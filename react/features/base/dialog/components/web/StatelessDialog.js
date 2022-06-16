@@ -14,12 +14,14 @@ import ModalHeader from './ModalHeader';
 
 /**
  * The ID to be used for the cancel button if enabled.
+ *
  * @type {string}
  */
 const CANCEL_BUTTON_ID = 'modal-dialog-cancel-button';
 
 /**
  * The ID to be used for the ok button if enabled.
+ *
  * @type {string}
  */
 const OK_BUTTON_ID = 'modal-dialog-ok-button';
@@ -102,7 +104,7 @@ type Props = DialogProps & {
      * - 'small' (400px), 'medium' (600px), 'large' (800px),
      *   'x-large' (968px)
      * - integer value for pixel width
-     * - string value for percentage
+     * - string value for percentage.
      */
     width: string
 };
@@ -131,7 +133,7 @@ class StatelessDialog extends Component<Props> {
     /**
      * The functional component to be used for rendering the modal footer.
      */
-    _Footer: ?Function
+    _Footer: ?Function;
 
     _dialogElement: ?HTMLElement;
 

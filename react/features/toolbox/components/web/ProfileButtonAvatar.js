@@ -24,7 +24,7 @@ type Props = {
  * A React {@code Component} for displaying a profile avatar as an
  * icon.
  *
- * @extends Component
+ * @augments Component
  */
 class ProfileButtonAvatar extends Component<Props> {
     /**

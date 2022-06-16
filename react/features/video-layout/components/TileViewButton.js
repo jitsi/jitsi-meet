@@ -1,5 +1,5 @@
 // @flow
-
+import { batch } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import {
@@ -11,6 +11,7 @@ import { translate } from '../../base/i18n';
 import { IconTileView } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
+import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { setTileView } from '../actions';
 import { shouldDisplayTileView } from '../functions';
 import logger from '../logger';
@@ -34,7 +35,7 @@ type Props = AbstractButtonProps & {
 /**
  * Component that renders a toolbar button for toggling the tile layout view.
  *
- * @extends AbstractButton
+ * @augments AbstractButton
  */
 class TileViewButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.tileView';
@@ -51,13 +52,7 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _tileViewEnabled, dispatch, handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
+        const { _tileViewEnabled, dispatch } = this.props;
 
         const value = !_tileViewEnabled;
 
@@ -68,7 +63,11 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
             }));
 
         logger.debug(`Tile view ${value ? 'enable' : 'disable'}`);
-        dispatch(setTileView(value));
+        batch(() => {
+            dispatch(setTileView(value));
+            navigator.product !== 'ReactNative' && dispatch(setOverflowMenuVisible(false));
+        });
+
     }
 
     /**

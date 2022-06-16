@@ -30,7 +30,17 @@ export type Props = {
      * The ID of the participant associated with the displayed connection indication and
      * stats.
      */
-    participantId: string
+    participantId: string,
+
+    /**
+     * The source name of the track.
+     */
+    _sourceName: string,
+
+    /**
+     * The flag whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: string
 };
 
 /**
@@ -57,13 +67,13 @@ export type State = {
  * Implements a React {@link Component} which displays the current connection
  * quality.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
     /**
      * The timeout for automatically hiding the indicator.
      */
-    autoHideTimeout: ?TimeoutID
+    autoHideTimeout: ?TimeoutID;
 
     /**
      * Initializes a new {@code ConnectionIndicator} instance.
@@ -87,6 +97,11 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
     componentDidMount() {
         statsEmitter.subscribeToClientStats(
             this.props.participantId, this._onStatsUpdated);
+
+        if (this.props._sourceNameSignalingEnabled) {
+            statsEmitter.subscribeToClientStats(
+                this.props._sourceName, this._onStatsUpdated);
+        }
     }
 
     /**
@@ -102,6 +117,15 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
             statsEmitter.subscribeToClientStats(
                 this.props.participantId, this._onStatsUpdated);
         }
+
+        if (this.props._sourceNameSignalingEnabled) {
+            if (prevProps._sourceName !== this.props._sourceName) {
+                statsEmitter.unsubscribeToClientStats(
+                    prevProps._sourceName, this._onStatsUpdated);
+                statsEmitter.subscribeToClientStats(
+                    this.props._sourceName, this._onStatsUpdated);
+            }
+        }
     }
 
     /**
@@ -114,6 +138,11 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
     componentWillUnmount() {
         statsEmitter.unsubscribeToClientStats(
             this.props.participantId, this._onStatsUpdated);
+
+        if (this.props._sourceNameSignalingEnabled) {
+            statsEmitter.unsubscribeToClientStats(
+                this.props._sourceName, this._onStatsUpdated);
+        }
 
         clearTimeout(this.autoHideTimeout);
     }

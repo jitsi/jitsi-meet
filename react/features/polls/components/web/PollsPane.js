@@ -7,12 +7,11 @@ import React, { useCallback, useRef } from 'react';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
 
+import PollCreate from './PollCreate';
 import PollsList from './PollsList';
 
-import { PollCreate } from '.';
 
 const PollsPane = (props: AbstractProps) => {
-
     const {
         createMode,
         isModerationEnabled,
@@ -48,8 +47,7 @@ const PollsPane = (props: AbstractProps) => {
             <div className = { 'poll-container' } >
                 <PollsList />
             </div>
-
-            <div className = { 'poll-footer poll-create-footer' }>
+            <div className = 'poll-footer poll-create-footer'>
                 { !isModerationEnabled || isModerator ? <button
                     aria-label = { t('polls.create.create') }
                     className = 'poll-button poll-button-primary'
@@ -60,14 +58,14 @@ const PollsPane = (props: AbstractProps) => {
                 { isModerationEnabled && isModerator ? <>
                     <button
                         aria-label = { t('polls.moderation.export') }
-                        className = 'poll-button poll-button-secondary poll-button-icon'
+                        className = 'poll-button poll-button-primary poll-small-icon-button'
                         onClick = { onExport }
                         type = 'button' >
                         <DownloadIcon label = { t('polls.moderation.export') } />
                     </button>
                     <button
                         aria-label = { t('polls.moderation.import') }
-                        className = 'poll-button poll-button-secondary poll-button-icon'
+                        className = 'poll-button poll-button-primary poll-small-icon-button'
                         onClick = { startFileUpload }
                         type = 'button' >
                         <UploadIcon label = { t('polls.moderation.import') } />

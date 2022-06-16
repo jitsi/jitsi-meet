@@ -3,6 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { overwriteConfig } from '../base/config';
+import { isMobileBrowser } from '../base/environment/utils';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -73,7 +74,7 @@ export function fullScreenChanged(fullScreen: boolean) {
 export function hideToolbox(force: boolean = false): Function {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const { toolbarConfig: { alwaysVisible } } = state['features/base/config'];
+        const { toolbarConfig: { alwaysVisible, autoHideWhileChatIsOpen } } = state['features/base/config'];
         const { hovered } = state['features/toolbox'];
         const toolbarTimeout = getToolbarTimeout(state);
 
@@ -88,7 +89,7 @@ export function hideToolbox(force: boolean = false): Function {
         if (!force
                 && (hovered
                     || state['features/invite'].calleeInfoVisible
-                    || state['features/chat'].isOpen
+                    || (state['features/chat'].isOpen && !autoHideWhileChatIsOpen)
                     || document.querySelector(focusSelector))) {
             dispatch(
                 setToolboxTimeout(
@@ -220,7 +221,8 @@ export function setToolbarHovered(hovered: boolean): Object {
 }
 
 /**
- * Dispatches an action which sets new timeout and clears the previous one.
+ * Dispatches an action which sets new timeout for the toolbox visibility and clears the previous one.
+ * On mobile browsers the toolbox does not hide on timeout. It is toggled on simple tap.
  *
  * @param {Function} handler - Function to be invoked after the timeout.
  * @param {number} timeoutMS - Delay.
@@ -231,10 +233,15 @@ export function setToolbarHovered(hovered: boolean): Object {
  * }}
  */
 export function setToolboxTimeout(handler: Function, timeoutMS: number): Object {
-    return {
-        type: SET_TOOLBOX_TIMEOUT,
-        handler,
-        timeoutMS
+    return function(dispatch) {
+        if (isMobileBrowser()) {
+            return;
+        }
+
+        dispatch({
+            type: SET_TOOLBOX_TIMEOUT,
+            handler,
+            timeoutMS
+        });
     };
 }
-

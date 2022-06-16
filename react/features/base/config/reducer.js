@@ -65,7 +65,7 @@ const CONFERENCE_HEADER_MAPPING = {
     hideConferenceTimer: [ 'conference-timer' ],
     hideConferenceSubject: [ 'subject' ],
     hideParticipantsStats: [ 'participants-count' ],
-    hideRecordingLabel: [ 'recording', 'local-recording' ]
+    hideRecordingLabel: [ 'recording' ]
 };
 
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
@@ -282,6 +282,13 @@ function _translateLegacyConfig(oldValue: Object) {
         };
     }
 
+    newValue.prejoinConfig = oldValue.prejoinConfig || {};
+    if (oldValue.hasOwnProperty('prejoinPageEnabled')
+        && !newValue.prejoinConfig.hasOwnProperty('enabled')
+    ) {
+        newValue.prejoinConfig.enabled = oldValue.prejoinPageEnabled;
+    }
+
     newValue.disabledSounds = newValue.disabledSounds || [];
 
     if (oldValue.disableJoinLeaveSounds) {
@@ -313,6 +320,38 @@ function _translateLegacyConfig(oldValue: Object) {
         && interfaceConfig.hasOwnProperty('DISABLE_FOCUS_INDICATOR')) {
         newValue.disableModeratorIndicator = interfaceConfig.DISABLE_FOCUS_INDICATOR;
     }
+
+    newValue.e2ee = newValue.e2ee || {};
+
+    if (oldValue.e2eeLabels) {
+        newValue.e2ee.e2eeLabels = oldValue.e2eeLabels;
+    }
+
+    if (oldValue.defaultLocalDisplayName === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DEFAULT_LOCAL_DISPLAY_NAME')) {
+        newValue.defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+    }
+
+    newValue.defaultLocalDisplayName
+        = newValue.defaultLocalDisplayName || 'me';
+
+    if (oldValue.defaultRemoteDisplayName === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DEFAULT_REMOTE_DISPLAY_NAME')) {
+        newValue.defaultRemoteDisplayName = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+    }
+
+    if (oldValue.hideAddRoomButton) {
+        newValue.breakoutRooms = {
+            /* eslint-disable-next-line no-extra-parens */
+            ...(newValue.breakoutRooms || {}),
+            hideAddRoomButton: oldValue.hideAddRoomButton
+        };
+    }
+
+    newValue.defaultRemoteDisplayName
+        = newValue.defaultRemoteDisplayName || 'Fellow Jitster';
 
     return newValue;
 }

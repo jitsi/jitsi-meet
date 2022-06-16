@@ -16,6 +16,11 @@ import AudioMuteButton from '../AudioMuteButton';
 type Props = {
 
     /**
+     * The button's key.
+     */
+     buttonKey?: string,
+
+    /**
      * External handler for click action.
      */
      handleClick: Function,
@@ -36,6 +41,12 @@ type Props = {
     isDisabled: boolean,
 
     /**
+     * Notify mode for `toolbarButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string,
+
+    /**
      * Used for translation.
      */
     t: Function,
@@ -47,7 +58,7 @@ type Props = {
     visible: boolean,
 
     /**
-     * Defines is popup is open
+     * Defines is popup is open.
      */
     isOpen: boolean,
 };
@@ -94,13 +105,7 @@ class AudioSettingsButton extends Component<Props> {
      * @returns {void}
      */
     _onClick() {
-        const { handleClick, onAudioOptionsClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
+        const { onAudioOptionsClick } = this.props;
 
         onAudioOptionsClick();
     }
@@ -111,7 +116,7 @@ class AudioSettingsButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { handleClick, hasPermissions, isDisabled, visible, isOpen, t } = this.props;
+        const { hasPermissions, isDisabled, visible, isOpen, buttonKey, notifyMode, t } = this.props;
         const settingsDisabled = !hasPermissions
             || isDisabled
             || !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
@@ -123,16 +128,22 @@ class AudioSettingsButton extends Component<Props> {
                     ariaExpanded = { isOpen }
                     ariaHasPopup = { true }
                     ariaLabel = { t('toolbar.audioSettings') }
+                    buttonKey = { buttonKey }
                     icon = { IconArrowUp }
                     iconDisabled = { settingsDisabled }
                     iconId = 'audio-settings-button'
                     iconTooltip = { t('toolbar.audioSettings') }
+                    notifyMode = { notifyMode }
                     onIconClick = { this._onClick }
                     onIconKeyDown = { this._onEscClick }>
-                    <AudioMuteButton handleClick = { handleClick } />
+                    <AudioMuteButton
+                        buttonKey = { buttonKey }
+                        notifyMode = { notifyMode } />
                 </ToolboxButtonWithIcon>
             </AudioSettingsPopup>
-        ) : <AudioMuteButton handleClick = { handleClick } />;
+        ) : <AudioMuteButton
+            buttonKey = { buttonKey }
+            notifyMode = { notifyMode } />;
     }
 }
 
@@ -159,5 +170,5 @@ const mapDispatchToProps = {
 
 export default translate(connect(
     mapStateToProps,
-    mapDispatchToProps,
+    mapDispatchToProps
 )(AudioSettingsButton));

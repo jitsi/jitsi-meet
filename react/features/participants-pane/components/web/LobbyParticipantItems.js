@@ -31,7 +31,7 @@ type Props = {
 function LobbyParticipantItems({ openDrawerForParticipant, overflowDrawer, participants }: Props) {
 
     return (
-        <div>
+        <div id = 'lobby-list'>
             {participants.map(p => (
                 <LobbyParticipantItem
                     key = { p.id }

@@ -6,12 +6,17 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { sendAnalytics, createPollEvent } from '../../analytics';
-import { isLocalParticipantModerator } from '../../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    isLocalParticipantModerator
+} from '../../base/participants/functions';
+import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
-import { isPollsModerationEnabled, getPoll } from '../functions';
+import { COMMAND_ANSWER_POLL } from '../constants';
+import { getPoll, isPollsModerationEnabled } from '../functions';
 import { usePollVisibility } from '../hooks';
 import type { Poll, PollVisibility } from '../types';
-
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -19,7 +24,7 @@ import type { Poll, PollVisibility } from '../types';
 type InputProps = {
 
     /**
-     * ID of the poll to display
+     * ID of the poll to display.
      */
     pollId: string,
 };
@@ -41,6 +46,7 @@ export type AbstractProps = {
     changeVote: Function,
     poll: Poll,
     pollVisibility: PollVisibility,
+    creatorName: string,
     showDetails: boolean,
     question: string,
     t: Function,
@@ -58,10 +64,10 @@ export type AbstractProps = {
 const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
     const { pollId } = props;
 
-    const conference: Object = useSelector(state => state['features/base/conference'].conference);
     const isModerator = useSelector(state => isLocalParticipantModerator(state));
     const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
     const pollDetails = useSelector(getPoll(pollId));
+    const participant = useBoundSelector(getParticipantById, pollDetails.senderId);
 
     const [ showDetails, setShowDetails ] = useState(false);
     const toggleIsDetailed = useCallback(() => {
@@ -110,21 +116,25 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
         sendAnalytics(createPollEvent('vote.changed'));
     }, [ dispatch, pollId ]);
 
+    const conference: Object = useSelector(state => state['features/base/conference'].conference);
     const pollVisibility = usePollVisibility(pollId, conference);
     const { t } = useTranslation();
 
-    return (<Component
-        answers = { answers }
-        changeVote = { changeVote }
-        haveVoted = { pollDetails.lastVote !== null }
-        isModerationEnabled = { isModerationEnabled }
-        isModerator = { isModerator }
-        poll = { pollDetails }
-        pollVisibility = { pollVisibility }
-        question = { pollDetails.question }
-        showDetails = { showDetails }
-        t = { t }
-        toggleIsDetailed = { toggleIsDetailed } />);
+    return (
+        <Component
+            answers = { answers }
+            changeVote = { changeVote }
+            creatorName = { participant ? participant.name : '' }
+            haveVoted = { pollDetails.lastVote !== null }
+            isModerationEnabled = { isModerationEnabled }
+            isModerator = { isModerator }
+            poll = { pollDetails }
+            pollVisibility = { pollVisibility }
+            question = { pollDetails.question }
+            showDetails = { showDetails }
+            t = { t }
+            toggleIsDetailed = { toggleIsDetailed } />
+    );
 };
 
 export default AbstractPollResults;

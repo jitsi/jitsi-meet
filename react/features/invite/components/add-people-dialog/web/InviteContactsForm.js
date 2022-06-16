@@ -34,7 +34,7 @@ type Props = AbstractProps & {
     _footerTextEnabled: boolean,
 
     /**
-     * Whether the meeting belongs to JaaS user
+     * Whether the meeting belongs to JaaS user.
      */
     _isVpaas: boolean,
 
@@ -180,7 +180,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _invite: Array<Object> => Promise<*>
+    _invite: Array<Object> => Promise<*>;
 
     _isAddDisabled: () => boolean;
 

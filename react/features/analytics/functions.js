@@ -8,10 +8,11 @@ import {
 } from '../base/environment/utils';
 import JitsiMeetJS, {
     analytics,
-    browser,
-    isAnalyticsEnabled
+    browser
 } from '../base/lib-jitsi-meet';
+import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions';
 import { getJitsiMeetGlobalNS, loadScript, parseURIString } from '../base/util';
+import { inIframe } from '../base/util/iframeUtils';
 
 import { AmplitudeHandler, MatomoHandler } from './handlers';
 import logger from './logger';
@@ -187,7 +188,7 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
     permanentProperties.externalApi = typeof API_ID === 'number';
 
     // Report if we are loaded in iframe
-    permanentProperties.inIframe = _inIframe();
+    permanentProperties.inIframe = inIframe();
 
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
@@ -218,24 +219,6 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
                 });
             }
         });
-    }
-}
-
-/**
- * Checks whether we are loaded in iframe.
- *
- * @returns {boolean} Returns {@code true} if loaded in iframe.
- * @private
- */
-function _inIframe() {
-    if (navigator.product === 'ReactNative') {
-        return false;
-    }
-
-    try {
-        return window.self !== window.top;
-    } catch (e) {
-        return true;
     }
 }
 

@@ -1,12 +1,11 @@
 // @flow
 import React, { useCallback } from 'react';
 
+import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { IconInfo } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { renderConnectionStatus } from '../../actions.web';
-
-import VideoMenuButton from './VideoMenuButton';
 
 type Props = {
 
@@ -29,19 +28,19 @@ type Props = {
 
 const ConnectionStatusButton = ({
     dispatch,
-    participantId,
     t
 }: Props) => {
-    const onClick = useCallback(() => {
+    const onClick = useCallback(e => {
+        e.stopPropagation();
         dispatch(renderConnectionStatus(true));
     }, [ dispatch ]);
 
     return (
-        <VideoMenuButton
-            buttonText = { t('videothumbnail.connectionInfo') }
+        <ContextMenuItem
+            accessibilityLabel = { t('videothumbnail.connectionInfo') }
             icon = { IconInfo }
-            id = { `connstatus_${participantId}` }
-            onClick = { onClick } />
+            onClick = { onClick }
+            text = { t('videothumbnail.connectionInfo') } />
     );
 };
 

@@ -1,12 +1,17 @@
 // @flow
 
 import React, { PureComponent } from 'react';
+import type { Dispatch } from 'redux';
 
-import { ColorSchemeRegistry } from '../../base/color-scheme';
+import { getSourceNameSignalingFeatureFlag } from '../../base/config/functions.any';
+import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
 import { ParticipantView, getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux';
-import { StyleType } from '../../base/styles';
-import { isLocalVideoTrackDesktop } from '../../base/tracks/functions';
+import {
+    getVideoTrackByParticipant,
+    isLocalVideoTrackDesktop,
+    trackStreamingStatusChanged
+} from '../../base/tracks';
 
 import { AVATAR_SIZE } from './styles';
 
@@ -33,14 +38,24 @@ type Props = {
     _participantId: string,
 
     /**
-     * The color-schemed stylesheet of the feature.
+     * Whether source name signaling is enabled.
      */
-    _styles: StyleType,
+    _sourceNameSignalingEnabled: boolean,
+
+    /**
+     * The video track that will be displayed in the thumbnail.
+     */
+    _videoTrack: ?Object,
 
     /**
      * Application's viewport height.
      */
     _width: number,
+
+    /**
+     * Invoked to trigger state changes in Redux.
+     */
+    dispatch: Dispatch<any>,
 
     /**
      * Callback to invoke when the {@code LargeVideo} is clicked/pressed.
@@ -71,13 +86,25 @@ const DEFAULT_STATE = {
     useConnectivityInfoLabel: true
 };
 
-/**
+/** .
  * Implements a React {@link Component} which represents the large video (a.k.a.
- * the conference participant who is on the local stage) on mobile/React Native.
+ * The conference participant who is on the local stage) on mobile/React Native.
  *
- * @extends Component
+ * @augments Component
  */
 class LargeVideo extends PureComponent<Props, State> {
+    /**
+     * Creates new LargeVideo component.
+     *
+     * @param {Props} props - The props of the component.
+     * @returns {LargeVideo}
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this.handleTrackStreamingStatusChanged = this.handleTrackStreamingStatusChanged.bind(this);
+    }
+
     state = {
         ...DEFAULT_STATE
     };
@@ -107,6 +134,86 @@ class LargeVideo extends PureComponent<Props, State> {
     }
 
     /**
+     * Starts listening for track streaming status updates after the initial render.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        // Listen to track streaming status changed event to keep it updated.
+        // TODO: after converting this component to a react function component,
+        // use a custom hook to update local track streaming status.
+        const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
+
+        if (_sourceNameSignalingEnabled && _videoTrack && !_videoTrack.local) {
+            _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                this.handleTrackStreamingStatusChanged);
+            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
+        }
+    }
+
+    /**
+     * Stops listening for track streaming status updates on the old track and starts listening instead on the new
+     * track.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidUpdate(prevProps: Props) {
+        // TODO: after converting this component to a react function component,
+        // use a custom hook to update local track streaming status.
+        const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
+
+        if (_sourceNameSignalingEnabled
+            && prevProps._videoTrack?.jitsiTrack?.getSourceName() !== _videoTrack?.jitsiTrack?.getSourceName()) {
+            if (prevProps._videoTrack && !prevProps._videoTrack.local) {
+                prevProps._videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                    this.handleTrackStreamingStatusChanged);
+                dispatch(trackStreamingStatusChanged(prevProps._videoTrack.jitsiTrack,
+                    prevProps._videoTrack.jitsiTrack.getTrackStreamingStatus()));
+            }
+            if (_videoTrack && !_videoTrack.local) {
+                _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                    this.handleTrackStreamingStatusChanged);
+                dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+                    _videoTrack.jitsiTrack.getTrackStreamingStatus()));
+            }
+        }
+    }
+
+    /**
+     * Remove listeners for track streaming status update.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        // TODO: after converting this component to a react function component,
+        // use a custom hook to update local track streaming status.
+        const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
+
+        if (_sourceNameSignalingEnabled && _videoTrack && !_videoTrack.local) {
+            _videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                this.handleTrackStreamingStatusChanged);
+            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
+        }
+    }
+
+    /**
+     * Handle track streaming status change event by by dispatching an action to update track streaming status for the
+     * given track in app state.
+     *
+     * @param {JitsiTrack} jitsiTrack - The track with streaming status updated.
+     * @param {JitsiTrackStreamingStatus} streamingStatus - The updated track streaming status.
+     * @returns {void}
+     */
+    handleTrackStreamingStatusChanged(jitsiTrack, streamingStatus) {
+        this.props.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -120,7 +227,6 @@ class LargeVideo extends PureComponent<Props, State> {
         const {
             _disableVideo,
             _participantId,
-            _styles,
             onClick
         } = this.props;
 
@@ -130,7 +236,6 @@ class LargeVideo extends PureComponent<Props, State> {
                 disableVideo = { _disableVideo }
                 onPress = { onClick }
                 participantId = { _participantId }
-                style = { _styles.largeVideo }
                 testHintId = 'org.jitsi.meet.LargeVideo'
                 useConnectivityInfoLabel = { useConnectivityInfoLabel }
                 zOrder = { 0 }
@@ -150,6 +255,7 @@ function _mapStateToProps(state) {
     const { participantId } = state['features/large-video'];
     const participant = getParticipantById(state, participantId);
     const { clientHeight: height, clientWidth: width } = state['features/base/responsive-ui'];
+    const videoTrack = getVideoTrackByParticipant(state['features/base/tracks'], participant);
     let disableVideo = false;
 
     if (participant?.local) {
@@ -160,7 +266,8 @@ function _mapStateToProps(state) {
         _disableVideo: disableVideo,
         _height: height,
         _participantId: participantId,
-        _styles: ColorSchemeRegistry.get(state, 'LargeVideo'),
+        _sourceNameSignalingEnabled: getSourceNameSignalingFeatureFlag(state),
+        _videoTrack: videoTrack,
         _width: width
     };
 }

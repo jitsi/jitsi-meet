@@ -1,6 +1,5 @@
 // @flow
 
-import { openDialog } from '../../../base/dialog';
 import { IconLiveStreaming } from '../../../base/icons';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
@@ -8,14 +7,11 @@ import {
     isLocalParticipantModerator
 } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { FEATURES } from '../../../jaas/constants';
 import { getActiveSession } from '../../functions';
 
-import {
-    StartLiveStreamDialog,
-    StopLiveStreamDialog
-} from './_';
 
 /**
  * The type of the React {@code Component} props of
@@ -24,14 +20,14 @@ import {
 export type Props = AbstractButtonProps & {
 
     /**
-     * True if there is a running active live stream, false otherwise.
-     */
-    _isLiveStreamRunning: boolean,
-
-    /**
      * True if the button needs to be disabled.
      */
     _disabled: Boolean,
+
+    /**
+     * True if there is a running active live stream, false otherwise.
+     */
+    _isLiveStreamRunning: boolean,
 
     /**
      * The tooltip to display when hovering over the button.
@@ -69,6 +65,17 @@ export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P
     }
 
     /**
+     * Helper function to be implemented by subclasses, which should be used
+     * to handle the live stream button being clicked / pressed.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _onHandleClick() {
+        // To be implemented by subclass.
+    }
+
+    /**
      * Handles clicking / pressing the button.
      *
      * @override
@@ -76,20 +83,12 @@ export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P
      * @returns {void}
      */
     async _handleClick() {
-        const { _isLiveStreamRunning, dispatch, handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
+        const { dispatch } = this.props;
 
         const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
 
         if (!dialogShown) {
-            dispatch(openDialog(
-                _isLiveStreamRunning ? StopLiveStreamDialog : StartLiveStreamDialog
-            ));
+            this._onHandleClick();
         }
     }
 
@@ -165,6 +164,12 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     if (getActiveSession(state, JitsiRecordingConstants.mode.FILE)) {
         _disabled = true;
         _tooltip = 'dialog.liveStreamingDisabledBecauseOfActiveRecordingTooltip';
+    }
+
+    // disable the button if we are in a breakout room.
+    if (isInBreakoutRoom(state)) {
+        _disabled = true;
+        visible = false;
     }
 
     return {

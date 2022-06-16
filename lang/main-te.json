@@ -36,9 +36,9 @@
     "audioDevices": {
         "bluetooth": "బ్లూటూత్",
         "headphones": "హెడ్‌ఫోన్స్",
+        "none": "ఆడియో పరికరాలేమీ అందుబాటులో లేవు",
         "phone": "ఫోను",
-        "speaker": "స్పీకర్",
-        "none": "ఆడియో పరికరాలేమీ అందుబాటులో లేవు"
+        "speaker": "స్పీకర్"
     },
     "audioOnly": {
         "audioOnly": "తక్కువ బ్యాండ్‌విడ్త్"
@@ -65,23 +65,23 @@
         "enter": "సంభాషణ గది లోనికి వెళ్ళండి",
         "error": "తప్పిదం: మీ సందేశం పంపబడలేదు. కారణం: {{error}}",
         "fieldPlaceHolder": "మీ సందేశాన్ని ఇక్కడ ఇవ్వండి",
-        "messagebox": "సందేశం టైపు చెయ్యండి",
         "messageTo": "{{recipient}}‍కి అంతరంగిక సందేశం",
-        "noMessagesMessage": "ఈ సమావేశంలో ఇంకా సందేశాలేమీ లేవు. ఇక్కడ ఒక సంభాషణను మొదలుపెట్టండి!",
+        "messagebox": "సందేశం టైపు చెయ్యండి",
         "nickname": {
             "popover": "ఒక మారుపేరు ఎంచుకోండి",
             "title": "సంభాషణను మొదలుపెట్టడానికి ఒక మారుపేరును ఇవ్వండి",
             "titleWithPolls": "సంభాషణను మొదలుపెట్టడానికి ఒక మారుపేరును ఇవ్వండి"
         },
+        "noMessagesMessage": "ఈ సమావేశంలో ఇంకా సందేశాలేమీ లేవు. ఇక్కడ ఒక సంభాషణను మొదలుపెట్టండి!",
         "privateNotice": "{{recipient}}‌కి అంతరంగిక సందేశం",
         "title": "సంభాషణ",
         "titleWithPolls": "సంభాషణ",
         "you": "మీరు"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "గూగుల్ క్యాలెండర్, ఆఫీస్ 365 సమన్వయం కోసం పొడగింతను స్థాపించుకోండి",
         "buttonText": "క్రోమ్ పొడగింతను స్థాపించు",
-        "dontShowAgain": "దీన్ని నాకు మళ్ళీ చూపించకు"
+        "dontShowAgain": "దీన్ని నాకు మళ్ళీ చూపించకు",
+        "installExtensionText": "గూగుల్ క్యాలెండర్, ఆఫీస్ 365 సమన్వయం కోసం పొడగింతను స్థాపించుకోండి"
     },
     "connectingOverlay": {
         "joiningRoom": "మిమ్మల్ని సమావేశంలో చేరుస్తోంది..."
@@ -119,6 +119,7 @@
         "maxEnabledResolution": "గరిష్ఠం పంపించు",
         "more": "ఎక్కువ చూపించు",
         "packetloss": "ప్యాకెట్ నష్టం:",
+        "participant_id": "పాల్గోలరి id:",
         "quality": {
             "good": "బాగుంది",
             "inactive": "అచేతనం",
@@ -132,7 +133,6 @@
         "remoteport_plural": "సుదూర పోర్టులు:",
         "resolution": "రిజల్యూషన్:",
         "savelogs": "చిట్టాలు భద్రపరచు",
-        "participant_id": "పాల్గోలరి id:",
         "status": "అనుసంధానం:",
         "transport": "Transport:",
         "transport_plural": "Transports:",
@@ -169,7 +169,20 @@
         "selectADevice": "ఒక పరికరాన్ని ఎంచుకోండి",
         "testAudio": "ఒక పరీక్షా ధ్వనిని వినిపించు"
     },
+    "dialOut": {
+        "statusMessage": "ఇప్పుడు {{status}}"
+    },
     "dialog": {
+        "Back": "వెనుకకు",
+        "Cancel": "రద్దుచేయి",
+        "IamHost": "నేనే అతిథేయిని",
+        "Ok": "సరే",
+        "Remove": "తీసివేయి",
+        "Share": "పంచుకోండి",
+        "Submit": "దాఖలుచేయి",
+        "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitingForHostTitle": "అతిథేయి కోసం వేచివున్నాం ...",
+        "Yes": "అవును",
         "accessibilityLabel": {
             "liveStreaming": "తాజా స్ట్రీమింగ్"
         },
@@ -179,7 +192,6 @@
         "alreadySharedVideoTitle": "ఒకసారి ఒక వీడియోకు మాత్రమే అనుమతి ఉంది",
         "applicationWindow": "అనువర్తన కిటికీ",
         "authenticationRequired": "అధీకరణ తప్పనిసరి",
-        "Back": "వెనుకకు",
         "cameraConstraintFailedError": "అవసరమైన కొన్ని నిబంధనలను మీ కేమెరా సంతృప్తి పరచలేదు.",
         "cameraNotFoundError": "కేమెరా కనబడలేదు.",
         "cameraNotSendingData": "మీ కేమెరాను చేరుకోలేకపోతున్నాం. ఈ పరికరాన్ని మరొక అనువర్తనం ఏమైనా వాడుతుందేమో చూడండి, అమరికల మెనూ నుండి మరొక పరికరాన్ని ఎంచుకోండి లేదా అనువర్తనాన్ని రీలోడ్ చెయ్యండి.",
@@ -188,7 +200,6 @@
         "cameraTimeoutError": "వీడియో మూలాన్ని మొదలుపెట్టలేకపోయాం. కాలం చెల్లిపోయింది!",
         "cameraUnknownError": "ఏదో తెలియని కారణం చేత కేమెరాను వాడలేకున్నాం.",
         "cameraUnsupportedResolutionError": "కావాల్సిన వీడియో రిజల్యూషనుకు మీ కేమెరాలో తోడ్పాటు లేదు.",
-        "Cancel": "రద్దుచేయి",
         "close": "మూసివేయి",
         "conferenceDisconnectMsg": "మీ నెట్‌వర్క్ అనుసంధానాన్ని ఒకసారి సరిచూసుకోండి. {{seconds}} క్షణాల్లో తిరిగి అనుసంధానమవుతుంది...",
         "conferenceDisconnectTitle": "మీ అనుసంధానం తెగిపోయింది.",
@@ -214,9 +225,8 @@
         "gracefulShutdown": "ప్రస్తుతం మా సేవలు నిర్వహణ నిమిత్తం అందుబాటులో లేవు. దయచేసి కాసేపాగి ప్రయత్నించండి.",
         "grantModeratorDialog": "మీరు నిజంగానే ఈ సదస్యునికి మధ్యవర్తి హోదా మంజూరు చేద్దామనుకుంటున్నారా?",
         "grantModeratorTitle": "మధ్యవర్తిత్వాన్ని మంజూరుచేయి",
-        "IamHost": "నేనే అతిథేయిని",
-        "incorrectRoomLockPassword": "సంకేతపదం తప్పు",
         "incorrectPassword": "తప్పుడు వాడుకరి పేరు లేదా సంకేతపదం",
+        "incorrectRoomLockPassword": "సంకేతపదం తప్పు",
         "internalError": "అయ్యో! ఏదో తప్పు జరిగింది. ఇదీ తప్పిదం: {{error}}",
         "internalErrorTitle": "అంతర్గంత తప్పిదం",
         "kickMessage": "మరిన్ని వివరాలకు మీరు {{participantDisplayName}}‌ను సంప్రదించవచ్చు.",
@@ -230,8 +240,8 @@
         "lockMessage": "Failed to lock the conference.",
         "lockRoom": "Add meeting $t(lockRoomPassword)",
         "lockTitle": "Lock failed",
-        "logoutQuestion": "మీరు నిజంగానే నిష్క్రమించి ఈ సమావేశాన్ని ఆపేయాలనుకుంటున్నారా?",
         "login": "ప్రవేశించు",
+        "logoutQuestion": "మీరు నిజంగానే నిష్క్రమించి ఈ సమావేశాన్ని ఆపేయాలనుకుంటున్నారా?",
         "logoutTitle": "నిష్క్రమణ",
         "maxUsersLimitReached": "సదస్యుల సంఖ్య గరిష్ఠ పరిమితికి చేరుకుంది. సమావేశం నిండుగా ఉంది. దయచేసి సమావేశ యజమానిని సంప్రదించండి లేదా మళ్ళీ ప్రయత్నించండి!",
         "maxUsersLimitReachedTitle": "సదస్యుల సంఖ్య గరిష్ఠ పరిమితికి చేరుకుంది",
@@ -242,25 +252,24 @@
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
         "micTimeoutError": "Could not start audio source. Timeout occured!",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
+        "muteEveryoneDialog": "Are you sure you want to mute everyone? You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteEveryoneElseDialog": "Once muted, you won't be able to unmute them, but they can unmute themselves at any time.",
         "muteEveryoneElseTitle": "Mute everyone except {{whom}}?",
-        "muteEveryoneDialog": "Are you sure you want to mute everyone? You won't be able to unmute them, but they can unmute themselves at any time.",
-        "muteEveryoneTitle": "అందరినీ మౌనించాలా?",
         "muteEveryoneElsesVideoDialog": "Once the camera is disabled, you won't be able to turn it back on, but they can turn it back on at any time.",
         "muteEveryoneElsesVideoTitle": "Disable everyone's camera except {{whom}}?",
+        "muteEveryoneSelf": "yourself",
+        "muteEveryoneStartMuted": "ఇకనుండి అందరూ మౌనించబడే మొదలవుతారు",
+        "muteEveryoneTitle": "అందరినీ మౌనించాలా?",
         "muteEveryonesVideoDialog": "Are you sure you want to disable everyone's camera? You won't be able to turn it back on, but they can turn it back on at any time.",
         "muteEveryonesVideoDialogOk": "అచేతనించు",
         "muteEveryonesVideoTitle": "అందరి కేమెరాలనూ అచేతనించాలా?",
-        "muteEveryoneSelf": "yourself",
-        "muteEveryoneStartMuted": "ఇకనుండి అందరూ మౌనించబడే మొదలవుతారు",
         "muteParticipantBody": "మీరు వారిని అమౌనించలేరు, కానీ వారంతవారు ఎప్పుడైనా అమౌనించుకోగలరు.",
         "muteParticipantButton": "మౌనించు",
         "muteParticipantDialog": "ఈ సదస్యుడిని మీరు నిజంగానే మౌనించాలనుకుంటున్నారా? మీరు వారిని అమౌనించలేరు, కానీ వారంతవారు ఎప్పుడైనా అమౌనించుకోగలరు.",
         "muteParticipantTitle": "ఈ సదస్యుడిని మౌనించాలా?",
+        "muteParticipantsVideoBody": "వారి కేమెరాను మీరు తిరిగి చేతనించలేరు, కానీ వారు ఎప్పుడైనా చేతనించుకోగలరు.",
         "muteParticipantsVideoButton": "కేమెరాను అచేతనించు",
         "muteParticipantsVideoTitle": "ఈ సదస్యుని కేమెరాను అచేతనించాలా?",
-        "muteParticipantsVideoBody": "వారి కేమెరాను మీరు తిరిగి చేతనించలేరు, కానీ వారు ఎప్పుడైనా చేతనించుకోగలరు.",
-        "Ok": "సరే",
         "password": "సంకేతపదం",
         "passwordLabel": "ఈ సమావేశానికి ఒక సదస్యులు తాళం వేసివున్నారు. చేరడానికి దయచేసి $t(lockRoomPassword) ఇవ్వండి.",
         "passwordNotSupported": "సమావేశానికి $t(lockRoomPassword) అమర్చడానికి తోడ్పాటులేదు.",
@@ -280,7 +289,6 @@
         "remoteControlShareScreenWarning": "Note that if you press \"Allow\" you will share your screen!",
         "remoteControlStopMessage": "The remote control session ended!",
         "remoteControlTitle": "Remote desktop control",
-        "Remove": "తీసివేయి",
         "removePassword": "$t(lockRoomPassword)ను తీసివేయి",
         "removeSharedVideoMsg": "Are you sure you would like to remove your shared video?",
         "removeSharedVideoTitle": "Remove shared video",
@@ -298,7 +306,6 @@
         "serviceUnavailable": "సేవ అందుబాటులో లేదు",
         "sessTerminated": "Call terminated",
         "sessionRestarted": "Call restarted because of a connection issue.",
-        "Share": "పంచుకోండి",
         "shareVideoLinkError": "దయచేసి సరైన యూట్యూబ్ లంకెను ఇవ్వండి.",
         "shareVideoTitle": "ఒక వీడియో పంచుకోండి",
         "shareYourScreen": "మీ తెరను పంచుకోండి",
@@ -311,7 +318,6 @@
         "stopRecordingWarning": "మీరు నిజంగానే రికార్డింగు ఆపివేయాలనుకుంటున్నారా?",
         "stopStreamingWarning": "మీరు నిజంగానే లైవ్ స్ట్రీమును ఆపివేయాలనుకుంటున్నారా?",
         "streamKey": "Live stream key",
-        "Submit": "దాఖలుచేయి",
         "thankYou": "{{appName}} వాడుతున్నందుకు కృతజ్ఞతలు!",
         "token": "token",
         "tokenAuthFailed": "క్షమించండి, మీరు ఈ కాల్‌లో చేరలేరు.",
@@ -322,14 +328,7 @@
         "userIdentifier": "వాడుకరి గుర్తింపు",
         "userPassword": "వాడుకరి సంకేతపదం",
         "videoLink": "వీడియో లంకె",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitingForHostTitle": "అతిథేయి కోసం వేచివున్నాం ...",
-        "Yes": "అవును",
         "yourEntireScreen": "మీ పూర్తి తెర"
-    },
-    "dialOut": {
-        "statusMessage": "ఇప్పుడు {{status}}"
     },
     "documentSharing": {
         "title": "పంచుకున్న పత్రం"
@@ -340,15 +339,6 @@
     "embedMeeting": {
         "title": "Embed this meeting"
     },
-    "virtualBackground": {
-        "title": "మిధ్యా వెనుతలాలు",
-        "blur": "Blur",
-        "slightBlur": "Slight Blur",
-        "removeBackground": "వెనుతలం తీసివేయి",
-        "addBackground": "వెనుతలం చేర్చు",
-        "pleaseWait": "దయచేసి వేచివుండండి...",
-        "none": "ఏమీలేదు"
-    },
     "feedback": {
         "average": "పర్లేదు",
         "bad": "బాలేదు",
@@ -357,6 +347,9 @@
         "rateExperience": "మీ సమావేశ అనుభవాన్ని రేట్ చేయండి",
         "veryBad": "అసలు బాలేదు",
         "veryGood": "చాలా బాగుందిా"
+    },
+    "helpView": {
+        "header": "సహాయ కేంద్రం"
     },
     "incomingCall": {
         "answer": "బదులివ్వు",
@@ -384,6 +377,7 @@
         "inviteURLFirstPartGeneral": "ఒక సమావేశంలో చేరమని మిమ్మల్ని ఆహ్వానించారు.",
         "inviteURLFirstPartPersonal": "మిమ్మల్ని {{name}} ఒక సమావేశానికి ఆహ్వానిస్తున్నారు.\n",
         "inviteURLSecondPart": "\nసమావేశంలో చేరండి:\n{{url}}\n",
+        "label": "డయలింగ్ సమాచారం",
         "liveStreamURL": "లైవ్ స్ట్రీమ్:",
         "moreNumbers": "మరిన్ని నెంబర్లు",
         "noNumbers": "డయల్ చేసే నెంబర్లేమీ లేవు.",
@@ -392,8 +386,13 @@
         "numbers": "డయల్ చేయాల్సిన నెంబర్లు",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "పంచుకోలు",
-        "tooltip": "ఈ సమావేశాపు లంకెను, డయలింగ్ సమాచారాన్ని పంచుకోండి",
-        "label": "డయలింగ్ సమాచారం"
+        "tooltip": "ఈ సమావేశాపు లంకెను, డయలింగ్ సమాచారాన్ని పంచుకోండి"
+    },
+    "inlineDialogFailure": {
+        "msg": "మేము కొంచెం తడబడ్డాం.",
+        "retry": "మళ్ళీ ప్రయత్నించండి",
+        "support": "తోడ్పాటు",
+        "supportMsg": "ఇలా తరచూ జరుగుతూంటే, మమ్మల్ని సంప్రదించండి"
     },
     "inviteDialog": {
         "alertText": "కొంతమంది సదస్యులను ఆహ్వానించలేకపోయాం.",
@@ -402,12 +401,6 @@
         "searchPeopleOnlyPlaceholder": "సదస్యుల కోసం వెతకండి",
         "searchPlaceholder": "సదస్యుల పేరు లేదా ఫోను నెంబరు",
         "send": "పంపించు"
-    },
-    "inlineDialogFailure": {
-        "msg": "మేము కొంచెం తడబడ్డాం.",
-        "retry": "మళ్ళీ ప్రయత్నించండి",
-        "support": "తోడ్పాటు",
-        "supportMsg": "ఇలా తరచూ జరుగుతూంటే, మమ్మల్ని సంప్రదించండి"
     },
     "keyboardShortcuts": {
         "focusLocal": "Focus on your video",
@@ -427,8 +420,6 @@
         "videoMute": "మీ కేమెరా మొదలుపెట్టండి లేదా ఆపివేయండి"
     },
     "liveStreaming": {
-        "limitNotificationDescriptionWeb": "Due to high demand your streaming will be limited to {{limit}} min. For unlimited streaming try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
-        "limitNotificationDescriptionNative": "Your streaming will be limited to {{limit}} min. For unlimited streaming try {{app}}.",
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",
         "changeSignIn": "Switch accounts.",
@@ -443,22 +434,58 @@
         "expandedPending": "The live streaming is being started...",
         "failedToStart": "Live Streaming failed to start",
         "getStreamKeyManually": "We weren’t able to fetch any live streams. Try getting your live stream key from YouTube.",
+        "googlePrivacyPolicy": "గూగుల్ గోప్యతా విధానం",
         "invalidStreamKey": "Live stream key may be incorrect.",
+        "limitNotificationDescriptionNative": "Your streaming will be limited to {{limit}} min. For unlimited streaming try {{app}}.",
+        "limitNotificationDescriptionWeb": "Due to high demand your streaming will be limited to {{limit}} min. For unlimited streaming try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Live Streaming stopped",
         "offBy": "{{name}} stopped the live streaming",
         "on": "Live Streaming started",
         "onBy": "{{name}} started the live streaming",
         "pending": "Starting Live Stream...",
         "serviceName": "లైవ్ స్ట్రీమింగ్ సేవ",
-        "signedInAs": "మీరు ప్రస్తుతం ఇలా ప్రవేశించివున్నారు:",
         "signIn": "గూగుల్‌తో ప్రవేశించండి",
         "signInCTA": "Sign in or enter your live stream key from YouTube.",
         "signOut": "నిష్క్రమించు",
+        "signedInAs": "మీరు ప్రస్తుతం ఇలా ప్రవేశించివున్నారు:",
         "start": "ఒక లైవ్ స్ట్రీమ్ మొదలుపెట్టండి",
         "streamIdHelp": "ఇది ఏమిటి?",
         "unavailableTitle": "లైవ్ స్ట్రీమింగ్ అందుబాటులో లేదు",
-        "youtubeTerms": "యూట్యూబ్ సేవా నియమాలు",
-        "googlePrivacyPolicy": "గూగుల్ గోప్యతా విధానం"
+        "youtubeTerms": "యూట్యూబ్ సేవా నియమాలు"
+    },
+    "lobby": {
+        "admit": "అనుమతించు",
+        "allow": "అనుమతించు",
+        "backToKnockModeButton": "సంకేతపదం లేదు, చేర్చుకోమని అడుగు",
+        "dialogTitle": "Lobby mode",
+        "disableDialogContent": "Lobby mode is currently enabled. This feature ensures that unwanted participants can't join your meeting. Do you want to disable it?",
+        "disableDialogSubmit": "అచేతనం చేయి",
+        "emailField": "మీ ఈమెయిలు చిరునామా ఇవ్వండి",
+        "enableDialogPasswordField": "సంకేతపదం పెట్టండి (ఐచ్ఛికం)",
+        "enableDialogSubmit": "చేతనించు",
+        "enableDialogText": "Lobby mode lets you protect your meeting by only allowing people to enter after a formal approval by a moderator.",
+        "enterPasswordButton": "సమావేశ సంకేతపదం ఇవ్వండి",
+        "enterPasswordTitle": "సమావేశంలో చేరడానికి సంకేతపదం ఇవ్వండి",
+        "invalidPassword": "చెల్లని సంకేతపదం",
+        "joinRejectedMessage": "మీ అభ్యర్థనను ఒక మధ్యవర్తి తిరస్కరించారు.",
+        "joinTitle": "సమావేశంలో చేరండి",
+        "joinWithPasswordMessage": "సంకేతపదంతో చేరడానికి ప్రయత్నిస్తున్నది, దయచేసి వేచివుండండి...",
+        "joiningMessage": "ఎవరైనా మీ అభ్యర్థనను ఆమోదించగానే మీరు సమావేశంలో చేరతారు",
+        "joiningTitle": "సమావేశంలో చేరడానికి అడుగుతున్నాం...",
+        "joiningWithPasswordTitle": "సంకేతపదంతో చేరుతున్నారు...",
+        "knockButton": "చేరడానికి అడుగు",
+        "knockTitle": "ఎవరో సమావేశంలో చేరదామనుకుంటున్నారు",
+        "knockingParticipantList": "Knocking participant list",
+        "nameField": "మీ పేరు ఇవ్వండి",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}} has been rejected to join by {{originParticipantName}}",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}} has been allowed to join by {{originParticipantName}}",
+        "notificationLobbyDisabled": "Lobby has been disabled by {{originParticipantName}}",
+        "notificationLobbyEnabled": "Lobby has been enabled by {{originParticipantName}}",
+        "notificationTitle": "Lobby",
+        "passwordField": "సమావేశం సంకేతపదం ఇవ్వండి",
+        "passwordJoinButton": "చేరు",
+        "reject": "నిరాకరించు",
+        "toggleLabel": "Enable lobby"
     },
     "localRecording": {
         "clientState": {
@@ -491,8 +518,13 @@
     },
     "lockRoomPassword": "సంకేతపదం",
     "lockRoomPasswordUppercase": "సంకేతపదం",
+    "lonelyMeetingExperience": {
+        "button": "ఇతరులను ఆహ్వానించండి",
+        "youAreAlone": "సమావేశంలో మీరొక్కరే ఉన్నారు"
+    },
     "me": "నేను",
     "notify": {
+        "OldElectronAPPTitle": "భద్రతా బలహీనత!",
         "connectedOneMember": "{{name}} సమావేశంలో చేరారు",
         "connectedThreePlusMembers": "{{name}}, మరో {{count}}గురు సమావేశంలో చేరారు",
         "connectedTwoMembers": "{{first}}, {{second}} సమావేశంలో చేరారు",
@@ -507,72 +539,71 @@
         "me": "Me",
         "moderator": "మధ్యవర్తిత్వ హక్కులు ఇవ్వబడ్డాయి!",
         "muted": "You have started the conversation muted.",
-        "mutedTitle": "మిమ్మల్ని మౌనించారు!",
-        "mutedRemotelyTitle": "{{participantDisplayName}} మిమ్మల్ని మౌనించారు!",
         "mutedRemotelyDescription": "You can always unmute when you're ready to speak. Mute back when you're done to keep noise away from the meeting.",
-        "videoMutedRemotelyTitle": "Your camera has been disabled by {{participantDisplayName}}!",
-        "videoMutedRemotelyDescription": "You can always turn it on again.",
+        "mutedRemotelyTitle": "{{participantDisplayName}} మిమ్మల్ని మౌనించారు!",
+        "mutedTitle": "మిమ్మల్ని మౌనించారు!",
+        "newDeviceAction": "వాడు",
+        "newDeviceAudioTitle": "కొత్త ఆడియో పరికరం కనుగొనబడింది",
+        "newDeviceCameraTitle": "కొత్త కేమెరా కనుగొనబడింది",
+        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription2": "సరికొత్త బిల్డు",
+        "oldElectronClientDescription3": " ఇప్పుడే!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
         "raisedHand": "{{name}} మాట్లాడాలనుకుంటున్నారు.",
         "screenShareNoAudio": " Share audio box was not checked in the window selection screen.",
         "screenShareNoAudioTitle": "Share audio was not checked",
         "somebody": "Somebody",
-        "startSilentTitle": "You joined with no audio output!",
         "startSilentDescription": "Rejoin the meeting to enable audio",
+        "startSilentTitle": "You joined with no audio output!",
         "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "విహారిణి హెచ్చరిక",
         "unmute": "Unmute",
-        "newDeviceCameraTitle": "కొత్త కేమెరా కనుగొనబడింది",
-        "newDeviceAudioTitle": "కొత్త ఆడియో పరికరం కనుగొనబడింది",
-        "newDeviceAction": "వాడు",
-        "OldElectronAPPTitle": "భద్రతా బలహీనత!",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
-        "oldElectronClientDescription2": "సరికొత్త బిల్డు",
-        "oldElectronClientDescription3": " ఇప్పుడే!"
+        "videoMutedRemotelyDescription": "You can always turn it on again.",
+        "videoMutedRemotelyTitle": "Your camera has been disabled by {{participantDisplayName}}!"
     },
     "participantsPane": {
-        "headings": {
-            "lobby": "Lobby ({{count}})",
-            "participantsList": "సదస్యులు ({{count}})"
-        },
         "actions": {
             "invite": "ప్రజలను ఆహ్వానించు",
             "muteAll": "అందరినీ మౌనించు",
             "stopVideo": "వీడియో ఆపివేయి"
+        },
+        "headings": {
+            "lobby": "Lobby ({{count}})",
+            "participantsList": "సదస్యులు ({{count}})"
         }
     },
-    "passwordSetRemotely": "మరో సదస్యులు అమర్చారు",
     "passwordDigitsOnly": "{{number}} అంకెల వరకు",
+    "passwordSetRemotely": "మరో సదస్యులు అమర్చారు",
     "poweredby": "శక్తిమంతం",
     "prejoin": {
         "audioAndVideoError": "Audio and video error:",
         "audioDeviceProblem": "There is a problem with your audio device",
         "audioOnlyError": "Audio error:",
         "audioTrackError": "Could not create audio track.",
-        "calling": "Calling",
         "callMe": "Call me",
         "callMeAtNumber": "Call me at this number:",
+        "calling": "Calling",
         "configuringDevices": "Configuring devices...",
         "connectedWithAudioQ": "You’re connected with audio?",
         "connection": {
-           "good": "మీ అంతర్జాల అనుసంధానం బానే ఉంది!",
-           "nonOptimal": "మీ అంతర్జాల అనుసంధానం అంత బాగాలేదు",
-           "poor": "మీ అంతర్జాల అనుసంధానం బాలేదు"
+            "good": "మీ అంతర్జాల అనుసంధానం బానే ఉంది!",
+            "nonOptimal": "మీ అంతర్జాల అనుసంధానం అంత బాగాలేదు",
+            "poor": "మీ అంతర్జాల అనుసంధానం బాలేదు"
         },
         "connectionDetails": {
-          "audioClipping": "We expect your audio to be clipped.",
-          "audioHighQuality": "We expect your audio to have excellent quality.",
-          "audioLowNoVideo": "We expect your audio quality to be low and no video.",
-          "goodQuality": "Awesome! Your media quality is going to be great.",
-          "noMediaConnectivity": "We could not find a way to establish media connectivity for this test. This is typically caused by a firewall or NAT.",
-          "noVideo": "We expect that your video will be terrible.",
-          "undetectable": "If you still can not make calls in browser, we recommend that you make sure your speakers, microphone and camera are properly set up, that you have granted your browser rights to use your microphone and camera, and that your browser version is up-to-date. If you still have trouble calling, you should contact the web application developer.",
-          "veryPoorConnection": "We expect your call quality to be really terrible.",
-          "videoFreezing": "We expect your video to freeze, turn black, and be pixelated.",
-          "videoHighQuality": "We expect your video to have good quality.",
-          "videoLowQuality": "We expect your video to have low quality in terms of frame rate and resolution.",
-          "videoTearing": "We expect your video to be pixelated or have visual artefacts."
+            "audioClipping": "We expect your audio to be clipped.",
+            "audioHighQuality": "We expect your audio to have excellent quality.",
+            "audioLowNoVideo": "We expect your audio quality to be low and no video.",
+            "goodQuality": "Awesome! Your media quality is going to be great.",
+            "noMediaConnectivity": "We could not find a way to establish media connectivity for this test. This is typically caused by a firewall or NAT.",
+            "noVideo": "We expect that your video will be terrible.",
+            "undetectable": "If you still can not make calls in browser, we recommend that you make sure your speakers, microphone and camera are properly set up, that you have granted your browser rights to use your microphone and camera, and that your browser version is up-to-date. If you still have trouble calling, you should contact the web application developer.",
+            "veryPoorConnection": "We expect your call quality to be really terrible.",
+            "videoFreezing": "We expect your video to freeze, turn black, and be pixelated.",
+            "videoHighQuality": "We expect your video to have good quality.",
+            "videoLowQuality": "We expect your video to have low quality in terms of frame rate and resolution.",
+            "videoTearing": "We expect your video to be pixelated or have visual artefacts."
         },
         "copyAndShare": "Copy & share meeting link",
         "dialInMeeting": "Dial into the meeting",
@@ -587,17 +618,17 @@
         "errorStatusCode": "Error dialing out, status code: {{status}}",
         "errorValidation": "నెంబరు సరిచూత విఫలమైంది",
         "iWantToDialIn": "I want to dial in",
+        "initiated": "Call initiated",
         "joinAudioByPhone": "ఫోను ఆడియోతో చేరు",
         "joinMeeting": "సమావేశంలో చేరు",
         "joinWithoutAudio": "ఆడియో లేకుండా చేరు",
-        "initiated": "Call initiated",
         "linkCopied": "లంకె క్లిప్‌బోర్డుకి కాపీ అయ్యింది",
         "lookGood": "మీ మైక్రోఫోను బాగానే పనిచేస్తున్నట్లుంది",
         "or": "లేదా",
         "premeeting": "Pre meeting",
+        "screenSharingError": "Screen sharing error:",
         "showScreen": "Enable pre meeting screen",
         "startWithPhone": "Start with phone audio",
-        "screenSharingError": "Screen sharing error:",
         "videoOnlyError": "Video error:",
         "videoTrackError": "Could not create video track.",
         "viewAllNumbers": "నెంబర్లన్నిటినీ చూడండి"
@@ -624,8 +655,6 @@
     },
     "raisedHand": "మాట్లాడాలనుకుంటున్నారు",
     "recording": {
-        "limitNotificationDescriptionWeb": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
-        "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <3>{{app}}</3>.",
         "authDropboxText": "డ్రాప్‌బాక్స్‌కు ఎక్కించండి",
         "availableSpace": "అందుబాటులో ఉన్న జాగా: {{spaceLeft}} MB (సుమారు {{duration}} నిమిషాల రికార్డింగు)",
         "beta": "బీటా",
@@ -637,6 +666,8 @@
         "expandedPending": "రికార్డింగు మొదలవుతూన్నది...",
         "failedToStart": "రికార్డింగు మొదలవడం విఫలమైంది",
         "fileSharingdescription": "రికార్డింగును సదస్యులతో పంచుకోండి",
+        "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <3>{{app}}</3>.",
+        "limitNotificationDescriptionWeb": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "live": "LIVE",
         "loggedIn": "{{userName}}‌గా ప్రవేశించారు",
         "off": "రికార్డింగు ఆగిపోయింది",
@@ -689,16 +720,16 @@
     },
     "settingsView": {
         "advanced": "ఉన్నతం",
-        "alertOk": "సరే",
         "alertCancel": "రద్దుచేయి",
+        "alertOk": "సరే",
         "alertTitle": "హెచ్చరిక",
         "alertURLText": "పేర్కొన్న సర్వరు చిరునామా చెల్లనిది",
         "buildInfoSection": "బిల్డు సమాచారం",
         "conferenceSection": "సదస్సు",
         "disableCallIntegration": "Disable native call integration",
-        "disableP2P": "Disable Peer-To-Peer mode",
         "disableCrashReporting": "Disable crash reporting",
         "disableCrashReportingWarning": "Are you sure you want to disable crash reporting? The setting will be applied after you restart the app.",
+        "disableP2P": "Disable Peer-To-Peer mode",
         "displayName": "చూపించే పేరు",
         "email": "ఈమెయిలు",
         "header": "అమరికలు",
@@ -723,8 +754,8 @@
         "speakerTime": "మాట్లాడిన సమయం"
     },
     "startupoverlay": {
-        "policyText": " ",
         "genericTitle": "ఈ సమావేశం మీ మైక్రోఫోనును, కేమెరాను వాడుకోవాలి.",
+        "policyText": " ",
         "title": "{{app}} మీ మైక్రోఫోనును, కేమెరాను వాడుకోవాలి."
     },
     "suspendedoverlay": {
@@ -733,7 +764,9 @@
         "title": "Your video call was interrupted because this computer went to sleep."
     },
     "toolbar": {
+        "Settings": "అమరికలు",
         "accessibilityLabel": {
+            "Settings": "Toggle settings",
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "callQuality": "Manage video quality",
@@ -758,8 +791,8 @@
             "mute": "Toggle mute audio",
             "muteEveryone": "అందరినీ మౌనించు",
             "muteEveryoneElse": "తతిమావారందిరినీ మౌనించు",
-            "muteEveryonesVideo": "అందరి కేమెరాలనూ అచేతనించు",
             "muteEveryoneElsesVideo": "తతిమావారందరి కేమెరాలనూ అచేతనించు",
+            "muteEveryonesVideo": "అందరి కేమెరాలనూ అచేతనించు",
             "participants": "సదస్యులు",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",
@@ -769,25 +802,24 @@
             "remoteMute": "సదస్యుని మౌనించు",
             "remoteVideoMute": "Disable camera of participant",
             "security": "భద్రతా ఎంపికలు",
-            "Settings": "Toggle settings",
-            "shareaudio": "Share audio",
-            "sharedvideo": "Toggle YouTube video sharing",
+            "selectBackground": "వెనుతలం ఎంచుకోండి",
             "shareRoom": "Invite someone",
             "shareYourScreen": "Toggle screenshare",
+            "shareaudio": "Share audio",
+            "sharedvideo": "Toggle video sharing",
             "shortcuts": "Toggle shortcuts",
             "show": "Show on stage",
             "speakerStats": "Toggle speaker statistics",
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
-            "videomute": "Toggle mute video",
-            "selectBackground": "వెనుతలం ఎంచుకోండి"
+            "videomute": "Toggle mute video"
         },
         "addPeople": "Add people to your call",
-        "audioSettings": "ఆడియో అమరికలు",
         "audioOnlyOff": "Disable low bandwidth mode",
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
+        "audioSettings": "ఆడియో అమరికలు",
         "authenticate": "Authenticate",
         "callQuality": "Manage video quality",
         "chat": "Open / Close chat",
@@ -815,13 +847,13 @@
         "mute": "మౌనించు / అమౌనించు",
         "muteEveryone": "అందరినీ మౌనించు",
         "muteEveryonesVideo": "అందరి కేమెరాలనూ అచేతనించు",
-        "noAudioSignalTitle": "మీ మైకు నుండి శబ్దమేమీ వినపడటం లేదు!",
         "noAudioSignalDesc": "If you did not purposely mute it from system settings or hardware, consider switching the device.",
         "noAudioSignalDescSuggestion": "If you did not purposely mute it from system settings or hardware, consider switching to the suggested device.",
         "noAudioSignalDialInDesc": "You can also dial-in using:",
         "noAudioSignalDialInLinkDesc": "Dial-in numbers",
-        "noisyAudioInputTitle": "మీ మైక్రోఫోను గోలగా ఉన్నట్టుంది!",
+        "noAudioSignalTitle": "మీ మైకు నుండి శబ్దమేమీ వినపడటం లేదు!",
         "noisyAudioInputDesc": "It sounds like your microphone is making noise, please consider muting or changing the device.",
+        "noisyAudioInputTitle": "మీ మైక్రోఫోను గోలగా ఉన్నట్టుంది!",
         "openChat": "సంభాషణను తెరువు",
         "participants": "సదస్యులు",
         "pip": "Enter Picture-in-Picture mode",
@@ -830,23 +862,22 @@
         "raiseHand": "మీ చేయి ఎత్తండి / దించండి",
         "raiseYourHand": "మీ చేయి ఎత్తండి",
         "security": "భద్రతా ఎంపికలు",
-        "Settings": "అమరికలు",
-        "shareaudio": "Share audio",
-        "sharedvideo": "Share a YouTube video",
+        "selectBackground": "వెనుతలం ఎంచుకోండి",
         "shareRoom": "Invite someone",
+        "shareaudio": "Share audio",
+        "sharedvideo": "Share video",
         "shortcuts": "View shortcuts",
         "speakerStats": "Speaker stats",
         "startScreenSharing": "Start screen sharing",
         "startSubtitles": "Start subtitles",
         "stopScreenSharing": "Stop screen sharing",
+        "stopSharedVideo": "Stop video",
         "stopSubtitles": "Stop subtitles",
-        "stopSharedVideo": "Stop YouTube video",
         "talkWhileMutedPopup": "మాట్లాడటానికి ప్రయత్నిస్తున్నారా? మీరు మౌనించబడివున్నారు.",
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
-        "videomute": "కేమెరా మొదలుపెట్టు / ఆపివేయి",
         "videoSettings": "వీడియో అమరికలు",
-        "selectBackground": "వెనుతలం ఎంచుకోండి"
+        "videomute": "కేమెరా మొదలుపెట్టు / ఆపివేయి"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
@@ -901,8 +932,8 @@
     "videothumbnail": {
         "connectionInfo": "అనుసంధాన సమాచారం",
         "domute": "మౌనించు",
-        "domuteVideo": "కేమెరాను అచేతనించు",
         "domuteOthers": "తతిమావారందరినీ మౌనించు",
+        "domuteVideo": "కేమెరాను అచేతనించు",
         "domuteVideoOfOthers": "తతిమావారందరి కేమెరాలూ అచేతనించు",
         "flip": "Flip",
         "grantModerator": "మధ్యవర్తిని చేయి",
@@ -910,10 +941,19 @@
         "moderator": "మధ్యవర్తి",
         "mute": "సదస్యుడిని మౌనించు",
         "muted": "మౌనించబడ్డారు",
-        "videoMuted": "కేమెరా అచేతనంగా ఉంది",
         "remoteControl": "Start / Stop remote control",
         "show": "వేదికపై చూపించు",
+        "videoMuted": "కేమెరా అచేతనంగా ఉంది",
         "videomute": "సదస్యుడు కేమెరా ఆపివేసుకున్నారు"
+    },
+    "virtualBackground": {
+        "addBackground": "వెనుతలం చేర్చు",
+        "blur": "Blur",
+        "none": "ఏమీలేదు",
+        "pleaseWait": "దయచేసి వేచివుండండి...",
+        "removeBackground": "వెనుతలం తీసివేయి",
+        "slightBlur": "Slight Blur",
+        "title": "మిధ్యా వెనుతలాలు"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -932,11 +972,11 @@
         "getHelp": "సహాయం పొందండి",
         "go": "వెళ్ళు",
         "goSmall": "వెళ్ళు",
-        "headerTitle": "జిత్సి మీట్",
         "headerSubtitle": "Secure and high quality meetings",
+        "headerTitle": "జిత్సి మీట్",
         "info": "డయలింగ్ సమాచారం",
-        "join": "CREATE / JOIN",
         "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
+        "join": "CREATE / JOIN",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
         "privacy": "అంతరంగికత",
         "recentList": "ఇటీవల",
@@ -950,46 +990,5 @@
         "startMeeting": "సమావేశం మొదలుపెట్టు",
         "terms": "నియమాలు",
         "title": "Secure, fully featured, and completely free video conferencing"
-    },
-    "lonelyMeetingExperience": {
-        "button": "ఇతరులను ఆహ్వానించండి",
-        "youAreAlone": "సమావేశంలో మీరొక్కరే ఉన్నారు"
-    },
-    "helpView": {
-        "header": "సహాయ కేంద్రం"
-    },
-    "lobby": {
-        "admit": "అనుమతించు",
-        "knockingParticipantList": "Knocking participant list",
-        "allow": "అనుమతించు",
-        "backToKnockModeButton": "సంకేతపదం లేదు, చేర్చుకోమని అడుగు",
-        "dialogTitle": "Lobby mode",
-        "disableDialogContent": "Lobby mode is currently enabled. This feature ensures that unwanted participants can't join your meeting. Do you want to disable it?",
-        "disableDialogSubmit": "అచేతనం చేయి",
-        "emailField": "మీ ఈమెయిలు చిరునామా ఇవ్వండి",
-        "enableDialogPasswordField": "సంకేతపదం పెట్టండి (ఐచ్ఛికం)",
-        "enableDialogSubmit": "చేతనించు",
-        "enableDialogText": "Lobby mode lets you protect your meeting by only allowing people to enter after a formal approval by a moderator.",
-        "enterPasswordButton": "సమావేశ సంకేతపదం ఇవ్వండి",
-        "enterPasswordTitle": "సమావేశంలో చేరడానికి సంకేతపదం ఇవ్వండి",
-        "invalidPassword": "చెల్లని సంకేతపదం",
-        "joiningMessage": "ఎవరైనా మీ అభ్యర్థనను ఆమోదించగానే మీరు సమావేశంలో చేరతారు",
-        "joinWithPasswordMessage": "సంకేతపదంతో చేరడానికి ప్రయత్నిస్తున్నది, దయచేసి వేచివుండండి...",
-        "joinRejectedMessage": "మీ అభ్యర్థనను ఒక మధ్యవర్తి తిరస్కరించారు.",
-        "joinTitle": "సమావేశంలో చేరండి",
-        "joiningTitle": "సమావేశంలో చేరడానికి అడుగుతున్నాం...",
-        "joiningWithPasswordTitle": "సంకేతపదంతో చేరుతున్నారు...",
-        "knockButton": "చేరడానికి అడుగు",
-        "knockTitle": "ఎవరో సమావేశంలో చేరదామనుకుంటున్నారు",
-        "nameField": "మీ పేరు ఇవ్వండి",
-        "notificationLobbyAccessDenied": "{{targetParticipantName}} has been rejected to join by {{originParticipantName}}",
-        "notificationLobbyAccessGranted": "{{targetParticipantName}} has been allowed to join by {{originParticipantName}}",
-        "notificationLobbyDisabled": "Lobby has been disabled by {{originParticipantName}}",
-        "notificationLobbyEnabled": "Lobby has been enabled by {{originParticipantName}}",
-        "notificationTitle": "Lobby",
-        "passwordField": "సమావేశం సంకేతపదం ఇవ్వండి",
-        "passwordJoinButton": "చేరు",
-        "reject": "నిరాకరించు",
-        "toggleLabel": "Enable lobby"
     }
 }

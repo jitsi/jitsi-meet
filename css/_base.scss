@@ -6,6 +6,10 @@
 * {
     -webkit-user-select: none;
     user-select: none;
+
+    // Firefox only
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, .5) transparent;
 }
 
 input,
@@ -37,18 +41,6 @@ body {
  */
 .js-focus-visible :focus:not(.focus-visible) {
   outline: none;
-}
-
-/**
- * AtlasKit sets a default margin on the rendered modals, so
- * when the shift-right class is set when the chat opens, we
- * pad the modal container in order for the modals to be centered
- * while also taking the chat size into consideration.
-*/
-@media (min-width: 581px) {
-    .shift-right .atlaskit-portal > div:not(.Tooltip) {
-        padding-left: $sidebarWidth;
-    }
 }
 
 .jitsi-icon {
@@ -158,16 +150,6 @@ form {
 .lastN, .disconnected {
     color: #a3a3a3;
     font-size: 12px;
-}
-
-/**
-* Dialogs fade
-*/
-.aui-blanket {
-    background: #000;
-    transition: opacity 0.2s, visibility 0.2s;
-    transition-delay: 0.1s;
-    visibility: visible;
 }
 
 #inviteLinkRef {

@@ -1,34 +1,35 @@
 // @flow
 
+import Clipboard from '@react-native-community/clipboard';
 import React, { PureComponent } from 'react';
 import {
-    KeyboardAvoidingView,
-    Platform,
     Text,
     TextInput,
     View
 } from 'react-native';
-import { connect } from 'react-redux';
+import { TouchableRipple } from 'react-native-paper';
 import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../../base/color-scheme';
-import {
-    FIELD_UNDERLINE,
-    CustomSubmitDialog
-} from '../../../../base/dialog';
+import { FIELD_UNDERLINE } from '../../../../base/dialog';
 import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../../base/participants';
+import { connect } from '../../../../base/redux';
 import { StyleType } from '../../../../base/styles';
+import BaseTheme from '../../../../base/ui/components/BaseTheme';
+import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
 import LobbyModeSwitch
     from '../../../../lobby/components/native/LobbyModeSwitch';
-import { LOCKED_LOCALLY } from '../../../../room-lock';
+import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../../../room-lock';
 import {
     endRoomLockRequest,
     unlockRoom
 } from '../../../../room-lock/actions';
-import RoomLockSwitch from '../../../../room-lock/components/RoomLockSwitch';
+
+import styles from './styles';
 
 /**
  * The style of the {@link TextInput} rendered by {@code SecurityDialog}. As it
@@ -92,14 +93,9 @@ type Props = {
     _passwordNumberOfDigits: number,
 
     /**
-     * Whether the room lock switch is available or not.
+     * Whether setting a room password is available or not.
      */
-    _roomLockSwitchVisible: boolean,
-
-    /**
-     * The color-schemed stylesheet of the security dialog feature.
-     */
-    _securityDialogStyles: StyleType,
+    _roomPasswordControls: boolean,
 
     /**
      * Redux store dispatch function.
@@ -149,9 +145,11 @@ class SecurityDialog extends PureComponent<Props, State> {
         };
 
         this._onChangeText = this._onChangeText.bind(this);
+        this._onCancel = this._onCancel.bind(this);
+        this._onCopy = this._onCopy.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._onToggleLobbyMode = this._onToggleLobbyMode.bind(this);
-        this._onToggleRoomLock = this._onToggleRoomLock.bind(this);
+        this._onAddPassword = this._onAddPassword.bind(this);
     }
 
     /**
@@ -161,19 +159,10 @@ class SecurityDialog extends PureComponent<Props, State> {
      */
     render() {
         return (
-            <CustomSubmitDialog
-                onSubmit = { this._onSubmit }>
-                <KeyboardAvoidingView
-                    behavior =
-                        {
-                            Platform.OS === 'ios'
-                                ? 'padding' : 'height'
-                        }
-                    enabled = { true }>
-                    { this._renderLobbyMode() }
-                    { this._renderRoomLock() }
-                </KeyboardAvoidingView>
-            </CustomSubmitDialog>
+            <JitsiScreen style = { styles.securityDialogContainer }>
+                { this._renderLobbyMode() }
+                { this._renderSetRoomPassword() }
+            </JitsiScreen>
         );
     }
 
@@ -187,7 +176,6 @@ class SecurityDialog extends PureComponent<Props, State> {
         const {
             _lobbyEnabled,
             _lobbyModeSwitchVisible,
-            _securityDialogStyles,
             t
         } = this.props;
 
@@ -196,55 +184,151 @@ class SecurityDialog extends PureComponent<Props, State> {
         }
 
         return (
-            <View>
-                <Text style = { _securityDialogStyles.title } >
-                    { t('lobby.dialogTitle') }
-                </Text>
-                <Text style = { _securityDialogStyles.text } >
-                    { t('lobby.enableDialogText') }
-                </Text>
-                <LobbyModeSwitch
-                    lobbyEnabled = { _lobbyEnabled }
-                    onToggleLobbyMode = { this._onToggleLobbyMode } />
+            <View style = { styles.lobbyModeContainer }>
+                <View style = { styles.lobbyModeContent } >
+                    <Text style = { styles.lobbyModeText }>
+                        { t('lobby.enableDialogText') }
+                    </Text>
+                    <View style = { styles.lobbyModeSection }>
+                        <Text style = { styles.lobbyModeLabel } >
+                            { t('lobby.toggleLabel') }
+                        </Text>
+                        <LobbyModeSwitch
+                            lobbyEnabled = { _lobbyEnabled }
+                            onToggleLobbyMode = { this._onToggleLobbyMode } />
+                    </View>
+                </View>
             </View>
         );
     }
 
     /**
-     * Renders room lock.
+     * Renders setting the password.
      *
      * @returns {ReactElement}
      * @private
      */
-    _renderRoomLock() {
+    _renderSetRoomPassword() {
         const {
             _isModerator,
             _locked,
             _lockedConference,
-            _roomLockSwitchVisible,
-            _securityDialogStyles,
+            _password,
+            _roomPasswordControls,
             t
         } = this.props;
         const { showElement } = this.state;
+        let setPasswordControls;
 
-        if (!_roomLockSwitchVisible) {
+        if (!_roomPasswordControls) {
             return null;
         }
 
+        if (_locked && showElement) {
+            setPasswordControls = (
+                <>
+                    <TouchableRipple
+                        onPress = { this._onCancel }
+                        rippleColor = { BaseTheme.palette.ui01 } >
+                        <Text style = { styles.passwordSetupButton }>
+                            { t('dialog.Remove') }
+                        </Text>
+                    </TouchableRipple>
+                    {
+                        _password
+                        && <TouchableRipple
+                            onPress = { this._onCopy }
+                            rippleColor = { BaseTheme.palette.ui01 } >
+                            <Text style = { styles.passwordSetupButton }>
+                                { t('dialog.copy') }
+                            </Text>
+                        </TouchableRipple>
+                    }
+                </>
+            );
+        } else if (!_lockedConference && showElement) {
+            setPasswordControls = (
+                <>
+                    <TouchableRipple
+                        onPress = { this._onCancel }
+                        rippleColor = { BaseTheme.palette.ui01 } >
+                        <Text style = { styles.passwordSetupButton }>
+                            { t('dialog.Cancel') }
+                        </Text>
+                    </TouchableRipple>
+                    <TouchableRipple
+                        onPress = { this._onSubmit }
+                        rippleColor = { BaseTheme.palette.ui01 } >
+                        <Text style = { styles.passwordSetupButton }>
+                            { t('dialog.add') }
+                        </Text>
+                    </TouchableRipple>
+                </>
+            );
+        } else if (!_lockedConference && !showElement) {
+            setPasswordControls = (
+                <TouchableRipple
+                    disabled = { !_isModerator }
+                    onPress = { this._onAddPassword }
+                    rippleColor = { BaseTheme.palette.ui01 } >
+                    <Text style = { styles.passwordSetupButton }>
+                        { t('info.addPassword') }
+                    </Text>
+                </TouchableRipple>
+            );
+        }
+
+        if (_locked === LOCKED_REMOTELY) {
+            if (_isModerator) {
+                setPasswordControls = (
+                    <View style = { styles.passwordSetRemotelyContainer }>
+                        <Text style = { styles.passwordSetRemotelyText }>
+                            { t('passwordSetRemotely') }
+                        </Text>
+                        <TouchableRipple
+                            onPress = { this._onCancel }
+                            rippleColor = { BaseTheme.palette.ui01 } >
+                            <Text style = { styles.passwordSetupButton }>
+                                { t('dialog.Remove') }
+                            </Text>
+                        </TouchableRipple>
+                    </View>
+                );
+            } else {
+                setPasswordControls = (
+                    <View style = { styles.passwordSetRemotelyContainer }>
+                        <Text style = { styles.passwordSetRemotelyTextDisabled }>
+                            { t('passwordSetRemotely') }
+                        </Text>
+                        <TouchableRipple
+                            disabled = { !_isModerator }
+                            onPress = { this._onAddPassword }
+                            rippleColor = { BaseTheme.palette.ui01 } >
+                            <Text style = { styles.passwordSetupButton }>
+                                { t('info.addPassword') }
+                            </Text>
+                        </TouchableRipple>
+                    </View>
+                );
+            }
+        }
+
         return (
-            <View>
-                <Text style = { _securityDialogStyles.title } >
-                    { t('dialog.lockRoom') }
-                </Text>
-                <Text style = { _securityDialogStyles.text } >
+            <View
+                style = { styles.passwordContainer } >
+                <Text style = { styles.passwordContainerText }>
                     { t('security.about') }
                 </Text>
-                <RoomLockSwitch
-                    disabled = { !_isModerator }
-                    locked = { _locked }
-                    onToggleRoomLock = { this._onToggleRoomLock }
-                    toggleRoomLock = { showElement || _lockedConference } />
-                { this._renderRoomLockMessage() }
+                <View
+                    style = {
+                        _locked !== LOCKED_REMOTELY
+                        && styles.passwordContainerControls
+                    }>
+                    <View>
+                        { this._setRoomPasswordMessage() }
+                    </View>
+                    { setPasswordControls }
+                </View>
             </View>
         );
     }
@@ -255,14 +339,13 @@ class SecurityDialog extends PureComponent<Props, State> {
      * @returns {ReactElement}
      * @private
      */
-    _renderRoomLockMessage() {
+    _setRoomPasswordMessage() {
         let textInputProps = _TEXT_INPUT_PROPS;
         const {
             _isModerator,
             _locked,
             _password,
             _passwordNumberOfDigits,
-            _securityDialogStyles,
             t
         } = this.props;
         const { passwordInputValue, showElement } = this.state;
@@ -283,9 +366,12 @@ class SecurityDialog extends PureComponent<Props, State> {
             if (typeof _locked === 'undefined') {
                 return (
                     <TextInput
+                        autoFocus = { true }
                         onChangeText = { this._onChangeText }
                         placeholder = { t('lobby.passwordField') }
-                        style = { _securityDialogStyles.field }
+                        placeholderTextColor = { BaseTheme.palette.text03 }
+                        selectionColor = { BaseTheme.palette.text03 }
+                        style = { styles.passwordInput }
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { passwordInputValue }
                         { ...textInputProps } />
@@ -293,13 +379,14 @@ class SecurityDialog extends PureComponent<Props, State> {
             } else if (_locked) {
                 if (_locked === LOCKED_LOCALLY && typeof _password !== 'undefined') {
                     return (
-                        <TextInput
-                            onChangeText = { this._onChangeText }
-                            placeholder = { _password }
-                            style = { _securityDialogStyles.field }
-                            underlineColorAndroid = { FIELD_UNDERLINE }
-                            value = { passwordInputValue }
-                            { ...textInputProps } />
+                        <View style = { styles.savedPasswordContainer }>
+                            <Text style = { styles.savedPasswordLabel }>
+                                { t('info.password') }
+                            </Text>
+                            <Text style = { styles.savedPassword }>
+                                { passwordInputValue }
+                            </Text>
+                        </View>
                     );
                 }
             }
@@ -324,28 +411,19 @@ class SecurityDialog extends PureComponent<Props, State> {
         }
     }
 
-    _onToggleRoomLock: () => void;
+    _onAddPassword: () => void;
 
     /**
-     * Callback to be invoked when room lock button is pressed.
+     * Callback to be invoked when add password button is pressed.
      *
      * @returns {void}
      */
-    _onToggleRoomLock() {
-        const { _isModerator, _locked, dispatch } = this.props;
+    _onAddPassword() {
         const { showElement } = this.state;
 
         this.setState({
             showElement: !showElement
         });
-
-        if (_locked && _isModerator) {
-            dispatch(unlockRoom());
-
-            this.setState({
-                showElement: false
-            });
-        }
     }
 
     /**
@@ -388,14 +466,41 @@ class SecurityDialog extends PureComponent<Props, State> {
         });
     }
 
-    _onSubmit: () => boolean;
+    _onCancel: () => void;
+
+    /**
+     * Cancels value typed in text input.
+     *
+     * @returns {void}
+     */
+    _onCancel() {
+        this.setState({
+            passwordInputValue: '',
+            showElement: false
+        });
+
+        this.props.dispatch(unlockRoom());
+    }
+
+    _onCopy: () => void;
+
+    /**
+     * Copies room password.
+     *
+     * @returns {void}
+     */
+    _onCopy() {
+        const { passwordInputValue } = this.state;
+
+        Clipboard.setString(passwordInputValue);
+    }
+
+    _onSubmit: () => void;
 
     /**
      * Submits value typed in text input.
      *
-     * @returns {boolean} False because we do not want to hide this
-     * dialog/prompt as the hiding will be handled inside endRoomLockRequest
-     * after setting the password is resolved.
+     * @returns {void}
      */
     _onSubmit() {
         const {
@@ -405,8 +510,6 @@ class SecurityDialog extends PureComponent<Props, State> {
         const { passwordInputValue } = this.state;
 
         dispatch(endRoomLockRequest(_conference, passwordInputValue));
-
-        return false;
     }
 }
 
@@ -430,13 +533,12 @@ function _mapStateToProps(state: Object): Object {
         _isModerator: isLocalParticipantModerator(state),
         _lobbyEnabled: lobbyEnabled,
         _lobbyModeSwitchVisible:
-            lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton,
+            lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton && !isInBreakoutRoom(state),
         _locked: locked,
         _lockedConference: Boolean(conference && locked),
         _password: password,
         _passwordNumberOfDigits: roomPasswordNumberOfDigits,
-        _roomLockSwitchVisible: visible,
-        _securityDialogStyles: ColorSchemeRegistry.get(state, 'SecurityDialog')
+        _roomPasswordControls: visible
     };
 }
 

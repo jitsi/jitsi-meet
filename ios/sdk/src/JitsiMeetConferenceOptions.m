@@ -19,18 +19,10 @@
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetUserInfo+Private.h"
 
-/**
- * Backwards compatibility: turn the boolean property into a feature flag.
- */
-static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
-
-
 @implementation JitsiMeetConferenceOptionsBuilder {
     NSMutableDictionary *_featureFlags;
     NSMutableDictionary *_config;
 }
-
-@dynamic welcomePageEnabled;
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -38,7 +30,6 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
         _room = nil;
         _token = nil;
 
-        _colorScheme = nil;
         _config = [[NSMutableDictionary alloc] init];
         _featureFlags = [[NSMutableDictionary alloc] init];
 
@@ -96,34 +87,11 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
     _config[config] = value;
 }
 
-#pragma mark - Dynamic properties
-
-- (void)setWelcomePageEnabled:(BOOL)welcomePageEnabled {
-    [self setFeatureFlag:WelcomePageEnabledFeatureFlag
-               withBoolean:welcomePageEnabled];
-}
-
-- (BOOL)welcomePageEnabled {
-    NSNumber *n = _featureFlags[WelcomePageEnabledFeatureFlag];
-
-    return n != nil ? [n boolValue] : NO;
-}
-
 @end
 
 @implementation JitsiMeetConferenceOptions {
     NSDictionary *_featureFlags;
     NSDictionary *_config;
-}
-
-@dynamic welcomePageEnabled;
-
-#pragma mark - Dynamic properties
-
-- (BOOL)welcomePageEnabled {
-    NSNumber *n = _featureFlags[WelcomePageEnabledFeatureFlag];
-
-    return n != nil ? [n boolValue] : NO;
 }
 
 #pragma mark - Internal initializer
@@ -133,8 +101,6 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
         _serverURL = builder.serverURL;
         _room = builder.room;
         _token = builder.token;
-
-        _colorScheme = builder.colorScheme;
 
         _config = builder.config;
 
@@ -160,10 +126,6 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
     NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
 
     props[@"flags"] = [NSMutableDictionary dictionaryWithDictionary:_featureFlags];
-
-    if (_colorScheme != nil) {
-        props[@"colorScheme"] = self.colorScheme;
-    }
 
     NSMutableDictionary *urlProps = [[NSMutableDictionary alloc] init];
 

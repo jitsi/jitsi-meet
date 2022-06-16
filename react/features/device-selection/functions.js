@@ -27,29 +27,37 @@ import {
  *
  * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
+ * @param {boolean} isDisplayedOnWelcomePage - Indicates whether the device selection dialog is displayed on the
+ * welcome page or not.
  * @returns {Object} - The properties for the device selection dialog.
  */
-export function getDeviceSelectionDialogProps(stateful: Object | Function) {
+export function getDeviceSelectionDialogProps(stateful: Object | Function, isDisplayedOnWelcomePage) {
+    // On mobile Safari because of https://bugs.webkit.org/show_bug.cgi?id=179363#c30, the old track is stopped
+    // by the browser when a new track is created for preview. That's why we are disabling all previews.
+    const disablePreviews = isIosMobileBrowser();
+
     const state = toState(stateful);
     const settings = state['features/base/settings'];
-    const { conference } = state['features/base/conference'];
     const { permissions } = state['features/base/devices'];
-    const isMobileSafari = isIosMobileBrowser();
-    const cameraChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('input');
+    const inputDeviceChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('input');
     const speakerChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output');
     const userSelectedCamera = getUserSelectedCameraDeviceId(state);
     const userSelectedMic = getUserSelectedMicDeviceId(state);
-    let disableAudioInputChange = !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
-    let disableVideoInputSelect = !cameraChangeSupported;
-    let selectedAudioInputId = isMobileSafari ? userSelectedMic : settings.micDeviceId;
+
+    // When the previews are disabled we don't need multiple audio input support in order to chage the mic. This is the
+    // case for Safari on iOS.
+    let disableAudioInputChange
+        = !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported() && !(disablePreviews && inputDeviceChangeSupported);
+    let disableVideoInputSelect = !inputDeviceChangeSupported;
+    let selectedAudioInputId = settings.micDeviceId;
     let selectedAudioOutputId = getAudioOutputDeviceId();
-    let selectedVideoInputId = isMobileSafari ? userSelectedCamera : settings.cameraDeviceId;
+    let selectedVideoInputId = settings.cameraDeviceId;
 
     // audio input change will be a problem only when we are in a
     // conference and this is not supported, when we open device selection on
     // welcome page changing input devices will not be a problem
     // on welcome page we also show only what we have saved as user selected devices
-    if (!conference) {
+    if (isDisplayedOnWelcomePage) {
         disableAudioInputChange = false;
         disableVideoInputSelect = false;
         selectedAudioInputId = userSelectedMic;
@@ -66,10 +74,10 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
         disableVideoInputSelect,
         hasAudioPermission: permissions.audio,
         hasVideoPermission: permissions.video,
-        hideAudioInputPreview: disableAudioInputChange || !JitsiMeetJS.isCollectingLocalStats(),
-        hideAudioOutputPreview: !speakerChangeSupported,
+        hideAudioInputPreview: disableAudioInputChange || !JitsiMeetJS.isCollectingLocalStats() || disablePreviews,
+        hideAudioOutputPreview: !speakerChangeSupported || disablePreviews,
         hideAudioOutputSelect: !speakerChangeSupported,
-        hideVideoInputPreview: !cameraChangeSupported,
+        hideVideoInputPreview: !inputDeviceChangeSupported || disablePreviews,
         selectedAudioInputId,
         selectedAudioOutputId,
         selectedVideoInputId

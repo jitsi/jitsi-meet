@@ -109,7 +109,7 @@ export default class AbstractRecordingLabel
             ? this._renderLabel() : null;
     }
 
-    _getLabelKey: () => ?string
+    _getLabelKey: () => ?string;
 
     /**
      * Returns the label key that this indicator should render.
@@ -135,7 +135,7 @@ export default class AbstractRecordingLabel
      * @protected
      * @returns {React$Element}
      */
-    _renderLabel: () => React$Element<*>
+    _renderLabel: () => React$Element<*>;
 
     /**
      * Updates the stale status of the label on a prop change. A label is stale

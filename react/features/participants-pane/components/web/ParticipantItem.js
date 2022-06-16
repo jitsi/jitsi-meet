@@ -1,8 +1,10 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
 import React, { type Node, useCallback } from 'react';
 
 import { Avatar } from '../../../base/avatar';
+import { ListItem } from '../../../base/components';
 import { translate } from '../../../base/i18n';
 import {
     ACTION_TRIGGER,
@@ -14,42 +16,23 @@ import {
 } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
-import {
-    ModeratorLabel,
-    ParticipantActionsHover,
-    ParticipantActionsPermanent,
-    ParticipantContainer,
-    ParticipantContent,
-    ParticipantDetailsContainer,
-    ParticipantName,
-    ParticipantNameContainer,
-    ParticipantStates
-} from './styled';
-
-/**
- * Participant actions component mapping depending on trigger type.
- */
-const Actions = {
-    [ACTION_TRIGGER.HOVER]: ParticipantActionsHover,
-    [ACTION_TRIGGER.PERMANENT]: ParticipantActionsPermanent
-};
 
 type Props = {
 
     /**
-     * Type of trigger for the participant actions
+     * Type of trigger for the participant actions.
      */
-    actionsTrigger: ActionTrigger,
+    actionsTrigger?: ActionTrigger,
 
     /**
-     * Media state for audio
+     * Media state for audio.
      */
-    audioMediaState: MediaState,
+    audioMediaState?: MediaState,
 
     /**
-     * React children
+     * React children.
      */
-    children: Node,
+    children?: Node,
 
     /**
      * Whether or not to disable the moderator indicator.
@@ -62,7 +45,7 @@ type Props = {
     displayName: string,
 
     /**
-     * Is this item highlighted/raised
+     * Is this item highlighted/raised.
      */
     isHighlighted?: boolean,
 
@@ -74,15 +57,15 @@ type Props = {
     /**
      * True if the participant is local.
      */
-    local: Boolean,
+    local: boolean,
 
     /**
      * Opens a drawer with participant actions.
      */
-    openDrawerForParticipant: Function,
+    openDrawerForParticipant?: Function,
 
     /**
-     * Callback for when the mouse leaves this component
+     * Callback for when the mouse leaves this component.
      */
     onLeave?: Function,
 
@@ -99,12 +82,12 @@ type Props = {
     /**
      * True if the participant have raised hand.
      */
-    raisedHand: boolean,
+    raisedHand?: boolean,
 
     /**
-     * Media state for video
+     * Media state for video.
      */
-    videoMediaState: MediaState,
+    videoMediaState?: MediaState,
 
     /**
      * Invoked to obtain translated strings.
@@ -114,8 +97,30 @@ type Props = {
     /**
      * The translated "you" text.
      */
-    youText: string
+    youText?: string
 }
+
+const useStyles = makeStyles(theme => {
+    return {
+        nameContainer: {
+            display: 'flex',
+            flex: 1,
+            overflow: 'hidden'
+        },
+
+        name: {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+        },
+
+        moderatorLabel: {
+            ...theme.typography.labelRegular,
+            lineHeight: `${theme.typography.labelRegular.lineHeight}px`,
+            color: theme.palette.text03
+        }
+    };
+});
 
 /**
  * A component representing a participant entry in ParticipantPane and Lobby.
@@ -141,45 +146,56 @@ function ParticipantItem({
     videoMediaState = MEDIA_STATE.NONE,
     youText
 }: Props) {
-    const ParticipantActions = Actions[actionsTrigger];
     const onClick = useCallback(
-        () => openDrawerForParticipant({
+        () => openDrawerForParticipant && openDrawerForParticipant({
             participantID,
             displayName
         }));
 
+    const styles = useStyles();
+
+    const icon = (
+        <Avatar
+            className = 'participant-avatar'
+            displayName = { displayName }
+            participantId = { participantID }
+            size = { 32 } />
+    );
+
+    const text = (
+        <>
+            <div className = { styles.nameContainer }>
+                <div className = { styles.name }>
+                    {displayName}
+                </div>
+                {local ? <span>&nbsp;({youText})</span> : null}
+            </div>
+            {isModerator && !disableModeratorIndicator && <div className = { styles.moderatorLabel }>
+                {t('videothumbnail.moderator')}
+            </div>}
+        </>
+    );
+
+    const indicators = (
+        <>
+            {raisedHand && <RaisedHandIndicator />}
+            {VideoStateIcons[videoMediaState]}
+            {AudioStateIcons[audioMediaState]}
+        </>
+    );
+
     return (
-        <ParticipantContainer
+        <ListItem
+            actions = { children }
+            hideActions = { local }
+            icon = { icon }
             id = { `participant-item-${participantID}` }
+            indicators = { indicators }
             isHighlighted = { isHighlighted }
-            local = { local }
             onClick = { !local && overflowDrawer ? onClick : undefined }
             onMouseLeave = { onLeave }
-            trigger = { actionsTrigger }>
-            <Avatar
-                className = 'participant-avatar'
-                participantId = { participantID }
-                size = { 32 } />
-            <ParticipantContent>
-                <ParticipantDetailsContainer>
-                    <ParticipantNameContainer>
-                        <ParticipantName>
-                            { displayName }
-                        </ParticipantName>
-                        { local ? <span>&nbsp;({ youText })</span> : null }
-                    </ParticipantNameContainer>
-                    {isModerator && !disableModeratorIndicator && <ModeratorLabel>
-                        {t('videothumbnail.moderator')}
-                    </ModeratorLabel>}
-                </ParticipantDetailsContainer>
-                { !local && <ParticipantActions children = { children } /> }
-                <ParticipantStates>
-                    { raisedHand && <RaisedHandIndicator /> }
-                    { VideoStateIcons[videoMediaState] }
-                    { AudioStateIcons[audioMediaState] }
-                </ParticipantStates>
-            </ParticipantContent>
-        </ParticipantContainer>
+            textChildren = { text }
+            trigger = { actionsTrigger } />
     );
 }
 

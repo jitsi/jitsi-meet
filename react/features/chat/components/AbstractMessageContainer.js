@@ -13,7 +13,7 @@ export type Props = {
 /**
  * Abstract component to display a list of chat messages, grouped by sender.
  *
- * @extends PureComponent
+ * @augments PureComponent
  */
 export default class AbstractMessageContainer<P: Props> extends PureComponent<P> {
     static defaultProps = {

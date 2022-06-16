@@ -6,6 +6,7 @@ import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { Switch } from '../../../base/react';
 import { connect } from '../../../base/redux';
+import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../actions';
 
 type Props = {
@@ -139,8 +140,10 @@ function mapStateToProps(state: Object): $Shape<Props> {
 
     return {
         _lobbyEnabled: state['features/lobby'].lobbyEnabled,
-        _visible: conference && conference.isLobbySupported() && isLocalParticipantModerator(state)
-            && !hideLobbyButton
+
+        // $FlowExpectedError
+        _visible: conference?.isLobbySupported() && isLocalParticipantModerator(state)
+            && !hideLobbyButton && !isInBreakoutRoom(state)
     };
 }
 

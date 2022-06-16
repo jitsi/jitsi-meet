@@ -113,12 +113,7 @@ function getConfig(options = {}) {
                     // presets when lib-jitsi-meet, for example, is npm linked in
                     // jitsi-meet.
                     plugins: [
-                        require.resolve('@babel/plugin-transform-flow-strip-types'),
-                        require.resolve('@babel/plugin-proposal-class-properties'),
-                        require.resolve('@babel/plugin-proposal-export-default-from'),
-                        require.resolve('@babel/plugin-proposal-export-namespace-from'),
-                        require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
-                        require.resolve('@babel/plugin-proposal-optional-chaining')
+                        require.resolve('@babel/plugin-proposal-export-default-from')
                     ],
                     presets: [
                         [
@@ -133,10 +128,10 @@ function getConfig(options = {}) {
                                 // done unnecessarily. For browsers not specified
                                 // here, the ES2015+ profile will be used.
                                 targets: {
-                                    chrome: 58,
-                                    electron: 2,
-                                    firefox: 54,
-                                    safari: 11
+                                    chrome: 80,
+                                    electron: 10,
+                                    firefox: 68,
+                                    safari: 14
                                 }
 
                             }
@@ -187,6 +182,10 @@ function getConfig(options = {}) {
                         expandProps: 'start'
                     }
                 } ]
+            }, {
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                loader: 'ts-loader'
             } ]
         },
         node: {
@@ -203,7 +202,7 @@ function getConfig(options = {}) {
             filename: `[name]${minimize ? '.min' : ''}.js`,
             path: `${__dirname}/build`,
             publicPath: '/libs/',
-            sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
+            sourceMapFilename: '[file].map'
         },
         plugins: [
             detectCircularDeps
@@ -222,6 +221,11 @@ function getConfig(options = {}) {
             ],
             extensions: [
                 '.web.js',
+                '.web.ts',
+
+                // Typescript:
+                '.tsx',
+                '.ts',
 
                 // Webpack defaults:
                 '.js',
@@ -243,6 +247,7 @@ function getConfig(options = {}) {
  * Webpack 5 because only one devServer entry is supported, so we attach it to
  * the main bundle.
  *
+
  * @returns {Object} the dev server configuration.
  */
 function getDevServerConfig() {
@@ -253,8 +258,8 @@ function getDevServerConfig() {
                 warnings: false
             }
         },
-        https: true,
         host: '127.0.0.1',
+        hot: true,
         proxy: {
             '/': {
                 bypass: devServerProxyBypass,
@@ -265,6 +270,7 @@ function getDevServerConfig() {
                 }
             }
         },
+        server: 'https',
         static: {
             directory: process.cwd()
         }
@@ -344,16 +350,6 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'flacEncodeWorker': './react/features/local-recording/recording/flac/flacEncodeWorker.js'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'flacEncodeWorker')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
                 'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
             },
             plugins: [
@@ -386,6 +382,16 @@ module.exports = (_env, argv) => {
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
             performance: getPerformanceHints(perfHintOptions, 35 * 1024)
+        }),
+        Object.assign({}, config, {
+            entry: {
+                'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2)
         })
     ];
 };

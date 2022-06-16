@@ -1,37 +1,40 @@
 // @flow
 
+import { withStyles } from '@material-ui/core';
 import React, { Component } from 'react';
-import { ThemeProvider } from 'styled-components';
 
+import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { isLocalParticipantModerator } from '../../../base/participants';
+import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
-import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
-import { showOverflowDrawer } from '../../../toolbox/functions';
+import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
-import { classList, findStyledAncestor, getParticipantsPaneOpen } from '../../functions';
-import theme from '../../theme.json';
-import { FooterContextMenu } from '../FooterContextMenu';
+import {
+    findAncestorByClass,
+    getParticipantsPaneOpen,
+    isMoreActionsVisible,
+    isMuteAllVisible
+} from '../../functions';
+import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
+import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
+import FooterButton from './FooterButton';
+import { FooterContextMenu } from './FooterContextMenu';
 import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
-import {
-    AntiCollapse,
-    Close,
-    Container,
-    Footer,
-    FooterButton,
-    FooterEllipsisButton,
-    FooterEllipsisContainer,
-    Header
-} from './styled';
 
 /**
  * The type of the React {@code Component} props of {@link ParticipantsPane}.
  */
 type Props = {
+
+    /**
+     * Whether there is backend support for Breakout Rooms.
+     */
+    _isBreakoutRoomsSupported: Boolean,
 
     /**
      * Whether to display the context menu  as a drawer.
@@ -44,6 +47,21 @@ type Props = {
     _paneOpen: boolean,
 
     /**
+     * Should the add breakout room button be displayed?
+     */
+    _showAddRoomButton: boolean,
+
+    /**
+     * Whether to show the more actions button.
+     */
+    _showMoreActionsButton: boolean,
+
+    /**
+     * Whether to show the mute all button.
+     */
+    _showMuteAllButton: boolean,
+
+    /**
      * Whether to show the footer menu.
      */
     _showFooter: boolean,
@@ -52,6 +70,11 @@ type Props = {
      * The Redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * The i18n translate function.
@@ -68,6 +91,73 @@ type State = {
      * Indicates if the footer context menu is open.
      */
     contextOpen: boolean,
+
+    /**
+     * Participants search string.
+     */
+    searchString: string
+};
+
+const styles = theme => {
+    return {
+        container: {
+            boxSizing: 'border-box',
+            flex: 1,
+            overflowY: 'auto',
+            position: 'relative',
+            padding: `0 ${participantsPaneTheme.panePadding}px`,
+
+            [`& > * + *:not(.${participantsPaneTheme.ignoredChildClassName})`]: {
+                marginTop: theme.spacing(3)
+            },
+
+            '&::-webkit-scrollbar': {
+                display: 'none'
+            }
+        },
+
+        closeButton: {
+            alignItems: 'center',
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'center'
+        },
+
+        header: {
+            alignItems: 'center',
+            boxSizing: 'border-box',
+            display: 'flex',
+            height: `${participantsPaneTheme.headerSize}px`,
+            padding: '0 20px',
+            justifyContent: 'flex-end'
+        },
+
+        antiCollapse: {
+            fontSize: 0,
+
+            '&:first-child': {
+                display: 'none'
+            },
+
+            '&:first-child + *': {
+                marginTop: 0
+            }
+        },
+
+        footer: {
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: `${theme.spacing(4)}px ${participantsPaneTheme.panePadding}px`,
+
+            '& > *:not(:last-child)': {
+                marginRight: `${theme.spacing(3)}px`
+            }
+        },
+
+        footerMoreContainer: {
+            position: 'relative'
+        }
+    };
 };
 
 /**
@@ -83,7 +173,8 @@ class ParticipantsPane extends Component<Props, State> {
         super(props);
 
         this.state = {
-            contextOpen: false
+            contextOpen: false,
+            searchString: ''
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -93,6 +184,7 @@ class ParticipantsPane extends Component<Props, State> {
         this._onMuteAll = this._onMuteAll.bind(this);
         this._onToggleContext = this._onToggleContext.bind(this);
         this._onWindowClickListener = this._onWindowClickListener.bind(this);
+        this.setSearchString = this.setSearchString.bind(this);
     }
 
 
@@ -121,12 +213,16 @@ class ParticipantsPane extends Component<Props, State> {
      */
     render() {
         const {
-            _overflowDrawer,
+            _isBreakoutRoomsSupported,
             _paneOpen,
+            _showAddRoomButton,
             _showFooter,
+            _showMoreActionsButton,
+            _showMuteAllButton,
+            classes,
             t
         } = this.props;
-        const { contextOpen } = this.state;
+        const { contextOpen, searchString } = this.state;
 
         // when the pane is not open optimize to not
         // execute the MeetingParticipantList render for large list of participants
@@ -135,47 +231,73 @@ class ParticipantsPane extends Component<Props, State> {
         }
 
         return (
-            <ThemeProvider theme = { theme }>
-                <div className = { classList('participants_pane', !_paneOpen && 'participants_pane--closed') }>
-                    <div className = 'participants_pane-content'>
-                        <Header>
-                            <Close
-                                aria-label = { t('participantsPane.close', 'Close') }
-                                onClick = { this._onClosePane }
-                                onKeyPress = { this._onKeyPress }
-                                role = 'button'
-                                tabIndex = { 0 } />
-                        </Header>
-                        <Container>
-                            <LobbyParticipants />
-                            <AntiCollapse />
-                            <MeetingParticipants />
-                        </Container>
-                        {_showFooter && (
-                            <Footer>
-                                <FooterButton onClick = { this._onMuteAll }>
+            <div className = 'participants_pane'>
+                <div className = 'participants_pane-content'>
+                    <div className = { classes.header }>
+                        <div
+                            aria-label = { t('participantsPane.close', 'Close') }
+                            className = { classes.closeButton }
+                            onClick = { this._onClosePane }
+                            onKeyPress = { this._onKeyPress }
+                            role = 'button'
+                            tabIndex = { 0 }>
+                            <Icon
+                                size = { 24 }
+                                src = { IconClose } />
+                        </div>
+                    </div>
+                    <div className = { classes.container }>
+                        <LobbyParticipants />
+                        <br className = { classes.antiCollapse } />
+                        <MeetingParticipants
+                            searchString = { searchString }
+                            setSearchString = { this.setSearchString } />
+                        {_isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
+                        {_showAddRoomButton && <AddBreakoutRoomButton />}
+                    </div>
+                    {_showFooter && (
+                        <div className = { classes.footer }>
+                            {_showMuteAllButton && (
+                                <FooterButton
+                                    accessibilityLabel = { t('participantsPane.actions.muteAll') }
+                                    onClick = { this._onMuteAll }>
                                     {t('participantsPane.actions.muteAll')}
                                 </FooterButton>
-                                <FooterEllipsisContainer>
-                                    <FooterEllipsisButton
+                            )}
+                            {_showMoreActionsButton && (
+                                <div className = { classes.footerMoreContainer }>
+                                    <FooterButton
+                                        accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
                                         id = 'participants-pane-context-menu'
-                                        onClick = { this._onToggleContext } />
-                                    {this.state.contextOpen && !_overflowDrawer
-                                        && <FooterContextMenu onMouseLeave = { this._onToggleContext } />}
-                                </FooterEllipsisContainer>
-                            </Footer>
-                        )}
-                    </div>
-                    <JitsiPortal>
-                        <Drawer
-                            isOpen = { contextOpen && _overflowDrawer }
-                            onClose = { this._onDrawerClose }>
-                            <FooterContextMenu inDrawer = { true } />
-                        </Drawer>
-                    </JitsiPortal>
+                                        isIconButton = { true }
+                                        onClick = { this._onToggleContext }>
+                                        <Icon src = { IconHorizontalPoints } />
+                                    </FooterButton>
+                                    <FooterContextMenu
+                                        isOpen = { contextOpen }
+                                        onDrawerClose = { this._onDrawerClose }
+                                        onMouseLeave = { this._onToggleContext } />
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
-            </ThemeProvider>
+            </div>
         );
+    }
+
+    setSearchString: (string) => void;
+
+    /**
+     * Sets the search string.
+     *
+     * @param {string} newSearchString - The new search string.
+     * @returns {void}
+     */
+    setSearchString(newSearchString) {
+        this.setState({
+            searchString: newSearchString
+        });
     }
 
     _onClosePane: () => void;
@@ -190,7 +312,7 @@ class ParticipantsPane extends Component<Props, State> {
         this.props.dispatch(close());
     }
 
-    _onDrawerClose: () => void
+    _onDrawerClose: () => void;
 
     /**
      * Callback for closing the drawer.
@@ -253,7 +375,7 @@ class ParticipantsPane extends Component<Props, State> {
      * @returns {void}
      */
     _onWindowClickListener(e) {
-        if (this.state.contextOpen && !findStyledAncestor(e.target, FooterEllipsisContainer)) {
+        if (this.state.contextOpen && !findAncestorByClass(e.target, this.props.classes.footerMoreContainer)) {
             this.setState({
                 contextOpen: false
             });
@@ -269,19 +391,21 @@ class ParticipantsPane extends Component<Props, State> {
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {{
- *     _paneOpen: boolean,
- *     _showFooter: boolean
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state: Object) {
     const isPaneOpen = getParticipantsPaneOpen(state);
+    const { conference } = state['features/base/conference'];
+    const _isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
 
     return {
-        _overflowDrawer: showOverflowDrawer(state),
+        _isBreakoutRoomsSupported,
         _paneOpen: isPaneOpen,
-        _showFooter: isPaneOpen && isLocalParticipantModerator(state)
+        _showAddRoomButton: isAddBreakoutRoomButtonVisible(state),
+        _showFooter: isLocalParticipantModerator(state),
+        _showMuteAllButton: isMuteAllVisible(state),
+        _showMoreActionsButton: isMoreActionsVisible(state)
     };
 }
 
-export default translate(connect(_mapStateToProps)(ParticipantsPane));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(ParticipantsPane)));

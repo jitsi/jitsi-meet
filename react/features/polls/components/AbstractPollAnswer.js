@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { sendAnalytics, createPollEvent } from '../../analytics';
 import { getLocalParticipant, getParticipantById, isLocalParticipantModerator } from '../../base/participants';
+import { useBoundSelector } from '../../base/util/hooks';
 import { registerVote, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
-import { isPollsModerationEnabled, getPoll } from '../functions';
+import { isPollsModerationEnabled } from '../functions';
 import { usePollVisibility } from '../hooks';
 import type { Poll, PollVisibility } from '../types';
 
@@ -28,6 +29,7 @@ export type AbstractProps = {
     checkBoxStates: Function,
     isModerationEnabled: boolean,
     isModerator: boolean,
+    creatorName: string,
     poll: Poll,
     pollVisibility: PollVisibility,
     setCheckbox: Function,
@@ -51,7 +53,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
     const conference: Object = useSelector(state => state['features/base/conference'].conference);
     const isModerator = useSelector(state => isLocalParticipantModerator(state));
     const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
-    const poll: Poll = useSelector(getPoll(pollId));
+    const poll: Poll = useSelector(state => state['features/polls'].polls[pollId]);
     const pollVisibility = usePollVisibility(pollId, conference);
 
     const { id: localId } = useSelector(getLocalParticipant);
@@ -63,6 +65,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
         return new Array(poll.answers.length).fill(false);
     });
+    const participant = useBoundSelector(getParticipantById, poll.senderId);
 
     const setCheckbox = useCallback((index, state) => {
         const newCheckBoxStates = [ ...checkBoxStates ];
@@ -74,7 +77,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     const dispatch = useDispatch();
 
-    const localParticipant = useSelector(state => getParticipantById(state, localId));
+    const localParticipant = useBoundSelector(getParticipantById, localId);
     const localName: string = localParticipant.name ? localParticipant.name : 'Fellow Jitster';
 
     const submitAnswer = useCallback(() => {
@@ -108,6 +111,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
         checkBoxStates = { checkBoxStates }
         isModerationEnabled = { isModerationEnabled }
         isModerator = { isModerator }
+        creatorName = { participant ? participant.name : '' }
         poll = { poll }
         pollVisibility = { pollVisibility }
         setCheckbox = { setCheckbox }

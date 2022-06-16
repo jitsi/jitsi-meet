@@ -1,16 +1,17 @@
 // @flow
 
 import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 
-import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import { updateFlags } from '../../base/flags/actions';
 import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
 import { Platform } from '../../base/react';
-import { DimensionsDetector, clientResized } from '../../base/responsive-ui';
+import { DimensionsDetector, clientResized, setSafeAreaInsets } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
+import { _getRouteToRender } from '../getRouteToRender.native';
 import logger from '../logger';
 
 import { AbstractApp } from './AbstractApp';
@@ -26,11 +27,6 @@ declare var __DEV__;
  * The type of React {@code Component} props of {@link App}.
  */
 type Props = AbstractAppProps & {
-
-    /**
-     * An object of colors that override the default colors of the app/sdk.
-     */
-    colorScheme: ?Object,
 
     /**
      * Identifier for this app on the native side.
@@ -51,10 +47,13 @@ type Props = AbstractAppProps & {
 /**
  * Root app {@code Component} on mobile/React Native.
  *
- * @extends AbstractApp
+ * @augments AbstractApp
  */
 export class App extends AbstractApp {
-    _init: Promise<*>;
+    /**
+     * The deferred for the initialisation {{promise, resolve, reject}}.
+     */
+    _init: Object;
 
     /**
      * Initializes a new {@code App} instance.
@@ -73,6 +72,7 @@ export class App extends AbstractApp {
 
         // Bind event handler so it is only bound once per instance.
         this._onDimensionsChanged = this._onDimensionsChanged.bind(this);
+        this._onSafeAreaInsetsChanged = this._onSafeAreaInsetsChanged.bind(this);
     }
 
     /**
@@ -82,41 +82,67 @@ export class App extends AbstractApp {
      *
      * @returns {void}
      */
-    componentDidMount() {
-        super.componentDidMount();
+    async componentDidMount() {
+        await super.componentDidMount();
 
         SplashScreen.hide();
+    }
 
-        this._init.then(() => {
-            const { dispatch, getState } = this.state.store;
+    /**
+     * Initializes feature flags and updates settings.
+     *
+     * @returns {void}
+     */
+    async _extraInit() {
+        const { dispatch, getState } = this.state.store;
 
-            // We set these early enough so then we avoid any unnecessary re-renders.
-            dispatch(setColorScheme(this.props.colorScheme));
-            dispatch(updateFlags(this.props.flags));
+        // We set these early enough so then we avoid any unnecessary re-renders.
+        dispatch(updateFlags(this.props.flags));
 
-            // Check if serverURL is configured externally and not allowed to change.
-            const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
+        const route = await _getRouteToRender();
 
-            if (!serverURLChangeEnabled) {
-                // As serverURL is provided externally, so we push it to settings.
-                if (typeof this.props.url !== 'undefined') {
-                    const { serverURL } = this.props.url;
+        // We need the root navigator to be set early.
+        await this._navigate(route);
 
-                    if (typeof serverURL !== 'undefined') {
-                        dispatch(updateSettings({ serverURL }));
-                    }
+        // HACK ALERT!
+        // Wait until the root navigator is ready.
+        // We really need to break the inheritance relationship between App,
+        // AbstractApp and BaseApp, it's very inflexible and cumbersome right now.
+        const rootNavigationReady = new Promise(resolve => {
+            const i = setInterval(() => {
+                const { ready } = getState()['features/app'] || {};
+
+                if (ready) {
+                    clearInterval(i);
+                    resolve();
+                }
+            }, 50);
+        });
+
+        await rootNavigationReady;
+
+        // Check if serverURL is configured externally and not allowed to change.
+        const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
+
+        if (!serverURLChangeEnabled) {
+            // As serverURL is provided externally, so we push it to settings.
+            if (typeof this.props.url !== 'undefined') {
+                const { serverURL } = this.props.url;
+
+                if (typeof serverURL !== 'undefined') {
+                    dispatch(updateSettings({ serverURL }));
                 }
             }
+        }
 
-            dispatch(updateSettings(this.props.userInfo || {}));
+        dispatch(updateSettings(this.props.userInfo || {}));
 
-            // Update settings with feature-flag.
-            const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
+        // Update settings with feature-flag.
+        const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
 
-            if (typeof callIntegrationEnabled !== 'undefined') {
-                dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
-            }
-        });
+        if (typeof callIntegrationEnabled !== 'undefined') {
+            dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
+        }
     }
 
     /**
@@ -127,10 +153,13 @@ export class App extends AbstractApp {
      */
     _createMainElement(component, props) {
         return (
-            <DimensionsDetector
-                onDimensionsChanged = { this._onDimensionsChanged }>
-                { super._createMainElement(component, props) }
-            </DimensionsDetector>
+            <SafeAreaProvider>
+                <DimensionsDetector
+                    onDimensionsChanged = { this._onDimensionsChanged }
+                    onSafeAreaInsetsChanged = { this._onSafeAreaInsetsChanged }>
+                    { super._createMainElement(component, props) }
+                </DimensionsDetector>
+            </SafeAreaProvider>
         );
     }
 
@@ -185,6 +214,23 @@ export class App extends AbstractApp {
         const { dispatch } = this.state.store;
 
         dispatch(clientResized(width, height));
+    }
+
+    /**
+     * Updates the safe are insets values.
+     *
+     * @param {Object} insets - The insets.
+     * @param {number} insets.top - The top inset.
+     * @param {number} insets.right - The right inset.
+     * @param {number} insets.bottom - The bottom inset.
+     * @param {number} insets.left - The left inset.
+     * @private
+     * @returns {void}
+     */
+    _onSafeAreaInsetsChanged(insets) {
+        const { dispatch } = this.state.store;
+
+        dispatch(setSafeAreaInsets(insets));
     }
 
     /**

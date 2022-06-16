@@ -1,10 +1,16 @@
 // @flow
+import { batch } from 'react-redux';
 
-import { setFollowMe, setStartMutedPolicy } from '../base/conference';
+
+import {
+    setFollowMe,
+    setStartMutedPolicy,
+    setStartReactionsMuted
+} from '../base/conference';
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
-import { setPrejoinPageVisibility } from '../prejoin/actions';
+import { setMaxStageParticipants } from '../filmstrip/actions.web';
 import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
@@ -12,7 +18,12 @@ import {
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
 import { LogoutDialog, SettingsDialog } from './components';
-import { getMoreTabProps, getProfileTabProps, getSoundsTabProps } from './functions';
+import {
+    getModeratorTabProps,
+    getMoreTabProps,
+    getProfileTabProps,
+    getSoundsTabProps
+} from './functions';
 
 declare var APP: Object;
 
@@ -32,10 +43,15 @@ export function openLogoutDialog(onLogout: Function) {
  *
  * @param {string} defaultTab - The tab in {@code SettingsDialog} that should be
  * displayed initially.
+ * @param {boolean} isDisplayedOnWelcomePage - Indicates whether the device selection dialog is displayed on the
+ * welcome page or not.
  * @returns {Function}
  */
-export function openSettingsDialog(defaultTab: string) {
-    return openDialog(SettingsDialog, { defaultTab });
+export function openSettingsDialog(defaultTab: string, isDisplayedOnWelcomePage: boolean) {
+    return openDialog(SettingsDialog, {
+        defaultTab,
+        isDisplayedOnWelcomePage
+    });
 }
 
 /**
@@ -74,27 +90,23 @@ export function submitMoreTab(newState: Object): Function {
     return (dispatch, getState) => {
         const currentState = getMoreTabProps(getState());
 
-        if (newState.followMeEnabled !== currentState.followMeEnabled) {
-            dispatch(setFollowMe(newState.followMeEnabled));
-        }
-
         const showPrejoinPage = newState.showPrejoinPage;
 
         if (showPrejoinPage !== currentState.showPrejoinPage) {
-            // The 'showPrejoin' flag starts as 'true' on every new session.
-            // This prevents displaying the prejoin page when the user re-enables it.
-            if (showPrejoinPage && getState()['features/prejoin']?.showPrejoin) {
-                dispatch(setPrejoinPageVisibility(false));
-            }
             dispatch(updateSettings({
                 userSelectedSkipPrejoin: !showPrejoinPage
             }));
         }
 
-        if (newState.startAudioMuted !== currentState.startAudioMuted
-            || newState.startVideoMuted !== currentState.startVideoMuted) {
-            dispatch(setStartMutedPolicy(
-                newState.startAudioMuted, newState.startVideoMuted));
+        const enabledNotifications = newState.enabledNotifications;
+
+        if (enabledNotifications !== currentState.enabledNotifications) {
+            dispatch(updateSettings({
+                userSelectedNotifications: {
+                    ...getState()['features/base/settings'].userSelectedNotifications,
+                    ...enabledNotifications
+                }
+            }));
         }
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
@@ -105,6 +117,44 @@ export function submitMoreTab(newState: Object): Function {
             const frameRate = parseInt(newState.currentFramerate, 10);
 
             dispatch(setScreenshareFramerate(frameRate));
+        }
+
+        if (newState.hideSelfView !== currentState.hideSelfView) {
+            dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
+        }
+
+        if (Number(newState.maxStageParticipants) !== currentState.maxStageParticipants) {
+            dispatch(setMaxStageParticipants(Number(newState.maxStageParticipants)));
+        }
+    };
+}
+
+/**
+ * Submits the settings from the "Moderator" tab of the settings dialog.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitModeratorTab(newState: Object): Function {
+    return (dispatch, getState) => {
+        const currentState = getModeratorTabProps(getState());
+
+        if (newState.followMeEnabled !== currentState.followMeEnabled) {
+            dispatch(setFollowMe(newState.followMeEnabled));
+        }
+
+        if (newState.startReactionsMuted !== currentState.startReactionsMuted) {
+            batch(() => {
+                // updating settings we want to update and backend (notify the rest of the participants)
+                dispatch(setStartReactionsMuted(newState.startReactionsMuted, true));
+                dispatch(updateSettings({ soundsReactions: !newState.startReactionsMuted }));
+            });
+        }
+
+        if (newState.startAudioMuted !== currentState.startAudioMuted
+            || newState.startVideoMuted !== currentState.startVideoMuted) {
+            dispatch(setStartMutedPolicy(
+                newState.startAudioMuted, newState.startVideoMuted));
         }
     };
 }
@@ -138,6 +188,7 @@ export function submitProfileTab(newState: Object): Function {
 export function submitSoundsTab(newState: Object): Function {
     return (dispatch, getState) => {
         const currentState = getSoundsTabProps(getState());
+        const shouldNotUpdateReactionSounds = getModeratorTabProps(getState()).startReactionsMuted;
         const shouldUpdate = (newState.soundsIncomingMessage !== currentState.soundsIncomingMessage)
             || (newState.soundsParticipantJoined !== currentState.soundsParticipantJoined)
             || (newState.soundsParticipantLeft !== currentState.soundsParticipantLeft)
@@ -145,13 +196,18 @@ export function submitSoundsTab(newState: Object): Function {
             || (newState.soundsReactions !== currentState.soundsReactions);
 
         if (shouldUpdate) {
-            dispatch(updateSettings({
+            const settingsToUpdate = {
                 soundsIncomingMessage: newState.soundsIncomingMessage,
                 soundsParticipantJoined: newState.soundsParticipantJoined,
                 soundsParticipantLeft: newState.soundsParticipantLeft,
                 soundsTalkWhileMuted: newState.soundsTalkWhileMuted,
                 soundsReactions: newState.soundsReactions
-            }));
+            };
+
+            if (shouldNotUpdateReactionSounds) {
+                delete settingsToUpdate.soundsReactions;
+            }
+            dispatch(updateSettings(settingsToUpdate));
         }
     };
 }

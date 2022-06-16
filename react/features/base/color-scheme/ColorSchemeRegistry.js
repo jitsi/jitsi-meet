@@ -23,8 +23,7 @@ class ColorSchemeRegistry {
     _styleTemplates = new Map();
 
     /**
-     * Clears the already scheme-ified style definitions. This is useful when
-     * the {@code SET_COLOR_SCHEME} action is dispatched (again).
+     * Clears the already scheme-ified style definitions.
      *
      * @returns {void}
      */
@@ -150,7 +149,7 @@ class ColorSchemeRegistry {
             stateful: Object | Function,
             componentName: string,
             colorDefinition: string): string {
-        const colorScheme = toState(stateful)['features/base/color-scheme'];
+        const colorScheme = toState(stateful)['features/base/color-scheme'] || {};
 
         return {
             ...defaultScheme._defaultTheme,

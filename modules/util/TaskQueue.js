@@ -1,4 +1,4 @@
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+const logger = require('@jitsi/logger').getLogger(__filename);
 
 /**
  * Manages a queue of functions where the current function in progress will

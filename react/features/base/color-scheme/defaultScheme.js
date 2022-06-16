@@ -17,6 +17,8 @@ export default {
     'Chat': {
         displayName: 'rgb(94, 109, 121)',
         localMsgBackground: 'rgb(215, 230, 249)',
+        lobbyMsgBackground: 'rgb(106, 80, 211)',
+        lobbyMsgNotice: 'rgb(16, 10, 41)',
         privateMsgBackground: 'rgb(250, 219, 219)',
         privateMsgNotice: 'rgb(186, 39, 58)',
         remoteMsgBackground: 'rgb(241, 242, 246)',
@@ -42,14 +44,6 @@ export default {
     'Modal': {},
     'LargeVideo': {
         background: '#040404'
-    },
-    'LoadConfigOverlay': {
-        background: 'rgb(249, 249, 249)'
-    },
-    'Thumbnail': {
-        activeParticipantHighlight: 'rgb(81, 214, 170)',
-        activeParticipantTint: 'rgba(49, 183, 106, 0.3)',
-        background: '#36383C'
     },
     'Toolbox': {
         button: 'rgb(255, 255, 255)',

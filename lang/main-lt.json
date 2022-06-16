@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Ausinės",
+        "none": "Neaptikta garso įrenginių",
         "phone": "Telefonas",
-        "speaker": "Garsiakalbis",
-        "none": "Neaptikta garso įrenginių"
+        "speaker": "Garsiakalbis"
     },
     "audioOnly": {
         "audioOnly": "Mažas pralaidumas (tik garsas)"
@@ -48,23 +48,23 @@
     "chat": {
         "error": "Klaida: jūsų pranešimas nebuvo išsiųstas. Priežastis: {{klaida}}",
         "fieldPlaceHolder": "Rašykite žinutę čia",
-        "messagebox": "Rašykite žinutę",
         "messageTo": "Asmeninis pranešimas {{gavėjas}}",
-        "noMessagesMessage": "Susitikime dar nėra pranešimų. Pradėkite pokalbį čia!",
+        "messagebox": "Rašykite žinutę",
         "nickname": {
             "popover": "Pridėkite slapyvardį",
             "title": "Norėdami naudoti pokalbį, įveskite slapyvardį",
             "titleWithPolls": "Norėdami naudoti pokalbį, įveskite slapyvardį"
         },
+        "noMessagesMessage": "Susitikime dar nėra pranešimų. Pradėkite pokalbį čia!",
         "privateNotice": "Asmeninis pranešimas {{gavėjui}}",
         "title": "Pokalbis",
         "titleWithPolls": "Pokalbis",
         "you": "Jūs"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Įdiekite „Google“ ir „Office 365“ kalendoriaus plėtinį",
         "buttonText": "Įdiekite Chrome plėtinį",
-        "dontShowAgain": "Daugiau nerodyti"
+        "dontShowAgain": "Daugiau nerodyti",
+        "installExtensionText": "Įdiekite „Google“ ir „Office 365“ kalendoriaus plėtinį"
     },
     "connectingOverlay": {
         "joiningRoom": "Jungiamasi prie jūsų susitikimo..."
@@ -144,7 +144,20 @@
         "selectADevice": "Pasirinkite prietaisą",
         "testAudio": "Testuoti garsą"
     },
+    "dialOut": {
+        "statusMessage": "dabar yra {{status}}"
+    },
     "dialog": {
+        "Back": "Atgal",
+        "Cancel": "Atšaukti",
+        "IamHost": "Aš esu šeimininkas (-ė)",
+        "Ok": "Ok",
+        "Remove": "Pašalinti",
+        "Share": "Dalintis",
+        "Submit": "Pateikti",
+        "WaitForHostMsg": "Konferencija dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",
+        "WaitingForHost": "Laukiama organizatoriaus ...",
+        "Yes": "Taip",
         "accessibilityLabel": {
             "liveStreaming": "Tiesioginis srautas"
         },
@@ -152,7 +165,6 @@
         "alreadySharedVideoMsg": "Kitas naudotojas jau dalinasi vaizdu. Šiame susitikime leidžiama dalintis tik vienu vaizdo įrašu vienu metu.",
         "alreadySharedVideoTitle": "Leidžiama dalintis tik vienu vaizdo įrašu vienu metu.",
         "applicationWindow": "Programos langas",
-        "Back": "Atgal",
         "cameraConstraintFailedError": "Jūsų kamera neatitinka reikalavimų.",
         "cameraNotFoundError": "Kamera nerasta.",
         "cameraNotSendingData": "Mums nepavyko prijungti kameros. Patikrinkite, ar kita programa nenaudoja šio įrenginio, nustatymų meniu pasirinkite kitą įrenginį arba pabandykite iš naujo įkelti programą",
@@ -160,7 +172,6 @@
         "cameraPermissionDeniedError": "Jūs negavote leidimo naudotis savo kamera. Jūs vis tiek galite prisijungti prie susitikimo, tačiau kiti jūsų nematys. Pasinaudokit kameros mygtuku adreso laukelyje, jei norite tai pakeisti.",
         "cameraUnknownError": "Įvyko klaida - negalite naudoti kameros.",
         "cameraUnsupportedResolutionError": "Jūsų kamera nepalaiko reikalaujamos vaizdo raiškos.",
-        "Cancel": "Atšaukti",
         "close": "Uždaryti",
         "conferenceDisconnectMsg": "Pasitikrinkite savo interneto ryšį. Perkrausime už {{seconds}} sek. ...",
         "conferenceDisconnectTitle": "Jūs buvote atjungta(-as).",
@@ -183,11 +194,10 @@
         "externalInstallationTitle": "Reikalingas plėtinys",
         "goToStore": "Apsilankykite mūsų internetinėje parduotuvėje",
         "gracefulShutdown": "Mūsų paslaugos šiuo metu neveikia. Prašome pabandyti vėliau.",
-        "IamHost": "Aš esu šeimininkas (-ė)",
-        "incorrectRoomLockPassword": "Slaptažodis neteisingas",
         "incorrectPassword": "Neteisingi prisijungimo vardas arba slaptažodis",
-        "inlineInstallationMsg": "Jums reikia atsisiųsti mūsų darbalaukio dalinimosi plėtinį.",
+        "incorrectRoomLockPassword": "Slaptažodis neteisingas",
         "inlineInstallExtension": "Įdiegti dabar",
+        "inlineInstallationMsg": "Jums reikia atsisiųsti mūsų darbalaukio dalinimosi plėtinį.",
         "internalError": "Oi! Įvyko klaida: {{error}}",
         "internalErrorTitle": "Vidinė klaida",
         "kickMessage": "Galite susisiekti su {{participantDisplayName}} dėl daugiau informacijos.",
@@ -211,17 +221,16 @@
         "micNotSendingDataTitle": "Jūsų mikrofonas yra išjungtas jūsų kompiuterio nustatymuose",
         "micPermissionDeniedError": "Jūs negavote leidimo naudotis mikrofonu. Jūs vis tiek galite prisijungti prie susitikimo, tačiau niekas jūsų negirdės. Naudokites kameros mygtuku įrankių juostoje, kad išspręstumėte šią problemą.",
         "micUnknownError": "Jūs negalite naudotis mikrofonu dėl nežinomų priežasčių.",
+        "muteEveryoneDialog": "Ar jūs esate tikri, kad norite visus nutildyti? Tai padarę nebegalėsite jų pagarsinti, nebent jie patys išeis iš begarsio rėžimo.",
         "muteEveryoneElseDialog": "Kartą juos nutildę, nebegalėsite jų pagarsinti, nebent jie patys išeis iš begarsio rėžimo.",
         "muteEveryoneElseTitle": "Nutildykite visus išskyrus {{whom}}?",
-        "muteEveryoneDialog": "Ar jūs esate tikri, kad norite visus nutildyti? Tai padarę nebegalėsite jų pagarsinti, nebent jie patys išeis iš begarsio rėžimo.",
-        "muteEveryoneTitle": "Nutildyti visus?",
         "muteEveryoneSelf": "save",
         "muteEveryoneStartMuted": "Nuo šiol visi įeiną į begarsį rėžimą",
+        "muteEveryoneTitle": "Nutildyti visus?",
         "muteParticipantBody": "Nebegalėsite jų pagarsinti, nebent jie patys išeis iš begarsio rėžimo.",
         "muteParticipantButton": "Nutildyti",
         "muteParticipantDialog": "Ar jūs esate tikri, kad norite nutildytį šį naudotoją? Tai padarę nebegalėsite jo pagarsinti, nebent pats išeis iš begarsio rėžimo.",
         "muteParticipantTitle": "Nutildyti šį dalyvį?",
-        "Ok": "Ok",
         "passwordLabel": "$t(lockRoomPasswordUppercase)",
         "passwordNotSupported": "Pradėtas susitikimas $t(lockRoomPassword) yra nepalaikomas.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nepalaikoma",
@@ -239,7 +248,6 @@
         "remoteControlShareScreenWarning": "Jei paspausite \"Leisti\" jūs pasidalinsite savo ekranu!",
         "remoteControlStopMessage": "Nuotolinio valdymo seansas baigėsi!",
         "remoteControlTitle": "Nuotolinio valdymo darbalaukio kontrolė",
-        "Remove": "Pašalinti",
         "removePassword": "Pašalinti $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Ar jūs esate tikri, kad norite pašalinti pasidalintą video?",
         "removeSharedVideoTitle": "Remove shared video",
@@ -257,8 +265,7 @@
         "sendPrivateMessageTitle": "Siųsti privačiai?",
         "serviceUnavailable": "Paslaugos neteikiamos",
         "sessTerminated": "Skambutis nutrauktas",
-        "Share": "Dalintis",
-        "shareVideoLinkError": "Prašome pateikti teisinga Youtube adresą.",
+        "shareVideoLinkError": "Prašome pateikti teisinga adresą.",
         "shareVideoTitle": "Dalintis video",
         "shareYourScreen": "Dalintis ekrano vaizdu",
         "shareYourScreenDisabled": "Ekrano dalinimasis negalimas.",
@@ -271,7 +278,6 @@
         "stopRecordingWarning": "Ar jūs esate įsitikinę, kad norite sustabdyti įrašymą?",
         "stopStreamingWarning": "Ar esate įsitikinę, kad norite sustabdyti tiesioginę transliaciją?",
         "streamKey": "Tiesioginės transliacijos kodas",
-        "Submit": "Pateikti",
         "thankYou": "Ačiū, kad naudojate {{appName}}!",
         "token": "ženklas",
         "tokenAuthFailed": "Atsiprašome, jūs negalite prisijungti prie šio skambučio.",
@@ -279,14 +285,7 @@
         "transcribing": "Perrašymas",
         "unlockRoom": "Pašalinti susitikimą $t(lockRoomPassword)",
         "userPassword": "naudotojo slaptažodis",
-        "WaitForHostMsg": "Konferencija <b>{{room}}</b> dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",
-        "WaitForHostMsgWOk": "Konferencija <b>{{room}}</b> dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",
-        "WaitingForHost": "Laukiama organizatoriaus ...",
-        "Yes": "Taip",
         "yourEntireScreen": "Jūsų visas ekranas"
-    },
-    "dialOut": {
-        "statusMessage": "dabar yra {{status}}"
     },
     "documentSharing": {
         "title": "Pasidalintas dokumentas"
@@ -326,6 +325,7 @@
         "inviteURLFirstPartGeneral": "Jūs esate kviečiama(-as) prisijungti prie susitikimo.",
         "inviteURLFirstPartPersonal": "{{name}} jus kviečia į susitikimą.\n",
         "inviteURLSecondPart": "\nPrisijungti prie susitikimo:\n{{url}}\n",
+        "label": "Susitikimo informacija",
         "liveStreamURL": "Tiesioginė transliacija:",
         "moreNumbers": "Daugiau numerių",
         "noNumbers": "Nėra jokių numerių.",
@@ -334,8 +334,13 @@
         "numbers": "Suvestiniai numeriai",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Dalintis",
-        "tooltip": "Dalintis adresu ir suvestine informacija šiam susitikimui",
-        "label": "Susitikimo informacija"
+        "tooltip": "Dalintis adresu ir suvestine informacija šiam susitikimui"
+    },
+    "inlineDialogFailure": {
+        "msg": "Truputį apsirikome.",
+        "retry": "Bandyti dar kartą",
+        "support": "Palaikyti",
+        "supportMsg": "Jei tai vėl pasikartos, kreipkitės į"
     },
     "inviteDialog": {
         "alertText": "Nepavyko pridėti kai kurių naudotojų.",
@@ -344,12 +349,6 @@
         "searchPeopleOnlyPlaceholder": "Ieškoti naudotojų",
         "searchPlaceholder": "naudotojas arba telefono numeris",
         "send": "Siųsti"
-    },
-    "inlineDialogFailure": {
-        "msg": "Truputį apsirikome.",
-        "retry": "Bandyti dar kartą",
-        "support": "Palaikyti",
-        "supportMsg": "Jei tai vėl pasikartos, kreipkitės į"
     },
     "keyboardShortcuts": {
         "focusLocal": "Koncentruotis į savo vaizdą",
@@ -390,10 +389,10 @@
         "onBy": "{{name}} pradėjo tiesioginę transliaciją",
         "pending": "Pradedama tiesioginė transliacija...",
         "serviceName": "Tiesioginė transliacijos tarnyba",
-        "signedInAs": "Jūs šiuo metu prisijungęs(-usi) kaip :",
         "signIn": "Prisijunkite su Google",
         "signInCTA": "Prisijunkite arba įveskite raktažodį iš Youtube.",
         "signOut": "Atsijungti",
+        "signedInAs": "Jūs šiuo metu prisijungęs(-usi) kaip :",
         "start": "Pradėti tiesioginę transliaciją",
         "streamIdHelp": "Kas tai?",
         "unavailableTitle": "Tiesioginė transliacija negalima"
@@ -429,6 +428,10 @@
     },
     "lockRoomPassword": "slaptažodis",
     "lockRoomPasswordUppercase": "Slaptažodis",
+    "lonelyMeetingExperience": {
+        "button": "Pakvieskite kitus",
+        "youAreAlone": "Jūs vienintelis(-ė) šiame susitikime"
+    },
     "me": "Aš",
     "notify": {
         "connectedOneMember": "{{name}} prisijungė prie susitikimo",
@@ -445,24 +448,24 @@
         "me": "Aš",
         "moderator": "Vadovo teisės suteiktos!",
         "muted": "Jūs pradėjote nutildytą pokalbį.",
-        "mutedTitle": "Jūsų garsas nutildytas!",
-        "mutedRemotelyTitle": "Jūs buvote nutildyta(-as) naudotojo {{participantDisplayName}}!",
         "mutedRemotelyDescription": "Jūs visada galite įsijungti garsą, kai norėsite. Įsijunkite garsą vėl, kai nuspresite, jog tai netrukdo susitikimui.",
+        "mutedRemotelyTitle": "Jūs buvote nutildyta(-as) naudotojo {{participantDisplayName}}!",
+        "mutedTitle": "Jūsų garsas nutildytas!",
+        "newDeviceAction": "Naudoti",
+        "newDeviceAudioTitle": "Aptiktas naujas įrašo įrenginys",
+        "newDeviceCameraTitle": "Aptikta nauja kamera",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) pašalintas kito naudotojo",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) nustatyta kito naudotojo",
         "raisedHand": "{{name}} norėtų kalbėti.",
         "somebody": "Kažkas",
-        "startSilentTitle": "Jūs prisijungėte be jokios garso išvesties!",
         "startSilentDescription": "Persijunkite prie susitikimo, kad įjungtumėte garsą",
+        "startSilentTitle": "Jūs prisijungėte be jokios garso išvesties!",
         "suboptimalBrowserWarning": "Mes apgailėstaujame, kad jūsų susitikimo įspūdžiai nėra tokie, kokių tikėjotės. Mes visada ieškome būdų kaip patobulėti, bet kol kas bandykite tai <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Naršyklės įspėjimas",
-        "unmute": "Įjungti garsą",
-        "newDeviceCameraTitle": "Aptikta nauja kamera",
-        "newDeviceAudioTitle": "Aptiktas naujas įrašo įrenginys",
-        "newDeviceAction": "Naudoti"
+        "unmute": "Įjungti garsą"
     },
-    "passwordSetRemotely": "nustatytas kito naudotojo",
     "passwordDigitsOnly": "Daugiausia {{number}} skaičių",
+    "passwordSetRemotely": "nustatytas kito naudotojo",
     "poweredby": "pateikiamas",
     "presenceStatus": {
         "busy": "Užimtas",
@@ -580,7 +583,9 @@
         "title": "Jūsų vaizdo skambutis buvo nutrauktas, nes jūsų kompiuteris atsijungė."
     },
     "toolbar": {
+        "Settings": "Nustatymai",
         "accessibilityLabel": {
+            "Settings": "Perjungti nustatymus",
             "audioOnly": "Tik audio perjungimas",
             "audioRoute": "Pasirinkite garso įrenginį",
             "callQuality": "Reguliuoti vaizdo kokybę",
@@ -607,18 +612,17 @@
             "raiseHand": "Perjungti rankos pakėlimą",
             "recording": "Perjungti įrašymą",
             "remoteMute": "Nutildyti dalyvius",
-            "Settings": "Perjungti nustatymus",
-            "sharedvideo": "Perjungti Youtube vaizdo dalinimasi",
             "shareRoom": "Pakviesti ką nors",
             "shareYourScreen": "Perjungti vaizdo dalinimasi",
+            "sharedvideo": "Perjungti vaizdo dalinimasi",
             "shortcuts": "Perjungti trumpinius",
             "show": "Rodyti viešai",
             "speakerStats": "Perjungti garsiakalbio nuostatas",
             "tileView": "Perjungti vaizdą",
             "toggleCamera": "Perjungti kamerą",
             "toggleFilmstrip": "Toggle filmstrip",
-            "videomute": "Perjungti vaizdo išjungimą",
-            "videoblur": "Įjungti fono suliejimą"
+            "videoblur": "Įjungti fono suliejimą",
+            "videomute": "Perjungti vaizdo išjungimą"
         },
         "addPeople": "Pridėti žmonių prie pokalbio",
         "audioOnlyOff": "Atjungti žemo pralaidumo rėžimą",
@@ -646,35 +650,34 @@
         "moreOptions": "Daugiau parinkčių",
         "mute": "Begarsis / Su garsu",
         "muteEveryone": "Nutildyti visus",
-        "noAudioSignalTitle": "Nėra jokios mikrafono įvesties!",
         "noAudioSignalDesc": "Jei specialiai nenutildėte tai sistemoje, apsvarstykite perjungti įrangą.",
         "noAudioSignalDescSuggestion": "Jei specialiai nenutildėte tai sistemoje, apsvarstykite perjungti į pasiūlytą įrangą.",
         "noAudioSignalDialInDesc": "Galite skambinti naudodami:",
-        "noAudioSignalDialInLinkDesc" : "Numeriai skambučiams",
-        "noisyAudioInputTitle": "Jūsų mikrofonas per garsus!",
+        "noAudioSignalDialInLinkDesc": "Numeriai skambučiams",
+        "noAudioSignalTitle": "Nėra jokios mikrafono įvesties!",
         "noisyAudioInputDesc": "Atrodo, kad jūsų mikrofonas turi trikdžių, prašome jį nutildyti arba pakeisti įrangą.",
+        "noisyAudioInputTitle": "Jūsų mikrofonas per garsus!",
         "openChat": "Atverti susirašinėjimą",
         "pip": "Atverti paveikslo su paveikslu rėžimą",
         "privateMessage": "Nusiųskite privačią žinutę",
         "profile": "Redaguoti profilį",
         "raiseHand": "Pakelti / Nuleisti ranką",
         "raiseYourHand": "Pakelti ranką",
-        "Settings": "Nustatymai",
-        "sharedvideo": "Pasidalinkite Youtube video",
         "shareRoom": "Pakviesti ką nors",
+        "sharedvideo": "Pasidalinkite video",
         "shortcuts": "Peržiūrėti trumpinius",
         "speakerStats": "Garsiakalbio pasirinktys",
         "startScreenSharing": "Pradėti ekrano dalinimasi",
         "startSubtitles": "Įjungti subtitrus",
+        "startvideoblur": "Sulieti foną",
         "stopScreenSharing": "Nebesidalinti vaizdu",
+        "stopSharedVideo": "Išjungti vaizdą",
         "stopSubtitles": "Išjungti subtitrus",
-        "stopSharedVideo": "Išjungti Youtube vaizdą",
+        "stopvideoblur": "Nesulieti fono",
         "talkWhileMutedPopup": "Ar bandote kalbėti? Jūs esate begarsio rėžime.",
         "tileViewToggle": "Perjungti rodinį",
         "toggleCamera": "Perjungti kamerą",
-        "videomute": "Įjungti / Išjungti kamerą",
-        "startvideoblur": "Sulieti foną",
-        "stopvideoblur": "Nesulieti fono"
+        "videomute": "Įjungti / Išjungti kamerą"
     },
     "transcribing": {
         "ccButtonTooltip": "Įjungti / Išjungti titrus",
@@ -754,25 +757,20 @@
         "connectCalendarButton": "Prijunkite savo kalendorių",
         "connectCalendarText": "Prijunkite savo kalendorių, kad stebėti visus savo būsimus susitikimus čia {{app}}. Plius, pridėkite {{provider}} susitikimus į savo kalendorių ir pradėkite juos vienu paspaudimu.",
         "enterRoomTitle": "Pradėkite savo susitikimą",
-        "roomNameAllowedChars": "Susitikimo pavadinime negali būti šių ženklų: ?, &, :, ', \", %, #.",
         "go": "PIRMYN",
         "goSmall": "PIRMYN",
-        "join": "KURTI / PRISIJUNGTI",
         "info": "Info",
+        "join": "KURTI / PRISIJUNGTI",
         "privacy": "Privatumas",
         "recentList": "Paskutinis",
         "recentListDelete": "Ištrinti",
         "recentListEmpty": "Jūsų paskutinis sąrašas yra tuščias. Susisiekite su savo komanda ir jūs rasite savo paskutinius susitikimus čia.",
         "reducedUIText": "Sveiki atvyke į {{app}}!",
+        "roomNameAllowedChars": "Susitikimo pavadinime negali būti šių ženklų: ?, &, :, ', \", %, #.",
         "roomname": "Įveskite pokalbių kambario pavadinimą",
         "roomnameHint": "Įveskite sugalvotą pavadinimą arba pokalbio kambario adresą (URL), kad prisijungtumėte. Jūs galite sugalvoti savo pavadinimą, bet įsitikinkite, kad ir kiti dalyviai, su kuriais bendrausite, taip pat žinos tikslų pavadinimą tam, kad įeitų į tą patį pokalbių kambarį.",
         "sendFeedback": "Palikite atsiliepimą",
         "terms": "Sąlygos",
         "title": "Saugus, pasiekiamas ir visiškai nemokamas video konferencijų rengimas"
-    },
-    "lonelyMeetingExperience": {
-        "button": "Pakvieskite kitus",
-        "youAreAlone": "Jūs vienintelis(-ė) šiame susitikime"
     }
 }
-

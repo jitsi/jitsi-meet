@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Heyrnartól",
+        "none": "Engin hljóðtæki tiltæk",
         "phone": "Sími",
-        "speaker": "Ræðumaður",
-        "none": "Engin hljóðtæki tiltæk"
+        "speaker": "Ræðumaður"
     },
     "audioOnly": {
         "audioOnly": "Lítil bandbreidd"
@@ -48,23 +48,23 @@
     "chat": {
         "error": "Villa: skilaboðin þín voru ekki send. Ástæða: {{error}}",
         "fieldPlaceHolder": "Skrifaðu skilaboðin þín hér",
-        "messagebox": "Skrifaðu skilaboð",
         "messageTo": "Einkaskilaboð til {{recipient}}",
-        "noMessagesMessage": "Það eru ennþá engin skilaboð á fundinum. Byrjaðu umræðuna hér!",
+        "messagebox": "Skrifaðu skilaboð",
         "nickname": {
             "popover": "Veldu gælunafn",
             "title": "Settu inn gælunafn/stuttnefni til að nota við spjall",
             "titleWithPolls": "Settu inn gælunafn/stuttnefni til að nota við spjall"
         },
+        "noMessagesMessage": "Það eru ennþá engin skilaboð á fundinum. Byrjaðu umræðuna hér!",
         "privateNotice": "Einkaskilaboð til {{recipient}}",
         "title": "Spjall",
         "titleWithPolls": "Spjall",
         "you": "þú"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Settu inn viðbót fyrir Google Calendar og samþættingu við Office 365",
         "buttonText": "Setja inn Chrome-viðbót",
-        "dontShowAgain": "Ekki sýna mér þetta aftur"
+        "dontShowAgain": "Ekki sýna mér þetta aftur",
+        "installExtensionText": "Settu inn viðbót fyrir Google Calendar og samþættingu við Office 365"
     },
     "connectingOverlay": {
         "joiningRoom": "Tengist við fundinn þinn ..."
@@ -144,7 +144,20 @@
         "selectADevice": "Veldu tæki",
         "testAudio": "Spila prufuhljóð"
     },
+    "dialOut": {
+        "statusMessage": "er núna {{status}}"
+    },
     "dialog": {
+        "Back": "Til baka",
+        "Cancel": "Hætta við",
+        "IamHost": "Ég er gestgjafinn",
+        "Ok": "Í lagi",
+        "Remove": "Fjarlægja",
+        "Share": "Deila",
+        "Submit": "Senda inn",
+        "WaitForHostMsg": "Fjarfundurinn er ekki byrjaður. Ef þú ert gestgjafinn skaltu auðkenna þig. Annars ættiðu að bíða eftir að gestgjafinn skrái sig inn.",
+        "WaitingForHost": "Bíð eftir að gestgjafanum ...",
+        "Yes": "Já",
         "accessibilityLabel": {
             "liveStreaming": "Beint streymi"
         },
@@ -152,7 +165,6 @@
         "alreadySharedVideoMsg": "Annar þátttakandi er þegar að deila myndmerkinu sínu. Þessi fjarfundur leyfir aðeins að einu myndmerki sé deilt í einu.",
         "alreadySharedVideoTitle": "Aðeins er leyft að deila einu myndmerki í einu",
         "applicationWindow": "Forritsgluggi",
-        "Back": "Til baka",
         "cameraConstraintFailedError": "Myndavélin þín uppfyllir ekki sumt af uppsettum skilyrðum.",
         "cameraNotFoundError": "Myndavél fannst ekki.",
         "cameraNotSendingData": "Við náum ekki að tengjast myndavélinni þinni. Athugaðu hvort eitthvað annað forrit sé að nota hana, veldu annað tæki í stillingavalmyndinni eða reyndu að endurhlaða forritið.",
@@ -160,7 +172,6 @@
         "cameraPermissionDeniedError": "Þú hefur ekki gefið leyfi til að nota myndavélina þína. Þú getur samt tekið þátt í fundinum, en aðrir munu ekki sjá þig. Notaðu myndavélarhnappinn í vistfangastikunni til að laga þetta.",
         "cameraUnknownError": "Get ekki notað myndavélina af óþekktum ástæðum.",
         "cameraUnsupportedResolutionError": "Myndavélin þín styður ekki umbeðna upplausn myndmerkis.",
-        "Cancel": "Hætta við",
         "close": "Loka",
         "conferenceDisconnectMsg": "Þú ættir kannski að athuga nettenginguna þína. Tengist aftur eftir {{seconds}} sek...",
         "conferenceDisconnectTitle": "Þú hefur verið aftengd(ur).",
@@ -183,11 +194,10 @@
         "externalInstallationTitle": "Krafist er forritsviðbótar",
         "goToStore": "Fara í vefsafnið",
         "gracefulShutdown": "Þjónustan okkar er ekki aðgengileg í augnablikinu. Endilega reyndu aftur síðar.",
-        "IamHost": "Ég er gestgjafinn",
-        "incorrectRoomLockPassword": "Rangt lykilorð",
         "incorrectPassword": "Rangt notandanafn eða lykilorð",
-        "inlineInstallationMsg": "Þú þarft að setja upp skjáborðsdeilingar-viðbótina.",
+        "incorrectRoomLockPassword": "Rangt lykilorð",
         "inlineInstallExtension": "Setja upp núna",
+        "inlineInstallationMsg": "Þú þarft að setja upp skjáborðsdeilingar-viðbótina.",
         "internalError": "Úbbs! Eitthvað fór úrskeiðis. Eftirfarandi villa kom upp: {{error}}",
         "internalErrorTitle": "Innri villa",
         "kickMessage": "Þú getur haft samband við {{participantDisplayName}} til að sjá frekari upplýsingar.",
@@ -211,17 +221,16 @@
         "micNotSendingDataTitle": "Þaggað er niður í hljóðnemanum þínum í kerfisstillingunum",
         "micPermissionDeniedError": "Þú hefur ekki gefið leyfi til að nota hljóðnemann þinn. Þú getur samt tekið þátt í fundinum, en aðrir munu ekki heyra í þér. Notaðu myndavélarhnappinn í vistfangastikunni til að laga þetta.",
         "micUnknownError": "Get ekki notað hljóðnemann af óþekktum ástæðum.",
+        "muteEveryoneDialog": "Ertu viss um að þú viljir þagga niður í öllum? Þú munt ekki geta afþaggað þá, en þeir munu geta afþaggað sig hvenær sem er .",
         "muteEveryoneElseDialog": "Ef þaggað er niður í þeim muntu ekki geta afþaggað þá, en þeir munu geta afþaggað sig hvenær sem er .",
         "muteEveryoneElseTitle": "Þagga niður í öllum nema {{whom}}?",
-        "muteEveryoneDialog": "Ertu viss um að þú viljir þagga niður í öllum? Þú munt ekki geta afþaggað þá, en þeir munu geta afþaggað sig hvenær sem er .",
-        "muteEveryoneTitle": "Þagga niður í öllum?",
         "muteEveryoneSelf": "þig sjálfan",
         "muteEveryoneStartMuted": "Allir byrja hljóðlaust héðan í frá",
+        "muteEveryoneTitle": "Þagga niður í öllum?",
         "muteParticipantBody": "Þú munt ekki geta afþaggað þá, en þeir munu geta afþaggað sig hvenær sem er .",
         "muteParticipantButton": "Þagga niður",
         "muteParticipantDialog": "Ertu viss um að þú viljir þagga niður í þessum þátttakanda? Þú munt ekki geta afþaggað hann, en hann munu geta afþaggað sig hvenær sem er .",
         "muteParticipantTitle": "Þagga niður í þessum þátttakanda?",
-        "Ok": "Í lagi",
         "passwordLabel": "Þátttakandi hefur læst fundinum. Settu inn $t(lockRoomPassword) til að taka þátt í honum.",
         "passwordNotSupported": "Að setja $t(lockRoomPassword) fyrir fund er ekki stutt.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) er ekki stutt",
@@ -239,7 +248,6 @@
         "remoteControlShareScreenWarning": "Athugaðu að ef þú ýtir á \"Leyfa\" muntu deila skjánum þínum!",
         "remoteControlStopMessage": "Fjarstýringarsetan endaði!",
         "remoteControlTitle": "Fjarstýring skjáborðs",
-        "Remove": "Fjarlægja",
         "removePassword": "Fjarlægja $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Ertu viss um að þú viljir fjarlægja deilda myndmerkið þitt?",
         "removeSharedVideoTitle": "Fjarlægja deilt myndmerki",
@@ -258,8 +266,7 @@
         "sendPrivateMessageTitle": "Senda sem einkamál?",
         "serviceUnavailable": "Þjónustan er ekki tiltæk",
         "sessTerminated": "Símtali er lokið",
-        "Share": "Deila",
-        "shareVideoLinkError": "Settu inn réttan YouTube-tengil.",
+        "shareVideoLinkError": "Settu inn réttan tengil.",
         "shareVideoTitle": "Deila myndmerki",
         "shareYourScreen": "Deila skjánum þínum",
         "shareYourScreenDisabled": "Skjádeiling er óvirk.",
@@ -272,7 +279,6 @@
         "stopRecordingWarning": "Ertu viss um að þú viljir stöðva þessa upptöku?",
         "stopStreamingWarning": "Ertu viss um að þú viljir stöðva þetta beina streymi?",
         "streamKey": "Lykill fyrir beint streymi",
-        "Submit": "Senda inn",
         "thankYou": "Takk fyrir að nota {{appName}}!",
         "token": "teikn",
         "tokenAuthFailed": "Því miður, þú hefur ekki heimild til að taka þátt í þessu samtali.",
@@ -280,14 +286,7 @@
         "transcribing": "Umrita (transcribing)",
         "unlockRoom": "Fjarlægja $t(lockRoomPassword) fundar",
         "userPassword": "lykilorð notandans",
-        "WaitForHostMsg": "Fjarfundurinn <b>{{room}}</b> er ekki byrjaður. Ef þú ert gestgjafinn skaltu auðkenna þig. Annars ættiðu að bíða eftir að gestgjafinn skrái sig inn.",
-        "WaitForHostMsgWOk": "Fjarfundurinn <b>{{room}}</b> er ekki byrjaður. Ef þú ert gestgjafinn skaltu ýta á 'Í lagi' til að auðkenna þig. Annars ættiðu að bíða eftir að gestgjafinn skrái sig inn.",
-        "WaitingForHost": "Bíð eftir að gestgjafanum ...",
-        "Yes": "Já",
         "yourEntireScreen": "Allur skjárinn þinn"
-    },
-    "dialOut": {
-        "statusMessage": "er núna {{status}}"
     },
     "documentSharing": {
         "title": "Sameiginlegt skjal"
@@ -300,6 +299,9 @@
         "rateExperience": "Gefðu upplifun þinni af fundinum einkunn",
         "veryBad": "Mjög slæm",
         "veryGood": "Mjög góð"
+    },
+    "helpView": {
+        "header": "Hjálparmiðstöð"
     },
     "incomingCall": {
         "answer": "Svara",
@@ -327,6 +329,7 @@
         "inviteURLFirstPartGeneral": "Þér hefur verið boðið að taka þátt í fundi.",
         "inviteURLFirstPartPersonal": "{{name}} er að bjóða þér á fund.\n",
         "inviteURLSecondPart": "\nTaka þátt í fundinum:\n{{url}}\n",
+        "label": "Upplýsingar um fund",
         "liveStreamURL": "Beint streymi:",
         "moreNumbers": "Fleiri símanúmer",
         "noNumbers": "Engin innhringinúmer.",
@@ -335,8 +338,13 @@
         "numbers": "Innhringinúmer",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Deila",
-        "tooltip": "Deila tengli og innhringingarupplýsingum um þennan fund",
-        "label": "Upplýsingar um fund"
+        "tooltip": "Deila tengli og innhringingarupplýsingum um þennan fund"
+    },
+    "inlineDialogFailure": {
+        "msg": "Við eigum í smá erfiðleikum.",
+        "retry": "Reyndu aftur",
+        "support": "Stuðningur",
+        "supportMsg": "Ef þetta heldur áfram að koma upp, skaltu hafa samband við"
     },
     "inviteDialog": {
         "alertText": "Mistókst að bjóða sumum þátttakendum.",
@@ -345,12 +353,6 @@
         "searchPeopleOnlyPlaceholder": "Leita að þátttakendum",
         "searchPlaceholder": "Þátttakandi eða símanúmer",
         "send": "Senda"
-    },
-    "inlineDialogFailure": {
-        "msg": "Við eigum í smá erfiðleikum.",
-        "retry": "Reyndu aftur",
-        "support": "Stuðningur",
-        "supportMsg": "Ef þetta heldur áfram að koma upp, skaltu hafa samband við"
     },
     "keyboardShortcuts": {
         "focusLocal": "Gera myndmerkið þitt virkt",
@@ -384,6 +386,7 @@
         "expandedPending": "Verið er að ræsa beina streymið...",
         "failedToStart": "Tókst ekki að ræsa beint streymi",
         "getStreamKeyManually": "Við gátum ekki nálgast nein bein streymi. Reyndu að ná þér í lykil fyrir beint streymi frá YouTube.",
+        "googlePrivacyPolicy": "Meðferð persónuupplýsinga hjá Google",
         "invalidStreamKey": "Lykill fyrir beint streymi gæti verið rangur.",
         "off": "Beint streymi stöðvað",
         "offBy": "{{name}} stöðvaði beina streymið",
@@ -391,15 +394,14 @@
         "onBy": "{{name}} byrjaði beint streymi",
         "pending": "Ræsi beint streymi...",
         "serviceName": "Þjónusta fyrir beint streymi",
-        "signedInAs": "Þú ert núna skráð/ur inn sem:",
         "signIn": "Skrá inn með Google",
         "signInCTA": "Skráðu þig inn eða settu inn lykil fyrir beint streymi frá YouTube.",
         "signOut": "Skrá út",
+        "signedInAs": "Þú ert núna skráð/ur inn sem:",
         "start": "Hefja beint streymi",
         "streamIdHelp": "Hvað er þetta?",
         "unavailableTitle": "Beint streymi er ekki tiltækt",
-        "youtubeTerms": "Þjónustuskilmálar YouTube",
-        "googlePrivacyPolicy": "Meðferð persónuupplýsinga hjá Google"
+        "youtubeTerms": "Þjónustuskilmálar YouTube"
     },
     "localRecording": {
         "clientState": {
@@ -432,6 +434,10 @@
     },
     "lockRoomPassword": "lykilorð",
     "lockRoomPasswordUppercase": "Lykilorð",
+    "lonelyMeetingExperience": {
+        "button": "Bjóddu öðrum",
+        "youAreAlone": "Þú ert sá eini á fundinum"
+    },
     "me": "ég",
     "notify": {
         "connectedOneMember": "{{name}} hefur bæst við á fundinn",
@@ -448,24 +454,24 @@
         "me": "Ég",
         "moderator": "Stjórnandaréttindi veitt!",
         "muted": "Þú byrjaðir samtalið með þaggað niður í þér.",
-        "mutedTitle": "Það er þaggað niður í þér!",
-        "mutedRemotelyTitle": "{{participantDisplayName}} hefur þaggað niður í þér!",
         "mutedRemotelyDescription": "Þú getur alltaf afþaggað þig þegar þú ert tilbúinn til að tala. Þaggaðu svo aftur niður í hljóðnemanum svo að aukahávaði sé ekki að trufla fundinn.",
+        "mutedRemotelyTitle": "{{participantDisplayName}} hefur þaggað niður í þér!",
+        "mutedTitle": "Það er þaggað niður í þér!",
+        "newDeviceAction": "Nota",
+        "newDeviceAudioTitle": "Nýtt hljóðtæki fannst",
+        "newDeviceCameraTitle": "Ný myndavél fannst",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) fjarlægt af öðrum þátttakanda",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) stillt af öðrum þátttakanda",
         "raisedHand": "{{name}} myndi vilja taka til máls.",
         "somebody": "Einhver",
-        "startSilentTitle": "Þú mættir með ekkert hljóðúttak!",
         "startSilentDescription": "Tengstu fundinum aftur til að virkja hljóð",
+        "startSilentTitle": "Þú mættir með ekkert hljóðúttak!",
         "suboptimalBrowserWarning": "Við erum ekki viss um að upplifun þín af fundinum verði neitt sérstök. Við erum alltaf að reyna að bæta þetta, en þangað til ættirðu frekar að nota einhvern af <a href='{{recommendedBrowserPageLink}}' target='_blank'>þeim vöfrum sem eru studdir að fullu</a>.",
         "suboptimalExperienceTitle": "Aðvörun vafra",
-        "unmute": "Afþagga",
-        "newDeviceCameraTitle": "Ný myndavél fannst",
-        "newDeviceAudioTitle": "Nýtt hljóðtæki fannst",
-        "newDeviceAction": "Nota"
+        "unmute": "Afþagga"
     },
-    "passwordSetRemotely": "sett af öðrum þátttakanda",
     "passwordDigitsOnly": "Allt að {{number}} stafir",
+    "passwordSetRemotely": "sett af öðrum þátttakanda",
     "poweredby": "keyrt með",
     "presenceStatus": {
         "busy": "Upptekinn",
@@ -585,7 +591,9 @@
         "title": "Myndsamtalið þitt var trufla vegna þess að tölvan þín svæfðist."
     },
     "toolbar": {
+        "Settings": "Stillingar",
         "accessibilityLabel": {
+            "Settings": "Víxla stillingum af/á",
             "audioOnly": "Víxla einungis hljóð af/á",
             "audioRoute": "Veldu hljóðtæki",
             "callQuality": "Sýsla með gæði myndmerkis",
@@ -612,18 +620,17 @@
             "raiseHand": "Víxla á milli uppréttrar og niðurlagðrar handar",
             "recording": "Víxla upptöku af/á",
             "remoteMute": "Þagga niður í þátttakanda",
-            "Settings": "Víxla stillingum af/á",
-            "sharedvideo": "Víxla deilingu Youtube-myndskeiðs af/á",
             "shareRoom": "Bjóddu einhverjum",
             "shareYourScreen": "Víxla skjádeilingu af/á",
+            "sharedvideo": "Víxla deilingu myndskeiðs af/á",
             "shortcuts": "Víxla flýtilyklum af/á",
             "show": "Birta í glugga",
             "speakerStats": "Víxla tölfræði ræðumanna af/á",
             "tileView": "Víxla reitasýn af/á",
             "toggleCamera": "Víxla myndavél",
             "toggleFilmstrip": "Víxla filmubút af/á",
-            "videomute": "Víxla hljóði myndmerkis af/á",
-            "videoblur": "Víxla móðun myndmerkis af/á"
+            "videoblur": "Víxla móðun myndmerkis af/á",
+            "videomute": "Víxla hljóði myndmerkis af/á"
         },
         "addPeople": "Bæta fólki við símtalið þitt",
         "audioOnlyOff": "Gera ham fyrir litla bandbreidd óvirkan",
@@ -651,35 +658,34 @@
         "moreOptions": "Fleiri valkostir",
         "mute": "Þagga/Kveikja á hljóði",
         "muteEveryone": "Þagga niður í öllum",
-        "noAudioSignalTitle": "Það er ekkert inntak að koma frá hljóðnemanum þínum!",
         "noAudioSignalDesc": "Ef þú þaggaðir ekki viljandi niður í þessu í kerfisstillingunum eða með vélbúnaðarrofa, þá ættirðu að íhuga að skipta um hljóðtæki.",
         "noAudioSignalDescSuggestion": "Ef þú þaggaðir ekki viljandi niður í þessu í kerfisstillingunum eða með vélbúnaðarrofa, þá ættirðu að íhuga að skipta yfir á hljóðtækið sem stungið er upp á.",
         "noAudioSignalDialInDesc": "Þú getur einnig hringt þig inn með:",
         "noAudioSignalDialInLinkDesc": "Innhringinúmer",
-        "noisyAudioInputTitle": "Hljóðneminn þinn lítur út fyrir að gefa frá sér truflanir!",
+        "noAudioSignalTitle": "Það er ekkert inntak að koma frá hljóðnemanum þínum!",
         "noisyAudioInputDesc": "Það lítur út fyrir að hljóðneminn þinn sé að gefa frá sér truflanir, íhugaðu að þagga niður í honum eða skipta um hljóðtæki.",
+        "noisyAudioInputTitle": "Hljóðneminn þinn lítur út fyrir að gefa frá sér truflanir!",
         "openChat": "Opna spjall",
         "pip": "Fara í mynd-í-mynd-ham",
         "privateMessage": "Senda einkaskilaboð",
         "profile": "Breyta persónusniðinu þínu",
         "raiseHand": "Rétta upp / Leggja niður hönd",
         "raiseYourHand": "Rétta upp höndina",
-        "Settings": "Stillingar",
-        "sharedvideo": "Deila YouTube-myndskeiði",
         "shareRoom": "Bjóddu einhverjum",
+        "sharedvideo": "Deila myndskeiði",
         "shortcuts": "Skoða flýtilykla",
         "speakerStats": "Tölfræði ræðumanns",
         "startScreenSharing": "Hefja skjádeilingu",
         "startSubtitles": "Hefja birtingu skjátexta",
+        "startvideoblur": "Móða bakgrunninn minn",
         "stopScreenSharing": "Hætta skjádeilingu",
+        "stopSharedVideo": "Stöðva myndskeið",
         "stopSubtitles": "Hætta birtingu skjátexta",
-        "stopSharedVideo": "Stöðva YouTube-myndskeið",
+        "stopvideoblur": "Gera móðun bakgrunns óvirka",
         "talkWhileMutedPopup": "Ertu að reyna að tala? Þaggað er niður í þér.",
         "tileViewToggle": "Víxla reitasýn af/á",
         "toggleCamera": "Víxla myndavél",
-        "videomute": "Ræsa / Stöðva myndavél",
-        "startvideoblur": "Móða bakgrunninn minn",
-        "stopvideoblur": "Gera móðun bakgrunns óvirka"
+        "videomute": "Ræsa / Stöðva myndavél"
     },
     "transcribing": {
         "ccButtonTooltip": "Hefja / Hætta birtingu skjátexta",
@@ -760,27 +766,20 @@
         "connectCalendarText": "Tengdu dagatalið þitt til að geta séð alla fundina þína í {{app}}. Að auki geturðu bætt fundum {{provider}} við dagatalið og ræst þá með einum smelli.",
         "enterRoomTitle": "Byrja nýjan fund",
         "getHelp": "Fá aðstoð",
-        "roomNameAllowedChars": "Heiti fundar ætti ekki að innihalda neinn eftirfarandi stafa: ?, &, :, ', \", %, #.",
         "go": "Af stað",
         "goSmall": "Af stað",
-        "join": "BÚA TIL / TAKA ÞÁTT",
         "info": "Upplýsingar",
+        "join": "BÚA TIL / TAKA ÞÁTT",
         "privacy": "Gagnaleynd",
         "recentList": "Nýlegt",
         "recentListDelete": "Eyða",
         "recentListEmpty": "Listinn þinn yfir nýlega atburði er tómur. Spjallaðu við teymið þitt og muntu þá finna alla nýlega fundi hér.",
         "reducedUIText": "Velkomin í {{app}}!",
+        "roomNameAllowedChars": "Heiti fundar ætti ekki að innihalda neinn eftirfarandi stafa: ?, &, :, ', \", %, #.",
         "roomname": "Settu inn nafn á fjarfundi",
         "roomnameHint": "Settu inn nafn eða slóð á fjarfundinum sem þú ætlar að taka þátt í. Þú getur skáldað eitthvað nafn, þú verður bara að láta aðra þáttakendur vita svo þeir setji inn sama nafnið.",
         "sendFeedback": "Senda inn umsögn",
         "terms": "Hugtök",
         "title": "Öruggir og fullkomlega frjálsir myndfundir með fullt af eiginleikum"
-    },
-    "lonelyMeetingExperience": {
-        "button": "Bjóddu öðrum",
-        "youAreAlone": "Þú ert sá eini á fundinum"
-    },
-    "helpView": {
-        "header": "Hjálparmiðstöð"
     }
 }

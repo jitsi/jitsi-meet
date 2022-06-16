@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Чихэвч",
+        "none": "Дууны төхөөрөмж байхгүй",
         "phone": "Утас",
-        "speaker": "Яригч",
-        "none": "Дууны төхөөрөмж байхгүй"
+        "speaker": "Яригч"
     },
     "audioOnly": {
         "audioOnly": "Чанар багасгах"
@@ -48,23 +48,23 @@
     "chat": {
         "error": "Алдаа: таны мессеж илгээгдээгүй байна. Шалтгаан: {{error}}",
         "fieldPlaceHolder": "Энд чатаа бичнэ үү",
-        "messagebox": "Зурвас бичих",
         "messageTo": "Хувийн зурвас {{recipient}}",
-        "noMessagesMessage": "Энэ хуралд ямар ч зурвас байхгүй. Эндээс зурвасаа эхлүүл!",
+        "messagebox": "Зурвас бичих",
         "nickname": {
             "popover": "Нэр бичнэ үү",
             "title": "Нэрээ оруулна уу",
             "titleWithPolls": "Нэрээ оруулна уу"
         },
+        "noMessagesMessage": "Энэ хуралд ямар ч зурвас байхгүй. Эндээс зурвасаа эхлүүл!",
         "privateNotice": "Хувийн зурвас {{recipient}}",
         "title": "Чат",
         "titleWithPolls": "Чат",
         "you": "чи"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",
         "buttonText": "Chrome Extension суулгах",
-        "dontShowAgain": "Энийг дахин харахгүй"
+        "dontShowAgain": "Энийг дахин харахгүй",
+        "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
     },
     "connectingOverlay": {
         "joiningRoom": "Таныг хуралд холбож байна..."
@@ -144,7 +144,20 @@
         "selectADevice": "Төхөөрөмж сонгоно уу",
         "testAudio": "Туршилтын дуу тоглуул"
     },
+    "dialOut": {
+        "statusMessage": "одоо {{status}} байна"
+    },
     "dialog": {
+        "Back": "Буцах",
+        "Cancel": "Цуцлах",
+        "IamHost": "Үүсгэгч",
+        "Ok": "Ok",
+        "Remove": "Устгах",
+        "Share": "Хуваалцах",
+        "Submit": "Илгээх",
+        "WaitForHostMsg": "Xурал хараахан эхлээгүй байна. Хэрэв та хост байгаа бол нэвтэрнэ үү. Үгүй бол хост ирэхийг хүлээнэ үү.",
+        "WaitingForHost": "Хостыг хүлээж байна ...",
+        "Yes": "Тийм",
         "accessibilityLabel": {
             "liveStreaming": "Шууд дамжуулалт"
         },
@@ -152,7 +165,6 @@
         "alreadySharedVideoMsg": "Видео хуваалцаж байна. Хуралд нэг зэрэг зөвхөн нэг л видеог хуваалцах боломжийг олгодог..",
         "alreadySharedVideoTitle": "Нэг удаад зөвхөн нэг л хуваалцсан видеог зөвшөөрнө",
         "applicationWindow": "Програмын цонх",
-        "Back": "Буцах",
         "cameraConstraintFailedError": "Таны камер зарим шаардлагатай хязгаарлалтыг хангаж чадахгүй байна.",
         "cameraNotFoundError": "Камер олдсонгүй.",
         "cameraNotSendingData": "Таны камерт хандах боломжгүй байна. Хэрэв өөр програм энэ төхөөрөмжийг ашиглаж байгаа эсэхийг шалгаад, тохиргоог цэснээс өөр төхөөрөмжийг сонгох эсвэл дахин ачаалж үзнэ үү.",
@@ -160,7 +172,6 @@
         "cameraPermissionDeniedError": "Та камераа ашиглах зөвшөөрөл өгөөгүй байна. Та энэ хуралд оролцох боломжтой ч бусад хүмүүс таныг харж чадахгүй. Үүнийг засахын тулд хаяг бичдэг хэсэгийн хойно байгаа камерын товчийг дарна уу.",
         "cameraUnknownError": "Ямар нэг шалтгааны улмаас камерыг ашиглаж чадахгүй.",
         "cameraUnsupportedResolutionError": "Таны камер шаардлагатай видеоны хэмжээг дэмждэггүй.",
-        "Cancel": "Цуцлах",
         "close": "Хаах",
         "conferenceDisconnectMsg": "Сүлжээний холболт шалгаж байна. Дахин холбогдож байна {{seconds}} сек...",
         "conferenceDisconnectTitle": "Та салсан байна.",
@@ -183,11 +194,10 @@
         "externalInstallationTitle": "Өргөтгөл суулгах шаардлагатай",
         "goToStore": "webstore орох",
         "gracefulShutdown": "Манай үйлчилгээ одоогоор засвартай байна. Дараа дахин оролдож үзнэ үү.",
-        "IamHost": "Үүсгэгч",
-        "incorrectRoomLockPassword": "Нууц үг буруу",
         "incorrectPassword": "Хэрэглэгчийн нэр эсвэл нууц үг буруу байна",
-        "inlineInstallationMsg": "Та манай десктоп хуваалцах өргөтгөлийг суулгах хэрэгтэй.",
+        "incorrectRoomLockPassword": "Нууц үг буруу",
         "inlineInstallExtension": "Одоо суулгах",
+        "inlineInstallationMsg": "Та манай десктоп хуваалцах өргөтгөлийг суулгах хэрэгтэй.",
         "internalError": "Ямар нэгэн зүйл буруу байна. Дараах алдаа гарсан байна: {{error}}",
         "internalErrorTitle": "Дотоод алдаа",
         "kickMessage": "Та дэлгэрэнгүй мэдээллийг {{participantDisplayName}} холбогдож авна уу..",
@@ -211,17 +221,16 @@
         "micNotSendingDataTitle": "Таны микрофоныг системийн тохиргооноос хаасан байна",
         "micPermissionDeniedError": "Та микрофон ашиглах зөвшөөрөл өгөөгүй байна. Та одоо чуулга уулзалтанд оролцож болох ч бусад хүмүүс таныг сонсох боломжгүй. Үүнийг засахын тулд хаягийн талбарт байгаа камерын товчийг ашиглана уу.",
         "micUnknownError": "Ямар нэг шалтгааны улмаас микрофоныг ашиглах боломжгүй байна.",
+        "muteEveryoneDialog": "Та бүх оролцогчдын дууг хаахдаа итгэлтэй байна уу? Та тэдний дууг идэвхжүүлэх боломжгүй ч хүссэн үедээ өөрийнхөө дуу нээх боломжтой.",
         "muteEveryoneElseDialog": "Бусад оролцогчдын дуу хаалттай үед та дууг нээх боломжгүй, гэхдээ өөрийнхөө дууг нээх боломжтой.",
         "muteEveryoneElseTitle": "Бүх оролцогчдын дууг хаах уу?",
-        "muteEveryoneDialog": "Та бүх оролцогчдын дууг хаахдаа итгэлтэй байна уу? Та тэдний дууг идэвхжүүлэх боломжгүй ч хүссэн үедээ өөрийнхөө дуу нээх боломжтой.",
-        "muteEveryoneTitle": "Бүх оролцогчдын дууг хаах уу?",
         "muteEveryoneSelf": "Чи өөрөө",
         "muteEveryoneStartMuted": "Одооноос эхлэн бүх оролцогчдын дуу хаагдана",
+        "muteEveryoneTitle": "Бүх оролцогчдын дууг хаах уу?",
         "muteParticipantBody": "Та тэдний дууг идэвхжүүлэх боломжгүй ч хүссэн үедээ өөрийн дууг нээх боломжтой.",
         "muteParticipantButton": "Дуугүй болгох",
         "muteParticipantDialog": "Та энэ оролцогчийн дууг хаахдаа итгэлтэй байна уу? Та дууг идэвхжүүлэх боломжгүй ч хүссэн үедээ өөрийн дууг нээх боломжтой.",
         "muteParticipantTitle": "Энэ оролцогчийн дууг хаах уу?",
-        "Ok": "Ok",
         "passwordLabel": "$t(lockRoomPasswordUppercase)",
         "passwordNotSupported": "$t(lockRoomPassword) тохируулах нь дэмжигдэхгүй байна.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) дэмжигдэхгүй байна",
@@ -239,7 +248,6 @@
         "remoteControlShareScreenWarning": "Хэрэв та \"Allow\" товчийг дарвал, таны дэлгэцийг хуваалцах болно гэдгийг анхаарна уу!",
         "remoteControlStopMessage": "Алсын удирдлагын хэсэг дууссан!",
         "remoteControlTitle": "Алсын удирдлагын",
-        "Remove": "Устгах",
         "removePassword": "$t(lockRoomPassword) устгах",
         "removeSharedVideoMsg": "Та хуваалцсан видеогоо устгахдаа итгэлтэй байна уу?",
         "removeSharedVideoTitle": "Хуваалцсан видеог устгах",
@@ -257,7 +265,6 @@
         "sendPrivateMessageTitle": "Хувиараа илгээх үү?",
         "serviceUnavailable": "Үйлчилгээ авах боломжгүй",
         "sessTerminated": "Дуудлага саллаа",
-        "Share": "Хуваалцах",
         "shareVideoLinkError": "YouTube-ийн зөв линк оруулна уу.",
         "shareVideoTitle": "Видео хуваалцах",
         "shareYourScreen": "Дэлгэцээ хуваалцах",
@@ -271,7 +278,6 @@
         "stopRecordingWarning": "Та бичлэгээ зогсоохдоо итгэлтэй байна уу?",
         "stopStreamingWarning": "Та шууд дамжуулалтыг зогсоохдоо итгэлтэй байна уу?",
         "streamKey": "Шууд дамжуулалтын түлхүүр",
-        "Submit": "Илгээх",
         "thankYou": "{{appName}} ашиглаж буй танд баярлалаа!",
         "token": "token",
         "tokenAuthFailed": "Уучлаарай, та энд нэвтрэх эрхгүй байна.",
@@ -279,14 +285,7 @@
         "transcribing": "Орчуулах",
         "unlockRoom": "$t(lockRoomPassword) хурлыг устгана уу",
         "userPassword": "хэрэглэгчийн нууц үг",
-        "WaitForHostMsg": "<b>{{room}}</b> хурал хараахан эхлээгүй байна. Хэрэв та хост байгаа бол нэвтэрнэ үү. Үгүй бол хост ирэхийг хүлээнэ үү.",
-        "WaitForHostMsgWOk": "<b>{{room}}</b> хурал хараахан эхлээгүй байна. Хэрэв та хост эзэмшигч бол баталгаажуулахын тулд Ok дээр дарна уу. Үгүй бол хост ирэхийг хүлээнэ үү.",
-        "WaitingForHost": "Хостыг хүлээж байна ...",
-        "Yes": "Тийм",
         "yourEntireScreen": "Таны дэлгэцийг бүхэлдээ"
-    },
-    "dialOut": {
-        "statusMessage": "одоо {{status}} байна"
     },
     "documentSharing": {
         "title": "Бичиг баримт хуваалцах"
@@ -326,6 +325,7 @@
         "inviteURLFirstPartGeneral": "Та бүхнийг уулзалтад урьж байна.",
         "inviteURLFirstPartPersonal": "{{name}} таныг уулзалтанд урьж байна.\n",
         "inviteURLSecondPart": "\nУулзалтад нэгдээрэй:\n{{url}}\n",
+        "label": "Хурлын мэдээлэл",
         "liveStreamURL": "Шууд дамжуулалт:",
         "moreNumbers": "Бусад дугаар",
         "noNumbers": "Залгах дугаар байхгүй байна.",
@@ -334,8 +334,13 @@
         "numbers": "Залгах дугаарууд",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Хуваалцах",
-        "tooltip": "Хурлын холбоосыг хуваалцах",
-        "label": "Хурлын мэдээлэл"
+        "tooltip": "Хурлын холбоосыг хуваалцах"
+    },
+    "inlineDialogFailure": {
+        "msg": "Асуудал гарлаа",
+        "retry": "Дахин оролд",
+        "support": "Дэмжлэг",
+        "supportMsg": "Хэрэв ийм асуудал дахиад тохиолдвол холбоо бариарай"
     },
     "inviteDialog": {
         "alertText": "Зарим оролцогчдыг урьж чадсангүй.",
@@ -344,12 +349,6 @@
         "searchPeopleOnlyPlaceholder": "Оролцогчдыг хайх",
         "searchPlaceholder": "Оролцогч эсвэл утасны дугаар",
         "send": "Илгээх"
-    },
-    "inlineDialogFailure": {
-        "msg": "Асуудал гарлаа",
-        "retry": "Дахин оролд",
-        "support": "Дэмжлэг",
-        "supportMsg": "Хэрэв ийм асуудал дахиад тохиолдвол холбоо бариарай"
     },
     "keyboardShortcuts": {
         "focusLocal": "Өөрийн видеог үзэх",
@@ -390,10 +389,10 @@
         "onBy": "{{name}} шууд дамжуулалт эхлүүлсэн",
         "pending": "Шууд дамжуулалтыг эхлүүлж байна...",
         "serviceName": "Шууд дамжуулалт үйлчилгээ",
-        "signedInAs": "Та одоо нэвтэрсэн байна:",
         "signIn": "Google-р нэвтрэх",
         "signInCTA": "YouTube дээр шууд дамжуулалтын түлхүүрээ оруулна уу.",
         "signOut": "Гарах",
+        "signedInAs": "Та одоо нэвтэрсэн байна:",
         "start": "Шууд дамжуулалт эхлүүл",
         "streamIdHelp": "Энэ юу вэ?",
         "unavailableTitle": "Шууд дамжуулалт боломжгүй"
@@ -429,6 +428,10 @@
     },
     "lockRoomPassword": "нууц үг",
     "lockRoomPasswordUppercase": "Нууц үг",
+    "lonelyMeetingExperience": {
+        "button": "Бусдыг урь",
+        "youAreAlone": "Та энэ хуралд ганцаараа байна"
+    },
     "me": "Надад",
     "notify": {
         "connectedOneMember": "{{name}} хуралд нэгдсэн",
@@ -445,24 +448,24 @@
         "me": "Надад",
         "moderator": "Зохицуулагчийн эрх олгосон!",
         "muted": "Та харилцан яриаг хаасан байна.",
-        "mutedTitle": "Таны дуу хаалтай байна!",
-        "mutedRemotelyTitle": "Таны дууг {{participantDisplayName}} хаасан байна!!",
         "mutedRemotelyDescription": "Та ярихад бэлэн үедээ дууг нээж ярих боломжтой. Уулзалтад дуу чимээ гаргахгүй байхын тулд дуугаа хаагаарай.",
+        "mutedRemotelyTitle": "Таны дууг {{participantDisplayName}} хаасан байна!!",
+        "mutedTitle": "Таны дуу хаалтай байна!",
+        "newDeviceAction": "Хэрэглэх",
+        "newDeviceAudioTitle": "Шинэ аудио төхөөрөмж",
+        "newDeviceCameraTitle": "Шинэ камер",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) өөр оролцогч устгасан",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) өөр оролцогчоос хийсэн",
         "raisedHand": "{{name}} ярихыг хүсч байна.",
         "somebody": "Хэн нэгэн",
-        "startSilentTitle": "Та ямар ч аудио төхөөрөмжгүй нэгдсэн!",
         "startSilentDescription": "Дууг идэвхжүүлэхийн тулд хуралд дахин нэгдээрэй",
+        "startSilentTitle": "Та ямар ч аудио төхөөрөмжгүй нэгдсэн!",
         "suboptimalBrowserWarning": "Таны хөтөч дээр бүрэн дэмжлэг ороогүй байна. Та бүрэн дэмжигдсэн <a href='{{recommendedBrowserPageLink}}' target='_blank'>хөтөчийг</a> ашиглана уу.",
         "suboptimalExperienceTitle": "Хөтөчийн анхааруулга",
-        "unmute": "Дуутай",
-        "newDeviceCameraTitle": "Шинэ камер",
-        "newDeviceAudioTitle": "Шинэ аудио төхөөрөмж",
-        "newDeviceAction": "Хэрэглэх"
+        "unmute": "Дуутай"
     },
-    "passwordSetRemotely": "өөр оролцогч хийсэн",
     "passwordDigitsOnly": "{{number}} хүртэлх тоо",
+    "passwordSetRemotely": "өөр оролцогч хийсэн",
     "poweredby": "дэмжигдсэн",
     "presenceStatus": {
         "busy": "Завгүй",
@@ -580,7 +583,9 @@
         "title": "Энэ компьютер унтарсан учир таны видео дуудлага тасарлаа."
     },
     "toolbar": {
+        "Settings": "Тохиргоо",
         "accessibilityLabel": {
+            "Settings": "Тохиргоо",
             "audioOnly": "Зөвхөн аудио",
             "audioRoute": "Дууны төхөөрөмж сонго",
             "callQuality": "Видеоны чанар",
@@ -607,17 +612,16 @@
             "raiseHand": "Гараа өргө",
             "recording": "Бичлэг хийх",
             "remoteMute": "Оролцогч дууг хаах",
-            "Settings": "Тохиргоо",
-            "sharedvideo": "Youtube-н видео хуваалцах",
             "shareRoom": "Хүн урих",
             "shareYourScreen": "Дэлгэц хуваалцах",
+            "sharedvideo": "Youtube-н видео хуваалцах",
             "shortcuts": "Товчлол",
             "show": "Үзүүлэх",
             "speakerStats": "Яригчийн статистик",
             "tileView": "Зэрэгцүүлж харах",
             "toggleCamera": "Камер",
-            "videomute": "Дүрсгүй видео",
-            "videoblur": "Видео бүдэгрүүлэх"
+            "videoblur": "Видео бүдэгрүүлэх",
+            "videomute": "Дүрсгүй видео"
         },
         "addPeople": "Таны дуудлагад хүн нэмэх",
         "audioOnlyOff": "Бага дамжуулах горимыг идэвхгүй болгох",
@@ -645,35 +649,34 @@
         "moreOptions": "Бусад тохиргоо",
         "mute": "Дуу хаах/нээх",
         "muteEveryone": "Бүх дууг хаах",
-        "noAudioSignalTitle": "Таны микрофоноос оруулах оролт байхгүй байна!",
         "noAudioSignalDesc": "Хэрэв та системийн тохиргоо эсвэл техник хангамжаас үүнийг идэвхгүй болгоогүй бол төхөөрөмжийг солиж үзнэ үү.",
         "noAudioSignalDescSuggestion": "Хэрэв та системийн тохиргоо эсвэл техник хангамжаас үүнийг идэвхгүй болгоогүй бол санал болгосон төхөөрөмжид шилжүүлнэ үү.",
         "noAudioSignalDialInDesc": "Залгаж ашиглаж болно:",
         "noAudioSignalDialInLinkDesc": "Залгах дугаарууд",
-        "noisyAudioInputTitle": "Таны микрофон шуугиантай байна!",
+        "noAudioSignalTitle": "Таны микрофоноос оруулах оролт байхгүй байна!",
         "noisyAudioInputDesc": "Таны микрофон шуугиж байна, дууг нь хаах эсвэл өөрчилнө үү.",
+        "noisyAudioInputTitle": "Таны микрофон шуугиантай байна!",
         "openChat": "Зурвас нээлттэй",
         "pip": "Зураг-зураг горим оруулах",
         "privateMessage": "Хувийн зурвас илгээх",
         "profile": "Профайлаа засна уу",
         "raiseHand": "Гараа өргөх/болих",
         "raiseYourHand": "Гараа өргө",
-        "Settings": "Тохиргоо",
-        "sharedvideo": "YouTube-н видео хуваалцах",
         "shareRoom": "Хэн нэгнийг урих",
+        "sharedvideo": "YouTube-н видео хуваалцах",
         "shortcuts": "Товчлол харах",
         "speakerStats": "Яригчийн статистик",
         "startScreenSharing": "Дэлгэц хуваалцахыг эхлүүл",
         "startSubtitles": "Хадмал орчуулгыг эхлүүл",
+        "startvideoblur": "Дэвсгэрийг бүдгэрүүл",
         "stopScreenSharing": "Дэлгэц хуваалцахыг зогсоох",
-        "stopSubtitles": "Хадмал орчуулгыг зогсоох",
         "stopSharedVideo": "YouTube видео зогсоох",
+        "stopSubtitles": "Хадмал орчуулгыг зогсоох",
+        "stopvideoblur": "Бүдэгрүүлэлтийг болиулах",
         "talkWhileMutedPopup": "Ярьж үзмээр байна уу? Дуу хаалттай байна.",
         "tileViewToggle": "Зэрэгцүүлж харах",
         "toggleCamera": "Камер",
-        "videomute": "Камер нээх/хаах",
-        "startvideoblur": "Дэвсгэрийг бүдгэрүүл",
-        "stopvideoblur": "Бүдэгрүүлэлтийг болиулах"
+        "videomute": "Камер нээх/хаах"
     },
     "transcribing": {
         "ccButtonTooltip": "Хадмал орчуулгыг харуулах/болих",
@@ -753,24 +756,20 @@
         "connectCalendarButton": "Цагалбараа холбоно уу",
         "connectCalendarText": "Цагалбар дээрх уулзалтуудаа {{app}} дээр оруулж болно. Та цагалбараа холбоход болно.",
         "enterRoomTitle": "Шинэ хурал эхлүүлэх",
-        "roomNameAllowedChars": "Хурлын нэр нь эдгээр тэмдэгтүүдийн аль нэгийг агуулж болохгүй: ?, &, :, ', \", %, #.",
         "go": "OK",
         "goSmall": "OK",
-        "join": "ҮҮСГЭХ / НЭГДЭХ",
         "info": "Мэдээлэл",
+        "join": "ҮҮСГЭХ / НЭГДЭХ",
         "privacy": "Нууцлал",
         "recentList": "Онцлох",
         "recentListDelete": "Устгах",
         "recentListEmpty": "Таны жагсаалт хоосон байна. Таны хийсэн бүх хурлууд энд байна.",
         "reducedUIText": "{{app}}, тавтай морил!",
+        "roomNameAllowedChars": "Хурлын нэр нь эдгээр тэмдэгтүүдийн аль нэгийг агуулж болохгүй: ?, &, :, ', \", %, #.",
         "roomname": "Хурлын нэрийг оруулна уу",
         "roomnameHint": "Нэгдэхийг хүсч буй хурлын нэр, URL-ийг оруулна уу. Та хурлын нэрээ үүсгэж болно. хуралд оролцох хүмүүстээ тэр нэрийг өгөөрэй.",
         "sendFeedback": "Санал илгээх",
         "terms": "Нөхцөлүүд",
         "title": "Аюулгүй, үнэгүй видео хурал хийх боломжтой"
-    },
-    "lonelyMeetingExperience": {
-        "button": "Бусдыг урь",
-        "youAreAlone": "Та энэ хуралд ганцаараа байна"
     }
 }

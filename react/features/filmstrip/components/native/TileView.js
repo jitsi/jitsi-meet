@@ -3,13 +3,15 @@
 import React, { PureComponent } from 'react';
 import {
     FlatList,
-    TouchableWithoutFeedback,
-    View
+    SafeAreaView,
+    TouchableWithoutFeedback
 } from 'react-native';
+import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Dispatch } from 'redux';
 
 import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { setVisibleRemoteParticipants } from '../../actions.web';
 
 import Thumbnail from './Thumbnail';
@@ -29,6 +31,11 @@ type Props = {
      * The number of columns.
      */
     _columns: number,
+
+    /**
+     * Whether or not to hide the self view.
+     */
+    _disableSelfView: boolean,
 
     /**
      * Application's viewport height.
@@ -66,6 +73,11 @@ type Props = {
     dispatch: Dispatch<any>,
 
     /**
+     * Object containing the safe area insets.
+     */
+    insets: Object,
+
+    /**
      * Callback to invoke when tile view is tapped.
      */
     onClick: Function
@@ -81,7 +93,7 @@ const EMPTY_ARRAY = [];
  * Implements a React {@link PureComponent} which displays thumbnails in a two
  * dimensional grid.
  *
- * @extends PureComponent
+ * @augments PureComponent
  */
 class TileView extends PureComponent<Props> {
 
@@ -120,7 +132,8 @@ class TileView extends PureComponent<Props> {
             ...styles.flatListTileView
         };
         this._contentContainerStyles = {
-            ...styles.contentContainer
+            ...styles.contentContainer,
+            paddingBottom: this.props.insets?.bottom || 0
         };
     }
 
@@ -146,7 +159,9 @@ class TileView extends PureComponent<Props> {
      * @returns {void}
      */
     _onViewableItemsChanged({ viewableItems = [] }: { viewableItems: Array<Object> }) {
-        if (viewableItems[0]?.index === 0) {
+        const { _disableSelfView } = this.props;
+
+        if (viewableItems[0]?.index === 0 && !_disableSelfView) {
             // Skip the local thumbnail.
             viewableItems.shift();
         }
@@ -157,8 +172,8 @@ class TileView extends PureComponent<Props> {
         }
 
         // We are off by one in the remote participants array.
-        const startIndex = viewableItems[0].index - 1;
-        const endIndex = viewableItems[viewableItems.length - 1].index - 1;
+        const startIndex = viewableItems[0].index - (_disableSelfView ? 0 : 1);
+        const endIndex = viewableItems[viewableItems.length - 1].index - (_disableSelfView ? 0 : 1);
 
         this.props.dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
     }
@@ -186,13 +201,14 @@ class TileView extends PureComponent<Props> {
             this._contentContainerStyles = {
                 ...styles.contentContainer,
                 minHeight: _height,
-                minWidth: _width
+                minWidth: _width,
+                paddingBottom: this.props.insets?.bottom || 0
             };
         }
 
         return (
             <TouchableWithoutFeedback onPress = { onClick }>
-                <View style = { styles.flatListContainer }>
+                <SafeAreaView style = { styles.flatListContainer }>
                     <FlatList
                         bounces = { false }
                         contentContainerStyle = { this._contentContainerStyles }
@@ -209,7 +225,7 @@ class TileView extends PureComponent<Props> {
                         style = { this._flatListStyles }
                         viewabilityConfig = { this._viewabilityConfig }
                         windowSize = { 2 } />
-                </View>
+                </SafeAreaView>
             </TouchableWithoutFeedback>
         );
     }
@@ -221,10 +237,14 @@ class TileView extends PureComponent<Props> {
      * @returns {Participant[]}
      */
     _getSortedParticipants() {
-        const { _localParticipant, _remoteParticipants } = this.props;
+        const { _localParticipant, _remoteParticipants, _disableSelfView } = this.props;
 
         if (!_localParticipant) {
             return EMPTY_ARRAY;
+        }
+
+        if (_disableSelfView) {
+            return _remoteParticipants;
         }
 
         return [ _localParticipant?.id, ..._remoteParticipants ];
@@ -243,7 +263,6 @@ class TileView extends PureComponent<Props> {
 
         return (
             <Thumbnail
-                disableTint = { true }
                 height = { _thumbnailHeight }
                 key = { item }
                 participantID = { item }
@@ -257,25 +276,29 @@ class TileView extends PureComponent<Props> {
  * Maps (parts of) the redux state to the associated {@code TileView}'s props.
  *
  * @param {Object} state - The redux state.
+ * @param {Object} ownProps - Component props.
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
     const responsiveUi = state['features/base/responsive-ui'];
     const { remoteParticipants, tileViewDimensions } = state['features/filmstrip'];
+    const disableSelfView = shouldHideSelfView(state);
     const { height } = tileViewDimensions.thumbnailSize;
     const { columns } = tileViewDimensions;
 
     return {
         _aspectRatio: responsiveUi.aspectRatio,
         _columns: columns,
-        _height: responsiveUi.clientHeight,
+        _disableSelfView: disableSelfView,
+        _height: responsiveUi.clientHeight - (ownProps.insets?.top || 0),
+        _insets: ownProps.insets,
         _localParticipant: getLocalParticipant(state),
         _participantCount: getParticipantCountWithFake(state),
         _remoteParticipants: remoteParticipants,
         _thumbnailHeight: height,
-        _width: responsiveUi.clientWidth
+        _width: responsiveUi.clientWidth - (ownProps.insets?.right || 0) - (ownProps.insets?.left || 0)
     };
 }
 
-export default connect(_mapStateToProps)(TileView);
+export default withSafeAreaInsets(connect(_mapStateToProps)(TileView));

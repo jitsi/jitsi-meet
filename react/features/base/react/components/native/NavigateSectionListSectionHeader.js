@@ -11,16 +11,16 @@ import styles from './styles';
 type Props = {
 
     /**
-     * A section containing the data to be rendered
+     * A section containing the data to be rendered.
      */
     section: SetionListSection
 }
 
 /**
  * Implements a React/Native {@link Component} that renders the section header
- * of the list
+ * of the list.
  *
- * @extends Component
+ * @augments Component
  */
 export default class NavigateSectionListSectionHeader extends Component<Props> {
     /**

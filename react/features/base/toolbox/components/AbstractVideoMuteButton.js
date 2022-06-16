@@ -22,14 +22,6 @@ export default class AbstractVideoMuteButton<P : Props, S : *>
      * @returns {void}
      */
     _handleClick() {
-        const { handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
-
         this._setVideoMuted(!this._isVideoMuted());
     }
 

@@ -3,12 +3,14 @@ import { ReducerRegistry } from '../base/redux';
 import {
     CLEAR_RECORDING_SESSIONS,
     RECORDING_SESSION_UPDATED,
+    SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
     SET_STREAM_KEY
 } from './actionTypes';
 
 const DEFAULT_STATE = {
+    disableHighlightMeetingMoment: false,
     pendingNotificationUids: {},
     selectedRecordingService: '',
     sessionDatas: []
@@ -63,6 +65,12 @@ ReducerRegistry.register(STORE_NAME,
             return {
                 ...state,
                 streamKey: action.streamKey
+            };
+
+        case SET_MEETING_HIGHLIGHT_BUTTON_STATE:
+            return {
+                ...state,
+                disableHighlightMeetingMoment: action.disabled
             };
 
         default:

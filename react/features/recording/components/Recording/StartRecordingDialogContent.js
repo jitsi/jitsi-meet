@@ -10,7 +10,9 @@ import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import {
     _abstractMapStateToProps
 } from '../../../base/dialog';
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
+import { browser } from '../../../base/lib-jitsi-meet';
 import {
     Button,
     Container,
@@ -20,13 +22,20 @@ import {
     Text
 } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { ColorPalette, StyleType } from '../../../base/styles';
+import { StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
 import { getRecordingDurationEstimation } from '../../functions';
 
-import { DROPBOX_LOGO, ICON_CLOUD, JITSI_LOGO } from './styles';
+import {
+    DROPBOX_LOGO,
+    ICON_CLOUD,
+    ICON_INFO,
+    ICON_USERS,
+    LOCAL_RECORDING,
+    TRACK_COLOR
+} from './styles';
 
 type Props = {
 
@@ -34,6 +43,11 @@ type Props = {
      * Style of the dialogs feature.
      */
     _dialogStyles: StyleType,
+
+    /**
+     * Whether local recording is enabled or not.
+     */
+    _localRecordingEnabled: boolean,
 
     /**
      * The color-schemed stylesheet of this component.
@@ -52,7 +66,7 @@ type Props = {
     fileRecordingsServiceEnabled: boolean,
 
     /**
-     * Whether to show the possibility to share file recording with other people (e.g. meeting participants), based on
+     * Whether to show the possibility to share file recording with other people (e.g. Meeting participants), based on
      * the actual implementation on the backend.
      */
     fileRecordingsServiceSharingEnabled: boolean,
@@ -117,9 +131,11 @@ type Props = {
 /**
  * React Component for getting confirmation to start a file recording session.
  *
- * @extends Component
+ * @augments Component
  */
 class StartRecordingDialogContent extends Component<Props> {
+    _localRecordingAvailable: boolean;
+
     /**
      * Initializes a new {@code StartRecordingDialogContent} instance.
      *
@@ -127,12 +143,29 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     constructor(props) {
         super(props);
+        const supportsLocalRecording = browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser();
+
+        this._localRecordingAvailable = props._localRecordingEnabled && supportsLocalRecording;
 
         // Bind event handler so it is only bound once for every instance.
         this._onSignIn = this._onSignIn.bind(this);
         this._onSignOut = this._onSignOut.bind(this);
         this._onDropboxSwitchChange = this._onDropboxSwitchChange.bind(this);
         this._onRecordingServiceSwitchChange = this._onRecordingServiceSwitchChange.bind(this);
+        this._onLocalRecordingSwitchChange = this._onLocalRecordingSwitchChange.bind(this);
+    }
+
+    /**
+     * Implements the Component's componentDidMount method.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        if (!this._shouldRenderNoIntegrationsContent()
+            && !this._shouldRenderIntegrationsContent()
+            && !this._shouldRenderFileSharingContent()) {
+            this._onLocalRecordingSwitchChange();
+        }
     }
 
     /**
@@ -149,10 +182,29 @@ class StartRecordingDialogContent extends Component<Props> {
                 className = 'recording-dialog'
                 style = { styles.container }>
                 { this._renderNoIntegrationsContent() }
-                { this._renderIntegrationsContent() }
                 { this._renderFileSharingContent() }
+                { this._renderUploadToTheCloudInfo() }
+                { this._renderIntegrationsContent() }
+                { this._renderLocalRecordingContent() }
             </Container>
         );
+    }
+
+    /**
+     * Whether the file sharing content should be rendered or not.
+     *
+     * @returns {boolean}
+     */
+    _shouldRenderFileSharingContent() {
+        const { fileRecordingsServiceSharingEnabled, isVpaas, selectedRecordingService } = this.props;
+
+        if (!fileRecordingsServiceSharingEnabled
+            || isVpaas
+            || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -161,11 +213,7 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderFileSharingContent() {
-        const { fileRecordingsServiceSharingEnabled, isVpaas, selectedRecordingService } = this.props;
-
-        if (!fileRecordingsServiceSharingEnabled
-            || isVpaas
-            || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
+        if (!this._shouldRenderFileSharingContent()) {
             return null;
         }
 
@@ -182,14 +230,11 @@ class StartRecordingDialogContent extends Component<Props> {
             <Container
                 className = 'recording-header'
                 key = 'fileSharingSetting'
-                style = { [
-                    styles.header,
-                    _dialogStyles.topBorderContainer
-                ] }>
-                <Container className = 'recording-icon-container'>
+                style = { styles.header }>
+                <Container className = 'recording-icon-container file-sharing-icon-container'>
                     <Image
-                        className = 'recording-icon'
-                        src = { ICON_CLOUD }
+                        className = 'recording-file-sharing-icon'
+                        src = { ICON_USERS }
                         style = { styles.recordingIcon } />
                 </Container>
                 <Text
@@ -206,10 +251,65 @@ class StartRecordingDialogContent extends Component<Props> {
                     onValueChange
                         = { onSharingSettingChanged }
                     style = { styles.switch }
-                    trackColor = {{ false: ColorPalette.lightGrey }}
+                    trackColor = {{ false: TRACK_COLOR }}
                     value = { sharingSetting } />
             </Container>
         );
+    }
+
+    /**
+     * Renders the info in case recording is uploaded to the cloud.
+     *
+     * @returns {React$Component}
+     */
+    _renderUploadToTheCloudInfo() {
+        const {
+            _dialogStyles,
+            _styles: styles,
+            isVpaas,
+            selectedRecordingService,
+            t
+        } = this.props;
+
+        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE)) {
+            return null;
+        }
+
+        return (
+            <Container
+                className = 'recording-info'
+                key = 'cloudUploadInfo'
+                style = { styles.headerInfo }>
+                <Image
+                    className = 'recording-info-icon'
+                    src = { ICON_INFO }
+                    style = { styles.recordingInfoIcon } />
+                <Text
+                    className = 'recording-info-title'
+                    style = {{
+                        ..._dialogStyles.text,
+                        ...styles.titleInfo
+                    }}>
+                    { t('recording.serviceDescriptionCloudInfo') }
+                </Text>
+            </Container>
+        );
+    }
+
+    /**
+     * Whether the no integrations content should be rendered or not.
+     *
+     * @returns {boolean}
+     */
+    _shouldRenderNoIntegrationsContent() {
+        // show the non integrations part only if fileRecordingsServiceEnabled
+        // is enabled or when there are no integrations enabled
+        if (!(this.props.fileRecordingsServiceEnabled
+            || !this.props.integrationsEnabled)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -218,40 +318,43 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderNoIntegrationsContent() {
-
-        // show the non integrations part only if fileRecordingsServiceEnabled
-        // is enabled or when there are no integrations enabled
-        if (!(this.props.fileRecordingsServiceEnabled
-            || !this.props.integrationsEnabled)) {
+        if (!this._shouldRenderNoIntegrationsContent()) {
             return null;
         }
 
         const { _dialogStyles, _styles: styles, isValidating, isVpaas, t } = this.props;
 
         const switchContent
-            = this.props.integrationsEnabled
+            = this.props.integrationsEnabled || this.props._localRecordingEnabled
                 ? (
                     <Switch
                         className = 'recording-switch'
                         disabled = { isValidating }
                         onValueChange = { this._onRecordingServiceSwitchChange }
                         style = { styles.switch }
-                        trackColor = {{ false: ColorPalette.lightGrey }}
+                        trackColor = {{ false: TRACK_COLOR }}
                         value = { this.props.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE } />
                 ) : null;
 
-        const icon = isVpaas ? ICON_CLOUD : JITSI_LOGO;
         const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
+        const jitsiContentRecordingIconContainer
+            = this.props.integrationsEnabled || this.props._localRecordingEnabled
+                ? 'jitsi-content-recording-icon-container-with-switch'
+                : 'jitsi-content-recording-icon-container-without-switch';
+        const contentRecordingClass = isVpaas
+            ? 'cloud-content-recording-icon-container'
+            : jitsiContentRecordingIconContainer;
+        const jitsiRecordingHeaderClass = !isVpaas && 'jitsi-recording-header';
 
         return (
             <Container
-                className = 'recording-header'
+                className = { `recording-header ${jitsiRecordingHeaderClass}` }
                 key = 'noIntegrationSetting'
                 style = { styles.header }>
-                <Container className = 'recording-icon-container'>
+                <Container className = { contentRecordingClass }>
                     <Image
-                        className = 'recording-icon'
-                        src = { icon }
+                        className = 'content-recording-icon'
+                        src = { ICON_CLOUD }
                         style = { styles.recordingIcon } />
                 </Container>
                 <Text
@@ -268,13 +371,26 @@ class StartRecordingDialogContent extends Component<Props> {
     }
 
     /**
+     * Whether the integrations content should be rendered or not.
+     *
+     * @returns {boolean}
+     */
+    _shouldRenderIntegrationsContent() {
+        if (!this.props.integrationsEnabled) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Renders the content in case integrations were enabled.
      *
      * @protected
      * @returns {React$Component}
      */
     _renderIntegrationsContent() {
-        if (!this.props.integrationsEnabled) {
+        if (!this._shouldRenderIntegrationsContent()) {
             return null;
         }
 
@@ -317,7 +433,7 @@ class StartRecordingDialogContent extends Component<Props> {
                     disabled = { isValidating }
                     onValueChange = { this._onDropboxSwitchChange }
                     style = { styles.switch }
-                    trackColor = {{ false: ColorPalette.lightGrey }}
+                    trackColor = {{ false: TRACK_COLOR }}
                     value = { this.props.selectedRecordingService
                         === RECORDING_TYPES.DROPBOX } />
             );
@@ -326,8 +442,8 @@ class StartRecordingDialogContent extends Component<Props> {
         return (
             <Container>
                 <Container
-                    className = 'recording-header recording-header-line'
-                    style = { styles.header }>
+                    className = 'recording-header'
+                    style = { styles.headerIntegrations }>
                     <Container
                         className = 'recording-icon-container'>
                         <Image
@@ -355,6 +471,7 @@ class StartRecordingDialogContent extends Component<Props> {
 
     _onDropboxSwitchChange: () => void;
     _onRecordingServiceSwitchChange: () => void;
+    _onLocalRecordingSwitchChange: () => void;
 
     /**
      * Handler for onValueChange events from the Switch component.
@@ -369,8 +486,7 @@ class StartRecordingDialogContent extends Component<Props> {
         } = this.props;
 
         // act like group, cannot toggle off
-        if (selectedRecordingService
-                === RECORDING_TYPES.JITSI_REC_SERVICE) {
+        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
             return;
         }
 
@@ -394,8 +510,7 @@ class StartRecordingDialogContent extends Component<Props> {
         } = this.props;
 
         // act like group, cannot toggle off
-        if (selectedRecordingService
-                === RECORDING_TYPES.DROPBOX) {
+        if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
             return;
         }
 
@@ -404,6 +519,30 @@ class StartRecordingDialogContent extends Component<Props> {
         if (!isTokenValid) {
             this._onSignIn();
         }
+    }
+
+    /**
+     * Handler for onValueChange events from the Switch component.
+     *
+     * @returns {void}
+     */
+    _onLocalRecordingSwitchChange() {
+        const {
+            onChange,
+            selectedRecordingService
+        } = this.props;
+
+        if (!this._localRecordingAvailable) {
+            return;
+        }
+
+        // act like group, cannot toggle off
+        if (selectedRecordingService
+            === RECORDING_TYPES.LOCAL) {
+            return;
+        }
+
+        onChange(RECORDING_TYPES.LOCAL);
     }
 
     /**
@@ -434,12 +573,20 @@ class StartRecordingDialogContent extends Component<Props> {
                     className = 'logged-in-panel'
                     style = { styles.loggedIn }>
                     <Container>
-                        <Text style = { styles.text }>
+                        <Text
+                            style = { [
+                                styles.text,
+                                styles.recordingText
+                            ] }>
                             { t('recording.loggedIn', { userName }) }
                         </Text>
                     </Container>
                     <Container>
-                        <Text style = { styles.text }>
+                        <Text
+                            style = { [
+                                styles.text,
+                                styles.recordingText
+                            ] }>
                             {
                                 t('recording.availableSpace', {
                                     spaceLeft,
@@ -450,6 +597,60 @@ class StartRecordingDialogContent extends Component<Props> {
                     </Container>
                 </Container>
             </Container>
+        );
+    }
+
+    _renderLocalRecordingContent: () => void;
+
+    /**
+     * Renders the content for local recordings.
+     *
+     * @protected
+     * @returns {React$Component}
+     */
+    _renderLocalRecordingContent() {
+        const { _styles: styles, isValidating, t, _dialogStyles, selectedRecordingService } = this.props;
+
+        if (!this._localRecordingAvailable) {
+            return null;
+        }
+
+        return (
+            <Container>
+                <Container
+                    className = 'recording-header recording-header-line'
+                    style = { styles.header }>
+                    <Container
+                        className = 'recording-icon-container'>
+                        <Image
+                            className = 'recording-icon'
+                            src = { LOCAL_RECORDING }
+                            style = { styles.recordingIcon } />
+                    </Container>
+                    <Text
+                        className = 'recording-title'
+                        style = {{
+                            ..._dialogStyles.text,
+                            ...styles.title
+                        }}>
+                        { t('recording.saveLocalRecording') }
+                    </Text>
+                    <Switch
+                        className = 'recording-switch'
+                        disabled = { isValidating }
+                        onValueChange = { this._onLocalRecordingSwitchChange }
+                        style = { styles.switch }
+                        trackColor = {{ false: TRACK_COLOR }}
+                        value = { this.props.selectedRecordingService
+                        === RECORDING_TYPES.LOCAL } />
+                </Container>
+                {selectedRecordingService === RECORDING_TYPES.LOCAL
+                    && <Text className = 'local-recording-warning'>
+                        {t('recording.localRecordingWarning')}
+                    </Text>
+                }
+            </Container>
+
         );
     }
 
@@ -488,6 +689,7 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
+        _localRecordingEnabled: state['features/base/config'].enableLocalRecording,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
     };
 }

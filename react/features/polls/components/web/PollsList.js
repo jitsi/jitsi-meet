@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { Icon, IconChatUnread } from '../../../base/icons';
 import { isPollsModerationEnabled } from '../../functions';
 
-import { PollItem } from '.';
+import PollItem from './PollItem';
 
 const PollsList = () => {
     const { t } = useTranslation();
@@ -31,21 +31,21 @@ const PollsList = () => {
     }, [ polls ]);
 
     return (
-    <>
-        {listPolls.length === 0
-            ? <div className = 'pane-content'>
-                <Icon
-                    className = 'empty-pane-icon'
-                    src = { IconChatUnread } />
-                <span className = 'empty-pane-message'>{t('polls.results.empty')}</span>
-            </div>
-            : listPolls.map((id, index) => (
-                <PollItem
-                    key = { id }
-                    pollId = { id }
-                    ref = { listPolls.length - 1 === index ? pollListEndRef : null } />
-            ))}
-    </>
+        <>
+            {listPolls.length === 0
+                ? <div className = 'pane-content'>
+                    <Icon
+                        className = 'empty-pane-icon'
+                        src = { IconChatUnread } />
+                    <span className = 'empty-pane-message'>{t('polls.results.empty')}</span>
+                </div>
+                : listPolls.map((id, index) => (
+                    <PollItem
+                        key = { id }
+                        pollId = { id }
+                        ref = { listPolls.length - 1 === index ? pollListEndRef : null } />
+                ))}
+        </>
     );
 };
 

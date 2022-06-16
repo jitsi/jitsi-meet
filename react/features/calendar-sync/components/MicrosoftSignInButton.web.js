@@ -30,7 +30,7 @@ type Props = {
 /**
  * A React Component showing a button to sign in with Microsoft.
  *
- * @extends Component
+ * @augments Component
  */
 class MicrosoftSignInButton extends Component<Props> {
     /**

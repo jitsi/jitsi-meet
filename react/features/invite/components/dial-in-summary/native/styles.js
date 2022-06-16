@@ -1,20 +1,21 @@
 // @flow
 
-import { ColorPalette } from '../../../../base/styles';
+import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 
-export const INDICATOR_COLOR = ColorPalette.lightGrey;
+export const INDICATOR_COLOR = BaseTheme.palette.indicatorColor;
 
-const WV_BACKGROUND = 'rgb(71, 71, 71)';
+const WV_BACKGROUND = BaseTheme.palette.ui14;
 
 export default {
 
     backDrop: {
-        backgroundColor: WV_BACKGROUND
+        backgroundColor: WV_BACKGROUND,
+        flex: 1
     },
 
     indicatorWrapper: {
         alignItems: 'center',
-        backgroundColor: ColorPalette.white,
+        backgroundColor: BaseTheme.palette.ui12,
         height: '100%',
         justifyContent: 'center'
     },

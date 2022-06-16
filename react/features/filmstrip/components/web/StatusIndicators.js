@@ -5,13 +5,16 @@ import React, { Component } from 'react';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getParticipantByIdOrUndefined, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isRemoteTrackMuted } from '../../../base/tracks';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import {
+    getVideoTrackByParticipant,
+    isLocalTrackMuted,
+    isRemoteTrackMuted
+} from '../../../base/tracks';
+import { getIndicatorsTooltipPosition } from '../../functions.web';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
-import VideoMutedIndicator from './VideoMutedIndicator';
 
 declare var interfaceConfig: Object;
 
@@ -19,11 +22,6 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of {@link StatusIndicators}.
  */
 type Props = {
-
-    /**
-     * The current layout of the filmstrip.
-     */
-    _currentLayout: string,
 
     /**
      * Indicates if the audio muted indicator should be visible or not.
@@ -41,20 +39,20 @@ type Props = {
     _showScreenShareIndicator: Boolean,
 
     /**
-     * Indicates if the video muted indicator should be visible or not.
-     */
-    _showVideoMutedIndicator: Boolean,
-
-    /**
      * The ID of the participant for which the status bar is rendered.
      */
-    participantID: String
+    participantID: String,
+
+    /**
+     * The type of thumbnail.
+     */
+    thumbnailType: string
 };
 
 /**
  * React {@code Component} for showing the status bar in a thumbnail.
  *
- * @extends Component
+ * @augments Component
  */
 class StatusIndicators extends Component<Props> {
     /**
@@ -65,32 +63,19 @@ class StatusIndicators extends Component<Props> {
      */
     render() {
         const {
-            _currentLayout,
             _showAudioMutedIndicator,
             _showModeratorIndicator,
             _showScreenShareIndicator,
-            _showVideoMutedIndicator
+            thumbnailType
         } = this.props;
-        let tooltipPosition;
-
-        switch (_currentLayout) {
-        case LAYOUTS.TILE_VIEW:
-            tooltipPosition = 'right';
-            break;
-        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            tooltipPosition = 'left';
-            break;
-        default:
-            tooltipPosition = 'top';
-        }
+        const tooltipPosition = getIndicatorsTooltipPosition(thumbnailType);
 
         return (
-            <div>
-                { _showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
-                { _showScreenShareIndicator ? <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> : null }
-                { _showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
-                { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
-            </div>
+            <>
+                { _showAudioMutedIndicator && <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> }
+                { _showModeratorIndicator && <ModeratorIndicator tooltipPosition = { tooltipPosition } />}
+                { _showScreenShareIndicator && <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> }
+            </>
         );
     }
 }
@@ -102,42 +87,37 @@ class StatusIndicators extends Component<Props> {
  * @param {Object} ownProps - The own props of the component.
  * @private
  * @returns {{
- *     _currentLayout: string,
+ *     _showAudioMutedIndicator: boolean,
  *     _showModeratorIndicator: boolean,
- *     _showVideoMutedIndicator: boolean
+ *     _showScreenShareIndicator: boolean
  * }}
 */
 function _mapStateToProps(state, ownProps) {
-    const { participantID } = ownProps;
+    const { participantID, audio, moderator, screenshare } = ownProps;
 
     // Only the local participant won't have id for the time when the conference is not yet joined.
     const participant = getParticipantByIdOrUndefined(state, participantID);
-
     const tracks = state['features/base/tracks'];
-    let isVideoMuted = true;
+
     let isAudioMuted = true;
     let isScreenSharing = false;
 
     if (participant?.local) {
-        isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
         isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
     } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
-        const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
+        const track = getVideoTrackByParticipant(tracks, participant);
 
         isScreenSharing = track?.videoType === 'desktop';
-        isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, participantID);
         isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);
     }
 
     const { disableModeratorIndicator } = state['features/base/config'];
 
     return {
-        _currentLayout: getCurrentLayout(state),
-        _showAudioMutedIndicator: isAudioMuted,
+        _showAudioMutedIndicator: isAudioMuted && audio,
         _showModeratorIndicator:
-            !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
-        _showScreenShareIndicator: isScreenSharing,
-        _showVideoMutedIndicator: isVideoMuted
+            !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR && moderator,
+        _showScreenShareIndicator: isScreenSharing && screenshare
     };
 }
 

@@ -2,15 +2,15 @@
 
 import React from 'react';
 
+import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
-import { IconMicDisabled } from '../../../base/icons';
+import { IconMicrophoneEmptySlash } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMuteButton, {
     _mapStateToProps,
     type Props
 } from '../AbstractMuteButton';
 
-import VideoMenuButton from './VideoMenuButton';
 
 /**
  * Implements a React {@link Component} which displays a button for audio muting
@@ -41,27 +41,24 @@ class MuteButton extends AbstractMuteButton {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioTrackMuted, participantID, t } = this.props;
-        const muteConfig = _audioTrackMuted ? {
-            translationKey: 'videothumbnail.muted',
-            muteClassName: 'mutelink disabled'
-        } : {
-            translationKey: 'videothumbnail.domute',
-            muteClassName: 'mutelink'
-        };
+        const { _audioTrackMuted, t } = this.props;
+
+        if (_audioTrackMuted) {
+            return null;
+        }
 
         return (
-            <VideoMenuButton
-                buttonText = { t(muteConfig.translationKey) }
-                displayClass = { muteConfig.muteClassName }
-                icon = { IconMicDisabled }
-                id = { `mutelink_${participantID}` }
+            <ContextMenuItem
+                accessibilityLabel = { t('dialog.muteParticipantButton') }
+                className = 'mutelink'
+                icon = { IconMicrophoneEmptySlash }
                 // eslint-disable-next-line react/jsx-handler-names
-                onClick = { this._handleClick } />
+                onClick = { this._handleClick }
+                text = { t('dialog.muteParticipantButton') } />
         );
     }
 
-    _handleClick: () => void
+    _handleClick: () => void;
 }
 
 export default translate(connect(_mapStateToProps)(MuteButton));

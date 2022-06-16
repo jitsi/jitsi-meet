@@ -7,13 +7,20 @@
 	border-radius: 3px;
 	padding: 16px;
 
+	&.with-gif {
+		width: 328px;
+
+		.reactions-row .toolbox-button:last-of-type {
+			top: 3px;
+
+			& .toolbox-icon.toggled {
+				background-color: #000000;
+			}
+		}
+	}
+
 	&.overflow {
-		width: auto;
-		padding-bottom: max(env(safe-area-inset-bottom, 0), 16px);
-		background-color: #141414;
-		box-shadow: none;
-		border-radius: 0;
-		position: relative;
+		width: 100%;
 
 		.toolbox-icon {
 			width: 48px;
@@ -32,6 +39,10 @@
 
 			.toolbox-button {
 				margin-right: 0;
+			}
+
+			.toolbox-button:last-of-type {
+				top: 0;
 			}
 		}
 	}
@@ -62,6 +73,7 @@
 		.toolbox-button {
 			margin-right: 8px;
 			touch-action: manipulation;
+			position: relative;
 		}
 
 		.toolbox-button:last-of-type {
@@ -92,6 +104,10 @@
 	}
 }
 
+.reactions-menu-container {
+	padding-bottom: 6px;
+}
+
 .reactions-animations-container {
 	position: absolute;
 	width: 20%;
@@ -100,8 +116,7 @@
 	height: 0;
 }
 
-.reactions-menu-popup-container,
-.reactions-menu-popup {
+.reactions-menu-popup-container {
 	display: inline-block;
 	position: relative;
 }

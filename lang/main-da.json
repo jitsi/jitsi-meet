@@ -1,4 +1,3 @@
- 
 {
     "addPeople": {
         "add": "Invitér",
@@ -21,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Høretelefoner",
+        "none": "Der er ikke nogen lydenheder tilgængelige",
         "phone": "Telefon",
-        "speaker": "Højtaler",
-        "none": "Der er ikke nogen lydenheder tilgængelige"
+        "speaker": "Højtaler"
     },
     "audioOnly": {
         "audioOnly": "Kun lyd"
@@ -49,23 +48,23 @@
     "chat": {
         "error": "Fejl: din besked \"{{originalText}}\" blev ikke sendt. Årsag: {{error}}",
         "fieldPlaceHolder": "Skriv din besked her",
-        "messagebox": "Indtast en besked",
         "messageTo": "Privat besked til {{recipient}}",
-        "noMessagesMessage": "Der er ikke nogen beskeder i mødet endnu. Skriv noget!",
+        "messagebox": "Indtast en besked",
         "nickname": {
             "popover": "Vælg dit navn/alias",
             "title": "Indtast et navn/alias for at deltage i chatten",
             "titleWithPolls": "Indtast et navn/alias for at deltage i chatten"
         },
+        "noMessagesMessage": "Der er ikke nogen beskeder i mødet endnu. Skriv noget!",
         "privateNotice": "Privat besked til {{recipient}}",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "Dig"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Installér plugin for Google Kalender og Office 365 integration",
         "buttonText": "Installér Chrome plugin",
-        "dontShowAgain": "Vis ikke dette igen"
+        "dontShowAgain": "Vis ikke dette igen",
+        "installExtensionText": "Installér plugin for Google Kalender og Office 365 integration"
     },
     "connectingOverlay": {
         "joiningRoom": "Forbinder dig til mødet…"
@@ -80,10 +79,10 @@
         "DISCONNECTED": "Frakoblet",
         "DISCONNECTING": "Frakobler",
         "ERROR": "Fejl",
-        "RECONNECTING": "Et netværksproblem opstod. Forbinder igen...",
         "GET_SESSION_ID_ERROR": "Hent session-id fejl: {{code}}",
         "GOT_SESSION_ID": "Henter session-ID… Udført",
-        "LOW_BANDWIDTH": "Video for {{displayName}} er slået fra for at spare båndbredde"
+        "LOW_BANDWIDTH": "Video for {{displayName}} er slået fra for at spare båndbredde",
+        "RECONNECTING": "Et netværksproblem opstod. Forbinder igen..."
     },
     "connectionindicator": {
         "address": "Adresse:",
@@ -146,7 +145,20 @@
         "selectADevice": "Vælg en enhed",
         "testAudio": "Afspil testlyd"
     },
+    "dialOut": {
+        "statusMessage": "er nu {{status}}"
+    },
     "dialog": {
+        "Back": "Tilbage",
+        "Cancel": "Annullér",
+        "IamHost": "Jeg er vært",
+        "Ok": "OK",
+        "Remove": "Fjern",
+        "Share": "Del",
+        "Submit": "Gem",
+        "WaitForHostMsg": "Mødet er ikke startet endnu. Hvis du er værten, log venligst ind. Ellers vent på at værten kommer",
+        "WaitingForHost": "Venter på vært …",
+        "Yes": "Ja",
         "accessibilityLabel": {
             "liveStreaming": "Livestream"
         },
@@ -154,7 +166,6 @@
         "alreadySharedVideoMsg": "En anden deltager deler allerede en video. Denne konference tillader kun en delt video af gangen.",
         "alreadySharedVideoTitle": "Det er kun muligt at dele én video ad gangen",
         "applicationWindow": "Applikationsvindue",
-        "Back": "Tilbage",
         "cameraConstraintFailedError": "Dit kamera lever ikke op til de nødvendige krav..",
         "cameraNotFoundError": "Kamera kunne ikke findes.",
         "cameraNotSendingData": "Vi kan ikke tilgå dit kamera. Kontrollér venligst om der er en anden applikation der gør brug af dit kamera, eller vælg et andet kamera og genindlæs siden.",
@@ -162,7 +173,6 @@
         "cameraPermissionDeniedError": "Du har ikke givet tilladelse til at bruge dit kamera. Du kan stadig deltage i mødet, men de andre deltagere vil ikke kunne se dig. Gør brug af kameraknappen i adressebaren for at give tilladelse.",
         "cameraUnknownError": "Kan ikke gøre brug af dit kamera, årsag ukendt.",
         "cameraUnsupportedResolutionError": "Dit kamera understøtter ikke den nødvendige opløsning.",
-        "Cancel": "Annullér",
         "close": "Luk",
         "conferenceDisconnectMsg": "Kontroller venligst din netværksforbindelse. Forbinder igen om {{seconds}} sekunder…",
         "conferenceDisconnectTitle": "Din forbindelse er blevet afbrudt.",
@@ -185,11 +195,10 @@
         "externalInstallationTitle": "Plugin skal bruges",
         "goToStore": "Gå til webstore",
         "gracefulShutdown": "Vores service er pt. under vedligeholdelse. Prøv igen senere.",
-        "IamHost": "Jeg er vært",
-        "incorrectRoomLockPassword": "",
         "incorrectPassword": "Forkert brugernavn eller adgangskode",
-        "inlineInstallationMsg": "Du skal installere vores skærmdelingsplugin.",
+        "incorrectRoomLockPassword": "",
         "inlineInstallExtension": "Installér nu",
+        "inlineInstallationMsg": "Du skal installere vores skærmdelingsplugin.",
         "internalError": "Der er opstået en fejl: {{error}}",
         "internalErrorTitle": "Intern fejl",
         "kickMessage": "Du er blevet afbrudt fra mødet!",
@@ -213,17 +222,16 @@
         "micNotSendingDataTitle": "Kunne ikke tilgå din mikrofon",
         "micPermissionDeniedError": "Du har ikke givet tilladelse til at bruge din mikrofon. Du kan stadig deltage i mødet men de andre deltagere kan ikke høre dig. Benyt kameraknappen i adressebaren for at give tilladelse.",
         "micUnknownError": "Kan ikke tilgå mikrofon af ukendt årsag.",
+        "muteEveryoneDialog": "Er du sikker på at du vil slå lyden fra for alle? Du kan ikke tænde lyden igen, men de kan selv tænde til enhver tid.",
         "muteEveryoneElseDialog": "Er du sikker på at du vil slå lyden fra for alle andre end denne deltager? Du kan ikke tænde lyden igen, men de kan selv tænde til enhver tid.",
         "muteEveryoneElseTitle": "Slå lyd fra for alle undtagen {{whom}}?",
-        "muteEveryoneDialog": "Er du sikker på at du vil slå lyden fra for alle? Du kan ikke tænde lyden igen, men de kan selv tænde til enhver tid.",
-        "muteEveryoneTitle": "Slå lyd fra for alle?",
         "muteEveryoneSelf": "Dig selv",
         "muteEveryoneStartMuted": "Lyden er slået fra for alle fra nu af",
+        "muteEveryoneTitle": "Slå lyd fra for alle?",
         "muteParticipantBody": "Du kan ikke tænde for deres mikrofon, men de kan selv tænde for deres mikrofon til enhver tid.",
         "muteParticipantButton": "Slå lyd fra",
         "muteParticipantDialog": "Er du sikker på at du vil slå lyden fra for denne deltager? Du kan ikke tænde igen, men de kan selv tænde til enhver tid.",
         "muteParticipantTitle": "Slå lyden fra for denne deltager?",
-        "Ok": "OK",
         "passwordLabel": "Adgangskode",
         "passwordNotSupported": "Det er ikke understøttet at sætte en adgangskode for mødet",
         "passwordNotSupportedTitle": "Adgangskode er ikke understøttet",
@@ -241,7 +249,6 @@
         "remoteControlShareScreenWarning": "Bemærk at hvis du vælger \"Tillad\" så vil du tillade fjernstyring!",
         "remoteControlStopMessage": "Fjernstyringssessionen er afsluttet!",
         "remoteControlTitle": "Fjernstyring",
-        "Remove": "Fjern",
         "removePassword": "Fjern adgangskode",
         "removeSharedVideoMsg": "Er du sikker på at du vil fjerne din delte video?",
         "removeSharedVideoTitle": "Fjern delt video",
@@ -259,8 +266,7 @@
         "sendPrivateMessageTitle": "Send privat?",
         "serviceUnavailable": "Service er ikke tilgængelig",
         "sessTerminated": "Møde afsluttet",
-        "Share": "Del",
-        "shareVideoLinkError": "Angiv venligst et gyldigt YouTube link.",
+        "shareVideoLinkError": "Angiv venligst et gyldigt link.",
         "shareVideoTitle": "Del en video",
         "shareYourScreen": "Del din skærm",
         "shareYourScreenDisabled": "Skærmdeling er ikke slået til.",
@@ -273,7 +279,6 @@
         "stopRecordingWarning": "Er du sikker på at du ønsker at stoppe optagelsen?",
         "stopStreamingWarning": "Er du sikker på at du ønsker at stoppe livestreaming?",
         "streamKey": "Livestream-nøgle",
-        "Submit": "Gem",
         "thankYou": "Tak for at du har benyttet {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Beklager, du kan ikke deltage i dette møde.",
@@ -281,14 +286,7 @@
         "transcribing": "Transskribering",
         "unlockRoom": "Fjern mødeadgangskode",
         "userPassword": "Brugeradgangskode",
-        "WaitForHostMsg": "Mødet <b>{{room}}</b> er ikke startet endnu. Hvis du er værten, log venligst ind. Ellers vent på at værten kommer",
-        "WaitForHostMsgWOk": "Mødet <b>{{room}}</b> er ikke startet endnu. Hvis du er værten, tryk venligst på OK for at logge ind. Ellers vent på at værten kommer.",
-        "WaitingForHost": "Venter på vært …",
-        "Yes": "Ja",
         "yourEntireScreen": "Hele din skærm"
-    },
-    "dialOut": {
-        "statusMessage": "er nu {{status}}"
     },
     "documentSharing": {
         "title": "Delt dokument"
@@ -328,6 +326,7 @@
         "inviteURLFirstPartGeneral": "Der er blevet inviteret til at deltage i et møde.",
         "inviteURLFirstPartPersonal": "{{name}} inviterer dig til at deltage i et møde.\n",
         "inviteURLSecondPart": "\nDeltag i mødet:\n{{url}}\n",
+        "label": "Mødeinformation",
         "liveStreamURL": "Livestream:",
         "moreNumbers": "Flere telefonnumre",
         "noNumbers": "Ring-ind nummer findes ikke.",
@@ -336,8 +335,13 @@
         "numbers": "Ring-ind numre",
         "password": "Adgangskode:",
         "title": "Del",
-        "tooltip": "Del link og ring-ind information for dette møde",
-        "label": "Mødeinformation"
+        "tooltip": "Del link og ring-ind information for dette møde"
+    },
+    "inlineDialogFailure": {
+        "msg": "Der er opstået en fejl.",
+        "retry": "Forsøg igen",
+        "support": "Support",
+        "supportMsg": "Hvis denne fejl bliver ved, kontakt da support"
     },
     "inviteDialog": {
         "alertText": "Kunne ikke invitere nogle af deltagerne.",
@@ -346,12 +350,6 @@
         "searchPeopleOnlyPlaceholder": "Søg efter deltagere",
         "searchPlaceholder": "Deltager eller telefonnummer",
         "send": "Send"
-    },
-    "inlineDialogFailure": {
-        "msg": "Der er opstået en fejl.",
-        "retry": "Forsøg igen",
-        "support": "Support",
-        "supportMsg": "Hvis denne fejl bliver ved, kontakt da support"
     },
     "keyboardShortcuts": {
         "focusLocal": "Sæt fokus din video",
@@ -392,10 +390,10 @@
         "onBy": "{{name}} startede livestreaming",
         "pending": "Starter livestream…",
         "serviceName": "Livestreaming-service",
-        "signedInAs": "Du er pt. logget ind som:",
         "signIn": "Log ind med Google",
         "signInCTA": "Log ind eller indtast din livestream-nøgle fra YouTube.",
         "signOut": "Log ud",
+        "signedInAs": "Du er pt. logget ind som:",
         "start": "Start en livestream",
         "streamIdHelp": "Hvad er dette?",
         "unavailableTitle": "Livestreaming er ikke tilgængelig"
@@ -447,24 +445,24 @@
         "me": "Mig",
         "moderator": "Moderatorrettigheder givet",
         "muted": "Du har startet samtalen med lyden slået fra.",
-        "mutedTitle": "Din lyd er slået fra",
-        "mutedRemotelyTitle": "Din lyd er slået fra af {{participantDisplayName}}",
         "mutedRemotelyDescription": "",
+        "mutedRemotelyTitle": "Din lyd er slået fra af {{participantDisplayName}}",
+        "mutedTitle": "Din lyd er slået fra",
+        "newDeviceAction": "Benyt",
+        "newDeviceAudioTitle": "Ny lydenhed fundet",
+        "newDeviceCameraTitle": "Nyt kamera fundet",
         "passwordRemovedRemotely": "",
         "passwordSetRemotely": "",
         "raisedHand": "{{name}} ønsker at få ordet.",
         "somebody": "Nogen",
-        "startSilentTitle": "",
         "startSilentDescription": "",
+        "startSilentTitle": "",
         "suboptimalExperienceDescription": "Hmmm... vi er bange for at din oplevelse med {{appName}} ikke vil være optimal. Vi arbejder på at forbedre dette, men indtil da forsøg venligst at bruge en af følgende <a href='{{recommendedBrowserPageLink}}' target='_blank'>fuldt understøttede internet browsere</a>.",
         "suboptimalExperienceTitle": "Browser-advarsel",
-        "unmute": "",
-        "newDeviceCameraTitle": "Nyt kamera fundet",
-        "newDeviceAudioTitle": "Ny lydenhed fundet",
-        "newDeviceAction": "Benyt"
+        "unmute": ""
     },
-    "passwordSetRemotely": "Sat af et andet medlem",
     "passwordDigitsOnly": "Op til {{number}} tal",
+    "passwordSetRemotely": "Sat af et andet medlem",
     "poweredby": "Powered by",
     "presenceStatus": {
         "busy": "Optaget",
@@ -582,7 +580,9 @@
         "title": "Dit møde blev afbrudt da din computer gik i dvale."
     },
     "toolbar": {
+        "Settings": "Indstillinger",
         "accessibilityLabel": {
+            "Settings": "Slå indstillinger fra/til",
             "audioOnly": "Tænd/sluk lyd",
             "audioRoute": "Vælg lydenhed",
             "callQuality": "Indstil opkaldskvalitet",
@@ -609,17 +609,16 @@
             "raiseHand": "Slå løft hånden fra/til",
             "recording": "Slå optagelse til/fra",
             "remoteMute": "Slå lyd fra for deltager",
-            "Settings": "Slå indstillinger fra/til",
-            "sharedvideo": "Slå YouTube-videodeling fra/til",
             "shareRoom": "Invitér nogen",
             "shareYourScreen": "Slå skærmdeling fra/til",
+            "sharedvideo": "Slå videodeling fra/til",
             "shortcuts": "Slå genveje fra/til",
             "show": "Vis",
             "speakerStats": "Slå højtalerinfo fra/til",
             "tileView": "Slå gittervisning fra/til",
             "toggleCamera": "Slå kamera fra/til",
-            "videomute": "Slå video fra/til",
-            "videoblur": "Slå baggrundssløring fra/til"
+            "videoblur": "Slå baggrundssløring fra/til",
+            "videomute": "Slå video fra/til"
         },
         "addPeople": "Tilføj deltager til mødet",
         "audioOnlyOff": "Slå kun-lyd møder fra",
@@ -647,35 +646,34 @@
         "moreOptions": "Flere indstillinger",
         "mute": "Slå lyd fra/til",
         "muteEveryone": "Slå lyd fra for alle",
-        "noAudioSignalTitle": "Der kommer ingen input fra din mikrofon",
         "noAudioSignalDesc": "Hvis du ikke med vilje har slået den fra under systemindstillinger eller hardware, kan du overveje at skifte enhed.",
         "noAudioSignalDescSuggestion": "Hvis du ikke med vilje har slået den fra under systemindstillinger eller hardware, skal du overveje at skifte til den foreslåede enhed.",
         "noAudioSignalDialInDesc": "Du kan også ringe op ved hjælp af:",
         "noAudioSignalDialInLinkDesc": "Opkaldsnumre",
-        "noisyAudioInputTitle": "Det lyder som om din mikrofon laver støj",
+        "noAudioSignalTitle": "Der kommer ingen input fra din mikrofon",
         "noisyAudioInputDesc": "Det lyder som om din mikrofon laver støj. Overvej venligst at slå lyden fra eller skifte enhed.",
+        "noisyAudioInputTitle": "Det lyder som om din mikrofon laver støj",
         "openChat": "Åbn chat",
         "pip": "Benyt Billede-i-billede",
         "privateMessage": "Send privat besked",
         "profile": "Rediger profil",
         "raiseHand": "Ræk hånden op / Tag hånden ned",
         "raiseYourHand": "Ræk hånden op",
-        "Settings": "Indstillinger",
-        "sharedvideo": "Del en YouTube-video",
         "shareRoom": "Invitér deltagere",
+        "sharedvideo": "Del en video",
         "shortcuts": "Vis genveje",
         "speakerStats": "Deltagerstatistik",
         "startScreenSharing": "Start skærmdeling",
         "startSubtitles": "Vis undertekster",
+        "startvideoblur": "Slå baggrundssløring til",
         "stopScreenSharing": "Stop skærmdeling",
+        "stopSharedVideo": "Stop video",
         "stopSubtitles": "Skjul undertekster",
-        "stopSharedVideo": "Stop YouTube-video",
+        "stopvideoblur": "Slå baggrundssløring fra",
         "talkWhileMutedPopup": "Forsøger du at sige noget? Din lyd er slået fra.",
         "tileViewToggle": "Slå gittervisning fra/til",
         "toggleCamera": "Slå kamera fra/til",
-        "videomute": "Start/stop kamera",
-        "startvideoblur": "Slå baggrundssløring til",
-        "stopvideoblur": "Slå baggrundssløring fra"
+        "videomute": "Start/stop kamera"
     },
     "transcribing": {
         "ccButtonTooltip": "Start/stop undertekster",
@@ -751,13 +749,14 @@
             "audio": "Lyd",
             "video": "Video"
         },
+        "betingelser": "Betingelser",
         "calendar": "Kalender",
         "connectCalendarButton": "Forbind til din kalender",
         "connectCalendarText": "",
         "enterRoomTitle": "Start et nyt møde",
         "go": "Start",
-        "join": "Deltag",
         "info": "Info",
+        "join": "Deltag",
         "privacy": "Privacy",
         "recentList": "Seneste",
         "recentListDelete": "Slet",
@@ -766,7 +765,6 @@
         "roomname": "Indtast mødenavn",
         "roomnameHint": "Indtast mødenavnet på det møde, du vil deltage i.",
         "sendFeedback": "Giv tilbagemelding",
-        "betingelser": "Betingelser",
         "title": "Skærmbesøg & videomøder"
     }
 }

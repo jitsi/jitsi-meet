@@ -49,7 +49,7 @@ type Props = {
 /**
  * React component for displaying a preview of a DesktopCapturerSource.
  *
- * @extends Component
+ * @augments Component
  */
 class DesktopSourcePreview extends Component<Props> {
     /**

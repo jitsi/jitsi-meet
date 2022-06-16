@@ -12,8 +12,6 @@ import { BaseIndicator } from '../../../base/react';
  */
 export default function ScreenShareIndicator() {
     return (
-        <BaseIndicator
-            highlight = { false }
-            icon = { IconShareDesktop } />
+        <BaseIndicator icon = { IconShareDesktop } />
     );
 }

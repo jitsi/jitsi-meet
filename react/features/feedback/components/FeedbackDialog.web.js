@@ -25,8 +25,6 @@ const scoreAnimationClass
 /**
  * The scores to display for selecting. The score is the index in the array and
  * the value of the index is a translation key used for display in the dialog.
- *
- * @types {string[]}
  */
 const SCORES = [
     'feedback.veryBad',
@@ -109,7 +107,7 @@ type State = {
  * conference quality, write a message describing the experience, and submit
  * the feedback.
  *
- * @extends Component
+ * @augments Component
  */
 class FeedbackDialog extends Component<Props, State> {
     /**

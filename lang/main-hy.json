@@ -124,7 +124,20 @@
         "selectADevice": "",
         "testAudio": ""
     },
+    "dialOut": {
+        "statusMessage": ""
+    },
     "dialog": {
+        "Back": "Վերադառնալ",
+        "Cancel": "Չեղարկել",
+        "IamHost": "Ես եմ ընդունողը",
+        "Ok": "Ok",
+        "Remove": "Հեռացնել",
+        "Share": "Տարածել",
+        "Submit": "Ներմուծել",
+        "WaitForHostMsg": "",
+        "WaitingForHost": "Սպասում է հյուրընկալողի …",
+        "Yes": "Այո",
         "accessibilityLabel": {
             "liveStreaming": "Ուղիղ Հեռարձակում"
         },
@@ -132,7 +145,6 @@
         "alreadySharedVideoMsg": "",
         "alreadySharedVideoTitle": "",
         "applicationWindow": "",
-        "Back": "Վերադառնալ",
         "cameraConstraintFailedError": "Ձեր տեսախցիկը չի համապատասխանում որոշ խոչընդոտների",
         "cameraNotFoundError": "Տեսախցիկ չի գտնվել",
         "cameraNotSendingData": "",
@@ -140,7 +152,6 @@
         "cameraPermissionDeniedError": "Ձեզ թույլտվրված չէ օգտագործել Ձեր տեսախցիկը: Դուք կարող եք միացած մնալ համաժողովին, սակայն մյուսները չեն տեսնի ձեզ. Օգտագործեք տեսախցիկի կոճակը խնդիրը կարգավորելու համար",
         "cameraUnknownError": "Չի կարող օգտագործվել տեսախցիկը անհայտ պատճառով",
         "cameraUnsupportedResolutionError": "Ձեր տեսախցիկը չունի պահանջվող վիդեո-չափ",
-        "Cancel": "Չեղարկել",
         "close": "",
         "conferenceDisconnectMsg": "Ստուգեք ցանցային միացումը։ Վերամիացում՝ {{seconds}} վ…",
         "conferenceDisconnectTitle": "Ձեր կապը անջատվել է",
@@ -163,11 +174,10 @@
         "externalInstallationTitle": "Ընդլայնում է պահանջվում:",
         "goToStore": "Գնալ դեպի վեբ խանութ",
         "gracefulShutdown": "Մեր ծառայությունը ներկայումս չի գործում տեխնիկական սպասարկման համար: Խնդրում ենք փորձեք ավելի ուշ:",
-        "IamHost": "Ես եմ ընդունողը",
-        "incorrectRoomLockPassword": "",
         "incorrectPassword": "Օգտագործողի անվանման կամ գաղտնաբառի սխալ",
-        "inlineInstallationMsg": "Չհաջողվեց տեղադրել էկրանի ցուցադրման ընդլայնումը",
+        "incorrectRoomLockPassword": "",
         "inlineInstallExtension": "",
+        "inlineInstallationMsg": "Չհաջողվեց տեղադրել էկրանի ցուցադրման ընդլայնումը",
         "internalError": "Օհո՜։ Ինչ֊որ սխալ կա։ {{error}}",
         "internalErrorTitle": "Ներքին սխալ ",
         "kickMessage": "",
@@ -195,7 +205,6 @@
         "muteParticipantButton": "Անջատել ձայնը",
         "muteParticipantDialog": "",
         "muteParticipantTitle": "Անջատե՞լ այս մասնակցի ձայնը:",
-        "Ok": "Ok",
         "passwordLabel": "",
         "passwordNotSupported": "Հանդիպման գաղտնաբառի նծշանակումը չի սպասարկվում",
         "passwordNotSupportedTitle": "",
@@ -213,7 +222,6 @@
         "remoteControlShareScreenWarning": "",
         "remoteControlStopMessage": "հեռահար կառավարման ընթացքը ավարտվեց",
         "remoteControlTitle": "",
-        "Remove": "Հեռացնել",
         "removePassword": "",
         "removeSharedVideoMsg": "Համոզված ե՞ք, որ ցանկանում եք հեռացնել տարածած տեսանյութը:",
         "removeSharedVideoTitle": "Հեռացնել տարածված տեսանյութը",
@@ -227,7 +235,6 @@
         "screenSharingPermissionDeniedError": "",
         "serviceUnavailable": "Ծառայությունը անհասանելի է",
         "sessTerminated": "",
-        "Share": "Տարածել",
         "shareVideoLinkError": "Խնդրում ենք ներկայացնել ճիշտ Youtube հղում:",
         "shareVideoTitle": "Տարածել տեսանյութը",
         "shareYourScreen": "",
@@ -241,7 +248,6 @@
         "stopRecordingWarning": "Վստա՞հ եք որ ցանկանում եք կանգնացնել ձայնագրումը",
         "stopStreamingWarning": "Վստա՞հ եք որ ցանկանում եք կանգնացնել ուղիղ հեռարձակումը:",
         "streamKey": "",
-        "Submit": "Ներմուծել",
         "thankYou": "Շնորհակալություն {{appName}} -ից օգտվելու համար:",
         "token": "սիմվոլ",
         "tokenAuthFailed": "Ներողություն,Դուք ընդունված չեք այս զանգին միանալու համար",
@@ -249,14 +255,7 @@
         "transcribing": "",
         "unlockRoom": "",
         "userPassword": "օգտագործողի գաղտնաբառը",
-        "WaitForHostMsg": "",
-        "WaitForHostMsgWOk": "",
-        "WaitingForHost": "Սպասում է հյուրընկալողի …",
-        "Yes": "Այո",
         "yourEntireScreen": ""
-    },
-    "dialOut": {
-        "statusMessage": ""
     },
     "feedback": {
         "average": "",
@@ -293,6 +292,7 @@
         "inviteURLFirstPartGeneral": "",
         "inviteURLFirstPartPersonal": "",
         "inviteURLSecondPart": "",
+        "label": "",
         "liveStreamURL": "Ուղիղ Հեռարձակում",
         "moreNumbers": "",
         "noNumbers": "",
@@ -301,8 +301,13 @@
         "numbers": "",
         "password": "",
         "title": "Տարածել",
-        "tooltip": "",
-        "label": ""
+        "tooltip": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
     },
     "inviteDialog": {
         "alertText": "",
@@ -311,12 +316,6 @@
         "searchPeopleOnlyPlaceholder": "",
         "searchPlaceholder": "",
         "send": ""
-    },
-    "inlineDialogFailure": {
-        "msg": "",
-        "retry": "",
-        "support": "",
-        "supportMsg": ""
     },
     "keyboardShortcuts": {
         "focusLocal": "Առաջ բերել Ձեռ վիդեոն",
@@ -354,10 +353,10 @@
         "on": "Ուղիղ Հեռարձակում",
         "pending": "Սկսում ենք Ուղիղ Հեռարձակումը",
         "serviceName": "",
-        "signedInAs": "",
         "signIn": "",
         "signInCTA": "",
         "signOut": "",
+        "signedInAs": "",
         "start": "Կանգնացնել ուղիղ հեռարձակումը:",
         "streamIdHelp": "",
         "unavailableTitle": ""
@@ -409,24 +408,24 @@
         "me": "Ես",
         "moderator": "Կարգավորիչ իրավունքները տրամադրված են:",
         "muted": "Դուք խոսակցությունը սկսեցել եք անջատած ձայնով",
-        "mutedTitle": "Ձեր ձայնը անջատված է",
-        "mutedRemotelyTitle": "",
         "mutedRemotelyDescription": "",
+        "mutedRemotelyTitle": "",
+        "mutedTitle": "Ձեր ձայնը անջատված է",
+        "newDeviceAction": "",
+        "newDeviceAudioTitle": "",
+        "newDeviceCameraTitle": "",
         "passwordRemovedRemotely": "",
         "passwordSetRemotely": "",
         "raisedHand": "",
         "somebody": "Ինչ֊որ մեկը",
-        "startSilentTitle": "",
         "startSilentDescription": "",
+        "startSilentTitle": "",
         "suboptimalExperienceDescription": "",
         "suboptimalExperienceTitle": "Բրաուզերի նախազգուշացում",
-        "unmute": "",
-        "newDeviceCameraTitle": "",
-        "newDeviceAudioTitle": "",
-        "newDeviceAction": ""
+        "unmute": ""
     },
-    "passwordSetRemotely": "Սահմանվել է մեկ այլ մասնակցի կողմից",
     "passwordDigitsOnly": "",
+    "passwordSetRemotely": "Սահմանվել է մեկ այլ մասնակցի կողմից",
     "poweredby": "Հիմնված է",
     "presenceStatus": {
         "busy": "",
@@ -537,7 +536,9 @@
         "title": "Ձեր վիդեո զանգը ընդհատվել էր, քանի որ այս համակարգիչը անցել էր քնի(Sleep) ռեժիմին"
     },
     "toolbar": {
+        "Settings": "Կարգավորումներ",
         "accessibilityLabel": {
+            "Settings": "",
             "audioOnly": "",
             "audioRoute": "",
             "callQuality": "",
@@ -559,17 +560,16 @@
             "raiseHand": "",
             "recording": "",
             "remoteMute": "",
-            "Settings": "",
-            "sharedvideo": "",
             "shareRoom": "",
             "shareYourScreen": "",
+            "sharedvideo": "",
             "shortcuts": "",
             "show": "",
             "speakerStats": "",
             "tileView": "",
             "toggleCamera": "",
-            "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "videomute": ""
         },
         "addPeople": "Ավելացնել մասնակից",
         "audioOnlyOff": "",
@@ -598,22 +598,21 @@
         "profile": "Փոփոխել տվյալները",
         "raiseHand": "Բարձրացնել/իջեցնել ձեռքը",
         "raiseYourHand": "",
-        "Settings": "Կարգավորումներ",
-        "sharedvideo": "Տարածել Youtube Video-ն",
         "shareRoom": "",
+        "sharedvideo": "Տարածել Youtube Video-ն",
         "shortcuts": "Տեսնել արագ գործողությունների կոճակները(shortcuts)",
         "speakerStats": "Հռետորի վիճակագրությունը",
         "startScreenSharing": "",
         "startSubtitles": "",
+        "startvideoblur": "",
         "stopScreenSharing": "",
-        "stopSubtitles": "",
         "stopSharedVideo": "Կանգնեցնել Youtube Video-ն",
+        "stopSubtitles": "",
+        "stopvideoblur": "",
         "talkWhileMutedPopup": "Փորձում եք խոսե՞լ: Ձեր ձայնը անջատված է:",
         "tileViewToggle": "",
         "toggleCamera": "",
-        "videomute": "Միացնել/Անջատել տեսախցիկը",
-        "startvideoblur": "",
-        "stopvideoblur": ""
+        "videomute": "Միացնել/Անջատել տեսախցիկը"
     },
     "transcribing": {
         "ccButtonTooltip": "",
@@ -690,8 +689,8 @@
         "connectCalendarText": "",
         "enterRoomTitle": "",
         "go": "ՄՈՒՏՔ",
-        "join": "Միանալ",
         "info": "",
+        "join": "Միանալ",
         "privacy": "Գաղտնիություն",
         "recentList": "",
         "recentListDelete": "",

@@ -14,7 +14,7 @@ import AbstractStopRecordingDialog, {
  * React Component for getting confirmation to stop a file recording session in
  * progress.
  *
- * @extends Component
+ * @augments Component
  */
 class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
 
@@ -26,12 +26,12 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
     render() {
         return (
             <ConfirmDialog
-                contentKey = 'dialog.stopRecordingWarning'
+                descriptionKey = 'dialog.stopRecordingWarning'
                 onSubmit = { this._onSubmit } />
         );
     }
 
-    _onSubmit: () => boolean
+    _onSubmit: () => boolean;
 }
 
 export default translate(connect(_mapStateToProps)(StopRecordingDialog));

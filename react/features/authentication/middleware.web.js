@@ -16,13 +16,13 @@ import { MiddlewareRegistry } from '../base/redux';
 import {
     CANCEL_LOGIN,
     STOP_WAIT_FOR_OWNER,
+    UPGRADE_ROLE_FINISHED,
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
     hideLoginDialog,
     openWaitForOwnerDialog,
-    stopWaitForOwner,
-    waitForOwner
+    stopWaitForOwner
 } from './actions.web';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
@@ -39,16 +39,23 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
 
     case CANCEL_LOGIN: {
+        const { dispatch, getState } = store;
+
         if (!isDialogOpen(store, WaitForOwnerDialog)) {
             if (_isWaitingForOwner(store)) {
-                store.dispatch(openWaitForOwnerDialog());
+                dispatch(openWaitForOwnerDialog());
 
                 return next(action);
             }
 
-            store.dispatch(hideLoginDialog());
+            dispatch(hideLoginDialog());
 
-            store.dispatch(maybeRedirectToWelcomePage());
+            const { authRequired, conference } = getState()['features/base/conference'];
+
+            // Only end the meeting if we are not already inside and trying to upgrade.
+            if (authRequired && !conference) {
+                dispatch(maybeRedirectToWelcomePage());
+            }
         }
         break;
     }
@@ -64,7 +71,11 @@ MiddlewareRegistry.register(store => next => action => {
             recoverable = error.recoverable;
         }
         if (recoverable) {
-            store.dispatch(waitForOwner());
+            // we haven't migrated all the code from AuthHandler, and we need for now conference.js to trigger
+            // the dialog to pass all required parameters to WaitForOwnerDialog
+            // keep it commented, so we do not trigger sending iqs to jicofo twice
+            // and showing the broken dialog with no handler
+            // store.dispatch(waitForOwner());
         } else {
             store.dispatch(stopWaitForOwner());
         }
@@ -72,9 +83,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_JOINED:
-        if (_isWaitingForOwner(store)) {
-            store.dispatch(stopWaitForOwner());
-        }
+        store.dispatch(stopWaitForOwner());
         store.dispatch(hideLoginDialog());
         break;
 
@@ -90,6 +99,15 @@ MiddlewareRegistry.register(store => next => action => {
         _clearExistingWaitForOwnerTimeout(store);
         store.dispatch(hideDialog(WaitForOwnerDialog));
         break;
+
+    case UPGRADE_ROLE_FINISHED: {
+        const { error, progress } = action;
+
+        if (!error && progress === 1) {
+            store.dispatch(hideLoginDialog());
+        }
+        break;
+    }
 
     case WAIT_FOR_OWNER: {
         _clearExistingWaitForOwnerTimeout(store);

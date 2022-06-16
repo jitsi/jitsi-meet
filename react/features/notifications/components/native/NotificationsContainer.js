@@ -34,7 +34,7 @@ type Props = {
  * automatic dismissmal after a notification is shown for a defined timeout
  * period.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class NotificationsContainer extends Component<Props> {
 
@@ -104,7 +104,7 @@ class NotificationsContainer extends Component<Props> {
             if (notification !== previousNotification) {
                 this._clearNotificationDismissTimeout();
 
-                if (notification && notification.timeout && notification.props.isDismissAllowed !== false) {
+                if (notification && notification.timeout) {
                     const {
                         timeout,
                         uid

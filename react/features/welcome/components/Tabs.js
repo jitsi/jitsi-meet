@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import Tab from './Tab';
 
 /**
- * The type of the React {@code Component} props of {@link Tabs}
+ * The type of the React {@code Component} props of {@link Tabs}.
  */
 type Props = {
 

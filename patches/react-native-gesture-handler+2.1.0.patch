@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-gesture-handler/android/build.gradle b/node_modules/react-native-gesture-handler/android/build.gradle
+index 8afc3d5..4b1f721 100644
+--- a/node_modules/react-native-gesture-handler/android/build.gradle
++++ b/node_modules/react-native-gesture-handler/android/build.gradle
+@@ -26,7 +26,7 @@ def shouldUseCommonInterfaceFromReanimated() {
+         def json = new JsonSlurper().parseText(inputFile.text)
+         def reanimatedVersion = json.version as String
+         def (major, minor, patch) = reanimatedVersion.tokenize('.')
+-        return Integer.parseInt(minor) >= 3
++        return Integer.parseInt(major) >= 2 && Integer.parseInt(minor) >= 3
+     } else {
+         return false
+     }

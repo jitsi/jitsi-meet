@@ -12,10 +12,28 @@
             margin: 8px;
         }
 
+        .lobby-chat-container {
+            background-color: $chatBackgroundColor;
+            width: 100%;
+            height: 314px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin-bottom: 16px;
+            border-radius: 5px;
+            .lobby-chat-header {
+                display: none;
+            }
+        }
+
         .joining-message {
             color: white;
             margin: 24px auto;
             text-align: center;
+        }
+
+        .open-chat-button {
+            display: none;
         }
     }
 }
@@ -61,6 +79,10 @@
     &.toolbox-visible {
         // Same as toolbox subject position
         top: 120px;
+    }
+
+    &.avoid-chat {
+        left: 315px;
     }
 
     .title {
@@ -140,6 +162,45 @@
 
         .details {
             margin: 0;
+        }
+    }
+}
+
+@media (max-width: 1000px) {
+    .lobby-screen-content {
+
+        .lobby-chat-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 255;
+
+            &.hidden {
+                display: none;
+            }
+
+            .lobby-chat-header {
+                display: flex;
+                flex-direction: row;
+                padding-top: 20px;
+                padding-left: 16px;
+                padding-right: 16px;
+
+                .title {
+                    flex: 1;
+                    color: #fff;
+                    font-size: 20px;
+                    font-weight: 600;
+                    line-height: 28px;
+                    letter-spacing: -1.2%;
+                }
+            }
+        }
+
+        .open-chat-button {
+            display: block;
         }
     }
 }

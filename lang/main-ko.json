@@ -35,9 +35,9 @@
     "audioDevices": {
         "bluetooth": "블루투스",
         "headphones": "헤드폰",
+        "none": "사용 가능한 오디오 장치가 없습니다.",
         "phone": "폰",
-        "speaker": "스피커",
-        "none": "사용 가능한 오디오 장치가 없습니다."
+        "speaker": "스피커"
     },
     "audioOnly": {
         "audioOnly": "음성 전용"
@@ -64,23 +64,23 @@
         "enter": "채팅방 입장",
         "error": "오류 : 메시지가 전송되지 않았습니다. 이유 : {{error}}",
         "fieldPlaceHolder": "메세지를 여기에 입력하세요",
-        "messagebox": "메시지 입력",
         "messageTo": "{{recipient}}에게 보내는 비공개 메시지",
-        "noMessagesMessage": "아직 회의에 메시지가 없습니다. 여기서 대화를 시작하세요!",
+        "messagebox": "메시지 입력",
         "nickname": {
             "popover": "닉네임을 선택하세요",
             "title": "채팅에서 사용할 닉네임을 입력하세요",
             "titleWithPolls": "채팅에서 사용할 닉네임을 입력하세요"
         },
+        "noMessagesMessage": "아직 회의에 메시지가 없습니다. 여기서 대화를 시작하세요!",
         "privateNotice": "{{recipient}}에게 보내는 비공개 메시지",
         "title": "채팅",
         "titleWithPolls": "채팅",
         "you": "당신"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Google 캘린더 및 Office 365 확장 프로그램을 설치합니다.",
         "buttonText": "Chrome 확장 프로그램을 설치합니다.",
-        "dontShowAgain": "다시 보지 않기"
+        "dontShowAgain": "다시 보지 않기",
+        "installExtensionText": "Google 캘린더 및 Office 365 확장 프로그램을 설치합니다."
     },
     "connectingOverlay": {
         "joiningRoom": "회의에 연결중 ..."
@@ -95,10 +95,10 @@
         "DISCONNECTED": "연결 끊김",
         "DISCONNECTING": "연결 종료중",
         "ERROR": "에러",
-        "RECONNECTING": "네트워크 문제가 발생했습니다. 다시 연결중...",
         "GET_SESSION_ID_ERROR": "세션 ID 가져오기 오류 : {{code}}",
         "GOT_SESSION_ID": "세션 ID를 가져오는중 ... 완료",
-        "LOW_BANDWIDTH": "대역폭을 절약하기 위해 {{displayName}}의 동영상이 중지되었습니다."
+        "LOW_BANDWIDTH": "대역폭을 절약하기 위해 {{displayName}}의 동영상이 중지되었습니다.",
+        "RECONNECTING": "네트워크 문제가 발생했습니다. 다시 연결중..."
     },
     "connectionindicator": {
         "address": "주소:",
@@ -157,7 +157,20 @@
         "selectADevice": "디바이스 선택",
         "testAudio": "테스트 사운드 재생"
     },
+    "dialOut": {
+        "statusMessage": "지금은 {{status}}입니다"
+    },
     "dialog": {
+        "Back": "뒤로가기",
+        "Cancel": "취소",
+        "IamHost": "내가 호스트",
+        "Ok": "확인",
+        "Remove": "제거",
+        "Share": "공유",
+        "Submit": "제출",
+        "WaitForHostMsg": "회의가 시작되지 않았습니다. 호스트인 경우 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",
+        "WaitingForHost": "호스트를 기다리는 중입니다…",
+        "Yes": "예",
         "accessibilityLabel": {
             "liveStreaming": "실시간 스트리밍:"
         },
@@ -166,7 +179,6 @@
         "alreadySharedVideoMsg": "다른 참가자가 이미 비디오를 공유하고 있습니다. 이 회의는 한 번에 하나의 공유 비디오만 허용합니다.",
         "alreadySharedVideoTitle": "한 번에 하나의 공유 비디오만 허용됩니다",
         "applicationWindow": "응용 프로그램 창",
-        "Back": "뒤로가기",
         "cameraConstraintFailedError": "카메라가 필요한 제약 조건 중 일부를 만족하지 못합니다",
         "cameraNotFoundError": "카메라를 찾을 수 없습니다",
         "cameraNotSendingData": "카메라에 액세스 할 수 없습니다. 다른 응용 프로그램이 장치를 사용하고 있는지 확인한 후 설정 메뉴에서 다른 장치를 선택하거나 응용 프로그램을 다시 로드하십시오.",
@@ -174,7 +186,6 @@
         "cameraPermissionDeniedError": "카메라 사용 권한을 부여하지 않았습니다. 회의에 계속 참여할 수 있지만 다른 참석자는 귀하를 볼 수 없습니다. 검색 주소창의 카메라 버튼을 사용하여 문제를 해결하십시오.",
         "cameraUnknownError": "알 수 없는 이유로 카메라를 사용할 수 없습니다",
         "cameraUnsupportedResolutionError": "카메라가 필요한 비디오 해상도를 지원하지 않습니다",
-        "Cancel": "취소",
         "close": "닫기",
         "conferenceDisconnectMsg": "네트워크 연결을 확인하고 있습니다. {{seconds}} 초 내에 다시 연결중입니다…",
         "conferenceDisconnectTitle": "연결이 끊어졌습니다.",
@@ -197,11 +208,10 @@
         "externalInstallationTitle": "확장 프로그램이 필요합니다",
         "goToStore": "웹 스토어로 이동",
         "gracefulShutdown": "서비스는 현재 유지 관리를 위해 중단되었습니다. 나중에 다시 시도 해주십시오.",
-        "IamHost": "내가 호스트",
-        "incorrectRoomLockPassword": "잘못된 비밀번호",
         "incorrectPassword": "잘못된 사용자 이름 또는 비밀번호",
-        "inlineInstallationMsg": "데스크톱 공유 확장 프로그램을 설치해야합니다",
+        "incorrectRoomLockPassword": "잘못된 비밀번호",
         "inlineInstallExtension": "지금 설치",
+        "inlineInstallationMsg": "데스크톱 공유 확장 프로그램을 설치해야합니다",
         "internalError": "죄송합니다. 뭔가 잘못 됐습니다. 다음 오류가 발생했습니다: {{error}}",
         "internalErrorTitle": "내부 에러",
         "kickMessage": "자세한 내용은 {{participantDisplayName}}에 문의하세요.",
@@ -225,24 +235,23 @@
         "micNotSendingDataTitle": "시스템 설정에 의해 마이크가 음소거되었습니다.",
         "micPermissionDeniedError": "마이크를 사용할 수있는 권한을 부여하지 않았습니다. 회의에 계속 참여할 수는 있지만 다른 사람들은 듣지 않습니다. 검색 주소창의 카메라 버튼을 사용하여 문제를 해결하십시오.",
         "micUnknownError": "알 수 없는 이유로 마이크를 사용할 수 없습니다",
+        "muteEveryoneDialog": "모든 참가자를 음소거 하시겠습니까? 당신이 다른 사람들의 음소거를 해제 할 수는 없지만 언제든지 다른 사람들은 스스로 음소거를 해제할 수 있습니다.",
         "muteEveryoneElseDialog": "당신이 다른 사람들의 음소거를 해제 할 수는 없지만 언제든지 다른 사람들은 스스로 음소거를 해제할 수 있습니다.",
         "muteEveryoneElseTitle": "{{whom}} 를 제외하고 전부 음소거 하시겠습니까?",
-        "muteEveryoneDialog": "모든 참가자를 음소거 하시겠습니까? 당신이 다른 사람들의 음소거를 해제 할 수는 없지만 언제든지 다른 사람들은 스스로 음소거를 해제할 수 있습니다.",
-        "muteEveryoneTitle": "모두 음소거 하시겠습니까?",
         "muteEveryoneElsesVideoDialog": "당신이 다른 사람들의 카메라를 다시 켤 수는 없지만 언제든지 다른 사람들은 스스로 카메라를 켤 수 있습니다.",
         "muteEveryoneElsesVideoTitle": "{{whom}} 를 제외하고 전부 카메라를 비활성화 하시겠습니까?",
+        "muteEveryoneStartMuted": "지금부터 모두 음소거 됩니다.",
+        "muteEveryoneTitle": "모두 음소거 하시겠습니까?",
         "muteEveryonesVideoDialog": "모든 참가자의 카메라를 비활성화 하시겠습니까? 당신이 다른 사람들의 카메라를 다시 켤 수는 없지만 언제든지 다른 사람들은 스스로 카메라를 켤 수 있습니다.",
         "muteEveryonesVideoDialogOk": "비활성화",
         "muteEveryonesVideoTitle": "모든 카메라를 비활성화 하시겠습니까?",
-        "muteEveryoneStartMuted": "지금부터 모두 음소거 됩니다.",
         "muteParticipantBody": "당신이 다른 사람들의 음소거를 해제 할 수는 없지만 언제든지 다른 사람들은 스스로 음소거를 해제할 수 있습니다.",
         "muteParticipantButton": "음소거",
         "muteParticipantDialog": "이 참가자를 음소거 하시겠습니까? 당신이 다른 사람들의 음소거를 해제 할 수는 없지만 언제든지 다른 사람들은 스스로 음소거를 해제할 수 있습니다.",
         "muteParticipantTitle": "이 참가자를 음소거 하시겠습니까?",
+        "muteParticipantsVideoBody": "당신이 다른 사람들의 카메라를 다시 켤 수는 없지만 언제든지 다른 사람들은 스스로 카메라를 켤 수 있습니다.",
         "muteParticipantsVideoButton": "카메라 비활성화",
         "muteParticipantsVideoTitle": "이 참가자의 카메라를 비활성화 하시겠습니까?",
-        "muteParticipantsVideoBody": "당신이 다른 사람들의 카메라를 다시 켤 수는 없지만 언제든지 다른 사람들은 스스로 카메라를 켤 수 있습니다.",
-        "Ok": "확인",
         "passwordLabel": "잠긴 회의입니다. 회의에 참여하려면 비밀번호를 입력하세요.",
         "passwordNotSupported": "회의 비밀번호 설정은 지원되지 않습니다",
         "passwordNotSupportedTitle": "비밀번호 미지원",
@@ -262,7 +271,6 @@
         "remoteControlShareScreenWarning": "\"허락\"을 누르면 화면을 공유합니다",
         "remoteControlStopMessage": "원격 제어 세션이 종료되었습니다",
         "remoteControlTitle": "원격 데스크탑 컨트롤",
-        "Remove": "제거",
         "removePassword": "비밀번호 제거",
         "removeSharedVideoMsg": "공유한 동영상을 삭제하시겠습니까?",
         "removeSharedVideoTitle": "공유된 동영상 삭제",
@@ -281,7 +289,6 @@
         "sendPrivateMessageTitle": "비공개로 보낼까요?",
         "serviceUnavailable": "서비스를 사용할 수 없음",
         "sessTerminated": "통화 종료",
-        "Share": "공유",
         "shareVideoLinkError": "올바른 YouTube 링크를 제공하십시오",
         "shareVideoTitle": "비디오 공유",
         "shareYourScreen": "화면공유",
@@ -295,7 +302,6 @@
         "stopRecordingWarning": "녹화를 중단하고 싶으십니까?",
         "stopStreamingWarning": "라이브 스트리밍을 중단하고 싶으십니까?",
         "streamKey": "라이브 스트리밍 키",
-        "Submit": "제출",
         "thankYou": "{{appName}}을 이용해 주셔서 감사합니다!",
         "token": "토큰",
         "tokenAuthFailed": "죄송합니다. 통화에 참여하실 수 없습니다.",
@@ -303,25 +309,10 @@
         "transcribing": "",
         "unlockRoom": "회의 비밀번호 제거",
         "userPassword": "사용자 비밀번호",
-        "WaitForHostMsg": "<b>{{room}}</b> 회의가 시작되지 않았습니다. 호스트인 경우 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",
-        "WaitForHostMsgWOk": "<b>{{room}}</b> 회의가 아직 시작되지 않았습니다. 호스트인 경우 확인을 눌러 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",
-        "WaitingForHost": "호스트를 기다리는 중입니다…",
-        "Yes": "예",
         "yourEntireScreen": "전체 화면"
-    },
-    "dialOut": {
-        "statusMessage": "지금은 {{status}}입니다"
     },
     "documentSharing": {
         "title": "문서 공유"
-    },
-    "virtualBackground": {
-        "title": "배경",
-        "enableBlur": "흐린 배경 활성화",
-        "removeBackground": "배경 제거",
-        "uploadImage": "이미지 업로드",
-        "pleaseWait": "잠시만 기다려주세요...",
-        "none": "없음"
     },
     "feedback": {
         "average": "보통",
@@ -331,6 +322,9 @@
         "rateExperience": "회의 경험 평가하기",
         "veryBad": "매우 나쁨",
         "veryGood": "매우 좋음"
+    },
+    "helpView": {
+        "header": "지원 센터"
     },
     "incomingCall": {
         "answer": "응답",
@@ -358,6 +352,7 @@
         "inviteURLFirstPartGeneral": "회의에 초대되었습니다.",
         "inviteURLFirstPartPersonal": "{{name}}이 회의에 초대하였습니다.\n",
         "inviteURLSecondPart": "\n회의에 참여하기:\n{{url}}\n",
+        "label": "회의 정보",
         "liveStreamURL": "실시간 스트리밍:",
         "moreNumbers": "더 많은 번호",
         "noNumbers": "전화 접속 번호 없음",
@@ -366,8 +361,13 @@
         "numbers": "전화 접속 번호",
         "password": "비밀번호",
         "title": "공유",
-        "tooltip": "링크 공유 및 회의에 대한 정보",
-        "label": "회의 정보"
+        "tooltip": "링크 공유 및 회의에 대한 정보"
+    },
+    "inlineDialogFailure": {
+        "msg": "약간의 문제가 있습니다",
+        "retry": "다시 시도",
+        "support": "지원",
+        "supportMsg": "문제가 계속 발생하면 연락하세요"
     },
     "inviteDialog": {
         "alertText": "일부 참가자를 초대하지 못했습니다.",
@@ -376,12 +376,6 @@
         "searchPeopleOnlyPlaceholder": "참가자 검색",
         "searchPlaceholder": "참가자 또는 전화 번호",
         "send": "전송"
-    },
-    "inlineDialogFailure": {
-        "msg": "약간의 문제가 있습니다",
-        "retry": "다시 시도",
-        "support": "지원",
-        "supportMsg": "문제가 계속 발생하면 연락하세요"
     },
     "keyboardShortcuts": {
         "focusLocal": "자신의 동영상에 포커스",
@@ -415,20 +409,20 @@
         "expandedPending": "라이브 스트리밍이 시작됩니다 ...",
         "failedToStart": "실시간 스트리밍 시작 실패",
         "getStreamKeyManually": "실시간 스트림을 가져올 수 없습니다. YouTube에서 실시간 스트림 키를 받아보세요.",
+        "googlePrivacyPolicy": "Google 개인 정보 보호 정책",
         "invalidStreamKey": "라이브 스트림 키가 잘못되었을 수 있습니다.",
         "off": "실시간 스트리밍이 중지됨",
         "on": "실시간 스트리밍",
         "pending": "실시간 스트리밍 시작…",
         "serviceName": "실시간 스트리밍 서비스",
-        "signedInAs": "현재 다음 계정으로 로그인되어 있습니다.",
         "signIn": "Google로 로그인",
         "signInCTA": "YouTube에서 로그인하거나 실시간 스트리밍 키를 입력하십시오",
         "signOut": "로그아웃",
+        "signedInAs": "현재 다음 계정으로 로그인되어 있습니다.",
         "start": "실시간 스트리밍 시작",
         "streamIdHelp": "도움말?",
         "unavailableTitle": "실시간 스트리밍을 사용할 수 없음",
-        "youtubeTerms": "YouTube 서비스 약관",
-        "googlePrivacyPolicy": "Google 개인 정보 보호 정책"
+        "youtubeTerms": "YouTube 서비스 약관"
     },
     "localRecording": {
         "clientState": {
@@ -461,6 +455,10 @@
     },
     "lockRoomPassword": "비밀번호",
     "lockRoomPasswordUppercase": "비밀번호",
+    "lonelyMeetingExperience": {
+        "button": "초대하기",
+        "youAreAlone": "회의에 참여자가 없습니다."
+    },
     "me": "나",
     "notify": {
         "connectedOneMember": "{{name}}님이 회의에 참여했습니다.",
@@ -477,26 +475,26 @@
         "me": "나",
         "moderator": "방장 권한이 부여되었습니다!",
         "muted": "음소거로 대화가 시작되었습니다",
-        "mutedTitle": "음소거 상태입니다!",
-        "mutedRemotelyTitle": "{{participantDisplayName}}에 의해 음소거되었습니다!",
         "mutedRemotelyDescription": "말할 준비가되면 언제든지 음소거를 해제 할 수 있습니다.",
-        "videoMutedRemotelyTitle": "{{participantDisplayName}}에 의해 카메라가 비활성화되었습니다!",
-        "videoMutedRemotelyDescription": "언제든지 카메라를 다시 켤 수 있습니다.",
+        "mutedRemotelyTitle": "{{participantDisplayName}}에 의해 음소거되었습니다!",
+        "mutedTitle": "음소거 상태입니다!",
+        "newDeviceAction": "사용",
+        "newDeviceAudioTitle": "새 오디오 장치 감지",
+        "newDeviceCameraTitle": "새 카메라 감지",
         "passwordRemovedRemotely": "다른 참가자가 $t(lockRoomPasswordUppercase)를 제거했습니다.",
         "passwordSetRemotely": "다른 참가자가 $t(lockRoomPasswordUppercase)를 설정했습니다.",
         "raisedHand": "{{name}}님이 말하고 싶어합니다.",
         "somebody": "누군가",
-        "startSilentTitle": "오디오 출력없이 참여했습니다!",
         "startSilentDescription": "오디오를 사용하려면 회의에 다시 참여하세요.",
+        "startSilentTitle": "오디오 출력없이 참여했습니다!",
         "suboptimalExperienceDescription": "{{appName}}에 대한 귀하의 경험이 없으시다면 <a href='{{recommendedBrowserPageLink}}' target='_blank'>완벽하게 지원되는 브라우저</a> 중 하나를 사용해보십시오.",
         "suboptimalExperienceTitle": "브라우저 경고",
         "unmute": "음소거 해제",
-        "newDeviceCameraTitle": "새 카메라 감지",
-        "newDeviceAudioTitle": "새 오디오 장치 감지",
-        "newDeviceAction": "사용"
+        "videoMutedRemotelyDescription": "언제든지 카메라를 다시 켤 수 있습니다.",
+        "videoMutedRemotelyTitle": "{{participantDisplayName}}에 의해 카메라가 비활성화되었습니다!"
     },
-    "passwordSetRemotely": "다른 참가자가 설정",
     "passwordDigitsOnly": "최대 {{number}} 자리",
+    "passwordSetRemotely": "다른 참가자가 설정",
     "poweredby": "powered by",
     "presenceStatus": {
         "busy": "바쁨",
@@ -577,8 +575,8 @@
     },
     "settingsView": {
         "advanced": "고급",
-        "alertOk": "확인",
         "alertCancel": "취소",
+        "alertOk": "확인",
         "alertTitle": "경고",
         "alertURLText": "입력된 서버 URL이 잘못되었습니다",
         "buildInfoSection": "빌드 정보",
@@ -615,7 +613,9 @@
         "title": "컴퓨터 휴식 모드가 되어 화상 통화가 중단되었습니다"
     },
     "toolbar": {
+        "Settings": "설정",
         "accessibilityLabel": {
+            "Settings": "설정 전환",
             "audioOnly": "음성 전용 모드 전환",
             "audioRoute": "음성 장비 선택하기",
             "callQuality": "비디오 품질 관리",
@@ -636,32 +636,31 @@
             "mute": "음소거 전환",
             "muteEveryone": "모두 음소거",
             "muteEveryoneElse": "다른 사람 모두 음소거",
-            "muteEveryonesVideo": "모든 카메라 비활성화",
             "muteEveryoneElsesVideo": "다른 사람의 카메라 모두 비활성화",
+            "muteEveryonesVideo": "모든 카메라 비활성화",
             "pip": "",
             "privateMessage": "비공개 메세지 보내기",
             "profile": "프로필 수정",
             "raiseHand": "손 들기",
             "recording": "녹화 전환",
             "remoteMute": "참가자 음소거",
-            "Settings": "설정 전환",
-            "sharedvideo": "YouTube 비디오 공유 전환",
+            "selectBackground": "배경 선택",
             "shareRoom": "초대하기",
             "shareYourScreen": "화면 공유 전환",
+            "sharedvideo": "YouTube 비디오 공유 전환",
             "shortcuts": "단축키 전환",
             "show": "",
             "speakerStats": "접속자 통계 전환",
             "tileView": "타일뷰 전환",
             "toggleCamera": "카메라 전환",
-            "videomute": "비디오 비활성화 전환",
             "videoblur": "",
-            "selectBackground": "배경 선택"
+            "videomute": "비디오 비활성화 전환"
         },
         "addPeople": "통화에 사용자 추가",
-        "audioSettings": "오디오 설정",
         "audioOnlyOff": "음성전용 모드 끄기",
         "audioOnlyOn": "음성전용 모드 끄기",
         "audioRoute": "음성 장비 선택하기",
+        "audioSettings": "오디오 설정",
         "authenticate": "인증중",
         "callQuality": "품질 설정하기",
         "chat": "대화 열기/닫기",
@@ -691,24 +690,23 @@
         "raiseHand": "말하기 요청/해제",
         "raiseYourHand": "손 들어주세요",
         "security": "보안 옵션",
-        "Settings": "설정",
-        "sharedvideo": "YouTube 비디오 공유",
+        "selectBackground": "배경 선택",
         "shareRoom": "초대하기",
+        "sharedvideo": "YouTube 비디오 공유",
         "shortcuts": "단축키보기",
         "speakerStats": "접속자 통계",
         "startScreenSharing": "화면 공유 시작",
         "startSubtitles": "자막 시작",
+        "startvideoblur": "내 배경을 흐리게",
         "stopScreenSharing": "화면 공유 중지",
-        "stopSubtitles": "자막 중지",
         "stopSharedVideo": "YouTube 비디오 공유 중지",
+        "stopSubtitles": "자막 중지",
+        "stopvideoblur": "배경 흐림 비활성화",
         "talkWhileMutedPopup": "음소거 상태입니다.",
         "tileViewToggle": "타일뷰 전환",
         "toggleCamera": "카메라 전환",
-        "videomute": "카메라 시작/중지",
         "videoSettings": "비디오 설정",
-        "selectBackground": "배경 선택",
-        "startvideoblur": "내 배경을 흐리게",
-        "stopvideoblur": "배경 흐림 비활성화"
+        "videomute": "카메라 시작/중지"
     },
     "transcribing": {
         "ccButtonTooltip": "자막 시작/종료",
@@ -770,6 +768,14 @@
         "show": "화면에 표시",
         "videomute": "참가자가 카메라를 중지했습니다."
     },
+    "virtualBackground": {
+        "enableBlur": "흐린 배경 활성화",
+        "none": "없음",
+        "pleaseWait": "잠시만 기다려주세요...",
+        "removeBackground": "배경 제거",
+        "title": "배경",
+        "uploadImage": "이미지 업로드"
+    },
     "welcomepage": {
         "accessibilityLabel": {
             "join": "가입",
@@ -785,28 +791,20 @@
         "connectCalendarText": "{{app}}에서 모든 회의를 보려면 캘린더를 연결하세요. 또한 캘린더에 {{provider}} 회의를 추가하고 클릭 한 번으로 시작하세요.",
         "enterRoomTitle": "새 회의 시작",
         "getHelp": "도움 받기",
-        "roomNameAllowedChars": "회의 이름은 이러한 문자를 포함 할 수 없습니다.: ?, &, :, ', \", %, #.",
         "go": "계속",
         "goSmall": "계속",
-        "join": "가입",
         "info": "정보",
+        "join": "가입",
         "privacy": "개인정보",
         "recentList": "최근",
         "recentListDelete": "삭제",
         "recentListEmpty": "최근 목록이 현재 비어 있습니다. 팀과 채팅하면 여기에서 최근 회의를 모두 찾을 수 있습니다.",
         "reducedUIText": "{{app}}에 오신 것을 환영합니다!",
+        "roomNameAllowedChars": "회의 이름은 이러한 문자를 포함 할 수 없습니다.: ?, &, :, ', \", %, #.",
         "roomname": "방 이름 입력",
         "roomnameHint": "참여하려는 방의 이름 또는 URL을 입력하십시오. 이름을 정하고 만나는 사람들에게 같은 이름을 입력하도록 알리면됩니다.",
         "sendFeedback": "피드백 보내기",
         "terms": "이용약관",
         "title": "안전하고 모든 기능을 갖춘 완전 무료 화상 회의"
-    },
-    "lonelyMeetingExperience": {
-        "button": "초대하기",
-        "youAreAlone": "회의에 참여자가 없습니다."
-    },
-    "helpView": {
-        "header": "지원 센터"
     }
 }
-

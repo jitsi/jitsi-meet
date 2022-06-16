@@ -52,7 +52,7 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _overwriteLocalParticipant(
         { dispatch, getState },
-        { avatarURL, email, name, features }) {
+        { avatarURL, email, id: jwtId, name, features }) {
     let localParticipant;
 
     if ((avatarURL || email || name)
@@ -67,6 +67,9 @@ function _overwriteLocalParticipant(
         }
         if (email) {
             newProperties.email = email;
+        }
+        if (jwtId) {
+            newProperties.jwtId = jwtId;
         }
         if (name) {
             newProperties.name = name;
@@ -217,10 +220,11 @@ function _undoOverwriteLocalParticipant(
  *     avatarURL: ?string,
  *     email: ?string,
  *     id: ?string,
- *     name: ?string
+ *     name: ?string,
+ *     hidden-from-recorder: ?boolean
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name }) {
+function _user2participant({ avatar, avatarUrl, email, id, name, 'hidden-from-recorder': hiddenFromRecorder }) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {
@@ -236,6 +240,10 @@ function _user2participant({ avatar, avatarUrl, email, id, name }) {
     }
     if (typeof name === 'string') {
         participant.name = name.trim();
+    }
+
+    if (hiddenFromRecorder === 'true' || hiddenFromRecorder === true) {
+        participant.hiddenFromRecorder = true;
     }
 
     return Object.keys(participant).length ? participant : undefined;

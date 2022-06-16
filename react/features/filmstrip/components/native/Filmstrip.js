@@ -1,14 +1,22 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { FlatList, SafeAreaView } from 'react-native';
+import { FlatList } from 'react-native';
+import { SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getLocalParticipant } from '../../../base/participants';
 import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { shouldHideSelfView } from '../../../base/settings/functions.any';
+import { isToolboxVisible } from '../../../toolbox/functions';
 import { setVisibleRemoteParticipants } from '../../actions';
-import { isFilmstripVisible, shouldRemoteVideosBeVisible } from '../../functions';
+import {
+    getFilmstripDimensions,
+    isFilmstripVisible,
+    shouldDisplayLocalThumbnailSeparately,
+    shouldRemoteVideosBeVisible
+} from '../../functions';
 
 import LocalThumbnail from './LocalThumbnail';
 import Thumbnail from './Thumbnail';
@@ -31,6 +39,16 @@ type Props = {
 
     _clientHeight: number,
 
+    /**
+     * Whether or not to hide the self view.
+     */
+    _disableSelfView: boolean,
+
+    /**
+     * Whether or not the toolbox is displayed.
+     */
+    _toolboxVisible: Boolean,
+
     _localParticipantId: string,
 
     /**
@@ -47,18 +65,23 @@ type Props = {
      * Invoked to trigger state changes in Redux.
      */
     dispatch: Function,
+
+    /**
+     * Object containing the safe area insets.
+     */
+    insets: Object,
 };
 
 /**
  * Implements a React {@link Component} which represents the filmstrip on
  * mobile/React Native.
  *
- * @extends Component
+ * @augments Component
  */
 class Filmstrip extends PureComponent<Props> {
     /**
      * Whether the local participant should be rendered separately from the
-     * remote participants i.e. outside of their {@link ScrollView}.
+     * remote participants ie outside of their {@link ScrollView}.
      */
     _separateLocalThumbnail: boolean;
 
@@ -84,7 +107,7 @@ class Filmstrip extends PureComponent<Props> {
         // layer #0 sits behind the window, creates a hole in the window, and
         // there we render the LargeVideo; layer #1 is known as media overlay in
         // EGL terms, renders on top of layer #0, and, consequently, is for the
-        // Filmstrip. With the separate LocalThumnail, we should have left the
+        // Filmstrip. With the separate LocalThumbnail, we should have left the
         // remote participants' Thumbnails in layer #1 and utilized layer #2 for
         // LocalThumbnail. Unfortunately, layer #2 is not practical (that's why
         // I said we had two practical layers only) because it renders on top of
@@ -92,7 +115,7 @@ class Filmstrip extends PureComponent<Props> {
         // indicators such as moderator, audio and video muted, etc. For now we
         // do not have much of a choice but to continue rendering LocalThumbnail
         // as any other remote Thumbnail on Android.
-        this._separateLocalThumbnail = Platform.OS !== 'android';
+        this._separateLocalThumbnail = shouldDisplayLocalThumbnailSeparately();
 
         this._viewabilityConfig = {
             itemVisiblePercentThreshold: 30,
@@ -123,20 +146,23 @@ class Filmstrip extends PureComponent<Props> {
      * @returns {Object} - The width and the height.
      */
     _getDimensions() {
-        const { _aspectRatio, _clientWidth, _clientHeight } = this.props;
-        const { height, width, margin } = styles.thumbnail;
+        const {
+            _aspectRatio,
+            _clientWidth,
+            _clientHeight,
+            _disableSelfView,
+            _localParticipantId,
+            insets
+        } = this.props;
+        const localParticipantVisible = Boolean(_localParticipantId) && !_disableSelfView;
 
-        if (_aspectRatio === ASPECT_RATIO_NARROW) {
-            return {
-                height,
-                width: this._separateLocalThumbnail ? _clientWidth - width - (margin * 2) : _clientWidth
-            };
-        }
-
-        return {
-            height: this._separateLocalThumbnail ? _clientHeight - height - (margin * 2) : _clientHeight,
-            width
-        };
+        return getFilmstripDimensions({
+            aspectRatio: _aspectRatio,
+            clientHeight: _clientHeight,
+            clientWidth: _clientWidth,
+            insets,
+            localParticipantVisible
+        });
     }
 
     _getItemLayout: (?Array<string>, number) => {length: number, offset: number, index: number};
@@ -170,7 +196,9 @@ class Filmstrip extends PureComponent<Props> {
      * @returns {void}
      */
     _onViewableItemsChanged({ viewableItems = [] }) {
-        if (!this._separateLocalThumbnail && viewableItems[0]?.index === 0) {
+        const { _disableSelfView } = this.props;
+
+        if (!this._separateLocalThumbnail && !_disableSelfView && viewableItems[0]?.index === 0) {
             // Skip the local thumbnail.
             viewableItems.shift();
         }
@@ -183,7 +211,7 @@ class Filmstrip extends PureComponent<Props> {
         let startIndex = viewableItems[0].index;
         let endIndex = viewableItems[viewableItems.length - 1].index;
 
-        if (!this._separateLocalThumbnail) {
+        if (!this._separateLocalThumbnail && !_disableSelfView) {
             // We are off by one in the remote participants array.
             startIndex -= 1;
             endIndex -= 1;
@@ -215,12 +243,20 @@ class Filmstrip extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _aspectRatio, _localParticipantId, _participants, _visible } = this.props;
+        const {
+            _aspectRatio,
+            _disableSelfView,
+            _toolboxVisible,
+            _localParticipantId,
+            _participants,
+            _visible
+        } = this.props;
 
         if (!_visible) {
             return null;
         }
 
+        const bottomEdge = Platform.OS === 'ios' && !_toolboxVisible;
         const isNarrowAspectRatio = _aspectRatio === ASPECT_RATIO_NARROW;
         const filmstripStyle = isNarrowAspectRatio ? styles.filmstripNarrow : styles.filmstripWide;
         const { height, width } = this._getDimensions();
@@ -229,13 +265,24 @@ class Filmstrip extends PureComponent<Props> {
             ? width / (thumbnailWidth + (2 * margin))
             : height / (thumbnailHeight + (2 * margin))
         );
-        const participants = this._separateLocalThumbnail ? _participants : [ _localParticipantId, ..._participants ];
+        let participants;
+
+        if (this._separateLocalThumbnail || _disableSelfView) {
+            participants = _participants;
+        } else if (isNarrowAspectRatio) {
+            participants = [ ..._participants, _localParticipantId ];
+        } else {
+            participants = [ _localParticipantId, ..._participants ];
+        }
 
         return (
-            <SafeAreaView style = { filmstripStyle }>
+            <SafeAreaView
+                edges = { [ bottomEdge && 'bottom', 'left', 'right' ].filter(Boolean) }
+                style = { filmstripStyle }>
                 {
                     this._separateLocalThumbnail
                         && !isNarrowAspectRatio
+                        && !_disableSelfView
                         && <LocalThumbnail />
                 }
                 <FlatList
@@ -254,7 +301,9 @@ class Filmstrip extends PureComponent<Props> {
                     viewabilityConfig = { this._viewabilityConfig }
                     windowSize = { 2 } />
                 {
-                    this._separateLocalThumbnail && isNarrowAspectRatio
+                    this._separateLocalThumbnail
+                        && isNarrowAspectRatio
+                        && !_disableSelfView
                         && <LocalThumbnail />
                 }
             </SafeAreaView>
@@ -271,17 +320,20 @@ class Filmstrip extends PureComponent<Props> {
  */
 function _mapStateToProps(state) {
     const { enabled, remoteParticipants } = state['features/filmstrip'];
+    const disableSelfView = shouldHideSelfView(state);
     const showRemoteVideos = shouldRemoteVideosBeVisible(state);
     const responsiveUI = state['features/base/responsive-ui'];
 
     return {
-        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
+        _aspectRatio: responsiveUI.aspectRatio,
         _clientHeight: responsiveUI.clientHeight,
         _clientWidth: responsiveUI.clientWidth,
+        _disableSelfView: disableSelfView,
         _localParticipantId: getLocalParticipant(state)?.id,
         _participants: showRemoteVideos ? remoteParticipants : NO_REMOTE_VIDEOS,
+        _toolboxVisible: isToolboxVisible(state),
         _visible: enabled && isFilmstripVisible(state)
     };
 }
 
-export default connect(_mapStateToProps)(Filmstrip);
+export default withSafeAreaInsets(connect(_mapStateToProps)(Filmstrip));

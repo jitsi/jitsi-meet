@@ -6,8 +6,10 @@ import { type Image } from '../virtual-background/constants';
 import {
     SET_DYNAMIC_BRANDING_DATA,
     SET_DYNAMIC_BRANDING_FAILED,
-    SET_DYNAMIC_BRANDING_READY
+    SET_DYNAMIC_BRANDING_READY,
+    UNSET_DYNAMIC_BRANDING
 } from './actionTypes';
+
 
 /**
  * The name of the redux store/state property which is the root of the redux
@@ -85,6 +87,15 @@ const DEFAULT_STATE = {
     inviteDomain: '',
 
     /**
+     * An object containing the mapping between the language and url where the translation
+     * bundle is hosted.
+     *
+     * @public
+     * @type {Object}
+     */
+    labels: null,
+
+    /**
      * The custom url used when the user clicks the logo.
      *
      * @public
@@ -101,6 +112,14 @@ const DEFAULT_STATE = {
     logoImageUrl: '',
 
     /**
+     * The generated MUI branded theme based on the custom theme json.
+     *
+     * @public
+     * @type {boolean}
+     */
+    muiBrandedTheme: undefined,
+
+    /**
      * The lobby/prejoin background.
      *
      * @public
@@ -109,7 +128,7 @@ const DEFAULT_STATE = {
     premeetingBackground: '',
 
     /**
-     * Flag used to signal if the app should use a custom logo or not
+     * Flag used to signal if the app should use a custom logo or not.
      *
      * @public
      * @type {boolean}
@@ -138,8 +157,10 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             defaultBranding,
             didPageUrl,
             inviteDomain,
+            labels,
             logoClickUrl,
             logoImageUrl,
+            muiBrandedTheme,
             premeetingBackground,
             virtualBackgrounds
         } = action.value;
@@ -151,8 +172,10 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             defaultBranding,
             didPageUrl,
             inviteDomain,
+            labels,
             logoClickUrl,
             logoImageUrl,
+            muiBrandedTheme,
             premeetingBackground,
             customizationFailed: false,
             customizationReady: true,
@@ -173,6 +196,9 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             ...state,
             customizationReady: true
         };
+
+    case UNSET_DYNAMIC_BRANDING:
+        return DEFAULT_STATE;
     }
 
     return state;

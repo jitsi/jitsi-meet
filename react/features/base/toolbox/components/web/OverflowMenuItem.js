@@ -61,7 +61,7 @@ type Props = {
  * A React {@code Component} for displaying a link to interact with other
  * features of the application.
  *
- * @extends Component
+ * @augments Component
  */
 class OverflowMenuItem extends Component<Props> {
     /**

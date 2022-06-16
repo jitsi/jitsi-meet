@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { IconMessage } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -9,10 +10,8 @@ import { openChat } from '../../../chat/';
 import {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
-} from '../../../chat/components/PrivateMessageButton';
+} from '../../../chat/components/web/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
-
-import VideoMenuButton from './VideoMenuButton';
 
 declare var interfaceConfig: Object;
 
@@ -49,18 +48,18 @@ class PrivateMessageMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t, _hidden } = this.props;
+        const { t, _hidden } = this.props;
 
         if (_hidden) {
             return null;
         }
 
         return (
-            <VideoMenuButton
-                buttonText = { t('toolbar.privateMessage') }
+            <ContextMenuItem
+                accessibilityLabel = { t('toolbar.accessibilityLabel.privateMessage') }
                 icon = { IconMessage }
-                id = { `privmsglink_${participantID}` }
-                onClick = { this._onClick } />
+                onClick = { this._onClick }
+                text = { t('toolbar.privateMessage') } />
         );
     }
 

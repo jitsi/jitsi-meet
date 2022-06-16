@@ -43,17 +43,11 @@ export default class BaseIndicator extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { highlight, icon, iconStyle, backgroundColor } = this.props;
-        const highlightedIndicator = { ...styles.highlightedIndicator };
-
-        if (backgroundColor) {
-            highlightedIndicator.backgroundColor = backgroundColor;
-        }
+        const { icon, iconStyle } = this.props;
 
         return (
             <View
-                style = { [ BASE_INDICATOR,
-                    highlight ? highlightedIndicator : null ] }>
+                style = { BASE_INDICATOR }>
                 <Icon
                     src = { icon }
                     style = { [

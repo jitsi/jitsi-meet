@@ -23,7 +23,7 @@ type Props = AbstractToolbarButtonProps & {
     tooltipPosition: string,
 
     /**
-     * Optional label for the button
+     * Optional label for the button.
      */
     label?: string
 };
@@ -47,7 +47,7 @@ type State = {
 /**
  * Represents a button in the reactions menu.
  *
- * @extends AbstractToolbarButton
+ * @augments AbstractToolbarButton
  */
 class ReactionButton extends AbstractToolbarButton<Props, State> {
     /**

@@ -50,8 +50,9 @@ const PollResults = (props: AbstractProps) => {
     );
 
     /**
-     * Render voters of and answer
-     * @param {AnswerInfo} answer - the answer info
+     * Render voters of and answer.
+     *
+     * @param {AnswerInfo} answer - The answer info.
      * @returns {React.Node}
      */
     const renderRow = useCallback((answer: AnswerInfo) => {
@@ -64,7 +65,11 @@ const PollResults = (props: AbstractProps) => {
                     { voters && voterCount > 0
                     && <View style = { resultsStyles.voters }>
                         {voters.map(({ id, name: voterName }) =>
-                            <Text key = { id }>{ voterName }</Text>
+                            (<Text
+                                key = { id }
+                                style = { resultsStyles.voter }>
+                                { voterName }
+                            </Text>)
                         )}
                     </View>}
                 </View>

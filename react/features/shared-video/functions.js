@@ -12,7 +12,7 @@ import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from '
  * @param {string} url - The entered video link.
  * @returns {string} The youtube video id if matched.
  */
-export function getYoutubeId(url: string) {
+function getYoutubeId(url: string) {
     if (!url) {
         return null;
     }
@@ -52,5 +52,39 @@ export function isVideoPlaying(stateful: Object | Function): boolean {
     }
 
     return videoPlaying;
+}
+
+/**
+ * Extracts a Youtube id or URL from the user input.
+ *
+ * @param {string} input - The user input.
+ * @returns {string|undefined}
+ */
+export function extractYoutubeIdOrURL(input: string) {
+    if (!input) {
+        return;
+    }
+
+    const trimmedLink = input.trim();
+
+    if (!trimmedLink) {
+        return;
+    }
+
+    const youtubeId = getYoutubeId(trimmedLink);
+
+    if (youtubeId) {
+        return youtubeId;
+    }
+
+    // Check if the URL is valid, native may crash otherwise.
+    try {
+        // eslint-disable-next-line no-new
+        new URL(trimmedLink);
+    } catch (_) {
+        return;
+    }
+
+    return trimmedLink;
 }
 

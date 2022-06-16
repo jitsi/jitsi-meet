@@ -9,11 +9,13 @@ import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { type StyleType } from '../../../base/styles';
+import { isGifMessage } from '../../../gifs/functions';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import { replaceNonUnicodeEmojis } from '../../functions';
 import AbstractChatMessage, { type Props as AbstractProps } from '../AbstractChatMessage';
-import PrivateMessageButton from '../PrivateMessageButton';
 
+import GifMessage from './GifMessage';
+import PrivateMessageButton from './PrivateMessageButton';
 import styles from './styles';
 
 type Props = AbstractProps & {
@@ -34,9 +36,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @inheritdoc
      */
     render() {
-        const { _styles, message } = this.props;
+        const { _styles, message, knocking } = this.props;
         const localMessage = message.messageType === MESSAGE_TYPE_LOCAL;
-        const { privateMessage } = message;
+        const { privateMessage, lobbyChat } = message;
 
         // Style arrays that need to be updated in various scenarios, such as
         // error messages or others.
@@ -71,6 +73,12 @@ class ChatMessage extends AbstractChatMessage<Props> {
             messageBubbleStyle.push(_styles.privateMessageBubble);
         }
 
+        if (lobbyChat && !knocking) {
+            messageBubbleStyle.push(_styles.lobbyMessageBubble);
+        }
+
+        const messageText = replaceNonUnicodeEmojis(this._getMessageText());
+
         return (
             <View style = { styles.messageWrapper } >
                 { this._renderAvatar() }
@@ -78,9 +86,13 @@ class ChatMessage extends AbstractChatMessage<Props> {
                     <View style = { messageBubbleStyle }>
                         <View style = { styles.textWrapper } >
                             { this._renderDisplayName() }
-                            <Linkify linkStyle = { styles.chatLink }>
-                                { replaceNonUnicodeEmojis(this._getMessageText()) }
-                            </Linkify>
+                            {isGifMessage(messageText)
+                                ? <GifMessage message = { messageText } />
+                                : (
+                                    <Linkify linkStyle = { styles.chatLink }>
+                                        {messageText}
+                                    </Linkify>
+                                )}
                             { this._renderPrivateNotice() }
                         </View>
                         { this._renderPrivateReplyButton() }
@@ -141,14 +153,14 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*> | null}
      */
     _renderPrivateNotice() {
-        const { _styles, message } = this.props;
+        const { _styles, message, knocking } = this.props;
 
-        if (!message.privateMessage) {
+        if (!(message.privateMessage || (message.lobbyChat && !knocking))) {
             return null;
         }
 
         return (
-            <Text style = { _styles.privateNotice }>
+            <Text style = { message.lobbyChat ? _styles.lobbyMsgNotice : _styles.privateNotice }>
                 { this._getPrivateNoticeMessage() }
             </Text>
         );
@@ -160,16 +172,17 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*> | null}
      */
     _renderPrivateReplyButton() {
-        const { _styles, message } = this.props;
-        const { messageType, privateMessage } = message;
+        const { _styles, message, knocking } = this.props;
+        const { messageType, privateMessage, lobbyChat } = message;
 
-        if (!privateMessage || messageType === MESSAGE_TYPE_LOCAL) {
+        if (!(privateMessage || lobbyChat) || messageType === MESSAGE_TYPE_LOCAL || knocking) {
             return null;
         }
 
         return (
             <View style = { _styles.replyContainer }>
                 <PrivateMessageButton
+                    isLobbyMessage = { lobbyChat }
                     participantID = { message.id }
                     reply = { true }
                     showLabel = { false }
@@ -204,7 +217,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _styles: ColorSchemeRegistry.get(state, 'Chat')
+        _styles: ColorSchemeRegistry.get(state, 'Chat'),
+        knocking: state['features/lobby'].knocking
     };
 }
 

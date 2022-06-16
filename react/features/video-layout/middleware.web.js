@@ -10,12 +10,9 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_STOPPED } from '../base/tracks';
-import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
-import { PARTICIPANTS_PANE_CLOSE, PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes.js';
+import { PARTICIPANTS_PANE_CLOSE, PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
 
 import './middleware.any';
-
-declare var APP: Object;
 
 /**
  * Middleware which intercepts actions and updates the legacy component
@@ -56,7 +53,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANTS_PANE_CLOSE:
     case PARTICIPANTS_PANE_OPEN:
-    case SET_FILMSTRIP_VISIBLE:
         VideoLayout.resizeVideoArea();
         break;
 

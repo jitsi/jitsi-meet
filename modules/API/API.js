@@ -1,6 +1,6 @@
 // @flow
 
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 
 import {
     createApiEvent,
@@ -21,6 +21,7 @@ import {
     getCurrentConference,
     sendTones,
     setFollowMe,
+    setLocalSubject,
     setPassword,
     setSubject
 } from '../../react/features/base/conference';
@@ -38,10 +39,21 @@ import {
     raiseHand,
     isParticipantModerator,
     isLocalParticipantModerator,
-    hasRaisedHand
+    hasRaisedHand,
+    grantModerator,
+    overwriteParticipantsNames
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
+import {
+    autoAssignToBreakoutRooms,
+    closeBreakoutRoom,
+    createBreakoutRoom,
+    moveToRoom,
+    removeBreakoutRoom,
+    sendParticipantToRoom
+} from '../../react/features/breakout-rooms/actions';
+import { getBreakoutRooms } from '../../react/features/breakout-rooms/functions';
 import {
     sendMessage,
     setPrivateMessageRecipient,
@@ -52,7 +64,7 @@ import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
-import { toggleE2EE } from '../../react/features/e2ee/actions';
+import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
 import { setVolume } from '../../react/features/filmstrip';
 import { invite } from '../../react/features/invite';
 import {
@@ -62,13 +74,22 @@ import {
     captureLargeVideoScreenshot,
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
-import { toggleLobbyMode, setKnockingParticipantApproval } from '../../react/features/lobby/actions';
-import { isForceMuted } from '../../react/features/participants-pane/functions';
+import { toggleLobbyMode, answerKnockingParticipant } from '../../react/features/lobby/actions';
+import {
+    close as closeParticipantsPane,
+    open as openParticipantsPane
+} from '../../react/features/participants-pane/actions';
+import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
 import { isScreenAudioSupported } from '../../react/features/screen-share';
 import { startScreenShareFlow, startAudioScreenShareFlow } from '../../react/features/screen-share/actions';
+import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
+import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
+import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
+import { toggleRequestingSubtitles, setRequestingSubtitles } from '../../react/features/subtitles/actions';
+import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { toggleTileView, setTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
@@ -114,8 +135,16 @@ let videoAvailable = true;
  */
 function initCommands() {
     commands = {
+        'add-breakout-room': name => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to add breakout rooms');
+
+                return;
+            }
+            APP.store.dispatch(createBreakoutRoom(name));
+        },
         'answer-knocking-participant': (id, approved) => {
-            APP.store.dispatch(setKnockingParticipantApproval(id, approved));
+            APP.store.dispatch(answerKnockingParticipant(id, approved));
         },
         'approve-video': participantId => {
             if (!isLocalParticipantModerator(APP.store.getState())) {
@@ -131,9 +160,29 @@ function initCommands() {
 
             APP.store.dispatch(approveParticipantAudio(participantId));
         },
+        'auto-assign-to-breakout-rooms': () => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to auto-assign participants to breakout rooms');
+
+                return;
+            }
+            APP.store.dispatch(autoAssignToBreakoutRooms());
+        },
+        'grant-moderator': participantId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to grant moderator right to another participant');
+
+                return;
+            }
+            APP.store.dispatch(grantModerator(participantId));
+        },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
+        },
+        'local-subject': localSubject => {
+            sendAnalytics(createApiEvent('local.subject.changed'));
+            APP.store.dispatch(setLocalSubject(localSubject));
         },
         'mute-everyone': mediaType => {
             const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
@@ -189,6 +238,14 @@ function initCommands() {
             const reject = mediaType === MEDIA_TYPE.VIDEO ? rejectParticipantVideo : rejectParticipantAudio;
 
             APP.store.dispatch(reject(participantId));
+        },
+        'remove-breakout-room': breakoutRoomJid => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to remove breakout rooms');
+
+                return;
+            }
+            APP.store.dispatch(removeBreakoutRoom(breakoutRoomJid));
         },
         'resize-large-video': (width, height) => {
             logger.debug('Resize large video command received');
@@ -276,6 +333,12 @@ function initCommands() {
                 APP.store.dispatch(disable());
             }
         },
+        'toggle-participants-pane': enabled => {
+            const toggleParticipantsPane = enabled
+                ? openParticipantsPane : closeParticipantsPane;
+
+            APP.store.dispatch(toggleParticipantsPane());
+        },
         'toggle-raise-hand': () => {
             const localParticipant = getLocalParticipant(APP.store.getState());
 
@@ -310,6 +373,12 @@ function initCommands() {
         'toggle-share-screen': (options = {}) => {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing(options.enable);
+        },
+        'toggle-subtitles': () => {
+            APP.store.dispatch(toggleRequestingSubtitles());
+        },
+        'set-subtitles': enabled => {
+            APP.store.dispatch(setRequestingSubtitles(enabled));
         },
         'toggle-tile-view': () => {
             sendAnalytics(createApiEvent('tile-view.toggled'));
@@ -360,9 +429,17 @@ function initCommands() {
                 logger.error('Failed sending endpoint text message', err);
             }
         },
+        'overwrite-names': participantList => {
+            logger.debug('Overwrite names command received');
+
+            APP.store.dispatch(overwriteParticipantsNames(participantList));
+        },
         'toggle-e2ee': enabled => {
             logger.debug('Toggle E2EE key command received');
             APP.store.dispatch(toggleE2EE(enabled));
+        },
+        'set-media-encryption-key': keyInfo => {
+            APP.store.dispatch(setMediaEncryptionKey(JSON.parse(keyInfo)));
         },
         'set-video-quality': frameHeight => {
             logger.debug('Set video quality command received');
@@ -373,7 +450,11 @@ function initCommands() {
         'start-share-video': url => {
             logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.start'));
-            APP.store.dispatch(playSharedVideo(url));
+            const id = extractYoutubeIdOrURL(url);
+
+            if (id) {
+                APP.store.dispatch(playSharedVideo(id));
+            }
         },
 
         'stop-share-video': () => {
@@ -467,6 +548,9 @@ function initCommands() {
                 return;
             }
 
+            if (isScreenshotCaptureEnabled(state, true, false)) {
+                APP.store.dispatch(toggleScreenshotCaptureSummary(true));
+            }
             conference.startRecording(recordingConfig);
         },
 
@@ -495,6 +579,7 @@ function initCommands() {
             const activeSession = getActiveSession(state, mode);
 
             if (activeSession && activeSession.id) {
+                APP.store.dispatch(toggleScreenshotCaptureSummary(false));
                 conference.stopRecording(activeSession.id);
             } else {
                 logger.error('No recording or streaming session found');
@@ -517,6 +602,26 @@ function initCommands() {
         },
         'cancel-private-chat': () => {
             APP.store.dispatch(setPrivateMessageRecipient());
+        },
+        'close-breakout-room': roomId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to close breakout rooms');
+
+                return;
+            }
+            APP.store.dispatch(closeBreakoutRoom(roomId));
+        },
+        'join-breakout-room': roomId => {
+            APP.store.dispatch(moveToRoom(roomId));
+        },
+        'send-participant-to-room': (participantId, roomId) => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to send participants to rooms');
+
+                return;
+            }
+
+            APP.store.dispatch(sendParticipantToRoom(participantId, roomId));
         },
         'kick-participant': participantId => {
             APP.store.dispatch(kickParticipant(participantId));
@@ -602,6 +707,9 @@ function initCommands() {
         case 'is-audio-muted':
             callback(APP.conference.isLocalAudioMuted());
             break;
+        case 'is-audio-disabled':
+            callback(isAudioMuteButtonDisabled(APP.store.getState()));
+            break;
         case 'is-moderation-on': {
             const { mediaType } = request;
             const type = mediaType || MEDIA_TYPE.AUDIO;
@@ -618,6 +726,10 @@ function initCommands() {
             callback(isForceMuted(participant, type, state));
             break;
         }
+        case 'is-participants-pane-open': {
+            callback(getParticipantsPaneOpen(APP.store.getState()));
+            break;
+        }
         case 'is-video-muted':
             callback(APP.conference.isLocalVideoMuted());
             break;
@@ -629,6 +741,9 @@ function initCommands() {
             break;
         case 'is-sharing-screen':
             callback(Boolean(APP.conference.isSharingScreen));
+            break;
+        case 'is-start-silent':
+            callback(Boolean(APP.store.getState()['features/base/config'].startSilent));
             break;
         case 'get-content-sharing-participants': {
             const tracks = getState()['features/base/tracks'];
@@ -660,6 +775,10 @@ function initCommands() {
             callback({
                 avatarBackgrounds: APP.store.getState()['features/dynamic-branding'].avatarBackgrounds
             });
+            break;
+        }
+        case 'list-breakout-rooms': {
+            callback(getBreakoutRooms(APP.store.getState()));
             break;
         }
         default:
@@ -1043,6 +1162,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that some face landmark data is available.
+     *
+     * @param {Object | undefined} faceBox - Detected face(s) bounding box (left, right, width).
+     * @param {string} faceExpression - Detected face expression.
+     * @returns {void}
+     */
+    notifyFaceLandmarkDetected(faceBox: Object, faceExpression: string) {
+        this._sendEvent({
+            name: 'face-landmark-detected',
+            faceBox,
+            faceExpression
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the list of sharing participants changed.
      *
      * @param {Object} data - The event data.
@@ -1129,8 +1263,8 @@ class API {
      *
      * @param {string} roomName - The room name.
      * @param {string} id - The id of the local user.
-     * @param {Object} props - The display name and avatar URL of the local
-     * user.
+     * @param {Object} props - The display name, the avatar URL of the local
+     * user and the type of the room.
      * @returns {void}
      */
     notifyConferenceJoined(roomName: string, id: string, props: Object) {
@@ -1328,6 +1462,22 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the iframe
+     * docked state has been changed. The responsibility for implementing
+     * the dock / undock functionality lies with the external application.
+     *
+     * @param {boolean} docked - Whether or not the iframe has been set to
+     * be docked or undocked.
+     * @returns {void}
+     */
+    notifyIframeDockStateChanged(docked: boolean) {
+        this._sendEvent({
+            name: 'iframe-dock-state-changed',
+            docked
+        });
+    }
+
+    /**
      * Notify external application of a participant, remote or local, being
      * removed from the conference by another participant.
      *
@@ -1463,6 +1613,22 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the current recording link is
+     * available.
+     *
+     * @param {string} link - The recording download link.
+     * @param {number} ttl - The recording download link time to live.
+     * @returns {void}
+     */
+    notifyRecordingLinkAvailable(link: string, ttl: number) {
+        this._sendEvent({
+            name: 'recording-link-available',
+            link,
+            ttl
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that a participant is knocking in the lobby.
      *
      * @param {Object} participant - Participant data such as id and name.
@@ -1492,12 +1658,14 @@ class API {
      * Notify external application ( if API is enabled) that a toolbar button was clicked.
      *
      * @param {string} key - The key of the toolbar button.
+     * @param {boolean} preventExecution - Whether execution of the button click was prevented or not.
      * @returns {void}
      */
-    notifyToolbarButtonClicked(key: string) {
+    notifyToolbarButtonClicked(key: string, preventExecution: boolean) {
         this._sendEvent({
             name: 'toolbar-button-clicked',
-            key
+            key,
+            preventExecution
         });
     }
 
@@ -1511,6 +1679,19 @@ class API {
         this._sendEvent({
             name: 'browser-support',
             supported
+        });
+    }
+
+    /**
+     * Notify external application that the breakout rooms changed.
+     *
+     * @param {Array} rooms - Array of breakout rooms.
+     * @returns {void}
+     */
+    notifyBreakoutRoomsUpdated(rooms) {
+        this._sendEvent({
+            name: 'breakout-rooms-updated',
+            rooms
         });
     }
 

@@ -2,10 +2,16 @@
 
 import React from 'react';
 
+import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 import { Icon } from '../../../icons';
 import { Tooltip } from '../../../tooltip';
 
 type Props = {
+
+    /**
+     * The button's key.
+     */
+    buttonKey?: string,
 
     /**
      * The decorated component (ToolboxButton).
@@ -23,6 +29,12 @@ type Props = {
     iconDisabled: boolean,
 
     /**
+     * Notify mode for `toolbarButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string,
+
+    /**
      * Click handler for the small icon.
      */
     onIconClick: Function,
@@ -38,35 +50,37 @@ type Props = {
     styles?: Object,
 
     /**
-     * aria label for the Icon.
+     * Aria label for the Icon.
      */
     ariaLabel?: string,
 
     /**
-     * whether the element has a popup
+     * Whether the element has a popup.
      */
     ariaHasPopup?: boolean,
 
     /**
-     * whether the element popup is expanded
+     * Whether the element popup is expanded.
      */
     ariaExpanded?: boolean,
 
     /**
-     * The id of the element this button icon controls
+     * The id of the element this button icon controls.
      */
     ariaControls?: string,
 
     /**
-     * keydown handler for icon.
+     * Keydown handler for icon.
      */
     onIconKeyDown?: Function,
 
     /**
-     * The ID of the icon button
+     * The ID of the icon button.
      */
     iconId: string
 };
+
+declare var APP: Object;
 
 /**
  * Displays the `ToolboxButtonWithIcon` component.
@@ -80,6 +94,8 @@ export default function ToolboxButtonWithIcon(props: Props) {
         icon,
         iconDisabled,
         iconTooltip,
+        buttonKey,
+        notifyMode,
         onIconClick,
         onIconKeyDown,
         styles,
@@ -97,7 +113,17 @@ export default function ToolboxButtonWithIcon(props: Props) {
             = 'settings-button-small-icon settings-button-small-icon--disabled';
     } else {
         iconProps.className = 'settings-button-small-icon';
-        iconProps.onClick = onIconClick;
+        iconProps.onClick = () => {
+            if (typeof APP !== 'undefined' && notifyMode) {
+                APP.API.notifyToolbarButtonClicked(
+                    buttonKey, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+                );
+            }
+
+            if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+                onIconClick();
+            }
+        };
         iconProps.onKeyDown = onIconKeyDown;
         iconProps.role = 'button';
         iconProps.tabIndex = 0;

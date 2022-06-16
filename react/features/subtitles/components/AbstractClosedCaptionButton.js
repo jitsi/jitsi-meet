@@ -38,13 +38,7 @@ export class AbstractClosedCaptionButton
      * @returns {void}
      */
     async _handleClick() {
-        const { _requestingSubtitles, dispatch, handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
+        const { _requestingSubtitles, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('transcribing.ccButton',
             {

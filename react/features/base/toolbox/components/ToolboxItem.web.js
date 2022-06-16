@@ -2,11 +2,25 @@
 
 import React, { Fragment } from 'react';
 
+import ContextMenuItem from '../../components/context-menu/ContextMenuItem';
 import { Icon } from '../../icons';
 import { Tooltip } from '../../tooltip';
 
 import AbstractToolboxItem from './AbstractToolboxItem';
-import type { Props } from './AbstractToolboxItem';
+import type { Props as AbstractToolboxItemProps } from './AbstractToolboxItem';
+
+type Props = AbstractToolboxItemProps & {
+
+    /**
+     * Whether or not the item is displayed in a context menu.
+     */
+    contextMenu?: boolean,
+
+    /**
+    * On key down handler.
+    */
+    onKeyDown: Function
+};
 
 /**
  * Web implementation of {@code AbstractToolboxItem}.
@@ -50,9 +64,12 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
      */
     _renderItem() {
         const {
+            contextMenu,
             disabled,
             elementAfter,
+            icon,
             onClick,
+            onKeyDown,
             showLabel,
             tooltipPosition,
             toggled
@@ -64,6 +81,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             'aria-label': this.accessibilityLabel,
             className: className + (disabled ? ' disabled' : ''),
             onClick: disabled ? undefined : onClick,
+            onKeyDown: disabled ? undefined : onKeyDown,
             onKeyPress: this._onKeyPress,
             tabIndex: 0,
             role: showLabel ? 'menuitem' : 'button'
@@ -71,6 +89,17 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
 
         const elementType = showLabel ? 'li' : 'div';
         const useTooltip = this.tooltip && this.tooltip.length > 0;
+
+        if (contextMenu) {
+            return (<ContextMenuItem
+                accessibilityLabel = { this.accessibilityLabel }
+                disabled = { disabled }
+                icon = { icon }
+                onClick = { onClick }
+                onKeyDown = { onKeyDown }
+                onKeyPress = { this._onKeyPress }
+                text = { this.label } />);
+        }
         let children = (
             <Fragment>
                 { this._renderIcon() }

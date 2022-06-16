@@ -17,6 +17,11 @@ import VideoMuteButton from '../VideoMuteButton';
 type Props = {
 
     /**
+     * The button's key.
+     */
+     buttonKey?: string,
+
+    /**
      * External handler for click action.
      */
     handleClick: Function,
@@ -37,9 +42,15 @@ type Props = {
     hasVideoTrack: boolean,
 
     /**
-     * If the button should be disabled
+     * If the button should be disabled.
      */
     isDisabled: boolean,
+
+    /**
+     * Notify mode for `toolbarButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string,
 
     /**
      * Flag controlling the visibility of the button.
@@ -50,12 +61,12 @@ type Props = {
     visible: boolean,
 
     /**
-     * Used for translation
+     * Used for translation.
      */
     t: Function,
 
     /**
-     * Defines is popup is open
+     * Defines is popup is open.
      */
     isOpen: boolean
 };
@@ -112,13 +123,7 @@ class VideoSettingsButton extends Component<Props> {
      * @returns {void}
      */
     _onClick() {
-        const { handleClick, onVideoOptionsClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
+        const { onVideoOptionsClick } = this.props;
 
         onVideoOptionsClick();
     }
@@ -129,7 +134,7 @@ class VideoSettingsButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { handleClick, t, visible, isOpen } = this.props;
+        const { t, visible, isOpen, buttonKey, notifyMode } = this.props;
 
         return visible ? (
             <VideoSettingsPopup>
@@ -138,16 +143,22 @@ class VideoSettingsButton extends Component<Props> {
                     ariaExpanded = { isOpen }
                     ariaHasPopup = { true }
                     ariaLabel = { this.props.t('toolbar.videoSettings') }
+                    buttonKey = { buttonKey }
                     icon = { IconArrowUp }
                     iconDisabled = { this._isIconDisabled() }
                     iconId = 'video-settings-button'
                     iconTooltip = { t('toolbar.videoSettings') }
+                    notifyMode = { notifyMode }
                     onIconClick = { this._onClick }
                     onIconKeyDown = { this._onEscClick }>
-                    <VideoMuteButton handleClick = { handleClick } />
+                    <VideoMuteButton
+                        buttonKey = { buttonKey }
+                        notifyMode = { notifyMode } />
                 </ToolboxButtonWithIcon>
             </VideoSettingsPopup>
-        ) : <VideoMuteButton handleClick = { handleClick } />;
+        ) : <VideoMuteButton
+            buttonKey = { buttonKey }
+            notifyMode = { notifyMode } />;
     }
 }
 
@@ -175,5 +186,5 @@ const mapDispatchToProps = {
 
 export default translate(connect(
     mapStateToProps,
-    mapDispatchToProps,
+    mapDispatchToProps
 )(VideoSettingsButton));

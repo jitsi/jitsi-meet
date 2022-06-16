@@ -37,7 +37,7 @@ type State = {
  * An abstract Component with the contents for a dialog that asks for confirmation
  * from the user before muting all remote participants.
  *
- * @extends AbstractMuteRemoteParticipantDialog
+ * @augments AbstractMuteRemoteParticipantDialog
  */
 export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRemoteParticipantDialog<P, State> {
     static defaultProps = {

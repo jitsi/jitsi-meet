@@ -17,15 +17,14 @@ import {
     getCurrentConference,
     isRoomValid
 } from '../../base/conference';
-import { LOAD_CONFIG_ERROR } from '../../base/config';
 import {
     CONNECTION_DISCONNECTED,
-    CONNECTION_FAILED,
     JITSI_CONNECTION_CONFERENCE_KEY,
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
-import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
+import {
+    JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import {
@@ -40,9 +39,11 @@ import { toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
 import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
+import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes';
 import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
+import { READY_TO_CLOSE } from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
 import logger from './logger';
@@ -92,6 +93,7 @@ const eventEmitter = new NativeEventEmitter(ExternalAPI);
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const oldAudioMuted = store.getState()['features/base/media'].audio.muted;
     const result = next(action);
     const { type } = action;
 
@@ -124,7 +126,6 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_LEFT:
-    case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
         break;
 
@@ -154,27 +155,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONNECTION_FAILED:
-        !action.error.recoverable
-            && _sendConferenceFailedOnConnectionError(store, action);
-        break;
-
     case ENTER_PICTURE_IN_PICTURE:
         sendEvent(store, type, /* data */ {});
         break;
-
-    case LOAD_CONFIG_ERROR: {
-        const { error, locationURL } = action;
-
-        sendEvent(
-            store,
-            CONFERENCE_TERMINATED,
-            /* data */ {
-                error: _toErrorString(error),
-                url: _normalizeUrl(locationURL)
-            });
-        break;
-    }
 
     case OPEN_CHAT:
     case CLOSE_CHAT: {
@@ -206,19 +189,35 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case READY_TO_CLOSE:
+        sendEvent(store, type, /* data */ {});
+        break;
+
     case SET_ROOM:
         _maybeTriggerEarlyConferenceWillJoin(store, action);
         break;
 
     case SET_AUDIO_MUTED:
-        sendEvent(
-            store,
-            'AUDIO_MUTED_CHANGED',
-            /* data */ {
-                muted: action.muted
-            });
+        if (action.muted !== oldAudioMuted) {
+            sendEvent(
+                store,
+                'AUDIO_MUTED_CHANGED',
+                /* data */ {
+                    muted: action.muted
+                });
+        }
         break;
 
+    case SET_PAGE_RELOAD_OVERLAY_CANCELED:
+        sendEvent(
+            store,
+            CONFERENCE_TERMINATED,
+            /* data */ {
+                error: _toErrorString(action.error),
+                url: _normalizeUrl(store.getState()['features/base/connection'].locationURL)
+            });
+
+        break;
     case SET_VIDEO_MUTED:
         sendEvent(
             store,
@@ -552,36 +551,6 @@ function _sendConferenceEvent(
 }
 
 /**
- * Sends {@link CONFERENCE_TERMINATED} event when the {@link CONNECTION_FAILED}
- * occurs. It should be done only if the connection fails before the conference
- * instance is created. Otherwise the eventual failure event is supposed to be
- * emitted by the base/conference feature.
- *
- * @param {Store} store - The redux store.
- * @param {Action} action - The redux action.
- * @returns {void}
- */
-function _sendConferenceFailedOnConnectionError(store, action) {
-    const { locationURL } = store.getState()['features/base/connection'];
-    const { connection } = action;
-
-    locationURL
-        && forEachConference(
-            store,
-
-            // If there's any conference in the  base/conference state then the
-            // base/conference feature is supposed to emit a failure.
-            conference => conference.getConnection() !== connection)
-        && sendEvent(
-        store,
-        CONFERENCE_TERMINATED,
-        /* data */ {
-            url: _normalizeUrl(locationURL),
-            error: action.error.name
-        });
-}
-
-/**
  * Determines whether to not send a {@code CONFERENCE_LEFT} event to the native
  * counterpart of the External API.
  *
@@ -630,11 +599,6 @@ function _swallowEvent(store, action, data) {
     switch (action.type) {
     case CONFERENCE_LEFT:
         return _swallowConferenceLeft(store, action, data);
-    case CONFERENCE_WILL_JOIN:
-        // CONFERENCE_WILL_JOIN is dispatched to the external API on SET_ROOM,
-        // before the connection is created, so we need to swallow the original
-        // one emitted by base/conference.
-        return true;
 
     default:
         return false;

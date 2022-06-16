@@ -4,7 +4,8 @@ import { MiddlewareRegistry } from '../base/redux';
 
 import {
     ENDPOINT_MESSAGE_RECEIVED,
-    TOGGLE_REQUESTING_SUBTITLES
+    TOGGLE_REQUESTING_SUBTITLES,
+    SET_REQUESTING_SUBTITLES
 } from './actionTypes';
 import {
     removeTranscriptMessage,
@@ -55,6 +56,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TOGGLE_REQUESTING_SUBTITLES:
         _requestingSubtitlesToggled(store);
+        break;
+    case SET_REQUESTING_SUBTITLES:
+        _requestingSubtitlesSet(store, action.enabled);
         break;
     }
 
@@ -175,6 +179,24 @@ function _requestingSubtitlesToggled({ getState }) {
     conference.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
         !_requestingSubtitles);
+}
+
+/**
+ * Set the local property 'requestingTranscription'. This will cause Jicofo
+ * and Jigasi to decide whether the transcriber needs to be in the room.
+ *
+ * @param {Store} store - The redux store.
+ * @param {boolean} enabled - The new state of the subtitles.
+ * @private
+ * @returns {void}
+ */
+function _requestingSubtitlesSet({ getState }, enabled: boolean) {
+    const state = getState();
+    const { conference } = state['features/base/conference'];
+
+    conference.setLocalParticipantProperty(
+        P_NAME_REQUESTING_TRANSCRIPTION,
+        enabled);
 }
 
 /**

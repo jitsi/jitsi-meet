@@ -12,7 +12,7 @@ import JitsiMeetJS, { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { hideNotification, showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, hideNotification, showNotification } from '../notifications';
 
 import { setNoAudioSignalNotificationUid } from './actions';
 import DialInLink from './components/DialInLink';
@@ -94,8 +94,8 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
             // at the point of the implementation the showNotification function only supports doing that for
             // the description.
             // TODO Add support for arguments to showNotification title and customAction strings.
-            customActionNameKey = `Switch to ${formatDeviceLabel(activeDevice.deviceLabel)}`;
-            customActionHandler = () => {
+            customActionNameKey = [ `Switch to ${formatDeviceLabel(activeDevice.deviceLabel)}` ];
+            customActionHandler = [ () => {
                 // Select device callback
                 dispatch(
                         updateSettings({
@@ -105,7 +105,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
                 );
 
                 dispatch(setAudioInputDevice(activeDevice.deviceId));
-            };
+            } ];
         }
 
         const notification = await dispatch(showNotification({
@@ -114,7 +114,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
             descriptionKey,
             customActionNameKey,
             customActionHandler
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
         dispatch(playSound(NO_AUDIO_SIGNAL_SOUND_ID));
 

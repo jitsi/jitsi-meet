@@ -54,7 +54,7 @@ type State = {
 /**
  * A dropdown to select a YouTube broadcast.
  *
- * @extends Component
+ * @augments Component
  */
 class StreamKeyPicker extends PureComponent<Props, State> {
     /**

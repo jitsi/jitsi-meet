@@ -6,6 +6,8 @@ import { getParticipantCountWithFake } from '../base/participants';
 import { toState } from '../base/redux';
 import { isLocalVideoTrackDesktop } from '../base/tracks';
 
+export * from './functions.any';
+
 const WIDTH = {
     FIT_9_ICONS: 560,
     FIT_8_ICONS: 500,
@@ -52,6 +54,19 @@ export function getMovableButtons(width: number): Set<string> {
 }
 
 /**
+ * Indicates if the desktop share button is disabled or not.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function isDesktopShareButtonDisabled(state: Object) {
+    const { muted, unmuteBlocked } = state['features/base/media'].video;
+    const videoOrShareInProgress = !muted || isLocalVideoTrackDesktop(state);
+
+    return unmuteBlocked && !videoOrShareInProgress;
+}
+
+/**
  * Returns true if the toolbox is visible.
  *
  * @param {Object | Function} stateful - A function or object that can be
@@ -78,5 +93,9 @@ export function isToolboxVisible(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isVideoMuteButtonDisabled(state: Object) {
-    return !hasAvailableDevices(state, 'videoInput') || isLocalVideoTrackDesktop(state);
+    const { muted, unmuteBlocked } = state['features/base/media'].video;
+
+    return !hasAvailableDevices(state, 'videoInput')
+        || (unmuteBlocked && Boolean(muted))
+        || isLocalVideoTrackDesktop(state);
 }

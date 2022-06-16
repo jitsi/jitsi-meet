@@ -31,6 +31,7 @@
 #import <JitsiMeetSDK/JitsiMeetSDK-Swift.h>
 
 #import "../LogUtils.h"
+#import "JitsiAudioSession.h"
 
 
 // The events emitted/supported by RNCallKit:
@@ -113,6 +114,7 @@ RCT_EXPORT_METHOD(setProviderConfiguration:(NSDictionary *)dictionary) {
     DDLogInfo(@"[RNCallKit][setProviderConfiguration:] dictionary = %@", dictionary);
 
     if (![JMCallKitProxy isProviderConfigured]) {
+        JMCallKitProxy.enabled = true;
         [self configureProviderFromDictionary:dictionary];
     }
 
@@ -319,13 +321,13 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 - (void) providerDidActivateAudioSessionWithSession:(AVAudioSession *)session {
     DDLogInfo(@"[RNCallKit][CXProviderDelegate][provider:didActivateAudioSession:]");
 
-    [[RTCAudioSession sharedInstance] audioSessionDidActivate:session];
+    [JitsiAudioSession activateWithAudioSession:session];
 }
 
 - (void) providerDidDeactivateAudioSessionWithSession:(AVAudioSession *)session {
     DDLogInfo(@"[RNCallKit][CXProviderDelegate][provider:didDeactivateAudioSession:]");
 
-    [[RTCAudioSession sharedInstance] audioSessionDidDeactivate:session];
+    [JitsiAudioSession deactivateWithAudioSession:session];
 }
 
 - (void) providerTimedOutPerformingActionWithAction:(CXAction *)action {

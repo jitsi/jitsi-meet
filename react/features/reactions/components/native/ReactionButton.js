@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Text, TouchableHighlight } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -12,6 +12,11 @@ import { REACTIONS } from '../../constants';
 
 
 export type ReactionStyles = {
+
+    /**
+     * Style for the gif button.
+     */
+    gifButton: StyleType,
 
     /**
      * Style for the button.
@@ -46,12 +51,22 @@ export type ReactionStyles = {
 type Props = {
 
     /**
+     * Component children.
+     */
+    children?: ReactNode,
+
+    /**
+     * External click handler.
+     */
+    onClick?: Function,
+
+    /**
      * Collection of styles for the button.
      */
     styles: ReactionStyles,
 
     /**
-     * The reaction to be sent
+     * The reaction to be sent.
      */
     reaction: string,
 
@@ -67,30 +82,26 @@ type Props = {
  * @returns {ReactElement}
  */
 function ReactionButton({
+    children,
+    onClick,
     styles,
     reaction,
     t
 }: Props) {
     const dispatch = useDispatch();
-
-    /**
-     * Handles clicking / pressing the button.
-     *
-     * @returns {void}
-     */
-    function _onClick() {
+    const _onClick = useCallback(() => {
         dispatch(addReactionToBuffer(reaction));
         sendAnalytics(createReactionMenuEvent(reaction));
-    }
+    }, [ reaction ]);
 
     return (
         <TouchableHighlight
             accessibilityLabel = { t(`toolbar.accessibilityLabel.${reaction}`) }
             accessibilityRole = 'button'
-            onPress = { _onClick }
-            style = { styles.style }
+            onPress = { onClick || _onClick }
+            style = { [ styles.style, children && styles?.gifButton ] }
             underlayColor = { styles.underlayColor }>
-            <Text style = { styles.emoji }>{REACTIONS[reaction].emoji}</Text>
+            {children ?? <Text style = { styles.emoji }>{REACTIONS[reaction].emoji}</Text>}
         </TouchableHighlight>
     );
 }

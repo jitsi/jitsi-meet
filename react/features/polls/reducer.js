@@ -4,6 +4,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     CHANGE_VOTE,
+    CLEAR_POLLS,
     RECEIVE_POLL,
     RECEIVE_POLLS,
     SHOW_POLL,
@@ -61,6 +62,13 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
                     showResults: !value
                 }
             }
+        };
+    }
+
+    case CLEAR_POLLS: {
+        return {
+            ...state,
+            ...INITIAL_STATE
         };
     }
 

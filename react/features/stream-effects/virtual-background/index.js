@@ -1,5 +1,6 @@
 // @flow
 
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
 import { showWarningNotification } from '../../notifications/actions';
 import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
@@ -8,8 +9,7 @@ import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
 import createTFLiteModule from './vendor/tflite/tflite';
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
 const models = {
-    model96: 'libs/segm_lite_v681.tflite',
-    model144: 'libs/segm_full_v679.tflite'
+    modelLandscape: 'libs/selfie_segmentation_landscape.tflite'
 };
 
 let tflite;
@@ -17,11 +17,7 @@ let wasmCheck;
 let isWasmDisabled = false;
 
 const segmentationDimensions = {
-    model96: {
-        height: 96,
-        width: 160
-    },
-    model144: {
+    modelLandscape: {
         height: 144,
         width: 256
     }
@@ -56,27 +52,32 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
                 tflite = await timeout(tfliteTimeout, createTFLiteModule());
             }
         } catch (err) {
-            isWasmDisabled = true;
-
             if (err?.message === '408') {
                 logger.error('Failed to download tflite model!');
                 dispatch(showWarningNotification({
                     titleKey: 'virtualBackground.backgroundEffectError'
-                }));
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
             } else {
-                logger.error('Looks like WebAssembly is disabled or not supported on this browser');
+                isWasmDisabled = true;
+                logger.error('Looks like WebAssembly is disabled or not supported on this browser', err);
                 dispatch(showWarningNotification({
                     titleKey: 'virtualBackground.webAssemblyWarning',
-                    description: 'WebAssembly disabled or not supported by this browser'
-                }));
+                    descriptionKey: 'virtualBackground.webAssemblyWarningDescription'
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
             }
 
             return;
         }
+    } else if (isWasmDisabled) {
+        dispatch(showWarningNotification({
+            titleKey: 'virtualBackground.backgroundEffectError'
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+        return;
     }
 
     const modelBufferOffset = tflite._getModelBufferMemoryOffset();
-    const modelResponse = await fetch(wasmCheck.feature.simd ? models.model144 : models.model96);
+    const modelResponse = await fetch(models.modelLandscape);
 
     if (!modelResponse.ok) {
         throw new Error('Failed to download tflite model!');
@@ -89,7 +90,7 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
     tflite._loadModel(model.byteLength);
 
     const options = {
-        ...wasmCheck.feature.simd ? segmentationDimensions.model144 : segmentationDimensions.model96,
+        ...segmentationDimensions.modelLandscape,
         virtualBackground
     };
 

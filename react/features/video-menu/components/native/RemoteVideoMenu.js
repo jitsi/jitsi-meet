@@ -5,16 +5,17 @@ import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { translate } from '../../../base/i18n';
 import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
-import { PrivateMessageButton } from '../../../chat';
+import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
+import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
 import { hideRemoteVideoMenu } from '../../actions.native';
 import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
@@ -25,6 +26,7 @@ import MuteButton from './MuteButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteVideoButton from './MuteVideoButton';
 import PinButton from './PinButton';
+import SendToBreakoutRoom from './SendToBreakoutRoom';
 import styles from './styles';
 
 // import VolumeSlider from './VolumeSlider';
@@ -48,14 +50,19 @@ type Props = {
     participantId: String,
 
     /**
-     * The color-schemed stylesheet of the BottomSheet.
+     * The id of the current room.
      */
-    _bottomSheetStyles: StyleType,
+    _currentRoomId: String,
 
     /**
      * Whether or not to display the kick button.
      */
     _disableKick: boolean,
+
+    /**
+     * Whether or not to display the send private message button.
+     */
+    _disablePrivateChat: Boolean,
 
     /**
      * Whether or not to display the remote mute buttons.
@@ -80,7 +87,17 @@ type Props = {
     /**
      * Display name of the participant retrieved from Redux.
      */
-    _participantDisplayName: string
+    _participantDisplayName: string,
+
+    /**
+     * Array containing the breakout rooms.
+     */
+    _rooms: Array<Object>,
+
+    /**
+     * Translation function.
+     */
+    t: Function
 }
 
 // eslint-disable-next-line prefer-const
@@ -110,16 +127,20 @@ class RemoteVideoMenu extends PureComponent<Props> {
     render() {
         const {
             _disableKick,
+            _disablePrivateChat,
             _disableRemoteMute,
             _disableGrantModerator,
             _isParticipantAvailable,
-            participantId
+            _rooms,
+            _currentRoomId,
+            participantId,
+            t
         } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participantId,
-            styles: this.props._bottomSheetStyles.buttons
+            styles: bottomSheetStyles.buttons
         };
 
         return (
@@ -135,9 +156,20 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 { !_disableKick && <KickButton { ...buttonProps } /> }
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
-                <PrivateMessageButton { ...buttonProps } />
+                { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
                 <ConnectionStatusButton { ...buttonProps } />
-                {/* <Divider style = { styles.divider } />*/}
+                {_rooms.length > 1 && <>
+                    <Divider style = { styles.divider } />
+                    <View style = { styles.contextMenuItem }>
+                        <Text style = { styles.contextMenuItemText }>
+                            {t('breakoutRooms.actions.sendToBreakoutRoom')}
+                        </Text>
+                    </View>
+                    {_rooms.map(room => _currentRoomId !== room.id && (<SendToBreakoutRoom
+                        key = { room.id }
+                        room = { room }
+                        { ...buttonProps } />))}
+                </>}
                 {/* <VolumeSlider participantID = { participantId } />*/}
             </BottomSheet>
         );
@@ -169,12 +201,12 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participantId } = this.props;
+        const { participantId } = this.props;
 
         return (
             <View
                 style = { [
-                    _bottomSheetStyles.sheet,
+                    bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
                     participantId = { participantId }
@@ -200,20 +232,23 @@ function _mapStateToProps(state, ownProps) {
     const { participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const isParticipantAvailable = getParticipantById(state, participantId);
-    let { disableKick } = remoteVideoMenu;
-
-    disableKick = disableKick || !kickOutEnabled;
+    const { disableKick, disablePrivateChat } = remoteVideoMenu;
+    const _rooms = Object.values(getBreakoutRooms(state));
+    const _currentRoomId = getCurrentRoomId(state);
+    const shouldDisableKick = disableKick || !kickOutEnabled;
 
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _disableKick: Boolean(disableKick),
+        _currentRoomId,
+        _disableKick: Boolean(shouldDisableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
+        _disablePrivateChat: Boolean(disablePrivateChat),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
-        _participantDisplayName: getParticipantDisplayName(state, participantId)
+        _participantDisplayName: getParticipantDisplayName(state, participantId),
+        _rooms
     };
 }
 
-RemoteVideoMenu_ = connect(_mapStateToProps)(RemoteVideoMenu);
+RemoteVideoMenu_ = translate(connect(_mapStateToProps)(RemoteVideoMenu));
 
 export default RemoteVideoMenu_;

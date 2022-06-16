@@ -92,6 +92,7 @@ const useStyles = makeStyles(theme => {
             '&.custom-slider': {
                 '-webkit-appearance': 'none',
                 background: 'transparent',
+                height,
                 left: 0,
                 position: 'absolute',
                 top: 0,

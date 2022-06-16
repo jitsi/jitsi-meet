@@ -6,14 +6,14 @@ import { useSelector } from 'react-redux';
 
 import { shouldShowResults } from '../../functions';
 
+import PollAnswer from './PollAnswer';
+import PollResults from './PollResults';
 import { chatStyles } from './styles';
-
-import { PollAnswer, PollResults } from '.';
 
 type Props = {
 
     /**
-     * Id of the poll
+     * Id of the poll.
      */
     pollId: string,
 

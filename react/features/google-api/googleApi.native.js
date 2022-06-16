@@ -5,7 +5,7 @@ import { NativeModules } from 'react-native';
 let GoogleSignin;
 
 if (NativeModules.RNGoogleSignin) {
-    GoogleSignin = require('@react-native-community/google-signin').GoogleSignin;
+    GoogleSignin = require('@react-native-google-signin/google-signin').GoogleSignin;
 }
 
 import {
@@ -19,7 +19,7 @@ import {
  * the export object is similar so no need for different export logic.
  *
  * For more detailed documentation of the {@code GoogleSignin} API, please visit
- * https://github.com/react-native-community/react-native-google-signin.
+ * https://github.com/@react-native-google-signin/google-signin.
  */
 class GoogleApi {
     /**

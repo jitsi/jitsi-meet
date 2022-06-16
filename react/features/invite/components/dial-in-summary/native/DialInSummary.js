@@ -1,16 +1,18 @@
 // @flow
 
-import React, { Component } from 'react';
-import { Linking, View } from 'react-native';
+import React, { PureComponent } from 'react';
+import { Linking, Platform, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { type Dispatch } from 'redux';
 
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { JitsiModal, setActiveModalId } from '../../../../base/modal';
+import { IconClose } from '../../../../base/icons';
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
-import { DIAL_IN_SUMMARY_VIEW_ID } from '../../../constants';
+import HeaderNavigationButton
+    from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 
 import DialInSummaryErrorDialog from './DialInSummaryErrorDialog';
@@ -18,18 +20,28 @@ import styles, { INDICATOR_COLOR } from './styles';
 
 type Props = {
 
-    /**
-     * The URL to display the summary for.
-     */
-    _summaryUrl: ?string,
+    dispatch: Dispatch<any>,
 
-    dispatch: Dispatch<any>
+    /**
+     * Default prop for navigating between screen components(React Navigation).
+     */
+    navigation: Object,
+
+    /**
+     * Default prop for navigating between screen components(React Navigation).
+     */
+    route: Object,
+
+    /**
+     * Translation function.
+     */
+    t: Function
 };
 
 /**
  * Implements a React native component that displays the dial in info page for a specific room.
  */
-class DialInSummary extends Component<Props> {
+class DialInSummary extends PureComponent<Props> {
 
     /**
      * Initializes a new instance.
@@ -45,28 +57,60 @@ class DialInSummary extends Component<Props> {
     }
 
     /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after mounting occurs.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const { navigation, t } = this.props;
+        const onNavigationClose = () => {
+            navigation.goBack();
+        };
+
+        navigation.setOptions({
+            headerLeft: () => {
+                if (Platform.OS === 'ios') {
+                    return (
+                        <HeaderNavigationButton
+                            label = { t('dialog.close') }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onPress = { onNavigationClose } />
+                    );
+                }
+
+                return (
+                    <HeaderNavigationButton
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onPress = { onNavigationClose }
+                        src = { IconClose } />
+                );
+            }
+        });
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      */
     render() {
-        const { _summaryUrl } = this.props;
+        const { route } = this.props;
+        const summaryUrl = route.params?.summaryUrl;
 
         return (
-            <JitsiModal
-                headerProps = {{
-                    headerLabelKey: 'info.label'
-                }}
-                modalId = { DIAL_IN_SUMMARY_VIEW_ID }
+            <JitsiScreen
                 style = { styles.backDrop }>
                 <WebView
                     onError = { this._onError }
                     onShouldStartLoadWithRequest = { this._onNavigate }
                     renderLoading = { this._renderLoading }
-                    source = {{ uri: getDialInfoPageURLForURIString(_summaryUrl) }}
+                    setSupportMultipleWindows = { false }
+                    source = {{ uri: getDialInfoPageURLForURIString(summaryUrl) }}
                     startInLoadingState = { true }
                     style = { styles.webView } />
-            </JitsiModal>
+            </JitsiScreen>
         );
     }
 
@@ -78,7 +122,6 @@ class DialInSummary extends Component<Props> {
      * @returns {void}
      */
     _onError() {
-        this.props.dispatch(setActiveModalId());
         this.props.dispatch(openDialog(DialInSummaryErrorDialog));
     }
 
@@ -94,14 +137,14 @@ class DialInSummary extends Component<Props> {
      */
     _onNavigate(request) {
         const { url } = request;
+        const { route } = this.props;
+        const summaryUrl = route.params?.summaryUrl;
 
         if (url.startsWith('tel:')) {
             Linking.openURL(url);
-
-            this.props.dispatch(setActiveModalId());
         }
 
-        return url === getDialInfoPageURLForURIString(this.props._summaryUrl);
+        return url === getDialInfoPageURLForURIString(summaryUrl);
     }
 
     _renderLoading: () => React$Component<any>;
@@ -122,18 +165,4 @@ class DialInSummary extends Component<Props> {
     }
 }
 
-/**
- * Maps part of the Redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @returns {{
- *      _summaryUrl: ?string
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        _summaryUrl: (state['features/base/modal'].modalProps || {}).summaryUrl
-    };
-}
-
-export default translate(connect(_mapStateToProps)(DialInSummary));
+export default translate(connect()(DialInSummary));

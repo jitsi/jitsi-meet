@@ -46,6 +46,11 @@ export type Props = {
     soundsReactions: Boolean,
 
     /**
+     * Whether or not moderator muted the sounds.
+     */
+    moderatorMutedSoundsReactions: Boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -54,7 +59,7 @@ export type Props = {
 /**
  * React {@code Component} for modifying the local user's sound settings.
  *
- * @extends Component
+ * @augments Component
  */
 class SoundsTab extends AbstractDialogTab<Props> {
     /**
@@ -97,6 +102,7 @@ class SoundsTab extends AbstractDialogTab<Props> {
             soundsTalkWhileMuted,
             soundsReactions,
             enableReactions,
+            moderatorMutedSoundsReactions,
             t
         } = this.props;
 
@@ -109,6 +115,7 @@ class SoundsTab extends AbstractDialogTab<Props> {
                 </h2>
                 {enableReactions && <Checkbox
                     isChecked = { soundsReactions }
+                    isDisabled = { moderatorMutedSoundsReactions }
                     label = { t('settings.reactions') }
                     name = 'soundsReactions'
                     onChange = { this._onChange } />

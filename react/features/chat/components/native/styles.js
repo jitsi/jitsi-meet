@@ -60,7 +60,7 @@ export default {
     },
 
     inputField: {
-        color: 'rgb(28, 32, 37)',
+        color: BaseTheme.palette.text01,
         flex: 1,
         height: 48
     },
@@ -69,10 +69,6 @@ export default {
         alignItems: 'center',
         borderRadius: BUBBLE_RADIUS,
         flexDirection: 'row'
-    },
-
-    messageContainer: {
-        flex: 1
     },
 
     /**
@@ -99,7 +95,7 @@ export default {
     },
 
     sendButtonIcon: {
-        color: ColorPalette.darkGrey,
+        color: BaseTheme.palette.icon01,
         fontSize: 22
     },
 
@@ -128,6 +124,7 @@ export default {
     },
 
     chatContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
         flex: 1
     },
 
@@ -148,6 +145,17 @@ export default {
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0
+    },
+
+    gifContainer: {
+        maxHeight: 150
+    },
+
+    gifImage: {
+        resizeMode: 'contain',
+        width: 250,
+        height: undefined,
+        flexGrow: 1
     }
 };
 
@@ -169,8 +177,25 @@ ColorSchemeRegistry.register('Chat', {
     },
 
     emptyComponentText: {
-        color: BaseTheme.palette.ui05,
+        color: BaseTheme.palette.text03,
         textAlign: 'center'
+    },
+
+    lobbyMessageBubble: {
+        backgroundColor: schemeColor('lobbyMsgBackground')
+    },
+
+    lobbyMsgNotice: {
+        color: schemeColor('lobbyMsgNotice'),
+        fontSize: 11,
+        marginTop: 6
+    },
+
+    lobbyMessageRecipientContainer: {
+        alignItems: 'center',
+        backgroundColor: schemeColor('lobbyMsgBackground'),
+        flexDirection: 'row',
+        padding: BoxModel.padding
     },
 
     localMessageBubble: {

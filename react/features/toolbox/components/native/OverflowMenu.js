@@ -3,40 +3,36 @@
 import React, { PureComponent } from 'react';
 import { Divider } from 'react-native-paper';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
-import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionMenu } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { LiveStreamButton, RecordButton } from '../../../recording';
-import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
+import SecurityDialogButton
+    from '../../../security/components/security-dialog/native/SecurityDialogButton';
 import { SharedVideoButton } from '../../../shared-video/components';
+import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import styles from '../../../video-menu/components/native/styles';
 import { getMovableButtons } from '../../functions.native';
 import HelpButton from '../HelpButton';
-import MuteEveryoneButton from '../MuteEveryoneButton';
-import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
+import LinkToSalesforceButton from './LinkToSalesforceButton';
+import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
-import ScreenSharingButton from './ScreenSharingButton.js';
+import ScreenSharingButton from './ScreenSharingButton';
 import ToggleCameraButton from './ToggleCameraButton';
+import ToggleSelfViewButton from './ToggleSelfViewButton';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
 type Props = {
-
-    /**
-     * The color-schemed stylesheet of the dialog feature.
-     */
-    _bottomSheetStyles: StyleType,
 
     /**
      * True if the overflow menu is currently visible, false otherwise.
@@ -47,6 +43,11 @@ type Props = {
      * Whether the recoding button should be enabled or not.
      */
     _recordingEnabled: boolean,
+
+    /**
+     * Whether or not the self view is hidden.
+     */
+    _selfViewHidden: boolean,
 
     /**
      * The width of the screen.
@@ -110,22 +111,26 @@ class OverflowMenu extends PureComponent<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _bottomSheetStyles, _width, _reactionsEnabled } = this.props;
+        const {
+            _reactionsEnabled,
+            _selfViewHidden,
+            _width
+        } = this.props;
         const toolbarButtons = getMovableButtons(_width);
 
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            styles: _bottomSheetStyles.buttons
+            styles: bottomSheetStyles.buttons
         };
 
         const topButtonProps = {
             afterClick: this._onCancel,
             showLabel: true,
             styles: {
-                ..._bottomSheetStyles.buttons,
+                ...bottomSheetStyles.buttons,
                 style: {
-                    ..._bottomSheetStyles.buttons.style,
+                    ...bottomSheetStyles.buttons.style,
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16
                 }
@@ -138,19 +143,20 @@ class OverflowMenu extends PureComponent<Props, State> {
                 renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : null }>
-                <AudioRouteButton { ...topButtonProps } />
-                <ParticipantsPaneButton { ...buttonProps } />
+                <ParticipantsPaneButton { ...topButtonProps } />
+                {_selfViewHidden && <ToggleSelfViewButton { ...buttonProps } />}
+                <OpenCarmodeButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <SecurityDialogButton { ...buttonProps } />
                 <RecordButton { ...buttonProps } />
                 <LiveStreamButton { ...buttonProps } />
-                <MuteEveryoneButton { ...buttonProps } />
-                <MuteEveryonesVideoButton { ...buttonProps } />
+                <LinkToSalesforceButton { ...buttonProps } />
                 <Divider style = { styles.divider } />
                 <SharedVideoButton { ...buttonProps } />
                 <ScreenSharingButton { ...buttonProps } />
+                <SpeakerStatsButton { ...buttonProps } />
                 {!toolbarButtons.has('togglecamera') && <ToggleCameraButton { ...buttonProps } />}
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
@@ -201,11 +207,13 @@ class OverflowMenu extends PureComponent<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { disableSelfView } = state['features/base/settings'];
+
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _width: state['features/base/responsive-ui'].clientWidth,
-        _reactionsEnabled: isReactionsEnabled(state)
+        _reactionsEnabled: isReactionsEnabled(state),
+        _selfViewHidden: Boolean(disableSelfView),
+        _width: state['features/base/responsive-ui'].clientWidth
     };
 }
 

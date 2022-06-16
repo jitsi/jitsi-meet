@@ -11,6 +11,7 @@ export const ICON_SIZE = 15;
 export default {
 
     addPeopleContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
         flex: 1
     },
 
@@ -26,18 +27,16 @@ export default {
     bottomBar: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: BaseTheme.palette.screen01Header,
+        backgroundColor: BaseTheme.palette.screen02Header,
         height: BaseTheme.spacing[10]
     },
 
     clearButton: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: 5
+        paddingTop: 7
     },
 
     clearIcon: {
-        color: DARK_GREY,
+        color: BaseTheme.palette.ui02,
         fontSize: 18,
         textAlign: 'center'
     },
@@ -77,7 +76,7 @@ export default {
     },
 
     itemText: {
-        color: DARK_GREY,
+        color: BaseTheme.palette.text01,
         fontSize: 14,
         fontWeight: 'normal'
     },
@@ -100,28 +99,34 @@ export default {
         color: DARK_GREY,
         flex: 1,
         fontSize: 17,
-        paddingVertical: 7
+        paddingVertical: 7,
+        paddingLeft: 0,
+        textAlign: 'left'
     },
 
     selectedIcon: {
-        color: DARK_GREY,
+        color: BaseTheme.palette.icon01,
         fontSize: 20,
         marginRight: BoxModel.margin,
         padding: 2
     },
 
     separator: {
-        borderBottomColor: LIGHT_GREY,
+        borderBottomColor: BaseTheme.palette.dividerColor,
         borderBottomWidth: 1,
         marginLeft: 85
     },
 
     searchFieldWrapper: {
+        backgroundColor: BaseTheme.palette.section01,
         alignItems: 'stretch',
         flexDirection: 'row',
-        height: 52,
-        paddingHorizontal: 12,
-        paddingVertical: 8
+        height: 36,
+        marginHorizontal: 15,
+        marginVertical: 8,
+        borderWidth: 0,
+        borderRadius: 10,
+        overflow: 'hidden'
     },
 
     searchIcon: {
@@ -132,8 +137,6 @@ export default {
     searchIconWrapper: {
         alignItems: 'center',
         backgroundColor: BaseTheme.palette.section01,
-        borderBottomLeftRadius: 10,
-        borderTopLeftRadius: 10,
         flexDirection: 'row',
         justifyContent: 'center',
         width: ICON_SIZE + 16
@@ -144,7 +147,7 @@ export default {
     },
 
     unselectIcon: {
-        color: LIGHT_GREY,
+        color: BaseTheme.palette.ui01,
         fontSize: 16,
         left: AVATAR_SIZE / -3,
         position: 'relative',

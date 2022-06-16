@@ -32,9 +32,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Слушалки",
+        "none": "Няма налични устройства за звук",
         "phone": "Телефон",
-        "speaker": "Високоговорител",
-        "none": "Няма налични устройства за звук"
+        "speaker": "Високоговорител"
     },
     "audioOnly": {
         "audioOnly": "Само звук"
@@ -60,22 +60,22 @@
     "chat": {
         "error": "Грешка: вашето съобщение не бе изпратено, пради: {{error}}",
         "fieldPlaceHolder": "Въведете съобщението",
-        "messagebox": "Въведете съобщение",
         "messageTo": "Лично съобщение до {{recipient}}",
-        "noMessagesMessage": "Все още няма съобщения в срещата. Започнете разговор тук!",
+        "messagebox": "Въведете съобщение",
         "nickname": {
             "popover": "Избор на име",
             "title": "Въведете име, за да обменяте съобщения",
             "titleWithPolls": "Въведете име, за да обменяте съобщения"
         },
+        "noMessagesMessage": "Все още няма съобщения в срещата. Започнете разговор тук!",
         "privateNotice": "Лично съобщение до {{recipient}}",
         "title": "Текстови съобщения",
         "titleWithPolls": "Текстови съобщения",
         "you": "вие"
     },
     "chromeExtensionBanner": {
-        "dontShowAgain": "Не показвай повече",
         "buttonText": "Инсталирайте разширението за Chrome",
+        "dontShowAgain": "Не показвай повече",
         "installExtensionText": "Инсталирайте разширенията за Google Calendar и Office 365"
     },
     "connectingOverlay": {
@@ -91,11 +91,11 @@
         "DISCONNECTED": "Изключен",
         "DISCONNECTING": "Прекъсване на връзката",
         "ERROR": "Грешка",
-        "RECONNECTING": "Появи се проблем с мрежата. Връзваме се наново...",
-        "LOW_BANDWIDTH": "Видеото на {{displayName}} беше изключено, поради слаба Интернет връзка",
-        "GOT_SESSION_ID": "Отваряне на сесията... Готово",
+        "FETCH_SESSION_ID": "Отваряне на сесия...",
         "GET_SESSION_ID_ERROR": "Грешка при отваряне на сесията: {{code}}",
-        "FETCH_SESSION_ID": "Отваряне на сесия..."
+        "GOT_SESSION_ID": "Отваряне на сесията... Готово",
+        "LOW_BANDWIDTH": "Видеото на {{displayName}} беше изключено, поради слаба Интернет връзка",
+        "RECONNECTING": "Появи се проблем с мрежата. Връзваме се наново..."
     },
     "connectionindicator": {
         "address": "Адрес:",
@@ -156,7 +156,20 @@
         "selectADevice": "Изберете устройство",
         "testAudio": "Пусни пробен звук"
     },
+    "dialOut": {
+        "statusMessage": "в момента е {{status}}"
+    },
     "dialog": {
+        "Back": "Назад",
+        "Cancel": "Отказ",
+        "IamHost": "Аз съм домакинът",
+        "Ok": "Готово",
+        "Remove": "Премахване",
+        "Share": "Споделяне",
+        "Submit": "Изпращане",
+        "WaitForHostMsg": "Конференцията все още не е започнала. Ако сте домакинът, тогава се идентифицирайте. В противен случай изчакайте докато домакинът пристигне.",
+        "WaitingForHost": "Чакаме домакина...",
+        "Yes": "Да",
         "accessibilityLabel": {
             "liveStreaming": "Излъчване на живо"
         },
@@ -165,7 +178,6 @@
         "alreadySharedVideoMsg": "Друг участник вече е споделил видео. Тази среща позволява само едно споделено видео.",
         "alreadySharedVideoTitle": "Разрешено е споделянето само на едно видео в даден момент",
         "applicationWindow": "Прозорец на програмата",
-        "Back": "Назад",
         "cameraConstraintFailedError": "Камерата Ви не покрива някои от изискванията.",
         "cameraNotFoundError": "Не е открита камера.",
         "cameraNotSendingData": "Камерата е недостъпна. Моля, проверете дали друго приложение не използва това устройство, изберете друго устройство от менюто с настройките, или презаредете приложението.",
@@ -173,7 +185,6 @@
         "cameraPermissionDeniedError": "Не сте дали разрешение за използване на камерата. Ще можете да се присъедините в срещата, но другите няма да Ви виждат. Използвайте бутона с камерата в адресната лента, за да оправите това.",
         "cameraUnknownError": "Невъзможен достъп до камерата по неясна причина.",
         "cameraUnsupportedResolutionError": "Камерата Ви не поддържа нужната резолюция.",
-        "Cancel": "Отказ",
         "close": "Затваряне",
         "conferenceDisconnectMsg": "Може би трябва да проверите мрежовата си връзка. Повторно свързване след {{seconds}} сек…",
         "conferenceDisconnectTitle": "Връзката се разпадна.",
@@ -196,11 +207,10 @@
         "externalInstallationTitle": "Нужно е разширение",
         "goToStore": "Към магазина в Интернет",
         "gracefulShutdown": "Услугата временно не е достъпна поради профилактика. Моля, опитайте по-късно.",
-        "IamHost": "Аз съм домакинът",
-        "incorrectRoomLockPassword": "Грешна парола",
         "incorrectPassword": "Неправилно потребителско име или парола",
-        "inlineInstallationMsg": "Трябва да инсталирате разширението за споделяне на екрана.",
+        "incorrectRoomLockPassword": "Грешна парола",
         "inlineInstallExtension": "Инсталиране сега",
+        "inlineInstallationMsg": "Трябва да инсталирате разширението за споделяне на екрана.",
         "internalError": "Опа! Нещо се обърка. Възникна следната грешка: {{error}}",
         "internalErrorTitle": "Вътрешна грешка",
         "kickMessage": "Може да се свържете с {{participantDisplayName}} за повече подробности.",
@@ -234,7 +244,6 @@
         "muteParticipantButton": "Изключи микрофона",
         "muteParticipantDialog": "Сигурни ли сте, че искате да заглушите този участник? Няма да можете да пуснете обратно звука му, но участникът ще може да направи това сам.",
         "muteParticipantTitle": "Спиране звука на участник?",
-        "Ok": "Готово",
         "passwordLabel": "Тази среща е заключена. Моля, въведете $t(lockRoomPassword), за да влезете.",
         "passwordNotSupported": "Задаването на $t(lockRoomPassword) за срещата не се поддържа.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) не се поддържа",
@@ -252,13 +261,13 @@
         "remoteControlShareScreenWarning": "Ако натиснете „Разрешаване“, ще споделите екрана си!",
         "remoteControlStopMessage": "Сесията за отдалечено управление приключи!",
         "remoteControlTitle": "Отдалечено управление на компютъра",
-        "Remove": "Премахване",
         "removePassword": "Премахване на $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Наистина ли искате да премахнете споделеното си видео?",
         "removeSharedVideoTitle": "Край на споделянето на видео",
         "reservationError": "Грешка в системата за резервации",
         "reservationErrorMsg": "Грешка номер: {{code}}, съобщение: {{msg}}",
         "retry": "Повторен опит",
+        "screenSharingAudio": "Сподели и звука",
         "screenSharingFailedToInstall": "Опа! Разширението за споделяне на екрана не успя да се инсталира.",
         "screenSharingFailedToInstallTitle": "Разширението за споделяне на екрана не успя да се инсталира",
         "screenSharingFirefoxPermissionDeniedError": "Нещо се обърка докато се опитвахме да споделим екрана. Моля, уверете се, че сте дали права за това. ",
@@ -270,8 +279,7 @@
         "sendPrivateMessageTitle": "Да се изпрати лично?",
         "serviceUnavailable": "Услугата не е налична",
         "sessTerminated": "Разговорът приключи",
-        "Share": "Споделяне",
-        "shareVideoLinkError": "Моля, въведете правилна връзка към YouTube.",
+        "shareVideoLinkError": "Моля, въведете правилна връзка.",
         "shareVideoTitle": "Сподели видео",
         "shareYourScreen": "Споделяне на екрана",
         "shareYourScreenDisabled": "Споделянето на екрана не се поддържа.",
@@ -284,7 +292,6 @@
         "stopRecordingWarning": "Наистина ли искате да спрем записа?",
         "stopStreamingWarning": "Наистина ли искате да спрете излъчването на живо?",
         "streamKey": "Ключ за излъчване на живо",
-        "Submit": "Изпращане",
         "thankYou": "Благодарим, че използвахте {{appName}}!",
         "token": "код за достъп",
         "tokenAuthFailed": "Съжаляваме, но не можете да се присъедините към този разговор.",
@@ -293,15 +300,7 @@
         "unlockRoom": "Премахване $t(lockRoomPassword) от срещата",
         "userPassword": "потребителска парола",
         "videoLink": "Линк към видео",
-        "WaitForHostMsg": "Конференцията <b>{{room}}</b> все още не е започнала. Ако сте домакинът, тогава се идентифицирайте. В противен случай изчакайте докато домакинът пристигне.",
-        "WaitForHostMsgWOk": "Конференцията <b>{{room}}</b> все още не е започнала. Ако сте домакинът, тогава натиснете бутона, за да се идентифицирате. В противен случай изчакайте докато домакинът пристигне.",
-        "WaitingForHost": "Чакаме домакина...",
-        "Yes": "Да",
-        "yourEntireScreen": "Целият екран",
-        "screenSharingAudio": "Сподели и звука"
-    },
-    "dialOut": {
-        "statusMessage": "в момента е {{status}}"
+        "yourEntireScreen": "Целият екран"
     },
     "documentSharing": {
         "title": "Споделен документ"
@@ -314,6 +313,9 @@
         "rateExperience": "Моля, оценете качеството на срещата",
         "veryBad": "Много лошо",
         "veryGood": "Много добро"
+    },
+    "helpView": {
+        "header": "Място за помощ"
     },
     "incomingCall": {
         "answer": "Вдигни",
@@ -341,6 +343,7 @@
         "inviteURLFirstPartGeneral": "Поканени сте да се присъедините към среща.",
         "inviteURLFirstPartPersonal": "{{name}} ви кани за среща.\n",
         "inviteURLSecondPart": "\nВлезте в срещата:\n{{url}}\n",
+        "label": "Информация за срещата",
         "liveStreamURL": "Излъчване на живо:",
         "moreNumbers": "Повече номера",
         "noNumbers": "Няма номера за набиране.",
@@ -349,8 +352,13 @@
         "numbers": "Номера",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Споделяне",
-        "tooltip": "Споделете връзката и информацията за номера свързани със срещата",
-        "label": "Информация за срещата"
+        "tooltip": "Споделете връзката и информацията за номера свързани със срещата"
+    },
+    "inlineDialogFailure": {
+        "msg": "Имаше грешка.",
+        "retry": "Опитайте отново",
+        "support": "Поддръжка",
+        "supportMsg": "Ако това се случва често, свържете се с"
     },
     "inviteDialog": {
         "alertText": "Не успях да поканя участниците.",
@@ -359,12 +367,6 @@
         "searchPeopleOnlyPlaceholder": "Търсене на участници",
         "searchPlaceholder": "Участник или телефонен номер",
         "send": "Изпрати"
-    },
-    "inlineDialogFailure": {
-        "msg": "Имаше грешка.",
-        "retry": "Опитайте отново",
-        "support": "Поддръжка",
-        "supportMsg": "Ако това се случва често, свържете се с"
     },
     "keyboardShortcuts": {
         "focusLocal": "Фокусиране върху Вашето видео",
@@ -398,6 +400,7 @@
         "expandedPending": "Излъчването на живо се стартира...",
         "failedToStart": "Излъчването на живо не успя да започне",
         "getStreamKeyManually": "Не успяхме да открием никакво предаване на живо. Опитайте да вземете ключа за такова от YouTube.",
+        "googlePrivacyPolicy": "Политика за поверителност на Google",
         "invalidStreamKey": "Ключът за предаване на живо е грешен.",
         "off": "Край на излъчването на живо",
         "offBy": "{{name}} спря излъчването на живо",
@@ -405,15 +408,48 @@
         "onBy": "{{name}} пусна излъчване на живо",
         "pending": "Започване на излъчването на живо…",
         "serviceName": "Предаване на живо",
-        "signedInAs": "В момента сте влезли като:",
         "signIn": "Влезте с Гугъл",
         "signInCTA": "Влезте или въведете ключа за излъчване на живо от YouTube.",
         "signOut": "Излизане",
+        "signedInAs": "В момента сте влезли като:",
         "start": "Започни излъчване на живо",
         "streamIdHelp": "Какво е това?",
         "unavailableTitle": "Излъчването на живо е недостъпно",
-        "googlePrivacyPolicy": "Политика за поверителност на Google",
         "youtubeTerms": "Условия за ползване на YouTube"
+    },
+    "lobby": {
+        "admit": "Допусни",
+        "allow": "Разреши",
+        "backToKnockModeButton": "Заявка за включване без парола",
+        "dialogTitle": "Режим лоби",
+        "disableDialogContent": "Режим Лоби е включен. Този решим защитава срещите Ви от случайни посетители. Искате ли да го изключите?",
+        "disableDialogSubmit": "Изключи",
+        "emailField": "Въведи имейл адрес",
+        "enableDialogPasswordField": "Задай парола (не е задължително)",
+        "enableDialogSubmit": "Включи",
+        "enableDialogText": "Режимът Лоби защитава срещите Ви от случайни посетители, чрез изрично одобрение на участниците от модератор.",
+        "enterPasswordButton": "Въведи парола за срещата",
+        "enterPasswordTitle": "Въведи парола за влезеш в срещата",
+        "invalidPassword": "Невалидна парола",
+        "joinRejectedMessage": "Вашето желание за включване беше отхвърлено от модератор.",
+        "joinTitle": "Включи се в срещата",
+        "joinWithPasswordMessage": "Опит за включване с парола, моля изчакайте...",
+        "joiningMessage": "Ще влезете в срещата, когато някой ви приеме",
+        "joiningTitle": "Изчаква одобрение...",
+        "joiningWithPasswordTitle": "Включване с парола...",
+        "knockButton": "Поискай достъп",
+        "knockTitle": "Някой желае да се включи в срещата",
+        "knockingParticipantList": "Списък с чакащи участници",
+        "nameField": "Въведи име",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}} не беше допуснат от {{originParticipantName}}",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}} беше допуснат от {{originParticipantName}}",
+        "notificationLobbyDisabled": "Лобито беше изключено от {{originParticipantName}}",
+        "notificationLobbyEnabled": "Лобито беше включено от {{originParticipantName}}",
+        "notificationTitle": "Лоби",
+        "passwordField": "Въведи парола за срещата",
+        "passwordJoinButton": "Влез",
+        "reject": "Откажи",
+        "toggleLabel": "Включи лоби"
     },
     "localRecording": {
         "clientState": {
@@ -446,6 +482,10 @@
     },
     "lockRoomPassword": "парола",
     "lockRoomPasswordUppercase": "Парола",
+    "lonelyMeetingExperience": {
+        "button": "Поканете участници",
+        "youAreAlone": "Вие сте сами в срещата"
+    },
     "me": "аз",
     "notify": {
         "connectedOneMember": "{{name}} влезе в срещата",
@@ -462,24 +502,24 @@
         "me": "Аз",
         "moderator": "Придобихте права на модератор!",
         "muted": "Започвате разговора без звук.",
-        "mutedTitle": "Звукът Ви е спрян!",
-        "mutedRemotelyTitle": "Микрофонът Ви бе спрян от {{participantDisplayName}}!",
         "mutedRemotelyDescription": "Винаги можете да пуснете микрофона си, когато сте готови да говорите. Заглушете го отново, за да не изпращате шум в срещата.",
+        "mutedRemotelyTitle": "Микрофонът Ви бе спрян от {{participantDisplayName}}!",
+        "mutedTitle": "Звукът Ви е спрян!",
+        "newDeviceAction": "Използвай",
+        "newDeviceAudioTitle": "Засечено е ново аудио устройство",
+        "newDeviceCameraTitle": "Засечена е нова камера",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) е премахната от друг потребител",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) създадена от друг потребител",
         "raisedHand": "{{name}} иска думата.",
         "somebody": "Някой",
-        "startSilentTitle": "Влязохте с опция да не чувате аудио!",
         "startSilentDescription": "Влезте повторно, за да пуснете звука",
+        "startSilentTitle": "Влязохте с опция да не чувате аудио!",
         "suboptimalBrowserWarning": "Опасяваме се, че няма да можете да се насладите на срещата. Работим по въпроса, междувременно използвайте някой от <a href='{{recommendedBrowserPageLink}}' target='_blank'>напълно поддържаните браузъри</a>.",
         "suboptimalExperienceTitle": "Внимание",
-        "unmute": "Пускане на микрофона",
-        "newDeviceCameraTitle": "Засечена е нова камера",
-        "newDeviceAudioTitle": "Засечено е ново аудио устройство",
-        "newDeviceAction": "Използвай"
+        "unmute": "Пускане на микрофона"
     },
-    "passwordSetRemotely": "зададена от друг участник",
     "passwordDigitsOnly": "До {{number}} цифри",
+    "passwordSetRemotely": "зададена от друг участник",
     "poweredby": "с подкрепата на",
     "presenceStatus": {
         "busy": "Зает",
@@ -550,6 +590,7 @@
         "followMe": "Всички ме следват",
         "language": "Език",
         "loggedIn": "Влезли сте като {{name}}",
+        "microphones": "Микрофони",
         "moderator": "Модератор",
         "more": "Повече",
         "name": "Име",
@@ -557,11 +598,10 @@
         "selectAudioOutput": "Звуков изход",
         "selectCamera": "Камера",
         "selectMic": "Микрофон",
+        "speakers": "Говорители",
         "startAudioMuted": "Всички започват заглушени",
         "startVideoMuted": "Всички започват скрити",
-        "title": "Настройки",
-        "speakers": "Говорители",
-        "microphones": "Микрофони"
+        "title": "Настройки"
     },
     "settingsView": {
         "advanced": "Разширени",
@@ -588,17 +628,17 @@
     },
     "speaker": "Говорещ",
     "speakerStats": {
-        "search": "Търсене",
         "hours": "{{count}}ч",
         "minutes": "{{count}}мин",
         "name": "Име",
+        "search": "Търсене",
         "seconds": "{{count}}сек",
         "speakerStats": "Статистика на говорителя",
         "speakerTime": "Време на говорене"
     },
     "startupoverlay": {
-        "policyText": " ",
         "genericTitle": "Срещата се нуждае от достъп до микрофона и камерата Ви.",
+        "policyText": " ",
         "title": "„{{app}}“ се нуждае от достъп до микрофона и камерата Ви."
     },
     "suspendedoverlay": {
@@ -607,7 +647,9 @@
         "title": "Вашият видео разговор беше прекъснат, тъй като компютърът Ви заспа."
     },
     "toolbar": {
+        "Settings": "Настройки",
         "accessibilityLabel": {
+            "Settings": "Промяна на настройки",
             "audioOnly": "Пускане на режим само със звук",
             "audioRoute": "Изберете устройство за звук",
             "callQuality": "Промяна качеството на видеото",
@@ -625,27 +667,26 @@
             "lockRoom": "Смяна парола на среща",
             "moreActions": "Показване на меню с повече опции",
             "moreActionsMenu": "Меню с повече опции",
+            "moreOptions": "Покажи повече опции",
             "mute": "Пускане/спиране на видеото",
+            "muteEveryone": "Заглуши всички",
             "pip": "Пускане на Картина-в-Картина",
             "privateMessage": "Изпрати лично съобщение",
             "profile": "Редактиране на профила",
             "raiseHand": "Смяна искане на думата",
             "recording": "Пускане/спиране на запис",
             "remoteMute": "Заглуши участник",
-            "Settings": "Промяна на настройки",
-            "sharedvideo": "Пускане/спиране на споделеното YouTube видео",
             "shareRoom": "Добавете някого",
             "shareYourScreen": "Споделяне на екрана",
+            "sharedvideo": "Пускане/спиране на споделеното видео",
             "shortcuts": "Бързи клавиши",
             "show": "Покажи на главния екран",
             "speakerStats": "Показване на статистики за участниците",
             "tileView": "Превключване на изглед галерия",
             "toggleCamera": "Пускане/спиране на камера",
-            "videomute": "Пускане/спиране на видеото",
-            "videoblur": "Пускане/спиране на замъгляване на видеото",
             "toggleFilmstrip": "Превключи видео миниатюрите",
-            "muteEveryone": "Заглуши всички",
-            "moreOptions": "Покажи повече опции"
+            "videoblur": "Пускане/спиране на замъгляване на видеото",
+            "videomute": "Пускане/спиране на видеото"
         },
         "addPeople": "Добавяне на участници в разговора",
         "audioOnlyOff": "Спиране режима с нисък трафик",
@@ -670,38 +711,37 @@
         "logout": "Изход",
         "lowerYourHand": "Махни искането на думата",
         "moreActions": "Още опции",
+        "moreOptions": "Повече опции",
         "mute": "Спиране/пускане на микрофона",
-        "noAudioSignalTitle": "Няма сигнал, идващ от микрофона!",
+        "muteEveryone": "Заглуши всички",
         "noAudioSignalDesc": "Ако не сте спрели звука на устройството от системните настройки, сменете с друго устройство.",
         "noAudioSignalDescSuggestion": "Ако не сте спрели звука на устройството от системните настройки, използвайте някое от предложените устройства.",
+        "noAudioSignalDialInDesc": "Може да влезнете чрез обаждане на:",
+        "noAudioSignalDialInLinkDesc": "Номера за обаждане",
+        "noAudioSignalTitle": "Няма сигнал, идващ от микрофона!",
+        "noisyAudioInputDesc": "Изглежда доста шум идва от микрофона Ви, заглушете го или сменете устройството.",
+        "noisyAudioInputTitle": "Изглежда е шумно около Вас!",
         "openChat": "Отвори съобщенията",
         "pip": "Пусни Картина-в-Картина",
         "privateMessage": "Изпрати лично съобщение",
         "profile": "Редактиране на профила",
         "raiseHand": "Вдигане/сваляне на ръка",
         "raiseYourHand": "Поискай думата",
-        "Settings": "Настройки",
-        "sharedvideo": "Споделяне на YouTube видео",
         "shareRoom": "Добавете някого",
+        "sharedvideo": "Споделяне на видео",
         "shortcuts": "Виж бързите клавиши",
         "speakerStats": "Статистика за говорителите",
         "startScreenSharing": "Започни споделяне на екрана",
         "startSubtitles": "Пускане на субтитри",
+        "startvideoblur": "Замъгли фона ми",
         "stopScreenSharing": "Спиране споделяне на екрана",
+        "stopSharedVideo": "Спиране на видео",
         "stopSubtitles": "Спиране на субтитри",
-        "stopSharedVideo": "Спиране на YouTube видео",
+        "stopvideoblur": "Спиране замъгляването на фона",
         "talkWhileMutedPopup": "Опитвате се да говорите? В момента микрофонът Ви е заглушен.",
         "tileViewToggle": "Превключване на изглед галерия",
         "toggleCamera": "Пускане/спиране на камера",
-        "videomute": "Пускане/спиране на камерата",
-        "startvideoblur": "Замъгли фона ми",
-        "stopvideoblur": "Спиране замъгляването на фона",
-        "noisyAudioInputDesc": "Изглежда доста шум идва от микрофона Ви, заглушете го или сменете устройството.",
-        "noisyAudioInputTitle": "Изглежда е шумно около Вас!",
-        "noAudioSignalDialInLinkDesc": "Номера за обаждане",
-        "noAudioSignalDialInDesc": "Може да влезнете чрез обаждане на:",
-        "muteEveryone": "Заглуши всички",
-        "moreOptions": "Повече опции"
+        "videomute": "Пускане/спиране на камерата"
     },
     "transcribing": {
         "ccButtonTooltip": "Пускане/спиране на субтитри",
@@ -757,6 +797,7 @@
     },
     "videothumbnail": {
         "domute": "Изключи микрофона",
+        "domuteOthers": "Заглушете всички останали",
         "flip": "Огледално",
         "kick": "Изгони",
         "moderator": "Модератор",
@@ -764,8 +805,7 @@
         "muted": "Изключен микрофон",
         "remoteControl": "Отдалечено управление",
         "show": "Покажи на главния екран",
-        "videomute": "Участникът е спрял камерата си",
-        "domuteOthers": "Заглушете всички останали"
+        "videomute": "Участникът е спрял камерата си"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -781,62 +821,21 @@
         "connectCalendarButton": "Свържете своя календар",
         "connectCalendarText": "Свържете своя календар, за да видите срещите си в {{app}}. Добавяйки {{provider}} срещите в календара си, ще можете да ги старирате с едно докосване.",
         "enterRoomTitle": "Започни нова среща",
-        "roomNameAllowedChars": "Името на срещата не трябва да съдържа никой от символите: ?, &, :, ', \", %, #.",
+        "getHelp": "Търсене на помощ",
         "go": "НАПРЕД",
         "goSmall": "НАПРЕД",
-        "join": "Създай / Влез",
         "info": "Информация",
+        "join": "Създай / Влез",
         "privacy": "Поверителност",
         "recentList": "Скорошни срещи",
         "recentListDelete": "Изтрий",
         "recentListEmpty": "Списъкът със скорошни срещи е празен. След като участвате в някоя среща, ще я намерите тук.",
         "reducedUIText": "Добре дошли в {{app}}!",
+        "roomNameAllowedChars": "Името на срещата не трябва да съдържа никой от символите: ?, &, :, ', \", %, #.",
         "roomname": "Въведете име на стаята",
         "roomnameHint": "Въведете името или връзката на стаята, в която искате да влезете. Също така може да си измислите име. Само го споделете с някого, за да може и той да въведе същото име и да се срещнете.",
         "sendFeedback": "Изпращане на отзиви",
         "terms": "Условия",
-        "title": "Сигурна, с много възможности, и напълно безплатна платформа за видео конференции",
-        "getHelp": "Търсене на помощ"
-    },
-    "lonelyMeetingExperience": {
-        "youAreAlone": "Вие сте сами в срещата",
-        "button": "Поканете участници"
-    },
-    "helpView": {
-        "header": "Място за помощ"
-    },
-    "lobby": {
-        "admit": "Допусни",
-        "knockingParticipantList": "Списък с чакащи участници",
-        "allow": "Разреши",
-        "backToKnockModeButton": "Заявка за включване без парола",
-        "dialogTitle": "Режим лоби",
-        "disableDialogContent": "Режим Лоби е включен. Този решим защитава срещите Ви от случайни посетители. Искате ли да го изключите?",
-        "disableDialogSubmit": "Изключи",
-        "emailField": "Въведи имейл адрес",
-        "enableDialogPasswordField": "Задай парола (не е задължително)",
-        "enableDialogSubmit": "Включи",
-        "enableDialogText": "Режимът Лоби защитава срещите Ви от случайни посетители, чрез изрично одобрение на участниците от модератор.",
-        "enterPasswordButton": "Въведи парола за срещата",
-        "enterPasswordTitle": "Въведи парола за влезеш в срещата",
-        "invalidPassword": "Невалидна парола",
-        "joiningMessage": "Ще влезете в срещата, когато някой ви приеме",
-        "joinWithPasswordMessage": "Опит за включване с парола, моля изчакайте...",
-        "joinRejectedMessage": "Вашето желание за включване беше отхвърлено от модератор.",
-        "joinTitle": "Включи се в срещата",
-        "joiningTitle": "Изчаква одобрение...",
-        "joiningWithPasswordTitle": "Включване с парола...",
-        "knockButton": "Поискай достъп",
-        "knockTitle": "Някой желае да се включи в срещата",
-        "nameField": "Въведи име",
-        "notificationLobbyAccessDenied": "{{targetParticipantName}} не беше допуснат от {{originParticipantName}}",
-        "notificationLobbyAccessGranted": "{{targetParticipantName}} беше допуснат от {{originParticipantName}}",
-        "notificationLobbyDisabled": "Лобито беше изключено от {{originParticipantName}}",
-        "notificationLobbyEnabled": "Лобито беше включено от {{originParticipantName}}",
-        "notificationTitle": "Лоби",
-        "passwordField": "Въведи парола за срещата",
-        "passwordJoinButton": "Влез",
-        "reject": "Откажи",
-        "toggleLabel": "Включи лоби"
+        "title": "Сигурна, с много възможности, и напълно безплатна платформа за видео конференции"
     }
 }

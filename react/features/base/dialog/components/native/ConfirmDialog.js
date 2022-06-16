@@ -1,107 +1,141 @@
 // @flow
 
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
+import Dialog from 'react-native-dialog';
 
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
-import { StyleType } from '../../../styles';
-import { _abstractMapStateToProps } from '../../functions';
+import AbstractDialog from '../AbstractDialog';
+import { renderHTML } from '../functions.native';
 
-import { type Props as BaseProps } from './BaseDialog';
-import BaseSubmitDialog from './BaseSubmitDialog';
-import { brandedDialog } from './styles';
+import styles from './styles';
 
-type Props = BaseProps & {
-
-    /**
-     * The color-schemed stylesheet of the feature.
-     */
-    _dialogStyles: StyleType,
-
-    /**
-     * Untranslated i18n key of the content to be displayed.
-     *
-     * NOTE: This dialog also adds support to Object type keys that will be
-     * translated using the provided params. See i18n function
-     * {@code translate(string, Object)} for more details.
-     */
-    contentKey: string | { key: string, params: Object},
-
-    /**
-     * The handler for the event when clicking the 'confirmNo' button.
-     * Defaults to onCancel if absent.
-     */
-    onDecline?: Function,
-
-    t: Function
-}
 
 /**
- * Implements a confirm dialog component.
+ * The type of the React {@code Component} props of
+ * {@link ConfirmDialog}.
  */
-class ConfirmDialog extends BaseSubmitDialog<Props, *> {
+type Props = {
+
     /**
-     * Returns the title key of the submit button.
-     *
-     * @returns {string}
+     * The i18n key of the text label for the cancel button.
      */
-    _getSubmitButtonKey() {
-        return this.props.okKey || 'dialog.confirmYes';
+    cancelLabel: string,
+
+    /**
+     * The React {@code Component} children.
+     */
+    children?: React$Node,
+
+    /**
+     * The i18n key of the text label for the confirm button.
+     */
+    confirmLabel: string,
+
+    /**
+     * Dialog description key for translations.
+     */
+    descriptionKey?: string | Object,
+
+    /**
+     * Whether or not the nature of the confirm button is destructive.
+     */
+    isConfirmDestructive?: Boolean,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
+     * Dialog title.
+     */
+    title?: string,
+};
+
+/**
+ * React Component for getting confirmation to stop a file recording session in
+ * progress.
+ *
+ * @augments Component
+ */
+class ConfirmDialog extends AbstractDialog<Props> {
+    /**
+     * Default values for {@code ConfirmDialog} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        isConfirmDestructive: false
+    };
+
+    /**
+     * Renders the dialog description.
+     *
+     * @returns {React$Component}
+     */
+    _renderDescription() {
+        const { descriptionKey, t } = this.props;
+        const description
+            = typeof descriptionKey === 'string'
+                ? t(descriptionKey)
+                : renderHTML(
+                    t(descriptionKey?.key, descriptionKey?.params)
+                );
+
+        return (
+            <Dialog.Description>
+                { description }
+            </Dialog.Description>
+        );
+    }
+
+    /**
+     * Implements {@code Component#render}.
+     *
+     * @inheritdoc
+     */
+    render() {
+        const {
+            cancelLabel,
+            children,
+            confirmLabel,
+            isConfirmDestructive,
+            t,
+            title
+        } = this.props;
+
+        const dialogButtonStyle
+            = isConfirmDestructive
+                ? styles.destructiveDialogButton : styles.dialogButton;
+
+        return (
+            <View>
+                <Dialog.Container visible = { true }>
+                    {
+                        title && <Dialog.Title>
+                            { t(title) }
+                        </Dialog.Title>
+                    }
+                    { this._renderDescription() }
+                    { children }
+                    <Dialog.Button
+                        label = { t(cancelLabel || 'dialog.confirmNo') }
+                        onPress = { this._onCancel }
+                        style = { styles.dialogButton } />
+                    <Dialog.Button
+                        label = { t(confirmLabel || 'dialog.confirmYes') }
+                        onPress = { this._onSubmit }
+                        style = { dialogButtonStyle } />
+                </Dialog.Container>
+            </View>
+        );
     }
 
     _onCancel: () => void;
 
-    /**
-     * Renders the 'No' button.
-     *
-     * NOTE: The {@code ConfirmDialog} is the only dialog right now that
-     * renders 2 buttons, mainly for clarity.
-     *
-     * @inheritdoc
-     */
-    _renderAdditionalButtons() {
-        const { _dialogStyles, cancelKey, onDecline, t } = this.props;
-
-        return (
-            <TouchableOpacity
-                onPress = { onDecline || this._onCancel }
-                style = { [
-                    _dialogStyles.button,
-                    brandedDialog.buttonFarLeft,
-                    _dialogStyles.buttonSeparator
-                ] }>
-                <Text style = { _dialogStyles.buttonLabel }>
-                    { t(cancelKey || 'dialog.confirmNo') }
-                </Text>
-            </TouchableOpacity>
-        );
-    }
-
-    /**
-     * Implements {@code BaseSubmitDialog._renderSubmittable}.
-     *
-     * @inheritdoc
-     */
-    _renderSubmittable() {
-        if (this.props.children) {
-            return this.props.children;
-        }
-
-        const { _dialogStyles, contentKey, t } = this.props;
-        const content
-            = typeof contentKey === 'string'
-                ? t(contentKey)
-                : this._renderHTML(t(contentKey.key, contentKey.params));
-
-        return (
-            <Text style = { _dialogStyles.text }>
-                { content }
-            </Text>
-        );
-    }
-
-    _renderHTML: string => Object | string
+    _onSubmit: (?string) => void;
 }
 
-export default translate(connect(_abstractMapStateToProps)(ConfirmDialog));
+export default translate(connect()(ConfirmDialog));

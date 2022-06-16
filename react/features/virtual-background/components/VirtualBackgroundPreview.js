@@ -1,6 +1,7 @@
 // @flow
 
 import Spinner from '@atlaskit/spinner';
+import { withStyles } from '@material-ui/core/styles';
 import React, { PureComponent } from 'react';
 
 import { hideDialog } from '../../base/dialog';
@@ -10,6 +11,7 @@ import Video from '../../base/media/components/Video';
 import { connect, equals } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
 import { showWarningNotification } from '../../notifications/actions';
 import { toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
@@ -27,6 +29,11 @@ export type Props = {
      * The deviceId of the camera device currently being used.
      */
     _currentCameraDeviceId: string,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * The redux {@code dispatch} function.
@@ -71,10 +78,59 @@ type State = {
 };
 
 /**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    return {
+        virtualBackgroundPreview: {
+            '& .video-preview': {
+                height: '250px'
+            },
+
+            '& .video-background-preview-entry': {
+                marginLeft: '-10px',
+                height: '250px',
+                width: '570px',
+                marginBottom: `${theme.spacing(2)}px`,
+                zIndex: 2,
+
+                '@media (max-width: 632px)': {
+                    maxWidth: '336px'
+                }
+            },
+
+            '& .video-preview-loader': {
+                borderRadius: '6px',
+                backgroundColor: 'transparent',
+                height: '250px',
+                marginBottom: `${theme.spacing(2)}px`,
+                width: '572px',
+                position: 'fixed',
+                zIndex: 2,
+
+                '& svg': {
+                    position: 'absolute',
+                    top: '40%',
+                    left: '45%'
+                },
+
+                '@media (min-width: 432px) and (max-width: 632px)': {
+                    width: '340px'
+                }
+            }
+        }
+    };
+};
+
+/**
  * Implements a React {@link PureComponent} which displays the virtual
  * background preview.
  *
- * @extends PureComponent
+ * @augments PureComponent
  */
 class VirtualBackgroundPreview extends PureComponent<Props, State> {
     _componentWasUnmounted: boolean;
@@ -140,7 +196,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
                 showWarningNotification({
                     titleKey: 'virtualBackground.backgroundEffectError',
                     description: 'Failed to access camera device.'
-                })
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG)
             );
             logger.error('Failed to access camera device. Error on apply background effect.');
 
@@ -264,11 +320,13 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      */
     render() {
         const { jitsiTrack } = this.state;
+        const { classes } = this.props;
 
-        return jitsiTrack
-            ? <div className = 'video-preview'>{this._renderPreviewEntry(jitsiTrack)}</div>
-            : <div className = 'video-preview-loader'>{this._loadVideoPreview()}</div>
-        ;
+        return (<div className = { classes.virtualBackgroundPreview }>
+            {jitsiTrack
+                ? <div className = 'video-preview'>{this._renderPreviewEntry(jitsiTrack)}</div>
+                : <div className = 'video-preview-loader'>{this._loadVideoPreview()}</div>
+            }</div>);
     }
 }
 
@@ -286,4 +344,4 @@ function _mapStateToProps(state): Object {
     };
 }
 
-export default translate(connect(_mapStateToProps)(VirtualBackgroundPreview));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(VirtualBackgroundPreview)));

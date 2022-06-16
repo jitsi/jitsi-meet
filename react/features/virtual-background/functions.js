@@ -34,7 +34,7 @@ export const blobToData = (blob: Blob): Promise<string> =>
     new Promise(resolve => {
         const reader = new FileReader();
 
-        reader.onloadend = () => resolve(reader.result.toString());
+        reader.onloadend = () => resolve(reader.result?.toString());
         reader.readAsDataURL(blob);
     });
 

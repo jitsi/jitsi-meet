@@ -12,7 +12,7 @@ import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 /**
  * A React Component for entering a key for starting a YouTube live stream.
  *
- * @extends Component
+ * @augments Component
  */
 class StreamKeyForm extends AbstractStreamKeyForm<Props> {
 
@@ -94,9 +94,9 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         );
     }
 
-    _onInputChange: Object => void
+    _onInputChange: Object => void;
 
-    _onOpenHelp: () => void
+    _onOpenHelp: () => void;
 
     /**
      * Opens a new tab with information on how to manually locate a YouTube
@@ -109,7 +109,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         window.open(this.helpURL, '_blank', 'noopener');
     }
 
-    _onOpenHelpKeyPress: () => void
+    _onOpenHelpKeyPress: () => void;
 
     /**
      * Opens a new tab with information on how to manually locate a YouTube

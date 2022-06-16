@@ -69,7 +69,13 @@ export default class Audio extends AbstractAudio {
     play() {
         if (this._sound) {
             this._sound.setNumberOfLoops(this.props.loop ? -1 : 0);
-            super.play();
+
+            // $FlowExpectedError
+            this._sound.play(success => {
+                if (!success) {
+                    logger.warn(`Failed to play ${this.props.src}`);
+                }
+            });
         }
     }
 

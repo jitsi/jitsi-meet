@@ -28,22 +28,32 @@ export const SQUARE_TILE_ASPECT_RATIO = 1;
 export const DISPLAY_DRAWER_THRESHOLD = 512;
 
 /**
- * Breakpoint past which a single column view is enforced in tile view.
- */
-export const SINGLE_COLUMN_BREAKPOINT = 300;
-
-/**
- * Breakpoint past which a two column view is enforced in tile view.
- */
-export const TWO_COLUMN_BREAKPOINT = 1000;
-
-/**
  * Breakpoint past which the aspect ratio is switched in tile view.
  * Also, past this breakpoint, if there are two participants in the conference, we enforce
  * single column view.
  * If this is to be modified, please also change the related media query from the tile_view scss file.
  */
 export const ASPECT_RATIO_BREAKPOINT = 500;
+
+/**
+ * Minimum height of tile for small screens.
+ */
+export const TILE_MIN_HEIGHT_SMALL = 150;
+
+/**
+ * Minimum height of tile for large screens.
+ */
+export const TILE_MIN_HEIGHT_LARGE = 200;
+
+/**
+ * Aspect ratio for portrait tiles.
+ */
+export const TILE_PORTRAIT_ASPECT_RATIO = 1 / 1.3;
+
+/**
+ * The default number of visible tiles for tile view.
+ */
+export const TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES = 25;
 
 /**
  * The default number of columns for tile view.
@@ -81,6 +91,7 @@ export const VIDEO_TEST_EVENTS = [
 
 /**
  * Display mode constant used when video is being displayed on the small video.
+ *
  * @type {number}
  * @constant
  */
@@ -89,59 +100,21 @@ export const DISPLAY_VIDEO = 0;
 /**
  * Display mode constant used when the user's avatar is being displayed on
  * the small video.
+ *
  * @type {number}
  * @constant
  */
 export const DISPLAY_AVATAR = 1;
 
 /**
- * Display mode constant used when neither video nor avatar is being displayed
- * on the small video. And we just show the display name.
- * @type {number}
- * @constant
- */
-export const DISPLAY_BLACKNESS_WITH_NAME = 2;
-
-/**
- * Display mode constant used when video is displayed and display name
- * at the same time.
- * @type {number}
- * @constant
- */
-export const DISPLAY_VIDEO_WITH_NAME = 3;
-
-/**
- * Display mode constant used when neither video nor avatar is being displayed
- * on the small video. And we just show the display name.
- * @type {number}
- * @constant
- */
-export const DISPLAY_AVATAR_WITH_NAME = 4;
-
-/**
  * Maps the display modes to class name that will be applied on the thumbnail container.
+ *
  * @type {Array<string>}
  * @constant
  */
 export const DISPLAY_MODE_TO_CLASS_NAME = [
     'display-video',
-    'display-avatar-only',
-    'display-name-on-black',
-    'display-name-on-video',
-    'display-avatar-with-name'
-];
-
-/**
- * Maps the display modes to string.
- * @type {Array<string>}
- * @constant
- */
-export const DISPLAY_MODE_TO_STRING = [
-    'video',
-    'avatar',
-    'blackness-with-name',
-    'video-with-name',
-    'avatar-with-name'
+    'display-avatar-only'
 ];
 
 /**
@@ -157,6 +130,28 @@ export const TILE_VERTICAL_MARGIN = 4;
  * @type {number}
  */
 export const TILE_HORIZONTAL_MARGIN = 4;
+
+/**
+ * The horizontal margin of a vertical filmstrip tile container.
+ *
+ * @type {number}
+ */
+export const TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN = 2;
+
+
+/**
+ * The vertical margin of the tile grid container.
+ *
+ * @type {number}
+ */
+export const TILE_VIEW_GRID_VERTICAL_MARGIN = 14;
+
+/**
+ * The horizontal margin of the tile grid container.
+ *
+ * @type {number}
+ */
+export const TILE_VIEW_GRID_HORIZONTAL_MARGIN = 14;
 
 /**
  * The height of the whole toolbar.
@@ -196,7 +191,7 @@ export const SCROLL_SIZE = 7;
  *
  * @type {number}
  */
-export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 60;
+export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 26;
 
 /**
  * The min horizontal space between the thumbnails container and the edges of the window.
@@ -223,7 +218,7 @@ export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
 
 /**
  * The margin for each side of the tile view. Taken away from the available
- * height and width for the tile container to display in.
+ * width for the tile container to display in.
  *
  * NOTE: Mobile specific.
  *
@@ -231,3 +226,79 @@ export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
  * @type {number}
  */
 export const TILE_MARGIN = 10;
+
+/**
+ * The types of thumbnails for filmstrip.
+ */
+export const THUMBNAIL_TYPE = {
+    TILE: 'TILE',
+    VERTICAL: 'VERTICAL',
+    HORIZONTAL: 'HORIZONTAL'
+};
+
+/**
+ * The popover position for the connection stats table.
+ */
+export const STATS_POPOVER_POSITION = {
+    [THUMBNAIL_TYPE.TILE]: 'right-start',
+    [THUMBNAIL_TYPE.VERTICAL]: 'left-start',
+    [THUMBNAIL_TYPE.HORIZONTAL]: 'top-end'
+};
+
+/**
+ * The tooltip position for the indicators on the thumbnail.
+ */
+export const INDICATORS_TOOLTIP_POSITION = {
+    [THUMBNAIL_TYPE.TILE]: 'right',
+    [THUMBNAIL_TYPE.VERTICAL]: 'left',
+    [THUMBNAIL_TYPE.HORIZONTAL]: 'top'
+};
+
+/**
+ * The default (and minimum) width for the vertical filmstrip (user resizable).
+ */
+export const DEFAULT_FILMSTRIP_WIDTH = 120;
+
+/**
+ * The default aspect ratio for the local tile.
+ */
+export const DEFAULT_LOCAL_TILE_ASPECT_RATIO = 16 / 9;
+
+/**
+ * The width of the filmstrip at which it no longer goes above the stage view, but it pushes it.
+ */
+export const FILMSTRIP_BREAKPOINT = 180;
+
+/**
+ * The width of the filmstrip at which the display mode changes from column to grid.
+ */
+export const FILMSTRIP_GRID_BREAKPOINT = 300;
+
+/**
+ * How much before the breakpoint should we display the background.
+ * (We display the opaque background before we resize the stage view to make sure
+ * the resize is not visible behind the filmstrip).
+ */
+export const FILMSTRIP_BREAKPOINT_OFFSET = 5;
+
+/**
+ * The minimum width for the stage view
+ * (used to determine the maximum width of the user-resizable vertical filmstrip).
+ */
+export const MIN_STAGE_VIEW_WIDTH = 800;
+
+/**
+ * Horizontal margin used for the vertical filmstrip.
+ */
+export const VERTICAL_VIEW_HORIZONTAL_MARGIN = VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN
+    + SCROLL_SIZE + TILE_HORIZONTAL_MARGIN + STAGE_VIEW_THUMBNAIL_HORIZONTAL_BORDER;
+
+/**
+ * The time after which a participant should be removed from active participants.
+ */
+export const ACTIVE_PARTICIPANT_TIMEOUT = 1000 * 60;
+
+/**
+ * The max number of participants to be displayed on the stage filmstrip.
+ */
+export const MAX_ACTIVE_PARTICIPANTS = 6;

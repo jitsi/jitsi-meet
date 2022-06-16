@@ -7,39 +7,56 @@ import { escapeRegexp } from '../base/util';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
- * emoticons (such as :O) to new Unicode representation, so then devices
- * and browsers that support them can render these natively without
- * a 3rd party component.
+ * emoticons (such as :O) with the new Unicode representation, so that
+ * devices and browsers that support them can render these natively
+ * without a 3rd party component.
  *
  * NOTE: this is currently only used on mobile, but it can be used
  * on web too once we drop support for browsers that don't support
  * unicode emoji rendering.
  */
-const EMOTICON_REGEXP_ARRAY: Array<Array<Object>> = [];
+const ASCII_EMOTICON_REGEXP_ARRAY: Array<Array<Object>> = [];
+
+/**
+ * An emoji regexp array to find and replace alias emoticons
+ * (such as :smiley:) with the new Unicode representation, so that
+ * devices and browsers that support them can render these natively
+ * without a 3rd party component.
+ *
+ * NOTE: this is currently only used on mobile, but it can be used
+ * on web too once we drop support for browsers that don't support
+ * unicode emoji rendering.
+ */
+const SLACK_EMOJI_REGEXP_ARRAY: Array<Array<Object>> = [];
 
 (function() {
     for (const [ key, value ] of Object.entries(aliases)) {
-        let escapedValues;
-        const asciiEmojies = emojiAsciiAliases[key];
 
-        // Adding ascii emoticons
-        if (asciiEmojies) {
-            escapedValues = asciiEmojies.map(v => escapeRegexp(v));
-        } else {
-            escapedValues = [];
+        // Add ASCII emoticons
+        const asciiEmoticons = emojiAsciiAliases[key];
+
+        if (asciiEmoticons) {
+            const asciiEscapedValues = asciiEmoticons.map(v => escapeRegexp(v));
+
+            const asciiRegexp = `(${asciiEscapedValues.join('|')})`;
+
+            // Escape urls
+            const formattedAsciiRegexp = key === 'confused'
+                ? `(?=(${asciiRegexp}))(:(?!//).)`
+                : asciiRegexp;
+
+            ASCII_EMOTICON_REGEXP_ARRAY.push([ new RegExp(formattedAsciiRegexp, 'g'), value ]);
         }
 
-        // Adding slack-type emoji format
-        escapedValues.push(escapeRegexp(`:${key}:`));
+        // Add slack-type emojis
+        const emojiRegexp = `\\B(${escapeRegexp(`:${key}:`)})\\B`;
 
-        const regexp = `\\B(${escapedValues.join('|')})\\B`;
-
-        EMOTICON_REGEXP_ARRAY.push([ new RegExp(regexp, 'g'), value ]);
+        SLACK_EMOJI_REGEXP_ARRAY.push([ new RegExp(emojiRegexp, 'g'), value ]);
     }
 })();
 
 /**
- * Replaces ascii and other non-unicode emoticons with unicode emojis to let the emojis be rendered
+ * Replaces ASCII and other non-unicode emoticons with unicode emojis to let the emojis be rendered
  * by the platform native renderer.
  *
  * @param {string} message - The message to parse and replace.
@@ -48,7 +65,11 @@ const EMOTICON_REGEXP_ARRAY: Array<Array<Object>> = [];
 export function replaceNonUnicodeEmojis(message: string) {
     let replacedMessage = message;
 
-    for (const [ regexp, replaceValue ] of EMOTICON_REGEXP_ARRAY) {
+    for (const [ regexp, replaceValue ] of SLACK_EMOJI_REGEXP_ARRAY) {
+        replacedMessage = replacedMessage.replace(regexp, replaceValue);
+    }
+
+    for (const [ regexp, replaceValue ] of ASCII_EMOTICON_REGEXP_ARRAY) {
         replacedMessage = replacedMessage.replace(regexp, replaceValue);
     }
 

@@ -42,7 +42,7 @@ export default class AbstractRaisedHandIndicator<P: Props>
      *
      * @returns {React$Element<*>}
      */
-    _renderIndicator: () => React$Element<*>
+    _renderIndicator: () => React$Element<*>;
 
 }
 

@@ -1,10 +1,12 @@
+
 import { ReducerRegistry } from '../base/redux';
+
 import {
     _TRANSCRIBER_JOINED,
     _TRANSCRIBER_LEFT,
     _POTENTIAL_TRANSCRIBER_JOINED,
     SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
-} from '../transcribing/actionTypes';
+} from './actionTypes';
 
 /**
  * Returns initial state for transcribing feature part of Redux store.
@@ -21,7 +23,7 @@ function _getInitialState() {
     return {
         /**
          * Indicates whether there is currently an active transcriber in the
-         * room
+         * room.
          *
          * @type {boolean}
          */
@@ -29,7 +31,7 @@ function _getInitialState() {
 
         /**
          * Indicates whether the transcriber has been dialed into the room and
-         * we're currently awaiting successful joining or failure of joining
+         * we're currently awaiting successful joining or failure of joining.
          *
          * @type {boolean}
          */
@@ -42,14 +44,14 @@ function _getInitialState() {
         isTerminating: false,
 
         /**
-         * The JID of the active transcriber
+         * The JID of the active transcriber.
          *
          * @type { string }
          */
         transcriberJID: null,
 
         /**
-         * A list containing potential JID's of transcriber participants
+         * A list containing potential JID's of transcriber participants.
          *
          * @type { Array }
          */

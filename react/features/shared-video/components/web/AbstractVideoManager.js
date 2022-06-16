@@ -1,6 +1,6 @@
 /* @flow */
 /* eslint-disable no-invalid-this */
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 import throttle from 'lodash/throttle';
 import { PureComponent } from 'react';
 
@@ -9,6 +9,7 @@ import { getCurrentConference } from '../../../base/conference';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant } from '../../../base/participants';
 import { isLocalTrackMuted } from '../../../base/tracks';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications';
 import { showWarningNotification } from '../../../notifications/actions';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { muteLocal } from '../../../video-menu/actions.any';
@@ -35,27 +36,27 @@ function shouldSeekToPosition(newTime, previousTime) {
 export type Props = {
 
     /**
-     * The current coference
+     * The current coference.
      */
     _conference: Object,
 
     /**
-     * Warning that indicates an incorect video url
+     * Warning that indicates an incorect video url.
      */
     _displayWarning: Function,
 
     /**
-     * Docks the toolbox
+     * Docks the toolbox.
      */
     _dockToolbox: Function,
 
     /**
-     * Action to stop video sharing
+     * Action to stop video sharing.
     */
     _stopSharedVideo: Function,
 
     /**
-     * Indicates whether the local audio is muted
+     * Indicates whether the local audio is muted.
     */
     _isLocalAudioMuted: boolean,
 
@@ -67,27 +68,27 @@ export type Props = {
     _isOwner: boolean,
 
     /**
-     * Store flag for muted state
+     * Store flag for muted state.
      */
     _muted: boolean,
 
     /**
-     * Mutes local audio track
+     * Mutes local audio track.
      */
     _muteLocal: Function,
 
     /**
-     * The shared video owner id
+     * The shared video owner id.
      */
     _ownerId: string,
 
     /**
-     * Updates the shared video status
+     * Updates the shared video status.
      */
     _setSharedVideoStatus: Function,
 
     /**
-     * The shared video status
+     * The shared video status.
      */
      _status: string,
 
@@ -98,12 +99,12 @@ export type Props = {
     _time: number,
 
     /**
-     * The video url
+     * The video url.
      */
      _videoUrl: string,
 
      /**
-      * The video id
+      * The video id.
       */
      videoId: string
 }
@@ -335,53 +336,54 @@ class AbstractVideoManager extends PureComponent<Props> {
     }
 
     /**
-     * Seeks video to provided time
+     * Seeks video to provided time.
+     *
      * @param {number} time
      */
     seek: (time: number) => void;
 
     /**
-     * Indicates the playback state of the video
+     * Indicates the playback state of the video.
      */
     getPlaybackStatus: () => boolean;
 
     /**
-     * Indicates whether the video is muted
+     * Indicates whether the video is muted.
      */
     isMuted: () => boolean;
 
     /**
-     * Retrieves current volume
+     * Retrieves current volume.
      */
     getVolume: () => number;
 
     /**
-     * Plays video
+     * Plays video.
      */
     play: () => void;
 
     /**
-     * Pauses video
+     * Pauses video.
      */
     pause: () => void;
 
     /**
-     * Mutes video
+     * Mutes video.
      */
     mute: () => void;
 
     /**
-     * Unmutes video
+     * Unmutes video.
      */
     unMute: () => void;
 
     /**
-     * Retrieves current time
+     * Retrieves current time.
      */
     getTime: () => number;
 
     /**
-     * Disposes current video player
+     * Disposes current video player.
      */
     dispose: () => void;
 }
@@ -423,7 +425,7 @@ export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
         _displayWarning: () => {
             dispatch(showWarningNotification({
                 titleKey: 'dialog.shareVideoLinkError'
-            }));
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         },
         _dockToolbox: value => {
             dispatch(dockToolbox(value));

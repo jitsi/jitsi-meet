@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Écouteurs",
+        "none": "Aucun périphérique audio n'est disponible",
         "phone": "Téléphone",
-        "speaker": "Intervenant",
-        "none": "Aucun périphérique audio n'est disponible"
+        "speaker": "Intervenant"
     },
     "audioOnly": {
         "audioOnly": "Bande passante faible"
@@ -48,14 +48,14 @@
     "chat": {
         "error": "Erreur : votre message n'a pas été envoyé. Raison : {{error}}",
         "fieldPlaceHolder": "Tapez votre message ici",
-        "messagebox": "Tapez un message",
         "messageTo": "",
-        "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
+        "messagebox": "Tapez un message",
         "nickname": {
             "popover": "Choisissez un nom d'affichage",
             "title": "Entrer un nom d'affichage pour utiliser le clavardage",
             "titleWithPolls": "Entrer un nom d'affichage pour utiliser le clavardage"
         },
+        "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
         "privateNotice": "Message privé à {{recipient}}",
         "title": "Clavardage",
         "titleWithPolls": "Clavardage",
@@ -135,7 +135,20 @@
         "selectADevice": "Sélectionner un dispositif",
         "testAudio": "Jouer un son de test"
     },
+    "dialOut": {
+        "statusMessage": "est maintenant {{status}}"
+    },
     "dialog": {
+        "Back": "Retour",
+        "Cancel": "Annuler",
+        "IamHost": "Je suis l'hôte",
+        "Ok": "OK",
+        "Remove": "Supprimer",
+        "Share": "Oui",
+        "Submit": "Envoyer",
+        "WaitForHostMsg": "La conférence n'a pas encore démarré. Si vous êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre que l'hôte arrive.",
+        "WaitingForHost": "En attente de l'hôte…",
+        "Yes": "Oui",
         "accessibilityLabel": {
             "liveStreaming": "Diffusion en direct"
         },
@@ -143,7 +156,6 @@
         "alreadySharedVideoMsg": "Un autre membre partage déjà une vidéo. Cette conférence permet le partage d'une seule vidéo à la fois.",
         "alreadySharedVideoTitle": "Seulement une vidéo à la fois peut être partagée",
         "applicationWindow": "Fenêtre d'application",
-        "Back": "Retour",
         "cameraConstraintFailedError": "Votre caméra ne répond pas à certaines exigences.",
         "cameraNotFoundError": "Impossible de trouver la caméra.",
         "cameraNotSendingData": "Il est impossible d'accéder à la caméra. Veuillez vérifier si une autre application utilise actuellement ce dispositif, sélectionner un autre dispositif à partir du menu des paramètres ou essayer de recharger l'application.",
@@ -151,7 +163,6 @@
         "cameraPermissionDeniedError": "Vous n'avez pas reçu l'autorisation d'utiliser votre caméra. Vous pouvez toujours rejoindre la conférence, mais les autres membres ne pourront pas vous voir. Utilisez le bouton de caméra dans la barre d'adresse pour corriger cela.",
         "cameraUnknownError": "Impossible d'utiliser la caméra pour une raison inconnue.",
         "cameraUnsupportedResolutionError": "Votre caméra ne prend pas en charge la résolution vidéo nécessaire.",
-        "Cancel": "Annuler",
         "close": "Fermer",
         "conferenceDisconnectMsg": "Vous devriez vérifier votre connexion au réseau. Reconnexion dans {{seconds}} sec…",
         "conferenceDisconnectTitle": "Vous avez été déconnecté.",
@@ -174,11 +185,10 @@
         "externalInstallationTitle": "Extension requise",
         "goToStore": "Rendez-vous sur notre boutique en ligne",
         "gracefulShutdown": "Notre service est actuellement hors service pour l'entretien. Veuillez réessayer plus tard.",
-        "IamHost": "Je suis l'hôte",
-        "incorrectRoomLockPassword": "Mot de passe incorrect",
         "incorrectPassword": "Nom d'utilisateur ou mot de passe incorrect",
-        "inlineInstallationMsg": "Vous devez installer notre extension de partage de bureau.",
+        "incorrectRoomLockPassword": "Mot de passe incorrect",
         "inlineInstallExtension": "Installer maintenant",
+        "inlineInstallationMsg": "Vous devez installer notre extension de partage de bureau.",
         "internalError": "Oups! Une erreur s'est produite. L'erreur suivante est survenue : {{error}}",
         "internalErrorTitle": "Erreur interne.",
         "kickMessage": "Aïe! Vous avez été expulsé de la réunion!",
@@ -206,7 +216,6 @@
         "muteParticipantButton": "Discrétion",
         "muteParticipantDialog": "Êtes-vous certain de vouloir désactiver le micro de ce participant? Vous ne pourrez pas le réactiver, mais il peut le réactiver lui-même à tout moment.",
         "muteParticipantTitle": "Désactiver le micro de ce membre?",
-        "Ok": "OK",
         "passwordLabel": "Mot de passe",
         "passwordNotSupported": "La mise en place d'un mot de passe de réunion n'est pas prise en charge.",
         "passwordNotSupportedTitle": "Mot de passe non pris en charge",
@@ -224,7 +233,6 @@
         "remoteControlShareScreenWarning": "Notez que si vous appuyez sur « Permettre », vous partagerez votre écran!",
         "remoteControlStopMessage": "La séance de contrôle à distance est terminée!",
         "remoteControlTitle": "Contrôle du bureau à distance",
-        "Remove": "Supprimer",
         "removePassword": "Supprimer un mot de passe",
         "removeSharedVideoMsg": "Êtes-vous certain de vouloir supprimer votre vidéo partagée?",
         "removeSharedVideoTitle": "Supprimer la vidéo partagée",
@@ -242,8 +250,7 @@
         "sendPrivateMessageTitle": "Envoyer en privé ?",
         "serviceUnavailable": "Service non disponible",
         "sessTerminated": "Appel terminé",
-        "Share": "Oui",
-        "shareVideoLinkError": "Veuillez fournir un lien YouTube correct.",
+        "shareVideoLinkError": "Veuillez fournir un lien correct.",
         "shareVideoTitle": "Partager une vidéo",
         "shareYourScreen": "Partager votre écran",
         "shareYourScreenDisabled": "Le partage d'écran est désactivé.",
@@ -256,7 +263,6 @@
         "stopRecordingWarning": "Êtes-vous certain de vouloir arrêter l'enregistrement?",
         "stopStreamingWarning": "Êtes-vous certain de vouloir arrêter la diffusion en direct?",
         "streamKey": "Clé de diffusion en direct",
-        "Submit": "Envoyer",
         "thankYou": "Merci d'utiliser {{appName}}!",
         "token": "jeton",
         "tokenAuthFailed": "Désolé, vous n'avez pas la permission de rejoindre cet appel.",
@@ -264,14 +270,7 @@
         "transcribing": "Transcription en cours",
         "unlockRoom": "Supprimer le mot de passe de la réunion",
         "userPassword": "mot de passe d'utilisateur",
-        "WaitForHostMsg": "La conférence <b>{{room}}</b> n'a pas encore démarré. Si vous êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre que l'hôte arrive.",
-        "WaitForHostMsgWOk": "La conférence <b>{{room}}</b> n'a pas encore démarré. Si vous êtes l'hôte, veuillez appuyer sur OK pour vous authentifier. Sinon, veuillez attendre que l'hôte arrive.",
-        "WaitingForHost": "En attente de l'hôte…",
-        "Yes": "Oui",
         "yourEntireScreen": "Votre écran entier"
-    },
-    "dialOut": {
-        "statusMessage": "est maintenant {{status}}"
     },
     "documentSharing": {
         "title": "Document partagé"
@@ -311,6 +310,7 @@
         "inviteURLFirstPartGeneral": "Vous avez été invité à rejoindre une réunion.",
         "inviteURLFirstPartPersonal": "{{name}} vous invite à une réunion.\n",
         "inviteURLSecondPart": "\nRejoindre la réunion:\n{{url}}\n",
+        "label": "Informations de réunion",
         "liveStreamURL": "Diffusion en direct :",
         "moreNumbers": "Plus de numéros",
         "noNumbers": "Aucun numéro d'appel interne.",
@@ -319,8 +319,13 @@
         "numbers": "Numéros d'appel interne",
         "password": "Mot de passe :",
         "title": "Oui",
-        "tooltip": "Lien de partage et informations d'appel interne pour cette réunion",
-        "label": "Informations de réunion"
+        "tooltip": "Lien de partage et informations d'appel interne pour cette réunion"
+    },
+    "inlineDialogFailure": {
+        "msg": "Nous avons rencontré un obstacle.",
+        "retry": "% abandonnés",
+        "support": "Soutien",
+        "supportMsg": "Si cela se produit à nouveau, veuillez communiquer avec"
     },
     "inviteDialog": {
         "alertText": "L'invitation de certains participants a échoué.",
@@ -329,12 +334,6 @@
         "searchPeopleOnlyPlaceholder": "Rechercher des participants",
         "searchPlaceholder": "Participant ou numéro de téléphone",
         "send": "Envoyer…"
-    },
-    "inlineDialogFailure": {
-        "msg": "Nous avons rencontré un obstacle.",
-        "retry": "% abandonnés",
-        "support": "Soutien",
-        "supportMsg": "Si cela se produit à nouveau, veuillez communiquer avec"
     },
     "keyboardShortcuts": {
         "focusLocal": "Focaliser sur votre vidéo",
@@ -375,10 +374,10 @@
         "onBy": "{{name}} démarré la diffusion en continu",
         "pending": "Démarrage de la diffusion en direct…",
         "serviceName": "Service de diffusion en direct",
-        "signedInAs": "Vous êtes actuellement connecté en tant que :",
         "signIn": "Se connecter avec Google",
         "signInCTA": "Connectez-vous ou entrez votre clé de diffusion en direct de YouTube",
         "signOut": "Se déconnecter",
+        "signedInAs": "Vous êtes actuellement connecté en tant que :",
         "start": "Démarrer une diffusion en direct",
         "streamIdHelp": "Qu'est-ce que c'est?",
         "unavailableTitle": "Diffusion en direct non disponible"
@@ -430,24 +429,24 @@
         "me": "Moi",
         "moderator": "Droits de modérateur accordés!",
         "muted": "Vous avez joint la conversation en sourdine.",
-        "mutedTitle": "Vous êtes en sourdine!",
-        "mutedRemotelyTitle": "Votre micro a été coupé par {{participantDisplayName}}!",
         "mutedRemotelyDescription": "Vous pouvez toujours activer votre micro pour prendre la parole. Désactivez votre micro quand vous terminez pour éviter les bruits parasites.",
+        "mutedRemotelyTitle": "Votre micro a été coupé par {{participantDisplayName}}!",
+        "mutedTitle": "Vous êtes en sourdine!",
+        "newDeviceAction": "Utiliser",
+        "newDeviceAudioTitle": "Nouveau dispositif audio détecté",
+        "newDeviceCameraTitle": "Nouvelle caméra détectée",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) supprimé par un autre participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) défini par un autre participant",
         "raisedHand": "{{name}} voudrait parler.",
         "somebody": "Quelqu'un",
-        "startSilentTitle": "Vous avez rejoint sans sortie audio!",
         "startSilentDescription": "Rejoignez la réunion de nouveau pour activer l'audio",
+        "startSilentTitle": "Vous avez rejoint sans sortie audio!",
         "suboptimalBrowserWarning": "Nous craignons que votre expérience de réunion en ligne ne soit bonne ici. Nous cherchons des moyens d’améliorer cela, mais d’ici-là, essayez d’utiliser l’un des <a href='{{recommendedBrowserPageLink}}' target='_blank'>navigateurs supportés</a>.",
         "suboptimalExperienceTitle": "Avertissement de navigateur",
-        "unmute": "Rétablir le son",
-        "newDeviceCameraTitle": "Nouvelle caméra détectée",
-        "newDeviceAudioTitle": "Nouveau dispositif audio détecté",
-        "newDeviceAction": "Utiliser"
+        "unmute": "Rétablir le son"
     },
-    "passwordSetRemotely": "réglé par un autre membre",
     "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
+    "passwordSetRemotely": "réglé par un autre membre",
     "poweredby": "optimisé par",
     "presenceStatus": {
         "busy": "Occupé",
@@ -565,7 +564,9 @@
         "title": "Votre appel vidéo a été interrompu parce que cet ordinateur est tombé en veille."
     },
     "toolbar": {
+        "Settings": "Paramètres",
         "accessibilityLabel": {
+            "Settings": "Basculement des paramètres",
             "audioOnly": "Basculement du mode audio uniquement",
             "audioRoute": "Sélectionner le dispositif audio",
             "callQuality": "Gestion de la qualité d'appel",
@@ -590,17 +591,16 @@
             "raiseHand": "Basculement de la main levée",
             "recording": "Basculement de l'enregistrement",
             "remoteMute": "Mettre le participant en sourdine",
-            "Settings": "Basculement des paramètres",
-            "sharedvideo": "Basculement du partage de vidéo YouTube",
             "shareRoom": "Inviter quelqu'un",
             "shareYourScreen": "Basculement du partage d'écran",
+            "sharedvideo": "Basculement du partage de vidéo",
             "shortcuts": "Basculement des raccourcis",
             "show": "",
             "speakerStats": "Basculement des statistiques d'intervenant",
             "tileView": "Basculement de l'affichage mosaïque",
             "toggleCamera": "Basculement de la caméra",
-            "videomute": "Basculement de la sourdine vidéo",
-            "videoblur": "Alterner le brouillage vidéo"
+            "videoblur": "Alterner le brouillage vidéo",
+            "videomute": "Basculement de la sourdine vidéo"
         },
         "addPeople": "Ajouter des personnes à votre appel",
         "audioOnlyOff": "Désactiver le mode bande passante faible",
@@ -626,31 +626,30 @@
         "lowerYourHand": "Abaisser votre main",
         "moreActions": "Plus d'actions",
         "mute": "Activer / Réactiver le son",
-        "noAudioSignalTitle": "Il n'y a pas d'entrée provenant de votre micro !",
         "noAudioSignalDesc": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, envisagez de changer le périphérique.",
         "noAudioSignalDescSuggestion": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, pensez à utiliser le périphérique suivant :",
+        "noAudioSignalTitle": "Il n'y a pas d'entrée provenant de votre micro !",
         "openChat": "Ouvrir le clavardage",
         "pip": "Passer en mode image dans l'image",
         "privateMessage": "Envoyer un message privé",
         "profile": "Modifier votre profil",
         "raiseHand": "Lever / Abaisser votre main",
         "raiseYourHand": "Lever votre main",
-        "Settings": "Paramètres",
-        "sharedvideo": "Partager une vidéo YouTube",
         "shareRoom": "Inviter quelqu'un",
+        "sharedvideo": "Partager une vidéo",
         "shortcuts": "Voir les raccourcis",
         "speakerStats": "Statistiques d'intervenant",
         "startScreenSharing": "Démarrer le partage d'écran",
         "startSubtitles": "Activer les sous-titres",
+        "startvideoblur": "Brouiller mon arrière plan",
         "stopScreenSharing": "Arrêter le partage d'écran",
+        "stopSharedVideo": "Arrêter la vidéo",
         "stopSubtitles": "Désactiver les sous-titres",
-        "stopSharedVideo": "Arrêter la vidéo YouTube",
+        "stopvideoblur": "Désactiver le brouillage d'arrière-plan",
         "talkWhileMutedPopup": "Vous essayez de parler? Vous êtes en sourdine.",
         "tileViewToggle": "Basculement de l'affichage mosaïque",
         "toggleCamera": "Basculement de la caméra",
-        "videomute": "Démarrer / Arrêter la caméra",
-        "startvideoblur": "Brouiller mon arrière plan",
-        "stopvideoblur": "Désactiver le brouillage d'arrière-plan"
+        "videomute": "Démarrer / Arrêter la caméra"
     },
     "transcribing": {
         "ccButtonTooltip": "Activer / Désactiver les sous-titres",
@@ -729,16 +728,16 @@
         "connectCalendarButton": "Connecter votre agenda",
         "connectCalendarText": "Connectez-vous à votre calendrier pour afficher toutes les réunions {{app}}. Ajoutez également les réunions de {{provider}} à votre calendrier et démarrez-les d'un simple clic.",
         "enterRoomTitle": "Démarrer une nouvelle réunion",
-        "roomNameAllowedChars": "Le nom de la réunion ne doit contenir aucun de ces caractères : ?, &, :, ', \", %, #.",
         "go": "Aller",
         "goSmall": "Aller",
-        "join": "CRÉER / REJOINDRE",
         "info": "Ret. arr.",
+        "join": "CRÉER / REJOINDRE",
         "privacy": "Confidentialité",
         "recentList": "Récent",
         "recentListDelete": "Supprimer",
         "recentListEmpty": "Votre liste récente est actuellement vide. Clavardez avec votre équipe et vous y trouverez toutes vos réunions récentes.",
         "reducedUIText": "Bienvenue sur {{app}}!",
+        "roomNameAllowedChars": "Le nom de la réunion ne doit contenir aucun de ces caractères : ?, &, :, ', \", %, #.",
         "roomname": "Entrer le nom de la salle",
         "roomnameHint": "Entrez le nom ou l'URL de la salle que vous voulez rejoindre. Vous pouvez inventer un nom, mais assurez-vous de le partager avec les participants de la réunion pour qu'ils utilisent le même nom.",
         "sendFeedback": "Envoyer un commentaire",

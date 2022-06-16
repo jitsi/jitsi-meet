@@ -1,14 +1,24 @@
-/* eslint-disable react/no-multi-comp */
 // @flow
+
+/* eslint-disable react/no-multi-comp, react/jsx-no-bind */
 
 import React, { useRef } from 'react';
 
 import { translate } from '../../../../base/i18n';
 import { copyText } from '../../../../base/util';
+import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 
 import PasswordForm from './PasswordForm';
 
+const DIGITS_ONLY = /^\d+$/;
+const KEY = 'add-passcode';
+
 type Props = {
+
+    /**
+     * Toolbar buttons which have their click exposed through the API.
+     */
+     buttonsWithNotifyClick: Array<string | Object>,
 
     /**
      * Whether or not the current user can modify the current password.
@@ -58,12 +68,15 @@ type Props = {
     t: Function
 };
 
+declare var APP: Object;
+
 /**
  * Component that handles the password manipulation from the invite dialog.
  *
  * @returns {React$Element<any>}
  */
 function PasswordSection({
+    buttonsWithNotifyClick,
     canEditPassword,
     conference,
     locked,
@@ -85,6 +98,10 @@ function PasswordSection({
      * @returns {void}
      */
     function onPasswordSubmit(enteredPassword) {
+        if (enteredPassword && passwordNumberOfDigits && !DIGITS_ONLY.test(enteredPassword)) {
+            // Don't set the password.
+            return;
+        }
         setPassword(conference, conference.lock, enteredPassword);
     }
 
@@ -96,7 +113,31 @@ function PasswordSection({
      * @returns {void}
      */
     function onTogglePasswordEditState() {
-        setPasswordEditEnabled(!passwordEditEnabled);
+        if (typeof APP === 'undefined' || !buttonsWithNotifyClick?.length) {
+            setPasswordEditEnabled(!passwordEditEnabled);
+
+            return;
+        }
+
+        let notifyMode;
+        const notify = buttonsWithNotifyClick.find(
+            (btn: string | Object) =>
+                (typeof btn === 'string' && btn === KEY)
+                || (typeof btn === 'object' && btn.key === KEY)
+        );
+
+        if (notify) {
+            notifyMode = typeof notify === 'string' || notify.preventExecution
+                ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+                : NOTIFY_CLICK_MODE.ONLY_NOTIFY;
+            APP.API.notifyToolbarButtonClicked(
+                KEY, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+            );
+        }
+
+        if (notifyMode === NOTIFY_CLICK_MODE.ONLY_NOTIFY) {
+            setPasswordEditEnabled(!passwordEditEnabled);
+        }
     }
 
     /**
@@ -106,7 +147,7 @@ function PasswordSection({
      */
     function onPasswordSave() {
         if (formRef.current) {
-            const { value } = formRef.current.querySelector('form > input');
+            const { value } = formRef.current.querySelector('div > input');
 
             if (value) {
                 onPasswordSubmit(value);

@@ -69,22 +69,22 @@ export default createStyleSheet({
         backgroundColor: BaseTheme.palette.dividerColor
     },
 
-    dividerWithSpacing: {
+    dividerDialog: {
         backgroundColor: BaseTheme.palette.dividerColor,
-        marginVertical: BaseTheme.spacing[3]
+        marginBottom: BaseTheme.spacing[3]
     },
 
-    toggleContainer: {
-        display: 'flex',
+    contextMenuItem: {
         alignItems: 'center',
+        display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center',
-        width: '100%',
-        overflow: 'hidden'
+        height: BaseTheme.spacing[7],
+        marginLeft: BaseTheme.spacing[3]
     },
 
-    toggleLabel: {
-        marginRight: BaseTheme.spacing[3],
-        maxWidth: '70%'
+    contextMenuItemText: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text01,
+        marginLeft: BaseTheme.spacing[4]
     }
 });

@@ -1,6 +1,5 @@
 /*
- * Copyright @ 2019-present 8x8, Inc.
- * Copyright @ 2018-2019 Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +17,7 @@
 import CallKit
 import Foundation
 
-public protocol CXProviderProtocol: class {
+public protocol CXProviderProtocol: AnyObject {
     var configuration: CXProviderConfiguration { get set }
     func setDelegate(_ delegate: CXProviderDelegate?, queue: DispatchQueue?)
     func reportNewIncomingCall(with UUID: UUID, update: CXCallUpdate, completion: @escaping (Error?) -> Void)
@@ -29,7 +28,7 @@ public protocol CXProviderProtocol: class {
     func invalidate()
 }
 
-public protocol CXCallControllerProtocol: class {
+public protocol CXCallControllerProtocol: AnyObject {
     var calls: [CXCall] { get }
     func request(_ transaction: CXTransaction, completion: @escaping (Error?) -> Swift.Void)
 }
@@ -53,7 +52,9 @@ extension CXCallController: CXCallControllerProtocol {
     public static var callKitProvider: CXProviderProtocol?
     public static var callKitCallController: CXCallControllerProtocol?
 
-    private static var provider: CXProviderProtocol {
+    private static var defaultProvider: CXProvider?
+
+    private static var provider: CXProviderProtocol? {
         callKitProvider ?? defaultProvider
     }
     
@@ -64,8 +65,8 @@ extension CXCallController: CXCallControllerProtocol {
     private static var providerConfiguration: CXProviderConfiguration? {
         didSet {
             guard let configuration = providerConfiguration else { return }
-            provider.configuration = configuration
-            provider.setDelegate(emitter, queue: nil)
+            provider?.configuration = configuration
+            provider?.setDelegate(emitter, queue: nil)
         }
     }
     
@@ -73,32 +74,27 @@ extension CXCallController: CXCallControllerProtocol {
         return CXCallController()
     }()
     
-    private static var defaultProvider: CXProvider = {
-        let configuration = CXProviderConfiguration(localizedName: "")
-        return CXProvider(configuration: configuration)
-    }()
-
     private static let emitter: JMCallKitEmitter = {
         return JMCallKitEmitter()
     }()
 
     /// Enables the proxy in between CallKit and the consumers of the SDK.
-    /// Defaults to enabled, set to false when you don't want to use CallKit.
-    @objc public static var enabled: Bool = true {
+    /// Defaults to disabled. Set to true when you want to use CallKit.
+    @objc public static var enabled: Bool = false {
         didSet {
             if callKitProvider == nil {
-                provider.invalidate()
+                provider?.invalidate()
             }
             
             if enabled {
-                guard isProviderConfigured() else  { return }
+                let configuration = providerConfiguration ?? CXProviderConfiguration(localizedName: "")
                 if callKitProvider == nil {
-                    defaultProvider = CXProvider(configuration: providerConfiguration!)
+                    defaultProvider = CXProvider(configuration: configuration)
                 }
                 
-                provider.setDelegate(emitter, queue: nil)
+                provider?.setDelegate(emitter, queue: nil)
             } else {
-                provider.setDelegate(nil, queue: nil)
+                provider?.setDelegate(nil, queue: nil)
             }
         }
     }
@@ -149,9 +145,9 @@ extension CXCallController: CXCallControllerProtocol {
         let callUpdate = makeCXUpdate(handle: handle,
                                       displayName: displayName,
                                       hasVideo: hasVideo)
-        provider.reportNewIncomingCall(with: UUID,
-                                       update: callUpdate,
-                                       completion: completion)
+        provider?.reportNewIncomingCall(with: UUID,
+                                        update: callUpdate,
+                                        completion: completion)
     }
 
     @objc public static func reportCallUpdate(with UUID: UUID,
@@ -163,7 +159,7 @@ extension CXCallController: CXCallControllerProtocol {
         let callUpdate = makeCXUpdate(handle: handle,
                                       displayName: displayName,
                                       hasVideo: hasVideo)
-        provider.reportCall(with: UUID, updated: callUpdate)
+        provider?.reportCall(with: UUID, updated: callUpdate)
     }
 
     @objc public static func reportCall(
@@ -171,17 +167,17 @@ extension CXCallController: CXCallControllerProtocol {
             endedAt dateEnded: Date?,
             reason endedReason: CXCallEndedReason) {
         guard enabled else { return }
-        provider.reportCall(with: UUID,
-                            endedAt: dateEnded,
-                            reason: endedReason)
+        provider?.reportCall(with: UUID,
+                             endedAt: dateEnded,
+                             reason: endedReason)
     }
 
     @objc public static func reportOutgoingCall(
             with UUID: UUID,
             startedConnectingAt dateStartedConnecting: Date?) {
         guard enabled else { return }
-        provider.reportOutgoingCall(with: UUID,
-                                    startedConnectingAt: dateStartedConnecting)
+        provider?.reportOutgoingCall(with: UUID,
+                                     startedConnectingAt: dateStartedConnecting)
     }
 
     @objc public static func reportOutgoingCall(
@@ -189,7 +185,7 @@ extension CXCallController: CXCallControllerProtocol {
             connectedAt dateConnected: Date?) {
         guard enabled else { return }
 
-        provider.reportOutgoingCall(with: UUID, connectedAt: dateConnected)
+        provider?.reportOutgoingCall(with: UUID, connectedAt: dateConnected)
     }
 
     @objc public static func request(

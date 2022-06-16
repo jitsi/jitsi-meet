@@ -13,7 +13,11 @@ import {
     participantLeft
 } from '../participants';
 import { toState } from '../redux';
-import { getBackendSafePath, getJitsiMeetGlobalNS, safeDecodeURIComponent } from '../util';
+import {
+    getBackendSafePath,
+    getJitsiMeetGlobalNS,
+    safeDecodeURIComponent
+} from '../util';
 
 import {
     AVATAR_URL_COMMAND,
@@ -180,9 +184,9 @@ export function getConferenceName(stateful: Function | Object): string {
     const state = toState(stateful);
     const { callee } = state['features/base/jwt'];
     const { callDisplayName } = state['features/base/config'];
-    const { pendingSubjectChange, room, subject } = getConferenceState(state);
+    const { localSubject, room, subject } = getConferenceState(state);
 
-    return pendingSubjectChange
+    return localSubject
         || subject
         || callDisplayName
         || (callee && callee.name)
@@ -386,7 +390,7 @@ function _reportError(msg, err) {
 
 /**
  * Sends a representation of the local participant such as her avatar (URL),
- * e-mail address, and display name to (the remote participants of) a specific
+ * email address, and display name to (the remote participants of) a specific
  * conference.
  *
  * @param {Function|Object} stateful - The redux store, state, or

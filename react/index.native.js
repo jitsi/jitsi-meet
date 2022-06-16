@@ -1,7 +1,11 @@
 // @flow
 
+// https://github.com/software-mansion/react-native-gesture-handler/issues/320#issuecomment-443815828
+import 'react-native-gesture-handler';
+
 // Apply all necessary polyfills as early as possible to make sure anything imported henceforth
 // sees them.
+import 'react-native-get-random-values';
 import './features/mobile/polyfills';
 
 import React, { PureComponent } from 'react';
@@ -9,11 +13,7 @@ import { AppRegistry } from 'react-native';
 
 import { App } from './features/app/components';
 import { _initLogging } from './features/base/logging/functions';
-import JitsiThemePaperProvider
-    from './features/base/ui/components/JitsiThemeProvider';
-import { IncomingCallApp } from './features/mobile/incoming-call';
-
-declare var __DEV__;
+import JitsiThemePaperProvider from './features/base/ui/components/JitsiThemeProvider';
 
 /**
  * The type of the React {@code Component} props of {@link Root}.
@@ -31,7 +31,7 @@ type Props = {
  * the JS/JSX source code). So create a wrapper React Component (class) around
  * features/app's App instead.
  *
- * @extends Component
+ * @augments Component
  */
 class Root extends PureComponent<Props> {
     /**
@@ -53,28 +53,5 @@ class Root extends PureComponent<Props> {
 // Initialize logging.
 _initLogging();
 
-// HORRIBLE HACK ALERT! React Native logs the initial props with `console.log`. Here we are quickly patching it
-// to avoid logging potentially sensitive information.
-if (!__DEV__) {
-    /* eslint-disable */
-
-    const __orig_console_log = console.log;
-    const __orig_appregistry_runapplication = AppRegistry.runApplication;
-
-    AppRegistry.runApplication = (...args) => {
-        // $FlowExpectedError
-        console.log = () => {};
-        __orig_appregistry_runapplication(...args);
-        // $FlowExpectedError
-        console.log = __orig_console_log;
-    };
-
-    /* eslint-enable */
-}
-
-
 // Register the main/root Component of JitsiMeetView.
 AppRegistry.registerComponent('App', () => Root);
-
-// Register the main/root Component of IncomingCallView.
-AppRegistry.registerComponent('IncomingCallApp', () => IncomingCallApp);

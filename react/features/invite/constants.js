@@ -1,9 +1,11 @@
 // @flow
 
 /**
- * Modal ID for the DialInSummary modal.
+ * The pathName for the dialInInfo page.
+ *
+ * @type {string}
  */
-export const DIAL_IN_SUMMARY_VIEW_ID = 'DIAL_IN_SUMMARY_VIEW_ID';
+export const DIAL_IN_INFO_PAGE_PATH_NAME = 'static/dialInInfo.html';
 
 /**
  * The identifier of the sound to be played when the status of an outgoing call
@@ -45,7 +47,7 @@ export const OUTGOING_CALL_START_SOUND_ID = 'OUTGOING_CALL_START_SOUND';
 export const SIP_ADDRESS_REGEX = /^[+a-zA-Z0-9]+(?:([^\s>:@]+)(?::([^\s@>]+))?@)?([\w\-.]+)(?::(\d+))?((?:;[^\s=?>;]+(?:=[^\s?;]+)?)*)(?:\?(([^\s&=>]+=[^\s&=>]+)(&[^\s&=>]+=[^\s&=>]+)*))?$/;
 
 /**
- * Different invite types mapping
+ * Different invite types mapping.
  */
 export const INVITE_TYPES = {
     PHONE: 'phone',

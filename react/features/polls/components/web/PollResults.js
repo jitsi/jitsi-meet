@@ -20,6 +20,7 @@ const PollResults = (props: AbstractProps) => {
         changeVote,
         poll,
         pollVisibility: { showPoll, hidePoll },
+        creatorName,
         haveVoted,
         showDetails,
         question,
@@ -43,6 +44,9 @@ const PollResults = (props: AbstractProps) => {
                             { poll.hidden ? t('polls.results.showPoll') : t('polls.results.hidePoll') }
                         </a> : null
                     }
+                </div>
+                <div className = 'poll-creator'>
+                    { t('polls.by', { name: creatorName }) }
                 </div>
             </div>
             <ol className = 'poll-result-list'>

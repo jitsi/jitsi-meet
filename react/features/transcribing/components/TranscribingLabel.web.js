@@ -13,7 +13,7 @@ import { _mapStateToProps, type Props } from './AbstractTranscribingLabel';
  * React {@code Component} for displaying a label when a transcriber is in the
  * conference.
  *
- * @extends Component
+ * @augments Component
  */
 class TranscribingLabel extends Component<Props> {
 

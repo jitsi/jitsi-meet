@@ -3,10 +3,13 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { getAmplitudeIdentity } from '../analytics';
-import { CONFERENCE_UNIQUE_ID_SET, getConferenceOptions, getRoomName } from '../base/conference';
-import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
+import { CONFERENCE_UNIQUE_ID_SET, E2E_RTT_CHANGED, CONFERENCE_TIMESTAMP_CHANGED, getConferenceOptions, getRoomName }
+    from '../base/conference';
+import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks';
+import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
@@ -23,7 +26,6 @@ MiddlewareRegistry.register(store => next => action => {
     const state = store.getState();
     const config = state['features/base/config'];
     const { analytics } = config;
-
 
     switch (action.type) {
     case LIB_WILL_INIT: {
@@ -47,6 +49,38 @@ MiddlewareRegistry.register(store => next => action => {
                 });
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);
+            }
+        }
+        break;
+    }
+    case TRACK_ADDED: {
+        if (canSendRtcstatsData(state)) {
+            const jitsiTrack = action?.track?.jitsiTrack;
+            const { ssrc, videoType } = jitsiTrack || { };
+
+            // Remote tracks store their ssrc in the jitsiTrack object. Local tracks don't. See getSsrcByTrack.
+            if (videoType && ssrc && !jitsiTrack.isLocal()) {
+                RTCStats.sendVideoTypeData({
+                    ssrc,
+                    videoType
+                });
+            }
+        }
+        break;
+    }
+    case TRACK_UPDATED: {
+        if (canSendRtcstatsData(state)) {
+            const { videoType, jitsiTrack } = action?.track || { };
+            const { ssrc } = jitsiTrack || { };
+
+            // if the videoType of the remote track has changed we expect to find it in track.videoType. grep for
+            // trackVideoTypeChanged.
+            if (videoType && ssrc && !jitsiTrack.isLocal()) {
+
+                RTCStats.sendVideoTypeData({
+                    ssrc,
+                    videoType
+                });
             }
         }
         break;
@@ -101,6 +135,38 @@ MiddlewareRegistry.register(store => next => action => {
 
             RTCStats.sendDominantSpeakerData({ dominantSpeakerEndpoint: id,
                 previousSpeakers });
+        }
+        break;
+    }
+    case E2E_RTT_CHANGED: {
+        if (canSendRtcstatsData(state)) {
+            const { participant, rtt } = action.e2eRtt;
+
+            RTCStats.sendE2eRttData({
+                remoteEndpointId: participant.getId(),
+                rtt,
+                remoteRegion: participant.getProperty('region')
+            });
+        }
+        break;
+    }
+    case ADD_FACE_EXPRESSION: {
+        if (canSendRtcstatsData(state)) {
+            const { duration, faceExpression, timestamp } = action;
+
+            RTCStats.sendFaceExpressionData({
+                duration,
+                faceLandmarks: faceExpression,
+                timestamp
+            });
+        }
+        break;
+    }
+    case CONFERENCE_TIMESTAMP_CHANGED: {
+        if (canSendRtcstatsData(state)) {
+            const conferenceTimestamp = action.conferenceTimestamp;
+
+            RTCStats.sendConferenceTimestamp(conferenceTimestamp);
         }
         break;
     }

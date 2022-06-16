@@ -1,11 +1,25 @@
 .subject {
     color: #fff;
-    margin-top: -120px;
-    transition: margin-top .3s ease-in;
-    z-index: $zindex3;
+    transition: opacity .6s ease-in-out;
+    z-index: $toolbarZ + 2;
+    margin-top: 20px;
+    opacity: 0;
 
     &.visible {
-        margin-top: 20px;
+        opacity: 1;
+    }
+
+    &#autoHide.with-always-on {
+        overflow: hidden;
+        animation: hideSubject forwards .6s ease-out;
+
+        & > .subject-info-container {
+            justify-content: flex-start;
+        }
+
+        &.visible {
+            animation: showSubject forwards .6s ease-out;
+        }
     }
 }
 
@@ -36,10 +50,7 @@
     line-height: 28px;
     padding: 0 16px;
     height: 28px;
-
-    @media (max-width: 700px) {
-        max-width: 100px;
-    }
+    max-width: 324px;
 
     @media (max-width: 300px) {
         display: none;
@@ -74,8 +85,25 @@
     position: absolute;
     top: 0;
     height: 48px;
+    max-width: calc(100% - 24px);
 }
 
-.shift-right .details-container {
-    margin-left: calc(#{$sidebarWidth} / 2);
+@keyframes hideSubject {
+    0% {
+        max-width: 100%;
+    }
+
+    100% {
+        max-width: 0;
+    }
+}
+
+@keyframes showSubject {
+    0% {
+        max-width: 0%;
+    }
+
+    100% {
+        max-width: 100%;
+    }
 }

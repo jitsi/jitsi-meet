@@ -7,9 +7,7 @@ import { toState } from '../base/redux';
 import { Conference } from '../conference';
 import { getDeepLinkingPage } from '../deep-linking';
 import { UnsupportedDesktopBrowser } from '../unsupported-browser';
-import { isWelcomePageUserEnabled } from '../welcome';
-import { BlankPage, WelcomePage } from '../welcome/components';
-
+import { BlankPage, isWelcomePageUserEnabled, WelcomePage } from '../welcome';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux
@@ -82,11 +80,10 @@ function _getWebWelcomePageRoute(state) {
         }
     } else {
         // Web: if the welcome page is disabled, go directly to a random room.
+        const url = new URL(window.location.href);
 
-        let href = window.location.href;
-
-        href.endsWith('/') || (href += '/');
-        route.href = href + generateRoomWithoutSeparator();
+        url.pathname += generateRoomWithoutSeparator();
+        route.href = url.href;
     }
 
     return Promise.resolve(route);

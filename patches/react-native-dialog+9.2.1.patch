@@ -1,0 +1,118 @@
+diff --git a/node_modules/react-native-dialog/lib/Button.js b/node_modules/react-native-dialog/lib/Button.js
+index 19eeb22..b8a66f4 100644
+--- a/node_modules/react-native-dialog/lib/Button.js
++++ b/node_modules/react-native-dialog/lib/Button.js
+@@ -50,7 +50,7 @@ const buildStyles = (isDark) => StyleSheet.create({
+             backgroundColor: "transparent",
+         },
+         android: {
+-            color: PlatformColor(`@android:color/${isDark ? "link_text_dark" : "link_text_dark_light"}`),
++            color: isDark ? '#BFC7C7C7' : '#BF727272',
+             textAlign: "center",
+             backgroundColor: "transparent",
+             padding: 8,
+diff --git a/node_modules/react-native-dialog/lib/CodeInput.js b/node_modules/react-native-dialog/lib/CodeInput.js
+index eceae56..cc4339d 100644
+--- a/node_modules/react-native-dialog/lib/CodeInput.js
++++ b/node_modules/react-native-dialog/lib/CodeInput.js
+@@ -97,7 +97,7 @@ const buildStyles = (isDark) => StyleSheet.create({
+             color: PlatformColor("label"),
+         },
+         android: {
+-            color: PlatformColor(`@android:color/${isDark ? "primary_text_dark" : "primary_text_light"}`),
++            color: isDark ? '#FAFAFA' : '#212121',
+             fontSize: 20,
+         },
+         default: {},
+@@ -107,7 +107,7 @@ const buildStyles = (isDark) => StyleSheet.create({
+             color: PlatformColor("label"),
+         },
+         android: {
+-            color: PlatformColor(`@android:color/${isDark ? "primary_text_dark" : "primary_text_light"}`),
++            color: isDark ? '#FAFAFA' : '#212121',
+             fontSize: 14,
+         },
+         default: {},
+diff --git a/node_modules/react-native-dialog/lib/Container.js b/node_modules/react-native-dialog/lib/Container.js
+index 69e3764..d7569fb 100644
+--- a/node_modules/react-native-dialog/lib/Container.js
++++ b/node_modules/react-native-dialog/lib/Container.js
+@@ -82,7 +82,7 @@ DialogContainer.propTypes = {
+     useNativeDriver: PropTypes.bool,
+     children: PropTypes.node.isRequired,
+ };
+-const buildStyles = () => StyleSheet.create({
++const buildStyles = (isDark) => StyleSheet.create({
+     centeredView: {
+         marginTop: 22,
+     },
+@@ -103,7 +103,7 @@ const buildStyles = () => StyleSheet.create({
+             overflow: "hidden",
+         },
+         android: {
+-            backgroundColor: PlatformColor("?attr/colorBackgroundFloating"),
++            backgroundColor: isDark ? '#212121' : '#FFFFFF',
+             flexDirection: "column",
+             borderRadius: 3,
+             padding: 16,
+diff --git a/node_modules/react-native-dialog/lib/Description.js b/node_modules/react-native-dialog/lib/Description.js
+index 2da9ed3..248ac2f 100644
+--- a/node_modules/react-native-dialog/lib/Description.js
++++ b/node_modules/react-native-dialog/lib/Description.js
+@@ -28,7 +28,7 @@ const buildStyles = (isDark) => StyleSheet.create({
+             marginTop: 4,
+         },
+         android: {
+-            color: PlatformColor(`@android:color/${isDark ? "secondary_text_dark" : "secondary_text_light"}`),
++            color: isDark ? '#C7C7C7' : '#727272',
+             fontSize: 16,
+             marginTop: 10,
+         },
+diff --git a/node_modules/react-native-dialog/lib/Input.js b/node_modules/react-native-dialog/lib/Input.js
+index b33a1a0..063d7f8 100644
+--- a/node_modules/react-native-dialog/lib/Input.js
++++ b/node_modules/react-native-dialog/lib/Input.js
+@@ -48,7 +48,7 @@ const buildStyles = (isDark) => StyleSheet.create({
+             color: PlatformColor("label"),
+         },
+         android: {
+-            color: PlatformColor(`@android:color/${isDark ? "primary_text_dark" : "primary_text_light"}`),
++            color: isDark ? '#FAFAFA' : '#212121',
+             fontSize: 14,
+         },
+         default: {},
+@@ -58,7 +58,7 @@ const buildStyles = (isDark) => StyleSheet.create({
+             color: PlatformColor("label"),
+         },
+         android: {
+-            color: PlatformColor(`@android:color/${isDark ? "primary_text_dark" : "primary_text_light"}`),
++            color: isDark ? '#FAFAFA' : '#212121',
+             marginLeft: -4,
+             paddingLeft: 4,
+         },
+diff --git a/node_modules/react-native-dialog/lib/Switch.js b/node_modules/react-native-dialog/lib/Switch.js
+index 26a05ca..05114fa 100644
+--- a/node_modules/react-native-dialog/lib/Switch.js
++++ b/node_modules/react-native-dialog/lib/Switch.js
+@@ -52,7 +52,7 @@ const buildStyles = (isDark) => StyleSheet.create({
+             flex: 1,
+             paddingRight: 8,
+             fontSize: 16,
+-            color: PlatformColor(`@android:color/${isDark ? "primary_text_dark" : "primary_text_light"}`),
++            color: isDark ? '#FAFAFA' : '#212121',
+         },
+         default: {},
+     }),
+diff --git a/node_modules/react-native-dialog/lib/Title.js b/node_modules/react-native-dialog/lib/Title.js
+index 1c6fd87..b5511cc 100644
+--- a/node_modules/react-native-dialog/lib/Title.js
++++ b/node_modules/react-native-dialog/lib/Title.js
+@@ -28,7 +28,7 @@ const buildStyles = (isDark) => StyleSheet.create({
+             fontWeight: "600",
+         },
+         android: {
+-            color: PlatformColor(`@android:color/${isDark ? "primary_text_dark" : "primary_text_light"}`),
++            color: isDark ? '#FAFAFA' : '#212121',
+             fontWeight: "500",
+             fontSize: 18,
+         },

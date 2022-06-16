@@ -1,6 +1,10 @@
 // @flow
 
+import { getSourceNameSignalingFeatureFlag } from '../base/config';
+import { getVirtualScreenshareParticipantOwnerId } from '../base/participants';
+
 import { setRemoteParticipants } from './actions';
+import { isFilmstripScrollVisible } from './functions';
 
 /**
  * Computes the reorderd list of the remote participants.
@@ -12,11 +16,11 @@ import { setRemoteParticipants } from './actions';
  */
 export function updateRemoteParticipants(store: Object, participantId: ?number) {
     const state = store.getState();
-    const { testing = {} } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     let reorderedParticipants = [];
 
-    if (!enableThumbnailReordering) {
+    const { sortedRemoteVirtualScreenshareParticipants } = state['features/base/participants'];
+
+    if (!isReorderingEnabled(state) && !sortedRemoteVirtualScreenshareParticipants.size) {
         if (participantId) {
             const { remoteParticipants } = state['features/filmstrip'];
 
@@ -35,13 +39,28 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
     } = state['features/base/participants'];
     const remoteParticipants = new Map(sortedRemoteParticipants);
     const screenShares = new Map(sortedRemoteScreenshares);
+    const screenShareParticipants = sortedRemoteVirtualScreenshareParticipants
+        ? [ ...sortedRemoteVirtualScreenshareParticipants.keys() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
     const speakers = new Map(speakersList);
 
-    for (const screenshare of screenShares.keys()) {
-        remoteParticipants.delete(screenshare);
-        speakers.delete(screenshare);
+    if (getSourceNameSignalingFeatureFlag(state)) {
+        for (const screenshare of screenShareParticipants) {
+            const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
+
+            remoteParticipants.delete(ownerId);
+            remoteParticipants.delete(screenshare);
+
+            speakers.delete(ownerId);
+            speakers.delete(screenshare);
+        }
+    } else {
+        for (const screenshare of screenShares.keys()) {
+            remoteParticipants.delete(screenshare);
+            speakers.delete(screenshare);
+        }
     }
+
     for (const sharedVideo of sharedVideos) {
         remoteParticipants.delete(sharedVideo);
         speakers.delete(sharedVideo);
@@ -50,13 +69,32 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
         remoteParticipants.delete(speaker);
     }
 
-    // Always update the order of the thumnails.
-    reorderedParticipants = [
-        ...Array.from(screenShares.keys()),
-        ...sharedVideos,
-        ...Array.from(speakers.keys()),
-        ...Array.from(remoteParticipants.keys())
-    ];
+    if (getSourceNameSignalingFeatureFlag(state)) {
+        // Always update the order of the thumnails.
+        const participantsWithScreenShare = screenShareParticipants.reduce((acc, screenshare) => {
+            const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
+
+            acc.push(ownerId);
+            acc.push(screenshare);
+
+            return acc;
+        }, []);
+
+        reorderedParticipants = [
+            ...participantsWithScreenShare,
+            ...sharedVideos,
+            ...Array.from(speakers.keys()),
+            ...Array.from(remoteParticipants.keys())
+        ];
+    } else {
+        // Always update the order of the thumnails.
+        reorderedParticipants = [
+            ...Array.from(screenShares.keys()),
+            ...sharedVideos,
+            ...Array.from(speakers.keys()),
+            ...Array.from(remoteParticipants.keys())
+        ];
+    }
 
     store.dispatch(setRemoteParticipants(reorderedParticipants));
 }
@@ -79,4 +117,18 @@ export function updateRemoteParticipantsOnLeave(store: Object, participantId: ?s
 
     reorderedParticipants.delete(participantId)
         && store.dispatch(setRemoteParticipants(Array.from(reorderedParticipants)));
+}
+
+/**
+ * Returns true if thumbnail reordering is enabled and false otherwise.
+ * Note: The function will return false if all participants are displayed on the screen.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} - True if thumbnail reordering is enabled and false otherwise.
+ */
+export function isReorderingEnabled(state) {
+    const { testing = {} } = state['features/base/config'];
+    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+
+    return enableThumbnailReordering && isFilmstripScrollVisible(state);
 }

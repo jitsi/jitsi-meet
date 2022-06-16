@@ -45,7 +45,7 @@ type State = {
 /**
  * React Component for requesting the local participant to set a display name.
  *
- * @extends Component
+ * @augments Component
  */
 class DisplayNameForm extends Component<Props, State> {
     state = {

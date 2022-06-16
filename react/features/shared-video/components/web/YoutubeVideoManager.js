@@ -15,7 +15,7 @@ import AbstractVideoManager, {
  *
  * @returns {void}
  */
-class YoutubeVideoManager extends AbstractVideoManager<Props> {
+class YoutubeVideoManager extends AbstractVideoManager {
     /**
      * Initializes a new YoutubeVideoManager instance.
      *
@@ -153,7 +153,7 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
         } else if (event.data === YouTube.PlayerState.PAUSED) {
             this.onPause();
         }
-    }
+    };
 
     /**
      * Fired when youtube player is ready.
@@ -208,7 +208,7 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
         };
 
         return options;
-    }
+    };
 
     /**
      * Implements React Component's render.

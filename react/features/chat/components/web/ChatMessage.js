@@ -1,16 +1,14 @@
 // @flow
 
 import React from 'react';
-import { toArray } from 'react-emoji-render';
-
 
 import { translate } from '../../../base/i18n';
-import { Linkify } from '../../../base/react';
+import Message from '../../../base/react/components/web/Message';
+import { connect } from '../../../base/redux';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
-import AbstractChatMessage, {
-    type Props
-} from '../AbstractChatMessage';
-import PrivateMessageButton from '../PrivateMessageButton';
+import AbstractChatMessage, { type Props } from '../AbstractChatMessage';
+
+import PrivateMessageButton from './PrivateMessageButton';
 
 /**
  * Renders a single chat message.
@@ -23,41 +21,15 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { message, t } = this.props;
-        const processedMessage = [];
-
-        const txt = this._getMessageText();
-
-        // Tokenize the text in order to avoid emoji substitution for URLs.
-        const tokens = txt.split(' ');
-
-        // Content is an array of text and emoji components
-        const content = [];
-
-        for (const token of tokens) {
-            if (token.includes('://')) {
-                // It contains a link, bypass the emojification.
-                content.push(token);
-            } else {
-                content.push(...toArray(token, { className: 'smiley' }));
-            }
-
-            content.push(' ');
-        }
-
-        content.forEach(i => {
-            if (typeof i === 'string' && i !== ' ') {
-                processedMessage.push(<Linkify key = { i }>{ i }</Linkify>);
-            } else {
-                processedMessage.push(i);
-            }
-        });
+        const { message, t, knocking } = this.props;
 
         return (
             <div
                 className = 'chatmessage-wrapper'
                 tabIndex = { -1 }>
-                <div className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''}` }>
+                <div
+                    className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''} ${
+                        message.lobbyChat && !knocking ? 'lobbymessage' : ''}` }>
                     <div className = 'replywrapper'>
                         <div className = 'messagecontent'>
                             { this.props.showDisplayName && this._renderDisplayName() }
@@ -68,14 +40,19 @@ class ChatMessage extends AbstractChatMessage<Props> {
                                         : t('chat.messageAccessibleTitle',
                                         { user: this.props.message.displayName }) }
                                 </span>
-                                { processedMessage }
+                                <Message text = { this._getMessageText() } />
                             </div>
-                            { message.privateMessage && this._renderPrivateNotice() }
+                            { (message.privateMessage || (message.lobbyChat && !knocking))
+                                && this._renderPrivateNotice() }
                         </div>
-                        { message.privateMessage && message.messageType !== MESSAGE_TYPE_LOCAL
+                        { (message.privateMessage || (message.lobbyChat && !knocking))
+                            && message.messageType !== MESSAGE_TYPE_LOCAL
                             && (
-                                <div className = 'messageactions'>
+                                <div
+                                    className = { `messageactions ${
+                                        message.lobbyChat ? 'lobbychatmessageactions' : ''}` }>
                                     <PrivateMessageButton
+                                        isLobbyMessage = { message.lobbyChat }
                                         participantID = { message.id }
                                         reply = { true }
                                         showLabel = { false } />
@@ -136,4 +113,18 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 }
 
-export default translate(ChatMessage);
+/**
+ * Maps part of the Redux store to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Props}
+ */
+function _mapStateToProps(state: Object): $Shape<Props> {
+    const { knocking } = state['features/lobby'];
+
+    return {
+        knocking
+    };
+}
+
+export default translate(connect(_mapStateToProps)(ChatMessage));

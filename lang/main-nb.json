@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Blåtann",
         "headphones": "Hodetelefoner",
+        "none": "Ingen lydenheter tilgjengelig",
         "phone": "Telefon",
-        "speaker": "Høyttaler",
-        "none": "Ingen lydenheter tilgjengelig"
+        "speaker": "Høyttaler"
     },
     "audioOnly": {
         "audioOnly": "Lav båndbredde"
@@ -30,7 +30,6 @@
     "calendarSync": {
         "addMeetingURL": "Legg til en møtelenke",
         "confirmAddLink": "Ønsker du å legge til en Jitsi-lenke til denne hendelsen?",
-        "join": "",
         "join": "Ta del",
         "joinTooltip": "Ta del i møtet",
         "nextMeeting": "neste møte",
@@ -43,6 +42,8 @@
     },
     "chat": {
         "error": "",
+        "fieldPlaceHolder": "Skriv inn din melding her",
+        "messageTo": "Privat melding til {{recipient}}",
         "messagebox": "Skriv en melding",
         "nickname": {
             "popover": "Velg et kallenavn",
@@ -50,9 +51,10 @@
             "titleWithPolls": ""
         },
         "title": "",
-        "titleWithPolls": "",
-        "messageTo": "Privat melding til {{recipient}}",
-        "fieldPlaceHolder": "Skriv inn din melding her"
+        "titleWithPolls": ""
+    },
+    "chromeExtensionBanner": {
+        "dontShowAgain": "Ikke vis meg dette igjen"
     },
     "connection": {
         "ATTACHED": "Vedlagt",
@@ -64,9 +66,9 @@
         "DISCONNECTED": "Frakoblet",
         "DISCONNECTING": "Kobler fra",
         "ERROR": "Feil",
-        "RECONNECTING": "",
+        "FETCH_SESSION_ID": "Henter økt-ID…",
         "GOT_SESSION_ID": "Henter økt-ID… Ferdig",
-        "FETCH_SESSION_ID": "Henter økt-ID…"
+        "RECONNECTING": ""
     },
     "connectionindicator": {
         "address": "Adresse:",
@@ -121,7 +123,20 @@
         "selectADevice": "Velg en enhet",
         "testAudio": "Spill en testlyd"
     },
+    "dialOut": {
+        "statusMessage": "er nå {{status}}"
+    },
     "dialog": {
+        "Back": "Tilbake",
+        "Cancel": "Avbryt",
+        "IamHost": "Jeg er vertsskap",
+        "Ok": "OK",
+        "Remove": "Fjern",
+        "Share": "Del",
+        "Submit": "Send inn",
+        "WaitForHostMsg": "",
+        "WaitingForHost": "",
+        "Yes": "Ja",
         "accessibilityLabel": {
             "liveStreaming": ""
         },
@@ -129,7 +144,6 @@
         "alreadySharedVideoMsg": "",
         "alreadySharedVideoTitle": "",
         "applicationWindow": "",
-        "Back": "Tilbake",
         "cameraConstraintFailedError": "",
         "cameraNotFoundError": "",
         "cameraNotSendingData": "",
@@ -137,7 +151,6 @@
         "cameraPermissionDeniedError": "",
         "cameraUnknownError": "",
         "cameraUnsupportedResolutionError": "",
-        "Cancel": "Avbryt",
         "close": "",
         "conferenceDisconnectMsg": "",
         "conferenceDisconnectTitle": "Du har blitt frakoblet.",
@@ -160,11 +173,10 @@
         "externalInstallationTitle": "Programtillegg kreves",
         "goToStore": "",
         "gracefulShutdown": "",
-        "IamHost": "Jeg er vertsskap",
-        "incorrectRoomLockPassword": "",
         "incorrectPassword": "",
-        "inlineInstallationMsg": "",
+        "incorrectRoomLockPassword": "",
         "inlineInstallExtension": "Installer nå",
+        "inlineInstallationMsg": "",
         "internalError": "",
         "internalErrorTitle": "",
         "kickMessage": "",
@@ -188,11 +200,14 @@
         "micNotSendingDataTitle": "",
         "micPermissionDeniedError": "",
         "micUnknownError": "",
+        "muteEveryoneElseTitle": "Forstum alle unntatt {{whom}}?",
+        "muteEveryoneSelf": "deg selv",
+        "muteEveryoneStartMuted": "Alle starter forstummet fra nå av",
+        "muteEveryoneTitle": "Forstum alle?",
         "muteParticipantBody": "Du vil ikke kunne oppheve forstumming av dem, men de kan oppheve forstumming selv når som helst.",
         "muteParticipantButton": "Forstum",
         "muteParticipantDialog": "",
         "muteParticipantTitle": "",
-        "Ok": "OK",
         "passwordLabel": "",
         "passwordNotSupported": "",
         "passwordNotSupportedTitle": "",
@@ -210,21 +225,23 @@
         "remoteControlShareScreenWarning": "",
         "remoteControlStopMessage": "",
         "remoteControlTitle": "",
-        "Remove": "Fjern",
         "removePassword": "Fjern",
         "removeSharedVideoMsg": "",
         "removeSharedVideoTitle": "Fjern delt video",
         "reservationError": "",
         "reservationErrorMsg": "",
         "retry": "Prøv igjen",
+        "screenSharingAudio": "Del lyd",
         "screenSharingFailedToInstall": "",
         "screenSharingFailedToInstallTitle": "",
         "screenSharingFirefoxPermissionDeniedError": "",
         "screenSharingFirefoxPermissionDeniedTitle": "",
         "screenSharingPermissionDeniedError": "",
+        "sendPrivateMessageCancel": "Send til gruppen",
+        "sendPrivateMessageOk": "Send privat",
+        "sendPrivateMessageTitle": "Send privat?",
         "serviceUnavailable": "Tjenesten er utilgjengelig",
         "sessTerminated": "",
-        "Share": "Del",
         "shareVideoLinkError": "",
         "shareVideoTitle": "Del en video",
         "shareYourScreen": "Del skjermen din",
@@ -238,7 +255,6 @@
         "stopRecordingWarning": "",
         "stopStreamingWarning": "",
         "streamKey": "",
-        "Submit": "Send inn",
         "thankYou": "Takk for at du bruker {{appName}}.",
         "token": "symbol",
         "tokenAuthFailed": "",
@@ -246,22 +262,10 @@
         "transcribing": "",
         "unlockRoom": "",
         "userPassword": "brukerpassord",
-        "WaitForHostMsg": "",
-        "WaitForHostMsgWOk": "",
-        "WaitingForHost": "",
-        "Yes": "Ja",
-        "yourEntireScreen": "Hele skjermen din",
-        "sendPrivateMessageTitle": "Send privat?",
-        "sendPrivateMessageOk": "Send privat",
-        "sendPrivateMessageCancel": "Send til gruppen",
-        "screenSharingAudio": "Del lyd",
-        "muteEveryoneStartMuted": "Alle starter forstummet fra nå av",
-        "muteEveryoneSelf": "deg selv",
-        "muteEveryoneTitle": "Forstum alle?",
-        "muteEveryoneElseTitle": "Forstum alle unntatt {{whom}}?"
+        "yourEntireScreen": "Hele skjermen din"
     },
-    "dialOut": {
-        "statusMessage": "er nå {{status}}"
+    "documentSharing": {
+        "title": "Delt dokument"
     },
     "feedback": {
         "average": "Middels",
@@ -298,6 +302,7 @@
         "inviteURLFirstPartGeneral": "",
         "inviteURLFirstPartPersonal": "",
         "inviteURLSecondPart": "",
+        "label": "",
         "liveStreamURL": "",
         "moreNumbers": "Flere nummer",
         "noNumbers": "",
@@ -306,8 +311,13 @@
         "numbers": "",
         "password": "",
         "title": "Del",
-        "tooltip": "",
-        "label": ""
+        "tooltip": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "Prøv igjen",
+        "support": "Brukerstøtte",
+        "supportMsg": ""
     },
     "inviteDialog": {
         "alertText": "",
@@ -316,12 +326,6 @@
         "searchPeopleOnlyPlaceholder": "",
         "searchPlaceholder": "",
         "send": "Send"
-    },
-    "inlineDialogFailure": {
-        "msg": "",
-        "retry": "Prøv igjen",
-        "support": "Brukerstøtte",
-        "supportMsg": ""
     },
     "keyboardShortcuts": {
         "focusLocal": "",
@@ -359,10 +363,10 @@
         "on": "",
         "pending": "",
         "serviceName": "",
-        "signedInAs": "©",
         "signIn": "",
         "signInCTA": "",
         "signOut": "",
+        "signedInAs": "©",
         "start": "",
         "streamIdHelp": "",
         "unavailableTitle": ""
@@ -414,24 +418,24 @@
         "me": "",
         "moderator": "",
         "muted": "",
-        "mutedTitle": "",
-        "mutedRemotelyTitle": "",
         "mutedRemotelyDescription": "",
+        "mutedRemotelyTitle": "",
+        "mutedTitle": "",
+        "newDeviceAction": "",
+        "newDeviceAudioTitle": "",
+        "newDeviceCameraTitle": "",
         "passwordRemovedRemotely": "",
         "passwordSetRemotely": "",
         "raisedHand": "",
         "somebody": "",
-        "startSilentTitle": "",
         "startSilentDescription": "",
+        "startSilentTitle": "",
         "suboptimalExperienceDescription": "",
         "suboptimalExperienceTitle": "",
-        "unmute": "",
-        "newDeviceCameraTitle": "",
-        "newDeviceAudioTitle": "",
-        "newDeviceAction": ""
+        "unmute": ""
     },
-    "passwordSetRemotely": "",
     "passwordDigitsOnly": "",
+    "passwordSetRemotely": "",
     "poweredby": "",
     "presenceStatus": {
         "busy": "",
@@ -542,7 +546,9 @@
         "title": ""
     },
     "toolbar": {
+        "Settings": "",
         "accessibilityLabel": {
+            "Settings": "",
             "audioOnly": "",
             "audioRoute": "",
             "callQuality": "",
@@ -564,17 +570,16 @@
             "raiseHand": "",
             "recording": "",
             "remoteMute": "",
-            "Settings": "",
-            "sharedvideo": "",
             "shareRoom": "",
             "shareYourScreen": "",
+            "sharedvideo": "",
             "shortcuts": "",
             "show": "",
             "speakerStats": "",
             "tileView": "",
             "toggleCamera": "",
-            "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "videomute": ""
         },
         "addPeople": "",
         "audioOnlyOff": "",
@@ -603,22 +608,21 @@
         "profile": "",
         "raiseHand": "",
         "raiseYourHand": "",
-        "Settings": "",
-        "sharedvideo": "",
         "shareRoom": "",
+        "sharedvideo": "",
         "shortcuts": "",
         "speakerStats": "",
         "startScreenSharing": "",
         "startSubtitles": "",
+        "startvideoblur": "",
         "stopScreenSharing": "",
-        "stopSubtitles": "",
         "stopSharedVideo": "",
+        "stopSubtitles": "",
+        "stopvideoblur": "",
         "talkWhileMutedPopup": "",
         "tileViewToggle": "",
         "toggleCamera": "",
-        "videomute": "",
-        "startvideoblur": "",
-        "stopvideoblur": ""
+        "videomute": ""
     },
     "transcribing": {
         "ccButtonTooltip": "",
@@ -695,8 +699,8 @@
         "connectCalendarText": "",
         "enterRoomTitle": "",
         "go": "",
-        "join": "",
         "info": "",
+        "join": "",
         "privacy": "",
         "recentList": "",
         "recentListDelete": "",
@@ -707,11 +711,5 @@
         "sendFeedback": "",
         "terms": "",
         "title": ""
-    },
-    "documentSharing": {
-        "title": "Delt dokument"
-    },
-    "chromeExtensionBanner": {
-        "dontShowAgain": "Ikke vis meg dette igjen"
     }
 }

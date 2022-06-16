@@ -1,6 +1,7 @@
 // @flow
 
 import { ColorPalette } from '../../styles';
+import BaseTheme from '../../ui/components/BaseTheme';
 
 /**
  * The default color of the {@code Label} and {@code ExpandedLabel}.
@@ -29,7 +30,8 @@ export default {
         right: 0,
         top: 36,
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        zIndex: 1
     },
 
     expandedLabelTextContainer: {
@@ -59,7 +61,7 @@ export default {
 
     labelText: {
         color: ColorPalette.white,
-        fontSize: 12
+        ...BaseTheme.typography.labelBold
     },
 
     labelOff: {

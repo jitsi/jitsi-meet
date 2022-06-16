@@ -9,6 +9,7 @@ import type { AbstractProps } from '../AbstractPollAnswer';
 
 const PollAnswer = (props: AbstractProps) => {
     const {
+        creatorName,
         checkBoxStates,
         isModerationEnabled,
         isModerator,
@@ -38,6 +39,9 @@ const PollAnswer = (props: AbstractProps) => {
                             { poll.hidden ? t('polls.results.showPoll') : t('polls.results.hidePoll') }
                         </a> : null
                     }
+                </div>
+                <div className = 'poll-creator'>
+                    { t('polls.by', { name: creatorName }) }
                 </div>
             </div>
             <ol className = 'poll-answer-list'>

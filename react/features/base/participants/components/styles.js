@@ -37,7 +37,7 @@ export default {
     },
 
     /**
-     * {@code ParticipantView} style.
+     * {@code ParticipantView} Style.
      */
     participantView: {
         alignItems: 'stretch',

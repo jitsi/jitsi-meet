@@ -1,13 +1,13 @@
 /* @flow */
 
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 
 import { APP_WILL_MOUNT } from '../app';
 import { CONFERENCE_JOINED, getCurrentConference } from '../conference';
 import JitsiMeetJS, {
-    LIB_WILL_INIT,
     JitsiConferenceEvents
 } from '../lib-jitsi-meet';
+import { LIB_WILL_INIT } from '../lib-jitsi-meet/actionTypes';
 import { MiddlewareRegistry } from '../redux';
 import { isTestModeEnabled } from '../testing';
 

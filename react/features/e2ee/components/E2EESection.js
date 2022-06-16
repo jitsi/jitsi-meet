@@ -61,7 +61,7 @@ type State = {
  * Implements a React {@code Component} for displaying a security dialog section with a field
  * for setting the E2EE key.
  *
- * @extends Component
+ * @augments Component
  */
 class E2EESection extends Component<Props, State> {
     /**

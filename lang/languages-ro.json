@@ -1,5 +1,4 @@
 {
-    "en": "Engleză",
     "af": "Afrikaans",
     "ar": "Arabă",
     "bg": "Bulgară",
@@ -8,6 +7,7 @@
     "da": "Daneză",
     "de": "Germană",
     "el": "Greacă",
+    "en": "Engleză",
     "enGB": "Engleză (Regatul Unit)",
     "eo": "Esperanto",
     "es": "Spaniolă",
@@ -30,8 +30,8 @@
     "oc": "Occitană",
     "pl": "Poloneză",
     "ptBR": "Portugheză (Brazilia)",
-    "ru": "Rusă",
     "ro": "Română",
+    "ru": "Rusă",
     "sc": "Sardă",
     "sk": "Slovacă",
     "sl": "Slovenă",

@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Auriculares",
+        "none": "Non hai dispositivos de son dispoñíbeis",
         "phone": "Teléfono",
-        "speaker": "Altofalante",
-        "none": "Non hai dispositivos de son dispoñíbeis"
+        "speaker": "Altofalante"
     },
     "audioOnly": {
         "audioOnly": "Largo de banda escaso"
@@ -48,23 +48,23 @@
     "chat": {
         "error": "Erro: a súa mensaxe non se enviou. Razón: {{error}}",
         "fieldPlaceHolder": "Escriba a súa mensaxe aquí",
-        "messagebox": "Escriba unha mensaxe",
         "messageTo": "Mensaxe privada para {{recipient}}",
-        "noMessagesMessage": "Aínda non hai mensaxes na reunión. Comece unha conversación aquí!",
+        "messagebox": "Escriba unha mensaxe",
         "nickname": {
             "popover": "Escolla un alcume",
             "title": "Escriba un alcume para utilizar no chat",
             "titleWithPolls": "Escriba un alcume para utilizar no chat"
         },
+        "noMessagesMessage": "Aínda non hai mensaxes na reunión. Comece unha conversación aquí!",
         "privateNotice": "Mensaxe privada para {{recipient}}",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "vostede"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Instala a extensión para a integración con Google Calendar e Office 365",
         "buttonText": "Instalar Extensión Chrome",
-        "dontShowAgain": "Non mostrar isto máis"
+        "dontShowAgain": "Non mostrar isto máis",
+        "installExtensionText": "Instala a extensión para a integración con Google Calendar e Office 365"
     },
     "connectingOverlay": {
         "joiningRoom": "Está a conectar coa reunión…"
@@ -140,7 +140,20 @@
         "selectADevice": "Seleccione un dispositivo",
         "testAudio": "Reproducir un son de proba"
     },
+    "dialOut": {
+        "statusMessage": "está agora {{status}}"
+    },
     "dialog": {
+        "Back": "Volver",
+        "Cancel": "Anular",
+        "IamHost": "Eu son o anfitrión",
+        "Ok": "Ok",
+        "Remove": "Retirar",
+        "Share": "Compartir",
+        "Submit": "Enviar",
+        "WaitForHostMsg": "A sala aínda non comezou. Se vostede é o anfitrión, autentíquese. Se non, agarde a que o anfitrión chegue.",
+        "WaitingForHost": "Agardando polo anfitrión…",
+        "Yes": "Si",
         "accessibilityLabel": {
             "liveStreaming": "Difusión ao vivo"
         },
@@ -148,7 +161,6 @@
         "alreadySharedVideoMsg": "Outro participante xa está a compartindo un vídeo. Esta sala de conferencia só permite compartir un vídeo á vez.",
         "alreadySharedVideoTitle": "Permítese un único vídeo compartido á vez",
         "applicationWindow": "Xanela da aplicación",
-        "Back": "Volver",
         "cameraConstraintFailedError": "A súa cámara non satisfai algún dos requisitos necesarios.",
         "cameraNotFoundError": "Non se atopou unha cámara.",
         "cameraNotSendingData": "Non se puido acceder á súa cámara. Comprobe se outra aplicación a está a utilizar, seleccione outro dispositivo no menú de configuración ou tente recargar a aplicación.",
@@ -156,7 +168,6 @@
         "cameraPermissionDeniedError": "Non concedeu o permiso para utilizar a súa cámara. Aínda así pode unirse á conferencia pero os outros non o verán a vostede. Utilice o botón da cámara na barra de enderezos para arranxalo.",
         "cameraUnknownError": "Non se pode utilizar a cámara por algunha razón descoñecida.",
         "cameraUnsupportedResolutionError": "A cámara non admite a resolución de vídeo requirida.",
-        "Cancel": "Anular",
         "close": "Pechar",
         "conferenceDisconnectMsg": "Pode querer comprobar a conexión de rede. Reconectando en {{seconds}} seg…",
         "conferenceDisconnectTitle": "Foi desconectado.",
@@ -179,11 +190,10 @@
         "externalInstallationTitle": "Requírese a extensión:",
         "goToStore": "Ir á tenda web",
         "gracefulShutdown": "O servizo está caído por mantemento. Ténteo outra vez máis adiante.",
-        "IamHost": "Eu son o anfitrión",
-        "incorrectRoomLockPassword": "Contrasinal incorrecto",
         "incorrectPassword": "Nome de usuario ou contrasinal incorrecto",
-        "inlineInstallationMsg": "Cómpre instalar a nosa extensión para o escritorio compartido.",
+        "incorrectRoomLockPassword": "Contrasinal incorrecto",
         "inlineInstallExtension": "Instalar agora",
+        "inlineInstallationMsg": "Cómpre instalar a nosa extensión para o escritorio compartido.",
         "internalError": "Opa! Algo foi malamente. Produciuse o seguinte erro: {{erro}}",
         "internalErrorTitle": "Erro interno",
         "kickMessage": "Pode contactar {{participantDisplayName}} para máis detalles.",
@@ -211,7 +221,6 @@
         "muteParticipantButton": "Silenciar",
         "muteParticipantDialog": "Confirma que quere silenciar este participante? Non poderá activalo para eles mais eles poderán activalo para si en calquera momento.",
         "muteParticipantTitle": "Silenciar este participante?",
-        "Ok": "Ok",
         "passwordLabel": "$t(lockRoomPasswordUppercase)",
         "passwordNotSupported": "Configurar un $t(lockRoomPassword) de reunión non é posíbel.",
         "passwordNotSupportedTitle": "Non se dispón de $t(lockRoomPasswordUppercase)",
@@ -229,7 +238,6 @@
         "remoteControlShareScreenWarning": "Saiba que se preme «Permitir» compartirá a súa pantalla!",
         "remoteControlStopMessage": "A sesión de control remoto rematou!",
         "remoteControlTitle": "Control de escritorio remoto",
-        "Remove": "Retirar",
         "removePassword": "Retirar $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Confirma que quere retirar o seu vídeo compartido?",
         "removeSharedVideoTitle": "Retirar o vídeo compartido",
@@ -247,8 +255,7 @@
         "sendPrivateMessageTitle": "Enviar por privado?",
         "serviceUnavailable": "O servizo non está dispoñíbel",
         "sessTerminated": "Terminouse a chamada",
-        "Share": "Compartir",
-        "shareVideoLinkError": "Forneza unha ligazón de YouTube correcta.",
+        "shareVideoLinkError": "Forneza unha ligazón correcta.",
         "shareVideoTitle": "Compartir un vídeo",
         "shareYourScreen": "Compartir a súa pantalla",
         "shareYourScreenDisabled": "Compartición de pantalla desactivada.",
@@ -261,7 +268,6 @@
         "stopRecordingWarning": "Confirma que quere parar a gravación?",
         "stopStreamingWarning": "Confirma que quere parar a difusión ao vivo?",
         "streamKey": "Clave de vídeo ao vivo",
-        "Submit": "Enviar",
         "thankYou": "Grazas por utilizar {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Desculpe, non ten permiso para unirse a esta chamada.",
@@ -269,14 +275,7 @@
         "transcribing": "Transcribindo",
         "unlockRoom": "Retirar a reunión $t(lockRoomPassword)",
         "userPassword": "contrasinal do usuario",
-        "WaitForHostMsg": "A sala <b>{{room}}</b> aínda non comezou. Se vostede é o anfitrión, autentíquese. Se non, agarde a que o anfitrión chegue.",
-        "WaitForHostMsgWOk": "A sala <b>{{room}}</b> aínda non comezou. Se vostede é o anfitrión, prema en Aceptar para autenticar. Se non, agarde a que o anfitrión chegue.",
-        "WaitingForHost": "Agardando polo anfitrión…",
-        "Yes": "Si",
         "yourEntireScreen": "A pantalla completa"
-    },
-    "dialOut": {
-        "statusMessage": "está agora {{status}}"
     },
     "documentSharing": {
         "title": "Documento compartido"
@@ -316,6 +315,7 @@
         "inviteURLFirstPartGeneral": "Convidárono a unirse á reunión.",
         "inviteURLFirstPartPersonal": "{{name}} invítao a unha reunión.\n",
         "inviteURLSecondPart": "\nUnirse á reunión:\n{{url}}\n",
+        "label": "Información da reunión",
         "liveStreamURL": "Vídeo ao vivo:",
         "moreNumbers": "Máis números",
         "noNumbers": "Non hai números de marcado.",
@@ -324,8 +324,13 @@
         "numbers": "Números de marcado",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Compartir",
-        "tooltip": "Compartir a ligazón e a información de marcado desta reunión",
-        "label": "Información da reunión"
+        "tooltip": "Compartir a ligazón e a información de marcado desta reunión"
+    },
+    "inlineDialogFailure": {
+        "msg": "Trancámonos un pouco.",
+        "retry": "Ténteo outra vez",
+        "support": "Asistencia",
+        "supportMsg": "Se isto continúa, contacte con"
     },
     "inviteDialog": {
         "alertText": "Produciuse un fallo ao convidar algúns participantes",
@@ -334,12 +339,6 @@
         "searchPeopleOnlyPlaceholder": "Procurar aos participantes",
         "searchPlaceholder": "Participante ou número de teléfono",
         "send": "Enviar"
-    },
-    "inlineDialogFailure": {
-        "msg": "Trancámonos un pouco.",
-        "retry": "Ténteo outra vez",
-        "support": "Asistencia",
-        "supportMsg": "Se isto continúa, contacte con"
     },
     "keyboardShortcuts": {
         "focusLocal": "Foco no seu vídeo",
@@ -380,10 +379,10 @@
         "onBy": "{{name}} comezou a difusión ao vivo",
         "pending": "Arrincando a difusión ao vivo…",
         "serviceName": "Servizo de difusión ao vivo",
-        "signedInAs": "Está conectado como:",
         "signIn": "Iniciar sesión con Google",
         "signInCTA": "Iniciar sesión ou escribir a súa clave de difusión ao vivo de YouTube",
         "signOut": "Desconectarse",
+        "signedInAs": "Está conectado como:",
         "start": "Arrincar unha difusión ao vivo",
         "streamIdHelp": "Que é isto?",
         "unavailableTitle": "A difusión ao vivo non está dispoñíbel"
@@ -435,24 +434,24 @@
         "me": "Eu",
         "moderator": "Dereitos de moderador concedidos!",
         "muted": "Vostede comezou a conversación silenciada.",
-        "mutedTitle": "Vostede está silenciado!",
-        "mutedRemotelyTitle": "Vostede foi silenciado por {{participantDisplayName}}!",
         "mutedRemotelyDescription": "Sempre pode activar o son cando estea listo para falar. Volva silenciar cando acabe para despexar de ruído a reunión.",
+        "mutedRemotelyTitle": "Vostede foi silenciado por {{participantDisplayName}}!",
+        "mutedTitle": "Vostede está silenciado!",
+        "newDeviceAction": "Utilizar",
+        "newDeviceAudioTitle": "Detectouse un novo dispositivo de son",
+        "newDeviceCameraTitle": "Detectada unha nova cámara",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) retirada por outro participante",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) estabelecida por outro participante",
         "raisedHand": "{{name}} pide a palabra.",
         "somebody": "Alguén",
-        "startSilentTitle": "Vostede uniuse sen saída de son!",
         "startSilentDescription": "Volva a unirse para activar o son",
+        "startSilentTitle": "Vostede uniuse sen saída de son!",
         "suboptimalBrowserWarning": "Lamentamos que a súa experiencia non estea a ser boa. Procuramos maneiras de mellorala mais, ata entón, probe utilizar un dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores totalmente compatíbeis</a>.",
         "suboptimalExperienceTitle": "Aviso verbo do navegador",
-        "unmute": "Activar o son",
-        "newDeviceCameraTitle": "Detectada unha nova cámara",
-        "newDeviceAudioTitle": "Detectouse un novo dispositivo de son",
-        "newDeviceAction": "Utilizar"
+        "unmute": "Activar o son"
     },
-    "passwordSetRemotely": "estabelecida por outro participante",
     "passwordDigitsOnly": "Ata {{number}} díxitos",
+    "passwordSetRemotely": "estabelecida por outro participante",
     "poweredby": "fornecido por",
     "presenceStatus": {
         "busy": "Ocupado",
@@ -570,7 +569,9 @@
         "title": "A súa chamada de vídeo interrompeuse porque este computador entrou en suspensión."
     },
     "toolbar": {
+        "Settings": "Configuración",
         "accessibilityLabel": {
+            "Settings": "Alternar axustes",
             "audioOnly": "Trocar só o son",
             "audioRoute": "Seleccionar o dispositivo de son",
             "callQuality": "Xestionar a calidade do vídeo",
@@ -595,17 +596,16 @@
             "raiseHand": "Trocar entre levantar e baixar a man",
             "recording": "Trocar a gravación",
             "remoteMute": "Silenciar participante",
-            "Settings": "Alternar axustes",
-            "sharedvideo": "Trocar a compartición de YouTube",
             "shareRoom": "Convidar a alguén",
             "shareYourScreen": "Trocar a pantalla compartida",
+            "sharedvideo": "Trocar a compartición",
             "shortcuts": "Trocar atallos",
             "show": "Amosar en primeiro plano",
             "speakerStats": "Trocar as estatísticas do falante",
             "tileView": "Trocar a vista en mosaico",
             "toggleCamera": "Trocar a cámara",
-            "videomute": "Trocar o activador de vídeo",
-            "videoblur": "Trocar o difuminador de vídeo"
+            "videoblur": "Trocar o difuminador de vídeo",
+            "videomute": "Trocar o activador de vídeo"
         },
         "addPeople": "Engadir xente á súa chamada",
         "audioOnlyOff": "Desactivar o modo de largo de banda reducido",
@@ -631,33 +631,32 @@
         "lowerYourHand": "Baixar a man",
         "moreActions": "Accións complementarias",
         "mute": "Silenciar / Activar",
-        "noAudioSignalTitle": "Non hai sinal de entrada desde o seu micro!",
         "noAudioSignalDesc": "Se vostede non o silenciou adrede na configuración do seu sistema ou hardware, considere cambiar de dispositivo.",
         "noAudioSignalDescSuggestion": "Se vostede non o silenciou adrede na configuración do sistema ou no hardware, considere utilizar o seguinte dispositivo:",
-        "noisyAudioInputTitle": "Parece que seu micrófono fai moito ruído",
+        "noAudioSignalTitle": "Non hai sinal de entrada desde o seu micro!",
         "noisyAudioInputDesc": "Parece que o seu micrófono está a crear ruído. Considere a posibilidade de calalo ou de cambiar de dispositivo",
+        "noisyAudioInputTitle": "Parece que seu micrófono fai moito ruído",
         "openChat": "Abrir chat",
         "pip": "Entrar no modo Picture-in-Picture",
         "privateMessage": "Enviar mensaxe privada",
         "profile": "Editar o seu perfil",
         "raiseHand": "Levantar / Baixar a man",
         "raiseYourHand": "Levantar a súa man",
-        "Settings": "Configuración",
-        "sharedvideo": "Compartir un vídeo de YouTube",
         "shareRoom": "Convidar a alguén",
+        "sharedvideo": "Compartir un vídeo",
         "shortcuts": "Ver atallos de teclado",
         "speakerStats": "Estatísticas de falante",
         "startScreenSharing": "Comezar a compartir pantalla",
         "startSubtitles": "Comezar subtítulos",
+        "startvideoblur": "Difuminar o meu fondo",
         "stopScreenSharing": "Parar de compartir pantalla",
+        "stopSharedVideo": "Parar o vídeo",
         "stopSubtitles": "Parar subtítulos",
-        "stopSharedVideo": "Parar o vídeo de YouTube",
+        "stopvideoblur": "Desactivar o difuminado do fondo",
         "talkWhileMutedPopup": "Está a tentar falar? Está silenciado.",
         "tileViewToggle": "Trocar a vista en mosaico",
         "toggleCamera": "Trocar a cámara",
-        "videomute": "Comezar / Parar a cámara",
-        "startvideoblur": "Difuminar o meu fondo",
-        "stopvideoblur": "Desactivar o difuminado do fondo"
+        "videomute": "Comezar / Parar a cámara"
     },
     "transcribing": {
         "ccButtonTooltip": "Comezar / Parar os subtítulos",
@@ -736,16 +735,16 @@
         "connectCalendarButton": "Conectar o seu calendario",
         "connectCalendarText": "Conectar o calendario para ver todas as reunións en {{app}}. Ademais, engada reunións de {{provider}} ao seu calendario e coméceas dun clic.",
         "enterRoomTitle": "Arrincar unha nova reunión",
-        "roomNameAllowedChars": "O nome da reunión non debería conter ningún destes caracteres: ?, &, :, ', \", %, #.",
         "go": "CREAR",
         "goSmall": "CREAR",
-        "join": "CREAR / UNIRSE",
         "info": "Info",
+        "join": "CREAR / UNIRSE",
         "privacy": "Confidencialidade",
         "recentList": "Recente",
         "recentListDelete": "Eliminar",
         "recentListEmpty": "Neste intre, a súa lista de recentes está baleira. Converse co seu equipo e atopará todas as reunións recentes aquí.",
         "reducedUIText": "Dámoslle a benvida a {{app}}!",
+        "roomNameAllowedChars": "O nome da reunión non debería conter ningún destes caracteres: ?, &, :, ', \", %, #.",
         "roomname": "Escriba o nome da sala",
         "roomnameHint": "Escribir o nome ou o URL da sala á que se quere unir. Pode dar de alta un nome e permitir que a xente coa que se reúne o saiba para que introduzan o mesmo nome.",
         "sendFeedback": "Enviar un comentario",

@@ -9,7 +9,7 @@ import AbstractGoogleSignInButton from './AbstractGoogleSignInButton';
 /**
  * A React Component showing a button to sign in with Google.
  *
- * @extends Component
+ * @augments Component
  */
 class GoogleSignInButton extends AbstractGoogleSignInButton {
 

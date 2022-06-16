@@ -2,6 +2,7 @@
 
 import { openDialog } from '../base/dialog';
 import { SharedVideoMenu } from '../video-menu';
+import { LocalVideoMenu } from '../video-menu/components/native';
 import ConnectionStatusComponent
     from '../video-menu/components/native/ConnectionStatusComponent';
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
@@ -37,10 +38,19 @@ export function showConnectionStatus(participantID: string) {
  * Displays the context menu for the selected meeting participant.
  *
  * @param {string} participantId - The ID of the selected meeting participant.
+ * @param {boolean} local - Whether the participant is local or not.
  * @returns {Function}
  */
-export function showContextMenuDetails(participantId: string) {
-    return openDialog(RemoteVideoMenu, { participantId });
+export function showContextMenuDetails(participantId: string, local: boolean = false) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const { remoteVideoMenu } = getState()['features/base/config'];
+
+        if (local) {
+            dispatch(openDialog(LocalVideoMenu));
+        } else if (!remoteVideoMenu?.disabled) {
+            dispatch(openDialog(RemoteVideoMenu, { participantId }));
+        }
+    };
 }
 
 /**

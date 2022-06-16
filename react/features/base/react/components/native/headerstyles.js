@@ -19,7 +19,7 @@ ColorSchemeRegistry.register('Header', {
     },
 
     /**
-     * Platform specific header button (e.g. back, menu, etc).
+     * Platform specific header button (e.g. Back, menu, etc).
      */
     headerButtonIcon: {
         alignSelf: 'center',
