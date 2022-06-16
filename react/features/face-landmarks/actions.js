@@ -140,8 +140,7 @@ export function loadWorker() {
         worker.postMessage({
             type: INIT_WORKER,
             baseUrl,
-            detectionTypes,
-            maxFacesDetected: faceLandmarks?.maxFacesDetected
+            detectionTypes
         });
 
         dispatch(startFaceLandmarksDetection());

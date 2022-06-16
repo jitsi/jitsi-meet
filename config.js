@@ -795,10 +795,7 @@ var config = {
     //     faceCenteringThreshold: 10,
 
     //     // Milliseconds for processing a new image capture in order to detect face coordinates if they exist.
-    //     captureInterval: 1000,
-
-    //     // Maximum number of faces that can be detected from a video track.
-    //     maxFacesDetected: 4
+    //     captureInterval: 1000
     // },
 
     // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
