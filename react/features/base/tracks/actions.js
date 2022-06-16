@@ -33,6 +33,7 @@ import {
     TRACK_STOPPED,
     TRACK_UPDATED,
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
+    TRACK_OWNER_CHANGED_AC,
     TRACK_WILL_CREATE
 } from './actionTypes';
 import {
@@ -611,6 +612,20 @@ export function trackStreamingStatusChanged(track, streamingStatus) {
         track: {
             jitsiTrack: track,
             streamingStatus
+        }
+    };
+}
+
+/**
+ * Create an action for when the owner of the track changes due to ssrc remapping.
+ * $
+ */
+export function trackOwnerChanged(track, participantId) {
+    return {
+        type: TRACK_OWNER_CHANGED_AC,
+        track: {
+            jitsiTrack: track,
+            participantId
         }
     };
 }

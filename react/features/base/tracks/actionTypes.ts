@@ -108,6 +108,16 @@ export const TRACK_STOPPED = 'TRACK_STOPPED';
 export const TRACK_UPDATED = 'TRACK_UPDATED';
 
 /**
+ * The type of redux action dispatched when $
+ *
+ * {
+ *     type: TRACK_OWNER_CHANGED_AC,
+ *     track: Track
+ * }
+ */
+export const TRACK_OWNER_CHANGED_AC = 'TRACK_OWNER_CHANGED_AC';
+ 
+/**
  * The type of redux action dispatched when a local track starts being created
  * via a WebRTC {@code getUserMedia} call. The action's payload includes an
  * extra {@code gumProcess} property which is a {@code Promise} with an extra

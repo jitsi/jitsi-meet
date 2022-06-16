@@ -10,7 +10,8 @@ import {
     TRACK_REMOVED,
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_UPDATED,
-    TRACK_WILL_CREATE
+    TRACK_WILL_CREATE,
+    TRACK_OWNER_CHANGED_AC
 } from './actionTypes';
 
 /**
@@ -62,6 +63,18 @@ function track(state, action) {
             };
         }
         break;
+
+    case TRACK_OWNER_CHANGED_AC: {
+        const t = action.track;
+        if (state.jitsiTrack === t.jitsiTrack.jitsiTrack) {
+            state.participantId = t.participantId;
+            console.error(`JPA (did it) ${state.participantId} ${t.participantId} ${state.jitsiTrack._sourceName}`);
+        }
+        else {
+            console.error(`JPA (no match) ${state.participantId} ${t.participantId} ${state.jitsiTrack._sourceName}`);
+        }
+        break;
+    }
 
     case TRACK_UPDATED: {
         const t = action.track;
@@ -124,6 +137,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
     case TRACK_NO_DATA_FROM_SOURCE:
     case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT:
     case TRACK_UPDATED:
+    case TRACK_OWNER_CHANGED_AC:
         return state.map(t => track(t, action));
 
     case TRACK_ADDED: {
