@@ -66,13 +66,17 @@ const JitsiKeyboardAvoidingView = (
     }, [ insets.bottom, insets.top ]);
 
     const headerHeight = getDefaultHeaderHeight(frame, isModalPresentation, topPadding);
+
+    // Notch devices have in general between 103 and 106px
+    const topNotchDevice = headerHeight > 100;
+    const deviceHeight = topNotchDevice ? headerHeight - 50 : headerHeight;
     const tabNavigatorPadding
-        = hasTabNavigator ? headerHeight : 0;
+        = hasTabNavigator ? deviceHeight : 0;
     const noNotchDevicePadding = bottomPadding || 10;
     const iosVerticalOffset
-        = headerHeight + noNotchDevicePadding + tabNavigatorPadding;
+        = deviceHeight + noNotchDevicePadding + tabNavigatorPadding;
     const androidVerticalOffset = hasBottomTextInput
-        ? headerHeight + StatusBar.currentHeight : headerHeight;
+        ? deviceHeight + StatusBar.currentHeight : deviceHeight;
 
     return (
         <KeyboardAvoidingView
