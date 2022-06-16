@@ -9,6 +9,7 @@ import {
     PREJOIN_PAGE_ENABLED
 } from '../../base/flags';
 import { IconClose } from '../../base/icons';
+import { cancelKnocking } from '../../lobby/actions.native';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
 
@@ -59,6 +60,7 @@ export function lobbyScreenHeaderCloseButton() {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const goBack = useCallback(() => {
+        dispatch(cancelKnocking());
         dispatch(appNavigate(undefined));
     }, [ dispatch ]);
 
