@@ -150,7 +150,7 @@ export class HumanHelper implements FaceLandmarksHelper {
     }
 
     getFaceCount(detections: Array<FaceResult> | undefined): number {
-        if(detections) {
+        if (detections) {
             return detections.length;
         }
 
@@ -158,7 +158,7 @@ export class HumanHelper implements FaceLandmarksHelper {
     }
 
     async getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>> {
-        if (!this.human) {
+        if (!this.human || !this.faceDetectionTypes.length) {
             return [];
         }
 
@@ -179,18 +179,15 @@ export class HumanHelper implements FaceLandmarksHelper {
 
         this.detectionInProgress = true;
 
+        detections = await this.getDetections(image);
+
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
-            detections = await this.getDetections(image);
             faceExpression = this.getFaceExpression(detections);
         }
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
-            if (!detections) {
-                detections = await this.getDetections(image);
-            }
-
             //if more than one face is detected the face centering will be disabled.
-            if ( this.getFaceCount(detections) > 1 ) {
+            if (this.getFaceCount(detections) > 1 ) {
                 this.faceDetectionTypes.splice(this.faceDetectionTypes.indexOf(DETECTION_TYPES.FACE_BOX), 1);
 
                 //face-box for re-centering
