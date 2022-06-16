@@ -67,7 +67,7 @@ const JitsiKeyboardAvoidingView = (
 
     const headerHeight = getDefaultHeaderHeight(frame, isModalPresentation, topPadding);
 
-    // Notch devices have in general between 103 and 106px
+    // Notch devices have in general a header height between 103 and 106px
     const topNotchDevice = headerHeight > 100;
     const deviceHeight = topNotchDevice ? headerHeight - 50 : headerHeight;
     const tabNavigatorPadding
