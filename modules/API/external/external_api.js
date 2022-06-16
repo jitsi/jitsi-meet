@@ -301,6 +301,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * the participant opening the meeting.
      * @param {string}  [options.e2eeKey] - The key used for End-to-End encryption.
      * THIS IS EXPERIMENTAL.
+     * @param {string}  [options.release] - The key used for specifying release if enabled on the backend.
      */
     constructor(domain, ...args) {
         super();
@@ -317,7 +318,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             invitees,
             devices,
             userInfo,
-            e2eeKey
+            e2eeKey,
+            release
         } = parseArguments(args);
         const localStorageContent = jitsiLocalStorage.getItem('jitsiLocalStorage');
 
@@ -332,7 +334,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             userInfo,
             appData: {
                 localStorageContent
-            }
+            },
+            release
         });
         this._createIFrame(height, width, onload);
         this._transport = new Transport({
