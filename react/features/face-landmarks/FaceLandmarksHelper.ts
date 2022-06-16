@@ -189,6 +189,7 @@ export class HumanHelper implements FaceLandmarksHelper {
                 detections = await this.getDetections(image);
             }
 
+            //if more than one face is detected the face centering will be disabled.
             if ( this.getFaceCount(detections) > 1 ) {
                 this.faceDetectionTypes.splice(this.faceDetectionTypes.indexOf(DETECTION_TYPES.FACE_BOX), 1);
 
