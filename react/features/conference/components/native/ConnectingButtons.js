@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Modal, StyleSheet, Text, TouchableOpacity, Pressable, View, LogBox, Linking } from 'react-native';
+import { Alert, Modal, StyleSheet, Text, TouchableOpacity, Pressable, View, LogBox, Linking,FlatList } from 'react-native';
 import styles from './styles';
 import { Icon, IconAdd, IconBookmark, IconDollar, IconCart, IconDollarGreen, IconCyclone, IconEightStreek, IconBeer, IconGem } from '../../../base/icons';
 import API from '../services';
@@ -58,21 +58,28 @@ const ConnectingButtons = (props: Props) => {
   }, [time])
   return (
     <View style={styles.ScreenButtons}>
-      {adsList.map((value, index) => {
-        return (
+      <FlatList
+      data={adsList}
+      keyExtractor={(item, index)=> index.toString()}
+      horizontal={true}
+      renderItem={({item,index})=>{
+        return(
           <View>
             {time == index || time + 1 == index ?
               <View>
-                <TouchableOpacity onPress={() => Linking.openURL(value.url)}><View>
-                  <SvgUri width='40' height='40' uri={value.iconUrl} />
-                  <Text style={styles.urlText}>{value.title}</Text>
+                <TouchableOpacity onPress={() => Linking.openURL(item.url)}><View>
+                  <View>
+                  <SvgUri width='40' height='40' uri={item.iconUrl} />
+                  <Text style={styles.urlText}>{item.title}</Text>
+                  </View>
                 </View>
                 </TouchableOpacity>
               </View>
               : null}
           </View>
         )
-      })}
+      }}
+      />
     </View>
   );
 }
