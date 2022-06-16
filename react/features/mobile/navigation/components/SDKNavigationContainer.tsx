@@ -10,7 +10,8 @@ import {
     navigationContainerTheme
 } from '../screenOptions';
 
-import WelcomePageNavigationContainer from './welcome/components/WelcomePageNavigationContainer';
+import WelcomePageNavigationContainer
+    from './welcome/components/WelcomePageNavigationContainer';
 
 const SDKStack = createNativeStackNavigator();
 

@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useCallback } from 'react';
 
 import { connect } from '../../../base/redux';
-import { DialInSummary } from '../../../invite';
 import Prejoin from '../../../prejoin/components/Prejoin.native';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
@@ -12,8 +11,6 @@ import { screen } from '../routes';
 import {
     conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
-    dialInSummaryScreenOptions,
-    drawerNavigatorScreenOptions,
     navigationContainerTheme,
     preJoinScreenOptions
 } from '../screenOptions';
@@ -22,8 +19,6 @@ import ConnectingPage from './ConnectingPage';
 import SDKNavigationContainer from './SDKNavigationContainer';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
-import WelcomePageNavigationContainer
-    from './welcome/components/WelcomePageNavigationContainer';
 
 const RootStack = createNativeStackNavigator();
 
