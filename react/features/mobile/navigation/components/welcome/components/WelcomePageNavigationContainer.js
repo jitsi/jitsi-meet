@@ -32,6 +32,7 @@ const WelcomePageNavigationContainer = () => {
         <DrawerStack.Navigator
             /* eslint-disable-next-line react/jsx-no-bind */
             drawerContent = { props => <CustomDrawerContent { ...props } /> }
+            independent = { true }
             screenOptions = { drawerContentOptions }>
             <DrawerStack.Screen
                 component = { WelcomePage }

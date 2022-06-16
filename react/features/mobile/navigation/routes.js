@@ -1,5 +1,6 @@
 export const screen = {
     root: 'Main root',
+    sdk: 'SDK',
     welcome: {
         main: 'Home',
         tabs: {

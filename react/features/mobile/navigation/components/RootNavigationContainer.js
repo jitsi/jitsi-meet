@@ -19,6 +19,7 @@ import {
 } from '../screenOptions';
 
 import ConnectingPage from './ConnectingPage';
+import SDKNavigationContainer from './SDKNavigationContainer';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
 import WelcomePageNavigationContainer
@@ -43,7 +44,7 @@ type Props = {
 
 const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) => {
     const initialRouteName = isWelcomePageAvailable
-        ? screen.root : screen.connecting;
+        ? screen.sdk : screen.connecting;
     const onReady = useCallback(() => {
         dispatch({
             type: _ROOT_NAVIGATION_READY,
@@ -53,7 +54,6 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
 
     return (
         <NavigationContainer
-            independent = { true }
             onReady = { onReady }
             ref = { rootNavigationRef }
             theme = { navigationContainerTheme }>
@@ -61,16 +61,13 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                 initialRouteName = { initialRouteName }>
                 {
                     isWelcomePageAvailable
-                        && <>
-                            <RootStack.Screen
-                                component = { WelcomePageNavigationContainer }
-                                name = { screen.root }
-                                options = { drawerNavigatorScreenOptions } />
-                            <RootStack.Screen
-                                component = { DialInSummary }
-                                name = { screen.dialInSummary }
-                                options = { dialInSummaryScreenOptions } />
-                        </>
+                    && <RootStack.Screen
+                        component = { SDKNavigationContainer }
+                        name = { screen.sdk }
+                        options = {{
+                            gestureEnabled: false,
+                            headerShown: false
+                        }} />
                 }
                 <RootStack.Screen
                     component = { ConnectingPage }
