@@ -116,12 +116,14 @@ import {
     getLocalJitsiVideoTrack,
     getLocalTracks,
     getLocalVideoTrack,
+    getTrackBySsrc,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
     toggleScreensharing as toggleScreensharingA,
     trackAdded,
-    trackRemoved
+    trackRemoved,
+    trackOwnerChanged
 } from './react/features/base/tracks';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker';
@@ -287,6 +289,17 @@ class ConferenceConnector {
             this._handleConferenceJoined.bind(this));
         room.on(JitsiConferenceEvents.CONFERENCE_FAILED,
             this._onConferenceFailed.bind(this));
+        room.on(JitsiConferenceEvents.TRACK_OWNER_CHANGED_JCE, (ssrc, owner) =>
+        {
+            let track = getTrackBySsrc(ssrc);
+            if(typeof track !== 'undefined')
+            {
+                console.error(`JPA ${ssrc} ${owner} ${track}`);
+                APP.store.dispatch(trackOwnerChanged(track, owner));
+            }
+            else
+                console.error(`JPA ${ssrc} ${owner} track not found`);
+        });
     }
 
     /**

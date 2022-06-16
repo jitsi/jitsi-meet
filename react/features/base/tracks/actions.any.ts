@@ -27,6 +27,7 @@ import {
     TRACK_CREATE_ERROR,
     TRACK_MUTE_UNMUTE_FAILED,
     TRACK_NO_DATA_FROM_SOURCE,
+    TRACK_OWNER_CHANGED,
     TRACK_REMOVED,
     TRACK_STOPPED,
     TRACK_UPDATED,
@@ -613,6 +614,20 @@ export function trackStreamingStatusChanged(track: any, streamingStatus: string)
         track: {
             jitsiTrack: track,
             streamingStatus
+        }
+    };
+}
+
+/**
+ * Create an action for when the owner of the track changes due to ssrc remapping.
+ * $
+ */
+export function trackOwnerChanged(track, participantId) {
+    return {
+        type: TRACK_OWNER_CHANGED,
+        track: {
+            jitsiTrack: track,
+            participantId
         }
     };
 }
