@@ -208,6 +208,9 @@
         "selectADevice": "Select a device",
         "testAudio": "Play a test sound"
     },
+    "dialIn": {
+        "screenTitle": "Dial-in summary"
+    },
     "dialOut": {
         "statusMessage": "is now {{status}}"
     },
@@ -815,6 +818,7 @@
         "initiated": "Call initiated",
         "joinAudioByPhone": "Join with phone audio",
         "joinMeeting": "Join meeting",
+        "joinMeetingInLowBandwidthMode": "Join in low bandwidth mode",
         "joinWithoutAudio": "Join without audio",
         "keyboardShortcuts": "Enable Keyboard shortcuts",
         "linkCopied": "Link copied to clipboard",
@@ -949,6 +953,7 @@
         "playSounds": "Play sound on",
         "reactions": "Meeting reactions",
         "sameAsSystem": "Same as system ({{label}})",
+        "screenTitle": "Settings",
         "selectAudioOutput": "Audio output",
         "selectCamera": "Camera",
         "selectMic": "Microphone",

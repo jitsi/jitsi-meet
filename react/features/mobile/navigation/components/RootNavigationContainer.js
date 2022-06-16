@@ -4,20 +4,25 @@ import React, { useCallback } from 'react';
 
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
+import Prejoin from '../../../prejoin/components/Prejoin.native';
+import { isWelcomePageEnabled } from '../../../welcome/functions';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
 import {
+    conferenceNavigationContainerScreenOptions,
+    connectingScreenOptions,
     dialInSummaryScreenOptions,
     drawerNavigatorScreenOptions,
-    navigationContainerTheme
+    navigationContainerTheme,
+    preJoinScreenOptions
 } from '../screenOptions';
 
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
-import WelcomePageNavigationContainer from './welcome/components/WelcomePageNavigationContainer';
-import { isWelcomePageAppEnabled } from './welcome/functions';
+import WelcomePageNavigationContainer
+    from './welcome/components/WelcomePageNavigationContainer';
 
 const RootStack = createNativeStackNavigator();
 
@@ -70,17 +75,15 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                 <RootStack.Screen
                     component = { ConnectingPage }
                     name = { screen.connecting }
-                    options = {{
-                        gestureEnabled: false,
-                        headerShown: false
-                    }} />
+                    options = { connectingScreenOptions } />
+                <RootStack.Screen
+                    component = { Prejoin }
+                    name = { screen.preJoin }
+                    options = { preJoinScreenOptions } />
                 <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }
-                    options = {{
-                        gestureEnabled: false,
-                        headerShown: false
-                    }} />
+                    options = { conferenceNavigationContainerScreenOptions } />
             </RootStack.Navigator>
         </NavigationContainer>
     );
@@ -94,7 +97,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
  */
 function mapStateToProps(state: Object) {
     return {
-        isWelcomePageAvailable: isWelcomePageAppEnabled(state)
+        isWelcomePageAvailable: isWelcomePageEnabled(state)
     };
 }
 

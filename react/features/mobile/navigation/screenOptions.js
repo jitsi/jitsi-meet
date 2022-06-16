@@ -12,7 +12,8 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 import { goBack } from './components/conference/ConferenceNavigationContainerRef';
 import { goBack as goBackToLobbyScreen } from './components/lobby/LobbyNavigationContainerRef';
-import { screenHeaderCloseButton } from './functions';
+import { lobbyScreenHeaderCloseButton, screenHeaderCloseButton } from './functions';
+import { goBack as goBackToWelcomeScreen } from './rootNavigationContainerRef';
 
 
 /**
@@ -81,8 +82,9 @@ export const welcomeScreenOptions = {
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen01Header
     },
-    // eslint-disable-next-line no-empty-function
-    headerTitle: () => {}
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
 };
 
 /**
@@ -164,7 +166,6 @@ export const chatTabBarOptions = {
  * Screen options for presentation type modals.
  */
 export const presentationScreenOptions = {
-    animation: 'slide_from_right',
     headerBackTitleVisible: false,
     headerLeft: () => screenHeaderCloseButton(goBack),
     headerStatusBarHeight: 0,
@@ -195,7 +196,8 @@ export const chatScreenOptions = presentationScreenOptions;
  */
 export const dialInSummaryScreenOptions = {
     ...presentationScreenOptions,
-    headerLeft: undefined
+    animation: 'slide_from_bottom',
+    headerLeft: () => screenHeaderCloseButton(goBackToWelcomeScreen)
 };
 
 /**
@@ -231,7 +233,10 @@ export const liveStreamScreenOptions = presentationScreenOptions;
 /**
  * Screen options for lobby modal.
  */
-export const lobbyScreenOptions = presentationScreenOptions;
+export const lobbyScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeft: () => lobbyScreenHeaderCloseButton()
+};
 
 /**
  * Screen options for lobby chat modal.
@@ -268,4 +273,39 @@ export const sharedDocumentScreenOptions = {
         ios: 'default',
         android: 'all'
     })
+};
+
+/**
+ * Screen options for connecting screen.
+ */
+export const connectingScreenOptions = {
+    gestureEnabled: false,
+    headerShown: false
+};
+
+/**
+ * Screen options for pre-join screen.
+ */
+export const preJoinScreenOptions = {
+    gestureEnabled: false,
+    headerStyle: {
+        backgroundColor: BaseTheme.palette.screen02Header
+    },
+    headerTitle: ''
+};
+
+/**
+ * Screen options for conference navigation container screen.
+ */
+export const conferenceNavigationContainerScreenOptions = {
+    gestureEnabled: false,
+    headerShown: false
+};
+
+/**
+ * Screen options for lobby navigation container screen.
+ */
+export const lobbyNavigationContainerScreenOptions = {
+    gestureEnabled: false,
+    headerShown: false
 };
