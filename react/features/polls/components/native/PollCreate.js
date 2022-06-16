@@ -169,7 +169,6 @@ const PollCreate = (props: AbstractProps) => {
                             style = { chatStyles.pollCreateButton } >
                             {t('polls.create.cancel')}
                         </Button>
-
                         <Button
                             color = { BaseTheme.palette.screen01Header }
                             disabled = { isSubmitDisabled }
