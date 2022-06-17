@@ -28,7 +28,6 @@ export default {
         marginTop: BaseTheme.spacing[4]
     },
 
-
     primaryButtonText: {
         ...btnText
     },
