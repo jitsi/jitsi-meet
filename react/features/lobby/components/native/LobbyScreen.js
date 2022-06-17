@@ -28,12 +28,7 @@ type Props = AbstractProps & {
     /**
      * The current aspect ratio of the screen.
      */
-    _aspectRatio: Symbol,
-
-    /**
-     * Branding image background.
-     */
-    _brandingImageBackgroundUrl: string,
+    _aspectRatio: Symbol
 }
 
 /**
@@ -46,7 +41,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     render() {
-        const { _aspectRatio, _brandingImageBackgroundUrl } = this.props;
+        const { _aspectRatio } = this.props;
         let contentWrapperStyles;
         let contentContainerStyles;
         let largeVideoContainerStyles;
@@ -64,8 +59,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         return (
             <JitsiScreen
                 style = { contentWrapperStyles }>
-                <BrandingImageBackground
-                    uri = { _brandingImageBackgroundUrl } />
+                <BrandingImageBackground />
                 <View style = { largeVideoContainerStyles }>
                     <LargeVideo />
                 </View>
@@ -303,12 +297,9 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
  * }}
  */
 function _mapStateToProps(state: Object, ownProps: Props) {
-    const { backgroundImageUrl } = state['features/dynamic-branding'];
-
     return {
         ...abstractMapStateToProps(state, ownProps),
-        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
-        _brandingImageBackgroundUrl: backgroundImageUrl
+        _aspectRatio: state['features/base/responsive-ui'].aspectRatio
     };
 }
 

@@ -2,6 +2,8 @@ import React from 'react';
 import { Image } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 
+import { connect } from '../../../base/redux';
+
 import styles from './styles';
 
 
@@ -42,4 +44,20 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
     return backgroundImage;
 };
 
-export default BrandingImageBackground;
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code DialInLink} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state: any) {
+    const { backgroundImageUrl } = state['features/dynamic-branding'];
+
+    return {
+        uri: backgroundImageUrl
+    };
+}
+
+export default connect(_mapStateToProps)(BrandingImageBackground);
