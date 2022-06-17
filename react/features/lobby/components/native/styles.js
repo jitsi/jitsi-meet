@@ -132,7 +132,8 @@ export default {
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
         height: BaseTheme.spacing[7],
-        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[3],
+        marginHorizontal: 12,
         padding: BaseTheme.spacing[2],
         textAlign: 'center'
     },
@@ -182,12 +183,12 @@ export default {
 
     primaryButton: {
         backgroundColor: BaseTheme.palette.action01,
-        marginTop: BaseTheme.spacing[4]
+        marginTop: BaseTheme.spacing[3]
     },
 
     primaryButtonDisabled: {
         backgroundColor: BaseTheme.palette.action03Disabled,
-        marginTop: BaseTheme.spacing[4]
+        marginTop: BaseTheme.spacing[3]
     },
 
     primaryButtonText: {

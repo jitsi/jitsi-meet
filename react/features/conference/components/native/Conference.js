@@ -6,7 +6,11 @@ import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appNavigate } from '../../../app/actions';
 import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { getParticipantCount } from '../../../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantCount,
+    getParticipantDisplayName
+} from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -22,6 +26,7 @@ import {
 } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
+import { startKnocking } from '../../../lobby/actions.any';
 import { KnockingParticipantList } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { navigate }
@@ -99,6 +104,11 @@ type Props = AbstractProps & {
      * The ID of the participant currently on stage (if any).
      */
     _largeVideoParticipantId: string,
+
+    /**
+     * Local participant's display name.
+     */
+    _localParticipantDisplayName: string,
 
     /**
      * Whether Picture-in-Picture is enabled.
@@ -189,10 +199,15 @@ class Conference extends AbstractConference<Props, State> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps) {
-        const { _showLobby } = this.props;
+        const {
+            _localParticipantDisplayName,
+            _showLobby,
+            dispatch
+        } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
             navigate(screen.lobby.root);
+            _localParticipantDisplayName !== 'me' && dispatch(startKnocking());
         }
 
         if (prevProps._showLobby && !_showLobby) {
@@ -521,6 +536,7 @@ function _mapStateToProps(state) {
     const brandingStyles = backgroundColor ? {
         backgroundColor
     } : undefined;
+    const localParticipant = getLocalParticipant(state);
 
     return {
         ...abstractMapStateToProps(state),
@@ -533,6 +549,7 @@ function _mapStateToProps(state) {
         _isOneToOneConference: Boolean(participantCount === 2),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
+        _localParticipantDisplayName: getParticipantDisplayName(state, localParticipant.id),
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
         _showLobby: getIsLobbyVisible(state),
