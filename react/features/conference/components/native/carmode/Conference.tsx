@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { DialogContainer } from '../../../../base/dialog';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator, TintedView } from '../../../../base/react';
 import { isLocalVideoTrackDesktop } from '../../../../base/tracks';
@@ -75,6 +76,7 @@ const CarmodeTab = (): JSX.Element => {
                 <SoundDeviceButton />
                 <EndMeetingButton />
             </View>
+            <DialogContainer />
         </JitsiScreen>
     );
 };
