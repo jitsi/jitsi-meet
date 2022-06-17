@@ -1,6 +1,13 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View, TouchableOpacity, TextInput, Platform, BackHandler } from 'react-native';
+import {
+    BackHandler,
+    Text,
+    View,
+    TouchableOpacity,
+    TextInput,
+    Platform
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { appNavigate } from '../../app/actions.native';
@@ -12,6 +19,7 @@ import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
+import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import { BrandingImageBackground } from '../../dynamic-branding';
 import { LargeVideo } from '../../large-video/components';
 import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNavigationButton';
@@ -19,6 +27,7 @@ import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef
 import { screen } from '../../mobile/navigation/routes';
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
+import { isDisplayNameRequired } from '../functions';
 
 import styles from './styles';
 
@@ -34,6 +43,7 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         (state: any) => state['features/base/responsive-ui']?.aspectRatio
     );
     const localParticipant = useSelector(state => getLocalParticipant(state));
+    const isDisplayNameMandatory = useSelector(state => isDisplayNameRequired(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -58,25 +68,9 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
 
     const goBack = useCallback(() => {
         dispatch(appNavigate(undefined));
+
         return true;
     }, [ dispatch ]);
-
-    let contentWrapperStyles;
-    let contentContainerStyles;
-    let largeVideoContainerStyles;
-    let toolboxContainerStyles;
-
-    if (aspectRatio === ASPECT_RATIO_NARROW) {
-        contentWrapperStyles = styles.contentWrapper;
-        contentContainerStyles = styles.contentContainer;
-        largeVideoContainerStyles = styles.largeVideoContainer;
-        toolboxContainerStyles = styles.toolboxContainer;
-    } else {
-        contentWrapperStyles = styles.contentWrapperWide;
-        contentContainerStyles = styles.contentContainerWide;
-        largeVideoContainerStyles = styles.largeVideoContainerWide;
-        toolboxContainerStyles = styles.toolboxContainerWide;
-    }
 
     const headerLeft = useCallback(() => {
         if (Platform.OS === 'ios') {
@@ -97,7 +91,7 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', goBack);
 
-        return () => BackHandler.removeEventListener('hardwareBackPress', goBack) 
+        return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
 
     }, [ ]);
 
@@ -107,9 +101,25 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         });
     }, [ navigation ]);
 
+    let contentWrapperStyles;
+    let contentContainerStyles;
+    let largeVideoContainerStyles;
+    let toolboxContainerStyles;
+
+    if (aspectRatio === ASPECT_RATIO_NARROW) {
+        contentWrapperStyles = styles.contentWrapper;
+        contentContainerStyles = styles.contentContainer;
+        largeVideoContainerStyles = styles.largeVideoContainer;
+        toolboxContainerStyles = styles.toolboxContainer;
+    } else {
+        contentWrapperStyles = styles.contentWrapperWide;
+        contentContainerStyles = styles.contentContainerWide;
+        largeVideoContainerStyles = styles.largeVideoContainerWide;
+        toolboxContainerStyles = styles.toolboxContainerWide;
+    }
+
     return (
         <JitsiScreen
-            safeAreaInsets = { [ 'right' ] }
             style = { contentWrapperStyles }>
             <BrandingImageBackground />
             <View style = { largeVideoContainerStyles }>
@@ -117,11 +127,15 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
             </View>
             <View style = { contentContainerStyles }>
                 <View style = { styles.formWrapper }>
-                    <TextInput
-                        onChangeText = { onChangeDisplayName }
-                        placeholder = { t('dialog.enterDisplayName') }
-                        style = { styles.field }
-                        value = { displayName } />
+                    {
+                        isDisplayNameMandatory
+                        && <TextInput
+                            onChangeText = { onChangeDisplayName }
+                            placeholder = { t('dialog.enterDisplayName') }
+                            placeholderTextColor = { BaseTheme.palette.text03 }
+                            style = { styles.field }
+                            value = { displayName } />
+                    }
                     <TouchableOpacity
                         onPress = { onJoin }
                         style = { [

@@ -115,7 +115,7 @@ export default {
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
         height: BaseTheme.spacing[7],
-        marginTop: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[3],
         textAlign: 'center'
     }
 };
