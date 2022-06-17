@@ -1,9 +1,7 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 
-import { BottomSheet, hideDialog, isDialogOpen } from '../../base/dialog';
+import { BottomSheet, hideSheet } from '../../base/dialog';
 import { bottomSheetStyles } from '../../base/dialog/components/native/styles';
 import { type Item } from '../../base/react/Types';
 import { connect } from '../../base/redux';
@@ -22,16 +20,8 @@ type Props = {
     /**
      * Item being rendered in this menu.
      */
-    item: Item,
-
-    /**
-     * True if the menu is currently open, false otherwise.
-     */
-    _isOpen: boolean
+    item: Item
 }
-
-// eslint-disable-next-line prefer-const
-let RecentListItemMenu_;
 
 /**
  * Class to implement a popup menu that opens upon long pressing a recent list item.
@@ -73,8 +63,6 @@ class RecentListItemMenu extends PureComponent<Props> {
         );
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Callback to hide this menu.
      *
@@ -82,16 +70,8 @@ class RecentListItemMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideDialog(RecentListItemMenu_));
-
-            return true;
-        }
-
-        return false;
+        this.props.dispatch(hideSheet());
     }
-
-    _renderMenuHeader: () => React$Element<any>;
 
     /**
      * Function to render the menu's header.
@@ -118,19 +98,4 @@ class RecentListItemMenu extends PureComponent<Props> {
     }
 }
 
-/**
- * Function that maps parts of Redux state tree into component props.
- *
- * @param {Object} state - Redux state.
- * @private
- * @returns {Props}
- */
-function _mapStateToProps(state) {
-    return {
-        _isOpen: isDialogOpen(state, RecentListItemMenu_)
-    };
-}
-
-RecentListItemMenu_ = connect(_mapStateToProps)(RecentListItemMenu);
-
-export default RecentListItemMenu_;
+export default connect()(RecentListItemMenu);

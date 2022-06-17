@@ -1,5 +1,4 @@
-// @flow
-import { hideDialog } from '../base/dialog';
+import { hideSheet } from '../base/dialog';
 
 import { RemoteVideoMenu, SharedVideoMenu, LocalVideoMenu } from './components/native';
 
@@ -9,7 +8,7 @@ import { RemoteVideoMenu, SharedVideoMenu, LocalVideoMenu } from './components/n
  * @returns {Function}
  */
 export function hideLocalVideoMenu() {
-    return hideDialog(LocalVideoMenu);
+    return hideSheet(LocalVideoMenu);
 }
 
 /**
@@ -18,7 +17,7 @@ export function hideLocalVideoMenu() {
  * @returns {Function}
  */
 export function hideRemoteVideoMenu() {
-    return hideDialog(RemoteVideoMenu);
+    return hideSheet(RemoteVideoMenu);
 }
 
 /**
@@ -27,7 +26,7 @@ export function hideRemoteVideoMenu() {
  * @returns {Function}
  */
 export function hideSharedVideoMenu() {
-    return hideDialog(SharedVideoMenu);
+    return hideSheet(SharedVideoMenu);
 }
 
 export * from './actions.any';

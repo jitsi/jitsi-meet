@@ -1,10 +1,11 @@
 // @flow
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 
 import { DialogContainer } from '../../base/dialog';
+import BottomSheetContainer from '../../base/dialog/components/native/BottomSheetContainer';
 import { updateFlags } from '../../base/flags/actions';
 import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
@@ -240,7 +241,10 @@ export class App extends AbstractApp {
      */
     _renderDialogContainer() {
         return (
-            <DialogContainer />
+            <Fragment>
+                <DialogContainer />
+                <BottomSheetContainer />
+            </Fragment>
         );
     }
 }

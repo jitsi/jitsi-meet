@@ -2,7 +2,12 @@
 
 import type { Dispatch } from 'redux';
 
-import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes';
+import {
+    HIDE_DIALOG,
+    HIDE_SHEET,
+    OPEN_DIALOG,
+    OPEN_SHEET
+} from './actionTypes';
 import { isDialogOpen } from './functions';
 
 /**
@@ -25,6 +30,25 @@ export function hideDialog(component: ?Object) {
 }
 
 /**
+ * Closes the requested sheet.
+ *
+ * @param {Object} [component] - The {@code BottomSheet} component to close/hide. If
+ * {@code undefined}, closes/hides {@code BottomSheet} regardless of which
+ * component it's rendering; otherwise, closes/hides {@code BottomSheet} only if
+ * it's rendering the specified {@code component}.
+ * @returns {{
+ *     type: HIDE_SHEET,
+ *     component: (React.Component | undefined)
+ * }}
+ */
+export function hideSheet(component: ?Object) {
+    return {
+        type: HIDE_SHEET,
+        component
+    };
+}
+
+/**
  * Signals Dialog to open dialog.
  *
  * @param {Object} component - The component to display as dialog.
@@ -39,6 +63,26 @@ export function hideDialog(component: ?Object) {
 export function openDialog(component: Object, componentProps: ?Object) {
     return {
         type: OPEN_DIALOG,
+        component,
+        componentProps
+    };
+}
+
+/**
+ * Opens the requested sheet.
+ *
+ * @param {Object} component - The component to display as a sheet.
+ * @param {Object} [componentProps] - The React {@code Component} props of the
+ * specified {@code component}.
+ * @returns {{
+ *     type: OPEN_SHEET,
+ *     component: React.Component,
+ *     componentProps: (Object | undefined)
+ * }}
+ */
+export function openSheet(component: Object, componentProps: ?Object) {
+    return {
+        type: OPEN_SHEET,
         component,
         componentProps
     };

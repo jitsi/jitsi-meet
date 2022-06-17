@@ -1,10 +1,8 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
-import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { BottomSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import {
@@ -27,11 +25,6 @@ const AVATAR_SIZE = 24;
 type Props = {
 
     /**
-     * True if the menu is currently open, false otherwise.
-     */
-    _isOpen: boolean,
-
-    /**
      * The local participant.
      */
     _participant: Object,
@@ -51,9 +44,6 @@ type Props = {
      */
     t: Function
 }
-
-// eslint-disable-next-line prefer-const
-let LocalVideoMenu_;
 
 /**
  * Class to implement a popup menu that opens upon long pressing a thumbnail.
@@ -96,8 +86,6 @@ class LocalVideoMenu extends PureComponent<Props> {
         );
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Callback to hide the {@code RemoteVideoMenu}.
      *
@@ -105,16 +93,8 @@ class LocalVideoMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideLocalVideoMenu());
-
-            return true;
-        }
-
-        return false;
+        this.props.dispatch(hideLocalVideoMenu());
     }
-
-    _renderMenuHeader: () => React$Element<any>;
 
     /**
      * Function to render the menu's header.
@@ -151,12 +131,9 @@ function _mapStateToProps(state) {
     const participant = getLocalParticipant(state);
 
     return {
-        _isOpen: isDialogOpen(state, LocalVideoMenu_),
         _participant: participant,
         _participantDisplayName: getParticipantDisplayName(state, participant.id)
     };
 }
 
-LocalVideoMenu_ = translate(connect(_mapStateToProps)(LocalVideoMenu));
-
-export default LocalVideoMenu_;
+export default translate(connect(_mapStateToProps)(LocalVideoMenu));
