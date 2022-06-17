@@ -97,6 +97,7 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
 
     const joinButtonStyles = displayName
         ? styles.primaryButton : styles.primaryButtonDisabled;
+    const joinButtonDisabled = !displayName && isDisplayNameMandatory;
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -130,17 +131,14 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
             </View>
             <View style = { contentContainerStyles }>
                 <View style = { styles.formWrapper }>
-                    {
-                        isDisplayNameMandatory
-                        && <TextInput
-                            onChangeText = { onChangeDisplayName }
-                            placeholder = { t('dialog.enterDisplayName') }
-                            placeholderTextColor = { BaseTheme.palette.text03 }
-                            style = { styles.field }
-                            value = { displayName } />
-                    }
+                    <TextInput
+                        onChangeText = { onChangeDisplayName }
+                        placeholder = { t('dialog.enterDisplayName') }
+                        placeholderTextColor = { BaseTheme.palette.text03 }
+                        style = { styles.field }
+                        value = { displayName } />
                     <TouchableOpacity
-                        disabled = { !displayName || isDisplayNameMandatory}
+                        disabled = { joinButtonDisabled }
                         onPress = { onJoin }
                         style = { [
                             styles.button,
