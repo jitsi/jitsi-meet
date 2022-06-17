@@ -51,9 +51,10 @@ MiddlewareRegistry.register(store => next => action => {
             dispatch(hideLoginDialog());
 
             const { authRequired, conference } = getState()['features/base/conference'];
+            const { passwordRequired } = getState()['features/base/connection'];
 
             // Only end the meeting if we are not already inside and trying to upgrade.
-            if (authRequired && !conference) {
+            if ((authRequired && !conference) || passwordRequired) {
                 dispatch(maybeRedirectToWelcomePage());
             }
         }
