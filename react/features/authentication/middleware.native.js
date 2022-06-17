@@ -15,6 +15,7 @@ import {
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
+import { setPrejoinPageVisibility } from '../prejoin';
 
 import {
     CANCEL_LOGIN,
@@ -120,6 +121,7 @@ MiddlewareRegistry.register(store => next => action => {
                 && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
                 && typeof error.recoverable === 'undefined') {
             error.recoverable = true;
+            store.dispatch(setPrejoinPageVisibility(false));
             store.dispatch(openLoginDialog());
         }
         break;
