@@ -9,6 +9,7 @@ import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
+import { BrandingImageBackground } from '../../../dynamic-branding';
 import { LargeVideo } from '../../../large-video/components';
 import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
@@ -27,7 +28,12 @@ type Props = AbstractProps & {
     /**
      * The current aspect ratio of the screen.
      */
-    _aspectRatio: Symbol
+    _aspectRatio: Symbol,
+
+    /**
+     * Branding image background.
+     */
+    _brandingImageBackgroundUrl: string,
 }
 
 /**
@@ -40,7 +46,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     render() {
-        const { _aspectRatio } = this.props;
+        const { _aspectRatio, _brandingImageBackgroundUrl } = this.props;
         let contentWrapperStyles;
         let contentContainerStyles;
         let largeVideoContainerStyles;
@@ -58,6 +64,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         return (
             <JitsiScreen
                 style = { contentWrapperStyles }>
+                <BrandingImageBackground
+                    uri = { _brandingImageBackgroundUrl } />
                 <View style = { largeVideoContainerStyles }>
                     <LargeVideo />
                 </View>
@@ -295,9 +303,12 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
  * }}
  */
 function _mapStateToProps(state: Object, ownProps: Props) {
+    const { backgroundImageUrl } = state['features/dynamic-branding'];
+
     return {
         ...abstractMapStateToProps(state, ownProps),
-        _aspectRatio: state['features/base/responsive-ui'].aspectRatio
+        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
+        _brandingImageBackgroundUrl: backgroundImageUrl
     };
 }
 
