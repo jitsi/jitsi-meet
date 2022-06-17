@@ -34,8 +34,6 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         (state: any) => state['features/base/responsive-ui']?.aspectRatio
     );
     const localParticipant = useSelector(state => getLocalParticipant(state));
-    const brandingImageBackgroundUrl = useSelector(
-        state => state['features/dynamic-branding']?.backgroundImageUrl);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -105,8 +103,7 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         <JitsiScreen
             safeAreaInsets = { [ 'right' ] }
             style = { contentWrapperStyles }>
-            <BrandingImageBackground
-                uri = { brandingImageBackgroundUrl } />
+            <BrandingImageBackground />
             <View style = { largeVideoContainerStyles }>
                 <LargeVideo />
             </View>
