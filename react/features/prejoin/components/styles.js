@@ -23,6 +23,11 @@ export default {
         backgroundColor: BaseTheme.palette.action01
     },
 
+    primaryButtonDisabled: {
+        backgroundColor: BaseTheme.palette.action03Disabled,
+        marginTop: BaseTheme.spacing[4]
+    },
+
 
     primaryButtonText: {
         ...btnText

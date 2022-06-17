@@ -95,6 +95,9 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
 
     }, [ ]);
 
+    const joinButtonStyles = displayName
+        ? styles.primaryButton : styles.primaryButtonDisabled;
+
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft
@@ -137,10 +140,11 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
                             value = { displayName } />
                     }
                     <TouchableOpacity
+                        disabled = { !displayName || isDisplayNameMandatory}
                         onPress = { onJoin }
                         style = { [
                             styles.button,
-                            styles.primaryButton
+                            joinButtonStyles
                         ] }>
                         <Text style = { styles.primaryButtonText }>
                             { t('prejoin.joinMeeting') }
