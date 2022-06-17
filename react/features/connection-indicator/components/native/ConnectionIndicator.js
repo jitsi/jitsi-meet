@@ -58,7 +58,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 }}>
                 <BaseIndicator
                     icon = { IconConnectionActive }
-                    iconStyle = { iconStyle } />
+                    iconStyle = { this.props.iconStyle || iconStyle } />
             </View>
         );
     }
