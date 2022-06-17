@@ -2,7 +2,7 @@ import React from 'react';
 import { Image } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 
-import { connect } from '../../../base/redux';
+import { connect } from '../../../base/redux/functions';
 
 import styles from './styles';
 
