@@ -2,7 +2,8 @@ import React from 'react';
 import { Image } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 
-import { connect } from '../../../base/redux/functions';
+// @ts-ignore
+import { connect } from '../../../base/redux';
 
 import styles from './styles';
 
@@ -22,6 +23,10 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
     const imgSrc = uri ? uri : undefined;
 
     let backgroundImage;
+
+    if (!uri) {
+        return null;
+    }
 
     if (imageType?.includes('.svg')) {
         backgroundImage

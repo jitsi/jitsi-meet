@@ -40,10 +40,12 @@ export default {
 
     buttonStylesBorderless: {
         iconStyle: {
+            backgroundColor: 'transparent',
             color: BaseTheme.palette.icon01,
             fontSize: 24
         },
         style: {
+            backgroundColor: 'transparent',
             flexDirection: 'row',
             justifyContent: 'center',
             marginHorizontal: BaseTheme.spacing[3],
