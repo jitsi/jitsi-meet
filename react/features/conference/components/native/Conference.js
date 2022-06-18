@@ -62,11 +62,6 @@ type Props = AbstractProps & {
     _brandingStyles: Object,
 
     /**
-     * Branding image background.
-     */
-    _brandingImageBackgroundUrl: string,
-
-    /**
      * Wherther the calendar feature is enabled or not.
      */
     _calendarEnabled: boolean,
@@ -226,7 +221,6 @@ class Conference extends AbstractConference<Props, State> {
      */
     render() {
         const {
-            _brandingImageBackgroundUrl,
             _brandingStyles,
             _fullscreenEnabled
         } = this.props;
@@ -237,8 +231,7 @@ class Conference extends AbstractConference<Props, State> {
                     styles.conference,
                     _brandingStyles
                 ] }>
-                <BrandingImageBackground
-                    uri = { _brandingImageBackgroundUrl } />
+                <BrandingImageBackground />
                 <StatusBar
                     barStyle = 'light-content'
                     hidden = { _fullscreenEnabled }
@@ -520,7 +513,7 @@ class Conference extends AbstractConference<Props, State> {
 function _mapStateToProps(state) {
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
-    const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
+    const { backgroundColor } = state['features/dynamic-branding'];
     const participantCount = getParticipantCount(state);
     const brandingStyles = backgroundColor ? {
         backgroundColor
@@ -530,7 +523,6 @@ function _mapStateToProps(state) {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
         _brandingStyles: brandingStyles,
-        _brandingImageBackgroundUrl: backgroundImageUrl,
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),

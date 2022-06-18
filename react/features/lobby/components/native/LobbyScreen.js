@@ -9,6 +9,7 @@ import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
+import { BrandingImageBackground } from '../../../dynamic-branding';
 import { LargeVideo } from '../../../large-video/components';
 import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
@@ -58,6 +59,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         return (
             <JitsiScreen
                 style = { contentWrapperStyles }>
+                <BrandingImageBackground />
                 <View style = { largeVideoContainerStyles }>
                     <LargeVideo />
                 </View>

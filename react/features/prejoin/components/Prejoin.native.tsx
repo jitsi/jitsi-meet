@@ -12,6 +12,7 @@ import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
+import { BrandingImageBackground } from '../../dynamic-branding';
 import { LargeVideo } from '../../large-video/components';
 import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNavigationButton';
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
@@ -102,6 +103,7 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         <JitsiScreen
             safeAreaInsets = { [ 'right' ] }
             style = { contentWrapperStyles }>
+            <BrandingImageBackground />
             <View style = { largeVideoContainerStyles }>
                 <LargeVideo />
             </View>
