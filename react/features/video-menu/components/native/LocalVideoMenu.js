@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
-import { BottomSheet, hideSheet } from '../../../base/dialog';
+import { BottomSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import {
@@ -56,7 +56,6 @@ class LocalVideoMenu extends PureComponent<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onCancel = this._onCancel.bind(this);
         this._renderMenuHeader = this._renderMenuHeader.bind(this);
     }
 
@@ -75,23 +74,12 @@ class LocalVideoMenu extends PureComponent<Props> {
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { true }>
                 <ToggleSelfViewButton { ...buttonProps } />
                 <ConnectionStatusButton { ...buttonProps } />
             </BottomSheet>
         );
-    }
-
-    /**
-     * Callback to hide the {@code RemoteVideoMenu}.
-     *
-     * @private
-     * @returns {boolean}
-     */
-    _onCancel() {
-        this.props.dispatch(hideSheet());
     }
 
     /**

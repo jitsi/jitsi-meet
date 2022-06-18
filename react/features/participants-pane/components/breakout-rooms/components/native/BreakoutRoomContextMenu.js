@@ -27,7 +27,6 @@ type Props = {
 
 const BreakoutRoomContextMenu = ({ room }: Props) => {
     const dispatch = useDispatch();
-    const closeDialog = useCallback(() => dispatch(hideSheet()), [ dispatch ]);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
     const { t } = useTranslation();
@@ -35,23 +34,22 @@ const BreakoutRoomContextMenu = ({ room }: Props) => {
     const onJoinRoom = useCallback(() => {
         sendAnalytics(createBreakoutRoomsEvent('join'));
         dispatch(moveToRoom(room.jid));
-        closeDialog();
+        dispatch(hideSheet());
     }, [ dispatch, room ]);
 
     const onRemoveBreakoutRoom = useCallback(() => {
         dispatch(removeBreakoutRoom(room.jid));
-        closeDialog();
+        dispatch(hideSheet());
     }, [ dispatch, room ]);
 
     const onCloseBreakoutRoom = useCallback(() => {
         dispatch(closeBreakoutRoom(room.id));
-        closeDialog();
+        dispatch(hideSheet());
     }, [ dispatch, room ]);
 
     return (
         <BottomSheet
             addScrollViewPadding = { false }
-            onCancel = { closeDialog }
             showSlidingView = { true }>
             {
                 !hideJoinRoomButton && (

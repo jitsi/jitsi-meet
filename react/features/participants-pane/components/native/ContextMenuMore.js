@@ -30,10 +30,10 @@ import styles from './styles';
 
 export const ContextMenuMore = () => {
     const dispatch = useDispatch();
-    const cancel = useCallback(() => dispatch(hideSheet()), [ dispatch ]);
-    const muteAllVideo = useCallback(() =>
-        dispatch(openDialog(MuteEveryonesVideoDialog)),
-        [ dispatch ]);
+    const muteAllVideo = useCallback(() => {
+        dispatch(openDialog(MuteEveryonesVideoDialog));
+        dispatch(hideSheet());
+    }, [ dispatch ]);
     const { t } = useTranslation();
 
     const isModerationSupported = useSelector(isAvModerationSupported);
@@ -52,7 +52,6 @@ export const ContextMenuMore = () => {
     return (
         <BottomSheet
             addScrollViewPadding = { false }
-            onCancel = { cancel }
             showSlidingView = { true }>
             <TouchableOpacity
                 onPress = { muteAllVideo }

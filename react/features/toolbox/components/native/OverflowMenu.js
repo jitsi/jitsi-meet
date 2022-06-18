@@ -130,7 +130,6 @@ class OverflowMenu extends PureComponent<Props, State> {
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : null }>

@@ -86,7 +86,6 @@ class SharedVideoMenu extends PureComponent<Props> {
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { _isParticipantAvailable }>
                 <Divider style = { styles.divider } />

@@ -20,7 +20,7 @@ const HighlightDialog = () => {
     }, [ dispatch ]);
 
     return (
-        <BottomSheet onCancel = { closeDialog }>
+        <BottomSheet>
             <View style = { styles.highlightDialog }>
                 <Text style = { styles.highlightDialogHeading }>{ `${t('recording.highlightMoment')}?` }</Text>
                 <Text style = { styles.highlightDialogText }>

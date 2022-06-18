@@ -211,30 +211,8 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so they are only bound once per instance.
-        this._onCancel = this._onCancel.bind(this);
-
         // Trigger an initial update.
         AudioMode.updateDeviceList && AudioMode.updateDeviceList();
-    }
-
-    /**
-     * Dispatches a redux action to hide this sheet.
-     *
-     * @returns {void}
-     */
-    _hide() {
-        this.props.dispatch(hideSheet());
-    }
-
-    /**
-     * Cancels the dialog by hiding it.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onCancel() {
-        this._hide();
     }
 
     /**
@@ -247,7 +225,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      */
     _onSelectDeviceFn(device: Device) {
         return () => {
-            this._hide();
+            this.props.dispatch(hideSheet());
             AudioMode.setAudioDevice(device.uid || device.type);
         };
     }
@@ -318,7 +296,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
         }
 
         return (
-            <BottomSheet onCancel = { this._onCancel }>
+            <BottomSheet>
                 { content }
             </BottomSheet>
         );
