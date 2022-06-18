@@ -116,6 +116,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "نزِّل إضافة متصفح كروم",
+        "buttonTextEdge": "قم بتثبيت ملحق Edge",
         "close": "إغلق",
         "dontShowAgain": "لا ترني هذه مرة أخرى",
         "installExtensionText": "نزِّل الإضافة للدمج مع رزنامة غوغل ورزنامة أوفيس 365"
@@ -206,6 +207,9 @@
         "previewUnavailable": "المعاينة غير متاحة",
         "selectADevice": "اختر جهازًا",
         "testAudio": "اختبر الصوت"
+    },
+    "dialIn": {
+        "screenTitle": "ملخص الطلب"
     },
     "dialOut": {
         "statusMessage": "{{status}} الآن"
@@ -814,6 +818,7 @@
         "initiated": "بدأ الاتصال",
         "joinAudioByPhone": "انضم مع صوت من الجوال",
         "joinMeeting": "انضم للمُلتقى",
+        "joinMeetingInLowBandwidthMode": "الانضمام في وضع النطاق الترددي المنخفض",
         "joinWithoutAudio": "انضم دون صوت",
         "keyboardShortcuts": "تفعيل اختصارات لوحة المفاتيح",
         "linkCopied": "نُسِخ الرابط",
@@ -948,6 +953,7 @@
         "playSounds": "تشغيل الصوت عند:",
         "reactions": "ردود فعل المُلتقى",
         "sameAsSystem": "مثل النظام ({{label}})",
+        "screenTitle": "إعدادات",
         "selectAudioOutput": "خرج الصوت",
         "selectCamera": "الكاميرا",
         "selectMic": "المجهار (المايكروفون)",
@@ -973,6 +979,7 @@
         "disableCrashReportingWarning": "أمتأكد من تعطيل تقارير الأعطال التقنية؟ ستسري الإعدادات الجديدة بعد إعادة تشغيل التطبيق",
         "disableP2P": "تعطيل وضع واحد شخص-لشخص",
         "displayName": "عرض الاسم",
+        "displayNamePlaceholderText": "على سبيل المثال: علي الحيدري",
         "email": "البريد الإلكتروني",
         "header": "الإعدادات",
         "profileSection": "الملف الشخصي",
