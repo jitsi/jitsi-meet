@@ -57,9 +57,7 @@ class RecentListItemMenu extends PureComponent<Props> {
             <BottomSheet
                 renderHeader = { this._renderMenuHeader }>
                 <DeleteItemButton { ...buttonProps } />
-                <ShowDialInInfoButton
-                    { ...buttonProps }
-                    afterClick = { undefined } />
+                <ShowDialInInfoButton { ...buttonProps } />
             </BottomSheet>
         );
     }
