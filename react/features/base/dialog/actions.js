@@ -30,21 +30,15 @@ export function hideDialog(component: ?Object) {
 }
 
 /**
- * Closes the requested sheet.
+ * Closes the active sheet.
  *
- * @param {Object} [component] - The {@code BottomSheet} component to close/hide. If
- * {@code undefined}, closes/hides {@code BottomSheet} regardless of which
- * component it's rendering; otherwise, closes/hides {@code BottomSheet} only if
- * it's rendering the specified {@code component}.
  * @returns {{
  *     type: HIDE_SHEET,
- *     component: (React.Component | undefined)
  * }}
  */
-export function hideSheet(component: ?Object) {
+export function hideSheet() {
     return {
-        type: HIDE_SHEET,
-        component
+        type: HIDE_SHEET
     };
 }
 

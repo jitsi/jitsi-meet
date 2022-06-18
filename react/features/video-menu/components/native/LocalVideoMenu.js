@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
-import { BottomSheet } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import {
@@ -11,7 +11,6 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import ToggleSelfViewButton from '../../../toolbox/components/native/ToggleSelfViewButton';
-import { hideLocalVideoMenu } from '../../actions.native';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
 import styles from './styles';
@@ -69,7 +68,6 @@ class LocalVideoMenu extends PureComponent<Props> {
     render() {
         const { _participant } = this.props;
         const buttonProps = {
-            afterClick: this._onCancel,
             showLabel: true,
             participantID: _participant.id,
             styles: bottomSheetStyles.buttons
@@ -93,7 +91,7 @@ class LocalVideoMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        this.props.dispatch(hideLocalVideoMenu());
+        this.props.dispatch(hideSheet());
     }
 
     /**

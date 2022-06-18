@@ -36,17 +36,11 @@ ReducerRegistry.register('features/base/dialog', (state = {}, action) => {
             componentProps: action.componentProps
         });
 
-    case HIDE_SHEET: {
-        const { component } = action;
-
-        if (typeof component === 'undefined' || state.sheet === component) {
-            return assign(state, {
-                sheet: undefined,
-                sheetProps: undefined
-            });
-        }
-        break;
-    }
+    case HIDE_SHEET:
+        return assign(state, {
+            sheet: undefined,
+            sheetProps: undefined
+        });
 
     case OPEN_SHEET:
         return assign(state, {

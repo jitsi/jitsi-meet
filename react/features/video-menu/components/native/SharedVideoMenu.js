@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { BottomSheet } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import {
     getParticipantById,
@@ -13,7 +13,6 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { SharedVideoButton } from '../../../shared-video/components';
-import { hideSharedVideoMenu } from '../../actions.native';
 
 import styles from './styles';
 
@@ -103,7 +102,7 @@ class SharedVideoMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        this.props.dispatch(hideSharedVideoMenu());
+        this.props.dispatch(hideSheet());
     }
 
     /**

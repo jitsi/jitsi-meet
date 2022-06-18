@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { BottomSheet } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
@@ -14,7 +14,6 @@ import {
 import { connect } from '../../../base/redux';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
-import { hideRemoteVideoMenu } from '../../actions.native';
 import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
 import AskUnmuteButton from './AskUnmuteButton';
@@ -147,7 +146,9 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
-                <ConnectionStatusButton { ...buttonProps } />
+                <ConnectionStatusButton
+                    { ...buttonProps }
+                    afterClick = { undefined } />
                 {_rooms.length > 1 && <>
                     <Divider style = { styles.divider } />
                     <View style = { styles.contextMenuItem }>
@@ -172,7 +173,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        this.props.dispatch(hideRemoteVideoMenu());
+        this.props.dispatch(hideSheet());
     }
 
     /**

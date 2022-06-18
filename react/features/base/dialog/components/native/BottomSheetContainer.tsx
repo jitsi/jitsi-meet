@@ -1,8 +1,12 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 import { useSelector } from 'react-redux';
 
+const Wrapper =  Platform.select({
+    ios: FullWindowOverlay,
+    default: View
+});
 
 const BottomSheetContainer: () => JSX.Element = () => {
     const { sheet, sheetProps } = useSelector(state => state['features/base/dialog']);
@@ -13,9 +17,9 @@ const BottomSheetContainer: () => JSX.Element = () => {
     }
 
     return (
-        <FullWindowOverlay style={StyleSheet.absoluteFill}>
+        <Wrapper style={StyleSheet.absoluteFill}>
             { React.createElement(sheet, sheetProps) }
-        </FullWindowOverlay>
+        </Wrapper>
     );
 }
 
