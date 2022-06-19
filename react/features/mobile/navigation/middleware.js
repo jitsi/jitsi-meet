@@ -1,5 +1,6 @@
 import { appNavigate } from '../../app/actions';
 import { CONFERENCE_FAILED } from '../../base/conference/actionTypes';
+import { AlertDialog, openDialog } from '../../base/dialog';
 import { JitsiConferenceErrors } from '../../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../../base/redux';
 
@@ -29,7 +30,12 @@ function _conferenceFailed({ dispatch }, next, action) {
     // We need to cover the case where knocking participant
     // is rejected from entering the conference
     if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
-        dispatch(appNavigate(undefined));
+        dispatch(openDialog(AlertDialog, {
+            contentKey: {
+                key: 'lobby.joinRejectedMessage'
+            },
+            onSubmit: () => dispatch(appNavigate(undefined))
+        }));
     }
 
     return next(action);
