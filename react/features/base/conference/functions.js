@@ -308,11 +308,16 @@ export function getRoomName(state: Object): string {
  * @returns {string} - Obfuscated room name.
  */
 export function getOrCreateObfuscatedRoomName(state: Object, dispatch: Function) {
-    let obfuscatedRoom = getConferenceState(state).obfuscatedRoom;
+    let { obfuscatedRoom } = getConferenceState(state);
+    const { obfuscatedRoomSource } = getConferenceState(state);
+    const room = getRoomName(state);
 
-    if (!obfuscatedRoom) {
-        obfuscatedRoom = sha512(getRoomName(state));
-        dispatch(setObfuscatedRoom(obfuscatedRoom));
+    // On native mobile the store doesn't clear when joining a new conference so we might have the obfuscatedRoom
+    // stored even though a different room was joined.
+    // Check if the obfuscatedRoom was already computed for the current room.
+    if (!obfuscatedRoom || (obfuscatedRoomSource !== room)) {
+        obfuscatedRoom = sha512(room);
+        dispatch(setObfuscatedRoom(obfuscatedRoom, room));
     }
 
     return obfuscatedRoom;

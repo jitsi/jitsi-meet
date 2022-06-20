@@ -90,7 +90,10 @@ ReducerRegistry.register(
             return set(state, 'room', undefined);
 
         case SET_OBFUSCATED_ROOM:
-            return set(state, 'obfuscatedRoom', action.obfuscatedRoom);
+            return { ...state,
+                obfuscatedRoom: action.obfuscatedRoom,
+                obfuscatedRoomSource: action.obfuscatedRoomSource
+            };
 
         case SET_PASSWORD:
             return _setPassword(state, action);

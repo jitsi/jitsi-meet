@@ -808,16 +808,18 @@ export function setPassword(
 /**
  * Sets the obfuscated room name of the conference to be joined.
  *
- * @param {(string|undefined)} obfuscatedRoom - Obfuscated room name.
+ * @param {(string)} obfuscatedRoom - Obfuscated room name.
+ * @param {(string)} obfuscatedRoomSource - The room name that was obfuscated.
  * @returns {{
  *     type: SET_OBFUSCATED_ROOM,
  *     room: string
  * }}
  */
-export function setObfuscatedRoom(obfuscatedRoom: ?string) {
+export function setObfuscatedRoom(obfuscatedRoom: string, obfuscatedRoomSource: string) {
     return {
         type: SET_OBFUSCATED_ROOM,
-        obfuscatedRoom
+        obfuscatedRoom,
+        obfuscatedRoomSource
     };
 }
 
