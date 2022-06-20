@@ -75,7 +75,6 @@ export const bottomSheetStyles = {
      * Style for the container of the sheet.
      */
     sheetContainer: {
-        borderColor: 'red',
         alignItems: 'stretch',
         flex: 1,
         flexDirection: 'column',

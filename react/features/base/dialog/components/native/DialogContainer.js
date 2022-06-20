@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { ReactionEmoji } from '../../../../reactions/components';
 import { getReactionsQueue } from '../../../../reactions/functions.any';
@@ -38,10 +38,12 @@ class DialogContainer extends AbstractDialogContainer {
      * @returns {ReactElement}
      */
     render() {
-        return (<React.Fragment>
-            {this._renderReactions()}
-            {this._renderDialogContent()}
-        </React.Fragment>);
+        return (
+            <Fragment>
+                {this._renderReactions()}
+                {this._renderDialogContent()}
+            </Fragment>
+        );
     }
 }
 

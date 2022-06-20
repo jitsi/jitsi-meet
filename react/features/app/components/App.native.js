@@ -1,7 +1,7 @@
-// @flow
-
-import React, { Fragment } from 'react';
+import React from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { FullWindowOverlay } from 'react-native-screens';
 import SplashScreen from 'react-native-splash-screen';
 
 import { DialogContainer } from '../../base/dialog';
@@ -9,7 +9,6 @@ import BottomSheetContainer from '../../base/dialog/components/native/BottomShee
 import { updateFlags } from '../../base/flags/actions';
 import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import { Platform } from '../../base/react';
 import { DimensionsDetector, clientResized, setSafeAreaInsets } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import { _getRouteToRender } from '../getRouteToRender.native';
@@ -23,6 +22,11 @@ import '../middlewares';
 import '../reducers';
 
 declare var __DEV__;
+
+const DialogContainerWrapper = Platform.select({
+    ios: FullWindowOverlay,
+    default: View
+});
 
 /**
  * The type of React {@code Component} props of {@link App}.
@@ -241,10 +245,12 @@ export class App extends AbstractApp {
      */
     _renderDialogContainer() {
         return (
-            <Fragment>
-                <DialogContainer />
+            <DialogContainerWrapper
+                pointerEvents = 'box-none'
+                style = { StyleSheet.absoluteFill }>
                 <BottomSheetContainer />
-            </Fragment>
+                <DialogContainer />
+            </DialogContainerWrapper>
         );
     }
 }
