@@ -1,11 +1,9 @@
-// @flow
-
 import React from 'react';
 import { TouchableWithoutFeedback, View } from 'react-native';
 import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app/functions';
-import { openDialog } from '../../base/dialog/actions';
+import { openSheet } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n';
 import { NavigateSectionList, type Section } from '../../base/react';
 import { connect } from '../../base/redux';
@@ -56,9 +54,6 @@ type Props = {
  *
  */
 class RecentList extends AbstractRecentList<Props> {
-    _getRenderListEmptyComponent: () => React$Node;
-    _onPress: string => {};
-
     /**
      * Initializes a new {@code RecentList} instance.
      *
@@ -105,8 +100,6 @@ class RecentList extends AbstractRecentList<Props> {
         );
     }
 
-    _onLongPress: (Object) => void;
-
     /**
      * Handles the list's navigate action.
      *
@@ -115,7 +108,7 @@ class RecentList extends AbstractRecentList<Props> {
      * @returns {void}
      */
     _onLongPress(item) {
-        this.props.dispatch(openDialog(RecentListItemMenu, { item }));
+        this.props.dispatch(openSheet(RecentListItemMenu, { item }));
     }
 }
 

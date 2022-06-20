@@ -1,10 +1,8 @@
-// @flow
-
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
 
-import { hideDialog, BottomSheet } from '../../../base/dialog';
+import { hideSheet, BottomSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import {
@@ -144,11 +142,6 @@ const deviceInfoMap = {
 };
 
 /**
- * The exported React {@code Component}.
- */
-let AudioRoutePickerDialog_; // eslint-disable-line prefer-const
-
-/**
  * Implements a React {@code Component} which prompts the user when a password
  * is required to join a conference.
  */
@@ -218,35 +211,9 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so they are only bound once per instance.
-        this._onCancel = this._onCancel.bind(this);
-
         // Trigger an initial update.
         AudioMode.updateDeviceList && AudioMode.updateDeviceList();
     }
-
-    /**
-     * Dispatches a redux action to hide this sheet.
-     *
-     * @returns {void}
-     */
-    _hide() {
-        this.props.dispatch(hideDialog(AudioRoutePickerDialog_));
-    }
-
-    _onCancel: () => void;
-
-    /**
-     * Cancels the dialog by hiding it.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onCancel() {
-        this._hide();
-    }
-
-    _onSelectDeviceFn: (Device) => Function;
 
     /**
      * Builds and returns a function which handles the selection of a device
@@ -258,7 +225,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      */
     _onSelectDeviceFn(device: Device) {
         return () => {
-            this._hide();
+            this.props.dispatch(hideSheet());
             AudioMode.setAudioDevice(device.uid || device.type);
         };
     }
@@ -329,7 +296,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
         }
 
         return (
-            <BottomSheet onCancel = { this._onCancel }>
+            <BottomSheet>
                 { content }
             </BottomSheet>
         );
@@ -348,6 +315,4 @@ function _mapStateToProps(state) {
     };
 }
 
-AudioRoutePickerDialog_ = translate(connect(_mapStateToProps)(AudioRoutePickerDialog));
-
-export default AudioRoutePickerDialog_;
+export default translate(connect(_mapStateToProps)(AudioRoutePickerDialog));

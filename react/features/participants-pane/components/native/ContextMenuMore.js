@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
@@ -16,7 +14,7 @@ import {
     isSupported as isAvModerationSupported,
     isEnabled as isAvModerationEnabled
 } from '../../../av-moderation/functions';
-import { openDialog, hideDialog } from '../../../base/dialog/actions';
+import { openDialog, hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
     Icon,
@@ -32,10 +30,10 @@ import styles from './styles';
 
 export const ContextMenuMore = () => {
     const dispatch = useDispatch();
-    const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
-    const muteAllVideo = useCallback(() =>
-        dispatch(openDialog(MuteEveryonesVideoDialog)),
-        [ dispatch ]);
+    const muteAllVideo = useCallback(() => {
+        dispatch(openDialog(MuteEveryonesVideoDialog));
+        dispatch(hideSheet());
+    }, [ dispatch ]);
     const { t } = useTranslation();
 
     const isModerationSupported = useSelector(isAvModerationSupported);
@@ -54,7 +52,6 @@ export const ContextMenuMore = () => {
     return (
         <BottomSheet
             addScrollViewPadding = { false }
-            onCancel = { cancel }
             showSlidingView = { true }>
             <TouchableOpacity
                 onPress = { muteAllVideo }

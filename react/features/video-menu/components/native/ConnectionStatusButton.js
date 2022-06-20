@@ -1,6 +1,4 @@
-// @flow
-
-import { openDialog } from '../../../base/dialog';
+import { openSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconInfo } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -42,7 +40,7 @@ class ConnectionStatusButton extends AbstractButton<Props, *> {
     _handleClick() {
         const { dispatch, participantID } = this.props;
 
-        dispatch(openDialog(ConnectionStatusComponent, {
+        dispatch(openSheet(ConnectionStatusComponent, {
             participantID
         }));
     }

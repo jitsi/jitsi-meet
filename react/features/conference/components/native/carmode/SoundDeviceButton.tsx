@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
-import { openDialog } from '../../../../base/dialog/actions';
+import { openSheet } from '../../../../base/dialog/actions';
 import AudioRoutePickerDialog from '../../../../mobile/audio-mode/components/AudioRoutePickerDialog';
 
 import AudioIcon from './AudioIcon';
@@ -19,7 +19,7 @@ const SelectSoundDevice = () : JSX.Element => {
     const dispatch = useDispatch();
 
     const onSelect = useCallback(() =>
-        dispatch(openDialog(AudioRoutePickerDialog))
+        dispatch(openSheet(AudioRoutePickerDialog))
     , [ dispatch ]);
 
     return (

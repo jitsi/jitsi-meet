@@ -1,7 +1,6 @@
-// @flow
 import type { Dispatch } from 'redux';
 
-import { openDialog } from '../../../base/dialog';
+import { openSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconVolumeEmpty } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -32,7 +31,7 @@ class AudioDeviceToggleButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(openDialog(AudioRoutePickerDialog));
+        this.props.dispatch(openSheet(AudioRoutePickerDialog));
     }
 }
 
