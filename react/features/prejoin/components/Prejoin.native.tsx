@@ -1,6 +1,6 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View, TouchableOpacity, TextInput, Platform } from 'react-native';
+import { Text, View, TouchableOpacity, TextInput, Platform, BackHandler } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { appNavigate } from '../../app/actions.native';
@@ -58,6 +58,7 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
 
     const goBack = useCallback(() => {
         dispatch(appNavigate(undefined));
+        return true;
     }, [ dispatch ]);
 
     let contentWrapperStyles;
@@ -92,6 +93,13 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
                 src = { IconClose } />
         );
     }, []);
+
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', goBack);
+
+        return () => BackHandler.removeEventListener('hardwareBackPress', goBack) 
+
+    }, [ ]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
