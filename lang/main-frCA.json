@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Ajouter un lien de réunion",
-        "confirmAddLink": "Voulez-vous ajouter un lien Jitsi Meet à cet événement ?",
+        "confirmAddLink": "Voulez-vous ajouter un lien  à cet événement ?",
         "error": {
             "appConfiguration": "L'intégration de l'agenda n'est pas correctement configurée.",
             "generic": "Une erreur s'est produite. Veuillez vérifier vos paramètres d'agenda ou essayer de rafraîchir l'agenda.",
@@ -288,7 +288,7 @@
         "answer": "Réponse",
         "audioCallTitle": "Appel entrant",
         "decline": "Rejeter",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "de ",
         "videoCallTitle": "Appel vidéo entrant"
     },
     "info": {

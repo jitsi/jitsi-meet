@@ -441,7 +441,7 @@
         "answer": "Rispondi",
         "audioCallTitle": "Chiamata in arrivo",
         "decline": "Chiudi",
-        "productLabel": "da Jitsi Meet",
+        "productLabel": "da ",
         "videoCallTitle": "Videochiamata in arrivo"
     },
     "info": {
@@ -679,7 +679,7 @@
         "newDeviceAction": "OK, usala",
         "newDeviceAudioTitle": "Trovata nuova origine audio",
         "newDeviceCameraTitle": "Trovata nuova videocamera",
-        "oldElectronClientDescription1": "Sembri stare usando una versione obsoleta del client Jitsi Meet che ha dei problemi di sicurezza noti. Assicurati di aggiornarla presso il nostro ",
+        "oldElectronClientDescription1": "Sembri stare usando una versione obsoleta del client  che ha dei problemi di sicurezza noti. Assicurati di aggiornarla presso il nostro ",
         "oldElectronClientDescription2": "ultima build",
         "oldElectronClientDescription3": " ora!",
         "participantWantsToJoin": "Vuole unirsi alla riunione",
@@ -1292,7 +1292,7 @@
         "go": "VAI",
         "goSmall": "VAI",
         "headerSubtitle": "Riunioni sicure e di alta qualità",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Informazioni chiamata",
         "jitsiOnMobile": "Jitsi su mobile – scarica le nostre app e dai inizio ad una riunione dovunque tu sia",
         "join": "CREA/UNISCITI",

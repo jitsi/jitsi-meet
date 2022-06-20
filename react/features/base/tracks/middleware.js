@@ -34,7 +34,9 @@ import {
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
     TRACK_STOPPED,
-    TRACK_UPDATED
+    TRACK_UPDATED,
+    TRACK_AUDIO_LEVEL_CHANGED,
+    TRACK_RECEIVING_DATA_STATUS
 } from './actionTypes';
 import {
     createLocalTracksA,
@@ -43,7 +45,8 @@ import {
     toggleScreensharing,
     trackMuteUnmuteFailed,
     trackRemoved,
-    trackNoDataFromSourceNotificationInfoChanged
+    trackNoDataFromSourceNotificationInfoChanged,
+    receivingDataStatusFromSource,
 } from './actions';
 import {
     getLocalTrack,
@@ -66,6 +69,14 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case TRACK_AUDIO_LEVEL_CHANGED:
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyAudioLevelChanged({
+                deviceId: action.deviceId,
+                audioLevel: action.audioLevel
+            });
+        }
+        break;
     case TRACK_ADDED: {
         const { local } = action.track;
 
@@ -75,6 +86,15 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(getAvailableDevices());
         }
 
+        break;
+    }
+    case TRACK_RECEIVING_DATA_STATUS: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyTrackReceivingStatus({
+                track: action.track,
+                isReceivingData: action.isReceivingData
+            });
+        }
         break;
     }
     case TRACK_NO_DATA_FROM_SOURCE: {
@@ -94,7 +114,6 @@ MiddlewareRegistry.register(store => next => action => {
                 && isUserInteractionRequiredForUnmute(store.getState())) {
             return;
         }
-
         _setMuted(store, action, MEDIA_TYPE.AUDIO);
         break;
 
@@ -296,14 +315,13 @@ StateListenerRegistry.register(
  */
 function _handleNoDataFromSourceErrors(store, action) {
     const { getState, dispatch } = store;
-
     const track = getTrackByJitsiTrack(getState()['features/base/tracks'], action.track.jitsiTrack);
-
     if (!track || !track.local) {
         return;
     }
-
     const { jitsiTrack } = track;
+
+    dispatch(receivingDataStatusFromSource({deviceId: jitsiTrack.deviceId, type: jitsiTrack.type}, track.isReceivingData));
 
     if (track.mediaType === MEDIA_TYPE.AUDIO && track.isReceivingData) {
         _removeNoDataFromSourceNotification(store, action.track);
@@ -415,6 +433,12 @@ async function _setMuted(store, { ensureTrack, authority, muted }, mediaType: ME
             setTrackMuted(jitsiTrack, muted, state).catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
         }
     } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(state))) {
+        const isAudioOnly = authority === VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY;
+        // screenshare cannot be muted or unmuted using the video mute button
+        // anymore, unless it is muted by audioOnly.
+        jitsiTrack && (jitsiTrack.videoType !== 'desktop' || isAudioOnly)
+            && setTrackMuted(jitsiTrack, muted);
+    } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(store.getState()))) {
         // FIXME: This only runs on mobile now because web has its own way of
         // creating local tracks. Adjust the check once they are unified.
         dispatch(createLocalTracksA({ devices: [ mediaType ] }));

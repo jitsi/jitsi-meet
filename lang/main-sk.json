@@ -526,7 +526,7 @@
         "newDeviceAction": "Použiť",
         "newDeviceAudioTitle": "Bolo zistené nové audio zariadenie",
         "newDeviceCameraTitle": "Bola zistená nová kamera",
-        "oldElectronClientDescription1": "Používate starú verziu klienta Jitsi Meet, ktorá má známe zraniteľnosti. Aktualizujte na ",
+        "oldElectronClientDescription1": "Používate starú verziu klienta , ktorá má známe zraniteľnosti. Aktualizujte na ",
         "oldElectronClientDescription2": "najnovšiu verziu",
         "oldElectronClientDescription3": " teraz!",
         "passwordRemovedRemotely": "Iný účastník odstránil $t(lockRoomPassword)",

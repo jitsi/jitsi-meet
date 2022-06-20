@@ -77,6 +77,7 @@ import {
     isLocalParticipantModerator
 } from './functions';
 import logger from './logger';
+import { TALK_WHILE_MUTED } from '../../talk-while-muted/actionTypes';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import './subscriber';
 
@@ -192,7 +193,12 @@ MiddlewareRegistry.register(store => next => action => {
             local: true,
             localRecording: recording
         }));
+    }
 
+    case TALK_WHILE_MUTED: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyTalkWhileMuted();
+        }
         break;
     }
 

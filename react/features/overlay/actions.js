@@ -13,18 +13,26 @@ import {
  * @param {boolean} isVisible - If the value is true - the prompt for media
  * permission is visible otherwise the value is false/undefined.
  * @param {string} browser - The name of the current browser.
+ * @param {string} title - Title of the notification to display to user.
+ * @param {string} text - Text of the notification to display to user.
  * @public
  * @returns {{
  *     type: MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
  *     browser: {string},
- *     isVisible: {boolean}
+ *     isVisible: {boolean},
+ *     title: {string},
+ *     text: {string}
  * }}
  */
-export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, browser: string) {
+export function mediaPermissionPromptVisibilityChanged(
+        isVisible: boolean, browser: string, title?: string, text?: string
+) {
     return {
         type: MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
         browser,
-        isVisible
+        isVisible,
+        text,
+        title
     };
 }
 

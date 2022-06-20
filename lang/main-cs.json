@@ -357,7 +357,7 @@
         "answer": "Odpovědět",
         "audioCallTitle": "Příchozí hovor",
         "decline": "OK",
-        "productLabel": "od Jitsi Meet",
+        "productLabel": "od ",
         "videoCallTitle": "Příchozí videohovor"
     },
     "info": {
@@ -546,7 +546,7 @@
         "newDeviceAction": "Použít",
         "newDeviceAudioTitle": "Detekováno nové zvukové zařízení",
         "newDeviceCameraTitle": "Detekována nová kamera",
-        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta Jitsi Meet, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
+        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta , který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
         "oldElectronClientDescription2": "nejnovější sestavení",
         "oldElectronClientDescription3": " ihned!",
         "passwordRemovedRemotely": "Jiný účastník odebral $t(lockRoomPassword)",
@@ -938,7 +938,7 @@
         "go": "ZAČÍT",
         "goSmall": "ZAČÍT",
         "headerSubtitle": "Bezpečné a kvalitní setkávání",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Informace o vytáčení",
         "jitsiOnMobile": "Jitsi na mobilu – stáhněte si naše aplikace a spusťte hovor odkudkoliv",
         "join": "VYTVOŘIT / PŘIPOJIT",

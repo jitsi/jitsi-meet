@@ -314,7 +314,7 @@
         "answer": "Respondi",
         "audioCallTitle": "Alvenanta voko",
         "decline": "Formeti",
-        "productLabel": "el Jitsi Meet",
+        "productLabel": "el ",
         "videoCallTitle": "Alvenanta vida voko"
     },
     "info": {
@@ -468,7 +468,7 @@
         "newDeviceAction": "Uzi",
         "newDeviceAudioTitle": "Nova aparato detektita",
         "newDeviceCameraTitle": "Nova kamerao detektita",
-        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de Jitsi Meet, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
+        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de , kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
         "oldElectronClientDescription2": "plej nova versio",
         "oldElectronClientDescription3": " nun!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) forigita de alia partoprenanto",

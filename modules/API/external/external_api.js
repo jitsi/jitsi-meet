@@ -76,6 +76,7 @@ const commands = {
     toggleE2EE: 'toggle-e2ee',
     toggleFilmStrip: 'toggle-film-strip',
     toggleLobby: 'toggle-lobby',
+    toggleMediaPermissionScreen: 'toggle-media-permission-screen',
     toggleModeration: 'toggle-moderation',
     toggleParticipantsPane: 'toggle-participants-pane',
     toggleRaiseHand: 'toggle-raise-hand',
@@ -84,7 +85,9 @@ const commands = {
     toggleSubtitles: 'toggle-subtitles',
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
-    toggleVideo: 'toggle-video'
+    setVideoBackgroundEffect: 'set-video-background-effect',
+    toggleVideo: 'toggle-video',
+    playTestSound: 'play-test-sound'
 };
 
 /**
@@ -93,6 +96,7 @@ const commands = {
  */
 const events = {
     'avatar-changed': 'avatarChanged',
+    'audio-level-changed': 'audioLevelChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'breakout-rooms-updated': 'breakoutRoomsUpdated',
@@ -127,6 +131,7 @@ const events = {
     'participant-left': 'participantLeft',
     'participant-role-changed': 'participantRoleChanged',
     'password-required': 'passwordRequired',
+    'permissions-granted': 'permissionsGranted',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
     'recording-link-available': 'recordingLinkAvailable',
@@ -142,7 +147,10 @@ const events = {
     'subject-change': 'subjectChange',
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
-    'toolbar-button-clicked': 'toolbarButtonClicked'
+    'toolbar-button-clicked': 'toolbarButtonClicked',
+    'track-receiving-data-status': 'trackReceivingDataStatus',
+    'talk-while-muted': 'talkWhileMuted',
+    'notification-raised': 'notificationRaised',
 };
 
 /**
@@ -535,6 +543,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             case 'participant-joined': {
                 this._participants[userID] = this._participants[userID] || {};
                 this._participants[userID].displayName = data.displayName;
+                this._participants[userID].email = data.email || "";
                 this._participants[userID].formattedDisplayName
                     = data.formattedDisplayName;
                 changeParticipantNumber(this, 1);
@@ -1292,5 +1301,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 exportedKey: false,
                 index }));
         }
+    }
+
+    /**
+     * Returns conference speaker stats.
+     *
+     * @returns {Promise<Object>} Resolves with speaker stats and rejects on failure
+     */
+    getSpeakerStats() {
+        console.log("CALL external_api - getSpeakerStats");
+        return this._transport.sendRequest({
+            name: 'get-speaker-stats'
+        });
     }
 }

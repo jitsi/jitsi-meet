@@ -31,6 +31,16 @@ export const TOGGLE_SCREENSHARING = 'TOGGLE_SCREENSHARING';
 export const TRACK_ADDED = 'TRACK_ADDED';
 
 /**
+ * The type of redux action dispatched when a track (local) volume level has change.
+ *
+ * {
+ *     type: TRACK_AUDIO_LEVEL_CHANGED,
+ *     track: Track
+ * }
+ */
+export const TRACK_AUDIO_LEVEL_CHANGED = 'TRACK_AUDIO_LEVEL_CHANGED';
+
+/**
  * The type of redux action dispatched when a canceled {@code getUserMedia}
  * process completes either successfully or with an error (the error is ignored
  * and the track is immediately disposed if it has been created).
@@ -76,6 +86,8 @@ export const TRACK_MUTE_UNMUTE_FAILED = 'TRACK_MUTE_UNMUTE_FAILED';
  */
 export const TRACK_NO_DATA_FROM_SOURCE = 'TRACK_NO_DATA_FROM_SOURCE';
 
+
+export const TRACK_RECEIVING_DATA_STATUS = 'TRACK_RECEIVING_DATA_STATUS';
 /**
  * The type of redux action dispatched when a track has been (locally or
  * remotely) removed from the conference.

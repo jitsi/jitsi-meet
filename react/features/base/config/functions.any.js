@@ -288,7 +288,7 @@ export function setConfigFromURLParams(
     // params = {
     //     "config.disableAudioLevels": false,
     //     "config.channelLastN": -1,
-    //     "interfaceConfig.APP_NAME": "Jitsi Meet"
+    //     "interfaceConfig.APP_NAME": "TeamAI"
     // }
     // We want to have:
     // json = {
@@ -297,7 +297,7 @@ export function setConfigFromURLParams(
     //         "channelLastN": -1
     //     },
     //     interfaceConfig: {
-    //         "APP_NAME": "Jitsi Meet"
+    //         "APP_NAME": "TeamAI"
     //     }
     // }
     config && (json.config = {});

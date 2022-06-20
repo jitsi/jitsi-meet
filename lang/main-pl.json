@@ -414,7 +414,7 @@
         "answer": "Odbierz",
         "audioCallTitle": "Przychodzące połączenie",
         "decline": "Odrzuć",
-        "productLabel": "z Jitsi Meet",
+        "productLabel": "z ",
         "videoCallTitle": "Przychodzące połączenie wideo"
     },
     "info": {
@@ -636,7 +636,7 @@
         "newDeviceAction": "Użyj",
         "newDeviceAudioTitle": "Wykryto nowe urządzenie dźwiękowe",
         "newDeviceCameraTitle": "Wykryto nową kamerę",
-        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Jitsi Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
+        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta , który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
         "oldElectronClientDescription2": "najnowszej wersji",
         "oldElectronClientDescription3": " teraz!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) usunięte przez innego uczestnika",
@@ -1199,7 +1199,7 @@
         "go": "Dalej",
         "goSmall": "Dalej",
         "headerSubtitle": "Bezpieczne i wysokiej jakości spotkania",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Informacje",
         "jitsiOnMobile": "Jitsi mobile – pobierz appkę i rozpocznij spotkanie z dowolnego miejsca",
         "join": "Utwórz / Dołącz",

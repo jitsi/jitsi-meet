@@ -328,7 +328,7 @@
         "answer": "Απάντηση",
         "audioCallTitle": "Εισερχόμενη κλήση",
         "decline": "Απόρριψη",
-        "productLabel": "από το Jitsi Meet",
+        "productLabel": "από το ",
         "videoCallTitle": "Εισερχόμενη κλήση βίντεο"
     },
     "info": {
@@ -511,7 +511,7 @@
         "newDeviceAction": "Χρήση",
         "newDeviceAudioTitle": "Εντοπίστηκε νέα συσκευή ήχου",
         "newDeviceCameraTitle": "Εντοπίστηκε νέα κάμερα",
-        "oldElectronClientDescription1": "Φαίνεται ότι χρησιμοποιείτε μια παλιά έκδοση του πελάτη Jitsi Meet που έχει γνωστά θέματα ευπάθειας ασφαλείας. Παρακαλώ βεβαιωθείτε ότι έχετε την ενημερωμένη έκδοση για ",
+        "oldElectronClientDescription1": "Φαίνεται ότι χρησιμοποιείτε μια παλιά έκδοση του πελάτη  που έχει γνωστά θέματα ευπάθειας ασφαλείας. Παρακαλώ βεβαιωθείτε ότι έχετε την ενημερωμένη έκδοση για ",
         "oldElectronClientDescription2": "πρόσφατη έκδοση μας",
         "oldElectronClientDescription3": " τώρα!",
         "passwordRemovedRemotely": "Το $t(lockRoomPasswordUppercase) αφαιρέθηκε από έναν άλλον συμμετέχοντα",

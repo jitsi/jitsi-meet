@@ -79,6 +79,7 @@
 #largeVideoContainer {
     height: 100%;
     width: 100%;
+    background: linear-gradient(0deg,rgba(0,0,0,.5) .09%,transparent 34.44%),linear-gradient(180deg,rgba(0,0,0,.5) .09%,transparent 34.44%);
 }
 
 #largeVideoWrapper {
@@ -316,6 +317,32 @@
         visibility: hidden;
     }
 
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
+    }
+
+    video {
+        visibility: visible;
+    }
+}
+
+.display-name-on-video {
+    .avatar-container {
+        visibility: hidden;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: visible;
+    }
+
     video {
         visibility: visible;
     }
@@ -324,6 +351,14 @@
 .display-avatar-only {
     .avatar-container {
         visibility: visible;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
     }
 
     video {

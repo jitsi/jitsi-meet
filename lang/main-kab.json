@@ -391,7 +391,7 @@
         "answer": "Tiririt",
         "audioCallTitle": "Asiwel i ikcem-d",
         "decline": "Agwi",
-        "productLabel": "seg Jitsi Meet",
+        "productLabel": "seg ",
         "videoCallTitle": "Asiwel s tvidyut ikcem-d"
     },
     "info": {
@@ -606,7 +606,7 @@
         "newDeviceAction": "Seqdec",
         "newDeviceAudioTitle": "Ibenk amaynut n umeslaw yettwaf-d",
         "newDeviceCameraTitle": "Tettwaf-d tkamiṛat tamaynut",
-        "oldElectronClientDescription1": "Akka i nettwali tesseqdaceḍ lqem aqbur n umsaɣ Jitsi Meet i yesɛan uguren n tɣellist yettwassnen. Ma ulac aɣilif ḍmen ad tleqqmeḍ ",
+        "oldElectronClientDescription1": "Akka i nettwali tesseqdaceḍ lqem aqbur n umsaɣ  i yesɛan uguren n tɣellist yettwassnen. Ma ulac aɣilif ḍmen ad tleqqmeḍ ",
         "oldElectronClientDescription2": "lqem akk aneggaru",
         "oldElectronClientDescription3": " tura!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) yettwakkes sɣur yimttekki-nniḍen",
@@ -1139,7 +1139,7 @@
         "go": "DDU",
         "goSmall": "Ddu",
         "headerSubtitle": "Timliliyin n tɣellist d tɣara meqqren",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Talɣut",
         "jitsiOnMobile": "Jitsi ɣef uziraz - sader isnasen-nneɣ syen tebduḍ timlilit seg wanda i tebɣiḍ",
         "join": "SNULFU-D / KCEM",
@@ -1147,7 +1147,7 @@
             "calendar": "Alugu n umitay",
             "desktopPreviewThumbnail": "Tanfult n teskant n tnarit",
             "googleLogo": "Alugu n Google",
-            "logoDeepLinking": "Alugu Jitsi Meet",
+            "logoDeepLinking": "Alugu ",
             "microsoftLogo": "Alugu n Microsoft",
             "policyLogo": "Alugu n tsertit"
         },

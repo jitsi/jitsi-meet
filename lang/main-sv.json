@@ -407,7 +407,7 @@
         "answer": "Svara",
         "audioCallTitle": "Inkommande samtal",
         "decline": "Avvisa",
-        "productLabel": "från Jitsi Meet",
+        "productLabel": "från ",
         "videoCallTitle": "Inkommande videosamtal"
     },
     "info": {
@@ -1156,7 +1156,7 @@
         "go": "KÖR",
         "goSmall": "BÖRJA",
         "headerSubtitle": "Säkra möten med hög kvalitet",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Info",
         "jitsiOnMobile": "Jitsi på mobilen - ladda ner våra appar och starta ett möte var som helst",
         "join": "Gå med",

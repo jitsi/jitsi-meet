@@ -350,7 +350,7 @@
         "answer": "Відповідь",
         "audioCallTitle": "Вхідний виклик",
         "decline": "Відхилити",
-        "productLabel": "з Jitsi Meet",
+        "productLabel": "з ",
         "videoCallTitle": "Вхідний відеовиклик"
     },
     "info": {
@@ -538,7 +538,7 @@
         "newDeviceAction": "Використовувати",
         "newDeviceAudioTitle": "Знайдено новий звуковий пристрій",
         "newDeviceCameraTitle": "Знайдено нову камеру",
-        "oldElectronClientDescription1": "Схоже, ви використовуєте стару версію клієнта Jitsi Meet, яка має відомі уразливості в системі безпеки. Переконайтеся, що ви оновились до нашої",
+        "oldElectronClientDescription1": "Схоже, ви використовуєте стару версію клієнта , яка має відомі уразливості в системі безпеки. Переконайтеся, що ви оновились до нашої",
         "oldElectronClientDescription2": "останньої версії",
         "oldElectronClientDescription3": " зараз!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) вилучено іншим учасником",

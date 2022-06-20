@@ -8,8 +8,8 @@ import {
     KICKED_OUT
 } from '../base/conference';
 import { SET_CONFIG } from '../base/config';
-import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
-import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
+import { NOTIFY_CAMERA_ERROR, NOTIFY_MEDIA_PERMISSIONS_GRANTED, NOTIFY_MIC_ERROR } from '../base/devices';
+import { JitsiRecordingConstants, JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_KICKED,
@@ -20,6 +20,7 @@ import {
     getLocalParticipant,
     getParticipantById
 } from '../base/participants';
+import { getActiveSession } from '../../features/recording/functions';
 import { MiddlewareRegistry } from '../base/redux';
 import { getBaseUrl } from '../base/util';
 import { appendSuffix } from '../display-name';
@@ -89,8 +90,20 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const { defaultLocalDisplayName } = state['features/base/config'];
         const { room } = state['features/base/conference'];
-        const { loadableAvatarUrl, name, id } = getLocalParticipant(state);
+
+        // const { loadableAvatarUrl, name, id } = getLocalParticipant(state);
         const breakoutRoom = APP.conference.roomName.toString() !== room.toLowerCase();
+        const localParticipant = getLocalParticipant(state);
+        console.log("LOCAL PARTICIPANT", localParticipant);
+        const { loadableAvatarUrl, name, id, email } = localParticipant;
+
+        const activeSession = getActiveSession(state, JitsiRecordingConstants.mode.FILE);
+        
+        const isRecordingOn = Boolean(activeSession);
+        const recordingStatusString = isRecordingOn ? 
+            activeSession.status === JitsiRecordingConstants.status.ON ? "ON" : 
+                activeSession.status === JitsiRecordingConstants.status.PENDING ? "PENDING" : "OFF" 
+            : "OFF";
 
         // we use APP.conference.roomName as we do not update state['features/base/conference'].room when
         // moving between rooms in case of breakout rooms and it stays always with the name of the main room
@@ -99,12 +112,14 @@ MiddlewareRegistry.register(store => next => action => {
             id,
             {
                 displayName: name,
+                email,
                 formattedDisplayName: appendSuffix(
                     name,
                     defaultLocalDisplayName
                 ),
                 avatarURL: loadableAvatarUrl,
-                breakoutRoom
+                breakoutRoom,
+                recordingStatus: recordingStatusString
             }
         );
         break;
@@ -127,7 +142,9 @@ MiddlewareRegistry.register(store => next => action => {
             { id: action.participant ? action.participant.getId() : undefined }
         );
         break;
-
+    case NOTIFY_MEDIA_PERMISSIONS_GRANTED:
+        APP.API.notifyPermissionsGranted(action.permissions);
+        break;
     case NOTIFY_CAMERA_ERROR:
         if (action.error) {
             APP.API.notifyOnCameraError(

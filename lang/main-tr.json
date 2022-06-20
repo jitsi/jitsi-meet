@@ -415,7 +415,7 @@
         "answer": "Cevapla",
         "audioCallTitle": "Gelen sesli arama",
         "decline": "Reddet",
-        "productLabel": "Jitsi Meet'den",
+        "productLabel": "'den",
         "videoCallTitle": "Gelen görüntülü arama"
     },
     "info": {
@@ -637,7 +637,7 @@
         "newDeviceAction": "Kullan",
         "newDeviceAudioTitle": "Yeni ses aygıtı algılandı",
         "newDeviceCameraTitle": "Yeni kamera algılandı",
-        "oldElectronClientDescription1": "Güvenlik açıkları bilinen Jitsi Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
+        "oldElectronClientDescription1": "Güvenlik açıkları bilinen  istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
         "oldElectronClientDescription2": "son yapı",
         "oldElectronClientDescription3": " şimdi!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) başka bir katılımcı tarafından kaldırıldı",
@@ -1181,7 +1181,7 @@
         "go": "GİT",
         "goSmall": "GİT",
         "headerSubtitle": "Güvenli ve yüksek kaliteli toplantılar",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Bilgi",
         "jitsiOnMobile": "Mobil'de Jitsi – uygulamalarımızı indirin ve her yerden bir toplantı başlatın",
         "join": "KATIL",

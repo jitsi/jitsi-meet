@@ -1,5 +1,6 @@
 // @flow
 
+import { BrowserDetection } from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
 
 import {
@@ -45,6 +46,8 @@ import {
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
+import { getLocalJitsiVideoTrack } from '../../react/features/base/tracks/functions';
+import { toggleBackgroundEffect } from '../../react/features/virtual-background/actions';
 import {
     autoAssignToBreakoutRooms,
     closeBreakoutRoom,
@@ -64,6 +67,7 @@ import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
+import { mediaPermissionPromptVisibilityChanged } from '../../react/features/overlay/actions';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
 import { setVolume } from '../../react/features/filmstrip';
 import { invite } from '../../react/features/invite';
@@ -98,9 +102,14 @@ import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
 
+import i18next from 'i18next';
+
 const logger = Logger.getLogger(__filename);
 
+const TEST_SOUND_PATH = 'sounds/ring.wav';
+
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * List of the available commands.
@@ -276,6 +285,11 @@ function initCommands() {
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
         },
+        'toggle-media-permission-screen': (visible, title, text) => {
+            const browser = new BrowserDetection();
+
+            APP.store.dispatch(mediaPermissionPromptVisibilityChanged(visible, browser.getName(), title, text));
+        },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
             APP.store.dispatch(setSubject(subject));
@@ -293,6 +307,11 @@ function initCommands() {
             sendAnalytics(createApiEvent('toggle-video'));
             logger.log('Video toggle: API command received');
             APP.conference.toggleVideoMuted(false /* no UI */);
+        },
+        'set-video-background-effect': options => {
+            const jitsiTrack = getLocalJitsiVideoTrack(APP.store.getState());
+
+            APP.store.dispatch(toggleBackgroundEffect(options, jitsiTrack));
         },
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
@@ -633,6 +652,14 @@ function initCommands() {
         },
         'toggle-virtual-background': () => {
             APP.store.dispatch(toggleDialog(VirtualBackgroundDialog));
+        },
+        'play-test-sound': (deviceId) => {
+            const audio = new Audio();
+            audio.src = TEST_SOUND_PATH;
+
+            audio.setSinkId(deviceId)
+                .then(() => audio.play())
+                .catch( err => logger.error('Could not set sink id', err));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -781,12 +808,62 @@ function initCommands() {
             callback(getBreakoutRooms(APP.store.getState()));
             break;
         }
+
+        case 'get-speaker-stats':
+            console.log("API - get-speaker-stats");
+            console.log("API - speaker stats", APP.conference.getSpeakerStats());
+
+            const stats = createSpeakerStats(APP.conference.getSpeakerStats());
+            console.log("API - get-speaker-stats", stats);
+
+            callback(stats);
+            break;
         default:
             return false;
         }
 
         return true;
     });
+}
+
+function createSpeakerStats(stats) {
+    const userIds = Object.keys(stats);
+    const speakerStats = userIds.map(userId => {
+        const userStats = createSpeakerStatsItem(stats[userId]);
+
+        return {
+            ...userStats, userId
+        };
+    });
+    return speakerStats
+}
+
+function createSpeakerStatsItem(statsModel) {
+    if (!statsModel) {
+        return null;
+    }
+
+    const localParticipant = getLocalParticipant(APP.store.getState());
+    const localDisplayName = localParticipant && localParticipant.name;
+
+    const isDominantSpeaker = statsModel.isDominantSpeaker();
+    const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
+    const hasLeft = statsModel.hasLeft();
+
+    let displayName;
+
+    if (statsModel.isLocalStats()) {
+        const meString = i18next.t('me');
+
+        displayName = localDisplayName;
+        displayName = displayName ? `${displayName} (${meString})` : meString;
+    } else {
+        displayName = statsModel.getDisplayName() || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+    }
+
+    return {
+        displayName, dominantSpeakerTime, hasLeft, isDominantSpeaker
+    };
 }
 
 /**
@@ -904,6 +981,20 @@ class API {
         this._sendEvent({
             name: 'large-video-visibility-changed',
             isVisible: !isHidden
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that media devices
+     * permissions are granted or not.
+     *
+     * @param {{audio: boolean, video: boolean}} permissions - Permissions per device type.
+     * @returns {void}
+     */
+    notifyPermissionsGranted(permissions: Object) {
+        this._sendEvent({
+            name: 'permissions-granted',
+            permissions
         });
     }
 
@@ -1332,6 +1423,43 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that audio input device level has changed.
+     *
+     * @param {Object} data - Track meta and audio level.
+     * @returns {void}
+     */
+    notifyAudioLevelChanged(data: Object) {
+        this._sendEvent({
+            name: 'audio-level-changed',
+            data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that audio input device level does not receive data.
+     *
+     * @param {Object} data - Device id and is receiving data flag.
+     * @returns {void}
+     */
+    notifyTrackReceivingStatus(data: Object) {
+        this._sendEvent({
+            name: 'track-receiving-data-status',
+            data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a user is talking while he/she is muted.
+     *
+     * @returns {void}
+     */
+    notifyTalkWhileMuted() {
+        this._sendEvent({
+            name: 'talk-while-muted'
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) for video muted status
      * changed.
      *
@@ -1704,6 +1832,19 @@ class API {
         if (this._enabled) {
             this._enabled = false;
         }
+    }
+
+    /**
+     * Send notification to external application.
+     *
+     *@param {Object} props - Notification object.
+     * @returns {void}
+     */
+    notifyExternal(props: Object = {}) {
+        this._sendEvent({
+            name: 'notification-raised',
+            props
+        });
     }
 }
 

@@ -24,6 +24,15 @@
     bottom: calc(#{$newToolbarSizeWithPadding}) !important;
 }
 
+/**
+ * Override @atlaskit/theme styling for the top toolbar so it displays over
+ * the video thumbnail while obscuring as little as possible.
+ */
+.videocontainer__toptoolbar > div > div {
+    background: none !important;
+    background-color: transparent !important;
+}
+
 
 /**
  * Keep overflow menu within screen vertical bounds and make it scrollable.

@@ -441,7 +441,7 @@
         "answer": "Resposta",
         "audioCallTitle": "Trucada entrant",
         "decline": "Rebutja",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "de ",
         "videoCallTitle": "Videotrucada entrant"
     },
     "info": {
@@ -677,7 +677,7 @@
         "newDeviceAction": "Usa",
         "newDeviceAudioTitle": "S'ha detectat un aparell d'àudio nou",
         "newDeviceCameraTitle": "S'ha detectat una càmera nova",
-        "oldElectronClientDescription1": "Sembla que useu una versió antiga del client Jitsi Meet, que té vulnerabilitats de seguretat conegudes. Assegureu-vos d'actualitzar-lo",
+        "oldElectronClientDescription1": "Sembla que useu una versió antiga del client , que té vulnerabilitats de seguretat conegudes. Assegureu-vos d'actualitzar-lo",
         "oldElectronClientDescription2": "última construcció",
         "oldElectronClientDescription3": "ara!",
         "participantWantsToJoin": "Vol unir-se a la reunió",
@@ -1286,7 +1286,7 @@
         "go": "SOM-HI",
         "goSmall": "SOM-HI",
         "headerSubtitle": "Reunions d'alta qualitat i segures",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Informació de marcatge",
         "jitsiOnMobile": "Jitsi al mòbil – baixeu les nostres aplicacions i comenceu una reunió des de qualsevol lloc",
         "join": "CREA / ENTRA",
@@ -1294,7 +1294,7 @@
             "calendar": "Logotip del Calendari",
             "desktopPreviewThumbnail": "Miniatura de visualització prèvia de l'escriptori",
             "googleLogo": "Logotip de Google",
-            "logoDeepLinking": "Logotip de Jitsi Meet",
+            "logoDeepLinking": "Logotip de ",
             "microsoftLogo": "Logotip de Microsoft",
             "policyLogo": "Logotip de la política"
         },

@@ -116,21 +116,6 @@ class PreMeetingScreen extends PureComponent<Props> {
 
         return (
             <div className = { containerClassName }>
-                <div style = { style }>
-                    <div className = 'content'>
-                        <ConnectionStatus />
-
-                        <div className = 'content-controls'>
-                            <h1 className = 'title'>
-                                { title }
-                            </h1>
-                            { children }
-                            { _buttons.length && <Toolbox toolbarButtons = { _buttons } /> }
-                            { skipPrejoinButton }
-                            { showDeviceStatus && <DeviceStatus /> }
-                        </div>
-                    </div>
-                </div>
                 <Preview
                     videoMuted = { videoMuted }
                     videoTrack = { videoTrack } />

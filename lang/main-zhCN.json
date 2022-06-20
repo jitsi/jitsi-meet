@@ -335,7 +335,7 @@
         "answer": "应答",
         "audioCallTitle": "来电",
         "decline": "解除,离开",
-        "productLabel": "来自Jitsi Meet",
+        "productLabel": "来自",
         "videoCallTitle": "视频来电"
     },
     "info": {
@@ -524,7 +524,7 @@
         "newDeviceAction": "使用",
         "newDeviceAudioTitle": "检测到新音频设备",
         "newDeviceCameraTitle": "检测到新相机",
-        "oldElectronClientDescription1": "您似乎正在使用具有已知安全漏洞的Jitsi Meet客户端的旧版本。请确保您更新到最新版本",
+        "oldElectronClientDescription1": "您似乎正在使用具有已知安全漏洞的客户端的旧版本。请确保您更新到最新版本",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": " 现在！",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) 被另一位参会者删除",

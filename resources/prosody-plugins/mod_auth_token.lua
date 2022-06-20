@@ -104,7 +104,7 @@ function provider.get_sasl_handler(session)
                 end
         	end
         else
-            self.username = message;
+            self.username = session.jitsi_meet_context_user.id;
         end
 
         local post_event_result = prosody.events.fire_event("post-jitsi-authentication", session);

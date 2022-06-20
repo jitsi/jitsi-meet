@@ -429,7 +429,7 @@
         "answer": "Répondre",
         "audioCallTitle": "Appel entrant",
         "decline": "Rejeter",
-        "productLabel": "via Jitsi Meet",
+        "productLabel": "via ",
         "videoCallTitle": "Appel vidéo entrant"
     },
     "info": {
@@ -665,7 +665,7 @@
         "newDeviceAction": "Utiliser",
         "newDeviceAudioTitle": "Nouveau périphérique audio détecté",
         "newDeviceCameraTitle": "Nouvelle caméra détectée",
-        "oldElectronClientDescription1": "Vous semblez utiliser une ancienne version du client Jitsi Meet qui présente des failles de sécurité connues. Veuillez vous assurer de mettre à jour vers notre ",
+        "oldElectronClientDescription1": "Vous semblez utiliser une ancienne version du client  qui présente des failles de sécurité connues. Veuillez vous assurer de mettre à jour vers notre ",
         "oldElectronClientDescription2": "dernière build",
         "oldElectronClientDescription3": " rapidement !",
         "participantWantsToJoin": "souhaite rejoindre la réunion",
@@ -1268,7 +1268,7 @@
         "go": "Créer",
         "goSmall": "Créer",
         "headerSubtitle": "Conférences sécurisées et de haute qualité",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Infos",
         "jitsiOnMobile": "Jitsi sur mobile – télécharger notre application et démarrez des conférences de n'import où",
         "join": "CRÉER / REJOINDRE",

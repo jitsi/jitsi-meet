@@ -545,7 +545,7 @@
         "newDeviceAction": "వాడు",
         "newDeviceAudioTitle": "కొత్త ఆడియో పరికరం కనుగొనబడింది",
         "newDeviceCameraTitle": "కొత్త కేమెరా కనుగొనబడింది",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the  client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "సరికొత్త బిల్డు",
         "oldElectronClientDescription3": " ఇప్పుడే!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",

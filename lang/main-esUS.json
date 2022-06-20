@@ -413,7 +413,7 @@
         "answer": "Contestar",
         "audioCallTitle": "Llamada entrante",
         "decline": "Descartar",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "de ",
         "videoCallTitle": "Videollamada"
     },
     "info": {
@@ -630,7 +630,7 @@
         "newDeviceAction": "Usar",
         "newDeviceAudioTitle": "Se detectó un dispositivo de audio nuevo",
         "newDeviceCameraTitle": "Se detectó una cámara nueva",
-        "oldElectronClientDescription1": "Estás usando una versión vieja de la aplicación de Jitsi Meet que tiene problemas de seguridad. ¡Por favor, actualiza a la ",
+        "oldElectronClientDescription1": "Estás usando una versión vieja de la aplicación de  que tiene problemas de seguridad. ¡Por favor, actualiza a la ",
         "oldElectronClientDescription2": "versión más reciente",
         "oldElectronClientDescription3": " YA!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) eliminada por otro participante",
@@ -1169,7 +1169,7 @@
         "go": "IR",
         "goSmall": "IR",
         "headerSubtitle": "Reuniones seguras y de alta calidad",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Información",
         "jitsiOnMobile": "Jitsi en el móvil: descarga nuestras aplicaciones y comienza una reunión desde cualquier lugar",
         "join": "CREAR / UNIRSE",

@@ -48,10 +48,12 @@ ReducerRegistry.register('features/overlay', (state = { }, action) => {
  */
 function _mediaPermissionPromptVisibilityChanged(
         state,
-        { browser, isVisible }) {
+        { browser, isVisible, title, text }) {
     return assign(state, {
         browser,
-        isMediaPermissionPromptVisible: isVisible
+        isMediaPermissionPromptVisible: isVisible,
+        mediaOverlayText: text,
+        mediaOverlayTitle: title
     });
 }
 
