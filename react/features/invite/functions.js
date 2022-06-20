@@ -26,6 +26,13 @@ import logger from './logger';
 declare var $: Function;
 declare var interfaceConfig: Object;
 
+export const sharingFeatures = {
+    email: 'email',
+    url: 'url',
+    dialIn: 'dial-in',
+    embed: 'embed'
+};
+
 /**
  * Sends an ajax request to check if the phone number can be called.
  *
@@ -246,7 +253,7 @@ export function getInviteTextiOS({
     invite += t('info.inviteTextiOSInviteUrl', { inviteUrl });
     invite += ' ';
 
-    if (shouldDisplayDialIn(dialIn)) {
+    if (shouldDisplayDialIn(dialIn) && isSharingEnabled(sharingFeatures.dialIn)) {
         invite += t('info.inviteTextiOSPhone', {
             number: phoneNumber,
             conferenceID: dialIn.conferenceID,
@@ -295,7 +302,7 @@ export function getInviteText({
         invite = `${invite}\n${liveStream}`;
     }
 
-    if (shouldDisplayDialIn(dialIn)) {
+    if (shouldDisplayDialIn(dialIn) && isSharingEnabled(sharingFeatures.dialIn)) {
         const dial = t('info.invitePhone', {
             number: phoneNumber,
             conferenceID: dialIn.conferenceID
@@ -800,13 +807,6 @@ export async function executeDialOutStatusRequest(url: string, reqId: string) {
 
     return res.ok ? json : Promise.reject(json);
 }
-
-export const sharingFeatures = {
-    email: 'email',
-    url: 'url',
-    dialIn: 'dial-in',
-    embed: 'embed'
-};
 
 /**
  * Returns true if a specific sharing feature is enabled in interface configuration.
