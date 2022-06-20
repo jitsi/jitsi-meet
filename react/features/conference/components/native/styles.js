@@ -1,4 +1,3 @@
-import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { fixAndroidViewClipping } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
@@ -81,6 +80,7 @@ export default {
 
     lonelyButton: {
         alignItems: 'center',
+        backgroundColor: BaseTheme.palette.action01,
         borderRadius: 24,
         flexDirection: 'row',
         height: BaseTheme.spacing[6],
@@ -89,6 +89,7 @@ export default {
     },
 
     lonelyButtonComponents: {
+        color: BaseTheme.palette.text01,
         marginHorizontal: 6
     },
 
@@ -99,6 +100,7 @@ export default {
     },
 
     lonelyMessage: {
+        color: BaseTheme.palette.text01,
         paddingVertical: BaseTheme.spacing[2]
     },
 
@@ -230,13 +232,3 @@ export default {
         paddingLeft: BaseTheme.spacing[2]
     }
 };
-
-ColorSchemeRegistry.register('Conference', {
-    lonelyButton: {
-        backgroundColor: schemeColor('inviteButtonBackground')
-    },
-
-    lonelyMessage: {
-        color: schemeColor('onVideoText')
-    }
-});
