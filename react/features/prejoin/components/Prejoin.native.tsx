@@ -88,9 +88,9 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         );
     }, []);
 
-    const joinButtonStyles = displayName
-        ? styles.primaryButton : styles.primaryButtonDisabled;
     const joinButtonDisabled = !displayName && isDisplayNameMandatory;
+    const joinButtonStyles = joinButtonDisabled
+        ? styles.primaryButtonDisabled : styles.primaryButton;
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', goBack);
@@ -124,6 +124,7 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
 
     return (
         <JitsiScreen
+            safeAreaInsets = { [ 'left' ] }
             style = { contentWrapperStyles }>
             <BrandingImageBackground />
             <View style = { largeVideoContainerStyles }>
