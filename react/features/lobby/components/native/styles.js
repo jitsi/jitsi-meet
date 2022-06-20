@@ -81,7 +81,7 @@ export default {
         justifyContent: 'center',
         minHeight: '50%',
         paddingHorizontal: BaseTheme.spacing[3],
-        width: 500
+        width: 400
     },
 
     contentContainerWide: {
