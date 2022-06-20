@@ -98,7 +98,7 @@
     "react-native-collapsible": "1.6.0",
     "react-native-default-preference": "1.4.4",
     "react-native-device-info": "8.4.8",
-    "react-native-dialog": "9.2.1",
+    "react-native-dialog": "https://github.com/jitsi/react-native-dialog/releases/download/v9.2.2-jitsi.1/react-native-dialog-9.2.2.tgz",
     "react-native-gesture-handler": "2.1.0",
     "react-native-get-random-values": "1.7.2",
     "react-native-immersive": "2.0.0",

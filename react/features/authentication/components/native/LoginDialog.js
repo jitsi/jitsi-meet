@@ -1,7 +1,5 @@
-/* @flow */
-
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 import Dialog from 'react-native-dialog';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
@@ -45,11 +43,6 @@ type Props = {
     _error: Object,
 
     /**
-     * Extra handler for cancel functionality.
-     */
-    _onCancel: Function,
-
-    /**
      * The progress in the floating range between 0 and 1 of the authenticating
      * and upgrading the role of the local participant/user.
      */
@@ -68,12 +61,7 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-
-    /**
-     * Override the default visibility.
-     */
-    visible: boolean
+    t: Function
 };
 
 /**
@@ -120,10 +108,6 @@ type State = {
  * of the configuration parameters.
  */
 class LoginDialog extends Component<Props, State> {
-    static defaultProps = {
-        visible: true
-    };
-
     /**
      * Initializes a new LoginDialog instance.
      *
@@ -154,42 +138,40 @@ class LoginDialog extends Component<Props, State> {
     render() {
         const {
             _connecting: connecting,
-            t,
-            visible
+            t
         } = this.props;
 
         return (
-            <View>
-                <Dialog.Container
-                    visible = { visible }>
-                    <Dialog.Title>
-                        { t('dialog.login') }
-                    </Dialog.Title>
-                    <Dialog.Input
-                        autoCapitalize = { 'none' }
-                        autoCorrect = { false }
-                        onChangeText = { this._onUsernameChange }
-                        placeholder = { 'user@domain.com' }
-                        spellCheck = { false }
-                        value = { this.state.username } />
-                    <Dialog.Input
-                        autoCapitalize = { 'none' }
-                        onChangeText = { this._onPasswordChange }
-                        placeholder = { t('dialog.userPassword') }
-                        secureTextEntry = { true }
-                        value = { this.state.password } />
-                    <Dialog.Description>
-                        { this._renderMessage() }
-                    </Dialog.Description>
-                    <Dialog.Button
-                        label = { t('dialog.Cancel') }
-                        onPress = { this._onCancel } />
-                    <Dialog.Button
-                        disabled = { connecting }
-                        label = { t('dialog.Ok') }
-                        onPress = { this._onLogin } />
-                </Dialog.Container>
-            </View>
+            <Dialog.Container
+                coverScreen = { false }
+                visible = { true }>
+                <Dialog.Title>
+                    { t('dialog.login') }
+                </Dialog.Title>
+                <Dialog.Input
+                    autoCapitalize = { 'none' }
+                    autoCorrect = { false }
+                    onChangeText = { this._onUsernameChange }
+                    placeholder = { 'user@domain.com' }
+                    spellCheck = { false }
+                    value = { this.state.username } />
+                <Dialog.Input
+                    autoCapitalize = { 'none' }
+                    onChangeText = { this._onPasswordChange }
+                    placeholder = { t('dialog.userPassword') }
+                    secureTextEntry = { true }
+                    value = { this.state.password } />
+                <Dialog.Description>
+                    { this._renderMessage() }
+                </Dialog.Description>
+                <Dialog.Button
+                    label = { t('dialog.Cancel') }
+                    onPress = { this._onCancel } />
+                <Dialog.Button
+                    disabled = { connecting }
+                    label = { t('dialog.Ok') }
+                    onPress = { this._onLogin } />
+            </Dialog.Container>
         );
     }
 
@@ -256,8 +238,6 @@ class LoginDialog extends Component<Props, State> {
         return null;
     }
 
-    _onUsernameChange: (string) => void;
-
     /**
      * Called when user edits the username.
      *
@@ -270,8 +250,6 @@ class LoginDialog extends Component<Props, State> {
             username: text.trim()
         });
     }
-
-    _onPasswordChange: (string) => void;
 
     /**
      * Called when user edits the password.
@@ -286,8 +264,6 @@ class LoginDialog extends Component<Props, State> {
         });
     }
 
-    _onCancel: () => void;
-
     /**
      * Notifies this LoginDialog that it has been dismissed by cancel.
      *
@@ -295,13 +271,8 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onCancel() {
-        const { _onCancel, dispatch } = this.props;
-
-        _onCancel && _onCancel();
-        dispatch(cancelLogin());
+        this.props.dispatch(cancelLogin());
     }
-
-    _onLogin: () => void;
 
     /**
      * Notifies this LoginDialog that the login button (OK) has been pressed by
