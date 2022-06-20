@@ -6,11 +6,7 @@ import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appNavigate } from '../../../app/actions';
 import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
-import {
-    getLocalParticipant,
-    getParticipantCount,
-    getParticipantDisplayName
-} from '../../../base/participants';
+import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -32,7 +28,7 @@ import { getIsLobbyVisible } from '../../../lobby/functions';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture';
+import { shouldAutoKnock, isDisplayNameRequired } from '../../../prejoin';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -91,6 +87,11 @@ type Props = AbstractProps & {
     _fullscreenEnabled: boolean,
 
     /**
+     * The indicator which determines if display name is required.
+     */
+    _isDisplayNameRequired: boolean,
+
+    /**
      * The indicator which determines if the conference type is one to one.
      */
     _isOneToOneConference: boolean,
@@ -125,6 +126,11 @@ type Props = AbstractProps & {
      * The indicator which determines whether the Toolbox is visible.
      */
     _toolboxVisible: boolean,
+
+    /**
+     * Indicates if we should auto-knock in case lobby is enabled for the room.
+     */
+    _shouldAutoKnock: boolean,
 
     /**
      * Indicates whether the lobby screen should be visible.
@@ -190,7 +196,6 @@ class Conference extends AbstractConference<Props, State> {
      */
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
-        setPictureInPictureEnabled(true);
     }
 
     /**
@@ -200,14 +205,20 @@ class Conference extends AbstractConference<Props, State> {
      */
     componentDidUpdate(prevProps) {
         const {
-            _localParticipantDisplayName,
+            _isDisplayNameRequired,
+            _shouldAutoKnock,
             _showLobby,
             dispatch
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
             navigate(screen.lobby.root);
-            _localParticipantDisplayName !== 'me' && dispatch(startKnocking());
+
+            // Prejoin is the first screen, and we can't pass that if
+            // _isDisplayNameRequired and a displayName is not set
+            if (_isDisplayNameRequired && _shouldAutoKnock) {
+                dispatch(startKnocking());
+            }
         }
 
         if (prevProps._showLobby && !_showLobby) {
@@ -228,7 +239,6 @@ class Conference extends AbstractConference<Props, State> {
         BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         clearTimeout(this._expandedLabelTimeout.current);
-        setPictureInPictureEnabled(false);
     }
 
     /**
@@ -536,7 +546,6 @@ function _mapStateToProps(state) {
     const brandingStyles = backgroundColor ? {
         backgroundColor
     } : undefined;
-    const localParticipant = getLocalParticipant(state);
 
     return {
         ...abstractMapStateToProps(state),
@@ -546,12 +555,13 @@ function _mapStateToProps(state) {
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
+        _isDisplayNameRequired: isDisplayNameRequired(state),
         _isOneToOneConference: Boolean(participantCount === 2),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
-        _localParticipantDisplayName: getParticipantDisplayName(state, localParticipant.id),
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
+        _shouldAutoKnock: shouldAutoKnock(state),
         _showLobby: getIsLobbyVisible(state),
         _toolboxVisible: isToolboxVisible(state)
     };

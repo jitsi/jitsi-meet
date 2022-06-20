@@ -88,16 +88,16 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         );
     }, []);
 
+    const joinButtonStyles = displayName
+        ? styles.primaryButton : styles.primaryButtonDisabled;
+    const joinButtonDisabled = !displayName && isDisplayNameMandatory;
+
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', goBack);
 
         return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
 
     }, [ ]);
-
-    const joinButtonStyles = displayName
-        ? styles.primaryButton : styles.primaryButtonDisabled;
-    const joinButtonDisabled = !displayName && isDisplayNameMandatory;
 
     useLayoutEffect(() => {
         navigation.setOptions({
