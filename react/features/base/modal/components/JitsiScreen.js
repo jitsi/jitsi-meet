@@ -1,7 +1,7 @@
 // @flow
 
-import React, { useCallback } from 'react';
-import { Keyboard, View } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { StyleType } from '../../styles';
@@ -62,32 +62,24 @@ const JitsiScreen = ({
     isModalPresentation = true,
     safeAreaInsets = [ 'left', 'right' ],
     style
-}: Props) => {
-    // Tells the view what to do with taps
-    const shouldSetResponse = useCallback(() => true);
-    const onRelease = useCallback(() => Keyboard.dismiss());
-
-    return (
-        <View
-            onResponderRelease = { onRelease }
-            onStartShouldSetResponder = { shouldSetResponse }
-            style = { styles.jitsiScreenContainer }>
-            <JitsiKeyboardAvoidingView
-                contentContainerStyle = { contentContainerStyle }
-                hasBottomTextInput = { hasBottomTextInput }
-                hasTabNavigator = { hasTabNavigator }
-                isModalPresentation = { isModalPresentation }
-                style = { style }>
-                <SafeAreaView
-                    edges = { safeAreaInsets }
-                    style = { styles.safeArea }>
-                    {children}
-                </SafeAreaView>
-                {footerComponent && footerComponent()}
-            </JitsiKeyboardAvoidingView>
-        </View>
-    );
-};
+}: Props) => (
+    <View
+        style = { styles.jitsiScreenContainer }>
+        <JitsiKeyboardAvoidingView
+            contentContainerStyle = { contentContainerStyle }
+            hasBottomTextInput = { hasBottomTextInput }
+            hasTabNavigator = { hasTabNavigator }
+            isModalPresentation = { isModalPresentation }
+            style = { style }>
+            <SafeAreaView
+                edges = { safeAreaInsets }
+                style = { styles.safeArea }>
+                {children}
+            </SafeAreaView>
+            {footerComponent && footerComponent()}
+        </JitsiKeyboardAvoidingView>
+    </View>
+);
 
 
 export default JitsiScreen;

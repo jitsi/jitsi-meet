@@ -1,8 +1,9 @@
 // @flow
 
 import { getDefaultHeaderHeight } from '@react-navigation/elements';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     StatusBar
@@ -78,6 +79,10 @@ const JitsiKeyboardAvoidingView = (
     const androidVerticalOffset = hasBottomTextInput
         ? deviceHeight + StatusBar.currentHeight : deviceHeight;
 
+    // Tells the view what to do with taps
+    const shouldSetResponse = useCallback(() => true);
+    const onRelease = useCallback(() => Keyboard.dismiss());
+
     return (
         <KeyboardAvoidingView
             behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
@@ -88,6 +93,8 @@ const JitsiKeyboardAvoidingView = (
                     ? iosVerticalOffset
                     : androidVerticalOffset
             }
+            onResponderRelease = { onRelease }
+            onStartShouldSetResponder = { shouldSetResponse }
             style = { style }>
             { children }
         </KeyboardAvoidingView>
