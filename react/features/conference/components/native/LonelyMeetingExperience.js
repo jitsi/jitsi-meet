@@ -1,15 +1,11 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { getFeatureFlag, INVITE_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { Icon, IconAddPeople } from '../../../base/icons';
 import { getParticipantCountWithFake } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 
@@ -34,11 +30,6 @@ type Props = {
      * True if it's a lonely meeting (participant count excluding fakes is 1).
      */
     _isLonelyMeeting: boolean,
-
-    /**
-     * Color schemed styles of the component.
-     */
-    _styles: StyleType,
 
     /**
      * The Redux Dispatch function.
@@ -76,7 +67,6 @@ class LonelyMeetingExperience extends PureComponent<Props> {
             _isInBreakoutRoom,
             _isInviteFunctionsDiabled,
             _isLonelyMeeting,
-            _styles,
             t
         } = this.props;
 
@@ -86,29 +76,18 @@ class LonelyMeetingExperience extends PureComponent<Props> {
 
         return (
             <View style = { styles.lonelyMeetingContainer }>
-                <Text
-                    style = { [
-                        styles.lonelyMessage,
-                        _styles.lonelyMessage
-                    ] }>
+                <Text style = { styles.lonelyMessage }>
                     { t('lonelyMeetingExperience.youAreAlone') }
                 </Text>
                 { !_isInviteFunctionsDiabled && !_isInBreakoutRoom && (
                     <TouchableOpacity
                         onPress = { this._onPress }
-                        style = { [
-                            styles.lonelyButton,
-                            _styles.lonelyButton
-                        ] }>
+                        style = { styles.lonelyButton }>
                         <Icon
                             size = { 24 }
                             src = { IconAddPeople }
                             style = { styles.lonelyButtonComponents } />
-                        <Text
-                            style = { [
-                                styles.lonelyButtonComponents,
-                                _styles.lonelyMessage
-                            ] }>
+                        <Text style = { styles.lonelyButtonComponents }>
                             { t('lonelyMeetingExperience.button') }
                         </Text>
                     </TouchableOpacity>
@@ -116,8 +95,6 @@ class LonelyMeetingExperience extends PureComponent<Props> {
             </View>
         );
     }
-
-    _onPress: () => void;
 
     /**
      * Callback for the onPress function of the button.
@@ -136,7 +113,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state): $Shape<Props> {
+function _mapStateToProps(state) {
     const { disableInviteFunctions } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const flag = getFeatureFlag(state, INVITE_ENABLED, true);
@@ -145,8 +122,7 @@ function _mapStateToProps(state): $Shape<Props> {
     return {
         _isInBreakoutRoom,
         _isInviteFunctionsDiabled: !flag || disableInviteFunctions,
-        _isLonelyMeeting: conference && getParticipantCountWithFake(state) === 1,
-        _styles: ColorSchemeRegistry.get(state, 'Conference')
+        _isLonelyMeeting: conference && getParticipantCountWithFake(state) === 1
     };
 }
 

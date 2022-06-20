@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
 import Dialog from 'react-native-dialog';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { toJid } from '../../../base/connection';
 import { connect } from '../../../base/connection/actions.native';
 import { _abstractMapStateToProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
-import type { StyleType } from '../../../base/styles';
 import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.native';
-
-// Register styles.
-import './styles';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -47,11 +41,6 @@ type Props = {
      * and upgrading the role of the local participant/user.
      */
     _progress: number,
-
-    /**
-     * The color-schemed stylesheet of this feature.
-     */
-    _styles: StyleType,
 
     /**
      * Redux store dispatch method.
@@ -186,12 +175,10 @@ class LoginDialog extends Component<Props, State> {
             _connecting: connecting,
             _error: error,
             _progress: progress,
-            _styles: styles,
             t
         } = this.props;
 
         let messageKey;
-        let messageIsError = false;
         const messageOptions = {};
 
         if (progress && progress < 1) {
@@ -212,27 +199,17 @@ class LoginDialog extends Component<Props, State> {
                                 this.props._configHosts)
                         && credentials.password === this.state.password) {
                     messageKey = 'dialog.incorrectPassword';
-                    messageIsError = true;
                 }
             } else if (name) {
                 messageKey = 'dialog.connectErrorWithMsg';
                 messageOptions.msg = `${name} ${error.message}`;
-                messageIsError = true;
             }
         } else if (connecting) {
             messageKey = 'connection.CONNECTING';
         }
 
         if (messageKey) {
-            const message = t(messageKey, messageOptions);
-            const messageStyles
-                = messageIsError ? styles.errorMessage : styles.progressMessage;
-
-            return (
-                <Text style = { messageStyles }>
-                    { message }
-                </Text>
-            );
+            return t(messageKey, messageOptions);
         }
 
         return null;
@@ -326,8 +303,7 @@ function _mapStateToProps(state) {
         _configHosts: configHosts,
         _connecting: Boolean(connecting) || Boolean(thenableWithCancel),
         _error: connectionError || authenticateAndUpgradeRoleError,
-        _progress: progress,
-        _styles: ColorSchemeRegistry.get(state, 'LoginDialog')
+        _progress: progress
     };
 }
 
