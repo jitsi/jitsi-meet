@@ -76,12 +76,12 @@ export default {
     },
 
     contentContainer: {
-        alignItems: 'center',
+        alignSelf: 'center',
         display: 'flex',
         justifyContent: 'center',
         minHeight: '50%',
         paddingHorizontal: BaseTheme.spacing[3],
-        maxWidth: 400
+        width: 500
     },
 
     contentContainerWide: {
