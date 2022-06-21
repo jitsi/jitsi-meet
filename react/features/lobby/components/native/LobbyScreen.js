@@ -58,6 +58,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
         return (
             <JitsiScreen
+                safeAreaInsets = { [ 'left' ] }
                 style = { contentWrapperStyles }>
                 <BrandingImageBackground />
                 <View style = { largeVideoContainerStyles }>

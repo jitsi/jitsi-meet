@@ -74,9 +74,9 @@ const JitsiScreen = ({
             <SafeAreaView
                 edges = { safeAreaInsets }
                 style = { styles.safeArea }>
-                { children }
+                {children}
             </SafeAreaView>
-            { footerComponent && footerComponent() }
+            {footerComponent && footerComponent()}
         </JitsiKeyboardAvoidingView>
     </View>
 );

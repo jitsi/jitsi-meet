@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+
 import { appNavigate } from '../../app/actions';
 import {
     getFeatureFlag,
     PREJOIN_PAGE_ENABLED
 } from '../../base/flags';
 import { IconClose } from '../../base/icons';
+import { toState } from '../../base/redux';
 import { cancelKnocking } from '../../lobby/actions.native';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
@@ -48,7 +50,7 @@ export function screenHeaderCloseButton(goBack: Function) {
  * {@code true}; otherwise, {@code false}.
  */
 export function isPrejoinPageEnabled(stateful: Function | Object) {
-    return getFeatureFlag(stateful, PREJOIN_PAGE_ENABLED, true);
+    return getFeatureFlag(toState(stateful), PREJOIN_PAGE_ENABLED, true);
 }
 
 /**
@@ -77,4 +79,24 @@ export function lobbyScreenHeaderCloseButton() {
             onPress = { goBack }
             src = { IconClose } />
     );
+}
+
+/**
+ * Returns true if we should auto-knock in case prejoin is enabled for the room.
+ *
+ * @param {Function|Object} stateful - The redux state or {@link getState}
+ * function.
+ * @returns {boolean}
+ */
+export function shouldEnableAutoKnock(stateful: Function | Object) {
+    const state = toState(stateful);
+    const { displayName } = state['features/base/settings'];
+
+    if (isPrejoinPageEnabled(state)) {
+        if (displayName) {
+            return true;
+        }
+    } else {
+        return false;
+    }
 }

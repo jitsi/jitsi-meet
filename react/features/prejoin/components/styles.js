@@ -23,6 +23,10 @@ export default {
         backgroundColor: BaseTheme.palette.action01
     },
 
+    primaryButtonDisabled: {
+        backgroundColor: BaseTheme.palette.action03Disabled,
+        marginTop: BaseTheme.spacing[4]
+    },
 
     primaryButtonText: {
         ...btnText
@@ -49,7 +53,8 @@ export default {
             marginHorizontal: BaseTheme.spacing[3],
             height: 24,
             width: 24
-        }
+        },
+        underlayColor: 'transparent'
     },
 
     contentWrapper: {
@@ -73,18 +78,20 @@ export default {
     },
 
     contentContainer: {
-        alignItems: 'center',
+        alignSelf: 'center',
         display: 'flex',
         justifyContent: 'center',
-        minHeight: '50%'
+        minHeight: '50%',
+        paddingHorizontal: BaseTheme.spacing[3],
+        width: 400
     },
 
     contentContainerWide: {
+        alignItems: 'center',
         height: '100%',
         justifyContent: 'center',
         left: '50%',
-        marginHorizontal: BaseTheme.spacing[6],
-        marginVertical: BaseTheme.spacing[3],
+        paddingHorizontal: BaseTheme.spacing[3],
         position: 'absolute',
         width: '50%'
     },
@@ -115,7 +122,7 @@ export default {
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
         height: BaseTheme.spacing[7],
-        marginTop: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[3],
         textAlign: 'center'
     }
 };
