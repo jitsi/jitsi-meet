@@ -53,7 +53,7 @@ export default {
     },
 
     contentWrapper: {
-        flex: 1
+        flex: 1,
     },
 
     contentWrapperWide: {

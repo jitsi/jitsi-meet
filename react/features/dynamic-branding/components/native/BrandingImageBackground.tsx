@@ -33,8 +33,10 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
             = (
                 <SvgUri
                     height = '100%'
+                    preserveAspectRatio = 'none'
                     style = { styles.brandingImageBackgroundSvg }
                     uri = { imgSrc }
+                    viewBox = '0 0 700 660'
                     width = '100%' />
             );
     } else {
