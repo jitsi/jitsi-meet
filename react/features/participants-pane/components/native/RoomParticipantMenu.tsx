@@ -3,18 +3,14 @@ import { Text, View } from 'react-native';
 
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 // @ts-ignore
-import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-// @ts-ignore
-import { StyleType } from '../../../base/styles';
 import { getBreakoutRooms } from '../../../breakout-rooms/functions';
 import SendToBreakoutRoom from '../../../video-menu/components/native/SendToBreakoutRoom';
 import styles from '../../../video-menu/components/native/styles';
-import { hideRoomParticipantMenu } from '../../actions.native';
-
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 
 /**
  * Size of the rendered avatar in the menu.
@@ -22,16 +18,6 @@ import { hideRoomParticipantMenu } from '../../actions.native';
 const AVATAR_SIZE = 24;
 
 type Props = {
-
-    /**
-     * The color-schemed stylesheet of the BottomSheet.
-     */
-    _bottomSheetStyles: StyleType,
-
-    /**
-     * True if the menu is currently open, false otherwise.
-     */
-    _isOpen: boolean,
 
     /**
      * The list of all breakout rooms.
@@ -64,9 +50,6 @@ type Props = {
     t: Function
 }
 
-// eslint-disable-next-line prefer-const
-let RoomParticipantMenu_;
-
 /**
  * Class to implement a popup menu that opens upon long pressing a thumbnail.
  */
@@ -89,17 +72,16 @@ class RoomParticipantMenu extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _bottomSheetStyles, _rooms, participantJid, room, t } = this.props;
+        const { _rooms, participantJid, room, t } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participantJid,
-            styles: _bottomSheetStyles.buttons
+            styles: bottomSheetStyles.buttons
         };
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { true }>
                 <View style = { styles.contextMenuItem }>
@@ -122,13 +104,7 @@ class RoomParticipantMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideRoomParticipantMenu());
-
-            return true;
-        }
-
-        return false;
+        this.props.dispatch(hideSheet());
     }
 
     /**
@@ -137,12 +113,12 @@ class RoomParticipantMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participantName } = this.props;
+        const { participantName } = this.props;
 
         return (
             <View
                 style = { [
-                    _bottomSheetStyles.sheet,
+                    bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
                     displayName = { participantName }
@@ -164,12 +140,8 @@ class RoomParticipantMenu extends PureComponent<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _isOpen: isDialogOpen(state, RoomParticipantMenu_),
         _rooms: Object.values(getBreakoutRooms(state))
     };
 }
 
-RoomParticipantMenu_ = translate(connect(_mapStateToProps)(RoomParticipantMenu));
-
-export default RoomParticipantMenu_;
+export default translate(connect(_mapStateToProps)(RoomParticipantMenu));

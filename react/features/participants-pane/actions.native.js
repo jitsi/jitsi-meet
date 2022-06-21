@@ -1,6 +1,6 @@
 import type { Dispatch } from 'redux';
 
-import { openSheet, hideSheet } from '../base/dialog';
+import { openSheet } from '../base/dialog';
 import { SharedVideoMenu } from '../video-menu';
 import { LocalVideoMenu } from '../video-menu/components/native';
 import ConnectionStatusComponent
@@ -95,13 +95,4 @@ export function showRoomParticipantMenu(room: Object, participantJid: string, pa
     return openSheet(RoomParticipantMenu, { room,
         participantJid,
         participantName });
-}
-
-/**
- * Hides the breakout room participant menu.
- *
- * @returns {Function}
- */
-export function hideRoomParticipantMenu() {
-    return hideSheet();
 }
