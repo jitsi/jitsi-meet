@@ -3,9 +3,7 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
 
-import { redirectToTokenAuthService } from './modules/UI/authentication/AuthHandler';
 import { LoginDialog } from './react/features/authentication/components';
-import { isTokenAuthEnabled } from './react/features/authentication/functions';
 import {
     connectionEstablished,
     connectionFailed,
@@ -235,13 +233,7 @@ export function openConnection({ id, password, retry, roomName }) {
  * @returns {Promise<JitsiConnection>}
  */
 function requestAuth(roomName) {
-    const config = APP.store.getState()['features/base/config'];
-
-    if (isTokenAuthEnabled(config)) {
-        // This Promise never resolves as user gets redirected to another URL
-        return new Promise(() => redirectToTokenAuthService(roomName));
-    }
-
+    // TODO: too similar with the function in AuthHandler, unify.
     return new Promise(resolve => {
         const onSuccess = connection => {
             resolve(connection);

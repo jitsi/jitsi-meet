@@ -8,7 +8,6 @@ import { openConnection } from './connection';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from './modules/UI/UIErrors';
 import AuthHandler from './modules/UI/authentication/AuthHandler';
-import UIUtil from './modules/UI/util/UIUtil';
 import VideoLayout from './modules/UI/videolayout/VideoLayout';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
@@ -2498,12 +2497,9 @@ export default {
 
         // logout
         APP.UI.addListener(UIEvents.LOGOUT, () => {
-            AuthHandler.logout(room).then(url => {
-                if (url) {
-                    UIUtil.redirect(url);
-                } else {
-                    this.hangup(true);
-                }
+            AuthHandler.logout(room).then(() => {
+                // TODO: here we just hangup, maybe that's all we should do?!
+                this.hangup(true);
             });
         });
 

@@ -1234,7 +1234,6 @@ var config = {
      peopleSearchQueryTypes
      peopleSearchUrl
      requireDisplayName
-     tokenAuthUrl
      */
 
     /**
