@@ -1696,6 +1696,19 @@ class API {
     }
 
     /**
+     * Notify the external application that the state of the participants pane changed.
+     *
+     * @param {boolean} open - Wether the panel is open or not.
+     * @returns {void}
+     */
+    notifyParticipantsPaneToggled(open) {
+        this._sendEvent({
+            name: 'participants-pane-toggled',
+            open
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}
