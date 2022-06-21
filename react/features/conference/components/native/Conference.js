@@ -27,8 +27,8 @@ import { KnockingParticipantList } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { shouldEnableAutoKnock } from '../../../mobile/navigation/functions';
 import { screen } from '../../../mobile/navigation/routes';
-import { shouldAutoKnock, isDisplayNameRequired } from '../../../prejoin';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -87,11 +87,6 @@ type Props = AbstractProps & {
     _fullscreenEnabled: boolean,
 
     /**
-     * The indicator which determines if display name is required.
-     */
-    _isDisplayNameRequired: boolean,
-
-    /**
      * The indicator which determines if the conference type is one to one.
      */
     _isOneToOneConference: boolean,
@@ -128,9 +123,9 @@ type Props = AbstractProps & {
     _toolboxVisible: boolean,
 
     /**
-     * Indicates if we should auto-knock in case lobby is enabled for the room.
+     * Indicates if we should auto-knock.
      */
-    _shouldAutoKnock: boolean,
+    _shouldEnableAutoKnock: boolean,
 
     /**
      * Indicates whether the lobby screen should be visible.
@@ -205,8 +200,7 @@ class Conference extends AbstractConference<Props, State> {
      */
     componentDidUpdate(prevProps) {
         const {
-            _isDisplayNameRequired,
-            _shouldAutoKnock,
+            _shouldEnableAutoKnock,
             _showLobby,
             dispatch
         } = this.props;
@@ -214,9 +208,7 @@ class Conference extends AbstractConference<Props, State> {
         if (!prevProps._showLobby && _showLobby) {
             navigate(screen.lobby.root);
 
-            // Prejoin is the first screen, and we can't pass that if
-            // _isDisplayNameRequired and a displayName is not set
-            if (_isDisplayNameRequired && _shouldAutoKnock) {
+            if (_shouldEnableAutoKnock) {
                 dispatch(startKnocking());
             }
         }
@@ -555,13 +547,12 @@ function _mapStateToProps(state) {
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
-        _isDisplayNameRequired: isDisplayNameRequired(state),
         _isOneToOneConference: Boolean(participantCount === 2),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
-        _shouldAutoKnock: shouldAutoKnock(state),
+        _shouldEnableAutoKnock: shouldEnableAutoKnock(state),
         _showLobby: getIsLobbyVisible(state),
         _toolboxVisible: isToolboxVisible(state)
     };
