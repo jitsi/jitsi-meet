@@ -169,24 +169,6 @@ let room;
 let connection;
 
 /**
- * The promise is used when the prejoin screen is shown.
- * While the user configures the devices the connection can be made.
- *
- * @type {Promise<Object>}
- * @private
- */
-let _connectionPromise;
-
-/**
- * We are storing the resolve function of a Promise that waits for the _connectionPromise to be created. This is needed
- * when the prejoin button was pressed before the conference object was initialized and the _connectionPromise has not
- * been initialized when we tried to execute prejoinStart. In this case in prejoinStart we create a new Promise, assign
- * the resolve function to this variable and wait for the promise to resolve before we continue. The
- * _onConnectionPromiseCreated will be called once the _connectionPromise is created.
- */
-let _onConnectionPromiseCreated;
-
-/**
  * This promise is used for chaining mutePresenterVideo calls in order to avoid  calling GUM multiple times if it takes
  * a while to finish.
  *
@@ -822,17 +804,7 @@ export default {
         };
 
         if (isPrejoinPageVisible(APP.store.getState())) {
-            _connectionPromise = connect(roomName).then(c => {
-                // we want to initialize it early, in case of errors to be able
-                // to gather logs
-                APP.connection = c;
-
-                return c;
-            });
-
-            if (_onConnectionPromiseCreated) {
-                _onConnectionPromiseCreated();
-            }
+            // TODO: reconsider creating the XMPP connection early here.
 
             APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
 
@@ -883,18 +855,9 @@ export default {
      * @returns {void}
      */
     async prejoinStart(tracks) {
-        if (!_connectionPromise) {
-            // The conference object isn't initialized yet. Wait for the promise to initialise.
-            await new Promise(resolve => {
-                _onConnectionPromiseCreated = resolve;
-            });
-            _onConnectionPromiseCreated = undefined;
-        }
-
-        let con;
-
         try {
-            con = await _connectionPromise;
+            const con = await connect(this.roomName);
+
             this.startConference(con, tracks);
         } catch (error) {
             logger.error(`An error occurred while trying to join a meeting from the prejoin screen: ${error}`);
