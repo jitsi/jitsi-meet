@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator, TintedView } from '../../../../base/react';
 import { isLocalVideoTrackDesktop } from '../../../../base/tracks';
-import { setPictureInPictureDisabled } from '../../../../mobile/picture-in-picture/functions';
+import { setPictureInPictureEnabled } from '../../../../mobile/picture-in-picture/functions';
 import { setIsCarmode } from '../../../../video-layout/actions';
 import ConferenceTimer from '../../ConferenceTimer';
 import { isConnecting } from '../../functions';
@@ -31,12 +31,12 @@ const CarmodeTab = (): JSX.Element => {
 
     useEffect(() => {
         dispatch(setIsCarmode(true));
-        setPictureInPictureDisabled(true);
+        setPictureInPictureEnabled(false);
 
         return () => {
             dispatch(setIsCarmode(false));
             if (!isSharing) {
-                setPictureInPictureDisabled(false);
+                setPictureInPictureEnabled(true);
             }
         };
     }, []);

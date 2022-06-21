@@ -1,6 +1,6 @@
 // @flow
 
-import { setPictureInPictureDisabled } from '../../mobile/picture-in-picture/functions';
+import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
 import { setAudioOnly } from '../audio-only';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
@@ -41,7 +41,7 @@ function _toggleScreenSharing(enabled, store) {
         }
     } else {
         dispatch(destroyLocalDesktopTrackIfExists());
-        setPictureInPictureDisabled(false);
+        setPictureInPictureEnabled(true);
     }
 }
 
@@ -54,7 +54,7 @@ function _toggleScreenSharing(enabled, store) {
  * @returns {void}
  */
 function _startScreenSharing(dispatch, state) {
-    setPictureInPictureDisabled(true);
+    setPictureInPictureEnabled(false);
 
     JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })
     .then(tracks => {
@@ -73,6 +73,6 @@ function _startScreenSharing(dispatch, state) {
     .catch(error => {
         console.log('ERROR creating ScreeSharing stream ', error);
 
-        setPictureInPictureDisabled(false);
+        setPictureInPictureEnabled(true);
     });
 }

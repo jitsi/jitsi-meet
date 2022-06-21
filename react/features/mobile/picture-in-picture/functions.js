@@ -5,13 +5,13 @@ import { NativeModules } from 'react-native';
 /**
  * Enabled/Disables the PictureInPicture mode in PiP native module.
  *
- * @param {boolean} disabled - Whether the PiP mode should be disabled.
+ * @param {boolean} enabled - Whether the PiP mode should be enabled.
  * @returns {void}
  */
-export function setPictureInPictureDisabled(disabled: boolean) {
+export function setPictureInPictureEnabled(enabled: boolean) {
     const { PictureInPicture } = NativeModules;
 
     if (PictureInPicture) {
-        PictureInPicture.setPictureInPictureDisabled(disabled);
+        PictureInPicture.setPictureInPictureEnabled(enabled);
     }
 }
