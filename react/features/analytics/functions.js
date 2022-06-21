@@ -2,6 +2,7 @@
 
 import { API_ID } from '../../../modules/API/constants';
 import { getName as getAppName } from '../app/functions';
+import { getAnalyticsRoomName } from '../base/conference';
 import {
     checkChromeExtensionsInstalled,
     isMobileBrowser
@@ -155,7 +156,9 @@ export async function createHandlers({ getState }: { getState: Function }) {
  * @param {Array<Object>} handlers - The analytics handlers.
  * @returns {void}
  */
-export function initAnalytics({ getState }: { getState: Function }, handlers: Array<Object>) {
+export function initAnalytics(store: Store, handlers: Array<Object>) {
+    const { getState, dispatch } = store;
+
     if (!isAnalyticsEnabled(getState) || handlers.length === 0) {
         return;
     }
@@ -166,7 +169,6 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
         deploymentInfo
     } = config;
     const { group, server } = state['features/base/jwt'];
-    const roomName = state['features/base/conference'].room;
     const { locationURL = {} } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
     const permanentProperties = {};
@@ -204,7 +206,7 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
     }
 
     analytics.addPermanentProperties(permanentProperties);
-    analytics.setConferenceName(roomName);
+    analytics.setConferenceName(getAnalyticsRoomName(state, dispatch));
 
     // Set the handlers last, since this triggers emptying of the cache
     analytics.setAnalyticsHandlers(handlers);
