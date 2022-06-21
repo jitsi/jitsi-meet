@@ -27,4 +27,4 @@ MiddlewareRegistry.register((store: IStore) => (next:Function) => (action:any) =
             break;
     }
     return next(action);
-})
+});
