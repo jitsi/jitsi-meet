@@ -33,8 +33,16 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
             = (
                 <SvgUri
                     height = '100%'
+
+                    // Force uniform scaling.
+                    // Align the <min-x> of the element's viewBox
+                    // with the smallest X value of the viewport.
+                    // Align the <min-y> of the element's viewBox
+                    // with the smallest Y value of the viewport.
+                    preserveAspectRatio = 'xMinYMin'
                     style = { styles.brandingImageBackgroundSvg }
                     uri = { imgSrc }
+                    viewBox = '0 0 400 650'
                     width = '100%' />
             );
     } else {
