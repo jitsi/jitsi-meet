@@ -126,6 +126,7 @@ const events = {
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
     'participant-role-changed': 'participantRoleChanged',
+    'participants-pane-toggled': 'participantsPaneToggled',
     'password-required': 'passwordRequired',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
