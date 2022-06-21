@@ -160,6 +160,11 @@ static void initializeViewsMap() {
     [externalAPI sendSetVideoMuted:muted];
 }
 
+- (void)setClosedCaptionsEnabled:(BOOL)enabled {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetClosedCaptionsEnabled:enabled];
+}
+
 #pragma mark Private methods
 
 /**

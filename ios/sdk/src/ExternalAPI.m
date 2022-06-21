@@ -27,6 +27,7 @@ static NSString * const openChatAction = @"org.jitsi.meet.OPEN_CHAT";
 static NSString * const closeChatAction = @"org.jitsi.meet.CLOSE_CHAT";
 static NSString * const sendChatMessageAction = @"org.jitsi.meet.SEND_CHAT_MESSAGE";
 static NSString * const setVideoMutedAction = @"org.jitsi.meet.SET_VIDEO_MUTED";
+static NSString * const setClosedCaptionsEnabledAction = @"org.jitsi.meet.SET_CLOSED_CAPTIONS_ENABLED";
 
 @implementation ExternalAPI
 
@@ -49,7 +50,8 @@ RCT_EXPORT_MODULE();
         @"OPEN_CHAT": openChatAction,
         @"CLOSE_CHAT": closeChatAction,
         @"SEND_CHAT_MESSAGE": sendChatMessageAction,
-        @"SET_VIDEO_MUTED" : setVideoMutedAction
+        @"SET_VIDEO_MUTED" : setVideoMutedAction,
+        @"SET_CLOSED_CAPTIONS_ENABLED": setClosedCaptionsEnabledAction
     };
 };
 
@@ -73,7 +75,8 @@ RCT_EXPORT_MODULE();
               openChatAction,
               closeChatAction,
               sendChatMessageAction,
-              setVideoMutedAction
+              setVideoMutedAction,
+              setClosedCaptionsEnabledAction
     ];
 }
 
@@ -205,5 +208,10 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:setVideoMutedAction body:data];
 }
 
+- (void)sendSetClosedCaptionsEnabled:(BOOL)enabled {
+    NSDictionary *data = @{ @"enabled": [NSNumber numberWithBool:enabled]};
+
+    [self sendEventWithName:setClosedCaptionsEnabledAction body:data];
+}
 
 @end
