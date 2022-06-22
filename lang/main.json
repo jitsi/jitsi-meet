@@ -765,11 +765,11 @@
         },
         "results": {
             "changeVote": "Change vote",
-            "showPoll": "Show poll",
-            "hidePoll": "Hide poll",
             "empty": "There are no polls in the meeting yet. Start a poll here!",
             "hideDetailedResults": "Hide details",
+            "hidePoll": "Hide poll",
             "showDetailedResults": "Show details",
+            "showPoll": "Show poll",
             "vote": "Vote"
         }
     },
