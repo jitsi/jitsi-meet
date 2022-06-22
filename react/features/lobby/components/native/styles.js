@@ -15,18 +15,17 @@ export default {
 
     buttonStylesBorderless: {
         iconStyle: {
-            backgroundColor: 'transparent',
             color: BaseTheme.palette.icon01,
             fontSize: 24
         },
         style: {
-            backgroundColor: 'transparent',
             flexDirection: 'row',
             justifyContent: 'center',
             marginHorizontal: BaseTheme.spacing[3],
             height: 24,
             width: 24
-        }
+        },
+        underlayColor: 'transparent'
     },
 
     lobbyChatWrapper: {
@@ -70,25 +69,27 @@ export default {
     },
 
     largeVideoContainerWide: {
-        position: 'absolute',
-        marginRight: 'auto',
         height: '100%',
+        marginRight: 'auto',
+        position: 'absolute',
         width: '50%'
     },
 
     contentContainer: {
+        alignSelf: 'center',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '50%'
+        minHeight: '50%',
+        paddingHorizontal: BaseTheme.spacing[3],
+        width: 400
     },
 
     contentContainerWide: {
-        justifyContent: 'center',
-        marginHorizontal: BaseTheme.spacing[6],
-        marginVertical: BaseTheme.spacing[3],
+        alignItems: 'center',
         height: '100%',
+        justifyContent: 'center',
         left: '50%',
+        paddingHorizontal: BaseTheme.spacing[3],
         position: 'absolute',
         width: '50%'
     },
@@ -124,7 +125,7 @@ export default {
 
     formWrapper: {
         alignSelf: 'stretch',
-        marginTop: 45
+        justifyContent: 'center'
     },
 
     field: {
@@ -134,7 +135,8 @@ export default {
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
         height: BaseTheme.spacing[7],
-        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[3],
+        marginHorizontal: 12,
         padding: BaseTheme.spacing[2],
         textAlign: 'center'
     },
@@ -184,12 +186,12 @@ export default {
 
     primaryButton: {
         backgroundColor: BaseTheme.palette.action01,
-        marginTop: BaseTheme.spacing[4]
+        marginTop: BaseTheme.spacing[3]
     },
 
     primaryButtonDisabled: {
         backgroundColor: BaseTheme.palette.action03Disabled,
-        marginTop: BaseTheme.spacing[4]
+        marginTop: BaseTheme.spacing[3]
     },
 
     primaryButtonText: {

@@ -10,14 +10,12 @@ import {
 import { TouchableRipple } from 'react-native-paper';
 import type { Dispatch } from 'redux';
 
-import { ColorSchemeRegistry } from '../../../../base/color-scheme';
 import { FIELD_UNDERLINE } from '../../../../base/dialog';
 import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
-import { StyleType } from '../../../../base/styles';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
@@ -50,11 +48,6 @@ type Props = {
      * The JitsiConference which requires a password.
      */
     _conference: Object,
-
-    /**
-     * The color-schemed stylesheet of the feature.
-     */
-    _dialogStyles: StyleType,
 
     /**
      * Whether the local user is the moderator.
@@ -529,7 +522,6 @@ function _mapStateToProps(state: Object): Object {
 
     return {
         _conference: conference,
-        _dialogStyles: ColorSchemeRegistry.get(state, 'Dialog'),
         _isModerator: isLocalParticipantModerator(state),
         _lobbyEnabled: lobbyEnabled,
         _lobbyModeSwitchVisible:

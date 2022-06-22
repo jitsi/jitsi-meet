@@ -2,6 +2,9 @@ import React from 'react';
 import { Image } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 
+// @ts-ignore
+import { connect } from '../../../base/redux';
+
 import styles from './styles';
 
 
@@ -21,13 +24,25 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
 
     let backgroundImage;
 
+    if (!uri) {
+        return null;
+    }
+
     if (imageType?.includes('.svg')) {
         backgroundImage
             = (
                 <SvgUri
                     height = '100%'
+
+                    // Force uniform scaling.
+                    // Align the <min-x> of the element's viewBox
+                    // with the smallest X value of the viewport.
+                    // Align the <min-y> of the element's viewBox
+                    // with the smallest Y value of the viewport.
+                    preserveAspectRatio = 'xMinYMin'
                     style = { styles.brandingImageBackgroundSvg }
                     uri = { imgSrc }
+                    viewBox = '0 0 400 650'
                     width = '100%' />
             );
     } else {
@@ -42,4 +57,20 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
     return backgroundImage;
 };
 
-export default BrandingImageBackground;
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code DialInLink} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state: any) {
+    const { backgroundImageUrl } = state['features/dynamic-branding'];
+
+    return {
+        uri: backgroundImageUrl
+    };
+}
+
+export default connect(_mapStateToProps)(BrandingImageBackground);

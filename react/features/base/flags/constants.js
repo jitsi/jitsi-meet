@@ -161,6 +161,12 @@ export const OVERFLOW_MENU_ENABLED = 'overflow-menu.enabled';
 export const PIP_ENABLED = 'pip.enabled';
 
 /**
+ * Flag indicating if the prejoin page should be enabled.
+ * Default: enabled (true).
+ */
+export const PREJOIN_PAGE_ENABLED = 'prejoinpage.enabled';
+
+/**
  * Flag indicating if raise hand feature should be enabled.
  * Default: enabled.
  */

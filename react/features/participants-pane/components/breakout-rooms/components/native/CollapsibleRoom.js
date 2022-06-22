@@ -1,11 +1,9 @@
-// @flow
-
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { openDialog } from '../../../../../base/dialog';
+import { openSheet } from '../../../../../base/dialog';
 import { participantMatchesSearch } from '../../../../functions';
 import CollapsibleList from '../../../native/CollapsibleList';
 import styles from '../../../native/styles';
@@ -41,7 +39,7 @@ export const CollapsibleRoom = ({ room, searchString }: Props) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const _openContextMenu = useCallback(() => {
-        dispatch(openDialog(BreakoutRoomContextMenu, { room }));
+        dispatch(openSheet(BreakoutRoomContextMenu, { room }));
     }, [ room ]);
     const roomParticipantsNr = Object.values(room.participants || {}).length;
     const title

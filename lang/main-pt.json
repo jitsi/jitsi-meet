@@ -116,6 +116,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Instalar extensão do Chrome",
+        "buttonTextEdge": "Instalar extensão do Edge",
         "close": "Fechar",
         "dontShowAgain": "Não me mostre isto outra vez",
         "installExtensionText": "Instalar a extensão para a integração Google Calendar e Office 365"
@@ -194,7 +195,7 @@
         "unsupportedBrowser": "Parece que está a usar um browser que não suportamos."
     },
     "defaultLink": "ex.: {{url}}",
-    "defaultNickname": "ex.: João Pedro",
+    "defaultNickname": "ex.: João Dias",
     "deviceError": {
         "cameraError": "Falha ao aceder à sua câmara",
         "cameraPermission": "Erro ao obter permissão para a câmara",
@@ -206,6 +207,9 @@
         "previewUnavailable": "Visualização indisponível",
         "selectADevice": "Selecione um dispositivo",
         "testAudio": "Tocar um som de teste"
+    },
+    "dialIn": {
+        "screenTitle": "Resumo da marcação"
     },
     "dialOut": {
         "statusMessage": "está agora {{status}}"
@@ -288,7 +292,7 @@
         "lockRoom": "Adicionar reunião $t(lockRoomPassword)",
         "lockTitle": "Bloqueio falhado",
         "login": "Entrar",
-        "logoutQuestion": "Tem a certeza de que quer terminar a sessão e interromper a conferência?",
+        "logoutQuestion": "Tem a certeza de que quer terminar a sessão e sair da conferência?",
         "logoutTitle": "Sair",
         "maxUsersLimitReached": "O limite para o número máximo de participantes foi atingido. A conferência está cheia. Por favor contacte o proprietário da reunião ou tente novamente mais tarde!",
         "maxUsersLimitReachedTitle": "Limite máximo de participantes atingido",
@@ -657,6 +661,8 @@
         "linkToSalesforceKey": "Ligar esta reunião",
         "linkToSalesforceProgress": "A ligar a reunião à Salesforce...",
         "linkToSalesforceSuccess": "A reunião foi ligada à Salesforce",
+        "localRecordingStarted": "{{name}} iniciou uma gravação local.",
+        "localRecordingStopped": "{{name}} parou uma gravação local.",
         "me": "Eu",
         "moderationInEffectCSDescription": "Por favor, levantem a mão se quiserem partilhar o vosso ecrã.",
         "moderationInEffectCSTitle": "A partilha de ecrã é bloqueada pelo moderador",
@@ -812,6 +818,7 @@
         "initiated": "Chamada iniciada",
         "joinAudioByPhone": "Entrar com o áudio do telefone",
         "joinMeeting": "Entrar na reunião",
+        "joinMeetingInLowBandwidthMode": "Entrar em modo de baixa largura de banda",
         "joinWithoutAudio": "Entrar sem áudio",
         "keyboardShortcuts": "Ativar os atalhos de teclado",
         "linkCopied": "Link copiado para a área de transferência",
@@ -887,6 +894,7 @@
         "limitNotificationDescriptionWeb": "Devido à grande procura, a sua gravação será limitada a {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Gerámos um link para a sua gravação.",
         "live": "DIRETO",
+        "localRecordingWarning": "Certifique-se de seleccionar o separador actual a fim de utilizar o vídeo e áudio correctos. A gravação está actualmente limitada a 1 GB, o que é cerca de 100 minutos.",
         "loggedIn": "Conectado como {{userName}}",
         "off": "Gravação parada",
         "offBy": "{{name}} parou a gravação",
@@ -894,6 +902,7 @@
         "onBy": "{{name}} iniciou a gravação",
         "pending": "Preparando para gravar a reunião...",
         "rec": "REC",
+        "saveLocalRecording": "Guardar ficheiro de gravação localmente",
         "serviceDescription": "Sua gravação será salva pelo serviço de gravação",
         "serviceDescriptionCloud": "Gravação na nuvem",
         "serviceDescriptionCloudInfo": "As reuniões gravadas são automaticamente apagadas 24h após a hora de gravação.",
@@ -901,11 +910,12 @@
         "sessionAlreadyActive": "Esta sessão já está a ser gravada ou transmitida em direto.",
         "signIn": "Entrar",
         "signOut": "Sair",
+        "surfaceError": "Por favor, seleccione o separador actual.",
         "unavailable": "Oops! O {{serviceName}} está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
         "unavailableTitle": "Gravação indisponível",
         "uploadToCloud": "Enviar para a nuvem"
     },
-    "screenshareDisplayName": "Ecrã do {{name}}",
+    "screenshareDisplayName": "Ecrã de {{name}}",
     "sectionList": {
         "pullToRefresh": "Puxe para atualizar"
     },
@@ -943,6 +953,7 @@
         "playSounds": "Reproduzir som quando",
         "reactions": "Expressarem uma reação",
         "sameAsSystem": "O mesmo que o sistema ({{label}})",
+        "screenTitle": "Definições",
         "selectAudioOutput": "Saída de áudio",
         "selectCamera": "Câmara",
         "selectMic": "Microfone",
@@ -968,6 +979,7 @@
         "disableCrashReportingWarning": "Tem a certeza de que quer desativar o relatório de falhas? A configuração será aplicada depois de reiniciar a aplicação.",
         "disableP2P": "Desactivar o modo Peer-To-Peer",
         "displayName": "Nome de exibição",
+        "displayNamePlaceholderText": "Ex: João Dias",
         "email": "Email",
         "header": "Configurações",
         "profileSection": "Perfil",
@@ -1077,7 +1089,7 @@
             "tileView": "Mudar a vista em quadrícula",
             "toggleCamera": "Mudar a câmara",
             "toggleFilmstrip": "Mudar a película de filme",
-            "undock": "Desencaixar numa janela separada",
+            "undock": "Soltar numa janela separada",
             "videoblur": "Mudar o desfoque de vídeo",
             "videomute": "Iniciar / Parar câmara"
         },
@@ -1163,7 +1175,7 @@
         "talkWhileMutedPopup": "Está a tentar falar? Está com o microfone desativado.",
         "tileViewToggle": "Mudar para vista em quadrícula",
         "toggleCamera": "Mudar a câmara",
-        "undock": "Desencaixar numa janela separada",
+        "undock": "Soltar numa janela separada",
         "videoSettings": "Definições de vídeo",
         "videomute": "Iniciar / Parar câmara"
     },

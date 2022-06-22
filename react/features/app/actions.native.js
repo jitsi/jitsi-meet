@@ -15,11 +15,17 @@ import { connect, disconnect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
 import { createDesiredLocalTracks } from '../base/tracks';
 import {
+    appendURLParam,
     getBackendSafeRoomName,
     parseURIString,
+    parseURLParams,
     toURLString
 } from '../base/util';
-import { navigateRoot } from '../mobile/navigation/rootNavigationContainerRef';
+import { isPrejoinPageEnabled } from '../mobile/navigation/functions';
+import {
+    goBackToRoot,
+    navigateRoot
+} from '../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 import { setFatalError } from '../overlay';
 
@@ -86,7 +92,11 @@ export function appNavigate(uri: ?string) {
         let url = `${baseURL}config.js`;
 
         // XXX In order to support multiple shards, tell the room to the deployment.
-        room && (url += `?room=${getBackendSafeRoomName(room)}`);
+        room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room)));
+
+        const { release } = parseURLParams(location, true, 'search');
+
+        release && (url = appendURLParam(url, 'release', release));
 
         let config;
 
@@ -128,7 +138,15 @@ export function appNavigate(uri: ?string) {
 
         if (room) {
             dispatch(createDesiredLocalTracks());
-            dispatch(connect());
+
+            if (isPrejoinPageEnabled(getState())) {
+                navigateRoot(screen.preJoin);
+            } else {
+                dispatch(connect());
+                navigateRoot(screen.conference.root);
+            }
+        } else {
+            goBackToRoot(getState(), dispatch);
         }
     };
 }

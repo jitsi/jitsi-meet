@@ -1,27 +1,26 @@
-// @flow
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, batch } from 'react-redux';
 
-import { hideDialog, BottomSheet } from '../../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../../base/dialog';
 import { highlightMeetingMoment } from '../../../actions.any';
 import styles from '../styles.native';
 
 const HighlightDialog = () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const closeDialog = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
+    const closeDialog = useCallback(() => dispatch(hideSheet()), [ dispatch ]);
     const highlightMoment = useCallback(() => {
         batch(() => {
             dispatch(highlightMeetingMoment());
-            dispatch(hideDialog());
+            dispatch(hideSheet());
         });
     }, [ dispatch ]);
 
     return (
-        <BottomSheet onCancel = { closeDialog }>
+        <BottomSheet>
             <View style = { styles.highlightDialog }>
                 <Text style = { styles.highlightDialogHeading }>{ `${t('recording.highlightMoment')}?` }</Text>
                 <Text style = { styles.highlightDialogText }>

@@ -31,6 +31,7 @@ import {
     gifsMenuOptions,
     inviteScreenOptions,
     liveStreamScreenOptions,
+    lobbyNavigationContainerScreenOptions,
     navigationContainerTheme,
     participantsScreenOptions,
     recordingScreenOptions,
@@ -101,15 +102,11 @@ const ConferenceNavigationContainer = () => {
                 <ConferenceStack.Screen
                     component = { StartRecordingDialog }
                     name = { screen.conference.recording }
-                    options = {{
-                        ...recordingScreenOptions
-                    }} />
+                    options = { recordingScreenOptions } />
                 <ConferenceStack.Screen
                     component = { StartLiveStreamDialog }
                     name = { screen.conference.liveStream }
-                    options = {{
-                        ...liveStreamScreenOptions
-                    }} />
+                    options = { liveStreamScreenOptions } />
                 <ConferenceStack.Screen
                     component = { SpeakerStats }
                     name = { screen.conference.speakerStats }
@@ -134,10 +131,7 @@ const ConferenceNavigationContainer = () => {
                 <ConferenceStack.Screen
                     component = { LobbyNavigationContainer }
                     name = { screen.lobby.root }
-                    options = {{
-                        gestureEnabled: false,
-                        headerShown: false
-                    }} />
+                    options = { lobbyNavigationContainerScreenOptions } />
                 <ConferenceStack.Screen
                     component = { AddPeopleDialog }
                     name = { screen.conference.invite }
@@ -158,7 +152,7 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...carmodeScreenOptions,
                         title: t('carmode.labels.title')
-                    }}/>
+                    }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>
     );

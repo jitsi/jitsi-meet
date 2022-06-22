@@ -1,8 +1,11 @@
 // @flow
 
+import debounce from 'lodash/debounce';
 import { NativeModules } from 'react-native';
 
 import { getAppProp } from '../../base/app';
+import { readyToClose } from '../external-api/actions';
+
 
 /**
  * Sends a specific event to the native counterpart of the External API. Native
@@ -24,3 +27,10 @@ export function sendEvent(store: Object, name: string, data: Object) {
     externalAPIScope
         && NativeModules.ExternalAPI.sendEvent(name, data, externalAPIScope);
 }
+
+/**
+ * Debounced sending of `readyToClose`.
+ */
+export const _sendReadyToClose = debounce(dispatch => {
+    dispatch(readyToClose());
+}, 2500, { leading: true });

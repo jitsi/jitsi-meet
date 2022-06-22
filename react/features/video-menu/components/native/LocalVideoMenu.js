@@ -1,10 +1,8 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
-import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { BottomSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import {
@@ -13,7 +11,6 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import ToggleSelfViewButton from '../../../toolbox/components/native/ToggleSelfViewButton';
-import { hideLocalVideoMenu } from '../../actions.native';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
 import styles from './styles';
@@ -25,11 +22,6 @@ import styles from './styles';
 const AVATAR_SIZE = 24;
 
 type Props = {
-
-    /**
-     * True if the menu is currently open, false otherwise.
-     */
-    _isOpen: boolean,
 
     /**
      * The local participant.
@@ -52,9 +44,6 @@ type Props = {
     t: Function
 }
 
-// eslint-disable-next-line prefer-const
-let LocalVideoMenu_;
-
 /**
  * Class to implement a popup menu that opens upon long pressing a thumbnail.
  */
@@ -67,7 +56,6 @@ class LocalVideoMenu extends PureComponent<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onCancel = this._onCancel.bind(this);
         this._renderMenuHeader = this._renderMenuHeader.bind(this);
     }
 
@@ -79,7 +67,6 @@ class LocalVideoMenu extends PureComponent<Props> {
     render() {
         const { _participant } = this.props;
         const buttonProps = {
-            afterClick: this._onCancel,
             showLabel: true,
             participantID: _participant.id,
             styles: bottomSheetStyles.buttons
@@ -87,7 +74,6 @@ class LocalVideoMenu extends PureComponent<Props> {
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { true }>
                 <ToggleSelfViewButton { ...buttonProps } />
@@ -95,26 +81,6 @@ class LocalVideoMenu extends PureComponent<Props> {
             </BottomSheet>
         );
     }
-
-    _onCancel: () => boolean;
-
-    /**
-     * Callback to hide the {@code RemoteVideoMenu}.
-     *
-     * @private
-     * @returns {boolean}
-     */
-    _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideLocalVideoMenu());
-
-            return true;
-        }
-
-        return false;
-    }
-
-    _renderMenuHeader: () => React$Element<any>;
 
     /**
      * Function to render the menu's header.
@@ -151,12 +117,9 @@ function _mapStateToProps(state) {
     const participant = getLocalParticipant(state);
 
     return {
-        _isOpen: isDialogOpen(state, LocalVideoMenu_),
         _participant: participant,
         _participantDisplayName: getParticipantDisplayName(state, participant.id)
     };
 }
 
-LocalVideoMenu_ = translate(connect(_mapStateToProps)(LocalVideoMenu));
-
-export default LocalVideoMenu_;
+export default translate(connect(_mapStateToProps)(LocalVideoMenu));

@@ -154,12 +154,12 @@ export const chatStyles = createStyleSheet({
     },
 
     pollCreateButtonsContainer: {
-        paddingVertical: BaseTheme.spacing[2]
+        paddingVertical: '8%'
     },
 
     pollCreateButton: {
         flex: 1,
-        marginHorizontal: 8
+        marginHorizontal: BaseTheme.spacing[2]
     },
 
     pollSendLabel: {
@@ -200,7 +200,8 @@ export const chatStyles = createStyleSheet({
 
     createPollButton: {
         padding: 8,
-        margin: BaseTheme.spacing[2]
+        marginHorizontal: BaseTheme.spacing[2],
+        marginVertical: BaseTheme.spacing[4]
     },
 
     PollPane: {

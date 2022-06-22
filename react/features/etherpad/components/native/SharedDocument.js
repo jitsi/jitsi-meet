@@ -1,10 +1,7 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
 import { IconArrowBack } from '../../../base/icons';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -26,11 +23,6 @@ type Props = {
      * URL for the shared document.
      */
     _documentUrl: string,
-
-    /**
-     * Color schemed style of the header component.
-     */
-    _headerStyles: Object,
 
     /**
      * Default prop for navigation between screen components(React Navigation).
@@ -97,8 +89,6 @@ class SharedDocument extends PureComponent<Props> {
         );
     }
 
-    _renderLoading: () => React$Component<any>;
-
     /**
      * Renders the loading indicator.
      *
@@ -126,8 +116,7 @@ export function _mapStateToProps(state: Object) {
     const documentUrl = getSharedDocumentUrl(state);
 
     return {
-        _documentUrl: documentUrl,
-        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+        _documentUrl: documentUrl
     };
 }
 

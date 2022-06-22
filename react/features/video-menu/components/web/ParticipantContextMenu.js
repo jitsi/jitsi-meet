@@ -16,7 +16,7 @@ import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participant
 import { isParticipantAudioMuted } from '../../../base/tracks';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { setVolume } from '../../../filmstrip/actions.web';
-import { isStageFilmstripEnabled } from '../../../filmstrip/functions.web';
+import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { isForceMuted } from '../../../participants-pane/functions';
 import { requestRemoteControl, stopController } from '../../../remote-control';
 import { stopSharedVideo } from '../../../shared-video/actions.any';
@@ -146,7 +146,7 @@ const ParticipantContextMenu = ({
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerationSupported = useSelector(isAvModerationSupported);
-    const stageFilmstrip = useSelector(isStageFilmstripEnabled);
+    const stageFilmstrip = useSelector(isStageFilmstripAvailable);
 
     const _currentRoomId = useSelector(getCurrentRoomId);
     const _rooms = Object.values(useSelector(getBreakoutRooms));

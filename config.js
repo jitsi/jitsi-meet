@@ -805,14 +805,14 @@ var config = {
     //     // Enables displaying face expressions in speaker stats
     //     enableDisplayFaceExpressions: false,
 
+    //     // Enable rtc stats for face landmarks
+    //     enableRTCStats: false,
+
     //     // Minimum required face movement percentage threshold for sending new face centering coordinates data.
     //     faceCenteringThreshold: 10,
 
     //     // Milliseconds for processing a new image capture in order to detect face coordinates if they exist.
-    //     captureInterval: 1000,
-
-    //     // Maximum number of faces that can be detected from a video track.
-    //     maxFacesDetected: 4
+    //     captureInterval: 1000
     // },
 
     // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
@@ -892,6 +892,10 @@ var config = {
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>'
 
+        // Obfuscates room name sent to analytics (amplitude, rtcstats)
+        // Default value is false.
+        // obfuscateRoomName: false,
+
         // Configuration for the rtcstats server:
         // By enabling rtcstats server every time a conference is joined the rtcstats
         // module connects to the provided rtcstatsEndpoint and sends statistics regarding
@@ -966,11 +970,17 @@ var config = {
     // chromeExtensionBanner: {
     //     // The chrome extension to be installed address
     //     url: 'https://chrome.google.com/webstore/detail/jitsi-meetings/kglhbbefdnlheedjiejgomgmfplipfeb',
+    //     edgeUrl: 'https://microsoftedge.microsoft.com/addons/detail/jitsi-meetings/eeecajlpbgjppibfledfihobcabccihn',
 
     //     // Extensions info which allows checking if they are installed or not
     //     chromeExtensionsInfo: [
     //         {
     //             id: 'kglhbbefdnlheedjiejgomgmfplipfeb',
+    //             path: 'jitsi-logo-48x48.png'
+    //         },
+    //         // Edge extension info
+    //         {
+    //             id: 'eeecajlpbgjppibfledfihobcabccihn',
     //             path: 'jitsi-logo-48x48.png'
     //         }
     //     ]

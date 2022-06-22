@@ -1,11 +1,9 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
@@ -16,7 +14,6 @@ import {
 import { connect } from '../../../base/redux';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
-import { hideRemoteVideoMenu } from '../../actions.native';
 import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
 import AskUnmuteButton from './AskUnmuteButton';
@@ -75,11 +72,6 @@ type Props = {
     _disableGrantModerator: Boolean,
 
     /**
-     * True if the menu is currently open, false otherwise.
-     */
-    _isOpen: boolean,
-
-    /**
      * Whether the participant is present in the room or not.
      */
     _isParticipantAvailable?: boolean,
@@ -99,9 +91,6 @@ type Props = {
      */
     t: Function
 }
-
-// eslint-disable-next-line prefer-const
-let RemoteVideoMenu_;
 
 /**
  * Class to implement a popup menu that opens upon long pressing a thumbnail.
@@ -145,7 +134,6 @@ class RemoteVideoMenu extends PureComponent<Props> {
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { _isParticipantAvailable }>
                 <AskUnmuteButton { ...buttonProps } />
@@ -157,7 +145,9 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
-                <ConnectionStatusButton { ...buttonProps } />
+                <ConnectionStatusButton
+                    { ...buttonProps }
+                    afterClick = { undefined } />
                 {_rooms.length > 1 && <>
                     <Divider style = { styles.divider } />
                     <View style = { styles.contextMenuItem }>
@@ -175,8 +165,6 @@ class RemoteVideoMenu extends PureComponent<Props> {
         );
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Callback to hide the {@code RemoteVideoMenu}.
      *
@@ -184,16 +172,8 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideRemoteVideoMenu());
-
-            return true;
-        }
-
-        return false;
+        this.props.dispatch(hideSheet());
     }
-
-    _renderMenuHeader: () => React$Element<any>;
 
     /**
      * Function to render the menu's header.
@@ -242,13 +222,10 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(shouldDisableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _disablePrivateChat: Boolean(disablePrivateChat),
-        _isOpen: isDialogOpen(state, RemoteVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
         _participantDisplayName: getParticipantDisplayName(state, participantId),
         _rooms
     };
 }
 
-RemoteVideoMenu_ = translate(connect(_mapStateToProps)(RemoteVideoMenu));
-
-export default RemoteVideoMenu_;
+export default translate(connect(_mapStateToProps)(RemoteVideoMenu));

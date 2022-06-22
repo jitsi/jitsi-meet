@@ -1759,12 +1759,12 @@ export default {
             return Promise.reject('Cannot toggle screen sharing: not supported.');
         }
 
-        if (this.isAudioOnly()) {
-            APP.store.dispatch(setAudioOnly(false));
-        }
         if (toggle) {
             try {
                 await this._switchToScreenSharing(options);
+                if (this.isAudioOnly()) {
+                    APP.store.dispatch(setAudioOnly(false));
+                }
 
                 return;
             } catch (err) {
@@ -2653,13 +2653,9 @@ export default {
             // muteVideo logic in such case.
             const tracks = APP.store.getState()['features/base/tracks'];
             const isTrackInRedux
-                = Boolean(
-                    tracks.find(
-                        track => track.jitsiTrack
-                            && track.jitsiTrack.getType() === 'video'));
+                = Boolean(tracks.find(track => track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.VIDEO));
 
-
-            if (isTrackInRedux) {
+            if (isTrackInRedux && !this.isSharingScreen) {
                 this.muteVideo(audioOnly);
             }
 

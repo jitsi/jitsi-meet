@@ -203,5 +203,9 @@ export default {
         color: BaseTheme.palette.text01,
         marginBottom: 32,
         ...BaseTheme.typography.bodyShortRegularLarge
+    },
+
+    connectionIndicatorIcon: {
+        fontSize: 20
     }
 };

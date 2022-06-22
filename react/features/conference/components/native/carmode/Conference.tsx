@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, SafeAreaView, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator, TintedView } from '../../../../base/react';
+import { isLocalVideoTrackDesktop } from '../../../../base/tracks';
+import { setPictureInPictureEnabled } from '../../../../mobile/picture-in-picture/functions';
 import { setIsCarmode } from '../../../../video-layout/actions';
 import ConferenceTimer from '../../ConferenceTimer';
 import { isConnecting } from '../../functions';
@@ -15,8 +17,6 @@ import MicrophoneButton from './MicrophoneButton';
 import SoundDeviceButton from './SoundDeviceButton';
 import TitleBar from './TitleBar';
 import styles from './styles';
-import { isLocalVideoTrackDesktop } from '../../../../base/tracks';
-import { setPictureInPictureDisabled } from '../../../../mobile/picture-in-picture/functions';
 
 /**
  * Implements the carmode tab.
@@ -31,14 +31,14 @@ const CarmodeTab = (): JSX.Element => {
 
     useEffect(() => {
         dispatch(setIsCarmode(true));
-        setPictureInPictureDisabled(true);
+        setPictureInPictureEnabled(false);
 
         return () => {
             dispatch(setIsCarmode(false));
             if (!isSharing) {
-                setPictureInPictureDisabled(false);
+                setPictureInPictureEnabled(true);
             }
-        }
+        };
     }, []);
 
     return (
