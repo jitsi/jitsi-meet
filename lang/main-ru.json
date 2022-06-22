@@ -652,7 +652,7 @@
         "moderationInEffectTitle": "Ваш микрофон отключен модератором",
         "moderationInEffectVideoDescription": "Пожалуйста, поднимите руку, если хотите включить камеру.",
         "moderationInEffectVideoTitle": "Ваша камера заблокирована модератором",
-        "moderationRequestFromModerator": "Хозяин хочет, чтобы вы включили звук",
+        "moderationRequestFromModerator": "Модератор хочет, чтобы вы включили звук",
         "moderationRequestFromParticipant": "Хочет говорить",
         "moderationStartedTitle": "Началась модерация",
         "moderationStoppedTitle": "Модерация остановлена",
