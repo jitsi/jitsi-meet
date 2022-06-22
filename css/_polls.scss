@@ -248,11 +248,11 @@ a.poll-visibility-link {
     text-decoration: none;
 
     &:hover {
-    color: #669AEC;
+        color: #669AEC;
     }
 
     &:visited {
-    color: #669AEC;
+        color: #669AEC;
     }
 }
 
@@ -451,16 +451,17 @@ a.poll-visibility-link {
   max-width: 117px;
 }
 
-.poll-button-icon {
-  max-width: 40px;
-  &:not(:first-child) {
-    margin-left: 10px;
-  }
-}
-
 .poll-button-short,
 .poll-button-shortest {
    @media (max-width: 580px) {
      min-width: 49%;
    }
+}
+
+.poll-small-icon-button {
+    width: 40px;
+    margin-left: 5px;
+    > * {
+        margin-right: 0 !important;
+    }
 }

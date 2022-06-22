@@ -67,7 +67,7 @@ export type Poll = {
     /**
      * Indicates whether the poll is invisible for non-moderators.
      */
-    hidden: string,
+    hidden: boolean,
 
 };
 

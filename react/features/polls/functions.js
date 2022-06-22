@@ -1,11 +1,9 @@
-
 // @flow
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import { downloadJSON } from '../base/util/downloadJSON';
 
 import { COMMAND_NEW_POLLS } from './constants';
-import type { Poll } from './types';
 
 /**
  * Selector creator for determining if poll results should be displayed or not.
@@ -22,38 +20,10 @@ export function shouldShowResults(id: string) {
 /**
  * Get new poll id.
  *
- * @returns {string} The final poll object.
+ * @returns {string} The poll id.
  */
 export function getNewPollId() {
-    return uuid.v4();
-}
-
-/**
- * Format new poll data.
- *
- * @param {Object} pollData - Poll data.
- * @returns {Poll} The final poll object.
- */
-export function formatNewPollData(pollData: Object): Poll {
-    const { question, answers, senderId, senderName, hidden } = pollData;
-
-    const poll = {
-        senderId,
-        senderName,
-        hidden,
-        showResults: false,
-        changingVote: false,
-        lastVote: null,
-        question,
-        answers: answers.map(answer => {
-            return {
-                name: answer,
-                voters: new Map()
-            };
-        })
-    };
-
-    return poll;
+    return uuidv4();
 }
 
 /**
@@ -92,13 +62,14 @@ export function importPollsFromFile(
 
                 if (pollsData?.length) {
                     const newPollsData = pollsData
-                        .filter(poll => poll.question && poll.answers.length > 2)
+                        .filter(poll => poll.question && poll.answers.length >= 2)
                         .map(poll => {
                             const answers = poll.answers.map(answer => answer?.name ?? answer);
 
                             return {
                                 question: poll.question,
                                 answers,
+                                changingVote: false,
                                 senderId: myId,
                                 senderName: myName,
                                 hidden: isModerationEnabled,
