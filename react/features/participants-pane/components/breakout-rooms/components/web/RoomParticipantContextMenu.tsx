@@ -15,6 +15,7 @@ import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 // @ts-ignore
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
+// @ts-ignore
 import { AVATAR_SIZE } from '../../../../constants';
 
 type Props = {
@@ -74,7 +75,7 @@ export const RoomParticipantContextMenu = ({
     const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const lowerMenu = useCallback(() => onSelect(true), [onSelect]);
-    const rooms = useSelector(getBreakoutRooms);
+    const rooms: Object = useSelector(getBreakoutRooms);
     const overflowDrawer = useSelector(showOverflowDrawer);
 
     const breakoutRoomsButtons = useMemo(() => Object.values(rooms || {}).map((room: any) => {
