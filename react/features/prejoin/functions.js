@@ -163,5 +163,5 @@ export function shouldAutoKnock(state: Object): boolean {
     const { iAmRecorder, iAmSipGateway, autoKnockLobby } = state['features/base/config'];
 
     return (isPrejoinPageVisible(state) || autoKnockLobby || (iAmRecorder && iAmSipGateway))
-        && !state['features/lobby'].knocking;
+        && state['features/base/settings'].displayName;
 }
