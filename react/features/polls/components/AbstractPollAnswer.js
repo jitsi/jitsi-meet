@@ -27,9 +27,9 @@ type InputProps = {
  **/
 export type AbstractProps = {
     checkBoxStates: Function,
+    creatorName: string,
     isModerationEnabled: boolean,
     isModerator: boolean,
-    creatorName: string,
     poll: Poll,
     pollVisibility: PollVisibility,
     setCheckbox: Function,
@@ -109,9 +109,9 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     return (<Component
         checkBoxStates = { checkBoxStates }
+        creatorName = { participant ? participant.name : '' }
         isModerationEnabled = { isModerationEnabled }
         isModerator = { isModerator }
-        creatorName = { participant ? participant.name : '' }
         poll = { poll }
         pollVisibility = { pollVisibility }
         setCheckbox = { setCheckbox }

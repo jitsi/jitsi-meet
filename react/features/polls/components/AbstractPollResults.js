@@ -7,13 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { sendAnalytics, createPollEvent } from '../../analytics';
 import {
-    getLocalParticipant,
     getParticipantById,
     isLocalParticipantModerator
 } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
-import { COMMAND_ANSWER_POLL } from '../constants';
 import { getPoll, isPollsModerationEnabled } from '../functions';
 import { usePollVisibility } from '../hooks';
 import type { Poll, PollVisibility } from '../types';
