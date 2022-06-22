@@ -10,6 +10,8 @@ local muc = module:depends("muc");
 
 local is_healthcheck_room = util.is_healthcheck_room;
 
+enable_polls_moderation = module:get_option_boolean("enable_polls_moderation", false);
+
 -- Checks if the given stanza contains a JSON message,
 -- and that the message type pertains to the polls feature.
 -- If yes, returns the parsed message. Otherwise, returns nil.
@@ -62,6 +64,15 @@ module:hook("message/bare", function(event)
     if data.type == "new-poll" then
         if check_polls(room) then return end
 
+        if enable_polls_moderation then
+            local role = room.get_affiliation(room, event.stanza.attr.from);
+
+            if role ~= "owner" then
+            	module:log("warn", "not creating poll for non moderator %s", data.senderName);
+                return true;
+            end
+        end
+
         local answers = {}
         local compactAnswers = {}
         for i, name in ipairs(data.answers) do
@@ -74,6 +85,7 @@ module:hook("message/bare", function(event)
             sender_id = data.senderId,
             sender_name = data.senderName,
             question = data.question,
+            hidden = data.hidden,
             answers = answers
         };
 
@@ -88,6 +100,7 @@ module:hook("message/bare", function(event)
                 senderId = data.senderId,
                 senderName = data.senderName,
                 question = data.question,
+                hidden = data.hidden,
                 answers = compactAnswers
             }
         }
@@ -98,8 +111,14 @@ module:hook("message/bare", function(event)
         if check_polls(room) then return end
 
         local poll = room.polls.by_id[data.pollId];
+
         if poll == nil then
             module:log("warn", "answering inexistent poll");
+            return;
+        end
+
+        if enable_polls_moderation and poll.hidden then
+            module:log("warn", "answering hidden poll");
             return;
         end
 
@@ -132,7 +151,7 @@ module:hook("muc-occupant-joined", function(event)
     if room.polls == nil or #room.polls.order == 0 then
         return
     end
-
+    
     local data = {
         type = "old-polls",
         polls = {},
@@ -143,6 +162,7 @@ module:hook("muc-occupant-joined", function(event)
             senderId = poll.sender_id,
             senderName = poll.sender_name,
             question = poll.question,
+            hidden = poll.hidden,
             answers = poll.answers
         };
     end
