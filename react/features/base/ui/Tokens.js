@@ -243,8 +243,8 @@ export const colorMap = {
 
     // Line separators
     border03: 'surface04',
-
     border04: 'primary12',
+    border05: 'surface07',
 
     // Color for error border & message
     borderError: 'error06',

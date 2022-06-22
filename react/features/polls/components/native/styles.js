@@ -3,58 +3,36 @@
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-export const answerStyles = createStyleSheet({
-    question: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 6
-    },
-    answer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 3
-    },
-    option: {
-        flexShrink: 1
-    }
-});
-
 export const dialogStyles = createStyleSheet({
     question: {
-        color: BaseTheme.palette.text01,
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginVertical: 4
+        borderWidth: 1,
+        borderColor: BaseTheme.palette.border05,
+        borderRadius: BaseTheme.shape.borderRadius,
+        color: BaseTheme.palette.text03,
+        fontSize: 14,
+        marginHorizontal: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[3],
+        padding: BaseTheme.spacing[3]
     },
 
     optionContainer: {
-        flexDirection: 'row'
+        flexDirection: 'column',
+        marginTop: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
+    optionFieldLabel: {
+        color: BaseTheme.palette.text03,
+        marginBottom: BaseTheme.spacing[2]
     },
 
     field: {
-        color: BaseTheme.palette.text01,
-        borderBottomWidth: 1,
-        borderColor: ColorPalette.blue,
+        color: BaseTheme.palette.text03,
+        borderWidth: 1,
+        borderColor: BaseTheme.palette.border05,
+        borderRadius: BaseTheme.shape.borderRadius,
         fontSize: 14,
-        flexGrow: 1,
-        paddingBottom: 0,
-        flexShrink: 1
-    },
-
-    buttonContainer: {
-        justifyContent: 'flex-end',
-        alignItems: 'center'
-    },
-
-    icon: {
-        color: ColorPalette.white,
-        backgroundColor: ColorPalette.blue,
-        borderRadius: 5,
-        margin: 0
-    },
-
-    plusButton: {
-        marginTop: 8
+        padding: BaseTheme.spacing[3]
     }
 });
 
@@ -116,24 +94,25 @@ export const resultsStyles = createStyleSheet({
 });
 
 export const chatStyles = createStyleSheet({
-    messageFooter: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        fontSize: 11,
-        marginTop: 6
+    questionFieldLabel: {
+        color: BaseTheme.palette.text03,
+        marginBottom: BaseTheme.spacing[2],
+        marginLeft: BaseTheme.spacing[3]
     },
 
-    showDetails: {
-        fontWeight: 'bold'
+    noPollContent: {
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        paddingTop: '4%'
     },
 
     noPollText: {
         flex: 1,
         color: BaseTheme.palette.text03,
         textAlign: 'center',
-        paddingTop: '8%'
+        maxWidth: '70%'
     },
 
     pollItemContainer: {
@@ -145,20 +124,22 @@ export const chatStyles = createStyleSheet({
     },
 
     pollCreateContainer: {
-        flex: 1,
-        justifyContent: 'space-between'
-    },
-
-    pollCreateSubContainer: {
         flex: 1
     },
 
+    pollCreateSubContainer: {
+        flex: 1,
+        marginTop: BaseTheme.spacing[3]
+    },
+
     pollCreateButtonsContainer: {
-        paddingVertical: '8%'
+        marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: '8%'
     },
 
     pollCreateButton: {
         flex: 1,
+        padding: 4,
         marginHorizontal: BaseTheme.spacing[2]
     },
 
@@ -190,7 +171,8 @@ export const chatStyles = createStyleSheet({
     },
 
     pollCreateAddButton: {
-        margin: BaseTheme.spacing[2]
+        margin: BaseTheme.spacing[2],
+        padding: BaseTheme.spacing[1]
     },
 
     toggleText: {
@@ -199,24 +181,18 @@ export const chatStyles = createStyleSheet({
     },
 
     createPollButton: {
-        padding: 8,
-        marginHorizontal: BaseTheme.spacing[2],
-        marginVertical: BaseTheme.spacing[4]
+        padding: 4,
+        marginHorizontal: BaseTheme.spacing[4],
+        marginVertical: '8%'
     },
 
-    PollPane: {
+    pollPane: {
         flex: 1,
         padding: 8
     },
 
-    PollPaneContainer: {
+    pollPaneContainer: {
         backgroundColor: BaseTheme.palette.ui01,
-        flex: 1
-    },
-
-    PollPaneContent: {
-        justifyContent: 'space-between',
-        padding: BaseTheme.spacing[3],
         flex: 1
     },
 

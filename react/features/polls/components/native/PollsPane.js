@@ -36,9 +36,9 @@ const PollsPane = (props: AbstractProps) => {
 
     return (
         <JitsiScreen
-            contentContainerStyle = { chatStyles.PollPane }
+            contentContainerStyle = { chatStyles.pollPane }
             hasTabNavigator = { true }
-            style = { chatStyles.PollPaneContainer }>
+            style = { chatStyles.pollPaneContainer }>
             {
                 createMode
                     ? <PollCreate setCreateMode = { setCreateMode } />
@@ -47,7 +47,7 @@ const PollsPane = (props: AbstractProps) => {
             }
             {
                 !createMode && <Button
-                    color = { palette.screen01Header }
+                    color = { palette.action01 }
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { onCreate }
                     style = { chatStyles.createPollButton } >
