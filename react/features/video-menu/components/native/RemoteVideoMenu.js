@@ -9,7 +9,8 @@ import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import {
     getParticipantById,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isLocalParticipantModerator
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
@@ -77,6 +78,11 @@ type Props = {
     _isParticipantAvailable?: boolean,
 
     /**
+     * Whether the local participant is moderator or not.
+     */
+    _moderator: boolean,
+
+    /**
      * Display name of the participant retrieved from Redux.
      */
     _participantDisplayName: string,
@@ -120,6 +126,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
             _disableRemoteMute,
             _disableGrantModerator,
             _isParticipantAvailable,
+            _moderator,
             _rooms,
             _currentRoomId,
             participantId,
@@ -148,7 +155,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 <ConnectionStatusButton
                     { ...buttonProps }
                     afterClick = { undefined } />
-                {_rooms.length > 1 && <>
+                {_moderator && _rooms.length > 1 && <>
                     <Divider style = { styles.divider } />
                     <View style = { styles.contextMenuItem }>
                         <Text style = { styles.contextMenuItemText }>
@@ -216,6 +223,7 @@ function _mapStateToProps(state, ownProps) {
     const _rooms = Object.values(getBreakoutRooms(state));
     const _currentRoomId = getCurrentRoomId(state);
     const shouldDisableKick = disableKick || !kickOutEnabled;
+    const moderator = isLocalParticipantModerator(state);
 
     return {
         _currentRoomId,
@@ -223,6 +231,7 @@ function _mapStateToProps(state, ownProps) {
         _disableRemoteMute: Boolean(disableRemoteMute),
         _disablePrivateChat: Boolean(disablePrivateChat),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
+        _moderator: moderator,
         _participantDisplayName: getParticipantDisplayName(state, participantId),
         _rooms
     };

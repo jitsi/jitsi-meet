@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { isParticipantModerator } from '../../../../../base/participants';
+import { isLocalParticipantModerator, isParticipantModerator } from '../../../../../base/participants';
 import { showRoomParticipantMenu } from '../../../../actions.native';
 import ParticipantItem from '../../../native/ParticipantItem';
 
@@ -22,10 +22,13 @@ type Props = {
 
 const BreakoutRoomParticipantItem = ({ item, room }: Props) => {
     const { defaultRemoteDisplayName } = useSelector(state => state['features/base/config']);
+    const moderator = useSelector(isLocalParticipantModerator);
     const dispatch = useDispatch();
     const onPress = useCallback(() => {
-        dispatch(showRoomParticipantMenu(room, item.jid, item.displayName));
-    });
+        if (moderator) {
+            dispatch(showRoomParticipantMenu(room, item.jid, item.displayName));
+        }
+    }, [ moderator, room, item ]);
 
     return (
         <ParticipantItem
