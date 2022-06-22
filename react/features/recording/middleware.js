@@ -132,6 +132,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
     }
 
     case START_LOCAL_RECORDING: {
+        const { localRecording } = getState()['features/base/config'];
+
         try {
             await LocalRecordingManager.startLocalRecording({ dispatch,
                 getState });
@@ -140,9 +142,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 titleKey: 'dialog.recording'
             };
 
-            dispatch(playSound(RECORDING_ON_SOUND_ID));
+            if (localRecording.notifyAllParticipants) {
+                dispatch(playSound(RECORDING_ON_SOUND_ID));
+            }
             dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
             dispatch(updateLocalRecordingStatus(true));
+            sendAnalytics(createRecordingEvent('started', 'local'));
         } catch (err) {
             logger.error('Capture failed', err);
 
@@ -158,10 +163,14 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
     }
 
     case STOP_LOCAL_RECORDING: {
+        const { localRecording } = getState()['features/base/config'];
+
         if (LocalRecordingManager.isRecordingLocally()) {
             LocalRecordingManager.stopLocalRecording();
-            dispatch(playSound(RECORDING_OFF_SOUND_ID));
             dispatch(updateLocalRecordingStatus(false));
+            if (localRecording.notifyAllParticipants) {
+                dispatch(playSound(RECORDING_OFF_SOUND_ID));
+            }
         }
         break;
     }

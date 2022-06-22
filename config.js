@@ -295,8 +295,13 @@ var config = {
     // Whether to enable live streaming or not.
     // liveStreamingEnabled: false,
 
-    // Whether to enable local recording or not.
-    // enableLocalRecording: false,
+    // Local recording configuration.
+    // localRecording: {
+    //     // Whether to enable local recording or not.
+    //     enable: false,
+    //     // Whether to notify all participants when a participant is recording locally.
+    //     notifyAllParticipants: false
+    // },
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)

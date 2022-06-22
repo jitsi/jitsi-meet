@@ -50,6 +50,11 @@ type Props = {
     _localRecordingEnabled: boolean,
 
     /**
+     * Whether we won't notify the other participants about the recording.
+     */
+    _localRecordingNoNotification: boolean,
+
+    /**
      * The color-schemed stylesheet of this component.
      */
     _styles: StyleType,
@@ -442,7 +447,8 @@ class StartRecordingDialogContent extends Component<Props> {
         return (
             <Container>
                 <Container
-                    className = 'recording-header'
+                    className = { `recording-header ${this._shouldRenderNoIntegrationsContent()
+                        ? 'recording-header-line' : ''}` }
                     style = { styles.headerIntegrations }>
                     <Container
                         className = 'recording-icon-container'>
@@ -609,7 +615,14 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderLocalRecordingContent() {
-        const { _styles: styles, isValidating, t, _dialogStyles, selectedRecordingService } = this.props;
+        const {
+            _styles: styles,
+            isValidating,
+            t,
+            _dialogStyles,
+            selectedRecordingService,
+            _localRecordingNoNotification
+        } = this.props;
 
         if (!this._localRecordingAvailable) {
             return null;
@@ -645,9 +658,14 @@ class StartRecordingDialogContent extends Component<Props> {
                         === RECORDING_TYPES.LOCAL } />
                 </Container>
                 {selectedRecordingService === RECORDING_TYPES.LOCAL
-                    && <Text className = 'local-recording-warning'>
-                        {t('recording.localRecordingWarning')}
-                    </Text>
+                    && <>
+                        <Text className = 'local-recording-warning text'>
+                            {t('recording.localRecordingWarning')}
+                        </Text>
+                        {_localRecordingNoNotification && <Text className = 'local-recording-warning notification'>
+                            {t('recording.localRecordingNoNotificationWarning')}
+                        </Text>}
+                    </>
                 }
             </Container>
 
@@ -689,7 +707,8 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
-        _localRecordingEnabled: state['features/base/config'].enableLocalRecording,
+        _localRecordingEnabled: state['features/base/config'].localRecording.enable,
+        _localRecordingNoNotification: !state['features/base/config'].localRecording.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
     };
 }
