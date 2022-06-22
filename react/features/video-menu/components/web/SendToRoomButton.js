@@ -19,7 +19,7 @@ type Props = {
     /**
      * The ID for the participant on which the button will act.
      */
-    participantID?: string,
+    participantID: string,
 
     /**
      * The room to send the participant to.

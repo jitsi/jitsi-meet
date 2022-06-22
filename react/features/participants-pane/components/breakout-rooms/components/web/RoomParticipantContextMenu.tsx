@@ -15,6 +15,7 @@ import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 // @ts-ignore
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
+import { AVATAR_SIZE } from '../../../../constants';
 
 type Props = {
 
@@ -102,7 +103,7 @@ export const RoomParticipantContextMenu = ({
                     accessibilityLabel: entity?.participantName,
                     customIcon: <Avatar
                         displayName = { entity?.participantName }
-                        size = { 20 } />,
+                        size = { AVATAR_SIZE } />,
                     text: entity?.participantName
                 } ] } />}
             <ContextMenuItemGroup>
