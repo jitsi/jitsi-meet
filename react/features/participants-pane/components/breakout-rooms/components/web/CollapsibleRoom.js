@@ -8,8 +8,11 @@ import { useSelector } from 'react-redux';
 
 import { ListItem } from '../../../../../base/components';
 import { Icon, IconArrowDown, IconArrowUp } from '../../../../../base/icons';
+import { isLocalParticipantModerator } from '../../../../../base/participants';
+import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { ACTION_TRIGGER } from '../../../../constants';
 import { participantMatchesSearch } from '../../../../functions';
+import ParticipantActionEllipsis from '../../../web/ParticipantActionEllipsis';
 import ParticipantItem from '../../../web/ParticipantItem';
 
 type Props = {
@@ -40,6 +43,16 @@ type Props = {
     onLeave?: Function,
 
     /**
+     * The raise context for the participant menu.
+     */
+    participantContextEntity: ?Object,
+
+    /**
+     * Callback to raise participant context menu.
+     */
+    raiseParticipantContextMenu: Function,
+
+    /**
      * Room reference.
      */
     room: Object,
@@ -47,7 +60,12 @@ type Props = {
     /**
      * Participants search string.
      */
-    searchString: string
+    searchString: string,
+
+    /**
+     * Toggles the room participant context menu.
+     */
+    toggleParticipantMenu: Function
 }
 
 const useStyles = makeStyles(theme => {
@@ -84,8 +102,11 @@ export const CollapsibleRoom = ({
     isHighlighted,
     onRaiseMenu,
     onLeave,
+    participantContextEntity,
+    raiseParticipantContextMenu,
     room,
-    searchString
+    searchString,
+    toggleParticipantMenu
 }: Props) => {
     const { t } = useTranslation();
     const styles = useStyles();
@@ -97,6 +118,8 @@ export const CollapsibleRoom = ({
         onRaiseMenu(target);
     }, [ onRaiseMenu ]);
     const { defaultRemoteDisplayName } = useSelector(state => state['features/base/config']);
+    const overflowDrawer = useSelector(showOverflowDrawer);
+    const moderator = useSelector(isLocalParticipantModerator);
 
     const arrow = (<div className = { styles.arrowContainer }>
         <Icon
@@ -108,6 +131,13 @@ export const CollapsibleRoom = ({
         {`${room.name || t('breakoutRooms.mainRoom')} (${Object.keys(room?.participants
             || {}).length})`}
     </span>);
+
+    const raiseParticipantMenu = useCallback(({ participantID, displayName }) => moderator
+    && raiseParticipantContextMenu({
+        room,
+        jid: participantID,
+        participantName: displayName
+    }), [ room, moderator ]);
 
     return (
         <>
@@ -126,10 +156,21 @@ export const CollapsibleRoom = ({
                 && Object.values(room?.participants || {}).map((p: Object) =>
                     participantMatchesSearch(p, searchString) && (
                         <ParticipantItem
+                            actionsTrigger = { ACTION_TRIGGER.HOVER }
                             displayName = { p.displayName || defaultRemoteDisplayName }
+                            isHighlighted = { participantContextEntity?.jid === p.jid }
                             key = { p.jid }
                             local = { false }
-                            participantID = { p.jid } />
+                            openDrawerForParticipant = { raiseParticipantMenu }
+                            overflowDrawer = { overflowDrawer }
+                            participantID = { p.jid }>
+                            {!overflowDrawer && moderator && (
+                                <ParticipantActionEllipsis
+                                    onClick = { toggleParticipantMenu({ room,
+                                        jid: p.jid,
+                                        participantName: p.displayName }) } />
+                            )}
+                        </ParticipantItem>
                     ))
             }
         </>

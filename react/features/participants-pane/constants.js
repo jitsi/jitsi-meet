@@ -107,3 +107,8 @@ export const VideoStateIcons = {
     ),
     [MEDIA_STATE.NONE]: null
 };
+
+/**
+ * Mobile web context menu avatar size.
+ */
+export const AVATAR_SIZE = 20;
