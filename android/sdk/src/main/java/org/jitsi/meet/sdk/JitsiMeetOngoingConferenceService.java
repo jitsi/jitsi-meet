@@ -139,6 +139,7 @@ public class JitsiMeetOngoingConferenceService extends Service
         final String actionName = intent.getAction();
         final Action action = Action.fromName(actionName);
 
+        // When starting the service, there is no action passed in the intent
         if (action != null) {
             switch (action) {
                 case UNMUTE:
