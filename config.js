@@ -297,8 +297,8 @@ var config = {
 
     // Local recording configuration.
     // localRecording: {
-    //     // Whether to enable local recording or not.
-    //     enable: false,
+    //     // Whether to disable local recording or not.
+    //     disable: false,
     //     // Whether to notify all participants when a participant is recording locally.
     //     notifyAllParticipants: false
     // },
