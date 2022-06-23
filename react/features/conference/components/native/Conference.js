@@ -29,6 +29,7 @@ import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { shouldEnableAutoKnock } from '../../../mobile/navigation/functions';
 import { screen } from '../../../mobile/navigation/routes';
+import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -191,6 +192,7 @@ class Conference extends AbstractConference<Props, State> {
      */
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+        setPictureInPictureEnabled(true);
     }
 
     /**
@@ -231,6 +233,7 @@ class Conference extends AbstractConference<Props, State> {
         BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         clearTimeout(this._expandedLabelTimeout.current);
+        setPictureInPictureEnabled(false);
     }
 
     /**
