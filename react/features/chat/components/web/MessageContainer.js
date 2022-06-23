@@ -63,22 +63,22 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
 
             return (
                 <ChatMessageGroup
-                    className={messageType || MESSAGE_TYPE_REMOTE}
-                    key={index}
-                    messages={group} />
+                    className = { messageType || MESSAGE_TYPE_REMOTE }
+                    key = { index }
+                    messages = { group } />
             );
         });
 
         return (
             <div
-                aria-labelledby='chat-header'
-                id='chatconversation'
-                onScroll={this._onChatScroll}
-                ref={this._messageListRef}
-                role='log'
-                tabIndex={0}>
-                {messages}
-                <div ref={this._messagesListEndRef} />
+                aria-labelledby = 'chat-header'
+                id = 'chatconversation'
+                onScroll = { this._onChatScroll }
+                ref = { this._messageListRef }
+                role = 'log'
+                tabIndex = { 0 }>
+                { messages }
+                <div ref = { this._messagesListEndRef } />
             </div>
         );
     }
