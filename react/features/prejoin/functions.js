@@ -2,7 +2,6 @@
 
 import { getRoomName } from '../base/conference';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
-import { getFeatureFlag, PREJOIN_PAGE_ENABLED } from '../base/flags';
 import { isAudioMuted, isVideoMutedByUser } from '../base/media';
 
 /**
