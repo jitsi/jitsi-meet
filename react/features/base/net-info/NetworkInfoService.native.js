@@ -43,9 +43,13 @@ export default class NetworkInfoService extends EventEmitter {
     /**
      * Starts the service.
      *
+     * @param {string} reachabilityUrl - The new state given by the native library.
      * @returns {void}
      */
-    start() {
+    start(reachabilityUrl: string) {
+        NetInfo.configure({
+            reachabilityUrl
+        });
         this._subscription = NetInfo.addEventListener(netInfoState => {
             this.emit(ONLINE_STATE_CHANGED_EVENT, NetworkInfoService._convertNetInfoState(netInfoState));
         });

@@ -2,6 +2,7 @@
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import { MiddlewareRegistry } from '../redux';
+import { DEFAULT_SERVER_URL } from '../settings/constants';
 
 import NetworkInfoService from './NetworkInfoService';
 import { _storeNetworkInfoCleanup, setNetworkInfo } from './actions';
@@ -46,7 +47,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
             dispatch(_storeNetworkInfoCleanup(stop));
 
-            networkInfoService.start();
+            const serverURL = getState()['features/base/settings'].serverURL || DEFAULT_SERVER_URL;
+
+            networkInfoService.start(`${serverURL}/config.js`);
         }
         break;
     case APP_WILL_UNMOUNT: {
