@@ -2,6 +2,7 @@
 
 import { getRoomName } from '../base/conference';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
+import { getFeatureFlag, PREJOIN_PAGE_ENABLED } from '../base/flags';
 import { isAudioMuted, isVideoMutedByUser } from '../base/media';
 
 /**
@@ -160,8 +161,11 @@ export function isPrejoinPageVisible(state: Object): boolean {
  * @returns {boolean}
  */
 export function shouldAutoKnock(state: Object): boolean {
-    const { iAmRecorder, iAmSipGateway, autoKnockLobby } = state['features/base/config'];
+    const { iAmRecorder, iAmSipGateway, autoKnockLobby, prejoinConfig } = state['features/base/config'];
+    const { userSelectedSkipPrejoin } = state['features/base/settings'];
+    const isPrejoinEnabled = prejoinConfig?.enabled;
 
-    return (isPrejoinPageVisible(state) || autoKnockLobby || (iAmRecorder && iAmSipGateway))
-        && state['features/base/settings'].displayName;
+    return ((isPrejoinEnabled && !userSelectedSkipPrejoin)
+            || autoKnockLobby || (iAmRecorder && iAmSipGateway))
+        && !state['features/lobby'].knocking;
 }
