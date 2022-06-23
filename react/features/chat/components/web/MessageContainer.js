@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import { scrollIntoView } from "seamless-scroll-polyfill";
 
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
 import AbstractMessageContainer, { type Props }
@@ -62,22 +63,22 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
 
             return (
                 <ChatMessageGroup
-                    className = { messageType || MESSAGE_TYPE_REMOTE }
-                    key = { index }
-                    messages = { group } />
+                    className={messageType || MESSAGE_TYPE_REMOTE}
+                    key={index}
+                    messages={group} />
             );
         });
 
         return (
             <div
-                aria-labelledby = 'chat-header'
-                id = 'chatconversation'
-                onScroll = { this._onChatScroll }
-                ref = { this._messageListRef }
-                role = 'log'
-                tabIndex = { 0 }>
-                { messages }
-                <div ref = { this._messagesListEndRef } />
+                aria-labelledby='chat-header'
+                id='chatconversation'
+                onScroll={this._onChatScroll}
+                ref={this._messageListRef}
+                role='log'
+                tabIndex={0}>
+                {messages}
+                <div ref={this._messagesListEndRef} />
             </div>
         );
     }
@@ -103,7 +104,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
      * @returns {void}
      */
     scrollToBottom(withAnimation: boolean) {
-        this._messagesListEndRef.current.scrollIntoView({
+        scrollIntoView(this._messagesListEndRef.current, {
             behavior: withAnimation ? 'smooth' : 'auto',
             block: 'nearest'
         });
