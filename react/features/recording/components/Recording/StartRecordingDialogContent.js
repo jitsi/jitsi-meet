@@ -707,7 +707,7 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
-        _localRecordingEnabled: state['features/base/config'].localRecording.enable,
+        _localRecordingEnabled: !state['features/base/config'].localRecording.disable,
         _localRecordingNoNotification: !state['features/base/config'].localRecording.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
     };
