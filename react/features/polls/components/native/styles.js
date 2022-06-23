@@ -2,17 +2,35 @@
 
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import {shape} from "../../../base/ui/Tokens";
 
 export const dialogStyles = createStyleSheet({
-    question: {
+    questionText: {
+        ...BaseTheme.typography.bodyShortBold,
+        color: BaseTheme.palette.text01,
+        marginBottom: BaseTheme.spacing[2],
+        marginLeft: BaseTheme.spacing[2]
+    },
+
+    questionOwnerText: {
+        ...BaseTheme.typography.bodyShortBold,
+        color: BaseTheme.palette.text03,
+        marginBottom: BaseTheme.spacing[2],
+        marginLeft: BaseTheme.spacing[2]
+    },
+
+    questionField: {
         borderWidth: 1,
         borderColor: BaseTheme.palette.border05,
         borderRadius: BaseTheme.shape.borderRadius,
-        color: BaseTheme.palette.text03,
+        color: BaseTheme.palette.text01,
         fontSize: 14,
         marginHorizontal: BaseTheme.spacing[3],
         marginBottom: BaseTheme.spacing[3],
-        padding: BaseTheme.spacing[3]
+        paddingBottom: BaseTheme.spacing[2],
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[2]
     },
 
     optionContainer: {
@@ -26,13 +44,20 @@ export const dialogStyles = createStyleSheet({
         marginBottom: BaseTheme.spacing[2]
     },
 
+    optionRemoveButtonText: {
+        color: BaseTheme.palette.actionDangerActive
+    },
+
     field: {
-        color: BaseTheme.palette.text03,
         borderWidth: 1,
         borderColor: BaseTheme.palette.border05,
         borderRadius: BaseTheme.shape.borderRadius,
+        color: BaseTheme.palette.text01,
         fontSize: 14,
-        padding: BaseTheme.spacing[3]
+        paddingBottom: BaseTheme.spacing[2],
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[2]
     }
 });
 
@@ -116,11 +141,13 @@ export const chatStyles = createStyleSheet({
     },
 
     pollItemContainer: {
-        borderRadius: 4,
-        borderColor: '#2183ad',
-        borderWidth: 2,
-        padding: 16,
-        marginBottom: 8
+        backgroundColor: BaseTheme.palette.ui02,
+        borderColor: BaseTheme.palette.border05,
+        borderRadius: BaseTheme.shape.borderRadius,
+        boxShadow: BaseTheme.shape.boxShadow,
+        borderWidth: 1,
+        padding: BaseTheme.spacing[2],
+        margin: BaseTheme.spacing[3]
     },
 
     pollCreateContainer: {

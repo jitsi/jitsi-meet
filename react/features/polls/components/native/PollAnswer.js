@@ -11,6 +11,7 @@ import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
 
 import { chatStyles, dialogStyles } from './styles';
+import {TRACK_COLOR} from "../../../recording/components/Recording/styles";
 
 
 const PollAnswer = (props: AbstractProps) => {
@@ -26,10 +27,9 @@ const PollAnswer = (props: AbstractProps) => {
     const { changingVote } = poll;
 
     return (
-        <View>
-            <View>
-                <Text style = { dialogStyles.question } >{ poll.question }</Text>
-            </View>
+        <>
+            <Text style = { dialogStyles.questionText } >{ poll.question }</Text>
+            <Text style = { dialogStyles.questionOwnerText } >{ t('polls.by', { name: poll.senderName }) }</Text>
             <View style = { chatStyles.answerContent }>
                 {poll.answers.map((answer, index) => (
                     <View
@@ -38,6 +38,7 @@ const PollAnswer = (props: AbstractProps) => {
                         <Switch
                             /* eslint-disable react/jsx-no-bind */
                             onValueChange = { state => setCheckbox(index, state) }
+                            trackColor = {{ true: BaseTheme.palette.action01 }}
                             value = { checkBoxStates[index] } />
                         <Text style = { chatStyles.switchLabel }>{answer.name}</Text>
                     </View>
@@ -52,7 +53,7 @@ const PollAnswer = (props: AbstractProps) => {
                     {t('polls.answer.skip')}
                 </Button>
                 <Button
-                    color = { BaseTheme.palette.screen01Header }
+                    color = { BaseTheme.palette.action01 }
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                     labelStyle = {
                         isSubmitAnswerDisabled(checkBoxStates)
@@ -65,7 +66,7 @@ const PollAnswer = (props: AbstractProps) => {
                     {t('polls.answer.submit')}
                 </Button>
             </View>
-        </View>
+        </>
 
     );
 };

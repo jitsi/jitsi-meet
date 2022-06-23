@@ -117,7 +117,7 @@ const PollCreate = (props: AbstractProps) => {
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }
                     placeholderTextColor = { BaseTheme.palette.text03 }
                     ref = { input => registerFieldRef(index, input) }
-                    selectionColor = { BaseTheme.palette.text03 }
+                    selectionColor = { BaseTheme.palette.action01 }
                     style = { dialogStyles.field }
                     value = { answers[index] } />
 
@@ -143,8 +143,8 @@ const PollCreate = (props: AbstractProps) => {
                     onSubmitEditing = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
                     placeholderTextColor = { BaseTheme.palette.text03 }
-                    selectionColor = { BaseTheme.palette.text03 }
-                    style = { dialogStyles.question }
+                    selectionColor = { BaseTheme.palette.action01 }
+                    style = { dialogStyles.questionField }
                     value = { question } />
                 <Divider style = { styles.fieldSeparator } />
                 <FlatList
