@@ -84,6 +84,7 @@ export class LargeVideoBackground extends Component<Props> {
         // Bind event handlers so they are only bound once per instance.
         this._setCanvasEl = this._setCanvasEl.bind(this);
         this._updateCanvas = this._updateCanvas.bind(this);
+        this.getSelfie = this.getSelfie.bind(this);
     }
 
     /**
@@ -244,6 +245,12 @@ export class LargeVideoBackground extends Component<Props> {
                 videoElement, 0, 0, widthScaledToFit, canvasHeight);
         }
     }
+
+    getSelfie() {
+        this._updateCanvas();
+        const dataURL = this._canvasEl.toDataURL("image/png")
+        console.log("Selfie", dataURL);
+    }
 }
 
 /**
@@ -260,6 +267,7 @@ function _mapStateToProps(state) {
         _shouldDisplayTileView: shouldDisplayTileView(state)
     };
 }
+
 
 
 export default connect(_mapStateToProps)(LargeVideoBackground);

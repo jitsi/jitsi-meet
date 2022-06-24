@@ -25,6 +25,7 @@ export const TOOLBAR_BUTTONS = [
     'filmstrip',
     'fullscreen',
     'hangup',
+    'selfie',
     'help',
     'highlight',
     'invite',
