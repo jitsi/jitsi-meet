@@ -71,7 +71,8 @@ export const SET_MEETING_HIGHLIGHT_BUTTON_STATE = 'SET_MEETING_HIGHLIGHT_BUTTON_
  * Attempts to start the local recording.
  *
  * {
- *     type: START_LOCAL_RECORDING
+ *     type: START_LOCAL_RECORDING,
+ *     onlySelf: boolean
  * }
  */
 export const START_LOCAL_RECORDING = 'START_LOCAL_RECORDING';
