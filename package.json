@@ -130,6 +130,7 @@
     "redux-thunk": "2.2.0",
     "resemblejs": "4.0.0",
     "rnnoise-wasm": "https://git@github.com/jitsi/rnnoise-wasm#566a16885897704d6e6d67a1d5ac5d39781db2af",
+    "seamless-scroll-polyfill": "2.1.8",
     "styled-components": "3.4.9",
     "util": "0.12.1",
     "uuid": "8.3.2",
