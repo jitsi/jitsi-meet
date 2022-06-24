@@ -97,7 +97,7 @@ function getConfig(options = {}) {
     const { detectCircularDeps, minimize } = options;
 
     return {
-        devtool: 'source-map',
+        devtool: minimize ? 'source-map' : 'eval-source-map',
         mode: minimize ? 'production' : 'development',
         module: {
             rules: [ {
