@@ -3,7 +3,7 @@
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-const BUTTON_SIZE = 48;
+const BUTTON_SIZE = 44;
 
 // Toolbox, toolbar:
 
@@ -18,7 +18,7 @@ const toolbarButton = {
     height: BUTTON_SIZE,
     justifyContent: 'center',
     marginHorizontal: 6,
-    marginVertical: 6,
+    marginVertical: 8,
     width: BUTTON_SIZE
 };
 
@@ -144,7 +144,13 @@ ColorSchemeRegistry.register('Toolbox', {
         },
         underlayColor: BaseTheme.palette.underlay01
     },
-
+    selfieButtonStyles: {
+        iconStyle: whiteToolbarButtonIcon,
+        style: {
+            ...toolbarButton,
+            backgroundColor: 'transparent'
+        }
+    },
     reactionDialog: {
         position: 'absolute',
         width: '100%',

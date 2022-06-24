@@ -22,6 +22,7 @@ import OverflowMenuButton from './OverflowMenuButton';
 import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
+import NativeSelfieButton from "./NativeSelfie";
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -63,7 +64,7 @@ function Toolbox(props: Props) {
     }
 
     const bottomEdge = Platform.OS === 'ios' && _visible;
-    const { buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
+    const { buttonStylesBorderless, hangupButtonStyles, selfieButtonStyles, toggledButtonStyles } = _styles;
     const additionalButtons = getMovableButtons(_width);
     const backgroundToggledStyle = {
         ...toggledButtonStyles,
@@ -118,6 +119,7 @@ function Toolbox(props: Props) {
                     <OverflowMenuButton
                         styles={buttonStylesBorderless}
                         toggledStyles={toggledButtonStyles} />
+                    <NativeSelfieButton styles={selfieButtonStyles}/>
                     <HangupButton
                         styles={hangupButtonStyles} />
                 </SafeAreaView>
