@@ -35,12 +35,13 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
      */
     constructor(props: Props) {
         super(props);
+
+        this._selfie = () => {
         const video = document.querySelector('#largeVideo');
         let canvas = document.createElement('canvas');
         canvas.width = 480;
         canvas.height = 360;
 
-        this._selfie = () => {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
