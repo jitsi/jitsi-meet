@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { scrollIntoView } from "seamless-scroll-polyfill";
+import { scrollIntoView } from 'seamless-scroll-polyfill';
 
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
 import AbstractMessageContainer, { type Props }
