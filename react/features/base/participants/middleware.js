@@ -183,7 +183,7 @@ MiddlewareRegistry.register(store => next => action => {
         const localId = getLocalParticipant(state)?.id;
         const { localRecording } = state['features/base/config'];
 
-        if (localRecording.notifyAllParticipants && !onlySelf) {
+        if (localRecording?.notifyAllParticipants && !onlySelf) {
             store.dispatch(participantUpdated({
                 // XXX Only the local participant is allowed to update without
                 // stating the JitsiConference instance (i.e. participant property

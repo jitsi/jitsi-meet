@@ -143,7 +143,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 titleKey: 'dialog.recording'
             };
 
-            if (localRecording.notifyAllParticipants && !onlySelf) {
+            if (localRecording?.notifyAllParticipants && !onlySelf) {
                 dispatch(playSound(RECORDING_ON_SOUND_ID));
             }
             dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
@@ -177,7 +177,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
         if (LocalRecordingManager.isRecordingLocally()) {
             LocalRecordingManager.stopLocalRecording();
             dispatch(updateLocalRecordingStatus(false));
-            if (localRecording.notifyAllParticipants && !onlySelf) {
+            if (localRecording?.notifyAllParticipants && !onlySelf) {
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));
             }
         }
