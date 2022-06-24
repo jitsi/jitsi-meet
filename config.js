@@ -319,6 +319,9 @@ var config = {
     // ./src/react/features/transcribing/transcriber-langs.json.
     // preferredTranscribeLanguage: 'en-US',
 
+    // Disable start transcription for all participants.
+    // disableStartTranscriptionForAll: false
+
     // Enables automatic turning on captions when recording is started
     // autoCaptionOnRecord: false,
 
