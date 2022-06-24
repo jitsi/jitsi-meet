@@ -366,4 +366,5 @@ return {
     internal_room_jid_match_rewrite = internal_room_jid_match_rewrite;
     update_presence_identity = update_presence_identity;
     http_get_with_retry = http_get_with_retry;
+    starts_with = starts_with;
 };
