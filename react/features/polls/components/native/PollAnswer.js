@@ -3,7 +3,9 @@
 import React from 'react';
 import { Switch, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
+import { getLocalParticipant } from '../../../base/participants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { BUTTON_MODES } from '../../../chat/constants';
 import { isSubmitAnswerDisabled } from '../../functions';
@@ -11,7 +13,6 @@ import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
 
 import { chatStyles, dialogStyles } from './styles';
-import {TRACK_COLOR} from "../../../recording/components/Recording/styles";
 
 
 const PollAnswer = (props: AbstractProps) => {
@@ -25,11 +26,12 @@ const PollAnswer = (props: AbstractProps) => {
         t
     } = props;
     const { changingVote } = poll;
+    const localParticipant = useSelector(getLocalParticipant);
 
     return (
         <>
             <Text style = { dialogStyles.questionText } >{ poll.question }</Text>
-            <Text style = { dialogStyles.questionOwnerText } >{ t('polls.by', { name: poll.senderName }) }</Text>
+            <Text style = { dialogStyles.questionOwnerText } >{ t('polls.by', { name: localParticipant.name }) }</Text>
             <View style = { chatStyles.answerContent }>
                 {poll.answers.map((answer, index) => (
                     <View

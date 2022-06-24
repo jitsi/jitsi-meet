@@ -1,8 +1,8 @@
 // @flow
 
-import { ColorPalette, createStyleSheet } from '../../../base/styles';
+import { createStyleSheet } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
-import {shape} from "../../../base/ui/Tokens";
+
 
 export const dialogStyles = createStyleSheet({
     questionText: {
@@ -76,18 +76,18 @@ export const resultsStyles = createStyleSheet({
     },
 
     bar: {
-        backgroundColor: ColorPalette.blue,
-        borderRadius: 3,
+        backgroundColor: BaseTheme.palette.action01,
+        borderRadius: BaseTheme.shape.borderRadius,
         height: 6
     },
 
     voters: {
-        borderRadius: 3,
+        backgroundColor: BaseTheme.palette.ui04,
+        borderColor: BaseTheme.palette.border03,
+        borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
-        borderColor: 'gray',
-        padding: 2,
-        marginHorizontal: 8,
-        marginVertical: 4
+        padding: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[2]
     },
 
     voter: {
@@ -95,7 +95,8 @@ export const resultsStyles = createStyleSheet({
     },
 
     answerContainer: {
-        marginVertical: 2,
+        marginHorizontal: BaseTheme.spacing[2],
+        marginVertical: BaseTheme.spacing[3],
         maxWidth: '100%'
     },
 
@@ -189,7 +190,7 @@ export const chatStyles = createStyleSheet({
     switchRow: {
         alignItems: 'center',
         flexDirection: 'row',
-        padding: 6
+        padding: BaseTheme.spacing[2]
     },
 
     switchLabel: {
@@ -203,7 +204,7 @@ export const chatStyles = createStyleSheet({
     },
 
     toggleText: {
-        color: ColorPalette.blue,
+        color: BaseTheme.palette.action01,
         paddingTop: BaseTheme.spacing[3]
     },
 
@@ -225,6 +226,7 @@ export const chatStyles = createStyleSheet({
 
     bottomLinks: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginHorizontal: BaseTheme.spacing[2]
     }
 });

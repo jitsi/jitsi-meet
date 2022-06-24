@@ -2,7 +2,9 @@
 
 import React, { useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 
+import { getLocalParticipant } from '../../../base/participants';
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
@@ -20,8 +22,8 @@ const PollResults = (props: AbstractProps) => {
         answers,
         changeVote,
         haveVoted,
-        showDetails,
         question,
+        showDetails,
         t,
         toggleIsDetailed
     } = props;
@@ -62,6 +64,9 @@ const PollResults = (props: AbstractProps) => {
             return (
                 <View style = { resultsStyles.answerContainer }>
                     { renderHeader(name, percentage, voterCount) }
+                    <View style = { resultsStyles.barContainer }>
+                        <View style = { [ resultsStyles.bar, { width: `${percentage}%` } ] } />
+                    </View>
                     { voters && voterCount > 0
                     && <View style = { resultsStyles.voters }>
                         {voters.map(({ id, name: voterName }) =>
@@ -89,13 +94,14 @@ const PollResults = (props: AbstractProps) => {
         );
 
     }, [ showDetails ]);
+    const localParticipant = useSelector(getLocalParticipant);
+
 
     /* eslint-disable react/jsx-no-bind */
     return (
         <View>
-            <View>
-                <Text style = { dialogStyles.question } >{ question }</Text>
-            </View>
+            <Text style = { dialogStyles.questionText } >{ question }</Text>
+            <Text style = { dialogStyles.questionOwnerText } >{ t('polls.by', { name: localParticipant.name }) }</Text>
             <FlatList
                 data = { answers }
                 keyExtractor = { (item, index) => index.toString() }
