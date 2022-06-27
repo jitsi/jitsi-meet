@@ -154,7 +154,8 @@ export const conferenceScreenOptions = {
 export const chatTabBarOptions = {
     tabBarActiveTintColor: BaseTheme.palette.field02,
     tabBarLabelStyle: {
-        fontSize: BaseTheme.typography.labelRegular.fontSize
+        fontSize: BaseTheme.typography.labelRegular.fontSize,
+        textTransform: 'capitalize'
     },
     tabBarInactiveTintColor: BaseTheme.palette.text03,
     tabBarIndicatorStyle: {
