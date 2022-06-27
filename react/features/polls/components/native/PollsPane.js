@@ -48,6 +48,7 @@ const PollsPane = (props: AbstractProps) => {
             {
                 !createMode && <Button
                     color = { palette.action01 }
+                    labelStyle = { chatStyles.pollButtonLabel }
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { onCreate }
                     style = { chatStyles.createPollButton } >

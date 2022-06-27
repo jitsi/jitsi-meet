@@ -52,6 +52,7 @@ const PollAnswer = (props: AbstractProps) => {
             <View style = { chatStyles.buttonRow }>
                 <Button
                     color = { BaseTheme.palette.action02 }
+                    labelStyle = { chatStyles.pollButtonLabel }
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { changingVote ? skipChangeVote : skipAnswer }
                     style = { chatStyles.pollCreateButton } >

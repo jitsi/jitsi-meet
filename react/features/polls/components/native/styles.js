@@ -172,11 +172,13 @@ export const chatStyles = createStyleSheet({
     },
 
     pollSendLabel: {
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.text01,
+        textTransform: 'capitalize'
     },
 
     pollSendDisabledLabel: {
-        color: BaseTheme.palette.text03
+        color: BaseTheme.palette.text03,
+        textTransform: 'capitalize'
     },
 
     buttonRow: {
@@ -196,6 +198,10 @@ export const chatStyles = createStyleSheet({
     switchLabel: {
         color: BaseTheme.palette.text01,
         marginLeft: BaseTheme.spacing[2]
+    },
+
+    pollButtonLabel: {
+        textTransform: 'capitalize'
     },
 
     pollCreateAddButton: {

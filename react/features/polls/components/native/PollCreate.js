@@ -158,6 +158,7 @@ const PollCreate = (props: AbstractProps) => {
                     <Button
                         color = { BaseTheme.palette.action02 }
                         disabled = { answers.length >= ANSWERS_LIMIT }
+                        labelStyle = { chatStyles.pollButtonLabel }
                         mode = { BUTTON_MODES.CONTAINED }
                         onPress = { () => {
                             // adding and answer
@@ -171,6 +172,7 @@ const PollCreate = (props: AbstractProps) => {
                         style = { chatStyles.buttonRow }>
                         <Button
                             color = { BaseTheme.palette.action02 }
+                            labelStyle = { chatStyles.pollButtonLabel }
                             mode = { BUTTON_MODES.CONTAINED }
                             onPress = { () => setCreateMode(false) }
                             style = { chatStyles.pollCreateButton } >
