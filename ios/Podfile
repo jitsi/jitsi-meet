@@ -9,9 +9,9 @@ install! 'cocoapods', :deterministic_uuids => false
 target 'JitsiMeet' do
   project 'app/app.xcodeproj'
 
-  pod 'Firebase/Analytics', '~> 6.33.0'
-  pod 'Firebase/Crashlytics', '~> 6.33.0'
-  pod 'Firebase/DynamicLinks', '~> 6.33.0'
+  pod 'Firebase/Analytics', '~> 8.0'
+  pod 'Firebase/Crashlytics', '~> 8.0'
+  pod 'Firebase/DynamicLinks', '~> 8.0'
 end
 
 target 'JitsiMeetSDK' do
