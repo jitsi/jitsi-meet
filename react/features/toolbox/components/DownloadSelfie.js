@@ -44,19 +44,15 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
             let canvas = document.createElement('canvas');
 
             if (videos.length > 0) {
-                canvas.width = videos[0].videoWidth;
-                canvas.height = videos[0].videoHeight;
+                canvas.width = 1080;
+                canvas.height = 720;
 
                 link = document.createElement("a");
                 document.body.appendChild(link); // for Firefox
-                // for (let i = 0; i < videos.length; i++) {
                 selfieTogether(videos, canvas);
-                // }
                 console.log('HIIIIIIIIIIIIII2', videos.length);
             }
 
-            // this._selfieTogether(video, canvas);
-            // this._selfieTogether(video1);
         };
 
         function saveBase64AsFile(base64, fileName) {
@@ -69,12 +65,21 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
 
         function selfieTogether(videoReceiver, canvas) {
             console.log('HIIIIIIIIIIIIII4', videoReceiver)
-            for (let i = 1; i < videoReceiver.length; i++) {
-                if (videoReceiver[i].id !== "largeVideo") {
-                    canvas.getContext('2d')
-                        .drawImage(videoReceiver[i], i * ((canvas.width) / videoReceiver.length), 0, (canvas.width) / videoReceiver.length, canvas.height);
-                }
-                // canvas.getContext('2d').drawImage(videoReceiver,  0, 0, canvas.width, canvas.height);
+
+            let toArr = Array.prototype.slice.call(videoReceiver, 0);
+            function arrayRemove(arr, value) {
+                return arr.filter(function(ele){
+                    return ele.id !== value;
+                });
+            }
+
+            let filtered = arrayRemove(toArr, "largeVideo");
+
+
+
+            for (let i = 0; i < filtered.length; i++) {
+                canvas.getContext('2d')
+                    .drawImage(filtered[i], (i) * ((canvas.width) / filtered.length), 0, (canvas.width) / filtered.length, canvas.height);
             }
             let dataURL = canvas.toDataURL("image/png");
             saveBase64AsFile(dataURL, "sample.png");
