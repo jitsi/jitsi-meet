@@ -6,9 +6,9 @@ import { Button, Divider, TouchableRipple } from 'react-native-paper';
 
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { BUTTON_MODES } from '../../../chat/constants';
-import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import styles
     from '../../../welcome/components/native/settings/components/styles';
+import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate from '../AbstractPollCreate';
 import type { AbstractProps } from '../AbstractPollCreate';
 
@@ -35,7 +35,7 @@ const PollCreate = (props: AbstractProps) => {
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
-     * This array is maintained by registerfieldRef and the useEffect below.
+     * This array is maintained by registerFieldRef and the useEffect below.
      */
     const answerInputs = useRef([]);
     const registerFieldRef = useCallback((i, input) => {
@@ -106,7 +106,7 @@ const PollCreate = (props: AbstractProps) => {
             <View
                 style = { dialogStyles.optionContainer }>
                 <Text style = { dialogStyles.optionFieldLabel }>
-                    { `Poll option ${index + 1}` }
+                    { t('polls.create.pollOption', { index: index + 1 }) }
                 </Text>
                 <TextInput
                     blurOnSubmit = { false }
@@ -132,7 +132,7 @@ const PollCreate = (props: AbstractProps) => {
         <View style = { chatStyles.pollCreateContainer }>
             <View style = { chatStyles.pollCreateSubContainer }>
                 <Text style = { chatStyles.questionFieldLabel }>
-                    Poll question
+                    { t('polls.create.pollQuestion') }
                 </Text>
                 <TextInput
                     autoFocus = { true }
@@ -165,7 +165,7 @@ const PollCreate = (props: AbstractProps) => {
                             requestFocus(answers.length);
                         } }
                         style = { chatStyles.pollCreateAddButton }>
-                        {t('polls.create.addOption')}
+                        { t('polls.create.addOption') }
                     </Button>
                     <View
                         style = { chatStyles.buttonRow }>
@@ -174,7 +174,7 @@ const PollCreate = (props: AbstractProps) => {
                             mode = { BUTTON_MODES.CONTAINED }
                             onPress = { () => setCreateMode(false) }
                             style = { chatStyles.pollCreateButton } >
-                            {t('polls.create.cancel')}
+                            { t('polls.create.cancel') }
                         </Button>
                         <Button
                             color = { BaseTheme.palette.action01 }
@@ -187,7 +187,7 @@ const PollCreate = (props: AbstractProps) => {
                             mode = { BUTTON_MODES.CONTAINED }
                             onPress = { onSubmit }
                             style = { chatStyles.pollCreateButton } >
-                            {t('polls.create.send')}
+                            { t('polls.create.send') }
                         </Button>
                     </View>
                 </View>

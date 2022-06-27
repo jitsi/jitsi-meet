@@ -28,7 +28,6 @@ const PollResults = (props: AbstractProps) => {
         toggleIsDetailed
     } = props;
 
-    /* eslint-disable react/no-multi-comp */
     /**
      * Render a header summing up answer information.
      *
@@ -43,11 +42,6 @@ const PollResults = (props: AbstractProps) => {
             <View>
                 <Text style = { resultsStyles.answer }>({nbVotes}) {percentage}%</Text>
             </View>
-
-            {/* <Text style = { resultsStyles.answer }>{ answer } - { percentage }%</Text>
-            <Text style = { resultsStyles.answerVoteCount }>
-                { t('polls.answer.vote', { count: nbVotes }) }
-            </Text> */}
         </View>
     );
 
@@ -110,17 +104,24 @@ const PollResults = (props: AbstractProps) => {
                 <TouchableOpacity onPress = { toggleIsDetailed }>
                     <Text
                         style = { chatStyles.toggleText }>
-                        {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
+                        {
+                            showDetails
+                                ? t('polls.results.hideDetailedResults')
+                                : t('polls.results.showDetailedResults')
+                        }
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress = { changeVote }>
                     <Text
                         style = { chatStyles.toggleText }>
-                        {haveVoted ? t('polls.results.changeVote') : t('polls.results.vote')}
+                        {
+                            haveVoted
+                                ? t('polls.results.changeVote')
+                                : t('polls.results.vote')
+                        }
                     </Text>
                 </TouchableOpacity>
             </View>
-
         </View>
     );
 };

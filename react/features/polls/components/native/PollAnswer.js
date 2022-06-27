@@ -31,7 +31,10 @@ const PollAnswer = (props: AbstractProps) => {
     return (
         <>
             <Text style = { dialogStyles.questionText } >{ poll.question }</Text>
-            <Text style = { dialogStyles.questionOwnerText } >{ t('polls.by', { name: localParticipant.name }) }</Text>
+            <Text style = { dialogStyles.questionOwnerText } >{
+                t('polls.by', { name: localParticipant.name })
+            }
+            </Text>
             <View style = { chatStyles.answerContent }>
                 {poll.answers.map((answer, index) => (
                     <View
@@ -52,7 +55,7 @@ const PollAnswer = (props: AbstractProps) => {
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { changingVote ? skipChangeVote : skipAnswer }
                     style = { chatStyles.pollCreateButton } >
-                    {t('polls.answer.skip')}
+                    { t('polls.answer.skip') }
                 </Button>
                 <Button
                     color = { BaseTheme.palette.action01 }
@@ -65,7 +68,7 @@ const PollAnswer = (props: AbstractProps) => {
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { submitAnswer }
                     style = { chatStyles.pollCreateButton } >
-                    {t('polls.answer.submit')}
+                    { t('polls.answer.submit') }
                 </Button>
             </View>
         </>
