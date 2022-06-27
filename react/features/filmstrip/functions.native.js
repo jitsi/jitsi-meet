@@ -112,7 +112,7 @@ export function getColumnCount(stateful: Object | Function) {
         return 2;
     }
 
-    return Math.min(3, participantCount);
+    return Math.min(participantCount <= 6 ? 3 : 4, participantCount);
 }
 
 /**
