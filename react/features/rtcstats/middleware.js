@@ -8,7 +8,7 @@ import {
     CONFERENCE_TIMESTAMP_CHANGED,
     getConferenceOptions,
     getAnalyticsRoomName,
-    CONFERENCE_WILL_JOIN,
+    CONFERENCE_JOINED,
     CONFERENCE_WILL_LEAVE }
     from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
@@ -96,7 +96,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-    case CONFERENCE_WILL_JOIN: {
+    case CONFERENCE_JOINED: {
         if (canSendRtcstatsData(state)) {
 
             // Once the conference started connect to the rtcstats server and send data.
