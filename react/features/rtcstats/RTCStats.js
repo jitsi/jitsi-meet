@@ -38,6 +38,7 @@ class RTCStats {
      *
      * @param {Object} options -.
      * @param {string} options.endpoint - The Amplitude app key required.
+     * @param {string} options.meetingFqn - The meeting fqn.
      * @param {string} options.useLegacy - Switch to legacy chrome webrtc statistics. Parameter will only have
      * an effect on chrome based applications.
      * @param {number} options.pollInterval - The getstats poll interval in ms.
@@ -46,10 +47,11 @@ class RTCStats {
      */
     init(options) {
 
-        const { endpoint, useLegacy, pollInterval, sendSdp } = options;
+        const { endpoint, meetingFqn, useLegacy, pollInterval, sendSdp } = options;
 
         const traceOptions = {
             endpoint,
+            meetingFqn,
             onCloseCallback: this.handleTraceWSClose.bind(this),
             useLegacy
         };

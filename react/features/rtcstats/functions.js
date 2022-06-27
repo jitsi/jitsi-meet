@@ -12,9 +12,9 @@ import RTCStats from './RTCStats';
  */
 export function isRtcstatsEnabled(stateful: Function | Object) {
     // TODO: Remove when rtcstats is fully cimpatible with mobile.
-    if (navigator.product === 'ReactNative') {
-        return false;
-    }
+    // if (navigator.product === 'ReactNative') {
+    //     return false;
+    // }
 
     const state = toState(stateful);
     const config = state['features/base/config'];
