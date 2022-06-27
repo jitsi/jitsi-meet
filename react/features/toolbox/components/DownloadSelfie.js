@@ -43,17 +43,17 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
 
             let canvas = document.createElement('canvas');
 
-           if(videos.length>0){
-               canvas.width = videos[0].videoWidth;
-               canvas.height = videos[0].videoHeight;
+            if (videos.length > 0) {
+                canvas.width = videos[0].videoWidth;
+                canvas.height = videos[0].videoHeight;
 
-               link = document.createElement("a");
-               document.body.appendChild(link); // for Firefox
-               for (let i = 0; i < videos.length; i++) {
-                   selfieTogether(videos[i], canvas);
-               }
-               console.log('HIIIIIIIIIIIIII2', videos.length);
-           }
+                link = document.createElement("a");
+                document.body.appendChild(link); // for Firefox
+                // for (let i = 0; i < videos.length; i++) {
+                selfieTogether(videos, canvas);
+                // }
+                console.log('HIIIIIIIIIIIIII2', videos.length);
+            }
 
             // this._selfieTogether(video, canvas);
             // this._selfieTogether(video1);
@@ -68,9 +68,14 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
         }
 
         function selfieTogether(videoReceiver, canvas) {
-            console.log('HIIIIIIIIIIIIII4')
-
-            canvas.getContext('2d').drawImage(videoReceiver, 0, 0, canvas.width, canvas.height);
+            console.log('HIIIIIIIIIIIIII4', videoReceiver)
+            for (let i = 1; i < videoReceiver.length; i++) {
+                if (videoReceiver[i].id !== "largeVideo") {
+                    canvas.getContext('2d')
+                        .drawImage(videoReceiver[i], i * ((canvas.width) / videoReceiver.length), 0, (canvas.width) / videoReceiver.length, canvas.height);
+                }
+                // canvas.getContext('2d').drawImage(videoReceiver,  0, 0, canvas.width, canvas.height);
+            }
             let dataURL = canvas.toDataURL("image/png");
             saveBase64AsFile(dataURL, "sample.png");
         }
