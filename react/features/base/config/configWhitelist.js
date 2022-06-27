@@ -222,6 +222,7 @@ export default [
     'toolbarConfig',
     'tileView',
     'transcribingEnabled',
+    'transcription',
     'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality',

@@ -39,10 +39,10 @@ MiddlewareRegistry.register(store => next => action => {
     case _TRANSCRIBER_LEFT: {
         store.dispatch(showStoppedTranscribingNotification());
         const state = store.getState();
-        const { disableStartTranscriptionForAll } = state['features/base/config'];
+        const { transcription } = state['features/base/config'];
         const { _requestingSubtitles } = state['features/subtitles'];
 
-        if (_requestingSubtitles && !disableStartTranscriptionForAll) {
+        if (_requestingSubtitles && !transcription.disableStartForAll) {
             store.dispatch(toggleRequestingSubtitles());
         }
         break;
@@ -74,10 +74,10 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case _TRANSCRIBER_JOINED: {
         const state = store.getState();
-        const { disableStartTranscriptionForAll } = state['features/base/config'];
+        const { transcription } = state['features/base/config'];
         const { _requestingSubtitles } = state['features/subtitles'];
 
-        if (!_requestingSubtitles && !disableStartTranscriptionForAll) {
+        if (!_requestingSubtitles && !transcription.disableStartForAll) {
             store.dispatch(toggleRequestingSubtitles());
         }
         break;
