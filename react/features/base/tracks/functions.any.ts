@@ -228,7 +228,7 @@ export function getTrackByMediaTypeAndParticipant(
     const tracks = state['features/base/tracks'];
     return tracks.find(
         t => {
-            console.error(`JPA t.jitsiTrack.ssrc ${t.jitsiTrack.ssrc} ssrc ${ssrc}`)
+            // console.error(`JPA t.jitsiTrack.ssrc ${t.jitsiTrack.ssrc} ssrc ${ssrc}`)
             return Boolean(t.jitsiTrack) && t.jitsiTrack.ssrc == ssrc; // $ types
         }
     );

@@ -294,7 +294,7 @@ class ConferenceConnector {
             let track = getTrackBySsrc(ssrc);
             if(typeof track !== 'undefined')
             {
-                console.error(`JPA ${ssrc} ${owner} ${track}`);
+                // console.error(`JPA ${ssrc} ${owner} ${track}`);
                 APP.store.dispatch(trackOwnerChanged(track, owner));
             }
             else

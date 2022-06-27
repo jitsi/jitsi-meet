@@ -48,9 +48,6 @@ function track(state: ITrack, action: any) {
             state.participantId = t.participantId;
             console.error(`JPA (did it) ${state.participantId} ${t.participantId} ${state.jitsiTrack._sourceName}`);
         }
-        else {
-            console.error(`JPA (no match) ${state.participantId} ${t.participantId} ${state.jitsiTrack._sourceName}`);
-        }
         break;
     }
 
