@@ -7,7 +7,7 @@ import { Button } from 'react-native-paper';
 import { Icon, IconClose } from '../../../base/icons';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { BUTTON_MODES } from '../../../chat/constants';
-import { CHAR_LIMIT } from '../../constants';
+import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate from '../AbstractPollCreate';
 import type { AbstractProps } from '../AbstractPollCreate';
 
@@ -151,6 +151,7 @@ const PollCreate = (props: AbstractProps) => {
                 <View style = { chatStyles.pollCreateButtonsContainer }>
                     <Button
                         color = { BaseTheme.palette.action02 }
+                        disabled = { answers.length >= ANSWERS_LIMIT }
                         mode = { BUTTON_MODES.CONTAINED }
                         onPress = { () => {
                             // adding and answer
