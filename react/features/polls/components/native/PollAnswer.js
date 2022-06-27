@@ -3,7 +3,9 @@
 import React from 'react';
 import { Switch, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
+import { getLocalParticipant } from '../../../base/participants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { BUTTON_MODES } from '../../../chat/constants';
 import { isSubmitAnswerDisabled } from '../../functions';
@@ -24,12 +26,15 @@ const PollAnswer = (props: AbstractProps) => {
         t
     } = props;
     const { changingVote } = poll;
+    const localParticipant = useSelector(getLocalParticipant);
 
     return (
-        <View>
-            <View>
-                <Text style = { dialogStyles.question } >{ poll.question }</Text>
-            </View>
+        <>
+            <Text style = { dialogStyles.questionText } >{ poll.question }</Text>
+            <Text style = { dialogStyles.questionOwnerText } >{
+                t('polls.by', { name: localParticipant.name })
+            }
+            </Text>
             <View style = { chatStyles.answerContent }>
                 {poll.answers.map((answer, index) => (
                     <View
@@ -38,6 +43,7 @@ const PollAnswer = (props: AbstractProps) => {
                         <Switch
                             /* eslint-disable react/jsx-no-bind */
                             onValueChange = { state => setCheckbox(index, state) }
+                            trackColor = {{ true: BaseTheme.palette.action01 }}
                             value = { checkBoxStates[index] } />
                         <Text style = { chatStyles.switchLabel }>{answer.name}</Text>
                     </View>
@@ -46,13 +52,14 @@ const PollAnswer = (props: AbstractProps) => {
             <View style = { chatStyles.buttonRow }>
                 <Button
                     color = { BaseTheme.palette.action02 }
+                    labelStyle = { chatStyles.pollButtonLabel }
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { changingVote ? skipChangeVote : skipAnswer }
                     style = { chatStyles.pollCreateButton } >
-                    {t('polls.answer.skip')}
+                    { t('polls.answer.skip') }
                 </Button>
                 <Button
-                    color = { BaseTheme.palette.screen01Header }
+                    color = { BaseTheme.palette.action01 }
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                     labelStyle = {
                         isSubmitAnswerDisabled(checkBoxStates)
@@ -62,10 +69,10 @@ const PollAnswer = (props: AbstractProps) => {
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { submitAnswer }
                     style = { chatStyles.pollCreateButton } >
-                    {t('polls.answer.submit')}
+                    { t('polls.answer.submit') }
                 </Button>
             </View>
-        </View>
+        </>
 
     );
 };

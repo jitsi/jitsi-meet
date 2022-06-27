@@ -152,13 +152,19 @@ export const conferenceScreenOptions = {
  * Tab bar options for chat screen.
  */
 export const chatTabBarOptions = {
-    tabBarActiveTintColor: BaseTheme.palette.screen01Header,
+    tabBarActiveTintColor: BaseTheme.palette.field02,
     tabBarLabelStyle: {
-        fontSize: BaseTheme.typography.labelRegular.fontSize
+        fontSize: BaseTheme.typography.labelRegular.fontSize,
+        textTransform: 'capitalize'
     },
-    tabBarInactiveTintColor: BaseTheme.palette.text01,
+    tabBarInactiveTintColor: BaseTheme.palette.text03,
     tabBarIndicatorStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
+        backgroundColor: BaseTheme.palette.field02
+    },
+    tabBarStyle: {
+        backgroundColor: BaseTheme.palette.ui01,
+        borderBottomColor: BaseTheme.palette.border05,
+        borderBottomWidth: 1
     }
 };
 

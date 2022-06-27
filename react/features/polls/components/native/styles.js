@@ -1,60 +1,63 @@
 // @flow
 
-import { ColorPalette, createStyleSheet } from '../../../base/styles';
+import { createStyleSheet } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-export const answerStyles = createStyleSheet({
-    question: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 6
-    },
-    answer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 3
-    },
-    option: {
-        flexShrink: 1
-    }
-});
 
 export const dialogStyles = createStyleSheet({
-    question: {
+    questionText: {
+        ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text01,
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginVertical: 4
+        marginBottom: BaseTheme.spacing[2],
+        marginLeft: BaseTheme.spacing[2]
+    },
+
+    questionOwnerText: {
+        ...BaseTheme.typography.bodyShortBold,
+        color: BaseTheme.palette.text03,
+        marginBottom: BaseTheme.spacing[2],
+        marginLeft: BaseTheme.spacing[2]
+    },
+
+    questionField: {
+        borderWidth: 1,
+        borderColor: BaseTheme.palette.border05,
+        borderRadius: BaseTheme.shape.borderRadius,
+        color: BaseTheme.palette.text01,
+        fontSize: 14,
+        marginHorizontal: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[3],
+        paddingBottom: BaseTheme.spacing[2],
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[2]
     },
 
     optionContainer: {
-        flexDirection: 'row'
+        flexDirection: 'column',
+        marginTop: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
+    optionFieldLabel: {
+        color: BaseTheme.palette.text03,
+        marginBottom: BaseTheme.spacing[2]
+    },
+
+    optionRemoveButtonText: {
+        color: BaseTheme.palette.actionDangerActive
     },
 
     field: {
+        borderWidth: 1,
+        borderColor: BaseTheme.palette.border05,
+        borderRadius: BaseTheme.shape.borderRadius,
         color: BaseTheme.palette.text01,
-        borderBottomWidth: 1,
-        borderColor: ColorPalette.blue,
         fontSize: 14,
-        flexGrow: 1,
-        paddingBottom: 0,
-        flexShrink: 1
-    },
-
-    buttonContainer: {
-        justifyContent: 'flex-end',
-        alignItems: 'center'
-    },
-
-    icon: {
-        color: ColorPalette.white,
-        backgroundColor: ColorPalette.blue,
-        borderRadius: 5,
-        margin: 0
-    },
-
-    plusButton: {
-        marginTop: 8
+        paddingBottom: BaseTheme.spacing[2],
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[2]
     }
 });
 
@@ -73,18 +76,18 @@ export const resultsStyles = createStyleSheet({
     },
 
     bar: {
-        backgroundColor: ColorPalette.blue,
-        borderRadius: 3,
+        backgroundColor: BaseTheme.palette.action01,
+        borderRadius: BaseTheme.shape.borderRadius,
         height: 6
     },
 
     voters: {
-        borderRadius: 3,
+        backgroundColor: BaseTheme.palette.ui04,
+        borderColor: BaseTheme.palette.border03,
+        borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
-        borderColor: 'gray',
-        padding: 2,
-        marginHorizontal: 8,
-        marginVertical: 4
+        padding: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[2]
     },
 
     voter: {
@@ -92,7 +95,8 @@ export const resultsStyles = createStyleSheet({
     },
 
     answerContainer: {
-        marginVertical: 2,
+        marginHorizontal: BaseTheme.spacing[2],
+        marginVertical: BaseTheme.spacing[3],
         maxWidth: '100%'
     },
 
@@ -116,58 +120,65 @@ export const resultsStyles = createStyleSheet({
 });
 
 export const chatStyles = createStyleSheet({
-    messageFooter: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        fontSize: 11,
-        marginTop: 6
+    questionFieldLabel: {
+        color: BaseTheme.palette.text03,
+        marginBottom: BaseTheme.spacing[2],
+        marginLeft: BaseTheme.spacing[3]
     },
 
-    showDetails: {
-        fontWeight: 'bold'
+    noPollContent: {
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        paddingTop: '4%'
     },
 
     noPollText: {
         flex: 1,
         color: BaseTheme.palette.text03,
         textAlign: 'center',
-        paddingTop: '8%'
+        maxWidth: '70%'
     },
 
     pollItemContainer: {
-        borderRadius: 4,
-        borderColor: '#2183ad',
-        borderWidth: 2,
-        padding: 16,
-        marginBottom: 8
+        backgroundColor: BaseTheme.palette.ui02,
+        borderColor: BaseTheme.palette.border05,
+        borderRadius: BaseTheme.shape.borderRadius,
+        boxShadow: BaseTheme.shape.boxShadow,
+        borderWidth: 1,
+        padding: BaseTheme.spacing[2],
+        margin: BaseTheme.spacing[3]
     },
 
     pollCreateContainer: {
-        flex: 1,
-        justifyContent: 'space-between'
-    },
-
-    pollCreateSubContainer: {
         flex: 1
     },
 
+    pollCreateSubContainer: {
+        flex: 1,
+        marginTop: BaseTheme.spacing[3]
+    },
+
     pollCreateButtonsContainer: {
-        paddingVertical: '8%'
+        marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: '8%'
     },
 
     pollCreateButton: {
         flex: 1,
+        padding: 4,
         marginHorizontal: BaseTheme.spacing[2]
     },
 
     pollSendLabel: {
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.text01,
+        textTransform: 'capitalize'
     },
 
     pollSendDisabledLabel: {
-        color: BaseTheme.palette.text03
+        color: BaseTheme.palette.text03,
+        textTransform: 'capitalize'
     },
 
     buttonRow: {
@@ -181,7 +192,7 @@ export const chatStyles = createStyleSheet({
     switchRow: {
         alignItems: 'center',
         flexDirection: 'row',
-        padding: 6
+        padding: BaseTheme.spacing[2]
     },
 
     switchLabel: {
@@ -189,39 +200,39 @@ export const chatStyles = createStyleSheet({
         marginLeft: BaseTheme.spacing[2]
     },
 
+    pollButtonLabel: {
+        textTransform: 'capitalize'
+    },
+
     pollCreateAddButton: {
-        margin: BaseTheme.spacing[2]
+        margin: BaseTheme.spacing[2],
+        padding: BaseTheme.spacing[1]
     },
 
     toggleText: {
-        color: ColorPalette.blue,
+        color: BaseTheme.palette.action01,
         paddingTop: BaseTheme.spacing[3]
     },
 
     createPollButton: {
-        padding: 8,
-        marginHorizontal: BaseTheme.spacing[2],
-        marginVertical: BaseTheme.spacing[4]
+        padding: 4,
+        marginHorizontal: BaseTheme.spacing[4],
+        marginVertical: '8%'
     },
 
-    PollPane: {
+    pollPane: {
         flex: 1,
         padding: 8
     },
 
-    PollPaneContainer: {
+    pollPaneContainer: {
         backgroundColor: BaseTheme.palette.ui01,
-        flex: 1
-    },
-
-    PollPaneContent: {
-        justifyContent: 'space-between',
-        padding: BaseTheme.spacing[3],
         flex: 1
     },
 
     bottomLinks: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginHorizontal: BaseTheme.spacing[2]
     }
 });
