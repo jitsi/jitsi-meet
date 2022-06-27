@@ -52,14 +52,14 @@ function _updateScreenshareParticipants({ getState, dispatch }) {
     }
 
     if (localScreenShare && !newLocalSceenshareSourceName) {
-        dispatch(participantLeft(localScreenShare.id, conference));
+        dispatch(participantLeft(localScreenShare.id, conference, undefined, true));
     }
 
     const removedScreenshareSourceNames = _.difference(previousScreenshareSourceNames, currentScreenshareSourceNames);
     const addedScreenshareSourceNames = _.difference(currentScreenshareSourceNames, previousScreenshareSourceNames);
 
     if (removedScreenshareSourceNames.length) {
-        removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference)));
+        removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference, undefined, true)));
     }
 
     if (addedScreenshareSourceNames.length) {
