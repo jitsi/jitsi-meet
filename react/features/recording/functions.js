@@ -155,7 +155,7 @@ export function getRecordButtonProps(state: Object): ?string {
         localRecording
     } = state['features/base/config'];
     const { features = {} } = getLocalParticipant(state);
-    let localRecordingEnabled = !localRecording.disable;
+    let localRecordingEnabled = !localRecording?.disable;
 
     if (navigator.product === 'ReactNative') {
         localRecordingEnabled = false;
