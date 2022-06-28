@@ -303,24 +303,42 @@ var config = {
     //     notifyAllParticipants: false
     // },
 
-    // Transcription (in interface_config,
-    // subtitles and buttons can be configured)
+    // DEPRECATED. Use transcription.enabled instead.
     // transcribingEnabled: false,
 
-    // If true transcriber will use the application language.
-    // The application language is either explicitly set by participants in their settings or automatically
-    // detected based on the environment, e.g. if the app is opened in a chrome instance which is using french as its
-    // default language then transcriptions for that participant will be in french.
-    // Defaults to true.
+    // DEPRECATED. Use transcription.useAppLanguage instead.
     // transcribeWithAppLanguage: true,
 
-    // Transcriber language. This settings will only work if "transcribeWithAppLanguage" is explicitly set to false.
-    // Available languages can be found in
-    // ./src/react/features/transcribing/transcriber-langs.json.
+    // DEPRECATED. Use transcription.preferredLanguage instead.
     // preferredTranscribeLanguage: 'en-US',
 
-    // Enables automatic turning on captions when recording is started
+    // DEPRECATED. Use transcription.autoCaptionOnRecord instead.
     // autoCaptionOnRecord: false,
+
+    // Transcription options.
+    // transcription: {
+    //     // Whether the feature should be enabled or not.
+    //     enabled: false,
+
+    //     // If true transcriber will use the application language.
+    //     // The application language is either explicitly set by participants in their settings or automatically
+    //     // detected based on the environment, e.g. if the app is opened in a chrome instance which
+    //     // is using french as its default language then transcriptions for that participant will be in french.
+    //     // Defaults to true.
+    //     useAppLanguage: true,
+
+    //     // Transcriber language. This settings will only work if "useAppLanguage"
+    //     // is explicitly set to false.
+    //     // Available languages can be found in
+    //     // ./src/react/features/transcribing/transcriber-langs.json.
+    //     preferredLanguage: 'en-US',
+
+    //     // Disable start transcription for all participants.
+    //     disableStartForAll: false,
+
+    //     // Enables automatic turning on captions when recording is started
+    //     autoCaptionOnRecord: false
+    // },
 
     // Misc
 
