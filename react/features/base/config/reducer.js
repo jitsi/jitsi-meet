@@ -207,11 +207,7 @@ function _getConferenceInfo(config) {
 
 /**
  * Constructs a new config {@code Object}, if necessary, out of a specific
- * config {@code Object} which is in the latest format supported by jitsi-meet.
- * Such a translation from an old config format to a new/the latest config
- * format is necessary because the mobile app bundles jitsi-meet and
- * lib-jitsi-meet at build time and does not download them at runtime from the
- * deployment on which it will join a conference.
+ * interface_config {@code Object} which is in the latest format supported by jitsi-meet.
  *
  * @param {Object} oldValue - The config {@code Object} which may or may not be
  * in the latest form supported by jitsi-meet and from which a new config
@@ -219,11 +215,11 @@ function _getConferenceInfo(config) {
  * @returns {Object} A config {@code Object} which is in the latest format
  * supported by jitsi-meet.
  */
-function _translateLegacyConfig(oldValue: Object) {
+function _translateInterfaceConfig(oldValue: Object) {
     const newValue = oldValue;
 
     if (!Array.isArray(oldValue.toolbarButtons)
-            && typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
+        && typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
         newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
     }
 
@@ -249,6 +245,58 @@ function _translateLegacyConfig(oldValue: Object) {
         newValue.toolbarConfig.timeout = interfaceConfig.TOOLBAR_TIMEOUT;
     }
 
+    if (!oldValue.connectionIndicators
+        && typeof interfaceConfig === 'object'
+        && (interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_DISABLED')
+            || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_ENABLED')
+            || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT'))) {
+        newValue.connectionIndicators = {
+            disabled: interfaceConfig.CONNECTION_INDICATOR_DISABLED,
+            autoHide: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
+            autoHideTimeout: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT
+        };
+    }
+
+    if (oldValue.disableModeratorIndicator === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DISABLE_FOCUS_INDICATOR')) {
+        newValue.disableModeratorIndicator = interfaceConfig.DISABLE_FOCUS_INDICATOR;
+    }
+
+    if (oldValue.defaultLocalDisplayName === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DEFAULT_LOCAL_DISPLAY_NAME')) {
+        newValue.defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+    }
+
+    if (oldValue.defaultRemoteDisplayName === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DEFAULT_REMOTE_DISPLAY_NAME')) {
+        newValue.defaultRemoteDisplayName = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+    }
+
+    return newValue;
+}
+
+/**
+ * Constructs a new config {@code Object}, if necessary, out of a specific
+ * config {@code Object} which is in the latest format supported by jitsi-meet.
+ * Such a translation from an old config format to a new/the latest config
+ * format is necessary because the mobile app bundles jitsi-meet and
+ * lib-jitsi-meet at build time and does not download them at runtime from the
+ * deployment on which it will join a conference.
+ *
+ * @param {Object} oldValue - The config {@code Object} which may or may not be
+ * in the latest form supported by jitsi-meet and from which a new config
+ * {@code Object} is to be constructed if necessary.
+ * @returns {Object} A config {@code Object} which is in the latest format
+ * supported by jitsi-meet.
+ */
+function _translateLegacyConfig(oldValue: Object) {
+    const newValue = _translateInterfaceConfig(oldValue);
+
+    // Translate deprecated config values to new config values.
+
     const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key]);
 
     if (filteredConferenceInfo.length) {
@@ -268,18 +316,6 @@ function _translateLegacyConfig(oldValue: Object) {
                     = newValue.conferenceInfo.autoHide.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
             }
         });
-    }
-
-    if (!oldValue.connectionIndicators
-            && typeof interfaceConfig === 'object'
-            && (interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_DISABLED')
-                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_ENABLED')
-                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT'))) {
-        newValue.connectionIndicators = {
-            disabled: interfaceConfig.CONNECTION_INDICATOR_DISABLED,
-            autoHide: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
-            autoHideTimeout: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT
-        };
     }
 
     newValue.prejoinConfig = oldValue.prejoinConfig || {};
@@ -315,32 +351,14 @@ function _translateLegacyConfig(oldValue: Object) {
         };
     }
 
-    if (oldValue.disableModeratorIndicator === undefined
-        && typeof interfaceConfig === 'object'
-        && interfaceConfig.hasOwnProperty('DISABLE_FOCUS_INDICATOR')) {
-        newValue.disableModeratorIndicator = interfaceConfig.DISABLE_FOCUS_INDICATOR;
-    }
-
     newValue.e2ee = newValue.e2ee || {};
 
     if (oldValue.e2eeLabels) {
         newValue.e2ee.e2eeLabels = oldValue.e2eeLabels;
     }
 
-    if (oldValue.defaultLocalDisplayName === undefined
-        && typeof interfaceConfig === 'object'
-        && interfaceConfig.hasOwnProperty('DEFAULT_LOCAL_DISPLAY_NAME')) {
-        newValue.defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
-    }
-
     newValue.defaultLocalDisplayName
         = newValue.defaultLocalDisplayName || 'me';
-
-    if (oldValue.defaultRemoteDisplayName === undefined
-        && typeof interfaceConfig === 'object'
-        && interfaceConfig.hasOwnProperty('DEFAULT_REMOTE_DISPLAY_NAME')) {
-        newValue.defaultRemoteDisplayName = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-    }
 
     if (oldValue.hideAddRoomButton) {
         newValue.breakoutRooms = {
@@ -352,6 +370,32 @@ function _translateLegacyConfig(oldValue: Object) {
 
     newValue.defaultRemoteDisplayName
         = newValue.defaultRemoteDisplayName || 'Fellow Jitster';
+
+    newValue.transcription = newValue.transcription || {};
+    if (oldValue.transcribingEnabled !== undefined) {
+        newValue.transcription = {
+            ...newValue.transcription,
+            enabled: oldValue.transcribingEnabled
+        };
+    }
+    if (oldValue.transcribeWithAppLanguage !== undefined) {
+        newValue.transcription = {
+            ...newValue.transcription,
+            useAppLanguage: oldValue.transcribeWithAppLanguage
+        };
+    }
+    if (oldValue.preferredTranscribeLanguage !== undefined) {
+        newValue.transcription = {
+            ...newValue.transcription,
+            preferredLanguage: oldValue.preferredTranscribeLanguage
+        };
+    }
+    if (oldValue.autoCaptionOnRecord !== undefined) {
+        newValue.transcription = {
+            ...newValue.transcription,
+            autoCaptionOnRecord: oldValue.autoCaptionOnRecord
+        };
+    }
 
     return newValue;
 }

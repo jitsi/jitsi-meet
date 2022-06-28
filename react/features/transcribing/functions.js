@@ -15,10 +15,10 @@ const DEFAULT_TRANSCRIBER_LANG = 'en-US';
  * @returns {string}
  */
 export function determineTranscriptionLanguage(config: Object) {
-    const { preferredTranscribeLanguage, transcribeWithAppLanguage = true, transcribingEnabled } = config;
+    const { transcription } = config;
 
     // if transcriptions are not enabled nothing to determine
-    if (!transcribingEnabled) {
+    if (!transcription?.enabled) {
         return undefined;
     }
 
@@ -26,7 +26,9 @@ export function determineTranscriptionLanguage(config: Object) {
     // config BCP47 value.
     // Jitsi language detections uses custom language tags, but the transcriber expects BCP-47 compliant tags,
     // we use a mapping file to convert them.
-    const bcp47Locale = transcribeWithAppLanguage ? JITSI_TO_BCP47_MAP[i18next.language] : preferredTranscribeLanguage;
+    const bcp47Locale = transcription?.useAppLanguage ?? true
+        ? JITSI_TO_BCP47_MAP[i18next.language]
+        : transcription?.preferredLanguage;
 
     // Check if the obtained language is supported by the transcriber
     let safeBCP47Locale = TRANSCRIBER_LANGS[bcp47Locale] && bcp47Locale;

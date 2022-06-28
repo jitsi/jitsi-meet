@@ -42,7 +42,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { transcription } = state['features/base/config'];
         const { _requestingSubtitles } = state['features/subtitles'];
 
-        if (_requestingSubtitles && !transcription.disableStartForAll) {
+        if (_requestingSubtitles && !transcription?.disableStartForAll) {
             store.dispatch(toggleRequestingSubtitles());
         }
         break;
@@ -77,7 +77,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { transcription } = state['features/base/config'];
         const { _requestingSubtitles } = state['features/subtitles'];
 
-        if (!_requestingSubtitles && !transcription.disableStartForAll) {
+        if (!_requestingSubtitles && !transcription?.disableStartForAll) {
             store.dispatch(toggleRequestingSubtitles());
         }
         break;
