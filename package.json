@@ -109,7 +109,7 @@
     "react-native-performance": "2.1.0",
     "react-native-reanimated": "https://git@github.com/software-mansion/react-native-reanimated#c4a6b6f687ede090f6081064abe83a2ef9a05784",
     "react-native-safe-area-context": "3.3.2",
-    "react-native-screens": "3.10.1",
+    "react-native-screens": "3.13.1",
     "react-native-sound": "0.11.1",
     "react-native-splash-screen": "3.3.0",
     "react-native-svg": "12.1.0",
