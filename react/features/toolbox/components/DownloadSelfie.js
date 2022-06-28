@@ -36,41 +36,39 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
         let link;
 
         this._selfie = () => {
-            console.log('HIIIIIIIIIIIIII')
             const videos = document.getElementsByTagName('video');
-
-            console.log('HIIIIIIIIIIIIII1', videos.length);
-
             let canvas = document.createElement('canvas');
 
-           if(videos.length>0){
-               canvas.width = videos[0].videoWidth;
-               canvas.height = videos[0].videoHeight;
+            if (videos.length > 0) {
+                canvas.width = 1080;
+                canvas.height = 720;
 
-               link = document.createElement("a");
-               document.body.appendChild(link); // for Firefox
-               for (let i = 0; i < videos.length; i++) {
-                   selfieTogether(videos[i], canvas);
-               }
-               console.log('HIIIIIIIIIIIIII2', videos.length);
-           }
+                link = document.createElement("a");
+                document.body.appendChild(link); // for Firefox
+                selfieTogether(videos, canvas);
+            }
 
-            // this._selfieTogether(video, canvas);
-            // this._selfieTogether(video1);
         };
 
         function saveBase64AsFile(base64, fileName) {
-            console.log('HIIIIIIIIIIIIII3')
-
             link.setAttribute("href", base64);
             link.setAttribute("download", fileName);
             link.click();
         }
 
         function selfieTogether(videoReceiver, canvas) {
-            console.log('HIIIIIIIIIIIIII4')
+            let toArr = Array.prototype.slice.call(videoReceiver, 0);
+            function arrayRemove(arr, value) {
+                return arr.filter(function (ele) {
+                    return ele.id !== value;
+                });
+            }
 
-            canvas.getContext('2d').drawImage(videoReceiver, 0, 0, canvas.width, canvas.height);
+            let filtered = arrayRemove(toArr, "largeVideo");
+            for (let i = 0; i < filtered.length; i++) {
+                canvas.getContext('2d')
+                    .drawImage(filtered[i], (i) * ((canvas.width) / filtered.length), 0, (canvas.width) / filtered.length, canvas.height);
+            }
             let dataURL = canvas.toDataURL("image/png");
             saveBase64AsFile(dataURL, "sample.png");
         }
