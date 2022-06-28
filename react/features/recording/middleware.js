@@ -147,6 +147,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 dispatch(playSound(RECORDING_ON_SOUND_ID));
             }
             dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            dispatch(showNotification({
+                titleKey: 'recording.localRecordingStartWarningTitle',
+                descriptionKey: 'recording.localRecordingStartWarning'
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
             dispatch(updateLocalRecordingStatus(true, onlySelf));
             sendAnalytics(createRecordingEvent('started', `local${onlySelf ? '.self' : ''}`));
         } catch (err) {
