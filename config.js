@@ -303,8 +303,19 @@ var config = {
     //     notifyAllParticipants: false
     // },
 
-    // Transcription options (in interface_config,
-    // subtitles and buttons can be configured).
+    // DEPRECATED. Use transcription.enabled instead.
+    // transcribingEnabled: false,
+
+    // DEPRECATED. Use transcription.useAppLanguage instead.
+    // transcribeWithAppLanguage: true,
+
+    // DEPRECATED. Use transcription.preferredLanguage instead.
+    // preferredTranscribeLanguage: 'en-US',
+
+    // DEPRECATED. Use transcription.autoCaptionOnRecord instead.
+    // autoCaptionOnRecord: false,
+
+    // Transcription options.
     // transcription: {
     //     // Whether the feature should be enabled or not.
     //     enabled: false,
