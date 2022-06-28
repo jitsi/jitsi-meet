@@ -15,12 +15,12 @@ const ToggleTopPanelLabel = () => {
     const asd = 'hello';
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const topPanelVisible = useSelector((state: any) => state['features/filmstrip'].topPanelVisible);
+    const topPanelHidden = !useSelector((state: any) => state['features/filmstrip'].topPanelVisible);
     const onClick = useCallback(() => {
         dispatch(setTopPanelVisible(true));
     }, []);
 
-    return !topPanelVisible && (<Tooltip
+    return topPanelHidden && (<Tooltip
         content={t('toggleTopPanelLabel') }
         position = { 'bottom' }>
         <Label
