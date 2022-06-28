@@ -58,19 +58,42 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
 
         function selfieTogether(videoReceiver, canvas) {
             let toArr = Array.prototype.slice.call(videoReceiver, 0);
+
             function arrayRemove(arr, value) {
                 return arr.filter(function (ele) {
                     return ele.id !== value;
                 });
             }
 
-            let filtered = arrayRemove(toArr, "largeVideo");
-            for (let i = 0; i < filtered.length; i++) {
-                canvas.getContext('2d')
-                    .drawImage(filtered[i], (i) * ((canvas.width) / filtered.length), 0, (canvas.width) / filtered.length, canvas.height);
+            let participantVideo = null;
+
+            function getParticipantVideo() {
+
+                toArr.some((obj) => {
+                    if (obj.id.includes('remote')) {
+                        participantVideo = obj;
+                        return true;
+                    }
+                    return false;
+                });
             }
-            let dataURL = canvas.toDataURL("image/png");
-            saveBase64AsFile(dataURL, "sample.png");
+
+            getParticipantVideo();
+
+            debugger;
+            if (participantVideo) {
+                let filtered = arrayRemove(toArr, "largeVideo");
+                for (let i = 0; i < filtered.length; i++) {
+                    canvas.getContext('2d')
+                        .drawImage(filtered[i], (i) * ((canvas.width) / filtered.length), 0, (canvas.width) / filtered.length, canvas.height);
+                }
+                let dataURL = canvas.toDataURL("image/png");
+                saveBase64AsFile(dataURL, "sample.png");
+
+            } else {
+                //alert
+            }
+
         }
     }
 
