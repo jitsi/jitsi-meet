@@ -894,7 +894,7 @@ class Filmstrip extends PureComponent <Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const { _hasScroll = false, filmstripType, _topPanelFilmstrip } = ownProps;
+    const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
@@ -941,6 +941,7 @@ function _mapStateToProps(state, ownProps) {
         _mainFilmstripVisible: visible,
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
+        _remoteParticipantsLength: _remoteParticipants.length,
         _thumbnailsReordered: enableThumbnailReordering,
         _topPanelHeight: topPanelHeight.current,
         _topPanelMaxHeight: topPanelHeight.current || TOP_FILMSTRIP_HEIGHT,

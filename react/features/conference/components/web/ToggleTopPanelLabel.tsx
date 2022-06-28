@@ -12,7 +12,6 @@ import { Tooltip } from '../../../base/tooltip';
 import { setTopPanelVisible } from '../../../filmstrip/actions.web';
 
 const ToggleTopPanelLabel = () => {
-    const asd = 'hello';
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const topPanelHidden = !useSelector((state: any) => state['features/filmstrip'].topPanelVisible);

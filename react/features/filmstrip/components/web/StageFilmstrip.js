@@ -142,7 +142,6 @@ function _mapStateToProps(state) {
         _currentLayout: getCurrentLayout(state),
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: filmstripWidth,
-        _remoteParticipantsLength: activeParticipants.length,
         _remoteParticipants: activeParticipants,
         _resizableFilmstrip: isFilmstripResizable(state) && _topPanelFilmstrip,
         _rows: gridDimensions.rows,

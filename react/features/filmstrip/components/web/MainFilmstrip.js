@@ -191,7 +191,6 @@ function _mapStateToProps(state) {
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: remoteFilmstripWidth,
         _hasScroll,
-        _remoteParticipantsLength: remoteParticipants.length,
         _remoteParticipants: remoteParticipants,
         _resizableFilmstrip,
         _rows: gridDimensions.rows,
