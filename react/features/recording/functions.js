@@ -161,7 +161,9 @@ export function getRecordButtonProps(state: Object): ?string {
         localRecordingEnabled = false;
     }
 
-    visible = isModerator && (recordingService?.enabled || localRecordingEnabled);
+    const dropboxEnabled = isDropboxEnabled(state);
+
+    visible = isModerator && (recordingService?.enabled || localRecordingEnabled || dropboxEnabled);
 
     if (enableFeaturesBasedOnToken) {
         visible = visible && String(features.recording) === 'true';
