@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
-#import "JitsiMeetViewDelegate.h"
+#import "JitsiMeetView+Private.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation JitsiMeetView (Private)
 
-@interface JitsiMeetRenderingView : UIView
-
-@property (nonatomic, assign) BOOL isPiPEnabled;
-
-- (void)setProps:(NSDictionary *_Nonnull)newProps;
++ (void)updateProps:(NSDictionary *_Nonnull)newProps {
+    [[NSNotificationCenter defaultCenter] postNotificationName:updateViewPropsNotificationName object:nil userInfo:@{@"props": newProps}];
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

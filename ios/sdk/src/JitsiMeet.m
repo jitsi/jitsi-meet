@@ -21,7 +21,7 @@
 #import "Dropbox.h"
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
-#import "JitsiMeetRenderingView.h"
+#import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
 #import "ReactUtils.h"
 #import "RNSplashScreen.h"
@@ -86,8 +86,12 @@
     restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *))restorationHandler {
 
     JitsiMeetConferenceOptions *options = [self optionsFromUserActivity:userActivity];
+    if (options) {
+        [JitsiMeetView updateProps:[options asProps]];
+        return true;
+    }
 
-    return options && [JitsiMeetRenderingView setPropsInViews:[options asProps]];
+    return false;
 }
 
 - (BOOL)application:(UIApplication *)app
@@ -111,8 +115,9 @@
     JitsiMeetConferenceOptions *conferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.room = [url absoluteString];
     }];
+    [JitsiMeetView updateProps:[conferenceOptions asProps]];
 
-    return [JitsiMeetRenderingView setPropsInViews:[conferenceOptions asProps]];
+    return true;
 }
 
 #pragma mark - Utility methods

@@ -77,7 +77,7 @@
  * - initializes the external API scope
  */
 - (void)initWithXXX {
-    self.jitsiMeetViewController = [[JitsiMeetViewController alloc] initWithPiPEnabled:self.isPiPEnabled];
+    self.jitsiMeetViewController = [[JitsiMeetViewController alloc] init];
     self.jitsiMeetViewController.view.frame = [self bounds];
     [self addSubview:self.jitsiMeetViewController.view];
     
@@ -87,7 +87,7 @@
 #pragma mark API
 
 - (void)join:(JitsiMeetConferenceOptions *)options {
-    [self.jitsiMeetViewController join:options];
+    [self.jitsiMeetViewController join:options withPiP:self.isPiPEnabled];
 }
 
 - (void)leave {

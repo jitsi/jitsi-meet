@@ -1,11 +1,18 @@
-//
-//  JitsiMeetRenderingView.m
-//  JitsiMeetSDK
-//
-//  Created by Alex Bumbu on 20.06.2022.
-//  Copyright © 2022 Jitsi. All rights reserved.
-//
-
+/*
+ * Copyright @ 2022-present 8x8, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #include <mach/mach_time.h>
 
 #import "JitsiMeetRenderingView.h"
@@ -17,20 +24,6 @@
  * Backwards compatibility: turn the boolean prop into a feature flag.
  */
 static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
-
-/**
- * The `JitsiMeetView`s associated with their `ExternalAPI` scopes (i.e. unique
- * identifiers within the process).
- */
-static NSMapTable<NSString *, JitsiMeetRenderingView *> *views;
-
-/**
- * This gets called automagically when the program starts.
- */
-__attribute__((constructor))
-static void initializeViewsMap() {
-    views = [NSMapTable strongToWeakObjectsMapTable];
-}
 
 @interface JitsiMeetRenderingView ()
 
@@ -55,7 +48,6 @@ static void initializeViewsMap() {
     if (self) {
         // Hook this JitsiMeetView into ExternalAPI.
         self.externalAPIScope = [NSUUID UUID].UUIDString;
-        [views setObject:self forKey:self.externalAPIScope];
     }
     
     return self;
@@ -106,27 +98,6 @@ static void initializeViewsMap() {
         rootView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self addSubview:rootView];
     }
-}
-
-+ (BOOL)setPropsInViews:(NSDictionary *_Nonnull)newProps {
-    BOOL handled = NO;
-
-    if (views) {
-        for (NSString *externalAPIScope in views) {
-            JitsiMeetRenderingView *view = [self viewForExternalAPIScope:externalAPIScope];
-
-            if (view) {
-                [view setProps:newProps];
-                handled = YES;
-            }
-        }
-    }
-
-    return handled;
-}
-
-+ (instancetype)viewForExternalAPIScope:(NSString *)externalAPIScope {
-    return [views objectForKey:externalAPIScope];
 }
 
 @end

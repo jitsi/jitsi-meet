@@ -1,20 +1,28 @@
-//
-//  JitsiMeetViewController.m
-//  JitsiMeetSDK
-//
-//  Created by Alex Bumbu on 20.06.2022.
-//  Copyright © 2022 Jitsi. All rights reserved.
-//
+/*
+ * Copyright @ 2022-present 8x8, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #import "JitsiMeetViewController.h"
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetRenderingView.h"
+#import "JitsiMeetView+Private.h"
 
 @interface JitsiMeetViewController ()
 
 @property (strong, nonatomic) JitsiMeetRenderingView *view;
-@property (assign, nonatomic) BOOL isPiPEnabled;
 
 @end
 
@@ -22,13 +30,17 @@
 
 @dynamic view;
 
-- (instancetype)initWithPiPEnabled:(BOOL)pipEnabled {
+- (instancetype)init {
     self = [super init];
     if (self) {
-        self.isPiPEnabled = pipEnabled;
+        [self registerObservers];
     }
     
     return self;
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)loadView {
@@ -36,7 +48,6 @@
     
     self.view = [[JitsiMeetRenderingView alloc] init];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.view.isPiPEnabled = self.isPiPEnabled;
 }
 
 - (void)viewDidLoad {
@@ -48,7 +59,8 @@
     self.view.backgroundColor = [UIColor colorWithRed:.07f green:.07f blue:.07f alpha:1];
 }
 
-- (void)join:(JitsiMeetConferenceOptions *)options {
+- (void)join:(JitsiMeetConferenceOptions *)options withPiP:(BOOL)enablePiP {
+    self.view.isPiPEnabled = enablePiP;
     [self.view setProps:options == nil ? @{} : [options asProps]];
 }
 
@@ -99,6 +111,17 @@
 - (void)setVideoMuted:(BOOL)muted {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI sendSetVideoMuted:muted];
+}
+
+#pragma mark Private
+
+- (void)registerObservers {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleUpdateViewPropsNotification:) name:updateViewPropsNotificationName object:nil];
+}
+
+- (void)handleUpdateViewPropsNotification:(NSNotification *)notification {
+    NSDictionary *props = [notification.userInfo objectForKey:@"props"];
+    [self.view setProps:props];
 }
 
 @end

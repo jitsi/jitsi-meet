@@ -15,7 +15,6 @@
  */
 
 #import "ExternalAPI.h"
-#import "JitsiMeetRenderingView.h"
 
 // Events
 static NSString * const hangUpAction = @"org.jitsi.meet.HANG_UP";
