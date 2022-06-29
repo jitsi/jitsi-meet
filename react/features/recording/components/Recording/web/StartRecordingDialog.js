@@ -62,6 +62,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
             userName
         } = this.state;
         const {
+            _fileRecordingsEnabled,
             _fileRecordingsServiceEnabled,
             _fileRecordingsServiceSharingEnabled
         } = this.props;
@@ -74,6 +75,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
                 titleKey = 'dialog.startRecording'
                 width = 'small'>
                 <StartRecordingDialogContent
+                    fileRecordingsEnabled = { _fileRecordingsEnabled }
                     fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
                     fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
                     integrationsEnabled = { this._areIntegrationsEnabled() }
