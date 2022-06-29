@@ -3094,34 +3094,12 @@ export default {
      * @param email {string} the new email
      */
     changeLocalEmail(email = '') {
-        const localParticipant = getLocalParticipant(APP.store.getState());
-
         const formattedEmail = String(email).trim();
-
-        if (formattedEmail === localParticipant.email) {
-            return;
-        }
-
-        const localId = localParticipant.id;
-
-        APP.store.dispatch(participantUpdated({
-            // XXX Only the local participant is allowed to update without
-            // stating the JitsiConference instance (i.e. participant property
-            // `conference` for a remote participant) because the local
-            // participant is uniquely identified by the very fact that there is
-            // only one local participant.
-
-            id: localId,
-            local: true,
-            email: formattedEmail
-        }));
 
         APP.store.dispatch(updateSettings({
             email: formattedEmail
         }));
-        APP.API.notifyEmailChanged(localId, {
-            email: formattedEmail
-        });
+
         sendData(commands.EMAIL, formattedEmail);
     },
 
@@ -3130,29 +3108,12 @@ export default {
      * @param url {string} the new url
      */
     changeLocalAvatarUrl(url = '') {
-        const { avatarURL, id } = getLocalParticipant(APP.store.getState());
-
         const formattedUrl = String(url).trim();
-
-        if (formattedUrl === avatarURL) {
-            return;
-        }
-
-        APP.store.dispatch(participantUpdated({
-            // XXX Only the local participant is allowed to update without
-            // stating the JitsiConference instance (i.e. participant property
-            // `conference` for a remote participant) because the local
-            // participant is uniquely identified by the very fact that there is
-            // only one local participant.
-
-            id,
-            local: true,
-            avatarURL: formattedUrl
-        }));
 
         APP.store.dispatch(updateSettings({
             avatarURL: formattedUrl
         }));
+
         sendData(commands.AVATAR_URL, url);
     },
 
@@ -3193,23 +3154,6 @@ export default {
      */
     changeLocalDisplayName(nickname = '') {
         const formattedNickname = getNormalizedDisplayName(nickname);
-        const { id, name } = getLocalParticipant(APP.store.getState());
-
-        if (formattedNickname === name) {
-            return;
-        }
-
-        APP.store.dispatch(participantUpdated({
-            // XXX Only the local participant is allowed to update without
-            // stating the JitsiConference instance (i.e. participant property
-            // `conference` for a remote participant) because the local
-            // participant is uniquely identified by the very fact that there is
-            // only one local participant.
-
-            id,
-            local: true,
-            name: formattedNickname
-        }));
 
         APP.store.dispatch(updateSettings({
             displayName: formattedNickname
