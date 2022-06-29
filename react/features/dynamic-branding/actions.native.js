@@ -6,6 +6,7 @@ import {
     setDynamicBrandingFailed,
     setDynamicBrandingReady
 } from './actions.any';
+import { getDynamicBrandingUrl } from './functions.any';
 import logger from './logger';
 
 
@@ -19,7 +20,7 @@ import logger from './logger';
 export function fetchCustomBrandingData() {
     return async function(dispatch: Function, getState: Function) {
         const state = getState();
-        const { dynamicBrandingUrl } = state['features/base/config'];
+        const dynamicBrandingUrl = await getDynamicBrandingUrl(state);
 
         if (dynamicBrandingUrl) {
             try {
