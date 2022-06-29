@@ -151,11 +151,17 @@ export function getRecordButtonProps(state: Object): ?string {
     const isModerator = isLocalParticipantModerator(state);
     const {
         enableFeaturesBasedOnToken,
-        fileRecordingsEnabled
+        fileRecordingsEnabled,
+        localRecording
     } = state['features/base/config'];
     const { features = {} } = getLocalParticipant(state);
+    let localRecordingEnabled = !localRecording?.disable;
 
-    visible = isModerator && fileRecordingsEnabled;
+    if (navigator.product === 'ReactNative') {
+        localRecordingEnabled = false;
+    }
+
+    visible = isModerator && (fileRecordingsEnabled || localRecordingEnabled);
 
     if (enableFeaturesBasedOnToken) {
         visible = visible && String(features.recording) === 'true';
