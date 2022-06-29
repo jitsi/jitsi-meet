@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-#import <JitsiMeetSDK/JitsiMeetSDK.h>
+#import <UIKit/UIKit.h>
+#import "JitsiMeetConferenceOptions.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-static NSString * const updateViewPropsNotificationName = @"org.jitsi.meet.UpdateViewProps";
+@interface JitsiMeetViewController : UIViewController
 
-@interface JitsiMeetView (Private)
-
-+ (void)updateProps:(NSDictionary *_Nonnull)newProps;
+- (void)join:(JitsiMeetConferenceOptions *)options withPiP:(BOOL)enablePiP;
+- (void)leave;
+- (void)hangUp;
+- (void)setAudioMuted:(BOOL)muted;
+- (void)sendEndpointTextMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to;
+- (void)toggleScreenShare:(BOOL)enabled;
+- (void)retrieveParticipantsInfo:(void (^ _Nonnull)(NSArray * _Nullable))completionHandler;
+- (void)openChat:(NSString*)to;
+- (void)closeChat;
+- (void)sendChatMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to;
+- (void)setVideoMuted:(BOOL)muted;
 
 @end
 

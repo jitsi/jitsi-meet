@@ -15,7 +15,6 @@
  */
 
 #import "ExternalAPI.h"
-#import "JitsiMeetView+Private.h"
 
 // Events
 static NSString * const hangUpAction = @"org.jitsi.meet.HANG_UP";
@@ -91,31 +90,14 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(sendEvent:(NSString *)name
                        data:(NSDictionary *)data
                       scope:(NSString *)scope) {
-    // The JavaScript App needs to provide uniquely identifying information to
-    // the native ExternalAPI module so that the latter may match the former
-    // to the native JitsiMeetView which hosts it.
-    JitsiMeetView *view = [JitsiMeetView viewForExternalAPIScope:scope];
-
-    if (!view) {
-        return;
-    }
-
-    id delegate = view.delegate;
-
-    if (!delegate) {
-        return;
-    }
-    
     if ([name isEqual: @"PARTICIPANTS_INFO_RETRIEVED"]) {
         [self onParticipantsInfoRetrieved: data];
         return;
     }
-
-    SEL sel = NSSelectorFromString([self methodNameFromEventName:name]);
-
-    if (sel && [delegate respondsToSelector:sel]) {
-        [delegate performSelector:sel withObject:data];
-    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:sendEventNotificationName
+                                                        object:nil
+                                                      userInfo:@{@"name": name, @"data": data}];
 }
 
 - (void) onParticipantsInfoRetrieved:(NSDictionary *)data {
@@ -125,28 +107,6 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     void (^completionHandler)(NSArray*) = [participantInfoCompletionHandlers objectForKey:completionHandlerId];
     completionHandler(participantsInfoArray);
     [participantInfoCompletionHandlers removeObjectForKey:completionHandlerId];
-}
-
-/**
- * Converts a specific event name i.e. redux action type description to a
- * method name.
- *
- * @param eventName The event name to convert to a method name.
- * @return A method name constructed from the specified `eventName`.
- */
-- (NSString *)methodNameFromEventName:(NSString *)eventName {
-   NSMutableString *methodName
-       = [NSMutableString stringWithCapacity:eventName.length];
-
-   for (NSString *c in [eventName componentsSeparatedByString:@"_"]) {
-       if (c.length) {
-           [methodName appendString:
-               methodName.length ? c.capitalizedString : c.lowercaseString];
-       }
-   }
-   [methodName appendString:@":"];
-
-   return methodName;
 }
 
 - (void)sendHangUp {
