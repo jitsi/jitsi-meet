@@ -45,6 +45,11 @@ type Props = {
     _dialogStyles: StyleType,
 
     /**
+     * Whether to hide the storage warning or not.
+     */
+    _hideStorageWarning: boolean,
+
+    /**
      * Whether local recording is enabled or not.
      */
     _localRecordingEnabled: boolean,
@@ -63,11 +68,6 @@ type Props = {
      * The redux dispatch function.
      */
     dispatch: Function,
-
-    /**
-     * Whether the file recording is enabled.
-     */
-    fileRecordingsEnabled: boolean,
 
     /**
      * Whether to show file recordings service, even if integrations
@@ -217,13 +217,14 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _shouldRenderFileSharingContent() {
         const {
+            fileRecordingsServiceEnabled,
             fileRecordingsServiceSharingEnabled,
             isVpaas,
-            selectedRecordingService,
-            fileRecordingsEnabled
+            selectedRecordingService
         } = this.props;
 
-        if (!(fileRecordingsServiceSharingEnabled && fileRecordingsEnabled)
+        if (!fileRecordingsServiceEnabled
+            || !fileRecordingsServiceSharingEnabled
             || isVpaas
             || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
             return false;
@@ -290,13 +291,14 @@ class StartRecordingDialogContent extends Component<Props> {
     _renderUploadToTheCloudInfo() {
         const {
             _dialogStyles,
+            _hideStorageWarning,
             _styles: styles,
             isVpaas,
             selectedRecordingService,
             t
         } = this.props;
 
-        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE)) {
+        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) || _hideStorageWarning) {
             return null;
         }
 
@@ -328,12 +330,8 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _shouldRenderNoIntegrationsContent() {
         // show the non integrations part only if fileRecordingsServiceEnabled
-        // is enabled or when there are no integrations enabled
-        if (!this.props.fileRecordingsEnabled) {
-            return false;
-        }
-        if (!(this.props.fileRecordingsServiceEnabled
-            || !this.props.integrationsEnabled)) {
+        // is enabled
+        if (!this.props.fileRecordingsServiceEnabled) {
             return false;
         }
 
@@ -454,7 +452,7 @@ class StartRecordingDialogContent extends Component<Props> {
             );
         }
 
-        if (this.props.fileRecordingsServiceEnabled && this.props.fileRecordingsEnabled) {
+        if (this.props.fileRecordingsServiceEnabled) {
             switchContent = (
                 <Switch
                     className = 'recording-switch'
@@ -761,6 +759,7 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
+        _hideStorageWarning: state['features/base/config'].recording?.hideStorageWarning,
         _localRecordingEnabled: !state['features/base/config'].localRecording?.disable,
         _localRecordingNoNotification: !state['features/base/config'].localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')

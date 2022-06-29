@@ -271,8 +271,9 @@ var config = {
 
     // Recording
 
-    // Whether to enable file recording or not.
+    // DEPRECATED. Use recordingService.enabled instead.
     // fileRecordingsEnabled: false,
+
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
@@ -282,14 +283,27 @@ var config = {
     //     redirectURI:
     //          'https://jitsi-meet.example.com/subfolder/static/oauth.html'
     // },
-    // When integrations like dropbox are enabled only that will be shown,
-    // by enabling fileRecordingsServiceEnabled, we show both the integrations
-    // and the generic recording service (its configuration and storage type
-    // depends on jibri configuration)
+
+    // recordingService: {
+    //     // When integrations like dropbox are enabled only that will be shown,
+    //     // by enabling fileRecordingsServiceEnabled, we show both the integrations
+    //     // and the generic recording service (its configuration and storage type
+    //     // depends on jibri configuration)
+    //     enabled: false,
+
+    //     // Whether to show the possibility to share file recording with other people
+    //     // (e.g. meeting participants), based on the actual implementation
+    //     // on the backend.
+    //     sharingEnabled: false,
+
+    //     // Hide the warning that says we only store the recording for 24 hours.
+    //     hideStorageWarning: false
+    // },
+
+    // DEPRECATED. Use recordingService.enabled instead.
     // fileRecordingsServiceEnabled: false,
-    // Whether to show the possibility to share file recording with other people
-    // (e.g. meeting participants), based on the actual implementation
-    // on the backend.
+
+    // DEPRECATED. Use recordingService.sharingEnabled instead.
     // fileRecordingsServiceSharingEnabled: false,
 
     // Whether to enable live streaming or not.
