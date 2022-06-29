@@ -23,7 +23,7 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
     _selfie: Function;
     accessibilityLabel = 'toolbar.accessibilityLabel.selfie';
     label = 'toolbar.selfie';
-    tooltip = 'selfie';
+    tooltip = 'Selfie';
 
     /**
      * Handles clicking / pressing the button, and opens a new window with the user documentation.

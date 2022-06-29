@@ -69,26 +69,34 @@ const ConnectButtons = (props: Props) => {
   const meetingName = props._meetingName.trim()
 
   useEffect(() => {
+      let cancel = false;
     (async () => {
       setLoading(true);
       const res = {
         roomName: meetingName
       }
-      let adsData = await API.request('GET', 'iconAds', res);
-      if (adsData.status == 1) {
-        for (let i = 0; i < adsData.data.length; i++) {
-          listOfAds.push(adsData.data[i]);
+      let webAdsData = await API.request('GET', 'iconAds', res);
+      if(cancel) return;
+        if (webAdsData.status === 1) {
+            for (let i = 0; i < webAdsData.data.length; i++) {
+                listOfAds.push(webAdsData.data[i]);
+            }
+            setAdsList(listOfAds)
+            setLoading(false);
         }
-        setAdsList(listOfAds)
-        setLoading(false);
-      }
     })()
+      return () => {
+          cancel = true;
+      }
   }, [])
 
   useEffect(() => {
-    setTimeout(() => {
+   const timer = setTimeout(() => {
       setTimer(timer + 2 > adsList.length - 1 ? 0 : timer + 2)
     }, 10000)
+      return ()=> {
+          clearTimeout(timer);
+      }
   }, [timer])
   return (
     true
