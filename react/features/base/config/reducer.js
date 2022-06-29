@@ -397,6 +397,20 @@ function _translateLegacyConfig(oldValue: Object) {
         };
     }
 
+    newValue.recordingService = newValue.recordingService || {};
+    if (oldValue.fileRecordingsServiceEnabled !== undefined) {
+        newValue.recordingService = {
+            ...newValue.recordingService,
+            enabled: oldValue.fileRecordingsServiceEnabled
+        };
+    }
+    if (oldValue.fileRecordingsServiceSharingEnabled !== undefined) {
+        newValue.recordingService = {
+            ...newValue.recordingService,
+            sharingEnabled: oldValue.fileRecordingsServiceSharingEnabled
+        };
+    }
+
     return newValue;
 }
 

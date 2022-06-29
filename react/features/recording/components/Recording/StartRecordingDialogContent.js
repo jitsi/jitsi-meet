@@ -70,11 +70,6 @@ type Props = {
     dispatch: Function,
 
     /**
-     * Whether the file recording is enabled.
-     */
-    fileRecordingsEnabled: boolean,
-
-    /**
      * Whether to show file recordings service, even if integrations
      * are enabled.
      */
@@ -222,13 +217,14 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _shouldRenderFileSharingContent() {
         const {
+            fileRecordingsServiceEnabled,
             fileRecordingsServiceSharingEnabled,
             isVpaas,
-            selectedRecordingService,
-            fileRecordingsEnabled
+            selectedRecordingService
         } = this.props;
 
-        if (!(fileRecordingsServiceSharingEnabled && fileRecordingsEnabled)
+        if (!fileRecordingsServiceEnabled
+            || !fileRecordingsServiceSharingEnabled
             || isVpaas
             || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
             return false;
@@ -334,12 +330,8 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _shouldRenderNoIntegrationsContent() {
         // show the non integrations part only if fileRecordingsServiceEnabled
-        // is enabled or when there are no integrations enabled
-        if (!this.props.fileRecordingsEnabled) {
-            return false;
-        }
-        if (!(this.props.fileRecordingsServiceEnabled
-            || !this.props.integrationsEnabled)) {
+        // is enabled
+        if (!this.props.fileRecordingsServiceEnabled) {
             return false;
         }
 
@@ -460,7 +452,7 @@ class StartRecordingDialogContent extends Component<Props> {
             );
         }
 
-        if (this.props.fileRecordingsServiceEnabled && this.props.fileRecordingsEnabled) {
+        if (this.props.fileRecordingsServiceEnabled) {
             switchContent = (
                 <Switch
                     className = 'recording-switch'

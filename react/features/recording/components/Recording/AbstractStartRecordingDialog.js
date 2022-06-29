@@ -405,9 +405,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
 export function mapStateToProps(state: Object) {
     const {
         transcription,
-        fileRecordingsEnabled = false,
-        fileRecordingsServiceEnabled = false,
-        fileRecordingsServiceSharingEnabled = false,
+        recordingService,
         dropbox = {}
     } = state['features/base/config'];
 
@@ -415,9 +413,8 @@ export function mapStateToProps(state: Object) {
         _appKey: dropbox.appKey,
         _autoCaptionOnRecord: transcription?.autoCaptionOnRecord ?? false,
         _conference: state['features/base/conference'].conference,
-        _fileRecordingsEnabled: fileRecordingsEnabled,
-        _fileRecordingsServiceEnabled: fileRecordingsServiceEnabled,
-        _fileRecordingsServiceSharingEnabled: fileRecordingsServiceSharingEnabled,
+        _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
+        _fileRecordingsServiceSharingEnabled: recordingService?.sharingEnabled ?? false,
         _isDropboxEnabled: isDropboxEnabled(state),
         _rToken: state['features/dropbox'].rToken,
         _tokenExpireDate: state['features/dropbox'].expireDate,

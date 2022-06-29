@@ -151,7 +151,7 @@ export function getRecordButtonProps(state: Object): ?string {
     const isModerator = isLocalParticipantModerator(state);
     const {
         enableFeaturesBasedOnToken,
-        fileRecordingsEnabled,
+        recordingService,
         localRecording
     } = state['features/base/config'];
     const { features = {} } = getLocalParticipant(state);
@@ -161,7 +161,7 @@ export function getRecordButtonProps(state: Object): ?string {
         localRecordingEnabled = false;
     }
 
-    visible = isModerator && (fileRecordingsEnabled || localRecordingEnabled);
+    visible = isModerator && (recordingService?.enabled || localRecordingEnabled);
 
     if (enableFeaturesBasedOnToken) {
         visible = visible && String(features.recording) === 'true';
