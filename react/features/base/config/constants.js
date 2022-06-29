@@ -42,6 +42,7 @@ export const TOOLBAR_BUTTONS = [
     'settings',
     'shareaudio',
     'sharedvideo',
+    'sharediframe',
     'shortcuts',
     'stats',
     'tileview',

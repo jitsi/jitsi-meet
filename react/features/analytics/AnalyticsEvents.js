@@ -630,6 +630,22 @@ export function createSharedVideoEvent(action, attributes = {}) {
 }
 
 /**
+ * Creates an event associated with the "shared iframe" feature.
+ *
+ * @param {string} action - The action that the event represents.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createSharedIFrameEvent(action, attributes = {}) {
+    return {
+        action,
+        attributes,
+        actionSubject: 'shared.iframe'
+    };
+}
+
+/**
  * Creates an event associated with a shortcut being pressed, released or
  * triggered. By convention, where appropriate an attribute named 'enable'
  * should be used to indicate the action which resulted by the shortcut being

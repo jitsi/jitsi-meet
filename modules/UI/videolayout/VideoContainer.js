@@ -389,9 +389,11 @@ export class VideoContainer extends LargeContainer {
         if (this.avatarDisplayed) {
             const $avatarImage = $('#dominantSpeakerAvatarContainer');
 
-            $element.css(
-                'top',
-                $avatarImage.offset().top + $avatarImage.height() + 10);
+            if ($avatarImage.length > 0) {
+                $element.css(
+                    'top',
+                    $avatarImage.offset().top + $avatarImage.height() + 10);
+            }
         } else {
             const height = $element.height();
             const parentHeight = $element.parent().height();

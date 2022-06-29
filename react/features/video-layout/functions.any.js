@@ -8,6 +8,7 @@ import {
     pinParticipant
 } from '../base/participants';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
+import { isIFrameSharingActive } from '../shared-iframe/functions';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
 
@@ -95,6 +96,9 @@ export function shouldDisplayTileView(state: Object = {}) {
 
         // There is a shared YouTube video in the meeting
         || isVideoPlaying(state)
+
+        // There is a shared IFrame Application in the meeting
+        || isIFrameSharingActive(state)
 
         // We want jibri to use stage view by default
         || iAmRecorder

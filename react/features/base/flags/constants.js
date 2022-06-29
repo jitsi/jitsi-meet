@@ -81,6 +81,12 @@ export const FULLSCREEN_ENABLED = 'fullscreen.enabled';
 export const HELP_BUTTON_ENABLED = 'help.enabled';
 
 /**
+ * Flag indicating if the video share button should be enabled
+ * Default: enabled (true).
+ */
+export const IFRAME_SHARE_BUTTON_ENABLED = 'iframe-share.enabled';
+
+/**
  * Flag indicating if invite functionality should be enabled.
  * Default: enabled (true).
  */

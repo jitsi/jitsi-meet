@@ -173,6 +173,7 @@ class MeetingParticipantItem extends PureComponent<Props> {
 function mapStateToProps(state, ownProps): Object {
     const { participant } = ownProps;
     const { ownerId } = state['features/shared-video'];
+
     const localParticipantId = getLocalParticipant(state).id;
     const _isAudioMuted = isParticipantAudioMuted(participant, state);
     const _isVideoMuted = isParticipantVideoMuted(participant, state);

@@ -116,6 +116,7 @@ class MeetingParticipantContextMenu extends Component<Props> {
 function _mapStateToProps(state, ownProps): Object {
     const { participantID, overflowDrawer, drawerParticipant } = ownProps;
     const { ownerId } = state['features/shared-video'];
+
     const localParticipantId = getLocalParticipant(state).id;
 
     const participant = getParticipantByIdOrUndefined(state,

@@ -302,6 +302,7 @@ function MeetingParticipantItem({
 function _mapStateToProps(state, ownProps): Object {
     const { participantID, searchString } = ownProps;
     const { ownerId } = state['features/shared-video'];
+
     const localParticipantId = getLocalParticipant(state).id;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
