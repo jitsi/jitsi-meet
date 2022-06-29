@@ -19,7 +19,11 @@ import {
     SET_VISIBLE_REMOTE_PARTICIPANTS,
     SET_VOLUME,
     SET_MAX_STAGE_PARTICIPANTS,
-    CLEAR_STAGE_PARTICIPANTS
+    CLEAR_STAGE_PARTICIPANTS,
+    SET_SCREENSHARING_TILE_DIMENSIONS,
+    SET_USER_FILMSTRIP_HEIGHT,
+    SET_FILMSTRIP_HEIGHT,
+    SET_TOP_PANEL_VISIBILITY
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -77,6 +81,11 @@ const DEFAULT_STATE = {
     remoteParticipants: [],
 
     /**
+     * The dimensions of the screenshare filmstrip.
+     */
+    screenshareFilmstripDimensions: {},
+
+    /**
      * The stage filmstrip view dimensions.
      *
      * @public
@@ -91,6 +100,27 @@ const DEFAULT_STATE = {
      * @type {Object}
      */
     tileViewDimensions: {},
+
+    /**
+     * The height of the resizable top panel.
+     */
+    topPanelHeight: {
+        /**
+         * Current height. Affected by: user top panel resize,
+         * window resize.
+         */
+        current: null,
+
+        /**
+         * Height set by user resize. Used as the preferred height.
+         */
+        userSet: null
+    },
+
+    /**
+     * The indicator determines if the top panel is visible.
+     */
+    topPanelVisible: true,
 
     /**
      * The vertical view dimensions.
@@ -227,12 +257,32 @@ ReducerRegistry.register(
                 ...state
             };
         }
+        case SET_FILMSTRIP_HEIGHT:{
+            return {
+                ...state,
+                topPanelHeight: {
+                    ...state.topPanelHeight,
+                    current: action.height
+                }
+            };
+        }
         case SET_FILMSTRIP_WIDTH: {
             return {
                 ...state,
                 width: {
                     ...state.width,
                     current: action.width
+                }
+            };
+        }
+        case SET_USER_FILMSTRIP_HEIGHT: {
+            const { height } = action;
+
+            return {
+                ...state,
+                topPanelHeight: {
+                    current: height,
+                    userSet: height
                 }
             };
         }
@@ -281,6 +331,18 @@ ReducerRegistry.register(
             return {
                 ...state,
                 activeParticipants: []
+            };
+        }
+        case SET_SCREENSHARING_TILE_DIMENSIONS: {
+            return {
+                ...state,
+                screenshareFilmstripDimensions: action.dimensions
+            };
+        }
+        case SET_TOP_PANEL_VISIBILITY: {
+            return {
+                ...state,
+                topPanelVisible: action.visible
             };
         }
         }

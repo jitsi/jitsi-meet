@@ -1,18 +1,12 @@
 // @flow
 import React from 'react';
 
-import { getToolbarButtons } from '../../../base/config';
-import { isMobileBrowser } from '../../../base/environment/utils';
 import { connect } from '../../../base/redux';
 import { LAYOUT_CLASSNAMES } from '../../../conference/components/web/Conference';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import {
-    ASPECT_RATIO_BREAKPOINT,
-    FILMSTRIP_TYPE,
-    TOOLBAR_HEIGHT_MOBILE
+    FILMSTRIP_TYPE
 } from '../../constants';
-import { getActiveParticipantsIds } from '../../functions';
-import { isFilmstripResizable, isStageFilmstripTopPanel } from '../../functions.web';
 
 import Filmstrip from './Filmstrip';
 
@@ -89,11 +83,12 @@ type Props = {
     _videosClassName: string
 };
 
-const StageFilmstrip = (props: Props) => props._currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW && (
+const ScreenshareFilmstrip = (props: Props) => props._currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW
+    && props._remoteParticipantsLength === 1 && (
     <span className = { LAYOUT_CLASSNAMES[LAYOUTS.TILE_VIEW] }>
         <Filmstrip
             { ...props }
-            filmstripType = { FILMSTRIP_TYPE.STAGE } />
+            filmstripType = { FILMSTRIP_TYPE.SCREENSHARE } />
     </span>
 );
 
@@ -105,52 +100,26 @@ const StageFilmstrip = (props: Props) => props._currentLayout === LAYOUTS.STAGE_
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const toolbarButtons = getToolbarButtons(state);
-    const activeParticipants = getActiveParticipantsIds(state);
-    const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const {
-        gridDimensions: dimensions = {},
         filmstripHeight,
         filmstripWidth,
         thumbnailSize
-    } = state['features/filmstrip'].stageFilmstripDimensions;
-    const gridDimensions = dimensions;
-
-    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-    const availableSpace = clientHeight - filmstripHeight;
-    let filmstripPadding = 0;
-
-    if (availableSpace > 0) {
-        const paddingValue = TOOLBAR_HEIGHT_MOBILE - availableSpace;
-
-        if (paddingValue > 0) {
-            filmstripPadding = paddingValue;
-        }
-    } else {
-        filmstripPadding = TOOLBAR_HEIGHT_MOBILE;
-    }
-
-    const collapseTileView = reduceHeight
-        && isMobileBrowser()
-        && clientWidth <= ASPECT_RATIO_BREAKPOINT;
-
-    const remoteFilmstripHeight = filmstripHeight - (collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
-    const _topPanelFilmstrip = isStageFilmstripTopPanel(state);
+    } = state['features/filmstrip'].screenshareFilmstripDimensions;
+    const screenshares = state['features/video-layout'].remoteScreenShares;
 
     return {
-        _columns: gridDimensions.columns,
+        _columns: 1,
         _currentLayout: getCurrentLayout(state),
-        _filmstripHeight: remoteFilmstripHeight,
+        _filmstripHeight: filmstripHeight,
         _filmstripWidth: filmstripWidth,
-        _remoteParticipants: activeParticipants,
-        _resizableFilmstrip: isFilmstripResizable(state) && _topPanelFilmstrip,
-        _rows: gridDimensions.rows,
+        _remoteParticipants: screenshares.length ? [ screenshares[0] ] : [],
+        _resizableFilmstrip: false,
+        _rows: 1,
         _thumbnailWidth: thumbnailSize?.width,
         _thumbnailHeight: thumbnailSize?.height,
-        _topPanelFilmstrip,
         _verticalViewGrid: false,
         _verticalViewBackground: false
     };
 }
 
-export default connect(_mapStateToProps)(StageFilmstrip);
+export default connect(_mapStateToProps)(ScreenshareFilmstrip);

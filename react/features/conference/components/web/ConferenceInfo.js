@@ -20,6 +20,7 @@ import InsecureRoomNameLabel from './InsecureRoomNameLabel';
 import ParticipantsCount from './ParticipantsCount';
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
 import SubjectText from './SubjectText';
+import ToggleTopPanelLabel from './ToggleTopPanelLabel';
 
 /**
  * The type of the React {@code Component} props of {@link Subject}.
@@ -82,6 +83,10 @@ const COMPONENTS = [
     {
         Component: InsecureRoomNameLabel,
         id: 'insecure-room'
+    },
+    {
+        Component: ToggleTopPanelLabel,
+        id: 'top-panel-toggle'
     }
 ];
 

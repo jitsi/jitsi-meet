@@ -1033,6 +1033,7 @@
     "termsView": {
         "header": "Terms"
     },
+    "toggleTopPanelLabel": "Toggle top panel",
     "toolbar": {
         "Settings": "Settings",
         "accessibilityLabel": {
