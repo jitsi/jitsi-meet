@@ -303,6 +303,11 @@ var config = {
     //     notifyAllParticipants: false
     // },
 
+    // recording: {
+    //     // Hide the warning that says we only store the recording for 24 hours.
+    //     hideStorageWarning: false
+    // },
+
     // DEPRECATED. Use transcription.enabled instead.
     // transcribingEnabled: false,
 

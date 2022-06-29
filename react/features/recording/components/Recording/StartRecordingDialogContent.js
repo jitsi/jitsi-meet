@@ -45,6 +45,11 @@ type Props = {
     _dialogStyles: StyleType,
 
     /**
+     * Whether to hide the storage warning or not.
+     */
+    _hideStorageWarning: boolean,
+
+    /**
      * Whether local recording is enabled or not.
      */
     _localRecordingEnabled: boolean,
@@ -290,13 +295,14 @@ class StartRecordingDialogContent extends Component<Props> {
     _renderUploadToTheCloudInfo() {
         const {
             _dialogStyles,
+            _hideStorageWarning,
             _styles: styles,
             isVpaas,
             selectedRecordingService,
             t
         } = this.props;
 
-        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE)) {
+        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) || _hideStorageWarning) {
             return null;
         }
 
@@ -761,6 +767,7 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
+        _hideStorageWarning: state['features/base/config'].recording?.hideStorageWarning,
         _localRecordingEnabled: !state['features/base/config'].localRecording?.disable,
         _localRecordingNoNotification: !state['features/base/config'].localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
