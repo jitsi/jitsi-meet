@@ -51,7 +51,7 @@ public class JitsiMeetOngoingConferenceService extends Service
 
     private boolean isAudioMuted;
 
-    static void launch(Context context, HashMap<String, Object> extraData) {
+    public static void launch(Context context, HashMap<String, Object> extraData) {
         OngoingNotification.createOngoingConferenceNotificationChannel();
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
@@ -80,7 +80,7 @@ public class JitsiMeetOngoingConferenceService extends Service
         }
     }
 
-    static void abort(Context context) {
+    public static void abort(Context context) {
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
         context.stopService(intent);
     }
