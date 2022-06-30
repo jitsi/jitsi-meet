@@ -44,7 +44,7 @@ export async function getDynamicBrandingUrl(stateful: Object | Function) {
     }
 
     const { brandingDataUrl: baseUrl } = config;
-    const fqn = extractFqnFromPath();
+    const fqn = extractFqnFromPath(state);
 
     if (baseUrl && fqn) {
         return `${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;
