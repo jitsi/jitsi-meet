@@ -10,6 +10,7 @@ import Conference from '../../../../../conference/components/native/Conference';
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 import { getDisablePolls } from '../../../../../conference/functions';
 import { SharedDocument } from '../../../../../etherpad';
+import { SharedIFrame } from '../../../../../shared-iframe';
 import { GifsMenu } from '../../../../../gifs/components';
 import AddPeopleDialog
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
@@ -38,6 +39,7 @@ import {
     salesforceScreenOptions,
     securityScreenOptions,
     sharedDocumentScreenOptions,
+    sharedIFrameScreenOptions,
     speakerStatsScreenOptions
 } from '../../../screenOptions';
 import LobbyNavigationContainer
@@ -145,6 +147,13 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...sharedDocumentScreenOptions,
                         title: t('documentSharing.title')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { SharedIFrame }
+                    name = { screen.conference.sharedIFrame }
+                    options = {{
+                        ...sharedIFrameScreenOptions,
+                        title: t('sharedIFrame.title')
                     }} />
                 <ConferenceStack.Screen
                     component = { CarMode }

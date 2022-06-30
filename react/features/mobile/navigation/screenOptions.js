@@ -270,6 +270,25 @@ export const gifsMenuOptions = presentationScreenOptions;
 export const sharedDocumentScreenOptions = presentationScreenOptions;
 
 /**
+ * Screen options for shared iframe.
+ */
+export const sharedIFrameScreenOptions = {
+    animation: 'slide_from_right',
+    headerBackTitleVisible: false,
+    headerShown: true,
+    headerStyle: {
+        backgroundColor: BaseTheme.palette.screen02Header
+    },
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    },
+    orientation: Platform.select({
+        ios: 'default',
+        android: 'all'
+    })
+};
+
+/**
  * Screen options for connecting screen.
  */
 export const connectingScreenOptions = {

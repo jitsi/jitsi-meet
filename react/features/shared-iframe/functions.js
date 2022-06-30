@@ -16,7 +16,7 @@ export function isIFrameSharingActive(stateful: Object | Function): boolean {
 
     // eslint-disable-next-line no-unused-vars
     for (const [ id, p ] of getFakeParticipants(stateful)) {
-        for (const shareKey of Object.keys(sharedIFrameConfig)) {
+        for (const shareKey of Object.keys(sharedIFrameConfig || {})) {
             if (p.name === shareKey) {
                 isIFrameActive = true;
                 break;

@@ -1002,6 +1002,9 @@
         "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this meeting\n{{dialInfoPageUrl}}",
         "mainText": "Click the following link to join the meeting:\n{{roomUrl}}"
     },
+    "sharedIFrame": {
+        "title": "Shared Document"
+    },
     "speaker": "Speaker",
     "speakerStats": {
         "angry": "Angry",
@@ -1117,8 +1120,8 @@
         "closeChat": "Close chat",
         "closeReactionsMenu": "Close reactions menu",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
-        "dock": "Dock in main window",
         "disabledSharedIFrame": "Someone else is already sharing {{iframename}}.",
+        "dock": "Dock in main window",
         "documentClose": "Close shared document",
         "documentOpen": "Open shared document",
         "download": "Download our apps",

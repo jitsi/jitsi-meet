@@ -139,7 +139,7 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _isDisabled: sharedIFrames[ownProps.shareKey]?.disabled || false,
-        _sharingIFrame: sharedIFrames[ownProps.shareKey]?.isSharing || false,
+        _sharingIFrame: sharedIFrames[ownProps.shareKey]?.isSharing || false
     };
 }
 
