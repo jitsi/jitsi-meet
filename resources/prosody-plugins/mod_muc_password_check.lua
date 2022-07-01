@@ -47,13 +47,6 @@ function verify_token(token, room_address)
         return false;
     end
 
-    -- accepting server tokens, which currently do not specify room permissions, so skip this check
-    -- if not token_util:verify_room(session, room_address) then
-    --     log("warn", "Token %s not allowed to join: %s",
-    --         tostring(token), tostring(room_address));
-    --     return false;
-    -- end
-
     return true;
 end
 
@@ -63,11 +56,13 @@ function handle_validate_room_password (event)
 
     if request.headers.content_type ~= json_content_type
             or (not request.body or #request.body == 0) then
+        module:log("warn", "Wrong content type: %s", request.headers.content_type);
         return 400;
     end
 
     local params = json.decode(event.request.body);
     if not params then
+        module:log("warn", "Missing params");
         return 400;
     end
 
@@ -75,24 +70,21 @@ function handle_validate_room_password (event)
     local passcode = params["passcode"];
 
     if (not conference or not passcode) then
-        return { status_code = 400 };
+        module:log("warn", "Missing conference or passcode param");
+        return 400;
     end
 
     local room_address = room_jid_match_rewrite(conference)
 
     -- verify access
     local token = event.request.headers["authorization"]
-    if not token then
-        return { status_code = 403 };
-    end
 
-    if starts_with(token,'Bearer ') then
+    if token and starts_with(token,'Bearer ') then
         token = token:sub(8,#token)
     end
 
-    --    module:log("debug","incoming token %s",token)
     if not verify_token(token, room_address) then
-        return { status_code = 403 };
+        return 403;
     end
 
     local room = get_room_from_jid(room_address);
@@ -111,7 +103,7 @@ function handle_validate_room_password (event)
     end
 
     PUT_response.body = json.encode(response_data);
-    module:log("info","Sending response for room password validate: %s", inspect(PUT_response));
+    module:log("debug","Sending response for room password validate: %s", inspect(PUT_response));
 
     return PUT_response;
 
@@ -123,7 +115,8 @@ end
 function handle_get_room_password (event)
     module:log("info","Request for room password received: reqid %s", event.request.headers["request_id"])
     if (not event.request.url.query) then
-        return { status_code = 400 };
+        module:log("warn", "No query");
+        return 400;
     end
     local params = parse(event.request.url.query);
     local room_name = params["room"];
@@ -134,7 +127,8 @@ function handle_get_room_password (event)
     local room_address;
 
     if (not conference) and ((not room_name) or (not domain_name)) then
-        return { status_code = 400 };
+        module:log("warn", "Missing param conference or room_name and domain_name");
+        return 400;
     end
 
     if conference then
@@ -150,17 +144,13 @@ function handle_get_room_password (event)
 
     -- verify access
     local token = event.request.headers["authorization"]
-    if not token then
-        return { status_code = 403 };
-    end
 
-    if starts_with(token,'Bearer ') then
+    if token and starts_with(token,'Bearer ') then
         token = token:sub(8,#token)
     end
 
-    --    module:log("debug","incoming token %s",token)
     if not verify_token(token, room_address) then
-        return { status_code = 403 };
+        return 403;
     end
 
         local room = get_room_from_jid(room_address);
@@ -183,8 +173,7 @@ function handle_get_room_password (event)
     end
 
     -- default case, return 404
-    return { status_code = 404 };
-
+    return 404;
 end
 
 -- process a host module directly if loaded or hooks to wait for its load
