@@ -1,6 +1,6 @@
-// @flow
-
-import { assign, ReducerRegistry } from '../base/redux';
+// @ts-ignore
+import { assign } from '../base/redux/functions';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CANCEL_LOGIN,
@@ -10,6 +10,13 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 
+export interface IAuthenticationState {
+    error?: Object|undefined;
+    progress?: number|undefined;
+    thenableWithCancel?: Object|undefined;
+    waitForOwnerTimeoutID?: number;
+}
+
 /**
  * Listens for actions which change the state of the authentication feature.
  *
@@ -18,7 +25,7 @@ import {
  * @param {string} action.type - Type of action.
  * @returns {Object}
  */
-ReducerRegistry.register('features/authentication', (state = {}, action) => {
+ReducerRegistry.register('features/authentication', (state: IAuthenticationState = {}, action: any) => {
     switch (action.type) {
     case CANCEL_LOGIN:
         return assign(state, {
