@@ -6,8 +6,8 @@ import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants';
+import { BUTTON_MODES } from '../../../base/react/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
-import { BUTTON_MODES } from '../../../chat/constants';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';

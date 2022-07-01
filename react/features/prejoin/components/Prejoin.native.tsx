@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import {
     BackHandler,
-    Text,
     View,
-    TouchableOpacity,
     TextInput,
     Platform
 } from 'react-native';
@@ -17,6 +15,8 @@ import { IconClose } from '../../base/icons';
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
+import Button from '../../base/react/components/Button';
+import { BUTTON_MODES, BUTTON_TYPES } from '../../base/react/constants';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
@@ -32,11 +32,11 @@ import { isDisplayNameRequired } from '../functions';
 import styles from './styles';
 
 
-interface Props {
+interface PrejoinProps {
     navigation: any;
 }
 
-const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) => {
+const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const aspectRatio = useSelector(
@@ -88,9 +88,9 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         );
     }, []);
 
+    const { CONTAINED } = BUTTON_MODES;
+    const { PRIMARY, SECONDARY } = BUTTON_TYPES;
     const joinButtonDisabled = !displayName && isDisplayNameMandatory;
-    const joinButtonStyles = joinButtonDisabled
-        ? styles.primaryButtonDisabled : styles.primaryButton;
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', goBack);
@@ -122,6 +122,7 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         toolboxContainerStyles = styles.toolboxContainerWide;
     }
 
+
     return (
         <JitsiScreen
             safeAreaInsets = { [ 'left' ] }
@@ -138,27 +139,19 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
                         placeholderTextColor = { BaseTheme.palette.text03 }
                         style = { styles.field }
                         value = { displayName } />
-                    <TouchableOpacity
+                    <Button
                         disabled = { joinButtonDisabled }
+                        label = 'prejoin.joinMeeting'
+                        mode = { CONTAINED }
                         onPress = { onJoin }
-                        style = { [
-                            styles.button,
-                            joinButtonStyles
-                        ] }>
-                        <Text style = { styles.primaryButtonText }>
-                            { t('prejoin.joinMeeting') }
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
+                        style = { styles.prejoinButton }
+                        type = { PRIMARY } />
+                    <Button
+                        label = 'prejoin.joinMeetingInLowBandwidthMode'
+                        mode = { CONTAINED }
                         onPress = { onJoinLowBandwidth }
-                        style = { [
-                            styles.button,
-                            styles.secondaryButton
-                        ] }>
-                        <Text style = { styles.secondaryButtonText }>
-                            { t('prejoin.joinMeetingInLowBandwidthMode') }
-                        </Text>
-                    </TouchableOpacity>
+                        style = { styles.prejoinButton }
+                        type = { SECONDARY } />
                 </View>
                 <View style = { toolboxContainerStyles }>
                     <AudioMuteButton

@@ -170,7 +170,7 @@ export default {
     },
 
     roomTimerView: {
-        backgroundColor: BaseTheme.palette.action02,
+        backgroundColor: BaseTheme.palette.ui03,
         borderRadius: 3,
         justifyContent: 'center',
         minWidth: 50

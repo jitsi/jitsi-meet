@@ -134,10 +134,47 @@ export const BASE_INDICATOR = {
     justifyContent: 'center'
 };
 
+const button = {
+    borderRadius: BaseTheme.shape.borderRadius,
+    height: BaseTheme.spacing[6],
+    minWidth: 85
+};
+
+const buttonLabel = {
+    ...BaseTheme.typography.bodyShortBold,
+    color: BaseTheme.palette.text01,
+    padding: 2,
+    textTransform: 'capitalize'
+};
+
 /**
  * The styles of the generic React {@code Component}s implemented by the feature
  * base/react.
  */
 export default {
-    ...SECTION_LIST_STYLES
+    ...SECTION_LIST_STYLES,
+
+    button: {
+        ...button
+    },
+
+    buttonLabelDisabled: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text03
+    },
+
+    buttonDisabled: {
+        ...button,
+        backgroundColor: BaseTheme.palette.actionDisabled
+    },
+
+    buttonLabelPrimary: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text01
+    },
+
+    buttonLabelSecondary: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text02
+    }
 };
