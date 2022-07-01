@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { Switch, Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants';
-import { BUTTON_MODES } from '../../../base/react/constants';
+import Button from '../../../base/react/components/Button';
+import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/react/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer from '../AbstractPollAnswer';
@@ -27,6 +27,7 @@ const PollAnswer = (props: AbstractProps) => {
     } = props;
     const { changingVote } = poll;
     const localParticipant = useSelector(getLocalParticipant);
+    const { PRIMARY, SECONDARY } = BUTTON_TYPES;
 
     return (
         <>
@@ -51,26 +52,18 @@ const PollAnswer = (props: AbstractProps) => {
             </View>
             <View style = { chatStyles.buttonRow }>
                 <Button
-                    color = { BaseTheme.palette.action02 }
-                    labelStyle = { chatStyles.pollButtonLabel }
+                    label = 'polls.answer.skip'
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { changingVote ? skipChangeVote : skipAnswer }
-                    style = { chatStyles.pollCreateButton } >
-                    { t('polls.answer.skip') }
-                </Button>
+                    style = { chatStyles.pollCreateButton }
+                    type = { SECONDARY } />
                 <Button
-                    color = { BaseTheme.palette.action01 }
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
-                    labelStyle = {
-                        isSubmitAnswerDisabled(checkBoxStates)
-                            ? chatStyles.pollSendDisabledLabel
-                            : chatStyles.pollSendLabel
-                    }
+                    label = 'polls.answer.submit'
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { submitAnswer }
-                    style = { chatStyles.pollCreateButton } >
-                    { t('polls.answer.submit') }
-                </Button>
+                    style = { chatStyles.pollCreateButton }
+                    type = { PRIMARY } />
             </View>
         </>
 
