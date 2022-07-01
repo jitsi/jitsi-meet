@@ -4,9 +4,10 @@ import { Button as NativePaperButton } from 'react-native-paper';
 
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import styles from '../components/native/styles';
-import { BUTTON_TYPES } from '../constants';
+import { BUTTON_MODES, BUTTON_TYPES } from '../constants';
 
 interface ButtonProps {
+    accessibilityLabel?: any;
     color?: string;
     disabled?: boolean;
     icon?: any;
@@ -20,20 +21,32 @@ interface ButtonProps {
 
 
 const Button: React.FC<ButtonProps> = ({
-    color: buttonColor, disabled, icon, label, labelStyle, mode, onPress, style, type
+    accessibilityLabel,
+    color: buttonColor,
+    disabled,
+    icon,
+    label,
+    labelStyle,
+    mode,
+    onPress,
+    style,
+    type
 }: ButtonProps) => {
     const { t } = useTranslation();
+    const { TEXT } = BUTTON_MODES;
+    const { DESTRUCTIVE, PRIMARY, SECONDARY } = BUTTON_TYPES;
+
     let buttonLabelStyles;
     let buttonStyles;
     let color;
 
-    if (type === BUTTON_TYPES.PRIMARY) {
+    if (type === PRIMARY) {
         buttonLabelStyles = styles.buttonLabelPrimary;
         color = BaseTheme.palette.action01;
-    } else if (type === BUTTON_TYPES.SECONDARY) {
+    } else if (type === SECONDARY) {
         buttonLabelStyles = styles.buttonLabelSecondary;
         color = BaseTheme.palette.action02;
-    } else if (type === BUTTON_TYPES.DESTRUCTIVE) {
+    } else if (type === DESTRUCTIVE) {
         color = BaseTheme.palette.actionDanger;
     } else {
         color = buttonColor;
@@ -46,8 +59,13 @@ const Button: React.FC<ButtonProps> = ({
         buttonStyles = styles.button;
     }
 
+    if (mode === TEXT) {
+        buttonLabelStyles = styles.buttonLabelPrimary;
+    }
+
     return (
         <NativePaperButton
+            accessibilityLabel = { t(accessibilityLabel) }
             children = { t(label) }
             color = { color }
             disabled = { disabled }

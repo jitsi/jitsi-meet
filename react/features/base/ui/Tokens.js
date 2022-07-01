@@ -182,7 +182,7 @@ export const colorMap = {
     icon01: 'surface11',
 
     // Secondary color for input fields
-    icon02: 'surface09',
+    icon02: 'surface01',
 
     // Tertiary color for disabled actions
     icon03: 'surface07',

@@ -3,12 +3,15 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { openDialog, openSheet } from '../../../base/dialog';
+import { IconHorizontalPoints } from '../../../base/icons';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../base/participants';
+import Button from '../../../base/react/components/Button';
+import IconButton from '../../../base/react/components/IconButton';
+import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/react/constants';
 import { equals } from '../../../base/redux';
 import {
     getBreakoutRooms,
@@ -29,7 +32,6 @@ import {
 import { CollapsibleRoom } from '../breakout-rooms/components/native/CollapsibleRoom';
 
 import { ContextMenuMore } from './ContextMenuMore';
-import HorizontalDotsIcon from './HorizontalDotsIcon';
 import LobbyParticipantList from './LobbyParticipantList';
 import MeetingParticipantList from './MeetingParticipantList';
 import styles from './styles';
@@ -92,21 +94,21 @@ const ParticipantsPane = () => {
                     {
                         showMuteAll && (
                             <Button
-                                children = { t('participantsPane.actions.muteAll') }
-                                labelStyle = { styles.muteAllLabel }
-                                mode = 'contained'
+                                accessibilityLabel = 'participantsPane.actions.muteAll'
+                                label = 'participantsPane.actions.muteAll'
+                                mode = { BUTTON_MODES.CONTAINED }
                                 onPress = { muteAll }
-                                style = { styles.muteAllMoreButton } />
+                                type = { BUTTON_TYPES.SECONDARY } />
                         )
                     }
                     {
                         showMoreActions && (
-                            <Button
-                                icon = { HorizontalDotsIcon }
-                                labelStyle = { styles.moreIcon }
-                                mode = 'contained'
+                            <IconButton
+                                mode = { BUTTON_MODES.CONTAINED }
                                 onPress = { openMoreMenu }
-                                style = { styles.moreButton } />
+                                src = { IconHorizontalPoints }
+                                style = { styles.moreButton }
+                                type = { BUTTON_TYPES.SECONDARY } />
                         )
                     }
                 </View>

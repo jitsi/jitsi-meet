@@ -46,6 +46,7 @@ const PollsPane = (props: AbstractProps) => {
             }
             {
                 !createMode && <Button
+                    accessibilityLabel = 'polls.create.create'
                     label = 'polls.create.create'
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { onCreate }

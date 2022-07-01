@@ -52,12 +52,14 @@ const PollAnswer = (props: AbstractProps) => {
             </View>
             <View style = { chatStyles.buttonRow }>
                 <Button
+                    accessibilityLabel = 'polls.answer.skip'
                     label = 'polls.answer.skip'
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { changingVote ? skipChangeVote : skipAnswer }
                     style = { chatStyles.pollCreateButton }
                     type = { SECONDARY } />
                 <Button
+                    accessibilityLabel = 'polls.answer.submit'
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                     label = 'polls.answer.submit'
                     mode = { BUTTON_MODES.CONTAINED }

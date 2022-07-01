@@ -35,39 +35,8 @@ const contextMenuItemText = {
  * The style of the participants pane buttons.
  */
 export const button = {
-    backgroundColor: BaseTheme.palette.action02,
-    borderRadius: BaseTheme.shape.borderRadius,
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
-    minWidth: 0
-};
-
-/**
- * Small buttons.
- */
-const smallButton = {
-    ...button,
-    height: BaseTheme.spacing[7],
-    width: BaseTheme.spacing[7]
-};
-
-/**
- * Mute all button.
- */
-const muteAllButton = {
-    ...button,
-    marginLeft: 'auto'
-};
-
-/**
- * The style of the participants pane buttons description.
- */
-const buttonContent = {
-    ...BaseTheme.typography.labelButton,
-    alignContent: 'center',
-    color: BaseTheme.palette.text01,
-    display: 'flex',
     justifyContent: 'center'
 };
 
@@ -263,49 +232,13 @@ export default {
     },
 
     inviteButton: {
-        backgroundColor: BaseTheme.palette.action01,
-        borderRadius: BaseTheme.shape.borderRadius,
-        height: BaseTheme.spacing[7],
         marginLeft: BaseTheme.spacing[3],
         marginRight: BaseTheme.spacing[3],
         marginVertical: BaseTheme.spacing[3]
     },
 
-    inviteLabel: {
-        fontSize: 15,
-        lineHeight: 30,
-        textTransform: 'capitalize'
-    },
-
     moreButton: {
-        ...smallButton,
-        marginLeft: BaseTheme.spacing[3]
-    },
-
-    moreIcon: {
-        ...buttonContent,
-        height: BaseTheme.spacing[5],
-        marginLeft: 'auto'
-    },
-
-    muteAllButton: {
-        ...muteAllButton
-    },
-
-    muteAllMoreButton: {
-        ...muteAllButton
-    },
-
-    muteAllLabel: {
-        ...BaseTheme.typography.labelButtonLarge,
-        color: BaseTheme.palette.text01,
-        height: BaseTheme.spacing[7],
-        marginVertical: BaseTheme.spacing[0],
-        marginHorizontal: BaseTheme.spacing[0],
-        paddingTop: 12,
-        paddingBottom: 12,
-        textTransform: 'capitalize',
-        width: 94
+        marginLeft: BaseTheme.spacing[2]
     },
 
     contextMenuItem: {

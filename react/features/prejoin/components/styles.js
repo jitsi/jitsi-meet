@@ -88,7 +88,7 @@ export default {
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
         color: BaseTheme.palette.text06,
-        height: BaseTheme.spacing[6],
+        height: BaseTheme.spacing[7],
         marginTop: BaseTheme.spacing[3],
         textAlign: 'center'
     }

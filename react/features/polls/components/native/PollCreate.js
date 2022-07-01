@@ -156,6 +156,7 @@ const PollCreate = (props: AbstractProps) => {
                     renderItem = { renderListItem } />
                 <View style = { chatStyles.pollCreateButtonsContainer }>
                     <Button
+                        accessibilityLabel = 'polls.create.addOption'
                         disabled = { answers.length >= ANSWERS_LIMIT }
                         label = 'polls.create.addOption'
                         mode = { BUTTON_MODES.CONTAINED }
@@ -169,6 +170,7 @@ const PollCreate = (props: AbstractProps) => {
                     <View
                         style = { chatStyles.buttonRow }>
                         <Button
+                            accessibilityLabel = 'polls.create.cancel'
                             label = 'polls.create.cancel'
                             labelStyle = { chatStyles.pollButtonLabel }
                             mode = { BUTTON_MODES.CONTAINED }
@@ -176,6 +178,7 @@ const PollCreate = (props: AbstractProps) => {
                             style = { chatStyles.pollCreateButton }
                             type = { SECONDARY } />
                         <Button
+                            accessibilityLabel = 'polls.create.send'
                             disabled = { isSubmitDisabled }
                             label = 'polls.create.send'
                             mode = { BUTTON_MODES.CONTAINED }

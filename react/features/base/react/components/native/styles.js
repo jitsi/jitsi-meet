@@ -142,9 +142,17 @@ const button = {
 
 const buttonLabel = {
     ...BaseTheme.typography.bodyShortBold,
-    color: BaseTheme.palette.text01,
     padding: 2,
     textTransform: 'capitalize'
+};
+
+const iconButtonContainer = {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    borderRadius: BaseTheme.shape.borderRadius,
+    height: BaseTheme.spacing[6],
+    width: BaseTheme.spacing[6]
 };
 
 /**
@@ -176,5 +184,19 @@ export default {
     buttonLabelSecondary: {
         ...buttonLabel,
         color: BaseTheme.palette.text02
+    },
+
+    iconButtonContainer: {
+        ...iconButtonContainer
+    },
+
+    iconButtonContainerPrimary: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.action01
+    },
+
+    iconButtonContainerSecondary: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.action02
     }
 };

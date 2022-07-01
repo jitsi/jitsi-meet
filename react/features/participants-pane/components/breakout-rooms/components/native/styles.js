@@ -19,14 +19,10 @@ const baseLabel = {
  */
 export default {
 
-    addButtonLabel: {
-        ...baseLabel,
-        color: BaseTheme.palette.text01
-    },
-
     addButton: {
-        ...baseButton,
-        backgroundColor: BaseTheme.palette.ui03
+        marginTop: BaseTheme.spacing[3],
+        marginLeft: BaseTheme.spacing[3],
+        marginRight: BaseTheme.spacing[3]
     },
 
     collapsibleRoom: {

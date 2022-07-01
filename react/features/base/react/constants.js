@@ -20,5 +20,6 @@ export const BUTTON_TYPES = {
  */
 export const BUTTON_MODES = {
     CONTAINED: 'contained',
+    ICON: 'icon',
     TEXT: 'text'
 };
