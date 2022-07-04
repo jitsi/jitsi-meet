@@ -48,8 +48,10 @@ const Button: React.FC<ButtonProps> = ({
         color = BaseTheme.palette.action02;
     } else if (type === DESTRUCTIVE) {
         color = BaseTheme.palette.actionDanger;
+        buttonLabelStyles = styles.buttonLabelDestructive;
     } else {
         color = buttonColor;
+        buttonLabelStyles = styles.buttonLabel;
     }
 
     if (disabled) {

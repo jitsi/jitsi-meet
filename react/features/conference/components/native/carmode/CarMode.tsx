@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,7 +23,6 @@ import styles from './styles';
  */
 const CarMode = (): JSX.Element => {
     const dispatch = useDispatch();
-    const { t } = useTranslation();
     const connecting = useSelector(isConnecting);
     const isSharing = useSelector(isLocalVideoTrackDesktop);
 

@@ -166,6 +166,10 @@ export default {
         ...button
     },
 
+    buttonLabel: {
+        ...buttonLabel
+    },
+
     buttonLabelDisabled: {
         ...buttonLabel,
         color: BaseTheme.palette.text03
@@ -184,6 +188,11 @@ export default {
     buttonLabelSecondary: {
         ...buttonLabel,
         color: BaseTheme.palette.text02
+    },
+
+    buttonLabelDestructive: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text01
     },
 
     iconButtonContainer: {
