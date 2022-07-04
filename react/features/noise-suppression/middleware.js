@@ -1,5 +1,6 @@
 import { MiddlewareRegistry } from '../base/redux';
 import { getLocalJitsiAudioTrack } from '../base/tracks';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showWarningNotification } from '../notifications';
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
 import { TOGGLE_NOISE_SUPPRESSION } from './actionTypes';
@@ -26,6 +27,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
         if (!localAudio) {
             logger.warn('Can not toggle noise suppression without any local track active.');
 
+            dispatch(showWarningNotification({
+                titleKey: 'notify.noiseSuppressionFailedTitle',
+                descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
             return;
         }
 
@@ -44,6 +50,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 `Failed to toggle noise suppression to active state: ${!noiseSuppressionActive}`,
                 error
             );
+
+            dispatch(showErrorNotification({
+                titleKey: 'notify.noiseSuppressionFailedTitle'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
 
         break;

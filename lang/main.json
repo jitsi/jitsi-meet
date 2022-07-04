@@ -683,6 +683,8 @@
         "newDeviceAction": "Use",
         "newDeviceAudioTitle": "New audio device detected",
         "newDeviceCameraTitle": "New camera detected",
+        "noiseSuppressionFailedTitle": "Failed to start noise suppression",
+        "noiseSuppressionNoTrackDescription": "Can not start noise suppression, please unmute your microphone first.",
         "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
