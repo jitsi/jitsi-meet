@@ -300,8 +300,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
 
     // Translate deprecated config values to new config values.
 
-    // @ts-ignore
-    const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key]);
+    const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key as keyof IConfig]);
 
     if (filteredConferenceInfo.length) {
         newValue.conferenceInfo = _getConferenceInfo(oldValue);
