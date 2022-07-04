@@ -6,6 +6,11 @@ module.exports = {
         '@jitsi/eslint-config/react',
         '.eslintrc-react-native.js'
     ],
+    'overrides': [
+        {
+            'files': [ '*.js', '*.ts', '*.tsx' ]
+        }
+    ],
     'rules': {
         'flowtype/no-types-missing-file-annotation': 0,
 
