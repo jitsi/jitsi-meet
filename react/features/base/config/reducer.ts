@@ -1,9 +1,9 @@
-// @flow
-
 import _ from 'lodash';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
-import { equals, ReducerRegistry } from '../redux';
+// @ts-ignore
+import { equals } from '../redux';
+import ReducerRegistry from '../redux/ReducerRegistry';
 
 import {
     UPDATE_CONFIG,
@@ -12,9 +12,11 @@ import {
     SET_CONFIG,
     OVERWRITE_CONFIG
 } from './actionTypes';
+import { IConfig } from './configType';
+// @ts-ignore
 import { _cleanupConfig } from './functions';
 
-declare var interfaceConfig: Object;
+declare var interfaceConfig: any;
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -26,7 +28,7 @@ declare var interfaceConfig: Object;
  *
  * @type {Object}
  */
-const INITIAL_NON_RN_STATE = {
+const INITIAL_NON_RN_STATE: IConfig = {
 };
 
 /**
@@ -38,7 +40,7 @@ const INITIAL_NON_RN_STATE = {
  *
  * @type {Object}
  */
-const INITIAL_RN_STATE = {
+const INITIAL_RN_STATE: IConfig = {
     analytics: {},
 
     // FIXME The support for audio levels in lib-jitsi-meet polls the statistics
@@ -61,14 +63,14 @@ const INITIAL_RN_STATE = {
  * Mapping between old configs controlling the conference info headers visibility and the
  * new configs. Needed in order to keep backwards compatibility.
  */
-const CONFERENCE_HEADER_MAPPING = {
+const CONFERENCE_HEADER_MAPPING: any = {
     hideConferenceTimer: [ 'conference-timer' ],
     hideConferenceSubject: [ 'subject' ],
     hideParticipantsStats: [ 'participants-count' ],
     hideRecordingLabel: [ 'recording' ]
 };
 
-ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
+ReducerRegistry.register('features/base/config', (state: IConfig = _getInitialState(), action: any) => {
     switch (action.type) {
     case UPDATE_CONFIG:
         return _updateConfig(state, action);
@@ -139,12 +141,12 @@ function _getInitialState() {
  * Reduces a specific Redux action SET_CONFIG of the feature
  * base/lib-jitsi-meet.
  *
- * @param {Object} state - The Redux state of the feature base/config.
+ * @param {IConfig} state - The Redux state of the feature base/config.
  * @param {Action} action - The Redux action SET_CONFIG to reduce.
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _setConfig(state, { config }) {
+function _setConfig(state: IConfig, { config }: {config: IConfig}) {
     // The mobile app bundles jitsi-meet and lib-jitsi-meet at build time and
     // does not download them at runtime from the deployment on which it will
     // join a conference. The downloading is planned for implementation in the
@@ -187,10 +189,10 @@ function _setConfig(state, { config }) {
 /**
  * Processes the conferenceInfo object against the defaults.
  *
- * @param {Object} config - The old config.
+ * @param {IConfig} config - The old config.
  * @returns {Object} The processed conferenceInfo object.
  */
-function _getConferenceInfo(config) {
+function _getConferenceInfo(config: IConfig) {
     const { conferenceInfo } = config;
 
     if (conferenceInfo) {
@@ -215,7 +217,7 @@ function _getConferenceInfo(config) {
  * @returns {Object} A config {@code Object} which is in the latest format
  * supported by jitsi-meet.
  */
-function _translateInterfaceConfig(oldValue: Object) {
+function _translateInterfaceConfig(oldValue: IConfig) {
     const newValue = oldValue;
 
     if (!Array.isArray(oldValue.toolbarButtons)
@@ -227,6 +229,7 @@ function _translateInterfaceConfig(oldValue: Object) {
         oldValue.toolbarConfig = {};
     }
 
+    newValue.toolbarConfig = oldValue.toolbarConfig || {};
     if (typeof oldValue.toolbarConfig.alwaysVisible !== 'boolean'
         && typeof interfaceConfig === 'object'
         && typeof interfaceConfig.TOOLBAR_ALWAYS_VISIBLE === 'boolean') {
@@ -292,28 +295,29 @@ function _translateInterfaceConfig(oldValue: Object) {
  * @returns {Object} A config {@code Object} which is in the latest format
  * supported by jitsi-meet.
  */
-function _translateLegacyConfig(oldValue: Object) {
+function _translateLegacyConfig(oldValue: IConfig) {
     const newValue = _translateInterfaceConfig(oldValue);
 
     // Translate deprecated config values to new config values.
 
-    const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key]);
+    const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key as keyof IConfig]);
 
     if (filteredConferenceInfo.length) {
         newValue.conferenceInfo = _getConferenceInfo(oldValue);
 
         filteredConferenceInfo.forEach(key => {
+            newValue.conferenceInfo ??= {};
             // hideRecordingLabel does not mean not render it at all, but autoHide it
             if (key === 'hideRecordingLabel') {
                 newValue.conferenceInfo.alwaysVisible
-                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    = (newValue.conferenceInfo?.alwaysVisible ?? []).filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
                 newValue.conferenceInfo.autoHide
                     = _.union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
             } else {
                 newValue.conferenceInfo.alwaysVisible
-                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    = (newValue.conferenceInfo.alwaysVisible ?? []).filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
                 newValue.conferenceInfo.autoHide
-                    = newValue.conferenceInfo.autoHide.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    = (newValue.conferenceInfo.autoHide ?? []).filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
             }
         });
     }
@@ -422,7 +426,7 @@ function _translateLegacyConfig(oldValue: Object) {
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _updateConfig(state, { config }) {
+function _updateConfig(state: IConfig, { config }: {config: IConfig}) {
     const newState = _.merge({}, state, config);
 
     _cleanupConfig(newState);

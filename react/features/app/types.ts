@@ -4,6 +4,7 @@ import { IAVModerationState } from "../av-moderation/reducer"
 import { IAppState } from "../base/app/reducer"
 import { IAudioOnlyState } from "../base/audio-only/reducer"
 import { IConferenceState } from "../base/conference/reducer"
+import { IConfig } from "../base/config/configType"
 
 export interface IStore {
     getState: Function,
@@ -16,5 +17,6 @@ export interface IState {
     'features/av-moderation': IAVModerationState,
     'features/base/app': IAppState,
     'features/base/audio-only': IAudioOnlyState,
-    'features/base/conference': IConferenceState
+    'features/base/conference': IConferenceState,
+    'features/base/config': IConfig,
 }
