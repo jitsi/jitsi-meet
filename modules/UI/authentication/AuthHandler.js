@@ -17,7 +17,6 @@ import {
 import { getReplaceParticipant } from '../../../react/features/base/config/functions';
 import { isDialogOpen } from '../../../react/features/base/dialog';
 import { setJWT } from '../../../react/features/base/jwt';
-import { setPrejoinPageVisibility } from '../../../react/features/prejoin';
 import UIUtil from '../util/UIUtil';
 
 import ExternalLoginDialog from './LoginDialog';
@@ -181,7 +180,6 @@ function authenticate(room: Object, lockPassword: string) {
     if (isTokenAuthEnabled(config) || room.isExternalAuthEnabled()) {
         doExternalAuth(room, lockPassword);
     } else {
-        APP.store.dispatch(setPrejoinPageVisibility(false));
         APP.store.dispatch(openLoginDialog());
     }
 }

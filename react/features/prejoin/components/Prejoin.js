@@ -3,9 +3,11 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
+import { LoginDialog, WaitForOwnerDialog } from '../../authentication/components';
 import { Avatar } from '../../base/avatar';
 import { getRoomName } from '../../base/conference';
 import { isNameReadOnly } from '../../base/config';
+import { isDialogOpen } from '../../base/dialog/functions';
 import { translate } from '../../base/i18n';
 import { IconArrowDown, IconArrowUp, IconPhone, IconVolumeOff } from '../../base/icons';
 import { isVideoMutedByUser } from '../../base/media';
@@ -14,6 +16,7 @@ import { ActionButton, InputField, PreMeetingScreen } from '../../base/premeetin
 import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
 import { getLocalJitsiVideoTrack } from '../../base/tracks';
+import { PasswordRequiredPrompt } from '../../room-lock/components';
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
@@ -46,6 +49,11 @@ type Props = {
      * If join by phone button should be visible.
      */
     hasJoinByPhoneButton: boolean,
+
+    /**
+     * Whether authentication is taking place or not.
+     */
+    isAuthInProgress: boolean,
 
     /**
      * Joins the current meeting.
@@ -342,6 +350,7 @@ class Prejoin extends Component<Props, State> {
         const {
             deviceStatusVisible,
             hasJoinByPhoneButton,
+            isAuthInProgress,
             joinConference,
             joinConferenceWithoutAudio,
             name,
@@ -378,7 +387,7 @@ class Prejoin extends Component<Props, State> {
                     data-testid = 'prejoin.screen'>
                     {this.showDisplayNameField ? (<InputField
                         autoComplete = { 'name' }
-                        autoFocus = { true }
+                        autoFocus = { !isAuthInProgress }
                         className = { showError ? 'error' : '' }
                         hasError = { showError }
                         onChange = { _setName }
@@ -450,11 +459,14 @@ function mapStateToProps(state): Object {
     const name = getDisplayName(state);
     const showErrorOnJoin = isDisplayNameRequired(state) && !name;
     const { id: participantId } = getLocalParticipant(state);
+    const isAuthInProgress = isDialogOpen(state, WaitForOwnerDialog)
+        || isDialogOpen(state, LoginDialog) || isDialogOpen(state, PasswordRequiredPrompt);
 
     return {
         canEditDisplayName: isPrejoinDisplayNameVisible(state),
         deviceStatusVisible: isDeviceStatusVisible(state),
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
+        isAuthInProgress,
         name,
         participantId,
         prejoinConfig: state['features/base/config'].prejoinConfig,
