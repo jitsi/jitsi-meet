@@ -143,6 +143,7 @@ var config = {
 
     // Disable measuring of audio levels.
     // disableAudioLevels: false,
+
     // audioLevelsInterval: 200,
 
     // Enabling this will run the lib-jitsi-meet no audio detection module which
@@ -415,7 +416,7 @@ var config = {
     //    // This will result in Safari not being able to decode video from endpoints sending VP9 video.
     //    // When set to false, the conference falls back to VP8 whenever there is an endpoint that doesn't support the
     //    // preferred codec and goes back to the preferred codec when that endpoint leaves.
-    //    // enforcePreferredCodec: false,
+    //    enforcePreferredCodec: false,
     //
     //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
     //    // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
@@ -583,8 +584,8 @@ var config = {
     // enableFeaturesBasedOnToken: false,
 
     // When enabled the password used for locking a room is restricted to up to the number of digits specified
-    // roomPasswordNumberOfDigits: 10,
     // default: roomPasswordNumberOfDigits: false,
+    // roomPasswordNumberOfDigits: 10,
 
     // Message to show the users. Example: 'The service will be down for
     // maintenance at 01:00 AM GMT,
