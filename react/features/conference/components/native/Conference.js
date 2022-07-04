@@ -1,6 +1,7 @@
 // @flow
 
-import React from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect } from 'react';
 import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -192,7 +193,6 @@ class Conference extends AbstractConference<Props, State> {
      */
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
-        setPictureInPictureEnabled(true);
     }
 
     /**
@@ -233,7 +233,6 @@ class Conference extends AbstractConference<Props, State> {
         BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         clearTimeout(this._expandedLabelTimeout.current);
-        setPictureInPictureEnabled(false);
     }
 
     /**
@@ -561,4 +560,19 @@ function _mapStateToProps(state) {
     };
 }
 
-export default withSafeAreaInsets(connect(_mapStateToProps)(Conference));
+export default withSafeAreaInsets(connect(_mapStateToProps)(props => {
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (isFocused) {
+            setPictureInPictureEnabled(true);
+        } else {
+            setPictureInPictureEnabled(false);
+        }
+    }, [ isFocused ]);
+
+    return (
+        <Conference
+            { ...props }/>
+    );
+}));
