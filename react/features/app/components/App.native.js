@@ -34,11 +34,6 @@ const DialogContainerWrapper = Platform.select({
 type Props = AbstractAppProps & {
 
     /**
-     * Identifier for this app on the native side.
-     */
-    externalAPIScope: string,
-
-    /**
      * An object with the feature flags.
      */
     flags: Object,

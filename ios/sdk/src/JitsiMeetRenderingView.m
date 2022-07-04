@@ -26,14 +26,6 @@
 static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
 
 @interface JitsiMeetRenderingView ()
-
-/**
- * The unique identifier of this `JitsiMeetView` within the process for the
- * purposes of `ExternalAPI`. The name scope was inspired by postis which we
- * use on Web for the similar purposes of the iframe-based external API.
- */
-@property (nonatomic, strong) NSString *externalAPIScope;
-
 @end
 
 @implementation JitsiMeetRenderingView {
@@ -41,16 +33,6 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
      * React Native view where the entire content will be rendered.
      */
     RNRootView *rootView;
-}
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        // Hook this JitsiMeetView into ExternalAPI.
-        self.externalAPIScope = [NSUUID UUID].UUIDString;
-    }
-    
-    return self;
 }
 
 /**
@@ -70,8 +52,6 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
     if (featureFlags[PiPEnabledFeatureFlag] == nil) {
         featureFlags[PiPEnabledFeatureFlag] = @(self.isPiPEnabled);
     }
-
-    props[@"externalAPIScope"] = self.externalAPIScope;
 
     // This method is supposed to be imperative i.e. a second
     // invocation with one and the same URL is expected to join the respective

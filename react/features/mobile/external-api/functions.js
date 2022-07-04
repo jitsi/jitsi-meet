@@ -3,7 +3,6 @@
 import debounce from 'lodash/debounce';
 import { NativeModules } from 'react-native';
 
-import { getAppProp } from '../../base/app';
 import { readyToClose } from '../external-api/actions';
 
 
@@ -19,13 +18,7 @@ import { readyToClose } from '../external-api/actions';
  * @returns {void}
  */
 export function sendEvent(store: Object, name: string, data: Object) {
-    // The JavaScript App needs to provide uniquely identifying information to
-    // the native ExternalAPI module so that the latter may match the former to
-    // the native view which hosts it.
-    const externalAPIScope = getAppProp(store, 'externalAPIScope');
-
-    externalAPIScope
-        && NativeModules.ExternalAPI.sendEvent(name, data, externalAPIScope);
+    NativeModules.ExternalAPI.sendEvent(name, data);
 }
 
 /**
