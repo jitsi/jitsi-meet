@@ -46,10 +46,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED: {
         const errorName = action.error?.name;
 
-        if (errorName === JitsiConferenceErrors.MEMBERS_ONLY_ERROR
-            || errorName === JitsiConferenceErrors.PASSWORD_REQUIRED) {
-            dispatch(setPrejoinPageVisibility(false));
-        } else if (enableForcedReload && errorName === JitsiConferenceErrors.CONFERENCE_RESTARTED) {
+        if (enableForcedReload && errorName === JitsiConferenceErrors.CONFERENCE_RESTARTED) {
             dispatch(setSkipPrejoinOnReload(true));
         }
 
