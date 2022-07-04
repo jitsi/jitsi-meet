@@ -266,7 +266,10 @@ function VirtualBackground({
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
-    const { disableScreensharingVirtualBackground } = useSelector(state => state['features/base/config']);
+    const {
+        disableScreensharingVirtualBackground,
+        doNotFlipLocalVideo
+    } = useSelector(state => state['features/base/config']);
 
     const [ activeDesktopVideo ] = useState(_virtualBackground?.virtualSource?.videoType === VIDEO_TYPE.DESKTOP
         ? _virtualBackground.virtualSource
@@ -478,10 +481,9 @@ function VirtualBackground({
         await setLoading(false);
         if (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             dispatch(updateSettings({
-                localFlipX: !_localFlipX
+                localFlipX: false
             }));
-        } else {
-
+        } else if (!doNotFlipLocalVideo) {
             // Set x scale to default value.
             dispatch(updateSettings({
                 localFlipX: true
