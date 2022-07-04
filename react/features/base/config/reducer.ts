@@ -306,7 +306,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
         newValue.conferenceInfo = _getConferenceInfo(oldValue);
 
         filteredConferenceInfo.forEach(key => {
-            newValue.conferenceInfo ??= {};
+            newValue.conferenceInfo = oldValue.conferenceInfo ?? {};
             // hideRecordingLabel does not mean not render it at all, but autoHide it
             if (key === 'hideRecordingLabel') {
                 newValue.conferenceInfo.alwaysVisible
