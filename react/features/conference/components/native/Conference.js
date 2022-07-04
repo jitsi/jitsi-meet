@@ -572,7 +572,6 @@ export default withSafeAreaInsets(connect(_mapStateToProps)(props => {
     }, [ isFocused ]);
 
     return (
-        <Conference
-            { ...props }/>
+        <Conference { ...props } />
     );
 }));
