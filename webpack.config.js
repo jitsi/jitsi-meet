@@ -2,7 +2,7 @@
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const fs = require('fs');
-const { join } = require('path');
+const { join, resolve } = require('path');
 const process = require('process');
 const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -392,6 +392,29 @@ module.exports = (_env, argv) => {
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
             ],
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2)
+        }),
+        Object.assign({}, config, {
+            entry: {
+                'noise-suppressor-worklet':
+                    './react/features/stream-effects/noise-suppression/NoiseSuppressorWorklet.ts'
+            },
+
+            module: { rules: [
+                ...config.module.rules,
+                {
+                    test: resolve(__dirname, 'node_modules/webpack-dev-server/client'),
+                    loader: 'null-loader'
+                }
+            ] },
+            plugins: [
+            ],
+            performance: getPerformanceHints(perfHintOptions, 40 * 1024),
+
+            output: {
+                ...config.output,
+
+                globalObject: 'AudioWorkletGlobalScope'
+            }
         })
     ];
 };

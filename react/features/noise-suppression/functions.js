@@ -7,5 +7,5 @@
  * @returns {boolean}
  */
 export function isNoiseSuppressionActive(state: Object) {
-    return state['features/noise-suppression'].isNoiseSuppressionActive;
+    return state['features/noise-suppression'].active;
 }

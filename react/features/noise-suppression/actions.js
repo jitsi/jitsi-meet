@@ -5,16 +5,16 @@ import { SET_NOISE_SUPPRESSION_STATE, TOGGLE_NOISE_SUPPRESSION } from './actionT
 /**
  * Updates the noise suppression active state.
  *
- * @param {boolean} noiseSuppressionActive - is noise suppression active
+ * @param {boolean} active - Is noise suppression active.
  * @returns {{
  *      type: SET_NOISE_SUPPRESSION_STATE,
  *      captureFrameRate: number
  * }}
  */
-export function setNoiseSuppressionState(noiseSuppressionActive: boolean) {
+export function setNoiseSuppressionState(active: boolean) {
     return {
         type: SET_NOISE_SUPPRESSION_STATE,
-        isNoiseSuppressionActive: noiseSuppressionActive
+        active
     };
 }
 

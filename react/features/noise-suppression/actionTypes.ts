@@ -5,7 +5,7 @@
  *
  * {
  *     type: SET_NOISE_SUPPRESSION_STATE,
- *     isNoiseSuppressionActive: boolean
+ *     active: boolean
  * }
  */
 export const SET_NOISE_SUPPRESSION_STATE = 'SET_NOISE_SUPPRESSION_STATE';

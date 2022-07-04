@@ -137,7 +137,6 @@ import {
     submitFeedback
 } from './react/features/feedback';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
-import { isNoiseSuppressionActive, setNoiseSuppressionState } from './react/features/noise-suppression';
 import {
     isModerationNotificationDisplayed,
     showNotification,
@@ -156,7 +155,6 @@ import { setScreenAudioShareState, isScreenAudioShared } from './react/features/
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from './react/features/screenshot-capture/functions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
-import { NoiseSuppressionEffect } from './react/features/stream-effects/noise-suppression/NoiseSuppressionEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { endpointMessageReceived } from './react/features/subtitles';
@@ -1782,43 +1780,6 @@ export default {
     },
 
     /**
-     * Toggle noise suppression on the current audio local track. This will apply a
-     * {@code NoiseSuppressionEffect}.
-     */
-    async toggleNoiseSuppression() {
-        const state = APP.store.getState();
-        const dispatch = APP.store.dispatch;
-        const noiseSuppressionActive = isNoiseSuppressionActive(state);
-        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
-
-        if (!localAudio) {
-            logger.warn('Can not toggle noise suppression without any local track active.');
-
-            return;
-        }
-
-        try {
-            if (noiseSuppressionActive) {
-                await localAudio.setEffect(undefined);
-                this._noiseSuppressionEffect = undefined;
-                logger.info('Noise suppression disabled.');
-                dispatch(setNoiseSuppressionState(false));
-            } else {
-                this._noiseSuppressionEffect = new NoiseSuppressionEffect();
-                await this._noiseSuppressionEffect.initializeRnnoiseProcessor();
-                await localAudio.setEffect(this._noiseSuppressionEffect);
-                logger.info('Noise suppression enabled.');
-                dispatch(setNoiseSuppressionState(true));
-            }
-        } catch (error) {
-            logger.error(
-                `Failed to toggle noise suppression to active state: ${!noiseSuppressionActive}`,
-                error
-            );
-        }
-    },
-
-    /**
      * Creates desktop (screensharing) {@link JitsiLocalTrack}
      *
      * @param {Object} [options] - Screen sharing options that will be passed to
@@ -2714,12 +2675,6 @@ export default {
         APP.UI.addListener(
             UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly, ignoreDidHaveVideo }) => {
                 this.toggleScreenSharing(enabled, { audioOnly }, ignoreDidHaveVideo);
-            }
-        );
-
-        APP.UI.addListener(
-            UIEvents.TOGGLE_NOISE_SUPPRESSION, () => {
-                this.toggleNoiseSuppression();
             }
         );
     },
