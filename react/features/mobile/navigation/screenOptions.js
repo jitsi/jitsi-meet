@@ -268,21 +268,7 @@ export const gifsMenuOptions = presentationScreenOptions;
 /**
  * Screen options for shared document.
  */
-export const sharedDocumentScreenOptions = {
-    animation: 'slide_from_right',
-    headerBackTitleVisible: false,
-    headerShown: true,
-    headerStyle: {
-        backgroundColor: BaseTheme.palette.screen02Header
-    },
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    },
-    orientation: Platform.select({
-        ios: 'default',
-        android: 'all'
-    })
-};
+export const sharedDocumentScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for connecting screen.
