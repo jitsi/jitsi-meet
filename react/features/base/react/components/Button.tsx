@@ -33,7 +33,7 @@ const Button: React.FC<ButtonProps> = ({
     type
 }: ButtonProps) => {
     const { t } = useTranslation();
-    const { TEXT } = BUTTON_MODES;
+    const { CONTAINED, TEXT } = BUTTON_MODES;
     const { DESTRUCTIVE, PRIMARY, SECONDARY } = BUTTON_TYPES;
 
     let buttonLabelStyles;
@@ -76,7 +76,7 @@ const Button: React.FC<ButtonProps> = ({
                 buttonLabelStyles,
                 labelStyle
             ] }
-            mode = { mode }
+            mode = { mode || CONTAINED }
             onPress = { onPress }
             style = { [
                 buttonStyles,

@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { openSheet } from '../../../../base/dialog/actions';
 import Button from '../../../../base/react/components/Button';
-import { BUTTON_MODES, BUTTON_TYPES } from '../../../../base/react/constants';
+import { BUTTON_TYPES } from '../../../../base/react/constants';
 import AudioRoutePickerDialog from '../../../../mobile/audio-mode/components/AudioRoutePickerDialog';
 
 import AudioIcon from './AudioIcon';
@@ -26,7 +26,6 @@ const SelectSoundDevice = () : JSX.Element => {
             accessibilityLabel = 'carmode.actions.selectSoundDevice'
             icon = { AudioIcon }
             label = 'carmode.actions.selectSoundDevice'
-            mode = { BUTTON_MODES.CONTAINED }
             onPress = { onSelect }
             style = { styles.soundDeviceButton }
             type = { BUTTON_TYPES.SECONDARY } />

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { createToolbarEvent, sendAnalytics } from '../../../../analytics';
 import { appNavigate } from '../../../../app/actions';
 import Button from '../../../../base/react/components/Button';
-import { BUTTON_MODES, BUTTON_TYPES } from '../../../../base/react/constants';
+import { BUTTON_TYPES } from '../../../../base/react/constants';
 
 import EndMeetingIcon from './EndMeetingIcon';
 import styles from './styles';
@@ -28,7 +28,6 @@ const EndMeetingButton = () : JSX.Element => {
             accessibilityLabel = 'carmode.actions.leaveMeeting'
             icon = { EndMeetingIcon }
             label = 'carmode.actions.leaveMeeting'
-            mode = { BUTTON_MODES.CONTAINED }
             onPress = { onSelect }
             style = { styles.endMeetingButton }
             type = { BUTTON_TYPES.DESTRUCTIVE } />

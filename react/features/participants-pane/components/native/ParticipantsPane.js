@@ -11,7 +11,7 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import Button from '../../../base/react/components/Button';
 import IconButton from '../../../base/react/components/IconButton';
-import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/react/constants';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import { equals } from '../../../base/redux';
 import {
     getBreakoutRooms,
@@ -96,7 +96,6 @@ const ParticipantsPane = () => {
                             <Button
                                 accessibilityLabel = 'participantsPane.actions.muteAll'
                                 label = 'participantsPane.actions.muteAll'
-                                mode = { BUTTON_MODES.CONTAINED }
                                 onPress = { muteAll }
                                 type = { BUTTON_TYPES.SECONDARY } />
                         )
@@ -104,7 +103,6 @@ const ParticipantsPane = () => {
                     {
                         showMoreActions && (
                             <IconButton
-                                mode = { BUTTON_MODES.CONTAINED }
                                 onPress = { openMoreMenu }
                                 src = { IconHorizontalPoints }
                                 style = { styles.moreButton }

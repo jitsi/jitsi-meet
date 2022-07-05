@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import Button from '../../../base/react/components/Button';
-import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/react/constants';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import { getUnreadPollCount } from '../../functions';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
@@ -48,7 +48,6 @@ const PollsPane = (props: AbstractProps) => {
                 !createMode && <Button
                     accessibilityLabel = 'polls.create.create'
                     label = 'polls.create.create'
-                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { onCreate }
                     style = { chatStyles.createPollButton }
                     type = { BUTTON_TYPES.PRIMARY } />

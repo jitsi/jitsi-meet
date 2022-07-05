@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants';
 import Button from '../../../base/react/components/Button';
-import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/react/constants';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer from '../AbstractPollAnswer';
@@ -54,7 +54,6 @@ const PollAnswer = (props: AbstractProps) => {
                 <Button
                     accessibilityLabel = 'polls.answer.skip'
                     label = 'polls.answer.skip'
-                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { changingVote ? skipChangeVote : skipAnswer }
                     style = { chatStyles.pollCreateButton }
                     type = { SECONDARY } />
@@ -62,7 +61,6 @@ const PollAnswer = (props: AbstractProps) => {
                     accessibilityLabel = 'polls.answer.submit'
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                     label = 'polls.answer.submit'
-                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { submitAnswer }
                     style = { chatStyles.pollCreateButton }
                     type = { PRIMARY } />

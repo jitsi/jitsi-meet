@@ -5,7 +5,7 @@ import { View, Text, TextInput, FlatList } from 'react-native';
 import { Divider, TouchableRipple } from 'react-native-paper';
 
 import Button from '../../../base/react/components/Button';
-import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/react/constants';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import styles
     from '../../../welcome/components/native/settings/components/styles';
@@ -159,7 +159,6 @@ const PollCreate = (props: AbstractProps) => {
                         accessibilityLabel = 'polls.create.addOption'
                         disabled = { answers.length >= ANSWERS_LIMIT }
                         label = 'polls.create.addOption'
-                        mode = { BUTTON_MODES.CONTAINED }
                         onPress = { () => {
                             // adding and answer
                             addAnswer();
@@ -173,7 +172,6 @@ const PollCreate = (props: AbstractProps) => {
                             accessibilityLabel = 'polls.create.cancel'
                             label = 'polls.create.cancel'
                             labelStyle = { chatStyles.pollButtonLabel }
-                            mode = { BUTTON_MODES.CONTAINED }
                             onPress = { () => setCreateMode(false) }
                             style = { chatStyles.pollCreateButton }
                             type = { SECONDARY } />
@@ -181,7 +179,6 @@ const PollCreate = (props: AbstractProps) => {
                             accessibilityLabel = 'polls.create.send'
                             disabled = { isSubmitDisabled }
                             label = 'polls.create.send'
-                            mode = { BUTTON_MODES.CONTAINED }
                             onPress = { onSubmit }
                             style = { chatStyles.pollCreateButton }
                             type = { PRIMARY } />

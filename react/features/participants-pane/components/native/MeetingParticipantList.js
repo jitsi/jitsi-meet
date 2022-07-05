@@ -8,7 +8,7 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
 import Button from '../../../base/react/components/Button';
-import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/react/constants';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
@@ -231,7 +231,6 @@ class MeetingParticipantList extends PureComponent<Props> {
                         accessibilityLabel = 'participantsPane.actions.invite'
                         icon = { this._renderInviteMoreIcon }
                         label = 'participantsPane.actions.invite'
-                        mode = { BUTTON_MODES.CONTAINED }
                         onPress = { this._onInvite }
                         style = { styles.inviteButton }
                         type = { BUTTON_TYPES.PRIMARY } />

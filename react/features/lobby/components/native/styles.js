@@ -181,11 +181,6 @@ export default {
         marginTop: BaseTheme.spacing[3]
     },
 
-    lobbyButtonDisabled: {
-        backgroundColor: BaseTheme.palette.action03Disabled,
-        marginTop: BaseTheme.spacing[3]
-    },
-
     enterPasswordButton: {
         marginHorizontal: BaseTheme.spacing[3],
         marginTop: BaseTheme.spacing[6]

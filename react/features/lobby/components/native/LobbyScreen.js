@@ -7,7 +7,7 @@ import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import Button from '../../../base/react/components/Button';
-import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/react/constants';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
@@ -191,7 +191,6 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                 <Button
                     accessibilityLabel = 'lobby.backToKnockModeButton'
                     label = 'lobby.backToKnockModeButton'
-                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { this._onSwitchToKnockMode }
                     style = { styles.lobbyButton }
                     type = { BUTTON_TYPES.PRIMARY } />
@@ -199,7 +198,6 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     accessibilityLabel = 'lobby.passwordJoinButton'
                     disabled = { !this.state.password }
                     label = 'lobby.passwordJoinButton'
-                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { this._onJoinWithPassword }
                     style = { styles.lobbyButton }
                     type = { BUTTON_TYPES.PRIMARY } />
@@ -240,8 +238,6 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
     _renderStandardButtons() {
         const { _knocking, _renderPassword, _isLobbyChatActive } = this.props;
         const { displayName } = this.state;
-        const askToJoinButtonStyles
-            = displayName ? styles.lobbyButton : styles.lobbyButtonDisabled;
 
         return (
             <View style = { styles.standardButtonWrapper }>
@@ -250,7 +246,6 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     && <Button
                         accessibilityLabel = 'toolbar.openChat'
                         label = 'toolbar.openChat'
-                        mode = { BUTTON_MODES.CONTAINED }
                         onPress = { this._onNavigateToLobbyChat }
                         style = { styles.lobbyButton }
                         type = { BUTTON_TYPES.PRIMARY } />
@@ -261,9 +256,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                         accessibilityLabel = 'lobby.knockButton'
                         disabled = { !displayName }
                         label = 'lobby.knockButton'
-                        mode = { BUTTON_MODES.CONTAINED }
                         onPress = { this._onAskToJoin }
-                        style = { askToJoinButtonStyles }
+                        style = { styles.lobbyButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
                 {
@@ -271,7 +265,6 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     && <Button
                         accessibilityLabel = 'lobby.enterPasswordButton'
                         label = 'lobby.enterPasswordButton'
-                        mode = { BUTTON_MODES.CONTAINED }
                         onPress = { this._onSwitchToPasswordMode }
                         style = { styles.enterPasswordButton }
                         type = { BUTTON_TYPES.PRIMARY } />

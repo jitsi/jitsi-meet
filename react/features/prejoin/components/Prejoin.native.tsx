@@ -16,7 +16,7 @@ import JitsiScreen from '../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
 import Button from '../../base/react/components/Button';
-import { BUTTON_MODES, BUTTON_TYPES } from '../../base/react/constants';
+import { BUTTON_TYPES } from '../../base/react/constants';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
@@ -88,7 +88,6 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
         );
     }, []);
 
-    const { CONTAINED } = BUTTON_MODES;
     const { PRIMARY, SECONDARY } = BUTTON_TYPES;
     const joinButtonDisabled = !displayName && isDisplayNameMandatory;
 
@@ -143,14 +142,12 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
                         accessibilityLabel = 'prejoin.joinMeeting'
                         disabled = { joinButtonDisabled }
                         label = 'prejoin.joinMeeting'
-                        mode = { CONTAINED }
                         onPress = { onJoin }
                         style = { styles.prejoinButton }
                         type = { PRIMARY } />
                     <Button
                         accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
                         label = 'prejoin.joinMeetingInLowBandwidthMode'
-                        mode = { CONTAINED }
                         onPress = { onJoinLowBandwidth }
                         style = { styles.prejoinButton }
                         type = { SECONDARY } />
