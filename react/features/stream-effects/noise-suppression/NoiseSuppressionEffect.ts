@@ -18,10 +18,13 @@ export class NoiseSuppressionEffect {
     private _audioSource: MediaStreamAudioSourceNode;
 
     /**
-     * Destination that will contain
+     * Destination that will contain denoised audio from the audio worklet.
      */
     private _audioDestination: MediaStreamAudioDestinationNode;
 
+    /**
+     * `AudioWorkletProcessor` associated node.
+     */
     private _noiseSuppressorNode: AudioWorkletNode;
 
     /**
@@ -41,9 +44,9 @@ export class NoiseSuppressionEffect {
         const baseUrl = `${getBaseUrl()}libs/`;
         const workletUrl = `${baseUrl}noise-suppressor-worklet.min.js`;
 
+        // Connect the audio processing graph MediaStream -> AudioWorkletNode -> MediaStreamAudioDestinationNode
         this._audioContext.audioWorklet.addModule(workletUrl).then(() => {
-            // After the resolution of module loading, an AudioWorkletNode can be
-            // constructed.
+            // After the resolution of module loading, an AudioWorkletNode can be constructed.
             this._noiseSuppressorNode = new AudioWorkletNode(this._audioContext, 'NoiseSuppressorWorklet');
             this._audioSource.connect(this._noiseSuppressorNode).connect(this._audioDestination);
         });
@@ -68,6 +71,9 @@ export class NoiseSuppressionEffect {
      * @returns {void}
      */
     stopEffect(): void {
+        // Technically after this process the Audio Worklet along with it's resources should be garbage collected,
+        // however on chrome there seems to be a problem as described here:
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=1298955
         this._noiseSuppressorNode.port.close();
         this._audioDestination.disconnect();
         this._noiseSuppressorNode.disconnect();
