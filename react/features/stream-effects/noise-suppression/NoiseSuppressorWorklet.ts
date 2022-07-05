@@ -1,5 +1,5 @@
 // @ts-ignore
-import { createRNNWasmModuleSync } from 'rnnoise-wasm';
+import { createRNNWasmModuleSync } from '@jitsi/rnnoise-wasm';
 
 import RnnoiseProcessor from '../rnnoise/RnnoiseProcessor';
 
