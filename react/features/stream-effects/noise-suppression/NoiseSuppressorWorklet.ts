@@ -98,6 +98,11 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
      * false will terminate it.
      */
     process(inputs: Float32Array[][], outputs: Float32Array[][]) {
+
+         // We expect the incoming track to be mono, if a stereo track is passed only on of its channels will get
+         // denoised and sent pack.
+         // TODO Technically we can denoise both channel however this might require a new rnnoise context, some more
+         // investigation is required.
         const inData = inputs[0][0];
         const outData = outputs[0][0];
 
