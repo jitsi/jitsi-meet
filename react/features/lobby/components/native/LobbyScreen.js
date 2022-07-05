@@ -238,7 +238,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, _renderPassword, _isLobbyChatActive, t } = this.props;
+        const { _knocking, _renderPassword, _isLobbyChatActive } = this.props;
         const { displayName } = this.state;
         const askToJoinButtonStyles
             = displayName ? styles.lobbyButton : styles.lobbyButtonDisabled;
@@ -273,7 +273,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                         label = 'lobby.enterPasswordButton'
                         mode = { BUTTON_MODES.CONTAINED }
                         onPress = { this._onSwitchToPasswordMode }
-                        style = { styles.lobbyButton }
+                        style = { styles.enterPasswordButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
             </View>
