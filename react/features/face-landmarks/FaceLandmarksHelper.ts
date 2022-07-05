@@ -79,12 +79,23 @@ export class HumanHelper implements FaceLandmarksHelper {
         segmentation: { enabled: false }
     };
 
+    /**
+     * Constructor function for the helper which initialize the helper.
+     *
+     * @param  {InitInput} input - The input for the helper.
+     * @returns {void}
+     */
     constructor({ baseUrl, detectionTypes }: InitInput) {
         this.faceDetectionTypes = detectionTypes;
         this.baseUrl = baseUrl;
         this.init();
     }
 
+    /**
+     * Initializes the human helper with the available tfjs backend for the given detection types.
+     *
+     * @returns {Promise<void>}
+     */
     async init(): Promise<void> {
 
         if (!this.human) {
@@ -119,6 +130,13 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
     }
 
+    /**
+     * Gets the face box from the detections, if there is no valid detections it will return undefined..
+     *
+     * @param {Array<FaceResult>} detections - The array with the detections.
+     * @param {number} threshold - Face box position change threshold.
+     * @returns {FaceBox | undefined}
+     */
     getFaceBox(detections: Array<FaceResult>, threshold: number): FaceBox | undefined {
         if (this.getFaceCount(detections) !== 1) {
             return;
@@ -141,6 +159,12 @@ export class HumanHelper implements FaceLandmarksHelper {
         return faceBox;
     }
 
+    /**
+     * Gets the face expression from the detections, if there is no valid detections it will return undefined.
+     *
+     * @param {Array<FaceResult>} detections - The array with the detections.
+     * @returns {string | undefined}
+     */
     getFaceExpression(detections: Array<FaceResult>): string | undefined {
         if (this.getFaceCount(detections) !== 1) {
             return;
@@ -151,6 +175,12 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
     }
 
+    /**
+     * Gets the face count from the detections, which is the number of detections.
+     *
+     * @param {Array<FaceResult>} detections - The array with the detections.
+     * @returns {number}
+     */
     getFaceCount(detections: Array<FaceResult> | undefined): number {
         if (detections) {
             return detections.length;
@@ -159,6 +189,13 @@ export class HumanHelper implements FaceLandmarksHelper {
         return 0;
     }
 
+    /**
+     * Gets the detections from the image captured from the track.
+     *
+     * @param {ImageBitmap | ImageData} image - The image captured from the track,
+     * if OffscreenCanvas available it will be ImageBitmap, otherwise it will be ImageData.
+     * @returns {Promise<Array<FaceResult>>}
+     */
     async getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>> {
         if (!this.human || !this.faceDetectionTypes.length) {
             return [];
@@ -174,14 +211,19 @@ export class HumanHelper implements FaceLandmarksHelper {
         return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
     }
 
+    /**
+     * Gathers together all the data from the detections, it's the function that will be called in the worker.
+     *
+     * @param {DetectInput} input - The input for the detections.
+     * @returns {Promise<DetectOutput>}
+     */
     public async detect({ image, threshold } : DetectInput): Promise<DetectOutput> {
-        let detections;
         let faceExpression;
         let faceBox;
 
         this.detectionInProgress = true;
 
-        detections = await this.getDetections(image);
+        const detections = await this.getDetections(image);
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
             faceExpression = this.getFaceExpression(detections);
@@ -213,6 +255,11 @@ export class HumanHelper implements FaceLandmarksHelper {
         };
     }
 
+    /**
+     * Returns the detection state.
+     *
+     * @returns {boolean}
+     */
     public getDetectionInProgress(): boolean {
         return this.detectionInProgress;
     }
