@@ -15,7 +15,6 @@ export { default as NavigateSectionListItem }
     from './NavigateSectionListItem';
 export { default as NavigateSectionListSectionHeader }
     from './NavigateSectionListSectionHeader';
-export { default as PagedList } from './PagedList';
 export { default as Pressable } from './Pressable';
 export { default as SectionList } from './SectionList';
 export { default as SlidingView } from './SlidingView';
