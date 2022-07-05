@@ -239,7 +239,7 @@ export const commonStyles = (theme: Object) => {
 
             '@media (hover: hover) and (pointer: fine)': {
                 '&:hover': {
-                    background: theme.palette.action02Hover
+                    background: theme.palette.ui04
                 }
             },
             [theme.breakpoints.down('320')]: {
@@ -248,12 +248,12 @@ export const commonStyles = (theme: Object) => {
             },
 
             '&.toggled': {
-                background: theme.palette.ui02
+                background: theme.palette.ui03
             },
 
             '&.disabled': {
                 cursor: 'initial !important',
-                backgroundColor: `${theme.palette.action02Disabled} !important`,
+                backgroundColor: `${theme.palette.disabled01} !important`,
 
                 '& svg': {
                     fill: `${theme.palette.text03} !important`

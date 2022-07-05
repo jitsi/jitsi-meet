@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => {
     return {
         button: {
             alignItems: 'center',
-            backgroundColor: theme.palette.action02,
+            backgroundColor: theme.palette.ui03,
             border: 0,
             borderRadius: `${theme.shape.borderRadius}px`,
             display: 'flex',
@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => {
             lineHeight: `${theme.typography.labelButton.lineHeight}px`,
 
             '&:hover': {
-                backgroundColor: theme.palette.action02Hover
+                backgroundColor: theme.palette.ui04
             },
 
             [`@media (max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {

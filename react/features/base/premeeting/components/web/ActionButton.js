@@ -130,7 +130,7 @@ const styles = theme => {
             },
 
             '&.disabled': {
-                background: theme.palette.action01Disabled,
+                background: theme.palette.disabled01,
                 border: '1px solid #5E6D7A',
                 color: '#AFB6BC',
                 cursor: 'initial',
