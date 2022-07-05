@@ -41,6 +41,16 @@ export function createFakeConfig(baseURL: string) {
 }
 
 /**
+ * Selector used to get the meeting region.
+ *
+ * @param {Object} state - The global state.
+ * @returns {string}
+ */
+export function getMeetingRegion(state: Object) {
+    return state['features/base/config']?.deploymentInfo?.region || '';
+}
+
+/**
  * Selector for determining if receiving multiple stream support is enabled.
  *
  * @param {Object} state - The global state.
