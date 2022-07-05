@@ -79,18 +79,7 @@ export default {
     },
 
     lonelyButton: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.action01,
-        borderRadius: 24,
-        flexDirection: 'row',
-        height: BaseTheme.spacing[6],
-        justifyContent: 'space-around',
-        paddingHorizontal: 12
-    },
-
-    lonelyButtonComponents: {
-        color: BaseTheme.palette.text01,
-        marginHorizontal: 6
+        borderRadius: BaseTheme.spacing[4]
     },
 
     lonelyMeetingContainer: {
