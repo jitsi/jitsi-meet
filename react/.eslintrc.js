@@ -17,7 +17,8 @@ module.exports = {
                 '@typescript-eslint/no-empty-function': 'off',
                 '@typescript-eslint/ban-types': 'off',
                 '@typescript-eslint/no-use-before-define': 'off',
-                'react/jsx-no-bind': 'off'
+                'react/jsx-no-bind': 'off',
+                'no-prototype-builtins': 'off'
             },
             'plugins': [ '@typescript-eslint' ],
             'extends': [
