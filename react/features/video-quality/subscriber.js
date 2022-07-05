@@ -95,6 +95,16 @@ StateListenerRegistry.register(
 );
 
 /**
+ * Updates the receiver constraints when the tiles in the resizable top panel change dimensions.
+ */
+StateListenerRegistry.register(
+    state => getVideoQualityForStageThumbnails(state),
+    (_, store) => {
+        _updateReceiverVideoConstraints(store);
+    }
+);
+
+/**
  * Updates the receiver constraints when the stage participants change.
  */
 StateListenerRegistry.register(
