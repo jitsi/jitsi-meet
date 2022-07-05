@@ -5,7 +5,7 @@ import { getFeatureFlag, INVITE_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { Icon, IconAddPeople } from '../../../base/icons';
 import { getParticipantCountWithFake } from '../../../base/participants';
-import Button from '../../../base/react/components/Button';
+import Button from '../../../base/react/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';

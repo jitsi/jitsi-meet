@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import Button from '../../../../../base/react/components/Button';
+import Button from '../../../../../base/react/components/native/Button';
 import { BUTTON_TYPES } from '../../../../../base/react/constants';
 import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
 

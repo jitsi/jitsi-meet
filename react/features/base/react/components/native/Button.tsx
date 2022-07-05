@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button as NativePaperButton } from 'react-native-paper';
 
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
-import styles from '../components/native/styles';
-import { BUTTON_MODES, BUTTON_TYPES } from '../constants';
+import BaseTheme from '../../../ui/components/BaseTheme.native';
+import styles from './styles';
+import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
 
 interface ButtonProps {
     accessibilityLabel?: any;

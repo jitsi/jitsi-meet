@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import Button from '../../../base/react/components/Button';
+import Button from '../../../base/react/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/react/constants';
 import { getUnreadPollCount } from '../../functions';
 import AbstractPollsPane from '../AbstractPollsPane';

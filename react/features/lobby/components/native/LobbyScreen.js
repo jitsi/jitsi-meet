@@ -6,7 +6,7 @@ import { Text, View, TextInput } from 'react-native';
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
-import Button from '../../../base/react/components/Button';
+import Button from '../../../base/react/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';

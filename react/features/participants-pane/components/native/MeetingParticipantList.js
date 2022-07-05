@@ -7,7 +7,7 @@ import { FlatList } from 'react-native';
 import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
-import Button from '../../../base/react/components/Button';
+import Button from '../../../base/react/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';

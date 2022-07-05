@@ -9,8 +9,8 @@ import { openDialog, openSheet } from '../../../base/dialog';
 import { IconHorizontalPoints } from '../../../base/icons';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../base/participants';
-import Button from '../../../base/react/components/Button';
-import IconButton from '../../../base/react/components/IconButton';
+import Button from '../../../base/react/components/native/Button';
+import IconButton from '../../../base/react/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../base/react/constants';
 import { equals } from '../../../base/redux';
 import {

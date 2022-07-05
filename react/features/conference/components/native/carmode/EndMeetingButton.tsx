@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../../../analytics';
 import { appNavigate } from '../../../../app/actions';
-import Button from '../../../../base/react/components/Button';
+import Button from '../../../../base/react/components/native/Button';
 import { BUTTON_TYPES } from '../../../../base/react/constants';
 
 import EndMeetingIcon from './EndMeetingIcon';

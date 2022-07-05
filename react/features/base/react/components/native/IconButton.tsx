@@ -1,10 +1,10 @@
 import React from 'react';
 import { TouchableRipple } from 'react-native-paper';
 
-import { Icon } from '../../../base/icons';
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
-import styles from '../components/native/styles';
-import { BUTTON_MODES, BUTTON_TYPES } from '../constants';
+import { Icon } from '../../../icons';
+import BaseTheme from '../../../ui/components/BaseTheme.native';
+import styles from './styles';
+import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
 
 interface ButtonProps {
     color?: any;

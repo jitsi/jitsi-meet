@@ -15,7 +15,7 @@ import { IconClose } from '../../base/icons';
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
-import Button from '../../base/react/components/Button';
+import Button from '../../base/react/components/native/Button';
 import { BUTTON_TYPES } from '../../base/react/constants';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
