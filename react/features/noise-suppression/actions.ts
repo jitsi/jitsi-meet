@@ -1,5 +1,3 @@
-// @flow
-
 import { SET_NOISE_SUPPRESSION_STATE, TOGGLE_NOISE_SUPPRESSION } from './actionTypes';
 
 /**
@@ -8,10 +6,10 @@ import { SET_NOISE_SUPPRESSION_STATE, TOGGLE_NOISE_SUPPRESSION } from './actionT
  * @param {boolean} active - Is noise suppression active.
  * @returns {{
  *      type: SET_NOISE_SUPPRESSION_STATE,
- *      captureFrameRate: number
+ *      active: boolean
  * }}
  */
-export function setNoiseSuppressionState(active: boolean) {
+export function setNoiseSuppressionState(active: boolean) : any {
     return {
         type: SET_NOISE_SUPPRESSION_STATE,
         active
@@ -25,7 +23,7 @@ export function setNoiseSuppressionState(active: boolean) {
  *     type: TOGGLE_NOISE_SUPPRESSION,
  * }}
  */
-export function toggleNoiseSuppression() {
+export function toggleNoiseSuppression() : any {
     return {
         type: TOGGLE_NOISE_SUPPRESSION
     };

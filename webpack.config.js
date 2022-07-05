@@ -394,6 +394,16 @@ module.exports = (_env, argv) => {
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2)
         }),
         Object.assign({}, config, {
+            /**
+             * The NoiseSuppressorWorklet is loaded in an audio worklet which doesn't have the same
+             * context as a normal window, (e.g. self/window is not defined).
+             * While running a production build webpack's boilerplate code doesn't introduce any
+             * audio worklet "unfriendly" code however when running the dev server, hot module replacement
+             * and live reload add javascript code that can't be ran by the worklet, so we explicity ignore
+             * those parts with the null-loader.
+             * The dev server also expects a `self` global object that's not available in the `AudioWorkletGlobalScope`,
+             * so we replace it.
+             */
             entry: {
                 'noise-suppressor-worklet':
                     './react/features/stream-effects/noise-suppression/NoiseSuppressorWorklet.ts'

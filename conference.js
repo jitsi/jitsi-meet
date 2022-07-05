@@ -150,7 +150,7 @@ import {
     makePrecallTest,
     setJoiningInProgress
 } from './react/features/prejoin';
-import { disableReceiver, requestRemoteControl, stopReceiver } from './react/features/remote-control';
+import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from './react/features/screenshot-capture/functions';
