@@ -102,31 +102,18 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
 
     /**
      * Dispatches an event that occurred on the JavaScript side of the SDK to
-     * the specified {@link BaseReactView}'s listener.
+     * the native side.
      *
      * @param name The name of the event.
      * @param data The details/specifics of the event to send determined
      * by/associated with the specified {@code name}.
-     * @param scope
      */
     @ReactMethod
-    public void sendEvent(String name, ReadableMap data, String scope) {
+    public void sendEvent(String name, ReadableMap data) {
         // Keep track of the current ongoing conference.
         OngoingConferenceTracker.getInstance().onExternalAPIEvent(name, data);
 
-        // The JavaScript App needs to provide uniquely identifying information
-        // to the native ExternalAPI module so that the latter may match the
-        // former to the native BaseReactView which hosts it.
-        BaseReactView view = BaseReactView.findViewByExternalAPIScope(scope);
-
-        if (view != null) {
-            JitsiMeetLogger.d(TAG + " Sending event: " + name + " with data: " + data);
-            try {
-                view.onExternalAPIEvent(name, data);
-                broadcastEmitter.sendBroadcast(name, data);
-            } catch (Exception e) {
-                JitsiMeetLogger.e(e, TAG + " onExternalAPIEvent: error sending event");
-            }
-        }
+        JitsiMeetLogger.d(TAG + " Sending event: " + name + " with data: " + data);
+        broadcastEmitter.sendBroadcast(name, data);
     }
 }
