@@ -59,9 +59,11 @@ class SharedDocument extends PureComponent<Props> {
                 addHeaderHeightValue = { true }
                 style = { styles.sharedDocContainer }>
                 <WebView
+                    hideKeyboardAccessoryView = { true }
                     renderLoading = { this._renderLoading }
                     source = {{ uri: _documentUrl }}
-                    startInLoadingState = { true } />
+                    startInLoadingState = { true }
+                    style = { styles.sharedDoc } />
             </JitsiScreen>
         );
     }
