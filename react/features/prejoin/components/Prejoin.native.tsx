@@ -4,7 +4,10 @@ import {
     BackHandler,
     View,
     TextInput,
-    Platform
+    Platform,
+    StyleProp,
+    ViewStyle,
+    TextStyle
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -123,16 +126,16 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
             safeAreaInsets = { [ 'left' ] }
             style = { contentWrapperStyles }>
             <BrandingImageBackground />
-            <View style = { largeVideoContainerStyles }>
+            <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
                 <LargeVideo />
             </View>
             <View style = { contentContainerStyles }>
-                <View style = { styles.formWrapper }>
+                <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <TextInput
                         onChangeText = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
                         placeholderTextColor = { BaseTheme.palette.text03 }
-                        style = { styles.field }
+                        style = { styles.field as StyleProp<TextStyle> }
                         value = { displayName } />
                     <Button
                         accessibilityLabel = 'prejoin.joinMeeting'

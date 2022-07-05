@@ -1,9 +1,12 @@
+/* eslint-disable import/order */
 import { v4 as uuidv4 } from 'uuid';
 
 // @ts-ignore
 import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
+
 // @ts-ignore
 import { getLocalParticipant } from '../base/participants';
+
 // @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
@@ -14,6 +17,7 @@ import logger from './logger';
  * Returns the queue of reactions.
  *
  * @param {Object} state - The state of the application.
+ * @returns {Array}
  */
 export function getReactionsQueue(state: any): Array<ReactionEmojiProps> {
     return state['features/reactions'].queue;
@@ -23,6 +27,7 @@ export function getReactionsQueue(state: any): Array<ReactionEmojiProps> {
  * Returns chat message from reactions buffer.
  *
  * @param {Array} buffer - The reactions buffer.
+ * @returns {string}
  */
 export function getReactionMessageFromBuffer(buffer: Array<string>): string {
     return buffer.map<string>(reaction => REACTIONS[reaction].message).reduce((acc, val) => `${acc}${val}`);
@@ -32,6 +37,7 @@ export function getReactionMessageFromBuffer(buffer: Array<string>): string {
  * Returns reactions array with uid.
  *
  * @param {Array} buffer - The reactions buffer.
+ * @returns {Array}
  */
 export function getReactionsWithId(buffer: Array<string>): Array<ReactionEmojiProps> {
     return buffer.map<ReactionEmojiProps>(reaction => {
@@ -47,6 +53,7 @@ export function getReactionsWithId(buffer: Array<string>): Array<ReactionEmojiPr
  *
  * @param {Object} state - The redux state object.
  * @param {Array} reactions - Reactions array to be sent.
+ * @returns {void}
  */
 export async function sendReactionsWebhook(state: any, reactions: Array<string>) {
     const { webhookProxyUrl: url } = state['features/base/config'];
@@ -93,6 +100,7 @@ export async function sendReactionsWebhook(state: any, reactions: Array<string>)
  * Returns unique reactions from the reactions buffer.
  *
  * @param {Array} reactions - The reactions buffer.
+ * @returns {Array}
  */
 function getUniqueReactions(reactions: Array<string>): Array<string> {
     return [ ...new Set(reactions) ];
@@ -103,6 +111,7 @@ function getUniqueReactions(reactions: Array<string>): Array<string> {
  *
  * @param {Array} reactions - Array of reactions.
  * @param {string} reaction - Reaction to get frequency for.
+ * @returns {number}
  */
 function getReactionFrequency(reactions: Array<string>, reaction: string): number {
     return reactions.filter(r => r === reaction).length;
@@ -112,6 +121,7 @@ function getReactionFrequency(reactions: Array<string>, reaction: string): numbe
  * Returns the threshold number for a given frequency.
  *
  * @param {number} frequency - Frequency of reaction.
+ * @returns {number}
  */
 function getSoundThresholdByFrequency(frequency: number): number {
     for (const i of SOUNDS_THRESHOLDS) {
@@ -127,6 +137,7 @@ function getSoundThresholdByFrequency(frequency: number): number {
  * Returns unique reactions with threshold.
  *
  * @param {Array} reactions - The reactions buffer.
+ * @returns {Array}
  */
 export function getReactionsSoundsThresholds(reactions: Array<string>): Array<ReactionThreshold> {
     const unique = getUniqueReactions(reactions);
@@ -143,6 +154,7 @@ export function getReactionsSoundsThresholds(reactions: Array<string>): Array<Re
  * Whether or not the reactions are enabled.
  *
  * @param {Object} state - The Redux state object.
+ * @returns {boolean}
  */
 export function isReactionsEnabled(state: any): boolean {
     const { disableReactions } = state['features/base/config'];

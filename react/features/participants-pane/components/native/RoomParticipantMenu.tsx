@@ -1,16 +1,18 @@
+/* eslint-disable import/order */
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
+
 // @ts-ignore
 import { BottomSheet, hideSheet } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { getBreakoutRooms } from '../../../breakout-rooms/functions';
 import SendToBreakoutRoom from '../../../video-menu/components/native/SendToBreakoutRoom';
 import styles from '../../../video-menu/components/native/styles';
-import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 
 /**
  * Size of the rendered avatar in the menu.

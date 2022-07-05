@@ -16,7 +16,7 @@ export const rootNavigationRef = React.createRef();
  * @param {Object} params - Params to pass to the destination route.
  * @returns {Function}
  */
-export function navigateRoot(name: string, params: Object) {
+export function navigateRoot(name: string, params?: Object) {
     return rootNavigationRef.current?.navigate(name, params);
 }
 

@@ -13,6 +13,7 @@ import { ReactionsAction } from './reducer';
  * Sets the reaction queue.
  *
  * @param {Array} queue - The new queue.
+ * @returns {ReactionsAction}
  */
 export function setReactionQueue(queue: Array<ReactionEmojiProps>): ReactionsAction {
     return {
@@ -26,6 +27,7 @@ export function setReactionQueue(queue: Array<ReactionEmojiProps>): ReactionsAct
  * Removes a reaction from the queue.
  *
  * @param {string} uid - Id of the reaction to be removed.
+ * @returns {Function}
  */
 export function removeReaction(uid: string): Function {
     return (dispatch: Function, getState: Function) => {
@@ -38,6 +40,8 @@ export function removeReaction(uid: string): Function {
 
 /**
  * Sends the reactions buffer to everyone in the conference.
+ *
+ * @returns {ReactionsAction}
  */
 export function sendReactions(): ReactionsAction {
     return {
@@ -49,6 +53,7 @@ export function sendReactions(): ReactionsAction {
  * Adds a reaction to the local buffer.
  *
  * @param {string} reaction - The reaction to be added.
+ * @returns {ReactionsAction}
  */
 export function addReactionToBuffer(reaction: string): ReactionsAction {
     return {
@@ -59,6 +64,8 @@ export function addReactionToBuffer(reaction: string): ReactionsAction {
 
 /**
  * Clears the reaction buffer.
+ *
+ * @returns {ReactionsAction}
  */
 export function flushReactionBuffer(): ReactionsAction {
     return {
@@ -70,6 +77,7 @@ export function flushReactionBuffer(): ReactionsAction {
  * Adds a reaction message to the chat.
  *
  * @param {string} message - The reaction message.
+ * @returns {ReactionsAction}
  */
 export function addReactionsToChat(message: string): ReactionsAction {
     return {
@@ -82,6 +90,7 @@ export function addReactionsToChat(message: string): ReactionsAction {
  * Adds reactions to the animation queue.
  *
  * @param {Array} reactions - The reactions to be animated.
+ * @returns {ReactionsAction}
  */
 export function pushReactions(reactions: Array<string>): ReactionsAction {
     return {

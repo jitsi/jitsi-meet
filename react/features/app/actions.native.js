@@ -44,7 +44,7 @@ export * from './actions.any';
  * scheme, or a mere room name.
  * @returns {Function}
  */
-export function appNavigate(uri: ?string) {
+export function appNavigate(uri: ?string | undefined) {
     logger.info(`appNavigate to ${uri}`);
 
     return async (dispatch: Dispatch<any>, getState: Function) => {

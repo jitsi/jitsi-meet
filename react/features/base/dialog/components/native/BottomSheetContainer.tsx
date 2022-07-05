@@ -15,6 +15,6 @@ const BottomSheetContainer: () => JSX.Element = () => {
             { React.createElement(sheet, sheetProps) }
         </Fragment>
     );
-}
+};
 
 export default BottomSheetContainer;

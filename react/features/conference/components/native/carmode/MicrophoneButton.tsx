@@ -1,14 +1,13 @@
-import React, { useCallback } from 'react';
-import { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+
 import {
     createShortcutEvent,
     sendAnalytics,
     ACTION_SHORTCUT_PRESSED as PRESSED,
     ACTION_SHORTCUT_RELEASED as RELEASED
 } from '../../../../analytics';
-
 import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags';
 import { Icon, IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons';
 import { MEDIA_TYPE } from '../../../../base/media';
@@ -41,7 +40,7 @@ const MicrophoneButton = () : JSX.Element => {
     }, [ audioMuted, disabled ]);
 
     const onLongPress = useCallback(() => {
-        if ( !disabled && !audioMuted) {
+        if (!disabled && !audioMuted) {
             sendAnalytics(createShortcutEvent(
                 'push.to.talk',
                 PRESSED,
@@ -49,7 +48,7 @@ const MicrophoneButton = () : JSX.Element => {
                 LONG_PRESS));
             setLongPress(true);
         }
-    }, [audioMuted, disabled, setLongPress]);
+    }, [ audioMuted, disabled, setLongPress ]);
 
     const onPressOut = useCallback(() => {
         if (longPress) {
@@ -62,13 +61,13 @@ const MicrophoneButton = () : JSX.Element => {
             ));
             dispatch(muteLocal(true, MEDIA_TYPE.AUDIO));
         }
-    }, [longPress, setLongPress]);
+    }, [ longPress, setLongPress ]);
 
     return (
         <TouchableOpacity
+            onLongPress = { onLongPress }
             onPressIn = { onPressIn }
-            onLongPress={ onLongPress }
-            onPressOut={ onPressOut } >
+            onPressOut = { onPressOut } >
             <View
                 style = { [
                     styles.microphoneStyles.container,

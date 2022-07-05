@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { makeStyles } from '@material-ui/core';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -5,16 +6,22 @@ import { useSelector } from 'react-redux';
 
 // @ts-ignore
 import { Avatar } from '../../../../../base/avatar';
+
 // @ts-ignore
 import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/components';
+
 // @ts-ignore
 import { isLocalParticipantModerator } from '../../../../../base/participants';
+
 // @ts-ignore
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
+
 // @ts-ignore
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
+
 // @ts-ignore
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
+
 // @ts-ignore
 import { AVATAR_SIZE } from '../../../../constants';
 
@@ -74,7 +81,7 @@ export const RoomParticipantContextMenu = ({
     const styles = useStyles();
     const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
-    const lowerMenu = useCallback(() => onSelect(true), [onSelect]);
+    const lowerMenu = useCallback(() => onSelect(true), [ onSelect ]);
     const rooms: Object = useSelector(getBreakoutRooms);
     const overflowDrawer = useSelector(showOverflowDrawer);
 
@@ -88,7 +95,8 @@ export const RoomParticipantContextMenu = ({
         }
 
         return null;
-    }).filter(Boolean), [ entity, rooms ]);
+    })
+.filter(Boolean), [ entity, rooms ]);
 
     return isLocalModerator && (
         <ContextMenu

@@ -36,7 +36,7 @@ export interface FaceLandmarksHelper {
 }
 
 /**
- * Helper class for human library
+ * Helper class for human library.
  */
 export class HumanHelper implements FaceLandmarksHelper {
     protected human: Human | undefined;
@@ -44,6 +44,7 @@ export class HumanHelper implements FaceLandmarksHelper {
     protected baseUrl: string;
     private detectionInProgress = false;
     private lastValidFaceBox: FaceBox | undefined;
+
     /**
     * Configuration for human.
     */
@@ -66,7 +67,7 @@ export class HumanHelper implements FaceLandmarksHelper {
             },
             mesh: { enabled: false },
             iris: { enabled: false },
-            emotion: { 
+            emotion: {
                 enabled: false,
                 modelPath: 'emotion.json'
             },
@@ -95,7 +96,7 @@ export class HumanHelper implements FaceLandmarksHelper {
             }
 
             if (this.faceDetectionTypes.length > 0 && this.config.face) {
-                this.config.face.enabled = true
+                this.config.face.enabled = true;
             }
 
             if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX) && this.config.face?.detector) {
@@ -107,12 +108,13 @@ export class HumanHelper implements FaceLandmarksHelper {
             }
 
             const initialHuman = new Human(this.config);
+
             try {
                 await initialHuman.load();
             } catch (err) {
                 console.error(err);
             }
-            
+
             this.human = initialHuman;
         }
     }
@@ -127,15 +129,15 @@ export class HumanHelper implements FaceLandmarksHelper {
             left: Math.round(detections[0].boxRaw[0] * 100),
             right: Math.round((detections[0].boxRaw[0] + detections[0].boxRaw[2]) * 100)
         };
-    
+
         faceBox.width = Math.round(faceBox.right - faceBox.left);
-    
+
         if (this.lastValidFaceBox && threshold && Math.abs(this.lastValidFaceBox.left - faceBox.left) < threshold) {
             return;
         }
-    
+
         this.lastValidFaceBox = faceBox;
-    
+
         return faceBox;
     }
 
@@ -163,14 +165,14 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
 
         this.human.tf.engine().startScope();
-    
+
         const imageTensor = this.human.tf.browser.fromPixels(image);
         const { face: detections } = await this.human.detect(imageTensor, this.config);
 
         this.human.tf.engine().endScope();
-        
+
         return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
-    }  
+    }
 
     public async detect({ image, threshold } : DetectInput): Promise<DetectOutput> {
         let detections;
@@ -186,15 +188,15 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
-            //if more than one face is detected the face centering will be disabled.
-            if (this.getFaceCount(detections) > 1 ) {
+            // if more than one face is detected the face centering will be disabled.
+            if (this.getFaceCount(detections) > 1) {
                 this.faceDetectionTypes.splice(this.faceDetectionTypes.indexOf(DETECTION_TYPES.FACE_BOX), 1);
 
-                //face-box for re-centering
+                // face-box for re-centering
                 faceBox = {
                     left: 0,
                     right: 100,
-                    width: 100,
+                    width: 100
                 };
             } else {
                 faceBox = this.getFaceBox(detections, threshold);
@@ -204,11 +206,11 @@ export class HumanHelper implements FaceLandmarksHelper {
 
         this.detectionInProgress = false;
 
-        return { 
-            faceExpression, 
+        return {
+            faceExpression,
             faceBox,
             faceCount: this.getFaceCount(detections)
-        }
+        };
     }
 
     public getDetectionInProgress(): boolean {

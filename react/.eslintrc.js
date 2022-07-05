@@ -8,7 +8,23 @@ module.exports = {
     ],
     'overrides': [
         {
-            'files': [ '*.js', '*.ts', '*.tsx' ]
+            'files': [ '*.ts', '*.tsx' ],
+            parser: '@typescript-eslint/parser',
+            rules: {
+                'no-undef': 'off',
+                'no-use-before-define': 'off',
+                '@typescript-eslint/ban-ts-comment': 'off',
+                '@typescript-eslint/no-empty-function': 'off',
+                '@typescript-eslint/ban-types': 'off',
+                '@typescript-eslint/no-use-before-define': 'off',
+                'react/jsx-no-bind': 'off'
+            },
+            'plugins': [ '@typescript-eslint' ],
+            'extends': [
+                'eslint:recommended',
+                'plugin:@typescript-eslint/eslint-recommended',
+                'plugin:@typescript-eslint/recommended'
+            ]
         }
     ],
     'rules': {

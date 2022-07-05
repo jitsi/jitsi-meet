@@ -1,30 +1,41 @@
+/* eslint-disable import/order */
 // @ts-ignore
 import { batch } from 'react-redux';
+
 // @ts-ignore
 import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
+
 // @ts-ignore
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
+import { IStore } from '../app/types';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import {
     CONFERENCE_JOIN_IN_PROGRESS,
     SET_START_REACTIONS_MUTED,
     setStartReactionsMuted
+
     // @ts-ignore
 } from '../base/conference';
 import {
     getParticipantById,
     getParticipantCount,
     isLocalParticipantModerator
+
     // @ts-ignore
 } from '../base/participants';
+
 // @ts-ignore
 import { MiddlewareRegistry } from '../base/redux';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
+
 // @ts-ignore
 import { updateSettings } from '../base/settings/actions';
+
 // @ts-ignore
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
+
 // @ts-ignore
 import { getDisabledSounds } from '../base/sounds/functions.any';
+
 // @ts-ignore
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 
@@ -60,7 +71,6 @@ import {
 } from './functions.any';
 import logger from './logger';
 import { RAISE_HAND_SOUND_FILE } from './sounds';
-import { IStore } from '../app/types';
 
 /**
  * Middleware which intercepts Reactions actions to handle changes to the
@@ -241,6 +251,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) 
  * @param {Object} store - The redux store. Used to calculate and dispatch
  * updates.
  * @private
+ * @returns {void}
  */
 function _onMuteReactionsCommand(attributes: MuteCommandAttributes = {}, id: string, store: IStore) {
     const state = store.getState();
@@ -267,6 +278,7 @@ function _onMuteReactionsCommand(attributes: MuteCommandAttributes = {}, id: str
     }
 
     const oldState = Boolean(state['features/base/conference'].startReactionsMuted);
+
     // @ts-ignore
     const newState = attributes.startReactionsMuted === 'true';
 

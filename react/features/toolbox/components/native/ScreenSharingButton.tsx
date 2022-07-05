@@ -22,8 +22,9 @@ const ScreenSharingButton = props => (
  * Maps (parts of) the redux state to the associated props for the
  * {@code ScreenSharingButton} component.
  *
- * @param state - The Redux state.
+ * @param {Object} state - The Redux state.
  * @private
+ * @returns {Object}
  */
 function _mapStateToProps(state: object): object {
     return {
