@@ -1,7 +1,6 @@
 // @flow
 
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -48,8 +47,6 @@ const ParticipantsPane = () => {
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
-    const { t } = useTranslation();
-
     const { conference } = useSelector(state => state['features/base/conference']);
     const _isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
     const currentRoomId = useSelector(getCurrentRoomId);

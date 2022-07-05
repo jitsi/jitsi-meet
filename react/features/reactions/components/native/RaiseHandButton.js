@@ -19,7 +19,8 @@ import Button from '../../../base/react/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { type AbstractButtonProps } from '../../../base/toolbox/components';
-import styles from './styles'
+
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link RaiseHandButton}.
