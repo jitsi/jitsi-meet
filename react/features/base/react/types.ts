@@ -1,4 +1,4 @@
-import { StyleType } from '../styles';
+import { StyleType } from '../styles/functions.native';
 
 export interface ButtonProps {
     accessibilityLabel?: any;
