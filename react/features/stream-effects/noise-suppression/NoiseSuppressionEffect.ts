@@ -74,10 +74,10 @@ export class NoiseSuppressionEffect {
         // Technically after this process the Audio Worklet along with it's resources should be garbage collected,
         // however on chrome there seems to be a problem as described here:
         // https://bugs.chromium.org/p/chromium/issues/detail?id=1298955
-        this._noiseSuppressorNode.port.close();
-        this._audioDestination.disconnect();
-        this._noiseSuppressorNode.disconnect();
-        this._audioSource.disconnect();
-        this._audioContext.close();
+        this._noiseSuppressorNode?.port?.close();
+        this._audioDestination?.disconnect();
+        this._noiseSuppressorNode?.disconnect();
+        this._audioSource?.disconnect();
+        this._audioContext?.close();
     }
 }
