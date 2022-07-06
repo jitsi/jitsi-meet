@@ -88,8 +88,7 @@ RCT_EXPORT_MODULE();
  * @param scope
  */
 RCT_EXPORT_METHOD(sendEvent:(NSString *)name
-                       data:(NSDictionary *)data
-                      scope:(NSString *)scope) {
+                       data:(NSDictionary *)data) {
     if ([name isEqual: @"PARTICIPANTS_INFO_RETRIEVED"]) {
         [self onParticipantsInfoRetrieved: data];
         return;
