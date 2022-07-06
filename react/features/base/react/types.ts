@@ -1,14 +1,12 @@
-import { StyleType } from '../styles/functions.native';
-
 export interface ButtonProps {
     accessibilityLabel?: any;
     color?: string;
     disabled?: boolean;
     icon?: any;
     label?: any;
-    labelStyle?: StyleType;
+    labelStyle?: any;
     onPress?: any;
-    style?: StyleType;
+    style?: any;
     type?: string;
 }
 
@@ -19,7 +17,7 @@ export interface IconButtonProps {
     onPress?: any;
     size?: number;
     src?: any;
-    style?: StyleType;
+    style?: any;
     tapColor?: string;
     type?: string;
 }
