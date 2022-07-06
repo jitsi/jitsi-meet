@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
+import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config';
 import { Dialog, hideDialog, openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Icon, IconCloseSmall, IconShareDesktop } from '../../base/icons';
@@ -35,14 +36,19 @@ type Props = {
     _images: Array<Image>,
 
     /**
+     * Returns the jitsi track that will have backgraund effect applied.
+     */
+    _jitsiTrack: Object,
+
+    /**
      * The current local flip x status.
      */
     _localFlipX: boolean,
 
     /**
-     * Returns the jitsi track that will have backgraund effect applied.
-     */
-    _jitsiTrack: Object,
+    * Whether or not multi-stream send support is enabled.
+    */
+    _multiStreamModeEnabled: boolean,
 
     /**
      * Returns the selected thumbnail identifier.
@@ -102,7 +108,8 @@ function _mapStateToProps(state): Object {
         _virtualBackground: state['features/virtual-background'],
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
         _showUploadButton: !(hasBrandingImages || state['features/base/config'].disableAddingBackgroundImages),
-        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
+        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack,
+        _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state)
     };
 }
 
@@ -256,6 +263,7 @@ function VirtualBackground({
     _selectedThumbnail,
     _showUploadButton,
     _virtualBackground,
+    _multiStreamModeEnabled,
     dispatch,
     initialOptions,
     t
@@ -266,7 +274,10 @@ function VirtualBackground({
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
-    const { disableScreensharingVirtualBackground } = useSelector(state => state['features/base/config']);
+    let { disableScreensharingVirtualBackground } = useSelector(state => state['features/base/config']);
+
+    // Disable screenshare as virtual background in multi-stream mode.
+    disableScreensharingVirtualBackground = disableScreensharingVirtualBackground || _multiStreamModeEnabled;
 
     const [ activeDesktopVideo ] = useState(_virtualBackground?.virtualSource?.videoType === VIDEO_TYPE.DESKTOP
         ? _virtualBackground.virtualSource
