@@ -570,7 +570,7 @@ export default withSafeAreaInsets(connect(_mapStateToProps)(props => {
             setPictureInPictureEnabled(false);
         }
 
-        //We also need to disable PiP when we are back on the WelcomePage
+        // We also need to disable PiP when we are back on the WelcomePage
         return () => setPictureInPictureEnabled(false);
     }, [ isFocused ]);
 
