@@ -106,11 +106,11 @@ export default {
 
     soundDeviceButton: {
         marginBottom: BaseTheme.spacing[3],
-        width: '80%'
+        width: 240
     },
 
     endMeetingButton: {
-        width: '80%'
+        width: 240
     },
 
     headerLabels: {

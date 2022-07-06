@@ -39,18 +39,6 @@ const title = {
     paddingLeft: BoxModel.padding
 };
 
-const baseHighlightDialogButton = {
-    borderRadius: BaseTheme.shape.borderRadius,
-    height: BaseTheme.spacing[7],
-    flex: 1,
-    justifyContent: 'space-around'
-};
-
-const baseHighlightDialogLabel = {
-    ...BaseTheme.typography.bodyShortBoldLarge,
-    textTransform: 'none'
-};
-
 export default {
     /**
      * Container for the StartRecordingDialog screen.
@@ -103,22 +91,6 @@ export default {
     highlightDialogButtonsContainer: {
         display: 'flex',
         flexDirection: 'column-reverse'
-    },
-    highlightDialogCancelButton: {
-        ...baseHighlightDialogButton,
-        backgroundColor: BaseTheme.palette.section01
-    },
-    highlightDialogHighlightButton: {
-        ...baseHighlightDialogButton,
-        backgroundColor: BaseTheme.palette.action01
-    },
-    highlightDialogCancelLabel: {
-        ...baseHighlightDialogLabel,
-        color: BaseTheme.palette.field01
-    },
-    highlightDialogHighlighLabel: {
-        ...baseHighlightDialogLabel,
-        color: BaseTheme.palette.text01
     },
     highlightDialogButtonsSpace: {
         height: 16,

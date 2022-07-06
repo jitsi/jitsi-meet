@@ -67,7 +67,6 @@ export default {
     },
 
     transparentButton: {
-        backgroundColor: 'transparent',
         marginTop: BaseTheme.spacing[3]
     },
 
@@ -77,7 +76,6 @@ export default {
     },
 
     autoAssignLabel: {
-        ...baseLabel,
         color: BaseTheme.palette.link01
     }
 };

@@ -57,34 +57,15 @@ const contextMenuItem = {
 export default {
 
     participantActionsButtonAdmit: {
-        backgroundColor: BaseTheme.palette.action01,
-        borderRadius: BaseTheme.shape.borderRadius,
-        flexDirection: 'row',
-        height: BaseTheme.spacing[6],
         marginRight: BaseTheme.spacing[3],
         position: 'absolute',
-        right: 0,
-        zIndex: 1
+        right: 0
     },
 
-    participantActionsButtonContent: {
-        alignItems: 'center',
-        display: 'flex',
-        height: BaseTheme.spacing[5],
-        top: BaseTheme.spacing[1]
-    },
-
-    participantActionsButtonText: {
-        color: BaseTheme.palette.text01,
-        textTransform: 'capitalize'
-    },
-
-    admitAllParticipantsActionButtonLabel: {
-        ...BaseTheme.typography.heading6,
+    admitAllButtonLabel: {
         color: BaseTheme.palette.link01,
-        textTransform: 'capitalize',
-        marginRight: BaseTheme.spacing[5],
-        marginTop: BaseTheme.spacing[3]
+        marginRight: BaseTheme.spacing[6],
+        marginTop: 14
     },
 
     participantContainer: {

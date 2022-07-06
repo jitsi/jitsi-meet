@@ -171,7 +171,6 @@ const PollCreate = (props: AbstractProps) => {
                         <Button
                             accessibilityLabel = 'polls.create.cancel'
                             label = 'polls.create.cancel'
-                            labelStyle = { chatStyles.pollButtonLabel }
                             onPress = { () => setCreateMode(false) }
                             style = { chatStyles.pollCreateButton }
                             type = { SECONDARY } />

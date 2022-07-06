@@ -5,19 +5,7 @@ import { Button as NativePaperButton } from 'react-native-paper';
 import BaseTheme from '../../../ui/components/BaseTheme.native';
 import styles from './styles';
 import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
-
-interface ButtonProps {
-    accessibilityLabel?: any;
-    color?: string;
-    disabled?: boolean;
-    icon?: any;
-    label?: any;
-    labelStyle?: any;
-    mode?: any;
-    onPress?: any;
-    style?: any;
-    type?: string;
-}
+import { ButtonProps } from '../../types';
 
 
 const Button: React.FC<ButtonProps> = ({
@@ -27,28 +15,34 @@ const Button: React.FC<ButtonProps> = ({
     icon,
     label,
     labelStyle,
-    mode,
     onPress,
     style,
     type
 }: ButtonProps) => {
     const { t } = useTranslation();
     const { CONTAINED, TEXT } = BUTTON_MODES;
-    const { DESTRUCTIVE, PRIMARY, SECONDARY } = BUTTON_TYPES;
+    const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
 
     let buttonLabelStyles;
     let buttonStyles;
     let color;
+    let mode;
 
     if (type === PRIMARY) {
         buttonLabelStyles = styles.buttonLabelPrimary;
         color = BaseTheme.palette.action01;
+        mode = CONTAINED
     } else if (type === SECONDARY) {
         buttonLabelStyles = styles.buttonLabelSecondary;
         color = BaseTheme.palette.action02;
+        mode = CONTAINED
     } else if (type === DESTRUCTIVE) {
         color = BaseTheme.palette.actionDanger;
         buttonLabelStyles = styles.buttonLabelDestructive;
+        mode = CONTAINED
+    } else if ( type === TERTIARY) {
+        buttonLabelStyles = styles.buttonLabelTertiary
+        mode = TEXT
     } else {
         color = buttonColor;
         buttonLabelStyles = styles.buttonLabel;
@@ -59,10 +53,6 @@ const Button: React.FC<ButtonProps> = ({
         buttonStyles = styles.buttonDisabled;
     } else {
         buttonStyles = styles.button;
-    }
-
-    if (mode === TEXT) {
-        buttonLabelStyles = styles.buttonLabelPrimary;
     }
 
     return (
@@ -76,7 +66,7 @@ const Button: React.FC<ButtonProps> = ({
                 buttonLabelStyles,
                 labelStyle
             ] }
-            mode = { mode || CONTAINED }
+            mode = { mode }
             onPress = { onPress }
             style = { [
                 buttonStyles,

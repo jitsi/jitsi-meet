@@ -28,13 +28,9 @@ import { screen } from '../../mobile/navigation/routes';
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
 import { isDisplayNameRequired } from '../functions';
-
+import { PrejoinProps } from '../types';
 import styles from './styles';
 
-
-interface PrejoinProps {
-    navigation: any;
-}
 
 const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const dispatch = useDispatch();

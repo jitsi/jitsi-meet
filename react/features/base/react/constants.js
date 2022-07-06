@@ -12,6 +12,7 @@ export const OVERLAY_Z_INDEX = 1000;
 export const BUTTON_TYPES = {
     PRIMARY: 'primary',
     SECONDARY: 'secondary',
+    TERTIARY: 'tertiary',
     DESTRUCTIVE: 'destructive'
 };
 
@@ -20,6 +21,5 @@ export const BUTTON_TYPES = {
  */
 export const BUTTON_MODES = {
     CONTAINED: 'contained',
-    ICON: 'icon',
     TEXT: 'text'
 };

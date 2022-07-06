@@ -195,6 +195,11 @@ export default {
         color: BaseTheme.palette.text01
     },
 
+    buttonLabelTertiary: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text01
+    },
+
     iconButtonContainer: {
         ...iconButtonContainer
     },
