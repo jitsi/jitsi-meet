@@ -1,3 +1,11 @@
+// eslint-disable-next-line no-bitwise
+
+interface RnnoiseModule extends EmscriptenModule {
+    _rnnoise_create() : number;
+    _rnnoise_process_frame(context: number, input: number, output: number): number;
+    _rnnoise_destroy(context: number): void;
+}
+
 /**
  * Constant. Rnnoise default sample size, samples of different size won't work.
  */
@@ -13,6 +21,9 @@ const RNNOISE_BUFFER_SIZE: number = RNNOISE_SAMPLE_LENGTH * 4;
  */
 const PCM_FREQUENCY: number = 44100;
 
+/**
+ * Used to shift a 32 bit number by 16 bits
+ */
 const SHIFT_16_BIT_NR: number = 32768;
 
 /**
@@ -24,7 +35,7 @@ export default class RnnoiseProcessor {
     /**
      * Rnnoise context object needed to perform the audio processing.
      */
-    private _context: any;
+    private _context: number;
 
     /**
      * State flag, check if the instance was destroyed.
@@ -34,12 +45,12 @@ export default class RnnoiseProcessor {
     /**
      * WASM interface through which calls to rnnoise are made.
      */
-    private _wasmInterface: any;
+    private _wasmInterface: RnnoiseModule;
 
     /**
      * WASM dynamic memory buffer used as input for rnnoise processing method.
      */
-    private _wasmPcmInput: any;
+    private _wasmPcmInput: number;
 
     /**
      * The Float32Array index representing the start point in the wasm heap of the _wasmPcmInput buffer.
@@ -52,7 +63,7 @@ export default class RnnoiseProcessor {
      * @class
      * @param {Object} wasmInterface - WebAssembly module interface that exposes rnnoise functionality.
      */
-    constructor(wasmInterface: Object) {
+    constructor(wasmInterface: RnnoiseModule) {
         // Considering that we deal with dynamic allocated memory employ exception safety strong guarantee
         // i.e. in case of exception there are no side effects.
         try {
@@ -61,7 +72,6 @@ export default class RnnoiseProcessor {
             // For VAD score purposes only allocate the buffers once and reuse them
             this._wasmPcmInput = this._wasmInterface._malloc(RNNOISE_BUFFER_SIZE);
 
-            // eslint-disable-next-line no-bitwise
             this._wasmPcmInputF32Index = this._wasmPcmInput >> 2;
 
             if (!this._wasmPcmInput) {
@@ -71,7 +81,7 @@ export default class RnnoiseProcessor {
             this._context = this._wasmInterface._rnnoise_create();
         } catch (error) {
             // release can be called even if not all the components were initialized.
-            this._releaseWasmResources();
+            this.destroy();
             throw error;
         }
     }
@@ -86,12 +96,10 @@ export default class RnnoiseProcessor {
         // For VAD score purposes only allocate the buffers once and reuse them
         if (this._wasmPcmInput) {
             this._wasmInterface._free(this._wasmPcmInput);
-            this._wasmPcmInput = null;
         }
 
         if (this._context) {
             this._wasmInterface._rnnoise_destroy(this._context);
-            this._context = null;
         }
     }
 

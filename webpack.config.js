@@ -418,7 +418,7 @@ module.exports = (_env, argv) => {
             ] },
             plugins: [
             ],
-            performance: getPerformanceHints(perfHintOptions, 1024 * 1024),
+            performance: getPerformanceHints(perfHintOptions, 200 * 1024),
 
             output: {
                 ...config.output,

@@ -69,7 +69,6 @@ class NoiseSuppressionButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object): $Shape<Props> {
-
     return {
         _isNoiseSuppressionActive: isNoiseSuppressionActive(state)
     };

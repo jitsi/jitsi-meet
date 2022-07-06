@@ -19,7 +19,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
 
     switch (action.type) {
     case TOGGLE_NOISE_SUPPRESSION: {
-
         const state = getState();
         const noiseSuppressionActive = isNoiseSuppressionActive(state);
         const localAudio = getLocalJitsiAudioTrack(state);
@@ -32,7 +31,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
-            return;
+            return result;
         }
 
         try {
