@@ -6,6 +6,7 @@ import { getLiveStreaming } from './functions';
 
 
 export type LiveStreaming = {
+    enabled: boolean,
     helpLink: string, // Documentation reference for the live streaming feature.
     termsLink: string, // Terms link
     dataPrivacyLink: string, // Data privacy link
@@ -13,6 +14,7 @@ export type LiveStreaming = {
 }
 
 export type LiveStreamingProps = {
+    enabled: boolean,
     helpURL: string,
     termsURL: string,
     dataPrivacyURL: string,
@@ -23,6 +25,10 @@ export type LiveStreamingProps = {
  * The props of the component.
  */
 export type Props = {
+    /**
+     * The live streaming dialog properties.
+     */
+    _liveStreaming: LiveStreamingProps
 
     /**
      * Callback invoked when the entered stream key has changed.
@@ -37,12 +43,7 @@ export type Props = {
     /**
      * The stream key value to display as having been entered so far.
      */
-    value: string,
-
-    /**
-     * The live streaming dialog properties.
-     */
-    _liveStreaming: LiveStreamingProps
+    value: string
 };
 
 /**
@@ -157,7 +158,7 @@ export default class AbstractStreamKeyForm<P: Props>
      */
     _validateStreamKey(streamKey = '') {
         const trimmedKey = streamKey.trim();
-        const match = this.props._liveStreaming?.streamLinkRegexp.exec(trimmedKey);
+        const match = this.props._liveStreaming.streamLinkRegexp.exec(trimmedKey);
 
         return Boolean(match);
     }

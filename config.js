@@ -307,11 +307,18 @@ var config = {
     // DEPRECATED. Use recordingService.sharingEnabled instead.
     // fileRecordingsServiceSharingEnabled: false,
 
-    // Whether to enable live streaming or not.
-    // liveStreamingEnabled: false,
+    // Local recording configuration.
+    // localRecording: {
+    //     // Whether to disable local recording or not.
+    //     disable: false,
+    //     // Whether to notify all participants when a participant is recording locally.
+    //     notifyAllParticipants: false
+    // },
 
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
     // liveStreaming: {
+    //    // Whether to enable live streaming or not.
+    //    enabled: false,
     //    // Terms link
     //    termsLink: 'https://www.youtube.com/t/terms',
     //    // Data privacy link
@@ -322,13 +329,8 @@ var config = {
     //    helpLink: 'https://jitsi.org/live'
     // },
 
-    // Local recording configuration.
-    // localRecording: {
-    //     // Whether to disable local recording or not.
-    //     disable: false,
-    //     // Whether to notify all participants when a participant is recording locally.
-    //     notifyAllParticipants: false
-    // },
+    // DEPRECATED. Use liveStreaming.enabled instead.
+    // liveStreamingEnabled: false,
 
     // DEPRECATED. Use transcription.enabled instead.
     // transcribingEnabled: false,

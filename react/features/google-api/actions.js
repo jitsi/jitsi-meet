@@ -10,6 +10,7 @@ import {
 } from './actionTypes';
 import { GOOGLE_API_STATES } from './constants';
 import googleApi from './googleApi';
+import { getLiveStreaming } from '../recording/components/LiveStream/functions';
 
 /**
  * Retrieves the current calendar events.
@@ -36,15 +37,16 @@ export function loadGoogleAPI() {
         googleApi.get()
         .then(() => {
             const {
-                liveStreamingEnabled,
                 enableCalendarIntegration,
                 googleApiApplicationClientID
             } = getState()['features/base/config'];
 
+            const liveStreaming = getLiveStreaming(getState());
+
             if (getState()['features/google-api'].googleAPIState
                     === GOOGLE_API_STATES.NEEDS_LOADING) {
                 return googleApi.initializeClient(
-                    googleApiApplicationClientID, liveStreamingEnabled, enableCalendarIntegration);
+                    googleApiApplicationClientID, liveStreaming.enabled, enableCalendarIntegration);
             }
 
             return Promise.resolve();

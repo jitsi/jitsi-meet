@@ -1,5 +1,3 @@
-// @flow
-
 import {
     FOUR_GROUPS_DASH_SEPARATED,
     GOOGLE_PRIVACY_POLICY,
@@ -14,16 +12,16 @@ import {
  * @returns {LiveStreaming}
  */
 export function getLiveStreaming(state: Object) {
-    const { liveStreaming } = state['features/base/config'];
-    const { helpLink, termsLink, dataPrivacyLink, validatorRegExpString } = liveStreaming || {};
+    const { liveStreaming = {} } = state['features/base/config'];
 
-    const regexpFromConfig = validatorRegExpString
-        && new RegExp(validatorRegExpString);
+    const regexp = liveStreaming.validatorRegExpString
+        && new RegExp(liveStreaming.validatorRegExpString);
 
     return {
-        helpURL: helpLink || JITSI_LIVE_STREAMING_HELP_LINK,
-        termsURL: termsLink || YOUTUBE_TERMS_URL,
-        dataPrivacyURL: dataPrivacyLink || GOOGLE_PRIVACY_POLICY,
-        streamLinkRegexp: regexpFromConfig || FOUR_GROUPS_DASH_SEPARATED
+        enabled: !!liveStreaming.enabled,
+        helpURL: liveStreaming.helpLink || JITSI_LIVE_STREAMING_HELP_LINK,
+        termsURL: liveStreaming.termsLink || YOUTUBE_TERMS_URL,
+        dataPrivacyURL: liveStreaming.dataPrivacyLink || GOOGLE_PRIVACY_POLICY,
+        streamLinkRegexp: regexp || FOUR_GROUPS_DASH_SEPARATED
     };
 }
