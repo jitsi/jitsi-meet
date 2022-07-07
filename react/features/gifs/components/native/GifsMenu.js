@@ -9,6 +9,7 @@ import { sendMessage } from '../../../chat/actions.any';
 import { goBack } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import ClearableInput from '../../../participants-pane/components/native/ClearableInput';
 import { formatGifUrlMessage, getGifUrl } from '../../functions';
+
 import GifsMenuFooter from './GifsMenuFooter';
 import styles from './styles';
 
