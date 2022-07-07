@@ -181,7 +181,12 @@ export const chatStyles = createStyleSheet({
         textTransform: 'capitalize'
     },
 
-    buttonRow: {
+    buttonRowAndroid: {
+        flexDirection: 'row',
+        marginBottom: BaseTheme.spacing[3]
+    },
+
+    buttonRowIos: {
         flexDirection: 'row'
     },
 

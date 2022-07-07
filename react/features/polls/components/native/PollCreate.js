@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, FlatList } from 'react-native';
+import { View, Text, TextInput, FlatList, Platform } from 'react-native';
 import { Button, Divider, TouchableRipple } from 'react-native-paper';
 
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
@@ -127,6 +127,8 @@ const PollCreate = (props: AbstractProps) => {
                 }
             </View>
         );
+    const buttonRowStyles = Platform.OS === 'android'
+        ? chatStyles.buttonRowAndroid : chatStyles.buttonRowIos;
 
     return (
         <View style = { chatStyles.pollCreateContainer }>
@@ -169,7 +171,7 @@ const PollCreate = (props: AbstractProps) => {
                         { t('polls.create.addOption') }
                     </Button>
                     <View
-                        style = { chatStyles.buttonRow }>
+                        style = { buttonRowStyles }>
                         <Button
                             color = { BaseTheme.palette.action02 }
                             labelStyle = { chatStyles.pollButtonLabel }
