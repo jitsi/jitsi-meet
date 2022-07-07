@@ -41,14 +41,20 @@ export default {
         width: BaseTheme.spacing[6]
     },
 
+    headerNavigationIcon: {
+        marginLeft: 12
+    },
+
     headerNavigationText: {
         color: BaseTheme.palette.text01,
+        marginLeft: BaseTheme.spacing[3],
         fontSize: HEADER_ACTION_BUTTON_SIZE
     },
 
     headerNavigationTextBold: {
         ...BaseTheme.typography.labelButton,
         color: BaseTheme.palette.text01,
+        marginRight: BaseTheme.spacing[3],
         fontSize: HEADER_ACTION_BUTTON_SIZE
     },
 
