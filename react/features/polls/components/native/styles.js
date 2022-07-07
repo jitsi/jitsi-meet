@@ -167,18 +167,7 @@ export const chatStyles = createStyleSheet({
 
     pollCreateButton: {
         flex: 1,
-        padding: 4,
         marginHorizontal: BaseTheme.spacing[2]
-    },
-
-    pollSendLabel: {
-        color: BaseTheme.palette.text01,
-        textTransform: 'capitalize'
-    },
-
-    pollSendDisabledLabel: {
-        color: BaseTheme.palette.text03,
-        textTransform: 'capitalize'
     },
 
     buttonRow: {
@@ -200,13 +189,8 @@ export const chatStyles = createStyleSheet({
         marginLeft: BaseTheme.spacing[2]
     },
 
-    pollButtonLabel: {
-        textTransform: 'capitalize'
-    },
-
     pollCreateAddButton: {
-        margin: BaseTheme.spacing[2],
-        padding: BaseTheme.spacing[1]
+        margin: BaseTheme.spacing[2]
     },
 
     toggleText: {
@@ -215,7 +199,6 @@ export const chatStyles = createStyleSheet({
     },
 
     createPollButton: {
-        padding: 4,
         marginHorizontal: BaseTheme.spacing[4],
         marginVertical: '8%'
     },

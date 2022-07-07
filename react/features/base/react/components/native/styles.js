@@ -134,10 +134,83 @@ export const BASE_INDICATOR = {
     justifyContent: 'center'
 };
 
+const button = {
+    borderRadius: BaseTheme.shape.borderRadius,
+    height: BaseTheme.spacing[6],
+    minWidth: 85
+};
+
+const buttonLabel = {
+    ...BaseTheme.typography.bodyShortBold,
+    padding: 2,
+    textTransform: 'capitalize'
+};
+
+const iconButtonContainer = {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    borderRadius: BaseTheme.shape.borderRadius,
+    height: BaseTheme.spacing[6],
+    width: BaseTheme.spacing[6]
+};
+
 /**
  * The styles of the generic React {@code Component}s implemented by the feature
  * base/react.
  */
 export default {
-    ...SECTION_LIST_STYLES
+    ...SECTION_LIST_STYLES,
+
+    button: {
+        ...button
+    },
+
+    buttonLabel: {
+        ...buttonLabel
+    },
+
+    buttonLabelDisabled: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text03
+    },
+
+    buttonDisabled: {
+        ...button,
+        backgroundColor: BaseTheme.palette.actionDisabled
+    },
+
+    buttonLabelPrimary: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text01
+    },
+
+    buttonLabelSecondary: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text02
+    },
+
+    buttonLabelDestructive: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text01
+    },
+
+    buttonLabelTertiary: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text01
+    },
+
+    iconButtonContainer: {
+        ...iconButtonContainer
+    },
+
+    iconButtonContainerPrimary: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.action01
+    },
+
+    iconButtonContainerSecondary: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.action02
+    }
 };

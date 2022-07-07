@@ -2,10 +2,11 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, FlatList } from 'react-native';
-import { Button, Divider, TouchableRipple } from 'react-native-paper';
+import { Divider, TouchableRipple } from 'react-native-paper';
 
+import Button from '../../../base/react/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
-import { BUTTON_MODES } from '../../../chat/constants';
 import styles
     from '../../../welcome/components/native/settings/components/styles';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
@@ -16,8 +17,6 @@ import { chatStyles, dialogStyles } from './styles';
 
 
 const PollCreate = (props: AbstractProps) => {
-
-
     const {
         addAnswer,
         answers,
@@ -56,6 +55,7 @@ const PollCreate = (props: AbstractProps) => {
      * about whether a newly created input field has been rendered yet or not.
      */
     const [ lastFocus, requestFocus ] = useState(null);
+    const { PRIMARY, SECONDARY } = BUTTON_TYPES;
 
     useEffect(() => {
         if (lastFocus === null) {
@@ -156,47 +156,36 @@ const PollCreate = (props: AbstractProps) => {
                     renderItem = { renderListItem } />
                 <View style = { chatStyles.pollCreateButtonsContainer }>
                     <Button
-                        color = { BaseTheme.palette.action02 }
+                        accessibilityLabel = 'polls.create.addOption'
                         disabled = { answers.length >= ANSWERS_LIMIT }
-                        labelStyle = { chatStyles.pollButtonLabel }
-                        mode = { BUTTON_MODES.CONTAINED }
+                        label = 'polls.create.addOption'
                         onPress = { () => {
                             // adding and answer
                             addAnswer();
                             requestFocus(answers.length);
                         } }
-                        style = { chatStyles.pollCreateAddButton }>
-                        { t('polls.create.addOption') }
-                    </Button>
+                        style = { chatStyles.pollCreateAddButton }
+                        type = { SECONDARY } />
                     <View
                         style = { chatStyles.buttonRow }>
                         <Button
-                            color = { BaseTheme.palette.action02 }
-                            labelStyle = { chatStyles.pollButtonLabel }
-                            mode = { BUTTON_MODES.CONTAINED }
+                            accessibilityLabel = 'polls.create.cancel'
+                            label = 'polls.create.cancel'
                             onPress = { () => setCreateMode(false) }
-                            style = { chatStyles.pollCreateButton } >
-                            { t('polls.create.cancel') }
-                        </Button>
+                            style = { chatStyles.pollCreateButton }
+                            type = { SECONDARY } />
                         <Button
-                            color = { BaseTheme.palette.action01 }
+                            accessibilityLabel = 'polls.create.send'
                             disabled = { isSubmitDisabled }
-                            labelStyle = {
-                                isSubmitDisabled
-                                    ? chatStyles.pollSendDisabledLabel
-                                    : chatStyles.pollSendLabel
-                            }
-                            mode = { BUTTON_MODES.CONTAINED }
+                            label = 'polls.create.send'
                             onPress = { onSubmit }
-                            style = { chatStyles.pollCreateButton } >
-                            { t('polls.create.send') }
-                        </Button>
+                            style = { chatStyles.pollCreateButton }
+                            type = { PRIMARY } />
                     </View>
                 </View>
             </View>
         </View>
     );
-
 };
 
 /*

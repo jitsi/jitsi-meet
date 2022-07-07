@@ -1,16 +1,15 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
+import Button from '../../../../../base/react/components/native/Button';
+import { BUTTON_TYPES } from '../../../../../base/react/constants';
 import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
 
 import styles from './styles';
 
 const AddBreakoutRoomButton = () => {
-    const { t } = useTranslation();
     const dispatch = useDispatch();
 
     const onAdd = useCallback(() =>
@@ -19,12 +18,11 @@ const AddBreakoutRoomButton = () => {
 
     return (
         <Button
-            accessibilityLabel = { t('breakoutRooms.actions.add') }
-            children = { t('breakoutRooms.actions.add') }
-            labelStyle = { styles.addButtonLabel }
-            mode = 'contained'
+            accessibilityLabel = 'breakoutRooms.actions.add'
+            label = 'breakoutRooms.actions.add'
             onPress = { onAdd }
-            style = { styles.addButton } />
+            style = { styles.addButton }
+            type = { BUTTON_TYPES.SECONDARY } />
     );
 };
 

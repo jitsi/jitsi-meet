@@ -161,8 +161,7 @@ ColorSchemeRegistry.register('Toolbox', {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '100%',
-        marginBottom: 16
+        width: '100%'
     },
 
     reactionButton: {
@@ -170,28 +169,6 @@ ColorSchemeRegistry.register('Toolbox', {
         style: reactionButton,
         underlayColor: BaseTheme.palette.ui13,
         emoji: reactionEmoji
-    },
-
-    raiseHandButton: {
-        style: {
-            ...reactionButton,
-            backgroundColor: BaseTheme.palette.ui13,
-            width: '100%',
-            borderRadius: 6
-        },
-        underlayColor: BaseTheme.palette.ui13,
-        emoji: reactionEmoji,
-        text: {
-            color: BaseTheme.palette.text01,
-            fontWeight: '600',
-            marginLeft: 8,
-            lineHeight: 24
-        },
-        container: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }
     },
 
     emojiAnimation: {
