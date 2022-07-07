@@ -24,7 +24,6 @@ import '../reducers';
 declare var __DEV__;
 
 const DialogContainerWrapper = Platform.select({
-    ios: FullWindowOverlay,
     default: View
 });
 
