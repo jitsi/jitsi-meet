@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, FlatList } from 'react-native';
+import { View, Text, TextInput, FlatList, Platform } from 'react-native';
 import { Divider, TouchableRipple } from 'react-native-paper';
 
 import Button from '../../../base/react/components/native/Button';
