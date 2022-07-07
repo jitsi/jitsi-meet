@@ -42,7 +42,11 @@ export function canSendRtcstatsData(stateful: Function | Object) {
 }
 
 /**
- * @param  {Function|Object} stateful
+ * Connects to the rtcstats service and sends the identity data.
+ *
+ * @param  {Function|Object} stateful - The redux store or {@code getState} function.
+ * @param {Object} conference - The conference for which rtcstats is connected.
+ * @returns {void}
  */
 export function connectAndSendIdentity(dispatch, stateful: Function | Object, conference) {
     const state = toState(stateful);
