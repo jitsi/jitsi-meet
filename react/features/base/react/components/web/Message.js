@@ -70,9 +70,9 @@ class Message extends Component<Props> {
             }
         }
 
-        content.forEach(token => {
+        content.forEach((token, index) => {
             if (typeof token === 'string' && token !== ' ') {
-                message.push(<Linkify key = { token }>{ token }</Linkify>);
+                message.push(<Linkify key = { `${token}-${index}` }>{ token }</Linkify>);
             } else {
                 message.push(token);
             }
