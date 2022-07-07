@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, FlatList } from 'react-native';
+import { View, Text, TextInput, FlatList, Platform } from 'react-native';
 import { Divider, TouchableRipple } from 'react-native-paper';
 
 import Button from '../../../base/react/components/native/Button';
@@ -127,6 +127,8 @@ const PollCreate = (props: AbstractProps) => {
                 }
             </View>
         );
+    const buttonRowStyles = Platform.OS === 'android'
+        ? chatStyles.buttonRowAndroid : chatStyles.buttonRowIos;
 
     return (
         <View style = { chatStyles.pollCreateContainer }>
@@ -167,7 +169,7 @@ const PollCreate = (props: AbstractProps) => {
                         style = { chatStyles.pollCreateAddButton }
                         type = { SECONDARY } />
                     <View
-                        style = { chatStyles.buttonRow }>
+                        style = { buttonRowStyles }>
                         <Button
                             accessibilityLabel = 'polls.create.cancel'
                             label = 'polls.create.cancel'

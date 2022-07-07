@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -12,7 +12,7 @@ import {
 } from '../../../screenOptions';
 import { lobbyNavigationContainerRef } from '../LobbyNavigationContainerRef';
 
-const LobbyStack = createNativeStackNavigator();
+const LobbyStack = createStackNavigator();
 
 
 const LobbyNavigationContainer = () => {
