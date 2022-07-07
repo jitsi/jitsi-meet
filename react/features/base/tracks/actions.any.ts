@@ -620,7 +620,13 @@ export function trackStreamingStatusChanged(track: any, streamingStatus: string)
 
 /**
  * Create an action for when the owner of the track changes due to ssrc remapping.
- * $
+ *
+ * @param {(JitsiRemoteTrack)} track - JitsiTrack instance.
+ * @param {string} participantId - New owner's participant ID.
+ * @returns {{
+ *     type: TRACK_OWNER_CHANGED_AC,
+ *     track: Track
+ * }}
  */
 export function trackOwnerChanged(track, participantId) {
     return {

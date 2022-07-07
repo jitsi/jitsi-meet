@@ -44,8 +44,10 @@ function track(state: ITrack, action: any) {
 
     case TRACK_OWNER_CHANGED: {
         const t = action.track;
+
         if (state.jitsiTrack === t.jitsiTrack.jitsiTrack) {
             console.error(`JPA (did it) ${state.participantId} ${t.participantId} ${state.jitsiTrack._sourceName}`);
+
             return {
                 ...state,
                 participantId: t.participantId

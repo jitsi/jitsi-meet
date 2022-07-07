@@ -289,16 +289,14 @@ class ConferenceConnector {
             this._handleConferenceJoined.bind(this));
         room.on(JitsiConferenceEvents.CONFERENCE_FAILED,
             this._onConferenceFailed.bind(this));
-        room.on(JitsiConferenceEvents.TRACK_OWNER_CHANGED_JCE, (ssrc, owner) =>
-        {
-            let track = getTrackBySsrc(ssrc);
-            if(typeof track !== 'undefined')
-            {
-                // console.error(`JPA ${ssrc} ${owner} ${track}`);
+        room.on(JitsiConferenceEvents.TRACK_OWNER_CHANGED_JCE, (ssrc, owner) => {
+            const track = getTrackBySsrc(ssrc);
+
+            if (track) {
                 APP.store.dispatch(trackOwnerChanged(track, owner));
+            } else {
+                console.error(`track not found. ssrc:${ssrc} owner:${owner}.`);
             }
-            else
-                console.error(`JPA ${ssrc} ${owner} track not found`);
         });
     }
 

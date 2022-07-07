@@ -221,16 +221,17 @@ export function getTrackByMediaTypeAndParticipant(
 }
 
 /**
- * $
+ * Returns track with specified SSRC.
+ *
+ * @param {int} ssrc - SSRC.
+ * @returns {(Track|undefined)}
  */
- export function getTrackBySsrc(ssrc) {
+export function getTrackBySsrc(ssrc) {
     const state = APP.store.getState();
     const tracks = state['features/base/tracks'];
+
     return tracks.find(
-        t => {
-            // console.error(`JPA t.jitsiTrack.ssrc ${t.jitsiTrack.ssrc} ssrc ${ssrc}`)
-            return Boolean(t.jitsiTrack) && t.jitsiTrack.ssrc == ssrc; // $ types
-        }
+        t => Boolean(t.jitsiTrack) && t.jitsiTrack.ssrc === ssrc
     );
 }
 
