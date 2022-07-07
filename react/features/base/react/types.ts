@@ -1,23 +1,23 @@
 export interface ButtonProps {
-    accessibilityLabel?: any;
+    accessibilityLabel?: string;
     color?: string;
     disabled?: boolean;
-    icon?: any;
-    label?: any;
-    labelStyle?: any;
-    onPress?: any;
-    style?: any;
+    icon?: JSX.Element;
+    label?: string;
+    labelStyle?: Object|undefined;
+    onPress?: Function;
+    style?: Object|undefined;
     type?: string;
 }
 
 export interface IconButtonProps {
-    accessibilityLabel?: any;
+    accessibilityLabel?: string;
     color?: string;
     disabled?: boolean;
-    onPress?: any;
-    size?: number;
-    src?: any;
-    style?: any;
+    onPress?: Function;
+    size?: number|string;
+    src?: Function;
+    style?: Object|undefined;
     tapColor?: string;
     type?: string;
 }

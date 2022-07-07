@@ -1,3 +1,3 @@
 interface PrejoinProps {
-    navigation: any;
+    navigation: Object;
 }
