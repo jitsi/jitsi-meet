@@ -52,7 +52,7 @@ export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
  * @param {Object} state - The redux state.
  * @returns {boolean} The enabled flag.
  */
- export function isAnonymousPollsEnabled(state: Object) {
+export function isAnonymousPollsEnabled(state: Object) {
     const enableAnonymousPolls = state['features/base/config']?.enableAnonymousPolls === true;
 
     return enableAnonymousPolls;
