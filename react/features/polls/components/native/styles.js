@@ -170,7 +170,26 @@ export const chatStyles = createStyleSheet({
         marginHorizontal: BaseTheme.spacing[2]
     },
 
+    pollSendLabel: {
+        color: BaseTheme.palette.text01,
+        textTransform: 'capitalize'
+    },
+
+    pollSendDisabledLabel: {
+        color: BaseTheme.palette.text03,
+        textTransform: 'capitalize'
+    },
+
     buttonRow: {
+        flexDirection: 'row'
+    },
+
+    buttonRowAndroid: {
+        flexDirection: 'row',
+        marginBottom: BaseTheme.spacing[3]
+    },
+
+    buttonRowIos: {
         flexDirection: 'row'
     },
 

@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 
 import { connect } from '../../../base/redux';
@@ -24,7 +24,7 @@ import ConferenceNavigationContainer
 import WelcomePageNavigationContainer
     from './welcome/components/WelcomePageNavigationContainer';
 
-const RootStack = createNativeStackNavigator();
+const RootStack = createStackNavigator();
 
 
 type Props = {
