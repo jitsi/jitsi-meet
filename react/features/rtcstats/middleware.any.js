@@ -24,7 +24,6 @@ import logger from './logger';
  */
 MiddlewareRegistry.register(store => next => action => {
     const state = store.getState();
-    const { dispatch } = store;
     const config = state['features/base/config'];
     const { analytics, faceLandmarks } = config;
 
