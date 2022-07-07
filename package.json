@@ -54,7 +54,7 @@
     "@react-navigation/elements": "1.2.1",
     "@react-navigation/material-top-tabs": "6.0.6",
     "@react-navigation/native": "6.0.6",
-    "@react-navigation/native-stack": "6.6.2",
+    "@react-navigation/stack": "6.2.2",
     "@svgr/webpack": "4.3.2",
     "@tensorflow/tfjs-backend-wasm": "3.13.0",
     "@tensorflow/tfjs-core": "3.13.0",

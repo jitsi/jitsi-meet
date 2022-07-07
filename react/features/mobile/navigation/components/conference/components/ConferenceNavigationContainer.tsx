@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -46,7 +46,7 @@ import {
     conferenceNavigationRef
 } from '../ConferenceNavigationContainerRef';
 
-const ConferenceStack = createNativeStackNavigator();
+const ConferenceStack = createStackNavigator();
 
 const ConferenceNavigationContainer = () => {
     const isPollsDisabled = useSelector(getDisablePolls);

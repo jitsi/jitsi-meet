@@ -1,3 +1,4 @@
+import { TransitionPresets } from '@react-navigation/stack';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -17,6 +18,23 @@ import { goBack as goBackToWelcomeScreen } from './rootNavigationContainerRef';
 
 
 /**
+ * Default modal transition for the current platform.
+ */
+export const modalPresentation = Platform.select({
+    ios: TransitionPresets.ModalPresentationIOS,
+    default: TransitionPresets.DefaultTransition
+});
+
+/**
+ * Screen options and transition types.
+ */
+export const fullScreenOptions = {
+    ...TransitionPresets.ModalTransition,
+    gestureEnabled: false,
+    headerShown: false
+};
+
+/**
  * Navigation container theme.
  */
 export const navigationContainerTheme = {
@@ -29,7 +47,7 @@ export const navigationContainerTheme = {
  * Drawer navigator screens options and transition types.
  */
 export const drawerNavigatorScreenOptions = {
-    animation: 'default',
+    ...TransitionPresets.ModalTransition,
     gestureEnabled: true,
     headerShown: false
 };
@@ -39,16 +57,12 @@ export const drawerNavigatorScreenOptions = {
  * Drawer screen options and transition types.
  */
 export const drawerScreenOptions = {
-    animation: 'default',
+    ...TransitionPresets.ModalTransition,
     gestureEnabled: true,
     headerShown: true,
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen02Header
-    },
-    orientation: Platform.select({
-        ios: 'default',
-        android: 'all'
-    })
+    }
 };
 
 /**
@@ -138,15 +152,7 @@ export const helpScreenOptions = {
 /**
  * Screen options for conference.
  */
-export const conferenceScreenOptions = {
-    animation: 'default',
-    gestureEnabled: false,
-    headerShown: false,
-    orientation: Platform.select({
-        ios: 'default',
-        android: 'all'
-    })
-};
+export const conferenceScreenOptions = fullScreenOptions;
 
 /**
  * Tab bar options for chat screen.
@@ -172,6 +178,7 @@ export const chatTabBarOptions = {
  * Screen options for presentation type modals.
  */
 export const presentationScreenOptions = {
+    ...modalPresentation,
     headerBackTitleVisible: false,
     headerLeft: () => screenHeaderCloseButton(goBack),
     headerStatusBarHeight: 0,
@@ -180,20 +187,13 @@ export const presentationScreenOptions = {
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
-    },
-    orientation: Platform.select({
-        ios: 'default',
-        android: 'all'
-    })
+    }
 };
 
 /**
  * Screen options for car mode.
  */
-export const carmodeScreenOptions = {
-    ...presentationScreenOptions,
-    orientation: 'portrait'
-};
+export const carmodeScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for chat.
@@ -205,7 +205,6 @@ export const chatScreenOptions = presentationScreenOptions;
  */
 export const dialInSummaryScreenOptions = {
     ...presentationScreenOptions,
-    animation: 'slide_from_bottom',
     headerLeft: () => screenHeaderCloseButton(goBackToWelcomeScreen)
 };
 
