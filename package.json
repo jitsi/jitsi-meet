@@ -81,7 +81,7 @@
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1466.0.0+2682b4ec/lib-jitsi-meet.tgz",
     "lodash": "4.17.21",
-    "moment": "2.29.2",
+    "moment": "2.29.4",
     "moment-duration-format": "2.2.2",
     "optional-require": "1.0.3",
     "promise.allsettled": "1.0.4",
