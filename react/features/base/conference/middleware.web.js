@@ -1,6 +1,7 @@
 // @flow
 
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
+import { turnOffNoiseSuppression } from '../../noise-suppression/actions';
 import { showNotification, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
 import {
     setPrejoinPageVisibility,
