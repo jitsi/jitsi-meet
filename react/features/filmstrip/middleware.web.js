@@ -31,6 +31,7 @@ import {
 import {
     addStageParticipant,
     removeStageParticipant,
+    setFilmstripHeight,
     setFilmstripWidth,
     setStageParticipants
 } from './actions';
@@ -38,7 +39,9 @@ import {
     ACTIVE_PARTICIPANT_TIMEOUT,
     DEFAULT_FILMSTRIP_WIDTH,
     MAX_ACTIVE_PARTICIPANTS,
-    MIN_STAGE_VIEW_WIDTH
+    MIN_STAGE_VIEW_HEIGHT,
+    MIN_STAGE_VIEW_WIDTH,
+    TOP_FILMSTRIP_HEIGHT
 } from './constants';
 import {
     isFilmstripResizable,
@@ -77,18 +80,26 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
 
         if (isFilmstripResizable(state)) {
-            const { width: filmstripWidth } = state['features/filmstrip'];
-            const { clientWidth } = action;
-            let width;
+            const { width: filmstripWidth, topPanelHeight } = state['features/filmstrip'];
+            const { clientWidth, clientHeight } = action;
+            let height, width;
 
             if (filmstripWidth.current > clientWidth - MIN_STAGE_VIEW_WIDTH) {
                 width = Math.max(clientWidth - MIN_STAGE_VIEW_WIDTH, DEFAULT_FILMSTRIP_WIDTH);
             } else {
                 width = Math.min(clientWidth - MIN_STAGE_VIEW_WIDTH, filmstripWidth.userSet);
             }
-
             if (width !== filmstripWidth.current) {
                 store.dispatch(setFilmstripWidth(width));
+            }
+
+            if (topPanelHeight.current > clientHeight - MIN_STAGE_VIEW_HEIGHT) {
+                height = Math.max(clientHeight - MIN_STAGE_VIEW_HEIGHT, TOP_FILMSTRIP_HEIGHT);
+            } else {
+                height = Math.min(clientHeight - MIN_STAGE_VIEW_HEIGHT, topPanelHeight.userSet);
+            }
+            if (height !== topPanelHeight.current) {
+                store.dispatch(setFilmstripHeight(height));
             }
         }
         break;

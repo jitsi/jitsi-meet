@@ -21,6 +21,7 @@ import JoinActionButton from './JoinQuickActionButton';
 import { LeaveButton } from './LeaveButton';
 import RoomActionEllipsis from './RoomActionEllipsis';
 import { RoomContextMenu } from './RoomContextMenu';
+import { RoomParticipantContextMenu } from './RoomParticipantContextMenu';
 
 type Props = {
 
@@ -41,7 +42,8 @@ export const RoomList = ({ searchString }: Props) => {
     const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
     const _overflowDrawer = useSelector(showOverflowDrawer);
     const [ lowerMenu, raiseMenu, toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
-
+    const [ lowerParticipantMenu, raiseParticipantMenu, toggleParticipantMenu,
+        participantMenuEnter, participantMenuLeave, raiseParticipantContext ] = useContextMenu();
     const onRaiseMenu = useCallback(room => target => raiseMenu(room, target), [ raiseMenu ]);
 
     return (
@@ -55,8 +57,11 @@ export const RoomList = ({ searchString }: Props) => {
                             isHighlighted = { raiseContext.entity === room }
                             onLeave = { lowerMenu }
                             onRaiseMenu = { onRaiseMenu(room) }
+                            participantContextEntity = { raiseParticipantContext.entity }
+                            raiseParticipantContextMenu = { raiseParticipantMenu }
                             room = { room }
-                            searchString = { searchString }>
+                            searchString = { searchString }
+                            toggleParticipantMenu = { toggleParticipantMenu }>
                             {!_overflowDrawer && <>
                                 {!hideJoinRoomButton && <JoinActionButton room = { room } />}
                                 {isLocalModerator && !room.isMainRoom
@@ -71,6 +76,11 @@ export const RoomList = ({ searchString }: Props) => {
                 onLeave = { menuLeave }
                 onSelect = { lowerMenu }
                 { ...raiseContext } />
+            <RoomParticipantContextMenu
+                onEnter = { participantMenuEnter }
+                onLeave = { participantMenuLeave }
+                onSelect = { lowerParticipantMenu }
+                { ...raiseParticipantContext } />
         </>
     );
 };

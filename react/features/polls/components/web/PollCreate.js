@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Icon, IconMenu } from '../../../base/icons';
 import { Tooltip } from '../../../base/tooltip';
-import { CHAR_LIMIT } from '../../constants';
+import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate from '../AbstractPollCreate';
 import type { AbstractProps } from '../AbstractPollCreate';
 
@@ -250,6 +250,7 @@ const PollCreate = (props: AbstractProps) => {
                 <button
                     aria-label = { 'Add option' }
                     className = 'poll-button poll-button-secondary'
+                    disabled = { answers.length >= ANSWERS_LIMIT }
                     onClick = { () => {
                         addAnswer();
                         requestFocus(answers.length);

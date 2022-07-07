@@ -64,7 +64,9 @@ export const CollapsibleRoom = ({ room, searchString }: Props) => {
                 keyExtractor = { _keyExtractor }
                 // eslint-disable-next-line react/jsx-no-bind
                 renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)
-                    && <BreakoutRoomParticipantItem item = { participant } /> }
+                    && <BreakoutRoomParticipantItem
+                        item = { participant }
+                        room = { room } /> }
                 scrollEnabled = { true }
                 showsHorizontalScrollIndicator = { false }
                 windowSize = { 2 } />

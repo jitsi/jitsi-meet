@@ -1,16 +1,17 @@
-// @flow
-
-import { ReducerRegistry } from '../redux';
+import ReducerRegistry from '../redux/ReducerRegistry';
 
 import { SET_AUDIO_ONLY } from './actionTypes';
 
+export interface IAudioOnlyState {
+    enabled: boolean
+}
 
 const DEFAULT_STATE = {
     enabled: false
 };
 
 
-ReducerRegistry.register('features/base/audio-only', (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register('features/base/audio-only', (state: IAudioOnlyState = DEFAULT_STATE, action) => {
     switch (action.type) {
     case SET_AUDIO_ONLY:
         return {

@@ -139,6 +139,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             = this._onSelectedRecordingServiceChanged.bind(this);
         this._onSharingSettingChanged = this._onSharingSettingChanged.bind(this);
         this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
+        this._onLocalRecordingSelfChange = this._onLocalRecordingSelfChange.bind(this);
 
         let selectedRecordingService;
 
@@ -157,7 +158,8 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             userName: undefined,
             sharingEnabled: true,
             spaceLeft: undefined,
-            selectedRecordingService
+            selectedRecordingService,
+            localRecordingOnlySelf: false
         };
     }
 
@@ -208,6 +210,19 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
     _onSharingSettingChanged() {
         this.setState({
             sharingEnabled: !this.state.sharingEnabled
+        });
+    }
+
+    _onLocalRecordingSelfChange: () => void;
+
+    /**
+     * Callback to handle local recording only self setting change.
+     *
+     * @returns {void}
+     */
+    _onLocalRecordingSelfChange() {
+        this.setState({
+            localRecordingOnlySelf: !this.state.localRecordingOnlySelf
         });
     }
 
@@ -326,7 +341,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             break;
         }
         case RECORDING_TYPES.LOCAL: {
-            dispatch(startLocalVideoRecording());
+            dispatch(startLocalVideoRecording(this.state.localRecordingOnlySelf));
 
             return true;
         }
@@ -389,18 +404,17 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
  */
 export function mapStateToProps(state: Object) {
     const {
-        autoCaptionOnRecord = false,
-        fileRecordingsServiceEnabled = false,
-        fileRecordingsServiceSharingEnabled = false,
+        transcription,
+        recordingService,
         dropbox = {}
     } = state['features/base/config'];
 
     return {
         _appKey: dropbox.appKey,
-        _autoCaptionOnRecord: autoCaptionOnRecord,
+        _autoCaptionOnRecord: transcription?.autoCaptionOnRecord ?? false,
         _conference: state['features/base/conference'].conference,
-        _fileRecordingsServiceEnabled: fileRecordingsServiceEnabled,
-        _fileRecordingsServiceSharingEnabled: fileRecordingsServiceSharingEnabled,
+        _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
+        _fileRecordingsServiceSharingEnabled: recordingService?.sharingEnabled ?? false,
         _isDropboxEnabled: isDropboxEnabled(state),
         _rToken: state['features/dropbox'].rToken,
         _tokenExpireDate: state['features/dropbox'].expireDate,

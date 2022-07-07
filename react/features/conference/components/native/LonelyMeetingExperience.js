@@ -1,10 +1,12 @@
 import React, { PureComponent } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { getFeatureFlag, INVITE_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { Icon, IconAddPeople } from '../../../base/icons';
 import { getParticipantCountWithFake } from '../../../base/participants';
+import Button from '../../../base/react/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
@@ -58,6 +60,19 @@ class LonelyMeetingExperience extends PureComponent<Props> {
     }
 
     /**
+     * Renders the "add people" icon.
+     *
+     * @returns {ReactElement}
+     */
+    _renderAddPeopleIcon() {
+        return (
+            <Icon
+                size = { 20 }
+                src = { IconAddPeople } />
+        );
+    }
+
+    /**
      * Implements {@code PureComponent#render}.
      *
      * @inheritdoc
@@ -80,17 +95,13 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                     { t('lonelyMeetingExperience.youAreAlone') }
                 </Text>
                 { !_isInviteFunctionsDiabled && !_isInBreakoutRoom && (
-                    <TouchableOpacity
+                    <Button
+                        accessibilityLabel = 'lonelyMeetingExperience.button'
+                        icon = { this._renderAddPeopleIcon }
+                        label = 'lonelyMeetingExperience.button'
                         onPress = { this._onPress }
-                        style = { styles.lonelyButton }>
-                        <Icon
-                            size = { 24 }
-                            src = { IconAddPeople }
-                            style = { styles.lonelyButtonComponents } />
-                        <Text style = { styles.lonelyButtonComponents }>
-                            { t('lonelyMeetingExperience.button') }
-                        </Text>
-                    </TouchableOpacity>
+                        style = { styles.lonelyButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
                 ) }
             </View>
         );

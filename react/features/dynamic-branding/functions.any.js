@@ -1,6 +1,7 @@
 // @flow
 
-import { loadConfig } from '../base/lib-jitsi-meet/functions';
+import { toState } from '../base/redux';
+
 
 /**
  * Extracts the fqn part from a path, where fqn represents
@@ -29,10 +30,13 @@ export function extractFqnFromPath(state?: Object) {
 /**
  * Returns the url used for fetching dynamic branding.
  *
+ * @param {Object | Function} stateful - The redux store, state, or
+ * {@code getState} function.
  * @returns {string}
  */
-export async function getDynamicBrandingUrl() {
-    const config = await loadConfig(window.location.href);
+export async function getDynamicBrandingUrl(stateful: Object | Function) {
+    const state = toState(stateful);
+    const config = state['features/base/config'];
     const { dynamicBrandingUrl } = config;
 
     if (dynamicBrandingUrl) {
@@ -40,7 +44,7 @@ export async function getDynamicBrandingUrl() {
     }
 
     const { brandingDataUrl: baseUrl } = config;
-    const fqn = extractFqnFromPath();
+    const fqn = extractFqnFromPath(state);
 
     if (baseUrl && fqn) {
         return `${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;

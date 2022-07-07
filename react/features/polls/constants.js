@@ -6,4 +6,5 @@ export const COMMAND_OLD_POLLS = 'old-polls';
 
 export const ANONYMOUS_NAME = 'Anonymous';
 
-export const CHAR_LIMIT = 1000;
+export const CHAR_LIMIT = 500;
+export const ANSWERS_LIMIT = 255;

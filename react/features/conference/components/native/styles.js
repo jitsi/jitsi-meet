@@ -79,18 +79,7 @@ export default {
     },
 
     lonelyButton: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.action01,
-        borderRadius: 24,
-        flexDirection: 'row',
-        height: BaseTheme.spacing[6],
-        justifyContent: 'space-around',
-        paddingHorizontal: 12
-    },
-
-    lonelyButtonComponents: {
-        color: BaseTheme.palette.text01,
-        marginHorizontal: 6
+        borderRadius: BaseTheme.spacing[4]
     },
 
     lonelyMeetingContainer: {
@@ -170,7 +159,7 @@ export default {
     },
 
     roomTimerView: {
-        backgroundColor: BaseTheme.palette.action02,
+        backgroundColor: BaseTheme.palette.ui03,
         borderRadius: 3,
         justifyContent: 'center',
         minWidth: 50

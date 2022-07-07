@@ -1,12 +1,11 @@
-/* @flow */
-
 import { MEDIA_TYPE } from '../base/media/constants';
 import type { MediaType } from '../base/media/constants';
 import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
+    // @ts-ignore
 } from '../base/participants';
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     DISABLE_MODERATION,
@@ -29,8 +28,19 @@ const initialState = {
     pendingVideo: []
 };
 
+export interface IAVModerationState {
+    audioModerationEnabled: boolean;
+    videoModerationEnabled: boolean;
+    audioWhitelist: { [id: string]: boolean };
+    videoWhitelist: { [id: string]: boolean };
+    pendingAudio: Array<{ id: string }>;
+    pendingVideo: Array<{ id: string }>;
+    audioUnmuteApproved?: boolean|undefined;
+    videoUnmuteApproved?: boolean|undefined;
+}
+
 /**
- Updates a participant in the state for the specified media type.
+ * Updates a participant in the state for the specified media type.
  *
  * @param {MediaType} mediaType - The media type.
  * @param {Object} participant - Information about participant to be modified.
@@ -38,11 +48,11 @@ const initialState = {
  * @private
  * @returns {boolean} - Whether state instance was modified.
  */
-function _updatePendingParticipant(mediaType: MediaType, participant, state: Object = {}) {
+function _updatePendingParticipant(mediaType: MediaType, participant: any, state: any = {}) {
     let arrayItemChanged = false;
     const storeKey = MEDIA_TYPE_TO_PENDING_STORE_KEY[mediaType];
     const arr = state[storeKey];
-    const newArr = arr.map(pending => {
+    const newArr = arr.map((pending: { id: string} ) => {
         if (pending.id === participant.id) {
             arrayItemChanged = true;
 
@@ -64,7 +74,7 @@ function _updatePendingParticipant(mediaType: MediaType, participant, state: Obj
     return false;
 }
 
-ReducerRegistry.register('features/av-moderation', (state = initialState, action) => {
+ReducerRegistry.register('features/av-moderation', (state: IAVModerationState = initialState, action: any) => {
 
     switch (action.type) {
     case DISABLE_MODERATION: {

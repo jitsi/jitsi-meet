@@ -12,7 +12,9 @@ export default {
             marginTop: BaseTheme.spacing[3]
         },
 
-        input: { textAlign: 'left' }
+        input: {
+            textAlign: 'left'
+        }
     },
 
     grid: {
@@ -22,19 +24,19 @@ export default {
     },
 
     credit: {
+        alignItems: 'center',
         backgroundColor: BaseTheme.palette.ui01,
-        width: '100%',
-        height: 40,
-        position: 'absolute',
-        marginBottom: 0,
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center'
+        height: 56,
+        justifyContent: 'center',
+        marginBottom: BaseTheme.spacing[0],
+        paddingBottom: BaseTheme.spacing[4],
+        width: '100%'
     },
 
     creditText: {
-        color: 'white',
+        color: BaseTheme.palette.text01,
         fontWeight: 'bold'
     }
 };

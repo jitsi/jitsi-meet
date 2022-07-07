@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
 
@@ -30,6 +28,22 @@ const DEFAULT_STATE = {
     }
 };
 
+interface Value {
+    startedTime: number,
+    value: number
+}
+
+export interface IAnalyticsState {
+    localTracksDuration: {
+        audio: Value,
+        video: {
+            camera: Value,
+            desktop: Value
+        },
+        conference: Value
+    }
+}
+
 /**
  * Listen for actions which changes the state of the analytics feature.
  *
@@ -38,7 +52,7 @@ const DEFAULT_STATE = {
  * @param {string} action.type - Type of action.
  * @returns {Object}
  */
-ReducerRegistry.register('features/analytics', (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register('features/analytics', (state: IAnalyticsState = DEFAULT_STATE, action: any) => {
     switch (action.type) {
     case UPDATE_LOCAL_TRACKS_DURATION:
         return {

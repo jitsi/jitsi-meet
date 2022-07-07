@@ -167,12 +167,9 @@ public class JitsiMeetActivity extends AppCompatActivity
         }
     }
 
-    public void leave() {
-        if (this.jitsiView  != null) {
-            this.jitsiView .leave();
-        } else {
-            JitsiMeetLogger.w("Cannot leave, view is null");
-        }
+    protected void leave() {
+        Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
     }
 
     private @Nullable

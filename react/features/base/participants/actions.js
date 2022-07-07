@@ -689,14 +689,16 @@ export function overwriteParticipantsNames(participantList) {
  * Local video recording status for the local participant.
  *
  * @param {boolean} recording - If local recording is ongoing.
+ * @param {boolean} onlySelf - If recording only local streams.
  * @returns {{
  *     type: SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
  *     recording: boolean
  * }}
  */
-export function updateLocalRecordingStatus(recording) {
+export function updateLocalRecordingStatus(recording, onlySelf) {
     return {
         type: SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
-        recording
+        recording,
+        onlySelf
     };
 }

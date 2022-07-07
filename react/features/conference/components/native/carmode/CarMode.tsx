@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -12,20 +11,18 @@ import { setIsCarmode } from '../../../../video-layout/actions';
 import ConferenceTimer from '../../ConferenceTimer';
 import { isConnecting } from '../../functions';
 
-import EndMeetingButton from './EndMeetingButton';
+import CarModeFooter from './CarModeFooter';
 import MicrophoneButton from './MicrophoneButton';
-import SoundDeviceButton from './SoundDeviceButton';
 import TitleBar from './TitleBar';
 import styles from './styles';
 
 /**
- * Implements the carmode tab.
+ * Implements the carmode component.
  *
- * @returns { JSX.Element} - The carmode tab.
+ * @returns { JSX.Element} - The carmode component.
  */
-const CarmodeTab = (): JSX.Element => {
+const CarMode = (): JSX.Element => {
     const dispatch = useDispatch();
-    const { t } = useTranslation();
     const connecting = useSelector(isConnecting);
     const isSharing = useSelector(isLocalVideoTrackDesktop);
 
@@ -42,7 +39,9 @@ const CarmodeTab = (): JSX.Element => {
     }, []);
 
     return (
-        <JitsiScreen style = { styles.conference }>
+        <JitsiScreen
+            footerComponent = { CarModeFooter }
+            style = { styles.conference }>
             {/*
                   * The activity/loading indicator goes above everything, except
                   * the toolbox/toolbars and the dialogs.
@@ -66,17 +65,8 @@ const CarmodeTab = (): JSX.Element => {
                 style = { styles.microphoneContainer }>
                 <MicrophoneButton />
             </View>
-            <View
-                pointerEvents = 'box-none'
-                style = { styles.bottomContainer }>
-                <Text style = { styles.videoStoppedLabel }>
-                    {t('carmode.labels.videoStopped')}
-                </Text>
-                <SoundDeviceButton />
-                <EndMeetingButton />
-            </View>
         </JitsiScreen>
     );
 };
 
-export default withSafeAreaInsets(CarmodeTab);
+export default withSafeAreaInsets(CarMode);

@@ -1,20 +1,18 @@
-/* @flow */
-
-import { combineReducers } from 'redux';
+import { Action, combineReducers } from 'redux';
 import type { Reducer } from 'redux';
 
 /**
  * The type of the dictionary/map which associates a reducer (function) with the
  * name of he Redux state property managed by the reducer.
  */
-declare type NameReducerMap<S, A> = { [name: string]: Reducer<S, A> };
+declare type NameReducerMap<S, A> = { [name: string]: Reducer<S, Action<any>> };
 
 /**
  * A registry for Redux reducers, allowing features to register themselves
  * without needing to create additional inter-feature dependencies.
  */
 class ReducerRegistry {
-    _elements: NameReducerMap<*, *>;
+    _elements: NameReducerMap<any, any>;
 
     /**
      * Creates a ReducerRegistry instance.
@@ -37,7 +35,7 @@ class ReducerRegistry {
      * included (such as reducers from third-party modules).
      * @returns {Function}
      */
-    combineReducers(additional: NameReducerMap<*, *> = {}) {
+    combineReducers(additional: NameReducerMap<any, any> = {}) {
         // $FlowExpectedError
         return combineReducers({
             ...this._elements,
@@ -55,7 +53,7 @@ class ReducerRegistry {
      * @param {Reducer} reducer - A Redux reducer.
      * @returns {void}
      */
-    register(name: string, reducer: Reducer<*, *>) {
+    register(name: string, reducer: Reducer<any, any>) {
         this._elements[name] = reducer;
     }
 }

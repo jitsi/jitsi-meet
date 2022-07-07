@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The set of facing modes for camera.
  *
@@ -17,7 +15,7 @@ export type MediaType = 'audio' | 'video' | 'presenter' | 'screenshare';
  *
  * @enum {string}
  */
-export const MEDIA_TYPE = {
+export const MEDIA_TYPE: {[key: string]: MediaType} = {
     AUDIO: 'audio',
     PRESENTER: 'presenter',
     SCREENSHARE: 'screenshare',

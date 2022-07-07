@@ -132,23 +132,40 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
     }
 
     case START_LOCAL_RECORDING: {
+        const { localRecording } = getState()['features/base/config'];
+        const { onlySelf } = action;
+
         try {
             await LocalRecordingManager.startLocalRecording({ dispatch,
-                getState });
+                getState }, action.onlySelf);
             const props = {
                 descriptionKey: 'recording.on',
                 titleKey: 'dialog.recording'
             };
 
-            dispatch(playSound(RECORDING_ON_SOUND_ID));
+            if (localRecording?.notifyAllParticipants && !onlySelf) {
+                dispatch(playSound(RECORDING_ON_SOUND_ID));
+            }
             dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-            dispatch(updateLocalRecordingStatus(true));
+            dispatch(showNotification({
+                titleKey: 'recording.localRecordingStartWarningTitle',
+                descriptionKey: 'recording.localRecordingStartWarning'
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            dispatch(updateLocalRecordingStatus(true, onlySelf));
+            sendAnalytics(createRecordingEvent('started', `local${onlySelf ? '.self' : ''}`));
         } catch (err) {
             logger.error('Capture failed', err);
 
-            const noTabError = err.message === 'WrongSurfaceSelected';
+            let descriptionKey = 'recording.error';
+
+            if (err.message === 'WrongSurfaceSelected') {
+                descriptionKey = 'recording.surfaceError';
+
+            } else if (err.message === 'NoLocalStreams') {
+                descriptionKey = 'recording.noStreams';
+            }
             const props = {
-                descriptionKey: noTabError ? 'recording.surfaceError' : 'recording.error',
+                descriptionKey,
                 titleKey: 'recording.failedToStart'
             };
 
@@ -158,10 +175,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
     }
 
     case STOP_LOCAL_RECORDING: {
+        const { localRecording } = getState()['features/base/config'];
+        const { onlySelf } = action;
+
         if (LocalRecordingManager.isRecordingLocally()) {
             LocalRecordingManager.stopLocalRecording();
-            dispatch(playSound(RECORDING_OFF_SOUND_ID));
             dispatch(updateLocalRecordingStatus(false));
+            if (localRecording?.notifyAllParticipants && !onlySelf) {
+                dispatch(playSound(RECORDING_OFF_SOUND_ID));
+            }
         }
         break;
     }

@@ -79,7 +79,7 @@
     "js-md5": "0.6.1",
     "js-sha512": "0.8.0",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1457.0.0+ad75454f/lib-jitsi-meet.tgz",
+    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1464.0.0+28aab9fc/lib-jitsi-meet.tgz",
     "lodash": "4.17.21",
     "moment": "2.29.2",
     "moment-duration-format": "2.2.2",
@@ -109,7 +109,7 @@
     "react-native-performance": "2.1.0",
     "react-native-reanimated": "https://git@github.com/software-mansion/react-native-reanimated#c4a6b6f687ede090f6081064abe83a2ef9a05784",
     "react-native-safe-area-context": "3.3.2",
-    "react-native-screens": "3.10.1",
+    "react-native-screens": "3.13.1",
     "react-native-sound": "0.11.1",
     "react-native-splash-screen": "3.3.0",
     "react-native-svg": "12.1.0",
@@ -130,6 +130,7 @@
     "redux-thunk": "2.2.0",
     "resemblejs": "4.0.0",
     "rnnoise-wasm": "https://git@github.com/jitsi/rnnoise-wasm#566a16885897704d6e6d67a1d5ac5d39781db2af",
+    "seamless-scroll-polyfill": "2.1.8",
     "styled-components": "3.4.9",
     "util": "0.12.1",
     "uuid": "8.3.2",
@@ -147,7 +148,10 @@
     "@babel/preset-react": "7.16.0",
     "@babel/runtime": "7.16.0",
     "@jitsi/eslint-config": "4.0.0",
+    "@types/lodash": "4.14.182",
+    "@types/react": "17.0.14",
     "@types/react-native": "0.67.6",
+    "@types/react-redux": "7.1.24",
     "@types/uuid": "8.3.4",
     "babel-loader": "8.2.3",
     "babel-plugin-optional-require": "0.3.1",
@@ -190,5 +194,9 @@
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
     "start": "make dev"
+  },
+  "resolutions": {
+    "@types/react": "17.0.14",
+    "@types/react-dom": "17.0.14"
   }
 }

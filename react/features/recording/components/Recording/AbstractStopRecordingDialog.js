@@ -7,6 +7,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { setVideoMuted } from '../../../base/media';
 import { stopLocalVideoRecording } from '../../actions';
 import { getActiveSession } from '../../functions';
 
@@ -37,6 +38,11 @@ export type Props = {
      * The redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+     * The user trying to stop the video while local recording is running.
+     */
+    localRecordingVideoStop?: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -78,6 +84,9 @@ export default class AbstractStopRecordingDialog<P: Props>
 
         if (this.props._localRecording) {
             this.props.dispatch(stopLocalVideoRecording());
+            if (this.props.localRecordingVideoStop) {
+                this.props.dispatch(setVideoMuted(true));
+            }
         } else {
             const { _fileRecordingSession } = this.props;
 

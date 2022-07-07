@@ -19,6 +19,10 @@
             font-size: 14px;
             margin-left: 16px;
         }
+
+        &.space-top {
+            margin-top: 10px;
+        }
     }
 
     .recording-header-line {
@@ -28,8 +32,21 @@
     }
 
     .local-recording-warning {
-        margin-top: 4px;
+        margin-top: 8px;
         display: block;
+        font-size: 14px;
+        line-height: 20px;
+        padding: 8px 16px;
+
+        &.text {
+            color: #fff;
+            background-color: #3D3D3D;
+        }
+
+        &.notification {
+            color: #040404;
+            background-color: #F8AE1A;
+        }
     }
 
     .recording-switch-disabled {
@@ -46,7 +63,7 @@
         border-radius: 4px;
         height: 40px;
         justify-content: center;
-        width: 56px;
+        width: 42px;
     }
 
     .cloud-content-recording-icon-container {
@@ -58,7 +75,7 @@
     }
 
     .jitsi-recording-header {
-        margin-bottom: 32px;
+        margin-bottom: 16px;
     }
 
     .jitsi-content-recording-icon-container-with-switch {

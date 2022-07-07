@@ -5,13 +5,6 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 const SECONDARY_COLOR = BaseTheme.palette.border04;
 
 export default {
-    button: {
-        alignItems: 'center',
-        borderRadius: BaseTheme.shape.borderRadius,
-        padding: BaseTheme.spacing[2],
-        height: BaseTheme.spacing[7],
-        width: '100%'
-    },
 
     buttonStylesBorderless: {
         iconStyle: {
@@ -134,9 +127,10 @@ export default {
         borderColor: SECONDARY_COLOR,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
+        color: BaseTheme.palette.text06,
         height: BaseTheme.spacing[7],
         marginTop: BaseTheme.spacing[3],
-        marginHorizontal: 12,
+        marginHorizontal: BaseTheme.spacing[3],
         padding: BaseTheme.spacing[2],
         textAlign: 'center'
     },
@@ -154,8 +148,7 @@ export default {
     },
 
     standardButtonWrapper: {
-        alignSelf: 'stretch',
-        marginHorizontal: 12
+        alignSelf: 'stretch'
     },
 
     joiningMessage: {
@@ -184,26 +177,13 @@ export default {
         paddingVertical: 12
     },
 
-    primaryButton: {
-        backgroundColor: BaseTheme.palette.action01,
+    lobbyButton: {
         marginTop: BaseTheme.spacing[3]
     },
 
-    primaryButtonDisabled: {
-        backgroundColor: BaseTheme.palette.action03Disabled,
-        marginTop: BaseTheme.spacing[3]
-    },
-
-    primaryButtonText: {
-        ...BaseTheme.typography.labelButtonLarge,
-        color: BaseTheme.palette.text01,
-        lineHeight: 30
-    },
-
-    primaryText: {
-        color: BaseTheme.palette.text01,
-        margin: 'auto',
-        textAlign: 'center'
+    enterPasswordButton: {
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[6]
     },
 
     // KnockingParticipantList

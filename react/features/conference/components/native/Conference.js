@@ -1,6 +1,7 @@
 // @flow
 
-import React from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect } from 'react';
 import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -29,6 +30,7 @@ import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { shouldEnableAutoKnock } from '../../../mobile/navigation/functions';
 import { screen } from '../../../mobile/navigation/routes';
+import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -558,4 +560,21 @@ function _mapStateToProps(state) {
     };
 }
 
-export default withSafeAreaInsets(connect(_mapStateToProps)(Conference));
+export default withSafeAreaInsets(connect(_mapStateToProps)(props => {
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (isFocused) {
+            setPictureInPictureEnabled(true);
+        } else {
+            setPictureInPictureEnabled(false);
+        }
+
+        // We also need to disable PiP when we are back on the WelcomePage
+        return () => setPictureInPictureEnabled(false);
+    }, [ isFocused ]);
+
+    return (
+        <Conference { ...props } />
+    );
+}));

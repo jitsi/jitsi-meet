@@ -1,45 +1,11 @@
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 const SECONDARY_COLOR = BaseTheme.palette.border04;
-const btn = {
-    marginTop: BaseTheme.spacing[4]
-};
-const btnText = {
-    ...BaseTheme.typography.labelButtonLarge,
-    color: BaseTheme.palette.text01,
-    lineHeight: 30
-};
+
 
 export default {
-    button: {
-        alignItems: 'center',
-        borderRadius: BaseTheme.shape.borderRadius,
-        padding: BaseTheme.spacing[2],
-        height: BaseTheme.spacing[7]
-    },
-
-    primaryButton: {
-        ...btn,
-        backgroundColor: BaseTheme.palette.action01
-    },
-
-    primaryButtonDisabled: {
-        backgroundColor: BaseTheme.palette.action03Disabled,
+    prejoinButton: {
         marginTop: BaseTheme.spacing[4]
-    },
-
-    primaryButtonText: {
-        ...btnText
-    },
-
-    secondaryButton: {
-        ...btn,
-        backgroundColor: BaseTheme.palette.action02
-    },
-
-
-    secondaryButtonText: {
-        ...btnText
     },
 
     buttonStylesBorderless: {
@@ -121,6 +87,7 @@ export default {
         borderColor: SECONDARY_COLOR,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
+        color: BaseTheme.palette.text06,
         height: BaseTheme.spacing[7],
         marginTop: BaseTheme.spacing[3],
         textAlign: 'center'

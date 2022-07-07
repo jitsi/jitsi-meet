@@ -89,6 +89,8 @@ export const colorMap = {
     // Status bar
     status01Bar: 'primary11',
 
+    actionDisabled: 'surface09',
+
     // Hover state for primary buttons
     action01Hover: 'primary06',
 
@@ -102,7 +104,7 @@ export const colorMap = {
     action01Disabled: 'primary02',
 
     // Secondary buttons
-    action02: 'surface04',
+    action02: 'surface10',
 
     // Hover state for secondary buttons
     action02Hover: 'surface05',
@@ -156,7 +158,7 @@ export const colorMap = {
     text01: 'surface11',
 
     // Secondary text with medium contrast
-    text02: 'surface09',
+    text02: 'surface01',
 
     // Tertiary text with low contrast – placeholders, disabled actions, label for disabled buttons
     text03: 'surface07',
@@ -180,7 +182,7 @@ export const colorMap = {
     icon01: 'surface11',
 
     // Secondary color for input fields
-    icon02: 'surface09',
+    icon02: 'surface01',
 
     // Tertiary color for disabled actions
     icon03: 'surface07',
@@ -243,8 +245,8 @@ export const colorMap = {
 
     // Line separators
     border03: 'surface04',
-
     border04: 'primary12',
+    border05: 'surface07',
 
     // Color for error border & message
     borderError: 'error06',

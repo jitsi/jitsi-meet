@@ -15,6 +15,8 @@
  */
 
 #import <Intents/Intents.h>
+#import <RNGoogleSignin/RNGoogleSignin.h>
+#import <WebRTC/RTCLogging.h>
 
 #import "Dropbox.h"
 #import "JitsiMeet+Private.h"
@@ -24,9 +26,6 @@
 #import "ReactUtils.h"
 #import "RNSplashScreen.h"
 #import "ScheenshareEventEmiter.h"
-
-#import <RNGoogleSignin/RNGoogleSignin.h>
-#import <WebRTC/RTCLogging.h>
 
 @implementation JitsiMeet {
     RCTBridgeWrapper *_bridgeWrapper;
@@ -87,8 +86,12 @@
     restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *))restorationHandler {
 
     JitsiMeetConferenceOptions *options = [self optionsFromUserActivity:userActivity];
+    if (options) {
+        [JitsiMeetView updateProps:[options asProps]];
+        return true;
+    }
 
-    return options && [JitsiMeetView setPropsInViews:[options asProps]];
+    return false;
 }
 
 - (BOOL)application:(UIApplication *)app
@@ -112,8 +115,9 @@
     JitsiMeetConferenceOptions *conferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.room = [url absoluteString];
     }];
+    [JitsiMeetView updateProps:[conferenceOptions asProps]];
 
-    return [JitsiMeetView setPropsInViews:[conferenceOptions asProps]];
+    return true;
 }
 
 #pragma mark - Utility methods

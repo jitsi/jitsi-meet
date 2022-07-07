@@ -8,9 +8,11 @@ import { LAYOUT_CLASSNAMES } from '../../../conference/components/web/Conference
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import {
     ASPECT_RATIO_BREAKPOINT,
+    FILMSTRIP_TYPE,
     TOOLBAR_HEIGHT_MOBILE
 } from '../../constants';
 import { getActiveParticipantsIds } from '../../functions';
+import { isFilmstripResizable, isStageFilmstripTopPanel } from '../../functions.web';
 
 import Filmstrip from './Filmstrip';
 
@@ -84,19 +86,14 @@ type Props = {
     /**
      * Additional CSS class names to add to the container of all the thumbnails.
      */
-    _videosClassName: string,
-
-    /**
-     * Whether or not the filmstrip videos should currently be displayed.
-     */
-    _visible: boolean
+    _videosClassName: string
 };
 
 const StageFilmstrip = (props: Props) => props._currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW && (
     <span className = { LAYOUT_CLASSNAMES[LAYOUTS.TILE_VIEW] }>
         <Filmstrip
             { ...props }
-            _stageFilmstrip = { true } />
+            filmstripType = { FILMSTRIP_TYPE.STAGE } />
     </span>
 );
 
@@ -109,7 +106,6 @@ const StageFilmstrip = (props: Props) => props._currentLayout === LAYOUTS.STAGE_
  */
 function _mapStateToProps(state) {
     const toolbarButtons = getToolbarButtons(state);
-    const { visible } = state['features/filmstrip'];
     const activeParticipants = getActiveParticipantsIds(state);
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const {
@@ -139,19 +135,19 @@ function _mapStateToProps(state) {
         && clientWidth <= ASPECT_RATIO_BREAKPOINT;
 
     const remoteFilmstripHeight = filmstripHeight - (collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
+    const _topPanelFilmstrip = isStageFilmstripTopPanel(state);
 
     return {
         _columns: gridDimensions.columns,
         _currentLayout: getCurrentLayout(state),
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: filmstripWidth,
-        _remoteParticipantsLength: activeParticipants.length,
         _remoteParticipants: activeParticipants,
-        _resizableFilmstrip: false,
+        _resizableFilmstrip: isFilmstripResizable(state) && _topPanelFilmstrip,
         _rows: gridDimensions.rows,
         _thumbnailWidth: thumbnailSize?.width,
         _thumbnailHeight: thumbnailSize?.height,
-        _visible: visible,
+        _topPanelFilmstrip,
         _verticalViewGrid: false,
         _verticalViewBackground: false
     };

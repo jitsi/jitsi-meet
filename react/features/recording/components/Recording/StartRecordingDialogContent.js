@@ -45,9 +45,19 @@ type Props = {
     _dialogStyles: StyleType,
 
     /**
+     * Whether to hide the storage warning or not.
+     */
+    _hideStorageWarning: boolean,
+
+    /**
      * Whether local recording is enabled or not.
      */
     _localRecordingEnabled: boolean,
+
+    /**
+     * Whether we won't notify the other participants about the recording.
+     */
+    _localRecordingNoNotification: boolean,
 
     /**
      * The color-schemed stylesheet of this component.
@@ -92,10 +102,20 @@ type Props = {
     isVpaas: boolean,
 
     /**
+     * Whether or not we should only record the local streams.
+     */
+    localRecordingOnlySelf: boolean,
+
+    /**
      * The function will be called when there are changes related to the
      * switches.
      */
     onChange: Function,
+
+    /**
+     * Callback to change the local recording only self setting.
+     */
+    onLocalRecordingSelfChange: Function,
 
     /**
      * Callback to be invoked on sharing setting change.
@@ -196,9 +216,15 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {boolean}
      */
     _shouldRenderFileSharingContent() {
-        const { fileRecordingsServiceSharingEnabled, isVpaas, selectedRecordingService } = this.props;
+        const {
+            fileRecordingsServiceEnabled,
+            fileRecordingsServiceSharingEnabled,
+            isVpaas,
+            selectedRecordingService
+        } = this.props;
 
-        if (!fileRecordingsServiceSharingEnabled
+        if (!fileRecordingsServiceEnabled
+            || !fileRecordingsServiceSharingEnabled
             || isVpaas
             || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
             return false;
@@ -265,13 +291,14 @@ class StartRecordingDialogContent extends Component<Props> {
     _renderUploadToTheCloudInfo() {
         const {
             _dialogStyles,
+            _hideStorageWarning,
             _styles: styles,
             isVpaas,
             selectedRecordingService,
             t
         } = this.props;
 
-        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE)) {
+        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) || _hideStorageWarning) {
             return null;
         }
 
@@ -303,9 +330,8 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _shouldRenderNoIntegrationsContent() {
         // show the non integrations part only if fileRecordingsServiceEnabled
-        // is enabled or when there are no integrations enabled
-        if (!(this.props.fileRecordingsServiceEnabled
-            || !this.props.integrationsEnabled)) {
+        // is enabled
+        if (!this.props.fileRecordingsServiceEnabled) {
             return false;
         }
 
@@ -442,7 +468,8 @@ class StartRecordingDialogContent extends Component<Props> {
         return (
             <Container>
                 <Container
-                    className = 'recording-header'
+                    className = { `recording-header ${this._shouldRenderNoIntegrationsContent()
+                        ? 'recording-header-line' : ''}` }
                     style = { styles.headerIntegrations }>
                     <Container
                         className = 'recording-icon-container'>
@@ -609,47 +636,90 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderLocalRecordingContent() {
-        const { _styles: styles, isValidating, t, _dialogStyles, selectedRecordingService } = this.props;
+        const {
+            _styles: styles,
+            isValidating,
+            t,
+            _dialogStyles,
+            selectedRecordingService,
+            _localRecordingNoNotification
+        } = this.props;
 
         if (!this._localRecordingAvailable) {
             return null;
         }
 
         return (
-            <Container>
-                <Container
-                    className = 'recording-header recording-header-line'
-                    style = { styles.header }>
+            <>
+                <Container>
                     <Container
-                        className = 'recording-icon-container'>
-                        <Image
-                            className = 'recording-icon'
-                            src = { LOCAL_RECORDING }
-                            style = { styles.recordingIcon } />
+                        className = 'recording-header recording-header-line'
+                        style = { styles.header }>
+                        <Container
+                            className = 'recording-icon-container'>
+                            <Image
+                                className = 'recording-icon'
+                                src = { LOCAL_RECORDING }
+                                style = { styles.recordingIcon } />
+                        </Container>
+                        <Text
+                            className = 'recording-title'
+                            style = {{
+                                ..._dialogStyles.text,
+                                ...styles.title
+                            }}>
+                            { t('recording.saveLocalRecording') }
+                        </Text>
+                        <Switch
+                            className = 'recording-switch'
+                            disabled = { isValidating }
+                            onValueChange = { this._onLocalRecordingSwitchChange }
+                            style = { styles.switch }
+                            trackColor = {{ false: TRACK_COLOR }}
+                            value = { this.props.selectedRecordingService
+                            === RECORDING_TYPES.LOCAL } />
                     </Container>
-                    <Text
-                        className = 'recording-title'
-                        style = {{
-                            ..._dialogStyles.text,
-                            ...styles.title
-                        }}>
-                        { t('recording.saveLocalRecording') }
-                    </Text>
-                    <Switch
-                        className = 'recording-switch'
-                        disabled = { isValidating }
-                        onValueChange = { this._onLocalRecordingSwitchChange }
-                        style = { styles.switch }
-                        trackColor = {{ false: TRACK_COLOR }}
-                        value = { this.props.selectedRecordingService
-                        === RECORDING_TYPES.LOCAL } />
                 </Container>
-                {selectedRecordingService === RECORDING_TYPES.LOCAL
-                    && <Text className = 'local-recording-warning'>
-                        {t('recording.localRecordingWarning')}
-                    </Text>
-                }
-            </Container>
+                {selectedRecordingService === RECORDING_TYPES.LOCAL && (
+                    <>
+                        <Container>
+                            <Container
+                                className = 'recording-header space-top'
+                                style = { styles.header }>
+                                <Container className = 'recording-icon-container file-sharing-icon-container'>
+                                    <Image
+                                        className = 'recording-file-sharing-icon'
+                                        src = { ICON_USERS }
+                                        style = { styles.recordingIcon } />
+                                </Container>
+                                <Text
+                                    className = 'recording-title'
+                                    style = {{
+                                        ..._dialogStyles.text,
+                                        ...styles.title
+                                    }}>
+                                    {t('recording.onlyRecordSelf')}
+                                </Text>
+                                <Switch
+                                    className = 'recording-switch'
+                                    disabled = { isValidating }
+                                    onValueChange = { this.props.onLocalRecordingSelfChange }
+                                    style = { styles.switch }
+                                    trackColor = {{ false: TRACK_COLOR }}
+                                    value = { this.props.localRecordingOnlySelf } />
+                            </Container>
+                        </Container>
+                        <Text className = 'local-recording-warning text'>
+                            {t('recording.localRecordingWarning')}
+                        </Text>
+                        {_localRecordingNoNotification && !this.props.localRecordingOnlySelf
+                            && <Text className = 'local-recording-warning notification'>
+                                {t('recording.localRecordingNoNotificationWarning')}
+                            </Text>
+                        }
+                    </>
+                )}
+            </>
 
         );
     }
@@ -689,7 +759,9 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
-        _localRecordingEnabled: state['features/base/config'].enableLocalRecording,
+        _hideStorageWarning: state['features/base/config'].recording?.hideStorageWarning,
+        _localRecordingEnabled: !state['features/base/config'].localRecording?.disable,
+        _localRecordingNoNotification: !state['features/base/config'].localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
     };
 }

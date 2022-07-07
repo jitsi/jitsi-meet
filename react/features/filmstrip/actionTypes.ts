@@ -93,6 +93,15 @@ export const SET_VOLUME = 'SET_VOLUME';
 export const SET_VISIBLE_REMOTE_PARTICIPANTS = 'SET_VISIBLE_REMOTE_PARTICIPANTS';
 
 /**
+ * The type of action which sets the height for the top panel filmstrip.
+ * {
+ *      type: SET_FILMSTRIP_HEIGHT,
+ *      height: number
+ * }
+ */
+export const SET_FILMSTRIP_HEIGHT = 'SET_FILMSTRIP_HEIGHT';
+
+/**
  * The type of action which sets the width for the vertical filmstrip.
  * {
  *      type: SET_FILMSTRIP_WIDTH,
@@ -100,6 +109,15 @@ export const SET_VISIBLE_REMOTE_PARTICIPANTS = 'SET_VISIBLE_REMOTE_PARTICIPANTS'
  * }
  */
 export const SET_FILMSTRIP_WIDTH = 'SET_FILMSTRIP_WIDTH';
+
+/**
+ * The type of action which sets the height for the top panel filmstrip (user resized).
+ * {
+ *      type: SET_USER_FILMSTRIP_HEIGHT,
+ *      height: number
+ * }
+ */
+export const SET_USER_FILMSTRIP_HEIGHT = 'SET_USER_FILMSTRIP_HEIGHT';
 
 /**
  * The type of action which sets the width for the vertical filmstrip (user resized).
@@ -187,3 +205,19 @@ export const TOGGLE_PIN_STAGE_PARTICIPANT = 'TOGGLE_PIN_STAGE_PARTICIPANT';
  * }
  */
 export const CLEAR_STAGE_PARTICIPANTS = 'CLEAR_STAGE_PARTICIPANTS';
+
+/**
+ * The type of Redux action which sets the dimensions of the screenshare tile.
+ * {
+ *     type: SET_SCREENSHARING_TILE_DIMENSIONS
+ * }
+ */
+export const SET_SCREENSHARING_TILE_DIMENSIONS = 'SET_SCREENSHARING_TILE_DIMENSIONS';
+
+/**
+ * The type of Redux action which sets the visibility of the top panel.
+ * {
+ *     type: SET_TOP_PANEL_VISIBILITY
+ * }
+ */
+export const SET_TOP_PANEL_VISIBILITY = 'SET_TOP_PANEL_VISIBILITY';

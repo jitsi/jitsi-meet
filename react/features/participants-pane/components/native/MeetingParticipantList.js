@@ -2,12 +2,15 @@
 
 import React, { PureComponent } from 'react';
 import { FlatList } from 'react-native';
-import { Button, withTheme } from 'react-native-paper';
+
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
+import Button from '../../../base/react/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
@@ -83,12 +86,7 @@ type Props = {
     /**
      * Translation function.
      */
-    t: Function,
-
-    /**
-     * Theme used for styles.
-     */
-    theme: Object
+    t: Function
 }
 
 /**
@@ -230,17 +228,17 @@ class MeetingParticipantList extends PureComponent<Props> {
                 {
                     _showInviteButton
                     && <Button
-                        children = { t('participantsPane.actions.invite') }
+                        accessibilityLabel = 'participantsPane.actions.invite'
                         icon = { this._renderInviteMoreIcon }
-                        labelStyle = { styles.inviteLabel }
-                        mode = 'contained'
+                        label = 'participantsPane.actions.invite'
                         onPress = { this._onInvite }
-                        style = { styles.inviteButton } />
+                        style = { styles.inviteButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
                 }
                 <ClearableInput
                     onChange = { this._onSearchStringChange }
                     placeholder = { t('participantsPane.search') }
-                    selectionColor = { this.props.theme.palette.text01 } />
+                    selectionColor = { BaseTheme.palette.text01 } />
                 <FlatList
                     bounces = { false }
                     data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
@@ -280,4 +278,4 @@ function _mapStateToProps(state): Object {
     };
 }
 
-export default translate(connect(_mapStateToProps)(withTheme(MeetingParticipantList)));
+export default translate(connect(_mapStateToProps)(MeetingParticipantList));

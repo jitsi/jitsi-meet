@@ -41,7 +41,8 @@ export default {
         alignSelf: 'center',
         flex: 1,
         padding: BoxModel.padding,
-        paddingTop: '8%'
+        paddingTop: '8%',
+        maxWidth: '80%'
     },
 
     /**

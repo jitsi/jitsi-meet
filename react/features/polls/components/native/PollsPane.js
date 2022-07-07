@@ -3,11 +3,11 @@
 
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { Button, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { BUTTON_MODES } from '../../../chat/constants';
+import Button from '../../../base/react/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import { getUnreadPollCount } from '../../functions';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
@@ -22,7 +22,6 @@ const PollsPane = (props: AbstractProps) => {
     const isPollsScreenFocused = useIsFocused();
     const navigation = useNavigation();
     const nbUnreadPolls = useSelector(getUnreadPollCount);
-    const { palette } = useTheme();
 
     const nrUnreadPolls = !isPollsScreenFocused && nbUnreadPolls > 0
         ? `(${nbUnreadPolls})`
@@ -36,9 +35,9 @@ const PollsPane = (props: AbstractProps) => {
 
     return (
         <JitsiScreen
-            contentContainerStyle = { chatStyles.PollPane }
+            contentContainerStyle = { chatStyles.pollPane }
             hasTabNavigator = { true }
-            style = { chatStyles.PollPaneContainer }>
+            style = { chatStyles.pollPaneContainer }>
             {
                 createMode
                     ? <PollCreate setCreateMode = { setCreateMode } />
@@ -47,12 +46,11 @@ const PollsPane = (props: AbstractProps) => {
             }
             {
                 !createMode && <Button
-                    color = { palette.screen01Header }
-                    mode = { BUTTON_MODES.CONTAINED }
+                    accessibilityLabel = 'polls.create.create'
+                    label = 'polls.create.create'
                     onPress = { onCreate }
-                    style = { chatStyles.createPollButton } >
-                    {t('polls.create.create')}
-                </Button>
+                    style = { chatStyles.createPollButton }
+                    type = { BUTTON_TYPES.PRIMARY } />
             }
         </JitsiScreen>
     );
