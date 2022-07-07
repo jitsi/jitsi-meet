@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { Chat, ChatAndPolls } from '../../../../../chat';
 
 import Conference from '../../../../../conference/components/native/Conference';
-import CarmodeTab from '../../../../../conference/components/native/carmode/Conference';
+import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 import { getDisablePolls } from '../../../../../conference/functions';
 import { SharedDocument } from '../../../../../etherpad';
 import { GifsMenu } from '../../../../../gifs/components';
@@ -147,7 +147,7 @@ const ConferenceNavigationContainer = () => {
                         title: t('documentSharing.title')
                     }} />
                 <ConferenceStack.Screen
-                    component = { CarmodeTab }
+                    component = { CarMode }
                     name = { screen.conference.carmode }
                     options = {{
                         ...carmodeScreenOptions,
