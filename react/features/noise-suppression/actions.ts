@@ -1,4 +1,5 @@
 import { SET_NOISE_SUPPRESSION_STATE, TOGGLE_NOISE_SUPPRESSION } from './actionTypes';
+import { isNoiseSuppressionActive } from './functions';
 
 /**
  * Updates the noise suppression active state.
@@ -28,3 +29,16 @@ export function toggleNoiseSuppression() : any {
         type: TOGGLE_NOISE_SUPPRESSION
     };
 }
+
+/**
+ * Turns off noise suppression if it's already enabled
+ *
+ * @returns {Function}
+ */
+ export function turnOffNoiseSuppression() : Function {
+    return async (dispatch: Function, getState: Function) => {
+        if (isNoiseSuppressionActive(getState())) {
+            await dispatch(toggleNoiseSuppression());
+        }
+    };
+ }

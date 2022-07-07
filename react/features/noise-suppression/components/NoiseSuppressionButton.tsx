@@ -1,17 +1,21 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
+import { IState } from '../../app/types';
+// @ts-ignore
 import { translate } from '../../base/i18n';
+// @ts-ignore
 import {
     IconShareAudio,
     IconStopAudioShare
+    // @ts-ignore
 } from '../../base/icons';
+// @ts-ignore
 import { connect } from '../../base/redux';
+// @ts-ignore
 import {
     AbstractButton,
     type AbstractButtonProps
+    // @ts-ignore
 } from '../../base/toolbox/components';
+// @ts-ignore
 import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { toggleNoiseSuppression } from '../actions';
 import { isNoiseSuppressionActive } from '../functions';
@@ -21,20 +25,22 @@ type Props = AbstractButtonProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>,
+    dispatch: Function;
 
 }
 
 /**
  * Component that renders a toolbar button for toggling noise suppression.
  */
-class NoiseSuppressionButton extends AbstractButton<Props, *> {
+class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
     accessibilityLabel = 'toolbar.accessibilityLabel.noiseSuppression';
     icon = IconShareAudio;
     label = 'toolbar.noiseSuppression';
     tooltip = 'toolbar.noiseSuppression';
     toggledIcon = IconStopAudioShare;
     toggledLabel = 'toolbar.disableNoiseSuppression';
+
+    private props: Props;
 
     /**
      * Handles clicking / pressing the button.
@@ -43,7 +49,7 @@ class NoiseSuppressionButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch } = this.props;
+        const { dispatch }= this.props;
 
         dispatch(toggleNoiseSuppression());
         dispatch(setOverflowMenuVisible(false));
@@ -68,7 +74,7 @@ class NoiseSuppressionButton extends AbstractButton<Props, *> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: Object): $Shape<Props> {
+function _mapStateToProps(state: IState): Object {
     return {
         _isNoiseSuppressionActive: isNoiseSuppressionActive(state)
     };

@@ -1,15 +1,19 @@
-import { distSquared } from '@tensorflow/tfjs-core/dist/util_base';
-
+// @ts-ignore
 import { MiddlewareRegistry } from '../base/redux';
+// @ts-ignore
 import { getLocalJitsiAudioTrack } from '../base/tracks';
+// @ts-ignore
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showWarningNotification } from '../notifications';
+// @ts-ignore
 import { isScreenAudioShared } from '../screen-share';
+// @ts-ignore
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
 import { TOGGLE_NOISE_SUPPRESSION } from './actionTypes';
 import { setNoiseSuppressionState } from './actions';
 import { isNoiseSuppressionActive } from './functions';
 import logger from './logger';
+import { IState, IStore } from '../app/types';
 
 /**
  * Verify if noise suppression can be enabled in the current state.
@@ -19,7 +23,7 @@ import logger from './logger';
  * @param {*} localAudio - Current local audio track.
  * @returns {boolean}
  */
-function canEnableNoiseSuppression(state, dispatch, localAudio) {
+function canEnableNoiseSuppression(state: IState, dispatch: Function, localAudio: any) : boolean {
     const { channelCount } = localAudio.track.getSettings();
 
     // Sharing screen audio implies an effect being applied to the local track, because currently we don't support
@@ -52,8 +56,9 @@ function canEnableNoiseSuppression(state, dispatch, localAudio) {
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action: any) => {
     const result = next(action);
+    const { dispatch, getState } = store;
 
     switch (action.type) {
     case TOGGLE_NOISE_SUPPRESSION: {
@@ -69,16 +74,14 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
-            return result;
+            return false;
         }
-
         try {
             if (noiseSuppressionActive) {
                 await localAudio.setEffect(undefined);
                 dispatch(setNoiseSuppressionState(false));
                 logger.info('Noise suppression disabled.');
             } else {
-
                 if (!canEnableNoiseSuppression(state, dispatch, localAudio)) {
                     return result;
                 }
