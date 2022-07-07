@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
 import { openSheet } from '../../../../base/dialog/actions';
+import Button from '../../../../base/react/components/native/Button';
+import { BUTTON_TYPES } from '../../../../base/react/constants';
 import AudioRoutePickerDialog from '../../../../mobile/audio-mode/components/AudioRoutePickerDialog';
 
 import AudioIcon from './AudioIcon';
@@ -15,7 +15,6 @@ import styles from './styles';
  * @returns {JSX.Element} - The sound device button.
  */
 const SelectSoundDevice = () : JSX.Element => {
-    const { t } = useTranslation();
     const dispatch = useDispatch();
 
     const onSelect = useCallback(() =>
@@ -24,13 +23,12 @@ const SelectSoundDevice = () : JSX.Element => {
 
     return (
         <Button
-            accessibilityLabel = { t('carmode.actions.selectSoundDevice') }
-            children = { t('carmode.actions.selectSoundDevice') }
+            accessibilityLabel = 'carmode.actions.selectSoundDevice'
             icon = { AudioIcon }
-            labelStyle = { styles.soundDeviceButtonLabel }
-            mode = 'contained'
+            label = 'carmode.actions.selectSoundDevice'
             onPress = { onSelect }
-            style = { styles.soundDeviceButton } />
+            style = { styles.soundDeviceButton }
+            type = { BUTTON_TYPES.SECONDARY } />
     );
 };
 

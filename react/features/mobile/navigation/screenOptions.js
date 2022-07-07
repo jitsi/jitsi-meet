@@ -57,7 +57,7 @@ export const drawerScreenOptions = {
 export const drawerContentOptions = {
     drawerActiveBackgroundColor: BaseTheme.palette.uiBackground,
     drawerActiveTintColor: BaseTheme.palette.screen01Header,
-    drawerInactiveTintColor: BaseTheme.palette.text02,
+    drawerInactiveTintColor: BaseTheme.palette.text01,
     drawerLabelStyle: {
         marginLeft: BaseTheme.spacing[2]
     },
@@ -75,7 +75,7 @@ export const welcomeScreenOptions = {
     ...drawerScreenOptions,
     drawerIcon: ({ focused }) => (
         <Icon
-            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon02 }
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon01 }
             size = { 20 }
             src = { IconHome } />
     ),
@@ -94,7 +94,7 @@ export const settingsScreenOptions = {
     ...drawerScreenOptions,
     drawerIcon: ({ focused }) => (
         <Icon
-            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon02 }
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon01 }
             size = { 20 }
             src = { IconSettings } />
     ),
@@ -110,7 +110,7 @@ export const termsAndPrivacyScreenOptions = {
     ...drawerScreenOptions,
     drawerIcon: ({ focused }) => (
         <Icon
-            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon02 }
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon01 }
             size = { 20 }
             src = { IconInfo } />
     ),
@@ -126,7 +126,7 @@ export const helpScreenOptions = {
     ...drawerScreenOptions,
     drawerIcon: ({ focused }) => (
         <Icon
-            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon02 }
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon01 }
             size = { 20 }
             src = { IconHelp } />
     ),

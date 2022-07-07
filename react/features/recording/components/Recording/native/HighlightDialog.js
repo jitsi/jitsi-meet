@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
 import { useDispatch, batch } from 'react-redux';
 
 import { BottomSheet, hideSheet } from '../../../../base/dialog';
+import Button from '../../../../base/react/components/native/Button';
+import { BUTTON_TYPES } from '../../../../base/react/constants';
 import { highlightMeetingMoment } from '../../../actions.any';
 import styles from '../styles.native';
 
@@ -28,20 +29,16 @@ const HighlightDialog = () => {
                 </Text>
                 <View style = { styles.highlightDialogButtonsContainer } >
                     <Button
-                        accessibilityLabel = { t('dialog.Cancel') }
-                        children = { t('dialog.Cancel') }
-                        labelStyle = { styles.highlightDialogCancelLabel }
-                        mode = 'contained'
+                        accessibilityLabel = 'dialog.Cancel'
+                        label = 'dialog.Cancel'
                         onPress = { closeDialog }
-                        style = { styles.highlightDialogCancelButton } />
+                        type = { BUTTON_TYPES.SECONDARY } />
                     <View style = { styles.highlightDialogButtonsSpace } />
                     <Button
-                        accessibilityLabel = { t('recording.highlight') }
-                        children = { t('recording.highlight') }
-                        labelStyle = { styles.highlightDialogHighlighLabel }
-                        mode = 'contained'
+                        accessibilityLabel = 'recording.highlight'
+                        label = 'recording.highlight'
                         onPress = { highlightMoment }
-                        style = { styles.highlightDialogHighlightButton } />
+                        type = { BUTTON_TYPES.PRIMARY } />
                 </View>
             </View>
         </BottomSheet>
