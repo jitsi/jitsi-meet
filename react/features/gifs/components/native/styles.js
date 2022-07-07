@@ -12,7 +12,9 @@ export default {
             marginTop: BaseTheme.spacing[3]
         },
 
-        input: { textAlign: 'left' }
+        input: {
+            textAlign: 'left'
+        }
     },
 
     grid: {
@@ -34,7 +36,7 @@ export default {
     },
 
     creditText: {
-        color: 'white',
+        color: BaseTheme.palette.text01,
         fontWeight: 'bold'
     }
 };

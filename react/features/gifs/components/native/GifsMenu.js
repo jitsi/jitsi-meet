@@ -1,7 +1,6 @@
 import { GiphyContent, GiphyGridView, GiphyMediaType } from '@giphy/react-native-sdk';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { createGifSentEvent, sendAnalytics } from '../../../analytics';
@@ -10,7 +9,7 @@ import { sendMessage } from '../../../chat/actions.any';
 import { goBack } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import ClearableInput from '../../../participants-pane/components/native/ClearableInput';
 import { formatGifUrlMessage, getGifUrl } from '../../functions';
-
+import GifsMenuFooter from './GifsMenuFooter';
 import styles from './styles';
 
 const GifsMenu = () => {
@@ -34,19 +33,9 @@ const GifsMenu = () => {
         goBack();
     }, []);
 
-
-    const footerComponent = () => (
-        <View style = { styles.credit }>
-            <Text
-                style = { styles.creditText }>Powered by</Text>
-            <Image source = { require('../../../../../images/GIPHY_logo.png') } />
-        </View>
-    );
-
     return (
         <JitsiScreen
-            /* eslint-disable-next-line react/jsx-no-bind */
-            footerComponent = { footerComponent }
+            footerComponent = { GifsMenuFooter }
             style = { styles.container }>
             <ClearableInput
                 customStyles = { styles.clearableInput }
