@@ -27,6 +27,11 @@
     margin: 4px 0 16px 0;
 }
 
+.poll-anonymous {
+    color: #C2C2C2;
+    font-weight: 500;
+}
+
 .poll-answer-container {
     background: #3D3D3D;
     border-radius: 3px;
@@ -299,6 +304,15 @@ ol.poll-result-list {
     font-weight: 400;
     margin-bottom: 4;
 }
+
+.poll-create-anonymous {
+    padding: 0 12px;
+
+    .poll-create-anonymous-label {
+        color: #C2C2C2;
+    }
+}
+
 
 .expandable-input{
     line-height: 18px;

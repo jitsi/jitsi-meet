@@ -33,6 +33,7 @@ export type AnswerInfo = {
  * The type of the React {@code Component} props of {@link AbstractPollResults}.
  */
 export type AbstractProps = {
+    anonymous: boolean,
     answers: Array<AnswerInfo>,
     changeVote: Function,
     creatorName: string,
@@ -107,6 +108,7 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
 
     return (
         <Component
+            anonymous = { pollDetails.anonymous }
             answers = { answers }
             changeVote = { changeVote }
             creatorName = { participant ? participant.name : '' }

@@ -135,6 +135,7 @@ export default [
     'e2eeLabels',
     'e2ee',
     'e2eping',
+    'enableAnonymousPolls',
     'enableDisplayNameInStats',
     'enableEmailInStats',
     'enableEncodedTransformSupport',

@@ -772,6 +772,9 @@ var config = {
     //     collectIP: true //enables the collection localIP address
     // },
 
+    // Enables the poll users to be able to create anonymous polls
+    // enableAnonymousPolls: false,
+
     // Enables sending participants' display names to callstats
     // enableDisplayNameInStats: false,
 

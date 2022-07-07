@@ -40,7 +40,7 @@ const parsePollData = (pollData): Poll | null => {
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
-    const { id, senderId, senderName, question, answers } = pollData;
+    const { id, senderId, senderName, question, answers, anonymous } = pollData;
 
     if (typeof id !== 'string' || typeof senderId !== 'string' || typeof senderName !== 'string'
         || typeof question !== 'string' || !(answers instanceof Array)) {
@@ -72,7 +72,8 @@ const parsePollData = (pollData): Poll | null => {
         question,
         showResults: true,
         lastVote: null,
-        answers: answersParsed
+        answers: answersParsed,
+        anonymous
     };
 };
 
@@ -121,7 +122,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 function _handleReceivePollsMessage(data, dispatch) {
     switch (data.type) {
     case COMMAND_NEW_POLL: {
-        const { question, answers, pollId, senderId, senderName } = data;
+        const { question, answers, pollId, senderId, senderName, anonymous } = data;
 
         const poll = {
             changingVote: false,
@@ -130,6 +131,7 @@ function _handleReceivePollsMessage(data, dispatch) {
             showResults: false,
             lastVote: null,
             question,
+            anonymous,
             answers: answers.map(answer => {
                 return {
                     name: answer,

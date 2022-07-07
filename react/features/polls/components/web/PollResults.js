@@ -14,6 +14,7 @@ import type { AbstractProps } from '../AbstractPollResults';
  */
 const PollResults = (props: AbstractProps) => {
     const {
+        anonymous,
         answers,
         changeVote,
         creatorName,
@@ -60,11 +61,18 @@ const PollResults = (props: AbstractProps) => {
                 )}
             </ol>
             <div className = { 'poll-result-links' }>
-                <a
-                    className = { 'poll-detail-link' }
-                    onClick = { toggleIsDetailed }>
-                    {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
-                </a>
+                { anonymous ? (
+                    <div className = 'poll-anonymous'>
+                        { t('polls.anonymous') }
+                    </div>
+                ) : (
+                    <a
+                        className = { 'poll-detail-link' }
+                        onClick = { toggleIsDetailed }>
+                        {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
+                    </a>
+                )}
+
                 <a
                     className = { 'poll-change-vote-link' }
                     onClick = { changeVote }>

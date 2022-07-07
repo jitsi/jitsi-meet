@@ -45,3 +45,15 @@ export function getUnreadPollCount(state: Object) {
 export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
     return !checkBoxStates.find(checked => checked);
 }
+
+/**
+ * Get whether the anonymous polls feature is enabled or not.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} The enabled flag.
+ */
+ export function isAnonymousPollsEnabled(state: Object) {
+    const enableAnonymousPolls = state['features/base/config']?.enableAnonymousPolls === true;
+
+    return enableAnonymousPolls;
+}

@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { sendAnalytics, createPollEvent } from '../../analytics';
 import { getParticipantDisplayName } from '../../base/participants';
 import { COMMAND_NEW_POLL } from '../constants';
+import { isAnonymousPollsEnabled } from '../functions';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -22,9 +23,12 @@ type InputProps = {
  **/
 export type AbstractProps = InputProps & {
     answers: Array<string>,
+    anonymous: Boolean,
     question: string,
     setQuestion: string => void,
     setAnswer: (number, string) => void,
+    setAnonymous: React.Dispatch<React.SetStateAction<boolean>>,
+    anonymousPollsEnabled: Boolean,
     addAnswer: ?number => void,
     moveAnswer: (number, number) => void,
     removeAnswer: number => void,
@@ -87,6 +91,8 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
     const conference = useSelector(state => state['features/base/conference'].conference);
     const myId = conference.myUserId();
     const myName = useSelector(state => getParticipantDisplayName(state, myId));
+    const [ anonymous, setAnonymous ] = useState(false);
+    const anonymousPollsEnabled = useSelector(state => isAnonymousPollsEnabled(state));
 
     const onSubmit = useCallback(ev => {
         if (ev) {
@@ -105,7 +111,8 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
             senderId: myId,
             senderName: myName,
             question,
-            answers: filteredAnswers
+            answers: filteredAnswers,
+            anonymous
         });
         sendAnalytics(createPollEvent('created'));
 
@@ -122,12 +129,15 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
 
     return (<Component
         addAnswer = { addAnswer }
+        anonymous = { anonymous }
+        anonymousPollsEnabled = { anonymousPollsEnabled }
         answers = { answers }
         isSubmitDisabled = { isSubmitDisabled }
         moveAnswer = { moveAnswer }
         onSubmit = { onSubmit }
         question = { question }
         removeAnswer = { removeAnswer }
+        setAnonymous = { setAnonymous }
         setAnswer = { setAnswer }
         setCreateMode = { setCreateMode }
         setQuestion = { setQuestion }

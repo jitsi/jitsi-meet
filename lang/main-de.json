@@ -729,6 +729,7 @@
     "passwordSetRemotely": "von einer anderen Person gesetzt",
     "pinnedParticipant": "Die Person ist angeheftet",
     "polls": {
+        "anonymous": "Anonym",
         "answer": {
             "skip": "Überspringen",
             "submit": "Speichern"

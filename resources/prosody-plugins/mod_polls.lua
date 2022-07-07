@@ -74,7 +74,8 @@ module:hook("message/bare", function(event)
             sender_id = data.senderId,
             sender_name = data.senderName,
             question = data.question,
-            answers = answers
+            answers = answers,
+            anonymous = data.anonymous
         };
 
         room.polls.by_id[data.pollId] = poll
@@ -88,7 +89,8 @@ module:hook("message/bare", function(event)
                 senderId = data.senderId,
                 senderName = data.senderName,
                 question = data.question,
-                answers = compactAnswers
+                answers = compactAnswers,
+                anonymous = data.anonymous
             }
         }
 
@@ -112,11 +114,12 @@ module:hook("message/bare", function(event)
             });
             poll.answers[i].voters[data.voterId] = value and data.voterName or nil;
         end
+
         local answerData = {
             event = event,
             room = room,
             pollId = poll.id,
-            voterName = data.voterName,
+            voterName = poll.anonymous and 'Anonymous' or data.voterName,
             voterId = data.voterId,
             answers = answers
         }
@@ -143,7 +146,8 @@ module:hook("muc-occupant-joined", function(event)
             senderId = poll.sender_id,
             senderName = poll.sender_name,
             question = poll.question,
-            answers = poll.answers
+            answers = poll.answers,
+            anonymous = poll.anonymous
         };
     end
 

@@ -743,6 +743,7 @@
     "passwordSetRemotely": "Set by another participant",
     "pinnedParticipant": "The participant is pinned",
     "polls": {
+        "anonymous": "Anonymous",
         "answer": {
             "skip": "Skip",
             "submit": "Submit"

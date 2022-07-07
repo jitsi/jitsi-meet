@@ -9,7 +9,7 @@ import { sendAnalytics, createPollEvent } from '../../analytics';
 import { getLocalParticipant, getParticipantById } from '../../base/participants';
 import { useBoundSelector } from '../../base/util/hooks';
 import { registerVote, setVoteChanging } from '../actions';
-import { COMMAND_ANSWER_POLL } from '../constants';
+import { ANONYMOUS_NAME, COMMAND_ANSWER_POLL } from '../constants';
 import type { Poll } from '../types';
 
 /**
@@ -78,7 +78,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
             type: COMMAND_ANSWER_POLL,
             pollId,
             voterId: localId,
-            voterName: localName,
+            voterName: poll.anonymous ? ANONYMOUS_NAME : localName,
             answers: checkBoxStates
         });
 
@@ -86,7 +86,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
         dispatch(registerVote(pollId, checkBoxStates));
 
         return false;
-    }, [ pollId, localId, localName, checkBoxStates, conference ]);
+    }, [ poll, pollId, localId, localName, checkBoxStates, conference ]);
 
     const skipAnswer = useCallback(() => {
         dispatch(registerVote(pollId, null));

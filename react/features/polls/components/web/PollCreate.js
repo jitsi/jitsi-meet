@@ -1,5 +1,6 @@
 // @flow
 
+import { Checkbox } from '@atlaskit/checkbox';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Icon, IconMenu } from '../../../base/icons';
@@ -14,12 +15,15 @@ const PollCreate = (props: AbstractProps) => {
     const {
         addAnswer,
         answers,
+        anonymous,
+        anonymousPollsEnabled,
         isSubmitDisabled,
         moveAnswer,
         onSubmit,
         question,
         removeAnswer,
         setAnswer,
+        setAnonymous,
         setCreateMode,
         setQuestion,
         t
@@ -175,6 +179,15 @@ const PollCreate = (props: AbstractProps) => {
             <div className = 'poll-create-header'>
                 { t('polls.create.create') }
             </div>
+            { anonymousPollsEnabled ? (
+                <div className = 'poll-create-anonymous'>
+                    <Checkbox
+                        isChecked = { anonymous }
+                        label = { <span
+                            className = 'poll-create-anonymous-label'>{ t('polls.anonymous') }</span> }
+                        onChange = { ev => setAnonymous(ev.target.checked) } />
+                </div>
+            ) : null}
             <div className = 'poll-question-field'>
                 <span className = 'poll-create-label'>
                     { t('polls.create.pollQuestion') }
