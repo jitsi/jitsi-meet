@@ -1,18 +1,11 @@
 // @flow
-
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-
-import { getAmplitudeIdentity } from '../analytics';
 import {
     E2E_RTT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
-    getConferenceOptions,
-    getAnalyticsRoomName,
-    CONFERENCE_JOINED,
     CONFERENCE_WILL_LEAVE }
     from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
-import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
+import { DOMINANT_SPEAKER_CHANGED } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
@@ -37,7 +30,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case LIB_WILL_INIT: {
-        if (isRtcstatsEnabled(state)) {
+        if (isRtcstatsEnabled(state) && !RTCStats.isInitialized()) {
             // RTCStats "proxies" WebRTC functions such as GUM and RTCPeerConnection by rewriting the global
             // window functions. Because lib-jitsi-meet uses references to those functions that are taken on
             // init, we need to add these proxies before it initializes, otherwise lib-jitsi-meet will use the
@@ -96,50 +89,6 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-    case CONFERENCE_JOINED: {
-        if (canSendRtcstatsData(state)) {
-
-            // Once the conference started connect to the rtcstats server and send data.
-            try {
-                RTCStats.connect();
-
-                const localParticipant = getLocalParticipant(state);
-                const options = getConferenceOptions(state);
-
-
-                // Unique identifier for a conference session, not to be confused with meeting name
-                // i.e. If all participants leave a meeting it will have a different value on the next join.
-                const { conference } = action;
-                const meetingUniqueId = conference && conference.getMeetingUniqueId();
-
-                // The current implementation of rtcstats-server is configured to send data to amplitude, thus
-                // we add identity specific information so we can correlate on the amplitude side. If amplitude is
-                // not configured an empty object will be sent.
-                // The current configuration of the conference is also sent as metadata to rtcstats server.
-                // This is done in order to facilitate queries based on different conference configurations.
-                // e.g. Find all RTCPeerConnections that connect to a specific shard or were created in a
-                // conference with a specific version.
-                // XXX(george): we also want to be able to correlate between rtcstats and callstats, so we're
-                // appending the callstats user name (if it exists) to the display name.
-                const displayName = options.statisticsId
-                    || options.statisticsDisplayName
-                    || jitsiLocalStorage.getItem('callStatsUserName');
-
-                RTCStats.sendIdentityData({
-                    ...getAmplitudeIdentity(),
-                    ...options,
-                    endpointId: localParticipant?.id,
-                    confName: getAnalyticsRoomName(state, dispatch),
-                    displayName,
-                    meetingUniqueId
-                });
-            } catch (error) {
-                // If the connection failed do not impact jitsi-meet just silently fail.
-                logger.error('RTCStats connect failed with: ', error);
-            }
-        }
-        break;
-    }
     case DOMINANT_SPEAKER_CHANGED: {
         if (canSendRtcstatsData(state)) {
             const { id, previousSpeakers } = action.participant;
@@ -185,6 +134,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (canSendRtcstatsData(state)) {
             RTCStats.close();
         }
+        break;
     }
     }
 

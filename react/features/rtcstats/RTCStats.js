@@ -17,7 +17,7 @@ import logger from './logger';
 function connectionFilter(config) {
     if (config && config.iceServers[0] && config.iceServers[0].urls) {
         for (const iceUrl of config.iceServers[0].urls) {
-            if (iceUrl.indexOf('taas.callstats.io') >= 0) {
+            if (iceUrl.indexOf('callstats.io') >= 0) {
                 return true;
             }
         }
