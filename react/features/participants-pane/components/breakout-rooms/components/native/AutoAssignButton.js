@@ -23,7 +23,7 @@ const AutoAssignButton = () => {
             label = 'breakoutRooms.actions.autoAssign'
             labelStyle = { styles.autoAssignLabel }
             onPress = { onAutoAssign }
-            style = { styles.transparentButton }
+            style = { styles.autoAssignButton }
             type = { BUTTON_TYPES.TERTIARY } />
     );
 };

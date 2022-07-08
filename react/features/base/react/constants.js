@@ -20,6 +20,5 @@ export const BUTTON_TYPES = {
  * The modes of the buttons.
  */
 export const BUTTON_MODES = {
-    CONTAINED: 'contained',
-    TEXT: 'text'
+    CONTAINED: 'contained'
 };

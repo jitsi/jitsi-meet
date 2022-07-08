@@ -1,6 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button as NativePaperButton } from 'react-native-paper';
+import {
+    Button as NativePaperButton,
+    Text,
+    TouchableRipple
+} from 'react-native-paper';
 
 import BaseTheme from '../../../ui/components/BaseTheme.native';
 import styles from './styles';
@@ -20,7 +24,7 @@ const Button: React.FC<ButtonProps> = ({
     type
 }: ButtonProps) => {
     const { t } = useTranslation();
-    const { CONTAINED, TEXT } = BUTTON_MODES;
+    const { CONTAINED } = BUTTON_MODES;
     const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
 
     let buttonLabelStyles;
@@ -40,10 +44,7 @@ const Button: React.FC<ButtonProps> = ({
         color = BaseTheme.palette.actionDanger;
         buttonLabelStyles = styles.buttonLabelDestructive;
         mode = CONTAINED
-    } else if ( type === TERTIARY) {
-        buttonLabelStyles = styles.buttonLabelTertiary
-        mode = TEXT
-    } else {
+    }  else {
         color = buttonColor;
         buttonLabelStyles = styles.buttonLabel;
     }
@@ -53,6 +54,26 @@ const Button: React.FC<ButtonProps> = ({
         buttonStyles = styles.buttonDisabled;
     } else {
         buttonStyles = styles.button;
+    }
+
+    if ( type === TERTIARY) {
+        return (
+            <TouchableRipple
+                accessibilityLabel = { accessibilityLabel }
+                disabled = { disabled }
+                onPress = { onPress }
+                rippleColor = 'transparent'
+                style = { [
+                    buttonStyles,
+                    style
+                ] }>
+                <Text
+                    style = { [
+                    buttonLabelStyles,
+                    labelStyle
+                ] }>{ t(label) }</Text>
+            </TouchableRipple>
+        );
     }
 
     return (
