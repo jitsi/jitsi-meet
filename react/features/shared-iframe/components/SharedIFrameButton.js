@@ -36,7 +36,12 @@ type Props = AbstractButtonProps & {
     /**
      * The Key of the sharedIFrame Config for this button.
      */
-    shareKey: String
+    shareKey: String,
+
+    /**
+     * The title of the sharedIframe.
+     */
+    shareTitle: String
 };
 
 /**
@@ -44,14 +49,14 @@ type Props = AbstractButtonProps & {
  */
 class SharedIFrameButton extends AbstractButton<Props, *> {
     accessibilityLabel = this.props.t('toolbar.accessibilityLabel.sharediframe', {
-        iframename: this.props.shareKey
+        iframename: this.props.shareTitle
     });
     icon = IconShareIFrame;
     label = this.props.t('toolbar.sharediframe', {
-        iframename: this.props.shareKey
+        iframename: this.props.shareTitle
     });
     toggledLabel = this.props.t('toolbar.stopSharedIFrame', {
-        iframename: this.props.shareKey
+        iframename: this.props.shareTitle
     });
 
     /**
@@ -60,17 +65,17 @@ class SharedIFrameButton extends AbstractButton<Props, *> {
     get tooltip() {
         if (this._isDisabled()) {
             return this.props.t('toolbar.disabledSharedIFrame', {
-                iframename: this.props.shareKey
+                iframename: this.props.shareTitle
             });
         }
         if (this._isToggled()) {
             return this.props.t('toolbar.stopSharedIFrame', {
-                iframename: this.props.shareKey
+                iframename: this.props.shareTitle
             });
         }
 
         return this.props.t('toolbar.sharediframe', {
-            iframename: this.props.shareKey
+            iframename: this.props.shareTitle
         });
     }
 

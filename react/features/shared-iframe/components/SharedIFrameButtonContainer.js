@@ -34,7 +34,8 @@ class SharedIFrameButtonContainer extends React.PureComponent<Props> {
             Object.keys(_sharedIFrames).map(shareKey => (<SharedIFrameButton
                 { ...this.props }
                 key = { this.props.buttonKey + shareKey }
-                shareKey = { shareKey } />))
+                shareKey = { shareKey }
+                shareTitle = { _sharedIFrames[shareKey].title || shareKey } />))
         );
     }
 }

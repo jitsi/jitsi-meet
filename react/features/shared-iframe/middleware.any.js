@@ -167,7 +167,7 @@ function handleSharingIFrame(store, iFrameTemplateUrl, { shareKey, isSharing, fr
             id: iFrameTemplateUrl,
             isFakeParticipant: true,
             avatarURL: sharedIFrames[shareKey].avatarUrl,
-            name: shareKey
+            name: sharedIFrames[shareKey].title || shareKey
         }));
 
         // Only pin if already in conference, do not pin for newly joined users
