@@ -326,7 +326,7 @@ export function showParticipantLeftNotification(displayName: string) {
  * @returns {Function}
  */
 export function showShareStartedNotification(displayName: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: Dispatch<any>) => {
         const notificationProps = {
             titleArguments: {
                 shareTitle: displayName
@@ -345,7 +345,7 @@ export function showShareStartedNotification(displayName: string) {
  * @returns {Function}
  */
 export function showShareStoppedNotification(displayName: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: Dispatch<any>) => {
         const notificationProps = {
             titleArguments: {
                 shareTitle: displayName
