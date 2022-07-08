@@ -160,13 +160,13 @@ function handleSharingIFrame(store, iFrameTemplateUrl, { shareKey, isSharing, fr
     const fakeParticipants = getFakeParticipants(state);
 
     if (isSharing === 'true' && !fakeParticipants.get(iFrameTemplateUrl)) {
-        const { sharedIFrameConfig } = state['features/base/config'];
+        const { sharedIFrames } = state['features/base/config'];
 
         dispatch(participantJoined({
             conference,
             id: iFrameTemplateUrl,
             isFakeParticipant: true,
-            avatarURL: sharedIFrameConfig[shareKey].avatarUrl,
+            avatarURL: sharedIFrames[shareKey].avatarUrl,
             name: shareKey
         }));
 

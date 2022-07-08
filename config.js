@@ -1260,7 +1260,7 @@ var config = {
     //  - {room} - The room id
     //  - {lang} - The ISO Language tag
     //
-    // sharedIFrameConfig: {
+    // sharedIFrames: {
     //     whiteboard: { // The Id and displayed name of the sharedIframe
     //         templateUrl: 'https://example.com/link/to/your/iframe/app/{room}?lang={lang}',
     //         // Optional:

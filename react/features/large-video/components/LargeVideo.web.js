@@ -345,7 +345,7 @@ function _mapStateToProps(state) {
     const { participantId } = state['features/large-video'];
     const participant = getParticipantById(state, participantId);
     const { hideDominantSpeakerBadge } = state['features/base/config'];
-    const { sharedIFrameConfig } = state['features/base/config'];
+    const { sharedIFrames } = state['features/base/config'];
 
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
@@ -359,7 +359,7 @@ function _mapStateToProps(state) {
         _visibleFilmstrip: visible,
         _participantId: participantId,
         _participantName: participant && participant.name,
-        _isIFrameParticipant: Object.keys(sharedIFrameConfig || {}).includes(participant && participant.name),
+        _isIFrameParticipant: Object.keys(sharedIFrames || {}).includes(participant && participant.name),
         _isFakeParticipant: participant && participant.isFakeParticipant,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state)
     };

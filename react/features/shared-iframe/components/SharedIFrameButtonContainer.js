@@ -12,7 +12,7 @@ type Props = AbstractButtonProps & {
     /**
      * The sharedIFrame Buttons to be displayed.
      */
-    _sharedIFrameConfig: any[],
+    _sharedIFrames: any[],
 
 };
 
@@ -28,10 +28,10 @@ class SharedIFrameButtonContainer extends React.PureComponent<Props> {
      * @returns {React$Element}
      */
     render() {
-        const { _sharedIFrameConfig } = this.props;
+        const { _sharedIFrames } = this.props;
 
         return (
-            Object.keys(_sharedIFrameConfig).map(shareKey => (<SharedIFrameButton
+            Object.keys(_sharedIFrames).map(shareKey => (<SharedIFrameButton
                 { ...this.props }
                 key = { this.props.buttonKey + shareKey }
                 shareKey = { shareKey } />))
@@ -47,10 +47,10 @@ class SharedIFrameButtonContainer extends React.PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state): Object {
-    const { sharedIFrameConfig } = state['features/base/config'];
+    const { sharedIFrames } = state['features/base/config'];
 
     return {
-        _sharedIFrameConfig: sharedIFrameConfig || {}
+        _sharedIFrames: sharedIFrames || {}
     };
 }
 

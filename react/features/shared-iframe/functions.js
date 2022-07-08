@@ -12,11 +12,11 @@ export function isIFrameSharingActive(stateful: Object | Function): boolean {
 
     let isIFrameActive = false;
     const state = toState(stateful);
-    const { sharedIFrameConfig } = state['features/base/config'];
+    const { sharedIFrames } = state['features/base/config'];
 
     // eslint-disable-next-line no-unused-vars
     for (const [ id, p ] of getFakeParticipants(stateful)) {
-        for (const shareKey of Object.keys(sharedIFrameConfig || {})) {
+        for (const shareKey of Object.keys(sharedIFrames || {})) {
             if (p.name === shareKey) {
                 isIFrameActive = true;
                 break;

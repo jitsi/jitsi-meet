@@ -76,14 +76,14 @@ export function showSharedIFrame(shareKey) {
     return (dispatch, getState) => {
         const state = getState();
         const conference = getCurrentConference(state);
-        const { sharedIFrameConfig } = state['features/base/config'];
+        const { sharedIFrames } = state['features/base/config'];
 
         if (conference) {
             const localParticipant = getLocalParticipant(state);
 
             dispatch(setSharedIFrameStatus({
                 shareKey,
-                iFrameTemplateUrl: sharedIFrameConfig[shareKey].templateUrl,
+                iFrameTemplateUrl: sharedIFrames[shareKey].templateUrl,
                 isSharing: 'true',
                 ownerId: localParticipant.id
             }));

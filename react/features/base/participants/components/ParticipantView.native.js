@@ -277,7 +277,7 @@ function _mapStateToProps(state, ownProps) {
     const participant = getParticipantByIdOrUndefined(state, participantId);
     const tracks = state['features/base/tracks'];
     const videoTrack = getVideoTrackByParticipant(tracks, participant);
-    const { sharedIFrameConfig } = state['features/base/config'];
+    const { sharedIFrames } = state['features/base/config'];
     let connectionStatus;
     const participantName = participant?.name;
 
@@ -285,7 +285,7 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
-        _isIFrameParticipant: Object.keys(sharedIFrameConfig || {}).includes(participantName),
+        _isIFrameParticipant: Object.keys(sharedIFrames || {}).includes(participantName),
         _isFakeParticipant: participant && participant.isFakeParticipant,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
