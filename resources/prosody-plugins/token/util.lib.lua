@@ -10,6 +10,7 @@ local json_safe = require "cjson.safe";
 local path = require "util.paths";
 local sha256 = require "util.hashes".sha256;
 local main_util = module:require "util";
+local ends_with = main_util.ends_with;
 local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
 
@@ -293,7 +294,7 @@ function Util:verify_room(session, room_address)
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
         -- its domain) we let it through, jicofo is verifying creation domain
-        if auth_room and room ~= auth_room and auth_room ~= '*' then
+        if auth_room and (room ~= auth_room and not ends_with(room, ']'..auth_room)) and auth_room ~= '*' then
             return false;
         end
 
