@@ -317,3 +317,42 @@ export function showParticipantLeftNotification(displayName: string) {
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantLeft(dispatch, getState);
 }
+
+
+/**
+ * Shows a notifcation for a joining sharedUser, e.g. Video, Whiteboard.
+ *
+ * @param {string} displayName - The name of shared instance.
+ * @returns {Function}
+ */
+export function showShareStartedNotification(displayName: string) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const notificationProps = {
+            titleArguments: {
+                shareTitle: displayName
+            },
+            titleKey: 'notify.shareStarted'
+        };
+
+        dispatch(showNotification(notificationProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+    };
+}
+
+/**
+ * Shows a notifcation for a leaving sharedUser, e.g. Video, Whiteboard.
+ *
+ * @param {string} displayName - The name of shared instance.
+ * @returns {Function}
+ */
+export function showShareStoppedNotification(displayName: string) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const notificationProps = {
+            titleArguments: {
+                shareTitle: displayName
+            },
+            titleKey: 'notify.shareStopped'
+        };
+
+        dispatch(showNotification(notificationProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+    };
+}

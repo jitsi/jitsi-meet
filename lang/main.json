@@ -698,6 +698,8 @@
         "screenShareNoAudio": "Share audio box was not checked in the window selection screen.",
         "screenShareNoAudioTitle": "Couldn't share system audio!",
         "selfViewTitle": "You can always un-hide the self-view from settings",
+        "shareStarted": "Shared {{shareTitle}} is now available",
+        "shareStopped": "Shared {{shareTitle}} is not shared anymore",
         "somebody": "Somebody",
         "startSilentDescription": "Rejoin the meeting to enable audio",
         "startSilentTitle": "You joined with no audio output!",
