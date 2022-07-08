@@ -207,6 +207,7 @@ export default [
     'resolution',
     'salesforceUrl',
     'screenshotCapture',
+    'sharedIFrames',
     'startAudioMuted',
     'startAudioOnly',
     'startLastN',
