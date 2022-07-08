@@ -4,6 +4,12 @@ import { Image, Text, View } from 'react-native';
 
 import styles from './styles';
 
+
+/**
+ * Implements the gifs menu footer component.
+ *
+ * @returns { JSX.Element} - The gifs menu footer component.
+ */
 const GifsMenuFooter = (): JSX.Element => {
     const { t } = useTranslation();
 
@@ -17,4 +23,4 @@ const GifsMenuFooter = (): JSX.Element => {
     )
 };
 
-export default GifsMenuFooter
+export default GifsMenuFooter;
