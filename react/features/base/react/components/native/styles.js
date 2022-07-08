@@ -5,6 +5,8 @@ import BaseTheme from '../../../ui/components/BaseTheme.native';
 
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
+const BUTTON_HEIGHT = BaseTheme.spacing[7];
+const BUTTON_WIDTH = BaseTheme.spacing[7];
 
 export const AVATAR_SIZE = 65;
 export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
@@ -136,13 +138,12 @@ export const BASE_INDICATOR = {
 
 const button = {
     borderRadius: BaseTheme.shape.borderRadius,
-    height: BaseTheme.spacing[6],
-    minWidth: 85
+    height: BUTTON_HEIGHT
 };
 
 const buttonLabel = {
     ...BaseTheme.typography.bodyShortBold,
-    padding: 2,
+    padding: 6,
     textTransform: 'capitalize'
 };
 
@@ -151,8 +152,8 @@ const iconButtonContainer = {
     display: 'flex',
     justifyContent: 'center',
     borderRadius: BaseTheme.shape.borderRadius,
-    height: BaseTheme.spacing[6],
-    width: BaseTheme.spacing[6]
+    height: BUTTON_HEIGHT,
+    width: BUTTON_WIDTH
 };
 
 /**
