@@ -69,9 +69,8 @@ function Util.new(module)
             "muc_mapper_domain",
             self.muc_domain_prefix.."."..self.muc_domain_base);
     end
-    -- whether domain name verification is enabled, by default it is disabled
-    self.enableDomainVerification = module:get_option_boolean(
-        "enable_domain_verification", false);
+    -- whether domain name verification is enabled, by default it is enabled
+    self.enableDomainVerification = module:get_option_boolean('enable_domain_verification', true);
 
     if self.allowEmptyToken == true then
         module:log("warn", "WARNING - empty tokens allowed");
