@@ -68,8 +68,6 @@ function track(state, action) {
         const t = action.track;
 
         if (state.jitsiTrack === t.jitsiTrack.jitsiTrack) {
-            console.error(`JPA (did it) ${state.participantId} ${t.participantId} ${state.jitsiTrack._sourceName}`);
-
             return {
                 ...state,
                 participantId: t.participantId
