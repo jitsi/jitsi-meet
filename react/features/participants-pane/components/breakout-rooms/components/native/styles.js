@@ -66,10 +66,6 @@ export default {
         marginLeft: BaseTheme.spacing[2]
     },
 
-    transparentButton: {
-        marginTop: BaseTheme.spacing[3]
-    },
-
     leaveButtonLabel: {
         ...baseLabel,
         color: BaseTheme.palette.textError
@@ -77,5 +73,11 @@ export default {
 
     autoAssignLabel: {
         color: BaseTheme.palette.link01
+    },
+
+    autoAssignButton: {
+        alignSelf: 'center',
+        justifyContent: 'center',
+        marginTop: BaseTheme.spacing[3]
     }
 };
