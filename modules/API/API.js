@@ -86,7 +86,7 @@ import { isScreenAudioSupported } from '../../react/features/screen-share';
 import { startScreenShareFlow, startAudioScreenShareFlow } from '../../react/features/screen-share/actions';
 import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
-import { toggleSharedIFrame, stopSharedIFrame } from '../../react/features/shared-iframe/actions.any';
+import { toggleSharedIFrame, stopSharedIFrame, showSharedIFrame } from '../../react/features/shared-iframe/actions.any';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { toggleRequestingSubtitles, setRequestingSubtitles } from '../../react/features/subtitles/actions';
@@ -465,13 +465,19 @@ function initCommands() {
         },
 
         'toggle-share-iframe': () => {
-            logger.debug('Share iframe command received');
+            logger.debug('Toggle shared iframe command received');
             sendAnalytics(createApiEvent('share.iframe.toggle'));
             APP.store.dispatch(toggleSharedIFrame());
         },
 
+        'start-share-iframe': shareKey => {
+            logger.debug('Start shared iframe command received');
+            sendAnalytics(createApiEvent('share.iframe.start'));
+            APP.store.dispatch(showSharedIFrame(shareKey));
+        },
+
         'stop-share-iframe': shareKey => {
-            logger.debug('Share iframe command received');
+            logger.debug('Stop shared iframe command received');
             sendAnalytics(createApiEvent('share.iframe.stop'));
             APP.store.dispatch(stopSharedIFrame(shareKey));
         },
