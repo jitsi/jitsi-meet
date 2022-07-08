@@ -7,9 +7,9 @@ import SoundDeviceButton from './SoundDeviceButton';
 import styles from './styles';
 
 /**
- * Implements the carmode footer component.
+ * Implements the car mode footer component.
  *
- * @returns { JSX.Element} - The carmode footer component.
+ * @returns { JSX.Element} - The car mode footer component.
  */
 const CarModeFooter = (): JSX.Element => {
     const { t } = useTranslation();
