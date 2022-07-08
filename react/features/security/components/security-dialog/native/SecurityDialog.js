@@ -7,7 +7,6 @@ import {
     TextInput,
     View
 } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
 import type { Dispatch } from 'redux';
 
 import { FIELD_UNDERLINE } from '../../../../base/dialog';
@@ -15,6 +14,8 @@ import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../../base/participants';
+import Button from '../../../../base/react/components/native/Button';
+import { BUTTON_TYPES } from '../../../../base/react/constants';
 import { connect } from '../../../../base/redux';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
@@ -28,6 +29,7 @@ import {
 } from '../../../../room-lock/actions';
 
 import styles from './styles';
+
 
 /**
  * The style of the {@link TextInput} rendered by {@code SecurityDialog}. As it
@@ -220,54 +222,49 @@ class SecurityDialog extends PureComponent<Props, State> {
         if (_locked && showElement) {
             setPasswordControls = (
                 <>
-                    <TouchableRipple
+                    <Button
+                        accessibilityLabel = 'dialog.Remove'
+                        label = 'dialog.Remove'
+                        labelStyle = { styles.passwordSetupButtonLabel }
                         onPress = { this._onCancel }
-                        rippleColor = { BaseTheme.palette.ui01 } >
-                        <Text style = { styles.passwordSetupButton }>
-                            { t('dialog.Remove') }
-                        </Text>
-                    </TouchableRipple>
+                        type = { BUTTON_TYPES.TERTIARY } />
                     {
                         _password
-                        && <TouchableRipple
+                        && <Button
+                            accessibilityLabel = 'dialog.copy'
+                            label = 'dialog.copy'
+                            labelStyle = { styles.passwordSetupButtonLabel }
                             onPress = { this._onCopy }
-                            rippleColor = { BaseTheme.palette.ui01 } >
-                            <Text style = { styles.passwordSetupButton }>
-                                { t('dialog.copy') }
-                            </Text>
-                        </TouchableRipple>
+                            type = { BUTTON_TYPES.TERTIARY } />
                     }
                 </>
             );
         } else if (!_lockedConference && showElement) {
             setPasswordControls = (
                 <>
-                    <TouchableRipple
+                    <Button
+                        accessibilityLabel = 'dialog.Cancel'
+                        label = 'dialog.Cancel'
+                        labelStyle = { styles.passwordSetupButtonLabel }
                         onPress = { this._onCancel }
-                        rippleColor = { BaseTheme.palette.ui01 } >
-                        <Text style = { styles.passwordSetupButton }>
-                            { t('dialog.Cancel') }
-                        </Text>
-                    </TouchableRipple>
-                    <TouchableRipple
+                        type = { BUTTON_TYPES.TERTIARY } />
+                    <Button
+                        accessibilityLabel = 'dialog.add'
+                        label = 'dialog.add'
+                        labelStyle = { styles.passwordSetupButtonLabel }
                         onPress = { this._onSubmit }
-                        rippleColor = { BaseTheme.palette.ui01 } >
-                        <Text style = { styles.passwordSetupButton }>
-                            { t('dialog.add') }
-                        </Text>
-                    </TouchableRipple>
+                        type = { BUTTON_TYPES.TERTIARY } />
                 </>
             );
         } else if (!_lockedConference && !showElement) {
             setPasswordControls = (
-                <TouchableRipple
+                <Button
+                    accessibilityLabel = 'info.addPassword'
                     disabled = { !_isModerator }
+                    label = 'info.addPassword'
+                    labelStyle = { styles.passwordSetupButtonLabel }
                     onPress = { this._onAddPassword }
-                    rippleColor = { BaseTheme.palette.ui01 } >
-                    <Text style = { styles.passwordSetupButton }>
-                        { t('info.addPassword') }
-                    </Text>
-                </TouchableRipple>
+                    type = { BUTTON_TYPES.TERTIARY } />
             );
         }
 
@@ -278,13 +275,12 @@ class SecurityDialog extends PureComponent<Props, State> {
                         <Text style = { styles.passwordSetRemotelyText }>
                             { t('passwordSetRemotely') }
                         </Text>
-                        <TouchableRipple
+                        <Button
+                            accessibilityLabel = 'dialog.Remove'
+                            label = 'dialog.Remove'
+                            labelStyle = { styles.passwordSetupButtonLabel }
                             onPress = { this._onCancel }
-                            rippleColor = { BaseTheme.palette.ui01 } >
-                            <Text style = { styles.passwordSetupButton }>
-                                { t('dialog.Remove') }
-                            </Text>
-                        </TouchableRipple>
+                            type = { BUTTON_TYPES.TERTIARY } />
                     </View>
                 );
             } else {
@@ -293,14 +289,13 @@ class SecurityDialog extends PureComponent<Props, State> {
                         <Text style = { styles.passwordSetRemotelyTextDisabled }>
                             { t('passwordSetRemotely') }
                         </Text>
-                        <TouchableRipple
+                        <Button
+                            accessibilityLabel = 'info.addPassword'
                             disabled = { !_isModerator }
+                            label = 'info.addPassword'
+                            labelStyle = { styles.passwordSetupButtonLabel }
                             onPress = { this._onAddPassword }
-                            rippleColor = { BaseTheme.palette.ui01 } >
-                            <Text style = { styles.passwordSetupButton }>
-                                { t('info.addPassword') }
-                            </Text>
-                        </TouchableRipple>
+                            type = { BUTTON_TYPES.TERTIARY } />
                     </View>
                 );
             }
@@ -363,7 +358,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                         onChangeText = { this._onChangeText }
                         placeholder = { t('lobby.passwordField') }
                         placeholderTextColor = { BaseTheme.palette.text03 }
-                        selectionColor = { BaseTheme.palette.text03 }
+                        selectionColor = { BaseTheme.palette.action01 }
                         style = { styles.passwordInput }
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { passwordInputValue }
