@@ -40,9 +40,6 @@
     "audioOnly": {
         "audioOnly": "Geringe Bandbreite"
     },
-    "blankPage": {
-        "meetingEnded": "Konferenz beendet."
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Breakout-Raum hinzufügen",
@@ -80,6 +77,17 @@
         "refresh": "Kalender aktualisieren",
         "today": "Heute"
     },
+    "carmode": {
+        "actions": {
+            "leaveMeeting": "Konferenz verlassen",
+            "selectSoundDevice": "Audiogerät auswählen"
+        },
+        "labels": {
+            "buttonLabel": "Automodus",
+            "title": "Automodus",
+            "videoStopped": "Ihre Kamera ist deaktiviert"
+        }
+    },
     "chat": {
         "enter": "Chat-Raum betreten",
         "error": "Fehler: Ihre Nachricht wurde nicht versendet. Grund: {{error}}",
@@ -108,6 +116,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Chrome-Erweiterung installieren",
+        "buttonTextEdge": "Edge-Erweiterung installieren",
         "close": "Schließen",
         "dontShowAgain": "Hinweis nicht mehr anzeigen",
         "installExtensionText": "Installieren Sie die Erweiterung für die Integration von Google Calendar und Office 365"
@@ -198,6 +207,9 @@
         "previewUnavailable": "Keine Vorschau verfügbar",
         "selectADevice": "Ein Gerät wählen",
         "testAudio": "Prüfton wiedergeben"
+    },
+    "dialIn": {
+        "screenTitle": "Einwahldaten"
     },
     "dialOut": {
         "statusMessage": "ist jetzt {{status}}"
@@ -649,6 +661,8 @@
         "linkToSalesforceKey": "Konferenz verlinken",
         "linkToSalesforceProgress": "Konferenz wird mit Salesforce verlinkt...",
         "linkToSalesforceSuccess": "Die Konferenz wurde mit Salesforce verlinkt",
+        "localRecordingStarted": "{{name}} hat eine lokale Aufzeichnung gestartet.",
+        "localRecordingStopped": "{{name}} hat eine lokale Aufzeichnung gestoppt.",
         "me": "Ich",
         "moderationInEffectCSDescription": "Bitte melden um ein Video zu teilen",
         "moderationInEffectCSTitle": "Die Videofreigabe ist von der Moderation gesperrt",
@@ -804,6 +818,7 @@
         "initiated": "Anruf gestartet",
         "joinAudioByPhone": "Per Telefon teilnehmen",
         "joinMeeting": "Konferenz beitreten",
+        "joinMeetingInLowBandwidthMode": "Konferenz im Datensparmodus beitreten",
         "joinWithoutAudio": "Ohne Ton beitreten",
         "keyboardShortcuts": "Tastaturkurzbefehle aktivieren",
         "linkCopied": "Link in die Zwischenablage kopiert",
@@ -879,13 +894,23 @@
         "limitNotificationDescriptionWeb": "Wegen hoher Nachfrage ist Ihre Aufnahme auf {{limit}} Min. begrenzt. Für unlimitierte Aufnahmen nutzen Sie bitte <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Link zur Aufzeichnung wurde generiert.",
         "live": "LIVE",
+        "localRecordingNoNotificationWarning": "Die Aufzeichnung wird anderen Anwesenden nicht mitgeteilt. Sie müssen diese selbst darauf hinweisen, dass die Konferenz aufgezeichnet wird.",
+        "localRecordingNoVideo": "Videos werden nicht aufgenommen",
+        "localRecordingStartWarning": "Bitte beenden Sie die Aufzeichnung vor dem Verlassen der Konferenz, um die Aufzeichnung zu speichern.",
+        "localRecordingStartWarningTitle": "Aufzeichnung zum Speichern beenden",
+        "localRecordingVideoStop": "Wenn Sie ihre Kamera abschalten wird auch die Aufnahme beendet. Sind Sie sicher, dass Sie fortfahren möchten?",
+        "localRecordingVideoWarning": "Um Ihr eigenes Kamerabild aufzuzeichnen, müssen Sie Ihre Kamera beim Start der Aufnahme einschalten",
+        "localRecordingWarning": "Bitte prüfen Sie, dass das aktuelle Tab auswählen, um Bild und Ton aufzuzeichnen. Die Länge der Aufzeichnung ist aktuell auf 1GB beschränkt, was ungefähr 100 Minuten entspricht.",
         "loggedIn": "Als {{userName}} angemeldet",
+        "noStreams": "Kein Ton oder Video erkannt.",
         "off": "Aufnahme gestoppt",
         "offBy": "{{name}} stoppte die Aufnahme",
         "on": "Aufnahme",
         "onBy": "{{name}} startete die Aufnahme",
+        "onlyRecordSelf": "Nur eigenes Kamerabild und Ton aufzeichnen",
         "pending": "Aufzeichnung des Meetings wird vorbereitet…",
         "rec": "AUFZ",
+        "saveLocalRecording": "Aufzeichnung lokal abspeichern",
         "serviceDescription": "Ihre Aufzeichnung wird vom Aufzeichnungsdienst gespeichert",
         "serviceDescriptionCloud": "Cloud-Aufzeichnung",
         "serviceDescriptionCloudInfo": "Aufzeichnungen werden 24 Stunden nach Aufzeichnungsende automatisch gelöscht.",
@@ -893,10 +918,12 @@
         "sessionAlreadyActive": "Diese Konferenz wird bereits aufgezeichnet.",
         "signIn": "Anmelden",
         "signOut": "Abmelden",
+        "surfaceError": "Bitte das aktuelle Tab auswählen.",
         "unavailable": "Oh! Der {{serviceName}} ist aktuell nicht verfügbar. Wir arbeiten an der Behebung des Problems. Bitte versuchen Sie es später noch einmal.",
         "unavailableTitle": "Aufnahme nicht verfügbar",
         "uploadToCloud": "In die Cloud hochladen"
     },
+    "screenshareDisplayName": "{{name}}s Bildschirmfreigabe",
     "sectionList": {
         "pullToRefresh": "Ziehen, um zu aktualisieren"
     },
@@ -930,10 +957,12 @@
         "name": "Name",
         "noDevice": "Kein",
         "participantJoined": "Neue Person nimmt teil",
+        "participantKnocking": "Person hat Lobby betreten",
         "participantLeft": "Person verlässt die Konferenz",
         "playSounds": "Hinweistöne aktiviert",
         "reactions": "Interaktionen",
         "sameAsSystem": "Wie System ({{label}})",
+        "screenTitle": "Einstellungen",
         "selectAudioOutput": "Audioausgabe",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
@@ -959,6 +988,7 @@
         "disableCrashReportingWarning": "Möchten Sie die Absturzberichte wirklich deaktivieren? Diese Einstellung wird nach einem Neustart der App wirksam.",
         "disableP2P": "Ende-zu-Ende-Modus deaktivieren",
         "displayName": "Anzeigename",
+        "displayNamePlaceholderText": "z.B. Erika Musterfrau",
         "email": "E-Mail",
         "header": "Einstellungen",
         "profileSection": "Profil",
@@ -1003,6 +1033,7 @@
     "termsView": {
         "header": "Nutzungsbedingungen"
     },
+    "toggleTopPanelLabel": "Obere Leiste ein-/ausschalten",
     "toolbar": {
         "Settings": "Einstellungen",
         "accessibilityLabel": {
@@ -1012,10 +1043,12 @@
             "boo": "Buhen",
             "breakoutRoom": "Breakout-Räume betreten/verlassen",
             "callQuality": "Qualitätseinstellungen",
+            "carmode": "Automodus",
             "cc": "Untertitel ein-/ausschalten",
             "chat": "Chatfenster öffnen / schließen",
             "clap": "Klatschen",
             "collapse": "Einklappen",
+            "dock": "In Hauptfenster einbinden",
             "document": "Geteiltes Dokument schließen",
             "download": "Unsere Apps herunterladen",
             "embedMeeting": "Konferenz einbetten",
@@ -1066,6 +1099,7 @@
             "tileView": "Kachelansicht ein-/ausschalten",
             "toggleCamera": "Kamera wechseln",
             "toggleFilmstrip": "Miniaturansichten ein-/ausschalten",
+            "undock": "In eigenem Fenster anzeigen",
             "videoblur": "Unscharfer Hintergrund ein-/ausschalten",
             "videomute": "„Video stummschalten“ ein-/ausschalten"
         },
@@ -1082,6 +1116,7 @@
         "closeChat": "Chat schließen",
         "closeReactionsMenu": "Interaktionsmenü schließen",
         "disableReactionSounds": "Sie können die Interaktionstöne für diese Konferenz deaktivieren",
+        "dock": "In Hauptfenster einbinden",
         "documentClose": "Geteiltes Dokument schließen",
         "documentOpen": "Geteiltes Dokument öffnen",
         "download": "Unsere Apps herunterladen",
@@ -1150,6 +1185,7 @@
         "talkWhileMutedPopup": "Versuchen Sie zu sprechen? Ihr Mikrofon ist stummgeschaltet.",
         "tileViewToggle": "Kachelansicht ein-/ausschalten",
         "toggleCamera": "Kamera wechseln",
+        "undock": "In eigenem Fenster anzeigen",
         "videoSettings": "Kameraeinstellungen",
         "videomute": "Kamera starten / stoppen"
     },
