@@ -14,7 +14,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
      * @param {MediaStreamTrack} track - Track to be added,.
      * @returns {void}
      */
-    addAudioTrackToLocalRecording(track) { },
+    addAudioTrackToLocalRecording() { },
 
     /**
      * Stops local recording.
@@ -29,7 +29,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
      * @param {IStore} store - The Redux store.
      * @returns {void}
      */
-    async startLocalRecording(store) { },
+    async startLocalRecording() { },
 
     /**
      * Whether or not we're currently recording locally.

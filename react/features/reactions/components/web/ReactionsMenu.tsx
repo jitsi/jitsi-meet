@@ -97,8 +97,6 @@ type Props = {
     t: Function
 };
 
-declare let APP: Object;
-
 const styles = (theme: any) => {
     return {
         overflow: {

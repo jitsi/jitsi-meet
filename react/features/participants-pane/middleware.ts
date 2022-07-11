@@ -1,6 +1,4 @@
 /* eslint-disable import/order */
-// @ts-ignore
-import { IStore } from '../app/types';
 
 // @ts-ignore
 import { MiddlewareRegistry } from '../base/redux';
@@ -16,7 +14,7 @@ declare let APP: any;
  * @param {IStore} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next:Function) => (action:any) => {
+MiddlewareRegistry.register(() => (next:Function) => (action:any) => {
     switch (action.type) {
     case PARTICIPANTS_PANE_OPEN:
         if (typeof APP !== 'undefined') {

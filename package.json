@@ -190,9 +190,9 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "eslint --ext .js,.ts,.tsx .",
+    "lint": "eslint --ext .js,.ts,.tsx --max-warnings 0 .",
     "lang-sort": "./resources/lang-sort.sh",
-    "lint-fix": "eslint --ext .js,.ts,.tsx --fix .",
+    "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
     "start": "make dev"

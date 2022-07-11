@@ -77,9 +77,6 @@ type Props = {
     t: Function
 };
 
-
-declare let APP: Object;
-
 /**
  * Button used for the reactions menu.
  *
