@@ -70,6 +70,7 @@ function Util.new(module)
             self.muc_domain_prefix.."."..self.muc_domain_base);
     end
     -- whether domain name verification is enabled, by default it is enabled
+    -- when disabled checking domain name and tenant if available will be skipped, we will check only room name.
     self.enableDomainVerification = module:get_option_boolean('enable_domain_verification', true);
 
     if self.allowEmptyToken == true then
