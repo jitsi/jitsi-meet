@@ -208,6 +208,7 @@ class ReactionsMenu extends Component<Props> {
                 accessibilityLabel = { t(`toolbar.accessibilityLabel.${key}`) }
                 icon = { REACTIONS[key].emoji }
                 key = { key }
+                // eslint-disable-next-line react/jsx-no-bind
                 onClick = { doSendReaction }
                 toggled = { false }
                 tooltip = { `${t(`toolbar.${key}`)} (${modifierKey} + ${REACTIONS[key].shortcutChar})` } />);
