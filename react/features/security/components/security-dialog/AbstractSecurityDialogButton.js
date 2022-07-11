@@ -92,6 +92,6 @@ export function _mapStateToProps(state: Object) {
 
     return {
         _locked: locked || lobbyEnabled,
-        visible: enabledFlag || (enabledLobbyModeFlag || enabledMeetingPassFlag)
+        visible: enabledFlag && (enabledLobbyModeFlag || enabledMeetingPassFlag)
     };
 }

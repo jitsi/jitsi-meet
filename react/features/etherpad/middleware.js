@@ -2,6 +2,7 @@
 
 import UIEvents from '../../../service/UI/UIEvents';
 import { getCurrentConference } from '../base/conference';
+import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
 import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
@@ -21,6 +22,23 @@ const ETHERPAD_COMMAND = 'etherpad';
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
+    case CONFERENCE_JOIN_IN_PROGRESS: {
+        const { conference } = action;
+
+        conference.addCommandListener(ETHERPAD_COMMAND,
+            ({ value }) => {
+                let url;
+                const { etherpad_base: etherpadBase } = getState()['features/base/config'];
+
+                if (etherpadBase) {
+                    url = new URL(value, etherpadBase).toString();
+                }
+
+                dispatch(setDocumentUrl(url));
+            }
+        );
+        break;
+    }
     case TOGGLE_DOCUMENT_EDITING: {
         if (typeof APP !== 'undefined') {
             APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
@@ -39,24 +57,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
  */
 StateListenerRegistry.register(
     state => getCurrentConference(state),
-    (conference, { dispatch, getState }, previousConference) => {
-        if (conference) {
-            conference.addCommandListener(ETHERPAD_COMMAND,
-                ({ value }) => {
-                    let url;
-                    const { etherpad_base: etherpadBase } = getState()['features/base/config'];
-
-                    if (etherpadBase) {
-                        const u = new URL(value, etherpadBase);
-
-                        url = u.toString();
-                    }
-
-                    dispatch(setDocumentUrl(url));
-                }
-            );
-        }
-
+    (conference, { dispatch }, previousConference) => {
         if (previousConference) {
             dispatch(setDocumentUrl(undefined));
         }

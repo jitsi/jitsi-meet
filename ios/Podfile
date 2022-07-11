@@ -9,9 +9,9 @@ install! 'cocoapods', :deterministic_uuids => false
 target 'JitsiMeet' do
   project 'app/app.xcodeproj'
 
-  pod 'Firebase/Analytics', '~> 6.33.0'
-  pod 'Firebase/Crashlytics', '~> 6.33.0'
-  pod 'Firebase/DynamicLinks', '~> 6.33.0'
+  pod 'Firebase/Analytics', '~> 8.0'
+  pod 'Firebase/Crashlytics', '~> 8.0'
+  pod 'Firebase/DynamicLinks', '~> 8.0'
 end
 
 target 'JitsiMeetSDK' do
@@ -23,7 +23,10 @@ target 'JitsiMeetSDK' do
   config = use_native_modules!
   use_react_native!(
     :path => config["reactNativePath"],
-    :hermes_enabled => false
+    :hermes_enabled => false,
+    :fabric_enabled => false,
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   # Native pod dependencies
@@ -35,6 +38,7 @@ end
 
 post_install do |installer|
   react_native_post_install(installer)
+  __apply_Xcode_12_5_M1_post_install_workaround(installer)
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['ENABLE_BITCODE'] = 'YES'
@@ -42,7 +46,4 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
     end
   end
-  # https://github.com/facebook/react-native/blob/d7f748a944a9a9324e485ccbe214098e6c8645fc/scripts/react_native_pods.rb#L630
-  time_header = "#{Pod::Config.instance.installation_root.to_s}/Pods/RCT-Folly/folly/portability/Time.h"
-  `sed -i -e  $'s/ && (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_10_0)//' #{time_header}`
 end

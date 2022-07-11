@@ -8,6 +8,7 @@
  */
 export function isAudioMuteButtonDisabled(state: Object) {
     const { available, muted, unmuteBlocked } = state['features/base/media'].audio;
+    const { startSilent } = state['features/base/config'];
 
-    return !available || (muted && unmuteBlocked);
+    return Boolean(!available || startSilent || (muted && unmuteBlocked));
 }

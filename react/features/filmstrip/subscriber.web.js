@@ -1,27 +1,33 @@
 // @flow
 
 import { isMobileBrowser } from '../base/environment/utils';
-import { getParticipantCountWithFake } from '../base/participants';
-import { StateListenerRegistry, equals } from '../base/redux';
+import { getParticipantCountWithFake, pinParticipant } from '../base/participants';
+import { StateListenerRegistry } from '../base/redux';
 import { clientResized } from '../base/responsive-ui';
 import { shouldHideSelfView } from '../base/settings';
 import { setFilmstripVisible } from '../filmstrip/actions';
+import { selectParticipantInLargeVideo } from '../large-video/actions.any';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
-import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
+import { getCurrentLayout, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
 import {
+    clearStageParticipants,
     setHorizontalViewDimensions,
+    setScreensharingTileDimensions,
+    setStageFilmstripViewDimensions,
     setTileViewDimensions,
     setVerticalViewDimensions
 } from './actions';
 import {
     ASPECT_RATIO_BREAKPOINT,
-    DISPLAY_DRAWER_THRESHOLD,
-    SINGLE_COLUMN_BREAKPOINT,
-    TWO_COLUMN_BREAKPOINT
+    DISPLAY_DRAWER_THRESHOLD
 } from './constants';
-import { isFilmstripResizable } from './functions.web';
+import {
+    isFilmstripResizable,
+    isTopPanelEnabled
+} from './functions';
+
 import './subscriber.any';
 
 
@@ -32,7 +38,8 @@ StateListenerRegistry.register(
     /* selector */ state => {
         return {
             numberOfParticipants: getParticipantCountWithFake(state),
-            disableSelfView: shouldHideSelfView(state)
+            disableSelfView: shouldHideSelfView(state),
+            localScreenShare: state['features/base/participants'].localScreenShare
         };
     },
     /* listener */ (currentState, store) => {
@@ -40,12 +47,7 @@ StateListenerRegistry.register(
         const resizableFilmstrip = isFilmstripResizable(state);
 
         if (shouldDisplayTileView(state)) {
-            const gridDimensions = getTileViewGridDimensions(state);
-            const oldGridDimensions = state['features/filmstrip'].tileViewDimensions.gridDimensions;
-
-            if (!equals(gridDimensions, oldGridDimensions)) {
-                store.dispatch(setTileViewDimensions(gridDimensions));
-            }
+            store.dispatch(setTileViewDimensions());
         }
         if (resizableFilmstrip) {
             store.dispatch(setVerticalViewDimensions());
@@ -58,21 +60,35 @@ StateListenerRegistry.register(
  * Listens for changes in the selected layout to calculate the dimensions of the tile view grid and horizontal view.
  */
 StateListenerRegistry.register(
-    /* selector */ state => getCurrentLayout(state),
-    /* listener */ (layout, store) => {
-        const state = store.getState();
+    /* selector */ state => {
+        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
 
+        return {
+            layout: getCurrentLayout(state),
+            height: clientHeight,
+            width: clientWidth
+        };
+    },
+    /* listener */ ({ layout }, store) => {
         switch (layout) {
         case LAYOUTS.TILE_VIEW:
-            store.dispatch(setTileViewDimensions(getTileViewGridDimensions(state)));
+            store.dispatch(setTileViewDimensions());
             break;
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
             store.dispatch(setHorizontalViewDimensions());
             break;
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
             store.dispatch(setVerticalViewDimensions());
+            if (store.getState()['features/filmstrip'].activeParticipants.length > 1) {
+                store.dispatch(clearStageParticipants());
+            }
+            break;
+        case LAYOUTS.STAGE_FILMSTRIP_VIEW:
+            store.dispatch(pinParticipant(null));
             break;
         }
+    }, {
+        deepEquals: true
     });
 
 /**
@@ -133,50 +149,6 @@ StateListenerRegistry.register(
     });
 
 /**
- * Symbol mapping used for the tile view responsiveness computation.
- */
-const responsiveColumnMapping = {
-    multipleColumns: Symbol('multipleColumns'),
-    singleColumn: Symbol('singleColumn'),
-    twoColumns: Symbol('twoColumns'),
-    twoParticipantsSingleColumn: Symbol('twoParticipantsSingleColumn')
-};
-
-/**
- * Listens for changes in the screen size to recompute
- * the dimensions of the tile view grid and the tiles for responsiveness.
- */
-StateListenerRegistry.register(
-    /* selector */ state => {
-        const { clientWidth } = state['features/base/responsive-ui'];
-
-        if (clientWidth < TWO_COLUMN_BREAKPOINT && clientWidth >= ASPECT_RATIO_BREAKPOINT) {
-            // Forcing the recomputation of tiles when screen switches in or out of
-            // the (TWO_COLUMN_BREAKPOINT, ASPECT_RATIO_BREAKPOINT] interval.
-            return responsiveColumnMapping.twoColumns;
-        } else if (clientWidth < ASPECT_RATIO_BREAKPOINT && clientWidth >= SINGLE_COLUMN_BREAKPOINT) {
-            // Forcing the recomputation of tiles when screen switches in or out of
-            // the (ASPECT_RATIO_BREAKPOINT, SINGLE_COLUMN_BREAKPOINT] interval.
-            return responsiveColumnMapping.twoParticipantsSingleColumn;
-        } else if (clientWidth < SINGLE_COLUMN_BREAKPOINT) {
-            // Forcing the recomputation of tiles when screen switches below SINGLE_COLUMN_BREAKPOINT.
-            return responsiveColumnMapping.singleColumn;
-        }
-
-        // Forcing the recomputation of tiles when screen switches above TWO_COLUMN_BREAKPOINT.
-        return responsiveColumnMapping.multipleColumns;
-    },
-    /* listener */ (_, store) => {
-        const state = store.getState();
-
-        if (shouldDisplayTileView(state)) {
-            const gridDimensions = getTileViewGridDimensions(state);
-
-            store.dispatch(setTileViewDimensions(gridDimensions));
-        }
-    });
-
-/**
  * Listens for changes in the filmstrip width to determine the size of the tiles.
  */
 StateListenerRegistry.register(
@@ -193,3 +165,63 @@ StateListenerRegistry.register(
     /* listener */(_, store) => {
         store.dispatch(setVerticalViewDimensions());
     });
+
+/**
+ * Listens for changes to determine the size of the stage filmstrip tiles.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        return {
+            remoteScreenShares: state['features/video-layout'].remoteScreenShares.length,
+            length: state['features/filmstrip'].activeParticipants.length,
+            width: state['features/filmstrip'].width?.current,
+            visible: state['features/filmstrip'].visible,
+            clientWidth: state['features/base/responsive-ui'].clientWidth,
+            clientHeight: state['features/base/responsive-ui'].clientHeight,
+            tileView: state['features/video-layout'].tileViewEnabled,
+            height: state['features/filmstrip'].topPanelHeight?.current
+        };
+    },
+    /* listener */(_, store) => {
+        if (getCurrentLayout(store.getState()) === LAYOUTS.STAGE_FILMSTRIP_VIEW) {
+            store.dispatch(setStageFilmstripViewDimensions());
+        }
+    }, {
+        deepEquals: true
+    });
+
+/**
+ * Listens for changes in the active participants count determine the stage participant (when
+ * there's just one).
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/filmstrip'].activeParticipants.length,
+    /* listener */(length, store) => {
+        if (length <= 1) {
+            store.dispatch(selectParticipantInLargeVideo());
+        }
+    });
+
+/**
+ * Listens for changes to determine the size of the screenshare filmstrip.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        return {
+            length: state['features/video-layout'].remoteScreenShares.length,
+            clientWidth: state['features/base/responsive-ui'].clientWidth,
+            clientHeight: state['features/base/responsive-ui'].clientHeight,
+            height: state['features/filmstrip'].topPanelHeight?.current,
+            width: state['features/filmstrip'].width?.current,
+            visible: state['features/filmstrip'].visible,
+            topPanelVisible: state['features/filmstrip'].topPanelVisible
+        };
+    },
+    /* listener */({ length }, store) => {
+        if (length >= 1 && isTopPanelEnabled(store.getState())) {
+            store.dispatch(setScreensharingTileDimensions());
+        }
+    }, {
+        deepEquals: true
+    });
+

@@ -1,6 +1,8 @@
 // @flow
 
-import { CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
+import _ from 'lodash';
+
+import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import {
     getParticipantById,
     getPinnedParticipant,
@@ -9,6 +11,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
+import { addStageParticipant, setMaxStageParticipants } from '../filmstrip/actions.web';
 import { setTileView } from '../video-layout';
 
 import {
@@ -58,7 +61,7 @@ let nextOnStageTimer = 0;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case CONFERENCE_WILL_JOIN: {
+    case CONFERENCE_JOIN_IN_PROGRESS: {
         const { conference } = action;
 
         conference.addCommandListener(
@@ -177,6 +180,19 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         _pinVideoThumbnailById(store, idOfParticipantToPin);
     } else if (typeof idOfParticipantToPin === 'undefined' && pinnedParticipant) {
         store.dispatch(pinParticipant(null));
+    }
+
+    if (attributes.pinnedStageParticipants !== undefined) {
+        const stageParticipants = JSON.parse(attributes.pinnedStageParticipants);
+
+        if (!_.isEqual(stageParticipants, oldState.pinnedStageParticipants)) {
+            stageParticipants.forEach(p => store.dispatch(addStageParticipant(p.participantId, true)));
+        }
+    }
+
+    if (attributes.maxStageParticipants !== undefined
+        && oldState.maxStageParticipants !== attributes.maxStageParticipants) {
+        store.dispatch(setMaxStageParticipants(Number(attributes.maxStageParticipants)));
     }
 }
 

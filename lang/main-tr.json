@@ -602,10 +602,12 @@
         "OldElectronAPPTitle": "Güvenlik açığı!",
         "allowAction": "İzin ver",
         "allowedUnmute": "Mikrofonunuzu sessizden çıkarabilir, kameranızı başlatabilir veya ekranınızı paylaşabilirsiniz.",
+        "chatMessages": "Sohbet mesajları",
         "connectedOneMember": "{{name}} toplantıya katıldı",
         "connectedThreePlusMembers": "{{name}} ve {{count}} kişi daha toplantıya katıldı",
         "connectedTwoMembers": "{{first}} ve {{second}} toplantıya katıldı",
         "disconnected": "bağlantı kesildi",
+        "displayNotifications": "Bildirimleri görüntüle",
         "focus": "Toplantı odağı",
         "focusFail": "{{component}} uygun değil - {{ms}} saniye içinde tekrar deneyin",
         "grantedTo": "{{to}} kişisine yönetici hakları verildi!",
@@ -662,6 +664,9 @@
             "audioModeration": "Seslerini aç",
             "blockEveryoneMicCamera": "Herkesin mikrofonunu ve kamerasını blokla",
             "invite": "Birini davet et",
+            "moreModerationActions": "Daha fazla denetleme seçeneği",
+            "moreModerationControls": "Daha fazla denetleme kontrolü",
+            "moreParticipantOptions": "Daha fazla katılımcı seçeneği",
             "mute": "Sustur",
             "muteAll": "Herkesi sustur",
             "muteEveryoneElse": "Diğer herkesi sessize al",
@@ -676,7 +681,8 @@
             "lobby": "Lobi ({{count}})",
             "participantsList": "Toplantı Katılımcıları ({{count}})",
             "waitingLobby": "Lobide bekleyen ({{count}})"
-        }
+        },
+        "search": "Katılımcıları ara"
     },
     "passwordDigitsOnly": "{{number}} rakama kadar",
     "passwordSetRemotely": "başka katılımcı tarafından ayarlandı",
@@ -850,6 +856,7 @@
         "incomingMessage": "Gelen mesaj",
         "language": "Dil",
         "loggedIn": "{{name}} olarak giriş yapıldı",
+        "maxStageParticipants": "Ana ekrana sabitlenecek maksimum katılımcı sayısı",
         "microphones": "Mikrofonlar",
         "moderator": "Yönetici",
         "more": "Daha fazla",
@@ -1109,6 +1116,7 @@
         "lowDefinition": "Düşük çözünürlük",
         "onlyAudioAvailable": "Yalnızca ses kullanılabilir",
         "onlyAudioSupported": "Bu tarayıcıda yalnızca sesi destekliyoruz.",
+        "performanceSettings": "Performans ayarları",
         "sd": "SD",
         "sdTooltip": "Standart çözünürlüklü video görüntüleme",
         "standardDefinition": "Standart çözünürlük"

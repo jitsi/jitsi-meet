@@ -39,13 +39,6 @@
     &.no-buttons {
         display: none;
     }
-
-    @media (min-width: 581px) {
-        &.shift-right {
-            margin-left: $sidebarWidth;
-            width: calc(100% - #{$sidebarWidth});
-        }
-    }
 }
 
 .toolbox-content {
@@ -99,6 +92,10 @@
     max-width: 100%;
     pointer-events: all;
     border-radius: 6px;
+
+    .toolbox-content-items {
+        @include ltr;
+    }
 }
 
 .toolbox-content-wrapper::after {
@@ -183,6 +180,7 @@
         }
 
         .toolbox-content-items {
+            @include ltr;
             border-radius: 0;
             display: flex;
             justify-content: space-evenly;

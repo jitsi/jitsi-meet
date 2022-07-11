@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../base/redux';
-import { closeChat, openChat } from '../../actions.native';
+import { closeChat } from '../../actions.any';
 import AbstractChat, {
     _mapStateToProps,
     type Props as AbstractProps
@@ -69,26 +69,21 @@ class Chat extends AbstractChat<Props> {
 export default translate(connect(_mapStateToProps)(props => {
     const {
         _nbUnreadMessages,
-        dispatch,
         navigation,
-        route,
         t
     } = props;
     const isChatScreenFocused = useIsFocused();
-    const privateMessageRecipient = route.params?.privateMessageRecipient;
 
     const nrUnreadMessages
         = !isChatScreenFocused && _nbUnreadMessages > 0
             ? `(${_nbUnreadMessages})` : '';
 
     useEffect(() => {
-        dispatch(openChat(privateMessageRecipient));
-
         navigation.setOptions({
             tabBarLabel: `${t('chat.tabs.chat')} ${nrUnreadMessages}`
         });
 
-        return () => dispatch(closeChat());
+        return () => props.dispatch(closeChat());
     }, [ nrUnreadMessages ]);
 
     return (

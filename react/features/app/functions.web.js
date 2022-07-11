@@ -3,6 +3,8 @@
 import { toState } from '../base/redux';
 import { getServerURL } from '../base/settings';
 
+export * from './functions.any';
+
 declare var interfaceConfig: Object;
 
 /**

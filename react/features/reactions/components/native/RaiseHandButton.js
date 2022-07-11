@@ -1,29 +1,36 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Text, TouchableHighlight, View } from 'react-native';
+import { Text } from 'react-native-paper';
 import { type Dispatch } from 'redux';
 
 import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import { RAISE_HAND_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
     hasRaisedHand,
     raiseHand
 } from '../../../base/participants';
+import Button from '../../../base/react/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { type AbstractButtonProps } from '../../../base/toolbox/components';
 
-import { type ReactionStyles } from './ReactionButton';
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link RaiseHandButton}.
  */
 type Props = AbstractButtonProps & {
+
+    /**
+     * Whether this button is enabled or not.
+     */
+    _enabled: boolean,
 
     /**
      * The local participant.
@@ -48,12 +55,7 @@ type Props = AbstractButtonProps & {
     /**
      * Used to close the overflow menu after raise hand is clicked.
      */
-    onCancel: Function,
-
-    /**
-     * Styles for the button.
-     */
-    _styles: ReactionStyles
+    onCancel: Function
 };
 
 /**
@@ -122,26 +124,37 @@ class RaiseHandButton extends Component<Props, *> {
     }
 
     /**
+     * Renders the "raise hand" emoji.
+     *
+     * @returns {ReactElement}
+     */
+    _renderRaiseHandEmoji() {
+        return (
+            <Text>✋</Text>
+        );
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
     render() {
-        const { _styles, t } = this.props;
+        const { _enabled } = this.props;
+
+        if (!_enabled) {
+            return null;
+        }
 
         return (
-            <TouchableHighlight
-                accessibilityLabel = { t(this.accessibilityLabel) }
-                accessibilityRole = 'button'
+            <Button
+                accessibilityLabel = { this.accessibilityLabel }
+                icon = { this._renderRaiseHandEmoji }
+                label = { this._getLabel() }
                 onPress = { this._onClick }
-                style = { _styles.style }
-                underlayColor = { _styles.underlayColor }>
-                <View style = { _styles.container }>
-                    <Text style = { _styles.emoji }>✋</Text>
-                    <Text style = { _styles.text }>{this._getLabel()}</Text>
-                </View>
-            </TouchableHighlight>
+                style = { styles.raiseHandButton }
+                type = { BUTTON_TYPES.SECONDARY } />
         );
     }
 }
@@ -155,11 +168,12 @@ class RaiseHandButton extends Component<Props, *> {
  */
 function _mapStateToProps(state): Object {
     const _localParticipant = getLocalParticipant(state);
+    const enabled = getFeatureFlag(state, RAISE_HAND_ENABLED, true);
 
     return {
+        _enabled: enabled,
         _localParticipant,
-        _raisedHand: hasRaisedHand(_localParticipant),
-        _styles: ColorSchemeRegistry.get(state, 'Toolbox').raiseHandButton
+        _raisedHand: hasRaisedHand(_localParticipant)
     };
 }
 

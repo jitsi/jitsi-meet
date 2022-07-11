@@ -6,6 +6,7 @@
 }
 
 #layout_wrapper {
+    @include ltr;
     display: flex;
     height: 100%;
 }
@@ -44,15 +45,6 @@
     position: relative;
     text-align: center;
     overflow: 'hidden';
-
-    @media (min-width: 581px) {
-        &.shift-right {
-            &#largeVideoContainer {
-                margin-left: $sidebarWidth;
-                width: calc(100% - #{$sidebarWidth});
-            }
-        }
-    }
 }
 
 #localVideoWrapper {

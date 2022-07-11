@@ -32,6 +32,11 @@ type Props = {
     showPopover: Function,
 
     /**
+     * The type of thumbnail.
+     */
+    thumbnailType: string,
+
+    /**
      * Whether or not the component is visible.
      */
     visible: boolean
@@ -44,6 +49,7 @@ const VideoMenuTriggerButton = ({
     participantId,
     popoverVisible,
     showPopover,
+    thumbnailType,
     visible
 }: Props) => local
     ? (
@@ -52,7 +58,8 @@ const VideoMenuTriggerButton = ({
                 buttonVisible = { visible }
                 hidePopover = { hidePopover }
                 popoverVisible = { popoverVisible }
-                showPopover = { showPopover } />
+                showPopover = { showPopover }
+                thumbnailType = { thumbnailType } />
         </span>
     )
     : (
@@ -62,7 +69,8 @@ const VideoMenuTriggerButton = ({
                 hidePopover = { hidePopover }
                 participantID = { participantId }
                 popoverVisible = { popoverVisible }
-                showPopover = { showPopover } />
+                showPopover = { showPopover }
+                thumbnailType = { thumbnailType } />
         </span>
     );
 

@@ -29,26 +29,13 @@ export default {
         inviteButtonBackground: 'rgb(0, 119, 225)',
         onVideoText: 'white'
     },
-    'Dialog': {
-        border: 'rgba(0, 3, 6, 0.6)',
-        buttonBackground: ColorPalette.blue,
-        buttonLabel: ColorPalette.white
-    },
+    'Dialog': {},
     'Header': {
         background: ColorPalette.blue,
         icon: ColorPalette.white,
         statusBar: ColorPalette.blueHighlight,
         statusBarContent: ColorPalette.white,
         text: ColorPalette.white
-    },
-    'Modal': {},
-    'LargeVideo': {
-        background: '#040404'
-    },
-    'Thumbnail': {
-        activeParticipantHighlight: 'rgb(81, 214, 170)',
-        activeParticipantTint: 'rgba(49, 183, 106, 0.3)',
-        background: '#36383C'
     },
     'Toolbox': {
         button: 'rgb(255, 255, 255)',

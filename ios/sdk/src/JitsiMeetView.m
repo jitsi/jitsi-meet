@@ -20,43 +20,22 @@
 #import "ExternalAPI.h"
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
-#import "JitsiMeetView+Private.h"
+#import "JitsiMeetView.h"
+#import "JitsiMeetViewController.h"
 #import "ReactUtils.h"
 #import "RNRootView.h"
 
+@interface JitsiMeetView ()
 
-/**
- * Backwards compatibility: turn the boolean prop into a feature flag.
- */
-static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
+@property (nonatomic, strong) JitsiMeetViewController *jitsiMeetViewController;
+@property (nonatomic, strong) UINavigationController *navController;
+@property (nonatomic, readonly) BOOL isPiPEnabled;
 
+@end
 
-@implementation JitsiMeetView {
-    /**
-     * The unique identifier of this `JitsiMeetView` within the process for the
-     * purposes of `ExternalAPI`. The name scope was inspired by postis which we
-     * use on Web for the similar purposes of the iframe-based external API.
-     */
-    NSString *externalAPIScope;
+@implementation JitsiMeetView
 
-    /**
-     * React Native view where the entire content will be rendered.
-     */
-    RNRootView *rootView;
-}
-
-/**
- * The `JitsiMeetView`s associated with their `ExternalAPI` scopes (i.e. unique
- * identifiers within the process).
- */
-static NSMapTable<NSString *, JitsiMeetView *> *views;
-/**
- * This gets called automagically when the program starts.
- */
-__attribute__((constructor))
-static void initializeViewsMap() {
-    views = [NSMapTable strongToWeakObjectsMapTable];
-}
+@dynamic isPiPEnabled;
 
 #pragma mark Initializers
 
@@ -87,6 +66,10 @@ static void initializeViewsMap() {
     return self;
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 /**
  * Internal initialization:
  *
@@ -94,145 +77,105 @@ static void initializeViewsMap() {
  * - initializes the external API scope
  */
 - (void)initWithXXX {
-    // Hook this JitsiMeetView into ExternalAPI.
-    externalAPIScope = [NSUUID UUID].UUIDString;
-    [views setObject:self forKey:externalAPIScope];
-
-    // Set a background color which is in accord with the JavaScript and Android
-    // parts of the application and causes less perceived visual flicker than
-    // the default background color.
-    self.backgroundColor
-        = [UIColor colorWithRed:.07f green:.07f blue:.07f alpha:1];
+    self.jitsiMeetViewController = [[JitsiMeetViewController alloc] init];
+    self.jitsiMeetViewController.view.frame = [self bounds];
+    [self addSubview:self.jitsiMeetViewController.view];
+    
+    [self registerObservers];
 }
 
 #pragma mark API
 
 - (void)join:(JitsiMeetConferenceOptions *)options {
-    [self setProps:options == nil ? @{} : [options asProps]];
+    [self.jitsiMeetViewController join:options withPiP:self.isPiPEnabled];
 }
 
 - (void)leave {
-    [self setProps:@{}];
+    [self.jitsiMeetViewController leave];
 }
 
 - (void)hangUp {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI sendHangUp];
+    [self.jitsiMeetViewController hangUp];
 }
 
 - (void)setAudioMuted:(BOOL)muted {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI sendSetAudioMuted:muted];
+    [self.jitsiMeetViewController setAudioMuted:muted];
 }
 
 - (void)sendEndpointTextMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI sendEndpointTextMessage:message :to];
+    [self.jitsiMeetViewController sendEndpointTextMessage:message :to];
 }
 
 - (void)toggleScreenShare:(BOOL)enabled {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI toggleScreenShare:enabled];
+    [self.jitsiMeetViewController toggleScreenShare:enabled];
 }
 
 - (void)retrieveParticipantsInfo:(void (^ _Nonnull)(NSArray * _Nullable))completionHandler {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI retrieveParticipantsInfo:completionHandler];
+    [self.jitsiMeetViewController retrieveParticipantsInfo:completionHandler];
 }
 
 - (void)openChat:(NSString*)to  {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI openChat:to];
+    [self.jitsiMeetViewController openChat:to];
 }
 
 - (void)closeChat  {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI closeChat];
+    [self.jitsiMeetViewController closeChat];
 }
 
 - (void)sendChatMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI sendChatMessage:message :to];
+    [self.jitsiMeetViewController sendChatMessage:message :to];
 }
 
 - (void)setVideoMuted:(BOOL)muted {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI sendSetVideoMuted:muted];
+    [self.jitsiMeetViewController setVideoMuted:muted];
 }
 
-#pragma mark Private methods
+- (void)setClosedCaptionsEnabled:(BOOL)enabled {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetClosedCaptionsEnabled:enabled];
+}
+
+#pragma mark Private
+
+- (BOOL)isPiPEnabled {
+    return self.delegate && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)];
+}
+
+- (void)registerObservers {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleSendEventNotification:) name:sendEventNotificationName object:nil];
+}
+
+- (void)handleSendEventNotification:(NSNotification *)notification {
+    NSString *eventName = notification.userInfo[@"name"];
+    NSString *eventData = notification.userInfo[@"data"];
+    
+    SEL sel = NSSelectorFromString([self methodNameFromEventName:eventName]);
+
+    if (sel && [self.delegate respondsToSelector:sel]) {
+        [self.delegate performSelector:sel withObject:eventData];
+    }
+}
 
 /**
- * Passes the given props to the React Native application. The props which we pass
- * are a combination of 3 different sources:
+ * Converts a specific event name i.e. redux action type description to a
+ * method name.
  *
- * - JitsiMeet.defaultConferenceOptions
- * - This function's parameters
- * - Some extras which are added by this function
+ * @param eventName The event name to convert to a method name.
+ * @return A method name constructed from the specified `eventName`.
  */
-- (void)setProps:(NSDictionary *_Nonnull)newProps {
-    NSMutableDictionary *props = mergeProps([[JitsiMeet sharedInstance] getDefaultProps], newProps);
+- (NSString *)methodNameFromEventName:(NSString *)eventName {
+   NSMutableString *methodName
+       = [NSMutableString stringWithCapacity:eventName.length];
 
-    // Set the PiP flag if it wasn't manually set.
-    NSMutableDictionary *featureFlags = props[@"flags"];
-    if (featureFlags[PiPEnabledFeatureFlag] == nil) {
-        featureFlags[PiPEnabledFeatureFlag]
-            = [NSNumber numberWithBool:
-               self.delegate && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)]];
-    }
+   for (NSString *c in [eventName componentsSeparatedByString:@"_"]) {
+       if (c.length) {
+           [methodName appendString:
+               methodName.length ? c.capitalizedString : c.lowercaseString];
+       }
+   }
+   [methodName appendString:@":"];
 
-    props[@"externalAPIScope"] = externalAPIScope;
-
-    // This method is supposed to be imperative i.e. a second
-    // invocation with one and the same URL is expected to join the respective
-    // conference again if the first invocation was followed by leaving the
-    // conference. However, React and, respectively,
-    // appProperties/initialProperties are declarative expressions i.e. one and
-    // the same URL will not trigger an automatic re-render in the JavaScript
-    // source code. The workaround implemented below introduces imperativeness
-    // in React Component props by defining a unique value per invocation.
-    props[@"timestamp"] = @(mach_absolute_time());
-
-    if (rootView) {
-        // Update props with the new URL.
-        rootView.appProperties = props;
-    } else {
-        RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
-        rootView
-            = [[RNRootView alloc] initWithBridge:bridge
-                                      moduleName:@"App"
-                               initialProperties:props];
-        rootView.backgroundColor = self.backgroundColor;
-
-        // Add rootView as a subview which completely covers this one.
-        [rootView setFrame:[self bounds]];
-        rootView.autoresizingMask
-            = UIViewAutoresizingFlexibleWidth
-                | UIViewAutoresizingFlexibleHeight;
-        [self addSubview:rootView];
-    }
-}
-
-+ (BOOL)setPropsInViews:(NSDictionary *_Nonnull)newProps {
-    BOOL handled = NO;
-
-    if (views) {
-        for (NSString *externalAPIScope in views) {
-            JitsiMeetView *view
-                = [self viewForExternalAPIScope:externalAPIScope];
-
-            if (view) {
-                [view setProps:newProps];
-                handled = YES;
-            }
-        }
-    }
-
-    return handled;
-}
-
-+ (instancetype)viewForExternalAPIScope:(NSString *)externalAPIScope {
-    return [views objectForKey:externalAPIScope];
+   return methodName;
 }
 
 @end

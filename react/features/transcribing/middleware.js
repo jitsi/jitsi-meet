@@ -1,6 +1,7 @@
 // @flow
 
 import { MiddlewareRegistry } from '../base/redux';
+import { toggleRequestingSubtitles } from '../subtitles';
 
 import {
     HIDDEN_PARTICIPANT_JOINED,
@@ -8,6 +9,7 @@ import {
     PARTICIPANT_UPDATED
 } from './../base/participants';
 import {
+    _TRANSCRIBER_JOINED,
     _TRANSCRIBER_LEFT
 } from './actionTypes';
 import {
@@ -34,9 +36,17 @@ MiddlewareRegistry.register(store => next => action => {
     } = store.getState()['features/transcribing'];
 
     switch (action.type) {
-    case _TRANSCRIBER_LEFT:
+    case _TRANSCRIBER_LEFT: {
         store.dispatch(showStoppedTranscribingNotification());
+        const state = store.getState();
+        const { transcription } = state['features/base/config'];
+        const { _requestingSubtitles } = state['features/subtitles'];
+
+        if (_requestingSubtitles && !transcription?.disableStartForAll) {
+            store.dispatch(toggleRequestingSubtitles());
+        }
         break;
+    }
     case HIDDEN_PARTICIPANT_JOINED:
         if (action.displayName
                 && action.displayName === TRANSCRIBER_DISPLAY_NAME) {
@@ -60,6 +70,16 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(hidePendingTranscribingNotification());
         }
 
+        break;
+    }
+    case _TRANSCRIBER_JOINED: {
+        const state = store.getState();
+        const { transcription } = state['features/base/config'];
+        const { _requestingSubtitles } = state['features/subtitles'];
+
+        if (!_requestingSubtitles && !transcription?.disableStartForAll) {
+            store.dispatch(toggleRequestingSubtitles());
+        }
         break;
     }
     }

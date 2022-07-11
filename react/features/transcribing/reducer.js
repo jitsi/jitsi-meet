@@ -1,10 +1,12 @@
+
 import { ReducerRegistry } from '../base/redux';
+
 import {
     _TRANSCRIBER_JOINED,
     _TRANSCRIBER_LEFT,
     _POTENTIAL_TRANSCRIBER_JOINED,
     SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
-} from '../transcribing/actionTypes';
+} from './actionTypes';
 
 /**
  * Returns initial state for transcribing feature part of Redux store.

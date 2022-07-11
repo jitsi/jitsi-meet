@@ -1,23 +1,20 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import {
     getParticipantById,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isLocalParticipantModerator
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
-import { hideRemoteVideoMenu } from '../../actions.native';
 import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
 import AskUnmuteButton from './AskUnmuteButton';
@@ -51,11 +48,6 @@ type Props = {
     participantId: String,
 
     /**
-     * The color-schemed stylesheet of the BottomSheet.
-     */
-    _bottomSheetStyles: StyleType,
-
-    /**
      * The id of the current room.
      */
     _currentRoomId: String,
@@ -81,14 +73,14 @@ type Props = {
     _disableGrantModerator: Boolean,
 
     /**
-     * True if the menu is currently open, false otherwise.
-     */
-    _isOpen: boolean,
-
-    /**
      * Whether the participant is present in the room or not.
      */
     _isParticipantAvailable?: boolean,
+
+    /**
+     * Whether the local participant is moderator or not.
+     */
+    _moderator: boolean,
 
     /**
      * Display name of the participant retrieved from Redux.
@@ -105,9 +97,6 @@ type Props = {
      */
     t: Function
 }
-
-// eslint-disable-next-line prefer-const
-let RemoteVideoMenu_;
 
 /**
  * Class to implement a popup menu that opens upon long pressing a thumbnail.
@@ -137,6 +126,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
             _disableRemoteMute,
             _disableGrantModerator,
             _isParticipantAvailable,
+            _moderator,
             _rooms,
             _currentRoomId,
             participantId,
@@ -146,12 +136,11 @@ class RemoteVideoMenu extends PureComponent<Props> {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participantId,
-            styles: this.props._bottomSheetStyles.buttons
+            styles: bottomSheetStyles.buttons
         };
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { _isParticipantAvailable }>
                 <AskUnmuteButton { ...buttonProps } />
@@ -163,8 +152,10 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
-                <ConnectionStatusButton { ...buttonProps } />
-                {_rooms.length > 1 && <>
+                <ConnectionStatusButton
+                    { ...buttonProps }
+                    afterClick = { undefined } />
+                {_moderator && _rooms.length > 1 && <>
                     <Divider style = { styles.divider } />
                     <View style = { styles.contextMenuItem }>
                         <Text style = { styles.contextMenuItemText }>
@@ -181,8 +172,6 @@ class RemoteVideoMenu extends PureComponent<Props> {
         );
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Callback to hide the {@code RemoteVideoMenu}.
      *
@@ -190,16 +179,8 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideRemoteVideoMenu());
-
-            return true;
-        }
-
-        return false;
+        this.props.dispatch(hideSheet());
     }
-
-    _renderMenuHeader: () => React$Element<any>;
 
     /**
      * Function to render the menu's header.
@@ -207,12 +188,12 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participantId } = this.props;
+        const { participantId } = this.props;
 
         return (
             <View
                 style = { [
-                    _bottomSheetStyles.sheet,
+                    bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
                     participantId = { participantId }
@@ -242,20 +223,18 @@ function _mapStateToProps(state, ownProps) {
     const _rooms = Object.values(getBreakoutRooms(state));
     const _currentRoomId = getCurrentRoomId(state);
     const shouldDisableKick = disableKick || !kickOutEnabled;
+    const moderator = isLocalParticipantModerator(state);
 
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _currentRoomId,
         _disableKick: Boolean(shouldDisableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _disablePrivateChat: Boolean(disablePrivateChat),
-        _isOpen: isDialogOpen(state, RemoteVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
+        _moderator: moderator,
         _participantDisplayName: getParticipantDisplayName(state, participantId),
         _rooms
     };
 }
 
-RemoteVideoMenu_ = translate(connect(_mapStateToProps)(RemoteVideoMenu));
-
-export default RemoteVideoMenu_;
+export default translate(connect(_mapStateToProps)(RemoteVideoMenu));

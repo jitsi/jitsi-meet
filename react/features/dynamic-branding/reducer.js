@@ -6,8 +6,10 @@ import { type Image } from '../virtual-background/constants';
 import {
     SET_DYNAMIC_BRANDING_DATA,
     SET_DYNAMIC_BRANDING_FAILED,
-    SET_DYNAMIC_BRANDING_READY
+    SET_DYNAMIC_BRANDING_READY,
+    UNSET_DYNAMIC_BRANDING
 } from './actionTypes';
+
 
 /**
  * The name of the redux store/state property which is the root of the redux
@@ -194,6 +196,9 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             ...state,
             customizationReady: true
         };
+
+    case UNSET_DYNAMIC_BRANDING:
+        return DEFAULT_STATE;
     }
 
     return state;

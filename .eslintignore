@@ -3,12 +3,10 @@ build/*
 
 # Third-party source code which we (1) do not want to modify or (2) try to
 # modify as little as possible.
-flow-typed/*
 libs/*
 resources/*
 react/features/stream-effects/virtual-background/vendor/*
-load-test/*
-react/features/facial-recognition/resources/*
+react/features/face-landmarks/resources/*
 
 # ESLint will by default ignore its own configuration file. However, there does
 # not seem to be a reason why we will want to risk being inconsistent with our
@@ -16,4 +14,4 @@ react/features/facial-recognition/resources/*
 !.eslintrc.js
 
 # Not worth it.
-actionTypes.js
+actionTypes.ts

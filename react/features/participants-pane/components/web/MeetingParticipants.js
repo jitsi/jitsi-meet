@@ -11,6 +11,7 @@ import participantsPaneTheme from '../../../base/components/themes/participantsP
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
+    getParticipantById,
     getParticipantCountWithFake
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -150,7 +151,15 @@ function MeetingParticipants({
  * @returns {Props}
  */
 function _mapStateToProps(state): Object {
-    const sortedParticipantIds = getSortedParticipantIds(state);
+    let sortedParticipantIds = getSortedParticipantIds(state);
+
+    // Filter out the virtual screenshare participants since we do not want them to be displayed as separate
+    // participants in the participants pane.
+    sortedParticipantIds = sortedParticipantIds.filter(id => {
+        const participant = getParticipantById(state, id);
+
+        return !participant.isVirtualScreenshareParticipant;
+    });
 
     // This is very important as getRemoteParticipants is not changing its reference object
     // and we will not re-render on change, but if count changes we will do

@@ -2,7 +2,6 @@
 
 import {
     createConnectionEvent,
-    inIframe,
     sendAnalytics
 } from '../analytics';
 import { SET_ROOM } from '../base/conference';
@@ -12,6 +11,7 @@ import {
     getURLWithoutParams
 } from '../base/connection';
 import { MiddlewareRegistry } from '../base/redux';
+import { inIframe } from '../base/util/iframeUtils';
 
 import { reloadNow } from './actions';
 import { _getRouteToRender } from './getRouteToRender';

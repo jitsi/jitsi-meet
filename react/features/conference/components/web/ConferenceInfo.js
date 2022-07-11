@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
 import { E2EELabel } from '../../../e2ee';
-import { LocalRecordingLabel } from '../../../local-recording';
 import { RecordingLabel } from '../../../recording';
 import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
@@ -21,6 +20,7 @@ import InsecureRoomNameLabel from './InsecureRoomNameLabel';
 import ParticipantsCount from './ParticipantsCount';
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
 import SubjectText from './SubjectText';
+import ToggleTopPanelLabel from './ToggleTopPanelLabel';
 
 /**
  * The type of the React {@code Component} props of {@link Subject}.
@@ -69,10 +69,6 @@ const COMPONENTS = [
         id: 'recording'
     },
     {
-        Component: LocalRecordingLabel,
-        id: 'local-recording'
-    },
-    {
         Component: RaisedHandsCountLabel,
         id: 'raised-hands-count'
     },
@@ -87,6 +83,10 @@ const COMPONENTS = [
     {
         Component: InsecureRoomNameLabel,
         id: 'insecure-room'
+    },
+    {
+        Component: ToggleTopPanelLabel,
+        id: 'top-panel-toggle'
     }
 ];
 

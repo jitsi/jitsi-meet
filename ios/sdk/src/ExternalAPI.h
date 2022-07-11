@@ -16,6 +16,8 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 
+static NSString * const sendEventNotificationName = @"org.jitsi.meet.SendEvent";
+
 @interface ExternalAPI : RCTEventEmitter<RCTBridgeModule>
 
 - (void)sendHangUp;
@@ -27,5 +29,6 @@
 - (void)closeChat;
 - (void)sendChatMessage:(NSString*)message :(NSString*)to ;
 - (void)sendSetVideoMuted:(BOOL)muted;
+- (void)sendSetClosedCaptionsEnabled:(BOOL)enabled;
 
 @end

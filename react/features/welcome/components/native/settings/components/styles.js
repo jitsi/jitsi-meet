@@ -103,7 +103,7 @@ export default {
      * Global {@code Text} color for the components.
      */
     text: {
-        color: BaseTheme.palette.text02
+        color: BaseTheme.palette.text01
     },
 
     /**

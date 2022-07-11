@@ -2,6 +2,7 @@
 
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import { isLocalParticipantModerator } from '../base/participants/functions';
+import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { MEDIA_TYPE_TO_WHITELIST_STORE_KEY, MEDIA_TYPE_TO_PENDING_STORE_KEY } from './constants';
 
@@ -49,7 +50,7 @@ export const isEnabled = (mediaType: MediaType) => (state: Object) => isEnabledF
 export const isSupported = () => (state: Object) => {
     const { conference } = state['features/base/conference'];
 
-    return conference ? conference.isAVModerationSupported() : false;
+    return Boolean(!isInBreakoutRoom(state) && conference?.isAVModerationSupported());
 };
 
 /**

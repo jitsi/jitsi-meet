@@ -35,11 +35,12 @@ import {
     getLocalParticipant
 } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
-import { toggleScreensharing } from '../../base/tracks';
+import { getLocalTracks, isLocalTrackMuted, toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
 import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
 import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes';
+import { setRequestingSubtitles } from '../../subtitles';
 import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
@@ -372,6 +373,9 @@ function _registerForNativeEvents(store) {
         dispatch(sendMessage(message));
     });
 
+    eventEmitter.addListener(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED, ({ enabled }) => {
+        dispatch(setRequestingSubtitles(enabled));
+    });
 }
 
 /**
@@ -390,6 +394,7 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.OPEN_CHAT);
     eventEmitter.removeAllListeners(ExternalAPI.CLOSE_CHAT);
     eventEmitter.removeAllListeners(ExternalAPI.SEND_CHAT_MESSAGE);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED);
 }
 
 /**
@@ -529,6 +534,11 @@ function _sendConferenceEvent(
     // transport an "equivalent".
     if (conference) {
         data.url = _normalizeUrl(conference[JITSI_CONFERENCE_URL_KEY]);
+
+        const localTracks = getLocalTracks(store.getState()['features/base/tracks']);
+        const isAudioMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.AUDIO);
+
+        data.isAudioMuted = isAudioMuted;
     }
 
     if (_swallowEvent(store, action, data)) {

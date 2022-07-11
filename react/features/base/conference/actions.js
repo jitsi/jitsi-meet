@@ -9,7 +9,7 @@ import {
 import { endpointMessageReceived } from '../../subtitles';
 import { getReplaceParticipant } from '../config/functions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
-import { JitsiConferenceEvents } from '../lib-jitsi-meet';
+import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
     setAudioMuted,
@@ -39,6 +39,7 @@ import { getBackendSafeRoomName } from '../util';
 import {
     AUTH_STATUS_CHANGED,
     CONFERENCE_FAILED,
+    CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_LOCAL_SUBJECT_CHANGED,
@@ -48,12 +49,14 @@ import {
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
+    E2E_RTT_CHANGED,
     KICKED_OUT,
     LOCK_STATE_CHANGED,
     NON_PARTICIPANT_MESSAGE_RECEIVED,
     P2P_STATUS_CHANGED,
     SEND_TONES,
     SET_FOLLOW_ME,
+    SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
     SET_ROOM,
@@ -104,6 +107,9 @@ function _addConferenceListeners(conference, dispatch, state) {
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOINED,
         (...args) => dispatch(conferenceJoined(conference, ...args)));
+    conference.on(
+        JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
+        (...args) => dispatch(conferenceJoinInProgress(conference, ...args)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (...args) => {
@@ -232,6 +238,10 @@ function _addConferenceListeners(conference, dispatch, state) {
         (...args) => dispatch(participantPresenceChanged(...args)));
 
     conference.on(
+        JitsiE2ePingEvents.E2E_RTT_CHANGED,
+        (...args) => dispatch(e2eRttChanged(...args)));
+
+    conference.on(
         JitsiConferenceEvents.BOT_TYPE_CHANGED,
         (id, botType) => dispatch(participantUpdated({
             conference,
@@ -253,6 +263,30 @@ function _addConferenceListeners(conference, dispatch, state) {
             id,
             email: data.value
         })));
+}
+
+
+/**
+ * Create an action for when the end-to-end RTT against a specific remote participant has changed.
+ *
+ * @param {Object} participant - The participant against which the rtt is measured.
+ * @param {number} rtt - The rtt.
+ * @returns {{
+ *     type: E2E_RTT_CHANGED,
+ *     e2eRtt: {
+ *         participant: Object,
+ *         rtt: number
+ *     }
+ * }}
+ */
+export function e2eRttChanged(participant, rtt) {
+    return {
+        type: E2E_RTT_CHANGED,
+        e2eRtt: {
+            rtt,
+            participant
+        }
+    };
 }
 
 /**
@@ -317,6 +351,23 @@ export function conferenceFailed(conference: Object, error: string, ...params: a
 export function conferenceJoined(conference: Object) {
     return {
         type: CONFERENCE_JOINED,
+        conference
+    };
+}
+
+/**
+ * Signals that a specific conference join is in progress.
+ *
+ * @param {JitsiConference} conference - The JitsiConference instance for which join by the local participant
+ * is in progress.
+ * @returns {{
+ *     type: CONFERENCE_JOIN_IN_PROGRESS,
+ *     conference: JitsiConference
+ * }}
+ */
+export function conferenceJoinInProgress(conference: Object) {
+    return {
+        type: CONFERENCE_JOIN_IN_PROGRESS,
         conference
     };
 }
@@ -751,6 +802,24 @@ export function setPassword(
             return Promise.reject();
         }
         }
+    };
+}
+
+/**
+ * Sets the obfuscated room name of the conference to be joined.
+ *
+ * @param {(string)} obfuscatedRoom - Obfuscated room name.
+ * @param {(string)} obfuscatedRoomSource - The room name that was obfuscated.
+ * @returns {{
+ *     type: SET_OBFUSCATED_ROOM,
+ *     room: string
+ * }}
+ */
+export function setObfuscatedRoom(obfuscatedRoom: string, obfuscatedRoomSource: string) {
+    return {
+        type: SET_OBFUSCATED_ROOM,
+        obfuscatedRoom,
+        obfuscatedRoomSource
     };
 }
 

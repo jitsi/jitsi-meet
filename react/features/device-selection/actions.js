@@ -14,36 +14,32 @@ import logger from './logger';
  * Submits the settings related to device selection.
  *
  * @param {Object} newState - The new settings.
+ * @param {boolean} isDisplayedOnWelcomePage - Indicates whether the device selection dialog is displayed on the
+ * welcome page or not.
  * @returns {Function}
  */
-export function submitDeviceSelectionTab(newState) {
+export function submitDeviceSelectionTab(newState, isDisplayedOnWelcomePage) {
     return (dispatch, getState) => {
-        const currentState = getDeviceSelectionDialogProps(getState());
+        const currentState = getDeviceSelectionDialogProps(getState(), isDisplayedOnWelcomePage);
 
-        if (newState.selectedVideoInputId
-            && newState.selectedVideoInputId
-                !== currentState.selectedVideoInputId) {
+        if (newState.selectedVideoInputId && (newState.selectedVideoInputId !== currentState.selectedVideoInputId)) {
             dispatch(updateSettings({
                 userSelectedCameraDeviceId: newState.selectedVideoInputId,
                 userSelectedCameraDeviceLabel:
                     getDeviceLabelById(getState(), newState.selectedVideoInputId, 'videoInput')
             }));
 
-            dispatch(
-                setVideoInputDevice(newState.selectedVideoInputId));
+            dispatch(setVideoInputDevice(newState.selectedVideoInputId));
         }
 
-        if (newState.selectedAudioInputId
-                && newState.selectedAudioInputId
-                  !== currentState.selectedAudioInputId) {
+        if (newState.selectedAudioInputId && newState.selectedAudioInputId !== currentState.selectedAudioInputId) {
             dispatch(updateSettings({
                 userSelectedMicDeviceId: newState.selectedAudioInputId,
                 userSelectedMicDeviceLabel:
                     getDeviceLabelById(getState(), newState.selectedAudioInputId, 'audioInput')
             }));
 
-            dispatch(
-                setAudioInputDevice(newState.selectedAudioInputId));
+            dispatch(setAudioInputDevice(newState.selectedAudioInputId));
         }
 
         if (newState.selectedAudioOutputId

@@ -47,6 +47,21 @@ export type Props = {
     onClick?: Function,
 
     /**
+     * Keydown handler.
+     */
+    onKeyDown?: Function,
+
+    /**
+     * Keypress handler.
+     */
+    onKeyPress?: Function,
+
+    /**
+     * TestId of the element, if any.
+     */
+    testId?: string,
+
+    /**
      * Action text.
      */
     text: string,
@@ -100,6 +115,9 @@ const ContextMenuItem = ({
     id,
     icon,
     onClick,
+    onKeyDown,
+    onKeyPress,
+    testId,
     text,
     textClassName }: Props) => {
     const styles = useStyles();
@@ -107,15 +125,19 @@ const ContextMenuItem = ({
 
     return (
         <div
+            aria-disabled = { disabled }
             aria-label = { accessibilityLabel }
             className = { clsx(styles.contextMenuItem,
                     _overflowDrawer && styles.contextMenuItemDrawer,
                     disabled && styles.contextMenuItemDisabled,
                     className
             ) }
+            data-testid = { testId }
             id = { id }
             key = { text }
-            onClick = { onClick }>
+            onClick = { disabled ? undefined : onClick }
+            onKeyDown = { disabled ? undefined : onKeyDown }
+            onKeyPress = { disabled ? undefined : onKeyPress }>
             {customIcon ? customIcon
                 : icon && <Icon
                     className = { styles.contextMenuItemIcon }

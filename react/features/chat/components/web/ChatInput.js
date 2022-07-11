@@ -219,6 +219,18 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _onDetectSubmit(event) {
+        // Composition events used to add accents to characters
+        // despite their absence from standard US keyboards,
+        // to build up logograms of many Asian languages
+        // from their base components or categories and so on.
+        if (event.isComposing || event.keyCode === 229) {
+            // keyCode 229 means that user pressed some button,
+            // but input method is still processing that.
+            // This is a standard behavior for some input methods
+            // like entering japanese or сhinese hieroglyphs.
+            return;
+        }
+
         if (event.key === 'Enter'
             && event.shiftKey === false
             && event.ctrlKey === false) {

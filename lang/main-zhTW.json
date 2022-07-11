@@ -31,6 +31,7 @@
     },
     "audioDevices": {
         "bluetooth": "藍牙",
+        "car": "汽車音響",
         "headphones": "耳機",
         "none": "沒有可用的音效裝置",
         "phone": "電話",
@@ -38,9 +39,6 @@
     },
     "audioOnly": {
         "audioOnly": "低頻寬"
-    },
-    "blankPage": {
-        "meetingEnded": "會議已結束。"
     },
     "breakoutRooms": {
         "actions": {
@@ -83,6 +81,7 @@
         "enter": "加入聊天室",
         "error": "錯誤：您的訊息未被傳送。原因：{{error}}",
         "fieldPlaceHolder": "在此輸入您的訊息",
+        "lobbyChatMessageTo": "Lobby chat message to {{recipient}}",
         "message": "訊息",
         "messageAccessibleTitle": "{{user}} 說：",
         "messageAccessibleTitleMe": "您說：",
@@ -130,11 +129,11 @@
     },
     "connectionindicator": {
         "address": "位址：",
-        "audio_ssrc": "Audio SSRC：",
+        "audio_ssrc": "音訊 SSRC：",
         "bandwidth": "估計頻寬：",
         "bitrate": "位元率：",
         "bridgeCount": "伺服器數量：",
-        "codecs": "Codecs (A/V)：",
+        "codecs": "編碼 (A/V)：",
         "connectedTo": "已連接至：",
         "e2e_rtt": "E2E RTT：",
         "framerate": "影格率：",
@@ -163,7 +162,7 @@
         "status": "連接：",
         "transport": "傳輸：",
         "transport_plural": "傳輸：",
-        "video_ssrc": "Video SSRC："
+        "video_ssrc": "視訊 SSRC："
     },
     "dateUtils": {
         "earlier": "稍早",
@@ -180,7 +179,8 @@
         "joinInApp": "使用 App 加入會議",
         "launchWebButton": "在瀏覽器開啟",
         "title": "正在 {{app}} 發起您的會議...",
-        "tryAgainButton": "在桌面上再試一次"
+        "tryAgainButton": "在桌面上再試一次",
+        "unsupportedBrowser": "您似乎正在使用我們不支援的瀏覽器。"
     },
     "defaultLink": "例如 {{url}}",
     "defaultNickname": "例如 春嬌 志明",
@@ -207,15 +207,17 @@
         "Remove": "移除",
         "Share": "分享",
         "Submit": "提交",
-        "WaitForHostMsg": "此會議 尚未啟動。如果您是會議主人，請進行認證；否則，請等待會議主人到達。",
+        "WaitForHostMsg": "此會議尚未開始。如果您是主辦人，請進行認證；否則，請等待主辦人到達。",
         "WaitingForHost": "等侯主辦人...",
         "Yes": "是的",
         "accessibilityLabel": {
             "liveStreaming": "直播串流"
         },
         "add": "新增",
+        "addMeetingNote": "新增此會議的備註",
+        "addOptionalNote": "新增備註 (選填)：",
         "allow": "允許",
-        "alreadySharedVideoMsg": "另一位參與者已經進行分享影像了。此會議同個時間只能允許一人分享影像畫面。",
+        "alreadySharedVideoMsg": "另一位參與者已經正在分享影像了。此會議同時僅允許一人分享影像畫面。",
         "alreadySharedVideoTitle": "一次只允許一位影像分享",
         "applicationWindow": "應用程式視窗",
         "authenticationRequired": "需要驗證",
@@ -265,11 +267,13 @@
         "kickParticipantDialog": "您確定要將這位參與者踢出會議嗎？",
         "kickParticipantTitle": "踢出這位參與者？",
         "kickTitle": "噢！{{participantDisplayName}} 已將您踢出會議",
+        "linkMeeting": "連結會議",
+        "linkMeetingTitle": "將會議連結至 Salesforce",
         "liveStreaming": "直播串流中",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "正在錄影，無法使用",
         "liveStreamingDisabledTooltip": "啟動直播串流已停用。",
         "localUserControls": "本機使用者控制",
-        "lockMessage": "鎖定會議失敗。",
+        "lockMessage": "無法鎖定會議。",
         "lockRoom": "增加會議 $t(lockRoomPasswordUppercase)",
         "lockTitle": "鎖定失敗",
         "login": "登入",
@@ -319,6 +323,7 @@
         "popupError": "您的瀏覽器在此網站上阻擋彈出視窗。請在瀏覽器的安全設定中啟用並再試一次。",
         "popupErrorTitle": "彈出視窗遭到阻擋",
         "readMore": "更多",
+        "recentlyUsedObjects": "您近期使用過的物件",
         "recording": "錄影中",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "正在直播時無法使用",
         "recordingDisabledTooltip": "啟動錄影已停用。",
@@ -335,19 +340,25 @@
         "removeSharedVideoMsg": "您確定要移除自己分享的影像嗎？",
         "removeSharedVideoTitle": "移除分享的影像",
         "reservationError": "預約系統錯誤",
-        "reservationErrorMsg": "錯誤碼： {{code}} ， 訊息： {{msg}}",
+        "reservationErrorMsg": "錯誤碼：{{code}}， 訊息：{{msg}}",
         "retry": "重試",
         "screenSharingAudio": "分享音訊",
         "screenSharingFailed": "噢喔！發生錯誤，我們無法啟動螢幕分享！",
         "screenSharingFailedTitle": "螢幕分享失敗！",
         "screenSharingPermissionDeniedError": "噢喔！您的影像分享權限發生問題。請重新載入，再試一次。",
-        "sendPrivateMessage": "您最近有收到私人訊息。您要進行私人回覆，或是要將自己的訊息發佈至群組？",
+        "searchInSalesforce": "在 Salesforce 中搜尋",
+        "searchResults": "搜尋結果 ({{count}})",
+        "searchResultsDetailsError": "取得擁有者資料時發生錯誤。",
+        "searchResultsError": "取得資料時發生錯誤。",
+        "searchResultsNotFound": "找不到任何結果。",
+        "searchResultsTryAgain": "請嘗試使用其他關鍵字。",
+        "sendPrivateMessage": "您最近有收到私人訊息。您要進行私人回覆，還是要將自己的訊息發佈至群組？",
         "sendPrivateMessageCancel": "發佈至群組",
         "sendPrivateMessageOk": "私人回覆",
-        "sendPrivateMessageTitle": "私人傳訊？",
+        "sendPrivateMessageTitle": "私人回覆？",
         "serviceUnavailable": "服務無法使用",
         "sessTerminated": "通話已經終止",
-        "sessionRestarted": "通話被橋接器重新啟動",
+        "sessionRestarted": "通話因連線問題重新啟動。",
         "shareAudio": "繼續",
         "shareAudioTitle": "如何分享音訊",
         "shareAudioWarningD1": "您必須先停止分享畫面才能分享音訊。",
@@ -359,11 +370,13 @@
         "shareScreenWarningD2": "您必須先停止分享音訊，啟動畫面分享，然後勾選 \"分享音訊\" 選項。",
         "shareScreenWarningH1": "如果您只要分享畫面：",
         "shareScreenWarningTitle": "您必須先停止分享音訊才能分享畫面",
-        "shareVideoLinkError": "請提供正確的 YouTube 連結。",
+        "shareVideoLinkError": "請提供正確的影片網址。",
         "shareVideoTitle": "分享影像",
         "shareYourScreen": "分享自己的螢幕",
         "shareYourScreenDisabled": "螢幕分享已停用。",
-        "sharedVideoLinkPlaceholder": "YouTube 或影片連結",
+        "sharedVideoDialogError": "錯誤：網址無效",
+        "sharedVideoLinkPlaceholder": "YouTube 或影片網址",
+        "start": "開始 ",
         "startLiveStreaming": "啟動直播串流",
         "startRecording": "啟動錄影作業",
         "startRemoteControlErrorMessage": "嘗試啟動遠端控制階段時發生錯誤！",
@@ -388,7 +401,7 @@
         "yourEntireScreen": "您的畫面"
     },
     "documentSharing": {
-        "title": "分享的文件"
+        "title": "分享的檔案"
     },
     "e2ee": {
         "labelToolTip": "此通話的音訊及視訊皆已使用端對端加密"
@@ -405,6 +418,10 @@
         "star": "星級",
         "veryBad": "極差",
         "veryGood": "極好"
+    },
+    "giphy": {
+        "noResults": "找不到任何結果 :(",
+        "search": "搜尋 GIPHY"
     },
     "helpView": {
         "header": "說明中心"
@@ -423,8 +440,8 @@
         "conferenceURL": "連結：",
         "copyNumber": "複製號碼",
         "country": "國家",
-        "dialANumber": "要參加您的會議，撥打以下其中一支號碼，然後輸入 PIN 碼。",
-        "dialInConferenceID": "PIN 號碼：",
+        "dialANumber": "若要參加您的會議，請撥打以下其中一支號碼，然後輸入 PIN 碼。",
+        "dialInConferenceID": "PIN 碼：",
         "dialInNotSupported": "抱歉，目前不支援電話撥入。",
         "dialInNumber": "撥入：",
         "dialInSummaryError": "目前解析撥入資訊錯誤。請稍後再試一次。",
@@ -472,6 +489,7 @@
         "focusLocal": "聚焦於自己的影像",
         "focusRemote": "聚焦於另一人的影像",
         "fullScreen": "觀看或離開全螢幕",
+        "giphyMenu": "切換 GIPHY 選單",
         "keyboardShortcuts": "快捷鍵",
         "localRecording": "顯示或隱藏本機端錄影操控",
         "mute": "靜音或解除靜音",
@@ -525,7 +543,8 @@
         "admit": "准許",
         "admitAll": "准許所有人",
         "allow": "允許",
-        "backToKnockModeButton": "沒有密碼，請要求加入",
+        "backToKnockModeButton": "請求加入",
+        "chat": "聊天",
         "dialogTitle": "大廳模式",
         "disableDialogContent": "已開啟大廳模式。此功能能夠確保閒雜人等無法加入您的會議。您確定要停用嗎？",
         "disableDialogSubmit": "停用",
@@ -538,6 +557,7 @@
         "errorMissingPassword": "請輸入會議密碼",
         "invalidPassword": "密碼錯誤",
         "joinRejectedMessage": "您的加入請求遭到管理員拒絕。",
+        "joinRejectedTitle": "加入請求遭拒。",
         "joinTitle": "加入會議",
         "joinWithPasswordMessage": "正在嘗試透過密碼加入，請稍候...",
         "joiningMessage": "一旦他人接受您的請求，即可加入會議",
@@ -546,6 +566,8 @@
         "knockButton": "請求加入",
         "knockTitle": "有人想要加入會議",
         "knockingParticipantList": "要求加入的參與者名單",
+        "lobbyChatStartedNotification": "{{moderator}} 與 {{attendee}} 開始了大廳聊天",
+        "lobbyChatStartedTitle": "{{moderator}} 與您開始了大廳聊天。",
         "nameField": "輸入您的名字",
         "notificationLobbyAccessDenied": "{{originParticipantName}} 拒絕了 {{targetParticipantName}} 的加入請求",
         "notificationLobbyAccessGranted": "{{originParticipantName}} 同意了 {{targetParticipantName}} 的加入請求",
@@ -600,13 +622,15 @@
         "allowedUnmute": "您可以將麥克風解除靜音、開啟視訊，或是分享您的畫面。",
         "audioUnmuteBlockedDescription": "麥克風解除靜音操作由於系統限制而被暫時封鎖。",
         "audioUnmuteBlockedTitle": "麥克風解除靜音遭封鎖！",
+        "chatMessages": "聊天訊息",
         "connectedOneMember": "{{name}} 加入了會議",
         "connectedThreePlusMembers": "{{name}} 及 {{count}} 位人員加入了會議",
         "connectedTwoMembers": "{{first}} 及 {{second}} 加入了會議",
         "disconnected": "已經中斷連接",
+        "displayNotifications": "顯示通知",
         "focus": "會議焦點",
         "focusFail": "{{component}} 無法使用 - 請在 {{ms}} 秒後重試",
-        "grantedTo": "主持人權限已授予 {{to}}！",
+        "gifsMenu": "GIPHY",
         "groupTitle": "通知",
         "hostAskedUnmute": "主持人希望您能解除靜音",
         "invitedOneMember": "{{name}} 已受邀請",
@@ -616,6 +640,12 @@
         "leftOneMember": "{{name}} 已離開會議",
         "leftThreePlusMembers": "{{name}} 和其他人已離開會議",
         "leftTwoMembers": "{{first}} 和 {{second}} 已離開會議",
+        "linkToSalesforce": "連結至 Salesforce",
+        "linkToSalesforceDescription": "您可以將會議摘要連結至 Salesforce 物件。",
+        "linkToSalesforceError": "無法將會議連結至 Salesforce",
+        "linkToSalesforceKey": "連結此會議",
+        "linkToSalesforceProgress": "正在將會議連結至 Salesforce...",
+        "linkToSalesforceSuccess": "會議已連結至 Salesforce",
         "me": "自己",
         "moderationInEffectCSDescription": "若要分享視訊，請舉手",
         "moderationInEffectCSTitle": "內容分享已被管理員停用",
@@ -639,14 +669,18 @@
         "oldElectronClientDescription1": "您似乎正在使用 Jitsi Meet 客戶端的舊版本，其有已知的安全漏洞。請更新到",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！",
+        "participantWantsToJoin": "想要加入會議",
+        "participantsWantToJoin": "想要加入會議",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) 已被其他參與者移除",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) 已被其他參與者設定",
         "raiseHandAction": "舉手",
         "raisedHand": "{{name}} 想要發言。",
+        "raisedHands": "{{participantName}} 和其他 {{raisedHands}} 人",
         "reactionSounds": "停用音效",
         "reactionSoundsForAll": "為所有人停用音效",
         "screenShareNoAudio": "您未在選擇視窗時勾選分享音訊",
         "screenShareNoAudioTitle": "未勾選分享音訊",
+        "selfViewTitle": "您隨時可以在設定中取消隱藏自己的畫面",
         "somebody": "某人",
         "startSilentDescription": "重新加入會議以啟用語音",
         "startSilentTitle": "您加入了會議而無聲音輸出！",
@@ -656,7 +690,9 @@
         "videoMutedRemotelyDescription": "您隨時可以再次啟用。",
         "videoMutedRemotelyTitle": "您的攝影機已被 {{participantDisplayName}} 停用！",
         "videoUnmuteBlockedDescription": "視訊鏡頭解除靜音操作由於系統限制而被暫時封鎖。",
-        "videoUnmuteBlockedTitle": "視訊鏡頭解除靜音遭封鎖！"
+        "videoUnmuteBlockedTitle": "視訊鏡頭解除靜音遭封鎖！",
+        "viewLobby": "檢視大廳",
+        "waitingParticipants": "{{waitingParticipants}} 人"
     },
     "participantsPane": {
         "actions": {
@@ -688,6 +724,7 @@
     },
     "passwordDigitsOnly": "上限為 {{number}} 位數",
     "passwordSetRemotely": "由其他參與者設定",
+    "pinnedParticipant": "參與者被釘選",
     "polls": {
         "answer": {
             "skip": "跳過",
@@ -801,7 +838,20 @@
         "setEmailLabel": "設定您的 Gravatar 電子信箱",
         "title": "簡介"
     },
-    "raisedHand": "請求發言",
+    "raisedHand": "想要發言",
+    "raisedHandsLabel": "舉手人數",
+    "record": {
+        "already": {
+            "linked": "會議已連結至此 Salesforce 物件。"
+        },
+        "type": {
+            "account": "帳號",
+            "contact": "聯絡",
+            "lead": "淺在客戶",
+            "opportunity": "機會",
+            "owner": "擁有者"
+        }
+    },
     "recording": {
         "authDropboxText": "上傳至 Dropbox",
         "availableSpace": "可用空間：{{spaceLeft}} MB (錄影時間大約 {{duration}} 分鐘)",
@@ -816,6 +866,11 @@
         "expandedPending": "錄影正在啟動...",
         "failedToStart": "錄影啟動失敗",
         "fileSharingdescription": "分享錄影給會議參與者",
+        "highlight": "精選",
+        "highlightMoment": "精選時刻",
+        "highlightMomentDisabled": "您可以在錄製開始後精選時刻",
+        "highlightMomentSuccess": "已精選的時刻",
+        "highlightMomentSucessDescription": "您的精選時刻將新增至會議摘要。",
         "inProgress": "正在錄製或直播",
         "limitNotificationDescriptionNative": "由於目前流量過大，您的錄影時間被限制在 {{limit}} 分鐘。若要無限制的錄影，請試試 <3>{{app}}</3>。",
         "limitNotificationDescriptionWeb": "由於目前流量過大，您的錄影時間被限制在 {{limit}} 分鐘。若要無限制的錄影，請試試 <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>。",
@@ -830,6 +885,7 @@
         "rec": "錄影",
         "serviceDescription": "您的錄影會由錄影服務儲存",
         "serviceDescriptionCloud": "雲端錄製",
+        "serviceDescriptionCloudInfo": "已錄製的會議將在 24 小時後自動清除。",
         "serviceName": "錄影服務",
         "sessionAlreadyActive": "已在錄製或直播此工作階段。",
         "signIn": "登入",
@@ -838,8 +894,9 @@
         "unavailableTitle": "錄影無法使用",
         "uploadToCloud": "上傳至雲端"
     },
+    "screenshareDisplayName": "{{name}} 的畫面",
     "sectionList": {
-        "pullToRefresh": "拉下以重新整理"
+        "pullToRefresh": "下拉以重新整理"
     },
     "security": {
         "about": "您可以新增 $t(lockRoomPassword) 至您的會議。參與者在加入會議前必須先輸入 $t(lockRoomPassword)。",
@@ -864,6 +921,7 @@
         "incomingMessage": "新訊息",
         "language": "語言",
         "loggedIn": "以 {{name}} 登入",
+        "maxStageParticipants": "能夠被釘選至主舞台的參與者最大人數",
         "microphones": "麥克風",
         "moderator": "主持人",
         "more": "更多",
@@ -877,6 +935,7 @@
         "selectAudioOutput": "音訊輸出",
         "selectCamera": "攝影裝置",
         "selectMic": "麥克風",
+        "selfView": "自我檢視",
         "sounds": "音效",
         "speakers": "喇叭",
         "startAudioMuted": "全部人啟動時處於靜音",
@@ -915,6 +974,7 @@
     "speakerStats": {
         "angry": "憤怒",
         "disgusted": "作嘔",
+        "displayEmotions": "顯示表情",
         "fearful": "害怕",
         "happy": "開心",
         "hours": "{{count}}時",
@@ -948,6 +1008,7 @@
             "audioOnly": "切換僅聲音",
             "audioRoute": "選擇音訊裝置",
             "boo": "喝倒彩",
+            "breakoutRoom": "加入/離開分組討論室",
             "callQuality": "管理影像品質",
             "cc": "切換字幕",
             "chat": "切換聊天視窗",
@@ -965,7 +1026,9 @@
             "invite": "邀請人員",
             "joy": "笑到流淚",
             "kick": "踢出參與者",
+            "laugh": "大笑",
             "like": "比讚",
+            "linkToSalesforce": "連結至 Salesforce",
             "lobbyButton": "啟用/停用大廳模式",
             "localRecording": "切換本地端錄影控制",
             "lockRoom": "切換會議密碼",
@@ -1027,6 +1090,7 @@
         "exitFullScreen": "離開全螢幕",
         "exitTileView": "跳出格狀檢視",
         "feedback": "回饋",
+        "giphy": "切換 GIPHY 選單",
         "hangup": "離開",
         "help": "說明",
         "invite": "邀請人員",
@@ -1034,6 +1098,7 @@
         "laugh": "大笑",
         "leaveBreakoutRoom": "離開分組討論室",
         "like": "比讚",
+        "linkToSalesforce": "連結至 Salesforce",
         "lobbyButtonDisable": "停用大廳模式",
         "lobbyButtonEnable": "啟用大廳模式",
         "login": "登入",
@@ -1148,13 +1213,18 @@
         "domuteVideoOfOthers": "停用其他人的攝影機",
         "flip": "翻轉",
         "grantModerator": "授予管理員",
+        "hideSelfView": "隱藏自我檢視",
         "kick": "踢出",
         "moderator": "主持人",
         "mute": "參與者處於靜音",
         "muted": "處於靜音",
+        "pinToStage": "釘選至舞台",
         "remoteControl": "開始/停止遠端控制",
+        "screenSharing": "參與者正在分享他們的畫面",
         "show": "顯示在台上",
-        "videoMuted": "已停用攝影機",
+        "showSelfView": "顯示自我檢視",
+        "unpinFromStage": "取消釘選",
+        "videoMuted": "已停用攝影裝置",
         "videomute": "參與者已經停止攝影裝置"
     },
     "virtualBackground": {
@@ -1178,7 +1248,8 @@
         "slightBlur": "稍微模糊",
         "title": "虛擬背景",
         "uploadedImage": "上傳圖片 {{index}}",
-        "webAssemblyWarning": "不支援 WebAssembly"
+        "webAssemblyWarning": "不支援 WebAssembly",
+        "webAssemblyWarningDescription": "WebAssembly 遭停用或不被此連覽器支援"
     },
     "volumeSlider": "音量滑條",
     "welcomepage": {

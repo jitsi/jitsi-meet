@@ -1,14 +1,18 @@
 // @flow
 
 import React from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text, TouchableRipple } from 'react-native-paper';
 
 import { Icon } from '../../../base/icons';
-import BaseTheme from '../../../base/ui/components/BaseTheme';
+import type { StyleType } from '../../../base/styles';
 import styles from '../../../conference/components/native/styles';
 
 type Props = {
+
+    /**
+     * Style of the header button .
+     */
+    buttonStyle?: StyleType,
 
     /**
      * Is the button disabled?
@@ -38,6 +42,7 @@ type Props = {
 
 const HeaderNavigationButton
     = ({
+        buttonStyle,
         disabled,
         label,
         onPress,
@@ -48,19 +53,22 @@ const HeaderNavigationButton
             <>
                 {
                     src ? (
-                        <TouchableOpacity
+                        <TouchableRipple
                             onPress = { onPress }
-                            style = { styles.headerNavigationButton }>
+                            rippleColor = { 'transparent' }
+                            style = { [
+                                buttonStyle,
+                                styles.headerNavigationButton ] } >
                             <Icon
-                                size = { 20 }
+                                size = { 24 }
                                 src = { src }
                                 style = { styles.headerNavigationIcon } />
-                        </TouchableOpacity>
+                        </TouchableRipple>
                     ) : (
                         <TouchableRipple
                             disabled = { disabled }
                             onPress = { onPress }
-                            rippleColor = { BaseTheme.palette.screen01Header }>
+                            rippleColor = { 'transparent' }>
                             <Text
                                 style = {
                                     twoActions

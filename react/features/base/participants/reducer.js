@@ -1,16 +1,20 @@
 // @flow
 
-import { SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED } from '../../video-layout/actionTypes';
+import {
+    SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
+} from '../../video-layout/actionTypes';
 import { ReducerRegistry, set } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    OVERWRITE_PARTICIPANT_NAME,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     RAISE_HAND_UPDATED,
+    SCREENSHARE_PARTICIPANT_NAME_CHANGED,
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
@@ -59,9 +63,12 @@ const DEFAULT_STATE = {
     fakeParticipants: new Map(),
     haveParticipantWithScreenSharingFeature: false,
     local: undefined,
+    localScreenShare: undefined,
+    overwrittenNameList: {},
     pinnedParticipant: undefined,
     raisedHandsQueue: [],
     remote: new Map(),
+    sortedRemoteVirtualScreenshareParticipants: new Map(),
     sortedRemoteParticipants: new Map(),
     sortedRemoteScreenshares: new Map(),
     speakersList: new Map()
@@ -205,9 +212,33 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             ...state
         };
     }
+    case SCREENSHARE_PARTICIPANT_NAME_CHANGED: {
+        const { id, name } = action;
+
+        if (state.sortedRemoteVirtualScreenshareParticipants.has(id)) {
+            state.sortedRemoteVirtualScreenshareParticipants.delete(id);
+
+            const sortedRemoteVirtualScreenshareParticipants = [ ...state.sortedRemoteVirtualScreenshareParticipants ];
+
+            sortedRemoteVirtualScreenshareParticipants.push([ id, name ]);
+            sortedRemoteVirtualScreenshareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
+
+            state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
+        }
+
+        return { ...state };
+    }
+
     case PARTICIPANT_JOINED: {
         const participant = _participantJoined(action);
-        const { id, isFakeParticipant, name, pinned } = participant;
+        const {
+            id,
+            isFakeParticipant,
+            isLocalScreenShare,
+            isVirtualScreenshareParticipant,
+            name,
+            pinned
+        } = participant;
         const { pinnedParticipant, dominantSpeaker } = state;
 
         if (pinned) {
@@ -241,6 +272,13 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             };
         }
 
+        if (isLocalScreenShare) {
+            return {
+                ...state,
+                localScreenShare: participant
+            };
+        }
+
         state.remote.set(id, participant);
 
         // Insert the new participant.
@@ -253,6 +291,14 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         // The sort order of participants is preserved since Map remembers the original insertion order of the keys.
         state.sortedRemoteParticipants = new Map(sortedRemoteParticipants);
 
+        if (isVirtualScreenshareParticipant) {
+            const sortedRemoteVirtualScreenshareParticipants = [ ...state.sortedRemoteVirtualScreenshareParticipants ];
+
+            sortedRemoteVirtualScreenshareParticipants.push([ id, name ]);
+            sortedRemoteVirtualScreenshareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
+
+            state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
+        }
         if (isFakeParticipant) {
             state.fakeParticipants.set(id, participant);
         }
@@ -267,7 +313,15 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         // (and the fact that the local participant "joins" at the beginning of
         // the app and "leaves" at the end of the app).
         const { conference, id } = action.participant;
-        const { fakeParticipants, remote, local, dominantSpeaker, pinnedParticipant } = state;
+        const {
+            fakeParticipants,
+            sortedRemoteVirtualScreenshareParticipants,
+            remote,
+            local,
+            localScreenShare,
+            dominantSpeaker,
+            pinnedParticipant
+        } = state;
         let oldParticipant = remote.get(id);
 
         if (oldParticipant && oldParticipant.conference === conference) {
@@ -275,6 +329,9 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         } else if (local?.id === id) {
             oldParticipant = state.local;
             delete state.local;
+        } else if (localScreenShare?.id === id) {
+            oldParticipant = state.local;
+            delete state.localScreenShare;
         } else {
             // no participant found
             return state;
@@ -324,6 +381,11 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             fakeParticipants.delete(id);
         }
 
+        if (sortedRemoteVirtualScreenshareParticipants.has(id)) {
+            sortedRemoteVirtualScreenshareParticipants.delete(id);
+            state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
+        }
+
         return { ...state };
     }
     case RAISE_HAND_UPDATED: {
@@ -352,6 +414,17 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         state.sortedRemoteScreenshares = new Map(sortedSharesList);
 
         return { ...state };
+    }
+    case OVERWRITE_PARTICIPANT_NAME: {
+        const { id, name } = action;
+
+        return {
+            ...state,
+            overwrittenNameList: {
+                ...state.overwrittenNameList,
+                [id]: name
+            }
+        };
     }
     }
 
@@ -447,6 +520,8 @@ function _participantJoined({ participant }) {
         dominantSpeaker,
         email,
         isFakeParticipant,
+        isVirtualScreenshareParticipant,
+        isLocalScreenShare,
         isReplacing,
         isJigasi,
         loadableAvatarUrl,
@@ -479,6 +554,8 @@ function _participantJoined({ participant }) {
         email,
         id,
         isFakeParticipant,
+        isVirtualScreenshareParticipant,
+        isLocalScreenShare,
         isReplacing,
         isJigasi,
         loadableAvatarUrl,
@@ -500,7 +577,7 @@ function _participantJoined({ participant }) {
  * @returns {boolean} - True if a participant was updated and false otherwise.
  */
 function _updateParticipantProperty(state, id, property, value) {
-    const { remote, local } = state;
+    const { remote, local, localScreenShare } = state;
 
     if (remote.has(id)) {
         remote.set(id, set(remote.get(id), property, value));
@@ -510,6 +587,11 @@ function _updateParticipantProperty(state, id, property, value) {
         // The local participant's ID can chance from something to "local" when
         // not in a conference.
         state.local = set(local, property, value);
+
+        return true;
+
+    } else if (localScreenShare?.id === id) {
+        state.localScreenShare = set(localScreenShare, property, value);
 
         return true;
     }

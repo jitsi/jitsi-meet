@@ -1,6 +1,7 @@
 /* @flow */
 
 import { withStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React, { Component } from 'react';
 
 import { isMobileBrowser } from '../../../features/base/environment/utils';
@@ -91,6 +92,11 @@ type Props = {
     isLocalVideo: boolean,
 
     /**
+     * Whether or not the statistics are for screen share.
+     */
+    isVirtualScreenshareParticipant: boolean,
+
+    /**
      * The send-side max enabled resolution (aka the highest layer that is not
      * suspended on the send-side).
      */
@@ -155,7 +161,12 @@ type Props = {
     /**
      * Statistics related to transports.
      */
-    transport: Array<Object>
+    transport: Array<Object>,
+
+    /**
+     * Whether source name signaling is enabled.
+     */
+    sourceNameSignalingEnabled: boolean
 };
 
 /**
@@ -172,15 +183,48 @@ function onClick(event) {
 
 const styles = theme => {
     return {
+        actions: {
+            margin: '10px auto',
+            textAlign: 'center'
+        },
+        connectionStatsTable: {
+            '&, & > table': {
+                fontSize: '12px',
+                fontWeight: '400',
+
+                '& td': {
+                    padding: '2px 0'
+                }
+            },
+            '& > table': {
+                whiteSpace: 'nowrap'
+            },
+
+            '& td:nth-child(n-1)': {
+                paddingLeft: '5px'
+            },
+
+            '& $upload, & $download': {
+                marginRight: '2px'
+            }
+        },
         contextMenu: {
             position: 'relative',
             marginTop: 0,
             right: 'auto',
             padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
-            marginLeft: '4px',
-            marginRight: '4px',
-            marginBottom: '4px'
-        }
+            marginLeft: `${theme.spacing(1)}px`,
+            marginRight: `${theme.spacing(1)}px`,
+            marginBottom: `${theme.spacing(1)}px`
+        },
+        download: {},
+        mobile: {
+            margin: `${theme.spacing(3)}px`
+        },
+        status: {
+            fontWeight: 'bold'
+        },
+        upload: {}
     };
 };
 
@@ -197,8 +241,18 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { isLocalVideo, enableSaveLogs, disableShowMoreStats, classes } = this.props;
-        const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
+        const {
+            classes,
+            disableShowMoreStats,
+            enableSaveLogs,
+            isVirtualScreenshareParticipant,
+            isLocalVideo
+        } = this.props;
+        const className = clsx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() });
+
+        if (isVirtualScreenshareParticipant) {
+            return this._renderScreenShareStatus();
+        }
 
         return (
             <ContextMenu
@@ -209,7 +263,7 @@ class ConnectionStatsTable extends Component<Props> {
                     className = { className }
                     onClick = { onClick }>
                     { this._renderStatistics() }
-                    <div className = 'connection-actions'>
+                    <div className = { classes.actions }>
                         { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
                         { !disableShowMoreStats && this._renderShowMoreLink() }
                     </div>
@@ -217,6 +271,31 @@ class ConnectionStatsTable extends Component<Props> {
                 </div>
             </ContextMenu>
         );
+    }
+
+    /**
+     * Creates a ReactElement that will display connection statistics for a screen share thumbnail.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderScreenShareStatus() {
+        const { classes } = this.props;
+        const className = clsx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() });
+
+        return (<ContextMenu
+            className = { classes.contextMenu }
+            hidden = { false }
+            inDrawer = { true }>
+            <div
+                className = { className }
+                onClick = { onClick }>
+                <tbody>
+                    { this._renderResolution() }
+                    { this._renderFrameRate() }
+                </tbody>
+            </div>
+        </ContextMenu>);
     }
 
     /**
@@ -230,7 +309,7 @@ class ConnectionStatsTable extends Component<Props> {
         const { isLocalVideo } = this.props;
 
         return (
-            <table className = 'connection-info__container'>
+            <table>
                 <tbody>
                     { isLocalVideo ? this._renderBandwidth() : null }
                     { isLocalVideo ? this._renderTransport() : null }
@@ -251,6 +330,7 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderBandwidth() {
+        const { classes } = this.props;
         const { download, upload } = this.props.bandwidth || {};
 
         return (
@@ -259,11 +339,11 @@ class ConnectionStatsTable extends Component<Props> {
                     { this.props.t('connectionindicator.bandwidth') }
                 </td>
                 <td>
-                    <span className = 'connection-info__download'>
+                    <span className = { classes.download }>
                         &darr;
                     </span>
                     { download ? `${download} Kbps` : 'N/A' }
-                    <span className = 'connection-info__upload'>
+                    <span className = { classes.upload }>
                         &uarr;
                     </span>
                     { upload ? `${upload} Kbps` : 'N/A' }
@@ -280,6 +360,7 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderBitrate() {
+        const { classes } = this.props;
         const { download, upload } = this.props.bitrate || {};
 
         return (
@@ -290,11 +371,11 @@ class ConnectionStatsTable extends Component<Props> {
                     </span>
                 </td>
                 <td>
-                    <span className = 'connection-info__download'>
+                    <span className = { classes.download }>
                         &darr;
                     </span>
                     { download ? `${download} Kbps` : 'N/A' }
-                    <span className = 'connection-info__upload'>
+                    <span className = { classes.upload }>
                         &uarr;
                     </span>
                     { upload ? `${upload} Kbps` : 'N/A' }
@@ -371,7 +452,7 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderCodecs() {
-        const { codec, t } = this.props;
+        const { codec, t, sourceNameSignalingEnabled } = this.props;
 
         if (!codec) {
             return;
@@ -379,13 +460,17 @@ class ConnectionStatsTable extends Component<Props> {
 
         let codecString;
 
-        // Only report one codec, in case there are multiple for a user.
-        Object.keys(codec || {})
-            .forEach(ssrc => {
-                const { audio, video } = codec[ssrc];
+        if (sourceNameSignalingEnabled) {
+            codecString = `${codec.audio}, ${codec.video}`;
+        } else {
+            // Only report one codec, in case there are multiple for a user.
+            Object.keys(codec || {})
+                .forEach(ssrc => {
+                    const { audio, video } = codec[ssrc];
 
-                codecString = `${audio}, ${video}`;
-            });
+                    codecString = `${audio}, ${video}`;
+                });
+        }
 
         if (!codecString) {
             codecString = 'N/A';
@@ -410,8 +495,10 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderConnectionSummary() {
+        const { classes } = this.props;
+
         return (
-            <tr className = 'connection-info__status'>
+            <tr className = { classes.status }>
                 <td>
                     <span>{ this.props.t('connectionindicator.status') }</span>
                 </td>
@@ -504,10 +591,17 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderFrameRate() {
-        const { framerate, t } = this.props;
-        const frameRateString = Object.keys(framerate || {})
-            .map(ssrc => framerate[ssrc])
-            .join(', ') || 'N/A';
+        const { framerate, t, sourceNameSignalingEnabled } = this.props;
+
+        let frameRateString;
+
+        if (sourceNameSignalingEnabled) {
+            frameRateString = framerate || 'N/A';
+        } else {
+            frameRateString = Object.keys(framerate || {})
+                .map(ssrc => framerate[ssrc])
+                .join(', ') || 'N/A';
+        }
 
         return (
             <tr>
@@ -527,7 +621,7 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderPacketLoss() {
-        const { packetLoss, t } = this.props;
+        const { classes, packetLoss, t } = this.props;
         let packetLossTableData;
 
         if (packetLoss) {
@@ -535,11 +629,11 @@ class ConnectionStatsTable extends Component<Props> {
 
             packetLossTableData = (
                 <td>
-                    <span className = 'connection-info__download'>
+                    <span className = { classes.download }>
                         &darr;
                     </span>
                     { download === null ? 'N/A' : `${download}%` }
-                    <span className = 'connection-info__upload'>
+                    <span className = { classes.upload }>
                         &uarr;
                     </span>
                     { upload === null ? 'N/A' : `${upload}%` }
@@ -569,14 +663,20 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderResolution() {
-        const { resolution, maxEnabledResolution, t } = this.props;
-        let resolutionString = Object.keys(resolution || {})
-            .map(ssrc => {
-                const { width, height } = resolution[ssrc];
+        const { resolution, maxEnabledResolution, t, sourceNameSignalingEnabled } = this.props;
+        let resolutionString;
 
-                return `${width}x${height}`;
-            })
-            .join(', ') || 'N/A';
+        if (sourceNameSignalingEnabled) {
+            resolutionString = resolution ? `${resolution.width}x${resolution.height}` : 'N/A';
+        } else {
+            resolutionString = Object.keys(resolution || {})
+                .map(ssrc => {
+                    const { width, height } = resolution[ssrc];
+
+                    return `${width}x${height}`;
+                })
+                .join(', ') || 'N/A';
+        }
 
         if (maxEnabledResolution && maxEnabledResolution < 720) {
             const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
@@ -650,7 +750,7 @@ class ConnectionStatsTable extends Component<Props> {
         const isRemoteVideo = !this.props.isLocalVideo;
 
         return (
-            <table className = 'connection-info__container'>
+            <table>
                 <tbody>
                     { this._renderConnectionSummary() }
                     { this._renderBitrate() }

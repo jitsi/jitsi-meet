@@ -4,6 +4,7 @@ import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
+import { browser } from '../lib-jitsi-meet';
 import { parseURLParams } from '../util';
 
 import CONFIG_WHITELIST from './configWhitelist';
@@ -12,7 +13,7 @@ import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
 // XXX The function getRoomName is split out of
-// functions.js because it is bundled in both app.bundle and
+// functions.any.js because it is bundled in both app.bundle and
 // do_external_connect, webpack 1 does not support tree shaking, and we don't
 // want all functions to be bundled in do_external_connect.
 export { default as getRoomName } from './getRoomName';
@@ -47,6 +48,27 @@ export function createFakeConfig(baseURL: string) {
  */
 export function getMeetingRegion(state: Object) {
     return state['features/base/config']?.deploymentInfo?.region || '';
+}
+
+/**
+ * Selector for determining if receiving multiple stream support is enabled.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getMultipleVideoSupportFeatureFlag(state: Object) {
+    return getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
+        && getSourceNameSignalingFeatureFlag(state);
+}
+
+/**
+ * Selector for determining if sending multiple stream support is enabled.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getMultipleVideoSendingSupportFeatureFlag(state: Object) {
+    return getMultipleVideoSupportFeatureFlag(state) && isUnifiedPlanEnabled(state);
 }
 
 /**
@@ -194,6 +216,19 @@ export function isNameReadOnly(state: Object): boolean {
  */
 export function isDisplayNameVisible(state: Object): boolean {
     return !state['features/base/config'].hideDisplayName;
+}
+
+/**
+ * Selector for determining if Unified plan support is enabled.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isUnifiedPlanEnabled(state: Object): boolean {
+    const { enableUnifiedOnChrome = true } = state['features/base/config'];
+
+    return browser.supportsUnifiedPlan()
+        && (!browser.isChromiumBased() || (browser.isChromiumBased() && enableUnifiedOnChrome));
 }
 
 /**

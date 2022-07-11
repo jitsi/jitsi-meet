@@ -15,7 +15,6 @@ import {
     NOTIFICATION_TIMEOUT_TYPE,
     showErrorNotification
 } from '../../notifications';
-import { showSalesforceNotification } from '../../salesforce';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { validateJwt } from '../jwt';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
@@ -239,9 +238,6 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
         && !conference.isHidden()) {
         dispatch(openDisplayNamePrompt(undefined));
     }
-
-
-    dispatch(showSalesforceNotification());
 
     return result;
 }

@@ -8,7 +8,7 @@ import { translate } from '../../../base/i18n';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
+import { getSourceNameByParticipantId, getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionStatsTable } from '../../../connection-stats';
 import { saveLogs } from '../../actions';
 import {
@@ -88,6 +88,12 @@ type Props = AbstractProps & {
     _enableSaveLogs: boolean,
 
     /**
+     * Whether or not the displays stats are for screen share. This prop is behind the sourceNameSignaling feature
+     * flag.
+     */
+    _isVirtualScreenshareParticipant: Boolean,
+
+    /**
      * Whether or not the displays stats are for local video.
      */
     _isLocalVideo: boolean,
@@ -125,7 +131,17 @@ type Props = AbstractProps & {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The source name of the track.
+     */
+    _sourceName: string,
+
+    /**
+     * Whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: boolean
 };
 
 /**
@@ -200,6 +216,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 enableSaveLogs = { this.props._enableSaveLogs }
                 framerate = { framerate }
                 isLocalVideo = { this.props._isLocalVideo }
+                isVirtualScreenshareParticipant = { this.props._isVirtualScreenshareParticipant }
                 maxEnabledResolution = { maxEnabledResolution }
                 onSaveLogs = { this.props._onSaveLogs }
                 onShowMore = { this._onToggleShowMore }
@@ -209,6 +226,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 resolution = { resolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
+                sourceNameSignalingEnabled = { this.props._sourceNameSignalingEnabled }
                 transport = { transport }
                 videoSsrc = { this.props._videoSsrc } />
         );
@@ -334,10 +352,13 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _connectionStatus: participant?.connectionStatus,
         _enableSaveLogs: state['features/base/config'].enableSaveLogs,
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
+        _isConnectionStatusInactive,
+        _isConnectionStatusInterrupted,
+        _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant,
         _isLocalVideo: participant?.local,
         _region: participant?.region,
-        _isConnectionStatusInactive,
-        _isConnectionStatusInterrupted
+        _sourceName: getSourceNameByParticipantId(state, participantId),
+        _sourceNameSignalingEnabled: sourceNameSignalingEnabled
     };
 
     if (conference) {

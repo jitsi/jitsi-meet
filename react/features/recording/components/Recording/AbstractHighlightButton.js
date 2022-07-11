@@ -1,17 +1,38 @@
 // @flow
 
 import { Component } from 'react';
+import { batch } from 'react-redux';
 
 import { getActiveSession, isHighlightMeetingMomentDisabled } from '../..';
+import { openDialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import {
+    hideNotification,
+    NOTIFICATION_TIMEOUT_TYPE,
+    NOTIFICATION_TYPE,
+    showNotification
+} from '../../../notifications';
 import { highlightMeetingMoment } from '../../actions.any';
+import { StartRecordingDialog } from '../../components';
+import { PROMPT_RECORDING_NOTIFICATION_ID } from '../../constants';
+import { getRecordButtonProps } from '../../functions';
 
 export type Props = {
 
     /**
-     * Whether or not the conference is in audio only mode.
+     * Indicates whether or not the button is disabled.
      */
-    _audioOnly: boolean,
+    _disabled: boolean,
+
+    /**
+     * Indicates whether or not a highlight request is in progress.
+     */
+    _isHighlightInProgress: boolean,
+
+    /**
+     * Indicates whether or not the button should be visible.
+     */
+    _visible: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -24,7 +45,7 @@ export type Props = {
  */
 export default class AbstractHighlightButton<P: Props> extends Component<P> {
     /**
-     * Initializes a new AbstractVideoTrack instance.
+     * Initializes a new AbstractHighlightButton instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -43,20 +64,42 @@ export default class AbstractHighlightButton<P: Props> extends Component<P> {
    * @returns {void}
    */
     _onClick() {
-        const { dispatch } = this.props;
+        const { _disabled, _isHighlightInProgress, dispatch } = this.props;
 
-        dispatch(highlightMeetingMoment());
+        if (_isHighlightInProgress) {
+            return;
+        }
+
+        if (_disabled) {
+            dispatch(showNotification({
+                descriptionKey: 'recording.highlightMomentDisabled',
+                titleKey: 'recording.highlightMoment',
+                uid: PROMPT_RECORDING_NOTIFICATION_ID,
+                customActionNameKey: [ 'localRecording.start' ],
+                customActionHandler: [ () => {
+                    batch(() => {
+                        dispatch(hideNotification(PROMPT_RECORDING_NOTIFICATION_ID));
+                        dispatch(openDialog(StartRecordingDialog));
+                    });
+                } ],
+                appearance: NOTIFICATION_TYPE.NORMAL
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        } else {
+            dispatch(highlightMeetingMoment());
+        }
     }
 }
 
 /**
  * Maps (parts of) the Redux state to the associated
- * {@code AbstractVideoQualityLabel}'s props.
+ * {@code AbstractHighlightButton}'s props.
  *
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioOnly: boolean
+ *     _disabled: boolean,
+ *     _isHighlightInProgress: boolean,
+ *     _visible: boolean
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
@@ -64,8 +107,17 @@ export function _abstractMapStateToProps(state: Object) {
     const isButtonDisabled = isHighlightMeetingMomentDisabled(state);
     const { webhookProxyUrl } = state['features/base/config'];
 
+    const {
+        disabled: isRecordButtonDisabled,
+        visible: isRecordButtonVisible
+    } = getRecordButtonProps(state);
+
+    const canStartRecording = isRecordButtonVisible && !isRecordButtonDisabled;
+    const _visible = (canStartRecording || isRecordingRunning) && Boolean(webhookProxyUrl);
+
     return {
-        _disabled: !isRecordingRunning || isButtonDisabled,
-        _visible: Boolean(webhookProxyUrl)
+        _disabled: !isRecordingRunning,
+        _isHighlightInProgress: isButtonDisabled,
+        _visible
     };
 }

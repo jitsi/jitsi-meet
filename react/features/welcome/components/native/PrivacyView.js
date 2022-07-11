@@ -29,7 +29,7 @@ const PrivacyView = ({ navigation }: Props) => {
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.jumpTo(screen.welcome.main))
+                    navigation.navigate(screen.welcome.main))
         });
     });
 

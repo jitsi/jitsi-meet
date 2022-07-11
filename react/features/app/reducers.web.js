@@ -2,10 +2,8 @@
 
 import '../base/devices/reducer';
 import '../e2ee/reducer';
-import '../face-centering/reducer';
-import '../facial-recognition/reducer';
+import '../face-landmarks/reducer';
 import '../feedback/reducer';
-import '../local-recording/reducer';
 import '../no-audio-signal/reducer';
 import '../noise-detection/reducer';
 import '../participants-pane/reducer';

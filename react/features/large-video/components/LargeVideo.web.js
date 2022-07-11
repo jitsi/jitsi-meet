@@ -6,7 +6,7 @@ import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { setColorAlpha } from '../../base/util';
-import { DominantSpeakerName } from '../../display-name';
+import { StageParticipantNameLabel } from '../../display-name';
 import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../filmstrip';
 import { getVerticalViewMaxWidth } from '../../filmstrip/functions.web';
 import { SharedVideo } from '../../shared-video/components/web';
@@ -175,7 +175,7 @@ class LargeVideo extends Component<Props> {
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
                     || <Captions /> }
-                {_showDominantSpeakerBadge && <DominantSpeakerName />}
+                {_showDominantSpeakerBadge && <StageParticipantNameLabel />}
             </div>
         );
     }

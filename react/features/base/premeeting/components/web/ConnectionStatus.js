@@ -1,10 +1,12 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useState } from 'react';
 
 import { translate } from '../../../i18n';
 import { Icon, IconArrowDownSmall, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons';
 import { connect } from '../../../redux';
+import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
 import { CONNECTION_TYPE } from '../../constants';
 import { getConnectionData } from '../../functions';
 
@@ -25,6 +27,99 @@ type Props = {
      */
     t: Function
 }
+
+const useStyles = makeStyles(theme => {
+    return {
+        connectionStatus: {
+            borderRadius: '6px',
+            color: '#fff',
+            fontSize: '12px',
+            letterSpacing: '0.16px',
+            lineHeight: '16px',
+            position: 'absolute',
+            width: '100%',
+
+            [theme.breakpoints.down('400')]: {
+                margin: 0,
+                width: '100%'
+            },
+
+            '@media (max-width: 720px)': {
+                margin: `${theme.spacing(4)} auto`,
+                position: 'fixed',
+                top: 0,
+                width: PREJOIN_DEFAULT_CONTENT_WIDTH
+            },
+
+            // mobile phone landscape
+            '@media (max-height: 420px)': {
+                display: 'none'
+            },
+
+            '& .con-status-header': {
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                alignItems: 'center',
+                display: 'flex',
+                padding: '14px 16px'
+            },
+
+            '& .con-status-circle': {
+                borderRadius: '50%',
+                display: 'inline-block',
+                padding: theme.spacing(1),
+                marginRight: theme.spacing(3)
+            },
+
+            '& .con-status--good': {
+                background: '#31B76A'
+            },
+
+            '& .con-status--poor': {
+                background: '#E12D2D'
+            },
+
+            '& .con-status--non-optimal': {
+                background: '#E39623'
+            },
+
+            '& .con-status-arrow': {
+                marginLeft: 'auto',
+                transition: 'background-color 0.16s ease-out'
+            },
+
+            '& .con-status-arrow--up': {
+                transform: 'rotate(180deg)'
+            },
+
+            '& .con-status-arrow > svg': {
+                cursor: 'pointer'
+            },
+
+            '& .con-status-arrow:hover': {
+                backgroundColor: 'rgba(1, 1, 1, 0.1)'
+            },
+
+            '& .con-status-text': {
+                textAlign: 'center'
+            },
+
+            '& .con-status-details': {
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                borderTop: '1px solid #5E6D7A',
+                padding: theme.spacing(3),
+                transition: 'opacity 0.16s ease-out'
+            },
+
+            '& .con-status-details-visible': {
+                opacity: 1
+            },
+
+            '& .con-status-details-hidden': {
+                opacity: 0
+            }
+        }
+    };
+});
 
 const CONNECTION_TYPE_MAP = {
     [CONNECTION_TYPE.POOR]: {
@@ -51,11 +146,8 @@ const CONNECTION_TYPE_MAP = {
  * @returns {ReactElement}
  */
 function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
-    if (connectionType === CONNECTION_TYPE.NONE) {
-        return null;
-    }
+    const classes = useStyles();
 
-    const { connectionClass, icon, connectionText } = CONNECTION_TYPE_MAP[connectionType];
     const [ showDetails, toggleDetails ] = useState(false);
     const arrowClassName = showDetails
         ? 'con-status-arrow con-status-arrow--up'
@@ -77,8 +169,14 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
         }
     }, [ showDetails, toggleDetails ]);
 
+    if (connectionType === CONNECTION_TYPE.NONE) {
+        return null;
+    }
+
+    const { connectionClass, icon, connectionText } = CONNECTION_TYPE_MAP[connectionType];
+
     return (
-        <div className = 'con-status'>
+        <div className = { classes.connectionStatus }>
             <div
                 aria-level = { 1 }
                 className = 'con-status-header'

@@ -11,7 +11,10 @@ import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
-import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
+import {
+    getVirtualScreenshareParticipantTrack,
+    getSourceNameByParticipantId,
+    getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import {
     isParticipantConnectionStatusInactive,
     isParticipantConnectionStatusInterrupted,
@@ -124,6 +127,16 @@ type Props = AbstractProps & {
      * Invoked to obtain translated strings.
      */
     t: Function,
+
+    /**
+     * The source name of the track.
+     */
+    _sourceName: string,
+
+    /**
+     * Whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: boolean
 };
 
 type State = AbstractState & {
@@ -366,11 +379,17 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const { participantId } = ownProps;
+    const tracks = state['features/base/tracks'];
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
-    const firstVideoTrack = getTrackByMediaTypeAndParticipant(
-        state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
-
     const participant = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
+
+    let firstVideoTrack;
+
+    if (sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant) {
+        firstVideoTrack = getVirtualScreenshareParticipantTrack(tracks, participantId);
+    } else {
+        firstVideoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+    }
 
     const _isConnectionStatusInactive = sourceNameSignalingEnabled
         ? isTrackStreamingStatusInactive(firstVideoTrack)
@@ -386,7 +405,9 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _popoverDisabled: state['features/base/config'].connectionIndicators?.disableDetails,
         _videoTrack: firstVideoTrack,
         _isConnectionStatusInactive,
-        _isConnectionStatusInterrupted
+        _isConnectionStatusInterrupted,
+        _sourceName: getSourceNameByParticipantId(state, participantId),
+        _sourceNameSignalingEnabled: sourceNameSignalingEnabled
     };
 }
 export default translate(connect(_mapStateToProps)(

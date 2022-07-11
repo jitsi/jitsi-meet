@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 import { FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getLocalParticipant } from '../../../base/participants';
 import { Platform } from '../../../base/react';
@@ -11,7 +11,12 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { isToolboxVisible } from '../../../toolbox/functions';
 import { setVisibleRemoteParticipants } from '../../actions';
-import { isFilmstripVisible, shouldRemoteVideosBeVisible } from '../../functions';
+import {
+    getFilmstripDimensions,
+    isFilmstripVisible,
+    shouldDisplayLocalThumbnailSeparately,
+    shouldRemoteVideosBeVisible
+} from '../../functions';
 
 import LocalThumbnail from './LocalThumbnail';
 import Thumbnail from './Thumbnail';
@@ -60,6 +65,11 @@ type Props = {
      * Invoked to trigger state changes in Redux.
      */
     dispatch: Function,
+
+    /**
+     * Object containing the safe area insets.
+     */
+    insets: Object,
 };
 
 /**
@@ -105,7 +115,7 @@ class Filmstrip extends PureComponent<Props> {
         // indicators such as moderator, audio and video muted, etc. For now we
         // do not have much of a choice but to continue rendering LocalThumbnail
         // as any other remote Thumbnail on Android.
-        this._separateLocalThumbnail = Platform.OS !== 'android';
+        this._separateLocalThumbnail = shouldDisplayLocalThumbnailSeparately();
 
         this._viewabilityConfig = {
             itemVisiblePercentThreshold: 30,
@@ -136,20 +146,23 @@ class Filmstrip extends PureComponent<Props> {
      * @returns {Object} - The width and the height.
      */
     _getDimensions() {
-        const { _aspectRatio, _clientWidth, _clientHeight } = this.props;
-        const { height, width, margin } = styles.thumbnail;
+        const {
+            _aspectRatio,
+            _clientWidth,
+            _clientHeight,
+            _disableSelfView,
+            _localParticipantId,
+            insets
+        } = this.props;
+        const localParticipantVisible = Boolean(_localParticipantId) && !_disableSelfView;
 
-        if (_aspectRatio === ASPECT_RATIO_NARROW) {
-            return {
-                height,
-                width: this._separateLocalThumbnail ? _clientWidth - width - (margin * 2) : _clientWidth
-            };
-        }
-
-        return {
-            height: this._separateLocalThumbnail ? _clientHeight - height - (margin * 2) : _clientHeight,
-            width
-        };
+        return getFilmstripDimensions({
+            aspectRatio: _aspectRatio,
+            clientHeight: _clientHeight,
+            clientWidth: _clientWidth,
+            insets,
+            localParticipantVisible
+        });
     }
 
     _getItemLayout: (?Array<string>, number) => {length: number, offset: number, index: number};
@@ -312,7 +325,7 @@ function _mapStateToProps(state) {
     const responsiveUI = state['features/base/responsive-ui'];
 
     return {
-        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
+        _aspectRatio: responsiveUI.aspectRatio,
         _clientHeight: responsiveUI.clientHeight,
         _clientWidth: responsiveUI.clientWidth,
         _disableSelfView: disableSelfView,
@@ -323,4 +336,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(Filmstrip);
+export default withSafeAreaInsets(connect(_mapStateToProps)(Filmstrip));

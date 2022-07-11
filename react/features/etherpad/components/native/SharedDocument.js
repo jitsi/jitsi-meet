@@ -1,18 +1,11 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-import { IconArrowBack } from '../../../base/icons';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import HeaderNavigationButton
-    from '../../../mobile/navigation/components/HeaderNavigationButton';
-import { goBack } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { getSharedDocumentUrl } from '../../functions';
 
 import styles, { INDICATOR_COLOR } from './styles';
@@ -26,11 +19,6 @@ type Props = {
      * URL for the shared document.
      */
     _documentUrl: string,
-
-    /**
-     * Color schemed style of the header component.
-     */
-    _headerStyles: Object,
 
     /**
      * Default prop for navigation between screen components(React Navigation).
@@ -59,25 +47,6 @@ class SharedDocument extends PureComponent<Props> {
     }
 
     /**
-     * Implements React's {@link Component#componentDidMount()}. Invoked
-     * immediately after this component is mounted.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        const { navigation } = this.props;
-
-        navigation.setOptions({
-            headerLeft: () => (
-                <HeaderNavigationButton
-                    onPress = { goBack }
-                    src = { IconArrowBack } />
-            )
-        });
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -90,14 +59,14 @@ class SharedDocument extends PureComponent<Props> {
                 addHeaderHeightValue = { true }
                 style = { styles.sharedDocContainer }>
                 <WebView
+                    hideKeyboardAccessoryView = { true }
                     renderLoading = { this._renderLoading }
                     source = {{ uri: _documentUrl }}
-                    startInLoadingState = { true } />
+                    startInLoadingState = { true }
+                    style = { styles.sharedDoc } />
             </JitsiScreen>
         );
     }
-
-    _renderLoading: () => React$Component<any>;
 
     /**
      * Renders the loading indicator.
@@ -126,8 +95,7 @@ export function _mapStateToProps(state: Object) {
     const documentUrl = getSharedDocumentUrl(state);
 
     return {
-        _documentUrl: documentUrl,
-        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+        _documentUrl: documentUrl
     };
 }
 

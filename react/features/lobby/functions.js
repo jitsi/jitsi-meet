@@ -58,7 +58,7 @@ export function showLobbyChatButton(
         const { lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
         const conference = getCurrentConference(state);
 
-        const lobbyLocalId = conference.myLobbyUserId();
+        const lobbyLocalId = conference?.myLobbyUserId();
 
         if (!enableLobbyChat) {
             return false;

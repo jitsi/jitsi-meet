@@ -48,4 +48,10 @@ public class BroadcastIntentHelper {
         intent.putExtra("muted", muted);
         return intent;
     }
+
+    public static Intent buildSetClosedCaptionsEnabledIntent(boolean enabled) {
+        Intent intent = new Intent(BroadcastAction.Type.SET_CLOSED_CAPTIONS_ENABLED.getAction());
+        intent.putExtra("enabled", enabled);
+        return intent;
+    }
 }

@@ -1,6 +1,5 @@
 // @flow
 
-import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { SMALL_THUMBNAIL_SIZE } from '../../constants';
 
@@ -171,31 +170,10 @@ export default {
     thumbnailDominantSpeaker: {
         borderWidth: 4,
         borderColor: BaseTheme.palette.action01Hover
-    }
-};
-
-/**
- * Color schemed styles for the @{code Thumbnail} component.
- */
-ColorSchemeRegistry.register('Thumbnail', {
-
-    /**
-     * Tinting style of the on-stage participant thumbnail.
-     */
-    activeThumbnailTint: {
-        backgroundColor: schemeColor('activeParticipantTint')
     },
 
-    /**
-     * Pinned video thumbnail style.
-     */
-    thumbnailPinned: {
-        borderColor: schemeColor('activeParticipantHighlight'),
-        shadowColor: schemeColor('activeParticipantHighlight'),
-        shadowOffset: {
-            height: 5,
-            width: 5
-        },
-        shadowRadius: 5
+    thumbnailGif: {
+        flexGrow: 1,
+        resizeMode: 'contain'
     }
-});
+};

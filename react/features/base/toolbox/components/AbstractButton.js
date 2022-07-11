@@ -21,6 +21,11 @@ export type Props = {|
     buttonKey?: string,
 
     /**
+     * Whether or not the button is displayed in a context menu.
+     */
+    contextMenu?: boolean,
+
+    /**
      * An extra class name to be added at the end of the element's class name
      * in order to enable custom styling.
      */

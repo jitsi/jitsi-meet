@@ -29,14 +29,11 @@ export function authenticateAndUpgradeRole(
         id: string,
         password: string,
         conference: Object) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const { password: roomPassword }
-            = getState()['features/base/conference'];
+    return (dispatch: Dispatch<any>) => {
         const process
             = conference.authenticateAndUpgradeRole({
                 id,
                 password,
-                roomPassword,
 
                 onLoginSuccessful() {
                 // When the login succeeds, the process has completed half

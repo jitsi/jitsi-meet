@@ -7,15 +7,11 @@ import { SharedVideo } from '../../../shared-video/components/native';
 import { Avatar } from '../../avatar';
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
-import {
-    MEDIA_TYPE,
-    VideoTrack
-} from '../../media';
+import { VideoTrack } from '../../media';
 import { Container, TintedView } from '../../react';
 import { connect } from '../../redux';
-import type { StyleType } from '../../styles';
 import { TestHint } from '../../testing/components';
-import { getTrackByMediaTypeAndParticipant } from '../../tracks';
+import { getVideoTrackByParticipant } from '../../tracks';
 import { shouldRenderParticipantVideo, getParticipantById } from '../functions';
 
 import styles from './styles';
@@ -90,17 +86,6 @@ type Props = {
      * The function to translate human-readable text.
      */
     t: Function,
-
-    /**
-     * If true, a tinting will be applied to the view, regardless of video or
-     * avatar is rendered.
-     */
-    tintEnabled: boolean,
-
-    /**
-     * The style of the tinting when applied.
-     */
-    tintStyle: StyleType,
 
     /**
      * The test hint id which can be used to locate the {@code ParticipantView}
@@ -193,15 +178,12 @@ class ParticipantView extends Component<Props> {
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
             disableVideo,
-            onPress,
-            tintStyle
+            onPress
         } = this.props;
 
         // If the connection has problems, we will "tint" the video / avatar.
         const connectionProblem
             = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
-        const useTint
-            = connectionProblem || this.props.tintEnabled;
 
         const testHintId
             = this.props.testHintId
@@ -241,12 +223,10 @@ class ParticipantView extends Component<Props> {
                             size = { this.props.avatarSize } />
                     </View> }
 
-                { useTint
+                { connectionProblem
 
                     // If the connection has problems, tint the video / avatar.
-                    && <TintedView
-                        style = {
-                            connectionProblem ? undefined : tintStyle } /> }
+                    && <TintedView /> }
 
                 { this.props.useConnectivityInfoLabel
                     && this._renderConnectionInfo(connectionStatus) }
@@ -268,6 +248,8 @@ class ParticipantView extends Component<Props> {
 function _mapStateToProps(state, ownProps) {
     const { disableVideo, participantId } = ownProps;
     const participant = getParticipantById(state, participantId);
+    const tracks = state['features/base/tracks'];
+    const videoTrack = getVideoTrackByParticipant(tracks, participant);
     let connectionStatus;
     let participantName;
 
@@ -278,11 +260,7 @@ function _mapStateToProps(state, ownProps) {
         _isFakeParticipant: participant && participant.isFakeParticipant,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
-        _videoTrack:
-            getTrackByMediaTypeAndParticipant(
-                state['features/base/tracks'],
-                MEDIA_TYPE.VIDEO,
-                participantId)
+        _videoTrack: videoTrack
     };
 }
 

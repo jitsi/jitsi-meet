@@ -27,7 +27,7 @@ export default {
     bottomBar: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: BaseTheme.palette.screen01Header,
+        backgroundColor: BaseTheme.palette.screen02Header,
         height: BaseTheme.spacing[10]
     },
 

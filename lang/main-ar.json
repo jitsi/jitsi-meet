@@ -31,6 +31,7 @@
     },
     "audioDevices": {
         "bluetooth": "بلوتوث",
+        "car": "مسجل السيارة",
         "headphones": "سماعات رأس",
         "none": "لا يوجد أي أجهزة صوت",
         "phone": "هاتف",
@@ -38,9 +39,6 @@
     },
     "audioOnly": {
         "audioOnly": "معدل تبادل البيانات منخفض"
-    },
-    "blankPage": {
-        "meetingEnded": "انتهى المُلتقى."
     },
     "breakoutRooms": {
         "actions": {
@@ -79,10 +77,22 @@
         "refresh": "حدِّث الرزنامة",
         "today": "اليوم"
     },
+    "carmode": {
+        "actions": {
+            "leaveMeeting": "اترك الاجتماع",
+            "selectSoundDevice": "حدد جهاز الصوت"
+        },
+        "labels": {
+            "buttonLabel": "وضع السيارة",
+            "title": "وضع القيادة الآمنة",
+            "videoStopped": "تم إيقاف الفيديو الخاص بك"
+        }
+    },
     "chat": {
         "enter": "أدخل الغرفة",
         "error": "خطأ: لم تُرسَل رسالتك. السبب: {{error}}",
         "fieldPlaceHolder": "اكتب رسالتك هنا",
+        "lobbyChatMessageTo": "رسالة دردشة لوبي إلى {{recipient}}",
         "message": "رسالة",
         "messageAccessibleTitle": "{{user}} مقولة:",
         "messageAccessibleTitleMe": "أنا أقول:",
@@ -106,6 +116,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "نزِّل إضافة متصفح كروم",
+        "buttonTextEdge": "قم بتثبيت ملحق Edge",
         "close": "إغلق",
         "dontShowAgain": "لا ترني هذه مرة أخرى",
         "installExtensionText": "نزِّل الإضافة للدمج مع رزنامة غوغل ورزنامة أوفيس 365"
@@ -197,6 +208,9 @@
         "selectADevice": "اختر جهازًا",
         "testAudio": "اختبر الصوت"
     },
+    "dialIn": {
+        "screenTitle": "ملخص الطلب"
+    },
     "dialOut": {
         "statusMessage": "{{status}} الآن"
     },
@@ -215,6 +229,8 @@
             "liveStreaming": "بث حي مباشر"
         },
         "add": "أضف",
+        "addMeetingNote": "أضف ملاحظة حول هذا المُلتقى",
+        "addOptionalNote": "أضف ملاحظة (اختياري)",
         "allow": "اسمح",
         "alreadySharedVideoMsg": "يشارك أحد الحضور الفيديو حاليًا، ولا يسمح هذا الإجتماع سوى بمشاركة فيديو واحد في آن واحد",
         "alreadySharedVideoTitle": "لا يُسمَح سوى بفيديو مشارك واحد على الأكثر في آن واحد.",
@@ -266,6 +282,8 @@
         "kickParticipantDialog": "أمتأكد من طرد هذا المشارك؟",
         "kickParticipantTitle": "أتريد طرد هذا المشارك؟",
         "kickTitle": "عذرًا! تم طردك {{participantDisplayName}} من المُلتقى",
+        "linkMeeting": "ربط المُلتقى",
+        "linkMeetingTitle": "ربط المُلتقى بـ Salesforce",
         "liveStreaming": "البث المباشر الحي",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "غير ممكن أثناء التسجيل",
         "liveStreamingDisabledTooltip": "بدء بثٍ حيٍّ مُعطَّل",
@@ -320,6 +338,7 @@
         "popupError": "يمنع متصفحك النوافذ المنبثقة من هذا الموقع. فعِّل رجاءً النوافذ المنبثقة في المتصفح من إعدادات الحماية وحاول مرة أخرى.",
         "popupErrorTitle": "النوافذ المنبثقة محجوبة.",
         "readMore": "أكثر",
+        "recentlyUsedObjects": "الأشياء المستخدمة مؤخرًا",
         "recording": "قيد التسجيل",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "ليس بالإمكان ما دمت قيد البث المباشر",
         "recordingDisabledTooltip": "عملية التسجيل معطلة.",
@@ -342,6 +361,12 @@
         "screenSharingFailed": "عجبًا! حصل خطأ ما، فلن نتمكن من مشاركة الشاشة للأسف!",
         "screenSharingFailedTitle": "فشلت عملية مشاركة الشاشة!",
         "screenSharingPermissionDeniedError": "عجبًا! حصل خطأ ما متعلق بأذونات إضافة مشاركة الشاشة. أعد التحميل وجرِّب مرة أخرى، رجاءً.",
+        "searchInSalesforce": "ابحث في Salesforce",
+        "searchResults": "نتائج البحث ({{count}})",
+        "searchResultsDetailsError": "حدث خطأ ما أثناء استرداد بيانات المالك.",
+        "searchResultsError": "حدث خطأ ما أثناء استرداد البيانات.",
+        "searchResultsNotFound": "لم يتم العثور على نتائج عن البحث.",
+        "searchResultsTryAgain": "حاول استخدام كلمات رئيسية بديلة.",
         "sendPrivateMessage": "وصلتك رسالة خاصة للتو، أتنوي الرد عليها ردًا خاصًا أم تريد إرسال رسالتك على المجموعة؟",
         "sendPrivateMessageCancel": "أرسل إلى المجموعة",
         "sendPrivateMessageOk": "أرسل ردًا خاصًا",
@@ -409,6 +434,10 @@
         "veryBad": "سيئة للغاية",
         "veryGood": "ممتازة"
     },
+    "giphy": {
+        "noResults": "لم يتم العثور على نتائج :(",
+        "search": "ابحث في GIPHY"
+    },
     "helpView": {
         "header": "مركز المساعدة"
     },
@@ -475,6 +504,7 @@
         "focusLocal": "ركز على الفيديو الخاص بك",
         "focusRemote": "ركز على فيديو مشارك آخر",
         "fullScreen": "استعمل/اخرج من وضع الشاشة الكاملة",
+        "giphyMenu": "تبديل قائمة GIPHY",
         "keyboardShortcuts": "اختصارات لوحة المفاتيح",
         "localRecording": "اظهِر أو اخفِ التحكم بالتسجيل المحلي",
         "mute": "اكتم أو ألغ كتم المجهار (المايكروفون) الخاص بك",
@@ -529,6 +559,7 @@
         "admitAll": "سمح للجميع بالدخول",
         "allow": "اسمح",
         "backToKnockModeButton": "لا يوجد كلمة مرور، اطلب الإذن بالدخول بدلًا من ذلك.",
+        "chat": "دردشة",
         "dialogTitle": "ونضع غرفة الانتظار",
         "disableDialogContent": "وضع غرفة الانتظار مفعَّل. تسمح هذه الميزة بعدم السماح للغرباء بالانضمام إلى المُلتقى، فهل تريد حقًا تعطيلها؟",
         "disableDialogSubmit": "عطِّل",
@@ -541,6 +572,7 @@
         "errorMissingPassword": "الرجاء إدخال كلمة مرور المُلتقى",
         "invalidPassword": "كلمة مرور غير صحيحة",
         "joinRejectedMessage": "رفض رئيس الجلسة منحك الإذن بالدخول إلى المُلتقى",
+        "joinRejectedTitle": "تم رفض طلب الانضمام.",
         "joinTitle": "انضم للمُلتقى",
         "joinWithPasswordMessage": "الرجاء الانتظار أثناء محاولة الدخول دون كلمة مرور...",
         "joiningMessage": "ستتمكن من الانضمام للمُلتقى بعد الموافقة على طلبك",
@@ -549,6 +581,8 @@
         "knockButton": "اطلب إذن الدخول",
         "knockTitle": "يريد أحدٌ الدخول إلى المُلتقى",
         "knockingParticipantList": "تنبيه قائمة المشاركين",
+        "lobbyChatStartedNotification": "بدأ {{moderator}} دردشة في الردهة مع {{attendee}}",
+        "lobbyChatStartedTitle": "بدأ {{moderator}} محادثة في الردهة معك.",
         "nameField": "أدخل اسمك",
         "notificationLobbyAccessDenied": "رفض {{originParticipantName}} مشاركة  {{targetParticipantName}} للمُلتقى",
         "notificationLobbyAccessGranted": "سمح {{originParticipantName}} بمشاركة  {{targetParticipantName}} للمُلتقى",
@@ -611,6 +645,7 @@
         "displayNotifications": "عرض الإخطارات لـ",
         "focus": "التركيز على المؤتمر",
         "focusFail": "إنَّ {{component}} غير متاح. ستعاد المحاولة مرة أخرى خلال {{ms}} ثانية.",
+        "gifsMenu": "GIPHY",
         "groupTitle": "إشعارات",
         "hostAskedUnmute": "The moderator would like you to speak",
         "invitedOneMember": "دُعِي {{name}}",
@@ -620,6 +655,14 @@
         "leftOneMember": "{{name}} غادر المُلتقى",
         "leftThreePlusMembers": "غادر {{name}} والعديد من الأشخاص الآخرين المُلتقى",
         "leftTwoMembers": "غادر {{first}} و {{second}} المُلتقى",
+        "linkToSalesforce": "ارتباط إلى Salesforce",
+        "linkToSalesforceDescription": "يمكنك ربط ملخص الاجتماع بكائن Salesforce.",
+        "linkToSalesforceError": "فشل ربط المُلتقى بـ Salesforce",
+        "linkToSalesforceKey": "ربط هذا المُلتقى",
+        "linkToSalesforceProgress": "جارٍ ربط الاجتماع بـ Salesforce ...",
+        "linkToSalesforceSuccess": "تم ربط الاجتماع بـ Salesforce",
+        "localRecordingStarted": "بدأ {{name}} تسجيلًا محليًا.",
+        "localRecordingStopped": "أوقف {{name}} التسجيل المحلي.",
         "me": "أنا",
         "moderationInEffectCSDescription": "يرجى رفع اليد إذا كنت تريد مشاركة شاشتك.",
         "moderationInEffectCSTitle": "تم حظر مشاركة الشاشة من قبل المشرف",
@@ -698,6 +741,7 @@
     },
     "passwordDigitsOnly": "حتى {{number}} عدد",
     "passwordSetRemotely": "ضبطها مشارك آخر",
+    "pinnedParticipant": "تم تثبيت المشارك",
     "polls": {
         "answer": {
             "skip": "تخطى",
@@ -774,6 +818,7 @@
         "initiated": "بدأ الاتصال",
         "joinAudioByPhone": "انضم مع صوت من الجوال",
         "joinMeeting": "انضم للمُلتقى",
+        "joinMeetingInLowBandwidthMode": "الانضمام في وضع النطاق الترددي المنخفض",
         "joinWithoutAudio": "انضم دون صوت",
         "keyboardShortcuts": "تفعيل اختصارات لوحة المفاتيح",
         "linkCopied": "نُسِخ الرابط",
@@ -813,6 +858,18 @@
     },
     "raisedHand": "يرد التحدث",
     "raisedHandsLabel": "عدد الأيدي المرفوعة",
+    "record": {
+        "already": {
+            "linked": "السجل مرتبط بالفعل بهذه الجلسة."
+        },
+        "type": {
+            "account": "الحساب",
+            "contact": "جهات الاتصال",
+            "lead": "البدء",
+            "opportunity": "الفرصة",
+            "owner": "المالك"
+        }
+    },
     "recording": {
         "authDropboxText": "رفع إلى Dropbox",
         "availableSpace": "المساحة المتاحة: {{spaceLeft}} ميغابايت (ما يقارب {{duration}} دقيقة تسجيل).",
@@ -827,28 +884,46 @@
         "expandedPending": "بدء التسجيل...",
         "failedToStart": "فشل بدء التسجيل",
         "fileSharingdescription": "شارك التسجيل مع المشاركين للمُلتقى",
+        "highlight": "تسليط الضوء",
+        "highlightMoment": "لحظة تسليط الضوء",
+        "highlightMomentDisabled": "يمكنك تمييز اللحظات التي يبدأ فيها التسجيل",
+        "highlightMomentSuccess": "تم تمييز اللحظة",
+        "highlightMomentSucessDescription": "ستتم إضافة اللحظة المميزة إلى ملخص المُلتقى.",
         "inProgress": "التسجيل أو البث المباشر قيد التقدم",
         "limitNotificationDescriptionNative": "نظرًا للضغط الكبير، سيقيَّد التسجيل إلى {{limit}} د، ولكن إن أردت التسجيل لمدة مفتوحة، جرِّب <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "نظرًا للضغط الكبير، سيقيَّد التسجيل إلى {{limit}} د، ولكن إن أردت التسجيل لمدة مفتوحة، جرِّب <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "لقد أنشأنا رابطًا لتسجيلك.",
         "live": "مباشر",
+        "localRecordingNoNotificationWarning": "لن يتم الإعلان عن التسجيل للمشاركين الآخرين. ستحتاج إلى إخبارهم بأنه تم تسجيل الاجتماع.",
+        "localRecordingNoVideo": "لا يتم تسجيل الفيديو",
+        "localRecordingStartWarning": "يرجى التأكد من إيقاف التسجيل قبل الخروج من الاجتماع من أجل حفظه.",
+        "localRecordingStartWarningTitle": "أوقف التسجيل لحفظه",
+        "localRecordingVideoStop": "سيؤدي إيقاف الفيديو أيضًا إلى إيقاف التسجيل المحلي. هل أنت متأكد أنك تريد الاستمرار؟",
+        "localRecordingVideoWarning": "لتسجيل الفيديو الخاص بك ، يجب أن يكون لديك عند بدء التسجيل",
+        "localRecordingWarning": "تأكد من تحديد علامة التبويب الحالية لاستخدام الفيديو والصوت الصحيحين. التسجيل محدود حاليًا بـ 1 كيغابايت ، أي حوالي 100 دقيقة.",
         "loggedIn": "مُسجَّل باسم {{userName}}",
+        "noStreams": "لم يتم الكشف عن دفق الصوت أو الفيديو.",
         "off": "أوقِف التسجيل",
         "offBy": "أوقَف {{name}} التسجيل",
         "on": "تسجيل",
         "onBy": "بدأ {{name}} التسجيل",
+        "onlyRecordSelf": "تسجيل فقط دفق الصوت والفيديو الخاصة بي",
         "pending": "التحضير لتسجيل المُلتقى...",
         "rec": "تسجيل",
+        "saveLocalRecording": "حفظ ملف التسجيل محليا",
         "serviceDescription": "ستحفظ خدمة التسجيل الفيديو المستجل",
         "serviceDescriptionCloud": "تسجيل سحابي",
+        "serviceDescriptionCloudInfo": "يتم مسح المُلتقيات المسجلة تلقائيًا بعد 24 ساعة من وقت التسجيل.",
         "serviceName": "خدمة التسجيل",
         "sessionAlreadyActive": "هذه الجلسة قيد التسجيل أو البث المباشر.",
         "signIn": "دخول",
         "signOut": "خروج",
+        "surfaceError": "الرجاء تحديد علامة التبويب الحالية.",
         "unavailable": "عجبًا! {{serviceName}} غير متاحة حاليًا. نعمل على حل المشكلة. حاول مرة أخرى لاحقًا.",
         "unavailableTitle": "التسجيل غير متاح",
         "uploadToCloud": "تحميل إلى السحابة"
     },
+    "screenshareDisplayName": "شاشة {{name}}",
     "sectionList": {
         "pullToRefresh": "اسحب للتحديث"
     },
@@ -875,16 +950,19 @@
         "incomingMessage": "رسالة واردة",
         "language": "اللغة",
         "loggedIn": "الدخول باسم {{name}}",
+        "maxStageParticipants": "الحد الأقصى لعدد المشاركين الذين يمكن تثبيتهم في المرحلة الرئيسية",
         "microphones": "المجهار (المايكروفون)",
         "moderator": "رئيس الجلسة",
         "more": "المزيد",
         "name": "الاسم",
         "noDevice": "لا يوجد",
         "participantJoined": "انضم مشارك",
+        "participantKnocking": "دخل المشارك في الردهة",
         "participantLeft": "غادر المشارك",
         "playSounds": "تشغيل الصوت عند:",
         "reactions": "ردود فعل المُلتقى",
         "sameAsSystem": "مثل النظام ({{label}})",
+        "screenTitle": "إعدادات",
         "selectAudioOutput": "خرج الصوت",
         "selectCamera": "الكاميرا",
         "selectMic": "المجهار (المايكروفون)",
@@ -910,6 +988,7 @@
         "disableCrashReportingWarning": "أمتأكد من تعطيل تقارير الأعطال التقنية؟ ستسري الإعدادات الجديدة بعد إعادة تشغيل التطبيق",
         "disableP2P": "تعطيل وضع واحد شخص-لشخص",
         "displayName": "عرض الاسم",
+        "displayNamePlaceholderText": "على سبيل المثال: علي الحيدري",
         "email": "البريد الإلكتروني",
         "header": "الإعدادات",
         "profileSection": "الملف الشخصي",
@@ -954,6 +1033,7 @@
     "termsView": {
         "header": "مصطلحات"
     },
+    "toggleTopPanelLabel": "تبديل اللوحة العلوية",
     "toolbar": {
         "Settings": "الإعدادات",
         "accessibilityLabel": {
@@ -963,16 +1043,19 @@
             "boo": "Boo",
             "breakoutRoom": "الانضمام / مغادرة غرفة فرعية",
             "callQuality": "اضبط دقة الفيديو",
+            "carmode": "وضع السيارة",
             "cc": "اظهِر/اخفِ الترجمة",
             "chat": "اظهِر/اخفِ نافذة الدردشة",
             "clap": "تصفيق",
             "collapse": "قلّص",
+            "dock": "إرساء في النافذة الرئيسية",
             "document": "اظهِر/اخفِ الملف المشارك",
             "download": "نزِّل التطبيق",
             "embedMeeting": "ضمِّن المُلتقى",
             "expand": "وسّع",
             "feedback": "أبدِ رأيك",
             "fullScreen": "استعمل/اخرج من وضع الشاشة الكاملة",
+            "giphy": "تبديل قائمة GIPHY",
             "grantModerator": "امنح صلاحيات رئيس الجلسة",
             "hangup": "أغلق المكالمة",
             "help": "مساعدة",
@@ -980,6 +1063,7 @@
             "kick": "اطرد مشاركًا",
             "laugh": "يضحك",
             "like": "رفع الإبهام متمنيا النجاح",
+            "linkToSalesforce": "ارتباط إلى Salesforce",
             "lobbyButton": "فعِّل/عطِّل وضع غرفة الانتظار",
             "localRecording": "اظهِر/اخفِ التحكم بالتسجيل المحلي",
             "lockRoom": "اظهِر/اخفِ كلمة مرور المُلتقى",
@@ -1015,6 +1099,7 @@
             "tileView": "اظهِر/اخفِ عرض العنوان",
             "toggleCamera": "بدِّل الكاميرا",
             "toggleFilmstrip": "بدِّل وضع الشريط السينمائي (filmstrip)",
+            "undock": "فك في نافذة منفصلة",
             "videoblur": "استعمل/اخرج من وضع تغبيش خلفية الفيديو",
             "videomute": "بدِّل وضع اخفاء الفيديو"
         },
@@ -1031,6 +1116,7 @@
         "closeChat": "أغلق الدردشة",
         "closeReactionsMenu": "إغلاق قائمة ردود الفعل",
         "disableReactionSounds": "يمكنك تعطيل أصوات ردود الفعل لهذا المُلتقى",
+        "dock": "إرساء في النافذة الرئيسية",
         "documentClose": "أغلق الملف المشارك",
         "documentOpen": "افتح الملف المشارك",
         "download": "نزِّل التطبيق",
@@ -1041,6 +1127,7 @@
         "exitFullScreen": "أدخل عنوان العرض",
         "exitTileView": "اخرج من وضع الشاشة الكاملة",
         "feedback": "أبدِ رأيك",
+        "giphy": "تبديل قائمة GIPHY",
         "hangup": "غادر",
         "help": "مساعدة",
         "invite": "ادعُ أحدًا",
@@ -1048,6 +1135,7 @@
         "laugh": "يضحك",
         "leaveBreakoutRoom": "اترك إلى غرفة الجانبية",
         "like": "رفع الإبهام متمنيا النجاح",
+        "linkToSalesforce": "ارتباط إلى Salesforce",
         "lobbyButtonDisable": "عطِّل وضع غرفة الانتظار",
         "lobbyButtonEnable": "فعِّل وضع غرفة الانتظار",
         "login": "ادخل",
@@ -1097,6 +1185,7 @@
         "talkWhileMutedPopup": "أتحاول التحدث؟ المجهار مكتوم لديك.",
         "tileViewToggle": "بدِّل عنوان العرض",
         "toggleCamera": "بدِّل الكاميرا",
+        "undock": "فك في نافذة منفصلة",
         "videoSettings": "اعدادات الفيديو",
         "videomute": "استعمل / أوقف الكاميرا"
     },
@@ -1167,10 +1256,12 @@
         "moderator": "رئيس الجلسة",
         "mute": "المشارك مكتوم الصوت",
         "muted": "مكتوم",
+        "pinToStage": "تثبيت في المرحلة",
         "remoteControl": "بدء / إيقاف التحكم البعيد",
         "screenSharing": "المشارك يشارك شاشته",
         "show": "أظهر على المنصة",
         "showSelfView": "إظهار الواجهة الذاتية",
+        "unpinFromStage": "فك",
         "videoMuted": "الكاميرا معطلة",
         "videomute": "أوقف المشارك الكاميرا"
     },

@@ -9,6 +9,7 @@ import {
 import { addKnownDomains } from '../base/known-domains';
 import { MiddlewareRegistry } from '../base/redux';
 import { parseURIString } from '../base/util';
+import { inIframe } from '../base/util/iframeUtils';
 
 import { _storeCurrentConference, _updateConferenceDuration } from './actions';
 import { isRecentListEnabled } from './functions';
@@ -88,7 +89,7 @@ function _appWillMount({ dispatch, getState }, next, action) {
 function _conferenceWillLeave({ dispatch, getState }, next, action) {
     const { doNotStoreRoom } = getState()['features/base/config'];
 
-    if (!doNotStoreRoom) {
+    if (!doNotStoreRoom && !inIframe()) {
         let locationURL;
 
         /**
@@ -128,7 +129,7 @@ function _conferenceWillLeave({ dispatch, getState }, next, action) {
 function _setRoom({ dispatch, getState }, next, action) {
     const { doNotStoreRoom } = getState()['features/base/config'];
 
-    if (!doNotStoreRoom && action.room) {
+    if (!doNotStoreRoom && !inIframe() && action.room) {
         const { locationURL } = getState()['features/base/connection'];
 
         if (locationURL) {

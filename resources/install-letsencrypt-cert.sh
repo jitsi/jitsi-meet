@@ -23,33 +23,30 @@ echo "by providing an email address for important account notifications"
 echo -n "Enter your email and press [ENTER]: "
 read EMAIL
 
-CERTBOT="$(command -v certbot)"
+CERTBOT="$(command -v certbot || true)"
 if [ ! -x "$CERTBOT" ] ; then
     DISTRO=$(lsb_release -is)
     DISTRO_VERSION=$(lsb_release -rs)
-    if [ "$DISTRO" = "Debian" ]; then
-        apt-get update
-        apt-get -y install certbot
-    elif [ "$DISTRO" = "Ubuntu" ]; then
-        if [ "$DISTRO_VERSION" = "20.04" ] || [ "$DISTRO_VERSION" = "19.10" ]; then
-                apt-get update
-                apt-get -y install software-properties-common
-                add-apt-repository -y universe
-                apt-get update
-                apt-get -y install certbot
-        elif [ "$DISTRO_VERSION" = "18.04" ]; then
-                apt-get update
-                apt-get -y install software-properties-common
-                add-apt-repository -y universe
-                add-apt-repository -y ppa:certbot/certbot
-                apt-get update
-                apt-get -y install certbot
-        fi
-    else
+
+    if [ "$DISTRO" != "Debian" ] && [ "$DISTRO" != "Ubuntu" ]; then
         echo "$DISTRO $DISTRO_VERSION is not supported"
-        echo "Only Debian 9,10 and Ubuntu 18.04,19.10,20.04 are supported"
+        echo "Only Debian and Ubuntu 18.04+ are supported"
         exit 1
     fi
+
+    if [ "$DISTRO" = "Ubuntu" ]; then
+        apt-get update
+        apt-get -y install software-properties-common
+        add-apt-repository -y universe
+        if [ "$DISTRO_VERSION" = "18.04" ]; then
+            add-apt-repository -y ppa:certbot/certbot
+        fi
+    fi
+
+    apt-get update
+    apt-get -y install certbot
+
+    CERTBOT="$(command -v certbot)"
 fi
 
 CRON_FILE="/etc/cron.weekly/letsencrypt-renew"

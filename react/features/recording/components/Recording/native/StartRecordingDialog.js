@@ -9,6 +9,7 @@ import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { goBack } from
     '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { RECORDING_TYPES } from '../../../constants';
 import AbstractStartRecordingDialog, {
     type Props,
     mapStateToProps
@@ -43,30 +44,38 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const {
-            _fileRecordingsServiceEnabled,
-            _isDropboxEnabled,
-            navigation,
-            t
-        } = this.props;
+        super.componentDidMount();
 
-        const {
-            isTokenValid,
-            isValidating
-        } = this.state;
-
-        // disable start button id recording service is shown only, when
-        // validating dropbox token, if that is not enabled we either always
-        // show the start button or if just dropbox is enabled start is available
-        // when there is token
-        const isStartDisabled
-            = _fileRecordingsServiceEnabled ? isValidating
-                : _isDropboxEnabled ? !isTokenValid : false;
+        const { navigation, t } = this.props;
 
         navigation.setOptions({
             headerRight: () => (
                 <HeaderNavigationButton
-                    disabled = { isStartDisabled }
+                    disabled = { this.isStartRecordingDisabled() }
+                    label = { t('dialog.start') }
+                    onPress = { this._onStartPress }
+                    twoActions = { true } />
+            )
+        });
+    }
+
+    /**
+     * Implements React's {@link Component#componentDidUpdate()}. Invoked
+     * immediately after this component is updated.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidUpdate(prevProps) {
+        super.componentDidUpdate(prevProps);
+
+        const { navigation, t } = this.props;
+
+        navigation.setOptions({
+            // eslint-disable-next-line react/no-multi-comp
+            headerRight: () => (
+                <HeaderNavigationButton
+                    disabled = { this.isStartRecordingDisabled() }
                     label = { t('dialog.start') }
                     onPress = { this._onStartPress }
                     twoActions = { true } />
@@ -83,6 +92,30 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
      */
     _onStartPress() {
         this._onSubmit() && goBack();
+    }
+
+    isStartRecordingDisabled: () => boolean;
+
+    /**
+     * Disables start recording button.
+     *
+     * @returns {boolean}
+     */
+    isStartRecordingDisabled() {
+        const { isTokenValid, selectedRecordingService } = this.state;
+
+        // Start button is disabled if recording service is only shown;
+        // When validating dropbox token, if that is not enabled, we either always
+        // show the start button or, if just dropbox is enabled, start button
+        // is available when there is token.
+        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
+            return false;
+        } else if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
+            return !isTokenValid;
+        }
+
+        return true;
+
     }
 
     /**

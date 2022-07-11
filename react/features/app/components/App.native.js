@@ -1,14 +1,14 @@
-// @flow
-
 import React from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 
 import { DialogContainer } from '../../base/dialog';
+import BottomSheetContainer from '../../base/dialog/components/native/BottomSheetContainer';
 import { updateFlags } from '../../base/flags/actions';
 import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import { Platform } from '../../base/react';
-import { DimensionsDetector, clientResized } from '../../base/responsive-ui';
+import { DimensionsDetector, clientResized, setSafeAreaInsets } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import { _getRouteToRender } from '../getRouteToRender.native';
 import logger from '../logger';
@@ -22,20 +22,14 @@ import '../reducers';
 
 declare var __DEV__;
 
+const DialogContainerWrapper = Platform.select({
+    default: View
+});
+
 /**
  * The type of React {@code Component} props of {@link App}.
  */
 type Props = AbstractAppProps & {
-
-    /**
-     * An object of colors that override the default colors of the app/sdk.
-     */
-    colorScheme: ?Object,
-
-    /**
-     * Identifier for this app on the native side.
-     */
-    externalAPIScope: string,
 
     /**
      * An object with the feature flags.
@@ -76,6 +70,7 @@ export class App extends AbstractApp {
 
         // Bind event handler so it is only bound once per instance.
         this._onDimensionsChanged = this._onDimensionsChanged.bind(this);
+        this._onSafeAreaInsetsChanged = this._onSafeAreaInsetsChanged.bind(this);
     }
 
     /**
@@ -98,13 +93,31 @@ export class App extends AbstractApp {
      */
     async _extraInit() {
         const { dispatch, getState } = this.state.store;
+
+        // We set these early enough so then we avoid any unnecessary re-renders.
+        dispatch(updateFlags(this.props.flags));
+
         const route = await _getRouteToRender();
 
         // We need the root navigator to be set early.
         await this._navigate(route);
 
-        // We set these early enough so then we avoid any unnecessary re-renders.
-        dispatch(updateFlags(this.props.flags));
+        // HACK ALERT!
+        // Wait until the root navigator is ready.
+        // We really need to break the inheritance relationship between App,
+        // AbstractApp and BaseApp, it's very inflexible and cumbersome right now.
+        const rootNavigationReady = new Promise(resolve => {
+            const i = setInterval(() => {
+                const { ready } = getState()['features/app'] || {};
+
+                if (ready) {
+                    clearInterval(i);
+                    resolve();
+                }
+            }, 50);
+        });
+
+        await rootNavigationReady;
 
         // Check if serverURL is configured externally and not allowed to change.
         const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
@@ -138,10 +151,13 @@ export class App extends AbstractApp {
      */
     _createMainElement(component, props) {
         return (
-            <DimensionsDetector
-                onDimensionsChanged = { this._onDimensionsChanged }>
-                { super._createMainElement(component, props) }
-            </DimensionsDetector>
+            <SafeAreaProvider>
+                <DimensionsDetector
+                    onDimensionsChanged = { this._onDimensionsChanged }
+                    onSafeAreaInsetsChanged = { this._onSafeAreaInsetsChanged }>
+                    { super._createMainElement(component, props) }
+                </DimensionsDetector>
+            </SafeAreaProvider>
         );
     }
 
@@ -199,13 +215,35 @@ export class App extends AbstractApp {
     }
 
     /**
+     * Updates the safe are insets values.
+     *
+     * @param {Object} insets - The insets.
+     * @param {number} insets.top - The top inset.
+     * @param {number} insets.right - The right inset.
+     * @param {number} insets.bottom - The bottom inset.
+     * @param {number} insets.left - The left inset.
+     * @private
+     * @returns {void}
+     */
+    _onSafeAreaInsetsChanged(insets) {
+        const { dispatch } = this.state.store;
+
+        dispatch(setSafeAreaInsets(insets));
+    }
+
+    /**
      * Renders the platform specific dialog container.
      *
      * @returns {React$Element}
      */
     _renderDialogContainer() {
         return (
-            <DialogContainer />
+            <DialogContainerWrapper
+                pointerEvents = 'box-none'
+                style = { StyleSheet.absoluteFill }>
+                <BottomSheetContainer />
+                <DialogContainer />
+            </DialogContainerWrapper>
         );
     }
 }

@@ -19,9 +19,16 @@ import {
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
-    SET_STREAM_KEY
+    SET_STREAM_KEY,
+    START_LOCAL_RECORDING,
+    STOP_LOCAL_RECORDING
 } from './actionTypes';
-import { getRecordingLink, getResourceId, isSavingRecordingOnDropbox, sendMeetingHighlight } from './functions';
+import {
+    getRecordingLink,
+    getResourceId,
+    isSavingRecordingOnDropbox,
+    sendMeetingHighlight
+} from './functions';
 import logger from './logger';
 
 declare var APP: Object;
@@ -132,14 +139,13 @@ export function highlightMeetingMoment() {
     return async (dispatch: Function, getState: Function) => {
         dispatch(setHighlightMomentButtonState(true));
 
-        try {
-            await sendMeetingHighlight(getState());
+        const success = await sendMeetingHighlight(getState());
+
+        if (success) {
             dispatch(showNotification({
                 descriptionKey: 'recording.highlightMomentSucessDescription',
                 titleKey: 'recording.highlightMomentSuccess'
-            }));
-        } catch (err) {
-            logger.error('Could not highlight meeting moment', err);
+            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         }
 
         dispatch(setHighlightMomentButtonState(false));
@@ -326,5 +332,29 @@ function _setPendingRecordingNotificationUid(uid: ?number, streamType: string) {
         type: SET_PENDING_RECORDING_NOTIFICATION_UID,
         streamType,
         uid
+    };
+}
+
+/**
+ * Starts local recording.
+ *
+ * @param {boolean} onlySelf - Whether to only record the local streams.
+ * @returns {Object}
+ */
+export function startLocalVideoRecording(onlySelf) {
+    return {
+        type: START_LOCAL_RECORDING,
+        onlySelf
+    };
+}
+
+/**
+ * Stops local recording.
+ *
+ * @returns {Object}
+ */
+export function stopLocalVideoRecording() {
+    return {
+        type: STOP_LOCAL_RECORDING
     };
 }

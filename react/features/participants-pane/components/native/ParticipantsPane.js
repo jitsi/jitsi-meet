@@ -1,26 +1,19 @@
 // @flow
 
-import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
-import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
-import { openDialog } from '../../../base/dialog';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import {
-    getParticipantCount,
-    isLocalParticipantModerator
-} from '../../../base/participants';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import { equals } from '../../../base/redux';
 import {
     getBreakoutRooms,
-    getBreakoutRoomsConfig,
     getCurrentRoomId,
+    isAddBreakoutRoomButtonVisible,
+    isAutoAssignParticipantsVisible,
     isInBreakoutRoom
 } from '../../../breakout-rooms/functions';
-import MuteEveryoneDialog
-    from '../../../video-menu/components/native/MuteEveryoneDialog';
+import { getKnockingParticipants } from '../../../lobby/functions';
 import {
     AddBreakoutRoomButton,
     AutoAssignButton,
@@ -28,50 +21,44 @@ import {
 } from '../breakout-rooms/components/native';
 import { CollapsibleRoom } from '../breakout-rooms/components/native/CollapsibleRoom';
 
-import { ContextMenuMore } from './ContextMenuMore';
-import HorizontalDotsIcon from './HorizontalDotsIcon';
 import LobbyParticipantList from './LobbyParticipantList';
 import MeetingParticipantList from './MeetingParticipantList';
+import ParticipantsPaneFooter from './ParticipantsPaneFooter';
 import styles from './styles';
 
+
 /**
- * Participant pane.
+ * Participants pane.
  *
  * @returns {React$Element<any>}
  */
 const ParticipantsPane = () => {
-    const dispatch = useDispatch();
     const [ searchString, setSearchString ] = useState('');
-    const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)), [ dispatch ]);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
-    const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
-        [ dispatch ]);
-    const { t } = useTranslation();
-
-    const { hideAddRoomButton } = useSelector(getBreakoutRoomsConfig);
     const { conference } = useSelector(state => state['features/base/conference']);
-
-    // $FlowExpectedError
     const _isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
     const currentRoomId = useSelector(getCurrentRoomId);
     const rooms: Array<Object> = Object.values(useSelector(getBreakoutRooms, equals))
         .filter((room: Object) => room.id !== currentRoomId)
         .sort((p1: Object, p2: Object) => (p1?.name || '').localeCompare(p2?.name || ''));
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
-    const participantsCount = useSelector(getParticipantCount);
-    const autoAssign = !inBreakoutRoom && isLocalModerator
-        && participantsCount > 2 && rooms.length > 1;
-    const addBreakoutRoom
-        = _isBreakoutRoomsSupported && !hideAddRoomButton && isLocalModerator;
+    const showAddBreakoutRoom = useSelector(isAddBreakoutRoomButtonVisible);
+    const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
+    const lobbyParticipants = useSelector(getKnockingParticipants);
 
     return (
-        <JitsiScreen style = { styles.participantsPaneContainer }>
+        <JitsiScreen
+            footerComponent = { isLocalModerator && ParticipantsPaneFooter }
+            style = { styles.participantsPaneContainer }>
             <LobbyParticipantList />
             <MeetingParticipantList
+                breakoutRooms = { rooms }
+                isLocalModerator = { isLocalModerator }
+                lobbyParticipants = { lobbyParticipants }
                 searchString = { searchString }
                 setSearchString = { setSearchString } />
             {
-                autoAssign && <AutoAssignButton />
+                showAutoAssign && <AutoAssignButton />
             }
             {
                 inBreakoutRoom && <LeaveBreakoutRoomButton />
@@ -84,24 +71,7 @@ const ParticipantsPane = () => {
                     searchString = { searchString } />))
             }
             {
-                addBreakoutRoom && <AddBreakoutRoomButton />
-            }
-            {
-                isLocalModerator
-                && <View style = { styles.participantsPaneFooter }>
-                    <Button
-                        children = { t('participantsPane.actions.muteAll') }
-                        labelStyle = { styles.muteAllLabel }
-                        mode = 'contained'
-                        onPress = { muteAll }
-                        style = { styles.muteAllMoreButton } />
-                    <Button
-                        icon = { HorizontalDotsIcon }
-                        labelStyle = { styles.moreIcon }
-                        mode = 'contained'
-                        onPress = { openMoreMenu }
-                        style = { styles.moreButton } />
-                </View>
+                showAddBreakoutRoom && <AddBreakoutRoomButton />
             }
         </JitsiScreen>
     );

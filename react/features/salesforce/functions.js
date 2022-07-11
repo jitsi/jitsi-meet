@@ -1,6 +1,21 @@
 // @flow
 
 import { doGetJSON } from '../base/util';
+import { isInBreakoutRoom } from '../breakout-rooms/functions';
+
+/**
+ * Determines whether Salesforce is enabled for the current conference.
+ *
+ * @param {Function|Object} state - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {boolean}
+ */
+export const isSalesforceEnabled = (state: Function | Object) => {
+    const { salesforceUrl } = state['features/base/config'];
+    const isBreakoutRoom = isInBreakoutRoom(state);
+
+    return Boolean(salesforceUrl) && !isBreakoutRoom;
+};
 
 /**
  * Fetches the Salesforce records that were most recently interacted with.

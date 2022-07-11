@@ -1,7 +1,4 @@
-// @flow
-
 import React from 'react';
-import { View } from 'react-native';
 import Dialog from 'react-native-dialog';
 
 import { translate } from '../../../i18n';
@@ -26,7 +23,7 @@ type Props = {
     /**
      * The React {@code Component} children.
      */
-    children?: React$Node,
+    children?: Node,
 
     /**
      * The i18n key of the text label for the confirm button.
@@ -111,25 +108,25 @@ class ConfirmDialog extends AbstractDialog<Props> {
                 ? styles.destructiveDialogButton : styles.dialogButton;
 
         return (
-            <View>
-                <Dialog.Container visible = { true }>
-                    {
-                        title && <Dialog.Title>
-                            { t(title) }
-                        </Dialog.Title>
-                    }
-                    { this._renderDescription() }
-                    { children }
-                    <Dialog.Button
-                        label = { t(cancelLabel || 'dialog.confirmNo') }
-                        onPress = { this._onCancel }
-                        style = { styles.dialogButton } />
-                    <Dialog.Button
-                        label = { t(confirmLabel || 'dialog.confirmYes') }
-                        onPress = { this._onSubmit }
-                        style = { dialogButtonStyle } />
-                </Dialog.Container>
-            </View>
+            <Dialog.Container
+                coverScreen = { false }
+                visible = { true }>
+                {
+                    title && <Dialog.Title>
+                        { t(title) }
+                    </Dialog.Title>
+                }
+                { this._renderDescription() }
+                { children }
+                <Dialog.Button
+                    label = { t(cancelLabel || 'dialog.confirmNo') }
+                    onPress = { this._onCancel }
+                    style = { styles.dialogButton } />
+                <Dialog.Button
+                    label = { t(confirmLabel || 'dialog.confirmYes') }
+                    onPress = { this._onSubmit }
+                    style = { dialogButtonStyle } />
+            </Dialog.Container>
         );
     }
 

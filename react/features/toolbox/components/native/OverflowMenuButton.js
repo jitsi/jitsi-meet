@@ -1,6 +1,4 @@
-// @flow
-
-import { openDialog } from '../../../base/dialog';
+import { openSheet } from '../../../base/dialog';
 import { getFeatureFlag, OVERFLOW_MENU_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons';
@@ -35,7 +33,7 @@ class OverflowMenuButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(openDialog(OverflowMenu));
+        this.props.dispatch(openSheet(OverflowMenu));
     }
 }
 

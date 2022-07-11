@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Icon, IconMenu } from '../../../base/icons';
 import { Tooltip } from '../../../base/tooltip';
-import { CHAR_LIMIT } from '../../constants';
+import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate from '../AbstractPollCreate';
 import type { AbstractProps } from '../AbstractPollCreate';
 
@@ -60,6 +60,18 @@ const PollCreate = (props: AbstractProps) => {
     }, [ lastFocus ]);
 
     const checkModifiers = useCallback(ev => {
+        // Composition events used to add accents to characters
+        // despite their absence from standard US keyboards,
+        // to build up logograms of many Asian languages
+        // from their base components or categories and so on.
+        if (ev.isComposing || ev.keyCode === 229) {
+            // keyCode 229 means that user pressed some button,
+            // but input method is still processing that.
+            // This is a standard behavior for some input methods
+            // like entering japanese or сhinese hieroglyphs.
+            return true;
+        }
+
         // Because this isn't done automatically on MacOS
         if (ev.key === 'Enter' && ev.metaKey) {
             ev.preventDefault();
@@ -90,7 +102,11 @@ const PollCreate = (props: AbstractProps) => {
         }
 
         if (ev.key === 'Enter') {
-            addAnswer(i + 1);
+            // We add a new option input
+            // only if we are on the last option input
+            if (i === answers.length - 1) {
+                addAnswer(i + 1);
+            }
             requestFocus(i + 1);
             ev.preventDefault();
         } else if (ev.key === 'Backspace' && ev.target.value === '' && answers.length > 1) {
@@ -221,6 +237,7 @@ const PollCreate = (props: AbstractProps) => {
                 <button
                     aria-label = { 'Add option' }
                     className = 'poll-button poll-button-secondary'
+                    disabled = { answers.length >= ANSWERS_LIMIT }
                     onClick = { () => {
                         addAnswer();
                         requestFocus(answers.length);

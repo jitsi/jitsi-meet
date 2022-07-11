@@ -1,21 +1,20 @@
-// @flow
-
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { hideDialog, BottomSheet } from '../../../base/dialog';
+import { hideSheet, BottomSheet } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import {
     Icon,
+    IconCar,
     IconDeviceBluetooth,
     IconDeviceEarpiece,
     IconDeviceHeadphone,
     IconDeviceSpeaker
 } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { ColorPalette, type StyleType } from '../../../base/styles';
+import { ColorPalette } from '../../../base/styles';
 
 import styles from './styles';
 
@@ -85,11 +84,6 @@ type RawDevice = {
 type Props = {
 
     /**
-     * Style of the bottom sheet feature.
-     */
-    _bottomSheetStyles: StyleType,
-
-    /**
      * Object describing available devices.
      */
     _devices: Array<RawDevice>,
@@ -125,6 +119,11 @@ const deviceInfoMap = {
         text: 'audioDevices.bluetooth',
         type: 'BLUETOOTH'
     },
+    CAR: {
+        icon: IconCar,
+        text: 'audioDevices.car',
+        type: 'CAR'
+    },
     EARPIECE: {
         icon: IconDeviceEarpiece,
         text: 'audioDevices.phone',
@@ -141,11 +140,6 @@ const deviceInfoMap = {
         type: 'SPEAKER'
     }
 };
-
-/**
- * The exported React {@code Component}.
- */
-let AudioRoutePickerDialog_; // eslint-disable-line prefer-const
 
 /**
  * Implements a React {@code Component} which prompts the user when a password
@@ -166,7 +160,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @inheritdoc
      */
     static getDerivedStateFromProps(props: Props) {
-        const { _devices: devices } = props;
+        const { _devices: devices, t } = props;
 
         if (!devices) {
             return null;
@@ -183,13 +177,18 @@ class AudioRoutePickerDialog extends Component<Props, State> {
                 continue;
             }
 
-            const text = device.type === 'BLUETOOTH' && device.name ? device.name : infoMap.text;
+            let text = t(infoMap.text);
+
+            // iOS provides descriptive names for these, use it.
+            if ((device.type === 'BLUETOOTH' || device.type === 'CAR') && device.name) {
+                text = device.name;
+            }
 
             if (infoMap) {
                 const info = {
                     ...infoMap,
                     selected: Boolean(device.selected),
-                    text: props.t(text),
+                    text,
                     uid: device.uid
                 };
 
@@ -212,35 +211,9 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so they are only bound once per instance.
-        this._onCancel = this._onCancel.bind(this);
-
         // Trigger an initial update.
         AudioMode.updateDeviceList && AudioMode.updateDeviceList();
     }
-
-    /**
-     * Dispatches a redux action to hide this sheet.
-     *
-     * @returns {void}
-     */
-    _hide() {
-        this.props.dispatch(hideDialog(AudioRoutePickerDialog_));
-    }
-
-    _onCancel: () => void;
-
-    /**
-     * Cancels the dialog by hiding it.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onCancel() {
-        this._hide();
-    }
-
-    _onSelectDeviceFn: (Device) => Function;
 
     /**
      * Builds and returns a function which handles the selection of a device
@@ -252,7 +225,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      */
     _onSelectDeviceFn(device: Device) {
         return () => {
-            this._hide();
+            this.props.dispatch(hideSheet());
             AudioMode.setAudioDevice(device.uid || device.type);
         };
     }
@@ -265,7 +238,6 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderDevice(device: Device) {
-        const { _bottomSheetStyles } = this.props;
         const { icon, selected, text } = device;
         const selectedStyle = selected ? styles.selectedText : {};
 
@@ -277,8 +249,8 @@ class AudioRoutePickerDialog extends Component<Props, State> {
                 <View style = { styles.deviceRow } >
                     <Icon
                         src = { icon }
-                        style = { [ styles.deviceIcon, _bottomSheetStyles.buttons.iconStyle, selectedStyle ] } />
-                    <Text style = { [ styles.deviceText, _bottomSheetStyles.buttons.labelStyle, selectedStyle ] } >
+                        style = { [ styles.deviceIcon, bottomSheetStyles.buttons.iconStyle, selectedStyle ] } />
+                    <Text style = { [ styles.deviceText, bottomSheetStyles.buttons.labelStyle, selectedStyle ] } >
                         { text }
                     </Text>
                 </View>
@@ -293,14 +265,14 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderNoDevices() {
-        const { _bottomSheetStyles, t } = this.props;
+        const { t } = this.props;
 
         return (
             <View style = { styles.deviceRow } >
                 <Icon
                     src = { deviceInfoMap.SPEAKER.icon }
-                    style = { [ styles.deviceIcon, _bottomSheetStyles.buttons.iconStyle ] } />
-                <Text style = { [ styles.deviceText, _bottomSheetStyles.buttons.labelStyle ] } >
+                    style = { [ styles.deviceIcon, bottomSheetStyles.buttons.iconStyle ] } />
+                <Text style = { [ styles.deviceText, bottomSheetStyles.buttons.labelStyle ] } >
                     { t('audioDevices.none') }
                 </Text>
             </View>
@@ -324,7 +296,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
         }
 
         return (
-            <BottomSheet onCancel = { this._onCancel }>
+            <BottomSheet>
                 { content }
             </BottomSheet>
         );
@@ -339,11 +311,8 @@ class AudioRoutePickerDialog extends Component<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _devices: state['features/mobile/audio-mode'].devices
     };
 }
 
-AudioRoutePickerDialog_ = translate(connect(_mapStateToProps)(AudioRoutePickerDialog));
-
-export default AudioRoutePickerDialog_;
+export default translate(connect(_mapStateToProps)(AudioRoutePickerDialog));

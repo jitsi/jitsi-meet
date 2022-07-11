@@ -84,7 +84,7 @@ type Props = {
 
 export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {
     const dispatch = useDispatch();
-    const isModerationSupported = useSelector(isAvModerationSupported());
+    const isModerationSupported = useSelector(isAvModerationSupported);
     const allModerators = useSelector(isEveryoneModerator);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
     const participantCount = useSelector(getParticipantCount);

@@ -1,6 +1,6 @@
 // @flow
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 type Props = {
@@ -41,8 +41,11 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
     const [ portalTarget ] = useState(() => {
         const portalDiv = document.createElement('div');
 
+        portalDiv.style.visibility = 'hidden';
+
         return portalDiv;
     });
+    const timerRef = useRef();
 
     useEffect(() => {
         if (style) {
@@ -74,6 +77,10 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
 
             if (contentRect.width !== size.width || contentRect.height !== size.height) {
                 setSize && setSize(contentRect);
+                clearTimeout(timerRef.current);
+                timerRef.current = setTimeout(() => {
+                    portalTarget.style.visibility = 'visible';
+                }, 100);
             }
         });
 

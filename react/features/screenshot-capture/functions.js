@@ -1,6 +1,5 @@
 // @flow
 
-import { getCurrentConference } from '../base/conference';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
 import { getActiveSession } from '../recording/functions';
@@ -21,29 +20,6 @@ export function createScreenshotCaptureSummary(stateful: Object | Function) {
     }
 
     return new ScreenshotCaptureSummary(toState(stateful));
-}
-
-/**
- * Get a participant's connection JID given its ID.
- *
- * @param {Object} state - The redux store state.
- * @param {string} participantId - ID of the given participant.
- * @returns {string|undefined} - The participant connection JID if found.
- */
-export function getParticipantJid(state: Object, participantId: string) {
-    const conference = getCurrentConference(state);
-
-    if (!conference) {
-        return;
-    }
-
-    const participant = conference.getParticipantById(participantId);
-
-    if (!participant) {
-        return;
-    }
-
-    return participant.getJid();
 }
 
 /**

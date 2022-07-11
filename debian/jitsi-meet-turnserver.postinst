@@ -33,7 +33,6 @@ case "$1" in
         JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
 
         TURN_CONFIG="/etc/turnserver.conf"
-        NGINX_CONFIG="/etc/nginx/sites-available/$JVB_HOSTNAME.conf"
         JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
 
         # if there was a turn config backup it so we can configure
@@ -49,19 +48,6 @@ case "$1" in
             if [[ -f $TURN_CONFIG ]] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
                 rm -f $TURN_CONFIG
             fi
-        fi
-
-        # this detect only old installations with no nginx
-        db_get jitsi-meet/jvb-serve || true
-        if [ ! -f $NGINX_CONFIG -o "$RET" = "true" ] ; then
-            # nothing to do
-            echo "------------------------------------------------"
-            echo ""
-            echo "turnserver not configured"
-            echo ""
-            echo "------------------------------------------------"
-            db_stop
-            exit 0
         fi
 
         if [[ -f $TURN_CONFIG ]] ; then
@@ -117,7 +103,7 @@ denied-peer-ip=240.0.0.0-255.255.255.255" >> $TURN_CONFIG
         sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $TURN_CONFIG
         sed -i "s/__turnSecret__/$TURN_SECRET/g" $TURN_CONFIG
 
-        # SSL for nginx
+        # SSL settings
         db_get jitsi-meet/cert-choice
         CERT_CHOICE="$RET"
 

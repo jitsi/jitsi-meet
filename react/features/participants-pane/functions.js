@@ -23,14 +23,6 @@ import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { QUICK_ACTION_BUTTON, REDUCER_KEY, MEDIA_STATE } from './constants';
 
 /**
- * Generates a class attribute value.
- *
- * @param {Iterable<string>} args - String iterable.
- * @returns {string} Class attribute value.
- */
-export const classList = (...args: Array<string | boolean>) => args.filter(Boolean).join(' ');
-
-/**
  * Find the first styled ancestor component of an element.
  *
  * @param {Element} target - Element to look up.
@@ -148,6 +140,20 @@ export const getComputedOuterHeight = (element: HTMLElement) => {
  * @returns {Object} Feature state.
  */
 const getState = (state: Object) => state[REDUCER_KEY];
+
+/**
+ * Returns the participants pane config.
+ *
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {Object}
+ */
+export const getParticipantsPaneConfig = (stateful: Function | Object) => {
+    const state = toState(stateful);
+    const { participantsPane = {} } = state['features/base/config'];
+
+    return participantsPane;
+};
 
 /**
  * Is the participants pane open.
@@ -269,3 +275,31 @@ export function participantMatchesSearch(participant: Object, searchString: stri
 
     return false;
 }
+
+/**
+ * Returns whether the more actions button is visible.
+ *
+ * @param {Object} state - Global state.
+ * @returns {boolean}
+ */
+export const isMoreActionsVisible = (state: Object) => {
+    const isLocalModerator = isLocalParticipantModerator(state);
+    const inBreakoutRoom = isInBreakoutRoom(state);
+    const { hideMoreActionsButton } = getParticipantsPaneConfig(state);
+
+    return inBreakoutRoom ? false : !hideMoreActionsButton && isLocalModerator;
+};
+
+/**
+ * Returns whether the mute all button is visible.
+ *
+ * @param {Object} state - Global state.
+ * @returns {boolean}
+ */
+export const isMuteAllVisible = (state: Object) => {
+    const isLocalModerator = isLocalParticipantModerator(state);
+    const inBreakoutRoom = isInBreakoutRoom(state);
+    const { hideMuteAllButton } = getParticipantsPaneConfig(state);
+
+    return inBreakoutRoom ? false : !hideMuteAllButton && isLocalModerator;
+};

@@ -159,13 +159,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      */
     componentDidMount() {
         const {
-            navigation
+            navigation,
+            t
         } = this.props;
 
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.jumpTo(screen.welcome.main))
+                    navigation.navigate(screen.welcome.main)),
+            headerTitle: t('settings.screenTitle')
         });
     }
 
@@ -211,7 +213,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             label = { this.props.t('settingsView.displayName') }
                             mode = 'outlined'
                             onChangeText = { this._onChangeDisplayName }
-                            placeholder = 'John Doe'
+                            placeholder = { this.props.t('settingsView.displayNamePlaceholderText') }
                             spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'name' } // iOS only

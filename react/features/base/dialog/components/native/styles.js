@@ -1,5 +1,3 @@
-// @flow
-
 import { StyleSheet } from 'react-native';
 
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
@@ -19,85 +17,6 @@ export const FIELD_UNDERLINE = ColorPalette.transparent;
 export const MD_FONT_SIZE = 16;
 export const MD_ITEM_HEIGHT = 48;
 export const MD_ITEM_MARGIN_PADDING = 16;
-
-/**
- * The React {@code Component} styles of {@code BottomSheet}. These have
- * been implemented as per the Material Design guidelines:
- * {@link https://material.io/guidelines/components/bottom-sheets.html}.
- */
-export const bottomSheetStyles = {
-    sheetAreaCover: {
-        backgroundColor: ColorPalette.transparent,
-        flex: 1
-    },
-
-    scrollView: {
-        paddingHorizontal: 0
-    },
-
-    /**
-     * Style for the container of the sheet.
-     */
-    sheetContainer: {
-        alignItems: 'stretch',
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        maxWidth: 500,
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        width: '100%'
-    },
-
-    sheetItemContainer: {
-        flex: -1
-    }
-};
-
-export default {
-    dialogButton: {
-        ...BaseTheme.typography.labelButton
-    },
-
-    destructiveDialogButton: {
-        ...BaseTheme.typography.labelButton,
-        color: BaseTheme.palette.actionDanger
-    }
-};
-
-export const brandedDialog = {
-
-    /**
-     * The style of bold {@code Text} rendered by the {@code Dialog}s of the
-     * feature authentication.
-     */
-    boldDialogText: {
-        fontWeight: 'bold'
-    },
-
-    buttonFarRight: {
-        borderBottomRightRadius: BORDER_RADIUS
-    },
-
-    buttonWrapper: {
-        alignItems: 'stretch',
-        borderRadius: BORDER_RADIUS,
-        flexDirection: 'row'
-    },
-
-    mainWrapper: {
-        alignSelf: 'stretch',
-        padding: BoxModel.padding * 2,
-
-        // The added bottom padding is to compensate the empty space around the
-        // close icon.
-        paddingBottom: BoxModel.padding * 3
-    },
-
-    overlayTouchable: {
-        ...StyleSheet.absoluteFillObject
-    }
-};
 
 /**
  * Reusable (colored) style for text in any branded dialogs.
@@ -136,12 +55,39 @@ export const inputDialog = {
 };
 
 /**
- * Default styles for the items of a {@code BottomSheet}-based menu.
- *
- * These have been implemented as per the Material Design guidelines:
+ * The React {@code Component} styles of {@code BottomSheet}. These have
+ * been implemented as per the Material Design guidelines:
  * {@link https://material.io/guidelines/components/bottom-sheets.html}.
  */
-ColorSchemeRegistry.register('BottomSheet', {
+export const bottomSheetStyles = {
+    sheetAreaCover: {
+        backgroundColor: ColorPalette.transparent,
+        flex: 1
+    },
+
+    scrollView: {
+        paddingHorizontal: 0
+    },
+
+    /**
+     * Style for the container of the sheet.
+     */
+    sheetContainer: {
+        alignItems: 'stretch',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        maxWidth: 500,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        width: '100%'
+    },
+
+    sheetItemContainer: {
+        flex: -1,
+        maxHeight: '75%'
+    },
+
     buttons: {
         /**
          * Style for the {@code Icon} element in a generic item of the menu.
@@ -194,7 +140,53 @@ ColorSchemeRegistry.register('BottomSheet', {
     sheetFooter: {
         backgroundColor: BaseTheme.palette.bottomSheet
     }
-});
+};
+
+export default {
+    dialogButton: {
+        ...BaseTheme.typography.labelButton
+    },
+
+    destructiveDialogButton: {
+        ...BaseTheme.typography.labelButton,
+        color: BaseTheme.palette.actionDanger
+    }
+};
+
+export const brandedDialog = {
+
+    /**
+     * The style of bold {@code Text} rendered by the {@code Dialog}s of the
+     * feature authentication.
+     */
+    boldDialogText: {
+        fontWeight: 'bold'
+    },
+
+    buttonFarRight: {
+        borderBottomRightRadius: BORDER_RADIUS
+    },
+
+    buttonWrapper: {
+        alignItems: 'stretch',
+        borderRadius: BORDER_RADIUS,
+        flexDirection: 'row'
+    },
+
+    mainWrapper: {
+        alignSelf: 'stretch',
+        padding: BoxModel.padding * 2,
+
+        // The added bottom padding is to compensate the empty space around the
+        // close icon.
+        paddingBottom: BoxModel.padding * 3
+    },
+
+    overlayTouchable: {
+        ...StyleSheet.absoluteFillObject
+    }
+};
+
 
 /**
  * Color schemed styles for all the component based on the abstract dialog.
@@ -270,30 +262,5 @@ ColorSchemeRegistry.register('Dialog', {
     topBorderContainer: {
         borderTopColor: BaseTheme.palette.dividerColor,
         borderTopWidth: 1
-    }
-});
-
-ColorSchemeRegistry.register('SecurityDialog', {
-    /**
-     * Field on an input dialog.
-     */
-    field: {
-        borderBottomWidth: 1,
-        borderColor: schemeColor('border'),
-        color: schemeColor('text'),
-        fontSize: 14,
-        paddingBottom: 8
-    },
-
-    text: {
-        color: schemeColor('text'),
-        fontSize: 14,
-        marginTop: 8
-    },
-
-    title: {
-        color: schemeColor('text'),
-        fontSize: 18,
-        fontWeight: 'bold'
     }
 });

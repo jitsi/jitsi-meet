@@ -6,10 +6,12 @@ import { MEDIA_TYPE } from '../base/media';
 import {
     getLocalParticipant,
     getParticipantById,
+    getParticipantCount,
     getParticipantCountWithFake,
     getPinnedParticipant
 } from '../base/participants';
 import { toState } from '../base/redux';
+import { shouldHideSelfView } from '../base/settings/functions.any';
 import {
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
@@ -17,7 +19,12 @@ import {
     isRemoteTrackMuted
 } from '../base/tracks/functions';
 import { isTrackStreamingStatusActive, isParticipantConnectionStatusActive } from '../connection-indicator/functions';
-import { getCurrentLayout, LAYOUTS } from '../video-layout';
+import { isSharingStatus } from '../shared-video/functions';
+import {
+    getCurrentLayout,
+    getNotResponsiveTileViewGridDimensions,
+    LAYOUTS
+} from '../video-layout';
 
 import {
     ASPECT_RATIO_BREAKPOINT,
@@ -26,15 +33,18 @@ import {
     DISPLAY_AVATAR,
     DISPLAY_VIDEO,
     FILMSTRIP_GRID_BREAKPOINT,
+    FILMSTRIP_TYPE,
     INDICATORS_TOOLTIP_POSITION,
     SCROLL_SIZE,
     SQUARE_TILE_ASPECT_RATIO,
+    THUMBNAIL_TYPE,
     TILE_ASPECT_RATIO,
     TILE_HORIZONTAL_MARGIN,
     TILE_MIN_HEIGHT_LARGE,
     TILE_MIN_HEIGHT_SMALL,
     TILE_PORTRAIT_ASPECT_RATIO,
     TILE_VERTICAL_MARGIN,
+    TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES,
     TILE_VIEW_GRID_HORIZONTAL_MARGIN,
     TILE_VIEW_GRID_VERTICAL_MARGIN,
     VERTICAL_VIEW_HORIZONTAL_MARGIN
@@ -188,6 +198,213 @@ export function calculateThumbnailSizeForVerticalView(clientWidth: number = 0,
 }
 
 /**
+ * Returns the minimum height of a thumbnail.
+ *
+ * @param {number} clientWidth - The width of the window.
+ * @returns {number} The minimum height of a thumbnail.
+ */
+export function getThumbnailMinHeight(clientWidth) {
+    return clientWidth < ASPECT_RATIO_BREAKPOINT ? TILE_MIN_HEIGHT_SMALL : TILE_MIN_HEIGHT_LARGE;
+}
+
+/**
+ * Returns the default aspect ratio for a tile.
+ *
+ * @param {boolean} disableResponsiveTiles - Indicates whether the responsive tiles functionality is disabled.
+ * @param {boolean} disableTileEnlargement - Indicates whether the tiles enlargement functionality is disabled.
+ * @param {number} clientWidth - The width of the window.
+ * @returns {number} The default aspect ratio for a tile.
+ */
+export function getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnlargement, clientWidth) {
+    if (!disableResponsiveTiles && disableTileEnlargement && clientWidth < ASPECT_RATIO_BREAKPOINT) {
+        return SQUARE_TILE_ASPECT_RATIO;
+    }
+
+    return TILE_ASPECT_RATIO;
+}
+
+/**
+ * Returns the number of participants that will be displayed in tile view.
+ *
+ * @param {Object} state - The redux store state.
+ * @returns {number} The number of participants that will be displayed in tile view.
+ */
+export function getNumberOfPartipantsForTileView(state) {
+    const { iAmRecorder } = state['features/base/config'];
+    const disableSelfView = shouldHideSelfView(state);
+    const { localScreenShare } = state['features/base/participants'];
+    const localParticipantsCount = getSourceNameSignalingFeatureFlag(state) && localScreenShare ? 2 : 1;
+    const numberOfParticipants = getParticipantCountWithFake(state)
+        - (iAmRecorder ? 1 : 0)
+        - (disableSelfView ? localParticipantsCount : 0);
+
+    return numberOfParticipants;
+}
+
+/**
+ * Calculates the dimensions (thumbnail width/height and columns/row) for tile view when the responsive tiles are
+ * disabled.
+ *
+ * @param {Object} state - The redux store state.
+ * @returns {Object} - The dimensions.
+ */
+export function calculateNonResponsiveTileViewDimensions(state) {
+    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const { disableTileEnlargement } = state['features/base/config'];
+    const { columns: c, minVisibleRows, rows: r } = getNotResponsiveTileViewGridDimensions(state);
+    const size = calculateThumbnailSizeForTileView({
+        columns: c,
+        minVisibleRows,
+        clientWidth,
+        clientHeight,
+        disableTileEnlargement,
+        disableResponsiveTiles: true
+    });
+
+    if (typeof size === 'undefined') { // The columns don't fit into the screen. We will have horizontal scroll.
+        const aspectRatio = disableTileEnlargement
+            ? getTileDefaultAspectRatio(true, disableTileEnlargement, clientWidth)
+            : TILE_PORTRAIT_ASPECT_RATIO;
+
+        const height = getThumbnailMinHeight(clientWidth);
+
+        return {
+            height,
+            width: aspectRatio * height,
+            columns: c,
+            rows: r
+        };
+    }
+
+    return {
+        height: size.height,
+        width: size.width,
+        columns: c,
+        rows: r
+    };
+}
+
+/**
+ * Calculates the dimensions (thumbnail width/height and columns/row) for tile view when the responsive tiles are
+ * enabled.
+ *
+ * @param {Object} state - The redux store state.
+ * @returns {Object} - The dimensions.
+ */
+export function calculateResponsiveTileViewDimensions({
+    clientWidth,
+    clientHeight,
+    disableTileEnlargement = false,
+    noHorizontalContainerMargin = false,
+    maxColumns,
+    numberOfParticipants,
+    desiredNumberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES,
+    minTileHeight
+}) {
+    let height, width;
+    let columns, rows;
+    let dimensions = {
+        maxArea: 0
+    };
+    let minHeightEnforcedDimensions = {
+        maxArea: 0
+    };
+    let zeroVisibleRowsDimensions = {
+        maxArea: 0
+    };
+
+    for (let c = 1; c <= Math.min(maxColumns, numberOfParticipants, desiredNumberOfVisibleTiles); c++) {
+        const r = Math.ceil(numberOfParticipants / c);
+
+        // we want to display as much as possible tumbnails up to desiredNumberOfVisibleTiles
+        const visibleRows
+            = numberOfParticipants <= desiredNumberOfVisibleTiles ? r : Math.floor(desiredNumberOfVisibleTiles / c);
+
+        const size = calculateThumbnailSizeForTileView({
+            columns: c,
+            minVisibleRows: visibleRows,
+            clientWidth,
+            clientHeight,
+            disableTileEnlargement,
+            disableResponsiveTiles: false,
+            noHorizontalContainerMargin,
+            minTileHeight
+        });
+
+        if (size) {
+            const { height: currentHeight, width: currentWidth, minHeightEnforced, maxVisibleRows } = size;
+            const numberOfVisibleParticipants = Math.min(c * maxVisibleRows, numberOfParticipants);
+
+            let area = Math.round(
+                (currentHeight + TILE_VERTICAL_MARGIN)
+                * (currentWidth + TILE_HORIZONTAL_MARGIN)
+                * numberOfVisibleParticipants);
+
+            const currentDimensions = {
+                maxArea: area,
+                height: currentHeight,
+                width: currentWidth,
+                columns: c,
+                rows: r,
+                numberOfVisibleParticipants
+            };
+            const { numberOfVisibleParticipants: oldNumberOfVisibleParticipants = 0 } = dimensions;
+
+            if (!minHeightEnforced) {
+                if (area > dimensions.maxArea) {
+                    dimensions = currentDimensions;
+                } else if ((area === dimensions.maxArea)
+                    && ((oldNumberOfVisibleParticipants > desiredNumberOfVisibleTiles
+                            && oldNumberOfVisibleParticipants >= numberOfParticipants)
+                        || (oldNumberOfVisibleParticipants < numberOfParticipants
+                            && numberOfVisibleParticipants <= desiredNumberOfVisibleTiles))
+                ) { // If the area of the new candidates and the old ones are equal we preffer the one that will have
+                    // closer number of visible participants to desiredNumberOfVisibleTiles config.
+                    dimensions = currentDimensions;
+                }
+            } else if (minHeightEnforced && area >= minHeightEnforcedDimensions.maxArea) {
+                // If we choose configuration with minHeightEnforced there will be less than desiredNumberOfVisibleTiles
+                // visible tiles, that's why we prefer more columns when the area is the same.
+                minHeightEnforcedDimensions = currentDimensions;
+            } else if (minHeightEnforced && maxVisibleRows === 0) {
+                area = currentHeight * currentWidth * Math.min(c, numberOfParticipants);
+
+                if (area > zeroVisibleRowsDimensions.maxArea) {
+                    zeroVisibleRowsDimensions = {
+                        ...currentDimensions,
+                        maxArea: area
+                    };
+                }
+            }
+        }
+    }
+
+    if (dimensions.maxArea > 0) {
+        ({ height, width, columns, rows } = dimensions);
+    } else if (minHeightEnforcedDimensions.maxArea > 0) {
+        ({ height, width, columns, rows } = minHeightEnforcedDimensions);
+    } else if (zeroVisibleRowsDimensions.maxArea > 0) {
+        ({ height, width, columns, rows } = zeroVisibleRowsDimensions);
+    } else { // This would mean that we can't fit even one thumbnail with minimal size.
+        const aspectRatio = disableTileEnlargement
+            ? getTileDefaultAspectRatio(false, disableTileEnlargement, clientWidth)
+            : TILE_PORTRAIT_ASPECT_RATIO;
+
+        height = getThumbnailMinHeight(clientWidth);
+        width = aspectRatio * height;
+        columns = 1;
+        rows = numberOfParticipants;
+    }
+
+    return {
+        height,
+        width,
+        columns,
+        rows
+    };
+}
+
+/**
  * Calculates the size for thumbnails when in tile view layout.
  *
  * @param {Object} dimensions - The desired dimensions of the tile view grid.
@@ -196,90 +413,76 @@ export function calculateThumbnailSizeForVerticalView(clientWidth: number = 0,
 export function calculateThumbnailSizeForTileView({
     columns,
     minVisibleRows,
-    rows,
     clientWidth,
     clientHeight,
-    disableResponsiveTiles,
-    disableTileEnlargement,
-    isVerticalFilmstrip = false
+    disableResponsiveTiles = false,
+    disableTileEnlargement = false,
+    noHorizontalContainerMargin = false,
+    minTileHeight
 }: Object) {
-    let aspectRatio = TILE_ASPECT_RATIO;
-
-    if (!disableResponsiveTiles && clientWidth < ASPECT_RATIO_BREAKPOINT) {
-        aspectRatio = SQUARE_TILE_ASPECT_RATIO;
-    }
-
-    const minHeight = clientWidth < ASPECT_RATIO_BREAKPOINT ? TILE_MIN_HEIGHT_SMALL : TILE_MIN_HEIGHT_LARGE;
+    const aspectRatio = getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnlargement, clientWidth);
+    const minHeight = minTileHeight || getThumbnailMinHeight(clientWidth);
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN)
-        - (isVerticalFilmstrip ? 0 : TILE_VIEW_GRID_HORIZONTAL_MARGIN);
-    const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - TILE_VIEW_GRID_VERTICAL_MARGIN;
+        - (noHorizontalContainerMargin ? SCROLL_SIZE : TILE_VIEW_GRID_HORIZONTAL_MARGIN);
+    const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
+    const viewHeight = availableHeight - (minVisibleRows * TILE_VERTICAL_MARGIN);
     const initialWidth = viewWidth / columns;
-    const initialHeight = viewHeight / minVisibleRows;
-    const aspectRatioHeight = initialWidth / aspectRatio;
-    const noScrollHeight = (clientHeight / rows) - TILE_VERTICAL_MARGIN;
-    const scrollInitialWidth = (viewWidth - SCROLL_SIZE) / columns;
-    let height = Math.floor(Math.min(aspectRatioHeight, initialHeight));
-    let width = Math.floor(aspectRatio * height);
+    let initialHeight = viewHeight / minVisibleRows;
+    let minHeightEnforced = false;
 
-    if (height > noScrollHeight && width > scrollInitialWidth) { // we will have scroll and we need more space for it.
-        const scrollAspectRatioHeight = scrollInitialWidth / aspectRatio;
-
-        // Recalculating width/height to fit the available space when a scroll is displayed.
-        // NOTE: Math.min(scrollAspectRatioHeight, initialHeight) would be enough to recalculate but since the new
-        // height value can theoretically be dramatically smaller and the scroll may not be neccessary anymore we need
-        // to compare it with noScrollHeight( the optimal height to fit all thumbnails without scroll) and get the
-        // bigger one. This way we ensure that we always strech the thumbnails as close as we can to the edges of the
-        // window.
-        height = Math.floor(Math.max(Math.min(scrollAspectRatioHeight, initialHeight), noScrollHeight));
-        width = Math.floor(aspectRatio * height);
-
-        return {
-            height,
-            width
-        };
+    if (initialHeight < minHeight) {
+        minHeightEnforced = true;
+        initialHeight = minHeight;
     }
 
     if (disableTileEnlargement) {
-        return {
-            height,
-            width
-        };
-    }
+        const aspectRatioHeight = initialWidth / aspectRatio;
 
-    if (initialHeight > noScrollHeight) {
-        height = Math.max(height, viewHeight / rows, minHeight);
-        width = Math.max(width, initialWidth);
-    } else {
-        height = Math.max(initialHeight, minHeight);
-        width = initialWidth;
-    }
-
-    if (height > width) {
-        const heightFromWidth = TILE_PORTRAIT_ASPECT_RATIO * width;
-
-        if (height > heightFromWidth && heightFromWidth < minHeight) {
-            return {
-                height,
-                width: height / TILE_PORTRAIT_ASPECT_RATIO
-            };
+        if (aspectRatioHeight < minHeight) { // we can't fit the required number of columns.
+            return;
         }
 
-        return {
-            height: Math.min(height, heightFromWidth),
-            width
-        };
-    } else if (height < width) {
+        const height = Math.min(aspectRatioHeight, initialHeight);
+
         return {
             height,
-            width: Math.min(width, aspectRatio * height)
+            width: aspectRatio * height,
+            minHeightEnforced,
+            maxVisibleRows: Math.floor(availableHeight / (height + TILE_VERTICAL_MARGIN))
         };
+    }
+
+    const initialRatio = initialWidth / initialHeight;
+    let height = initialHeight;
+    let width;
+
+    // The biggest area of the grid will be when the grid's height is equal to clientHeight or when the grid's width is
+    // equal to clientWidth.
+
+    if (initialRatio > aspectRatio) {
+        width = initialHeight * aspectRatio;
+    } else if (initialRatio >= TILE_PORTRAIT_ASPECT_RATIO) {
+        width = initialWidth;
+    // eslint-disable-next-line no-negated-condition
+    } else if (!minHeightEnforced) {
+        height = initialWidth / TILE_PORTRAIT_ASPECT_RATIO;
+
+        if (height >= minHeight) {
+            width = initialWidth;
+        } else { // The width is so small that we can't reach the minimum height with portrait aspect ratio.
+            return;
+        }
+    } else {
+        // We can't fit that number of columns with the desired min height and aspect ratio.
+        return;
     }
 
     return {
         height,
-        width
+        width,
+        minHeightEnforced,
+        maxVisibleRows: Math.floor(availableHeight / (height + TILE_VERTICAL_MARGIN))
     };
-
 }
 
 /**
@@ -308,16 +511,36 @@ export function getVerticalFilmstripVisibleAreaWidth() {
 */
 export function computeDisplayModeFromInput(input: Object) {
     const {
+        filmstripType,
+        isActiveParticipant,
         isAudioOnly,
         isCurrentlyOnLargeVideo,
+        isVirtualScreenshareParticipant,
         isScreenSharing,
         canPlayEventReceived,
         isRemoteParticipant,
+        multipleVideoSupport,
+        stageParticipantsVisible,
         tileViewActive
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
 
-    if (!tileViewActive && isScreenSharing && isRemoteParticipant) {
+    if (multipleVideoSupport) {
+        // Display video for virtual screen share participants in all layouts.
+        if (isVirtualScreenshareParticipant) {
+            return DISPLAY_VIDEO;
+        }
+
+        // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A virtual
+        // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior consistent
+        // and an avatar is displayed on the original participant thumbnail as long as screenshare is in progress.
+        if (isScreenSharing) {
+            return DISPLAY_AVATAR;
+        }
+    }
+
+    if (!tileViewActive && filmstripType === FILMSTRIP_TYPE.MAIN && ((isScreenSharing && isRemoteParticipant)
+        || (stageParticipantsVisible && isActiveParticipant))) {
         return DISPLAY_AVATAR;
     } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
         // Display name is always and only displayed when user is on the stage
@@ -341,17 +564,24 @@ export function computeDisplayModeFromInput(input: Object) {
 export function getDisplayModeInput(props: Object, state: Object) {
     const {
         _currentLayout,
+        _isActiveParticipant,
         _isAudioOnly,
         _isCurrentlyOnLargeVideo,
+        _isVirtualScreenshareParticipant,
         _isScreenSharing,
         _isVideoPlayable,
+        _multipleVideoSupport,
         _participant,
-        _videoTrack
+        _stageParticipantsVisible,
+        _videoTrack,
+        filmstripType = FILMSTRIP_TYPE.MAIN
     } = props;
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
     const { canPlayEventReceived } = state;
 
     return {
+        filmstripType,
+        isActiveParticipant: _isActiveParticipant,
         isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
         isAudioOnly: _isAudioOnly,
         tileViewActive,
@@ -361,6 +591,9 @@ export function getDisplayModeInput(props: Object, state: Object) {
         videoStream: Boolean(_videoTrack),
         isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
+        isVirtualScreenshareParticipant: _isVirtualScreenshareParticipant,
+        multipleVideoSupport: _multipleVideoSupport,
+        stageParticipantsVisible: _stageParticipantsVisible,
         videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
     };
 }
@@ -368,11 +601,11 @@ export function getDisplayModeInput(props: Object, state: Object) {
 /**
  * Gets the tooltip position for the thumbnail indicators.
  *
- * @param {string} currentLayout - The current layout of the app.
+ * @param {string} thumbnailType - The current thumbnail type.
  * @returns {string}
  */
-export function getIndicatorsTooltipPosition(currentLayout: string) {
-    return INDICATORS_TOOLTIP_POSITION[currentLayout] || 'top';
+export function getIndicatorsTooltipPosition(thumbnailType: string) {
+    return INDICATORS_TOOLTIP_POSITION[thumbnailType] || 'top';
 }
 
 /**
@@ -386,7 +619,7 @@ export function isFilmstripResizable(state: Object) {
     const _currentLayout = getCurrentLayout(state);
 
     return !filmstrip?.disableResizable && !isMobileBrowser()
-        && _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW;
+        && (_currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW || _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW);
 }
 
 /**
@@ -422,4 +655,139 @@ export function getVerticalViewMaxWidth(state) {
     maxWidth += (_verticalViewGrid ? 0 : 11) + (_resizableFilmstrip ? 9 : 4);
 
     return maxWidth;
+}
+
+/**
+ * Returns true if the scroll is displayed and false otherwise.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} - True if the scroll is displayed and false otherwise.
+ */
+export function isFilmstripScrollVisible(state) {
+    const _currentLayout = getCurrentLayout(state);
+    let hasScroll = false;
+
+    switch (_currentLayout) {
+    case LAYOUTS.TILE_VIEW:
+        ({ hasScroll = false } = state['features/filmstrip'].tileViewDimensions);
+        break;
+    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+    case LAYOUTS.STAGE_FILMSTRIP_VIEW: {
+        ({ hasScroll = false } = state['features/filmstrip'].verticalViewDimensions);
+        break;
+    }
+    case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
+        ({ hasScroll = false } = state['features/filmstrip'].horizontalViewDimensions);
+        break;
+    }
+    }
+
+    return hasScroll;
+}
+
+/**
+ * Gets the ids of the active participants.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {Array<string>}
+ */
+export function getActiveParticipantsIds(state) {
+    const { activeParticipants } = state['features/filmstrip'];
+
+    return activeParticipants.map(p => p.participantId);
+}
+
+/**
+ * Gets the ids of the active participants.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {Array<Object>}
+ */
+export function getPinnedActiveParticipants(state) {
+    const { activeParticipants } = state['features/filmstrip'];
+
+    return activeParticipants.filter(p => p.pinned);
+}
+
+/**
+ * Get whether or not the stage filmstrip is available (enabled & can be used).
+ *
+ * @param {Object} state - Redux state.
+ * @param {number} minParticipantCount - The min number of participants for the stage filmstrip
+ * to be displayed.
+ * @returns {boolean}
+ */
+export function isStageFilmstripAvailable(state, minParticipantCount = 0) {
+    const { activeParticipants } = state['features/filmstrip'];
+    const { remoteScreenShares } = state['features/video-layout'];
+    const sharedVideo = isSharingStatus(state['features/shared-video']?.status);
+
+    return isStageFilmstripEnabled(state) && !sharedVideo
+        && activeParticipants.length >= minParticipantCount
+        && (isTopPanelEnabled(state) || remoteScreenShares.length === 0);
+}
+
+/**
+ * Whether the stage filmstrip should be displayed on the top.
+ *
+ * @param {Object} state - Redux state.
+ * @param {number} minParticipantCount - The min number of participants for the stage filmstrip
+ * to be displayed.
+ * @returns {boolean}
+ */
+export function isStageFilmstripTopPanel(state, minParticipantCount = 0) {
+    const { remoteScreenShares } = state['features/video-layout'];
+
+    return isTopPanelEnabled(state)
+        && isStageFilmstripAvailable(state, minParticipantCount) && remoteScreenShares.length > 0;
+}
+
+/**
+ * Whether the stage filmstrip is disabled or not.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function isStageFilmstripEnabled(state) {
+    const { filmstrip } = state['features/base/config'];
+
+    return !(filmstrip?.disableStageFilmstrip ?? true) && interfaceConfig.VERTICAL_FILMSTRIP;
+}
+
+/**
+ * Gets the thumbnail type by filmstrip type.
+ *
+ * @param {string} currentLayout - Current app layout.
+ * @param {string} filmstripType - The current filmstrip type.
+ * @returns {string}
+ */
+export function getThumbnailTypeFromLayout(currentLayout, filmstripType) {
+    switch (currentLayout) {
+    case LAYOUTS.TILE_VIEW:
+        return THUMBNAIL_TYPE.TILE;
+    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+        return THUMBNAIL_TYPE.VERTICAL;
+    case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
+        return THUMBNAIL_TYPE.HORIZONTAL;
+    case LAYOUTS.STAGE_FILMSTRIP_VIEW:
+        if (filmstripType !== FILMSTRIP_TYPE.MAIN) {
+            return THUMBNAIL_TYPE.TILE;
+        }
+
+        return THUMBNAIL_TYPE.VERTICAL;
+    }
+}
+
+/**
+ * Whether or not the top panel is enabled.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function isTopPanelEnabled(state) {
+    const { filmstrip } = state['features/base/config'];
+    const participantsCount = getParticipantCount(state);
+
+    return !filmstrip?.disableTopPanel && participantsCount >= (filmstrip?.minParticipantCountForTopPanel ?? 50);
+
 }

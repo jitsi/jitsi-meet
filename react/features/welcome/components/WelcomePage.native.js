@@ -27,7 +27,6 @@ import {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from './AbstractWelcomePage';
-import VideoSwitch from './VideoSwitch';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
 
@@ -101,7 +100,8 @@ class WelcomePage extends AbstractWelcomePage<*> {
 
         const {
             _headerStyles,
-            navigation
+            navigation,
+            t
         } = this.props;
 
         navigation.setOptions({
@@ -118,9 +118,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                         style = { _headerStyles.headerButtonIcon } />
                 </TouchableOpacity>
             ),
-            // eslint-disable-next-line react/no-multi-comp
-            headerRight: () =>
-                <VideoSwitch />
+            headerTitle: t('welcomepage.headerTitle')
         });
 
         navigation.addListener('focus', () => {

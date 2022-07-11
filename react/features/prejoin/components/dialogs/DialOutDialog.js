@@ -1,5 +1,6 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
@@ -31,6 +32,22 @@ type Props = {
     t: Function,
 };
 
+const useStyles = makeStyles(theme => {
+    return {
+        dialOutDialog: {
+            padding: `${theme.spacing(3)}px`
+        },
+        header: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginBottom: `${theme.spacing(4)}px`
+        },
+        picker: {
+            margin: `${theme.spacing(2)}px 0 ${theme.spacing(3)}px 0`
+        }
+    };
+});
+
 /**
  * This component displays the dialog from which the user can enter the
  * phone number in order to be called by the meeting.
@@ -40,10 +57,11 @@ type Props = {
  */
 function DialOutDialog(props: Props) {
     const { onClose, onTextButtonClick, onSubmit, t } = props;
+    const classes = useStyles();
 
     return (
-        <div className = 'prejoin-dialog-callout'>
-            <div className = 'prejoin-dialog-callout-header'>
+        <div className = { classes.dialOutDialog }>
+            <div className = { classes.header }>
                 <div className = 'prejoin-dialog-title'>
                     {t('prejoin.startWithPhone')}
                 </div>
@@ -55,7 +73,7 @@ function DialOutDialog(props: Props) {
                     src = { IconClose } />
             </div>
             <Label>{t('prejoin.callMeAtNumber')}</Label>
-            <div className = 'prejoin-dialog-callout-picker'>
+            <div className = { classes.picker }>
                 <CountryPicker onSubmit = { onSubmit } />
             </div>
             <ActionButton

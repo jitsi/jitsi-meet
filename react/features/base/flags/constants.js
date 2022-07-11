@@ -39,6 +39,12 @@ export const CALENDAR_ENABLED = 'calendar.enabled';
 export const CALL_INTEGRATION_ENABLED = 'call-integration.enabled';
 
 /**
+ * Flag indicating if car mode should be enabled.
+ * Default: enabled (true).
+ */
+export const CAR_MODE_ENABLED = 'car-mode.enabled';
+
+/**
  * Flag indicating if close captions should be enabled.
  * Default: enabled (true).
  */
@@ -153,6 +159,12 @@ export const OVERFLOW_MENU_ENABLED = 'overflow-menu.enabled';
  * Default: auto-detected.
  */
 export const PIP_ENABLED = 'pip.enabled';
+
+/**
+ * Flag indicating if the prejoin page should be enabled.
+ * Default: enabled (true).
+ */
+export const PREJOIN_PAGE_ENABLED = 'prejoinpage.enabled';
 
 /**
  * Flag indicating if raise hand feature should be enabled.

@@ -414,7 +414,7 @@ export class VideoContainer extends LargeContainer {
 
         const verticalFilmstripWidth = state['features/filmstrip'].width?.current;
 
-        if (currentLayout === LAYOUTS.TILE_VIEW) {
+        if (currentLayout === LAYOUTS.TILE_VIEW || currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW) {
             // We don't need to resize the large video since it won't be displayed and we'll resize when returning back
             // to stage view.
             return;

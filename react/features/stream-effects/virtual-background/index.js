@@ -52,14 +52,13 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
                 tflite = await timeout(tfliteTimeout, createTFLiteModule());
             }
         } catch (err) {
-            isWasmDisabled = true;
-
             if (err?.message === '408') {
                 logger.error('Failed to download tflite model!');
                 dispatch(showWarningNotification({
                     titleKey: 'virtualBackground.backgroundEffectError'
                 }, NOTIFICATION_TIMEOUT_TYPE.LONG));
             } else {
+                isWasmDisabled = true;
                 logger.error('Looks like WebAssembly is disabled or not supported on this browser', err);
                 dispatch(showWarningNotification({
                     titleKey: 'virtualBackground.webAssemblyWarning',

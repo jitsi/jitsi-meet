@@ -1,7 +1,6 @@
 // @flow
 
 import { BoxModel } from '../base/styles';
-import { LAYOUTS } from '../video-layout/constants';
 
 /**
  * The size (height and width) of the small (not tile view) thumbnails.
@@ -29,16 +28,6 @@ export const SQUARE_TILE_ASPECT_RATIO = 1;
 export const DISPLAY_DRAWER_THRESHOLD = 512;
 
 /**
- * Breakpoint past which a single column view is enforced in tile view.
- */
-export const SINGLE_COLUMN_BREAKPOINT = 300;
-
-/**
- * Breakpoint past which a two column view is enforced in tile view.
- */
-export const TWO_COLUMN_BREAKPOINT = 1000;
-
-/**
  * Breakpoint past which the aspect ratio is switched in tile view.
  * Also, past this breakpoint, if there are two participants in the conference, we enforce
  * single column view.
@@ -57,9 +46,14 @@ export const TILE_MIN_HEIGHT_SMALL = 150;
 export const TILE_MIN_HEIGHT_LARGE = 200;
 
 /**
- * Aspect ratio for portrait tiles. (height / width).
+ * Aspect ratio for portrait tiles.
  */
-export const TILE_PORTRAIT_ASPECT_RATIO = 1.3;
+export const TILE_PORTRAIT_ASPECT_RATIO = 1 / 1.3;
+
+/**
+ * The default number of visible tiles for tile view.
+ */
+export const TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES = 25;
 
 /**
  * The default number of columns for tile view.
@@ -150,14 +144,14 @@ export const TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN = 2;
  *
  * @type {number}
  */
-export const TILE_VIEW_GRID_VERTICAL_MARGIN = 12;
+export const TILE_VIEW_GRID_VERTICAL_MARGIN = 14;
 
 /**
  * The horizontal margin of the tile grid container.
  *
  * @type {number}
  */
-export const TILE_VIEW_GRID_HORIZONTAL_MARGIN = 12;
+export const TILE_VIEW_GRID_HORIZONTAL_MARGIN = 14;
 
 /**
  * The height of the whole toolbar.
@@ -224,7 +218,7 @@ export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
 
 /**
  * The margin for each side of the tile view. Taken away from the available
- * height and width for the tile container to display in.
+ * width for the tile container to display in.
  *
  * NOTE: Mobile specific.
  *
@@ -234,21 +228,30 @@ export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
 export const TILE_MARGIN = 10;
 
 /**
+ * The types of thumbnails for filmstrip.
+ */
+export const THUMBNAIL_TYPE = {
+    TILE: 'TILE',
+    VERTICAL: 'VERTICAL',
+    HORIZONTAL: 'HORIZONTAL'
+};
+
+/**
  * The popover position for the connection stats table.
  */
 export const STATS_POPOVER_POSITION = {
-    [LAYOUTS.TILE_VIEW]: 'right-start',
-    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'left-start',
-    [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'top-end'
+    [THUMBNAIL_TYPE.TILE]: 'right-start',
+    [THUMBNAIL_TYPE.VERTICAL]: 'left-start',
+    [THUMBNAIL_TYPE.HORIZONTAL]: 'top-end'
 };
 
 /**
  * The tooltip position for the indicators on the thumbnail.
  */
 export const INDICATORS_TOOLTIP_POSITION = {
-    [LAYOUTS.TILE_VIEW]: 'right',
-    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'left',
-    [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'top'
+    [THUMBNAIL_TYPE.TILE]: 'right',
+    [THUMBNAIL_TYPE.VERTICAL]: 'left',
+    [THUMBNAIL_TYPE.HORIZONTAL]: 'top'
 };
 
 /**
@@ -279,6 +282,12 @@ export const FILMSTRIP_GRID_BREAKPOINT = 300;
 export const FILMSTRIP_BREAKPOINT_OFFSET = 5;
 
 /**
+ * The minimum height for the stage view
+ * (used to determine the maximum height of the user-resizable top panel).
+ */
+export const MIN_STAGE_VIEW_HEIGHT = 700;
+
+/**
  * The minimum width for the stage view
  * (used to determine the maximum width of the user-resizable vertical filmstrip).
  */
@@ -289,3 +298,27 @@ export const MIN_STAGE_VIEW_WIDTH = 800;
  */
 export const VERTICAL_VIEW_HORIZONTAL_MARGIN = VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN
     + SCROLL_SIZE + TILE_HORIZONTAL_MARGIN + STAGE_VIEW_THUMBNAIL_HORIZONTAL_BORDER;
+
+/**
+ * The time after which a participant should be removed from active participants.
+ */
+export const ACTIVE_PARTICIPANT_TIMEOUT = 1000 * 60;
+
+/**
+ * The types of filmstrip.
+ */
+export const FILMSTRIP_TYPE = {
+    MAIN: 'main',
+    STAGE: 'stage',
+    SCREENSHARE: 'screenshare'
+};
+
+/**
+ * The max number of participants to be displayed on the stage filmstrip.
+ */
+export const MAX_ACTIVE_PARTICIPANTS = 6;
+
+/**
+ * Top filmstrip default height.
+ */
+export const TOP_FILMSTRIP_HEIGHT = 180;

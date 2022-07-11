@@ -1,10 +1,12 @@
 // @flow
 
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import { getLocalParticipant } from '../base/participants';
+import { getLocalParticipant, getRemoteParticipants, isLocalParticipantModerator } from '../base/participants';
+import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox';
-import { extractFqnFromPath } from '../dynamic-branding';
+import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
+import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import { RECORDING_STATUS_PRIORITIES, RECORDING_TYPES } from './constants';
 import logger from './logger';
 
@@ -115,10 +117,82 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
             }
         }
     }
+    if ((!Array.isArray(recordingSessions) || recordingSessions.length === 0)
+        && mode === JitsiRecordingConstants.mode.FILE
+        && (LocalRecordingManager.isRecordingLocally() || isRemoteParticipantRecordingLocally(state))) {
+        status = JitsiRecordingConstants.status.ON;
+    }
 
     return status;
 }
 
+/**
+ * Returns the recording button props.
+ *
+ * @param {Object} state - The redux state to search in.
+ *
+ * @returns {{
+ *    disabled: boolean,
+ *    tooltip: string,
+ *    visible: boolean
+ * }}
+ */
+export function getRecordButtonProps(state: Object): ?string {
+    let visible;
+
+    // a button can be disabled/enabled if enableFeaturesBasedOnToken
+    // is on or if the livestreaming is running.
+    let disabled;
+    let tooltip = '';
+
+    // If the containing component provides the visible prop, that is one
+    // above all, but if not, the button should be autonomus and decide on
+    // its own to be visible or not.
+    const isModerator = isLocalParticipantModerator(state);
+    const {
+        enableFeaturesBasedOnToken,
+        recordingService,
+        localRecording
+    } = state['features/base/config'];
+    const { features = {} } = getLocalParticipant(state);
+    let localRecordingEnabled = !localRecording?.disable;
+
+    if (navigator.product === 'ReactNative') {
+        localRecordingEnabled = false;
+    }
+
+    const dropboxEnabled = isDropboxEnabled(state);
+
+    visible = isModerator && (recordingService?.enabled || localRecordingEnabled || dropboxEnabled);
+
+    if (enableFeaturesBasedOnToken) {
+        visible = visible && String(features.recording) === 'true';
+        disabled = String(features.recording) === 'disabled';
+        if (!visible && !disabled) {
+            disabled = true;
+            visible = true;
+            tooltip = 'dialog.recordingDisabledTooltip';
+        }
+    }
+
+    // disable the button if the livestreaming is running.
+    if (getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
+        disabled = true;
+        tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
+    }
+
+    // disable the button if we are in a breakout room.
+    if (isInBreakoutRoom(state)) {
+        disabled = true;
+        visible = false;
+    }
+
+    return {
+        disabled,
+        tooltip,
+        visible
+    };
+}
 
 /**
  * Returns the resource id.
@@ -154,8 +228,8 @@ export async function sendMeetingHighlight(state: Object) {
     };
 
     const reqBody = {
-        meetingFqn: extractFqnFromPath(),
-        sessionId: conference.sessionId,
+        meetingFqn: extractFqnFromPath(state),
+        sessionId: conference.getMeetingUniqueId(),
         submitted: Date.now(),
         participantId: localParticipant.jwtId,
         participantName: localParticipant.name,
@@ -176,6 +250,25 @@ export async function sendMeetingHighlight(state: Object) {
             logger.error('Status error:', res.status);
         } catch (err) {
             logger.error('Could not send request', err);
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Whether a remote participant is recording locally or not.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+function isRemoteParticipantRecordingLocally(state) {
+    const participants = getRemoteParticipants(state);
+
+    // eslint-disable-next-line prefer-const
+    for (let value of participants.values()) {
+        if (value.localRecording) {
+            return true;
         }
     }
 

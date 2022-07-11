@@ -1,6 +1,6 @@
-// @flow
+import type { Dispatch } from 'redux';
 
-import { openDialog } from '../base/dialog';
+import { openSheet } from '../base/dialog';
 import { SharedVideoMenu } from '../video-menu';
 import { LocalVideoMenu } from '../video-menu/components/native';
 import ConnectionStatusComponent
@@ -11,6 +11,7 @@ import { SET_VOLUME } from './actionTypes';
 import {
     ContextMenuLobbyParticipantReject
 } from './components/native';
+import RoomParticipantMenu from './components/native/RoomParticipantMenu';
 export * from './actions.any';
 
 /**
@@ -20,7 +21,7 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function showContextMenuReject(participant: Object) {
-    return openDialog(ContextMenuLobbyParticipantReject, { participant });
+    return openSheet(ContextMenuLobbyParticipantReject, { participant });
 }
 
 
@@ -31,7 +32,7 @@ export function showContextMenuReject(participant: Object) {
  * @returns {Function}
  */
 export function showConnectionStatus(participantID: string) {
-    return openDialog(ConnectionStatusComponent, { participantID });
+    return openSheet(ConnectionStatusComponent, { participantID });
 }
 
 /**
@@ -46,9 +47,9 @@ export function showContextMenuDetails(participantId: string, local: boolean = f
         const { remoteVideoMenu } = getState()['features/base/config'];
 
         if (local) {
-            dispatch(openDialog(LocalVideoMenu));
+            dispatch(openSheet(LocalVideoMenu));
         } else if (!remoteVideoMenu?.disabled) {
-            dispatch(openDialog(RemoteVideoMenu, { participantId }));
+            dispatch(openSheet(RemoteVideoMenu, { participantId }));
         }
     };
 }
@@ -60,7 +61,7 @@ export function showContextMenuDetails(participantId: string, local: boolean = f
  * @returns {Function}
  */
 export function showSharedVideoMenu(participantId: string) {
-    return openDialog(SharedVideoMenu, { participantId });
+    return openSheet(SharedVideoMenu, { participantId });
 }
 
 /**
@@ -80,4 +81,18 @@ export function setVolume(participantId: string, volume: number) {
         participantId,
         volume
     };
+}
+
+/**
+ * Displays the breakout room participant menu.
+ *
+ * @param {Object} room - The room the participant is in.
+ * @param {string} participantJid - The jid of the participant.
+ * @param {string} participantName - The display name of the participant.
+ * @returns {Function}
+ */
+export function showRoomParticipantMenu(room: Object, participantJid: string, participantName: string) {
+    return openSheet(RoomParticipantMenu, { room,
+        participantJid,
+        participantName });
 }

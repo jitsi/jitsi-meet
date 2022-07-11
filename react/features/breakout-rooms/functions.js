@@ -3,6 +3,7 @@
 import _ from 'lodash';
 
 import { getCurrentConference } from '../base/conference';
+import { getParticipantCount, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
 
 import { FEATURE_KEY } from './constants';
@@ -84,4 +85,41 @@ export const getBreakoutRoomsConfig = (stateful: Function | Object) => {
     const { breakoutRooms = {} } = state['features/base/config'];
 
     return breakoutRooms;
+};
+
+/**
+ * Returns whether the add breakout room button is visible.
+ *
+ * @param {Function | Object} stateful - Global state.
+ * @returns {boolean}
+ */
+export const isAddBreakoutRoomButtonVisible = (stateful: Function | Object) => {
+    const state = toState(stateful);
+    const isLocalModerator = isLocalParticipantModerator(state);
+    const { conference } = state['features/base/conference'];
+    const isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
+    const { hideAddRoomButton } = getBreakoutRoomsConfig(state);
+
+    return isLocalModerator && isBreakoutRoomsSupported && !hideAddRoomButton;
+};
+
+/**
+ * Returns whether the auto assign participants to breakout rooms button is visible.
+ *
+ * @param {Function | Object} stateful - Global state.
+ * @returns {boolean}
+ */
+export const isAutoAssignParticipantsVisible = (stateful: Function | Object) => {
+    const state = toState(stateful);
+    const rooms = getBreakoutRooms(state);
+    const inBreakoutRoom = isInBreakoutRoom(state);
+    const isLocalModerator = isLocalParticipantModerator(state);
+    const participantsCount = getParticipantCount(state);
+    const { hideAutoAssignButton } = getBreakoutRoomsConfig(state);
+
+    return !inBreakoutRoom
+        && isLocalModerator
+        && participantsCount > 2
+        && Object.keys(rooms).length > 1
+        && !hideAutoAssignButton;
 };

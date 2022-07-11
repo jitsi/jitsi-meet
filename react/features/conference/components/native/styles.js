@@ -1,4 +1,3 @@
-import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { fixAndroidViewClipping } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
@@ -36,27 +35,27 @@ export default {
         margin: 10
     },
 
-    headerNavigationIcon: {
-        marginLeft: 14
-    },
-
     headerNavigationButton: {
         height: BaseTheme.spacing[6],
         marginTop: 20,
         width: BaseTheme.spacing[6]
     },
 
+    headerNavigationIcon: {
+        marginLeft: 12
+    },
+
     headerNavigationText: {
         color: BaseTheme.palette.text01,
-        fontSize: HEADER_ACTION_BUTTON_SIZE,
-        marginHorizontal: BaseTheme.spacing[3]
+        marginLeft: BaseTheme.spacing[3],
+        fontSize: HEADER_ACTION_BUTTON_SIZE
     },
 
     headerNavigationTextBold: {
         ...BaseTheme.typography.labelButton,
         color: BaseTheme.palette.text01,
-        fontSize: HEADER_ACTION_BUTTON_SIZE,
-        marginHorizontal: BaseTheme.spacing[3]
+        marginRight: BaseTheme.spacing[3],
+        fontSize: HEADER_ACTION_BUTTON_SIZE
     },
 
     /**
@@ -76,7 +75,7 @@ export default {
         width: BaseTheme.spacing[7]
     },
 
-    inviteButton: {
+    titleBarButton: {
         iconStyle: {
             color: BaseTheme.palette.icon01,
             padding: 12,
@@ -86,16 +85,7 @@ export default {
     },
 
     lonelyButton: {
-        alignItems: 'center',
-        borderRadius: 24,
-        flexDirection: 'row',
-        height: BaseTheme.spacing[6],
-        justifyContent: 'space-around',
-        paddingHorizontal: 12
-    },
-
-    lonelyButtonComponents: {
-        marginHorizontal: 6
+        borderRadius: BaseTheme.spacing[4]
     },
 
     lonelyMeetingContainer: {
@@ -105,6 +95,7 @@ export default {
     },
 
     lonelyMessage: {
+        color: BaseTheme.palette.text01,
         paddingVertical: BaseTheme.spacing[2]
     },
 
@@ -174,7 +165,7 @@ export default {
     },
 
     roomTimerView: {
-        backgroundColor: BaseTheme.palette.action02,
+        backgroundColor: BaseTheme.palette.ui03,
         borderRadius: 3,
         justifyContent: 'center',
         minWidth: 50
@@ -236,13 +227,3 @@ export default {
         paddingLeft: BaseTheme.spacing[2]
     }
 };
-
-ColorSchemeRegistry.register('Conference', {
-    lonelyButton: {
-        backgroundColor: schemeColor('inviteButtonBackground')
-    },
-
-    lonelyMessage: {
-        color: schemeColor('onVideoText')
-    }
-});

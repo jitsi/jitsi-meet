@@ -14,6 +14,16 @@ cross_domain_bosh = false;
 consider_bosh_secure = true;
 -- https_ports = { }; -- Remove this line to prevent listening on port 5284
 
+-- by default prosody 0.12 sends cors headers, if you want to disable it uncomment the following (the config is available on 0.12.1)
+--http_cors_override = {
+--    bosh = {
+--        enabled = false;
+--    };
+--    websocket = {
+--        enabled = false;
+--    };
+--}
+
 -- https://ssl-config.mozilla.org/#server=haproxy&version=2.1&config=intermediate&openssl=1.1.0g&guideline=5.4
 ssl = {
     protocol = "tlsv1_2+";
@@ -26,8 +36,7 @@ unlimited_jids = {
 }
 
 VirtualHost "jitmeet.example.com"
-    -- enabled = false -- Remove this line to enable this host
-    authentication = "anonymous"
+    authentication = "jitsi-anonymous" -- do not delete me
     -- Properties below are modified by jitsi-meet-tokens package config
     -- and authentication above is switched to "token"
     --app_id="example_app_id"
@@ -127,3 +136,18 @@ Component "lobby.jitmeet.example.com" "muc"
         "muc_rate_limit";
         "polls";
     }
+
+-- Enables dial-in for Jitsi meet components customers
+-- Note: make sure you have the following packages installed: lua-basexx, liblua5.3-dev, libssl-dev, luarocks
+-- and execute $ sudo luarocks install luajwtjitsi 3.0-0
+VirtualHost "jigasi.meet.jitsi"
+    enabled = false -- Jitsi meet components customers remove this line
+    modules_enabled = {
+      "ping";
+      "bosh";
+    }
+    authentication = "token"
+    app_id = "jitsi";
+    asap_key_server = "https://jaas-public-keys.jitsi.net/jitsi-components/prod-8x8"
+    asap_accepted_issuers = { "jaas-components" }
+    asap_accepted_audiences = { "jigasi.jitmeet.example.com" }

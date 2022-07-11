@@ -31,6 +31,7 @@
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
+        "car": "Sistema áudio do automóvel",
         "headphones": "Auscultadores",
         "none": "Sem dispositivos de áudio disponíveis",
         "phone": "Telemóvel",
@@ -38,9 +39,6 @@
     },
     "audioOnly": {
         "audioOnly": "Largura de banda baixa"
-    },
-    "blankPage": {
-        "meetingEnded": "A reunião terminou."
     },
     "breakoutRooms": {
         "actions": {
@@ -79,6 +77,17 @@
         "refresh": "Atualizar calendário",
         "today": "Hoje"
     },
+    "carmode": {
+        "actions": {
+            "leaveMeeting": " Deixar a reunião",
+            "selectSoundDevice": "Seleccionar dispositivo de som"
+        },
+        "labels": {
+            "buttonLabel": "Modo carro",
+            "title": "Modo de condução segura",
+            "videoStopped": "O seu vídeo está parado"
+        }
+    },
     "chat": {
         "enter": "Entrar na sala",
         "error": "Erro: a sua mensagem não foi enviada. Motivo: {{error}}",
@@ -107,6 +116,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Instalar extensão do Chrome",
+        "buttonTextEdge": "Instalar extensão do Edge",
         "close": "Fechar",
         "dontShowAgain": "Não me mostre isto outra vez",
         "installExtensionText": "Instalar a extensão para a integração Google Calendar e Office 365"
@@ -185,7 +195,7 @@
         "unsupportedBrowser": "Parece que está a usar um browser que não suportamos."
     },
     "defaultLink": "ex.: {{url}}",
-    "defaultNickname": "ex.: João Pedro",
+    "defaultNickname": "ex.: João Dias",
     "deviceError": {
         "cameraError": "Falha ao aceder à sua câmara",
         "cameraPermission": "Erro ao obter permissão para a câmara",
@@ -197,6 +207,9 @@
         "previewUnavailable": "Visualização indisponível",
         "selectADevice": "Selecione um dispositivo",
         "testAudio": "Tocar um som de teste"
+    },
+    "dialIn": {
+        "screenTitle": "Resumo da marcação"
     },
     "dialOut": {
         "statusMessage": "está agora {{status}}"
@@ -279,7 +292,7 @@
         "lockRoom": "Adicionar reunião $t(lockRoomPassword)",
         "lockTitle": "Bloqueio falhado",
         "login": "Entrar",
-        "logoutQuestion": "Tem a certeza de que quer terminar a sessão e interromper a conferência?",
+        "logoutQuestion": "Tem a certeza de que quer terminar a sessão e sair da conferência?",
         "logoutTitle": "Sair",
         "maxUsersLimitReached": "O limite para o número máximo de participantes foi atingido. A conferência está cheia. Por favor contacte o proprietário da reunião ou tente novamente mais tarde!",
         "maxUsersLimitReachedTitle": "Limite máximo de participantes atingido",
@@ -348,7 +361,7 @@
         "screenSharingFailed": "Oops! Algo correu mal, não fomos capazes de começar a partilhar o ecrã!",
         "screenSharingFailedTitle": "A partilha de ecrã falhou!",
         "screenSharingPermissionDeniedError": "Oops! Alguma coisa correu mal com as vossas permissões de partilha de ecrã. Por favor, volte a carregar e tente novamente.",
-        "searchInSalesforce": "Pesquisar na Força de Vendas",
+        "searchInSalesforce": "Pesquisar na Salesforce",
         "searchResults": "Resultados da pesquisa({{count}})",
         "searchResultsDetailsError": "Algo correu mal enquanto se recuperava os dados do proprietário.",
         "searchResultsError": "Alguma coisa correu mal durante a recuperação de dados.",
@@ -423,7 +436,7 @@
     },
     "giphy": {
         "noResults": "Não foram encontrados resultados :(",
-        "search": "Procurar GIPHY"
+        "search": "Procurar no GIPHY"
     },
     "helpView": {
         "header": "Centro de ajuda"
@@ -491,7 +504,7 @@
         "focusLocal": "Focar no seu vídeo",
         "focusRemote": "Focar no vídeo de outro participante",
         "fullScreen": "Entrar ou sair do ecrã completo",
-        "giphyMenu": "Alternar o menu GIPHY",
+        "giphyMenu": "Ativar/Desativar o menu GIPHY",
         "keyboardShortcuts": "Atalhos de teclado",
         "localRecording": "Mostrar ou ocultar controlos de gravação local",
         "mute": "Ligar ou desligar o seu microfone",
@@ -559,6 +572,7 @@
         "errorMissingPassword": "Por favor introduza a senha da reunião",
         "invalidPassword": "Senha inválida",
         "joinRejectedMessage": "O seu pedido de adesão foi rejeitado por um moderador.",
+        "joinRejectedTitle": "Pedido de adesão rejeitado.",
         "joinTitle": "Junte-se à reunião",
         "joinWithPasswordMessage": "Tentando aderir com senha, por favor aguarde...",
         "joiningMessage": "Participará na reunião assim que alguém aceitar o seu pedido",
@@ -567,8 +581,8 @@
         "knockButton": "Pedir para participar",
         "knockTitle": "Alguém quer juntar-se à reunião",
         "knockingParticipantList": "Lista de participantes a expulsar",
-        "lobbyChatStartedNotification": "{{moderator}} iniciou uma conversa na sala de espera com {{attendee}}",
-        "lobbyChatStartedTitle": "{{moderator}} iniciou uma conversa na sala de espera consigo.",
+        "lobbyChatStartedNotification": "{{moderator}} iniciou com {{attendee}} uma conversa na sala de espera",
+        "lobbyChatStartedTitle": "{{moderator}} iniciou consigo uma conversa na sala de espera.",
         "nameField": "Introduza o seu nome",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} foi recusada a adesão por {{originParticipantName}}",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} foi autorizado a aderir por {{originParticipantName}}",
@@ -631,6 +645,7 @@
         "displayNotifications": "Mostrar notificações para",
         "focus": "Foco da conferência",
         "focusFail": "{{component}} não disponĩvel - tente em {{ms}} seg.",
+        "gifsMenu": "GIPHY",
         "groupTitle": "Notificações",
         "hostAskedUnmute": "O moderador gostaria que você falasse",
         "invitedOneMember": "{{displayName}} foi convidado",
@@ -640,12 +655,14 @@
         "leftOneMember": "{{name}} deixou a reunião",
         "leftThreePlusMembers": "{{name}} e muitos outros deixaram a reunião",
         "leftTwoMembers": "{{first}} e {{second}} deixaram a reunião",
-        "linkToSalesforce": "Link para a Força de Vendas",
-        "linkToSalesforceDescription": "Pode ligar o resumo da reunião a um objecto da Força de Vendas.",
-        "linkToSalesforceError": "Falha na ligação da reunião à Força de Vendas",
+        "linkToSalesforce": "Link para a Salesforce",
+        "linkToSalesforceDescription": "Pode ligar o resumo da reunião a um objecto da Salesforce.",
+        "linkToSalesforceError": "Falha na ligação da reunião à Salesforce",
         "linkToSalesforceKey": "Ligar esta reunião",
-        "linkToSalesforceProgress": "A ligar a reunião à Força de Vendas...",
-        "linkToSalesforceSuccess": "A reunião foi ligada à Força de Vendas",
+        "linkToSalesforceProgress": "A ligar a reunião à Salesforce...",
+        "linkToSalesforceSuccess": "A reunião foi ligada à Salesforce",
+        "localRecordingStarted": "{{name}} iniciou uma gravação local.",
+        "localRecordingStopped": "{{name}} parou uma gravação local.",
         "me": "Eu",
         "moderationInEffectCSDescription": "Por favor, levantem a mão se quiserem partilhar o vosso ecrã.",
         "moderationInEffectCSTitle": "A partilha de ecrã é bloqueada pelo moderador",
@@ -724,6 +741,7 @@
     },
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "passwordSetRemotely": "Definido por outro participante",
+    "pinnedParticipant": "O participante está afixado",
     "polls": {
         "answer": {
             "skip": "Ignorar",
@@ -800,6 +818,7 @@
         "initiated": "Chamada iniciada",
         "joinAudioByPhone": "Entrar com o áudio do telefone",
         "joinMeeting": "Entrar na reunião",
+        "joinMeetingInLowBandwidthMode": "Entrar em modo de baixa largura de banda",
         "joinWithoutAudio": "Entrar sem áudio",
         "keyboardShortcuts": "Ativar os atalhos de teclado",
         "linkCopied": "Link copiado para a área de transferência",
@@ -841,7 +860,7 @@
     "raisedHandsLabel": "Número de mãos levantadas",
     "record": {
         "already": {
-            "linked": "O registo já está ligado a esta sessão."
+            "linked": "A reunião já está ligada a este objecto da Força de vendas."
         },
         "type": {
             "account": "Conta",
@@ -865,11 +884,17 @@
         "expandedPending": "Iniciando gravação...",
         "failedToStart": "Falha ao iniciar a gravação",
         "fileSharingdescription": "Partilhar o link da gravação com os participantes da reunião",
+        "highlight": "Destaque",
+        "highlightMoment": "Momento de destaque",
+        "highlightMomentDisabled": "É possível destacar momentos quando a gravação começa",
+        "highlightMomentSuccess": "Momento destacado",
+        "highlightMomentSucessDescription": "O seu momento destacado será acrescentado ao resumo da reunião.",
         "inProgress": "Gravação ou transmissão em direto em curso",
         "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. Para gravações ilimitadas tente <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Devido à grande procura, a sua gravação será limitada a {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Gerámos um link para a sua gravação.",
         "live": "DIRETO",
+        "localRecordingWarning": "Certifique-se de seleccionar o separador actual a fim de utilizar o vídeo e áudio correctos. A gravação está actualmente limitada a 1 GB, o que é cerca de 100 minutos.",
         "loggedIn": "Conectado como {{userName}}",
         "off": "Gravação parada",
         "offBy": "{{name}} parou a gravação",
@@ -877,6 +902,7 @@
         "onBy": "{{name}} iniciou a gravação",
         "pending": "Preparando para gravar a reunião...",
         "rec": "REC",
+        "saveLocalRecording": "Guardar ficheiro de gravação localmente",
         "serviceDescription": "Sua gravação será salva pelo serviço de gravação",
         "serviceDescriptionCloud": "Gravação na nuvem",
         "serviceDescriptionCloudInfo": "As reuniões gravadas são automaticamente apagadas 24h após a hora de gravação.",
@@ -884,10 +910,12 @@
         "sessionAlreadyActive": "Esta sessão já está a ser gravada ou transmitida em direto.",
         "signIn": "Entrar",
         "signOut": "Sair",
+        "surfaceError": "Por favor, seleccione o separador actual.",
         "unavailable": "Oops! O {{serviceName}} está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
         "unavailableTitle": "Gravação indisponível",
         "uploadToCloud": "Enviar para a nuvem"
     },
+    "screenshareDisplayName": "Ecrã de {{name}}",
     "sectionList": {
         "pullToRefresh": "Puxe para atualizar"
     },
@@ -914,6 +942,7 @@
         "incomingMessage": "Receber uma mensagem",
         "language": "Idioma",
         "loggedIn": "Sessão iniciada como {{name}}",
+        "maxStageParticipants": "Número máximo de participantes que podem ser afixados",
         "microphones": "Microfones",
         "moderator": "Moderador",
         "more": "Mais",
@@ -924,6 +953,7 @@
         "playSounds": "Reproduzir som quando",
         "reactions": "Expressarem uma reação",
         "sameAsSystem": "O mesmo que o sistema ({{label}})",
+        "screenTitle": "Definições",
         "selectAudioOutput": "Saída de áudio",
         "selectCamera": "Câmara",
         "selectMic": "Microfone",
@@ -949,6 +979,7 @@
         "disableCrashReportingWarning": "Tem a certeza de que quer desativar o relatório de falhas? A configuração será aplicada depois de reiniciar a aplicação.",
         "disableP2P": "Desactivar o modo Peer-To-Peer",
         "displayName": "Nome de exibição",
+        "displayNamePlaceholderText": "Ex: João Dias",
         "email": "Email",
         "header": "Configurações",
         "profileSection": "Perfil",
@@ -1002,17 +1033,19 @@
             "boo": "Vaia",
             "breakoutRoom": "Entrar/Sair salas instantâneas",
             "callQuality": "Gerir a qualidade do vídeo",
+            "carmode": "Modo carro",
             "cc": "Mudar legendas",
             "chat": "Abrir / Fechar chat",
             "clap": "Aplausos",
             "collapse": "Colapsar",
+            "dock": "Encaixar na janela principal",
             "document": "Mudar para documento partilhado",
             "download": "Descarregar as nossas aplicações",
             "embedMeeting": "Reunião incorporada",
             "expand": "Expandir",
             "feedback": "Deixar comentários",
             "fullScreen": "Mudar para ecrã completo",
-            "giphy": "Alternar o menu GIPHY",
+            "giphy": "Ativar/Desativar o menu GIPHY",
             "grantModerator": "Conceder direitos de moderador",
             "hangup": "Sair da reunião",
             "help": "Ajuda",
@@ -1020,7 +1053,7 @@
             "kick": "Remover participante",
             "laugh": "Risos",
             "like": "Aprovado",
-            "linkToSalesforce": "Link para a Força de Vendas",
+            "linkToSalesforce": "Link para a Salesforce",
             "lobbyButton": "Ativar/desativar sala de espera",
             "localRecording": "Mudar os controlos locais de gravação",
             "lockRoom": "Mudar palavra-chave de reunião",
@@ -1056,6 +1089,7 @@
             "tileView": "Mudar a vista em quadrícula",
             "toggleCamera": "Mudar a câmara",
             "toggleFilmstrip": "Mudar a película de filme",
+            "undock": "Soltar numa janela separada",
             "videoblur": "Mudar o desfoque de vídeo",
             "videomute": "Iniciar / Parar câmara"
         },
@@ -1072,6 +1106,7 @@
         "closeChat": "Fechar chat",
         "closeReactionsMenu": "Fechar menu de reações",
         "disableReactionSounds": "Pode desactivar os sons de reacção para esta reunião",
+        "dock": "Encaixar na janela principal",
         "documentClose": "Fechar documento partilhado",
         "documentOpen": "Abrir documento partilhado",
         "download": "Descarregar as nossas aplicações",
@@ -1082,7 +1117,7 @@
         "exitFullScreen": "Sair de ecrã completo",
         "exitTileView": "Sair de quadrícula",
         "feedback": "Deixar comentários",
-        "giphy": "Alternar o menu GIPHY",
+        "giphy": "Ativar/Desativar o menu GIPHY",
         "hangup": "Sair da reunião",
         "help": "Ajuda",
         "invite": "Convidar pessoas",
@@ -1090,7 +1125,7 @@
         "laugh": "Risos",
         "leaveBreakoutRoom": "Sair da sala",
         "like": "Aprovado",
-        "linkToSalesforce": "Link para a Força de Vendas",
+        "linkToSalesforce": "Link para a Salesforce",
         "lobbyButtonDisable": "Desativar sala de espera",
         "lobbyButtonEnable": "Ativar sala de espera",
         "login": "Iniciar sessão",
@@ -1140,6 +1175,7 @@
         "talkWhileMutedPopup": "Está a tentar falar? Está com o microfone desativado.",
         "tileViewToggle": "Mudar para vista em quadrícula",
         "toggleCamera": "Mudar a câmara",
+        "undock": "Soltar numa janela separada",
         "videoSettings": "Definições de vídeo",
         "videomute": "Iniciar / Parar câmara"
     },
@@ -1210,10 +1246,12 @@
         "moderator": "Moderador",
         "mute": "Participante está sem som",
         "muted": "Sem som",
+        "pinToStage": "Afixar",
         "remoteControl": "Iniciar / Parar controlo remoto",
         "screenSharing": "Participante está a partilhar o seu ecrã",
         "show": "Mostrar no palco",
         "showSelfView": "Mostrar autovisualização",
+        "unpinFromStage": "Desafixar",
         "videoMuted": "Câmara desativada",
         "videomute": "Participante parou a câmara"
     },

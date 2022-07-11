@@ -4,20 +4,35 @@ import { PARTICIPANT_LEFT } from '../base/participants';
 import { ReducerRegistry } from '../base/redux';
 
 import {
+    REMOVE_STAGE_PARTICIPANT,
+    SET_STAGE_PARTICIPANTS,
     SET_FILMSTRIP_ENABLED,
     SET_FILMSTRIP_VISIBLE,
     SET_FILMSTRIP_WIDTH,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_REMOTE_PARTICIPANTS,
+    SET_STAGE_FILMSTRIP_DIMENSIONS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_USER_FILMSTRIP_WIDTH,
     SET_USER_IS_RESIZING,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
-    SET_VOLUME
+    SET_VOLUME,
+    SET_MAX_STAGE_PARTICIPANTS,
+    CLEAR_STAGE_PARTICIPANTS,
+    SET_SCREENSHARING_TILE_DIMENSIONS,
+    SET_USER_FILMSTRIP_HEIGHT,
+    SET_FILMSTRIP_HEIGHT,
+    SET_TOP_PANEL_VISIBILITY
 } from './actionTypes';
 
 const DEFAULT_STATE = {
+
+    /**
+     * The list of participants to be displayed on the stage filmstrip.
+     */
+    activeParticipants: [],
+
     /**
      * The indicator which determines whether the {@link Filmstrip} is enabled.
      *
@@ -43,6 +58,14 @@ const DEFAULT_STATE = {
     isResizing: false,
 
     /**
+     * The current max number of participants to be displayed on the stage filmstrip.
+     *
+     * @public
+     * @type {Number}
+     */
+    maxStageParticipants: 1,
+
+    /**
      * The custom audio volume levels per participant.
      *
      * @type {Object}
@@ -58,12 +81,46 @@ const DEFAULT_STATE = {
     remoteParticipants: [],
 
     /**
+     * The dimensions of the screenshare filmstrip.
+     */
+    screenshareFilmstripDimensions: {},
+
+    /**
+     * The stage filmstrip view dimensions.
+     *
+     * @public
+     * @type {Object}
+     */
+    stageFilmstripDimensions: {},
+
+    /**
      * The tile view dimensions.
      *
      * @public
      * @type {Object}
      */
     tileViewDimensions: {},
+
+    /**
+     * The height of the resizable top panel.
+     */
+    topPanelHeight: {
+        /**
+         * Current height. Affected by: user top panel resize,
+         * window resize.
+         */
+        current: null,
+
+        /**
+         * Height set by user resize. Used as the preferred height.
+         */
+        userSet: null
+    },
+
+    /**
+     * The indicator determines if the top panel is visible.
+     */
+    topPanelVisible: true,
 
     /**
      * The vertical view dimensions.
@@ -177,12 +234,15 @@ ReducerRegistry.register(
                 }
             };
         case SET_VISIBLE_REMOTE_PARTICIPANTS: {
+            const { endIndex, startIndex } = action;
+            const { remoteParticipants } = state;
+            const visibleRemoteParticipants = new Set(remoteParticipants.slice(startIndex, endIndex + 1));
+
             return {
                 ...state,
-                visibleParticipantsStartIndex: action.startIndex,
-                visibleParticipantsEndIndex: action.endIndex,
-                visibleRemoteParticipants:
-                    new Set(state.remoteParticipants.slice(action.startIndex, action.endIndex + 1))
+                visibleParticipantsStartIndex: startIndex,
+                visibleParticipantsEndIndex: endIndex,
+                visibleRemoteParticipants
             };
         }
         case PARTICIPANT_LEFT: {
@@ -197,12 +257,32 @@ ReducerRegistry.register(
                 ...state
             };
         }
+        case SET_FILMSTRIP_HEIGHT:{
+            return {
+                ...state,
+                topPanelHeight: {
+                    ...state.topPanelHeight,
+                    current: action.height
+                }
+            };
+        }
         case SET_FILMSTRIP_WIDTH: {
             return {
                 ...state,
                 width: {
                     ...state.width,
                     current: action.width
+                }
+            };
+        }
+        case SET_USER_FILMSTRIP_HEIGHT: {
+            const { height } = action;
+
+            return {
+                ...state,
+                topPanelHeight: {
+                    current: height,
+                    userSet: height
                 }
             };
         }
@@ -221,6 +301,48 @@ ReducerRegistry.register(
             return {
                 ...state,
                 isResizing: action.resizing
+            };
+        }
+        case SET_STAGE_FILMSTRIP_DIMENSIONS: {
+            return {
+                ...state,
+                stageFilmstripDimensions: action.dimensions
+            };
+        }
+        case SET_STAGE_PARTICIPANTS: {
+            return {
+                ...state,
+                activeParticipants: action.queue
+            };
+        }
+        case REMOVE_STAGE_PARTICIPANT: {
+            return {
+                ...state,
+                activeParticipants: state.activeParticipants.filter(p => p.participantId !== action.participantId)
+            };
+        }
+        case SET_MAX_STAGE_PARTICIPANTS: {
+            return {
+                ...state,
+                maxStageParticipants: action.maxParticipants
+            };
+        }
+        case CLEAR_STAGE_PARTICIPANTS: {
+            return {
+                ...state,
+                activeParticipants: []
+            };
+        }
+        case SET_SCREENSHARING_TILE_DIMENSIONS: {
+            return {
+                ...state,
+                screenshareFilmstripDimensions: action.dimensions
+            };
+        }
+        case SET_TOP_PANEL_VISIBILITY: {
+            return {
+                ...state,
+                topPanelVisible: action.visible
             };
         }
         }

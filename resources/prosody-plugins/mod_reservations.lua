@@ -32,6 +32,9 @@
 --      * set "reservations_api_should_retry_for_code" to a function that takes an HTTP response code and
 --        returns true if API call should be retried. By default, retries are done for 5XX
 --        responses. Timeouts are never retried, and HTTP call failures are always retried.
+--      * set "reservations_enable_max_occupants" to true to enable integration with
+--        mod_muc_max_occupants. Setting thia will allow optional "max_occupants"
+--        payload from API to influence max occupants allowed for a given room.
 --
 --
 --  Example config:
@@ -71,6 +74,7 @@ local api_headers = module:get_option("reservations_api_headers");
 local api_timeout = module:get_option("reservations_api_timeout", 20);
 local api_retry_count = tonumber(module:get_option("reservations_api_retry_count", 3));
 local api_retry_delay = tonumber(module:get_option("reservations_api_retry_delay", 3));
+local max_occupants_enabled = module:get_option("reservations_enable_max_occupants", false);
 
 
 -- Option for user to control HTTP response codes that will result in a retry.
@@ -244,7 +248,7 @@ function RoomReservation:enqueue_or_route_event(event)
 end
 
 --- Updates status and initiates event routing. Called internally when API call complete.
-function RoomReservation:set_status_success(start_time, duration, mail_owner, conflict_id)
+function RoomReservation:set_status_success(start_time, duration, mail_owner, conflict_id, max_occupants)
     module:log("info", "Reservation created successfully for %s", self.room_jid);
     self.meta = {
         status = STATUS.SUCCESS;
@@ -255,6 +259,9 @@ function RoomReservation:set_status_success(start_time, duration, mail_owner, co
         error_text = nil;
         error_code = nil;
     }
+    if max_occupants_enabled and max_occupants then
+        self.meta.max_occupants = max_occupants
+    end
     self:route_pending_events()
 end
 
@@ -362,7 +369,7 @@ end
 
 --- Parses and validates HTTP response body for conference payload
 --  Ref: https://github.com/jitsi/jicofo/blob/master/doc/reservation.md
---  @return nil if invalid, or table with keys "id", "name", "mail_owner", "start_time", "duration".
+--  @return nil if invalid, or table with payload parsed from JSON response
 function RoomReservation:parse_conference_response(response_body)
     local data = json.decode(response_body);
 
@@ -372,7 +379,7 @@ function RoomReservation:parse_conference_response(response_body)
     end
 
     if data.name == nil or data.name:lower() ~= self:get_room_name() then
-        module:log("error", "Missing or mismathing room name - %s", data.name);
+        module:log("error", "Missing or mismatching room name - %s", data.name);
         return;
     end
 
@@ -392,6 +399,17 @@ function RoomReservation:parse_conference_response(response_body)
         return;
     end
     data.duration = duration;
+
+    -- if optional max_occupants field set, cast to number
+    if data.max_occupants ~= nil then
+        local max_occupants = tonumber(data.max_occupants)
+        if max_occupants == nil or max_occupants < 1 then
+            -- N.B. invalid max_occupants rejected even if max_occupants_enabled=false
+            module:log("error", "Invalid value for max_occupants - %s", data.max_occupants);
+            return;
+        end
+        data.max_occupants = max_occupants
+    end
 
     local start_time = datetime.parse(data.start_time);  -- N.B. we lose milliseconds portion of the date
     if start_time == nil then
@@ -440,7 +458,7 @@ function RoomReservation:handler_conference_data_returned_from_api(response_body
         module:log("error", "API returned success code but invalid payload");
         self:set_status_failed(500, 'Invalid response from reservation server');
     else
-        self:set_status_success(data.start_time, data.duration, data.mail_owner, data.id)
+        self:set_status_success(data.start_time, data.duration, data.mail_owner, data.id, data.max_occupants)
     end
 end
 
@@ -573,11 +591,30 @@ local function room_destroyed(event)
     end
 end
 
+--- If max_occupants_enabled, update room max_occupants if returned by API
+local function room_created(event)
+    local res;
+    local room = event.room
+
+    if max_occupants_enabled and not is_healthcheck_room(room.jid) then
+        res = reservations[room.jid]
+
+        if res and res.meta.max_occupants ~= nil then
+            module:log("info", "Setting max_occupants %d for room %s", res.meta.max_occupants, room.jid);
+            room._data.max_occupants = res.meta.max_occupants
+        end
+    end
+end
 
 function process_host(host)
     if host == muc_component_host then -- the conference muc component
-        module:log("info", "Hook to muc events on %s", host);
+        module:log("info", "Hook to muc-room-destroyed on %s", host);
         module:context(host):hook("muc-room-destroyed", room_destroyed, -1);
+
+        if max_occupants_enabled then
+            module:log("info", "Hook to muc-room-created on %s (mod_muc_max_occupants integration enabled)", host);
+            module:context(host):hook("muc-room-created", room_created);
+        end
     end
 end
 

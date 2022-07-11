@@ -11,7 +11,9 @@ import {
 import { toState } from '../base/redux';
 import { getHideSelfView } from '../base/settings';
 import { parseStandardURIString } from '../base/util';
+import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me';
+import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
 
 import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
@@ -115,6 +117,7 @@ export function getMoreTabProps(stateful: Object | Function) {
     const language = i18next.language || DEFAULT_LANGUAGE;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
     const enabledNotifications = getNotificationsMap(stateful);
+    const stageFilmstripEnabled = isStageFilmstripEnabled(state);
 
     // when self view is controlled by the config we hide the settings
     const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
@@ -130,7 +133,9 @@ export function getMoreTabProps(stateful: Object | Function) {
         enabledNotifications,
         showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
-        showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled
+        showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
+        maxStageParticipants: state['features/filmstrip'].maxStageParticipants,
+        stageFilmstripEnabled
     };
 }
 
@@ -176,10 +181,10 @@ export function getModeratorTabProps(stateful: Object | Function) {
  */
 export function shouldShowModeratorSettings(stateful: Object | Function) {
     const state = toState(stateful);
+    const { hideModeratorSettingsTab } = getParticipantsPaneConfig(state);
+    const hasModeratorRights = Boolean(isSettingEnabled('moderator') && isLocalParticipantModerator(state));
 
-    return Boolean(
-        isSettingEnabled('moderator')
-        && isLocalParticipantModerator(state));
+    return hasModeratorRights && !hideModeratorSettingsTab;
 }
 
 /**
@@ -225,6 +230,7 @@ export function getSoundsTabProps(stateful: Object | Function) {
     const {
         soundsIncomingMessage,
         soundsParticipantJoined,
+        soundsParticipantKnocking,
         soundsParticipantLeft,
         soundsTalkWhileMuted,
         soundsReactions
@@ -235,6 +241,7 @@ export function getSoundsTabProps(stateful: Object | Function) {
     return {
         soundsIncomingMessage,
         soundsParticipantJoined,
+        soundsParticipantKnocking,
         soundsParticipantLeft,
         soundsTalkWhileMuted,
         soundsReactions,
