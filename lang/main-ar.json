@@ -894,12 +894,20 @@
         "limitNotificationDescriptionWeb": "نظرًا للضغط الكبير، سيقيَّد التسجيل إلى {{limit}} د، ولكن إن أردت التسجيل لمدة مفتوحة، جرِّب <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "لقد أنشأنا رابطًا لتسجيلك.",
         "live": "مباشر",
+        "localRecordingNoNotificationWarning": "لن يتم الإعلان عن التسجيل للمشاركين الآخرين. ستحتاج إلى إخبارهم بأنه تم تسجيل الاجتماع.",
+        "localRecordingNoVideo": "لا يتم تسجيل الفيديو",
+        "localRecordingStartWarning": "يرجى التأكد من إيقاف التسجيل قبل الخروج من الاجتماع من أجل حفظه.",
+        "localRecordingStartWarningTitle": "أوقف التسجيل لحفظه",
+        "localRecordingVideoStop": "سيؤدي إيقاف الفيديو أيضًا إلى إيقاف التسجيل المحلي. هل أنت متأكد أنك تريد الاستمرار؟",
+        "localRecordingVideoWarning": "لتسجيل الفيديو الخاص بك ، يجب أن يكون لديك عند بدء التسجيل",
         "localRecordingWarning": "تأكد من تحديد علامة التبويب الحالية لاستخدام الفيديو والصوت الصحيحين. التسجيل محدود حاليًا بـ 1 كيغابايت ، أي حوالي 100 دقيقة.",
         "loggedIn": "مُسجَّل باسم {{userName}}",
+        "noStreams": "لم يتم الكشف عن دفق الصوت أو الفيديو.",
         "off": "أوقِف التسجيل",
         "offBy": "أوقَف {{name}} التسجيل",
         "on": "تسجيل",
         "onBy": "بدأ {{name}} التسجيل",
+        "onlyRecordSelf": "تسجيل فقط دفق الصوت والفيديو الخاصة بي",
         "pending": "التحضير لتسجيل المُلتقى...",
         "rec": "تسجيل",
         "saveLocalRecording": "حفظ ملف التسجيل محليا",
@@ -949,6 +957,7 @@
         "name": "الاسم",
         "noDevice": "لا يوجد",
         "participantJoined": "انضم مشارك",
+        "participantKnocking": "دخل المشارك في الردهة",
         "participantLeft": "غادر المشارك",
         "playSounds": "تشغيل الصوت عند:",
         "reactions": "ردود فعل المُلتقى",
@@ -1024,6 +1033,7 @@
     "termsView": {
         "header": "مصطلحات"
     },
+    "toggleTopPanelLabel": "تبديل اللوحة العلوية",
     "toolbar": {
         "Settings": "الإعدادات",
         "accessibilityLabel": {
