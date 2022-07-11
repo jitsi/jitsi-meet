@@ -63,6 +63,7 @@ export const colors = {
 // Mapping between the token used and the color
 export const colorMap = {
     // ----- Surfaces -----
+
     // Default page background
     uiBackground: 'surface01',
 
@@ -142,6 +143,7 @@ export const colorMap = {
     iconError: 'error06',
 
     // ----- Forms -----
+
     field01: 'surface04',
 
     // ----- Feedback -----
@@ -156,7 +158,6 @@ export const colorMap = {
 
     // ----- Support -----
 
-    // Backgrounds for avatars
     support01: 'support01',
     support02: 'support02',
     support03: 'support03',
