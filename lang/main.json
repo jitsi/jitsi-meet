@@ -994,12 +994,17 @@
         "displayName": "Display name",
         "displayNamePlaceholderText": "Eg: John Doe",
         "email": "Email",
+        "goTo": "Go to",
         "header": "Settings",
+        "help": "Help",
+        "links": "Links",
+        "privacy": "Privacy",
         "profileSection": "Profile",
         "serverURL": "Server URL",
         "showAdvanced": "Show advanced settings",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
+        "terms": "Terms",
         "version": "Version"
     },
     "share": {
