@@ -53,7 +53,7 @@ case "$1" in
             if ! egrep -q '^\s*authentication\s*=\s*"token" -- do not delete me' "$PROSODY_HOST_CONFIG"; then
                 # enable tokens in prosody host config
                 sed -i 's/--plugin_paths/plugin_paths/g' $PROSODY_HOST_CONFIG
-                sed -i 's/authentication = "anonymous" -- do not delete me/authentication = "token" -- do not delete me/g' $PROSODY_HOST_CONFIG
+                sed -i 's/authentication = "jitsi-anonymous" -- do not delete me/authentication = "token" -- do not delete me/g' $PROSODY_HOST_CONFIG
                 sed -i "s/ --app_id=\"example_app_id\"/ app_id=\"$APP_ID\"/g" $PROSODY_HOST_CONFIG
                 sed -i "s/ --app_secret=\"example_app_secret\"/ app_secret=\"$APP_SECRET\"/g" $PROSODY_HOST_CONFIG
                 sed -i 's/ --modules_enabled = { "token_verification" }/ modules_enabled = { "token_verification" }/g' $PROSODY_HOST_CONFIG
