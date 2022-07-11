@@ -7,7 +7,6 @@ import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { connect } from '../../../base/redux';
 import { SharedDocumentButton } from '../../../etherpad';
-import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionMenu } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { LiveStreamButton, RecordButton } from '../../../recording';
@@ -115,25 +114,11 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: bottomSheetStyles.buttons
         };
 
-        const topButtonProps = {
-            afterClick: this._onCancel,
-            showLabel: true,
-            styles: {
-                ...bottomSheetStyles.buttons,
-                style: {
-                    ...bottomSheetStyles.buttons.style,
-                    borderTopLeftRadius: 16,
-                    borderTopRightRadius: 16
-                }
-            }
-        };
-
         return (
             <BottomSheet
                 renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : null }>
-                <ParticipantsPaneButton { ...topButtonProps } />
                 {_selfViewHidden && <ToggleSelfViewButton { ...buttonProps } />}
                 <OpenCarmodeButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />

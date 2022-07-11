@@ -75,7 +75,7 @@ export default {
         width: BaseTheme.spacing[7]
     },
 
-    inviteButton: {
+    titleBarButton: {
         iconStyle: {
             color: BaseTheme.palette.icon01,
             padding: 12,
