@@ -39,7 +39,7 @@ const Button: React.FC<ButtonProps> = ({
         mode = CONTAINED;
     } else if (type === SECONDARY) {
         buttonLabelStyles = styles.buttonLabelSecondary;
-        color = BaseTheme.palette.action02;
+        color = BaseTheme.palette.ui04;
         mode = CONTAINED;
     } else if (type === DESTRUCTIVE) {
         color = BaseTheme.palette.actionDanger;

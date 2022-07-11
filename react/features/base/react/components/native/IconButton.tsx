@@ -31,9 +31,9 @@ const IconButton: React.FC<IconButtonProps> = ({
         iconButtonContainerStyles = styles.iconButtonContainerPrimary;
         rippleColor = BaseTheme.palette.action01;
     } else if (type === SECONDARY) {
-        color = BaseTheme.palette.icon02;
+        color = BaseTheme.palette.icon01;
         iconButtonContainerStyles = styles.iconButtonContainerSecondary;
-        rippleColor = BaseTheme.palette.action02;
+        rippleColor = BaseTheme.palette.ui04;
     } else if (type === TERTIARY) {
         color = BaseTheme.palette.icon01;
         iconButtonContainerStyles = styles.iconButtonContainer;
