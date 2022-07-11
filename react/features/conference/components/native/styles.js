@@ -85,8 +85,7 @@ export default {
     },
 
     lonelyButton: {
-        borderRadius: BaseTheme.spacing[4],
-        paddingHorizontal: BaseTheme.spacing[1]
+        borderRadius: BaseTheme.spacing[4]
     },
 
     lonelyMeetingContainer: {
