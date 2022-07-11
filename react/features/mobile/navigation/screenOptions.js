@@ -1,5 +1,4 @@
 import { TransitionPresets } from '@react-navigation/stack';
-import React from 'react';
 import { Platform } from 'react-native';
 
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
@@ -25,6 +24,14 @@ export const fullScreenOptions = {
     ...TransitionPresets.ModalTransition,
     gestureEnabled: false,
     headerShown: false
+};
+
+export const linksScreenOptions = {
+    gestureEnabled: true,
+    headerShown: true,
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
 };
 
 /**

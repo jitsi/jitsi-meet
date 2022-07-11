@@ -1,5 +1,6 @@
 // @flow
 
+import { Link } from '@react-navigation/native';
 import React from 'react';
 import {
     Alert,
@@ -9,11 +10,11 @@ import {
     Text
 } from 'react-native';
 import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
-import { Link } from '@react-navigation/native';
 
 import { translate } from '../../../../../base/i18n';
 import JitsiScreen from '../../../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../../../base/redux';
+import { screen } from '../../../../../mobile/navigation/routes';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
@@ -28,12 +29,12 @@ import styles, {
     ENABLED_TRACK_COLOR,
     THUMB_COLOR
 } from './styles';
-import { screen } from '../../../../../mobile/navigation/routes';
 
 /**
  * Application information module.
  */
 const { AppInfo } = NativeModules;
+
 
 type State = {
 
@@ -264,17 +265,21 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         accordion = { true }
                         expandable = { true }
                         label = 'settingsView.links'>
-                        <Link style = { styles.sectionLink } to = {{ screen: screen.welcome.help }}>
+                        <Link
+                            style = { styles.sectionLink }
+                            to = {{ screen: screen.welcome.help }}>
                             { this.props.t('settingsView.help') }
                         </Link>
                         <Divider style = { styles.fieldSeparator } />
-                        <Divider style = { styles.fieldSeparator } />
-                        <Link style = { styles.sectionLink } to = {{ screen: screen.welcome.terms }}>
+                        <Link
+                            style = { styles.sectionLink }
+                            to = {{ screen: screen.welcome.terms }}>
                             { this.props.t('settingsView.terms') }
                         </Link>
                         <Divider style = { styles.fieldSeparator } />
-                        <Divider style = { styles.fieldSeparator } />
-                        <Link style = { styles.sectionLink } to = {{ screen: screen.welcome.privacy }}>
+                        <Link
+                            style = { styles.sectionLink }
+                            to = {{ screen: screen.welcome.privacy }}>
                             { this.props.t('settingsView.privacy') }
                         </Link>
                     </FormSectionAccordion>

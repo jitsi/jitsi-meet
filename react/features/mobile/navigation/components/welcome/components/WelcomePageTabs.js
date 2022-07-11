@@ -6,17 +6,18 @@ import { useSelector } from 'react-redux';
 
 import { CalendarList, isCalendarEnabled } from '../../../../../calendar-sync';
 import { RecentList } from '../../../../../recent-list';
+import SettingsView
+    from '../../../../../welcome/components/native/settings/components/SettingsView';
 import {
     calendarListTabBarOptions,
-    recentListTabBarOptions, settingsTabBarOptions,
+    recentListTabBarOptions,
+    settingsTabBarOptions,
     tabBarOptions
 } from '../../../../../welcome/constants';
 import { screen } from '../../../routes';
-import SettingsView
-    from '../../../../../welcome/components/native/settings/components/SettingsView';
-import { useNavigationState } from '@react-navigation/native';
 
 const WelcomePage = createBottomTabNavigator();
+
 
 /**
  * The type of the React {@code Component} props of {@link WelcomePageTabs}.
@@ -57,14 +58,6 @@ const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
         )
     );
 
-    const SettingsViewScreen = useCallback(() =>
-        (
-            <SettingsView/>
-        )
-    );
-
-
-
     return (
         <WelcomePage.Navigator
             screenOptions = {{
@@ -85,10 +78,9 @@ const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
             </WelcomePage.Screen>
             }
             <WelcomePage.Screen
-                name = { screen.welcome.settings }
-                options = { settingsTabBarOptions}>
-                { SettingsViewScreen }
-            </WelcomePage.Screen>
+                component = { SettingsView }
+                name = { screen.welcome.tabs.settings }
+                options = { settingsTabBarOptions } />
         </WelcomePage.Navigator>
     );
 };

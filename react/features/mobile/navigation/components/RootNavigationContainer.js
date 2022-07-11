@@ -1,10 +1,15 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
 import Prejoin from '../../../prejoin/components/Prejoin.native';
+import WelcomePage from '../../../welcome/components/WelcomePage';
+import HelpView from '../../../welcome/components/native/HelpView';
+import PrivacyView from '../../../welcome/components/native/PrivacyView';
+import TermsView from '../../../welcome/components/native/TermsView';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
@@ -13,6 +18,7 @@ import {
     conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
     dialInSummaryScreenOptions,
+    linksScreenOptions,
     navigationContainerTheme,
     preJoinScreenOptions,
     welcomeScreenOptions
@@ -21,7 +27,6 @@ import {
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
-import WelcomePage from '../../../welcome/components/WelcomePage';
 
 const RootStack = createStackNavigator();
 
@@ -41,6 +46,7 @@ type Props = {
 
 
 const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) => {
+    const { t } = useTranslation();
     const initialRouteName = isWelcomePageAvailable
         ? screen.welcome.main : screen.connecting;
     const onReady = useCallback(() => {
@@ -71,6 +77,27 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                                 options = { dialInSummaryScreenOptions } />
                         </>
                 }
+                <RootStack.Screen
+                    component = { HelpView }
+                    name = { screen.welcome.help }
+                    options = {{
+                        ...linksScreenOptions,
+                        title: t('helpView.header')
+                    }} />
+                <RootStack.Screen
+                    component = { TermsView }
+                    name = { screen.welcome.terms }
+                    options = {{
+                        ...linksScreenOptions,
+                        title: t('termsView.header')
+                    }} />
+                <RootStack.Screen
+                    component = { PrivacyView }
+                    name = { screen.welcome.privacy }
+                    options = {{
+                        ...linksScreenOptions,
+                        title: t('privacyView.header')
+                    }} />
                 <RootStack.Screen
                     component = { ConnectingPage }
                     name = { screen.connecting }

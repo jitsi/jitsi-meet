@@ -3,9 +3,9 @@ export const screen = {
         main: 'Welcome',
         tabs: {
             recent: 'Recent',
-            calendar: 'Calendar'
+            calendar: 'Calendar',
+            settings: 'Settings'
         },
-        settings: 'Settings',
         terms: 'Terms',
         privacy: 'Privacy',
         help: 'Help'
