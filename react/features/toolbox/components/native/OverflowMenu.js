@@ -7,6 +7,7 @@ import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { connect } from '../../../base/redux';
 import { SharedDocumentButton } from '../../../etherpad';
+import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionMenu } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { LiveStreamButton, RecordButton } from '../../../recording';
@@ -25,7 +26,6 @@ import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
-import ToggleCameraButton from './ToggleCameraButton';
 import ToggleSelfViewButton from './ToggleSelfViewButton';
 
 /**
@@ -114,14 +114,31 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: bottomSheetStyles.buttons
         };
 
+        const topButtonProps = {
+            afterClick: this._onCancel,
+            showLabel: true,
+            styles: {
+                ...bottomSheetStyles.buttons,
+                style: {
+                    ...bottomSheetStyles.buttons.style,
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16
+                }
+            }
+        };
+
+        const firstMenuButtonProps
+            = toolbarButtons.has('participantspane') ? topButtonProps : buttonProps;
+
         return (
             <BottomSheet
                 renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : null }>
-                {_selfViewHidden && <ToggleSelfViewButton { ...buttonProps } />}
-                <OpenCarmodeButton { ...buttonProps } />
+                {!toolbarButtons.has('participantspane') && <ParticipantsPaneButton { ...topButtonProps } />}
+                <OpenCarmodeButton { ...firstMenuButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
+                {_selfViewHidden && <ToggleSelfViewButton { ...buttonProps } />}
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <SecurityDialogButton { ...buttonProps } />
@@ -132,7 +149,6 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <SharedVideoButton { ...buttonProps } />
                 <ScreenSharingButton { ...buttonProps } />
                 <SpeakerStatsButton { ...buttonProps } />
-                {!toolbarButtons.has('togglecamera') && <ToggleCameraButton { ...buttonProps } />}
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <ClosedCaptionButton { ...buttonProps } />
