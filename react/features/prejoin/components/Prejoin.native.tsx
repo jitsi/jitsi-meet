@@ -6,8 +6,8 @@ import {
     TextInput,
     Platform,
     StyleProp,
-    ViewStyle,
-    TextStyle
+    TextStyle,
+    ViewStyle
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -32,6 +32,7 @@ import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
 import { isDisplayNameRequired } from '../functions';
 import { PrejoinProps } from '../types';
+
 import styles from './styles';
 
 
@@ -95,7 +96,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
 
         return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
 
-    }, [ ]);
+    }, []);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -126,7 +127,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
             safeAreaInsets = { [ 'left' ] }
             style = { contentWrapperStyles }>
             <BrandingImageBackground />
-            <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
+            <View style = { largeVideoContainerStyles }>
                 <LargeVideo />
             </View>
             <View style = { contentContainerStyles }>

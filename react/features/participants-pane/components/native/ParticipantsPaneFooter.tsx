@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { View } from 'react-native';
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 
 import { openDialog, openSheet } from '../../../base/dialog';
 import { IconHorizontalPoints } from '../../../base/icons';
@@ -28,7 +28,7 @@ const ParticipantsPaneFooter = (): JSX.Element => {
     const showMoreActions = useSelector(isMoreActionsVisible);
     const showMuteAll = useSelector(isMuteAllVisible);
 
-    return(
+    return (
         <View style = { styles.participantsPaneFooter }>
             {
                 showMuteAll && (
@@ -49,7 +49,7 @@ const ParticipantsPaneFooter = (): JSX.Element => {
                 )
             }
         </View>
-    )
+    );
 };
 
 export default ParticipantsPaneFooter;
