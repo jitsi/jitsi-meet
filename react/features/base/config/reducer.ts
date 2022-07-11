@@ -1,6 +1,8 @@
+/* eslint-disable import/order */
 import _ from 'lodash';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
+
 // @ts-ignore
 import { equals } from '../redux';
 import ReducerRegistry from '../redux/ReducerRegistry';
@@ -13,10 +15,11 @@ import {
     OVERWRITE_CONFIG
 } from './actionTypes';
 import { IConfig } from './configType';
+
 // @ts-ignore
 import { _cleanupConfig } from './functions';
 
-declare var interfaceConfig: any;
+declare let interfaceConfig: any;
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -307,15 +310,18 @@ function _translateLegacyConfig(oldValue: IConfig) {
 
         filteredConferenceInfo.forEach(key => {
             newValue.conferenceInfo = oldValue.conferenceInfo ?? {};
+
             // hideRecordingLabel does not mean not render it at all, but autoHide it
             if (key === 'hideRecordingLabel') {
                 newValue.conferenceInfo.alwaysVisible
-                    = (newValue.conferenceInfo?.alwaysVisible ?? []).filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    = (newValue.conferenceInfo?.alwaysVisible ?? [])
+                    .filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
                 newValue.conferenceInfo.autoHide
                     = _.union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
             } else {
                 newValue.conferenceInfo.alwaysVisible
-                    = (newValue.conferenceInfo.alwaysVisible ?? []).filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    = (newValue.conferenceInfo.alwaysVisible ?? [])
+                    .filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
                 newValue.conferenceInfo.autoHide
                     = (newValue.conferenceInfo.autoHide ?? []).filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
             }

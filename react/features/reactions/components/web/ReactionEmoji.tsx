@@ -1,10 +1,13 @@
+/* eslint-disable import/order */
 import React, { Component } from 'react';
+
+// @ts-ignore
+import { IStore } from '../../../app/types';
 
 // @ts-ignore
 import { connect } from '../../../base/redux';
 import { removeReaction } from '../../actions.any';
 import { REACTIONS } from '../../constants';
-import { IStore } from '../../../app/types';
 
 type Props = {
 
@@ -86,8 +89,10 @@ class ReactionEmoji extends Component<Props, State> {
     }
 }
 
-const mapDispatchToProps = (dispatch: IStore['dispatch']) => ({
-    reactionRemove: (uid: string) => dispatch(removeReaction(uid))
-});
+const mapDispatchToProps = (dispatch: IStore['dispatch']) => {
+    return {
+        reactionRemove: (uid: string) => dispatch(removeReaction(uid))
+    };
+};
 
-export default connect(null, mapDispatchToProps)(ReactionEmoji);
+export default connect(undefined, mapDispatchToProps)(ReactionEmoji);

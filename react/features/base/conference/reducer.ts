@@ -1,9 +1,13 @@
+/* eslint-disable import/order */
 // @ts-ignore
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
+
 // @ts-ignore
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection';
+
 // @ts-ignore
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
+
 // @ts-ignore
 import { assign, set } from '../redux';
 import ReducerRegistry from '../redux/ReducerRegistry';
@@ -28,6 +32,7 @@ import {
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED
 } from './actionTypes';
+
 // @ts-ignore
 import { isRoomValid } from './functions';
 
@@ -376,7 +381,8 @@ function _p2pStatusChanged(state: any, action: any) {
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _setPassword(state: any, { conference, method, password }: {conference: any, method: Object, password: string}) {
+function _setPassword(state: any, { conference, method, password }
+    : {conference: any, method: Object, password: string}) {
     switch (method) {
     case conference.join:
         return assign(state, {

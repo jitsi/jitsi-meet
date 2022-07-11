@@ -5,14 +5,14 @@ import type { Reducer } from 'redux';
  * The type of the dictionary/map which associates a reducer (function) with the
  * name of he Redux state property managed by the reducer.
  */
-declare type NameReducerMap<S, A> = { [name: string]: Reducer<S, Action<any>> };
+type NameReducerMap<S> = { [name: string]: Reducer<S, Action<any>> };
 
 /**
  * A registry for Redux reducers, allowing features to register themselves
  * without needing to create additional inter-feature dependencies.
  */
 class ReducerRegistry {
-    _elements: NameReducerMap<any, any>;
+    _elements: NameReducerMap<any>;
 
     /**
      * Creates a ReducerRegistry instance.
@@ -35,7 +35,7 @@ class ReducerRegistry {
      * included (such as reducers from third-party modules).
      * @returns {Function}
      */
-    combineReducers(additional: NameReducerMap<any, any> = {}) {
+    combineReducers(additional: NameReducerMap<any> = {}) {
         // $FlowExpectedError
         return combineReducers({
             ...this._elements,

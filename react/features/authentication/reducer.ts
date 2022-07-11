@@ -1,6 +1,8 @@
+/* eslint-disable import/order */
+import ReducerRegistry from '../base/redux/ReducerRegistry';
+
 // @ts-ignore
 import { assign } from '../base/redux/functions';
-import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CANCEL_LOGIN,

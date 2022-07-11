@@ -1,3 +1,3 @@
-interface PrejoinProps {
-    navigation: Object;
+export interface PrejoinProps {
+    navigation: any;
 }

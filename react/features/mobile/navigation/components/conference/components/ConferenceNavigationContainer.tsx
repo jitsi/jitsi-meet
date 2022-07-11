@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { Chat, ChatAndPolls } from '../../../../../chat';
-
 import Conference from '../../../../../conference/components/native/Conference';
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 import { getDisablePolls } from '../../../../../conference/functions';

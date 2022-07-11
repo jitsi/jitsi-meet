@@ -3,6 +3,7 @@ import type { MediaType } from '../base/media/constants';
 import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
+
     // @ts-ignore
 } from '../base/participants';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
@@ -52,7 +53,7 @@ function _updatePendingParticipant(mediaType: MediaType, participant: any, state
     let arrayItemChanged = false;
     const storeKey = MEDIA_TYPE_TO_PENDING_STORE_KEY[mediaType];
     const arr = state[storeKey];
-    const newArr = arr.map((pending: { id: string} ) => {
+    const newArr = arr.map((pending: { id: string}) => {
         if (pending.id === participant.id) {
             arrayItemChanged = true;
 

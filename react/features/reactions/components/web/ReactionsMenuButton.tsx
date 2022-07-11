@@ -1,17 +1,21 @@
-// @flow
-
+/* eslint-disable import/order */
 import React, { useCallback } from 'react';
+
 // @ts-ignore
 import { useSelector } from 'react-redux';
 
 // @ts-ignore
 import { isMobileBrowser } from '../../../base/environment/utils';
+
 // @ts-ignore
 import { translate } from '../../../base/i18n';
+
 // @ts-ignore
 import { IconArrowUp } from '../../../base/icons';
+
 // @ts-ignore
 import { connect } from '../../../base/redux';
+
 // @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
@@ -72,9 +76,6 @@ type Props = {
      */
     t: Function
 };
-
-
-declare var APP: Object;
 
 /**
  * Button used for the reactions menu.

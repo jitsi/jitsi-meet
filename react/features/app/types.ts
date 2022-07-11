@@ -1,10 +1,10 @@
-import { IAnalyticsState } from "../analytics/reducer"
-import { IAuthenticationState } from "../authentication/reducer"
-import { IAVModerationState } from "../av-moderation/reducer"
-import { IAppState } from "../base/app/reducer"
-import { IAudioOnlyState } from "../base/audio-only/reducer"
-import { IConferenceState } from "../base/conference/reducer"
-import { IConfig } from "../base/config/configType"
+import { IAnalyticsState } from '../analytics/reducer';
+import { IAuthenticationState } from '../authentication/reducer';
+import { IAVModerationState } from '../av-moderation/reducer';
+import { IAppState } from '../base/app/reducer';
+import { IAudioOnlyState } from '../base/audio-only/reducer';
+import { IConferenceState } from '../base/conference/reducer';
+import { IConfig } from '../base/config/configType';
 
 export interface IStore {
     getState: Function,

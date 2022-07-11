@@ -4,7 +4,10 @@ import {
     BackHandler,
     View,
     TextInput,
-    Platform
+    Platform,
+    StyleProp,
+    TextStyle,
+    ViewStyle
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -29,6 +32,7 @@ import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
 import { isDisplayNameRequired } from '../functions';
 import { PrejoinProps } from '../types';
+
 import styles from './styles';
 
 
@@ -92,7 +96,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
 
         return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
 
-    }, [ ]);
+    }, []);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -127,12 +131,12 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
                 <LargeVideo />
             </View>
             <View style = { contentContainerStyles }>
-                <View style = { styles.formWrapper }>
+                <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <TextInput
                         onChangeText = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
                         placeholderTextColor = { BaseTheme.palette.text03 }
-                        style = { styles.field }
+                        style = { styles.field as StyleProp<TextStyle> }
                         value = { displayName } />
                     <Button
                         accessibilityLabel = 'prejoin.joinMeeting'

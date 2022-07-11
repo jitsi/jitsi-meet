@@ -3,9 +3,10 @@ import { TouchableRipple } from 'react-native-paper';
 
 import { Icon } from '../../../icons';
 import BaseTheme from '../../../ui/components/BaseTheme.native';
-import styles from './styles';
 import { BUTTON_TYPES } from '../../constants';
 import { IconButtonProps } from '../../types';
+
+import styles from './styles';
 
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -33,7 +34,7 @@ const IconButton: React.FC<IconButtonProps> = ({
         color = BaseTheme.palette.icon02;
         iconButtonContainerStyles = styles.iconButtonContainerSecondary;
         rippleColor = BaseTheme.palette.action02;
-    } else if ( type === TERTIARY) {
+    } else if (type === TERTIARY) {
         color = BaseTheme.palette.icon01;
         iconButtonContainerStyles = styles.iconButtonContainer;
         rippleColor = BaseTheme.palette.action03;

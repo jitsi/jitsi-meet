@@ -4,12 +4,12 @@ export default {
      * {@code BrandingImageBackground} Style.
      */
     brandingImageBackgroundSvg: {
-        position: 'absolute' as 'absolute'
+        position: 'absolute'
     },
 
     brandingImageBackground: {
         height: '100%',
-        position: 'absolute' as 'absolute',
+        position: 'absolute',
         width: '100%'
     }
 };

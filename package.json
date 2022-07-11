@@ -153,6 +153,8 @@
     "@types/react-native": "0.67.6",
     "@types/react-redux": "7.1.24",
     "@types/uuid": "8.3.4",
+    "@typescript-eslint/eslint-plugin": "5.30.5",
+    "@typescript-eslint/parser": "5.30.4",
     "babel-loader": "8.2.3",
     "babel-plugin-optional-require": "0.3.1",
     "circular-dependency-plugin": "5.2.0",
@@ -188,9 +190,9 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "eslint  --max-warnings 0 .",
+    "lint": "eslint --ext .js,.ts,.tsx --max-warnings 0 .",
     "lang-sort": "./resources/lang-sort.sh",
-    "lint-fix": "eslint  --max-warnings 0 --fix .",
+    "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
     "start": "make dev"

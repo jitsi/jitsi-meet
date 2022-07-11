@@ -1,13 +1,17 @@
+/* eslint-disable import/order */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 // @ts-ignore
 import { IconMenuDown } from '../../../base/icons';
+
 // @ts-ignore
 import { Label } from '../../../base/label';
+
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
+
 // @ts-ignore
 import { setTopPanelVisible } from '../../../filmstrip/actions.web';
 
@@ -20,11 +24,11 @@ const ToggleTopPanelLabel = () => {
     }, []);
 
     return topPanelHidden && (<Tooltip
-        content={t('toggleTopPanelLabel') }
+        content = { t('toggleTopPanelLabel') }
         position = { 'bottom' }>
         <Label
-            icon={IconMenuDown}
-            onClick = { onClick }/>
+            icon = { IconMenuDown }
+            onClick = { onClick } />
     </Tooltip>);
 };
 

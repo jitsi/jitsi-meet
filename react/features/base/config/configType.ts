@@ -187,7 +187,7 @@ export interface IConfig {
         notifyAllParticipants?: boolean;
     };
     transcribingEnabled?: boolean;
-    transcribeWithAppLanguage?:  boolean;
+    transcribeWithAppLanguage?: boolean;
     preferredTranscribeLanguage?: string;
     autoCaptionOnRecord?: boolean;
     transcription?: {
