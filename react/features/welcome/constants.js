@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { IconEventNote, IconRestore } from '../base/icons';
+import { IconEventNote, IconRestore, IconSettings } from '../base/icons';
 import BaseTheme from '../base/ui/components/BaseTheme';
 
 import TabIcon from './components/TabIcon';
@@ -35,5 +35,14 @@ export const calendarListTabBarOptions = {
         <TabIcon
             focused = { focused }
             src = { IconEventNote } />
+    )
+};
+
+export const settingsTabBarOptions = {
+    // $FlowExpectedError
+    tabBarIcon: ({ focused }) => (
+        <TabIcon
+            focused = { focused }
+            src = { IconSettings } />
     )
 };

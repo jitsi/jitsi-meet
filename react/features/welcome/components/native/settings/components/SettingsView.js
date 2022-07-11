@@ -9,13 +9,11 @@ import {
     Text
 } from 'react-native';
 import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
+import { Link } from '@react-navigation/native';
 
 import { translate } from '../../../../../base/i18n';
 import JitsiScreen from '../../../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../../../base/redux';
-import { renderArrowBackButton }
-    from '../../../../../mobile/navigation/components/welcome/functions';
-import { screen } from '../../../../../mobile/navigation/routes';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
@@ -30,6 +28,7 @@ import styles, {
     ENABLED_TRACK_COLOR,
     THUMB_COLOR
 } from './styles';
+import { screen } from '../../../../../mobile/navigation/routes';
 
 /**
  * Application information module.
@@ -93,6 +92,11 @@ type Props = AbstractProps & {
     _serverURLChangeEnabled: boolean,
 
     /**
+     * Checks if the screen is focused.
+     */
+    isSettingsScreenFocused: boolean,
+
+    /**
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object,
@@ -148,27 +152,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this._onDisableP2P = this._onDisableP2P.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidMount()}. Invoked
-     * immediately after mounting occurs.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        const {
-            navigation,
-            t
-        } = this.props;
-
-        navigation.setOptions({
-            headerLeft: () =>
-                renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main)),
-            headerTitle: t('settings.screenTitle')
-        });
     }
 
     /**
@@ -276,6 +259,24 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 }}
                                 value = { startWithVideoMuted } />
                         </FormRow>
+                    </FormSectionAccordion>
+                    <FormSectionAccordion
+                        accordion = { true }
+                        expandable = { true }
+                        label = 'settingsView.links'>
+                        <Link style = { styles.sectionLink } to = {{ screen: screen.welcome.help }}>
+                            { this.props.t('settingsView.help') }
+                        </Link>
+                        <Divider style = { styles.fieldSeparator } />
+                        <Divider style = { styles.fieldSeparator } />
+                        <Link style = { styles.sectionLink } to = {{ screen: screen.welcome.terms }}>
+                            { this.props.t('settingsView.terms') }
+                        </Link>
+                        <Divider style = { styles.fieldSeparator } />
+                        <Divider style = { styles.fieldSeparator } />
+                        <Link style = { styles.sectionLink } to = {{ screen: screen.welcome.privacy }}>
+                            { this.props.t('settingsView.privacy') }
+                        </Link>
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         accordion = { false }

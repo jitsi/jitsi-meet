@@ -13,16 +13,15 @@ import {
     conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
     dialInSummaryScreenOptions,
-    drawerNavigatorScreenOptions,
     navigationContainerTheme,
-    preJoinScreenOptions
+    preJoinScreenOptions,
+    welcomeScreenOptions
 } from '../screenOptions';
 
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
-import WelcomePageNavigationContainer
-    from './welcome/components/WelcomePageNavigationContainer';
+import WelcomePage from '../../../welcome/components/WelcomePage';
 
 const RootStack = createStackNavigator();
 
@@ -43,7 +42,7 @@ type Props = {
 
 const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) => {
     const initialRouteName = isWelcomePageAvailable
-        ? screen.root : screen.connecting;
+        ? screen.welcome.main : screen.connecting;
     const onReady = useCallback(() => {
         dispatch({
             type: _ROOT_NAVIGATION_READY,
@@ -63,9 +62,9 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                     isWelcomePageAvailable
                         && <>
                             <RootStack.Screen
-                                component = { WelcomePageNavigationContainer }
-                                name = { screen.root }
-                                options = { drawerNavigatorScreenOptions } />
+                                component = { WelcomePage }
+                                name = { screen.welcome.main }
+                                options = { welcomeScreenOptions } />
                             <RootStack.Screen
                                 component = { DialInSummary }
                                 name = { screen.dialInSummary }

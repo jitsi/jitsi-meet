@@ -1,7 +1,6 @@
 export const screen = {
-    root: 'Main root',
     welcome: {
-        main: 'Home',
+        main: 'Welcome',
         tabs: {
             recent: 'Recent',
             calendar: 'Calendar'

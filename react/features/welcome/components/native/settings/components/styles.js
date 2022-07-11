@@ -99,6 +99,13 @@ export default {
         fontSize: 14
     },
 
+    sectionLink: {
+        ...BaseTheme.typography.bodyShortBoldLarge,
+        color: BaseTheme.palette.link01,
+        margin: BaseTheme.spacing[2],
+        textAlign: 'center'
+    },
+
     /**
      * Global {@code Text} color for the components.
      */

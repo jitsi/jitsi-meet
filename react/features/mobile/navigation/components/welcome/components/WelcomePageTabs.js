@@ -8,10 +8,13 @@ import { CalendarList, isCalendarEnabled } from '../../../../../calendar-sync';
 import { RecentList } from '../../../../../recent-list';
 import {
     calendarListTabBarOptions,
-    recentListTabBarOptions,
+    recentListTabBarOptions, settingsTabBarOptions,
     tabBarOptions
 } from '../../../../../welcome/constants';
 import { screen } from '../../../routes';
+import SettingsView
+    from '../../../../../welcome/components/native/settings/components/SettingsView';
+import { useNavigationState } from '@react-navigation/native';
 
 const WelcomePage = createBottomTabNavigator();
 
@@ -28,22 +31,39 @@ type Props = {
     /**
      * Callback to be invoked when pressing the list container.
      */
-    onListContainerPress?: Function
+    onListContainerPress?: Function,
+
+    /**
+     * Displays room name input.
+     */
+    showRoomNameInput: boolean
 };
 
 const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
     const RecentListScreen = useCallback(() =>
-        (<RecentList
-            disabled = { disabled }
-            onListContainerPress = { onListContainerPress } />)
+        (
+            <RecentList
+                disabled = { disabled }
+                onListContainerPress = { onListContainerPress } />
+        )
     );
 
     const calendarEnabled = useSelector(isCalendarEnabled);
 
     const CalendarListScreen = useCallback(() =>
-        (<CalendarList
-            disabled = { disabled } />)
+        (
+            <CalendarList
+                disabled = { disabled } />
+        )
     );
+
+    const SettingsViewScreen = useCallback(() =>
+        (
+            <SettingsView/>
+        )
+    );
+
+
 
     return (
         <WelcomePage.Navigator
@@ -64,6 +84,11 @@ const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
                 { CalendarListScreen }
             </WelcomePage.Screen>
             }
+            <WelcomePage.Screen
+                name = { screen.welcome.settings }
+                options = { settingsTabBarOptions}>
+                { SettingsViewScreen }
+            </WelcomePage.Screen>
         </WelcomePage.Navigator>
     );
 };
