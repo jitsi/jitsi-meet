@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import ChatMessage from './ChatMessage';
+import ShowUnreadMessagesButton from './ShowUnreadMessagesButton';
 
 type Props = {
 
@@ -43,16 +44,20 @@ class ChatMessageGroup extends Component<Props> {
         }
 
         return (
-            <div className = { `chat-message-group ${className}` }>
-                {
-                    messages.map((message, i) => (
+            <div>
+                <div className = { `chat-message-group ${className}` }>
+                    {messages.map((message, i) => (
                         <ChatMessage
                             key = { i }
                             message = { message }
                             showDisplayName = { i === 0 }
                             showTimestamp = { i === messages.length - 1 } />
-                    ))
-                }
+                    ))}
+                </div>
+
+                {/* <ShowUnreadMessagesButton
+                    displayName = 'mama'
+                    unreadMessagesCounter = { messages.length } /> */}
             </div>
         );
     }

@@ -8,6 +8,7 @@ import AbstractMessageContainer, { type Props }
     from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
+import ShowUnreadMessagesButton from './ShowUnreadMessagesButton';
 
 /**
  * Displays all received chat messages, grouped by sender.
@@ -78,6 +79,9 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
                 role = 'log'
                 tabIndex = { 0 }>
                 { messages }
+                <ShowUnreadMessagesButton
+                    displayName = 'mama'
+                    unreadMessagesCounter = { messages.length } />
                 <div ref = { this._messagesListEndRef } />
             </div>
         );
