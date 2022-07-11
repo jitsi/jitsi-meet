@@ -36,8 +36,7 @@ unlimited_jids = {
 }
 
 VirtualHost "jitmeet.example.com"
-    -- enabled = false -- Remove this line to enable this host
-    authentication = "anonymous"
+    authentication = "anonymous" -- do not delete me
     -- Properties below are modified by jitsi-meet-tokens package config
     -- and authentication above is switched to "token"
     --app_id="example_app_id"
