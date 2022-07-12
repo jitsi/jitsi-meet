@@ -188,7 +188,7 @@ export default {
 
     buttonLabelSecondary: {
         ...buttonLabel,
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.text0
     },
 
     buttonLabelDestructive: {
@@ -212,6 +212,6 @@ export default {
 
     iconButtonContainerSecondary: {
         ...iconButtonContainer,
-        backgroundColor: BaseTheme.palette.ui04
+        backgroundColor: BaseTheme.palette.action02
     }
 };
