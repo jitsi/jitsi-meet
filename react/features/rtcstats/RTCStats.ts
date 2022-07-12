@@ -1,21 +1,20 @@
+/* eslint-disable import/order */
 // @ts-ignore
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
+
 // @ts-ignore
 import traceInit from '@jitsi/rtcstats/trace-ws';
 
-import {
-    createRTCStatsTraceCloseEvent,
-    sendAnalytics
-    // @ts-ignore
-} from '../analytics';
+// @ts-ignore
+import { createRTCStatsTraceCloseEvent, sendAnalytics } from '../analytics';
 
 import logger from './logger';
-import { 
+import {
     DominantSpeakerData,
     E2ERTTData,
     FaceLandmarksData,
     InitOptions,
-    VideoTypeData 
+    VideoTypeData
 } from './types';
 
 /**
@@ -40,7 +39,8 @@ function connectionFilter(config: any) {
  */
 class RTCStats {
     trace: any;
-    initialized: boolean = false;
+    initialized = false;
+
     /**
      * Initialize the rtcstats components. First off we initialize the trace, which is a wrapped websocket
      * that does the actual communication with the server. Secondly, the rtcstats component is initialized,
@@ -78,7 +78,6 @@ class RTCStats {
         this.trace = traceInit(traceOptions);
         rtcstatsInit(this.trace, rtcstatsOptions);
         this.initialized = true;
-        
     }
 
     /**
@@ -159,8 +158,8 @@ class RTCStats {
      * @param {Object} faceLandmarksData - Face landmarks data to be saved in the rtcstats dump.
      * @returns {void}
      */
-    sendFaceLandmarksData(faceLandmarkData: FaceLandmarksData) {
-        this.trace && this.trace.statsEntry('faceLandmarks', null, faceLandmarkData);
+    sendFaceLandmarksData(faceLandmarksData: FaceLandmarksData) {
+        this.trace && this.trace.statsEntry('faceLandmarks', null, faceLandmarksData);
     }
 
     /**

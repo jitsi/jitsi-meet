@@ -1,14 +1,19 @@
+/* eslint-disable import/order */
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
+
 // @ts-ignore
 import { getAmplitudeIdentity } from '../analytics';
-import { 
-    getConferenceOptions, 
-    getAnalyticsRoomName }
+import {
+    getConferenceOptions,
+    getAnalyticsRoomName
+
     // @ts-ignore
-from '../base/conference';
+} from '../base/conference';
+
 // @ts-ignore
 import { getLocalParticipant } from '../base/participants';
+
 // @ts-ignore
 import { toState } from '../base/redux';
 

@@ -1,21 +1,26 @@
-// @flow
+/* eslint-disable import/order */
+import { IStore } from '../app/types';
 import {
     E2E_RTT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
-    CONFERENCE_WILL_LEAVE }
+    CONFERENCE_WILL_LEAVE
+
     // @ts-ignore
-from '../base/conference';
+} from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
+
 // @ts-ignore
 import { DOMINANT_SPEAKER_CHANGED } from '../base/participants';
+
 // @ts-ignore
 import { MiddlewareRegistry } from '../base/redux';
+
 // @ts-ignore
 import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks';
+
 // @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
-import { IStore } from '../app/types';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
@@ -28,7 +33,7 @@ import logger from './logger';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
     const state = store.getState();
     const config = state['features/base/config'];
     const { analytics, faceLandmarks } = config;

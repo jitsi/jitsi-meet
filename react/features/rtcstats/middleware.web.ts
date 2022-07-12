@@ -1,8 +1,11 @@
+/* eslint-disable import/order */
+import { IStore } from '../app/types';
+
 // @ts-ignore
 import { CONFERENCE_UNIQUE_ID_SET } from '../base/conference';
+
 // @ts-ignore
 import { MiddlewareRegistry } from '../base/redux';
-import { IStore } from '../app/types';
 
 import { connectAndSendIdentity } from './functions';
 import './middleware.any';
