@@ -10,7 +10,6 @@ import Conference from '../../../../../conference/components/native/Conference';
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 import { getDisablePolls } from '../../../../../conference/functions';
 import { SharedDocument } from '../../../../../etherpad';
-import { SharedIFrame } from '../../../../../shared-iframe';
 import { GifsMenu } from '../../../../../gifs/components';
 import AddPeopleDialog
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
@@ -22,6 +21,7 @@ import SalesforceLinkDialog
     from '../../../../../salesforce/components/native/SalesforceLinkDialog';
 import SecurityDialog
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
+import { SharedIFrame } from '../../../../../shared-iframe';
 import SpeakerStats
     from '../../../../../speaker-stats/components/native/SpeakerStats';
 import { screen } from '../../../routes';
