@@ -1,0 +1,39 @@
+diff --git a/node_modules/react-native-screens/ios/RNSFullWindowOverlay.m b/node_modules/react-native-screens/ios/RNSFullWindowOverlay.m
+index b8c13e2..5337e72 100644
+--- a/node_modules/react-native-screens/ios/RNSFullWindowOverlay.m
++++ b/node_modules/react-native-screens/ios/RNSFullWindowOverlay.m
+@@ -46,6 +46,7 @@ - (void)reactSetFrame:(CGRect)frame
+ - (void)addSubview:(UIView *)view
+ {
+   [_container addSubview:view];
++    [_container bringSubviewToFront:view];
+ }
+ 
+ - (RNSFullWindowOverlayContainer *)container
+@@ -59,8 +60,25 @@ - (RNSFullWindowOverlayContainer *)container
+ 
+ - (void)show
+ {
+-  UIWindow *window = RCTSharedApplication().delegate.window;
++    UIWindow *window = nil;
++    
++    if (@available(iOS 13.0, *)) {
++      NSPredicate *activeScenePredicate = [NSPredicate predicateWithBlock:^BOOL(UIScene*  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
++        return evaluatedObject.activationState == UISceneActivationStateForegroundActive;
++      }];
++      NSPredicate *keyWindowPredicate = [NSPredicate predicateWithBlock:^BOOL(UIWindow*  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
++        return evaluatedObject.keyWindow == true;
++      }];
++      
++      UIScene *activeScene = [[RCTSharedApplication().connectedScenes filteredSetUsingPredicate:activeScenePredicate] anyObject];
++      window = [[[(UIWindowScene *)activeScene windows] filteredArrayUsingPredicate:keyWindowPredicate] firstObject];
++    } else {
++      window = RCTSharedApplication().keyWindow;
++    }
++        
++   // UIWindow *window = RCTSharedApplication().delegate.window;
+   [window addSubview:_container];
++    [window bringSubviewToFront:_container];
+ }
+ 
+ - (void)hide
