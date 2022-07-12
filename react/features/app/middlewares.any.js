@@ -43,7 +43,6 @@ import '../recent-list/middleware';
 import '../recording/middleware';
 import '../rejoin/middleware';
 import '../room-lock/middleware';
-import '../rtcstats/middleware.any';
 import '../speaker-stats/middleware';
 import '../subtitles/middleware';
 import '../toolbox/middleware';

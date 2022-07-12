@@ -1,1 +1,1 @@
-import './middleware';
+import './middleware.any';
