@@ -17,8 +17,7 @@ import { SET_SHARED_IFRAME_STATUS, RESET_SHARED_IFRAME_STATUS } from './actionTy
 import {
     resetSharedIFrameStatus,
     setDisableButton,
-    setSharedIFrameStatus,
-    updateSharedIFrameState
+    setSharedIFrameStatus
 } from './actions';
 import { SHARED_IFRAME } from './constants';
 
@@ -44,9 +43,6 @@ MiddlewareRegistry.register(store => next => action => {
             of Object.keys(sharedIFrames).map(key => sharedIFrames[key])) {
             dispatch(resetSharedIFrameStatus(thisShareKey));
         }
-        break;
-    case CONFERENCE_JOINED:
-        dispatch(updateSharedIFrameState({ userJoinedConference: true }));
         break;
     case PARTICIPANT_LEFT:
         // Check each sharedIFrame if the participant left is his owner

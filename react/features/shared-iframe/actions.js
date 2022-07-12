@@ -2,27 +2,10 @@ import { getCurrentConference } from '../base/conference';
 import { getLocalParticipant } from '../base/participants';
 
 import {
-    ONLY_UPDATE_SHARED_IFRAME_STATUS,
     RESET_SHARED_IFRAME_STATUS,
     SET_DISABLE_SHARED_IFRAME_BUTTON,
     SET_SHARED_IFRAME_STATUS
 } from './actionTypes';
-
-/**
- * Update the state without side effects.
- *
- * @param {string} statePatch - The state patch to be applied.
- * @returns {{
- *     type: ONLY_UPDATE_SHARED_IFRAME_STATUS,
- * }}
- */
-export function updateSharedIFrameStateWithoutSideEffects(statePatch) {
-    return {
-        type: ONLY_UPDATE_SHARED_IFRAME_STATUS,
-        statePatch
-    };
-}
-
 
 /**
  * Resets the status of the shared iframe.
@@ -128,18 +111,6 @@ export function toggleSharedIFrame(shareKey) {
         } else {
             dispatch(showSharedIFrame(shareKey));
         }
-    };
-}
-
-/**
- * Update the state without side effects.
- *
- * @param {string} statePatch - The state patch to be applied.
- * @returns {Function}
- */
-export function updateSharedIFrameState(statePatch) {
-    return dispatch => {
-        dispatch(updateSharedIFrameStateWithoutSideEffects(statePatch));
     };
 }
 
