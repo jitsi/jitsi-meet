@@ -452,7 +452,7 @@ class StartRecordingDialogContent extends Component<Props> {
             );
         }
 
-        if (this.props.fileRecordingsServiceEnabled) {
+        if (this.props.fileRecordingsServiceEnabled || this._localRecordingAvailable) {
             switchContent = (
                 <Switch
                     className = 'recording-switch'

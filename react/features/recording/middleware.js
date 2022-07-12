@@ -176,12 +176,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
 
     case STOP_LOCAL_RECORDING: {
         const { localRecording } = getState()['features/base/config'];
-        const { onlySelf } = action;
 
         if (LocalRecordingManager.isRecordingLocally()) {
             LocalRecordingManager.stopLocalRecording();
             dispatch(updateLocalRecordingStatus(false));
-            if (localRecording?.notifyAllParticipants && !onlySelf) {
+            if (localRecording?.notifyAllParticipants && !LocalRecordingManager.selfRecording) {
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));
             }
         }

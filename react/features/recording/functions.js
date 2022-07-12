@@ -1,6 +1,7 @@
 // @flow
 
-import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
+import { isMobileBrowser } from '../base/environment/utils';
+import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getRemoteParticipants, isLocalParticipantModerator } from '../base/participants';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox';
@@ -155,7 +156,8 @@ export function getRecordButtonProps(state: Object): ?string {
         localRecording
     } = state['features/base/config'];
     const { features = {} } = getLocalParticipant(state);
-    let localRecordingEnabled = !localRecording?.disable;
+    const supportsLocalRecording = browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser();
+    let localRecordingEnabled = !localRecording?.disable && supportsLocalRecording;
 
     if (navigator.product === 'ReactNative') {
         localRecordingEnabled = false;

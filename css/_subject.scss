@@ -12,6 +12,7 @@
     &#autoHide.with-always-on {
         overflow: hidden;
         animation: hideSubject forwards .6s ease-out;
+        margin-left: 4px;
 
         & > .subject-info-container {
             justify-content: flex-start;
