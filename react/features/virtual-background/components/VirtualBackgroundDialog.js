@@ -117,7 +117,12 @@ const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackg
 
 const useStyles = makeStyles(theme => {
     return {
+        container: {
+            display: 'flex',
+            flexDirection: 'column'
+        },
         dialog: {
+            alignSelf: 'flex-start',
             marginLeft: '-10px',
             position: 'relative',
             maxHeight: '300px',
@@ -205,10 +210,11 @@ const useStyles = makeStyles(theme => {
                     left: '51px'
                 }
             },
-            '@media (max-width: 360px)': {
-                gridTemplateColumns: 'auto auto auto'
+            '@media (max-width: 720px)': {
+                gridTemplateColumns: 'auto auto auto auto'
             },
             '@media (max-width: 632px)': {
+                gridTemplateColumns: 'auto auto auto auto auto',
                 fontSize: '1.5vw',
 
                 [[ '& .desktop-share:hover',
@@ -236,6 +242,12 @@ const useStyles = makeStyles(theme => {
                     height: '60px',
                     width: '60px'
                 }
+            },
+            '@media (max-width: 360px)': {
+                gridTemplateColumns: 'auto auto auto auto'
+            },
+            '@media (max-width: 319px)': {
+                gridTemplateColumns: 'auto auto'
             }
         },
         dialogMarginTop: {
@@ -538,7 +550,7 @@ function VirtualBackground({
                         size = 'medium' />
                 </div>
             ) : (
-                <div>
+                <div className = { classes.container }>
                     {_showUploadButton
                     && <UploadImageButton
                         setLoading = { setLoading }
