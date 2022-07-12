@@ -8,6 +8,7 @@ import { IconShareDoc } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { toggleDocument } from '../../etherpad/actions';
+import { setOverflowMenuVisible } from '../../toolbox/actions.web';
 
 type Props = AbstractButtonProps & {
 
@@ -67,6 +68,7 @@ class SharedDocumentButton extends AbstractButton<Props, *> {
             }));
 
         dispatch(toggleDocument());
+        dispatch(setOverflowMenuVisible(false));
     }
 
     /**
