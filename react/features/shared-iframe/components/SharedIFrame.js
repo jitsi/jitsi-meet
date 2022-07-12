@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { PureComponent } from 'react';
 
 import Filmstrip from '../../../../modules/UI/videolayout/Filmstrip';
 import { i18next, DEFAULT_LANGUAGE } from '../../base/i18n';
@@ -69,7 +69,7 @@ type Props = {
  *
  * @augments Component
  */
-class SharedIFrame extends React.PureComponent<Props> {
+class SharedIFrame extends PureComponent<Props> {
     /**
      * Computes the width and the height of the component.
      *

@@ -1,5 +1,5 @@
 /* @flow */
-import React from 'react';
+import React, { PureComponent } from 'react';
 
 import { sendAnalytics, createSharedIFrameEvent as createEvent } from '../../analytics';
 import { connect } from '../../base/redux';
@@ -31,7 +31,7 @@ export type Props = {
 /**
  * Manager of shared iframe.
  */
-class IFrameManager extends React.PureComponent<Props> {
+class IFrameManager extends PureComponent<Props> {
 
     /**
      * Initializes a new instance of IFrameManager.

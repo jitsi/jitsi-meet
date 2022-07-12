@@ -1,7 +1,10 @@
 // @flow
 
-import React from 'react';
+import React, { PureComponent } from 'react';
 
+import {
+    type AbstractButtonProps
+} from '../../../base/toolbox/components';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 
@@ -19,7 +22,7 @@ type Props = AbstractButtonProps & {
 /**
  * Implements a Container to hold all Buttons needed for the SharedIFrame Feature.
  */
-class SharedIFrameButtonContainer extends React.PureComponent<Props> {
+class SharedIFrameButtonContainer extends PureComponent<Props> {
 
     /**
      * Implements React's {@link Component#render()}.
