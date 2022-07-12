@@ -1,8 +1,11 @@
-/* @flow */
+/* eslint-disable import/order */
 
-import { SET_ROOM } from '../conference';
+import { SET_ROOM } from '../conference/actionTypes';
+
+// @ts-ignore
 import { JitsiConnectionErrors } from '../lib-jitsi-meet';
-import { assign, set, ReducerRegistry } from '../redux';
+import { assign, set } from '../redux/functions';
+import ReducerRegistry from '../redux/ReducerRegistry';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -12,14 +15,26 @@ import {
     SET_LOCATION_URL,
     SHOW_CONNECTION_INFO
 } from './actionTypes';
-import type { ConnectionFailedError } from './actions.native';
+
+// @ts-ignore
+import { ConnectionFailedError } from './actions.native';
+
+export interface IConnectionState {
+    connection?: Object;
+    connecting?: Object;
+    timeEstablished?: number;
+    error?: ConnectionFailedError;
+    passwordRequired?: Object;
+    locationURL?: URL;
+    showConnectionInfo?: boolean;
+}
 
 /**
  * Reduces the Redux actions of the feature base/connection.
  */
 ReducerRegistry.register(
     'features/base/connection',
-    (state: Object = {}, action: Object) => {
+    (state: IConnectionState = {}, action: any) => {
         switch (action.type) {
         case CONNECTION_DISCONNECTED:
             return _connectionDisconnected(state, action);
@@ -50,14 +65,14 @@ ReducerRegistry.register(
  * Reduces a specific Redux action CONNECTION_DISCONNECTED of the feature
  * base/connection.
  *
- * @param {Object} state - The Redux state of the feature base/connection.
+ * @param {IConnectionState} state - The Redux state of the feature base/connection.
  * @param {Action} action - The Redux action CONNECTION_DISCONNECTED to reduce.
  * @private
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
 function _connectionDisconnected(
-        state: Object,
+        state: IConnectionState,
         { connection }: { connection: Object }) {
     const connection_ = _getCurrentConnection(state);
 
@@ -76,14 +91,14 @@ function _connectionDisconnected(
  * Reduces a specific Redux action CONNECTION_ESTABLISHED of the feature
  * base/connection.
  *
- * @param {Object} state - The Redux state of the feature base/connection.
+ * @param {IConnectionState} state - The Redux state of the feature base/connection.
  * @param {Action} action - The Redux action CONNECTION_ESTABLISHED to reduce.
  * @private
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
 function _connectionEstablished(
-        state: Object,
+        state: IConnectionState,
         { connection, timeEstablished }: {
             connection: Object,
             timeEstablished: number
@@ -101,14 +116,14 @@ function _connectionEstablished(
  * Reduces a specific Redux action CONNECTION_FAILED of the feature
  * base/connection.
  *
- * @param {Object} state - The Redux state of the feature base/connection.
+ * @param {IConnectionState} state - The Redux state of the feature base/connection.
  * @param {Action} action - The Redux action CONNECTION_FAILED to reduce.
  * @private
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
 function _connectionFailed(
-        state: Object,
+        state: IConnectionState,
         { connection, error }: {
             connection: Object,
             error: ConnectionFailedError
@@ -133,14 +148,14 @@ function _connectionFailed(
  * Reduces a specific Redux action CONNECTION_WILL_CONNECT of the feature
  * base/connection.
  *
- * @param {Object} state - The Redux state of the feature base/connection.
+ * @param {IConnectionState} state - The Redux state of the feature base/connection.
  * @param {Action} action - The Redux action CONNECTION_WILL_CONNECT to reduce.
  * @private
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
 function _connectionWillConnect(
-        state: Object,
+        state: IConnectionState,
         { connection }: { connection: Object }) {
     return assign(state, {
         connecting: connection,
@@ -159,12 +174,12 @@ function _connectionWillConnect(
  * The current (similar to getCurrentConference in base/conference/functions.any.js)
  * connection which is {@code connection} or {@code connecting}.
  *
- * @param {Object} baseConnectionState - The current state of the
+ * @param {IConnectionState} baseConnectionState - The current state of the
  * {@code 'base/connection'} feature.
  * @returns {JitsiConnection} - The current {@code JitsiConnection} if any.
  * @private
  */
-function _getCurrentConnection(baseConnectionState: Object): ?Object {
+function _getCurrentConnection(baseConnectionState: IConnectionState): IConnectionState|undefined {
     return baseConnectionState.connection || baseConnectionState.connecting;
 }
 
@@ -172,15 +187,15 @@ function _getCurrentConnection(baseConnectionState: Object): ?Object {
  * Reduces a specific redux action {@link SET_LOCATION_URL} of the feature
  * base/connection.
  *
- * @param {Object} state - The redux state of the feature base/connection.
+ * @param {IConnectionState} state - The redux state of the feature base/connection.
  * @param {Action} action - The redux action {@code SET_LOCATION_URL} to reduce.
  * @private
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
 function _setLocationURL(
-        state: Object,
-        { locationURL }: { locationURL: ?URL }) {
+        state: IConnectionState,
+        { locationURL }: { locationURL?: URL }) {
     return set(state, 'locationURL', locationURL);
 }
 
@@ -188,12 +203,12 @@ function _setLocationURL(
  * Reduces a specific redux action {@link SET_ROOM} of the feature
  * base/connection.
  *
- * @param {Object} state - The redux state of the feature base/connection.
+ * @param {IConnectionState} state - The redux state of the feature base/connection.
  * @private
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
-function _setRoom(state: Object) {
+function _setRoom(state: IConnectionState) {
     return assign(state, {
         error: undefined,
         passwordRequired: undefined
@@ -204,14 +219,14 @@ function _setRoom(state: Object) {
  * Reduces a specific redux action {@link SHOW_CONNECTION_INFO} of the feature
  * base/connection.
  *
- * @param {Object} state - The redux state of the feature base/connection.
+ * @param {IConnectionState} state - The redux state of the feature base/connection.
  * @param {Action} action - The redux action {@code SHOW_CONNECTION_INFO} to reduce.
  * @private
  * @returns {Object} The new state of the feature base/connection after the
  * reduction of the specified action.
  */
 function _setShowConnectionInfo(
-        state: Object,
+        state: IConnectionState,
         { showConnectionInfo }: { showConnectionInfo: boolean }) {
     return set(state, 'showConnectionInfo', showConnectionInfo);
 }

@@ -8,8 +8,7 @@ import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection';
 // @ts-ignore
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 
-// @ts-ignore
-import { assign, set } from '../redux';
+import { assign, set } from '../redux/functions';
 import ReducerRegistry from '../redux/ReducerRegistry';
 
 import {
@@ -58,6 +57,14 @@ export interface IConferenceState {
     passwordRequired: boolean|undefined;
     authEnabled?: boolean|undefined;
     authLogin?: string|undefined;
+    subject?: string;
+    localSubject?: string;
+    conferenceTimestamp?: number;
+    authRequired?: Object;
+    followMeEnabled?: boolean;
+    startReactionsMuted?: boolean;
+    room?: Object;
+    pendingSubjectChange?: string;
 }
 
 /**
