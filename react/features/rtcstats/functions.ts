@@ -1,12 +1,17 @@
 // @flow
 
-
+// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-
+// @ts-ignore
 import { getAmplitudeIdentity } from '../analytics';
-import { getConferenceOptions, getAnalyticsRoomName }
-    from '../base/conference';
+import { 
+    getConferenceOptions, 
+    getAnalyticsRoomName }
+    // @ts-ignore
+from '../base/conference';
+// @ts-ignore
 import { getLocalParticipant } from '../base/participants';
+// @ts-ignore
 import { toState } from '../base/redux';
 
 import RTCStats from './RTCStats';
@@ -49,7 +54,7 @@ export function canSendRtcstatsData(stateful: Function | Object) {
  * @param {Object} conference - The conference for which rtcstats is connected.
  * @returns {void}
  */
-export function connectAndSendIdentity(dispatch, stateful: Function | Object, conference) {
+export function connectAndSendIdentity(dispatch: Function, stateful: Function | Object, conference: any) {
     const state = toState(stateful);
 
     if (canSendRtcstatsData(state)) {
