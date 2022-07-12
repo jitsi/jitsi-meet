@@ -2,7 +2,7 @@
 
 import { batch } from 'react-redux';
 
-import { CONFERENCE_JOINED, CONFERENCE_LEFT, getCurrentConference } from '../base/conference';
+import { CONFERENCE_LEFT, getCurrentConference } from '../base/conference';
 import {
     PARTICIPANT_LEFT,
     getLocalParticipant,
