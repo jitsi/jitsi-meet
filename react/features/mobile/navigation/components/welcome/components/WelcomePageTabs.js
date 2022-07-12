@@ -1,7 +1,7 @@
 // @flow
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { useCallback } from 'react';
+import React  from 'react';
 import { useSelector } from 'react-redux';
 
 import { CalendarList, isCalendarEnabled } from '../../../../../calendar-sync';
@@ -15,6 +15,7 @@ import {
     tabBarOptions
 } from '../../../../../welcome/constants';
 import { screen } from '../../../routes';
+import { useNavigationState } from '@react-navigation/native';
 
 const WelcomePage = createBottomTabNavigator();
 
@@ -30,6 +31,11 @@ type Props = {
     disabled: boolean,
 
     /**
+     * Checks if settings screen is focused.
+     */
+    isSettingsScreenFocused: boolean,
+
+    /**
      * Callback to be invoked when pressing the list container.
      */
     onListContainerPress?: Function,
@@ -40,23 +46,27 @@ type Props = {
     showRoomNameInput: boolean
 };
 
-const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
-    const RecentListScreen = useCallback(() =>
-        (
+const WelcomePageTabs = ({ disabled, isSettingsScreenFocused, onListContainerPress }: Props) => {
+    const RecentListScreen = () => (
             <RecentList
                 disabled = { disabled }
                 onListContainerPress = { onListContainerPress } />
-        )
     );
 
     const calendarEnabled = useSelector(isCalendarEnabled);
 
-    const CalendarListScreen = useCallback(() =>
-        (
+    const CalendarListScreen = () => (
             <CalendarList
                 disabled = { disabled } />
-        )
     );
+    const SettingsScreen = () => (
+        <SettingsView
+            isSettingsScreenFocused = { isSettingsScreenFocused } />
+    );
+
+    const navState = useNavigationState(state => state);
+
+    console.log(navState, 'NAVIGATION STATE');
 
     return (
         <WelcomePage.Navigator
@@ -78,9 +88,10 @@ const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
             </WelcomePage.Screen>
             }
             <WelcomePage.Screen
-                component = { SettingsView }
                 name = { screen.welcome.tabs.settings }
-                options = { settingsTabBarOptions } />
+                options = { settingsTabBarOptions }>
+                { SettingsScreen }
+            </WelcomePage.Screen>
         </WelcomePage.Navigator>
     );
 };

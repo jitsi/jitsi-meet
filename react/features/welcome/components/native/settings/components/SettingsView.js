@@ -1,12 +1,12 @@
 // @flow
 
-import { Link } from '@react-navigation/native';
+import { Link, useIsFocused } from '@react-navigation/native';
 import React from 'react';
 import {
     Alert,
     NativeModules,
     Platform,
-    ScrollView,
+    ScrollView, Settings,
     Text
 } from 'react-native';
 import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
@@ -115,7 +115,6 @@ type Props = AbstractProps & {
  */
 class SettingsView extends AbstractSettingsView<Props, State> {
     _urlField: Object;
-
     /**
      * Initializes a new {@code SettingsView} instance.
      *
@@ -183,6 +182,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                 text: palette.text01
             }
         };
+
+        console.log(this.props.isSettingsScreenFocused, 'SETTINGS');
 
         return (
             <JitsiScreen
@@ -601,4 +602,13 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(withTheme(SettingsView)));
+export default translate(connect(_mapStateToProps)(withTheme(props => {
+    const isFocused = useIsFocused();
+
+    return(
+        <SettingsView
+            { ...props }
+            isSettingsScreenFocused = { isFocused }
+        />
+    )
+})));

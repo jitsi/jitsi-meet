@@ -36,6 +36,11 @@ type Props = AbstractProps & {
     _headerStyles: Object,
 
     /**
+     * Checks if settings screen is focused.
+     */
+    isSettingsScreenFocused: boolean,
+
+    /**
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object,
@@ -52,6 +57,15 @@ type Props = AbstractProps & {
  * @augments AbstractWelcomePage
  */
 class WelcomePage extends AbstractWelcomePage<*> {
+    /**
+     * The default values for {@code WelcomePage} component's property types.
+     *
+     * @static
+     */
+    static defaultProps = {
+        isSettingsScreenFocused: false
+    };
+
     /**
      * Constructor of the Component.
      *
@@ -302,44 +316,48 @@ class WelcomePage extends AbstractWelcomePage<*> {
      */
     _renderFullUI() {
         const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
-        const { t } = this.props;
+        const { isSettingsScreenFocused, t } = this.props;
 
         return (
             <>
                 <JitsiStatusBar />
                 <View style = { styles.welcomePage }>
-                    <SafeAreaView style = { styles.roomContainer } >
-                        <View style = { styles.joinControls } >
-                            <Text style = { styles.enterRoomText }>
-                                { t('welcomepage.roomname') }
-                            </Text>
-                            <TextInput
-                                accessibilityLabel = { t(roomnameAccLabel) }
-                                autoCapitalize = { 'none' }
-                                autoComplete = { 'off' }
-                                autoCorrect = { false }
-                                autoFocus = { false }
-                                onBlur = { this._onFieldBlur }
-                                onChangeText = { this._onRoomChange }
-                                onFocus = { this._onFieldFocus }
-                                onSubmitEditing = { this._onJoin }
-                                placeholder = { this.state.roomPlaceholder }
-                                placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
-                                returnKeyType = { 'go' }
-                                spellCheck = { false }
-                                style = { styles.textInput }
-                                underlineColorAndroid = 'transparent'
-                                value = { this.state.room } />
-                            {
-                                this._renderInsecureRoomNameWarning()
-                            }
-                            {
-                                this._renderHintBox()
-                            }
-                        </View>
-                    </SafeAreaView>
+                    {
+                        !isSettingsScreenFocused &&
+                        <SafeAreaView style = { styles.roomContainer } >
+                            <View style = { styles.joinControls } >
+                                <Text style = { styles.enterRoomText }>
+                                    { t('welcomepage.roomname') }
+                                </Text>
+                                <TextInput
+                                    accessibilityLabel = { t(roomnameAccLabel) }
+                                    autoCapitalize = { 'none' }
+                                    autoComplete = { 'off' }
+                                    autoCorrect = { false }
+                                    autoFocus = { false }
+                                    onBlur = { this._onFieldBlur }
+                                    onChangeText = { this._onRoomChange }
+                                    onFocus = { this._onFieldFocus }
+                                    onSubmitEditing = { this._onJoin }
+                                    placeholder = { this.state.roomPlaceholder }
+                                    placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
+                                    returnKeyType = { 'go' }
+                                    spellCheck = { false }
+                                    style = { styles.textInput }
+                                    underlineColorAndroid = 'transparent'
+                                    value = { this.state.room } />
+                                {
+                                    this._renderInsecureRoomNameWarning()
+                                }
+                                {
+                                    this._renderHintBox()
+                                }
+                            </View>
+                        </SafeAreaView>
+                    }
                     <WelcomePageTabs
                         disabled = { this.state._fieldFocused }
+                        isSettingsScreenFocused = { isSettingsScreenFocused }
                         onListContainerPress = { this._onFieldBlur } />
                 </View>
             </>
