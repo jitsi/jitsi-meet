@@ -51,7 +51,6 @@
     "@react-native-google-signin/google-signin": "7.0.4",
     "@react-native-masked-view/masked-view": "0.2.6",
     "@react-navigation/bottom-tabs": "6.0.9",
-    "@react-navigation/drawer": "6.1.8",
     "@react-navigation/elements": "1.2.1",
     "@react-navigation/material-top-tabs": "6.0.6",
     "@react-navigation/native": "6.0.6",
