@@ -10,9 +10,7 @@ import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import {
     _abstractMapStateToProps
 } from '../../../base/dialog';
-import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { browser } from '../../../base/lib-jitsi-meet';
 import {
     Button,
     Container,
@@ -26,7 +24,7 @@ import { StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
-import { getRecordingDurationEstimation } from '../../functions';
+import { getRecordingDurationEstimation, supportsLocalRecording } from '../../functions';
 
 import {
     DROPBOX_LOGO,
@@ -163,9 +161,8 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     constructor(props) {
         super(props);
-        const supportsLocalRecording = browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser();
 
-        this._localRecordingAvailable = props._localRecordingEnabled && supportsLocalRecording;
+        this._localRecordingAvailable = props._localRecordingEnabled && supportsLocalRecording();
 
         // Bind event handler so it is only bound once for every instance.
         this._onSignIn = this._onSignIn.bind(this);
@@ -452,7 +449,7 @@ class StartRecordingDialogContent extends Component<Props> {
             );
         }
 
-        if (this.props.fileRecordingsServiceEnabled) {
+        if (this.props.fileRecordingsServiceEnabled || this._localRecordingAvailable) {
             switchContent = (
                 <Switch
                     className = 'recording-switch'
