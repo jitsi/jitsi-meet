@@ -9,6 +9,7 @@ import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../base/toolbox/components';
+import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { toggleSharedIFrame } from '../actions';
 
 type Props = AbstractButtonProps & {
@@ -95,7 +96,11 @@ class SharedIFrameButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
+        const { dispatch } = this.props;
+
         this._doToggleSharedIFrame();
+
+        dispatch(setOverflowMenuVisible(false));
     }
 
     /**
