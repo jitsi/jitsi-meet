@@ -83,7 +83,7 @@ export function showSharedIFrame(shareKey) {
 
             dispatch(setSharedIFrameStatus({
                 shareKey,
-                iFrameTemplateUrl: sharedIFrames[shareKey].templateUrl,
+                iFrameTemplateUrl: sharedIFrames.frames[shareKey].templateUrl,
                 isSharing: 'true',
                 ownerId: localParticipant.id
             }));
@@ -101,10 +101,12 @@ export function showSharedIFrame(shareKey) {
 export function stopSharedIFrame(shareKey) {
     return (dispatch, getState) => {
         const state = getState();
+        const { sharedIFrames: sharedIFramesConfig } = state['features/base/config'];
 
         const localParticipant = getLocalParticipant(state);
 
-        if (state['features/shared-iframe']?.iframes?.[shareKey]?.ownerId === localParticipant.id) {
+        if (state['features/shared-iframe']?.iframes?.[shareKey]?.ownerId === localParticipant.id
+            || !sharedIFramesConfig.restrictControlToInitialSharer) {
             dispatch(resetSharedIFrameStatus(shareKey));
         }
     };

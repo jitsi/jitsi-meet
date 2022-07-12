@@ -9,7 +9,7 @@ import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../base/toolbox/components';
-import { toggleSharedIFrame } from '../actions.any';
+import { toggleSharedIFrame } from '../actions';
 
 type Props = AbstractButtonProps & {
 

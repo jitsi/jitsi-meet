@@ -19,7 +19,7 @@ import {
     setDisableButton,
     setSharedIFrameStatus,
     updateSharedIFrameState
-} from './actions.any';
+} from './actions';
 import { SHARED_IFRAME } from './constants';
 
 /**
@@ -106,13 +106,13 @@ StateListenerRegistry.register(
 
             conference.addCommandListener(SHARED_IFRAME,
                 ({ value, attributes }) => {
-                    const { from, shareKey, sharedIFrames } = attributes;
+                    const { from, shareKey, sharedIFrames, isSharing } = attributes;
                     const state = getState();
                     const localParticipantId = getLocalParticipant(state).id;
                     const oldIFrames = state['features/shared-iframe']?.iframes || {};
                     const newIFrames = JSON.parse(sharedIFrames);
 
-                    if (attributes.isSharing === 'true') {
+                    if (isSharing === 'true') {
                         handleSharingIFrame(store, value, attributes, conference);
                     } else {
                         dispatch(participantLeft(value, conference));
@@ -158,16 +158,15 @@ function handleSharingIFrame(store, iFrameTemplateUrl, { shareKey, isSharing, fr
     const state = getState();
     const localParticipantId = getLocalParticipant(state).id;
     const fakeParticipants = getFakeParticipants(state);
+    const { sharedIFrames: sharedIFramesConfig } = state['features/base/config'];
 
     if (isSharing === 'true' && !fakeParticipants.get(iFrameTemplateUrl)) {
-        const { sharedIFrames } = state['features/base/config'];
-
         dispatch(participantJoined({
             conference,
             id: iFrameTemplateUrl,
             isFakeParticipant: true,
-            avatarURL: sharedIFrames[shareKey].avatarUrl,
-            name: sharedIFrames[shareKey].title || shareKey
+            avatarURL: sharedIFramesConfig.frames[shareKey].avatarUrl,
+            name: sharedIFramesConfig.frames[shareKey].title || shareKey
         }));
 
         // Only pin if already in conference, do not pin for newly joined users
@@ -186,7 +185,10 @@ function handleSharingIFrame(store, iFrameTemplateUrl, { shareKey, isSharing, fr
             isSharing,
             iFrameTemplateUrl
         }));
-        dispatch(setDisableButton(shareKey, true));
+
+        if (sharedIFramesConfig.restrictControlToInitialSharer) {
+            dispatch(setDisableButton(shareKey, true));
+        }
     }
 }
 

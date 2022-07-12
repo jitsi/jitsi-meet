@@ -51,7 +51,7 @@ function _mapStateToProps(state): Object {
     const { sharedIFrames } = state['features/base/config'];
 
     return {
-        _sharedIFrames: sharedIFrames || {}
+        _sharedIFrames: sharedIFrames.frames || {}
     };
 }
 

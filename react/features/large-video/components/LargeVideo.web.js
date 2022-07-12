@@ -359,7 +359,7 @@ function _mapStateToProps(state) {
         _visibleFilmstrip: visible,
         _participantId: participantId,
         _participantName: participant && participant.name,
-        _isIFrameParticipant: Object.keys(sharedIFrames || {}).includes(participant && participant.name),
+        _isIFrameParticipant: Object.keys(sharedIFrames.frames || {}).includes(participant && participant.name),
         _isFakeParticipant: participant && participant.isFakeParticipant,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state)
     };

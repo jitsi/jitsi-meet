@@ -285,7 +285,7 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
-        _isIFrameParticipant: Object.keys(sharedIFrames || {}).includes(participantName),
+        _isIFrameParticipant: Object.keys(sharedIFrames.frames || {}).includes(participantName),
         _isFakeParticipant: participant && participant.isFakeParticipant,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,

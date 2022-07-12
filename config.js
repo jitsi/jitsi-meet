@@ -1261,15 +1261,20 @@ var config = {
     //  - {lang} - The ISO Language tag
     //
     // sharedIFrames: {
-    //     whiteboard: { // The Id and displayed name of the sharedIframe
-    //         templateUrl: 'https://example.com/link/to/your/iframe/app/{room}?lang={lang}',
-    //         // Optional:
-    //         avatarUrl: 'images/sharedIFrameAvatar.svg',
-    //     },
-    //     etherpad: {
-    //         templateUrl: 'https://example.com/link/to/your/iframe/app/{room}?lang={lang}',
-    //         avatarUrl: 'images/sharedIFrameAvatarEtherpad.svg',
-    //     }
+    //     // Decides whether anybody can stop the sharing or only the one who started it.
+    //     restrictControlToInitialSharer: false,
+    //     frames: {
+    //         whiteboard: { // The Id and displayed name of the sharedIframe
+    //             title: 'Whiteboard', // Optional, the key is used as default name.
+    //             templateUrl: 'https://wbo.ophir.dev/boards/{room}?lang={lang}', // Required
+    //             avatarUrl: 'images/sharedIFrameAvatar.svg' // Optional
+    //         },
+    //         etherpad: {
+    //             title: 'Document',
+    //             templateUrl: 'https://yopad.eu/p/{room}',
+    //             avatarUrl: 'images/sharedIFrameAvatarEtherpad.svg'
+    //         }
+    //    }
     // },
 
     // List of undocumented settings used in jitsi-meet
