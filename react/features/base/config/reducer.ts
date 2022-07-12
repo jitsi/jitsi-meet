@@ -3,8 +3,7 @@ import _ from 'lodash';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
 
-// @ts-ignore
-import { equals } from '../redux';
+import { equals } from '../redux/functions';
 import ReducerRegistry from '../redux/ReducerRegistry';
 
 import {
