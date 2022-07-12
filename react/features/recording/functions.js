@@ -128,6 +128,16 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
 }
 
 /**
+ * Check if local recording is supported.
+ *
+ * @returns {boolean} - Wether local recording is supported or not.
+ */
+export function supportsLocalRecording() {
+    return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()
+        && navigator.product !== 'ReactNative';
+}
+
+/**
  * Returns the recording button props.
  *
  * @param {Object} state - The redux state to search in.
@@ -156,12 +166,7 @@ export function getRecordButtonProps(state: Object): ?string {
         localRecording
     } = state['features/base/config'];
     const { features = {} } = getLocalParticipant(state);
-    const supportsLocalRecording = browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser();
-    let localRecordingEnabled = !localRecording?.disable && supportsLocalRecording;
-
-    if (navigator.product === 'ReactNative') {
-        localRecordingEnabled = false;
-    }
+    const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
 
     const dropboxEnabled = isDropboxEnabled(state);
 

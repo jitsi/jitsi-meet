@@ -6,8 +6,7 @@ import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
-import { isMobileBrowser } from '../../../base/environment/utils';
-import { JitsiRecordingConstants, browser } from '../../../base/lib-jitsi-meet';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getDropboxData,
     isEnabled as isDropboxEnabled,
@@ -18,6 +17,7 @@ import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notif
 import { toggleRequestingSubtitles } from '../../../subtitles';
 import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
+import { supportsLocalRecording } from '../../functions';
 
 export type Props = {
 
@@ -138,7 +138,6 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      */
     constructor(props: Props) {
         super(props);
-        const supportsLocalRecording = browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser();
 
         // Bind event handler so it is only bound once for every instance.
         this._onSubmit = this._onSubmit.bind(this);
@@ -156,7 +155,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
                 || !this._areIntegrationsEnabled()) {
             selectedRecordingService = RECORDING_TYPES.JITSI_REC_SERVICE;
         } else if (this._areIntegrationsEnabled()) {
-            if (props._localRecordingEnabled && supportsLocalRecording) {
+            if (props._localRecordingEnabled && supportsLocalRecording()) {
                 selectedRecordingService = RECORDING_TYPES.LOCAL;
             } else {
                 selectedRecordingService = RECORDING_TYPES.DROPBOX;
