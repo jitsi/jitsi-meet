@@ -83,7 +83,7 @@ export const resultsStyles = createStyleSheet({
 
     voters: {
         backgroundColor: BaseTheme.palette.ui04,
-        borderColor: BaseTheme.palette.border03,
+        borderColor: BaseTheme.palette.ui03,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
         padding: BaseTheme.spacing[2],

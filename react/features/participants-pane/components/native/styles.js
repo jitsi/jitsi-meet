@@ -269,7 +269,7 @@ export default {
         height: MD_ITEM_HEIGHT,
         borderWidth: 1,
         borderStyle: 'solid',
-        borderColor: BaseTheme.palette.border02,
+        borderColor: BaseTheme.palette.ui05,
         backgroundColor: BaseTheme.palette.uiBackground,
         borderRadius: BaseTheme.shape.borderRadius,
         marginLeft: BaseTheme.spacing[3],

@@ -61,7 +61,7 @@ const styles = theme => {
             },
 
             '&:hover': {
-                background: theme.palette.action02
+                background: theme.palette.ui04
             }
         },
         header: {

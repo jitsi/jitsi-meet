@@ -188,7 +188,7 @@ export default {
 
     buttonLabelSecondary: {
         ...buttonLabel,
-        color: BaseTheme.palette.text02
+        color: BaseTheme.palette.text0
     },
 
     buttonLabelDestructive: {

@@ -1134,7 +1134,7 @@ var config = {
                 field02Hover: 'red',
                 action01: 'green',
                 action01Hover: 'lightgreen',
-                action02Disabled: 'beige',
+                disabled01: 'beige',
                 success02: 'cadetblue',
                 action02Hover: 'aliceblue'
             },
