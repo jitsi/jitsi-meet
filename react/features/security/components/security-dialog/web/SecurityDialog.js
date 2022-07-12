@@ -36,6 +36,11 @@ type Props = {
     _locked: string,
 
     /**
+     * Whether or not password features are rendered in security dialog.
+     */
+     _renderPassword: boolean,
+
+    /**
      * The current known password for the JitsiConference.
      */
     _password: string,
@@ -66,6 +71,7 @@ function SecurityDialog({
     _canEditPassword,
     _conference,
     _locked,
+    _renderPassword,
     _password,
     _passwordNumberOfDigits,
     _showE2ee,
@@ -87,16 +93,21 @@ function SecurityDialog({
             width = { 'small' }>
             <div className = 'security-dialog'>
                 <LobbySection />
-                <PasswordSection
-                    buttonsWithNotifyClick = { _buttonsWithNotifyClick }
-                    canEditPassword = { _canEditPassword }
-                    conference = { _conference }
-                    locked = { _locked }
-                    password = { _password }
-                    passwordEditEnabled = { passwordEditEnabled }
-                    passwordNumberOfDigits = { _passwordNumberOfDigits }
-                    setPassword = { setPassword }
-                    setPasswordEditEnabled = { setPasswordEditEnabled } />
+                {
+                    _renderPassword ? <>
+                        <div className = 'separator-line' />
+                        <PasswordSection
+                            buttonsWithNotifyClick = { _buttonsWithNotifyClick }
+                            canEditPassword = { _canEditPassword }
+                            conference = { _conference }
+                            locked = { _locked }
+                            password = { _password }
+                            passwordEditEnabled = { passwordEditEnabled }
+                            passwordNumberOfDigits = { _passwordNumberOfDigits }
+                            setPassword = { setPassword }
+                            setPasswordEditEnabled = { setPasswordEditEnabled } />
+                    </> : null
+                }
                 {
                     _showE2ee ? <>
                         <div className = 'separator-line' />
@@ -124,8 +135,11 @@ function mapStateToProps(state) {
         locked,
         password
     } = state['features/base/conference'];
-    const { roomPasswordNumberOfDigits, buttonsWithNotifyClick } = state['features/base/config'];
-
+    const {
+        roomPasswordNumberOfDigits,
+        buttonsWithNotifyClick,
+        disableMeetingPassword
+    } = state['features/base/config'];
     const showE2ee = Boolean(e2eeSupported) && isLocalParticipantModerator(state);
 
     return {
@@ -134,6 +148,7 @@ function mapStateToProps(state) {
         _conference: conference,
         _dialIn: state['features/invite'],
         _locked: locked,
+        _renderPassword: !disableMeetingPassword,
         _password: password,
         _passwordNumberOfDigits: roomPasswordNumberOfDigits,
         _showE2ee: showE2ee

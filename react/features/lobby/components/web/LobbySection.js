@@ -105,7 +105,6 @@ class LobbySection extends PureComponent<Props, State> {
                             value = { this.state.lobbyEnabled } />
                     </div>
                 </div>
-                <div className = 'separator-line' />
             </>
         );
     }

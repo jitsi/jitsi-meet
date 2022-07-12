@@ -86,6 +86,11 @@ type Props = {
     _passwordNumberOfDigits: number,
 
     /**
+     * Whether or not password features are rendered in security dialog.
+     */
+    _renderPassword: boolean,
+
+    /**
      * Whether setting a room password is available or not.
      */
     _roomPasswordControls: boolean,
@@ -151,10 +156,12 @@ class SecurityDialog extends PureComponent<Props, State> {
      * @inheritdoc
      */
     render() {
+        const { _renderPassword } = this.props;
+
         return (
             <JitsiScreen style = { styles.securityDialogContainer }>
                 { this._renderLobbyMode() }
-                { this._renderSetRoomPassword() }
+                { _renderPassword ? this._renderSetRoomPassword() : null }
             </JitsiScreen>
         );
     }
@@ -517,6 +524,7 @@ function _mapStateToProps(state: Object): Object {
     const { hideLobbyButton } = state['features/base/config'];
     const { lobbyEnabled } = state['features/lobby'];
     const { roomPasswordNumberOfDigits } = state['features/base/config'];
+    const { disableMeetingPassword } = state['features/base/config'];
     const lobbySupported = conference && conference.isLobbySupported();
     const visible = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
 
@@ -528,6 +536,7 @@ function _mapStateToProps(state: Object): Object {
             lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton && !isInBreakoutRoom(state),
         _locked: locked,
         _lockedConference: Boolean(conference && locked),
+        _renderPassword: !disableMeetingPassword,
         _password: password,
         _passwordNumberOfDigits: roomPasswordNumberOfDigits,
         _roomPasswordControls: visible

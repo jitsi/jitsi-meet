@@ -447,6 +447,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
     const deviceStatusVisible = isDeviceStatusVisible(state);
     const { membersOnly } = state['features/base/conference'];
     const { isLobbyChatActive, lobbyMessageRecipient, messages } = state['features/chat'];
+    const { disableMeetingPassword } = state['features/base/config'];
 
     return {
         _deviceStatusVisible: deviceStatusVisible,
@@ -460,7 +461,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
         _participantId: participantId,
         _participantName: localParticipant?.name,
         _passwordJoinFailed: passwordJoinFailed,
-        _renderPassword: !iAmSipGateway,
+        _renderPassword: !disableMeetingPassword && !iAmSipGateway,
         showCopyUrlButton
     };
 }

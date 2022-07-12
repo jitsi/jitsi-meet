@@ -107,6 +107,7 @@ export default [
     'disableLocalVideoFlip',
     'disableModeratorIndicator',
     'disableNS',
+    'disableMeetingPassword',
     'disablePolls',
     'disableProfile',
     'disableReactions',

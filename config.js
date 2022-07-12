@@ -574,6 +574,9 @@ var config = {
     // Default language for the user interface. Cannot be overwritten.
     // defaultLanguage: 'en',
 
+    // Disables password features
+    // disableMeetingPassword: false,
+
     // Disables profile and the edit of all fields from the profile settings (display name and email)
     // disableProfile: false,
 
