@@ -38,7 +38,8 @@ ReducerRegistry.register('features/shared-iframe', (state = {}, action) => {
                     ...state?.iframes?.[shareKey],
                     ownerId,
                     isSharing,
-                    iFrameTemplateUrl
+                    iFrameTemplateUrl,
+                    shareKey
                 }
             }
         };
