@@ -61,7 +61,6 @@ export function resetAnalytics() {
  */
 export async function createHandlers({ getState }: { getState: Function }) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
-    window.analyticsHandlers = []; // Legacy support.
 
     if (!isAnalyticsEnabled(getState)) {
         // Avoid all analytics processing if there are no handlers, since no event would be sent.
@@ -258,16 +257,9 @@ function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
             }
         }
 
-        // analyticsHandlers is the handlers we want to use
-        // we search for them in the JitsiMeetGlobalNS, but also
-        // check the old location to provide legacy support
-        const analyticsHandlers = [
-            ...getJitsiMeetGlobalNS().analyticsHandlers,
-            ...window.analyticsHandlers
-        ];
         const handlers = [];
 
-        for (const Handler of analyticsHandlers) {
+        for (const Handler of getJitsiMeetGlobalNS().analyticsHandlers) {
             // Catch any error while loading to avoid skipping analytics in case
             // of multiple scripts.
             try {
