@@ -370,7 +370,7 @@ function _mapStateToProps(state, ownProps) {
                     currentLanguage: tabState?.currentLanguage,
                     hideSelfView: tabState?.hideSelfView,
                     showPrejoinPage: tabState?.showPrejoinPage,
-                    enabledNotifications: tabState?.enabledNotifications,
+                    enabledNotifications: tabState?.enabledNotifications || {},
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
             },
