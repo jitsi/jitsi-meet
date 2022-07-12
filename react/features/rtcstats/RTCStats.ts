@@ -1,4 +1,3 @@
-
 // @ts-ignore
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 // @ts-ignore

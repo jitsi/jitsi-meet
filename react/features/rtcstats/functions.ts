@@ -1,5 +1,3 @@
-// @flow
-
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 // @ts-ignore
