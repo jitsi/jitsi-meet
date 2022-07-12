@@ -99,26 +99,33 @@ const ConnectButtons = (props: Props) => {
       }
   }, [timer])
   return (
-    true
-      ? <div style={{ display: 'flex' }} className={`invite-more-container${true ? '' : ' elevated'}`}>
+    <div style={{display: 'flex'}}
+         className={`invite-more-container${true ? '' : ' elevated'}`}>
         {adsList.map((value, index) => {
-          return (
-            <div key={index}>
-              {timer == index || timer + 1 == index ?
+            return (
                 <div>
-                  <div style={{ borderRadius: '40%', margin: '10px' }}
-                    className='invite-more-button'
-                    onClick={() => { window.open(value.url) }}>
-                    <img src={value.iconUrl} />
-                  </div>
-                  <div>
-                    <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{value.title}</p>
-                  </div>
-                </div> : null}
-            </div>
-          )
+                    <div key={index}>
+                        {timer === index || timer + 1 === index ?
+                            <div>
+                                <div style={{borderRadius: '40%', margin: '10px'}}
+                                     className='invite-more-button'
+                                     onClick={() => {
+                                         window.open(value.url)
+                                     }}>
+                                    <img src={value.iconUrl}/>
+                                </div>
+                                <div>
+                                    <p style={{
+                                        textAlign: 'center',
+                                        fontWeight: 'bold'
+                                    }}>{value.title}</p>
+                                </div>
+                            </div> : null}
+                    </div>
+                </div>
+            )
         })}
-      </div> : null
+    </div>
   );
 }
 

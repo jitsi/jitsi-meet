@@ -1,15 +1,11 @@
-.toolbox-content-wrapper{
-    display:flex;
-    flex-direction:column;
-    margin:0 8%;
-    max-width:100%
+.toolbox-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 0 8%;
+    max-width: 100%
 }
-.toolbox-content-wrapper1{
-    display:flex;
-    flex-direction:column;
-    margin:0 10%;
-    max-width:100%
-}
+
+
 .new-toolbox {
     bottom: 0;
     left: 0;
@@ -20,29 +16,45 @@
     pointer-events: none;
     z-index: 252;
 }
+
 @media only screen and (max-width: 1610px) {
     .toolbox-content-wrapper {
-        display:flex;
-        flex-direction:column;
-        margin:0 11%;
-        max-width:100%
+        display: flex;
+        flex-direction: column;
+        margin: 0 11%;
+        max-width: 100%
     }
-  }
-  @media only screen and (max-width: 1610px) {
-    .toolbox-content-wrapper1 {
-        display:flex;
-        flex-direction:column;
-        margin:0 11%;
-        max-width:100%
-    }
-  }
-  .premeeting-screen .content-controls #new-toolbox .toolbox-content-items {
+}
+
+
+.premeeting-screen .content-controls #new-toolbox .toolbox-content-items {
     background: 0 0;
     box-shadow: none;
     display: flex;
     justify-content: space-evenly;
     padding: 8px 0;
-    margin-left: 50%;
 }
 
+.premeeting-screen .content-controls .displayButtons {
+    visibility: collapse;
+    height: 0;
+}
+
+.toolbox-content {
+    align-items: center;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 250;
+    pointer-events: none;
+    justify-content: center;
+}
+
+.leftwatermark {
+    left: 20px;
+    top: 20px;
+    background-position: center left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
 

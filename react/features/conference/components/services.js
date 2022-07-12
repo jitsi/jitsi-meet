@@ -10,7 +10,7 @@ const API = {
         }
         let queryParams = '?'
         let url
-        if (method == 'GET' && data) {
+        if (method === 'GET' && data) {
             for (const key in data) {
                 queryParams += `${key}=${data[key]}&`
             }

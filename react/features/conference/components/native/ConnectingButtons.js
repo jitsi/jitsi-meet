@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Linking, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, Linking, Text, TouchableOpacity, View, ActivityIndicator} from 'react-native';
 import styles from './styles';
 import API from '../services';
 import {connect} from '../../../base/redux';
@@ -72,7 +72,7 @@ const ConnectingButtons = (props: Props) => {
                 renderItem={({item, index}) => {
                     return (
                         <View>
-                            {time == index || time + 1 == index ?
+                            {time === index || (time + 1) === index ?
                                 <View>
                                     <TouchableOpacity
                                         onPress={() => Linking.openURL(item.url)}><View>

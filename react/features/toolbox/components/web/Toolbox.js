@@ -1310,95 +1310,92 @@ class Toolbox extends Component<Props> {
         } = this._getVisibleButtons();
 
         return (
-            <div className={containerClassName}>
-                <div className='toolbox-content-wrapper'
-                     onFocus={this._onTabIn}
-                     {...(_isMobile ? {} : {
-                         onMouseOut: this._onMouseOut,
-                         onMouseOver: this._onMouseOver
-                     })}>
+            <div>
+                <div className='displayButtons'>
                     <SideButtons/>
                     <ConnectButtons/>
                 </div>
-                <div
-                    className='toolbox-content-wrapper1'
-                    onFocus={this._onTabIn}
-                    {...(_isMobile ? {} : {
-                        onMouseOut: this._onMouseOut,
-                        onMouseOver: this._onMouseOver
-                    })}>
-                    <div className='toolbox-content-items'>
-                        {mainMenuButtons.map(({
-                                                  Content,
-                                                  key,
-                                                  ...rest
-                                              }) => Content !== Separator && (
-                            <Content
-                                {...rest}
-                                buttonKey={key}
-                                key={key}/>))}
+                <div className={containerClassName}>
+                    <div
+                        className='toolbox-content-wrapper'
+                        onFocus={this._onTabIn}
+                        {...(_isMobile ? {} : {
+                            onMouseOut: this._onMouseOut,
+                            onMouseOver: this._onMouseOver
+                        })}>
+                        <div className='toolbox-content-items'>
+                            {mainMenuButtons.map(({
+                                                      Content,
+                                                      key,
+                                                      ...rest
+                                                  }) => Content !== Separator && (
+                                <Content
+                                    {...rest}
+                                    buttonKey={key}
+                                    key={key}/>))}
 
-                        {Boolean(overflowMenuButtons.length) && (
-                            <OverflowMenuButton
-                                ariaControls='overflow-menu'
-                                isOpen={_overflowMenuVisible}
-                                key='overflow-menu'
-                                onVisibilityChange={this._onSetOverflowVisible}
-                                showMobileReactions={
-                                    _reactionsEnabled && overflowMenuButtons.find(({key}) => key === 'raisehand')
-                                }>
-                                <ContextMenu
-                                    accessibilityLabel={t(toolbarAccLabel)}
-                                    className={classes.contextMenu}
-                                    hidden={false}
-                                    inDrawer={_overflowDrawer}
-                                    onKeyDown={this._onEscKey}>
-                                    {overflowMenuButtons.reduce((acc, val) => {
-                                        if (acc.length) {
-                                            const prev = acc[acc.length - 1];
-                                            const group = prev[prev.length - 1].group;
+                            {Boolean(overflowMenuButtons.length) && (
+                                <OverflowMenuButton
+                                    ariaControls='overflow-menu'
+                                    isOpen={_overflowMenuVisible}
+                                    key='overflow-menu'
+                                    onVisibilityChange={this._onSetOverflowVisible}
+                                    showMobileReactions={
+                                        _reactionsEnabled && overflowMenuButtons.find(({key}) => key === 'raisehand')
+                                    }>
+                                    <ContextMenu
+                                        accessibilityLabel={t(toolbarAccLabel)}
+                                        className={classes.contextMenu}
+                                        hidden={false}
+                                        inDrawer={_overflowDrawer}
+                                        onKeyDown={this._onEscKey}>
+                                        {overflowMenuButtons.reduce((acc, val) => {
+                                            if (acc.length) {
+                                                const prev = acc[acc.length - 1];
+                                                const group = prev[prev.length - 1].group;
 
-                                            if (group === val.group) {
-                                                prev.push(val);
+                                                if (group === val.group) {
+                                                    prev.push(val);
+                                                } else {
+                                                    acc.push([val]);
+                                                }
                                             } else {
                                                 acc.push([val]);
                                             }
-                                        } else {
-                                            acc.push([val]);
-                                        }
 
-                                        return acc;
-                                    }, []).map(buttonGroup => (
-                                        <ContextMenuItemGroup
-                                            key={`group-${buttonGroup[0].group}`}>
-                                            {buttonGroup.map(({
-                                                                  key,
-                                                                  Content,
-                                                                  ...rest
-                                                              }) => (
-                                                    key !== 'raisehand' || !_reactionsEnabled)
-                                                && <Content
-                                                    {...rest}
-                                                    buttonKey={key}
-                                                    contextMenu={true}
-                                                    key={key}
-                                                    showLabel={true}/>)}
-                                        </ContextMenuItemGroup>))}
-                                </ContextMenu>
-                            </OverflowMenuButton>
-                        )}
-                        <DownloadSelfie
-                            buttonKey='selfie'
-                            customClass='selfie-button'
-                            key='selfie-button'
-                            notifyMode={this._getButtonNotifyMode('selfie')}
-                            visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/>
-                        <HangupButton
-                            buttonKey='hangup'
-                            customClass='hangup-button'
-                            key='hangup-button'
-                            notifyMode={this._getButtonNotifyMode('hangup')}
-                            visible={isToolbarButtonEnabled('hangup', _toolbarButtons)}/>
+                                            return acc;
+                                        }, []).map(buttonGroup => (
+                                            <ContextMenuItemGroup
+                                                key={`group-${buttonGroup[0].group}`}>
+                                                {buttonGroup.map(({
+                                                                      key,
+                                                                      Content,
+                                                                      ...rest
+                                                                  }) => (
+                                                        key !== 'raisehand' || !_reactionsEnabled)
+                                                    && <Content
+                                                        {...rest}
+                                                        buttonKey={key}
+                                                        contextMenu={true}
+                                                        key={key}
+                                                        showLabel={true}/>)}
+                                            </ContextMenuItemGroup>))}
+                                    </ContextMenu>
+                                </OverflowMenuButton>
+                            )}
+                            <DownloadSelfie
+                                buttonKey='selfie'
+                                customClass='selfie-button'
+                                key='selfie-button'
+                                notifyMode={this._getButtonNotifyMode('selfie')}
+                                visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/>
+                            <HangupButton
+                                buttonKey='hangup'
+                                customClass='hangup-button'
+                                key='hangup-button'
+                                notifyMode={this._getButtonNotifyMode('hangup')}
+                                visible={isToolbarButtonEnabled('hangup', _toolbarButtons)}/>
+                        </div>
                     </div>
                 </div>
             </div>

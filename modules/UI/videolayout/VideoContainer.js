@@ -49,33 +49,43 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
         subtractFilmstrip) {
     if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
         // Avoid NaN values caused by division by 0.
+        console.log('videoWidth', videoWidth, 'videoHeight', videoHeight,'videoSpaceWidth',videoSpaceWidth,'videoSpaceHeight', videoSpaceHeight);
         return [ 0, 0 ];
     }
 
     const aspectRatio = videoWidth / videoHeight;
+    console.log('aspectRatio', aspectRatio)
     let availableWidth = Math.max(videoWidth, videoSpaceWidth);
     let availableHeight = Math.max(videoHeight, videoSpaceHeight);
+    console.log('availableWidth', availableWidth);
+    console.log('availableHeight', availableHeight);
 
     if (interfaceConfig.VERTICAL_FILMSTRIP) {
         if (subtractFilmstrip) {
             // eslint-disable-next-line no-param-reassign
             videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
+            console.log('videoSpaceWidth1', videoSpaceWidth);
         }
     } else {
         // eslint-disable-next-line no-param-reassign
         videoSpaceHeight -= Filmstrip.getFilmstripHeight();
+        console.log('videoSpaceHeight1', videoSpaceHeight);
     }
 
     if (availableWidth / aspectRatio >= videoSpaceHeight) {
         availableHeight = videoSpaceHeight;
+        console.log('availableHeight2', availableHeight);
         availableWidth = availableHeight * aspectRatio;
+        console.log('availableWidth2', availableWidth);
     }
 
     if (availableHeight * aspectRatio >= videoSpaceWidth) {
         availableWidth = videoSpaceWidth;
+        console.log('availableWidth3', availableWidth);
         availableHeight = availableWidth / aspectRatio;
+        console.log('availableHeight3', availableHeight);
     }
-
+    console.log('availableWidth4', availableWidth, 'availableHeight4', availableHeight);
     return [ availableWidth, availableHeight ];
 }
 
@@ -324,6 +334,7 @@ export class VideoContainer extends LargeContainer {
                 containerWidth,
                 containerHeight,
                 verticalFilmstripWidth < FILMSTRIP_BREAKPOINT);
+            console.log('width',width,'height',height,'containerWidth',containerWidth,'containerHeight',containerHeight);
         }
 
         return computeCameraVideoSize(width,
