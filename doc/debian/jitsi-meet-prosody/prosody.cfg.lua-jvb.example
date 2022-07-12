@@ -145,6 +145,7 @@ VirtualHost "jigasi.meet.jitsi"
     modules_enabled = {
       "ping";
       "bosh";
+      "muc_password_check";
     }
     authentication = "token"
     app_id = "jitsi";
