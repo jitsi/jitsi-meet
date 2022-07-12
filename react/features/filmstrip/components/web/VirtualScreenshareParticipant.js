@@ -107,6 +107,7 @@ const VirtualScreenshareParticipant = ({
     onTouchMove,
     onTouchStart,
     participantId,
+    popoutOpen,
     styles,
     videoTrack,
     thumbnailType
@@ -164,6 +165,18 @@ const VirtualScreenshareParticipant = ({
                     participantId = { participantId }
                     showStatusIndicators = { true } />
             </div>
+            {popoutOpen && <div
+                style={{
+                    background: `rgba(0,0,0,.6)`,
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    zIndex: '1',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>Popout Open</div>
+            }
         </span>);
 };
 

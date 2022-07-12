@@ -33,7 +33,7 @@ import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
 
 import { closePopout } from '../../../popout/actions';
-import { isPopoutClosedButNotMarked } from '../../../popout/functions';
+import PopoutWindowPortal from '../../../popout/PopoutWindowPortal';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -245,6 +245,12 @@ class Conference extends AbstractConference<Props, *> {
                 onMouseMove = { this._onMouseMove }
                 ref = { this._setBackground }>
                 <Chat />
+                {Object.entries(_popouts)
+                    .filter(([participantId, { popoutOpen }]) => popoutOpen)
+                    .map(([participantId, {}]) =>
+                        <PopoutWindowPortal key={participantId} participantId={participantId} />
+                    )
+                }
                 <div
                     className = { _layoutClassName }
                     id = 'videoconference_page'

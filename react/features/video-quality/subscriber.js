@@ -202,6 +202,16 @@ StateListenerRegistry.register(
     });
 
 /**
+ * Update receiver video constraints when popout state changes
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/popout'],
+    /* listener */ (popouts, store) => {
+        _updateReceiverVideoConstraints(store);
+    }
+);
+
+/**
  * Helper function for updating the preferred sender video constraint, based on the user preference.
  *
  * @param {number} preferred - The user preferred max frame height.
@@ -248,8 +258,8 @@ function _updateReceiverVideoConstraints({ getState }) {
     const activeParticipantsIds = getActiveParticipantsIds(state);
 
     const participantIdsWithPopout = Object.entries(state['features/popout'])
-        .filter(([participantId, popoutState]) => isPopoutOpen(popoutState.popout))
-        .map(([participantId, popoutState]) => participantId);
+        .filter(([participantId, { popoutOpen }]) => popoutOpen)
+        .map(([participantId, {}]) => participantId);
 
     let receiverConstraints;
 
@@ -302,13 +312,29 @@ function _updateReceiverVideoConstraints({ getState }) {
                 return;
             }
 
-            visibleRemoteTrackSourceNames.forEach(sourceName => {
-                receiverConstraints.constraints[sourceName] = { 'maxHeight': maxFrameHeight };
-            });
+            if (participantIdsWithPopout.length) {
+                visibleRemoteTrackSourceNames.forEach(sourceName => {
+                    receiverConstraints.constraints[sourceName] = { 'maxHeight': VIDEO_QUALITY_LEVELS.STANDARD };
+                });
 
-            // Prioritize screenshare in tile view.
-            if (remoteScreenSharesSourceNames?.length) {
-                receiverConstraints.selectedSources = remoteScreenSharesSourceNames;
+                participantIdsWithPopout.forEach(participantId => {
+                    let sourceName;
+                    if (remoteScreenSharesSourceNames.includes(participantId)) {
+                        sourceName = participantId;
+                    } else {
+                        sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+                    }
+                    receiverConstraints.constraints[sourceName] = { 'maxHeight': VIDEO_QUALITY_LEVELS.ULTRA };
+                });
+            } else {
+                visibleRemoteTrackSourceNames.forEach(sourceName => {
+                    receiverConstraints.constraints[sourceName] = { 'maxHeight': maxFrameHeight };
+                });
+    
+                // Prioritize screenshare in tile view.
+                if (remoteScreenSharesSourceNames?.length) {
+                    receiverConstraints.selectedSources = remoteScreenSharesSourceNames;
+                }
             }
 
         // Stage view.
@@ -340,6 +366,16 @@ function _updateReceiverVideoConstraints({ getState }) {
                 receiverConstraints.constraints[largeVideoSourceName] = { 'maxHeight': quality };
                 receiverConstraints.onStageSources = [ largeVideoSourceName ];
             }
+
+            participantIdsWithPopout.forEach(participantId => {
+                let sourceName;
+                if (remoteScreenSharesSourceNames.includes(participantId)) {
+                    sourceName = participantId;
+                } else {
+                    sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+                }
+                receiverConstraints.constraints[sourceName] = { 'maxHeight': VIDEO_QUALITY_LEVELS.ULTRA };
+            });
         }
 
         if (remoteScreenSharesSourceNames?.length) {
@@ -363,17 +399,23 @@ function _updateReceiverVideoConstraints({ getState }) {
                 return;
             }
 
-            visibleRemoteParticipants.forEach(participantId => {
-                receiverConstraints.constraints[participantId] = { 'maxHeight': maxFrameHeight };
-            });
+            if (participantIdsWithPopout.length) {
+                visibleRemoteParticipants.forEach(participantId => {
+                    receiverConstraints.constraints[participantId] = { 'maxHeight': VIDEO_QUALITY_LEVELS.STANDARD };
+                });
 
-            // Prioritize screenshare in tile view.
-            remoteScreenShares?.length && (receiverConstraints.selectedEndpoints = remoteScreenShares);
-
-            // Prioritize popout in tile view.
-            participantIdsWithPopout.forEach(id => {
-                receiverConstraints.selectedEndpoints.push(id);
-            });
+                participantIdsWithPopout.forEach(id => {
+                    receiverConstraints.constraints[id] = { 'maxHeight': VIDEO_QUALITY_LEVELS.ULTRA };
+                    receiverConstraints.onStageEndpoints.push(id);
+                });
+            } else {
+                visibleRemoteParticipants.forEach(participantId => {
+                    receiverConstraints.constraints[participantId] = { 'maxHeight': maxFrameHeight };
+                });
+    
+                // Prioritize screenshare in tile view.
+                remoteScreenShares?.length && (receiverConstraints.selectedEndpoints = remoteScreenShares);
+            }
 
         // Stage view.
         } else {
@@ -405,10 +447,8 @@ function _updateReceiverVideoConstraints({ getState }) {
                 receiverConstraints.onStageEndpoints = [ largeVideoParticipantId ];
             }
 
-            // Prioritize popout in stage view.
             participantIdsWithPopout.forEach(id => {
-                receiverConstraints.constraints[id] = { 'maxHeight': maxFrameHeight };
-                receiverConstraints.onStageEndpoints.push(id);
+                receiverConstraints.constraints[id] = { 'maxHeight': VIDEO_QUALITY_LEVELS.ULTRA };
             });
         }
     }

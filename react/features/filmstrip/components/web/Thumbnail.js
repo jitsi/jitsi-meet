@@ -66,11 +66,7 @@ import ThumbnailBottomIndicators from "./ThumbnailBottomIndicators";
 import ThumbnailTopIndicators from "./ThumbnailTopIndicators";
 import VirtualScreenshareParticipant from "./VirtualScreenshareParticipant";
 
-import { setPopoutDisplayMode, setPopoutAvatar } from "../../../popout/actions";
-import {
-    getPopoutAvatarHtmlFromThumbnail,
-    isPopoutOpen,
-} from "../../../popout/functions";
+import { setPopoutDisplayMode } from "../../../popout/actions";
 
 declare var interfaceConfig: Object;
 
@@ -1290,7 +1286,7 @@ class Thumbnail extends Component<Props, State> {
 
         if (_isVirtualScreenshareParticipant) {
             const { isHovered } = this.state;
-            const { _videoTrack, _isMobile, classes, _thumbnailType } =
+            const { _videoTrack, _isMobile, classes, _thumbnailType, _popoutOpen } =
                 this.props;
 
             return (
@@ -1308,6 +1304,7 @@ class Thumbnail extends Component<Props, State> {
                     onTouchMove={this._onTouchMove}
                     onTouchStart={this._onTouchStart}
                     participantId={_participant.id}
+                    popoutOpen = { _popoutOpen }
                     styles={this._getStyles()}
                     thumbnailType={_thumbnailType}
                     videoTrack={_videoTrack}
@@ -1498,9 +1495,7 @@ function _mapStateToProps(state, ownProps): Object {
         _videoTrack,
         ...size,
         _gifSrc: mode === "chat" ? null : gifSrc,
-        _popoutOpen: isPopoutOpen(
-            state["features/popout"][participantID]?.popout
-        ),
+        _popoutOpen: !!state['features/popout'][participantID]?.popoutOpen,
         _sourceNameSignalingEnabled: sourceNameSignalingEnabled,
     };
 }

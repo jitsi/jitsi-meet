@@ -189,7 +189,7 @@ const ParticipantContextMenu = ({
         text: t('toolbar.stopSharedVideo')
     } ];
 
-    const isPopoutOpen = useSelector(state => state['features/popout'][_getCurrentParticipantId()]?.popout);
+    const isPopoutOpen = useSelector(state => !!state['features/popout'][_getCurrentParticipantId()]?.popoutOpen);
 
     if (_isModerator) {
         if ((thumbnailMenu || _overflowDrawer) && isModerationSupported && _isAudioMuted) {
