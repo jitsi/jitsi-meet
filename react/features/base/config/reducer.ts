@@ -149,13 +149,6 @@ function _getInitialState() {
  * @returns {Object} The new state after the reduction of the specified action.
  */
 function _setConfig(state: IConfig, { config }: {config: IConfig}) {
-    // The mobile app bundles jitsi-meet and lib-jitsi-meet at build time and
-    // does not download them at runtime from the deployment on which it will
-    // join a conference. The downloading is planned for implementation in the
-    // future (later rather than sooner) but is not implemented yet at the time
-    // of this writing and, consequently, we must provide legacy support in the
-    // meantime.
-
     // eslint-disable-next-line no-param-reassign
     config = _translateLegacyConfig(config);
 
