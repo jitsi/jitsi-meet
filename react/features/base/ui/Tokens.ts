@@ -57,7 +57,7 @@ export const colors = {
     surface16: '#131519',
     surface17: '#161618',
     warning07: '#FFD740',
-    disabled01: '#00000040',
+    disabled01: '#00000040'
 };
 
 // Mapping between the token used and the color
@@ -208,7 +208,7 @@ export const colorMap = {
     field02: 'surface11',
     field02Hover: 'primary09',
     field02Focus: 'primary05',
-    field02Disabled: 'surface06',
+    field02Disabled: 'surface06'
 };
 
 
