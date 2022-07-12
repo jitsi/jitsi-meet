@@ -61,8 +61,7 @@ const HeaderNavigationButton
                                 styles.headerNavigationButton ] } >
                             <Icon
                                 size = { 24 }
-                                src = { src }
-                                style = { styles.headerNavigationIcon } />
+                                src = { src } />
                         </TouchableRipple>
                     ) : (
                         <TouchableRipple
