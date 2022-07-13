@@ -52,7 +52,9 @@ function _getWebConferenceRoute(state) {
     return getDeepLinkingPage(state)
         .then(deepLinkComponent => {
             if (deepLinkComponent) {
-                route.component = deepLinkComponent;
+             //   route.component = deepLinkComponent;
+                route.component = Conference;
+
             } else if (isSupportedBrowser()) {
                 route.component = Conference;
             } else {
