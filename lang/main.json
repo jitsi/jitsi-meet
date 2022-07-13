@@ -910,7 +910,7 @@
         "onlyRecordSelf": "Record only my audio and video streams",
         "pending": "Preparing to record the meeting...",
         "rec": "REC",
-        "saveLocalRecording": "Save recording file locally",
+        "saveLocalRecording": "Save recording file locally (Beta)",
         "serviceDescription": "Your recording will be saved by the recording service",
         "serviceDescriptionCloud": "Cloud recording",
         "serviceDescriptionCloudInfo": "Recorded meetings are automatically cleared 24h after their recording time.",
