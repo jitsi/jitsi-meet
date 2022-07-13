@@ -894,15 +894,23 @@
         "limitNotificationDescriptionWeb": "Devido à grande procura, a sua gravação será limitada a {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Gerámos um link para a sua gravação.",
         "live": "DIRETO",
-        "localRecordingWarning": "Certifique-se de seleccionar o separador actual a fim de utilizar o vídeo e áudio correctos. A gravação está actualmente limitada a 1 GB, o que é cerca de 100 minutos.",
+        "localRecordingNoNotificationWarning": "A gravação não será anunciada aos outros participantes. Será necessário avisá-los de que a reunião está gravada.",
+        "localRecordingNoVideo": "O vídeo não está a ser gravado",
+        "localRecordingStartWarning": "Por favor, certifique-se de que pára a gravação antes de sair da reunião a fim de a guardar.",
+        "localRecordingStartWarningTitle": "Parar a gravação para a salvar",
+        "localRecordingVideoStop": "A paragem do seu vídeo também irá parar a gravação local. Tem a certeza de que quer continuar?",
+        "localRecordingVideoWarning": "Para gravar o seu vídeo deve tê-lo ligado quando iniciar a gravação",
+        "localRecordingWarning": "Certifique-se de selecionar o separador actual a fim de utilizar o vídeo e áudio corretos. A gravação está actualmente limitada a 1 GB, o que é cerca de 100 minutos.",
         "loggedIn": "Conectado como {{userName}}",
+        "noStreams": "Não foi detetado nenhum sinal áudio ou vídeo.",
         "off": "Gravação parada",
         "offBy": "{{name}} parou a gravação",
         "on": "Gravando",
         "onBy": "{{name}} iniciou a gravação",
+        "onlyRecordSelf": "Gravar apenas as minhas transmissões áudio e vídeo",
         "pending": "Preparando para gravar a reunião...",
         "rec": "REC",
-        "saveLocalRecording": "Guardar ficheiro de gravação localmente",
+        "saveLocalRecording": "Guardar ficheiro de gravação localmente (Beta)",
         "serviceDescription": "Sua gravação será salva pelo serviço de gravação",
         "serviceDescriptionCloud": "Gravação na nuvem",
         "serviceDescriptionCloudInfo": "As reuniões gravadas são automaticamente apagadas 24h após a hora de gravação.",
@@ -915,7 +923,7 @@
         "unavailableTitle": "Gravação indisponível",
         "uploadToCloud": "Enviar para a nuvem"
     },
-    "screenshareDisplayName": "Ecrã de {{name}}",
+    "screenshareDisplayName": "Ecrã do/a {{name}}",
     "sectionList": {
         "pullToRefresh": "Puxe para atualizar"
     },
@@ -949,6 +957,7 @@
         "name": "Nome",
         "noDevice": "Nenhum",
         "participantJoined": "Entrar um participante",
+        "participantKnocking": "Participante entrou na sala de espera",
         "participantLeft": "Sair um participante",
         "playSounds": "Reproduzir som quando",
         "reactions": "Expressarem uma reação",
@@ -1024,6 +1033,7 @@
     "termsView": {
         "header": "Termos"
     },
+    "toggleTopPanelLabel": "Mostrar ou ocultar o painel superior",
     "toolbar": {
         "Settings": "Definições",
         "accessibilityLabel": {
@@ -1038,7 +1048,7 @@
             "chat": "Abrir / Fechar chat",
             "clap": "Aplausos",
             "collapse": "Colapsar",
-            "dock": "Encaixar na janela principal",
+            "dock": "Ancorar na janela principal",
             "document": "Mudar para documento partilhado",
             "download": "Descarregar as nossas aplicações",
             "embedMeeting": "Reunião incorporada",
@@ -1089,7 +1099,7 @@
             "tileView": "Mudar a vista em quadrícula",
             "toggleCamera": "Mudar a câmara",
             "toggleFilmstrip": "Mudar a película de filme",
-            "undock": "Soltar numa janela separada",
+            "undock": "Desancorar numa janela separada",
             "videoblur": "Mudar o desfoque de vídeo",
             "videomute": "Iniciar / Parar câmara"
         },
@@ -1106,7 +1116,7 @@
         "closeChat": "Fechar chat",
         "closeReactionsMenu": "Fechar menu de reações",
         "disableReactionSounds": "Pode desactivar os sons de reacção para esta reunião",
-        "dock": "Encaixar na janela principal",
+        "dock": "Ancorar na janela principal",
         "documentClose": "Fechar documento partilhado",
         "documentOpen": "Abrir documento partilhado",
         "download": "Descarregar as nossas aplicações",
@@ -1175,7 +1185,7 @@
         "talkWhileMutedPopup": "Está a tentar falar? Está com o microfone desativado.",
         "tileViewToggle": "Mudar para vista em quadrícula",
         "toggleCamera": "Mudar a câmara",
-        "undock": "Soltar numa janela separada",
+        "undock": "Desancorar numa janela separada",
         "videoSettings": "Definições de vídeo",
         "videomute": "Iniciar / Parar câmara"
     },
