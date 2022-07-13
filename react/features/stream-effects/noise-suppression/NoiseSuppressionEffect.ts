@@ -1,6 +1,8 @@
 // @ts-ignore
 import { getBaseUrl } from '../../base/util';
 
+import logger from './logger';
+
 /**
  * Class Implementing the effect interface expected by a JitsiLocalTrack.
  * Effect applies rnnoise denoising on a audio JitsiLocalTrack.
@@ -35,7 +37,7 @@ export class NoiseSuppressionEffect {
      * @param {MediaStream} audioStream - Audio stream which will be mixed with _mixAudio.
      * @returns {MediaStream} - MediaStream containing both audio tracks mixed together.
      */
-    startEffect(audioStream: MediaStream) : MediaStream{
+    startEffect(audioStream: MediaStream) : MediaStream {
         this._audioContext = new AudioContext();
 
         this._audioSource = this._audioContext.createMediaStreamSource(audioStream);
@@ -45,10 +47,14 @@ export class NoiseSuppressionEffect {
         const workletUrl = `${baseUrl}noise-suppressor-worklet.min.js`;
 
         // Connect the audio processing graph MediaStream -> AudioWorkletNode -> MediaStreamAudioDestinationNode
-        this._audioContext.audioWorklet.addModule(workletUrl).then(() => {
+        this._audioContext.audioWorklet.addModule(workletUrl)
+        .then(() => {
             // After the resolution of module loading, an AudioWorkletNode can be constructed.
             this._noiseSuppressorNode = new AudioWorkletNode(this._audioContext, 'NoiseSuppressorWorklet');
             this._audioSource.connect(this._noiseSuppressorNode).connect(this._audioDestination);
+        })
+        .catch(error => {
+            logger.error('Error while adding audio worklet module: ', error);
         });
 
         return this._audioDestination.stream;

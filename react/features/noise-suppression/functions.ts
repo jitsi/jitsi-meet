@@ -1,4 +1,4 @@
-import { IState } from "../app/types";
+import { IState } from '../app/types';
 
 /**
  * Is noise suppression currently active.

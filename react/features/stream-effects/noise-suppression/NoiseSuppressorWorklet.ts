@@ -1,23 +1,23 @@
 // @ts-ignore
 import { createRNNWasmModuleSync } from '@jitsi/rnnoise-wasm';
 
+import { leastCommonMultiple } from '../../base/util/math';
 import RnnoiseProcessor from '../rnnoise/RnnoiseProcessor';
 
-import { leastCommonMultiple } from '../../base/util/math';
 
 /**
- * Audio worklet which will denoise targeted audio stream using rnnoise
+ * Audio worklet which will denoise targeted audio stream using rnnoise.
  */
 class NoiseSuppressorWorklet extends AudioWorkletProcessor {
     /**
-     * RnnoiseProcessor instance
+     * RnnoiseProcessor instance.
      */
     private _denoiseProcessor: RnnoiseProcessor;
 
     /**
      * Audio worklets work with a predefined sample rate of 128.
      */
-    private _procNodeSampleRate: number = 128;
+    private _procNodeSampleRate = 128;
 
     /**
      * PCM Sample size expected by the denoise processor.
@@ -36,21 +36,21 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
      * copied to the circular buffer as it comes in, one `procNodeSampleRate` sized sample at a time.
      * _inputBufferLength denotes the current length of all gathered raw audio segments.
      */
-    private _inputBufferLength: number = 0;
+    private _inputBufferLength = 0;
 
     /**
      * Denoising is done directly on the circular buffer using subArray views, but because
      * `procNodeSampleRate` and `_denoiseSampleSize` have different sizes, denoised samples lag behind
      * the current gathered raw audio samples so we need a different index, `_denoisedBufferLength`.
      */
-    private _denoisedBufferLength: number = 0;
+    private _denoisedBufferLength = 0;
 
     /**
      * Once enough data has been denoised (size of procNodeSampleRate) it's sent to the
      * output buffer, `_denoisedBufferIndx` indicates the start index on the circular buffer
      * of denoised data not yet sent.
      */
-    private _denoisedBufferIndx: number = 0;
+    private _denoisedBufferIndx = 0;
 
     /**
      * C'tor.
@@ -90,19 +90,19 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
      * Rnnoise only accepts PCM samples of 480 bytes whereas `process` handles 128 sized samples, we take this into
      * account using a circular buffer.
      *
-     * @param {Float32Array[][]} inputs - Array of inputs connected to the node, each of them with their associated
+     * @param {Float32Array[]} inputs - Array of inputs connected to the node, each of them with their associated
      * array of channels. Each channel is an array of 128 pcm samples.
-     * @param {Float32Array[][]} outputs - Array of outputs similar to the inputs parameter structure, expected to be
+     * @param {Float32Array[]} outputs - Array of outputs similar to the inputs parameter structure, expected to be
      * filled during the execution of `process`. By default each channel is zero filled.
      * @returns {boolean} - Boolean value that returns whether or not the processor should remain active. Returning
      * false will terminate it.
      */
     process(inputs: Float32Array[][], outputs: Float32Array[][]) {
 
-         // We expect the incoming track to be mono, if a stereo track is passed only on of its channels will get
-         // denoised and sent pack.
-         // TODO Technically we can denoise both channel however this might require a new rnnoise context, some more
-         // investigation is required.
+        // We expect the incoming track to be mono, if a stereo track is passed only on of its channels will get
+        // denoised and sent pack.
+        // TODO Technically we can denoise both channel however this might require a new rnnoise context, some more
+        // investigation is required.
         const inData = inputs[0][0];
         const outData = outputs[0][0];
 

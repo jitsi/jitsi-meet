@@ -1,3 +1,5 @@
+import { Dispatch } from 'redux';
+
 import { SET_NOISE_SUPPRESSION_STATE, TOGGLE_NOISE_SUPPRESSION } from './actionTypes';
 import { isNoiseSuppressionActive } from './functions';
 
@@ -31,14 +33,14 @@ export function toggleNoiseSuppression() : any {
 }
 
 /**
- * Turns off noise suppression if it's already enabled
+ * Turns off noise suppression if it's already enabled.
  *
  * @returns {Function}
  */
- export function turnOffNoiseSuppression() : Function {
-    return async (dispatch: Function, getState: Function) => {
+export function turnOffNoiseSuppression() : Function {
+    return (dispatch: Dispatch, getState: Function) => {
         if (isNoiseSuppressionActive(getState())) {
-            await dispatch(toggleNoiseSuppression());
+            dispatch(toggleNoiseSuppression());
         }
     };
- }
+}

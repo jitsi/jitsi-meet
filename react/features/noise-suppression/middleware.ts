@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment */
+import { IState, IStore } from '../app/types';
 // @ts-ignore
 import { MiddlewareRegistry } from '../base/redux';
 // @ts-ignore
@@ -13,7 +15,6 @@ import { TOGGLE_NOISE_SUPPRESSION } from './actionTypes';
 import { setNoiseSuppressionState } from './actions';
 import { isNoiseSuppressionActive } from './functions';
 import logger from './logger';
-import { IState, IStore } from '../app/types';
 
 /**
  * Verify if noise suppression can be enabled in the current state.
@@ -74,7 +75,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
                 descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
-            return false;
+            return result;
         }
         try {
             if (noiseSuppressionActive) {

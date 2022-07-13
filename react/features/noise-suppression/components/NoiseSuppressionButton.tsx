@@ -1,3 +1,4 @@
+/* eslint-disable lines-around-comment */
 import { IState } from '../../app/types';
 // @ts-ignore
 import { translate } from '../../base/i18n';
@@ -49,7 +50,7 @@ class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch }= this.props;
+        const { dispatch } = this.props;
 
         dispatch(toggleNoiseSuppression());
         dispatch(setOverflowMenuVisible(false));

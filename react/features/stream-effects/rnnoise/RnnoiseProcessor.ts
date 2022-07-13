@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-bitwise
+/* eslint-disable no-bitwise */
 
 interface RnnoiseModule extends EmscriptenModule {
     _rnnoise_create() : number;
@@ -9,7 +9,7 @@ interface RnnoiseModule extends EmscriptenModule {
 /**
  * Constant. Rnnoise default sample size, samples of different size won't work.
  */
-export const RNNOISE_SAMPLE_LENGTH: number = 480;
+export const RNNOISE_SAMPLE_LENGTH = 480;
 
 /**
  *  Constant. Rnnoise only takes inputs of 480 PCM float32 samples thus 480*4.
@@ -19,12 +19,12 @@ const RNNOISE_BUFFER_SIZE: number = RNNOISE_SAMPLE_LENGTH * 4;
 /**
  *  Constant. Rnnoise only takes operates on 44.1Khz float 32 little endian PCM.
  */
-const PCM_FREQUENCY: number = 44100;
+const PCM_FREQUENCY = 44100;
 
 /**
- * Used to shift a 32 bit number by 16 bits
+ * Used to shift a 32 bit number by 16 bits.
  */
-const SHIFT_16_BIT_NR: number = 32768;
+const SHIFT_16_BIT_NR = 32768;
 
 /**
  * Represents an adaptor for the rnnoise library compiled to webassembly. The class takes care of webassembly
@@ -40,7 +40,7 @@ export default class RnnoiseProcessor {
     /**
      * State flag, check if the instance was destroyed.
      */
-    private _destroyed: boolean = false;
+    private _destroyed = false;
 
     /**
      * WASM interface through which calls to rnnoise are made.
