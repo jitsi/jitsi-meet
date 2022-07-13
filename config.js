@@ -314,8 +314,12 @@ var config = {
     // localRecording: {
     //     // Whether to disable local recording or not.
     //     disable: false,
+
     //     // Whether to notify all participants when a participant is recording locally.
-    //     notifyAllParticipants: false
+    //     notifyAllParticipants: false,
+
+    //     // Whether to disable the self recording feature (only local participant streams).
+    //     disableSelfRecording: false
     // },
 
     // DEPRECATED. Use transcription.enabled instead.
