@@ -36,7 +36,11 @@ export function extractFqnFromPath(state?: Object) {
  */
 export async function getDynamicBrandingUrl(stateful: Object | Function) {
     const state = toState(stateful);
-    const config = state['features/base/config'];
+
+    // NB: On web this is dispatched really early, before the config has been stored in the
+    // state. Thus, fetch it from the window global.
+    const config
+        = navigator.product === 'ReactNative' ? state['features/base/config'] : window.config;
     const { dynamicBrandingUrl } = config;
 
     if (dynamicBrandingUrl) {
