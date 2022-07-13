@@ -36,11 +36,6 @@ type Props = AbstractProps & {
     _headerStyles: Object,
 
     /**
-     * Checks if settings screen is focused.
-     */
-    isSettingsScreenFocused: boolean,
-
-    /**
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object,
@@ -58,15 +53,6 @@ type Props = AbstractProps & {
  */
 class WelcomePage extends AbstractWelcomePage<*> {
     /**
-     * The default values for {@code WelcomePage} component's property types.
-     *
-     * @static
-     */
-    static defaultProps = {
-        isSettingsScreenFocused: false
-    };
-
-    /**
      * Constructor of the Component.
      *
      * @inheritdoc
@@ -75,6 +61,10 @@ class WelcomePage extends AbstractWelcomePage<*> {
         super(props);
 
         this.state._fieldFocused = false;
+
+        this.state.isSettingsScreenFocused = false;
+
+        this.state.roomNameInputAnimation = new Animated.Value(1);
 
         this.state.hintBoxAnimation = new Animated.Value(0);
 
@@ -85,6 +75,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
         // Specially bind functions to avoid function definition on render.
         this._onFieldBlur = this._onFieldFocusChange.bind(this, false);
         this._onFieldFocus = this._onFieldFocusChange.bind(this, true);
+        this._onSettingsScreenFocused = this._onSettingsScreenFocused.bind(this);
     }
 
     _onFieldBlur: () => void;
@@ -238,6 +229,30 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     }));
     }
 
+    _onSettingsScreenFocused: boolean => void;
+
+    /**
+     * Callback for when the settings screen is focused.
+     *
+     * @private
+     * @param {boolean} focused - The focused state of the screen.
+     * @returns {void}
+     */
+    _onSettingsScreenFocused(focused) {
+        this.setState({
+            isSettingsScreenFocused: focused
+        });
+
+        Animated.timing(
+            this.state.roomNameInputAnimation,
+            {
+                toValue: focused ? 0 : 1,
+                duration: 500,
+                useNativeDriver: true
+            })
+            .start();
+    }
+
     _renderHintBox: () => React$Element<any>;
 
     /**
@@ -310,55 +325,71 @@ class WelcomePage extends AbstractWelcomePage<*> {
     }
 
     /**
+     * Renders the room name input.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderRoomNameInput() {
+        const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
+        const { t } = this.props;
+        const { isSettingsScreenFocused } = this.state;
+
+        return (
+            <Animated.View
+                style = { [
+                    isSettingsScreenFocused && styles.roomNameInputContainer,
+                    { opacity: this.state.roomNameInputAnimation }
+                ] }>
+                <SafeAreaView style = { styles.roomContainer }>
+                    <View style = { styles.joinControls } >
+                        <Text style = { styles.enterRoomText }>
+                            { t('welcomepage.roomname') }
+                        </Text>
+                        <TextInput
+                            accessibilityLabel = { t(roomnameAccLabel) }
+                            autoCapitalize = { 'none' }
+                            autoComplete = { 'off' }
+                            autoCorrect = { false }
+                            autoFocus = { false }
+                            onBlur = { this._onFieldBlur }
+                            onChangeText = { this._onRoomChange }
+                            onFocus = { this._onFieldFocus }
+                            onSubmitEditing = { this._onJoin }
+                            placeholder = { this.state.roomPlaceholder }
+                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
+                            returnKeyType = { 'go' }
+                            spellCheck = { false }
+                            style = { styles.textInput }
+                            underlineColorAndroid = 'transparent'
+                            value = { this.state.room } />
+                        {
+                            this._renderInsecureRoomNameWarning()
+                        }
+                        {
+                            this._renderHintBox()
+                        }
+                    </View>
+                </SafeAreaView>
+            </Animated.View>
+        );
+    }
+
+    /**
      * Renders the full welcome page.
      *
      * @returns {ReactElement}
      */
     _renderFullUI() {
-        const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
-        const { isSettingsScreenFocused, t } = this.props;
-
         return (
             <>
                 <JitsiStatusBar />
+                { this._renderRoomNameInput() }
                 <View style = { styles.welcomePage }>
-                    {
-                        !isSettingsScreenFocused &&
-                        <SafeAreaView style = { styles.roomContainer } >
-                            <View style = { styles.joinControls } >
-                                <Text style = { styles.enterRoomText }>
-                                    { t('welcomepage.roomname') }
-                                </Text>
-                                <TextInput
-                                    accessibilityLabel = { t(roomnameAccLabel) }
-                                    autoCapitalize = { 'none' }
-                                    autoComplete = { 'off' }
-                                    autoCorrect = { false }
-                                    autoFocus = { false }
-                                    onBlur = { this._onFieldBlur }
-                                    onChangeText = { this._onRoomChange }
-                                    onFocus = { this._onFieldFocus }
-                                    onSubmitEditing = { this._onJoin }
-                                    placeholder = { this.state.roomPlaceholder }
-                                    placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
-                                    returnKeyType = { 'go' }
-                                    spellCheck = { false }
-                                    style = { styles.textInput }
-                                    underlineColorAndroid = 'transparent'
-                                    value = { this.state.room } />
-                                {
-                                    this._renderInsecureRoomNameWarning()
-                                }
-                                {
-                                    this._renderHintBox()
-                                }
-                            </View>
-                        </SafeAreaView>
-                    }
                     <WelcomePageTabs
                         disabled = { this.state._fieldFocused }
-                        isSettingsScreenFocused = { isSettingsScreenFocused }
-                        onListContainerPress = { this._onFieldBlur } />
+                        onListContainerPress = { this._onFieldBlur }
+                        onSettingsScreenFocused = { this._onSettingsScreenFocused } />
                 </View>
             </>
         );

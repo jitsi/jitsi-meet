@@ -1,12 +1,12 @@
 // @flow
 
 import { Link, useIsFocused } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Alert,
     NativeModules,
     Platform,
-    ScrollView, Settings,
+    ScrollView,
     Text
 } from 'react-native';
 import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
@@ -93,9 +93,9 @@ type Props = AbstractProps & {
     _serverURLChangeEnabled: boolean,
 
     /**
-     * Checks if the screen is focused.
+     * Handler for when settings screen is focused.
      */
-    isSettingsScreenFocused: boolean,
+    onSettingsScreenFocused: Function,
 
     /**
      * Default prop for navigating between screen components(React Navigation).
@@ -115,7 +115,9 @@ type Props = AbstractProps & {
  */
 class SettingsView extends AbstractSettingsView<Props, State> {
     _urlField: Object;
+
     /**
+     *
      * Initializes a new {@code SettingsView} instance.
      *
      * @inheritdoc
@@ -182,8 +184,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                 text: palette.text01
             }
         };
-
-        console.log(this.props.isSettingsScreenFocused, 'SETTINGS');
 
         return (
             <JitsiScreen
@@ -604,11 +604,17 @@ function _mapStateToProps(state) {
 
 export default translate(connect(_mapStateToProps)(withTheme(props => {
     const isFocused = useIsFocused();
+    const { onSettingsScreenFocused } = props;
 
-    return(
-        <SettingsView
-            { ...props }
-            isSettingsScreenFocused = { isFocused }
-        />
-    )
+    useEffect(() => {
+        if (isFocused) {
+            onSettingsScreenFocused(true);
+        } else {
+            onSettingsScreenFocused(false);
+        }
+    });
+
+    return (
+        <SettingsView { ...props } />
+    );
 })));

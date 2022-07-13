@@ -1,7 +1,7 @@
 // @flow
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React  from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import { CalendarList, isCalendarEnabled } from '../../../../../calendar-sync';
@@ -15,7 +15,6 @@ import {
     tabBarOptions
 } from '../../../../../welcome/constants';
 import { screen } from '../../../routes';
-import { useNavigationState } from '@react-navigation/native';
 
 const WelcomePage = createBottomTabNavigator();
 
@@ -31,14 +30,14 @@ type Props = {
     disabled: boolean,
 
     /**
-     * Checks if settings screen is focused.
-     */
-    isSettingsScreenFocused: boolean,
-
-    /**
      * Callback to be invoked when pressing the list container.
      */
     onListContainerPress?: Function,
+
+    /**
+     * Callback to be invoked when settings screen is focused.
+     */
+    onSettingsScreenFocused: Function,
 
     /**
      * Displays room name input.
@@ -46,27 +45,30 @@ type Props = {
     showRoomNameInput: boolean
 };
 
-const WelcomePageTabs = ({ disabled, isSettingsScreenFocused, onListContainerPress }: Props) => {
-    const RecentListScreen = () => (
+const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocused }: Props) => {
+    const RecentListScreen = useCallback(() =>
+        (
             <RecentList
                 disabled = { disabled }
                 onListContainerPress = { onListContainerPress } />
+        )
     );
 
     const calendarEnabled = useSelector(isCalendarEnabled);
 
-    const CalendarListScreen = () => (
+    const CalendarListScreen = useCallback(() =>
+        (
             <CalendarList
                 disabled = { disabled } />
-    );
-    const SettingsScreen = () => (
-        <SettingsView
-            isSettingsScreenFocused = { isSettingsScreenFocused } />
+        )
     );
 
-    const navState = useNavigationState(state => state);
-
-    console.log(navState, 'NAVIGATION STATE');
+    const SettingsScreen = useCallback(() =>
+        (
+            <SettingsView
+                onSettingsScreenFocused = { onSettingsScreenFocused } />
+        )
+    );
 
     return (
         <WelcomePage.Navigator

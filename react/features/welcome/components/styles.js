@@ -120,6 +120,10 @@ export default {
         paddingVertical: 2 * BoxModel.padding
     },
 
+    roomNameInputContainer: {
+        height: '0%'
+    },
+
     /**
      * Top-level screen style.
      */
