@@ -66,6 +66,7 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
     const SettingsScreen = useCallback(() =>
         (
             <SettingsView
+                isTabNavigatorScreen = { true }
                 onSettingsScreenFocused = { onSettingsScreenFocused } />
         )
     );

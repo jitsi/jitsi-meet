@@ -34,7 +34,8 @@ export const screen = {
         participants: 'Participants',
         gifsMenu: 'GIPHY',
         invite: 'Invite',
-        sharedDocument: 'Shared document'
+        sharedDocument: 'Shared document',
+        settings: 'Settings'
     },
     lobby: {
         root: 'Lobby root',

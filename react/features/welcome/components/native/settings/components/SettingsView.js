@@ -93,6 +93,11 @@ type Props = AbstractProps & {
     _serverURLChangeEnabled: boolean,
 
     /**
+     * Checks if the screen is part of a tab navigator.
+     */
+    isTabNavigatorScreen: Function,
+
+    /**
      * Handler for when settings screen is focused.
      */
     onSettingsScreenFocused: Function,
@@ -115,6 +120,15 @@ type Props = AbstractProps & {
  */
 class SettingsView extends AbstractSettingsView<Props, State> {
     _urlField: Object;
+
+    /**
+     * The default values for {@code SettingsView} component's property types.
+     *
+     * @static
+     */
+    static defaultProps = {
+        isTabNavigatorScreen: false
+    };
 
     /**
      *
@@ -604,13 +618,15 @@ function _mapStateToProps(state) {
 
 export default translate(connect(_mapStateToProps)(withTheme(props => {
     const isFocused = useIsFocused();
-    const { onSettingsScreenFocused } = props;
+    const { isTabNavigatorScreen, onSettingsScreenFocused } = props;
 
     useEffect(() => {
-        if (isFocused) {
-            onSettingsScreenFocused(true);
-        } else {
-            onSettingsScreenFocused(false);
+        if (isTabNavigatorScreen) {
+            if (isFocused) {
+                onSettingsScreenFocused(true);
+            } else {
+                onSettingsScreenFocused(false);
+            }
         }
     });
 

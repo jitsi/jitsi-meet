@@ -179,6 +179,11 @@ export const gifsMenuOptions = presentationScreenOptions;
 export const sharedDocumentScreenOptions = presentationScreenOptions;
 
 /**
+ * Screen options for settings modal.
+ */
+export const settingsScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for connecting screen.
  */
 export const connectingScreenOptions = {
