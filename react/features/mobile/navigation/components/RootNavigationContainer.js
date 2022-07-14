@@ -18,7 +18,7 @@ import {
     conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
     dialInSummaryScreenOptions,
-    linksScreenOptions,
+    linkScreenOptions,
     navigationContainerTheme,
     preJoinScreenOptions,
     welcomeScreenOptions
@@ -79,23 +79,23 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                 }
                 <RootStack.Screen
                     component = { HelpView }
-                    name = { screen.welcome.help }
+                    name = { screen.welcome.tabs.settings.help }
                     options = {{
-                        ...linksScreenOptions,
+                        ...linkScreenOptions,
                         title: t('helpView.header')
                     }} />
                 <RootStack.Screen
                     component = { TermsView }
-                    name = { screen.welcome.terms }
+                    name = { screen.welcome.tabs.settings.terms }
                     options = {{
-                        ...linksScreenOptions,
+                        ...linkScreenOptions,
                         title: t('termsView.header')
                     }} />
                 <RootStack.Screen
                     component = { PrivacyView }
-                    name = { screen.welcome.privacy }
+                    name = { screen.welcome.tabs.settings.privacy }
                     options = {{
-                        ...linksScreenOptions,
+                        ...linkScreenOptions,
                         title: t('privacyView.header')
                     }} />
                 <RootStack.Screen

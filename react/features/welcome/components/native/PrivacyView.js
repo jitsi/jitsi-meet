@@ -6,7 +6,6 @@ import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebVie
 import JitsiStatusBar from '../../../base/modal/components/JitsiStatusBar';
 import { renderArrowBackButton }
     from '../../../mobile/navigation/components/welcome/functions';
-import { screen } from '../../../mobile/navigation/routes';
 import styles from '../styles';
 
 
@@ -29,7 +28,7 @@ const PrivacyView = ({ navigation }: Props) => {
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main))
+                    navigation.goBack())
         });
     });
 

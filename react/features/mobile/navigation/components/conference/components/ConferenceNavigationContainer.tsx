@@ -22,6 +22,9 @@ import SecurityDialog
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
 import SpeakerStats
     from '../../../../../speaker-stats/components/native/SpeakerStats';
+import HelpView from '../../../../../welcome/components/native/HelpView';
+import PrivacyView from '../../../../../welcome/components/native/PrivacyView';
+import TermsView from '../../../../../welcome/components/native/TermsView';
 import SettingsView
     from '../../../../../welcome/components/native/settings/components/SettingsView';
 import { screen } from '../../../routes';
@@ -31,6 +34,7 @@ import {
     conferenceScreenOptions,
     gifsMenuOptions,
     inviteScreenOptions,
+    linkScreenOptions,
     liveStreamScreenOptions,
     lobbyNavigationContainerScreenOptions,
     navigationContainerTheme,
@@ -150,10 +154,31 @@ const ConferenceNavigationContainer = () => {
                     }} />
                 <ConferenceStack.Screen
                     component = { SettingsView }
-                    name = { screen.conference.settings }
+                    name = { screen.conference.settings.main }
                     options = {{
                         ...settingsScreenOptions,
                         title: t('settings.title')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { HelpView }
+                    name = { screen.conference.settings.help }
+                    options = {{
+                        ...linkScreenOptions,
+                        title: t('helpView.header')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { TermsView }
+                    name = { screen.conference.settings.terms }
+                    options = {{
+                        ...linkScreenOptions,
+                        title: t('termsView.header')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { PrivacyView }
+                    name = { screen.conference.settings.privacy }
+                    options = {{
+                        ...linkScreenOptions,
+                        title: t('privacyView.header')
                     }} />
                 <ConferenceStack.Screen
                     component = { CarMode }

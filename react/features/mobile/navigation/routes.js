@@ -1,14 +1,18 @@
 export const screen = {
     welcome: {
+        help: 'Help',
         main: 'Welcome',
+        privacy: 'Privacy',
         tabs: {
             recent: 'Recent',
             calendar: 'Calendar',
-            settings: 'Settings'
-        },
-        terms: 'Terms',
-        privacy: 'Privacy',
-        help: 'Help'
+            settings: {
+                help: 'Help',
+                main: 'Settings',
+                privacy: 'Privacy',
+                terms: 'Terms'
+            }
+        }
     },
     dialInSummary: 'Dial-In Info',
     connecting: 'Connecting',
@@ -35,7 +39,12 @@ export const screen = {
         gifsMenu: 'GIPHY',
         invite: 'Invite',
         sharedDocument: 'Shared document',
-        settings: 'Settings'
+        settings: {
+            help: 'Help',
+            main: 'Settings',
+            privacy: 'Privacy',
+            terms: 'Terms'
+        }
     },
     lobby: {
         root: 'Lobby root',

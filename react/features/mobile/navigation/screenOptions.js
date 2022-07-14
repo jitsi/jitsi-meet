@@ -26,7 +26,7 @@ export const fullScreenOptions = {
     headerShown: false
 };
 
-export const linksScreenOptions = {
+export const linkScreenOptions = {
     gestureEnabled: true,
     headerShown: true,
     headerTitleStyle: {

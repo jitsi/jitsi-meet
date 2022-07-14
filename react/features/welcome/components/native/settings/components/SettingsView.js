@@ -199,6 +199,20 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             }
         };
 
+        let helpScreenRoute;
+        let termsScreenRoute;
+        let privacyScreenRoute;
+
+        if (this.props.isTabNavigatorScreen) {
+            helpScreenRoute = screen.welcome.tabs.settings.help;
+            termsScreenRoute = screen.welcome.tabs.settings.terms;
+            privacyScreenRoute = screen.welcome.tabs.settings.privacy;
+        } else {
+            helpScreenRoute = screen.conference.settings.help;
+            termsScreenRoute = screen.conference.settings.terms;
+            privacyScreenRoute = screen.conference.settings.privacy;
+        }
+
         return (
             <JitsiScreen
                 style = { styles.settingsViewContainer }>
@@ -282,19 +296,19 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         label = 'settingsView.links'>
                         <Link
                             style = { styles.sectionLink }
-                            to = {{ screen: screen.welcome.help }}>
+                            to = {{ screen: helpScreenRoute }}>
                             { this.props.t('settingsView.help') }
                         </Link>
                         <Divider style = { styles.fieldSeparator } />
                         <Link
                             style = { styles.sectionLink }
-                            to = {{ screen: screen.welcome.terms }}>
+                            to = {{ screen: termsScreenRoute }}>
                             { this.props.t('settingsView.terms') }
                         </Link>
                         <Divider style = { styles.fieldSeparator } />
                         <Link
                             style = { styles.sectionLink }
-                            to = {{ screen: screen.welcome.privacy }}>
+                            to = {{ screen: privacyScreenRoute }}>
                             { this.props.t('settingsView.privacy') }
                         </Link>
                     </FormSectionAccordion>

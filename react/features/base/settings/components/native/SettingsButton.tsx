@@ -20,7 +20,7 @@ class SettingsButton extends AbstractButton<AbstractButtonProps, any, any> {
      * @returns {void}
      */
     _handleClick() {
-        return navigate(screen.conference.settings);
+        return navigate(screen.conference.settings.main);
     }
 }
 

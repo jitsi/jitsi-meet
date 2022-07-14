@@ -91,7 +91,7 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
             </WelcomePage.Screen>
             }
             <WelcomePage.Screen
-                name = { screen.welcome.tabs.settings }
+                name = { screen.welcome.tabs.settings.main }
                 options = { settingsTabBarOptions }>
                 { SettingsScreen }
             </WelcomePage.Screen>

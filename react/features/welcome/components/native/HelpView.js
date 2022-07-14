@@ -7,7 +7,6 @@ import JitsiStatusBar from '../../../base/modal/components/JitsiStatusBar';
 import { connect } from '../../../base/redux';
 import { renderArrowBackButton }
     from '../../../mobile/navigation/components/welcome/functions';
-import { screen } from '../../../mobile/navigation/routes';
 import styles from '../styles';
 
 
@@ -45,7 +44,7 @@ class HelpView extends PureComponent<Props> {
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main))
+                    navigation.goBack())
         });
     }
 
