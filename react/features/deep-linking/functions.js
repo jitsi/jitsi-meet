@@ -69,7 +69,7 @@ export function getDeepLinkingPage(state) {
 
         return Promise.resolve(
             typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
-                ? NoMobileApp : NoMobileApp);
+                ? DeepLinkingMobilePage : NoMobileApp);
     }
 
     return _openDesktopApp(state).then(
