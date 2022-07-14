@@ -29,7 +29,7 @@ function init_session(event)
         local params = formdecode(query);
 
         -- The following fields are filled in the session, by extracting them
-        -- from the query and no validation is beeing done.
+        -- from the query and no validation is being done.
         -- After validating auth_token will be cleaned in case of error and few
         -- other fields will be extracted from the token and set in the session
 

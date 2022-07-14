@@ -302,7 +302,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack) {
  *
  * @param {boolean} enabled - The state to toggle screen sharing to.
  * @param {boolean} audioOnly - Only share system audio.
- * @param {boolean} ignoreDidHaveVideo - Wether or not to ignore if video was on when sharing started.
+ * @param {boolean} ignoreDidHaveVideo - Whether or not to ignore if video was on when sharing started.
  * @returns {{
  *     type: TOGGLE_SCREENSHARING,
  *     on: boolean,
@@ -758,7 +758,7 @@ function _trackCreateCanceled(mediaType) {
 }
 
 /**
- * If thee local track if of type Desktop, it calls _disposeAndRemoveTracks) on it.
+ * If the local track if of type Desktop, it calls _disposeAndRemoveTracks) on it.
  *
  * @returns {Function}
  */

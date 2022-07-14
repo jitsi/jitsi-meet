@@ -613,7 +613,7 @@ var config = {
     // },
 
     // When 'true', the user cannot edit the display name.
-    // (Mainly useful when used in conjuction with the JWT so the JWT name becomes read only.)
+    // (Mainly useful when used in conjunction with the JWT so the JWT name becomes read only.)
     // readOnlyName: false,
 
     // If etherpad integration is enabled, setting this to true will
@@ -1028,7 +1028,7 @@ var config = {
     //   maxConferenceSize: 200,
     //
     //   // The maximum number of e2e ping messages per second for the whole conference to aim for.
-    //   // This is used to contol the pacing of messages in order to reduce the load on the backend.
+    //   // This is used to control the pacing of messages in order to reduce the load on the backend.
     //   maxMessagesPerSecond: 250
     //   },
 

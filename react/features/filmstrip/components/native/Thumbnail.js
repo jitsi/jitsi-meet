@@ -90,7 +90,7 @@ type Props = {
      * The ID of the participant obtain from the participant object in Redux.
      *
      * NOTE: Generally it should be the same as the participantID prop except the case where the passed
-     * participantID doesn't corespond to any of the existing participants.
+     * participantID doesn't correspond to any of the existing participants.
      */
     _participantId: string,
 

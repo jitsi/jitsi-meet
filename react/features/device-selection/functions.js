@@ -44,7 +44,7 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function, isDis
     const userSelectedCamera = getUserSelectedCameraDeviceId(state);
     const userSelectedMic = getUserSelectedMicDeviceId(state);
 
-    // When the previews are disabled we don't need multiple audio input support in order to chage the mic. This is the
+    // When the previews are disabled we don't need multiple audio input support in order to change the mic. This is the
     // case for Safari on iOS.
     let disableAudioInputChange
         = !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported() && !(disablePreviews && inputDeviceChangeSupported);

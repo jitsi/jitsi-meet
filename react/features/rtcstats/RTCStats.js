@@ -109,7 +109,7 @@ class RTCStats {
      * Send the timestamp of the start of the conference, the data will be processed by the rtcstats-server
      * and saved in the dump file.
      *
-     * @param {Oject} timestamp - The object which contains the timestamp.
+     * @param {Object} timestamp - The object which contains the timestamp.
      * @returns {void}
      */
     sendConferenceTimestamp(timestamp) {

@@ -116,7 +116,7 @@ export function isVideoMutedByUser(stateful: Function | Object) {
  * @param {boolean} waitForVideoStarted - True if the specified videoTrack
  * should be rendered only after its associated video has started;
  * otherwise, false.
- * @returns {boolean} True if the specified videoTrack should be renderd;
+ * @returns {boolean} True if the specified videoTrack should be rendered;
  * otherwise, false.
  */
 export function shouldRenderVideoTrack(

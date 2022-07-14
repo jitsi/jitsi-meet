@@ -45,7 +45,7 @@ export const SET_OVERFLOW_DRAWER = 'SET_OVERFLOW_DRAWER';
 export const SET_OVERFLOW_MENU_VISIBLE = 'SET_OVERFLOW_MENU_VISIBLE';
 
 /**
- * The type of the action which sets the indicator which determiens whether a
+ * The type of the action which sets the indicator which determines whether a
  * fToolbar in the Toolbox is hovered.
  *
  * {

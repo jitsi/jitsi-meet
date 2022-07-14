@@ -690,7 +690,7 @@ export function createStartSilentEvent() {
 /**
  * Creates an event which indicates that HTMLAudioElement.play has failed.
  *
- * @param {sting} elementID - The ID of the HTMLAudioElement.
+ * @param {string} elementID - The ID of the HTMLAudioElement.
  * @returns {Object} The event in a format suitable for sending via sendAnalytics.
  */
 export function createAudioPlayErrorEvent(elementID) {
@@ -703,9 +703,9 @@ export function createAudioPlayErrorEvent(elementID) {
 }
 
 /**
- * Creates an event which indicates that HTMLAudioElement.play has succeded after a prior failure.
+ * Creates an event which indicates that HTMLAudioElement.play has succeeded after a prior failure.
  *
- * @param {sting} elementID - The ID of the HTMLAudioElement.
+ * @param {string} elementID - The ID of the HTMLAudioElement.
  * @returns {Object} The event in a format suitable for sending via sendAnalytics.
  */
 export function createAudioPlaySuccessEvent(elementID) {
