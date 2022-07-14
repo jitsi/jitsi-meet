@@ -1,4 +1,5 @@
-import { ReducerRegistry } from '../redux';
+/* eslint-disable import/order */
+import ReducerRegistry from '../redux/ReducerRegistry';
 
 import {
     ADD_PENDING_DEVICE_REQUEST,
@@ -8,10 +9,15 @@ import {
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
+
+// @ts-ignore
 import { groupDevicesByKind } from './functions';
+
+// @ts-ignore
 import logger from './logger';
 
-const DEFAULT_STATE = {
+
+const DEFAULT_STATE: IDevicesState = {
     availableDevices: {
         audioInput: [],
         audioOutput: [],
@@ -24,10 +30,23 @@ const DEFAULT_STATE = {
     }
 };
 
+export interface IDevicesState {
+    availableDevices: {
+        audioInput: MediaDeviceInfo[];
+        audioOutput: MediaDeviceInfo[];
+        videoInput: MediaDeviceInfo[];
+    };
+    pendingRequests: Object[];
+    permissions: {
+        audio: boolean;
+        video: boolean;
+    }
+}
+
 /**
  * Listen for actions which changes the state of known and used devices.
  *
- * @param {Object} state - The Redux state of the feature features/base/devices.
+ * @param {IDevicesState} state - The Redux state of the feature features/base/devices.
  * @param {Object} action - Action object.
  * @param {string} action.type - Type of action.
  * @param {Array<MediaDeviceInfo>} action.devices - All available audio and
@@ -36,7 +55,7 @@ const DEFAULT_STATE = {
  */
 ReducerRegistry.register(
     'features/base/devices',
-    (state = DEFAULT_STATE, action) => {
+    (state: IDevicesState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case UPDATE_DEVICE_LIST: {
             const deviceList = groupDevicesByKind(action.devices);

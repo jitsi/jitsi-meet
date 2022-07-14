@@ -1,4 +1,5 @@
-import { assign, ReducerRegistry } from '../redux';
+import ReducerRegistry from '../redux/ReducerRegistry';
+import { assign } from '../redux/functions';
 
 import {
     HIDE_DIALOG,
@@ -7,16 +8,23 @@ import {
     OPEN_SHEET
 } from './actionTypes';
 
+export interface IDialogState {
+    component?: Object;
+    componentProps?: Object;
+    sheet?: Object;
+    sheetProps?: Object;
+}
+
 /**
  * Reduces redux actions which show or hide dialogs.
  *
- * @param {State} state - The current redux state.
+ * @param {IDialogState} state - The current redux state.
  * @param {Action} action - The redux action to reduce.
  * @param {string} action.type - The type of the redux action to reduce..
  * @returns {State} The next redux state that is the result of reducing the
  * specified action.
  */
-ReducerRegistry.register('features/base/dialog', (state = {}, action) => {
+ReducerRegistry.register('features/base/dialog', (state: IDialogState = {}, action) => {
     switch (action.type) {
     case HIDE_DIALOG: {
         const { component } = action;
