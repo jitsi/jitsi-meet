@@ -21,7 +21,7 @@ const splitter = new GraphemeSplitter();
  * Generates the background color of an initials based avatar.
  *
  * @param {string?} initials - The initials of the avatar.
- * @param {Array<strig>} customAvatarBackgrounds - Custom avatar background values.
+ * @param {Array<string>} customAvatarBackgrounds - Custom avatar background values.
  * @returns {string}
  */
 export function getAvatarColor(initials: ?string, customAvatarBackgrounds: Array<string>) {

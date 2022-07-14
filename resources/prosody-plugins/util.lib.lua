@@ -22,7 +22,7 @@ local escaped_muc_domain_prefix = muc_domain_prefix:gsub("%p", "%%%1");
 -- (e.g. extract 'foo' from 'conference.foo.example.com')
 local target_subdomain_pattern = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..escaped_muc_domain_base;
 
--- table to store all incoming iqs without roomname in it, like discoinfo to the muc compoent
+-- table to store all incoming iqs without roomname in it, like discoinfo to the muc component
 local roomless_iqs = {};
 
 -- Utility function to split room JID to include room name and subdomain

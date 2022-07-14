@@ -465,7 +465,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
         local room = event.room;
         local main_room, main_room_jid = get_main_room(room.jid);
 
-        -- Breakout room matadata.
+        -- Breakout room metadata.
         table.insert(event.form, {
             name = 'muc#roominfo_isbreakout';
             label = 'Is this a breakout room?';
@@ -492,7 +492,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
         local room = event.room;
         local _, main_room_jid = get_main_room(room.jid);
 
-        -- Breakout room matadata.
+        -- Breakout room metadata.
         table.insert(event.form, {
             name = 'muc#roominfo_isbreakout';
             label = 'Is this a breakout room?';

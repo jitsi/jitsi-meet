@@ -107,7 +107,7 @@ export const isParticipantPending = (participant: Object, mediaType: MediaType) 
 
 /**
  * Selector which returns a list with all the participants asking to audio unmute.
- * This is visible ony for the moderator.
+ * This is visible only for the moderator.
  *
  * @param {Object} state - The global state.
  * @returns {Array<Object>}

@@ -3070,7 +3070,7 @@ export default {
     /**
      * Leaves the room.
      *
-     * @param {boolean} doDisconnect - Wether leaving the room should also terminate the connection.
+     * @param {boolean} doDisconnect - Whether leaving the room should also terminate the connection.
      * @returns {Promise}
      */
     async leaveRoom(doDisconnect = true) {

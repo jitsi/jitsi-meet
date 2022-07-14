@@ -41,7 +41,7 @@ export type Props = {
     _conference: Object,
 
     /**
-     * Warning that indicates an incorect video url.
+     * Warning that indicates an incorrect video url.
      */
     _displayWarning: Function,
 

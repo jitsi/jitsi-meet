@@ -22,7 +22,7 @@ type Props = {
     _render: boolean;
 
     /**
-     * Whether ot not the name is in a container.
+     * Whether or not the name is in a container.
      */
     contained?: boolean;
 

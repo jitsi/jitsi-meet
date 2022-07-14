@@ -9,7 +9,7 @@ import { keyboardEventToKey } from './keycodes';
 import logger from './logger';
 
 /**
- * Checks if the remote contrrol is enabled.
+ * Checks if the remote control is enabled.
  *
  * @param {*} state - The redux state.
  * @returns {boolean} - True if the remote control is enabled and false otherwise.

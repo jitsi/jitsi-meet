@@ -13,7 +13,7 @@ import { ADD_KNOWN_DOMAINS } from './actionTypes';
  * read the information out of the app's manifests: App Store strips the
  * associated domains manifest out of the app so it's never downloaded on the
  * client and we did not spend a lot of effort to read the associated domains
- * out of the Andorid manifest.
+ * out of the Android manifest.
  */
 export const DEFAULT_STATE = [
     'alpha.jitsi.net',

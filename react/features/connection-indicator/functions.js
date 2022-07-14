@@ -37,7 +37,7 @@ export function isTrackStreamingStatusInterrupted(videoTrack) {
 }
 
 /**
- * Checks if the passed participant's connecton status is active.
+ * Checks if the passed participant's connection status is active.
  *
  * @param {Object} participant - Participant reference.
  * @returns {boolean} - Is connection status active.
@@ -49,7 +49,7 @@ export function isParticipantConnectionStatusActive(participant) {
 }
 
 /**
- * Checks if the passed participant's connecton status is inactive.
+ * Checks if the passed participant's connection status is inactive.
  *
  * @param {Object} participant - Participant reference.
  * @returns {boolean} - Is connection status inactive.
@@ -61,7 +61,7 @@ export function isParticipantConnectionStatusInactive(participant) {
 }
 
 /**
- * Checks if the passed participant's connecton status is interrupted.
+ * Checks if the passed participant's connection status is interrupted.
  *
  * @param {Object} participant - Participant reference.
  * @returns {boolean} - Is connection status interrupted.

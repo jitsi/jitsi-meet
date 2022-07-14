@@ -474,11 +474,11 @@ function initCommands() {
          * @param { string } arg.mode - Recording mode, either `file` or `stream`.
          * @param { string } arg.dropboxToken - Dropbox oauth2 token.
          * @param { string } arg.rtmpStreamKey - The RTMP stream key.
-         * @param { string } arg.rtmpBroadcastID - The RTMP braodcast ID.
+         * @param { string } arg.rtmpBroadcastID - The RTMP broadcast ID.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
          * Only applies to certain jitsi meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
-         * @param { string } arg.youtubeBroadcastID - The youtube broacast ID.
+         * @param { string } arg.youtubeBroadcastID - The youtube broadcast ID.
          * @returns {void}
          */
         'start-recording': ({
@@ -1642,7 +1642,7 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that an error occured.
+     * Notify external application (if API is enabled) that an error occurred.
      *
      * @param {Object} error - The error.
      * @returns {void}
@@ -1670,7 +1670,7 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) wether the used browser is supported or not.
+     * Notify external application (if API is enabled) whether the used browser is supported or not.
      *
      * @param {boolean} supported - If browser is supported or not.
      * @returns {void}
@@ -1698,7 +1698,7 @@ class API {
     /**
      * Notify the external application that the state of the participants pane changed.
      *
-     * @param {boolean} open - Wether the panel is open or not.
+     * @param {boolean} open - Whether the panel is open or not.
      * @returns {void}
      */
     notifyParticipantsPaneToggled(open) {
