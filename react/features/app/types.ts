@@ -6,6 +6,8 @@ import { IAudioOnlyState } from '../base/audio-only/reducer';
 import { IConferenceState } from '../base/conference/reducer';
 import { IConfig } from '../base/config/configType';
 import { IConnectionState } from '../base/connection/reducer';
+import { IDevicesState } from '../base/devices/reducer';
+import { IDialogState } from '../base/dialog/reducer';
 
 export interface IStore {
     getState: Function,
@@ -20,5 +22,7 @@ export interface IState {
     'features/base/audio-only': IAudioOnlyState,
     'features/base/conference': IConferenceState,
     'features/base/config': IConfig,
-    'features/base/connection': IConnectionState
+    'features/base/connection': IConnectionState,
+    'features/base/devices': IDevicesState,
+    'features/base/dialog': IDialogState
 }
