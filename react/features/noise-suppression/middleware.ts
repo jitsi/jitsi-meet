@@ -11,9 +11,8 @@ import { isScreenAudioShared } from '../screen-share';
 // @ts-ignore
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
-import { TOGGLE_NOISE_SUPPRESSION } from './actionTypes';
-import { setNoiseSuppressionState } from './actions';
-import { isNoiseSuppressionActive } from './functions';
+import { SET_NOISE_SUPPRESSION_ENABLED } from './actionTypes';
+import { isNoiseSuppressionEnabled } from './functions';
 import logger from './logger';
 
 /**
@@ -50,6 +49,18 @@ function canEnableNoiseSuppression(state: IState, dispatch: Function, localAudio
 
     return true;
 }
+/**
+ * Set the SET_NOISE_SUPPRESSION_ENABLED state to disabled and return the next function up the chain.
+ *
+ * @param {Function} next - The Redux next function.
+ * @param {Object} action - The Redux action.
+ * @returns {Function}
+ */
+function disableNSState(next: Function, action: any) {
+    action.enabled = false;
+
+    return next(action);
+}
 
 /**
  * Implements middleware for the noise suppression feature.
@@ -58,14 +69,16 @@ function canEnableNoiseSuppression(state: IState, dispatch: Function, localAudio
  * @returns {Function}
  */
 MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action: any) => {
-    const result = next(action);
     const { dispatch, getState } = store;
 
     switch (action.type) {
-    case TOGGLE_NOISE_SUPPRESSION: {
+    case SET_NOISE_SUPPRESSION_ENABLED: {
         const state = getState();
-        const noiseSuppressionActive = isNoiseSuppressionActive(state);
+        const { enabled } = action;
+        const noiseSuppressionEnabled = isNoiseSuppressionEnabled(state);
         const localAudio = getLocalJitsiAudioTrack(state);
+
+        logger.info(`Attempting to set noise suppression enabled state: ${noiseSuppressionEnabled}`);
 
         if (!localAudio) {
             logger.warn('Can not toggle noise suppression without any local track active.');
@@ -75,37 +88,38 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
                 descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
-            return result;
+            return disableNSState(next, action);
         }
         try {
-            if (noiseSuppressionActive) {
-                await localAudio.setEffect(undefined);
-                dispatch(setNoiseSuppressionState(false));
-                logger.info('Noise suppression disabled.');
-            } else {
+            if (enabled && !noiseSuppressionEnabled) {
                 if (!canEnableNoiseSuppression(state, dispatch, localAudio)) {
-                    return result;
+                    return disableNSState(next, action);
                 }
 
                 await localAudio.setEffect(new NoiseSuppressionEffect());
-                dispatch(setNoiseSuppressionState(true));
                 logger.info('Noise suppression enabled.');
+
+            } else if (noiseSuppressionEnabled) {
+                await localAudio.setEffect(undefined);
+                logger.info('Noise suppression disabled.');
             }
         } catch (error) {
             logger.error(
-                `Failed to toggle noise suppression to active state: ${!noiseSuppressionActive}`,
+                `Failed to set noise suppression enabled to: ${enabled}`,
                 error
             );
 
             dispatch(showErrorNotification({
                 titleKey: 'notify.noiseSuppressionFailedTitle'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+            return disableNSState(next, action);
         }
 
         break;
     }
     }
 
-    return result;
+    return next(action);
 });
 

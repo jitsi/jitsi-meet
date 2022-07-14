@@ -2,28 +2,28 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    SET_NOISE_SUPPRESSION_STATE
+    SET_NOISE_SUPPRESSION_ENABLED
 } from './actionTypes';
 
 export interface INoiseSuppressionState {
-    active: boolean
+    enabled: boolean
 }
 
 const DEFAULT_STATE = {
-    active: false
+    enabled: false
 };
 
 /**
  * Reduces the Redux actions of the feature features/noise-suppression.
  */
 ReducerRegistry.register('features/noise-suppression', (state: INoiseSuppressionState = DEFAULT_STATE, action: any) => {
-    const { active } = action;
+    const { enabled } = action;
 
     switch (action.type) {
-    case SET_NOISE_SUPPRESSION_STATE:
+    case SET_NOISE_SUPPRESSION_ENABLED:
         return {
             ...state,
-            active
+            enabled
         };
     default:
         return state;

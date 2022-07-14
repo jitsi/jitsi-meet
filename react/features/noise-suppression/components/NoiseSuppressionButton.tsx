@@ -19,7 +19,7 @@ import {
 // @ts-ignore
 import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { toggleNoiseSuppression } from '../actions';
-import { isNoiseSuppressionActive } from '../functions';
+import { isNoiseSuppressionEnabled } from '../functions';
 
 type Props = AbstractButtonProps & {
 
@@ -64,7 +64,7 @@ class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
      * @returns {boolean}
      */
     _isToggled() {
-        return this.props._isNoiseSuppressionActive;
+        return this.props._isNoiseSuppressionEnabled;
     }
 }
 
@@ -77,7 +77,7 @@ class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
  */
 function _mapStateToProps(state: IState): Object {
     return {
-        _isNoiseSuppressionActive: isNoiseSuppressionActive(state)
+        _isNoiseSuppressionEnabled: isNoiseSuppressionEnabled(state)
     };
 }
 
