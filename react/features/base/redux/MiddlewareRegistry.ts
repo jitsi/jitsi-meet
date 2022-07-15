@@ -29,7 +29,6 @@ class MiddlewareRegistry {
      * @returns {Middleware}
      */
     applyMiddleware(...additional: Array<Middleware<any, any>>) {
-        // $FlowExpectedError
         return applyMiddleware(...this._elements, ...additional);
     }
 
