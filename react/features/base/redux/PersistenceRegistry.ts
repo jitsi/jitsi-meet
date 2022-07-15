@@ -1,12 +1,15 @@
-// @flow
-
+/* eslint-disable import/order */
+// @ts-ignore
 import Bourne from '@hapi/bourne';
+
+// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import md5 from 'js-md5';
 
+// @ts-ignore
 import logger from './logger';
 
-declare var __DEV__;
+declare let __DEV__: any;
 
 /**
  * The name of the {@code localStorage} store where the app persists its values.
@@ -30,8 +33,8 @@ declare type PersistencyConfigMap = { [name: string]: ElementConfig };
  * persisted and also handles the persistency calls too.
  */
 class PersistenceRegistry {
-    _checksum: string;
-    _defaultStates: { [name: string ]: ?Object} = {};
+    _checksum = '';
+    _defaultStates: { [name: string ]: Object|undefined} = {};
     _elements: PersistencyConfigMap = {};
 
     /**
@@ -43,7 +46,7 @@ class PersistenceRegistry {
      * @returns {Object}
      */
     getPersistedState() {
-        let filteredPersistedState = {};
+        let filteredPersistedState: any = {};
 
         // localStorage key per feature
         for (const subtreeName of Object.keys(this._elements)) {
@@ -134,7 +137,7 @@ class PersistenceRegistry {
      */
     register(
             name: string,
-            config?: ElementConfig = true,
+            config: ElementConfig = true,
             defaultState?: Object) {
         this._elements[name] = config;
         this._defaultStates[name] = defaultState;
@@ -165,8 +168,8 @@ class PersistenceRegistry {
      * @private
      * @returns {Object}
      */
-    _getFilteredState(state: Object) {
-        const filteredState = {};
+    _getFilteredState(state: any): any {
+        const filteredState: any = {};
 
         for (const name of Object.keys(this._elements)) {
             if (state[name]) {
@@ -189,8 +192,8 @@ class PersistenceRegistry {
      * @private
      * @returns {Object}
      */
-    _getFilteredSubtree(subtree, subtreeConfig) {
-        let filteredSubtree;
+    _getFilteredSubtree(subtree: any, subtreeConfig: any) {
+        let filteredSubtree: any;
 
         if (typeof subtreeConfig === 'object') {
             // Only a filtered subtree gets persisted as specified by
@@ -219,7 +222,7 @@ class PersistenceRegistry {
      * @private
      * @returns {Object}
      */
-    _getPersistedSubtree(subtreeName, subtreeConfig, subtreeDefaults) {
+    _getPersistedSubtree(subtreeName: string, subtreeConfig: Object, subtreeDefaults?: Object) {
         let persistedSubtree = jitsiLocalStorage.getItem(subtreeName);
 
         if (persistedSubtree) {
@@ -254,7 +257,7 @@ class PersistenceRegistry {
      * @param {?Object} defaults - The defaults, if any.
      * @returns {Object}
      */
-    _mergeDefaults(subtree: Object, defaults: ?Object) {
+    _mergeDefaults(subtree: Object, defaults?: Object) {
         if (!defaults) {
             return subtree;
         }

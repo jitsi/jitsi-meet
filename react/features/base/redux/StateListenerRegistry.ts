@@ -1,8 +1,9 @@
-// @flow
-
-import type { Store } from 'redux';
+/* eslint-disable import/order */
+import { Store } from 'redux';
 
 import { equals } from './functions';
+
+// @ts-ignore
 import logger from './logger';
 
 /**
@@ -20,7 +21,7 @@ import logger from './logger';
  * Immutable!
  */
 type Listener
-    = (selection: any, store: Store<*, *>, prevSelection: any) => void;
+    = (selection: any, store: Store<any, any>, prevSelection: any) => void;
 
 /**
  * The type selector supported for registration with
@@ -47,7 +48,7 @@ type RegistrationOptions = {
      * @property {boolean} [deepEquals=false] - Whether or not a deep equals check should be performed on the selection
      * returned by {@link Selector}.
      */
-    deepEquals: ?boolean
+    deepEquals?: boolean
 }
 
 /**
@@ -66,7 +67,7 @@ type SelectorListener = {
     /**
      * The {@link RegistrationOptions} passed during the registration to be applied on the listener.
      */
-    options: ?RegistrationOptions,
+    options?: RegistrationOptions,
 
     /**
      * The {@code Selector} which selects values whose changes are listened to
@@ -86,11 +87,6 @@ class StateListenerRegistry {
      */
     _selectorListeners: Set<SelectorListener> = new Set();
 
-    _listener: ({
-        prevSelections: Map<SelectorListener, any>,
-        store: Store<*, *>
-    }) => void;
-
     /**
      * Invoked by a specific redux store any time an action is dispatched, and
      * some part of the state (tree) may potentially have changed.
@@ -102,7 +98,7 @@ class StateListenerRegistry {
      */
     _listener({ prevSelections, store }: {
             prevSelections: Map<SelectorListener, any>,
-            store: Store<*, *>
+            store: Store<any, any>
     }) {
         for (const selectorListener of this._selectorListeners) {
             const prevSelection = prevSelections.get(selectorListener);
@@ -140,7 +136,7 @@ class StateListenerRegistry {
      * @param {RegistrationOptions} [options] - Any options to be applied to the registration.
      * @returns {void}
      */
-    register(selector: Selector, listener: Listener, options: ?RegistrationOptions) {
+    register(selector: Selector, listener: Listener, options?: RegistrationOptions) {
         this._selectorListeners.add({
             listener,
             selector,
@@ -157,7 +153,7 @@ class StateListenerRegistry {
      * {@code StateListenerRegistry} is to {@code subscribe}.
      * @returns {void}
      */
-    subscribe(store: Store<*, *>) {
+    subscribe(store: Store<any, any>) {
         // XXX If StateListenerRegistry is not utilized by the app to listen to
         // state changes, do not bother subscribing to the store at all.
         if (this._selectorListeners.size) {

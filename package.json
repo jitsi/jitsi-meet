@@ -148,6 +148,7 @@
     "@babel/preset-react": "7.16.0",
     "@babel/runtime": "7.16.0",
     "@jitsi/eslint-config": "4.0.0",
+    "@types/js-md5": "0.4.3",
     "@types/lodash": "4.14.182",
     "@types/react": "17.0.14",
     "@types/react-native": "0.67.6",
