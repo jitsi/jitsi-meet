@@ -196,7 +196,8 @@
     "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
-    "start": "make dev"
+    "start": "make dev",
+    "types": "tsc --noEmit --skipLibCheck"
   },
   "resolutions": {
     "@types/react": "17.0.14",

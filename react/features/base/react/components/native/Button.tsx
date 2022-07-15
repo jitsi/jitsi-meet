@@ -1,3 +1,4 @@
+/* eslint-disable lines-around-comment */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,10 +7,13 @@ import {
     TouchableRipple
 } from 'react-native-paper';
 
+// @ts-ignore
 import BaseTheme from '../../../ui/components/BaseTheme.native';
+// @ts-ignore
 import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
 import { ButtonProps } from '../../types';
 
+// @ts-ignore
 import styles from './styles';
 
 
@@ -62,6 +66,7 @@ const Button: React.FC<ButtonProps> = ({
             <TouchableRipple
                 accessibilityLabel = { accessibilityLabel }
                 disabled = { disabled }
+                // @ts-ignore
                 onPress = { onPress }
                 rippleColor = 'transparent'
                 style = { [
@@ -72,15 +77,16 @@ const Button: React.FC<ButtonProps> = ({
                     style = { [
                         buttonLabelStyles,
                         labelStyle
-                    ] }>{ t(label) }</Text>
+                    ] }>{ t(label ?? '') }</Text>
             </TouchableRipple>
         );
     }
 
     return (
+        // @ts-ignore
         <NativePaperButton
-            accessibilityLabel = { t(accessibilityLabel) }
-            children = { t(label) }
+            accessibilityLabel = { t(accessibilityLabel ?? '') }
+            children = { t(label ?? '') }
             color = { color }
             disabled = { disabled }
             icon = { icon }
