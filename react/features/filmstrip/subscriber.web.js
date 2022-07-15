@@ -72,9 +72,7 @@ StateListenerRegistry.register(
     /* listener */ ({ layout }, store) => {
         switch (layout) {
         case LAYOUTS.TILE_VIEW:
-            if (store.getState()['features/base/participants']?.pinnedParticipant) {
-                pinParticipant(null);
-            }
+            store.dispatch(pinParticipant(null));
             store.dispatch(setTileViewDimensions());
             break;
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
