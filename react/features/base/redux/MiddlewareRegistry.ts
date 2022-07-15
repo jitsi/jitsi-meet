@@ -1,14 +1,11 @@
-/* @flow */
-
-import { applyMiddleware } from 'redux';
-import type { Middleware } from 'redux';
+import { applyMiddleware, Middleware } from 'redux';
 
 /**
  * A registry for Redux middleware, allowing features to register their
  * middleware without needing to create additional inter-feature dependencies.
  */
 class MiddlewareRegistry {
-    _elements: Array<Middleware<*, *>>;
+    _elements: Array<Middleware<any, any>>;
 
     /**
      * Creates a MiddlewareRegistry instance.
@@ -31,7 +28,7 @@ class MiddlewareRegistry {
      * be included (such as middleware from third-party modules).
      * @returns {Middleware}
      */
-    applyMiddleware(...additional: Array<Middleware<*, *>>) {
+    applyMiddleware(...additional: Array<Middleware<any, any>>) {
         // $FlowExpectedError
         return applyMiddleware(...this._elements, ...additional);
     }
@@ -44,7 +41,7 @@ class MiddlewareRegistry {
      * @param {Middleware} middleware - A Redux middleware.
      * @returns {void}
      */
-    register(middleware: Middleware<*, *>) {
+    register(middleware: Middleware<any, any>) {
         this._elements.push(middleware);
     }
 }
