@@ -191,13 +191,12 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "eslint --ext .js,.ts,.tsx --max-warnings 0 .",
+    "lint": "eslint --ext .js,.ts,.tsx --max-warnings 0 . && tsc --noEmit --skipLibCheck",
     "lang-sort": "./resources/lang-sort.sh",
     "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
-    "start": "make dev",
-    "types": "tsc --noEmit --skipLibCheck"
+    "start": "make dev"
   },
   "resolutions": {
     "@types/react": "17.0.14",
