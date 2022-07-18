@@ -3,6 +3,7 @@
 import { withStyles } from '@material-ui/core';
 import React, { Component } from 'react';
 
+import Button from '../../../base/components/common/Button';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
@@ -21,7 +22,6 @@ import {
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
-import FooterButton from './FooterButton';
 import { FooterContextMenu } from './FooterContextMenu';
 import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
@@ -258,21 +258,20 @@ class ParticipantsPane extends Component<Props, State> {
                     {_showFooter && (
                         <div className = { classes.footer }>
                             {_showMuteAllButton && (
-                                <FooterButton
+                                <Button
                                     accessibilityLabel = { t('participantsPane.actions.muteAll') }
-                                    onClick = { this._onMuteAll }>
-                                    {t('participantsPane.actions.muteAll')}
-                                </FooterButton>
+                                    onClick = { this._onMuteAll }
+                                    text = { t('participantsPane.actions.muteAll') }
+                                    type = 'secondary' />
                             )}
                             {_showMoreActionsButton && (
                                 <div className = { classes.footerMoreContainer }>
-                                    <FooterButton
+                                    <Button
                                         accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
+                                        icon = { IconHorizontalPoints }
                                         id = 'participants-pane-context-menu'
-                                        isIconButton = { true }
-                                        onClick = { this._onToggleContext }>
-                                        <Icon src = { IconHorizontalPoints } />
-                                    </FooterButton>
+                                        onClick = { this._onToggleContext }
+                                        type = 'secondary' />
                                     <FooterContextMenu
                                         isOpen = { contextOpen }
                                         onDrawerClose = { this._onDrawerClose }

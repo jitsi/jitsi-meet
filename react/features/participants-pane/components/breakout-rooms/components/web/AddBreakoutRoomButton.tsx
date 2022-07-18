@@ -1,36 +1,26 @@
-// @flow
-
-import { makeStyles } from '@material-ui/core/styles';
+/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import Button from '../../../../../base/components/common/Button';
+// @ts-ignore
 import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
-import ParticipantPaneBaseButton from '../../../web/ParticipantPaneBaseButton';
-
-const useStyles = makeStyles(() => {
-    return {
-        button: {
-            width: '100%'
-        }
-    };
-});
 
 export const AddBreakoutRoomButton = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const styles = useStyles();
 
     const onAdd = useCallback(() =>
         dispatch(createBreakoutRoom())
     , [ dispatch ]);
 
     return (
-        <ParticipantPaneBaseButton
+        <Button
             accessibilityLabel = { t('breakoutRooms.actions.add') }
-            className = { styles.button }
-            onClick = { onAdd }>
-            {t('breakoutRooms.actions.add')}
-        </ParticipantPaneBaseButton>
+            fullWidth = { true }
+            onClick = { onAdd }
+            text = { t('breakoutRooms.actions.add') }
+            type = 'secondary' />
     );
 };
