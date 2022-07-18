@@ -1,11 +1,16 @@
+/* eslint-disable lines-around-comment */
 import React from 'react';
 import { TouchableRipple } from 'react-native-paper';
 
+// @ts-ignore
 import { Icon } from '../../../icons';
+// @ts-ignore
 import BaseTheme from '../../../ui/components/BaseTheme.native';
+// @ts-ignore
 import { BUTTON_TYPES } from '../../constants';
 import { IconButtonProps } from '../../types';
 
+// @ts-ignore
 import styles from './styles';
 
 
@@ -48,6 +53,7 @@ const IconButton: React.FC<IconButtonProps> = ({
         <TouchableRipple
             accessibilityLabel = { accessibilityLabel }
             disabled = { disabled }
+            // @ts-ignore
             onPress = { onPress }
             rippleColor = { rippleColor }
             style = { [

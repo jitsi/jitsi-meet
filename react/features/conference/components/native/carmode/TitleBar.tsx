@@ -1,16 +1,25 @@
+/* eslint-disable lines-around-comment */
 import React from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { useSelector } from 'react-redux';
 
+// @ts-ignore
 import { getConferenceName } from '../../../../base/conference/functions';
+// @ts-ignore
 import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../../base/flags';
+// @ts-ignore
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
+// @ts-ignore
 import { getLocalParticipant } from '../../../../base/participants';
-import { connect } from '../../../../base/redux';
+import { connect } from '../../../../base/redux/functions';
+// @ts-ignore
 import ConnectionIndicator from '../../../../connection-indicator/components/native/ConnectionIndicator';
+// @ts-ignore
 import RecordingLabel from '../../../../recording/components/native/RecordingLabel';
+// @ts-ignore
 import { VideoQualityLabel } from '../../../../video-quality';
 
+// @ts-ignore
 import styles from './styles';
 
 
@@ -36,7 +45,7 @@ type Props = {
  * @returns {JSX.Element}
  */
 const TitleBar = (props: Props) : JSX.Element => {
-    const localParticipant = useSelector(getLocalParticipant);
+    const localParticipant: any = useSelector(getLocalParticipant);
     const localParticipantId = localParticipant?.id;
 
     return (<>
@@ -78,7 +87,7 @@ const TitleBar = (props: Props) : JSX.Element => {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: any) {
     const { hideConferenceSubject } = state['features/base/config'];
 
     return {

@@ -1,6 +1,9 @@
+/* eslint-disable lines-around-comment */
 import React from 'react';
 
+// @ts-ignore
 import { Icon, IconVolumeEmpty } from '../../../../base/icons';
+// @ts-ignore
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 
 /**

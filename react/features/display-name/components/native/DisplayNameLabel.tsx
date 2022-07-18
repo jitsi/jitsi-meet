@@ -4,9 +4,12 @@ import { Text, View } from 'react-native';
 import {
     getParticipantById,
     getParticipantDisplayName
+
+    // @ts-ignore
 } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 
+// @ts-ignore
 import styles from './styles';
 
 type Props = {
@@ -65,7 +68,7 @@ class DisplayNameLabel extends React.Component<Props> {
  * @param {Props} ownProps - The own props of the component.
  * @returns {Props}
  */
-function _mapStateToProps(state: any, ownProps) {
+function _mapStateToProps(state: any, ownProps: any) {
     const participant = getParticipantById(state, ownProps.participantId);
 
     return {

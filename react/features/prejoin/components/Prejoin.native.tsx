@@ -1,3 +1,4 @@
+/* eslint-disable lines-around-comment */
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,28 +12,47 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+// @ts-ignore
 import { appNavigate } from '../../app/actions.native';
+// @ts-ignore
 import { setAudioOnly } from '../../base/audio-only/actions';
+// @ts-ignore
 import { connect } from '../../base/connection/actions.native';
+// @ts-ignore
 import { IconClose } from '../../base/icons';
+// @ts-ignore
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
+// @ts-ignore
 import { getLocalParticipant } from '../../base/participants';
+// @ts-ignore
 import { getFieldValue } from '../../base/react';
 import Button from '../../base/react/components/native/Button';
+// @ts-ignore
 import { BUTTON_TYPES } from '../../base/react/constants';
+// @ts-ignore
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
+// @ts-ignore
 import { updateSettings } from '../../base/settings';
+// @ts-ignore
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import { BrandingImageBackground } from '../../dynamic-branding';
+// @ts-ignore
 import { LargeVideo } from '../../large-video/components';
+// @ts-ignore
 import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNavigationButton';
+// @ts-ignore
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
+// @ts-ignore
 import { screen } from '../../mobile/navigation/routes';
+// @ts-ignore
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
+// @ts-ignore
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
+// @ts-ignore
 import { isDisplayNameRequired } from '../functions';
 import { PrejoinProps } from '../types';
 
+// @ts-ignore
 import styles from './styles';
 
 
