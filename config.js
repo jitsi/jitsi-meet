@@ -93,6 +93,10 @@ var config = {
         // Enables sending multiple video streams, i.e., camera and desktop tracks can be shared in the conference
         // separately as two different streams instead of one composite stream.
         // sendMultipleVideoStreams: false
+
+        // Signal that this client supports receiving multiple video streams. Without this flag jicofo will enable
+        // multi-stream backward compatibility.
+        receiveMultipleVideoStreams: true
     },
 
     // Disables moderator indicators.
