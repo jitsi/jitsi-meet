@@ -24,6 +24,7 @@ import { getLocalParticipant, hasRaisedHand, raiseHand } from '../../../base/par
 
 // @ts-ignore
 import { connect } from '../../../base/redux';
+import { Theme } from '../../../base/ui/types';
 
 // @ts-ignore
 import { GifsMenu, GifsMenuButton } from '../../../gifs/components';
@@ -97,7 +98,7 @@ type Props = {
     t: Function
 };
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         overflow: {
             width: 'auto',

@@ -240,44 +240,30 @@ export const typography = {
         letterSpacing: 0.16
     },
 
-    labelButton: {
-        fontSize: 14,
-        lineHeight: 24,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
-
-    labelButtonLarge: {
-        fontSize: 16,
-        lineHeight: 24,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
-
     bodyShortRegular: {
         fontSize: 14,
-        lineHeight: 18,
+        lineHeight: 20,
         fontWeight: font.weightRegular,
         letterSpacing: 0
     },
 
     bodyShortBold: {
         fontSize: 14,
-        lineHeight: 18,
+        lineHeight: 20,
         fontWeight: font.weightSemiBold,
         letterSpacing: 0
     },
 
     bodyShortRegularLarge: {
         fontSize: 16,
-        lineHeight: 24,
+        lineHeight: 22,
         fontWeight: font.weightRegular,
         letterSpacing: 0
     },
 
     bodyShortBoldLarge: {
         fontSize: 16,
-        lineHeight: 24,
+        lineHeight: 22,
         fontWeight: font.weightSemiBold,
         letterSpacing: 0
     },
@@ -299,6 +285,13 @@ export const typography = {
     bodyLongBold: {
         fontSize: 14,
         lineHeight: 24,
+        fontWeight: font.weightSemiBold,
+        letterSpacing: 0
+    },
+
+    bodyLongBoldLarge: {
+        fontSize: 16,
+        lineHeight: 26,
         fontWeight: font.weightSemiBold,
         letterSpacing: 0
     },
@@ -345,8 +338,25 @@ export const typography = {
         letterSpacing: 0
     },
 
+
+    // These styles are no longer part of the Design System.
+    // They should be replaced and removed.
     heading7: {
         fontSize: 14,
+        lineHeight: 24,
+        fontWeight: font.weightSemiBold,
+        letterSpacing: 0
+    },
+
+    labelButton: {
+        fontSize: 14,
+        lineHeight: 24,
+        fontWeight: font.weightSemiBold,
+        letterSpacing: 0
+    },
+
+    labelButtonLarge: {
+        fontSize: 16,
         lineHeight: 24,
         fontWeight: font.weightSemiBold,
         letterSpacing: 0
