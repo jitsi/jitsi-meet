@@ -1,3 +1,4 @@
+/* eslint-disable lines-around-comment */
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
@@ -36,10 +37,14 @@ import SpeakerStats
     from '../../../../../speaker-stats/components/native/SpeakerStats';
 // @ts-ignore
 import HelpView from '../../../../../welcome/components/native/HelpView';
+// @ts-ignore
 import PrivacyView from '../../../../../welcome/components/native/PrivacyView';
+// @ts-ignore
 import TermsView from '../../../../../welcome/components/native/TermsView';
 import SettingsView
+// @ts-ignore
     from '../../../../../welcome/components/native/settings/components/SettingsView';
+// @ts-ignore
 import { screen } from '../../../routes';
 import {
     carmodeScreenOptions,

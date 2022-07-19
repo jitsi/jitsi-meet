@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useEffect } from 'react';
 
 import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';

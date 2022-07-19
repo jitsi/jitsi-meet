@@ -1,8 +1,15 @@
+/* eslint-disable lines-around-comment */
+// @ts-ignore
 import { translate } from '../../../../base/i18n';
+// @ts-ignore
 import { IconSettings } from '../../../../base/icons';
+// @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
+// @ts-ignore
 import { navigate }
+// @ts-ignore
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+// @ts-ignore
 import { screen } from '../../../../mobile/navigation/routes';
 
 /**
