@@ -12,6 +12,7 @@ import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/component
 
 // @ts-ignore
 import { isLocalParticipantModerator } from '../../../../../base/participants';
+import { Theme } from '../../../../../base/ui/types';
 
 // @ts-ignore
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
@@ -57,7 +58,7 @@ type Props = {
     onSelect: Function
 };
 
-const useStyles = makeStyles((theme:any) => {
+const useStyles = makeStyles((theme: Theme) => {
     return {
         text: {
             color: theme.palette.text02,
