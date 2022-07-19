@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../redux';
+import ReducerRegistry from '../redux/ReducerRegistry';
 
 import {
     LIB_DID_DISPOSE,
@@ -15,9 +13,14 @@ import {
  */
 const DEFAULT_STATE = {};
 
+export interface ILibJitsiMeetState {
+    initError?: Error;
+    initialized?: boolean;
+}
+
 ReducerRegistry.register(
     'features/base/lib-jitsi-meet',
-    (state = DEFAULT_STATE, action) => {
+    (state: ILibJitsiMeetState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case LIB_DID_DISPOSE:
             return DEFAULT_STATE;

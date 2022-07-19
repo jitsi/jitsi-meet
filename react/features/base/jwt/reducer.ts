@@ -1,8 +1,11 @@
-// @flow
-
-import { equals, ReducerRegistry } from '../redux';
+import ReducerRegistry from '../redux/ReducerRegistry';
+import { equals } from '../redux/functions';
 
 import { SET_JWT } from './actionTypes';
+
+export interface IJwtState {
+    jwt?: string;
+}
 
 /**
  * Reduces redux actions which affect the JSON Web Token (JWT) stored in the
@@ -15,10 +18,10 @@ import { SET_JWT } from './actionTypes';
  */
 ReducerRegistry.register(
     'features/base/jwt',
-    (state = {}, action) => {
+    (state: IJwtState = {}, action) => {
         switch (action.type) {
         case SET_JWT: {
-            // eslint-disable-next-line no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { type, ...payload } = action;
             const nextState = {
                 ...payload

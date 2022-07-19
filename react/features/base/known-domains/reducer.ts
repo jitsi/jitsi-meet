@@ -1,7 +1,6 @@
-// @flow
-
 import { APP_WILL_MOUNT } from '../app/actionTypes';
-import { PersistenceRegistry, ReducerRegistry } from '../redux';
+import PersistenceRegistry from '../redux/PersistenceRegistry';
+import ReducerRegistry from '../redux/ReducerRegistry';
 
 import { ADD_KNOWN_DOMAINS } from './actionTypes';
 
@@ -26,7 +25,7 @@ const STORE_NAME = 'features/base/known-domains';
 
 PersistenceRegistry.register(STORE_NAME);
 
-ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register(STORE_NAME, (state: Array<string> = DEFAULT_STATE, action) => {
     switch (action.type) {
     case ADD_KNOWN_DOMAINS:
         return _addKnownDomains(state, action.knownDomains);
@@ -50,7 +49,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
  * @private
  * @returns {Object} The next redux state.
  */
-function _addKnownDomains(state, knownDomains) {
+function _addKnownDomains(state: Array<string>, knownDomains: Array<string>) {
     // In case persistence has deserialized a weird redux state:
     let nextState = Array.isArray(state) ? state : [];
 
