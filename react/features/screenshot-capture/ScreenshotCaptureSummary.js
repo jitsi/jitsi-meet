@@ -16,6 +16,7 @@ import {
     POLL_INTERVAL,
     SET_INTERVAL
 } from './constants';
+import logger from './logger';
 import { processScreenshot } from './processScreenshot';
 import { timerWorkerScript } from './worker';
 
@@ -211,7 +212,7 @@ export default class ScreenshotCaptureSummary {
                     try {
                         this._doProcessScreenshot(imageData);
                     } catch (err) {
-                        console.error(err);
+                        logger.error(err);
                     }
                 }
             });
