@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import Button from '../../../../../base/components/common/Button';
+import { BUTTON_TYPES } from '../../../../../base/react/constants';
 // @ts-ignore
 import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
 
@@ -19,8 +20,8 @@ export const AddBreakoutRoomButton = () => {
         <Button
             accessibilityLabel = { t('breakoutRooms.actions.add') }
             fullWidth = { true }
+            label = { t('breakoutRooms.actions.add') }
             onClick = { onAdd }
-            text = { t('breakoutRooms.actions.add') }
-            type = 'secondary' />
+            type = { BUTTON_TYPES.SECONDARY } />
     );
 };

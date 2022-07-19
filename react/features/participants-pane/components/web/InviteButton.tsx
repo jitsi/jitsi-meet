@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import Button from '../../../base/components/common/Button';
 import { IconInviteMore } from '../../../base/icons/svg/index';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 // @ts-ignore
 import { beginAddPeople } from '../../../invite';
 
@@ -24,8 +25,8 @@ export const InviteButton = () => {
             accessibilityLabel = { t('participantsPane.actions.invite') }
             fullWidth = { true }
             icon = { IconInviteMore }
+            label = { t('participantsPane.actions.invite') }
             onClick = { onInvite }
-            text = { t('participantsPane.actions.invite') }
-            type = 'primary' />
+            type = { BUTTON_TYPES.PRIMARY } />
     );
 };

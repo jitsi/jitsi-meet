@@ -17,7 +17,9 @@ module.exports = {
                 '@typescript-eslint/no-empty-function': 'off',
                 '@typescript-eslint/ban-types': 'off',
                 '@typescript-eslint/no-explicit-any': 'off',
-                'no-prototype-builtins': 'off'
+                'no-prototype-builtins': 'off',
+                'no-shadow': 'off',
+                '@typescript-eslint/no-shadow': [ 'error' ]
             },
             'plugins': [ '@typescript-eslint' ],
             'extends': [

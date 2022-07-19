@@ -2,7 +2,6 @@ import { ButtonProps } from '../components/common/types';
 
 export interface IButtonProps extends ButtonProps {
     color?: string;
-    label?: string;
     labelStyle?: Object|undefined;
     onPress?: Function;
     style?: Object|undefined;

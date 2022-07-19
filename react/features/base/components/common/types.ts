@@ -1,3 +1,5 @@
+import { BUTTON_TYPES } from '../../react/constants';
+
 export interface ButtonProps {
 
     /**
@@ -16,7 +18,12 @@ export interface ButtonProps {
     icon?: Function;
 
     /**
+     * The text to be displayed on the button.
+     */
+    label?: string;
+
+    /**
      * The type of button to be displayed.
      */
-    type?: 'primary' | 'secondary' | 'tertiary' | 'destructive';
+    type?: BUTTON_TYPES;
 }

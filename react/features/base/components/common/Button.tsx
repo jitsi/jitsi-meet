@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import React from 'react';
 
 import Icon from '../../icons/components/Icon';
+import { BUTTON_TYPES } from '../../react/constants';
 import { withPixelLineHeight } from '../../styles/functions.web';
 
 import { ButtonProps } from './types';
@@ -28,11 +29,6 @@ interface IButtonProps extends ButtonProps {
      * Which size the button should be.
      */
     size?: 'small' | 'medium' | 'large';
-
-    /**
-     * The text to be displayed on the button.
-     */
-    text?: string;
 }
 
 const useStyles = makeStyles((theme: any) => {
@@ -170,10 +166,10 @@ const Button = ({
     fullWidth,
     icon,
     id,
+    label,
     onClick,
     size = 'medium',
-    text,
-    type = 'primary'
+    type = BUTTON_TYPES.PRIMARY
 }: IButtonProps) => {
     const styles = useStyles();
 
@@ -182,7 +178,7 @@ const Button = ({
             aria-label = { accessibilityLabel }
             className = { clsx(styles.button, styles[type],
                 disabled && styles.disabled,
-                icon && !text && `${styles.iconButton} iconButton`,
+                icon && !label && `${styles.iconButton} iconButton`,
                 styles[size], fullWidth && styles.fullWidth) }
             disabled = { disabled }
             { ...(id ? { id } : {}) }
@@ -191,7 +187,7 @@ const Button = ({
             {icon && <Icon
                 size = { 20 }
                 src = { icon } />}
-            {text && <span className = { icon ? styles.textWithIcon : '' }>{text}</span>}
+            {label && <span className = { icon ? styles.textWithIcon : '' }>{label}</span>}
         </button>
     );
 };

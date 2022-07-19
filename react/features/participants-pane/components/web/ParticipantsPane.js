@@ -9,6 +9,7 @@ import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
@@ -260,9 +261,9 @@ class ParticipantsPane extends Component<Props, State> {
                             {_showMuteAllButton && (
                                 <Button
                                     accessibilityLabel = { t('participantsPane.actions.muteAll') }
+                                    label = { t('participantsPane.actions.muteAll') }
                                     onClick = { this._onMuteAll }
-                                    text = { t('participantsPane.actions.muteAll') }
-                                    type = 'secondary' />
+                                    type = { BUTTON_TYPES.SECONDARY } />
                             )}
                             {_showMoreActionsButton && (
                                 <div className = { classes.footerMoreContainer }>
@@ -271,7 +272,7 @@ class ParticipantsPane extends Component<Props, State> {
                                         icon = { IconHorizontalPoints }
                                         id = 'participants-pane-context-menu'
                                         onClick = { this._onToggleContext }
-                                        type = 'secondary' />
+                                        type = { BUTTON_TYPES.SECONDARY } />
                                     <FooterContextMenu
                                         isOpen = { contextOpen }
                                         onDrawerClose = { this._onDrawerClose }
