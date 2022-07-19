@@ -208,7 +208,11 @@ export default class ScreenshotCaptureSummary {
             .setReturnEarlyThreshold(PERCENTAGE_LOWER_BOUND)
             .onComplete(resultData => {
                 if (resultData.rawMisMatchPercentage > PERCENTAGE_LOWER_BOUND) {
-                    this._doProcessScreenshot(imageData);
+                    try {
+                        this._doProcessScreenshot(imageData);
+                    } catch (err) {
+                        console.error(err);
+                    }
                 }
             });
     }
