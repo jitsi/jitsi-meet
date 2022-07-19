@@ -23,7 +23,9 @@ import {
     hideNotification,
     showNotification,
     showParticipantJoinedNotification,
-    showParticipantLeftNotification
+    showParticipantLeftNotification,
+    showShareStoppedNotification,
+    showShareStartedNotification
 } from './actions';
 import {
     NOTIFICATION_TIMEOUT_TYPE,
@@ -132,9 +134,14 @@ MiddlewareRegistry.register(store => next => action => {
         if (conference
             && !p.local
             && !p.isVirtualScreenshareParticipant
+            && !p.isFakeParticipant
             && !joinLeaveNotificationsDisabled()
             && !p.isReplacing) {
             dispatch(showParticipantJoinedNotification(
+                getParticipantDisplayName(state, p.id)
+            ));
+        } else if (p && p.isFakeParticipant) {
+            dispatch(showShareStartedNotification(
                 getParticipantDisplayName(state, p.id)
             ));
         }
@@ -152,8 +159,13 @@ MiddlewareRegistry.register(store => next => action => {
             if (participant
                 && !participant.local
                 && !participant.isVirtualScreenshareParticipant
+                && !participant.isFakeParticipant
                 && !action.participant.isReplaced) {
                 dispatch(showParticipantLeftNotification(
+                    getParticipantDisplayName(state, participant.id)
+                ));
+            } else if (participant && participant.isFakeParticipant) {
+                dispatch(showShareStoppedNotification(
                     getParticipantDisplayName(state, participant.id)
                 ));
             }

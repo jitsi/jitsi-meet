@@ -1,0 +1,8 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+    <title>shared-iframe</title>
+    <rect x="2.021" y="2" width="12" height="12" style="stroke: rgb(255, 255, 255); fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2px;"/>
+    <rect x="17" y="2" width="12" height="12" style="stroke: rgb(255, 255, 255); fill: none; stroke-linejoin: round; stroke-width: 2px;"/>
+    <rect x="2" y="17" width="12" height="12" style="stroke: rgb(255, 255, 255); fill: none; stroke-linejoin: round; stroke-width: 2px;"/>
+    <ellipse style="stroke: rgb(255, 255, 255); fill: none; stroke-width: 2px;" cx="23" cy="23" rx="6" ry="6"/>
+</svg>

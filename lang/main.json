@@ -698,6 +698,8 @@
         "screenShareNoAudio": "Share audio box was not checked in the window selection screen.",
         "screenShareNoAudioTitle": "Couldn't share system audio!",
         "selfViewTitle": "You can always un-hide the self-view from settings",
+        "shareStarted": "Shared {{shareTitle}} is now available",
+        "shareStopped": "Shared {{shareTitle}} is not shared anymore",
         "somebody": "Somebody",
         "startSilentDescription": "Rejoin the meeting to enable audio",
         "startSilentTitle": "You joined with no audio output!",
@@ -1002,6 +1004,9 @@
         "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this meeting\n{{dialInfoPageUrl}}",
         "mainText": "Click the following link to join the meeting:\n{{roomUrl}}"
     },
+    "sharedIFrame": {
+        "title": "Shared Document"
+    },
     "speaker": "Speaker",
     "speakerStats": {
         "angry": "Angry",
@@ -1090,6 +1095,7 @@
             "shareRoom": "Invite someone",
             "shareYourScreen": "Start / Stop sharing your screen",
             "shareaudio": "Share audio",
+            "sharediframe": "Toggle {{iframename}} sharing",
             "sharedvideo": "Toggle video sharing",
             "shortcuts": "Toggle shortcuts",
             "show": "Show on stage",
@@ -1116,6 +1122,7 @@
         "closeChat": "Close chat",
         "closeReactionsMenu": "Close reactions menu",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
+        "disabledSharedIFrame": "Someone else is already sharing {{iframename}}.",
         "dock": "Dock in main window",
         "documentClose": "Close shared document",
         "documentOpen": "Open shared document",
@@ -1171,6 +1178,7 @@
         "selectBackground": "Select background",
         "shareRoom": "Invite someone",
         "shareaudio": "Share audio",
+        "sharediframe": "Share {{iframename}}",
         "sharedvideo": "Share video",
         "shortcuts": "View shortcuts",
         "silence": "Silence",
@@ -1179,6 +1187,7 @@
         "startSubtitles": "Start subtitles",
         "stopAudioSharing": "Stop audio sharing",
         "stopScreenSharing": "Stop screen sharing",
+        "stopSharedIFrame": "Stop {{iframename}}",
         "stopSharedVideo": "Stop video",
         "stopSubtitles": "Stop subtitles",
         "surprised": "Surprised",

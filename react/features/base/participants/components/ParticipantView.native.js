@@ -3,7 +3,13 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
+import {
+    getParticipantByIdOrUndefined
+} from '../../../base/participants';
+import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 import { SharedVideo } from '../../../shared-video/components/native';
+import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from '../../../shared-video/constants';
 import { Avatar } from '../../avatar';
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
@@ -12,7 +18,7 @@ import { Container, TintedView } from '../../react';
 import { connect } from '../../redux';
 import { TestHint } from '../../testing/components';
 import { getVideoTrackByParticipant } from '../../tracks';
-import { shouldRenderParticipantVideo, getParticipantById } from '../functions';
+import { shouldRenderParticipantVideo } from '../functions';
 
 import styles from './styles';
 
@@ -43,6 +49,13 @@ type Props = {
      * @private
      */
     _participantName: string,
+
+    /**
+     * Whether the current participant is an IFrame participant.
+     *
+     * @private
+     */
+    _isIFrameParticipant: string,
 
     /**
      * True if the video should be rendered, false otherwise.
@@ -175,6 +188,8 @@ class ParticipantView extends Component<Props> {
         const {
             _connectionStatus: connectionStatus,
             _isFakeParticipant,
+            _isIFrameParticipant,
+            _participantName,
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
             disableVideo,
@@ -190,11 +205,23 @@ class ParticipantView extends Component<Props> {
                 ? this.props.testHintId
                 : `org.jitsi.meet.Participant#${this.props.participantId}`;
 
-        const renderSharedVideo = _isFakeParticipant && !disableVideo;
+        const renderSharedVideo = _isFakeParticipant
+            && (
+                _participantName === VIDEO_PLAYER_PARTICIPANT_NAME
+                || _participantName === YOUTUBE_PLAYER_PARTICIPANT_NAME)
+            && !disableVideo;
+
+        const navigateToSharedIframe = () => navigate(screen.conference.sharedIFrame, {
+            key: _participantName }
+        );
 
         return (
             <Container
-                onClick = { renderVideo || renderSharedVideo ? undefined : onPress }
+                onClick = {
+                    renderVideo || renderSharedVideo
+                        ? undefined : _isIFrameParticipant
+                            ? navigateToSharedIframe
+                            : onPress }
                 style = {{
                     ...styles.participantView,
                     ...this.props.style
@@ -247,16 +274,18 @@ class ParticipantView extends Component<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const { disableVideo, participantId } = ownProps;
-    const participant = getParticipantById(state, participantId);
+    const participant = getParticipantByIdOrUndefined(state, participantId);
     const tracks = state['features/base/tracks'];
     const videoTrack = getVideoTrackByParticipant(tracks, participant);
+    const { sharedIFrames } = state['features/base/config'];
     let connectionStatus;
-    let participantName;
+    const participantName = participant?.name;
 
     return {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
+        _isIFrameParticipant: Object.keys(sharedIFrames.frames || {}).includes(participantName),
         _isFakeParticipant: participant && participant.isFakeParticipant,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,

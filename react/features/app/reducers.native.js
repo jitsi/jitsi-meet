@@ -7,6 +7,7 @@ import '../mobile/external-api/reducer';
 import '../mobile/full-screen/reducer';
 import '../mobile/watchos/reducer';
 import '../shared-video/reducer';
+import '../shared-iframe/reducer';
 
 import './reducer.native';
 

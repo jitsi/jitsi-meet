@@ -32,6 +32,7 @@ import SalesforceLinkDialog
 import SecurityDialog
 // @ts-ignore
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
+import { SharedIFrame } from '../../../../../shared-iframe';
 import SpeakerStats
 // @ts-ignore
     from '../../../../../speaker-stats/components/native/SpeakerStats';
@@ -51,6 +52,7 @@ import {
     salesforceScreenOptions,
     securityScreenOptions,
     sharedDocumentScreenOptions,
+    sharedIFrameScreenOptions,
     speakerStatsScreenOptions
     // @ts-ignore
 } from '../../../screenOptions';
@@ -161,6 +163,13 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...sharedDocumentScreenOptions,
                         title: t('documentSharing.title')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { SharedIFrame }
+                    name = { screen.conference.sharedIFrame }
+                    options = {{
+                        ...sharedIFrameScreenOptions,
+                        title: t('sharedIFrame.title')
                     }} />
                 <ConferenceStack.Screen
                     component = { CarMode }
