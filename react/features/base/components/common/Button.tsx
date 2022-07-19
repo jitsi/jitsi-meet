@@ -5,27 +5,14 @@ import React from 'react';
 import Icon from '../../icons/components/Icon';
 import { withPixelLineHeight } from '../../styles/functions.web';
 
-interface ButtonProps {
+import { ButtonProps } from './types';
 
-    /**
-     * Label used for accessibility.
-     */
-    accessibilityLabel: string;
-
-    /**
-     * Whether or not the button is disabled.
-     */
-    disabled?: boolean;
+interface IButtonProps extends ButtonProps {
 
     /**
      * Whether or not the button should be full width.
      */
     fullWidth?: boolean,
-
-    /**
-     * The icon to be displayed on the button.
-     */
-    icon?: Function;
 
     /**
      * The id of the button.
@@ -46,11 +33,6 @@ interface ButtonProps {
      * The text to be displayed on the button.
      */
     text?: string;
-
-    /**
-     * The type of button to be displayed.
-     */
-    type?: 'primary' | 'secondary' | 'tertiary' | 'destructive';
 }
 
 const useStyles = makeStyles((theme: any) => {
@@ -192,7 +174,7 @@ const Button = ({
     size = 'medium',
     text,
     type = 'primary'
-}: ButtonProps) => {
+}: IButtonProps) => {
     const styles = useStyles();
 
     return (
