@@ -55,6 +55,7 @@ class Chat extends AbstractChat<Props> {
             <JitsiScreen
                 hasBottomTextInput = { true }
                 hasTabNavigator = { true }
+                keyboardAlreadyDismissible = { true }
                 style = { styles.chatContainer }>
                 <MessageContainer messages = { _messages } />
                 <MessageRecipient privateMessageRecipient = { privateMessageRecipient } />
