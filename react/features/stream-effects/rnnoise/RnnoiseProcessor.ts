@@ -2,8 +2,8 @@
 
 interface RnnoiseModule extends EmscriptenModule {
     _rnnoise_create() : number;
-    _rnnoise_process_frame(context: number, input: number, output: number): number;
     _rnnoise_destroy(context: number): void;
+    _rnnoise_process_frame(context: number, input: number, output: number): number;
 }
 
 /**
