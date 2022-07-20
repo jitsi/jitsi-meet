@@ -1,8 +1,10 @@
-// @flow
-
+/* eslint-disable import/order */
 import React, { useCallback } from 'react';
 
+// @ts-ignore
 import { Container } from '../../react/base';
+
+// @ts-ignore
 import { styleTypeToObject } from '../../styles';
 
 type Props = {
@@ -15,7 +17,7 @@ type Props = {
     /**
      * Color of the icon (if not provided by the style object).
      */
-    color?: ?string,
+    color?: string,
 
     /**
      * Id prop (mainly for autotests).
@@ -35,7 +37,7 @@ type Props = {
     /**
      * The size of the icon (if not provided by the style object).
      */
-    size?: ?number | string,
+    size?: number | string,
 
     /**
      * The preloaded icon component to render.
@@ -82,12 +84,12 @@ type Props = {
      */
     ariaControls?: string,
 
-      /**
+    /**
      * TabIndex  for the Icon.
      */
     tabIndex?: number,
 
-     /**
+    /**
      * Role for the Icon.
      */
     role?: string,
@@ -110,7 +112,7 @@ export const DEFAULT_SIZE = navigator.product === 'ReactNative' ? 36 : 22;
  * Implements an Icon component that takes a loaded SVG file as prop and renders it as an icon.
  *
  * @param {Props} props - The props of the component.
- * @returns {Reactelement}
+ * @returns {ReactElement}
  */
 export default function Icon(props: Props) {
     const {

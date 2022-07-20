@@ -1,5 +1,3 @@
-// @flow
-
 export { default as IconAdd } from './add.svg';
 export { default as IconAddPeople } from './link.svg';
 export { default as IconArrowBack } from './arrow_back.svg';

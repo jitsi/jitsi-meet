@@ -11,13 +11,13 @@ import {
 import BaseTheme from '../../../ui/components/BaseTheme.native';
 // @ts-ignore
 import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
-import { ButtonProps } from '../../types';
+import { IButtonProps } from '../../types';
 
 // @ts-ignore
 import styles from './styles';
 
 
-const Button: React.FC<ButtonProps> = ({
+const Button: React.FC<IButtonProps> = ({
     accessibilityLabel,
     color: buttonColor,
     disabled,
@@ -27,7 +27,7 @@ const Button: React.FC<ButtonProps> = ({
     onPress,
     style,
     type
-}: ButtonProps) => {
+}: IButtonProps) => {
     const { t } = useTranslation();
     const { CONTAINED } = BUTTON_MODES;
     const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;

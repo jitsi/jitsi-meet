@@ -1,13 +1,10 @@
-export interface ButtonProps {
-    accessibilityLabel?: string;
+import { ButtonProps } from '../components/common/types';
+
+export interface IButtonProps extends ButtonProps {
     color?: string;
-    disabled?: boolean;
-    icon?: JSX.Element;
-    label?: string;
     labelStyle?: Object|undefined;
     onPress?: Function;
     style?: Object|undefined;
-    type?: string;
 }
 
 export interface IconButtonProps {

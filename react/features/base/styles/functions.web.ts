@@ -1,7 +1,7 @@
-// @flow
+// @ts-ignore
+import { StyleType } from './functions.any';
 
-import { type StyleType } from './functions.any';
-
+// @ts-ignore
 export * from './functions.any';
 
 /**
@@ -32,7 +32,7 @@ export function getFixedPlatformStyle(style: StyleType): StyleType {
  * @param {Object} base - The base object containing the `lineHeight` property.
  * @returns {Object}
  */
-export function withPixelLineHeight(base: Object): Object {
+export function withPixelLineHeight(base: any): Object {
     return {
         ...base,
         lineHeight: `${base.lineHeight}px`
