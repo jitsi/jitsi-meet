@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference/actionTypes';
-import { ReducerRegistry } from '../redux';
+import ReducerRegistry from '../redux/ReducerRegistry';
 import { TRACK_REMOVED } from '../tracks/actionTypes';
 
 import {
@@ -49,7 +49,7 @@ export const _AUDIO_INITIAL_MEDIA_STATE = {
  * @private
  * @returns {AudioMediaState}
  */
-function _audio(state = _AUDIO_INITIAL_MEDIA_STATE, action) {
+function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: any) {
     switch (action.type) {
     case SET_AUDIO_AVAILABLE:
         return {
@@ -103,7 +103,7 @@ export const _SCREENSHARE_INITIAL_MEDIA_STATE = {
  * @private
  * @returns {ScreenshareMediaState}
  */
-function _screenshare(state = _SCREENSHARE_INITIAL_MEDIA_STATE, action) {
+function _screenshare(state: IScreenshareState = _SCREENSHARE_INITIAL_MEDIA_STATE, action: any) {
     switch (action.type) {
     case SET_SCREENSHARE_MUTED:
         return {
@@ -161,7 +161,7 @@ export const _VIDEO_INITIAL_MEDIA_STATE = {
  * @private
  * @returns {VideoMediaState}
  */
-function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
+function _video(state: IVideoState = _VIDEO_INITIAL_MEDIA_STATE, action: any) {
     switch (action.type) {
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
@@ -216,6 +216,32 @@ function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
     }
 }
 
+interface IAudioState {
+    available: boolean;
+    muted: boolean;
+    unmuteBlocked: boolean;
+}
+
+interface IScreenshareState {
+    available: boolean;
+    muted: number;
+    unmuteBlocked: boolean;
+}
+
+interface IVideoState {
+    available: boolean;
+    facingMode: string;
+    muted: number;
+    transforms: Object;
+    unmuteBlocked: boolean;
+}
+
+export interface IMediaState {
+    audio: IAudioState;
+    screenshare: IScreenshareState;
+    video: IVideoState;
+}
+
 /**
  * Listen for various actions related to media devices.
  *
@@ -239,7 +265,7 @@ ReducerRegistry.register('features/base/media', combineReducers({
  * @private
  * @returns {Object}
  */
-function _clearAllVideoTransforms(state) {
+function _clearAllVideoTransforms(state: IVideoState) {
     return {
         ...state,
         transforms: _VIDEO_INITIAL_MEDIA_STATE.transforms
@@ -254,7 +280,7 @@ function _clearAllVideoTransforms(state) {
  * @private
  * @returns {Object}
  */
-function _storeVideoTransform(state, { streamId, transform }) {
+function _storeVideoTransform(state: IVideoState, { streamId, transform }: { streamId: string, transform: string }) {
     return {
         ...state,
         transforms: {
@@ -273,12 +299,12 @@ function _storeVideoTransform(state, { streamId, transform }) {
  * @private
  * @returns {Object}
  */
-function _trackRemoved(state, { track: { jitsiTrack } }) {
+function _trackRemoved(state: IVideoState, { track: { jitsiTrack } } : {track: {jitsiTrack: any}}) {
     if (jitsiTrack) {
         const streamId = jitsiTrack.getStreamId();
 
         if (streamId && streamId in state.transforms) {
-            const nextTransforms = {
+            const nextTransforms: any = {
                 ...state.transforms
             };
 

@@ -12,8 +12,10 @@ import { IFlagsState } from '../base/flags/reducer';
 import { IJwtState } from '../base/jwt/reducer';
 import { ILastNState } from '../base/lastn/reducer';
 import { ILibJitsiMeetState } from '../base/lib-jitsi-meet/reducer';
+import { ILoggingState } from '../base/logging/reducer';
+import { IMediaState } from '../base/media/reducer';
+import { INetInfoState } from '../base/net-info/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
-
 
 export interface IStore {
     dispatch: Function,
@@ -35,6 +37,9 @@ export interface IState {
     'features/base/jwt': IJwtState,
     'features/base/known-domains': Array<string>,
     'features/base/lastn': ILastNState,
-    'features/base/lib-jitsi-meet': ILibJitsiMeetState
+    'features/base/lib-jitsi-meet': ILibJitsiMeetState,
+    'features/base/logging': ILoggingState,
+    'features/base/media': IMediaState,
+    'features/base/net-info': INetInfoState,
     'features/noise-suppression': INoiseSuppressionState
 }
