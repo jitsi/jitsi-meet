@@ -1,8 +1,8 @@
 export type InitOptions = {
     endpoint: string;
     meetingFqn: string;
-    useLegacy: boolean;
     pollInterval: number;
+    useLegacy: boolean;
 }
 
 export type VideoTypeData = {
@@ -17,8 +17,8 @@ export type DominantSpeakerData = {
 
 export type E2ERTTData = {
     remoteEndpointId: string;
-    rtt: number;
     remoteRegion: string;
+    rtt: number;
 }
 
 export type FaceLandmarksData = {
