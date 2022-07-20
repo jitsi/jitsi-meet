@@ -39,17 +39,14 @@ if (navigator.product === 'ReactNative') {
 
 type LogLevel = 'trace' | 'log' | 'info' | 'warn' | 'error';
 
+interface LoggingLevel {
+    [key: string]: LogLevel;
+}
+
 export interface ILoggingState {
-    config: {
+    config: LoggingLevel & {
         defaultLogLevel: LogLevel;
         disableLogCollector?: boolean;
-        'modules/RTC/TraceablePeerConnection.js': LogLevel;
-        'modules/sdp/SDPUtil.js': LogLevel;
-        'modules/statistics/CallStats.js': LogLevel;
-        'modules/xmpp/ChatRoom.js': LogLevel;
-        'modules/xmpp/JingleSessionPC.js': LogLevel;
-        'modules/xmpp/strophe.jingle.js': LogLevel;
-        'modules/xmpp/strophe.util.js': LogLevel;
     };
     logCollector?: Object;
 }
