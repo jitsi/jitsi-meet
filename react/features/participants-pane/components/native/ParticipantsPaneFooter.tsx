@@ -4,21 +4,15 @@ import { View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 // @ts-ignore
-import { openDialog, openSheet } from '../../../base/dialog';
-// @ts-ignore
-import { IconHorizontalPoints } from '../../../base/icons';
+import { openSheet } from '../../../base/dialog';
 import Button from '../../../base/react/components/native/Button';
-import IconButton from '../../../base/react/components/native/IconButton';
 // @ts-ignore
 import { BUTTON_TYPES } from '../../../base/react/constants';
-import MuteEveryoneDialog
 // @ts-ignore
-    from '../../../video-menu/components/native/MuteEveryoneDialog';
-// @ts-ignore
-import { isMoreActionsVisible, isMuteAllVisible } from '../../functions';
+import { isMoreActionsVisible } from '../../functions';
 
 // @ts-ignore
-import { ContextMenuMore } from './ContextMenuMore';
+import { ModeratorMenu } from './ModeratorMenu';
 // @ts-ignore
 import styles from './styles';
 
@@ -28,34 +22,23 @@ import styles from './styles';
  *
  * @returns { JSX.Element} - The participants pane footer component.
  */
-const ParticipantsPaneFooter = (): JSX.Element => {
+const ParticipantsPaneFooter = (): JSX.Element|null => {
     const dispatch = useDispatch();
-    const openMoreMenu = useCallback(() => dispatch(openSheet(ContextMenuMore)), [ dispatch ]);
-    const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
-        [ dispatch ]);
+    const openMenu = useCallback(() => dispatch(openSheet(ModeratorMenu)), [ dispatch ]);
     const showMoreActions = useSelector(isMoreActionsVisible);
-    const showMuteAll = useSelector(isMuteAllVisible);
+
+    if (!showMoreActions) {
+        return null;
+    }
 
     return (
         <View style = { styles.participantsPaneFooter }>
-            {
-                showMuteAll && (
-                    <Button
-                        accessibilityLabel = 'participantsPane.actions.muteAll'
-                        label = 'participantsPane.actions.muteAll'
-                        onPress = { muteAll }
-                        type = { BUTTON_TYPES.SECONDARY } />
-                )
-            }
-            {
-                showMoreActions && (
-                    <IconButton
-                        onPress = { openMoreMenu }
-                        src = { IconHorizontalPoints }
-                        style = { styles.moreButton }
-                        type = { BUTTON_TYPES.SECONDARY } />
-                )
-            }
+            <Button
+                accessibilityLabel = 'participantsPane.actions.moderator'
+                label = 'participantsPane.actions.moderator'
+                onPress = { openMenu }
+                style = { styles.moreButton }
+                type = { BUTTON_TYPES.SECONDARY } />
         </View>
     );
 };

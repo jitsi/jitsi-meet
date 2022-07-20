@@ -723,6 +723,7 @@
             "audioModeration": "Unmute themselves",
             "blockEveryoneMicCamera": "Block everyone's mic and camera",
             "invite": "Invite Someone",
+            "moderator": "Moderator",
             "moreModerationActions": "More moderation options",
             "moreModerationControls": "More moderation controls",
             "moreParticipantOptions": "More participant options",

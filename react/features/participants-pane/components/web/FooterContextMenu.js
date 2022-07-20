@@ -20,6 +20,7 @@ import { openDialog } from '../../../base/dialog';
 import {
     IconCheck,
     IconHorizontalPoints,
+    IconMicrophoneEmptySlash,
     IconVideoOff
 } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
@@ -33,7 +34,10 @@ import {
     openSettingsDialog,
     shouldShowModeratorSettings
 } from '../../../settings';
-import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
+import {
+    MuteEveryoneDialog,
+    MuteEveryonesVideoDialog
+} from '../../../video-menu/components';
 
 const useStyles = makeStyles(theme => {
     return {
@@ -104,6 +108,9 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
 
     const classes = useStyles();
 
+    const muteAll = useCallback(
+        () => dispatch(openDialog(MuteEveryoneDialog)), [ dispatch ]);
+
     const muteAllVideo = useCallback(
         () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);
 
@@ -140,6 +147,13 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
             onMouseLeave = { onMouseLeave }>
             <ContextMenuItemGroup
                 actions = { [ {
+                    accessibilityLabel: t('participantsPane.actions.muteAll'),
+                    id: 'participants-pane-context-menu-stop-mic',
+                    icon: IconMicrophoneEmptySlash,
+                    onClick: muteAll,
+                    text: t('participantsPane.actions.muteAll')
+                },
+                {
                     accessibilityLabel: t('participantsPane.actions.stopEveryonesVideo'),
                     id: 'participants-pane-context-menu-stop-video',
                     icon: IconVideoOff,

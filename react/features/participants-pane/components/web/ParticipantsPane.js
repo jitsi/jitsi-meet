@@ -5,20 +5,17 @@ import React, { Component } from 'react';
 
 import Button from '../../../base/components/common/Button';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
-import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
+import { Icon, IconClose } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
-import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
 import {
     findAncestorByClass,
     getParticipantsPaneOpen,
-    isMoreActionsVisible,
-    isMuteAllVisible
+    isMoreActionsVisible
 } from '../../functions';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
@@ -56,11 +53,6 @@ type Props = {
      * Whether to show the more actions button.
      */
     _showMoreActionsButton: boolean,
-
-    /**
-     * Whether to show the mute all button.
-     */
-    _showMuteAllButton: boolean,
 
     /**
      * Whether to show the footer menu.
@@ -182,7 +174,6 @@ class ParticipantsPane extends Component<Props, State> {
         this._onClosePane = this._onClosePane.bind(this);
         this._onDrawerClose = this._onDrawerClose.bind(this);
         this._onKeyPress = this._onKeyPress.bind(this);
-        this._onMuteAll = this._onMuteAll.bind(this);
         this._onToggleContext = this._onToggleContext.bind(this);
         this._onWindowClickListener = this._onWindowClickListener.bind(this);
         this.setSearchString = this.setSearchString.bind(this);
@@ -219,7 +210,6 @@ class ParticipantsPane extends Component<Props, State> {
             _showAddRoomButton,
             _showFooter,
             _showMoreActionsButton,
-            _showMuteAllButton,
             classes,
             t
         } = this.props;
@@ -258,19 +248,12 @@ class ParticipantsPane extends Component<Props, State> {
                     </div>
                     {_showFooter && (
                         <div className = { classes.footer }>
-                            {_showMuteAllButton && (
-                                <Button
-                                    accessibilityLabel = { t('participantsPane.actions.muteAll') }
-                                    label = { t('participantsPane.actions.muteAll') }
-                                    onClick = { this._onMuteAll }
-                                    type = { BUTTON_TYPES.SECONDARY } />
-                            )}
                             {_showMoreActionsButton && (
                                 <div className = { classes.footerMoreContainer }>
                                     <Button
                                         accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
-                                        icon = { IconHorizontalPoints }
                                         id = 'participants-pane-context-menu'
+                                        label = { t('participantsPane.actions.moderator') }
                                         onClick = { this._onToggleContext }
                                         type = { BUTTON_TYPES.SECONDARY } />
                                     <FooterContextMenu
@@ -342,17 +325,6 @@ class ParticipantsPane extends Component<Props, State> {
         }
     }
 
-    _onMuteAll: () => void;
-
-    /**
-     * The handler for clicking mute all button.
-     *
-     * @returns {void}
-     */
-    _onMuteAll() {
-        this.props.dispatch(openDialog(MuteEveryoneDialog));
-    }
-
     _onToggleContext: () => void;
 
     /**
@@ -403,7 +375,6 @@ function _mapStateToProps(state: Object) {
         _paneOpen: isPaneOpen,
         _showAddRoomButton: isAddBreakoutRoomButtonVisible(state),
         _showFooter: isLocalParticipantModerator(state),
-        _showMuteAllButton: isMuteAllVisible(state),
         _showMoreActionsButton: isMoreActionsVisible(state)
     };
 }

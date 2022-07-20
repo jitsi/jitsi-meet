@@ -19,17 +19,23 @@ import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
     Icon,
     IconCheck,
+    IconMicrophoneEmptySlash,
     IconVideoOff
 } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getParticipantCount, isEveryoneModerator } from '../../../base/participants';
+import MuteEveryoneDialog from '../../../video-menu/components/native/MuteEveryoneDialog';
 import MuteEveryonesVideoDialog
     from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
 
 import styles from './styles';
 
-export const ContextMenuMore = () => {
+export const ModeratorMenu = () => {
     const dispatch = useDispatch();
+    const muteAll = useCallback(() => {
+        dispatch(openDialog(MuteEveryoneDialog));
+        dispatch(hideSheet());
+    }, [ dispatch ]);
     const muteAllVideo = useCallback(() => {
         dispatch(openDialog(MuteEveryonesVideoDialog));
         dispatch(hideSheet());
@@ -53,6 +59,14 @@ export const ContextMenuMore = () => {
         <BottomSheet
             addScrollViewPadding = { false }
             showSlidingView = { true }>
+            <TouchableOpacity
+                onPress = { muteAll }
+                style = { styles.contextMenuItem }>
+                <Icon
+                    size = { 24 }
+                    src = { IconMicrophoneEmptySlash } />
+                <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.muteAll')}</Text>
+            </TouchableOpacity>
             <TouchableOpacity
                 onPress = { muteAllVideo }
                 style = { styles.contextMenuItem }>
