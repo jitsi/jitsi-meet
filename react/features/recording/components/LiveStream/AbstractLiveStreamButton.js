@@ -11,6 +11,7 @@ import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { FEATURES } from '../../../jaas/constants';
 import { getActiveSession } from '../../functions';
+
 import { getLiveStreaming } from './functions';
 
 
@@ -142,7 +143,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         // its own to be visible or not.
         const isModerator = isLocalParticipantModerator(state);
         const {
-            enableFeaturesBasedOnToken,
+            enableFeaturesBasedOnToken
         } = state['features/base/config'];
         const liveStreaming = getLiveStreaming(state);
         const { features = {} } = getLocalParticipant(state);

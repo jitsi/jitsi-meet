@@ -3,6 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { getShareInfoText } from '../invite';
+import { getLiveStreaming } from '../recording/components/LiveStream/functions';
 
 import {
     SET_GOOGLE_API_PROFILE,
@@ -10,7 +11,6 @@ import {
 } from './actionTypes';
 import { GOOGLE_API_STATES } from './constants';
 import googleApi from './googleApi';
-import { getLiveStreaming } from '../recording/components/LiveStream/functions';
 
 /**
  * Retrieves the current calendar events.

@@ -10,6 +10,9 @@ import { StyleType } from '../../../../base/styles';
 import AbstractStreamKeyForm, {
     type Props as AbstractProps
 } from '../AbstractStreamKeyForm';
+import { getLiveStreaming } from '../functions';
+
+import styles, { PLACEHOLDER_COLOR } from './styles';
 
 type Props = AbstractProps & {
 
@@ -18,9 +21,6 @@ type Props = AbstractProps & {
      */
     _dialogStyles: StyleType
 };
-
-import styles, { PLACEHOLDER_COLOR } from './styles';
-import { getLiveStreaming } from '../functions';
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.

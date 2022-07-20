@@ -18,7 +18,7 @@ export function getLiveStreaming(state: Object) {
         && new RegExp(liveStreaming.validatorRegExpString);
 
     return {
-        enabled: !!liveStreaming.enabled,
+        enabled: Boolean(liveStreaming.enabled),
         helpURL: liveStreaming.helpLink || JITSI_LIVE_STREAMING_HELP_LINK,
         termsURL: liveStreaming.termsLink || YOUTUBE_TERMS_URL,
         dataPrivacyURL: liveStreaming.dataPrivacyLink || GOOGLE_PRIVACY_POLICY,

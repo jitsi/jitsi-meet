@@ -2,6 +2,7 @@
 
 import debounce from 'lodash/debounce';
 import { Component } from 'react';
+
 import { getLiveStreaming } from './functions';
 
 
@@ -25,10 +26,11 @@ export type LiveStreamingProps = {
  * The props of the component.
  */
 export type Props = {
+
     /**
      * The live streaming dialog properties.
      */
-    _liveStreaming: LiveStreamingProps
+    _liveStreaming: LiveStreamingProps,
 
     /**
      * Callback invoked when the entered stream key has changed.
