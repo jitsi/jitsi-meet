@@ -137,6 +137,7 @@ import {
     submitFeedback
 } from './react/features/feedback';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
+import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
 import {
     isModerationNotificationDisplayed,
     showNotification,
@@ -2017,6 +2018,11 @@ export default {
                 }
 
                 if (this._desktopAudioStream) {
+                    // Noise suppression doesn't work with desktop audio because we can't chain
+                    // track effects yet, disable it first.
+                    // We need to to wait for the effect to clear first or it might interfere with the audio mixer.
+                    await APP.store.dispatch(setNoiseSuppressionEnabled(false));
+
                     const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
 
                     // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
@@ -2590,8 +2596,11 @@ export default {
 
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
-            micDeviceId => {
+            async micDeviceId => {
                 const audioWasMuted = this.isLocalAudioMuted();
+
+                // Disable noise suppression if it was enabled on the previous track.
+                await APP.store.dispatch(setNoiseSuppressionEnabled(false));
 
                 // When the 'default' mic needs to be selected, we need to
                 // pass the real device id to gUM instead of 'default' in order

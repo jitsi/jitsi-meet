@@ -9,7 +9,8 @@
         "noEmit": false,
         "moduleResolution": "Node",
         "strict": true,
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "strictPropertyInitialization": false
     },
     "exclude": [
         "node_modules"
