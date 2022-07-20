@@ -13,6 +13,11 @@ export interface Theme {
         ui03: string;
         ui04: string;
         ui05: string;
+        ui06: string;
+        ui07: string;
+        ui08: string;
+        ui09: string;
+        ui10: string;
         action01: string;
         action01Hover: string;
         action01Active: string;
