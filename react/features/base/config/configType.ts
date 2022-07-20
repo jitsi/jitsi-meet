@@ -173,6 +173,7 @@ export interface IConfig {
         };
     };
     corsAvatarURLs?: Array<string>;
+    defaultKnownDomains?: Array<string>;
     defaultLanguage?: string;
     defaultLocalDisplayName?: string;
     defaultLogoUrl?: string;

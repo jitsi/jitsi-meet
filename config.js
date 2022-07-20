@@ -1295,6 +1295,7 @@ var config = {
      _immediateReloadThreshold
      debug
      debugAudioLevels
+     defaultKnownDomains
      deploymentInfo
      dialOutAuthUrl
      dialOutCodesUrl
