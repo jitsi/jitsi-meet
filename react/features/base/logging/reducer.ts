@@ -1,6 +1,5 @@
-// @flow
-
-import { equals, ReducerRegistry, set } from '../redux';
+import ReducerRegistry from '../redux/ReducerRegistry';
+import { equals, set } from '../redux/functions';
 
 import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
 
@@ -38,9 +37,23 @@ if (navigator.product === 'ReactNative') {
     };
 }
 
+type LogLevel = 'trace' | 'log' | 'info' | 'warn' | 'error';
+
+interface LoggingLevel {
+    [key: string]: LogLevel;
+}
+
+export interface ILoggingState {
+    config: LoggingLevel & {
+        defaultLogLevel: LogLevel;
+        disableLogCollector?: boolean;
+    };
+    logCollector?: Object;
+}
+
 ReducerRegistry.register(
     'features/base/logging',
-    (state = DEFAULT_STATE, action) => {
+    (state: ILoggingState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case SET_LOGGING_CONFIG:
             return _setLoggingConfig(state, action);
@@ -63,7 +76,7 @@ ReducerRegistry.register(
  * @returns {Object} The new state of the feature base/logging after the
  * reduction of the specified action.
  */
-function _setLoggingConfig(state, action) {
+function _setLoggingConfig(state: ILoggingState, action: any) {
     const config = {
         // The config of DEFAULT_STATE is the default configuration of the
         // feature base/logging.
@@ -91,6 +104,6 @@ function _setLoggingConfig(state, action) {
  * @returns {Object} The new state of the feature base/logging after the
  * reduction of the specified action.
  */
-function _setLogCollector(state, action) {
+function _setLogCollector(state: ILoggingState, action: any) {
     return set(state, 'logCollector', action.logCollector);
 }
