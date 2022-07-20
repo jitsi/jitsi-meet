@@ -1,7 +1,16 @@
+/* eslint-disable lines-around-comment */
 import { Dispatch } from 'redux';
 
+// @ts-ignore
+import { getLocalJitsiAudioTrack } from '../base/tracks';
+// @ts-ignore
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showWarningNotification } from '../notifications';
+// @ts-ignore
+import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
+
 import { SET_NOISE_SUPPRESSION_ENABLED } from './actionTypes';
-import { isNoiseSuppressionEnabled } from './functions';
+import { canEnableNoiseSuppression, isNoiseSuppressionEnabled } from './functions';
+import logger from './logger';
 
 /**
  * Updates the noise suppression active state.
@@ -12,7 +21,7 @@ import { isNoiseSuppressionEnabled } from './functions';
  *      enabled: boolean
  * }}
  */
-export function setNoiseSuppressionEnabled(enabled: boolean) : any {
+export function setNoiseSuppressionEnabledState(enabled: boolean) : any {
     return {
         type: SET_NOISE_SUPPRESSION_ENABLED,
         enabled
@@ -35,14 +44,57 @@ export function toggleNoiseSuppression() : any {
 }
 
 /**
- * Turns off noise suppression if it's already enabled.
+ * Attempt to enable or disable noise suppression using the {@link NoiseSuppressionEffect}.
+ *
+ * @param {boolean} enabled - Enable or disable noise suppression.
  *
  * @returns {Function}
  */
-export function turnOffNoiseSuppression() : Function {
+export function setNoiseSuppressionEnabled(enabled: boolean) : any {
     return async (dispatch: Dispatch, getState: Function) => {
-        if (isNoiseSuppressionEnabled(getState())) {
-            await dispatch(setNoiseSuppressionEnabled(false));
+        const state = getState();
+
+        const localAudio = getLocalJitsiAudioTrack(state);
+        const noiseSuppressionEnabled = isNoiseSuppressionEnabled(state);
+
+        logger.info(`Attempting to set noise suppression enabled state: ${enabled}`);
+
+        if (!localAudio) {
+            logger.warn('Can not apply noise suppression without any local track active.');
+
+            dispatch(showWarningNotification({
+                titleKey: 'notify.noiseSuppressionFailedTitle',
+                descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+            return;
+        }
+        try {
+            if (enabled && !noiseSuppressionEnabled) {
+                if (!canEnableNoiseSuppression(state, dispatch, localAudio)) {
+                    return;
+                }
+
+                await localAudio.setEffect(new NoiseSuppressionEffect());
+                dispatch(setNoiseSuppressionEnabledState(true));
+                logger.info('Noise suppression enabled.');
+
+            } else if (!enabled && noiseSuppressionEnabled) {
+                await localAudio.setEffect(undefined);
+                dispatch(setNoiseSuppressionEnabledState(false));
+                logger.info('Noise suppression disabled.');
+            } else {
+                logger.warn(`Noise suppression enabled state already: ${enabled}`);
+            }
+        } catch (error) {
+            logger.error(
+                `Failed to set noise suppression enabled to: ${enabled}`,
+                error
+            );
+
+            dispatch(showErrorNotification({
+                titleKey: 'notify.noiseSuppressionFailedTitle'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
     };
 }

@@ -137,7 +137,7 @@ import {
     submitFeedback
 } from './react/features/feedback';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
-import { turnOffNoiseSuppression } from './react/features/noise-suppression/actions';
+import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
 import {
     isModerationNotificationDisplayed,
     showNotification,
@@ -2021,7 +2021,7 @@ export default {
                     // Noise suppression doesn't work with desktop audio because we can't chain
                     // track effects yet, disable it first.
                     // We need to to wait for the effect to clear first or it might interfere with the audio mixer.
-                    await APP.store.dispatch(turnOffNoiseSuppression());
+                    await APP.store.dispatch(setNoiseSuppressionEnabled(false));
 
                     const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
 
@@ -2600,7 +2600,7 @@ export default {
                 const audioWasMuted = this.isLocalAudioMuted();
 
                 // Disable noise suppression if it was enabled on the previous track.
-                await APP.store.dispatch(turnOffNoiseSuppression());
+                await APP.store.dispatch(setNoiseSuppressionEnabled(false));
 
                 // When the 'default' mic needs to be selected, we need to
                 // pass the real device id to gUM instead of 'default' in order

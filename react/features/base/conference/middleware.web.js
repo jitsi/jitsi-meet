@@ -1,7 +1,7 @@
 // @flow
 
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
-import { turnOffNoiseSuppression } from '../../noise-suppression/actions';
+import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
 import { showNotification, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
 import {
     setPrejoinPageVisibility,
@@ -173,7 +173,7 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
             // Noise suppression doesn't work with desktop audio because we can't chain
             // track effects yet, disable it first.
             // We need to to wait for the effect to clear first or it might interfere with the audio mixer.
-            await dispatch(turnOffNoiseSuppression());
+            await dispatch(setNoiseSuppressionEnabled(false));
             _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
         }
