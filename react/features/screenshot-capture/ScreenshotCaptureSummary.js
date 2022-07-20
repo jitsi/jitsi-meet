@@ -14,6 +14,7 @@ import {
     INTERVAL_TIMEOUT,
     PERCENTAGE_LOWER_BOUND,
     POLL_INTERVAL,
+    QUEUE_LIMIT,
     SET_INTERVAL
 } from './constants';
 import logger from './logger';
@@ -39,6 +40,7 @@ export default class ScreenshotCaptureSummary {
     _streamHeight: any;
     _streamWidth: any;
     _storedImageData: ImageData;
+    _queue: number[];
 
     /**
      * Initializes a new {@code ScreenshotCaptureEffect} instance.
@@ -57,6 +59,7 @@ export default class ScreenshotCaptureSummary {
         this._streamWorker.onmessage = this._handleWorkerAction;
 
         this._initializedRegion = false;
+        this._queue = [];
     }
 
     /**
@@ -199,6 +202,14 @@ export default class ScreenshotCaptureSummary {
      * @returns {void}
      */
     async _handleScreenshot() {
+        if (this._queue.length > QUEUE_LIMIT) {
+            return;
+        }
+
+        const timestamp = Date.now();
+
+        this._queue.push(timestamp);
+
         const imageBitmap = await this._imageCapture.grabFrame();
 
         this._currentCanvasContext.drawImage(imageBitmap, 0, 0, this._streamWidth, this._streamHeight);
@@ -216,5 +227,6 @@ export default class ScreenshotCaptureSummary {
                     }
                 }
             });
+        this._queue.splice(this._queue.indexOf(timestamp), 1);
     }
 }

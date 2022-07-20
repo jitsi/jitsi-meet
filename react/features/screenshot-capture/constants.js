@@ -11,6 +11,11 @@ export const PERCENTAGE_LOWER_BOUND = 5;
 export const POLL_INTERVAL = 4000;
 
 /**
+ * Number of screenshots that can be processed at the same time.
+ */
+export const QUEUE_LIMIT = 5;
+
+/**
  * SET_INTERVAL constant is used to set interval and it is set in
  * the id property of the request.data property. TimeMs property must
  * also be set. Request.data example:
