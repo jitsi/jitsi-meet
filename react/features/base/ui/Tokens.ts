@@ -73,6 +73,11 @@ export const colorMap = {
     ui03: 'surface04',
     ui04: 'surface05',
     ui05: 'surface06',
+    ui06: 'surface07',
+    ui07: 'surface08',
+    ui08: 'surface09',
+    ui09: 'surface10',
+    ui10: 'surface11',
 
     // ----- Actions -----
 
