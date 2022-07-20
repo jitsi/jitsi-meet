@@ -12,14 +12,14 @@ import { REACTIONS } from '../../constants';
 type Props = {
 
     /**
+     * Index of the reaction in the queue.
+     */
+    index: number,
+
+    /**
      * Reaction to be displayed.
      */
     reaction: string,
-
-    /**
-     * Id of the reaction.
-     */
-    uid: string,
 
     /**
      * Removes reaction from redux state.
@@ -27,9 +27,9 @@ type Props = {
     reactionRemove: Function,
 
     /**
-     * Index of the reaction in the queue.
+     * Id of the reaction.
      */
-    index: number
+    uid: string
 };
 
 type State = {

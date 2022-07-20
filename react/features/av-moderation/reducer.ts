@@ -31,13 +31,13 @@ const initialState = {
 
 export interface IAVModerationState {
     audioModerationEnabled: boolean;
-    videoModerationEnabled: boolean;
+    audioUnmuteApproved?: boolean|undefined;
     audioWhitelist: { [id: string]: boolean };
-    videoWhitelist: { [id: string]: boolean };
     pendingAudio: Array<{ id: string }>;
     pendingVideo: Array<{ id: string }>;
-    audioUnmuteApproved?: boolean|undefined;
+    videoModerationEnabled: boolean;
     videoUnmuteApproved?: boolean|undefined;
+    videoWhitelist: { [id: string]: boolean };
 }
 
 /**

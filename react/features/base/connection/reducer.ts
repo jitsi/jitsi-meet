@@ -20,13 +20,13 @@ import {
 import { ConnectionFailedError } from './actions.native';
 
 export interface IConnectionState {
-    connection?: Object;
     connecting?: Object;
-    timeEstablished?: number;
+    connection?: Object;
     error?: ConnectionFailedError;
-    passwordRequired?: Object;
     locationURL?: URL;
+    passwordRequired?: Object;
     showConnectionInfo?: boolean;
+    timeEstablished?: number;
 }
 
 /**

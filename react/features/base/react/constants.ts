@@ -8,10 +8,10 @@ export const OVERLAY_Z_INDEX = 1000;
  * The types of the buttons.
  */
 export enum BUTTON_TYPES {
+    DESTRUCTIVE = 'destructive',
     PRIMARY = 'primary',
     SECONDARY = 'secondary',
-    TERTIARY = 'tertiary',
-    DESTRUCTIVE = 'destructive'
+    TERTIARY = 'tertiary'
 }
 
 /**

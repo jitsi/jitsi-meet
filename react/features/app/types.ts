@@ -14,8 +14,8 @@ import { ILastNState } from '../base/lastn/reducer';
 import { ILibJitsiMeetState } from '../base/lib-jitsi-meet/reducer';
 
 export interface IStore {
-    getState: Function,
-    dispatch: Function
+    dispatch: Function,
+    getState: Function
 }
 
 export interface IState {

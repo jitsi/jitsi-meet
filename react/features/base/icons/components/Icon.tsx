@@ -10,6 +10,41 @@ import { styleTypeToObject } from '../../styles';
 type Props = {
 
     /**
+     * The id of the element this button icon controls.
+     */
+    ariaControls?: string,
+
+    /**
+     * Id of description label.
+     */
+    ariaDescribedBy?: string,
+
+    /**
+     * Aria disabled flag for the Icon.
+     */
+    ariaDisabled?: boolean,
+
+    /**
+     * Whether the element popup is expanded.
+     */
+    ariaExpanded?: boolean,
+
+    /**
+     * Whether the element has a popup.
+     */
+    ariaHasPopup?: boolean,
+
+    /**
+     * Aria label for the Icon.
+     */
+    ariaLabel?: string,
+
+    /**
+     * Whether the element has a pressed.
+     */
+    ariaPressed?: boolean,
+
+    /**
      * Class name for the web platform, if any.
      */
     className?: string,
@@ -20,19 +55,34 @@ type Props = {
     color?: string,
 
     /**
-     * Id prop (mainly for autotests).
-     */
-    id?: string,
-
-    /**
      * Id of the icon container.
      */
     containerId?: string,
 
     /**
+     * Id prop (mainly for autotests).
+     */
+    id?: string,
+
+    /**
      * Function to invoke on click.
      */
     onClick?: Function,
+
+    /**
+     * Keydown handler.
+     */
+    onKeyDown?: Function,
+
+    /**
+     * Keypress handler.
+     */
+    onKeyPress?: Function,
+
+    /**
+     * Role for the Icon.
+     */
+    role?: string,
 
     /**
      * The size of the icon (if not provided by the style object).
@@ -50,59 +100,9 @@ type Props = {
     style?: Object,
 
     /**
-     * Aria disabled flag for the Icon.
-     */
-    ariaDisabled?: boolean,
-
-    /**
-     * Aria label for the Icon.
-     */
-    ariaLabel?: string,
-
-    /**
-     * Whether the element has a popup.
-     */
-    ariaHasPopup?: boolean,
-
-    /**
-     * Whether the element has a pressed.
-     */
-    ariaPressed?: boolean,
-
-    /**
-     * Id of description label.
-     */
-    ariaDescribedBy?: string,
-
-    /**
-     * Whether the element popup is expanded.
-     */
-    ariaExpanded?: boolean,
-
-    /**
-     * The id of the element this button icon controls.
-     */
-    ariaControls?: string,
-
-    /**
      * TabIndex  for the Icon.
      */
-    tabIndex?: number,
-
-    /**
-     * Role for the Icon.
-     */
-    role?: string,
-
-    /**
-     * Keypress handler.
-     */
-    onKeyPress?: Function,
-
-    /**
-     * Keydown handler.
-     */
-    onKeyDown?: Function
+    tabIndex?: number
 }
 
 export const DEFAULT_COLOR = navigator.product === 'ReactNative' ? 'white' : undefined;

@@ -13,14 +13,19 @@ import { ReactionEmojiProps } from './constants';
 interface IReactionsState {
 
     /**
-     * The indicator that determines whether the reactions menu is visible.
-     */
-    visible: boolean,
-
-    /**
      * An array that contains the reactions buffer to be sent.
      */
     buffer: Array<string>,
+
+    /**
+     * Whether or not the disable reaction sounds notification was shown.
+     */
+    notificationDisplayed: boolean,
+
+    /**
+    * The array of reactions to animate.
+    */
+    queue: Array<ReactionEmojiProps>,
 
     /**
      * A number, non-zero value which identifies the timer created by a call
@@ -29,14 +34,9 @@ interface IReactionsState {
     timeoutID: number|null,
 
     /**
-    * The array of reactions to animate.
-    */
-    queue: Array<ReactionEmojiProps>,
-
-    /**
-     * Whether or not the disable reaction sounds notification was shown.
+     * The indicator that determines whether the reactions menu is visible.
      */
-    notificationDisplayed: boolean
+    visible: boolean
 }
 
 export interface ReactionsAction extends Partial<IReactionsState> {

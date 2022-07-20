@@ -31,9 +31,9 @@ type Props = {
     _rooms: Array<any>,
 
     /**
-     * The room the participant is in.
+     * The Redux dispatch function.
      */
-    room: any,
+    dispatch: Function,
 
     /**
      * The jid of the selected participant.
@@ -46,9 +46,9 @@ type Props = {
     participantName: string,
 
     /**
-     * The Redux dispatch function.
+     * The room the participant is in.
      */
-    dispatch: Function,
+    room: any,
 
     /**
      * Translation function.
