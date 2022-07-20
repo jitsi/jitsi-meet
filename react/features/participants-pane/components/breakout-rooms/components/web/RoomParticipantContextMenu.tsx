@@ -32,9 +32,9 @@ type Props = {
      * Room and participant jid reference.
      */
     entity: {
-        room: any,
         jid: string,
-        participantName: string
+        participantName: string,
+        room: any
     },
 
     /**

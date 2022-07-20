@@ -2,9 +2,9 @@ import { IStore } from '../../../app/types';
 
 interface ILocalRecordingManager {
     addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
-    stopLocalRecording: () => void;
-    startLocalRecording: (store: IStore) => void;
     isRecordingLocally: () => boolean;
+    startLocalRecording: (store: IStore) => void;
+    stopLocalRecording: () => void;
 }
 
 const LocalRecordingManager: ILocalRecordingManager = {

@@ -11,10 +11,10 @@ import { SET_LAST_N } from './actionTypes';
 import { validateLastNLimits } from './functions';
 
 export interface ILastNState {
+    lastN?: number;
     lastNLimits?: {
         [key: number]: number;
     };
-    lastN?: number;
 }
 
 ReducerRegistry.register('features/base/lastn', (state: ILastNState = { }, action) => {

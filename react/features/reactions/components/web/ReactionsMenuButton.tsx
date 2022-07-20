@@ -51,14 +51,14 @@ type Props = {
     handleClick: Function,
 
     /**
-     * Whether or not the reactions menu is open.
-     */
-    isOpen: boolean,
-
-    /**
      * Whether or not it's a mobile browser.
      */
     isMobile: boolean,
+
+    /**
+     * Whether or not the reactions menu is open.
+     */
+    isOpen: boolean,
 
     /**
      * Notify mode for `toolbarButtonClicked` event -
