@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { rejectParticipantAudio } from '../../../av-moderation/actions';
+import Input from '../../../base/components/common/Input';
 import useContextMenu from '../../../base/components/context-menu/useContextMenu';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
@@ -22,7 +23,6 @@ import { muteRemote } from '../../../video-menu/actions.any';
 import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
 
-import ClearableInput from './ClearableInput';
 import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
 import MeetingParticipantItems from './MeetingParticipantItems';
@@ -38,6 +38,13 @@ const useStyles = makeStyles(theme => {
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
                 ...theme.typography.labelButtonLarge,
                 lineHeight: `${theme.typography.labelButtonLarge.lineHeight}px`
+            }
+        },
+
+        search: {
+            '& input': {
+                textAlign: 'center',
+                paddingRight: '16px'
             }
         }
     };
@@ -107,7 +114,9 @@ function MeetingParticipants({
                     : t('participantsPane.headings.participantsList', { count: participantsCount })}
             </div>
             {showInviteButton && <InviteButton />}
-            <ClearableInput
+            <Input
+                className = { styles.search }
+                clearable = { true }
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />

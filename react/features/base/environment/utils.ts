@@ -1,5 +1,4 @@
-// @flow
-
+// @ts-ignore
 import Platform from '../react/Platform';
 
 /**
@@ -28,8 +27,8 @@ export function isIosMobileBrowser() {
  *
  * @returns {Promise[]}
  */
-export function checkChromeExtensionsInstalled(config: Object = {}) {
-    const isExtensionInstalled = info => new Promise(resolve => {
+export function checkChromeExtensionsInstalled(config: any = {}) {
+    const isExtensionInstalled = (info: any) => new Promise(resolve => {
         const img = new Image();
 
         img.src = `chrome-extension://${info.id}/${info.path}`;
@@ -41,9 +40,9 @@ export function checkChromeExtensionsInstalled(config: Object = {}) {
             resolve(false);
         };
     });
-    const extensionInstalledFunction = info => isExtensionInstalled(info);
+    const extensionInstalledFunction = (info: any) => isExtensionInstalled(info);
 
     return Promise.all(
-        (config.chromeExtensionsInfo || []).map(info => extensionInstalledFunction(info))
+        (config.chromeExtensionsInfo || []).map((info: any) => extensionInstalledFunction(info))
     );
 }
