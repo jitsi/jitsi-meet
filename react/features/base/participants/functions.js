@@ -57,57 +57,43 @@ const AVATAR_CHECKER_FUNCTIONS = [
 export function getActiveSpeakersToBeDisplayed(stateful: Object | Function) {
     const state = toState(stateful);
     const {
-        dominantSpeaker,
         fakeParticipants,
         sortedRemoteScreenshares,
         sortedRemoteVirtualScreenshareParticipants,
         speakersList
     } = state['features/base/participants'];
-    const localId = getLocalParticipant(state)?.id;
     const { visibleRemoteParticipants } = state['features/filmstrip'];
 
     // Do not re-sort the active speakers if all of them are currently visible.
-    if (typeof visibleRemoteParticipants === 'undefined' || visibleRemoteParticipants.size <= speakersList.size) {
+    if (typeof visibleRemoteParticipants === 'undefined' || speakersList.size <= visibleRemoteParticipants.size) {
         return speakersList;
     }
-    let activeSpeakersToBeDisplayed = visibleRemoteParticipants.size;
-    let isScreeshareDominantSpeaker = false;
-
-    // Remove self.
-    speakersList.delete(localId);
+    const activeSpeakers = new Map(speakersList);
+    let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
 
     // Remove screenshares from the count.
     if (getMultipleVideoSupportFeatureFlag(state)) {
         if (sortedRemoteVirtualScreenshareParticipants) {
-            activeSpeakersToBeDisplayed -= sortedRemoteVirtualScreenshareParticipants.size * 2;
+            availableSlotsForActiveSpeakers -= sortedRemoteVirtualScreenshareParticipants.size * 2;
             for (const screenshare of Array.from(sortedRemoteVirtualScreenshareParticipants.keys())) {
                 const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
 
-                isScreeshareDominantSpeaker = isScreeshareDominantSpeaker || (ownerId === dominantSpeaker);
-                speakersList.delete(ownerId);
+                activeSpeakers.delete(ownerId);
             }
         }
     } else if (sortedRemoteScreenshares) {
-        activeSpeakersToBeDisplayed -= sortedRemoteScreenshares.size;
+        availableSlotsForActiveSpeakers -= sortedRemoteScreenshares.size;
         for (const id of Array.from(sortedRemoteScreenshares.keys())) {
-            speakersList.delete(id);
+            activeSpeakers.delete(id);
         }
     }
 
     // Remove shared video from the count.
     if (fakeParticipants) {
-        activeSpeakersToBeDisplayed -= fakeParticipants.size;
+        availableSlotsForActiveSpeakers -= fakeParticipants.size;
     }
-    const truncatedSpeakersList = Array.from(speakersList).slice(0, activeSpeakersToBeDisplayed);
+    const truncatedSpeakersList = Array.from(activeSpeakers).slice(0, availableSlotsForActiveSpeakers);
 
-    // Push the dominant speaker to the visible speakers list if they are currently not in the list.
-    if (dominantSpeaker !== localId
-        && truncatedSpeakersList.find(s => s[0] !== dominantSpeaker)
-        && !isScreeshareDominantSpeaker
-        && !sortedRemoteScreenshares.has(dominantSpeaker)) {
-        truncatedSpeakersList.unshift([ dominantSpeaker, getParticipantById(state, dominantSpeaker)?.name ]);
-        truncatedSpeakersList.pop();
-    }
     truncatedSpeakersList.sort((a, b) => a[1].localeCompare(b[1]));
 
     return new Map(truncatedSpeakersList);
