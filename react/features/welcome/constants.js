@@ -21,7 +21,6 @@ export const tabBarOptions = {
 };
 
 export const recentListTabBarOptions = {
-    // $FlowExpectedError
     tabBarIcon: ({ focused }) => (
         <TabIcon
             focused = { focused }
@@ -30,7 +29,6 @@ export const recentListTabBarOptions = {
 };
 
 export const calendarListTabBarOptions = {
-    // $FlowExpectedError
     tabBarIcon: ({ focused }) => (
         <TabIcon
             focused = { focused }
@@ -39,7 +37,6 @@ export const calendarListTabBarOptions = {
 };
 
 export const settingsTabBarOptions = {
-    // $FlowExpectedError
     tabBarIcon: ({ focused }) => (
         <TabIcon
             focused = { focused }

@@ -102,7 +102,7 @@ export default {
     sectionLink: {
         ...BaseTheme.typography.bodyShortBoldLarge,
         color: BaseTheme.palette.link01,
-        margin: BaseTheme.spacing[2],
+        margin: BaseTheme.spacing[3],
         textAlign: 'center'
     },
 

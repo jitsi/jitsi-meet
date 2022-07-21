@@ -217,3 +217,11 @@ export const lobbyNavigationContainerScreenOptions = {
     gestureEnabled: false,
     headerShown: false
 };
+
+/**
+ * Screen options for settings navigation container screen.
+ */
+export const settingsNavigationContainerScreenOptions = {
+    gestureEnabled: true,
+    headerShown: false
+};

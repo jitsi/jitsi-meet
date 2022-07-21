@@ -204,13 +204,13 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         let privacyScreenRoute;
 
         if (this.props.isTabNavigatorScreen) {
-            helpScreenRoute = screen.welcome.tabs.settings.help;
-            termsScreenRoute = screen.welcome.tabs.settings.terms;
-            privacyScreenRoute = screen.welcome.tabs.settings.privacy;
+            helpScreenRoute = screen.welcome.tabs.settings.links.help;
+            termsScreenRoute = screen.welcome.tabs.settings.links.terms;
+            privacyScreenRoute = screen.welcome.tabs.settings.links.privacy;
         } else {
-            helpScreenRoute = screen.conference.settings.help;
-            termsScreenRoute = screen.conference.settings.terms;
-            privacyScreenRoute = screen.conference.settings.privacy;
+            helpScreenRoute = screen.settings.links.help;
+            termsScreenRoute = screen.settings.links.terms;
+            privacyScreenRoute = screen.settings.links.privacy;
         }
 
         return (
@@ -218,8 +218,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                 style = { styles.settingsViewContainer }>
                 <ScrollView>
                     <FormSectionAccordion
-                        accordion = { false }
-                        expandable = { false }
                         label = 'settingsView.profileSection'>
                         <TextInput
                             autoCorrect = { false }
@@ -248,8 +246,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             value = { email } />
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        accordion = { false }
-                        expandable = { false }
                         label = 'settingsView.conferenceSection'>
                         <TextInput
                             autoCapitalize = 'none'
@@ -291,8 +287,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         </FormRow>
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        accordion = { true }
-                        expandable = { true }
                         label = 'settingsView.links'>
                         <Link
                             style = { styles.sectionLink }
@@ -313,8 +307,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         </Link>
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        accordion = { false }
-                        expandable = { false }
                         label = 'settingsView.buildInfoSection'>
                         <FormRow
                             label = 'settingsView.version'>

@@ -7,10 +7,12 @@ export const screen = {
             recent: 'Recent',
             calendar: 'Calendar',
             settings: {
-                help: 'Help',
                 main: 'Settings',
-                privacy: 'Privacy',
-                terms: 'Terms'
+                links: {
+                    help: 'Help',
+                    privacy: 'Privacy',
+                    terms: 'Terms'
+                }
             }
         }
     },
@@ -38,17 +40,20 @@ export const screen = {
         participants: 'Participants',
         gifsMenu: 'GIPHY',
         invite: 'Invite',
-        sharedDocument: 'Shared document',
-        settings: {
-            help: 'Help',
-            main: 'Settings',
-            privacy: 'Privacy',
-            terms: 'Terms'
-        }
+        sharedDocument: 'Shared document'
     },
     lobby: {
         root: 'Lobby root',
         main: 'Lobby',
         chat: 'Lobby chat'
+    },
+    settings: {
+        root: 'Settings root',
+        main: 'Settings',
+        links: {
+            help: 'Help',
+            privacy: 'Privacy',
+            terms: 'Terms'
+        }
     }
 };

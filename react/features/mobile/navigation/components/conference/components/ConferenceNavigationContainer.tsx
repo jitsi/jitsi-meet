@@ -36,15 +36,6 @@ import SpeakerStats
 // @ts-ignore
     from '../../../../../speaker-stats/components/native/SpeakerStats';
 // @ts-ignore
-import HelpView from '../../../../../welcome/components/native/HelpView';
-// @ts-ignore
-import PrivacyView from '../../../../../welcome/components/native/PrivacyView';
-// @ts-ignore
-import TermsView from '../../../../../welcome/components/native/TermsView';
-import SettingsView
-// @ts-ignore
-    from '../../../../../welcome/components/native/settings/components/SettingsView';
-// @ts-ignore
 import { screen } from '../../../routes';
 import {
     carmodeScreenOptions,
@@ -52,7 +43,6 @@ import {
     conferenceScreenOptions,
     gifsMenuOptions,
     inviteScreenOptions,
-    linkScreenOptions,
     liveStreamScreenOptions,
     lobbyNavigationContainerScreenOptions,
     navigationContainerTheme,
@@ -60,7 +50,7 @@ import {
     recordingScreenOptions,
     salesforceScreenOptions,
     securityScreenOptions,
-    settingsScreenOptions,
+    settingsNavigationContainerScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions
     // @ts-ignore
@@ -68,6 +58,9 @@ import {
 import LobbyNavigationContainer
 // @ts-ignore
     from '../../lobby/components/LobbyNavigationContainer';
+import SettingsNavigationContainer
+// @ts-ignore
+    from '../../settings/components/SettingsNavigationContainer';
 import {
     conferenceNavigationRef
     // @ts-ignore
@@ -174,33 +167,9 @@ const ConferenceNavigationContainer = () => {
                         title: t('documentSharing.title')
                     }} />
                 <ConferenceStack.Screen
-                    component = { SettingsView }
-                    name = { screen.conference.settings.main }
-                    options = {{
-                        ...settingsScreenOptions,
-                        title: t('settings.title')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { HelpView }
-                    name = { screen.conference.settings.help }
-                    options = {{
-                        ...linkScreenOptions,
-                        title: t('helpView.header')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { TermsView }
-                    name = { screen.conference.settings.terms }
-                    options = {{
-                        ...linkScreenOptions,
-                        title: t('termsView.header')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { PrivacyView }
-                    name = { screen.conference.settings.privacy }
-                    options = {{
-                        ...linkScreenOptions,
-                        title: t('privacyView.header')
-                    }} />
+                    component = { SettingsNavigationContainer }
+                    name = { screen.settings.root }
+                    options = { settingsNavigationContainerScreenOptions } />
                 <ConferenceStack.Screen
                     component = { CarMode }
                     name = { screen.conference.carmode }

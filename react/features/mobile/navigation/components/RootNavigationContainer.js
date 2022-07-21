@@ -79,21 +79,21 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                 }
                 <RootStack.Screen
                     component = { HelpView }
-                    name = { screen.welcome.tabs.settings.help }
+                    name = { screen.welcome.tabs.settings.links.help }
                     options = {{
                         ...linkScreenOptions,
                         title: t('helpView.header')
                     }} />
                 <RootStack.Screen
                     component = { TermsView }
-                    name = { screen.welcome.tabs.settings.terms }
+                    name = { screen.welcome.tabs.settings.links.terms }
                     options = {{
                         ...linkScreenOptions,
                         title: t('termsView.header')
                     }} />
                 <RootStack.Screen
                     component = { PrivacyView }
-                    name = { screen.welcome.tabs.settings.privacy }
+                    name = { screen.welcome.tabs.settings.links.privacy }
                     options = {{
                         ...linkScreenOptions,
                         title: t('privacyView.header')
