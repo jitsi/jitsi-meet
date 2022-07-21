@@ -35,6 +35,7 @@ import {
     setFilmstripWidth,
     setStageParticipants
 } from './actions';
+import { setScreenshareFilmstripParticipant } from './actions.web';
 import {
     ACTIVE_PARTICIPANT_TIMEOUT,
     DEFAULT_FILMSTRIP_WIDTH,
@@ -52,6 +53,7 @@ import {
     isStageFilmstripAvailable
 } from './functions';
 import './subscriber';
+import { isTopPanelEnabled } from './functions.web';
 
 /**
  * Map of timers.
@@ -275,6 +277,15 @@ MiddlewareRegistry.register(store => next => action => {
         const { participantId } = action;
         const pinnedParticipants = getPinnedActiveParticipants(state);
         const dominant = getDominantSpeakerParticipant(state);
+
+        if (isTopPanelEnabled(state)) {
+            const screenshares = state['features/video-layout'].remoteScreenShares;
+
+            if (screenshares.find(sId => sId === participantId)) {
+                dispatch(setScreenshareFilmstripParticipant(participantId));
+                break;
+            }
+        }
 
         if (pinnedParticipants.find(p => p.participantId === participantId)) {
             if (dominant?.id === participantId) {

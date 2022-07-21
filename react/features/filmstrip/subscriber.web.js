@@ -19,6 +19,7 @@ import {
     setTileViewDimensions,
     setVerticalViewDimensions
 } from './actions';
+import { setScreenshareFilmstripParticipant } from './actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD
@@ -222,6 +223,19 @@ StateListenerRegistry.register(
     /* listener */({ length }, store) => {
         if (length >= 1 && isTopPanelEnabled(store.getState())) {
             store.dispatch(setScreensharingTileDimensions());
+        }
+    }, {
+        deepEquals: true
+    });
+
+/**
+ * Listens for changes to clear invalid data.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/video-layout'].remoteScreenShares.length,
+    /* listener */(length, store) => {
+        if (length === 0) {
+            store.dispatch(setScreenshareFilmstripParticipant());
         }
     }, {
         deepEquals: true
