@@ -63,12 +63,12 @@ export function getActiveSpeakersToBeDisplayed(stateful: Object | Function) {
         speakersList
     } = state['features/base/participants'];
     const { visibleRemoteParticipants } = state['features/filmstrip'];
+    const activeSpeakers = new Map(speakersList);
 
     // Do not re-sort the active speakers if all of them are currently visible.
-    if (typeof visibleRemoteParticipants === 'undefined' || speakersList.size <= visibleRemoteParticipants.size) {
-        return speakersList;
+    if (typeof visibleRemoteParticipants === 'undefined' || activeSpeakers.size <= visibleRemoteParticipants.size) {
+        return activeSpeakers;
     }
-    const activeSpeakers = new Map(speakersList);
     let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
 
     // Remove screenshares from the count.

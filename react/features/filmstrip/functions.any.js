@@ -49,10 +49,12 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
 
             remoteParticipants.delete(ownerId);
             remoteParticipants.delete(screenshare);
+            speakers.delete(ownerId);
         }
     } else {
         for (const screenshare of screenShares.keys()) {
             remoteParticipants.delete(screenshare);
+            speakers.delete(screenshare);
         }
     }
 
