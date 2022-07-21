@@ -63,6 +63,7 @@ const commands = {
     setSubtitles: 'set-subtitles',
     setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
+    showNotification: 'show-notification',
     startRecording: 'start-recording',
     startShareVideo: 'start-share-video',
     stopRecording: 'stop-recording',
