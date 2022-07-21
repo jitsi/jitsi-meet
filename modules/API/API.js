@@ -75,6 +75,7 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode, answerKnockingParticipant } from '../../react/features/lobby/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE, showNotification } from '../../react/features/notifications';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -97,10 +98,6 @@ import VirtualBackgroundDialog from '../../react/features/virtual-background/com
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    NOTIFICATION_TYPE, showNotification
-} from "../../react/features/notifications";
 
 const logger = Logger.getLogger(__filename);
 
@@ -482,25 +479,27 @@ function initCommands() {
             title,
             description,
             type = NOTIFICATION_TYPE.NORMAL,
-            timeout = NOTIFICATION_TIMEOUT_TYPE.SHORT,
+            timeout = NOTIFICATION_TIMEOUT_TYPE.SHORT
         }) => {
             const validTypes = Object.values(NOTIFICATION_TYPE);
             const validTimeouts = Object.values(NOTIFICATION_TIMEOUT_TYPE);
 
             if (!validTypes.includes(type)) {
                 logger.error(`Invalid notification type "${type}". Expecting one of ${validTypes}`);
+
                 return;
             }
 
             if (!validTimeouts.includes(timeout)) {
                 logger.error(`Invalid notification timeout "${timeout}". Expecting one of ${validTimeouts}`);
+
                 return;
             }
 
             APP.store.dispatch(showNotification({
                 title,
                 description,
-                appearance: type,
+                appearance: type
             }, timeout));
         },
 
