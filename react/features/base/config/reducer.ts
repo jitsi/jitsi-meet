@@ -416,6 +416,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
     }
 
     newValue.liveStreaming = newValue.liveStreaming || {};
+
     // Migrate config.liveStreamingEnabled
     if (oldValue.liveStreamingEnabled !== undefined) {
         newValue.liveStreaming = {
@@ -423,6 +424,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
             enabled: oldValue.liveStreamingEnabled
         };
     }
+
     // Migrate interfaceConfig.LIVE_STREAMING_HELP_LINK
     if (oldValue.liveStreaming === undefined
         && typeof interfaceConfig === 'object'
