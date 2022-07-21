@@ -1,5 +1,5 @@
+import { FaceLandmarksHelper, HumanHelper } from './FaceLandmarksHelper';
 import { DETECT_FACE, INIT_WORKER } from './constants';
-import { FaceLandmarksHelper, HumanHelper }from './FaceLandmarksHelper';
 
 
 let helper: FaceLandmarksHelper;

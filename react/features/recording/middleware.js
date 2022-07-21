@@ -153,6 +153,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
             dispatch(updateLocalRecordingStatus(true, onlySelf));
             sendAnalytics(createRecordingEvent('started', `local${onlySelf ? '.self' : ''}`));
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyRecordingStatusChanged(true, 'local');
+            }
         } catch (err) {
             logger.error('Capture failed', err);
 
@@ -169,6 +172,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 titleKey: 'recording.failedToStart'
             };
 
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyRecordingStatusChanged(false, 'local', err.message);
+            }
+
             dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
         break;
@@ -176,13 +183,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
 
     case STOP_LOCAL_RECORDING: {
         const { localRecording } = getState()['features/base/config'];
-        const { onlySelf } = action;
 
         if (LocalRecordingManager.isRecordingLocally()) {
             LocalRecordingManager.stopLocalRecording();
             dispatch(updateLocalRecordingStatus(false));
-            if (localRecording?.notifyAllParticipants && !onlySelf) {
+            if (localRecording?.notifyAllParticipants && !LocalRecordingManager.selfRecording) {
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));
+            }
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyRecordingStatusChanged(false, 'local');
             }
         }
         break;

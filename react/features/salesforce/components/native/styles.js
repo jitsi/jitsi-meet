@@ -34,7 +34,7 @@ export default {
     },
     recordsSearch: {
         backgroundColor: BaseTheme.palette.field01,
-        borderColor: BaseTheme.palette.border02,
+        borderColor: BaseTheme.palette.ui05,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
         color: BaseTheme.palette.text01,
@@ -101,7 +101,7 @@ export default {
     notes: {
         alignItems: 'flex-start',
         backgroundColor: BaseTheme.palette.field01,
-        borderColor: BaseTheme.palette.border02,
+        borderColor: BaseTheme.palette.ui05,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
         color: BaseTheme.palette.field02,

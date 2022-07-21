@@ -1,16 +1,25 @@
+/* eslint-disable lines-around-comment */
 import React from 'react';
+import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Text, View } from 'react-native';
 
+// @ts-ignore
 import { getConferenceName } from '../../../../base/conference/functions';
-import { ConnectionIndicator } from '../../../../connection-indicator';
+// @ts-ignore
 import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../../base/flags';
+// @ts-ignore
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
-import { connect } from '../../../../base/redux';;
-import { RecordingLabel } from '../../../../recording';
+// @ts-ignore
+import { getLocalParticipant } from '../../../../base/participants';
+import { connect } from '../../../../base/redux/functions';
+// @ts-ignore
+import ConnectionIndicator from '../../../../connection-indicator/components/native/ConnectionIndicator';
+// @ts-ignore
+import RecordingLabel from '../../../../recording/components/native/RecordingLabel';
+// @ts-ignore
 import { VideoQualityLabel } from '../../../../video-quality';
 
-import { getLocalParticipant } from '../../../../base/participants';
+// @ts-ignore
 import styles from './styles';
 
 
@@ -36,30 +45,30 @@ type Props = {
  * @returns {JSX.Element}
  */
 const TitleBar = (props: Props) : JSX.Element => {
-    const localParticipant =  useSelector(getLocalParticipant);
+    const localParticipant: any = useSelector(getLocalParticipant);
     const localParticipantId = localParticipant?.id;
 
     return (<>
         <View
             pointerEvents = 'box-none'
-            style = { styles.titleBarWrapper }>
+            style = { styles.titleBarWrapper as StyleProp<ViewStyle> }>
             <View
                 pointerEvents = 'box-none'
-                style = { styles.roomNameWrapper }>
-                <View style = { styles.qualityLabelContainer }>
+                style = { styles.roomNameWrapper as StyleProp<ViewStyle> }>
+                <View style = { styles.qualityLabelContainer as StyleProp<ViewStyle> }>
                     <VideoQualityLabel />
                 </View>
                 <ConnectionIndicator
-                    participantId = { localParticipantId }
-                    iconStyle = { styles.connectionIndicatorIcon } />
-                <View style = { styles.headerLabels }>
+                    iconStyle = { styles.connectionIndicatorIcon }
+                    participantId = { localParticipantId } />
+                <View style = { styles.headerLabels as StyleProp<ViewStyle> }>
                     <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
                     <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
                 </View>
 
                 {
                     props._meetingNameEnabled
-                    && <View style = { styles.roomNameView }>
+                    && <View style = { styles.roomNameView as StyleProp<ViewStyle> }>
                         <Text
                             numberOfLines = { 1 }
                             style = { styles.roomName }>
@@ -70,7 +79,7 @@ const TitleBar = (props: Props) : JSX.Element => {
             </View>
         </View>
     </>);
-}
+};
 
 /**
  * Maps part of the Redux store to the props of this component.
@@ -78,7 +87,7 @@ const TitleBar = (props: Props) : JSX.Element => {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: any) {
     const { hideConferenceSubject } = state['features/base/config'];
 
     return {

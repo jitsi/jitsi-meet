@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => {
             backgroundColor: theme.palette.field01,
             border: '1px solid',
             borderRadius: 6,
-            borderColor: theme.palette.border02,
+            borderColor: theme.palette.ui05,
             color: theme.palette.text01,
             padding: '10px 16px',
             width: '100%',

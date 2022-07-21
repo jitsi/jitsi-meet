@@ -1,3 +1,4 @@
+/* eslint-disable lines-around-comment */
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 
@@ -5,12 +6,17 @@ import { Text, View } from 'react-native';
 import { Avatar } from '../../../base/avatar';
 // @ts-ignore
 import { BottomSheet, hideSheet } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
-import { getBreakoutRooms } from '../../../breakout-rooms/functions';
-import SendToBreakoutRoom from '../../../video-menu/components/native/SendToBreakoutRoom';
-import styles from '../../../video-menu/components/native/styles';
+// @ts-ignore
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
+// @ts-ignore
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux/functions';
+// @ts-ignore
+import { getBreakoutRooms } from '../../../breakout-rooms/functions';
+// @ts-ignore
+import SendToBreakoutRoom from '../../../video-menu/components/native/SendToBreakoutRoom';
+// @ts-ignore
+import styles from '../../../video-menu/components/native/styles';
 
 /**
  * Size of the rendered avatar in the menu.
@@ -25,9 +31,9 @@ type Props = {
     _rooms: Array<any>,
 
     /**
-     * The room the participant is in.
+     * The Redux dispatch function.
      */
-    room: any,
+    dispatch: Function,
 
     /**
      * The jid of the selected participant.
@@ -40,9 +46,9 @@ type Props = {
     participantName: string,
 
     /**
-     * The Redux dispatch function.
+     * The room the participant is in.
      */
-    dispatch: Function,
+    room: any,
 
     /**
      * Translation function.
@@ -138,7 +144,7 @@ class RoomParticipantMenu extends PureComponent<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: any) {
     return {
         _rooms: Object.values(getBreakoutRooms(state))
     };

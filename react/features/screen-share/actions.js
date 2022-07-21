@@ -92,7 +92,7 @@ export function startAudioScreenShareFlow() {
                 return;
             }
 
-            // We don't want to explicity set the screens share state, by passing undefined we let the
+            // We don't want to explicitly set the screens share state, by passing undefined we let the
             // underlying logic decide if it's on or off.
             dispatch(toggleScreensharing(undefined, true));
 
@@ -105,7 +105,7 @@ export function startAudioScreenShareFlow() {
 
 /**
  * Start normal screen sharing flow.Function will switch between off and on states depending on the context, and if
- * not explicity told otherwise.
+ * not explicitly told otherwise.
  *
  * @param {boolean} enabled - Explicitly set the screen sharing state.
  * @returns {void}

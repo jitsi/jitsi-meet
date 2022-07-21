@@ -83,7 +83,7 @@ export const resultsStyles = createStyleSheet({
 
     voters: {
         backgroundColor: BaseTheme.palette.ui04,
-        borderColor: BaseTheme.palette.border03,
+        borderColor: BaseTheme.palette.ui03,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
         padding: BaseTheme.spacing[2],
@@ -167,7 +167,6 @@ export const chatStyles = createStyleSheet({
 
     pollCreateButton: {
         flex: 1,
-        padding: 4,
         marginHorizontal: BaseTheme.spacing[2]
     },
 
@@ -182,6 +181,15 @@ export const chatStyles = createStyleSheet({
     },
 
     buttonRow: {
+        flexDirection: 'row'
+    },
+
+    buttonRowAndroid: {
+        flexDirection: 'row',
+        marginBottom: BaseTheme.spacing[3]
+    },
+
+    buttonRowIos: {
         flexDirection: 'row'
     },
 
@@ -200,13 +208,8 @@ export const chatStyles = createStyleSheet({
         marginLeft: BaseTheme.spacing[2]
     },
 
-    pollButtonLabel: {
-        textTransform: 'capitalize'
-    },
-
     pollCreateAddButton: {
-        margin: BaseTheme.spacing[2],
-        padding: BaseTheme.spacing[1]
+        margin: BaseTheme.spacing[2]
     },
 
     toggleText: {
@@ -215,7 +218,6 @@ export const chatStyles = createStyleSheet({
     },
 
     createPollButton: {
-        padding: 4,
         marginHorizontal: BaseTheme.spacing[4],
         marginVertical: '8%'
     },

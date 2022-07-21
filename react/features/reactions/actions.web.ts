@@ -6,6 +6,8 @@ import { ReactionsAction } from './reducer';
 
 /**
  * Toggles the visibility of the reactions menu.
+ *
+ * @returns {void}
  */
 export function toggleReactionsMenuVisibility(): ReactionsAction {
     return {
@@ -15,6 +17,8 @@ export function toggleReactionsMenuVisibility(): ReactionsAction {
 
 /**
  * Displays the disable sounds notification.
+ *
+ * @returns {void}
  */
 export function displayReactionSoundsNotification(): ReactionsAction {
     return {

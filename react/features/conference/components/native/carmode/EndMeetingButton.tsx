@@ -1,12 +1,17 @@
+/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
+// @ts-ignore
 import { createToolbarEvent, sendAnalytics } from '../../../../analytics';
+// @ts-ignore
 import { appNavigate } from '../../../../app/actions';
+import Button from '../../../../base/react/components/native/Button';
+// @ts-ignore
+import { BUTTON_TYPES } from '../../../../base/react/constants';
 
 import EndMeetingIcon from './EndMeetingIcon';
+// @ts-ignore
 import styles from './styles';
 
 /**
@@ -15,7 +20,6 @@ import styles from './styles';
  * @returns {JSX.Element} - The end meeting button.
  */
 const EndMeetingButton = () : JSX.Element => {
-    const { t } = useTranslation();
     const dispatch = useDispatch();
 
     const onSelect = useCallback(() => {
@@ -26,13 +30,13 @@ const EndMeetingButton = () : JSX.Element => {
 
     return (
         <Button
-            accessibilityLabel = { t('carmode.actions.leaveMeeting') }
-            children = { t('carmode.actions.leaveMeeting') }
+            accessibilityLabel = 'carmode.actions.leaveMeeting'
+            // @ts-ignore
             icon = { EndMeetingIcon }
-            labelStyle = { styles.endMeetingButtonLabel }
-            mode = 'contained'
+            label = 'carmode.actions.leaveMeeting'
             onPress = { onSelect }
-            style = { styles.endMeetingButton } />
+            style = { styles.endMeetingButton }
+            type = { BUTTON_TYPES.DESTRUCTIVE } />
     );
 };
 

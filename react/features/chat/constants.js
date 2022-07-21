@@ -35,11 +35,3 @@ export const SMALL_WIDTH_THRESHOLD = 580;
  * Lobby message type.
  */
 export const LOBBY_CHAT_MESSAGE = 'LOBBY_CHAT_MESSAGE';
-
-/**
- * The modes of the buttons of the chat and polls tabs.
- */
-export const BUTTON_MODES = {
-    CONTAINED: 'contained',
-    TEXT: 'text'
-};

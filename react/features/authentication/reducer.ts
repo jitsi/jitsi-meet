@@ -1,6 +1,5 @@
-// @ts-ignore
-import { assign } from '../base/redux/functions';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { assign } from '../base/redux/functions';
 
 import {
     CANCEL_LOGIN,

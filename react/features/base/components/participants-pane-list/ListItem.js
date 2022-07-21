@@ -92,7 +92,7 @@ const useStyles = makeStyles(theme => {
             minHeight: '40px',
 
             '&:hover': {
-                backgroundColor: theme.palette.action02Active,
+                backgroundColor: theme.palette.ui02,
 
                 '& .indicators': {
                     display: 'none'
@@ -100,8 +100,8 @@ const useStyles = makeStyles(theme => {
 
                 '& .actions': {
                     display: 'flex',
-                    boxShadow: `-15px 0px 10px -5px ${theme.palette.action02Active}`,
-                    backgroundColor: theme.palette.action02Active
+                    boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
+                    backgroundColor: theme.palette.ui02
                 }
             },
 
@@ -113,7 +113,7 @@ const useStyles = makeStyles(theme => {
         },
 
         highlighted: {
-            backgroundColor: theme.palette.action02Active
+            backgroundColor: theme.palette.ui02
         },
 
         detailsContainer: {
@@ -159,8 +159,8 @@ const useStyles = makeStyles(theme => {
 
         actionsContainer: {
             display: 'none',
-            boxShadow: `-15px 0px 10px -5px ${theme.palette.action02Active}`,
-            backgroundColor: theme.palette.action02Active
+            boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
+            backgroundColor: theme.palette.ui02
         },
 
         actionsPermanent: {
@@ -171,8 +171,8 @@ const useStyles = makeStyles(theme => {
 
         actionsVisible: {
             display: 'flex',
-            boxShadow: `-15px 0px 10px -5px ${theme.palette.action02Active}`,
-            backgroundColor: theme.palette.action02Active
+            boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
+            backgroundColor: theme.palette.ui02
         }
     };
 });

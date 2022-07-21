@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme => {
             width: 'calc(100% + 48px)',
             height: 1,
             left: -24,
-            backgroundColor: theme.palette.border02
+            backgroundColor: theme.palette.ui05
         },
         searchSwitchContainer: {
             display: 'flex',

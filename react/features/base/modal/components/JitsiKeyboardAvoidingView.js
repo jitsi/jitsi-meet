@@ -1,6 +1,6 @@
 // @flow
 
-import { getDefaultHeaderHeight } from '@react-navigation/elements';
+import { useHeaderHeight } from '@react-navigation/elements';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
     Keyboard,
@@ -8,7 +8,7 @@ import {
     Platform,
     StatusBar
 } from 'react-native';
-import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { StyleType } from '../../styles';
 
@@ -35,9 +35,9 @@ type Props = {
     hasTabNavigator: boolean,
 
     /**
-     * Is the screen presented as a modal?
+     * Is the keyboard already dismissible?
      */
-    isModalPresentation: boolean,
+    keyboardAlreadyDismissible?: boolean,
 
     /**
      * Additional style to be appended to the KeyboardAvoidingView.
@@ -51,36 +51,30 @@ const JitsiKeyboardAvoidingView = (
             contentContainerStyle,
             hasTabNavigator,
             hasBottomTextInput,
-            isModalPresentation,
+            keyboardAlreadyDismissible,
             style
         }: Props) => {
-    const frame = useSafeAreaFrame();
+    const headerHeight = useHeaderHeight();
     const insets = useSafeAreaInsets();
     const [ bottomPadding, setBottomPadding ] = useState(insets.bottom);
-    const [ topPadding, setTopPadding ] = useState(insets.top);
 
     useEffect(() => {
         // This useEffect is needed because insets are undefined at first for some reason
         // https://github.com/th3rdwave/react-native-safe-area-context/issues/54
         setBottomPadding(insets.bottom);
-        setTopPadding(insets.top);
-    }, [ insets.bottom, insets.top ]);
+    }, [ insets.bottom ]);
 
-    const headerHeight = getDefaultHeaderHeight(frame, isModalPresentation, topPadding);
 
-    // Notch devices have in general a header height between 103 and 106px
-    const topNotchDevice = headerHeight > 100;
-    const deviceHeight = topNotchDevice ? headerHeight - 50 : headerHeight;
     const tabNavigatorPadding
-        = hasTabNavigator ? deviceHeight : 0;
+        = hasTabNavigator ? headerHeight : 0;
     const noNotchDevicePadding = bottomPadding || 10;
     const iosVerticalOffset
-        = deviceHeight + noNotchDevicePadding + tabNavigatorPadding;
+        = headerHeight + noNotchDevicePadding + tabNavigatorPadding;
     const androidVerticalOffset = hasBottomTextInput
-        ? deviceHeight + StatusBar.currentHeight : deviceHeight;
+        ? headerHeight + StatusBar.currentHeight : headerHeight;
 
     // Tells the view what to do with taps
-    const shouldSetResponse = useCallback(() => true);
+    const shouldSetResponse = useCallback(() => !keyboardAlreadyDismissible);
     const onRelease = useCallback(() => Keyboard.dismiss());
 
     return (

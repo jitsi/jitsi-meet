@@ -20,23 +20,23 @@ type InitInput = {
 }
 
 type DetectOutput = {
-    faceExpression?: string,
     faceBox?: FaceBox,
-    faceCount: number
+    faceCount: number,
+    faceExpression?: string
 };
 
 export interface FaceLandmarksHelper {
-    getFaceBox(detections: Array<FaceResult>, threshold: number): FaceBox | undefined;
-    getFaceExpression(detections: Array<FaceResult>): string | undefined;
-    getFaceCount(detections : Array<FaceResult>): number;
-    getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>>;
-    init(): Promise<void>;
     detect({ image, threshold } : DetectInput): Promise<DetectOutput>;
     getDetectionInProgress(): boolean;
+    getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>>;
+    getFaceBox(detections: Array<FaceResult>, threshold: number): FaceBox | undefined;
+    getFaceCount(detections : Array<FaceResult>): number;
+    getFaceExpression(detections: Array<FaceResult>): string | undefined;
+    init(): Promise<void>;
 }
 
 /**
- * Helper class for human library
+ * Helper class for human library.
  */
 export class HumanHelper implements FaceLandmarksHelper {
     protected human: Human | undefined;
@@ -44,6 +44,7 @@ export class HumanHelper implements FaceLandmarksHelper {
     protected baseUrl: string;
     private detectionInProgress = false;
     private lastValidFaceBox: FaceBox | undefined;
+
     /**
     * Configuration for human.
     */
@@ -66,7 +67,7 @@ export class HumanHelper implements FaceLandmarksHelper {
             },
             mesh: { enabled: false },
             iris: { enabled: false },
-            emotion: { 
+            emotion: {
                 enabled: false,
                 modelPath: 'emotion.json'
             },
@@ -78,12 +79,23 @@ export class HumanHelper implements FaceLandmarksHelper {
         segmentation: { enabled: false }
     };
 
+    /**
+     * Constructor function for the helper which initialize the helper.
+     *
+     * @param  {InitInput} input - The input for the helper.
+     * @returns {void}
+     */
     constructor({ baseUrl, detectionTypes }: InitInput) {
         this.faceDetectionTypes = detectionTypes;
         this.baseUrl = baseUrl;
         this.init();
     }
 
+    /**
+     * Initializes the human helper with the available tfjs backend for the given detection types.
+     *
+     * @returns {Promise<void>}
+     */
     async init(): Promise<void> {
 
         if (!this.human) {
@@ -95,7 +107,7 @@ export class HumanHelper implements FaceLandmarksHelper {
             }
 
             if (this.faceDetectionTypes.length > 0 && this.config.face) {
-                this.config.face.enabled = true
+                this.config.face.enabled = true;
             }
 
             if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX) && this.config.face?.detector) {
@@ -107,16 +119,24 @@ export class HumanHelper implements FaceLandmarksHelper {
             }
 
             const initialHuman = new Human(this.config);
+
             try {
                 await initialHuman.load();
             } catch (err) {
                 console.error(err);
             }
-            
+
             this.human = initialHuman;
         }
     }
 
+    /**
+     * Gets the face box from the detections, if there is no valid detections it will return undefined..
+     *
+     * @param {Array<FaceResult>} detections - The array with the detections.
+     * @param {number} threshold - Face box position change threshold.
+     * @returns {FaceBox | undefined}
+     */
     getFaceBox(detections: Array<FaceResult>, threshold: number): FaceBox | undefined {
         if (this.getFaceCount(detections) !== 1) {
             return;
@@ -127,18 +147,24 @@ export class HumanHelper implements FaceLandmarksHelper {
             left: Math.round(detections[0].boxRaw[0] * 100),
             right: Math.round((detections[0].boxRaw[0] + detections[0].boxRaw[2]) * 100)
         };
-    
+
         faceBox.width = Math.round(faceBox.right - faceBox.left);
-    
+
         if (this.lastValidFaceBox && threshold && Math.abs(this.lastValidFaceBox.left - faceBox.left) < threshold) {
             return;
         }
-    
+
         this.lastValidFaceBox = faceBox;
-    
+
         return faceBox;
     }
 
+    /**
+     * Gets the face expression from the detections, if there is no valid detections it will return undefined.
+     *
+     * @param {Array<FaceResult>} detections - The array with the detections.
+     * @returns {string | undefined}
+     */
     getFaceExpression(detections: Array<FaceResult>): string | undefined {
         if (this.getFaceCount(detections) !== 1) {
             return;
@@ -149,6 +175,12 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
     }
 
+    /**
+     * Gets the face count from the detections, which is the number of detections.
+     *
+     * @param {Array<FaceResult>} detections - The array with the detections.
+     * @returns {number}
+     */
     getFaceCount(detections: Array<FaceResult> | undefined): number {
         if (detections) {
             return detections.length;
@@ -157,44 +189,56 @@ export class HumanHelper implements FaceLandmarksHelper {
         return 0;
     }
 
+    /**
+     * Gets the detections from the image captured from the track.
+     *
+     * @param {ImageBitmap | ImageData} image - The image captured from the track,
+     * if OffscreenCanvas available it will be ImageBitmap, otherwise it will be ImageData.
+     * @returns {Promise<Array<FaceResult>>}
+     */
     async getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>> {
         if (!this.human || !this.faceDetectionTypes.length) {
             return [];
         }
 
         this.human.tf.engine().startScope();
-    
+
         const imageTensor = this.human.tf.browser.fromPixels(image);
         const { face: detections } = await this.human.detect(imageTensor, this.config);
 
         this.human.tf.engine().endScope();
-        
-        return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
-    }  
 
+        return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
+    }
+
+    /**
+     * Gathers together all the data from the detections, it's the function that will be called in the worker.
+     *
+     * @param {DetectInput} input - The input for the detections.
+     * @returns {Promise<DetectOutput>}
+     */
     public async detect({ image, threshold } : DetectInput): Promise<DetectOutput> {
-        let detections;
         let faceExpression;
         let faceBox;
 
         this.detectionInProgress = true;
 
-        detections = await this.getDetections(image);
+        const detections = await this.getDetections(image);
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
             faceExpression = this.getFaceExpression(detections);
         }
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
-            //if more than one face is detected the face centering will be disabled.
-            if (this.getFaceCount(detections) > 1 ) {
+            // if more than one face is detected the face centering will be disabled.
+            if (this.getFaceCount(detections) > 1) {
                 this.faceDetectionTypes.splice(this.faceDetectionTypes.indexOf(DETECTION_TYPES.FACE_BOX), 1);
 
-                //face-box for re-centering
+                // face-box for re-centering
                 faceBox = {
                     left: 0,
                     right: 100,
-                    width: 100,
+                    width: 100
                 };
             } else {
                 faceBox = this.getFaceBox(detections, threshold);
@@ -204,13 +248,18 @@ export class HumanHelper implements FaceLandmarksHelper {
 
         this.detectionInProgress = false;
 
-        return { 
-            faceExpression, 
+        return {
+            faceExpression,
             faceBox,
             faceCount: this.getFaceCount(detections)
-        }
+        };
     }
 
+    /**
+     * Returns the detection state.
+     *
+     * @returns {boolean}
+     */
     public getDetectionInProgress(): boolean {
         return this.detectionInProgress;
     }

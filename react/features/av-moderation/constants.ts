@@ -1,4 +1,4 @@
-import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
+import { MEDIA_TYPE } from '../base/media/constants';
 
 /**
  * Mapping between a media type and the witelist reducer key.

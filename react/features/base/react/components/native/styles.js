@@ -5,92 +5,11 @@ import BaseTheme from '../../../ui/components/BaseTheme.native';
 
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
+const BUTTON_HEIGHT = BaseTheme.spacing[7];
+const BUTTON_WIDTH = BaseTheme.spacing[7];
 
 export const AVATAR_SIZE = 65;
 export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
-
-/**
- * Style classes of the PagedList-based components.
- */
-const PAGED_LIST_STYLES = {
-
-    /**
-     * Outermost container of a page in {@code PagedList}.
-     */
-    pageContainer: {
-        flex: 1
-    },
-
-    /**
-     * Style of the page indicator (Android).
-     */
-    pageIndicator: {
-        alignItems: 'center',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: BoxModel.padding / 2
-    },
-
-    /**
-     * Additional style for the active indicator icon (Android).
-     */
-    pageIndicatorActive: {
-        color: ColorPalette.white
-    },
-
-    /**
-     * Container for the page indicators (Android).
-     */
-    pageIndicatorContainer: {
-        alignItems: 'center',
-        backgroundColor: ColorPalette.blue,
-        flexDirection: 'row',
-        justifyContent: 'space-around'
-    },
-
-    pageIndicatorContent: {
-        alignItems: 'center',
-        flexDirection: 'column',
-        justifyContent: 'center'
-    },
-
-    /**
-     * Icon of the page indicator (Android).
-     */
-    pageIndicatorIcon: {
-        color: ColorPalette.blueHighlight,
-        fontSize: 24
-    },
-
-    /**
-     * Label of the page indicator (Android).
-     */
-    pageIndicatorText: {
-        color: ColorPalette.blueHighlight
-    },
-
-    /**
-     * Top level style of the paged list.
-     */
-    pagedList: {
-        flex: 1
-    },
-
-    /**
-     * The paged list container View.
-     */
-    pagedListContainer: {
-        flex: 1,
-        flexDirection: 'column'
-    },
-
-    /**
-     * Disabled style for the container.
-     */
-    pagedListContainerDisabled: {
-        opacity: 0.2
-    }
-};
 
 const SECTION_LIST_STYLES = {
     /**
@@ -217,11 +136,82 @@ export const BASE_INDICATOR = {
     justifyContent: 'center'
 };
 
+const button = {
+    borderRadius: BaseTheme.shape.borderRadius,
+    height: BUTTON_HEIGHT
+};
+
+const buttonLabel = {
+    ...BaseTheme.typography.bodyShortBold,
+    padding: 6,
+    textTransform: 'capitalize'
+};
+
+const iconButtonContainer = {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    borderRadius: BaseTheme.shape.borderRadius,
+    height: BUTTON_HEIGHT,
+    width: BUTTON_WIDTH
+};
+
 /**
  * The styles of the generic React {@code Component}s implemented by the feature
  * base/react.
  */
 export default {
-    ...PAGED_LIST_STYLES,
-    ...SECTION_LIST_STYLES
+    ...SECTION_LIST_STYLES,
+
+    button: {
+        ...button
+    },
+
+    buttonLabel: {
+        ...buttonLabel
+    },
+
+    buttonLabelDisabled: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text03
+    },
+
+    buttonDisabled: {
+        ...button,
+        backgroundColor: BaseTheme.palette.actionDisabled
+    },
+
+    buttonLabelPrimary: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text01
+    },
+
+    buttonLabelSecondary: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text0
+    },
+
+    buttonLabelDestructive: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text01
+    },
+
+    buttonLabelTertiary: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text01
+    },
+
+    iconButtonContainer: {
+        ...iconButtonContainer
+    },
+
+    iconButtonContainerPrimary: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.action01
+    },
+
+    iconButtonContainerSecondary: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.action02
+    }
 };

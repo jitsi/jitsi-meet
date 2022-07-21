@@ -102,11 +102,11 @@ export const SOUNDS_THRESHOLDS = [ 1, 4, 10 ];
 
 interface IReactions {
     [key: string]: {
-        message: string;
         emoji: string;
+        message: string;
         shortcutChar: string;
-        soundId: string;
         soundFiles: string[];
+        soundId: string;
     }
 }
 

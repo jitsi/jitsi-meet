@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { withStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
@@ -7,21 +8,30 @@ import {
     createReactionMenuEvent,
     createToolbarEvent,
     sendAnalytics
+
     // @ts-ignore
 } from '../../../analytics';
 import { IStore } from '../../../app/types';
+
 // @ts-ignore
 import { isMobileBrowser } from '../../../base/environment/utils';
+
 // @ts-ignore
 import { translate } from '../../../base/i18n';
+
 // @ts-ignore
 import { getLocalParticipant, hasRaisedHand, raiseHand } from '../../../base/participants';
+
 // @ts-ignore
 import { connect } from '../../../base/redux';
+import { Theme } from '../../../base/ui/types';
+
 // @ts-ignore
 import { GifsMenu, GifsMenuButton } from '../../../gifs/components';
+
 // @ts-ignore
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
+
 // @ts-ignore
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
@@ -88,9 +98,7 @@ type Props = {
     t: Function
 };
 
-declare var APP: Object;
-
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         overflow: {
             width: 'auto',
@@ -201,6 +209,7 @@ class ReactionsMenu extends Component<Props> {
                 accessibilityLabel = { t(`toolbar.accessibilityLabel.${key}`) }
                 icon = { REACTIONS[key].emoji }
                 key = { key }
+                // eslint-disable-next-line react/jsx-no-bind
                 onClick = { doSendReaction }
                 toggled = { false }
                 tooltip = { `${t(`toolbar.${key}`)} (${modifierKey} + ${REACTIONS[key].shortcutChar})` } />);
@@ -274,6 +283,7 @@ function mapDispatchToProps(dispatch: IStore['dispatch']) {
         ...bindActionCreators(
         {
             _dockToolbox: dockToolbox
+
         // @ts-ignore
         }, dispatch)
     };
@@ -282,5 +292,6 @@ function mapDispatchToProps(dispatch: IStore['dispatch']) {
 export default translate(connect(
     mapStateToProps,
     mapDispatchToProps
+
     // @ts-ignore
 )(withStyles(styles)(ReactionsMenu)));

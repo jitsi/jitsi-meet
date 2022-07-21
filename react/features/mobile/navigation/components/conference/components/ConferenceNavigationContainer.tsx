@@ -1,28 +1,41 @@
+/* eslint-disable lines-around-comment */
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
+// @ts-ignore
 import { Chat, ChatAndPolls } from '../../../../../chat';
-
+// @ts-ignore
 import Conference from '../../../../../conference/components/native/Conference';
-import CarmodeTab from '../../../../../conference/components/native/carmode/Conference';
+import CarMode from '../../../../../conference/components/native/carmode/CarMode';
+// @ts-ignore
 import { getDisablePolls } from '../../../../../conference/functions';
+// @ts-ignore
 import { SharedDocument } from '../../../../../etherpad';
+// @ts-ignore
 import { GifsMenu } from '../../../../../gifs/components';
 import AddPeopleDialog
+// @ts-ignore
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
+// @ts-ignore
 import { ParticipantsPane } from '../../../../../participants-pane/components/native';
+// @ts-ignore
 import { StartLiveStreamDialog } from '../../../../../recording';
 import { StartRecordingDialog }
+// @ts-ignore
     from '../../../../../recording/components/Recording/native';
 import SalesforceLinkDialog
+// @ts-ignore
     from '../../../../../salesforce/components/native/SalesforceLinkDialog';
 import SecurityDialog
+// @ts-ignore
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
 import SpeakerStats
+// @ts-ignore
     from '../../../../../speaker-stats/components/native/SpeakerStats';
+// @ts-ignore
 import { screen } from '../../../routes';
 import {
     carmodeScreenOptions,
@@ -39,14 +52,17 @@ import {
     securityScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions
+    // @ts-ignore
 } from '../../../screenOptions';
 import LobbyNavigationContainer
+// @ts-ignore
     from '../../lobby/components/LobbyNavigationContainer';
 import {
     conferenceNavigationRef
+    // @ts-ignore
 } from '../ConferenceNavigationContainerRef';
 
-const ConferenceStack = createNativeStackNavigator();
+const ConferenceStack = createStackNavigator();
 
 const ConferenceNavigationContainer = () => {
     const isPollsDisabled = useSelector(getDisablePolls);
@@ -147,7 +163,7 @@ const ConferenceNavigationContainer = () => {
                         title: t('documentSharing.title')
                     }} />
                 <ConferenceStack.Screen
-                    component = { CarmodeTab }
+                    component = { CarMode }
                     name = { screen.conference.carmode }
                     options = {{
                         ...carmodeScreenOptions,

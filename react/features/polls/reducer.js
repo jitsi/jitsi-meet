@@ -53,7 +53,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
             polls: {
                 ...state.polls,
 
-                // The poll is added to the dictionnary of received polls
+                // The poll is added to the dictionary of received polls
                 [action.pollId]: action.poll
             },
             nbUnreadPolls: state.nbUnreadPolls + 1

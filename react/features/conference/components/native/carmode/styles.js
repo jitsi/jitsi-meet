@@ -6,29 +6,6 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 const MICROPHONE_SIZE = 180;
 
 /**
- * Base button style.
- */
-const baseButton = {
-    borderRadius: BaseTheme.shape.borderRadius,
-    height: BaseTheme.spacing[7],
-    marginTop: BaseTheme.spacing[3],
-    marginLeft: BaseTheme.spacing[10],
-    marginRight: BaseTheme.spacing[10],
-    display: 'flex',
-    justifyContent: 'space-around',
-    width: 300
-};
-
-/**
- * Base label style.
- */
-const baseLabel = {
-    display: 'flex',
-    fontSize: 16,
-    textTransform: 'capitalize'
-};
-
-/**
  * The styles of the safe area view that contains the title bar.
  */
 const titleBarSafeView = {
@@ -47,7 +24,7 @@ export default {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        bottom: 0,
+        bottom: BaseTheme.spacing[8],
         left: 0,
         right: 0,
         position: 'absolute'
@@ -106,10 +83,8 @@ export default {
     },
 
     roomTimer: {
-        color: BaseTheme.palette.text01,
         ...BaseTheme.typography.bodyShortBold,
-        paddingHorizontal: 8,
-        paddingVertical: 6,
+        color: BaseTheme.palette.text01,
         textAlign: 'center'
     },
 
@@ -129,25 +104,13 @@ export default {
         color: BaseTheme.palette.text02
     },
 
-    soundDeviceButtonLabel: {
-        ...baseLabel,
-        color: BaseTheme.palette.text06
-    },
-
     soundDeviceButton: {
-        ...baseButton,
-        backgroundColor: BaseTheme.palette.section01
+        marginBottom: BaseTheme.spacing[3],
+        width: 240
     },
 
     endMeetingButton: {
-        ...baseButton,
-        backgroundColor: BaseTheme.palette.actionDanger,
-        marginBottom: 60
-    },
-
-    endMeetingButtonLabel: {
-        ...baseLabel,
-        color: BaseTheme.palette.text01
+        width: 240
     },
 
     headerLabels: {
@@ -196,13 +159,14 @@ export default {
     },
 
     titleBar: {
-        alignSelf: 'center'
+        alignSelf: 'center',
+        marginTop: BaseTheme.spacing[1]
     },
 
     videoStoppedLabel: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
         color: BaseTheme.palette.text01,
-        marginBottom: 32,
-        ...BaseTheme.typography.bodyShortRegularLarge
+        marginBottom: BaseTheme.spacing[3]
     },
 
     connectionIndicatorIcon: {

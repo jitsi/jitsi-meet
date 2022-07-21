@@ -64,7 +64,7 @@ type Props = {
     rowIndex?: number,
 
     /**
-     * The styles comming from react-window.
+     * The styles coming from react-window.
      */
     style: Object
 };

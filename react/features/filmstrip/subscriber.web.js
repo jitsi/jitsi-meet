@@ -72,6 +72,8 @@ StateListenerRegistry.register(
     /* listener */ ({ layout }, store) => {
         switch (layout) {
         case LAYOUTS.TILE_VIEW:
+            store.dispatch(clearStageParticipants());
+            store.dispatch(pinParticipant(null));
             store.dispatch(setTileViewDimensions());
             break;
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
@@ -195,9 +197,9 @@ StateListenerRegistry.register(
  * there's just one).
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/filmstrip'].activeParticipants.length,
-    /* listener */(length, store) => {
-        if (length <= 1) {
+    /* selector */ state => state['features/filmstrip'].activeParticipants,
+    /* listener */(activeParticipants, store) => {
+        if (activeParticipants.length <= 1) {
             store.dispatch(selectParticipantInLargeVideo());
         }
     });

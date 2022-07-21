@@ -1,5 +1,5 @@
 {
-    "include": ["react/features/**/*.ts"],
+    "include": ["react/features/**/*.ts", "react/features/**/*.tsx", "./custom.d.ts"],
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "module": "es6",
@@ -9,7 +9,8 @@
         "noEmit": false,
         "moduleResolution": "Node",
         "strict": true,
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "strictPropertyInitialization": false
     },
     "exclude": [
         "node_modules"

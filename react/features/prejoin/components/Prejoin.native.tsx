@@ -1,42 +1,62 @@
+/* eslint-disable lines-around-comment */
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     BackHandler,
-    Text,
     View,
-    TouchableOpacity,
     TextInput,
-    Platform
+    Platform,
+    StyleProp,
+    TextStyle,
+    ViewStyle
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+// @ts-ignore
 import { appNavigate } from '../../app/actions.native';
+// @ts-ignore
 import { setAudioOnly } from '../../base/audio-only/actions';
+// @ts-ignore
 import { connect } from '../../base/connection/actions.native';
+// @ts-ignore
 import { IconClose } from '../../base/icons';
+// @ts-ignore
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
+// @ts-ignore
 import { getLocalParticipant } from '../../base/participants';
+// @ts-ignore
 import { getFieldValue } from '../../base/react';
+import Button from '../../base/react/components/native/Button';
+// @ts-ignore
+import { BUTTON_TYPES } from '../../base/react/constants';
+// @ts-ignore
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
+// @ts-ignore
 import { updateSettings } from '../../base/settings';
+// @ts-ignore
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import { BrandingImageBackground } from '../../dynamic-branding';
+// @ts-ignore
 import { LargeVideo } from '../../large-video/components';
+// @ts-ignore
 import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNavigationButton';
+// @ts-ignore
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
+// @ts-ignore
 import { screen } from '../../mobile/navigation/routes';
+// @ts-ignore
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
+// @ts-ignore
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
+// @ts-ignore
 import { isDisplayNameRequired } from '../functions';
+import { PrejoinProps } from '../types';
 
+// @ts-ignore
 import styles from './styles';
 
 
-interface Props {
-    navigation: any;
-}
-
-const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) => {
+const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const aspectRatio = useSelector(
@@ -88,16 +108,15 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         );
     }, []);
 
+    const { PRIMARY, SECONDARY } = BUTTON_TYPES;
     const joinButtonDisabled = !displayName && isDisplayNameMandatory;
-    const joinButtonStyles = joinButtonDisabled
-        ? styles.primaryButtonDisabled : styles.primaryButton;
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', goBack);
 
         return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
 
-    }, [ ]);
+    }, []);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -122,6 +141,7 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         toolboxContainerStyles = styles.toolboxContainerWide;
     }
 
+
     return (
         <JitsiScreen
             safeAreaInsets = { [ 'left' ] }
@@ -131,34 +151,26 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
                 <LargeVideo />
             </View>
             <View style = { contentContainerStyles }>
-                <View style = { styles.formWrapper }>
+                <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <TextInput
                         onChangeText = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
                         placeholderTextColor = { BaseTheme.palette.text03 }
-                        style = { styles.field }
+                        style = { styles.field as StyleProp<TextStyle> }
                         value = { displayName } />
-                    <TouchableOpacity
+                    <Button
+                        accessibilityLabel = 'prejoin.joinMeeting'
                         disabled = { joinButtonDisabled }
+                        label = 'prejoin.joinMeeting'
                         onPress = { onJoin }
-                        style = { [
-                            styles.button,
-                            joinButtonStyles
-                        ] }>
-                        <Text style = { styles.primaryButtonText }>
-                            { t('prejoin.joinMeeting') }
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
+                        style = { styles.prejoinButton }
+                        type = { PRIMARY } />
+                    <Button
+                        accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
+                        label = 'prejoin.joinMeetingInLowBandwidthMode'
                         onPress = { onJoinLowBandwidth }
-                        style = { [
-                            styles.button,
-                            styles.secondaryButton
-                        ] }>
-                        <Text style = { styles.secondaryButtonText }>
-                            { t('prejoin.joinMeetingInLowBandwidthMode') }
-                        </Text>
-                    </TouchableOpacity>
+                        style = { styles.prejoinButton }
+                        type = { SECONDARY } />
                 </View>
                 <View style = { toolboxContainerStyles }>
                     <AudioMuteButton

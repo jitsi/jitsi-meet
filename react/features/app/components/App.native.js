@@ -1,7 +1,6 @@
 import React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { FullWindowOverlay } from 'react-native-screens';
 import SplashScreen from 'react-native-splash-screen';
 
 import { DialogContainer } from '../../base/dialog';
@@ -24,7 +23,6 @@ import '../reducers';
 declare var __DEV__;
 
 const DialogContainerWrapper = Platform.select({
-    ios: FullWindowOverlay,
     default: View
 });
 

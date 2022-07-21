@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, ImageStyle, StyleProp, ViewStyle } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 
 // @ts-ignore
@@ -40,7 +40,7 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
                     // Align the <min-y> of the element's viewBox
                     // with the smallest Y value of the viewport.
                     preserveAspectRatio = 'xMinYMin'
-                    style = { styles.brandingImageBackgroundSvg }
+                    style = { styles.brandingImageBackgroundSvg as StyleProp<ViewStyle> }
                     uri = { imgSrc }
                     viewBox = '0 0 400 650'
                     width = '100%' />
@@ -50,7 +50,7 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
             = (
                 <Image
                     source = {{ uri: imgSrc }}
-                    style = { styles.brandingImageBackground } />
+                    style = { styles.brandingImageBackground as StyleProp<ImageStyle> } />
             );
     }
 

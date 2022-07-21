@@ -9,6 +9,8 @@ import { connect } from '../../../base/redux';
 import InviteButton from '../../../invite/components/add-people-dialog/native/InviteButton';
 import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
+import ToggleCameraButton
+    from '../../../toolbox/components/native/ToggleCameraButton';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import ConferenceTimer from '../ConferenceTimer';
 
@@ -82,10 +84,13 @@ const TitleBar = (props: Props) => (<>
             <Labels createOnPress = { props._createOnPress } />
         </View>
         <View style = { styles.titleBarButtonContainer }>
-            <AudioDeviceToggleButton styles = { styles.inviteButton } />
+            <ToggleCameraButton styles = { styles.titleBarButton } />
         </View>
         <View style = { styles.titleBarButtonContainer }>
-            <InviteButton styles = { styles.inviteButton } />
+            <AudioDeviceToggleButton styles = { styles.titleBarButton } />
+        </View>
+        <View style = { styles.titleBarButtonContainer }>
+            <InviteButton styles = { styles.titleBarButton } />
         </View>
     </View>}
 </>);

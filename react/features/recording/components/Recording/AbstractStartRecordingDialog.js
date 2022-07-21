@@ -17,6 +17,7 @@ import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notif
 import { toggleRequestingSubtitles } from '../../../subtitles';
 import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
+import { supportsLocalRecording } from '../../functions';
 
 export type Props = {
 
@@ -51,6 +52,11 @@ export type Props = {
      * If true the dropbox integration is enabled, otherwise - disabled.
      */
     _isDropboxEnabled: boolean,
+
+    /**
+     * Whether or not local recording is enabled.
+     */
+    _localRecordingEnabled: boolean,
 
     /**
      * The dropbox refresh token.
@@ -149,7 +155,11 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
                 || !this._areIntegrationsEnabled()) {
             selectedRecordingService = RECORDING_TYPES.JITSI_REC_SERVICE;
         } else if (this._areIntegrationsEnabled()) {
-            selectedRecordingService = RECORDING_TYPES.DROPBOX;
+            if (props._localRecordingEnabled && supportsLocalRecording()) {
+                selectedRecordingService = RECORDING_TYPES.LOCAL;
+            } else {
+                selectedRecordingService = RECORDING_TYPES.DROPBOX;
+            }
         }
 
         this.state = {
@@ -406,7 +416,8 @@ export function mapStateToProps(state: Object) {
     const {
         transcription,
         recordingService,
-        dropbox = {}
+        dropbox = {},
+        localRecording
     } = state['features/base/config'];
 
     return {
@@ -416,6 +427,7 @@ export function mapStateToProps(state: Object) {
         _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
         _fileRecordingsServiceSharingEnabled: recordingService?.sharingEnabled ?? false,
         _isDropboxEnabled: isDropboxEnabled(state),
+        _localRecordingEnabled: !localRecording?.disable,
         _rToken: state['features/dropbox'].rToken,
         _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token

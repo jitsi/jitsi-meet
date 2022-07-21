@@ -445,7 +445,7 @@ function _getDisplayName(state: Object, name: string): string {
 }
 
 /**
- * Loops trough the participants in the state in order to check if all participants are moderators.
+ * Loops through the participants in the state in order to check if all participants are moderators.
  *
  * @param {Object} state - The local participant redux state.
  * @returns {boolean}

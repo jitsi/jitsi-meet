@@ -1,6 +1,6 @@
 import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
-export const PLACEHOLDER_COLOR = BaseTheme.palette.action02Focus;
+export const PLACEHOLDER_COLOR = BaseTheme.palette.focus01;
 export const ENABLED_TRACK_COLOR = BaseTheme.palette.switch01Enabled;
 export const DISABLED_TRACK_COLOR = BaseTheme.palette.switch01Disabled;
 export const THUMB_COLOR = BaseTheme.palette.field02;
@@ -66,7 +66,7 @@ export default {
      */
     fieldSeparator: {
         borderBottomWidth: 1,
-        borderColor: BaseTheme.palette.border02
+        borderColor: BaseTheme.palette.ui05
     },
 
     /**
@@ -103,7 +103,7 @@ export default {
      * Global {@code Text} color for the components.
      */
     text: {
-        color: BaseTheme.palette.text02
+        color: BaseTheme.palette.text01
     },
 
     /**

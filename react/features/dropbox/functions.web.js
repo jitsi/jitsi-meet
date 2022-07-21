@@ -71,7 +71,7 @@ export function _authorizeDropbox(
 
 
 /**
- * Gets a new acccess token based on the refresh token.
+ * Gets a new access token based on the refresh token.
  *
  * @param {string} appKey - The dropbox appKey.
  * @param {string} rToken - The refresh token.

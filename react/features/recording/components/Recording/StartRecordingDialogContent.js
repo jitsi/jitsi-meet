@@ -10,9 +10,7 @@ import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import {
     _abstractMapStateToProps
 } from '../../../base/dialog';
-import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { browser } from '../../../base/lib-jitsi-meet';
 import {
     Button,
     Container,
@@ -26,7 +24,7 @@ import { StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
-import { getRecordingDurationEstimation } from '../../functions';
+import { getRecordingDurationEstimation, supportsLocalRecording } from '../../functions';
 
 import {
     DROPBOX_LOGO,
@@ -58,6 +56,11 @@ type Props = {
      * Whether we won't notify the other participants about the recording.
      */
     _localRecordingNoNotification: boolean,
+
+    /**
+     * Whether self local recording is enabled or not.
+     */
+    _localRecordingSelfEnabled: boolean,
 
     /**
      * The color-schemed stylesheet of this component.
@@ -163,9 +166,8 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     constructor(props) {
         super(props);
-        const supportsLocalRecording = browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser();
 
-        this._localRecordingAvailable = props._localRecordingEnabled && supportsLocalRecording;
+        this._localRecordingAvailable = props._localRecordingEnabled && supportsLocalRecording();
 
         // Bind event handler so it is only bound once for every instance.
         this._onSignIn = this._onSignIn.bind(this);
@@ -452,7 +454,7 @@ class StartRecordingDialogContent extends Component<Props> {
             );
         }
 
-        if (this.props.fileRecordingsServiceEnabled) {
+        if (this.props.fileRecordingsServiceEnabled || this._localRecordingAvailable) {
             switchContent = (
                 <Switch
                     className = 'recording-switch'
@@ -682,33 +684,35 @@ class StartRecordingDialogContent extends Component<Props> {
                 </Container>
                 {selectedRecordingService === RECORDING_TYPES.LOCAL && (
                     <>
-                        <Container>
-                            <Container
-                                className = 'recording-header space-top'
-                                style = { styles.header }>
-                                <Container className = 'recording-icon-container file-sharing-icon-container'>
-                                    <Image
-                                        className = 'recording-file-sharing-icon'
-                                        src = { ICON_USERS }
-                                        style = { styles.recordingIcon } />
+                        {this.props._localRecordingSelfEnabled && (
+                            <Container>
+                                <Container
+                                    className = 'recording-header space-top'
+                                    style = { styles.header }>
+                                    <Container className = 'recording-icon-container file-sharing-icon-container'>
+                                        <Image
+                                            className = 'recording-file-sharing-icon'
+                                            src = { ICON_USERS }
+                                            style = { styles.recordingIcon } />
+                                    </Container>
+                                    <Text
+                                        className = 'recording-title'
+                                        style = {{
+                                            ..._dialogStyles.text,
+                                            ...styles.title
+                                        }}>
+                                        {t('recording.onlyRecordSelf')}
+                                    </Text>
+                                    <Switch
+                                        className = 'recording-switch'
+                                        disabled = { isValidating }
+                                        onValueChange = { this.props.onLocalRecordingSelfChange }
+                                        style = { styles.switch }
+                                        trackColor = {{ false: TRACK_COLOR }}
+                                        value = { this.props.localRecordingOnlySelf } />
                                 </Container>
-                                <Text
-                                    className = 'recording-title'
-                                    style = {{
-                                        ..._dialogStyles.text,
-                                        ...styles.title
-                                    }}>
-                                    {t('recording.onlyRecordSelf')}
-                                </Text>
-                                <Switch
-                                    className = 'recording-switch'
-                                    disabled = { isValidating }
-                                    onValueChange = { this.props.onLocalRecordingSelfChange }
-                                    style = { styles.switch }
-                                    trackColor = {{ false: TRACK_COLOR }}
-                                    value = { this.props.localRecordingOnlySelf } />
                             </Container>
-                        </Container>
+                        )}
                         <Text className = 'local-recording-warning text'>
                             {t('recording.localRecordingWarning')}
                         </Text>
@@ -761,6 +765,7 @@ function _mapStateToProps(state) {
         isVpaas: isVpaasMeeting(state),
         _hideStorageWarning: state['features/base/config'].recording?.hideStorageWarning,
         _localRecordingEnabled: !state['features/base/config'].localRecording?.disable,
+        _localRecordingSelfEnabled: !state['features/base/config'].localRecording?.disableSelfRecording,
         _localRecordingNoNotification: !state['features/base/config'].localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
     };
