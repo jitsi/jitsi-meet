@@ -20,7 +20,7 @@ export function isOldJitsiMeetElectronApp() {
 
     const majorVersion = Number(match[3]);
 
-    if (isNaN(majorVersion) || majorVersion >= 2) {
+    if (isNaN(majorVersion) || majorVersion >= 2022) {
         return false;
     }
 
