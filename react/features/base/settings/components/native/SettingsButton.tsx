@@ -27,7 +27,7 @@ class SettingsButton extends AbstractButton<AbstractButtonProps, any, any> {
      * @returns {void}
      */
     _handleClick() {
-        return navigate(screen.settings.root);
+        return navigate(screen.settings.main);
     }
 }
 

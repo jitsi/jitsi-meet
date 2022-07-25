@@ -5,15 +5,7 @@ export const screen = {
         privacy: 'Privacy',
         tabs: {
             recent: 'Recent',
-            calendar: 'Calendar',
-            settings: {
-                main: 'Settings',
-                links: {
-                    help: 'Help',
-                    privacy: 'Privacy',
-                    terms: 'Terms'
-                }
-            }
+            calendar: 'Calendar'
         }
     },
     dialInSummary: 'Dial-In Info',
@@ -48,12 +40,6 @@ export const screen = {
         chat: 'Lobby chat'
     },
     settings: {
-        root: 'Settings root',
-        main: 'Settings',
-        links: {
-            help: 'Help',
-            privacy: 'Privacy',
-            terms: 'Terms'
-        }
+        main: 'Settings'
     }
 };

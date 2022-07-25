@@ -68,6 +68,7 @@ import {
 
 const ConferenceStack = createStackNavigator();
 
+
 const ConferenceNavigationContainer = () => {
     const isPollsDisabled = useSelector(getDisablePolls);
     let ChatScreen;
@@ -168,7 +169,7 @@ const ConferenceNavigationContainer = () => {
                     }} />
                 <ConferenceStack.Screen
                     component = { SettingsNavigationContainer }
-                    name = { screen.settings.root }
+                    name = { screen.settings.main }
                     options = { settingsNavigationContainerScreenOptions } />
                 <ConferenceStack.Screen
                     component = { CarMode }

@@ -1,13 +1,9 @@
-// @flow
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import { CalendarList, isCalendarEnabled } from '../../../../../calendar-sync';
 import { RecentList } from '../../../../../recent-list';
-import SettingsView
-    from '../../../../../welcome/components/native/settings/components/SettingsView';
 import {
     calendarListTabBarOptions,
     recentListTabBarOptions,
@@ -15,6 +11,8 @@ import {
     tabBarOptions
 } from '../../../../../welcome/constants';
 import { screen } from '../../../routes';
+import SettingsNavigationContainer
+    from '../../settings/components/SettingsNavigationContainer';
 
 const WelcomePage = createBottomTabNavigator();
 
@@ -37,13 +35,9 @@ type Props = {
     /**
      * Callback to be invoked when settings screen is focused.
      */
-    onSettingsScreenFocused: Function,
-
-    /**
-     * Displays room name input.
-     */
-    showRoomNameInput: boolean
+    onSettingsScreenFocused: Function
 };
+
 
 const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocused }: Props) => {
     const RecentListScreen = useCallback(() =>
@@ -65,19 +59,24 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
 
     const SettingsScreen = useCallback(() =>
         (
-            <SettingsView
-                isTabNavigatorScreen = { true }
+            <SettingsNavigationContainer
                 onSettingsScreenFocused = { onSettingsScreenFocused } />
         )
     );
 
     return (
         <WelcomePage.Navigator
+            initialRouteName = { screen.welcome.tabs.recent }
             screenOptions = {{
-                headerShown: false,
-                ...tabBarOptions
+                ...tabBarOptions,
+                headerShown: false
             }}>
             <WelcomePage.Screen
+                listeners = {{
+                    tabPress: () => {
+                        onSettingsScreenFocused(false);
+                    }
+                }}
                 name = { screen.welcome.tabs.recent }
                 options = { recentListTabBarOptions }>
                 { RecentListScreen }
@@ -85,13 +84,23 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
             {
                 calendarEnabled
             && <WelcomePage.Screen
+                listeners = {{
+                    tabPress: () => {
+                        onSettingsScreenFocused(false);
+                    }
+                }}
                 name = { screen.welcome.tabs.calendar }
                 options = { calendarListTabBarOptions }>
                 { CalendarListScreen }
             </WelcomePage.Screen>
             }
             <WelcomePage.Screen
-                name = { screen.welcome.tabs.settings.main }
+                listeners = {{
+                    tabPress: () => {
+                        onSettingsScreenFocused(true);
+                    }
+                }}
+                name = { screen.settings.main }
                 options = { settingsTabBarOptions }>
                 { SettingsScreen }
             </WelcomePage.Screen>

@@ -1,7 +1,6 @@
 // @flow
 
-import { Link, useIsFocused } from '@react-navigation/native';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
     Alert,
     NativeModules,
@@ -9,12 +8,18 @@ import {
     ScrollView,
     Text
 } from 'react-native';
-import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
+import {
+    Divider,
+    Switch,
+    TextInput,
+    TouchableRipple,
+    withTheme
+} from 'react-native-paper';
 
 import { translate } from '../../../../../base/i18n';
 import JitsiScreen from '../../../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../../../base/redux';
-import { screen } from '../../../../../mobile/navigation/routes';
+import { openURLInBrowser } from '../../../../../base/util';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
@@ -93,14 +98,9 @@ type Props = AbstractProps & {
     _serverURLChangeEnabled: boolean,
 
     /**
-     * Checks if the screen is part of a tab navigator.
+     * Help section url documentation.
      */
-    isTabNavigatorScreen: Function,
-
-    /**
-     * Handler for when settings screen is focused.
-     */
-    onSettingsScreenFocused: Function,
+    helpSectionURL: string,
 
     /**
      * Default prop for navigating between screen components(React Navigation).
@@ -120,15 +120,6 @@ type Props = AbstractProps & {
  */
 class SettingsView extends AbstractSettingsView<Props, State> {
     _urlField: Object;
-
-    /**
-     * The default values for {@code SettingsView} component's property types.
-     *
-     * @static
-     */
-    static defaultProps = {
-        isTabNavigatorScreen: false
-    };
 
     /**
      *
@@ -188,6 +179,9 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             startWithVideoMuted
         } = this.state;
         const { palette } = this.props.theme;
+        const { helpSectionURL } = this.props;
+        const privacySectionUrl = 'https://jitsi.org/meet/privacy';
+        const termsSectionUrl = 'https://jitsi.org/meet/terms';
 
         const textInputTheme = {
             colors: {
@@ -198,20 +192,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                 text: palette.text01
             }
         };
-
-        let helpScreenRoute;
-        let termsScreenRoute;
-        let privacyScreenRoute;
-
-        if (this.props.isTabNavigatorScreen) {
-            helpScreenRoute = screen.welcome.tabs.settings.links.help;
-            termsScreenRoute = screen.welcome.tabs.settings.links.terms;
-            privacyScreenRoute = screen.welcome.tabs.settings.links.privacy;
-        } else {
-            helpScreenRoute = screen.settings.links.help;
-            termsScreenRoute = screen.settings.links.terms;
-            privacyScreenRoute = screen.settings.links.privacy;
-        }
 
         return (
             <JitsiScreen
@@ -288,23 +268,35 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         label = 'settingsView.links'>
-                        <Link
-                            style = { styles.sectionLink }
-                            to = {{ screen: helpScreenRoute }}>
-                            { this.props.t('settingsView.help') }
-                        </Link>
+                        <TouchableRipple
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onPress = { () => openURLInBrowser(helpSectionURL) }
+                            rippleColor = { 'transparent' }
+                            style = { styles.sectionLinkContainer }>
+                            <Text style = { styles.sectionLinkText }>
+                                { this.props.t('settingsView.help') }
+                            </Text>
+                        </TouchableRipple>
                         <Divider style = { styles.fieldSeparator } />
-                        <Link
-                            style = { styles.sectionLink }
-                            to = {{ screen: termsScreenRoute }}>
-                            { this.props.t('settingsView.terms') }
-                        </Link>
+                        <TouchableRipple
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onPress = { () => openURLInBrowser(termsSectionUrl) }
+                            rippleColor = { 'transparent' }
+                            style = { styles.sectionLinkContainer }>
+                            <Text style = { styles.sectionLinkText }>
+                                { this.props.t('settingsView.terms') }
+                            </Text>
+                        </TouchableRipple>
                         <Divider style = { styles.fieldSeparator } />
-                        <Link
-                            style = { styles.sectionLink }
-                            to = {{ screen: privacyScreenRoute }}>
-                            { this.props.t('settingsView.privacy') }
-                        </Link>
+                        <TouchableRipple
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onPress = { () => openURLInBrowser(privacySectionUrl) }
+                            rippleColor = { 'transparent' }
+                            style = { styles.sectionLinkContainer }>
+                            <Text style = { styles.sectionLinkText }>
+                                { this.props.t('settingsView.privacy') }
+                            </Text>
+                        </TouchableRipple>
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         label = 'settingsView.buildInfoSection'>
@@ -616,27 +608,13 @@ class SettingsView extends AbstractSettingsView<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { userDocumentationURL } = state['features/base/config'].deploymentUrls || {};
+
     return {
         ..._abstractMapStateToProps(state),
-        _serverURLChangeEnabled: isServerURLChangeEnabled(state)
+        _serverURLChangeEnabled: isServerURLChangeEnabled(state),
+        helpSectionURL: userDocumentationURL
     };
 }
 
-export default translate(connect(_mapStateToProps)(withTheme(props => {
-    const isFocused = useIsFocused();
-    const { isTabNavigatorScreen, onSettingsScreenFocused } = props;
-
-    useEffect(() => {
-        if (isTabNavigatorScreen) {
-            if (isFocused) {
-                onSettingsScreenFocused(true);
-            } else {
-                onSettingsScreenFocused(false);
-            }
-        }
-    });
-
-    return (
-        <SettingsView { ...props } />
-    );
-})));
+export default translate(connect(_mapStateToProps)(withTheme(SettingsView)));
