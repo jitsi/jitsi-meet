@@ -8,18 +8,12 @@ import { IconCloseCircle } from '../../icons/svg/index';
 import { withPixelLineHeight } from '../../styles/functions.web';
 import { Theme } from '../../ui/types';
 
-interface InputProps {
+import { InputProps } from './types';
+
+interface IInputProps extends InputProps {
     bottomLabel?: string;
     className?: string;
-    clearable?: boolean;
-    disabled?: boolean;
-    error?: boolean;
-    icon?: any;
-    label?: string;
-    onChange: (value: string) => void;
-    placeholder?: string;
     type?: 'text' | 'email' | 'number' | 'password';
-    value: string;
 }
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -131,7 +125,7 @@ const Input = ({
     placeholder,
     type = 'text',
     value
-}: InputProps) => {
+}: IInputProps) => {
     const styles = useStyles();
     const isMobile = isMobileBrowser();
 
@@ -155,7 +149,7 @@ const Input = ({
                 placeholder = { placeholder }
                 type = { type }
                 value = { value } />
-            {clearable && value !== '' && <button className = { styles.clearButton }>
+            {clearable && !disabled && value !== '' && <button className = { styles.clearButton }>
                 <Icon
                     onClick = { clearInput }
                     size = { 20 }
