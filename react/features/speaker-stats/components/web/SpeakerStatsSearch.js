@@ -37,7 +37,6 @@ const useStyles = makeStyles(theme => {
             padding: '10px 16px',
             width: '100%',
             height: 40,
-            boxSizing: 'border-box',
             '&::placeholder': {
                 color: theme.palette.text03,
                 ...theme.typography.bodyShortRegular,
