@@ -319,7 +319,7 @@ export default {
     },
 
     centerInput: {
-        paddingRight: 16,
+        paddingRight: BaseTheme.spacing[3],
         textAlign: 'center'
     }
 };

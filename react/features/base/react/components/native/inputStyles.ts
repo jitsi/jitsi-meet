@@ -29,7 +29,7 @@ export default {
         backgroundColor: BaseTheme.palette.ui03,
         color: BaseTheme.palette.text01,
         paddingVertical: 13,
-        paddingHorizontal: 16,
+        paddingHorizontal: BaseTheme.spacing[3],
         borderRadius: BaseTheme.shape.borderRadius,
         ...BaseTheme.typography.bodyShortRegularLarge,
         lineHeight: 0,
@@ -51,11 +51,11 @@ export default {
     },
 
     iconInput: {
-        paddingLeft: 40
+        paddingLeft: BaseTheme.spacing[6]
     },
 
     clearableInput: {
-        paddingRight: 40
+        paddingRight: BaseTheme.spacing[6]
     },
 
     clearButton: {
