@@ -16,38 +16,38 @@ declare var interfaceConfig: Object;
 
 export type Props = {
 
-  /**
-   * Whether to show the option to invite more people.
-   */
-  _shouldShow: boolean,
+    /**
+     * Whether to show the option to invite more people.
+     */
+    _shouldShow: boolean,
 
-  /**
-   * Whether the toolbox is visible.
-   */
-  _toolboxVisible: boolean,
+    /**
+     * Whether the toolbox is visible.
+     */
+    _toolboxVisible: boolean,
 
-  /**
-   * Handler to open the invite dialog.
-   */
-  onClick: Function,
+    /**
+     * Handler to open the invite dialog.
+     */
+    onClick: Function,
 
-  /**
-   * Invoked to obtain translated strings.
-   */
-  t: Function,
-  dispatch: Function,
-  /**
-* Name of the meeting we're currently in.
-*/
-  _meetingName: string,
-  /**
- * Whether displaying the current meeting name is enabled or not.
- */
-  _meetingNameEnabled: boolean,
-  /**
-* True if the navigation bar should be visible.
-*/
-  _visible: boolean
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+    dispatch: Function,
+    /**
+     * Name of the meeting we're currently in.
+     */
+    _meetingName: string,
+    /**
+     * Whether displaying the current meeting name is enabled or not.
+     */
+    _meetingNameEnabled: boolean,
+    /**
+     * True if the navigation bar should be visible.
+     */
+    _visible: boolean
 }
 
 /**
@@ -62,52 +62,50 @@ const listOfAds = [];
 
 const ConnectButtons = (props: Props) => {
 
-  const [timer, setTimer] = useState(false);
-  const [adsList, setAdsList] = useState([]);
-  const [loading, setLoading] = useState(false);
+    const [timer, setTimer] = useState(0);
+    const [adsList, setAdsList] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-  const meetingName = props._meetingName.trim()
+    const meetingName = props._meetingName.trim()
 
-  useEffect(() => {
-      let cancel = false;
-    (async () => {
-      setLoading(true);
-      const res = {
-        roomName: meetingName
-      }
-      let webAdsData = await API.request('GET', 'iconAds', res);
-      if(cancel) return;
-        if (webAdsData.status === 1) {
-            for (let i = 0; i < webAdsData.data.length; i++) {
-                listOfAds.push(webAdsData.data[i]);
+    useEffect(() => {
+        let cancel = false;
+        (async () => {
+            setLoading(true);
+            const res = {
+                roomName: meetingName
             }
-            setAdsList(listOfAds)
-            setLoading(false);
+            let webAdsData = await API.request('GET', 'iconAds', res);
+            if(cancel) return;
+            if (webAdsData.status === 1) {
+                for (let i = 0; i < webAdsData.data.length; i++) {
+                    listOfAds.push(webAdsData.data[i]);
+                }
+                setAdsList(listOfAds)
+                setLoading(false);
+            }
+        })()
+        return () => {
+            cancel = true;
         }
-    })()
-      return () => {
-          cancel = true;
-      }
-  }, [])
+    }, [adsList])
 
-  useEffect(() => {
-   const timer = setTimeout(() => {
-      setTimer(timer + 2 > adsList.length - 1 ? 0 : timer + 2)
+
+     setTimeout(() => {
+        setTimer(timer + 2 > adsList.length - 1 ? 0 : timer + 2)
     }, 10000)
-      return ()=> {
-          clearTimeout(timer);
-      }
-  }, [timer])
-  return (
-    <div style={{display: 'flex'}}
-         className={`invite-more-container${true ? '' : ' elevated'}`}>
-        {adsList.map((value, index) => {
-            return (
-                <div>
+    return (
+        <div style={{ display: 'flex' }}
+             className={`invite-more-container${true ? '' : ' elevated'}`}>
+            {adsList.map((value, index) => {
+                return (
                     <div key={index}>
-                        {timer === index || timer + 1 === index ?
+                        {timer == index || timer + 1 == index ?
                             <div>
-                                <div style={{borderRadius: '40%', margin: '10px'}}
+                                <div style={{
+                                    borderRadius: '40%',
+                                    margin: '10px'
+                                }}
                                      className='invite-more-button'
                                      onClick={() => {
                                          window.open(value.url)
@@ -122,11 +120,10 @@ const ConnectButtons = (props: Props) => {
                                 </div>
                             </div> : null}
                     </div>
-                </div>
-            )
-        })}
-    </div>
-  );
+                )
+            })}
+        </div>
+    );
 }
 
 
@@ -139,18 +136,18 @@ const ConnectButtons = (props: Props) => {
  * @returns {Props}
  */
 function mapStateToProps(state) {
-  // const participantCount = getParticipantCount(state);
-  // const isAlone = participantCount === 1;
-  // const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
+    // const participantCount = getParticipantCount(state);
+    // const isAlone = participantCount === 1;
+    // const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
-  return {
-    _shouldShow: isButtonEnabled('invite', state),
-    _toolboxVisible: isToolboxEnabled(state),
-    _meetingName: getConferenceName(state),
-    _meetingNameEnabled:
-      getFeatureFlag(state, MEETING_NAME_ENABLED, true),
-    // _visible: isToolboxVisible(state)
-  };
+    return {
+        _shouldShow: isButtonEnabled('invite', state),
+        _toolboxVisible: isToolboxEnabled(state),
+        _meetingName: getConferenceName(state),
+        _meetingNameEnabled:
+            getFeatureFlag(state, MEETING_NAME_ENABLED, true),
+        // _visible: isToolboxVisible(state)
+    };
 }
 
 /**
