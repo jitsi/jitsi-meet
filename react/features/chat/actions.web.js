@@ -5,7 +5,7 @@ import type { Dispatch } from 'redux';
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { getParticipantById } from '../base/participants/functions';
 
-import { OPEN_CHAT } from './actionTypes';
+import { OPEN_CHAT, RESET_HAS_NEW_MESSAGES, SET_INPUT_CHAT_HEIGHT } from './actionTypes';
 import { closeChat } from './actions.any';
 
 export * from './actions.any';
@@ -66,5 +66,36 @@ export function toggleChat() {
 
         // Recompute the large video size whenever we toggle the chat, as it takes chat state into account.
         VideoLayout.onResize();
+    };
+}
+
+/**
+ * Set has new messages to state.
+ *
+ * @param {boolean} hasNewMessages - Boolean to show/hide unread messages button from chat.
+ * @returns {{
+ *      type: RESET_HAS_NEW_MESSAGES,
+ *       hasNewMessages: boolean
+ * }}
+ */
+export function resetHasNewMessages() {
+    return {
+        type: RESET_HAS_NEW_MESSAGES
+    };
+}
+
+/**
+ * Set chat input height.
+ *
+ * @param {number} inputChatHeight - Input chat height.
+ * @returns {{
+ *      type: SET_INPUT_CHAT_HEIGHT,
+ *       chatHeight: number
+ * }}
+ */
+export function setChatHeight(inputChatHeight) {
+    return {
+        type: SET_INPUT_CHAT_HEIGHT,
+        inputChatHeight
     };
 }

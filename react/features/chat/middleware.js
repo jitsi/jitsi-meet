@@ -71,6 +71,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case ADD_MESSAGE:
+
         unreadCount = getUnreadCount(getState());
         if (action.isReaction) {
             action.hasRead = false;

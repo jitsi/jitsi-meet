@@ -14,7 +14,9 @@ import {
     SET_IS_POLL_TAB_FOCUSED,
     SET_LOBBY_CHAT_RECIPIENT,
     SET_LOBBY_CHAT_ACTIVE_STATE,
-    REMOVE_LOBBY_CHAT_PARTICIPANT
+    REMOVE_LOBBY_CHAT_PARTICIPANT,
+    RESET_HAS_NEW_MESSAGES,
+    SET_INPUT_CHAT_HEIGHT
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -26,7 +28,9 @@ const DEFAULT_STATE = {
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
     lobbyMessageRecipient: undefined,
-    isLobbyChatActive: false
+    isLobbyChatActive: false,
+    hasNewMessages: false,
+    inputChatHeight: 0
 };
 
 ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
@@ -62,7 +66,8 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             lastReadMessage:
                 action.hasRead ? newMessage : state.lastReadMessage,
             nbUnreadMessages: state.isPollsTabFocused ? state.nbUnreadMessages + 1 : state.nbUnreadMessages,
-            messages
+            messages,
+            hasNewMessages: true
         };
     }
 
@@ -142,6 +147,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             isOpen: action.payload || state.isOpen,
             privateMessageRecipient: undefined
         };
+
     case REMOVE_LOBBY_CHAT_PARTICIPANT:
         return {
             ...state,
@@ -156,6 +162,18 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             isLobbyChatActive: false,
             lobbyMessageRecipient: undefined
         };
+
+    case RESET_HAS_NEW_MESSAGES:
+        return {
+            ...state,
+            hasNewMessages: false
+        };
+    case SET_INPUT_CHAT_HEIGHT:
+        return {
+            ...state,
+            inputChatHeight: action.inputChatHeight
+        };
+
     }
 
     return state;

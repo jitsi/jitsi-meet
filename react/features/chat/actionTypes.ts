@@ -113,3 +113,22 @@ export const SET_IS_POLL_TAB_FOCUSED = 'SET_IS_POLL_TAB_FOCUSED';
   * }
   */
  export const REMOVE_LOBBY_CHAT_PARTICIPANT = 'REMOVE_LOBBY_CHAT_PARTICIPANT';
+
+  /**
+  * The type of action which reset has new messages to initial value false.
+  *
+ * {
+ *     type: RESET_HAS_NEW_MESSAGES
+ * }
+  */
+ export const RESET_HAS_NEW_MESSAGES = 'RESET_HAS_NEW_MESSAGES'
+
+  /**
+  * The type of action which set the input height.
+  *
+ * {
+ *     type: RESET_HAS_NEW_MESSAGES
+ * }
+  */
+
+ export const SET_INPUT_CHAT_HEIGHT= 'SET_CHAT_HEIGHT'

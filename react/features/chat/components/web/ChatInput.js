@@ -8,6 +8,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { Icon, IconPlane, IconSmile } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { setChatHeight } from '../../actions.web';
 import { areSmileysDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
@@ -83,7 +84,7 @@ class ChatInput extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this._textArea = null;
+        this._textArea = React.createRef();
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDetectSubmit = this._onDetectSubmit.bind(this);
@@ -94,7 +95,7 @@ class ChatInput extends Component<Props, State> {
         this._onEscHandler = this._onEscHandler.bind(this);
         this._onToggleSmileysPanelKeyPress = this._onToggleSmileysPanelKeyPress.bind(this);
         this._onSubmitMessageKeyPress = this._onSubmitMessageKeyPress.bind(this);
-        this._setTextAreaRef = this._setTextAreaRef.bind(this);
+        this._onResizeTextarea = this._onResizeTextarea.bind(this);
     }
 
     /**
@@ -105,7 +106,7 @@ class ChatInput extends Component<Props, State> {
     componentDidMount() {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
-            this._textArea && this._textArea.blur();
+            this._textArea && this._textArea.current.blur();
         }
     }
 
@@ -154,10 +155,10 @@ class ChatInput extends Component<Props, State> {
                             id = 'usermsg'
                             maxRows = { 5 }
                             onChange = { this._onMessageChange }
-                            onHeightChange = { this.props.onResize }
+                            onHeightChange = { this._onResizeTextarea }
                             onKeyDown = { this._onDetectSubmit }
                             placeholder = { this.props.t('chat.messagebox') }
-                            ref = { this._setTextAreaRef }
+                            ref = { this._textArea }
                             tabIndex = { 0 }
                             value = { this.state.message } />
                     </div>
@@ -184,7 +185,7 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _focus() {
-        this._textArea && this._textArea.focus();
+        this._textArea && this._textArea.current.focus();
     }
 
 
@@ -344,17 +345,16 @@ class ChatInput extends Component<Props, State> {
         }
     }
 
-    _setTextAreaRef: (?HTMLTextAreaElement) => void;
+    _onResizeTextarea: (?HTMLTextAreaElement) => void;
 
     /**
-     * Sets the reference to the HTML TextArea.
-     *
-     * @param {HTMLAudioElement} textAreaElement - The HTML text area element.
-     * @private
-     * @returns {void}
-     */
-    _setTextAreaRef(textAreaElement: ?HTMLTextAreaElement) {
-        this._textArea = textAreaElement;
+ * Set the text area height to store.
+ *
+ * @private
+ * @returns {void}
+ */
+    _onResizeTextarea() {
+        this.props.dispatch(setChatHeight(this._textArea.current.clientHeight));
     }
 }
 
@@ -374,3 +374,19 @@ const mapStateToProps = state => {
 };
 
 export default translate(connect(mapStateToProps)(ChatInput));
+
+// this._setTextAreaRef = this._setTextAreaRef.bind(this);
+// this._onResizeTest = this._onResizeTest.bind(this);
+
+// _setTextAreaRef: (?HTMLTextAreaElement) => void;
+
+// /**
+//  * Sets the reference to the HTML TextArea.
+//  *
+//  * @param {HTMLAudioElement} textAreaElement - The HTML text area element.
+//  * @private
+//  * @returns {void}
+//  */
+// _setTextAreaRef(textAreaElement: ?HTMLTextAreaElement) {
+//     this._textArea = textAreaElement;
+// }

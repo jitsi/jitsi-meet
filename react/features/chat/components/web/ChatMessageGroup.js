@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 
 import ChatMessage from './ChatMessage';
-import ShowUnreadMessagesButton from './ShowUnreadMessagesButton';
 
 type Props = {
 
@@ -54,10 +53,6 @@ class ChatMessageGroup extends Component<Props> {
                             showTimestamp = { i === messages.length - 1 } />
                     ))}
                 </div>
-
-                {/* <ShowUnreadMessagesButton
-                    displayName = 'mama'
-                    unreadMessagesCounter = { messages.length } /> */}
             </div>
         );
     }
