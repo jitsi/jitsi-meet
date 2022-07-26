@@ -247,7 +247,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                         accessibilityLabel = 'toolbar.openChat'
                         label = 'toolbar.openChat'
                         onPress = { this._onNavigateToLobbyChat }
-                        style = { styles.lobbyButton }
+                        style = { styles.openChatButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
                 {

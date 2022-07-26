@@ -5,7 +5,7 @@ const SECONDARY_COLOR = BaseTheme.palette.border04;
 
 export default {
     prejoinButton: {
-        marginTop: BaseTheme.spacing[4]
+        marginTop: BaseTheme.spacing[3]
     },
 
     buttonStylesBorderless: {
