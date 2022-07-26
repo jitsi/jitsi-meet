@@ -129,7 +129,7 @@ export default {
         borderWidth: 2,
         color: BaseTheme.palette.text06,
         height: BaseTheme.spacing[7],
-        marginTop: BaseTheme.spacing[3],
+        marginTop: 38,
         marginHorizontal: BaseTheme.spacing[3],
         padding: BaseTheme.spacing[2],
         textAlign: 'center'
@@ -164,7 +164,7 @@ export default {
     },
 
     loadingIndicator: {
-        marginBottom: BaseTheme.spacing[4]
+        marginBottom: BaseTheme.spacing[3]
     },
 
     participantBox: {
@@ -181,9 +181,14 @@ export default {
         marginTop: BaseTheme.spacing[3]
     },
 
+    openChatButton: {
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[3]
+    },
+
     enterPasswordButton: {
         marginHorizontal: BaseTheme.spacing[3],
-        marginTop: BaseTheme.spacing[6]
+        marginTop: BaseTheme.spacing[3]
     },
 
     // KnockingParticipantList
