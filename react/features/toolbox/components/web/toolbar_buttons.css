@@ -57,4 +57,11 @@
     background-repeat: no-repeat;
     background-size: contain;
 }
+.hangup-button svg {
+    fill: #FF0000;
+}
+
+.hangup-button {
+    background-color: #141414;
+}
 
