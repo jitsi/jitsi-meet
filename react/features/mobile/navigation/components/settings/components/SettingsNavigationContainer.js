@@ -3,12 +3,17 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import HelpView from '../../../../../settings/components/native/HelpView';
+import PrivacyView from '../../../../../settings/components/native/PrivacyView';
+import TermsView from '../../../../../settings/components/native/TermsView';
 import SettingsView
     from '../../../../../welcome/components/native/settings/components/SettingsView';
 import { screen } from '../../../routes';
 import {
+    linkScreenOptions,
     navigationContainerTheme,
-    settingsScreenOptions
+    settingsScreenOptions,
+    welcomeScreenOptions
 } from '../../../screenOptions';
 import {
     settingsNavigationContainerRef
@@ -30,6 +35,8 @@ type Props = {
 
 
 const SettingsNavigationContainer = ({ onSettingsScreenFocused }: Props) => {
+    const isInsideWelcomePage = Boolean(onSettingsScreenFocused);
+    const baseSettingsScreenOptions = isInsideWelcomePage ? welcomeScreenOptions : settingsScreenOptions;
     const { t } = useTranslation();
 
     return (
@@ -43,9 +50,29 @@ const SettingsNavigationContainer = ({ onSettingsScreenFocused }: Props) => {
                     component = { SettingsView }
                     name = { screen.settings.main }
                     options = {{
-                        ...settingsScreenOptions,
-                        headerShown: !onSettingsScreenFocused,
+                        ...baseSettingsScreenOptions,
                         title: t('settings.title')
+                    }} />
+                <SettingsStack.Screen
+                    component = { HelpView }
+                    name = { screen.settings.links.help }
+                    options = {{
+                        ...linkScreenOptions,
+                        title: t('helpView.header')
+                    }} />
+                <SettingsStack.Screen
+                    component = { TermsView }
+                    name = { screen.settings.links.terms }
+                    options = {{
+                        ...linkScreenOptions,
+                        title: t('termsView.header')
+                    }} />
+                <SettingsStack.Screen
+                    component = { PrivacyView }
+                    name = { screen.settings.links.privacy }
+                    options = {{
+                        ...linkScreenOptions,
+                        title: t('privacyView.header')
                     }} />
             </SettingsStack.Navigator>
         </NavigationContainer>

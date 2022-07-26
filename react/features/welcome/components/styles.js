@@ -7,7 +7,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 export const PLACEHOLDER_TEXT_COLOR = BaseTheme.palette.text01;
 
-export const DRAWER_AVATAR_SIZE = 104;
+export const AVATAR_SIZE = 104;
 
 /**
  * The default color of text on the WelcomePage.
@@ -225,12 +225,5 @@ export default {
         flex: 1,
         opacity: 0.8,
         overflow: 'hidden'
-    },
-
-    /**
-     * Style for screen container.
-     */
-    screenContainer: {
-        flex: 1
     }
 };

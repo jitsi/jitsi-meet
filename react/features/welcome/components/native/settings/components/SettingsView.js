@@ -1,31 +1,37 @@
 // @flow
 
+import { Link } from '@react-navigation/native';
 import React from 'react';
 import {
     Alert,
     NativeModules,
     Platform,
     ScrollView,
-    Text
+    Text, View
 } from 'react-native';
 import {
     Divider,
     Switch,
     TextInput,
-    TouchableRipple,
     withTheme
 } from 'react-native-paper';
 
+import { Avatar } from '../../../../../base/avatar';
 import { translate } from '../../../../../base/i18n';
 import JitsiScreen from '../../../../../base/modal/components/JitsiScreen';
+import {
+    getLocalParticipant,
+    getParticipantDisplayName
+} from '../../../../../base/participants';
 import { connect } from '../../../../../base/redux';
-import { openURLInBrowser } from '../../../../../base/util';
+import { screen } from '../../../../../mobile/navigation/routes';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from '../../../../../settings/components/AbstractSettingsView';
 import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../../../../settings/functions';
+import { AVATAR_SIZE } from '../../../styles';
 
 import FormRow from './FormRow';
 import FormSectionAccordion from './FormSectionAccordion';
@@ -34,6 +40,7 @@ import styles, {
     ENABLED_TRACK_COLOR,
     THUMB_COLOR
 } from './styles';
+
 
 /**
  * Application information module.
@@ -98,9 +105,14 @@ type Props = AbstractProps & {
     _serverURLChangeEnabled: boolean,
 
     /**
-     * Help section url documentation.
+     * Avatar label.
      */
-    helpSectionURL: string,
+    avatarLabel: string,
+
+    /**
+     * The ID of the local participant.
+     */
+    localParticipantId: string,
 
     /**
      * Default prop for navigating between screen components(React Navigation).
@@ -179,9 +191,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             startWithVideoMuted
         } = this.state;
         const { palette } = this.props.theme;
-        const { helpSectionURL } = this.props;
-        const privacySectionUrl = 'https://jitsi.org/meet/privacy';
-        const termsSectionUrl = 'https://jitsi.org/meet/terms';
 
         const textInputTheme = {
             colors: {
@@ -196,7 +205,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         return (
             <JitsiScreen
                 style = { styles.settingsViewContainer }>
-                <ScrollView>
+                <ScrollView contentInsetAdjustmentBehavior = { 'automatic' }>
+                    <View style = { styles.avatarContainer }>
+                        <Avatar
+                            participantId = { this.props.localParticipantId }
+                            size = { AVATAR_SIZE } />
+                        <Text style = { styles.avatarLabel }>
+                            { this.props.avatarLabel }
+                        </Text>
+                    </View>
                     <FormSectionAccordion
                         label = 'settingsView.profileSection'>
                         <TextInput
@@ -268,35 +285,23 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         label = 'settingsView.links'>
-                        <TouchableRipple
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onPress = { () => openURLInBrowser(helpSectionURL) }
-                            rippleColor = { 'transparent' }
-                            style = { styles.sectionLinkContainer }>
-                            <Text style = { styles.sectionLinkText }>
-                                { this.props.t('settingsView.help') }
-                            </Text>
-                        </TouchableRipple>
+                        <Link
+                            style = { styles.sectionLink }
+                            to = {{ screen: screen.settings.links.help }}>
+                            { this.props.t('settingsView.help') }
+                        </Link>
                         <Divider style = { styles.fieldSeparator } />
-                        <TouchableRipple
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onPress = { () => openURLInBrowser(termsSectionUrl) }
-                            rippleColor = { 'transparent' }
-                            style = { styles.sectionLinkContainer }>
-                            <Text style = { styles.sectionLinkText }>
-                                { this.props.t('settingsView.terms') }
-                            </Text>
-                        </TouchableRipple>
+                        <Link
+                            style = { styles.sectionLink }
+                            to = {{ screen: screen.settings.links.terms }}>
+                            { this.props.t('settingsView.terms') }
+                        </Link>
                         <Divider style = { styles.fieldSeparator } />
-                        <TouchableRipple
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onPress = { () => openURLInBrowser(privacySectionUrl) }
-                            rippleColor = { 'transparent' }
-                            style = { styles.sectionLinkContainer }>
-                            <Text style = { styles.sectionLinkText }>
-                                { this.props.t('settingsView.privacy') }
-                            </Text>
-                        </TouchableRipple>
+                        <Link
+                            style = { styles.sectionLink }
+                            to = {{ screen: screen.settings.links.privacy }}>
+                            { this.props.t('settingsView.privacy') }
+                        </Link>
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         label = 'settingsView.buildInfoSection'>
@@ -308,8 +313,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         </FormRow>
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        accordion = { true }
-                        expandable = { true }
                         label = 'settingsView.advanced'>
                         { Platform.OS === 'android' && (
                             <>
@@ -608,12 +611,17 @@ class SettingsView extends AbstractSettingsView<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { userDocumentationURL } = state['features/base/config'].deploymentUrls || {};
+    const localParticipant = getLocalParticipant(state);
+    const localParticipantId = localParticipant?.id;
+    const avatarLabel = localParticipant && getParticipantDisplayName(state, localParticipantId);
+
+    console.log(localParticipantId, 'PARTICIPANT');
 
     return {
         ..._abstractMapStateToProps(state),
         _serverURLChangeEnabled: isServerURLChangeEnabled(state),
-        helpSectionURL: userDocumentationURL
+        avatarLabel,
+        localParticipantId
     };
 }
 

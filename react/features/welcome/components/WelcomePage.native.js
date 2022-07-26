@@ -243,6 +243,10 @@ class WelcomePage extends AbstractWelcomePage<*> {
             isSettingsScreenFocused: focused
         });
 
+        this.props.navigation.setOptions({
+            headerShown: !focused
+        });
+
         Animated.timing(
             this.state.roomNameInputAnimation,
             {

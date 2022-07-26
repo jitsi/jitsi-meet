@@ -1,8 +1,6 @@
 export const screen = {
     welcome: {
-        help: 'Help',
         main: 'Welcome',
-        privacy: 'Privacy',
         tabs: {
             recent: 'Recent',
             calendar: 'Calendar'
@@ -40,6 +38,11 @@ export const screen = {
         chat: 'Lobby chat'
     },
     settings: {
-        main: 'Settings'
+        main: 'Settings',
+        links: {
+            help: 'Help',
+            privacy: 'Privacy',
+            terms: 'Terms'
+        }
     }
 };
