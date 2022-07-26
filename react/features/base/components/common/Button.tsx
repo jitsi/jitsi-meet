@@ -5,6 +5,7 @@ import React from 'react';
 import Icon from '../../icons/components/Icon';
 import { BUTTON_TYPES } from '../../react/constants';
 import { withPixelLineHeight } from '../../styles/functions.web';
+import { Theme } from '../../ui/types';
 
 import { ButtonProps } from './types';
 
@@ -31,7 +32,7 @@ interface IButtonProps extends ButtonProps {
     size?: 'small' | 'medium' | 'large';
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles((theme: Theme) => {
     return {
         button: {
             backgroundColor: theme.palette.action01,

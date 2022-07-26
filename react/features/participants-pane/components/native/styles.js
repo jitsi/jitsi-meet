@@ -310,5 +310,16 @@ export default {
         paddingLeft: BaseTheme.spacing[3],
         paddingRight: BaseTheme.spacing[3],
         fontSize: 16
+    },
+
+    inputContainer: {
+        marginLeft: BaseTheme.spacing[3],
+        marginRight: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[4]
+    },
+
+    centerInput: {
+        paddingRight: BaseTheme.spacing[3],
+        textAlign: 'center'
     }
 };
