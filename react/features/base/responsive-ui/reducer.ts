@@ -1,6 +1,5 @@
-// @flow
-
-import { ReducerRegistry, set } from '../redux';
+import ReducerRegistry from '../redux/ReducerRegistry';
+import { set } from '../redux/functions';
 
 import {
     CLIENT_RESIZED,
@@ -27,7 +26,21 @@ const DEFAULT_STATE = {
     contextMenuOpened: false
 };
 
-ReducerRegistry.register('features/base/responsive-ui', (state = DEFAULT_STATE, action) => {
+export interface IResponsiveUIState {
+    aspectRatio: Symbol;
+    clientHeight: number;
+    clientWidth: number;
+    contextMenuOpened: boolean;
+    reducedUI: boolean;
+    safeAreaInsets?: {
+        bottom: number;
+        left: number;
+        right: number;
+        top: number;
+    }
+}
+
+ReducerRegistry.register('features/base/responsive-ui', (state: IResponsiveUIState = DEFAULT_STATE, action) => {
     switch (action.type) {
     case CLIENT_RESIZED: {
         return {

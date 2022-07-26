@@ -1,10 +1,12 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
+// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
 import { APP_WILL_MOUNT } from '../app/actionTypes';
-import { PersistenceRegistry, ReducerRegistry } from '../redux';
+import PersistenceRegistry from '../redux/PersistenceRegistry';
+import ReducerRegistry from '../redux/ReducerRegistry';
+// @ts-ignore
 import { assignIfDefined } from '../util';
 
 import { SETTINGS_UPDATED } from './actionTypes';
@@ -14,7 +16,7 @@ import { SETTINGS_UPDATED } from './actionTypes';
  *
  * @type Object
  */
-const DEFAULT_STATE = {
+const DEFAULT_STATE: ISettingsState = {
     audioOutputDeviceId: undefined,
     avatarURL: undefined,
     cameraDeviceId: undefined,
@@ -49,16 +51,53 @@ const DEFAULT_STATE = {
     userSelectedSkipPrejoin: undefined
 };
 
+export interface ISettingsState {
+    audioOutputDeviceId?: string|boolean;
+    avatarURL?: string|boolean;
+    cameraDeviceId?: string|boolean;
+    disableCallIntegration?: boolean;
+    disableCrashReporting?: boolean;
+    disableP2P?: boolean;
+    disableSelfView?: boolean;
+    displayName?: string|boolean;
+    email?: string|boolean;
+    hideShareAudioHelper?: boolean;
+    localFlipX?: boolean;
+    micDeviceId?: string|boolean;
+    serverURL?: string|boolean;
+    soundsIncomingMessage?: boolean;
+    soundsParticipantJoined?: boolean;
+    soundsParticipantKnocking?: boolean;
+    soundsParticipantLeft?: boolean;
+    soundsReactions?: boolean;
+    soundsTalkWhileMuted?: boolean;
+    startAudioOnly?: boolean;
+    startWithAudioMuted?: boolean;
+    startWithVideoMuted?: boolean;
+    userSelectedAudioOutputDeviceId?: string|boolean;
+    userSelectedAudioOutputDeviceLabel?: string|boolean;
+    userSelectedCameraDeviceId?: string|boolean;
+    userSelectedCameraDeviceLabel?: string|boolean;
+    userSelectedMicDeviceId?: string|boolean;
+    userSelectedMicDeviceLabel?: string|boolean;
+    userSelectedNotifications?: {
+        [key: string]: boolean;
+    }|boolean,
+    userSelectedSkipPrejoin?: boolean;
+}
+
 const STORE_NAME = 'features/base/settings';
 
 /**
  * Sets up the persistence of the feature {@code base/settings}.
  */
-const filterSubtree = {};
+const filterSubtree: ISettingsState = {};
 
 // start with the default state
 Object.keys(DEFAULT_STATE).forEach(key => {
-    filterSubtree[key] = true;
+    const key1 = key as keyof typeof filterSubtree;
+
+    filterSubtree[key1] = true;
 });
 
 // we want to filter these props, to not be stored as they represent
@@ -69,7 +108,7 @@ filterSubtree.micDeviceId = false;
 
 PersistenceRegistry.register(STORE_NAME, filterSubtree, DEFAULT_STATE);
 
-ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register(STORE_NAME, (state: ISettingsState = DEFAULT_STATE, action) => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         return _initSettings(state);
@@ -90,10 +129,10 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
  *   - Old Settings.js style data.
  *
  * @private
- * @param {Object} featureState - The current state of the feature.
+ * @param {ISettingsState} featureState - The current state of the feature.
  * @returns {Object}
  */
-function _initSettings(featureState) {
+function _initSettings(featureState: ISettingsState) {
     let settings = featureState;
 
     // Old Settings.js values

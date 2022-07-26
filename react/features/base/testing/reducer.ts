@@ -1,4 +1,5 @@
-import { assign, ReducerRegistry } from '../redux';
+import ReducerRegistry from '../redux/ReducerRegistry';
+import { assign } from '../redux/functions';
 
 import { SET_CONNECTION_STATE } from './actionTypes';
 
@@ -13,9 +14,13 @@ const INITIAL_STATE = {
     connectionState: ''
 };
 
+export interface ITestingState {
+    connectionState: string;
+}
+
 ReducerRegistry.register(
     'features/testing',
-    (state = INITIAL_STATE, action) => {
+    (state: ITestingState = INITIAL_STATE, action) => {
         switch (action.type) {
         case SET_CONNECTION_STATE:
             return _setConnectionState(state, action);
@@ -35,6 +40,6 @@ ReducerRegistry.register(
  * @returns {Object} The new state of the feature testing after the
  * reduction of the specified action.
  */
-function _setConnectionState(state, action) {
+function _setConnectionState(state: ITestingState, action: any) {
     return assign(state, { connectionState: action.connectionState });
 }

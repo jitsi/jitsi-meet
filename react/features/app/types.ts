@@ -15,6 +15,10 @@ import { ILibJitsiMeetState } from '../base/lib-jitsi-meet/reducer';
 import { ILoggingState } from '../base/logging/reducer';
 import { IMediaState } from '../base/media/reducer';
 import { INetInfoState } from '../base/net-info/reducer';
+import { IResponsiveUIState } from '../base/responsive-ui/reducer';
+import { ISettingsState } from '../base/settings/reducer';
+import { ISoundsState } from '../base/sounds/reducer';
+import { ITestingState } from '../base/testing/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
 
 export interface IStore {
@@ -41,5 +45,9 @@ export interface IState {
     'features/base/logging': ILoggingState,
     'features/base/media': IMediaState,
     'features/base/net-info': INetInfoState,
-    'features/noise-suppression': INoiseSuppressionState
+    'features/base/responsive-ui': IResponsiveUIState,
+    'features/base/settings': ISettingsState,
+    'features/base/sounds': ISoundsState,
+    'features/noise-suppression': INoiseSuppressionState,
+    'features/testing': ITestingState
 }
