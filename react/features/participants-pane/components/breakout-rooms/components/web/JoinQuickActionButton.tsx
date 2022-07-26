@@ -1,12 +1,14 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import { makeStyles } from '@material-ui/styles';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+// @ts-ignore
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
-import { QuickActionButton } from '../../../../../base/components';
+import Button from '../../../../../base/ui/components/web/Button';
+import { Theme } from '../../../../../base/ui/types';
+// @ts-ignore
 import { moveToRoom } from '../../../../../breakout-rooms/actions';
 
 type Props = {
@@ -14,10 +16,13 @@ type Props = {
     /**
      * The room to join.
      */
-    room: Object
+    room: {
+        id: string;
+        jid: string;
+    }
 }
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme: Theme) => {
     return {
         button: {
             marginRight: `${theme.spacing(2)}px`
@@ -36,13 +41,14 @@ const JoinActionButton = ({ room }: Props) => {
         dispatch(moveToRoom(room.jid));
     }, [ dispatch, room ]);
 
-    return (<QuickActionButton
-        accessibilityLabel = { t('breakoutRooms.actions.join') }
-        className = { styles.button }
-        onClick = { onJoinRoom }
-        testId = { `join-room-${room.id}` }>
-        {t('breakoutRooms.actions.join')}
-    </QuickActionButton>
+    return (
+        <Button
+            accessibilityLabel = { t('breakoutRooms.actions.join') }
+            className = { styles.button }
+            label = { t('breakoutRooms.actions.join') }
+            onClick = { onJoinRoom }
+            size = 'small'
+            testId = { `join-room-${room.id}` } />
     );
 };
 
