@@ -1,5 +1,4 @@
-// @ts-ignore
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     TOGGLE_REACTIONS_VISIBLE,

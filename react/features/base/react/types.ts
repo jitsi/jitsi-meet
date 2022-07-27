@@ -4,7 +4,7 @@ export interface IconButtonProps {
     disabled?: boolean;
     onPress?: Function;
     size?: number|string;
-    src?: Function;
+    src: Function;
     style?: Object|undefined;
     tapColor?: string;
     type?: string;
