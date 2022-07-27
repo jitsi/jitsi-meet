@@ -3,14 +3,14 @@
 import { withStyles } from '@material-ui/core';
 import React, { Component } from 'react';
 
-import Button from '../../../base/components/common/Button';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
-import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';

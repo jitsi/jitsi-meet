@@ -7,10 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openDialog, openSheet } from '../../../base/dialog';
 // @ts-ignore
 import { IconHorizontalPoints } from '../../../base/icons';
-import Button from '../../../base/react/components/native/Button';
 import IconButton from '../../../base/react/components/native/IconButton';
-// @ts-ignore
-import { BUTTON_TYPES } from '../../../base/react/constants';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import MuteEveryoneDialog
 // @ts-ignore
     from '../../../video-menu/components/native/MuteEveryoneDialog';

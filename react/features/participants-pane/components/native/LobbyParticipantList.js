@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Button from '../../../base/react/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/react/constants';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { admitMultiple } from '../../../lobby/actions.native';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 

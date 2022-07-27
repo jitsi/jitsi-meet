@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { rejectParticipantAudio } from '../../../av-moderation/actions';
-import Input from '../../../base/components/common/Input';
 import useContextMenu from '../../../base/components/context-menu/useContextMenu';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
@@ -16,6 +15,7 @@ import {
     getParticipantCountWithFake
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import Input from '../../../base/ui/components/web/Input';
 import { normalizeAccents } from '../../../base/util/strings';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../toolbox/functions';

@@ -15,10 +15,10 @@ import {
     hasRaisedHand,
     raiseHand
 } from '../../../base/participants';
-import Button from '../../../base/react/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { type AbstractButtonProps } from '../../../base/toolbox/components';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 
 import styles from './styles';
 

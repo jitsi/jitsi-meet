@@ -1,4 +1,4 @@
-import { BUTTON_TYPES } from '../../react/constants';
+import { BUTTON_TYPES } from '../constants';
 
 export interface ButtonProps {
 

@@ -1,4 +1,21 @@
-// @flow
+import { Theme } from './types';
+
+/**
+ * The types of the buttons.
+ */
+export enum BUTTON_TYPES {
+    DESTRUCTIVE = 'destructive',
+    PRIMARY = 'primary',
+    SECONDARY = 'secondary',
+    TERTIARY = 'tertiary'
+}
+
+/**
+ * The modes of the buttons.
+ */
+export const BUTTON_MODES = {
+    CONTAINED: 'contained'
+};
 
 /**
  * An object containing all the class names for common CSS.
@@ -25,7 +42,7 @@ export const commonClassName = {
  *
  * @returns {Object} - The common styles.
  */
-export const commonStyles = (theme: Object) => {
+export const commonStyles = (theme: Theme) => {
     return {
         // '.empty-list'
         [commonClassName.emptyList]: {
@@ -293,7 +310,7 @@ export const commonStyles = (theme: Object) => {
  * @param {Object} theme - The Jitsi theme.
  * @returns {Object}
  */
-export const getGlobalStyles = (theme: Object) => {
+export const getGlobalStyles = (theme: Theme) => {
     return {
         // @atlaskit/modal-dialog OVERRIDES
         '.atlaskit-portal div[role=dialog]': {

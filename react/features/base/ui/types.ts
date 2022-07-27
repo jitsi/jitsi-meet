@@ -7,8 +7,8 @@ interface TypographyType {
 
 export interface Theme {
     breakpoints: {
-        down: (value: number) => string;
-        up: (value: number) => string;
+        down: (value: number|string) => string;
+        up: (value: number|string) => string;
     },
     palette: {
         action01: string;
