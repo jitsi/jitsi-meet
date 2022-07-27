@@ -68,5 +68,6 @@ export const THIRD_PARTY_PREJOIN_BUTTONS = [ 'microphone', 'camera', 'select-bac
 
 export const FEATURE_FLAGS = {
     MULTIPLE_VIDEO_STREAMS_SUPPORT: 'sendMultipleVideoStreams',
-    SOURCE_NAME_SIGNALING: 'sourceNameSignaling'
+    SOURCE_NAME_SIGNALING: 'sourceNameSignaling',
+    SSRC_REWRITING: 'ssrcRewritingEnabled',
 };
