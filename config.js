@@ -692,6 +692,7 @@ var config = {
     //    'select-background',
     //    'settings',
     //    'shareaudio',
+    //    'noisesuppression',
     //    'sharedvideo',
     //    'shortcuts',
     //    'stats',
