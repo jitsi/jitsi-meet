@@ -4,9 +4,8 @@ import { useDispatch } from 'react-redux';
 
 // @ts-ignore
 import { openSheet } from '../../../../base/dialog/actions';
-import Button from '../../../../base/react/components/native/Button';
-// @ts-ignore
-import { BUTTON_TYPES } from '../../../../base/react/constants';
+import Button from '../../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../../base/ui/constants';
 // @ts-ignore
 import AudioRoutePickerDialog from '../../../../mobile/audio-mode/components/AudioRoutePickerDialog';
 

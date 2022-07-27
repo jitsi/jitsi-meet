@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux';
 
 // @ts-ignore
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
-import Button from '../../../../../base/components/common/Button';
-import { BUTTON_TYPES } from '../../../../../base/react/constants';
+import Button from '../../../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../../../base/ui/constants';
 // @ts-ignore
 import { moveToRoom } from '../../../../../breakout-rooms/actions';
 

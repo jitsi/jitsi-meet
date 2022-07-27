@@ -6,8 +6,7 @@ import { TouchableRipple } from 'react-native-paper';
 import { Icon } from '../../../icons';
 // @ts-ignore
 import BaseTheme from '../../../ui/components/BaseTheme.native';
-// @ts-ignore
-import { BUTTON_TYPES } from '../../constants';
+import { BUTTON_TYPES } from '../../../ui/constants';
 import { IconButtonProps } from '../../types';
 
 // @ts-ignore

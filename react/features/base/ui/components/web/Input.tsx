@@ -2,13 +2,12 @@ import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
 
-import { isMobileBrowser } from '../../environment/utils';
-import Icon from '../../icons/components/Icon';
-import { IconCloseCircle } from '../../icons/svg/index';
-import { withPixelLineHeight } from '../../styles/functions.web';
-import { Theme } from '../../ui/types';
-
-import { InputProps } from './types';
+import { isMobileBrowser } from '../../../environment/utils';
+import Icon from '../../../icons/components/Icon';
+import { IconCloseCircle } from '../../../icons/svg/index';
+import { withPixelLineHeight } from '../../../styles/functions.web';
+import { Theme } from '../../../ui/types';
+import { InputProps } from '../types';
 
 interface IInputProps extends InputProps {
     bottomLabel?: string;

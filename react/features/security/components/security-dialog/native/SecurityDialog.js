@@ -14,10 +14,10 @@ import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../../base/participants';
-import Button from '../../../../base/react/components/native/Button';
-import { BUTTON_TYPES } from '../../../../base/react/constants';
 import { connect } from '../../../../base/redux';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
+import Button from '../../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../../base/ui/constants';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
 import LobbyModeSwitch

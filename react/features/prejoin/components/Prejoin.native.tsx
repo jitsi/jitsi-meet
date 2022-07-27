@@ -18,23 +18,21 @@ import { appNavigate } from '../../app/actions.native';
 import { setAudioOnly } from '../../base/audio-only/actions';
 // @ts-ignore
 import { connect } from '../../base/connection/actions.native';
-// @ts-ignore
-import { IconClose } from '../../base/icons';
+import { IconClose } from '../../base/icons/svg/index';
 // @ts-ignore
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
 // @ts-ignore
 import { getLocalParticipant } from '../../base/participants';
 // @ts-ignore
 import { getFieldValue } from '../../base/react';
-import Button from '../../base/react/components/native/Button';
-// @ts-ignore
-import { BUTTON_TYPES } from '../../base/react/constants';
 // @ts-ignore
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 // @ts-ignore
 import { updateSettings } from '../../base/settings';
 // @ts-ignore
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
+import Button from '../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../base/ui/constants';
 import { BrandingImageBackground } from '../../dynamic-branding';
 // @ts-ignore
 import { LargeVideo } from '../../large-video/components';

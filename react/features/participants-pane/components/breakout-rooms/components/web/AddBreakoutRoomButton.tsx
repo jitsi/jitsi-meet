@@ -3,8 +3,8 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import Button from '../../../../../base/components/common/Button';
-import { BUTTON_TYPES } from '../../../../../base/react/constants';
+import Button from '../../../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../../../base/ui/constants';
 // @ts-ignore
 import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
 

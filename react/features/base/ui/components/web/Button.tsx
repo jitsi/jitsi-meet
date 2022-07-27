@@ -2,12 +2,12 @@ import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React from 'react';
 
-import Icon from '../../icons/components/Icon';
-import { BUTTON_TYPES } from '../../react/constants';
-import { withPixelLineHeight } from '../../styles/functions.web';
-import { Theme } from '../../ui/types';
+import Icon from '../../../icons/components/Icon';
+import { withPixelLineHeight } from '../../../styles/functions.web';
+import { BUTTON_TYPES } from '../../constants';
+import { Theme } from '../../types';
+import { ButtonProps } from '../types';
 
-import { ButtonProps } from './types';
 
 interface IButtonProps extends ButtonProps {
 

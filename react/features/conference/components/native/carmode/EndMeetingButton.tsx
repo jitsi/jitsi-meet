@@ -6,9 +6,8 @@ import { useDispatch } from 'react-redux';
 import { createToolbarEvent, sendAnalytics } from '../../../../analytics';
 // @ts-ignore
 import { appNavigate } from '../../../../app/actions';
-import Button from '../../../../base/react/components/native/Button';
-// @ts-ignore
-import { BUTTON_TYPES } from '../../../../base/react/constants';
+import Button from '../../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../../base/ui/constants';
 
 import EndMeetingIcon from './EndMeetingIcon';
 // @ts-ignore

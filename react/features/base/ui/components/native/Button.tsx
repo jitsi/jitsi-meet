@@ -7,15 +7,19 @@ import {
     TouchableRipple
 } from 'react-native-paper';
 
-// @ts-ignore
-import BaseTheme from '../../../ui/components/BaseTheme.native';
-// @ts-ignore
 import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
-import { IButtonProps } from '../../types';
-
 // @ts-ignore
-import styles from './styles';
+import BaseTheme from '../BaseTheme.native';
+import { ButtonProps } from '../types';
 
+import styles from './buttonStyles';
+
+export interface IButtonProps extends ButtonProps {
+    color?: string;
+    labelStyle?: Object | undefined;
+    onPress?: Function;
+    style?: Object | undefined;
+}
 
 const Button: React.FC<IButtonProps> = ({
     accessibilityLabel,
