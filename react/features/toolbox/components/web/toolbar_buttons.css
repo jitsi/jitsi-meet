@@ -42,7 +42,7 @@
     display: flex;
     justify-content: space-evenly;
     padding: 8px 0;
-    margin-left: 50%;
+    /*margin-left: 50%;*/
 }
 .leftwatermark {
     left: 20px;
@@ -60,4 +60,5 @@
 .hangup-button {
     background-color: #141414;
 }
+@media (max-width:500px){.toolbox-content-mobile{margin-bottom:0; flex-direction: column}}
 
