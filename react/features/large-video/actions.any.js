@@ -150,7 +150,7 @@ function _electParticipantInLargeVideo(state) {
 
     // Next, pick the most recent participant with video.
     // (Skip this if rewriting, tracks may be detached from any owner.)
-    if(!getSsrcRewritingFeatureFlag(state)) {
+    if (!getSsrcRewritingFeatureFlag(state)) {
         const tracks = state['features/base/tracks'];
         const videoTrack = _electLastVisibleRemoteVideo(tracks);
 

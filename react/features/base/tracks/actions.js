@@ -33,7 +33,7 @@ import {
     TRACK_STOPPED,
     TRACK_UPDATED,
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
-    TRACK_OWNER_CHANGED_AC,
+    TRACK_OWNER_CHANGED,
     TRACK_WILL_CREATE
 } from './actionTypes';
 import {
@@ -622,13 +622,13 @@ export function trackStreamingStatusChanged(track, streamingStatus) {
  * @param {(JitsiRemoteTrack)} track - JitsiTrack instance.
  * @param {string} participantId - New owner's participant ID.
  * @returns {{
- *     type: TRACK_OWNER_CHANGED_AC,
+ *     type: TRACK_OWNER_CHANGED,
  *     track: Track
  * }}
  */
 export function trackOwnerChanged(track, participantId) {
     return {
-        type: TRACK_OWNER_CHANGED_AC,
+        type: TRACK_OWNER_CHANGED,
         track: {
             jitsiTrack: track,
             participantId

@@ -111,11 +111,11 @@ export const TRACK_UPDATED = 'TRACK_UPDATED';
  * The type of redux action dispatched when $
  *
  * {
- *     type: TRACK_OWNER_CHANGED_AC,
+ *     type: TRACK_OWNER_CHANGED,
  *     track: Track
  * }
  */
-export const TRACK_OWNER_CHANGED_AC = 'TRACK_OWNER_CHANGED_AC';
+export const TRACK_OWNER_CHANGED = 'TRACK_OWNER_CHANGED';
  
 /**
  * The type of redux action dispatched when a local track starts being created

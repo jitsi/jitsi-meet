@@ -87,7 +87,7 @@ export function getSourceNameSignalingFeatureFlag(state: Object) {
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
- export function getSsrcRewritingFeatureFlag(state: Object) {
+export function getSsrcRewritingFeatureFlag(state: Object) {
     return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING);
 }
 
