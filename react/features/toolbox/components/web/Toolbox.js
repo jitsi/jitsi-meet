@@ -1483,3 +1483,4 @@ function _mapStateToProps(state, ownProps) {
 }
 
 export default translate(connect(_mapStateToProps)(withStyles(styles)(Toolbox)));
+

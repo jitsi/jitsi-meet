@@ -44,5 +44,20 @@
     padding: 8px 0;
     margin-left: 50%;
 }
+.leftwatermark {
+    left: 20px;
+    top: 20px;
+    background-position: center left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
 
+
+.hangup-button svg {
+    fill: #FF0000;
+}
+
+.hangup-button {
+    background-color: #141414;
+}
 
