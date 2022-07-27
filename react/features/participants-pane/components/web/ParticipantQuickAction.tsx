@@ -1,12 +1,14 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import { makeStyles } from '@material-ui/styles';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+// @ts-ignore
 import { approveParticipant } from '../../../av-moderation/actions';
-import { QuickActionButton } from '../../../base/components';
+import Button from '../../../base/ui/components/web/Button';
+import { Theme } from '../../../base/ui/types';
+// @ts-ignore
 import { QUICK_ACTION_BUTTON } from '../../constants';
 
 type Props = {
@@ -47,7 +49,7 @@ type Props = {
     participantName: string
 }
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme: Theme) => {
     return {
         button: {
             marginRight: `${theme.spacing(2)}px`
@@ -74,24 +76,24 @@ const ParticipantQuickAction = ({
     switch (buttonType) {
     case QUICK_ACTION_BUTTON.MUTE: {
         return (
-            <QuickActionButton
+            <Button
                 accessibilityLabel = { `${t('participantsPane.actions.mute')} ${participantName}` }
                 className = { styles.button }
+                label = { muteParticipantButtonText }
                 onClick = { muteAudio(participantID) }
-                testId = { `mute-${participantID}` }>
-                {muteParticipantButtonText}
-            </QuickActionButton>
+                size = 'small'
+                testId = { `mute-${participantID}` } />
         );
     }
     case QUICK_ACTION_BUTTON.ASK_TO_UNMUTE: {
         return (
-            <QuickActionButton
+            <Button
                 accessibilityLabel = { `${t('participantsPane.actions.askUnmute')} ${participantName}` }
                 className = { styles.button }
+                label = { askUnmuteText }
                 onClick = { askToUnmute }
-                testId = { `unmute-${participantID}` }>
-                { askUnmuteText }
-            </QuickActionButton>
+                size = 'small'
+                testId = { `unmute-${participantID}` } />
         );
     }
     default: {

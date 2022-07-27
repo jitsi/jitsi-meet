@@ -12,6 +12,11 @@ import { ButtonProps } from '../types';
 interface IButtonProps extends ButtonProps {
 
     /**
+     * Class name used for additional styles.
+     */
+    className?: string,
+
+    /**
      * Whether or not the button should be full width.
      */
     fullWidth?: boolean,
@@ -24,12 +29,17 @@ interface IButtonProps extends ButtonProps {
     /**
      * Click callback.
      */
-    onClick: () => void;
+    onClick: (e?: React.MouseEvent<HTMLButtonElement>) => void;
 
     /**
      * Which size the button should be.
      */
     size?: 'small' | 'medium' | 'large';
+
+    /**
+     * Data test id.
+     */
+    testId?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -163,6 +173,7 @@ const useStyles = makeStyles((theme: Theme) => {
 
 const Button = ({
     accessibilityLabel,
+    className,
     disabled,
     fullWidth,
     icon,
@@ -170,6 +181,7 @@ const Button = ({
     label,
     onClick,
     size = 'medium',
+    testId,
     type = BUTTON_TYPES.PRIMARY
 }: IButtonProps) => {
     const styles = useStyles();
@@ -180,7 +192,8 @@ const Button = ({
             className = { clsx(styles.button, styles[type],
                 disabled && styles.disabled,
                 icon && !label && `${styles.iconButton} iconButton`,
-                styles[size], fullWidth && styles.fullWidth) }
+                styles[size], fullWidth && styles.fullWidth, className) }
+            data-testid = { testId }
             disabled = { disabled }
             { ...(id ? { id } : {}) }
             onClick = { onClick }
