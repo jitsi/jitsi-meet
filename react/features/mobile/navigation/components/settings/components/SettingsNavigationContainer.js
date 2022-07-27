@@ -7,7 +7,7 @@ import HelpView from '../../../../../settings/components/native/HelpView';
 import PrivacyView from '../../../../../settings/components/native/PrivacyView';
 import TermsView from '../../../../../settings/components/native/TermsView';
 import SettingsView
-    from '../../../../../welcome/components/native/settings/components/SettingsView';
+    from '../../../../../settings/components/native/SettingsView';
 import { screen } from '../../../routes';
 import {
     linkScreenOptions,

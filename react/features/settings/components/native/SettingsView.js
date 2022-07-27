@@ -16,22 +16,22 @@ import {
     withTheme
 } from 'react-native-paper';
 
-import { Avatar } from '../../../../../base/avatar';
-import { translate } from '../../../../../base/i18n';
-import JitsiScreen from '../../../../../base/modal/components/JitsiScreen';
+import { Avatar } from '../../../base/avatar';
+import { translate } from '../../../base/i18n';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import {
     getLocalParticipant,
     getParticipantDisplayName
-} from '../../../../../base/participants';
-import { connect } from '../../../../../base/redux';
-import { screen } from '../../../../../mobile/navigation/routes';
+} from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { screen } from '../../../mobile/navigation/routes';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
-} from '../../../../../settings/components/AbstractSettingsView';
-import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../../../../settings/functions';
-import { AVATAR_SIZE } from '../../../styles';
+} from '../AbstractSettingsView';
+import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
+import { AVATAR_SIZE } from '../../../welcome/components/styles';
 
 import FormRow from './FormRow';
 import FormSectionAccordion from './FormSectionAccordion';
@@ -120,6 +120,11 @@ type Props = AbstractProps & {
     navigation: Object,
 
     /**
+     * Callback to be invoked when settings screen is focused.
+     */
+    onSettingsScreenFocused: Function,
+
+    /**
      * Theme used for styles.
      */
     theme: Object
@@ -204,8 +209,9 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         return (
             <JitsiScreen
+                safeAreaInsets = { [ 'bottom', 'left', 'right' ] }
                 style = { styles.settingsViewContainer }>
-                <ScrollView contentInsetAdjustmentBehavior = { 'automatic' }>
+                <ScrollView>
                     <View style = { styles.avatarContainer }>
                         <Avatar
                             participantId = { this.props.localParticipantId }
@@ -614,8 +620,6 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localParticipantId = localParticipant?.id;
     const avatarLabel = localParticipant && getParticipantDisplayName(state, localParticipantId);
-
-    console.log(localParticipantId, 'PARTICIPANT');
 
     return {
         ..._abstractMapStateToProps(state),

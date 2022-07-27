@@ -9,7 +9,7 @@ import {
     DISABLED_TRACK_COLOR,
     ENABLED_TRACK_COLOR,
     THUMB_COLOR
-} from '../../../welcome/components/native/settings/components/styles';
+} from '../../../settings/components/native/styles';
 
 import styles from './styles';
 
