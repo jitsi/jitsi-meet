@@ -28,15 +28,14 @@ const SettingsStack = createStackNavigator();
 type Props = {
 
     /**
-     * Callback to be invoked when settings screen is focused.
+     * Is the navigator part of Welcome page?
      */
-    onSettingsScreenFocused: Function
+    isInWelcomePage: boolean
 };
 
 
-const SettingsNavigationContainer = ({ onSettingsScreenFocused }: Props) => {
-    const isInsideWelcomePage = Boolean(onSettingsScreenFocused);
-    const baseSettingsScreenOptions = isInsideWelcomePage ? welcomeScreenOptions : settingsScreenOptions;
+const SettingsNavigationContainer = ({ isInWelcomePage }: Props) => {
+    const baseSettingsScreenOptions = isInWelcomePage ? welcomeScreenOptions : settingsScreenOptions;
     const { t } = useTranslation();
 
     return (

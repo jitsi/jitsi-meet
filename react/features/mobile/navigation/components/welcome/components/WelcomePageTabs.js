@@ -60,7 +60,7 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
     const SettingsScreen = useCallback(() =>
         (
             <SettingsNavigationContainer
-                onSettingsScreenFocused = { onSettingsScreenFocused } />
+                isInWelcomePage = { onSettingsScreenFocused } />
         )
     );
 
