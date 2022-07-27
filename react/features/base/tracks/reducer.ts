@@ -1,5 +1,6 @@
-import { PARTICIPANT_ID_CHANGED } from '../participants';
-import { ReducerRegistry, set } from '../redux';
+import { PARTICIPANT_ID_CHANGED } from '../participants/actionTypes';
+import ReducerRegistry from '../redux/ReducerRegistry';
+import { set } from '../redux/functions';
 
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
@@ -12,6 +13,19 @@ import {
     TRACK_UPDATED,
     TRACK_WILL_CREATE
 } from './actionTypes';
+
+interface ITrack {
+    isReceivingData: boolean;
+    jitsiTrack: Object;
+    lastMediaEvent?: string;
+    local: boolean;
+    mediaType: string;
+    mirror: boolean;
+    muted: boolean;
+    participantId: string;
+    videoStarted: boolean;
+    videoType?: string|null;
+}
 
 /**
  * Track type.
@@ -52,7 +66,7 @@ import {
  * @param {Participant} action.participant - Information about participant.
  * @returns {Track|undefined}
  */
-function track(state, action) {
+function track(state: ITrack, action: any) {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
         if (state.participantId === action.oldValue) {
@@ -70,6 +84,7 @@ function track(state, action) {
             // Make sure that there's an actual update in order to reduce the
             // risk of unnecessary React Component renders.
             for (const p in t) {
+                // @ts-ignore
                 if (state[p] !== t[p]) {
                     // There's an actual update.
                     return {
@@ -115,16 +130,18 @@ function track(state, action) {
     return state;
 }
 
+export type ITracksState = ITrack[];
+
 /**
  * Listen for actions that mutate (e.g. Add, remove) local and remote tracks.
  */
-ReducerRegistry.register('features/base/tracks', (state = [], action) => {
+ReducerRegistry.register('features/base/tracks', (state: ITracksState = [], action) => {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
     case TRACK_NO_DATA_FROM_SOURCE:
     case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT:
     case TRACK_UPDATED:
-        return state.map(t => track(t, action));
+        return state.map((t: ITrack) => track(t, action));
 
     case TRACK_ADDED: {
         let withoutTrackStub = state;
@@ -132,7 +149,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
         if (action.track.local) {
             withoutTrackStub
                 = state.filter(
-                    t => !t.local || t.mediaType !== action.track.mediaType);
+                    (t: ITrack) => !t.local || t.mediaType !== action.track.mediaType);
         }
 
         return [ ...withoutTrackStub, action.track ];
@@ -140,11 +157,11 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
 
     case TRACK_CREATE_CANCELED:
     case TRACK_CREATE_ERROR: {
-        return state.filter(t => !t.local || t.mediaType !== action.trackType);
+        return state.filter((t: ITrack) => !t.local || t.mediaType !== action.trackType);
     }
 
     case TRACK_REMOVED:
-        return state.filter(t => t.jitsiTrack !== action.track.jitsiTrack);
+        return state.filter((t: ITrack) => t.jitsiTrack !== action.track.jitsiTrack);
 
     case TRACK_WILL_CREATE:
         return [ ...state, action.track ];
@@ -154,10 +171,14 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
     }
 });
 
+export interface INoSrcDataState {
+    noSrcDataNotificationUid?: string|number;
+}
+
 /**
  * Listen for actions that mutate the no-src-data state, like the current notification id.
  */
-ReducerRegistry.register('features/base/no-src-data', (state = {}, action) => {
+ReducerRegistry.register('features/base/no-src-data', (state: INoSrcDataState = {}, action) => {
     switch (action.type) {
     case SET_NO_SRC_DATA_NOTIFICATION_UID:
         return set(state, 'noSrcDataNotificationUid', action.uid);

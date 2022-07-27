@@ -19,6 +19,8 @@ import { IResponsiveUIState } from '../base/responsive-ui/reducer';
 import { ISettingsState } from '../base/settings/reducer';
 import { ISoundsState } from '../base/sounds/reducer';
 import { ITestingState } from '../base/testing/reducer';
+import { INoSrcDataState, ITracksState } from '../base/tracks/reducer';
+import { IUserInteractionState } from '../base/user-interaction/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
 
 export interface IStore {
@@ -45,9 +47,12 @@ export interface IState {
     'features/base/logging': ILoggingState,
     'features/base/media': IMediaState,
     'features/base/net-info': INetInfoState,
+    'features/base/no-src-data': INoSrcDataState,
     'features/base/responsive-ui': IResponsiveUIState,
     'features/base/settings': ISettingsState,
     'features/base/sounds': ISoundsState,
+    'features/base/tracks': ITracksState,
+    'features/base/user-interaction': IUserInteractionState,
     'features/noise-suppression': INoiseSuppressionState,
     'features/testing': ITestingState
 }
