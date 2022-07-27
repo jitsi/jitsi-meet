@@ -64,6 +64,16 @@ export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
 }
 
 /**
+ * Selector used to get the SSRC-rewriting feature flag.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+ export function getSsrcRewritingFeatureFlag(state: Object) {
+    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING);
+}
+
+/**
  * Selector used to get a feature flag.
  *
  * @param {Object} state - The global state.
