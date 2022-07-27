@@ -44,15 +44,24 @@ export function canSendRtcstatsData(stateful: Function | Object) {
     return isRtcstatsEnabled(stateful) && RTCStats.isInitialized();
 }
 
+type Identity = {
+    isBreakoutRoom: boolean;
+
+    // Unique identifier for a conference session, not to be confused with meeting name
+    // i.e. If all participants leave a meeting it will have a different value on the next join.
+    meetingUniqueId?: string;
+    roomId?: string;
+}
+
 /**
  * Connects to the rtcstats service and sends the identity data.
  *
  * @param {Function} dispatch - The redux dispatch function.
  * @param  {Function|Object} stateful - The redux store or {@code getState} function.
- * @param {Object} conference - The conference for which rtcstats is connected.
+ * @param {Identity} identity - Identity data for the client.
  * @returns {void}
  */
-export function connectAndSendIdentity(dispatch: Function, stateful: Function | Object, conference: any) {
+export function connectAndSendIdentity(dispatch: Function, stateful: Function | Object, identity: Identity) {
     const state = toState(stateful);
 
     if (canSendRtcstatsData(state)) {
@@ -64,10 +73,6 @@ export function connectAndSendIdentity(dispatch: Function, stateful: Function | 
             const localParticipant = getLocalParticipant(state);
             const options = getConferenceOptions(state);
 
-
-            // Unique identifier for a conference session, not to be confused with meeting name
-            // i.e. If all participants leave a meeting it will have a different value on the next join.
-            const meetingUniqueId = conference && conference.getMeetingUniqueId();
 
             // The current implementation of rtcstats-server is configured to send data to amplitude, thus
             // we add identity specific information so we can correlate on the amplitude side. If amplitude is
@@ -88,7 +93,7 @@ export function connectAndSendIdentity(dispatch: Function, stateful: Function | 
                 endpointId: localParticipant?.id,
                 confName: getAnalyticsRoomName(state, dispatch),
                 displayName,
-                meetingUniqueId
+                ...identity
             });
         } catch (error) {
             // If the connection failed do not impact jitsi-meet just silently fail.

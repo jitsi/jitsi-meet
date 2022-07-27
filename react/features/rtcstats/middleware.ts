@@ -2,7 +2,9 @@
 import { IStore } from '../app/types';
 import {
     E2E_RTT_CHANGED,
+    CONFERENCE_JOINED,
     CONFERENCE_TIMESTAMP_CHANGED,
+    CONFERENCE_UNIQUE_ID_SET,
     CONFERENCE_WILL_LEAVE
 
     // @ts-ignore
@@ -19,11 +21,14 @@ import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks';
 
 // @ts-ignore
+import { isInBreakoutRoom, getCurrentRoomId } from '../breakout-rooms/functions';
+
+// @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
-import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
+import { canSendRtcstatsData, connectAndSendIdentity, isRtcstatsEnabled } from './functions';
 import logger from './logger';
 
 /**
@@ -34,7 +39,8 @@ import logger from './logger';
  * @returns {Function}
  */
 MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
-    const state = store.getState();
+    const { dispatch, getState } = store;
+    const state = getState();
     const config = state['features/base/config'];
     const { analytics, faceLandmarks } = config;
 
@@ -64,6 +70,37 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);
             }
+        }
+        break;
+    }
+    case CONFERENCE_JOINED: {
+        if (isInBreakoutRoom(getState())) {
+            connectAndSendIdentity(
+                dispatch,
+                state,
+                {
+                    isBreakoutRoom: true,
+                    roomId: getCurrentRoomId(getState())
+                }
+            );
+        }
+        break;
+    }
+    case CONFERENCE_UNIQUE_ID_SET: {
+        if (!isInBreakoutRoom(getState())) {
+            // Unique identifier for a conference session, not to be confused with meeting name
+            // i.e. If all participants leave a meeting it will have a different value on the next join.
+            const { conference } = action;
+            const meetingUniqueId = conference && conference.getMeetingUniqueId();
+
+            connectAndSendIdentity(
+                dispatch,
+                state,
+                {
+                    isBreakoutRoom: false,
+                    meetingUniqueId
+                }
+            );
         }
         break;
     }
@@ -134,7 +171,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
     }
     case CONFERENCE_TIMESTAMP_CHANGED: {
         if (canSendRtcstatsData(state)) {
-            const conferenceTimestamp = action.conferenceTimestamp;
+            const { conferenceTimestamp } = action;
 
             RTCStats.sendConferenceTimestamp(conferenceTimestamp);
         }
