@@ -12,8 +12,8 @@ import {
 } from '../../../../analytics';
 // @ts-ignore
 import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags';
-// @ts-ignore
-import { Icon, IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons/svg/index';
 // @ts-ignore
 import { MEDIA_TYPE } from '../../../../base/media';
 // @ts-ignore

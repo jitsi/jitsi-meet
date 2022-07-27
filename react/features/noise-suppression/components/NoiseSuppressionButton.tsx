@@ -2,15 +2,11 @@
 import { IState } from '../../app/types';
 // @ts-ignore
 import { translate } from '../../base/i18n';
-// @ts-ignore
 import {
     IconShareAudio,
     IconStopAudioShare
-    // @ts-ignore
-} from '../../base/icons';
-// @ts-ignore
-import { connect } from '../../base/redux';
-// @ts-ignore
+} from '../../base/icons/svg/index';
+import { connect } from '../../base/redux/functions';
 import {
     AbstractButton,
     type AbstractButtonProps
@@ -81,4 +77,5 @@ function _mapStateToProps(state: IState): Object {
     };
 }
 
+// @ts-ignore
 export default translate(connect(_mapStateToProps)(NoiseSuppressionButton));

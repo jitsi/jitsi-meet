@@ -1,11 +1,7 @@
-/* eslint-disable import/order */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-// @ts-ignore
 import { IStore } from '../../../app/types';
-
-// @ts-ignore
-import { connect } from '../../../base/redux';
 import { removeReaction } from '../../actions.any';
 import { REACTIONS } from '../../constants';
 

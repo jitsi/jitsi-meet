@@ -3,8 +3,7 @@
 import { CAR_MODE_ENABLED, getFeatureFlag } from '../../../base/flags';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
-// @ts-ignore
-import { IconCar } from '../../../base/icons';
+import { IconCar } from '../../../base/icons/svg/index';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
