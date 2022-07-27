@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 
 import HelpView from '../../../../../settings/components/native/HelpView';
 import PrivacyView from '../../../../../settings/components/native/PrivacyView';
-import TermsView from '../../../../../settings/components/native/TermsView';
 import SettingsView
     from '../../../../../settings/components/native/SettingsView';
+import TermsView from '../../../../../settings/components/native/TermsView';
 import { screen } from '../../../routes';
 import {
     linkScreenOptions,

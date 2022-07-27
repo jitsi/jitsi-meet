@@ -25,13 +25,13 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { screen } from '../../../mobile/navigation/routes';
+import { AVATAR_SIZE } from '../../../welcome/components/styles';
+import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from '../AbstractSettingsView';
-import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
-import { AVATAR_SIZE } from '../../../welcome/components/styles';
 
 import FormRow from './FormRow';
 import FormSectionAccordion from './FormSectionAccordion';
