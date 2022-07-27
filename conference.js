@@ -289,7 +289,7 @@ class ConferenceConnector {
             this._handleConferenceJoined.bind(this));
         room.on(JitsiConferenceEvents.CONFERENCE_FAILED,
             this._onConferenceFailed.bind(this));
-        room.on(JitsiConferenceEvents.TRACK_OWNER_CHANGED_JCE, (ssrc, owner) => {
+        room.on(JitsiConferenceEvents.TRACK_OWNER_CHANGED, (ssrc, owner) => {
             const track = getTrackBySsrc(ssrc);
 
             if (track) {

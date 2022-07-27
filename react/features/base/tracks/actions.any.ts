@@ -624,7 +624,7 @@ export function trackStreamingStatusChanged(track: any, streamingStatus: string)
  * @param {(JitsiRemoteTrack)} track - JitsiTrack instance.
  * @param {string} participantId - New owner's participant ID.
  * @returns {{
- *     type: TRACK_OWNER_CHANGED_AC,
+ *     type: TRACK_OWNER_CHANGED,
  *     track: Track
  * }}
  */
