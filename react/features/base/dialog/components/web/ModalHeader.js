@@ -12,8 +12,10 @@ import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 
 import { translate } from '../../../i18n';
-import { Icon, IconClose } from '../../../icons';
+import { IconClose } from '../../../icons/svg/index';
 import { withPixelLineHeight } from '../../../styles/functions';
+import Button from '../../../ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../ui/constants';
 
 const TitleIcon = ({ appearance }: { appearance?: 'danger' | 'warning' }) => {
     if (!appearance) {
@@ -155,18 +157,13 @@ class ModalHeader extends React.Component<Props> {
                 </Title>
 
                 {
-                    !hideCloseIconButton
-                        && <div
-                            className = { classes.closeButton }
-                            id = 'modal-header-close-button'
-                            onClick = { onClose }>
-                            <Icon
-                                ariaLabel = { t('dialog.close') }
-                                onKeyPress = { this._onKeyPress }
-                                role = 'button'
-                                src = { IconClose }
-                                tabIndex = { 0 } />
-                        </div>
+                    !hideCloseIconButton && <Button
+                        accessibilityLabel = { t('dialog.close') }
+                        icon = { IconClose }
+                        id = 'modal-header-close-button'
+                        onClick = { onClose }
+                        size = 'large'
+                        type = { BUTTON_TYPES.TERTIARY } />
                 }
             </Header>
         );
