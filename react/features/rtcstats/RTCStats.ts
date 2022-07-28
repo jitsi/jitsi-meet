@@ -167,10 +167,11 @@ class RTCStats {
      * connect successfully initializes, however calls to GUM are recorded in an internal buffer even if not
      * connected and sent once it is established.
      *
+     * @param {boolean} isBreakoutRoom - Flag indicating if the user is in a breakout room.
      * @returns {void}
      */
-    connect() {
-        this.trace && this.trace.connect();
+    connect(isBreakoutRoom: boolean) {
+        this.trace && this.trace.connect(isBreakoutRoom);
     }
 
     /**

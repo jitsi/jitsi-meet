@@ -73,6 +73,9 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         }
         break;
     }
+
+    // Used for connecting to rtcstats server when joining a breakout room.
+    // Breakout rooms do not have a meetingUniqueId.
     case CONFERENCE_JOINED: {
         if (isInBreakoutRoom(getState())) {
             connectAndSendIdentity(
@@ -86,6 +89,9 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         }
         break;
     }
+
+    // Used for connecting to rtcstats server when joining the main room.
+    // Using this event to be sure the meetingUniqueId can be retrieved.
     case CONFERENCE_UNIQUE_ID_SET: {
         if (!isInBreakoutRoom(getState())) {
             // Unique identifier for a conference session, not to be confused with meeting name

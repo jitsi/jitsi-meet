@@ -68,7 +68,7 @@ export function connectAndSendIdentity(dispatch: Function, stateful: Function | 
 
         // Once the conference started connect to the rtcstats server and send data.
         try {
-            RTCStats.connect();
+            RTCStats.connect(identity.isBreakoutRoom);
 
             const localParticipant = getLocalParticipant(state);
             const options = getConferenceOptions(state);
