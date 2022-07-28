@@ -27,9 +27,14 @@ interface IButtonProps extends ButtonProps {
     id?: string;
 
     /**
+     * Whether or not the button is a submit form button.
+     */
+    isSubmit?: boolean;
+
+    /**
      * Click callback.
      */
-    onClick: (e?: React.MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (e?: React.MouseEvent<HTMLButtonElement>) => void;
 
     /**
      * Which size the button should be.
@@ -178,8 +183,9 @@ const Button = ({
     fullWidth,
     icon,
     id,
+    isSubmit,
     label,
-    onClick,
+    onClick = () => null,
     size = 'medium',
     testId,
     type = BUTTON_TYPES.PRIMARY
@@ -197,7 +203,7 @@ const Button = ({
             disabled = { disabled }
             { ...(id ? { id } : {}) }
             onClick = { onClick }
-            type = 'button'>
+            type = { isSubmit ? 'submit' : 'button' }>
             {icon && <Icon
                 size = { 20 }
                 src = { icon } />}

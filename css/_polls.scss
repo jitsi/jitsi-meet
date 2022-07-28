@@ -291,6 +291,10 @@ ol.poll-result-list {
     h1, strong ,span {
         color: #fff;
     }
+
+    button > span {
+        color: inherit;
+    }
 }
 
 .poll-create-label {

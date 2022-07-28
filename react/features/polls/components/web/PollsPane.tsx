@@ -1,11 +1,15 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React from 'react';
 
+import Button from '../../../base/ui/components/web/Button';
+// @ts-ignore
 import AbstractPollsPane from '../AbstractPollsPane';
+// @ts-ignore
 import type { AbstractProps } from '../AbstractPollsPane';
 
+// @ts-ignore
 import PollCreate from './PollCreate';
+// @ts-ignore
 import PollsList from './PollsList';
 
 
@@ -19,13 +23,12 @@ const PollsPane = (props: AbstractProps) => {
                 <PollsList />
             </div>
             <div className = 'poll-footer poll-create-footer'>
-                <button
-                    aria-label = { t('polls.create.create') }
-                    className = 'poll-button poll-button-primary'
+                <Button
+                    accessibilityLabel = { t('polls.create.create') }
+                    fullWidth = { true }
+                    label = { t('polls.create.create') }
                     // eslint-disable-next-line react/jsx-no-bind
-                    onClick = { onCreate } >
-                    <span>{t('polls.create.create')}</span>
-                </button>
+                    onClick = { onCreate } />
             </div>
         </div>;
 };
