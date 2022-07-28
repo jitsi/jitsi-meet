@@ -1,35 +1,49 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
+import { makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Icon, IconMenu } from '../../../base/icons';
+import Icon from '../../../base/icons/components/Icon';
+import { IconMenu } from '../../../base/icons/svg/index';
+// @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { Theme } from '../../../base/ui/types';
+// @ts-ignore
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
+// @ts-ignore
 import AbstractPollCreate from '../AbstractPollCreate';
+// @ts-ignore
 import type { AbstractProps } from '../AbstractPollCreate';
 
-const PollCreate = (props: AbstractProps) => {
+const useStyles = makeStyles((theme: Theme) => {
+    return {
+        buttonMargin: {
+            marginRight: `${theme.spacing(2)}px`
+        }
+    };
+});
 
-
-    const {
-        addAnswer,
-        answers,
-        isSubmitDisabled,
-        moveAnswer,
-        onSubmit,
-        question,
-        removeAnswer,
-        setAnswer,
-        setCreateMode,
-        setQuestion,
-        t
-    } = props;
+const PollCreate = ({
+    addAnswer,
+    answers,
+    isSubmitDisabled,
+    moveAnswer,
+    onSubmit,
+    question,
+    removeAnswer,
+    setAnswer,
+    setCreateMode,
+    setQuestion,
+    t
+}: AbstractProps) => {
+    const styles = useStyles();
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
      * This array is maintained by registerfieldRef and the useEffect below.
      */
-    const answerInputs = useRef([]);
+    const answerInputs = useRef<Array<HTMLInputElement>>([]);
     const registerFieldRef = useCallback((i, r) => {
         if (r === null) {
             return;
@@ -45,7 +59,7 @@ const PollCreate = (props: AbstractProps) => {
      * This state allows us to requestFocus asynchronously, without having to worry
      * about whether a newly created input field has been rendered yet or not.
      */
-    const [ lastFocus, requestFocus ] = useState(null);
+    const [ lastFocus, requestFocus ] = useState<number|null>(null);
 
     useEffect(() => {
         if (lastFocus === null) {
@@ -82,7 +96,7 @@ const PollCreate = (props: AbstractProps) => {
         if (ev.ctrlKey || ev.metaKey || ev.altKey || ev.shiftKey) {
             return;
         }
-    });
+    }, []);
 
     const onQuestionKeyDown = useCallback(ev => {
         if (checkModifiers(ev)) {
@@ -93,7 +107,7 @@ const PollCreate = (props: AbstractProps) => {
             requestFocus(0);
             ev.preventDefault();
         }
-    });
+    }, []);
 
     // Called on keypress in answer fields
     const onAnswerKeyDown = useCallback((i, ev) => {
@@ -132,7 +146,7 @@ const PollCreate = (props: AbstractProps) => {
 
     const [ grabbing, setGrabbing ] = useState(null);
 
-    const interchangeHeights = (i, j) => {
+    const interchangeHeights = (i: number, j: number) => {
         const h = answerInputs.current[i].scrollHeight;
 
         answerInputs.current[i].style.height = `${answerInputs.current[j].scrollHeight}px`;
@@ -151,16 +165,17 @@ const PollCreate = (props: AbstractProps) => {
                 return null;
             });
         }, { once: true });
-    });
+    }, []);
+
     const onMouseOver = useCallback(i => {
         if (grabbing !== null && grabbing !== i) {
             interchangeHeights(i, grabbing);
             moveAnswer(grabbing, i);
             setGrabbing(i);
         }
-    });
+    }, []);
 
-    const autogrow = ev => {
+    const autogrow = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
         const el = ev.target;
 
         el.style.height = '1px';
@@ -188,11 +203,11 @@ const PollCreate = (props: AbstractProps) => {
                     onKeyDown = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
                     required = { true }
-                    row = '1'
+                    rows = { 1 }
                     value = { question } />
             </div>
             <ol className = 'poll-answer-field-list'>
-                {answers.map((answer, i) =>
+                {answers.map((answer: any, i: number) =>
                     (<li
                         className = { `poll-answer-field${grabbing === i ? ' poll-dragged' : ''}` }
                         key = { i }
@@ -210,12 +225,12 @@ const PollCreate = (props: AbstractProps) => {
                                 placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
                                 ref = { r => registerFieldRef(i, r) }
                                 required = { true }
-                                row = { 1 }
+                                rows = { 1 }
                                 value = { answer } />
                             <button
                                 className = 'poll-drag-handle'
                                 onMouseDown = { ev => onGrab(i, ev) }
-                                tabIndex = '-1'
+                                tabIndex = { -1 }
                                 type = 'button'>
                                 <Icon src = { IconMenu } />
                             </button>
@@ -234,34 +249,32 @@ const PollCreate = (props: AbstractProps) => {
                 )}
             </ol>
             <div className = 'poll-add-button'>
-                <button
-                    aria-label = { 'Add option' }
-                    className = 'poll-button poll-button-secondary'
+                <Button
+                    accessibilityLabel = { t('polls.create.addOption') }
                     disabled = { answers.length >= ANSWERS_LIMIT }
+                    fullWidth = { true }
+                    label = { t('polls.create.addOption') }
                     onClick = { () => {
                         addAnswer();
                         requestFocus(answers.length);
                     } }
-                    type = 'button' >
-                    <span>{t('polls.create.addOption')}</span>
-                </button>
+                    type = { BUTTON_TYPES.SECONDARY } />
             </div>
         </div>
         <div className = 'poll-footer poll-create-footer'>
-            <button
-                aria-label = { t('polls.create.cancel') }
-                className = 'poll-button poll-button-secondary poll-button-short'
+            <Button
+                accessibilityLabel = { t('polls.create.cancel') }
+                className = { styles.buttonMargin }
+                fullWidth = { true }
+                label = { t('polls.create.cancel') }
                 onClick = { () => setCreateMode(false) }
-                type = 'button' >
-                <span>{t('polls.create.cancel')}</span>
-            </button>
-            <button
-                aria-label = { t('polls.create.send') }
-                className = 'poll-button poll-button-primary poll-button-short'
+                type = { BUTTON_TYPES.SECONDARY } />
+            <Button
+                accessibilityLabel = { t('polls.create.send') }
                 disabled = { isSubmitDisabled }
-                type = 'submit' >
-                <span>{t('polls.create.send')}</span>
-            </button>
+                fullWidth = { true }
+                isSubmit = { true }
+                label = { t('polls.create.send') } />
         </div>
     </form>);
 

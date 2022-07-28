@@ -1,24 +1,38 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import { Checkbox } from '@atlaskit/checkbox';
+import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { Theme } from '../../../base/ui/types';
+// @ts-ignore
 import { isSubmitAnswerDisabled } from '../../functions';
+// @ts-ignore
 import AbstractPollAnswer from '../AbstractPollAnswer';
+// @ts-ignore
 import type { AbstractProps } from '../AbstractPollAnswer';
 
-const PollAnswer = (props: AbstractProps) => {
-    const {
-        creatorName,
-        checkBoxStates,
-        poll,
-        setCheckbox,
-        skipAnswer,
-        skipChangeVote,
-        submitAnswer,
-        t
-    } = props;
+const useStyles = makeStyles((theme: Theme) => {
+    return {
+        buttonMargin: {
+            marginRight: `${theme.spacing(2)}px`
+        }
+    };
+});
+
+const PollAnswer = ({
+    creatorName,
+    checkBoxStates,
+    poll,
+    setCheckbox,
+    skipAnswer,
+    skipChangeVote,
+    submitAnswer,
+    t
+}: AbstractProps) => {
     const { changingVote } = poll;
+    const styles = useStyles();
 
     return (
         <div className = 'poll-answer'>
@@ -32,7 +46,7 @@ const PollAnswer = (props: AbstractProps) => {
             </div>
             <ol className = 'poll-answer-list'>
                 {
-                    poll.answers.map((answer, index) => (
+                    poll.answers.map((answer: any, index: number) => (
                         <li
                             className = 'poll-answer-container'
                             key = { index }>
@@ -48,19 +62,19 @@ const PollAnswer = (props: AbstractProps) => {
                 }
             </ol>
             <div className = 'poll-footer poll-answer-footer' >
-                <button
-                    aria-label = { t('polls.answer.skip') }
-                    className = 'poll-button poll-button-secondary poll-button-shortest'
-                    onClick = { changingVote ? skipChangeVote : skipAnswer } >
-                    <span>{t('polls.answer.skip')}</span>
-                </button>
-                <button
-                    aria-label = { t('polls.answer.submit') }
-                    className = 'poll-button poll-button-primary poll-button-shortest'
+                <Button
+                    accessibilityLabel = { t('polls.answer.skip') }
+                    className = { styles.buttonMargin }
+                    fullWidth = { true }
+                    label = { t('polls.answer.skip') }
+                    onClick = { changingVote ? skipChangeVote : skipAnswer }
+                    type = { BUTTON_TYPES.SECONDARY } />
+                <Button
+                    accessibilityLabel = { t('polls.answer.submit') }
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
-                    onClick = { submitAnswer }>
-                    <span>{t('polls.answer.submit')}</span>
-                </button>
+                    fullWidth = { true }
+                    label = { t('polls.answer.submit') }
+                    onClick = { submitAnswer } />
             </div>
         </div>
     );
