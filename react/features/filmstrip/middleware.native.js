@@ -15,7 +15,7 @@ MiddlewareRegistry.register(store => next => action => {
     if (action.type === PARTICIPANT_LEFT) {
         // This have to be executed before we remove the participant from features/base/participants state in order to
         // remove the related thumbnail component before we need to re-render it. If we do this after next()
-        // we will be in sitation where the participant exists in the remoteParticipants array in features/filmstrip
+        // we will be in situation where the participant exists in the remoteParticipants array in features/filmstrip
         // but doesn't exist in features/base/participants state which will lead to rendering a thumbnail for
         // non-existing participant.
         updateRemoteParticipantsOnLeave(store, action.participant?.id);

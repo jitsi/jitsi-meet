@@ -1,14 +1,13 @@
-// @flow
-
 import React from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 
 import { DialogContainer } from '../../base/dialog';
+import BottomSheetContainer from '../../base/dialog/components/native/BottomSheetContainer';
 import { updateFlags } from '../../base/flags/actions';
 import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import { Platform } from '../../base/react';
 import { DimensionsDetector, clientResized, setSafeAreaInsets } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import { _getRouteToRender } from '../getRouteToRender.native';
@@ -23,15 +22,14 @@ import '../reducers';
 
 declare var __DEV__;
 
+const DialogContainerWrapper = Platform.select({
+    default: View
+});
+
 /**
  * The type of React {@code Component} props of {@link App}.
  */
 type Props = AbstractAppProps & {
-
-    /**
-     * Identifier for this app on the native side.
-     */
-    externalAPIScope: string,
 
     /**
      * An object with the feature flags.
@@ -240,7 +238,12 @@ export class App extends AbstractApp {
      */
     _renderDialogContainer() {
         return (
-            <DialogContainer />
+            <DialogContainerWrapper
+                pointerEvents = 'box-none'
+                style = { StyleSheet.absoluteFill }>
+                <BottomSheetContainer />
+                <DialogContainer />
+            </DialogContainerWrapper>
         );
     }
 }

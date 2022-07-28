@@ -19,14 +19,10 @@ const baseLabel = {
  */
 export default {
 
-    addButtonLabel: {
-        ...baseLabel,
-        color: BaseTheme.palette.text01
-    },
-
     addButton: {
-        ...baseButton,
-        backgroundColor: BaseTheme.palette.ui03
+        marginTop: BaseTheme.spacing[3],
+        marginLeft: BaseTheme.spacing[3],
+        marginRight: BaseTheme.spacing[3]
     },
 
     collapsibleRoom: {
@@ -70,18 +66,18 @@ export default {
         marginLeft: BaseTheme.spacing[2]
     },
 
-    transparentButton: {
-        backgroundColor: 'transparent',
-        marginTop: BaseTheme.spacing[3]
-    },
-
     leaveButtonLabel: {
         ...baseLabel,
         color: BaseTheme.palette.textError
     },
 
     autoAssignLabel: {
-        ...baseLabel,
         color: BaseTheme.palette.link01
+    },
+
+    autoAssignButton: {
+        alignSelf: 'center',
+        justifyContent: 'center',
+        marginTop: BaseTheme.spacing[3]
     }
 };

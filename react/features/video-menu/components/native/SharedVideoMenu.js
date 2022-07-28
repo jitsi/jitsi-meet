@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import {
     getParticipantById,
@@ -13,7 +13,6 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { SharedVideoButton } from '../../../shared-video/components';
-import { hideSharedVideoMenu } from '../../actions.native';
 
 import styles from './styles';
 
@@ -51,9 +50,6 @@ type Props = {
     _participantDisplayName: string,
 }
 
-// eslint-disable-next-line prefer-const
-let SharedVideoMenu_;
-
 /**
  * Class to implement a popup menu that opens upon long pressing a fake participant thumbnail.
  */
@@ -90,7 +86,6 @@ class SharedVideoMenu extends PureComponent<Props> {
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { _isParticipantAvailable }>
                 <Divider style = { styles.divider } />
@@ -99,8 +94,6 @@ class SharedVideoMenu extends PureComponent<Props> {
         );
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Callback to hide the {@code SharedVideoMenu}.
      *
@@ -108,16 +101,8 @@ class SharedVideoMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideSharedVideoMenu());
-
-            return true;
-        }
-
-        return false;
+        this.props.dispatch(hideSheet());
     }
-
-    _renderMenuHeader: () => React$Element<any>;
 
     /**
      * Function to render the menu's header.
@@ -156,12 +141,9 @@ function _mapStateToProps(state, ownProps) {
     const isParticipantAvailable = getParticipantById(state, participantId);
 
     return {
-        _isOpen: isDialogOpen(state, SharedVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
         _participantDisplayName: getParticipantDisplayName(state, participantId)
     };
 }
 
-SharedVideoMenu_ = connect(_mapStateToProps)(SharedVideoMenu);
-
-export default SharedVideoMenu_;
+export default connect(_mapStateToProps)(SharedVideoMenu);

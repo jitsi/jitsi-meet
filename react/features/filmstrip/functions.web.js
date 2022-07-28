@@ -6,6 +6,7 @@ import { MEDIA_TYPE } from '../base/media';
 import {
     getLocalParticipant,
     getParticipantById,
+    getParticipantCount,
     getParticipantCountWithFake,
     getPinnedParticipant
 } from '../base/participants';
@@ -32,6 +33,7 @@ import {
     DISPLAY_AVATAR,
     DISPLAY_VIDEO,
     FILMSTRIP_GRID_BREAKPOINT,
+    FILMSTRIP_TYPE,
     INDICATORS_TOOLTIP_POSITION,
     SCROLL_SIZE,
     SQUARE_TILE_ASPECT_RATIO,
@@ -80,7 +82,7 @@ export function shouldRemoteVideosBeVisible(state: Object) {
         return false;
     }
 
-    // Include fake participants to derive how many thumbnails are dispalyed,
+    // Include fake participants to derive how many thumbnails are displayed,
     // as it is assumed all participants, including fake, will be displayed
     // in the filmstrip.
     const participantCount = getParticipantCountWithFake(state);
@@ -296,7 +298,8 @@ export function calculateResponsiveTileViewDimensions({
     noHorizontalContainerMargin = false,
     maxColumns,
     numberOfParticipants,
-    desiredNumberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES
+    desiredNumberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES,
+    minTileHeight
 }) {
     let height, width;
     let columns, rows;
@@ -324,7 +327,8 @@ export function calculateResponsiveTileViewDimensions({
             clientHeight,
             disableTileEnlargement,
             disableResponsiveTiles: false,
-            noHorizontalContainerMargin
+            noHorizontalContainerMargin,
+            minTileHeight
         });
 
         if (size) {
@@ -354,7 +358,7 @@ export function calculateResponsiveTileViewDimensions({
                             && oldNumberOfVisibleParticipants >= numberOfParticipants)
                         || (oldNumberOfVisibleParticipants < numberOfParticipants
                             && numberOfVisibleParticipants <= desiredNumberOfVisibleTiles))
-                ) { // If the area of the new candidates and the old ones are equal we preffer the one that will have
+                ) { // If the area of the new candidates and the old ones are equal we prefer the one that will have
                     // closer number of visible participants to desiredNumberOfVisibleTiles config.
                     dimensions = currentDimensions;
                 }
@@ -413,10 +417,11 @@ export function calculateThumbnailSizeForTileView({
     clientHeight,
     disableResponsiveTiles = false,
     disableTileEnlargement = false,
-    noHorizontalContainerMargin = false
+    noHorizontalContainerMargin = false,
+    minTileHeight
 }: Object) {
     const aspectRatio = getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnlargement, clientWidth);
-    const minHeight = getThumbnailMinHeight(clientWidth);
+    const minHeight = minTileHeight || getThumbnailMinHeight(clientWidth);
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN)
         - (noHorizontalContainerMargin ? SCROLL_SIZE : TILE_VIEW_GRID_HORIZONTAL_MARGIN);
     const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
@@ -506,6 +511,7 @@ export function getVerticalFilmstripVisibleAreaWidth() {
 */
 export function computeDisplayModeFromInput(input: Object) {
     const {
+        filmstripType,
         isActiveParticipant,
         isAudioOnly,
         isCurrentlyOnLargeVideo,
@@ -515,7 +521,6 @@ export function computeDisplayModeFromInput(input: Object) {
         isRemoteParticipant,
         multipleVideoSupport,
         stageParticipantsVisible,
-        stageFilmstrip,
         tileViewActive
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
@@ -534,8 +539,8 @@ export function computeDisplayModeFromInput(input: Object) {
         }
     }
 
-    if (!tileViewActive && ((isScreenSharing && isRemoteParticipant)
-        || (stageParticipantsVisible && isActiveParticipant && !stageFilmstrip))) {
+    if (!tileViewActive && filmstripType === FILMSTRIP_TYPE.MAIN && ((isScreenSharing && isRemoteParticipant)
+        || (stageParticipantsVisible && isActiveParticipant))) {
         return DISPLAY_AVATAR;
     } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
         // Display name is always and only displayed when user is on the stage
@@ -569,12 +574,13 @@ export function getDisplayModeInput(props: Object, state: Object) {
         _participant,
         _stageParticipantsVisible,
         _videoTrack,
-        stageFilmstrip
+        filmstripType = FILMSTRIP_TYPE.MAIN
     } = props;
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
     const { canPlayEventReceived } = state;
 
     return {
+        filmstripType,
         isActiveParticipant: _isActiveParticipant,
         isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
         isAudioOnly: _isAudioOnly,
@@ -588,7 +594,6 @@ export function getDisplayModeInput(props: Object, state: Object) {
         isVirtualScreenshareParticipant: _isVirtualScreenshareParticipant,
         multipleVideoSupport: _multipleVideoSupport,
         stageParticipantsVisible: _stageParticipantsVisible,
-        stageFilmstrip,
         videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
     };
 }
@@ -717,8 +722,24 @@ export function isStageFilmstripAvailable(state, minParticipantCount = 0) {
     const { remoteScreenShares } = state['features/video-layout'];
     const sharedVideo = isSharingStatus(state['features/shared-video']?.status);
 
-    return isStageFilmstripEnabled(state) && remoteScreenShares.length === 0 && !sharedVideo
-        && activeParticipants.length >= minParticipantCount;
+    return isStageFilmstripEnabled(state) && !sharedVideo
+        && activeParticipants.length >= minParticipantCount
+        && (isTopPanelEnabled(state) || remoteScreenShares.length === 0);
+}
+
+/**
+ * Whether the stage filmstrip should be displayed on the top.
+ *
+ * @param {Object} state - Redux state.
+ * @param {number} minParticipantCount - The min number of participants for the stage filmstrip
+ * to be displayed.
+ * @returns {boolean}
+ */
+export function isStageFilmstripTopPanel(state, minParticipantCount = 0) {
+    const { remoteScreenShares } = state['features/video-layout'];
+
+    return isTopPanelEnabled(state)
+        && isStageFilmstripAvailable(state, minParticipantCount) && remoteScreenShares.length > 0;
 }
 
 /**
@@ -737,10 +758,10 @@ export function isStageFilmstripEnabled(state) {
  * Gets the thumbnail type by filmstrip type.
  *
  * @param {string} currentLayout - Current app layout.
- * @param {boolean} isStageFilmstrip - Whether the filmstrip is stage filmstrip or not.
+ * @param {string} filmstripType - The current filmstrip type.
  * @returns {string}
  */
-export function getThumbnailTypeFromLayout(currentLayout, isStageFilmstrip = false) {
+export function getThumbnailTypeFromLayout(currentLayout, filmstripType) {
     switch (currentLayout) {
     case LAYOUTS.TILE_VIEW:
         return THUMBNAIL_TYPE.TILE;
@@ -749,10 +770,24 @@ export function getThumbnailTypeFromLayout(currentLayout, isStageFilmstrip = fal
     case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
         return THUMBNAIL_TYPE.HORIZONTAL;
     case LAYOUTS.STAGE_FILMSTRIP_VIEW:
-        if (isStageFilmstrip) {
+        if (filmstripType !== FILMSTRIP_TYPE.MAIN) {
             return THUMBNAIL_TYPE.TILE;
         }
 
         return THUMBNAIL_TYPE.VERTICAL;
     }
+}
+
+/**
+ * Whether or not the top panel is enabled.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function isTopPanelEnabled(state) {
+    const { filmstrip } = state['features/base/config'];
+    const participantsCount = getParticipantCount(state);
+
+    return !filmstrip?.disableTopPanel && participantsCount >= (filmstrip?.minParticipantCountForTopPanel ?? 50);
+
 }

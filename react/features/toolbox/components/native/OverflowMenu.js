@@ -3,9 +3,10 @@
 import React, { PureComponent } from 'react';
 import { Divider } from 'react-native-paper';
 
-import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { connect } from '../../../base/redux';
+import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import { SharedDocumentButton } from '../../../etherpad';
 import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionMenu } from '../../../reactions/components';
@@ -19,14 +20,12 @@ import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import styles from '../../../video-menu/components/native/styles';
 import { getMovableButtons } from '../../functions.native';
-import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
-import ToggleCameraButton from './ToggleCameraButton';
 import ToggleSelfViewButton from './ToggleSelfViewButton';
 
 /**
@@ -72,15 +71,6 @@ type State = {
      */
     scrolledToTop: boolean
 }
-
-/**
- * The exported React {@code Component}. We need it to execute
- * {@link hideDialog}.
- *
- * XXX It does not break our coding style rule to not utilize globals for state,
- * because it is merely another name for {@code export}'s {@code default}.
- */
-let OverflowMenu_; // eslint-disable-line prefer-const
 
 /**
  * Implements a React {@code Component} with some extra actions in addition to
@@ -137,16 +127,18 @@ class OverflowMenu extends PureComponent<Props, State> {
             }
         };
 
+        const firstMenuButtonProps
+            = toolbarButtons.has('participantspane') ? topButtonProps : buttonProps;
+
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : null }>
-                <ParticipantsPaneButton { ...topButtonProps } />
-                {_selfViewHidden && <ToggleSelfViewButton { ...buttonProps } />}
-                <OpenCarmodeButton { ...buttonProps } />
+                {!toolbarButtons.has('participantspane') && <ParticipantsPaneButton { ...topButtonProps } />}
+                <OpenCarmodeButton { ...firstMenuButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
+                {_selfViewHidden && <ToggleSelfViewButton { ...buttonProps } />}
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <SecurityDialogButton { ...buttonProps } />
@@ -157,35 +149,24 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <SharedVideoButton { ...buttonProps } />
                 <ScreenSharingButton { ...buttonProps } />
                 <SpeakerStatsButton { ...buttonProps } />
-                {!toolbarButtons.has('togglecamera') && <ToggleCameraButton { ...buttonProps } />}
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <ClosedCaptionButton { ...buttonProps } />
                 <SharedDocumentButton { ...buttonProps } />
-                <HelpButton { ...buttonProps } />
+                <SettingsButton { ...buttonProps } />
             </BottomSheet>
         );
     }
-
-    _onCancel: () => boolean;
 
     /**
      * Hides this {@code OverflowMenu}.
      *
      * @private
-     * @returns {boolean}
+     * @returns {void}
      */
     _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideDialog(OverflowMenu_));
-
-            return true;
-        }
-
-        return false;
+        this.props.dispatch(hideSheet());
     }
-
-    _renderReactionMenu: () => React$Element<any>;
 
     /**
      * Functoin to render the reaction menu as the footer of the bottom sheet.
@@ -210,13 +191,10 @@ function _mapStateToProps(state) {
     const { disableSelfView } = state['features/base/settings'];
 
     return {
-        _isOpen: isDialogOpen(state, OverflowMenu_),
         _reactionsEnabled: isReactionsEnabled(state),
         _selfViewHidden: Boolean(disableSelfView),
         _width: state['features/base/responsive-ui'].clientWidth
     };
 }
 
-OverflowMenu_ = connect(_mapStateToProps)(OverflowMenu);
-
-export default OverflowMenu_;
+export default connect(_mapStateToProps)(OverflowMenu);

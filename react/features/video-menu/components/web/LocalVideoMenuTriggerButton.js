@@ -19,7 +19,7 @@ import { getHideSelfView } from '../../../base/settings';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip';
-import { isStageFilmstripEnabled } from '../../../filmstrip/functions.web';
+import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { renderConnectionStatus } from '../../actions.web';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
@@ -305,7 +305,7 @@ function _mapStateToProps(state, ownProps) {
         _overflowDrawer: overflowDrawer,
         _localParticipantId: localParticipant.id,
         _showConnectionInfo: showConnectionInfo,
-        _showPinToStage: isStageFilmstripEnabled(state)
+        _showPinToStage: isStageFilmstripAvailable(state)
     };
 }
 

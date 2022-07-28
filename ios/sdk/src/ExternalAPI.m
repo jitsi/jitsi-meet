@@ -15,7 +15,6 @@
  */
 
 #import "ExternalAPI.h"
-#import "JitsiMeetView+Private.h"
 
 // Events
 static NSString * const hangUpAction = @"org.jitsi.meet.HANG_UP";
@@ -27,6 +26,7 @@ static NSString * const openChatAction = @"org.jitsi.meet.OPEN_CHAT";
 static NSString * const closeChatAction = @"org.jitsi.meet.CLOSE_CHAT";
 static NSString * const sendChatMessageAction = @"org.jitsi.meet.SEND_CHAT_MESSAGE";
 static NSString * const setVideoMutedAction = @"org.jitsi.meet.SET_VIDEO_MUTED";
+static NSString * const setClosedCaptionsEnabledAction = @"org.jitsi.meet.SET_CLOSED_CAPTIONS_ENABLED";
 
 @implementation ExternalAPI
 
@@ -49,7 +49,8 @@ RCT_EXPORT_MODULE();
         @"OPEN_CHAT": openChatAction,
         @"CLOSE_CHAT": closeChatAction,
         @"SEND_CHAT_MESSAGE": sendChatMessageAction,
-        @"SET_VIDEO_MUTED" : setVideoMutedAction
+        @"SET_VIDEO_MUTED" : setVideoMutedAction,
+        @"SET_CLOSED_CAPTIONS_ENABLED": setClosedCaptionsEnabledAction
     };
 };
 
@@ -73,7 +74,8 @@ RCT_EXPORT_MODULE();
               openChatAction,
               closeChatAction,
               sendChatMessageAction,
-              setVideoMutedAction
+              setVideoMutedAction,
+              setClosedCaptionsEnabledAction
     ];
 }
 
@@ -86,33 +88,15 @@ RCT_EXPORT_MODULE();
  * @param scope
  */
 RCT_EXPORT_METHOD(sendEvent:(NSString *)name
-                       data:(NSDictionary *)data
-                      scope:(NSString *)scope) {
-    // The JavaScript App needs to provide uniquely identifying information to
-    // the native ExternalAPI module so that the latter may match the former
-    // to the native JitsiMeetView which hosts it.
-    JitsiMeetView *view = [JitsiMeetView viewForExternalAPIScope:scope];
-
-    if (!view) {
-        return;
-    }
-
-    id delegate = view.delegate;
-
-    if (!delegate) {
-        return;
-    }
-    
+                       data:(NSDictionary *)data) {
     if ([name isEqual: @"PARTICIPANTS_INFO_RETRIEVED"]) {
         [self onParticipantsInfoRetrieved: data];
         return;
     }
-
-    SEL sel = NSSelectorFromString([self methodNameFromEventName:name]);
-
-    if (sel && [delegate respondsToSelector:sel]) {
-        [delegate performSelector:sel withObject:data];
-    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:sendEventNotificationName
+                                                        object:nil
+                                                      userInfo:@{@"name": name, @"data": data}];
 }
 
 - (void) onParticipantsInfoRetrieved:(NSDictionary *)data {
@@ -122,28 +106,6 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     void (^completionHandler)(NSArray*) = [participantInfoCompletionHandlers objectForKey:completionHandlerId];
     completionHandler(participantsInfoArray);
     [participantInfoCompletionHandlers removeObjectForKey:completionHandlerId];
-}
-
-/**
- * Converts a specific event name i.e. redux action type description to a
- * method name.
- *
- * @param eventName The event name to convert to a method name.
- * @return A method name constructed from the specified `eventName`.
- */
-- (NSString *)methodNameFromEventName:(NSString *)eventName {
-   NSMutableString *methodName
-       = [NSMutableString stringWithCapacity:eventName.length];
-
-   for (NSString *c in [eventName componentsSeparatedByString:@"_"]) {
-       if (c.length) {
-           [methodName appendString:
-               methodName.length ? c.capitalizedString : c.lowercaseString];
-       }
-   }
-   [methodName appendString:@":"];
-
-   return methodName;
 }
 
 - (void)sendHangUp {
@@ -205,5 +167,10 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:setVideoMutedAction body:data];
 }
 
+- (void)sendSetClosedCaptionsEnabled:(BOOL)enabled {
+    NSDictionary *data = @{ @"enabled": [NSNumber numberWithBool:enabled]};
+
+    [self sendEventWithName:setClosedCaptionsEnabledAction body:data];
+}
 
 @end

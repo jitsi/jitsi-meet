@@ -41,7 +41,8 @@ export default {
         alignSelf: 'center',
         flex: 1,
         padding: BoxModel.padding,
-        paddingTop: '8%'
+        paddingTop: '8%',
+        maxWidth: '80%'
     },
 
     /**
@@ -56,7 +57,8 @@ export default {
         borderTopColor: 'rgb(209, 219, 231)',
         borderTopWidth: 1,
         flexDirection: 'row',
-        paddingHorizontal: BoxModel.padding
+        paddingBottom: '4%',
+        paddingHorizontal: BaseTheme.spacing[3]
     },
 
     inputField: {

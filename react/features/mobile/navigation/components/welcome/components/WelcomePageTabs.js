@@ -1,5 +1,3 @@
-// @flow
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -9,11 +7,15 @@ import { RecentList } from '../../../../../recent-list';
 import {
     calendarListTabBarOptions,
     recentListTabBarOptions,
+    settingsTabBarOptions,
     tabBarOptions
 } from '../../../../../welcome/constants';
 import { screen } from '../../../routes';
+import SettingsNavigationContainer
+    from '../../settings/components/SettingsNavigationContainer';
 
 const WelcomePage = createBottomTabNavigator();
+
 
 /**
  * The type of the React {@code Component} props of {@link WelcomePageTabs}.
@@ -28,30 +30,53 @@ type Props = {
     /**
      * Callback to be invoked when pressing the list container.
      */
-    onListContainerPress?: Function
+    onListContainerPress?: Function,
+
+    /**
+     * Callback to be invoked when settings screen is focused.
+     */
+    onSettingsScreenFocused: Function
 };
 
-const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
+
+const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocused }: Props) => {
     const RecentListScreen = useCallback(() =>
-        (<RecentList
-            disabled = { disabled }
-            onListContainerPress = { onListContainerPress } />)
+        (
+            <RecentList
+                disabled = { disabled }
+                onListContainerPress = { onListContainerPress } />
+        )
     );
 
     const calendarEnabled = useSelector(isCalendarEnabled);
 
     const CalendarListScreen = useCallback(() =>
-        (<CalendarList
-            disabled = { disabled } />)
+        (
+            <CalendarList
+                disabled = { disabled } />
+        )
+    );
+
+    const SettingsScreen = useCallback(() =>
+        (
+            <SettingsNavigationContainer
+                isInWelcomePage = { true } />
+        )
     );
 
     return (
         <WelcomePage.Navigator
+            initialRouteName = { screen.welcome.tabs.recent }
             screenOptions = {{
-                headerShown: false,
-                ...tabBarOptions
+                ...tabBarOptions,
+                headerShown: false
             }}>
             <WelcomePage.Screen
+                listeners = {{
+                    tabPress: () => {
+                        onSettingsScreenFocused(false);
+                    }
+                }}
                 name = { screen.welcome.tabs.recent }
                 options = { recentListTabBarOptions }>
                 { RecentListScreen }
@@ -59,11 +84,26 @@ const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
             {
                 calendarEnabled
             && <WelcomePage.Screen
+                listeners = {{
+                    tabPress: () => {
+                        onSettingsScreenFocused(false);
+                    }
+                }}
                 name = { screen.welcome.tabs.calendar }
                 options = { calendarListTabBarOptions }>
                 { CalendarListScreen }
             </WelcomePage.Screen>
             }
+            <WelcomePage.Screen
+                listeners = {{
+                    tabPress: () => {
+                        onSettingsScreenFocused(true);
+                    }
+                }}
+                name = { screen.settings.main }
+                options = { settingsTabBarOptions }>
+                { SettingsScreen }
+            </WelcomePage.Screen>
         </WelcomePage.Navigator>
     );
 };

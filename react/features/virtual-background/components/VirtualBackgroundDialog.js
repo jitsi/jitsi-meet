@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
+import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config';
 import { Dialog, hideDialog, openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Icon, IconCloseSmall, IconShareDesktop } from '../../base/icons';
@@ -35,14 +36,19 @@ type Props = {
     _images: Array<Image>,
 
     /**
+     * Returns the jitsi track that will have backgraund effect applied.
+     */
+    _jitsiTrack: Object,
+
+    /**
      * The current local flip x status.
      */
     _localFlipX: boolean,
 
     /**
-     * Returns the jitsi track that will have backgraund effect applied.
-     */
-    _jitsiTrack: Object,
+    * Whether or not multi-stream send support is enabled.
+    */
+    _multiStreamModeEnabled: boolean,
 
     /**
      * Returns the selected thumbnail identifier.
@@ -102,7 +108,8 @@ function _mapStateToProps(state): Object {
         _virtualBackground: state['features/virtual-background'],
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
         _showUploadButton: !(hasBrandingImages || state['features/base/config'].disableAddingBackgroundImages),
-        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
+        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack,
+        _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state)
     };
 }
 
@@ -110,7 +117,12 @@ const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackg
 
 const useStyles = makeStyles(theme => {
     return {
+        container: {
+            display: 'flex',
+            flexDirection: 'column'
+        },
         dialog: {
+            alignSelf: 'flex-start',
             marginLeft: '-10px',
             position: 'relative',
             maxHeight: '300px',
@@ -198,10 +210,11 @@ const useStyles = makeStyles(theme => {
                     left: '51px'
                 }
             },
-            '@media (max-width: 360px)': {
-                gridTemplateColumns: 'auto auto auto'
+            '@media (max-width: 720px)': {
+                gridTemplateColumns: 'auto auto auto auto'
             },
             '@media (max-width: 632px)': {
+                gridTemplateColumns: 'auto auto auto auto auto',
                 fontSize: '1.5vw',
 
                 [[ '& .desktop-share:hover',
@@ -229,6 +242,12 @@ const useStyles = makeStyles(theme => {
                     height: '60px',
                     width: '60px'
                 }
+            },
+            '@media (max-width: 360px)': {
+                gridTemplateColumns: 'auto auto auto auto'
+            },
+            '@media (max-width: 319px)': {
+                gridTemplateColumns: 'auto auto'
             }
         },
         dialogMarginTop: {
@@ -256,6 +275,7 @@ function VirtualBackground({
     _selectedThumbnail,
     _showUploadButton,
     _virtualBackground,
+    _multiStreamModeEnabled,
     dispatch,
     initialOptions,
     t
@@ -266,7 +286,10 @@ function VirtualBackground({
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
-    const { disableScreensharingVirtualBackground } = useSelector(state => state['features/base/config']);
+    let { disableScreensharingVirtualBackground } = useSelector(state => state['features/base/config']);
+
+    // Disable screenshare as virtual background in multi-stream mode.
+    disableScreensharingVirtualBackground = disableScreensharingVirtualBackground || _multiStreamModeEnabled;
 
     const [ activeDesktopVideo ] = useState(_virtualBackground?.virtualSource?.videoType === VIDEO_TYPE.DESKTOP
         ? _virtualBackground.virtualSource
@@ -307,7 +330,7 @@ function VirtualBackground({
             blurValue: 25,
             selectedThumbnail: 'blur'
         });
-        logger.info('"Blur" option setted for virtual background preview!');
+        logger.info('"Blur" option set for virtual background preview!');
 
     }, []);
 
@@ -325,7 +348,7 @@ function VirtualBackground({
             blurValue: 8,
             selectedThumbnail: 'slight-blur'
         });
-        logger.info('"Slight-blur" option setted for virtual background preview!');
+        logger.info('"Slight-blur" option set for virtual background preview!');
 
     }, []);
 
@@ -390,7 +413,7 @@ function VirtualBackground({
             dispatch(openDialog(VirtualBackgroundDialog, { initialOptions: newOptions }));
         } else {
             setOptions(newOptions);
-            logger.info('"Desktop-share" option setted for virtual background preview!');
+            logger.info('"Desktop-share" option set for virtual background preview!');
         }
     }, [ dispatch, options ]);
 
@@ -406,7 +429,7 @@ function VirtualBackground({
             enabled: false,
             selectedThumbnail: 'none'
         });
-        logger.info('"None" option setted for virtual background preview!');
+        logger.info('"None" option set for virtual background preview!');
 
     }, []);
 
@@ -428,7 +451,7 @@ function VirtualBackground({
                 url: image.src,
                 selectedThumbnail: image.id
             });
-            logger.info('Uploaded image setted for virtual background preview!');
+            logger.info('Uploaded image set for virtual background preview!');
         }
     }, [ storedImages ]);
 
@@ -527,7 +550,7 @@ function VirtualBackground({
                         size = 'medium' />
                 </div>
             ) : (
-                <div>
+                <div className = { classes.container }>
                     {_showUploadButton
                     && <UploadImageButton
                         setLoading = { setLoading }

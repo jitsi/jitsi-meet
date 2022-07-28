@@ -230,6 +230,7 @@ export function getSoundsTabProps(stateful: Object | Function) {
     const {
         soundsIncomingMessage,
         soundsParticipantJoined,
+        soundsParticipantKnocking,
         soundsParticipantLeft,
         soundsTalkWhileMuted,
         soundsReactions
@@ -240,6 +241,7 @@ export function getSoundsTabProps(stateful: Object | Function) {
     return {
         soundsIncomingMessage,
         soundsParticipantJoined,
+        soundsParticipantKnocking,
         soundsParticipantLeft,
         soundsTalkWhileMuted,
         soundsReactions,

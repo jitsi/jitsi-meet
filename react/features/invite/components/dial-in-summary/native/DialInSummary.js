@@ -1,22 +1,20 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { Linking, Platform, View } from 'react-native';
+import { Linking, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { type Dispatch } from 'redux';
 
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { IconClose } from '../../../../base/icons';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
-import HeaderNavigationButton
-    from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 
 import DialInSummaryErrorDialog from './DialInSummaryErrorDialog';
 import styles, { INDICATOR_COLOR } from './styles';
+
 
 type Props = {
 
@@ -65,28 +63,9 @@ class DialInSummary extends PureComponent<Props> {
      */
     componentDidMount() {
         const { navigation, t } = this.props;
-        const onNavigationClose = () => {
-            navigation.goBack();
-        };
 
         navigation.setOptions({
-            headerLeft: () => {
-                if (Platform.OS === 'ios') {
-                    return (
-                        <HeaderNavigationButton
-                            label = { t('dialog.close') }
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onPress = { onNavigationClose } />
-                    );
-                }
-
-                return (
-                    <HeaderNavigationButton
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onPress = { onNavigationClose }
-                        src = { IconClose } />
-                );
-            }
+            headerTitle: t('dialIn.screenTitle')
         });
     }
 

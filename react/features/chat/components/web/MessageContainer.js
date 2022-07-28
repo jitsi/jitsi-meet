@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import { scrollIntoView } from 'seamless-scroll-polyfill';
 
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
 import AbstractMessageContainer, { type Props }
@@ -103,7 +104,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
      * @returns {void}
      */
     scrollToBottom(withAnimation: boolean) {
-        this._messagesListEndRef.current.scrollIntoView({
+        scrollIntoView(this._messagesListEndRef.current, {
             behavior: withAnimation ? 'smooth' : 'auto',
             block: 'nearest'
         });

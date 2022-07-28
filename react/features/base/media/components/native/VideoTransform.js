@@ -637,7 +637,7 @@ class VideoTransform extends Component<Props, State> {
 
     /**
      * Function to decide whether the responder should respond to a start
-     * (thouch) event.
+     * (touch) event.
      *
      * @private
      * @returns {boolean}

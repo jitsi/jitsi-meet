@@ -1,7 +1,7 @@
 /**
  * Checks whether we are loaded in iframe.
  *
- * @returns Whether the current page is loaded in an iframe.
+ * @returns {boolean} Whether the current page is loaded in an iframe.
  */
 export function inIframe(): boolean {
     if (navigator.product === 'ReactNative') {

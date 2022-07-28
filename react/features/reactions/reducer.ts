@@ -1,5 +1,4 @@
-// @ts-ignore
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     TOGGLE_REACTIONS_VISIBLE,
@@ -10,44 +9,52 @@ import {
 } from './actionTypes';
 import { ReactionEmojiProps } from './constants';
 
-interface State {
-    /**
-     * The indicator that determines whether the reactions menu is visible.
-     */
-    visible: boolean,
+interface IReactionsState {
+
     /**
      * An array that contains the reactions buffer to be sent.
      */
     buffer: Array<string>,
+
     /**
-     * A number, non-zero value which identifies the timer created by a call
-     * to setTimeout().
+     * Whether or not the disable reaction sounds notification was shown.
      */
-    timeoutID: number|null,
+    notificationDisplayed: boolean,
+
     /**
     * The array of reactions to animate.
     */
     queue: Array<ReactionEmojiProps>,
 
     /**
-     * Whether or not the disable reaction sounds notification was shown.
+     * A number, non-zero value which identifies the timer created by a call
+     * to setTimeout().
      */
-    notificationDisplayed: boolean
+    timeoutID: number|null,
+
+    /**
+     * The indicator that determines whether the reactions menu is visible.
+     */
+    visible: boolean
 }
 
-export interface ReactionsAction extends Partial<State> {
+export interface ReactionsAction extends Partial<IReactionsState> {
+
     /**
      * The message to be added to the chat.
      */
     message?: string,
+
     /**
      * The reaction to be added to buffer.
      */
     reaction?: string,
+
     /**
      * The reactions to be added to the animation queue.
      */
     reactions?: Array<string>,
+
     /**
      * The action type.
      */
@@ -58,8 +65,9 @@ export interface ReactionsAction extends Partial<State> {
  * Returns initial state for reactions' part of Redux store.
  *
  * @private
+ * @returns {IReactionsState}
  */
-function _getInitialState(): State {
+function _getInitialState(): IReactionsState {
     return {
         visible: false,
         buffer: [],
@@ -71,7 +79,7 @@ function _getInitialState(): State {
 
 ReducerRegistry.register(
     'features/reactions',
-    (state: State = _getInitialState(), action: ReactionsAction) => {
+    (state: IReactionsState = _getInitialState(), action: ReactionsAction) => {
         switch (action.type) {
 
         case TOGGLE_REACTIONS_VISIBLE:

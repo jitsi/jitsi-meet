@@ -8,7 +8,7 @@ import logger from './logger';
 /**
  * Signals the local participant activate the virtual background video or not.
  *
- * @param {Object} options - Represents the virtual background setted options.
+ * @param {Object} options - Represents the virtual background set options.
  * @param {Object} jitsiTrack - Represents the jitsi track that will have backgraund effect applied.
  * @returns {Promise}
  */
@@ -38,7 +38,7 @@ export function toggleBackgroundEffect(options: Object, jitsiTrack: Object) {
 /**
  * Sets the selected virtual background image object.
  *
- * @param {Object} options - Represents the virtual background setted options.
+ * @param {Object} options - Represents the virtual background set options.
  * @returns {{
  *     type: SET_VIRTUAL_BACKGROUND,
  *     virtualSource: string,

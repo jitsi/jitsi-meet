@@ -31,6 +31,11 @@ export type Props = {
     soundsParticipantJoined: Boolean,
 
     /**
+     * Whether or not the sound for the participant entering the lobby should play.
+     */
+    soundsParticipantKnocking: Boolean,
+
+    /**
      * Whether or not the sound for the participant left should play.
      */
     soundsParticipantLeft: Boolean,
@@ -98,6 +103,7 @@ class SoundsTab extends AbstractDialogTab<Props> {
         const {
             soundsIncomingMessage,
             soundsParticipantJoined,
+            soundsParticipantKnocking,
             soundsParticipantLeft,
             soundsTalkWhileMuted,
             soundsReactions,
@@ -139,6 +145,11 @@ class SoundsTab extends AbstractDialogTab<Props> {
                     isChecked = { soundsTalkWhileMuted }
                     label = { t('settings.talkWhileMuted') }
                     name = 'soundsTalkWhileMuted'
+                    onChange = { this._onChange } />
+                <Checkbox
+                    isChecked = { soundsParticipantKnocking }
+                    label = { t('settings.participantKnocking') }
+                    name = 'soundsParticipantKnocking'
                     onChange = { this._onChange } />
             </div>
         );

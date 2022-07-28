@@ -2,17 +2,19 @@
 
 import React, { PureComponent } from 'react';
 import { FlatList } from 'react-native';
-import { Button, withTheme } from 'react-native-paper';
+
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import Button from '../../../base/ui/components/native/Button';
+import Input from '../../../base/ui/components/native/Input';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
 
-import ClearableInput from './ClearableInput';
 import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
@@ -83,12 +85,7 @@ type Props = {
     /**
      * Translation function.
      */
-    t: Function,
-
-    /**
-     * Theme used for styles.
-     */
-    theme: Object
+    t: Function
 }
 
 /**
@@ -230,17 +227,20 @@ class MeetingParticipantList extends PureComponent<Props> {
                 {
                     _showInviteButton
                     && <Button
-                        children = { t('participantsPane.actions.invite') }
+                        accessibilityLabel = 'participantsPane.actions.invite'
                         icon = { this._renderInviteMoreIcon }
-                        labelStyle = { styles.inviteLabel }
-                        mode = 'contained'
+                        label = 'participantsPane.actions.invite'
                         onPress = { this._onInvite }
-                        style = { styles.inviteButton } />
+                        style = { styles.inviteButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
                 }
-                <ClearableInput
+                <Input
+                    clearable = { true }
+                    customStyles = {{ container: styles.inputContainer,
+                        input: styles.centerInput }}
                     onChange = { this._onSearchStringChange }
                     placeholder = { t('participantsPane.search') }
-                    selectionColor = { this.props.theme.palette.text01 } />
+                    value = { this.props.searchString } />
                 <FlatList
                     bounces = { false }
                     data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
@@ -280,4 +280,4 @@ function _mapStateToProps(state): Object {
     };
 }
 
-export default translate(connect(_mapStateToProps)(withTheme(MeetingParticipantList)));
+export default translate(connect(_mapStateToProps)(MeetingParticipantList));

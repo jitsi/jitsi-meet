@@ -207,6 +207,16 @@ export const SEND_TONES = 'SEND_TONES';
 export const SET_FOLLOW_ME = 'SET_FOLLOW_ME';
 
 /**
+ * The type of (redux) action which sets the obfuscated room name.
+ *
+ * {
+ *     type: SET_OBFUSCATED_ROOM,
+ *     obfuscatedRoom: string
+ * }
+ */
+ export const SET_OBFUSCATED_ROOM = 'SET_OBFUSCATED_ROOM';
+
+/**
  * The type of (redux) action which updates the current known status of the
  * Mute Reactions Sound feature.
  *

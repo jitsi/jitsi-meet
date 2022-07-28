@@ -1,6 +1,4 @@
-// @flow
-
-import { openDialog } from '../base/dialog';
+import { openSheet } from '../base/dialog';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 
@@ -15,7 +13,7 @@ export * from './actions.any';
  */
 export function openHighlightDialog() {
     return (dispatch: Function) => {
-        dispatch(openDialog(HighlightDialog));
+        dispatch(openSheet(HighlightDialog));
     };
 }
 

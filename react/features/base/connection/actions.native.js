@@ -1,15 +1,10 @@
 // @flow
 
-import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
 import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
-import {
-    getBackendSafeRoomName,
-    parseURIString
-} from '../util';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -18,8 +13,11 @@ import {
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL
 } from './actionTypes';
+import { constructOptions } from './actions.any';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
+
+export * from './actions.any';
 
 /**
  * The error structure passed to the {@link connectionFailed} action.
@@ -78,7 +76,7 @@ export type ConnectionFailedError = {
 export function connect(id: ?string, password: ?string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const options = _constructOptions(state);
+        const options = constructOptions(state);
         const { locationURL } = state['features/base/connection'];
         const { jwt } = state['features/base/jwt'];
         const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, options);
@@ -260,69 +258,6 @@ function _connectionWillConnect(connection) {
         type: CONNECTION_WILL_CONNECT,
         connection
     };
-}
-
-/**
- * Constructs options to be passed to the constructor of {@code JitsiConnection}
- * based on the redux state.
- *
- * @param {Object} state - The redux state.
- * @returns {Object} The options to be passed to the constructor of
- * {@code JitsiConnection}.
- */
-function _constructOptions(state) {
-    // Deep clone the options to make sure we don't modify the object in the
-    // redux store.
-    const options = _.cloneDeep(state['features/base/config']);
-
-    let { bosh, websocket } = options;
-
-    // TESTING: Only enable WebSocket for some percentage of users.
-    if (websocket) {
-        if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
-            websocket = undefined;
-        }
-    }
-
-    // Normalize the BOSH URL.
-    if (bosh && !websocket) {
-        const { locationURL } = state['features/base/connection'];
-
-        if (bosh.startsWith('//')) {
-            // By default our config.js doesn't include the protocol.
-            bosh = `${locationURL.protocol}${bosh}`;
-        } else if (bosh.startsWith('/')) {
-            // Handle relative URLs, which won't work on mobile.
-            const {
-                protocol,
-                host,
-                contextRoot
-            } = parseURIString(locationURL.href);
-
-            // eslint-disable-next-line max-len
-            bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
-        }
-    }
-
-    // WebSocket is preferred over BOSH.
-    const serviceUrl = websocket || bosh;
-
-    logger.log(`Using service URL ${serviceUrl}`);
-
-    // Append room to the URL's search.
-    const { room } = state['features/base/conference'];
-
-    if (serviceUrl && room) {
-        const roomName = getBackendSafeRoomName(room);
-
-        options.serviceUrl = `${serviceUrl}?room=${roomName}`;
-
-        if (options.websocketKeepAliveUrl) {
-            options.websocketKeepAliveUrl += `?room=${roomName}`;
-        }
-    }
-
-    return options;
 }
 
 /**

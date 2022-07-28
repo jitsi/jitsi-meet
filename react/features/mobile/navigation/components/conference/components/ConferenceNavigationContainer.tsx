@@ -1,28 +1,41 @@
+/* eslint-disable lines-around-comment */
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
+// @ts-ignore
 import { Chat, ChatAndPolls } from '../../../../../chat';
-
+// @ts-ignore
 import Conference from '../../../../../conference/components/native/Conference';
-import CarmodeTab from '../../../../../conference/components/native/carmode/Conference';
+import CarMode from '../../../../../conference/components/native/carmode/CarMode';
+// @ts-ignore
 import { getDisablePolls } from '../../../../../conference/functions';
+// @ts-ignore
 import { SharedDocument } from '../../../../../etherpad';
+// @ts-ignore
 import { GifsMenu } from '../../../../../gifs/components';
 import AddPeopleDialog
+// @ts-ignore
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
+// @ts-ignore
 import { ParticipantsPane } from '../../../../../participants-pane/components/native';
+// @ts-ignore
 import { StartLiveStreamDialog } from '../../../../../recording';
 import { StartRecordingDialog }
+// @ts-ignore
     from '../../../../../recording/components/Recording/native';
 import SalesforceLinkDialog
+// @ts-ignore
     from '../../../../../salesforce/components/native/SalesforceLinkDialog';
 import SecurityDialog
+// @ts-ignore
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
 import SpeakerStats
+// @ts-ignore
     from '../../../../../speaker-stats/components/native/SpeakerStats';
+// @ts-ignore
 import { screen } from '../../../routes';
 import {
     carmodeScreenOptions,
@@ -31,21 +44,30 @@ import {
     gifsMenuOptions,
     inviteScreenOptions,
     liveStreamScreenOptions,
+    lobbyNavigationContainerScreenOptions,
     navigationContainerTheme,
     participantsScreenOptions,
     recordingScreenOptions,
     salesforceScreenOptions,
     securityScreenOptions,
+    settingsNavigationContainerScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions
+    // @ts-ignore
 } from '../../../screenOptions';
 import LobbyNavigationContainer
+// @ts-ignore
     from '../../lobby/components/LobbyNavigationContainer';
+import SettingsNavigationContainer
+// @ts-ignore
+    from '../../settings/components/SettingsNavigationContainer';
 import {
     conferenceNavigationRef
+    // @ts-ignore
 } from '../ConferenceNavigationContainerRef';
 
-const ConferenceStack = createNativeStackNavigator();
+const ConferenceStack = createStackNavigator();
+
 
 const ConferenceNavigationContainer = () => {
     const isPollsDisabled = useSelector(getDisablePolls);
@@ -101,15 +123,11 @@ const ConferenceNavigationContainer = () => {
                 <ConferenceStack.Screen
                     component = { StartRecordingDialog }
                     name = { screen.conference.recording }
-                    options = {{
-                        ...recordingScreenOptions
-                    }} />
+                    options = { recordingScreenOptions } />
                 <ConferenceStack.Screen
                     component = { StartLiveStreamDialog }
                     name = { screen.conference.liveStream }
-                    options = {{
-                        ...liveStreamScreenOptions
-                    }} />
+                    options = { liveStreamScreenOptions } />
                 <ConferenceStack.Screen
                     component = { SpeakerStats }
                     name = { screen.conference.speakerStats }
@@ -134,10 +152,7 @@ const ConferenceNavigationContainer = () => {
                 <ConferenceStack.Screen
                     component = { LobbyNavigationContainer }
                     name = { screen.lobby.root }
-                    options = {{
-                        gestureEnabled: false,
-                        headerShown: false
-                    }} />
+                    options = { lobbyNavigationContainerScreenOptions } />
                 <ConferenceStack.Screen
                     component = { AddPeopleDialog }
                     name = { screen.conference.invite }
@@ -153,12 +168,16 @@ const ConferenceNavigationContainer = () => {
                         title: t('documentSharing.title')
                     }} />
                 <ConferenceStack.Screen
-                    component = { CarmodeTab }
+                    component = { SettingsNavigationContainer }
+                    name = { screen.settings.main }
+                    options = { settingsNavigationContainerScreenOptions } />
+                <ConferenceStack.Screen
+                    component = { CarMode }
                     name = { screen.conference.carmode }
                     options = {{
                         ...carmodeScreenOptions,
                         title: t('carmode.labels.title')
-                    }}/>
+                    }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>
     );

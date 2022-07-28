@@ -139,6 +139,7 @@ import {
     submitFeedback
 } from './react/features/feedback';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
+import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
 import {
     isModerationNotificationDisplayed,
     showNotification,
@@ -1770,12 +1771,12 @@ export default {
             return Promise.reject('Cannot toggle screen sharing: not supported.');
         }
 
-        if (this.isAudioOnly()) {
-            APP.store.dispatch(setAudioOnly(false));
-        }
         if (toggle) {
             try {
                 await this._switchToScreenSharing(options);
+                if (this.isAudioOnly()) {
+                    APP.store.dispatch(setAudioOnly(false));
+                }
 
                 return;
             } catch (err) {
@@ -2028,6 +2029,11 @@ export default {
                 }
 
                 if (this._desktopAudioStream) {
+                    // Noise suppression doesn't work with desktop audio because we can't chain
+                    // track effects yet, disable it first.
+                    // We need to to wait for the effect to clear first or it might interfere with the audio mixer.
+                    await APP.store.dispatch(setNoiseSuppressionEnabled(false));
+
                     const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
 
                     // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
@@ -2601,8 +2607,11 @@ export default {
 
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
-            micDeviceId => {
+            async micDeviceId => {
                 const audioWasMuted = this.isLocalAudioMuted();
+
+                // Disable noise suppression if it was enabled on the previous track.
+                await APP.store.dispatch(setNoiseSuppressionEnabled(false));
 
                 // When the 'default' mic needs to be selected, we need to
                 // pass the real device id to gUM instead of 'default' in order
@@ -2664,13 +2673,9 @@ export default {
             // muteVideo logic in such case.
             const tracks = APP.store.getState()['features/base/tracks'];
             const isTrackInRedux
-                = Boolean(
-                    tracks.find(
-                        track => track.jitsiTrack
-                            && track.jitsiTrack.getType() === 'video'));
+                = Boolean(tracks.find(track => track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.VIDEO));
 
-
-            if (isTrackInRedux) {
+            if (isTrackInRedux && !this.isSharingScreen) {
                 this.muteVideo(audioOnly);
             }
 
@@ -3085,7 +3090,7 @@ export default {
     /**
      * Leaves the room.
      *
-     * @param {boolean} doDisconnect - Wether leaving the room should also terminate the connection.
+     * @param {boolean} doDisconnect - Whether leaving the room should also terminate the connection.
      * @returns {Promise}
      */
     async leaveRoom(doDisconnect = true) {
@@ -3109,34 +3114,12 @@ export default {
      * @param email {string} the new email
      */
     changeLocalEmail(email = '') {
-        const localParticipant = getLocalParticipant(APP.store.getState());
-
         const formattedEmail = String(email).trim();
-
-        if (formattedEmail === localParticipant.email) {
-            return;
-        }
-
-        const localId = localParticipant.id;
-
-        APP.store.dispatch(participantUpdated({
-            // XXX Only the local participant is allowed to update without
-            // stating the JitsiConference instance (i.e. participant property
-            // `conference` for a remote participant) because the local
-            // participant is uniquely identified by the very fact that there is
-            // only one local participant.
-
-            id: localId,
-            local: true,
-            email: formattedEmail
-        }));
 
         APP.store.dispatch(updateSettings({
             email: formattedEmail
         }));
-        APP.API.notifyEmailChanged(localId, {
-            email: formattedEmail
-        });
+
         sendData(commands.EMAIL, formattedEmail);
     },
 
@@ -3145,29 +3128,12 @@ export default {
      * @param url {string} the new url
      */
     changeLocalAvatarUrl(url = '') {
-        const { avatarURL, id } = getLocalParticipant(APP.store.getState());
-
         const formattedUrl = String(url).trim();
-
-        if (formattedUrl === avatarURL) {
-            return;
-        }
-
-        APP.store.dispatch(participantUpdated({
-            // XXX Only the local participant is allowed to update without
-            // stating the JitsiConference instance (i.e. participant property
-            // `conference` for a remote participant) because the local
-            // participant is uniquely identified by the very fact that there is
-            // only one local participant.
-
-            id,
-            local: true,
-            avatarURL: formattedUrl
-        }));
 
         APP.store.dispatch(updateSettings({
             avatarURL: formattedUrl
         }));
+
         sendData(commands.AVATAR_URL, url);
     },
 
@@ -3208,23 +3174,6 @@ export default {
      */
     changeLocalDisplayName(nickname = '') {
         const formattedNickname = getNormalizedDisplayName(nickname);
-        const { id, name } = getLocalParticipant(APP.store.getState());
-
-        if (formattedNickname === name) {
-            return;
-        }
-
-        APP.store.dispatch(participantUpdated({
-            // XXX Only the local participant is allowed to update without
-            // stating the JitsiConference instance (i.e. participant property
-            // `conference` for a remote participant) because the local
-            // participant is uniquely identified by the very fact that there is
-            // only one local participant.
-
-            id,
-            local: true,
-            name: formattedNickname
-        }));
 
         APP.store.dispatch(updateSettings({
             displayName: formattedNickname

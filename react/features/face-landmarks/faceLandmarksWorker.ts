@@ -1,5 +1,5 @@
+import { FaceLandmarksHelper, HumanHelper } from './FaceLandmarksHelper';
 import { DETECT_FACE, INIT_WORKER } from './constants';
-import { FaceLandmarksHelper, HumanHelper }from './FaceLandmarksHelper';
 
 
 let helper: FaceLandmarksHelper;
@@ -13,7 +13,7 @@ onmessage = async function(message: MessageEvent<any>) {
 
         const detections = await helper.detect(message.data);
 
-        if (detections && (detections.faceBox || detections.faceExpression)) {
+        if (detections && (detections.faceBox || detections.faceExpression || detections.faceCount)) {
             self.postMessage(detections);
         }
 

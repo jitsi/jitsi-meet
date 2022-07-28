@@ -1,6 +1,7 @@
 // @flow
 
-import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
+import { isMobileBrowser } from '../base/environment/utils';
+import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getRemoteParticipants, isLocalParticipantModerator } from '../base/participants';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox';
@@ -127,6 +128,16 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
 }
 
 /**
+ * Check if local recording is supported.
+ *
+ * @returns {boolean} - Whether local recording is supported or not.
+ */
+export function supportsLocalRecording() {
+    return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()
+        && navigator.product !== 'ReactNative';
+}
+
+/**
  * Returns the recording button props.
  *
  * @param {Object} state - The redux state to search in.
@@ -151,11 +162,15 @@ export function getRecordButtonProps(state: Object): ?string {
     const isModerator = isLocalParticipantModerator(state);
     const {
         enableFeaturesBasedOnToken,
-        fileRecordingsEnabled
+        recordingService,
+        localRecording
     } = state['features/base/config'];
     const { features = {} } = getLocalParticipant(state);
+    const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
 
-    visible = isModerator && fileRecordingsEnabled;
+    const dropboxEnabled = isDropboxEnabled(state);
+
+    visible = isModerator && (recordingService?.enabled || localRecordingEnabled || dropboxEnabled);
 
     if (enableFeaturesBasedOnToken) {
         visible = visible && String(features.recording) === 'true';

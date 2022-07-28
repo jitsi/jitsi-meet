@@ -167,12 +167,9 @@ public class JitsiMeetActivity extends AppCompatActivity
         }
     }
 
-    public void leave() {
-        if (this.jitsiView  != null) {
-            this.jitsiView .leave();
-        } else {
-            JitsiMeetLogger.w("Cannot leave, view is null");
-        }
+    protected void leave() {
+        Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
     }
 
     private @Nullable
@@ -213,7 +210,7 @@ public class JitsiMeetActivity extends AppCompatActivity
     protected void onConferenceJoined(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference joined: " + extraData);
         // Launch the service for the ongoing notification.
-        JitsiMeetOngoingConferenceService.launch(this);
+        JitsiMeetOngoingConferenceService.launch(this, extraData);
     }
 
     protected void onConferenceTerminated(HashMap<String, Object> extraData) {

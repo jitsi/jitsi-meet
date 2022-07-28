@@ -1,5 +1,3 @@
-// @flow
-
 import { StyleSheet } from 'react-native';
 
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
@@ -75,7 +73,6 @@ export const bottomSheetStyles = {
      * Style for the container of the sheet.
      */
     sheetContainer: {
-        borderColor: 'red',
         alignItems: 'stretch',
         flex: 1,
         flexDirection: 'column',
@@ -265,30 +262,5 @@ ColorSchemeRegistry.register('Dialog', {
     topBorderContainer: {
         borderTopColor: BaseTheme.palette.dividerColor,
         borderTopWidth: 1
-    }
-});
-
-ColorSchemeRegistry.register('SecurityDialog', {
-    /**
-     * Field on an input dialog.
-     */
-    field: {
-        borderBottomWidth: 1,
-        borderColor: schemeColor('border'),
-        color: schemeColor('text'),
-        fontSize: 14,
-        paddingBottom: 8
-    },
-
-    text: {
-        color: schemeColor('text'),
-        fontSize: 14,
-        marginTop: 8
-    },
-
-    title: {
-        color: schemeColor('text'),
-        fontSize: 18,
-        fontWeight: 'bold'
     }
 });

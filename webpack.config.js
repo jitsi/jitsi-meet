@@ -2,7 +2,7 @@
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const fs = require('fs');
-const { join } = require('path');
+const { join, resolve } = require('path');
 const process = require('process');
 const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -97,7 +97,7 @@ function getConfig(options = {}) {
     const { detectCircularDeps, minimize } = options;
 
     return {
-        devtool: 'source-map',
+        devtool: minimize ? 'source-map' : 'eval-source-map',
         mode: minimize ? 'production' : 'development',
         module: {
             rules: [ {
@@ -282,7 +282,7 @@ module.exports = (_env, argv) => {
     const mode = typeof argv.mode === 'undefined' ? 'production' : argv.mode;
     const isProduction = mode === 'production';
     const configOptions = {
-        detectCircularDeps: Boolean(process.env.DETECT_CIRCULAR_DEPS) || !isProduction,
+        detectCircularDeps: Boolean(process.env.DETECT_CIRCULAR_DEPS),
         minimize: isProduction
     };
     const config = getConfig(configOptions);
@@ -392,6 +392,39 @@ module.exports = (_env, argv) => {
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
             ],
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2)
+        }),
+        Object.assign({}, config, {
+            /**
+             * The NoiseSuppressorWorklet is loaded in an audio worklet which doesn't have the same
+             * context as a normal window, (e.g. self/window is not defined).
+             * While running a production build webpack's boilerplate code doesn't introduce any
+             * audio worklet "unfriendly" code however when running the dev server, hot module replacement
+             * and live reload add javascript code that can't be ran by the worklet, so we explicity ignore
+             * those parts with the null-loader.
+             * The dev server also expects a `self` global object that's not available in the `AudioWorkletGlobalScope`,
+             * so we replace it.
+             */
+            entry: {
+                'noise-suppressor-worklet':
+                    './react/features/stream-effects/noise-suppression/NoiseSuppressorWorklet.ts'
+            },
+
+            module: { rules: [
+                ...config.module.rules,
+                {
+                    test: resolve(__dirname, 'node_modules/webpack-dev-server/client'),
+                    loader: 'null-loader'
+                }
+            ] },
+            plugins: [
+            ],
+            performance: getPerformanceHints(perfHintOptions, 200 * 1024),
+
+            output: {
+                ...config.output,
+
+                globalObject: 'AudioWorkletGlobalScope'
+            }
         })
     ];
 };

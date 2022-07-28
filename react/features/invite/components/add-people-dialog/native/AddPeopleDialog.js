@@ -230,7 +230,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         data = { inviteItems }
                         horizontal = { true }
                         keyExtractor = { this._keyExtractor }
-                        keyboardShouldPersistTaps = 'always'
                         renderItem = { this._renderInvitedItem } />
                 </View> }
                 <View style = { styles.resultList }>
@@ -239,7 +238,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         data = { selectableItems }
                         extraData = { inviteItems }
                         keyExtractor = { this._keyExtractor }
-                        keyboardShouldPersistTaps = 'always'
                         renderItem = { this._renderItem } />
                 </View>
             </JitsiScreen>

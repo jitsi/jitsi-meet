@@ -33,6 +33,11 @@ export type Props = {
     participantId: string,
 
     /**
+     * Custom icon style.
+     */
+    iconStyle?: Object,
+
+    /**
      * The source name of the track.
      */
     _sourceName: string,

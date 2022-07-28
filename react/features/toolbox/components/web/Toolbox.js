@@ -12,7 +12,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
-import { getToolbarButtons } from '../../../base/config';
+import { getMultipleVideoSendingSupportFeatureFlag, getToolbarButtons } from '../../../base/config';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { openDialog, toggleDialog } from '../../../base/dialog';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
@@ -36,6 +36,7 @@ import { isGifEnabled } from '../../../gifs/functions';
 import { InviteButton } from '../../../invite/components/add-people-dialog';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { KeyboardShortcutsButton } from '../../../keyboard-shortcuts';
+import { NoiseSuppressionButton } from '../../../noise-suppression/components';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -205,7 +206,12 @@ type Props = {
     _localVideo: Object,
 
     /**
-     *Whether or not the overflow menu is displayed in a drawer drawer.
+     * Whether or not multi-stream send support is enabled.
+     */
+    _multiStreamModeEnabled: boolean,
+
+    /**
+     * Whether or not the overflow menu is displayed in a drawer drawer.
      */
     _overflowDrawer: boolean,
 
@@ -631,6 +637,7 @@ class Toolbox extends Component<Props> {
             _isIosMobile,
             _isMobile,
             _hasSalesforce,
+            _multiStreamModeEnabled,
             _screenSharing
         } = this.props;
 
@@ -755,13 +762,20 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
+        const noiseSuppression = {
+            key: 'noisesuppression',
+            Content: NoiseSuppressionButton,
+            group: 3
+        };
+
+
         const etherpad = {
             key: 'etherpad',
             Content: SharedDocumentButton,
             group: 3
         };
 
-        const virtualBackground = !_screenSharing && {
+        const virtualBackground = (_multiStreamModeEnabled || !_screenSharing) && {
             key: 'select-background',
             Content: VideoBackgroundButton,
             group: 3
@@ -841,6 +855,7 @@ class Toolbox extends Component<Props> {
             linkToSalesforce,
             shareVideo,
             shareAudio,
+            noiseSuppression,
             etherpad,
             virtualBackground,
             dockIframe,
@@ -1445,6 +1460,7 @@ function _mapStateToProps(state, ownProps) {
         _hasSalesforce: isSalesforceEnabled(state),
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
+        _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state),
         _overflowMenuVisible: overflowMenuVisible,
         _overflowDrawer: overflowDrawer,
         _participantsPaneOpen: getParticipantsPaneOpen(state),

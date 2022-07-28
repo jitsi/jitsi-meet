@@ -1,12 +1,8 @@
 // @flow
 
-import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
-import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
-import { openDialog } from '../../../base/dialog';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { equals } from '../../../base/redux';
@@ -18,9 +14,6 @@ import {
     isInBreakoutRoom
 } from '../../../breakout-rooms/functions';
 import { getKnockingParticipants } from '../../../lobby/functions';
-import MuteEveryoneDialog
-    from '../../../video-menu/components/native/MuteEveryoneDialog';
-import { isMoreActionsVisible, isMuteAllVisible } from '../../functions';
 import {
     AddBreakoutRoomButton,
     AutoAssignButton,
@@ -28,26 +21,20 @@ import {
 } from '../breakout-rooms/components/native';
 import { CollapsibleRoom } from '../breakout-rooms/components/native/CollapsibleRoom';
 
-import { ContextMenuMore } from './ContextMenuMore';
-import HorizontalDotsIcon from './HorizontalDotsIcon';
 import LobbyParticipantList from './LobbyParticipantList';
 import MeetingParticipantList from './MeetingParticipantList';
+import ParticipantsPaneFooter from './ParticipantsPaneFooter';
 import styles from './styles';
 
+
 /**
- * Participant pane.
+ * Participants pane.
  *
  * @returns {React$Element<any>}
  */
 const ParticipantsPane = () => {
-    const dispatch = useDispatch();
     const [ searchString, setSearchString ] = useState('');
-    const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)), [ dispatch ]);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
-    const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
-        [ dispatch ]);
-    const { t } = useTranslation();
-
     const { conference } = useSelector(state => state['features/base/conference']);
     const _isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
     const currentRoomId = useSelector(getCurrentRoomId);
@@ -57,12 +44,12 @@ const ParticipantsPane = () => {
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const showAddBreakoutRoom = useSelector(isAddBreakoutRoomButtonVisible);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
-    const showMoreActions = useSelector(isMoreActionsVisible);
-    const showMuteAll = useSelector(isMuteAllVisible);
     const lobbyParticipants = useSelector(getKnockingParticipants);
 
     return (
-        <JitsiScreen style = { styles.participantsPaneContainer }>
+        <JitsiScreen
+            footerComponent = { isLocalModerator && ParticipantsPaneFooter }
+            style = { styles.participantsPaneContainer }>
             <LobbyParticipantList />
             <MeetingParticipantList
                 breakoutRooms = { rooms }
@@ -85,31 +72,6 @@ const ParticipantsPane = () => {
             }
             {
                 showAddBreakoutRoom && <AddBreakoutRoomButton />
-            }
-            {
-                isLocalModerator
-                && <View style = { styles.participantsPaneFooter }>
-                    {
-                        showMuteAll && (
-                            <Button
-                                children = { t('participantsPane.actions.muteAll') }
-                                labelStyle = { styles.muteAllLabel }
-                                mode = 'contained'
-                                onPress = { muteAll }
-                                style = { styles.muteAllMoreButton } />
-                        )
-                    }
-                    {
-                        showMoreActions && (
-                            <Button
-                                icon = { HorizontalDotsIcon }
-                                labelStyle = { styles.moreIcon }
-                                mode = 'contained'
-                                onPress = { openMoreMenu }
-                                style = { styles.moreButton } />
-                        )
-                    }
-                </View>
             }
         </JitsiScreen>
     );

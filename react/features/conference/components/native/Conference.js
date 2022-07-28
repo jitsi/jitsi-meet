@@ -1,6 +1,7 @@
 // @flow
 
-import React from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect } from 'react';
 import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -22,11 +23,14 @@ import {
 } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
+import { startKnocking } from '../../../lobby/actions.any';
 import { KnockingParticipantList } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { shouldEnableAutoKnock } from '../../../mobile/navigation/functions';
 import { screen } from '../../../mobile/navigation/routes';
+import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -60,11 +64,6 @@ type Props = AbstractProps & {
      * Branding styles for conference.
      */
     _brandingStyles: Object,
-
-    /**
-     * Branding image background.
-     */
-    _brandingImageBackgroundUrl: string,
 
     /**
      * Wherther the calendar feature is enabled or not.
@@ -105,6 +104,11 @@ type Props = AbstractProps & {
     _largeVideoParticipantId: string,
 
     /**
+     * Local participant's display name.
+     */
+    _localParticipantDisplayName: string,
+
+    /**
      * Whether Picture-in-Picture is enabled.
      */
     _pictureInPictureEnabled: boolean,
@@ -119,6 +123,11 @@ type Props = AbstractProps & {
      * The indicator which determines whether the Toolbox is visible.
      */
     _toolboxVisible: boolean,
+
+    /**
+     * Indicates if we should auto-knock.
+     */
+    _shouldEnableAutoKnock: boolean,
 
     /**
      * Indicates whether the lobby screen should be visible.
@@ -192,10 +201,18 @@ class Conference extends AbstractConference<Props, State> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps) {
-        const { _showLobby } = this.props;
+        const {
+            _shouldEnableAutoKnock,
+            _showLobby,
+            dispatch
+        } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
             navigate(screen.lobby.root);
+
+            if (_shouldEnableAutoKnock) {
+                dispatch(startKnocking());
+            }
         }
 
         if (prevProps._showLobby && !_showLobby) {
@@ -226,7 +243,6 @@ class Conference extends AbstractConference<Props, State> {
      */
     render() {
         const {
-            _brandingImageBackgroundUrl,
             _brandingStyles,
             _fullscreenEnabled
         } = this.props;
@@ -237,8 +253,7 @@ class Conference extends AbstractConference<Props, State> {
                     styles.conference,
                     _brandingStyles
                 ] }>
-                <BrandingImageBackground
-                    uri = { _brandingImageBackgroundUrl } />
+                <BrandingImageBackground />
                 <StatusBar
                     barStyle = 'light-content'
                     hidden = { _fullscreenEnabled }
@@ -520,7 +535,7 @@ class Conference extends AbstractConference<Props, State> {
 function _mapStateToProps(state) {
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
-    const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
+    const { backgroundColor } = state['features/dynamic-branding'];
     const participantCount = getParticipantCount(state);
     const brandingStyles = backgroundColor ? {
         backgroundColor
@@ -530,7 +545,6 @@ function _mapStateToProps(state) {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
         _brandingStyles: brandingStyles,
-        _brandingImageBackgroundUrl: backgroundImageUrl,
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
@@ -540,9 +554,27 @@ function _mapStateToProps(state) {
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
+        _shouldEnableAutoKnock: shouldEnableAutoKnock(state),
         _showLobby: getIsLobbyVisible(state),
         _toolboxVisible: isToolboxVisible(state)
     };
 }
 
-export default withSafeAreaInsets(connect(_mapStateToProps)(Conference));
+export default withSafeAreaInsets(connect(_mapStateToProps)(props => {
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (isFocused) {
+            setPictureInPictureEnabled(true);
+        } else {
+            setPictureInPictureEnabled(false);
+        }
+
+        // We also need to disable PiP when we are back on the WelcomePage
+        return () => setPictureInPictureEnabled(false);
+    }, [ isFocused ]);
+
+    return (
+        <Conference { ...props } />
+    );
+}));

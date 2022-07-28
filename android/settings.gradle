@@ -37,8 +37,6 @@ include ':react-native-pager-view'
 project(':react-native-pager-view').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-pager-view/android')
 include ':react-native-performance'
 project(':react-native-performance').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-performance/android')
-include ':react-native-reanimated'
-project(':react-native-reanimated').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-reanimated/android')
 include ':react-native-safe-area-context'
 project(':react-native-safe-area-context').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-safe-area-context/android')
 include ':react-native-screens'

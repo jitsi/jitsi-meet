@@ -19,6 +19,7 @@ export function _cleanupConfig(config: Object) {
         delete config.analytics?.googleAnalyticsTrackingId;
         delete config.callStatsID;
         delete config.callStatsSecret;
+        config.giphy = { enabled: false };
     }
 }
 

@@ -116,6 +116,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "نزِّل إضافة متصفح كروم",
+        "buttonTextEdge": "قم بتثبيت ملحق Edge",
         "close": "إغلق",
         "dontShowAgain": "لا ترني هذه مرة أخرى",
         "installExtensionText": "نزِّل الإضافة للدمج مع رزنامة غوغل ورزنامة أوفيس 365"
@@ -206,6 +207,9 @@
         "previewUnavailable": "المعاينة غير متاحة",
         "selectADevice": "اختر جهازًا",
         "testAudio": "اختبر الصوت"
+    },
+    "dialIn": {
+        "screenTitle": "ملخص الطلب"
     },
     "dialOut": {
         "statusMessage": "{{status}} الآن"
@@ -679,6 +683,10 @@
         "newDeviceAction": "استعمل",
         "newDeviceAudioTitle": "اكتُشفَ جهاز صوت جديد",
         "newDeviceCameraTitle": "اكتُشفَت كاميرا جديدة",
+        "noiseSuppressionDesktopAudioDescription": "لا يمكن تمكين منع الضوضاء أثناء مشاركة صوت سطح المكتب ، يرجى تعطيله والمحاولة مرة أخرى.",
+        "noiseSuppressionFailedTitle": "فشل في بدء قمع الضوضاء",
+        "noiseSuppressionNoTrackDescription": "يرجى إعادة صوت الميكروفون أولاً.",
+        "noiseSuppressionStereoDescription": "قمع ضوضاء صوت الاستريو غير مدعوم حاليًا.",
         "oldElectronClientDescription1": "يبدو أنَّك تستعمل إصدارًا قديمًا من جيتسي يحوي ثغرة أمنية. تأكد رجاءً من أنَّك حدَّثته إلى ",
         "oldElectronClientDescription2": "أحدث إصدار",
         "oldElectronClientDescription3": " الآن!",
@@ -814,6 +822,7 @@
         "initiated": "بدأ الاتصال",
         "joinAudioByPhone": "انضم مع صوت من الجوال",
         "joinMeeting": "انضم للمُلتقى",
+        "joinMeetingInLowBandwidthMode": "الانضمام في وضع النطاق الترددي المنخفض",
         "joinWithoutAudio": "انضم دون صوت",
         "keyboardShortcuts": "تفعيل اختصارات لوحة المفاتيح",
         "linkCopied": "نُسِخ الرابط",
@@ -889,12 +898,20 @@
         "limitNotificationDescriptionWeb": "نظرًا للضغط الكبير، سيقيَّد التسجيل إلى {{limit}} د، ولكن إن أردت التسجيل لمدة مفتوحة، جرِّب <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "لقد أنشأنا رابطًا لتسجيلك.",
         "live": "مباشر",
+        "localRecordingNoNotificationWarning": "لن يتم الإعلان عن التسجيل للمشاركين الآخرين. ستحتاج إلى إخبارهم بأنه تم تسجيل الاجتماع.",
+        "localRecordingNoVideo": "لا يتم تسجيل الفيديو",
+        "localRecordingStartWarning": "يرجى التأكد من إيقاف التسجيل قبل الخروج من الاجتماع من أجل حفظه.",
+        "localRecordingStartWarningTitle": "أوقف التسجيل لحفظه",
+        "localRecordingVideoStop": "سيؤدي إيقاف الفيديو أيضًا إلى إيقاف التسجيل المحلي. هل أنت متأكد أنك تريد الاستمرار؟",
+        "localRecordingVideoWarning": "لتسجيل الفيديو الخاص بك ، يجب أن يكون لديك عند بدء التسجيل",
         "localRecordingWarning": "تأكد من تحديد علامة التبويب الحالية لاستخدام الفيديو والصوت الصحيحين. التسجيل محدود حاليًا بـ 1 كيغابايت ، أي حوالي 100 دقيقة.",
         "loggedIn": "مُسجَّل باسم {{userName}}",
+        "noStreams": "لم يتم الكشف عن دفق الصوت أو الفيديو.",
         "off": "أوقِف التسجيل",
         "offBy": "أوقَف {{name}} التسجيل",
         "on": "تسجيل",
         "onBy": "بدأ {{name}} التسجيل",
+        "onlyRecordSelf": "تسجيل فقط دفق الصوت والفيديو الخاصة بي",
         "pending": "التحضير لتسجيل المُلتقى...",
         "rec": "تسجيل",
         "saveLocalRecording": "حفظ ملف التسجيل محليا",
@@ -944,10 +961,12 @@
         "name": "الاسم",
         "noDevice": "لا يوجد",
         "participantJoined": "انضم مشارك",
+        "participantKnocking": "دخل المشارك في الردهة",
         "participantLeft": "غادر المشارك",
         "playSounds": "تشغيل الصوت عند:",
         "reactions": "ردود فعل المُلتقى",
         "sameAsSystem": "مثل النظام ({{label}})",
+        "screenTitle": "إعدادات",
         "selectAudioOutput": "خرج الصوت",
         "selectCamera": "الكاميرا",
         "selectMic": "المجهار (المايكروفون)",
@@ -973,6 +992,7 @@
         "disableCrashReportingWarning": "أمتأكد من تعطيل تقارير الأعطال التقنية؟ ستسري الإعدادات الجديدة بعد إعادة تشغيل التطبيق",
         "disableP2P": "تعطيل وضع واحد شخص-لشخص",
         "displayName": "عرض الاسم",
+        "displayNamePlaceholderText": "على سبيل المثال: علي الحيدري",
         "email": "البريد الإلكتروني",
         "header": "الإعدادات",
         "profileSection": "الملف الشخصي",
@@ -1017,6 +1037,7 @@
     "termsView": {
         "header": "مصطلحات"
     },
+    "toggleTopPanelLabel": "تبديل اللوحة العلوية",
     "toolbar": {
         "Settings": "الإعدادات",
         "accessibilityLabel": {
@@ -1058,6 +1079,7 @@
             "muteEveryoneElse": "كتم صوت الآخرين",
             "muteEveryoneElsesVideoStream": "وقّف فيديو أي شخص آخر",
             "muteEveryonesVideoStream": "وقّف فيديو الجميع",
+            "noiseSuppression": "قمع الضوضاء",
             "participants": "مشاركون",
             "pip": "استعمل/اخرج من وضع صورة-في-صورة",
             "privateMessage": "أرسل رسالة خاصة",
@@ -1098,6 +1120,7 @@
         "clap": "تصفيق",
         "closeChat": "أغلق الدردشة",
         "closeReactionsMenu": "إغلاق قائمة ردود الفعل",
+        "disableNoiseSuppression": "قم بتعطيل خاصية منع الضوضاء",
         "disableReactionSounds": "يمكنك تعطيل أصوات ردود الفعل لهذا المُلتقى",
         "dock": "إرساء في النافذة الرئيسية",
         "documentClose": "أغلق الملف المشارك",
@@ -1134,6 +1157,7 @@
         "noAudioSignalDialInDesc": "يمكن أيضًا الاتصال باستعمال:",
         "noAudioSignalDialInLinkDesc": "أرقام الاتصال",
         "noAudioSignalTitle": "لا يصلنا شيئًا من المجهار (المايكروفون) الخاص بك",
+        "noiseSuppression": "قمع الضوضاء",
         "noisyAudioInputDesc": "يبدو أنَّ المجهار (المايكروفون) لديك يصدر الكثير من الضجة، اكتمه رجاءً أو استعمل مجهارًا آخر.",
         "noisyAudioInputTitle": "يبدو أنَّ المجهار (المايكروفون) لديك يصدر الكثير من الضجة!",
         "openChat": "فتح الدرشة",

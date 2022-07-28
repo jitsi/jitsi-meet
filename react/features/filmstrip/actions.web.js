@@ -25,7 +25,11 @@ import {
     SET_VOLUME,
     SET_MAX_STAGE_PARTICIPANTS,
     TOGGLE_PIN_STAGE_PARTICIPANT,
-    CLEAR_STAGE_PARTICIPANTS
+    CLEAR_STAGE_PARTICIPANTS,
+    SET_SCREENSHARING_TILE_DIMENSIONS,
+    SET_USER_FILMSTRIP_HEIGHT,
+    SET_FILMSTRIP_HEIGHT,
+    SET_TOP_PANEL_VISIBILITY
 } from './actionTypes';
 import {
     HORIZONTAL_FILMSTRIP_MARGIN,
@@ -33,11 +37,13 @@ import {
     SCROLL_SIZE,
     STAGE_VIEW_THUMBNAIL_VERTICAL_BORDER,
     TILE_HORIZONTAL_MARGIN,
+    TILE_MIN_HEIGHT_SMALL,
     TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN,
     TILE_VERTICAL_MARGIN,
     TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES,
     TILE_VIEW_GRID_HORIZONTAL_MARGIN,
     TILE_VIEW_GRID_VERTICAL_MARGIN,
+    TOP_FILMSTRIP_HEIGHT,
     VERTICAL_FILMSTRIP_VERTICAL_MARGIN
 } from './constants';
 import {
@@ -48,6 +54,7 @@ import {
     getNumberOfPartipantsForTileView,
     getVerticalViewMaxWidth,
     isFilmstripResizable,
+    isStageFilmstripTopPanel,
     showGridInVerticalView
 } from './functions';
 import { isStageFilmstripAvailable } from './functions.web';
@@ -270,7 +277,7 @@ export function setStageFilmstripViewDimensions() {
         const {
             tileView = {}
         } = state['features/base/config'];
-        const { visible } = state['features/filmstrip'];
+        const { visible, topPanelHeight } = state['features/filmstrip'];
         const verticalWidth = visible ? getVerticalViewMaxWidth(state) : 0;
         const { numberOfVisibleTiles = MAX_ACTIVE_PARTICIPANTS } = tileView;
         const numberOfParticipants = state['features/filmstrip'].activeParticipants.length;
@@ -280,6 +287,7 @@ export function setStageFilmstripViewDimensions() {
             disableResponsiveTiles: false,
             disableTileEnlargement: false
         });
+        const topPanel = isStageFilmstripTopPanel(state);
 
         const {
             height,
@@ -288,12 +296,13 @@ export function setStageFilmstripViewDimensions() {
             rows
         } = calculateResponsiveTileViewDimensions({
             clientWidth: availableWidth,
-            clientHeight,
+            clientHeight: topPanel ? topPanelHeight?.current || TOP_FILMSTRIP_HEIGHT : clientHeight,
             disableTileEnlargement: false,
             maxColumns,
             noHorizontalContainerMargin: verticalWidth > 0,
             numberOfParticipants,
-            numberOfVisibleTiles
+            numberOfVisibleTiles,
+            minTileHeight: topPanel ? TILE_MIN_HEIGHT_SMALL : null
         });
         const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
         const hasScroll = clientHeight < thumbnailsTotalHeight;
@@ -352,7 +361,7 @@ export function clickOnVideo(n: number) {
 /**
  * Sets the volume for a thumbnail's audio.
  *
- * @param {string} participantId - The participant ID asociated with the audio.
+ * @param {string} participantId - The participant ID associated with the audio.
  * @param {string} volume - The volume level.
  * @returns {{
  *     type: SET_VOLUME,
@@ -369,6 +378,22 @@ export function setVolume(participantId: string, volume: number) {
 }
 
 /**
+ * Sets the top filmstrip's height.
+ *
+ * @param {number} height - The new height of the filmstrip.
+ * @returns {{
+ *      type: SET_FILMSTRIP_HEIGHT,
+ *      height: number
+ * }}
+ */
+export function setFilmstripHeight(height: number) {
+    return {
+        type: SET_FILMSTRIP_HEIGHT,
+        height
+    };
+}
+
+/**
  * Sets the filmstrip's width.
  *
  * @param {number} width - The new width of the filmstrip.
@@ -381,6 +406,22 @@ export function setFilmstripWidth(width: number) {
     return {
         type: SET_FILMSTRIP_WIDTH,
         width
+    };
+}
+
+/**
+ * Sets the filmstrip's height and the user preferred height.
+ *
+ * @param {number} height - The new height of the filmstrip.
+ * @returns {{
+ *      type: SET_USER_FILMSTRIP_WIDTH,
+ *      height: number
+ * }}
+ */
+export function setUserFilmstripHeight(height: number) {
+    return {
+        type: SET_USER_FILMSTRIP_HEIGHT,
+        height
     };
 }
 
@@ -488,5 +529,47 @@ export function togglePinStageParticipant(participantId) {
 export function clearStageParticipants() {
     return {
         type: CLEAR_STAGE_PARTICIPANTS
+    };
+}
+
+/**
+ * Set the screensharing tile dimensions.
+ *
+ * @returns {Object}
+ */
+export function setScreensharingTileDimensions() {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+        const { visible, topPanelHeight, topPanelVisible } = state['features/filmstrip'];
+        const verticalWidth = visible ? getVerticalViewMaxWidth(state) : 0;
+        const availableWidth = clientWidth - verticalWidth;
+        const topPanel = isStageFilmstripTopPanel(state) && topPanelVisible;
+        const availableHeight = clientHeight - (topPanel ? topPanelHeight?.current || TOP_FILMSTRIP_HEIGHT : 0);
+
+        dispatch({
+            type: SET_SCREENSHARING_TILE_DIMENSIONS,
+            dimensions: {
+                filmstripHeight: availableHeight,
+                filmstripWidth: availableWidth,
+                thumbnailSize: {
+                    width: availableWidth - TILE_HORIZONTAL_MARGIN,
+                    height: availableHeight - TILE_VERTICAL_MARGIN
+                }
+            }
+        });
+    };
+}
+
+/**
+ * Sets the visibility of the top panel.
+ *
+ * @param {boolean} visible - Whether it should be visible or not.
+ * @returns {Object}
+ */
+export function setTopPanelVisible(visible) {
+    return {
+        type: SET_TOP_PANEL_VISIBILITY,
+        visible
     };
 }

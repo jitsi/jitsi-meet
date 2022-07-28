@@ -268,7 +268,8 @@ function _mapStateToProps(state, ownProps) {
     const moderatorTabProps = getModeratorTabProps(state);
     const { showModeratorSettings } = moderatorTabProps;
     const { showLanguageSettings, showNotificationsSettings, showPrejoinSettings } = moreTabProps;
-    const showMoreTab = showLanguageSettings || showNotificationsSettings || showPrejoinSettings;
+    const showMoreTab
+        = configuredTabs.includes('more') && (showLanguageSettings || showNotificationsSettings || showPrejoinSettings);
     const showProfileSettings
         = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
@@ -370,7 +371,7 @@ function _mapStateToProps(state, ownProps) {
                     currentLanguage: tabState?.currentLanguage,
                     hideSelfView: tabState?.hideSelfView,
                     showPrejoinPage: tabState?.showPrejoinPage,
-                    enabledNotifications: tabState?.enabledNotifications,
+                    enabledNotifications: tabState?.enabledNotifications || {},
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
             },

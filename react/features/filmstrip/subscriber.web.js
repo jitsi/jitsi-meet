@@ -14,6 +14,7 @@ import { getCurrentLayout, shouldDisplayTileView, LAYOUTS } from '../video-layou
 import {
     clearStageParticipants,
     setHorizontalViewDimensions,
+    setScreensharingTileDimensions,
     setStageFilmstripViewDimensions,
     setTileViewDimensions,
     setVerticalViewDimensions
@@ -23,7 +24,8 @@ import {
     DISPLAY_DRAWER_THRESHOLD
 } from './constants';
 import {
-    isFilmstripResizable
+    isFilmstripResizable,
+    isTopPanelEnabled
 } from './functions';
 
 import './subscriber.any';
@@ -70,6 +72,8 @@ StateListenerRegistry.register(
     /* listener */ ({ layout }, store) => {
         switch (layout) {
         case LAYOUTS.TILE_VIEW:
+            store.dispatch(clearStageParticipants());
+            store.dispatch(pinParticipant(null));
             store.dispatch(setTileViewDimensions());
             break;
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
@@ -176,7 +180,8 @@ StateListenerRegistry.register(
             visible: state['features/filmstrip'].visible,
             clientWidth: state['features/base/responsive-ui'].clientWidth,
             clientHeight: state['features/base/responsive-ui'].clientHeight,
-            tileView: state['features/video-layout'].tileViewEnabled
+            tileView: state['features/video-layout'].tileViewEnabled,
+            height: state['features/filmstrip'].topPanelHeight?.current
         };
     },
     /* listener */(_, store) => {
@@ -192,9 +197,33 @@ StateListenerRegistry.register(
  * there's just one).
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/filmstrip'].activeParticipants.length,
-    /* listener */(length, store) => {
-        if (length <= 1) {
+    /* selector */ state => state['features/filmstrip'].activeParticipants,
+    /* listener */(activeParticipants, store) => {
+        if (activeParticipants.length <= 1) {
             store.dispatch(selectParticipantInLargeVideo());
         }
     });
+
+/**
+ * Listens for changes to determine the size of the screenshare filmstrip.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        return {
+            length: state['features/video-layout'].remoteScreenShares.length,
+            clientWidth: state['features/base/responsive-ui'].clientWidth,
+            clientHeight: state['features/base/responsive-ui'].clientHeight,
+            height: state['features/filmstrip'].topPanelHeight?.current,
+            width: state['features/filmstrip'].width?.current,
+            visible: state['features/filmstrip'].visible,
+            topPanelVisible: state['features/filmstrip'].topPanelVisible
+        };
+    },
+    /* listener */({ length }, store) => {
+        if (length >= 1 && isTopPanelEnabled(store.getState())) {
+            store.dispatch(setScreensharingTileDimensions());
+        }
+    }, {
+        deepEquals: true
+    });
+

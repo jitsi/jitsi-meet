@@ -1,6 +1,7 @@
 // @flow
 
-import { loadConfig } from '../base/lib-jitsi-meet/functions';
+import { toState } from '../base/redux';
+
 
 /**
  * Extracts the fqn part from a path, where fqn represents
@@ -29,10 +30,17 @@ export function extractFqnFromPath(state?: Object) {
 /**
  * Returns the url used for fetching dynamic branding.
  *
+ * @param {Object | Function} stateful - The redux store, state, or
+ * {@code getState} function.
  * @returns {string}
  */
-export async function getDynamicBrandingUrl() {
-    const config = await loadConfig(window.location.href);
+export async function getDynamicBrandingUrl(stateful: Object | Function) {
+    const state = toState(stateful);
+
+    // NB: On web this is dispatched really early, before the config has been stored in the
+    // state. Thus, fetch it from the window global.
+    const config
+        = navigator.product === 'ReactNative' ? state['features/base/config'] : window.config;
     const { dynamicBrandingUrl } = config;
 
     if (dynamicBrandingUrl) {
@@ -40,7 +48,7 @@ export async function getDynamicBrandingUrl() {
     }
 
     const { brandingDataUrl: baseUrl } = config;
-    const fqn = extractFqnFromPath();
+    const fqn = extractFqnFromPath(state);
 
     if (baseUrl && fqn) {
         return `${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;

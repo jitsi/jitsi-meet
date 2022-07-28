@@ -9,6 +9,7 @@ import {
     ASPECT_RATIO_BREAKPOINT,
     FILMSTRIP_BREAKPOINT,
     FILMSTRIP_BREAKPOINT_OFFSET,
+    FILMSTRIP_TYPE,
     TOOLBAR_HEIGHT,
     TOOLBAR_HEIGHT_MOBILE } from '../../constants';
 import { isFilmstripResizable, showGridInVerticalView } from '../../functions.web';
@@ -85,15 +86,16 @@ type Props = {
     /**
      * Additional CSS class names to add to the container of all the thumbnails.
      */
-    _videosClassName: string,
-
-    /**
-     * Whether or not the filmstrip videos should currently be displayed.
-     */
-    _visible: boolean
+    _videosClassName: string
 };
 
-const MainFilmstrip = (props: Props) => <span><Filmstrip { ...props } /></span>;
+const MainFilmstrip = (props: Props) => (
+    <span>
+        <Filmstrip
+            { ...props }
+            filmstripType = { FILMSTRIP_TYPE.MAIN } />
+    </span>
+);
 
 /**
  * Maps (parts of) the Redux state to the associated {@code Filmstrip}'s props.
@@ -104,7 +106,7 @@ const MainFilmstrip = (props: Props) => <span><Filmstrip { ...props } /></span>;
  */
 function _mapStateToProps(state) {
     const toolbarButtons = getToolbarButtons(state);
-    const { visible, remoteParticipants, width: verticalFilmstripWidth } = state['features/filmstrip'];
+    const { remoteParticipants, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const {
         gridDimensions: dimensions = {},
@@ -189,13 +191,11 @@ function _mapStateToProps(state) {
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: remoteFilmstripWidth,
         _hasScroll,
-        _remoteParticipantsLength: remoteParticipants.length,
         _remoteParticipants: remoteParticipants,
         _resizableFilmstrip,
         _rows: gridDimensions.rows,
         _thumbnailWidth: _thumbnailSize?.width,
         _thumbnailHeight: _thumbnailSize?.height,
-        _visible: visible,
         _verticalViewGrid,
         _verticalViewBackground: verticalFilmstripWidth.current + FILMSTRIP_BREAKPOINT_OFFSET >= FILMSTRIP_BREAKPOINT
     };

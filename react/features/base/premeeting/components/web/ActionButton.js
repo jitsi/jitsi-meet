@@ -107,10 +107,11 @@ const styles = theme => {
             position: 'relative',
             textAlign: 'center',
             width: '100%',
+            border: 0,
 
             '&.primary': {
                 background: theme.palette.action01,
-                border: '1px solid #0376DA',
+                color: theme.palette.text01,
 
                 '&:hover': {
                     backgroundColor: theme.palette.action01Hover
@@ -119,7 +120,11 @@ const styles = theme => {
 
             '&.secondary': {
                 background: theme.palette.action02,
-                border: '1px solid transparent'
+                color: theme.palette.text04,
+
+                '&:hover': {
+                    backgroundColor: theme.palette.action02Hover
+                }
             },
 
             '&.text': {
@@ -130,7 +135,7 @@ const styles = theme => {
             },
 
             '&.disabled': {
-                background: theme.palette.action01Disabled,
+                background: theme.palette.disabled01,
                 border: '1px solid #5E6D7A',
                 color: '#AFB6BC',
                 cursor: 'initial',

@@ -38,6 +38,11 @@ type Props = {
     hasTabNavigator?: boolean,
 
     /**
+     * Is the keyboard already dismissible?
+     */
+    keyboardAlreadyDismissible?: boolean,
+
+    /**
      * Insets for the SafeAreaView.
      */
     safeAreaInsets?: Array,
@@ -54,7 +59,8 @@ const JitsiScreen = ({
     footerComponent,
     hasTabNavigator = false,
     hasBottomTextInput = false,
-    safeAreaInsets = [ 'bottom', 'left', 'right' ],
+    keyboardAlreadyDismissible = false,
+    safeAreaInsets = [ 'left', 'right' ],
     style
 }: Props) => (
     <View
@@ -63,11 +69,12 @@ const JitsiScreen = ({
             contentContainerStyle = { contentContainerStyle }
             hasBottomTextInput = { hasBottomTextInput }
             hasTabNavigator = { hasTabNavigator }
+            keyboardAlreadyDismissible = { keyboardAlreadyDismissible }
             style = { style }>
             <SafeAreaView
                 edges = { safeAreaInsets }
                 style = { styles.safeArea }>
-                { children }
+                {children}
             </SafeAreaView>
             { footerComponent && footerComponent() }
         </JitsiKeyboardAvoidingView>

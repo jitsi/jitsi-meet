@@ -1,7 +1,6 @@
 import { GiphyContent, GiphyGridView, GiphyMediaType } from '@giphy/react-native-sdk';
 import React, { useCallback, useState } from 'react';
-import { Image, Keyboard, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { createGifSentEvent, sendAnalytics } from '../../../analytics';
@@ -11,12 +10,13 @@ import { goBack } from '../../../mobile/navigation/components/conference/Confere
 import ClearableInput from '../../../participants-pane/components/native/ClearableInput';
 import { formatGifUrlMessage, getGifUrl } from '../../functions';
 
+import GifsMenuFooter from './GifsMenuFooter';
 import styles from './styles';
 
 const GifsMenu = () => {
     const [ searchQuery, setSearchQuery ] = useState('');
     const dispatch = useDispatch();
-    const insets = useSafeAreaInsets();
+    const { t } = useTranslation();
 
     const content = searchQuery === ''
         ? GiphyContent.trending({ mediaType: GiphyMediaType.Gif })
@@ -34,33 +34,22 @@ const GifsMenu = () => {
         goBack();
     }, []);
 
-    const onScroll = useCallback(Keyboard.dismiss, []);
-
-    return (<JitsiScreen
-        style = { styles.container }>
-        <ClearableInput
-            autoFocus = { true }
-            customStyles = { styles.clearableInput }
-            onChange = { setSearchQuery }
-            placeholder = 'Search GIPHY'
-            value = { searchQuery } />
-        <GiphyGridView
-            cellPadding = { 5 }
-            content = { content }
-            onMediaSelect = { sendGif }
-            onScroll = { onScroll }
-            style = { styles.grid } />
-        <View
-            style = { [ styles.credit, {
-                bottom: insets.bottom,
-                left: insets.left,
-                right: insets.right
-            } ] }>
-            <Text
-                style = { styles.creditText }>Powered by</Text>
-            <Image source = { require('../../../../../images/GIPHY_logo.png') } />
-        </View>
-    </JitsiScreen>);
+    return (
+        <JitsiScreen
+            footerComponent = { GifsMenuFooter }
+            style = { styles.container }>
+            <ClearableInput
+                customStyles = { styles.clearableInput }
+                onChange = { setSearchQuery }
+                placeholder = { t('giphy.search') }
+                value = { searchQuery } />
+            <GiphyGridView
+                cellPadding = { 5 }
+                content = { content }
+                onMediaSelect = { sendGif }
+                style = { styles.grid } />
+        </JitsiScreen>
+    );
 };
 
 export default GifsMenu;

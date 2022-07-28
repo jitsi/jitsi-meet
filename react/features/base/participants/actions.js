@@ -378,6 +378,7 @@ export function hiddenParticipantLeft(id) {
  * participant is allowed to not specify an associated {@code JitsiConference}
  * instance.
  * @param {boolean} isReplaced - Whether the participant is to be replaced in the meeting.
+ * @param {boolean} isVirtualScreenshareParticipant - Whether the participant is a virtual screen share participant.
  * @returns {{
  *     type: PARTICIPANT_LEFT,
  *     participant: {
@@ -386,13 +387,14 @@ export function hiddenParticipantLeft(id) {
  *     }
  * }}
  */
-export function participantLeft(id, conference, isReplaced) {
+export function participantLeft(id, conference, isReplaced, isVirtualScreenshareParticipant) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
             conference,
             id,
-            isReplaced
+            isReplaced,
+            isVirtualScreenshareParticipant
         }
     };
 }
@@ -689,14 +691,16 @@ export function overwriteParticipantsNames(participantList) {
  * Local video recording status for the local participant.
  *
  * @param {boolean} recording - If local recording is ongoing.
+ * @param {boolean} onlySelf - If recording only local streams.
  * @returns {{
  *     type: SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
  *     recording: boolean
  * }}
  */
-export function updateLocalRecordingStatus(recording) {
+export function updateLocalRecordingStatus(recording, onlySelf) {
     return {
         type: SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
-        recording
+        recording,
+        onlySelf
     };
 }

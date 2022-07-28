@@ -1,18 +1,14 @@
 export const screen = {
-    root: 'Main root',
     welcome: {
-        main: 'Home',
+        main: 'Welcome',
         tabs: {
             recent: 'Recent',
             calendar: 'Calendar'
-        },
-        settings: 'Settings',
-        terms: 'Terms',
-        privacy: 'Privacy',
-        help: 'Help'
+        }
     },
     dialInSummary: 'Dial-In Info',
     connecting: 'Connecting',
+    preJoin: 'Pre-Join',
     conference: {
         root: 'Conference root',
         main: 'Conference',
@@ -40,5 +36,13 @@ export const screen = {
         root: 'Lobby root',
         main: 'Lobby',
         chat: 'Lobby chat'
+    },
+    settings: {
+        main: 'Settings',
+        links: {
+            help: 'Help',
+            privacy: 'Privacy',
+            terms: 'Terms'
+        }
     }
 };

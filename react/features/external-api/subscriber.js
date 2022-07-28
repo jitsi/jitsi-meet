@@ -23,7 +23,7 @@ StateListenerRegistry.register(
         const localParticipant = getLocalParticipant(store.getState());
         const { defaultLocalDisplayName } = store.getState()['features/base/config'];
 
-        // Initial setting of the display name occurs happens on app
+        // Initial setting of the display name happens on app
         // initialization, before the local participant is ready. The initial
         // settings is not desired to be fired anyways, only changes.
         if (localParticipant) {
@@ -35,6 +35,23 @@ StateListenerRegistry.register(
                     displayName,
                     defaultLocalDisplayName
                 )
+            });
+        }
+    });
+
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/settings'].email,
+    /* listener */ (email, store) => {
+        const localParticipant = getLocalParticipant(store.getState());
+
+        // Initial setting of the email happens on app
+        // initialization, before the local participant is ready. The initial
+        // settings is not desired to be fired anyways, only changes.
+        if (localParticipant) {
+            const { id } = localParticipant;
+
+            APP.API.notifyEmailChanged(id, {
+                email
             });
         }
     });

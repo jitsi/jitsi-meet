@@ -1,7 +1,4 @@
-// @flow
-
 import React from 'react';
-import { View } from 'react-native';
 import Dialog from 'react-native-dialog';
 
 import { translate } from '../../../i18n';
@@ -95,40 +92,39 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
         } = this.props;
 
         return (
-            <View>
-                <Dialog.Container
-                    visible = { true }>
-                    <Dialog.Title>
-                        { t(titleKey) }
-                    </Dialog.Title>
-                    {
-                        descriptionKey && (
-                            <Dialog.Description>
-                                { t(descriptionKey) }
-                            </Dialog.Description>
-                        )
-                    }
-                    <Dialog.Input
-                        autoFocus = { true }
-                        onChangeText = { this._onChangeText }
-                        value = { this.state.fieldValue }
-                        { ...this.props.textInputProps } />
-                    {
-                        messageKey && (
-                            <Dialog.Description
-                                style = { styles.formMessage }>
-                                { t(messageKey) }
-                            </Dialog.Description>
-                        )
-                    }
-                    <Dialog.Button
-                        label = { t('dialog.Cancel') }
-                        onPress = { this._onCancel } />
-                    <Dialog.Button
-                        label = { t('dialog.Ok') }
-                        onPress = { this._onSubmitValue } />
-                </Dialog.Container>
-            </View>
+            <Dialog.Container
+                coverScreen = { false }
+                visible = { true }>
+                <Dialog.Title>
+                    { t(titleKey) }
+                </Dialog.Title>
+                {
+                    descriptionKey && (
+                        <Dialog.Description>
+                            { t(descriptionKey) }
+                        </Dialog.Description>
+                    )
+                }
+                <Dialog.Input
+                    autoFocus = { true }
+                    onChangeText = { this._onChangeText }
+                    value = { this.state.fieldValue }
+                    { ...this.props.textInputProps } />
+                {
+                    messageKey && (
+                        <Dialog.Description
+                            style = { styles.formMessage }>
+                            { t(messageKey) }
+                        </Dialog.Description>
+                    )
+                }
+                <Dialog.Button
+                    label = { t('dialog.Cancel') }
+                    onPress = { this._onCancel } />
+                <Dialog.Button
+                    label = { t('dialog.Ok') }
+                    onPress = { this._onSubmitValue } />
+            </Dialog.Container>
         );
     }
 

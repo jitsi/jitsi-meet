@@ -46,7 +46,7 @@ export type Props = {
     loadedPreview: Function,
 
     /**
-     * Represents the virtual background setted options.
+     * Represents the virtual background set options.
      */
     options: Object,
 

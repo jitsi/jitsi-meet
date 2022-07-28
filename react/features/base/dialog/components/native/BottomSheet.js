@@ -2,6 +2,8 @@ import React, { PureComponent, type Node } from 'react';
 import { SafeAreaView, ScrollView, View } from 'react-native';
 
 import { SlidingView } from '../../../react';
+import { connect } from '../../../redux';
+import { hideSheet } from '../../actions';
 
 import { bottomSheetStyles as styles } from './styles';
 
@@ -19,6 +21,11 @@ type Props = {
      * The children to be displayed within this component.
      */
     children: Node,
+
+    /**
+     * Redux Dispatch function.
+     */
+    dispatch: Function,
 
     /**
      * Handler for the cancel event, which happens when the user dismisses
@@ -62,6 +69,31 @@ class BottomSheet extends PureComponent<Props> {
     };
 
     /**
+     * Initializes a new instance.
+     *
+     * @param {Props} props - The React {@code Component} props to initialize
+     * the new instance with.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onCancel = this._onCancel.bind(this);
+    }
+
+    /**
+     * Handles the cancel event, when the user dismissed the sheet. By default we close it.
+     *
+     * @returns {void}
+     */
+    _onCancel() {
+        if (this.props.onCancel) {
+            this.props.onCancel();
+        } else {
+            this.props.dispatch(hideSheet());
+        }
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -80,7 +112,7 @@ class BottomSheet extends PureComponent<Props> {
             <SlidingView
                 accessibilityRole = 'menu'
                 accessibilityViewIsModal = { true }
-                onHide = { this.props.onCancel }
+                onHide = { this._onCancel }
                 position = 'bottom'
                 show = { showSlidingView }>
                 <View
@@ -116,4 +148,4 @@ class BottomSheet extends PureComponent<Props> {
     }
 }
 
-export default BottomSheet;
+export default connect()(BottomSheet);

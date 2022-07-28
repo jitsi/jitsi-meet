@@ -10,6 +10,7 @@ local json_safe = require "cjson.safe";
 local path = require "util.paths";
 local sha256 = require "util.hashes".sha256;
 local main_util = module:require "util";
+local ends_with = main_util.ends_with;
 local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
 
@@ -24,7 +25,7 @@ Util.__index = Util
 --- Constructs util class for token verifications.
 -- Constructor that uses the passed module to extract all the
 -- needed configurations.
--- If confuguration is missing returns nil
+-- If configuration is missing returns nil
 -- @param module the module in which options to check for configs.
 -- @return the new instance or nil
 function Util.new(module)
@@ -68,9 +69,9 @@ function Util.new(module)
             "muc_mapper_domain",
             self.muc_domain_prefix.."."..self.muc_domain_base);
     end
-    -- whether domain name verification is enabled, by default it is disabled
-    self.enableDomainVerification = module:get_option_boolean(
-        "enable_domain_verification", false);
+    -- whether domain name verification is enabled, by default it is enabled
+    -- when disabled checking domain name and tenant if available will be skipped, we will check only room name.
+    self.enableDomainVerification = module:get_option_boolean('enable_domain_verification', true);
 
     if self.allowEmptyToken == true then
         module:log("warn", "WARNING - empty tokens allowed");
@@ -260,7 +261,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
     end
 end
 
---- Verifies room name and domain if necesarry.
+--- Verifies room name and domain if necessary.
 -- Checks configs and if necessary checks the room name extracted from
 -- room_address against the one saved in the session when token was verified.
 -- Also verifies domain name from token against the domain in the room_address,
@@ -293,7 +294,7 @@ function Util:verify_room(session, room_address)
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
         -- its domain) we let it through, jicofo is verifying creation domain
-        if auth_room and room ~= auth_room and auth_room ~= '*' then
+        if auth_room and (room ~= auth_room and not ends_with(room, ']'..auth_room)) and auth_room ~= '*' then
             return false;
         end
 

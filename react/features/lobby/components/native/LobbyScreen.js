@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { Text, View, TextInput } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -9,6 +9,9 @@ import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BrandingImageBackground } from '../../../dynamic-branding';
 import { LargeVideo } from '../../../large-video/components';
 import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
@@ -20,7 +23,6 @@ import AbstractLobbyScreen, {
     _mapStateToProps as abstractMapStateToProps } from '../AbstractLobbyScreen';
 
 import styles from './styles';
-
 
 type Props = AbstractProps & {
 
@@ -57,7 +59,9 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
         return (
             <JitsiScreen
+                safeAreaInsets = { [ 'left' ] }
                 style = { contentWrapperStyles }>
+                <BrandingImageBackground />
                 <View style = { largeVideoContainerStyles }>
                     <LargeVideo />
                 </View>
@@ -182,31 +186,21 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     _renderPasswordJoinButtons() {
-        const { t } = this.props;
-
         return (
             <View style = { styles.passwordJoinButtonsWrapper }>
-                <TouchableOpacity
+                <Button
+                    accessibilityLabel = 'lobby.backToKnockModeButton'
+                    label = 'lobby.backToKnockModeButton'
                     onPress = { this._onSwitchToKnockMode }
-                    style = { [
-                        styles.button,
-                        styles.primaryButton
-                    ] }>
-                    <Text style = { styles.primaryButtonText }>
-                        { t('lobby.backToKnockModeButton') }
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
+                    style = { styles.lobbyButton }
+                    type = { BUTTON_TYPES.PRIMARY } />
+                <Button
+                    accessibilityLabel = 'lobby.passwordJoinButton'
                     disabled = { !this.state.password }
+                    label = 'lobby.passwordJoinButton'
                     onPress = { this._onJoinWithPassword }
-                    style = { [
-                        styles.button,
-                        styles.primaryButton
-                    ] }>
-                    <Text style = { styles.primaryButtonText }>
-                        { t('lobby.passwordJoinButton') }
-                    </Text>
-                </TouchableOpacity>
+                    style = { styles.lobbyButton }
+                    type = { BUTTON_TYPES.PRIMARY } />
             </View>
         );
     }
@@ -242,44 +236,39 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, _renderPassword, _isLobbyChatActive, t } = this.props;
+        const { _knocking, _renderPassword, _isLobbyChatActive } = this.props;
         const { displayName } = this.state;
-        const askToJoinButtonStyles
-            = displayName ? styles.primaryButton : styles.primaryButtonDisabled;
 
         return (
             <View style = { styles.standardButtonWrapper }>
-                { _knocking && _isLobbyChatActive && <TouchableOpacity
-                    onPress = { this._onNavigateToLobbyChat }
-                    style = { [
-                        styles.button,
-                        styles.primaryButton
-                    ] }>
-                    <Text style = { styles.primaryButtonText }>
-                        { t('toolbar.openChat') }
-                    </Text>
-                </TouchableOpacity>}
-                { _knocking || <TouchableOpacity
-                    disabled = { !displayName }
-                    onPress = { this._onAskToJoin }
-                    style = { [
-                        styles.button,
-                        askToJoinButtonStyles
-                    ] }>
-                    <Text style = { styles.primaryButtonText }>
-                        { t('lobby.knockButton') }
-                    </Text>
-                </TouchableOpacity> }
-                { _renderPassword && <TouchableOpacity
-                    onPress = { this._onSwitchToPasswordMode }
-                    style = { [
-                        styles.button,
-                        styles.primaryButton
-                    ] }>
-                    <Text style = { styles.primaryButtonText }>
-                        { t('lobby.enterPasswordButton') }
-                    </Text>
-                </TouchableOpacity> }
+                {
+                    _knocking && _isLobbyChatActive
+                    && <Button
+                        accessibilityLabel = 'toolbar.openChat'
+                        label = 'toolbar.openChat'
+                        onPress = { this._onNavigateToLobbyChat }
+                        style = { styles.openChatButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
+                }
+                {
+                    _knocking
+                    || <Button
+                        accessibilityLabel = 'lobby.knockButton'
+                        disabled = { !displayName }
+                        label = 'lobby.knockButton'
+                        onPress = { this._onAskToJoin }
+                        style = { styles.lobbyButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
+                }
+                {
+                    _renderPassword
+                    && <Button
+                        accessibilityLabel = 'lobby.enterPasswordButton'
+                        label = 'lobby.enterPasswordButton'
+                        onPress = { this._onSwitchToPasswordMode }
+                        style = { styles.enterPasswordButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
+                }
             </View>
         );
     }

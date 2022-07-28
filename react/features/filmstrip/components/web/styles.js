@@ -23,6 +23,7 @@ export const styles = theme => {
             left: 'calc(50% - 16px)',
             opacity: 0,
             transition: 'opacity .3s',
+            zIndex: 1,
 
             '&:hover': {
                 backgroundColor: theme.palette.ui02
@@ -53,8 +54,18 @@ export const styles = theme => {
             top: 'calc(50% - 12px)'
         },
 
+        toggleTopPanelContainer: {
+            transform: 'rotate(180deg)',
+            bottom: 'calc(-24px - 6px)',
+            top: 'auto'
+        },
+
+        toggleTopPanelContainerHidden: {
+            visibility: 'hidden'
+        },
+
         filmstrip: {
-            transition: 'background .2s ease-in-out, right 1s, bottom 1s, height .3s ease-in',
+            transition: 'background .2s ease-in-out, right 1s, bottom 1s, top 1s, height .3s ease-in',
             right: 0,
             bottom: 0,
 
@@ -111,6 +122,10 @@ export const styles = theme => {
             '& .avatar-container': {
                 maxWidth: 'initial',
                 maxHeight: 'initial'
+            },
+
+            '&.top-panel-filmstrip': {
+                flexDirection: 'column'
             }
         },
 
@@ -136,6 +151,18 @@ export const styles = theme => {
 
                 '& .dragHandle': {
                     backgroundColor: theme.palette.icon01
+                }
+            },
+
+            '&.top-panel': {
+                order: 2,
+                width: '100%',
+                height: '9px',
+                cursor: 'row-resize',
+
+                '& .dragHandle': {
+                    height: '3px',
+                    width: '100px'
                 }
             }
         },

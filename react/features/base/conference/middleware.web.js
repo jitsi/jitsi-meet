@@ -1,6 +1,7 @@
 // @flow
 
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
+import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
 import { showNotification, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
 import {
     setPrejoinPageVisibility,
@@ -46,10 +47,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED: {
         const errorName = action.error?.name;
 
-        if (errorName === JitsiConferenceErrors.MEMBERS_ONLY_ERROR
-            || errorName === JitsiConferenceErrors.PASSWORD_REQUIRED) {
-            dispatch(setPrejoinPageVisibility(false));
-        } else if (enableForcedReload && errorName === JitsiConferenceErrors.CONFERENCE_RESTARTED) {
+        if (enableForcedReload && errorName === JitsiConferenceErrors.CONFERENCE_RESTARTED) {
             dispatch(setSkipPrejoinOnReload(true));
         }
 
@@ -172,6 +170,10 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
         // Apply the AudioMixer effect if there is a local audio track, add the desktop track to the conference
         // otherwise without unmuting the microphone.
         if (desktopAudioTrack) {
+            // Noise suppression doesn't work with desktop audio because we can't chain
+            // track effects yet, disable it first.
+            // We need to to wait for the effect to clear first or it might interfere with the audio mixer.
+            await dispatch(setNoiseSuppressionEnabled(false));
             _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
         }

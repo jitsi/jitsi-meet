@@ -2,7 +2,12 @@
 
 import type { Dispatch } from 'redux';
 
-import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes';
+import {
+    HIDE_DIALOG,
+    HIDE_SHEET,
+    OPEN_DIALOG,
+    OPEN_SHEET
+} from './actionTypes';
 import { isDialogOpen } from './functions';
 
 /**
@@ -25,6 +30,19 @@ export function hideDialog(component: ?Object) {
 }
 
 /**
+ * Closes the active sheet.
+ *
+ * @returns {{
+ *     type: HIDE_SHEET,
+ * }}
+ */
+export function hideSheet() {
+    return {
+        type: HIDE_SHEET
+    };
+}
+
+/**
  * Signals Dialog to open dialog.
  *
  * @param {Object} component - The component to display as dialog.
@@ -39,6 +57,26 @@ export function hideDialog(component: ?Object) {
 export function openDialog(component: Object, componentProps: ?Object) {
     return {
         type: OPEN_DIALOG,
+        component,
+        componentProps
+    };
+}
+
+/**
+ * Opens the requested sheet.
+ *
+ * @param {Object} component - The component to display as a sheet.
+ * @param {Object} [componentProps] - The React {@code Component} props of the
+ * specified {@code component}.
+ * @returns {{
+ *     type: OPEN_SHEET,
+ *     component: React.Component,
+ *     componentProps: (Object | undefined)
+ * }}
+ */
+export function openSheet(component: Object, componentProps: ?Object) {
+    return {
+        type: OPEN_SHEET,
         component,
         componentProps
     };

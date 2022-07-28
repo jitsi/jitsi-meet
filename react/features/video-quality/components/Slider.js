@@ -39,7 +39,7 @@ type Props = {
 }
 
 const useStyles = makeStyles(theme => {
-    // keep the same hight for all elements:
+    // keep the same height for all elements:
     // input, input track & fake track(div)
     const height = 6;
 

@@ -6,13 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
-import { Icon, IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons';
+import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons';
 import { hasRaisedHand } from '../../../base/participants';
+import { BUTTON_TYPES } from '../../../base/react/constants';
+import Button from '../../../base/ui/components/web/Button';
 import { showLobbyChatButton } from '../../../lobby/functions';
 import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
 import { useLobbyActions } from '../../hooks';
 
-import LobbyParticipantQuickAction from './LobbyParticipantQuickAction';
 import ParticipantItem from './ParticipantItem';
 
 type Props = {
@@ -70,13 +71,13 @@ export const LobbyParticipantItem = ({
     const closeContextMenu = useCallback(() => setIsOpen(false));
 
     const renderAdmitButton = () => (
-        <LobbyParticipantQuickAction
+        <Button
             accessibilityLabel = { `${t('lobby.admit')} ${p.name}` }
             className = { styles.button }
+            label = { t('lobby.admit') }
             onClick = { admit }
-            testId = { `admit-${id}` }>
-            {t('lobby.admit')}
-        </LobbyParticipantQuickAction>);
+            size = 'small'
+            testId = { `admit-${id}` } />);
 
     return (
         <ParticipantItem
@@ -93,14 +94,13 @@ export const LobbyParticipantItem = ({
 
             {showChat ? <>
                 {renderAdmitButton()}
-                <LobbyParticipantQuickAction
+                <Button
                     accessibilityLabel = { `${t('participantsPane.actions.moreModerationActions')} ${p.name}` }
                     className = { styles.moreButton }
+                    icon = { IconHorizontalPoints }
                     onClick = { openContextMenu }
                     ref = { moreButtonRef }
-                    secondary = { true }>
-                    <Icon src = { IconHorizontalPoints } />
-                </LobbyParticipantQuickAction>
+                    size = 'small' />
                 <ContextMenu
                     className = { styles.contextMenu }
                     hidden = { !isOpen }
@@ -124,14 +124,14 @@ export const LobbyParticipantItem = ({
                         } ] } />
                 </ContextMenu>
             </> : <>
-                <LobbyParticipantQuickAction
+                <Button
                     accessibilityLabel = { `${t('lobby.reject')} ${p.name}` }
                     className = { styles.button }
+                    label = { t('lobby.reject') }
                     onClick = { reject }
-                    secondary = { true }
-                    testId = { `reject-${id}` }>
-                    {t('lobby.reject') }
-                </LobbyParticipantQuickAction>
+                    size = 'small'
+                    testId = { `reject-${id}` }
+                    type = { BUTTON_TYPES.DESTRUCTIVE } />
                 {renderAdmitButton()}
             </>
             }

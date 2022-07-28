@@ -5,28 +5,20 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 const SECONDARY_COLOR = BaseTheme.palette.border04;
 
 export default {
-    button: {
-        alignItems: 'center',
-        borderRadius: BaseTheme.shape.borderRadius,
-        padding: BaseTheme.spacing[2],
-        height: BaseTheme.spacing[7],
-        width: '100%'
-    },
 
     buttonStylesBorderless: {
         iconStyle: {
-            backgroundColor: 'transparent',
             color: BaseTheme.palette.icon01,
             fontSize: 24
         },
         style: {
-            backgroundColor: 'transparent',
             flexDirection: 'row',
             justifyContent: 'center',
             marginHorizontal: BaseTheme.spacing[3],
             height: 24,
             width: 24
-        }
+        },
+        underlayColor: 'transparent'
     },
 
     lobbyChatWrapper: {
@@ -70,25 +62,27 @@ export default {
     },
 
     largeVideoContainerWide: {
-        position: 'absolute',
-        marginRight: 'auto',
         height: '100%',
+        marginRight: 'auto',
+        position: 'absolute',
         width: '50%'
     },
 
     contentContainer: {
+        alignSelf: 'center',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '50%'
+        minHeight: '50%',
+        paddingHorizontal: BaseTheme.spacing[3],
+        width: 400
     },
 
     contentContainerWide: {
-        justifyContent: 'center',
-        marginHorizontal: BaseTheme.spacing[6],
-        marginVertical: BaseTheme.spacing[3],
+        alignItems: 'center',
         height: '100%',
+        justifyContent: 'center',
         left: '50%',
+        paddingHorizontal: BaseTheme.spacing[3],
         position: 'absolute',
         width: '50%'
     },
@@ -124,7 +118,7 @@ export default {
 
     formWrapper: {
         alignSelf: 'stretch',
-        marginTop: 45
+        justifyContent: 'center'
     },
 
     field: {
@@ -133,7 +127,9 @@ export default {
         borderColor: SECONDARY_COLOR,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
+        color: BaseTheme.palette.text06,
         height: BaseTheme.spacing[7],
+        marginTop: 38,
         marginHorizontal: BaseTheme.spacing[3],
         padding: BaseTheme.spacing[2],
         textAlign: 'center'
@@ -152,8 +148,7 @@ export default {
     },
 
     standardButtonWrapper: {
-        alignSelf: 'stretch',
-        marginHorizontal: 12
+        alignSelf: 'stretch'
     },
 
     joiningMessage: {
@@ -169,7 +164,7 @@ export default {
     },
 
     loadingIndicator: {
-        marginBottom: BaseTheme.spacing[4]
+        marginBottom: BaseTheme.spacing[3]
     },
 
     participantBox: {
@@ -182,26 +177,18 @@ export default {
         paddingVertical: 12
     },
 
-    primaryButton: {
-        backgroundColor: BaseTheme.palette.action01,
-        marginTop: BaseTheme.spacing[4]
+    lobbyButton: {
+        marginTop: BaseTheme.spacing[3]
     },
 
-    primaryButtonDisabled: {
-        backgroundColor: BaseTheme.palette.action03Disabled,
-        marginTop: BaseTheme.spacing[4]
+    openChatButton: {
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[3]
     },
 
-    primaryButtonText: {
-        ...BaseTheme.typography.labelButtonLarge,
-        color: BaseTheme.palette.text01,
-        lineHeight: 30
-    },
-
-    primaryText: {
-        color: BaseTheme.palette.text01,
-        margin: 'auto',
-        textAlign: 'center'
+    enterPasswordButton: {
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[3]
     },
 
     // KnockingParticipantList

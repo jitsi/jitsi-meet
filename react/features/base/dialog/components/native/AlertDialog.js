@@ -1,7 +1,4 @@
-// @flow
-
 import React from 'react';
-import { View } from 'react-native';
 import Dialog from 'react-native-dialog';
 
 import { translate } from '../../../i18n';
@@ -46,16 +43,16 @@ class AlertDialog extends AbstractDialog<Props> {
                 : renderHTML(t(contentKey.key, contentKey.params));
 
         return (
-            <View>
-                <Dialog.Container visible = { true }>
-                    <Dialog.Description>
-                        { content }
-                    </Dialog.Description>
-                    <Dialog.Button
-                        label = { t('dialog.Ok') }
-                        onPress = { this._onSubmit } />
-                </Dialog.Container>
-            </View>
+            <Dialog.Container
+                coverScreen = { false }
+                visible = { true }>
+                <Dialog.Description>
+                    { content }
+                </Dialog.Description>
+                <Dialog.Button
+                    label = { t('dialog.Ok') }
+                    onPress = { this._onSubmit } />
+            </Dialog.Container>
         );
     }
 

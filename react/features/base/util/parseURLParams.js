@@ -23,9 +23,13 @@ const blacklist = [ '__proto__', 'constructor', 'prototype' ];
  * @returns {Object}
  */
 export function parseURLParams(
-        url: URL,
+        url: URL | string,
         dontParse: boolean = false,
         source: string = 'hash'): Object {
+    if (typeof url === 'string') {
+        // eslint-disable-next-line no-param-reassign
+        url = new URL(url);
+    }
     const paramStr = source === 'search' ? url.search : url.hash;
     const params = {};
     const paramParts = (paramStr && paramStr.substr(1).split('&')) || [];
