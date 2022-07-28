@@ -250,7 +250,7 @@ const PollCreate = ({
             </ol>
             <div className = 'poll-add-button'>
                 <Button
-                    accessibilityLabel = { 'Add option' }
+                    accessibilityLabel = { t('polls.create.addOption') }
                     disabled = { answers.length >= ANSWERS_LIMIT }
                     fullWidth = { true }
                     label = { t('polls.create.addOption') }
