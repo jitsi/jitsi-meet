@@ -98,7 +98,7 @@ export const TRACK_STOPPED = 'TRACK_STOPPED';
 export const TRACK_UPDATED = 'TRACK_UPDATED';
 
 /**
- * The type of redux action dispatched when $
+ * The type of redux action dispatched when the owner of a track changes due to ssrc remapping.
  *
  * {
  *     type: TRACK_OWNER_CHANGED,
