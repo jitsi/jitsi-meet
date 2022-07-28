@@ -1,4 +1,6 @@
-import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
+import { BoxModel } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
 export const PLACEHOLDER_COLOR = BaseTheme.palette.focus01;
 export const ENABLED_TRACK_COLOR = BaseTheme.palette.switch01Enabled;
@@ -7,10 +9,29 @@ export const THUMB_COLOR = BaseTheme.palette.field02;
 
 const TEXT_SIZE = 14;
 
+
 /**
  * The styles of the native components of the feature {@code settings}.
  */
 export default {
+
+    avatarContainer: {
+        alignItems: 'center',
+        flexDirection: 'column',
+        height: 180,
+        justifyContent: 'center'
+    },
+
+    /**
+     * The style of the display name label.
+     */
+    avatarLabel: {
+        color: BaseTheme.palette.text01,
+        fontSize: 16,
+        marginTop: BoxModel.margin,
+        textAlign: 'center'
+    },
+
 
     /**
      * Style for screen container.
@@ -99,6 +120,23 @@ export default {
         fontSize: 14
     },
 
+    sectionLink: {
+        ...BaseTheme.typography.bodyShortBoldLarge,
+        color: BaseTheme.palette.link01,
+        margin: BaseTheme.spacing[3],
+        textAlign: 'center'
+    },
+
+    sectionLinkContainer: {
+        margin: BaseTheme.spacing[3]
+    },
+
+    sectionLinkText: {
+        ...BaseTheme.typography.bodyShortBoldLarge,
+        color: BaseTheme.palette.link01,
+        textAlign: 'center'
+    },
+
     /**
      * Global {@code Text} color for the components.
      */
@@ -136,5 +174,12 @@ export default {
         marginVertical: 5,
         paddingVertical: 3,
         textAlign: 'left'
+    },
+
+    /**
+     * Style for screen container.
+     */
+    screenContainer: {
+        flex: 1
     }
 };

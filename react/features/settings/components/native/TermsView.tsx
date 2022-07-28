@@ -1,13 +1,18 @@
-// @flow
+/* eslint-disable lines-around-comment */
 
 import React, { useEffect } from 'react';
 
+// @ts-ignore
 import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';
+// @ts-ignore
 import JitsiStatusBar from '../../../base/modal/components/JitsiStatusBar';
+// @ts-ignore
 import { renderArrowBackButton }
+// @ts-ignore
     from '../../../mobile/navigation/components/welcome/functions';
-import { screen } from '../../../mobile/navigation/routes';
-import styles from '../styles';
+
+// @ts-ignore
+import styles from './styles';
 
 
 type Props = {
@@ -19,17 +24,19 @@ type Props = {
 }
 
 /**
- * The URL at which the privacy policy is available to the user.
+ * The URL at which the terms (of service/use) are available to the user.
  */
-const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+const TERMS_URL = 'https://jitsi.org/meet/terms';
 
-const PrivacyView = ({ navigation }: Props) => {
+const TermsView = ({ navigation }: Props) => {
 
     useEffect(() => {
+        // @ts-ignore
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main))
+                    // @ts-ignore
+                    navigation.goBack())
         });
     });
 
@@ -37,10 +44,10 @@ const PrivacyView = ({ navigation }: Props) => {
         <>
             <JitsiStatusBar />
             <JitsiScreenWebView
-                source = { PRIVACY_URL }
+                source = { TERMS_URL }
                 style = { styles.screenContainer } />
         </>
     );
 };
 
-export default PrivacyView;
+export default TermsView;

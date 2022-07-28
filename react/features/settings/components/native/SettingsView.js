@@ -1,27 +1,37 @@
 // @flow
 
+import { Link } from '@react-navigation/native';
 import React from 'react';
 import {
     Alert,
     NativeModules,
     Platform,
     ScrollView,
-    Text
+    Text, View
 } from 'react-native';
-import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
+import {
+    Divider,
+    Switch,
+    TextInput,
+    withTheme
+} from 'react-native-paper';
 
-import { translate } from '../../../../../base/i18n';
-import JitsiScreen from '../../../../../base/modal/components/JitsiScreen';
-import { connect } from '../../../../../base/redux';
-import { renderArrowBackButton }
-    from '../../../../../mobile/navigation/components/welcome/functions';
-import { screen } from '../../../../../mobile/navigation/routes';
+import { Avatar } from '../../../base/avatar';
+import { translate } from '../../../base/i18n';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import {
+    getLocalParticipant,
+    getParticipantDisplayName
+} from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { screen } from '../../../mobile/navigation/routes';
+import { AVATAR_SIZE } from '../../../welcome/components/styles';
+import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
-} from '../../../../../settings/components/AbstractSettingsView';
-import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../../../../settings/functions';
+} from '../AbstractSettingsView';
 
 import FormRow from './FormRow';
 import FormSectionAccordion from './FormSectionAccordion';
@@ -31,10 +41,12 @@ import styles, {
     THUMB_COLOR
 } from './styles';
 
+
 /**
  * Application information module.
  */
 const { AppInfo } = NativeModules;
+
 
 type State = {
 
@@ -93,9 +105,24 @@ type Props = AbstractProps & {
     _serverURLChangeEnabled: boolean,
 
     /**
+     * Avatar label.
+     */
+    avatarLabel: string,
+
+    /**
+     * The ID of the local participant.
+     */
+    localParticipantId: string,
+
+    /**
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object,
+
+    /**
+     * Callback to be invoked when settings screen is focused.
+     */
+    onSettingsScreenFocused: Function,
 
     /**
      * Theme used for styles.
@@ -112,6 +139,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
     _urlField: Object;
 
     /**
+     *
      * Initializes a new {@code SettingsView} instance.
      *
      * @inheritdoc
@@ -151,27 +179,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
     }
 
     /**
-     * Implements React's {@link Component#componentDidMount()}. Invoked
-     * immediately after mounting occurs.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        const {
-            navigation,
-            t
-        } = this.props;
-
-        navigation.setOptions({
-            headerLeft: () =>
-                renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main)),
-            headerTitle: t('settings.screenTitle')
-        });
-    }
-
-    /**
      * Implements React's {@link Component#render()}, renders the settings page.
      *
      * @inheritdoc
@@ -202,11 +209,18 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         return (
             <JitsiScreen
+                safeAreaInsets = { [ 'bottom', 'left', 'right' ] }
                 style = { styles.settingsViewContainer }>
                 <ScrollView>
+                    <View style = { styles.avatarContainer }>
+                        <Avatar
+                            participantId = { this.props.localParticipantId }
+                            size = { AVATAR_SIZE } />
+                        <Text style = { styles.avatarLabel }>
+                            { this.props.avatarLabel }
+                        </Text>
+                    </View>
                     <FormSectionAccordion
-                        accordion = { false }
-                        expandable = { false }
                         label = 'settingsView.profileSection'>
                         <TextInput
                             autoCorrect = { false }
@@ -235,8 +249,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             value = { email } />
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        accordion = { false }
-                        expandable = { false }
                         label = 'settingsView.conferenceSection'>
                         <TextInput
                             autoCapitalize = 'none'
@@ -278,8 +290,26 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         </FormRow>
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        accordion = { false }
-                        expandable = { false }
+                        label = 'settingsView.links'>
+                        <Link
+                            style = { styles.sectionLink }
+                            to = {{ screen: screen.settings.links.help }}>
+                            { this.props.t('settingsView.help') }
+                        </Link>
+                        <Divider style = { styles.fieldSeparator } />
+                        <Link
+                            style = { styles.sectionLink }
+                            to = {{ screen: screen.settings.links.terms }}>
+                            { this.props.t('settingsView.terms') }
+                        </Link>
+                        <Divider style = { styles.fieldSeparator } />
+                        <Link
+                            style = { styles.sectionLink }
+                            to = {{ screen: screen.settings.links.privacy }}>
+                            { this.props.t('settingsView.privacy') }
+                        </Link>
+                    </FormSectionAccordion>
+                    <FormSectionAccordion
                         label = 'settingsView.buildInfoSection'>
                         <FormRow
                             label = 'settingsView.version'>
@@ -289,8 +319,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         </FormRow>
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        accordion = { true }
-                        expandable = { true }
                         label = 'settingsView.advanced'>
                         { Platform.OS === 'android' && (
                             <>
@@ -589,9 +617,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const localParticipant = getLocalParticipant(state);
+    const localParticipantId = localParticipant?.id;
+    const avatarLabel = localParticipant && getParticipantDisplayName(state, localParticipantId);
+
     return {
         ..._abstractMapStateToProps(state),
-        _serverURLChangeEnabled: isServerURLChangeEnabled(state)
+        _serverURLChangeEnabled: isServerURLChangeEnabled(state),
+        avatarLabel,
+        localParticipantId
     };
 }
 

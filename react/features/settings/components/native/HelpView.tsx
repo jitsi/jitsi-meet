@@ -1,14 +1,20 @@
-// @flow
+/* eslint-disable lines-around-comment */
 
 import React, { PureComponent } from 'react';
 
+// @ts-ignore
 import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';
+// @ts-ignore
 import JitsiStatusBar from '../../../base/modal/components/JitsiStatusBar';
+// @ts-ignore
 import { connect } from '../../../base/redux';
+// @ts-ignore
 import { renderArrowBackButton }
+// @ts-ignore
     from '../../../mobile/navigation/components/welcome/functions';
-import { screen } from '../../../mobile/navigation/routes';
-import styles from '../styles';
+
+// @ts-ignore
+import styles from './styles';
 
 
 const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
@@ -42,10 +48,12 @@ class HelpView extends PureComponent<Props> {
             navigation
         } = this.props;
 
+        // @ts-ignore
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main))
+                    // @ts-ignore
+                    navigation.goBack())
         });
     }
 
@@ -73,7 +81,7 @@ class HelpView extends PureComponent<Props> {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: any) {
     return {
         _url: state['features/base/config'].helpCentreURL || DEFAULT_HELP_CENTRE_URL
     };

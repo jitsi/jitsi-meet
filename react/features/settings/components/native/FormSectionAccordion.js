@@ -3,9 +3,8 @@
 import React, { useCallback, useState } from 'react';
 import { List } from 'react-native-paper';
 
-import { translate } from '../../../../../base/i18n';
-import { Icon, IconArrowDown, IconArrowUp } from '../../../../../base/icons';
-import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
+import { translate } from '../../../base/i18n';
+import { Icon, IconArrowDown, IconArrowUp } from '../../../base/icons';
 
 import styles from './styles';
 
@@ -66,11 +65,15 @@ function FormSectionAccordion({ accordion, children, expandable, label, style, t
                     { ...props }
                     src = { expandSection ? IconArrowUp : IconArrowDown }
                     style = { styles.section } /> }
-            rippleColor = { BaseTheme.palette.uiBackground }
             style = { [
                 styles.formSectionTitle,
                 style
             ] }
+            theme = {{
+                colors: {
+                    background: 'transparent'
+                }
+            }}
             title = { t(label) }
             titleStyle = { styles.formSectionTitleText }>
             { children }

@@ -50,6 +50,7 @@ import {
     recordingScreenOptions,
     salesforceScreenOptions,
     securityScreenOptions,
+    settingsNavigationContainerScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions
     // @ts-ignore
@@ -57,12 +58,16 @@ import {
 import LobbyNavigationContainer
 // @ts-ignore
     from '../../lobby/components/LobbyNavigationContainer';
+import SettingsNavigationContainer
+// @ts-ignore
+    from '../../settings/components/SettingsNavigationContainer';
 import {
     conferenceNavigationRef
     // @ts-ignore
 } from '../ConferenceNavigationContainerRef';
 
 const ConferenceStack = createStackNavigator();
+
 
 const ConferenceNavigationContainer = () => {
     const isPollsDisabled = useSelector(getDisablePolls);
@@ -162,6 +167,10 @@ const ConferenceNavigationContainer = () => {
                         ...sharedDocumentScreenOptions,
                         title: t('documentSharing.title')
                     }} />
+                <ConferenceStack.Screen
+                    component = { SettingsNavigationContainer }
+                    name = { screen.settings.main }
+                    options = { settingsNavigationContainerScreenOptions } />
                 <ConferenceStack.Screen
                     component = { CarMode }
                     name = { screen.conference.carmode }

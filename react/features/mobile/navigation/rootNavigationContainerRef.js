@@ -40,7 +40,7 @@ export function goBackToRoot(stateful: Function | Object, dispatch: Function) {
     const state = toState(stateful);
 
     if (isWelcomePageEnabled(state)) {
-        navigateRoot(screen.root);
+        navigateRoot(screen.welcome.main);
     } else {
         // For JitsiSDK, WelcomePage is not available
         _sendReadyToClose(dispatch);
