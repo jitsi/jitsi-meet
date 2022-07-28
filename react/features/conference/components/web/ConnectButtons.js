@@ -115,7 +115,8 @@ const ConnectButtons = (props: Props) => {
                                 <div>
                                     <p style={{
                                         textAlign: 'center',
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        color:'#000'
                                     }}>{value.title}</p>
                                 </div>
                             </div> : null}
