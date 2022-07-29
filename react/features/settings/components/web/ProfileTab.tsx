@@ -1,26 +1,31 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import Button from '@atlaskit/button/standard-button';
-import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
+// @ts-ignore
 import UIEvents from '../../../../../service/UI/UIEvents';
 import {
     sendAnalytics,
     createProfilePanelButtonEvent
+    // @ts-ignore
 } from '../../../analytics';
+// @ts-ignore
 import { AbstractDialogTab } from '../../../base/dialog';
+// @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
+// @ts-ignore
 import { translate } from '../../../base/i18n';
+import Input from '../../../base/ui/components/web/Input';
+// @ts-ignore
 import { openLogoutDialog } from '../../actions';
 
-declare var APP: Object;
+// eslint-disable-next-line no-var
+declare var APP: any;
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.
  */
-export type Props = {
-    ...$Exact<AbstractDialogTabProps>,
+export type Props = AbstractDialogTabProps & {
 
     /**
      * Whether or not server-side authentication is available.
@@ -43,14 +48,14 @@ export type Props = {
     email: string,
 
     /**
-     * If the display name is read only.
-     */
-    readOnlyName: boolean,
-
-    /**
      * Whether to hide the email input in the profile settings.
      */
     hideEmailInSettings?: boolean,
+
+    /**
+     * If the display name is read only.
+     */
+    readOnlyName: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -84,29 +89,25 @@ class ProfileTab extends AbstractDialogTab<Props> {
         this._onEmailChange = this._onEmailChange.bind(this);
     }
 
-    _onDisplayNameChange: (Object) => void;
-
     /**
      * Changes display name of the user.
      *
-     * @param {Object} e - The key event to handle.
+     * @param {string} value - The key event to handle.
      *
      * @returns {void}
      */
-    _onDisplayNameChange({ target: { value } }) {
+    _onDisplayNameChange(value: string) {
         super._onChange({ displayName: value });
     }
-
-    _onEmailChange: (Object) => void;
 
     /**
      * Changes email of the user.
      *
-     * @param {Object} e - The key event to handle.
+     * @param {string} value - The key event to handle.
      *
      * @returns {void}
      */
-    _onEmailChange({ target: { value } }) {
+    _onEmailChange(value: string) {
         super._onChange({ email: value });
     }
 
@@ -123,33 +124,30 @@ class ProfileTab extends AbstractDialogTab<Props> {
             email,
             hideEmailInSettings,
             readOnlyName,
-            t
+            t // @ts-ignore
         } = this.props;
 
         return (
             <div>
                 <div className = 'profile-edit'>
                     <div className = 'profile-edit-field'>
-                        <FieldTextStateless
-                            autoComplete = 'name'
-                            compact = { true }
+                        <Input
+                            disabled = { readOnlyName }
                             id = 'setDisplayName'
-                            isReadOnly = { readOnlyName }
                             label = { t('profile.setDisplayNameLabel') }
+                            name = 'name'
                             onChange = { this._onDisplayNameChange }
                             placeholder = { t('settings.name') }
-                            shouldFitContainer = { true }
                             type = 'text'
                             value = { displayName } />
                     </div>
                     {!hideEmailInSettings && <div className = 'profile-edit-field'>
-                        <FieldTextStateless
-                            compact = { true }
+                        <Input
                             id = 'setEmail'
                             label = { t('profile.setEmailLabel') }
+                            name = 'email'
                             onChange = { this._onEmailChange }
                             placeholder = { t('profile.setEmailInput') }
-                            shouldFitContainer = { true }
                             type = 'text'
                             value = { email } />
                     </div>}
@@ -159,8 +157,6 @@ class ProfileTab extends AbstractDialogTab<Props> {
         );
     }
 
-    _onAuthToggle: () => void;
-
     /**
      * Shows the dialog for logging in or out of a server and closes this
      * dialog.
@@ -169,6 +165,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
      * @returns {void}
      */
     _onAuthToggle() {
+        // @ts-ignore
         if (this.props.authLogin) {
             sendAnalytics(createProfilePanelButtonEvent('logout.button'));
 
@@ -192,6 +189,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
         const {
             authLogin,
             t
+            // @ts-ignore
         } = this.props;
 
         return (

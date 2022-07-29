@@ -125,7 +125,8 @@ const styles = theme => {
 
             '& .profile-edit-field': {
                 flex: 0.5,
-                marginRight: '20px'
+                marginRight: '20px',
+                marginTop: `${theme.spacing(3)}px`
             },
 
             '& .settings-sub-pane': {

@@ -12,6 +12,8 @@ import { InputProps } from '../types';
 interface IInputProps extends InputProps {
     bottomLabel?: string;
     className?: string;
+    id?: string;
+    name?: string;
     type?: 'text' | 'email' | 'number' | 'password';
 }
 
@@ -119,7 +121,9 @@ const Input = ({
     disabled,
     error,
     icon,
+    id,
     label,
+    name,
     onChange,
     placeholder,
     type = 'text',
@@ -144,6 +148,8 @@ const Input = ({
                 className = { clsx(styles.input, isMobile && 'is-mobile',
                     error && 'error', clearable && styles.clearableInput, icon && styles.iconInput) }
                 disabled = { disabled }
+                { ...(id ? { id } : {}) }
+                name = { name }
                 onChange = { handleChange }
                 placeholder = { placeholder }
                 type = { type }
