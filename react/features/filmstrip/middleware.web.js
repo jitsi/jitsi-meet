@@ -33,8 +33,9 @@ import {
     removeStageParticipant,
     setFilmstripHeight,
     setFilmstripWidth,
+    setScreenshareFilmstripParticipant,
     setStageParticipants
-} from './actions';
+} from './actions.web';
 import {
     ACTIVE_PARTICIPANT_TIMEOUT,
     DEFAULT_FILMSTRIP_WIDTH,
@@ -45,12 +46,13 @@ import {
 } from './constants';
 import {
     isFilmstripResizable,
+    isTopPanelEnabled,
+    isStageFilmstripAvailable,
     updateRemoteParticipants,
     updateRemoteParticipantsOnLeave,
     getActiveParticipantsIds,
-    getPinnedActiveParticipants,
-    isStageFilmstripAvailable
-} from './functions';
+    getPinnedActiveParticipants
+} from './functions.web';
 import './subscriber';
 
 /**
@@ -275,6 +277,15 @@ MiddlewareRegistry.register(store => next => action => {
         const { participantId } = action;
         const pinnedParticipants = getPinnedActiveParticipants(state);
         const dominant = getDominantSpeakerParticipant(state);
+
+        if (isTopPanelEnabled(state)) {
+            const screenshares = state['features/video-layout'].remoteScreenShares;
+
+            if (screenshares.find(sId => sId === participantId)) {
+                dispatch(setScreenshareFilmstripParticipant(participantId));
+                break;
+            }
+        }
 
         if (pinnedParticipants.find(p => p.participantId === participantId)) {
             if (dominant?.id === participantId) {

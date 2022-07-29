@@ -16,9 +16,10 @@ import {
     setHorizontalViewDimensions,
     setScreensharingTileDimensions,
     setStageFilmstripViewDimensions,
+    setScreenshareFilmstripParticipant,
     setTileViewDimensions,
     setVerticalViewDimensions
-} from './actions';
+} from './actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD
@@ -26,7 +27,7 @@ import {
 import {
     isFilmstripResizable,
     isTopPanelEnabled
-} from './functions';
+} from './functions.web';
 
 import './subscriber.any';
 
@@ -222,6 +223,19 @@ StateListenerRegistry.register(
     /* listener */({ length }, store) => {
         if (length >= 1 && isTopPanelEnabled(store.getState())) {
             store.dispatch(setScreensharingTileDimensions());
+        }
+    }, {
+        deepEquals: true
+    });
+
+/**
+ * Listens for changes to clear invalid data.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/video-layout'].remoteScreenShares.length,
+    /* listener */(length, store) => {
+        if (length === 0) {
+            store.dispatch(setScreenshareFilmstripParticipant());
         }
     }, {
         deepEquals: true

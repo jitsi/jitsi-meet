@@ -23,7 +23,8 @@ import {
     SET_SCREENSHARING_TILE_DIMENSIONS,
     SET_USER_FILMSTRIP_HEIGHT,
     SET_FILMSTRIP_HEIGHT,
-    SET_TOP_PANEL_VISIBILITY
+    SET_TOP_PANEL_VISIBILITY,
+    SET_SCREENSHARE_FILMSTRIP_PARTICIPANT
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -84,6 +85,12 @@ const DEFAULT_STATE = {
      * The dimensions of the screenshare filmstrip.
      */
     screenshareFilmstripDimensions: {},
+
+    /**
+     * The id of the participant whose screenshare to
+     * display on the screenshare filmstrip.
+     */
+    screenshareFilmstripParticipantId: null,
 
     /**
      * The stage filmstrip view dimensions.
@@ -343,6 +350,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 topPanelVisible: action.visible
+            };
+        }
+        case SET_SCREENSHARE_FILMSTRIP_PARTICIPANT: {
+            return {
+                ...state,
+                screenshareFilmstripParticipantId: action.participantId
             };
         }
         }

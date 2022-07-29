@@ -29,7 +29,8 @@ import {
     SET_SCREENSHARING_TILE_DIMENSIONS,
     SET_USER_FILMSTRIP_HEIGHT,
     SET_FILMSTRIP_HEIGHT,
-    SET_TOP_PANEL_VISIBILITY
+    SET_TOP_PANEL_VISIBILITY,
+    SET_SCREENSHARE_FILMSTRIP_PARTICIPANT
 } from './actionTypes';
 import {
     HORIZONTAL_FILMSTRIP_MARGIN,
@@ -571,5 +572,18 @@ export function setTopPanelVisible(visible) {
     return {
         type: SET_TOP_PANEL_VISIBILITY,
         visible
+    };
+}
+
+/**
+ * Sets the participant whose screenshare to be displayed on the filmstrip.
+ *
+ * @param {string|undefined} participantId - The id of the participant to be set.
+ * @returns {Object}
+ */
+export function setScreenshareFilmstripParticipant(participantId) {
+    return {
+        type: SET_SCREENSHARE_FILMSTRIP_PARTICIPANT,
+        participantId
     };
 }

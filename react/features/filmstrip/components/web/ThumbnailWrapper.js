@@ -288,11 +288,17 @@ function _mapStateToProps(state, ownProps) {
     }
 
     if (_currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW && filmstripType === FILMSTRIP_TYPE.SCREENSHARE) {
-        const { remoteScreenShares } = state['features/video-layout'];
+        const { screenshareFilmstripParticipantId } = state['features/filmstrip'];
+        const screenshares = state['features/video-layout'].remoteScreenShares;
+        let id = screenshares.find(sId => sId === screenshareFilmstripParticipantId);
+
+        if (!id && screenshares.length) {
+            id = screenshares[screenshares.length - 1];
+        }
 
         return {
             _filmstripType: filmstripType,
-            _participantID: remoteScreenShares[remoteScreenShares.length - 1]
+            _participantID: id
         };
     }
 
