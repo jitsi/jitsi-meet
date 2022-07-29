@@ -1,5 +1,4 @@
-/* @flow */
-
+// @ts-ignore
 import Bourne from '@hapi/bourne';
 
 import { reportError } from './helpers';
@@ -24,14 +23,14 @@ const blacklist = [ '__proto__', 'constructor', 'prototype' ];
  */
 export function parseURLParams(
         url: URL | string,
-        dontParse: boolean = false,
-        source: string = 'hash'): Object {
+        dontParse = false,
+        source = 'hash'): Object {
     if (typeof url === 'string') {
         // eslint-disable-next-line no-param-reassign
         url = new URL(url);
     }
     const paramStr = source === 'search' ? url.search : url.hash;
-    const params = {};
+    const params: any = {};
     const paramParts = (paramStr && paramStr.substr(1).split('&')) || [];
 
     // Detect and ignore hash params for hash routers.
@@ -61,7 +60,7 @@ export function parseURLParams(
 
                 value = decoded === 'undefined' ? undefined : Bourne.parse(decoded);
             }
-        } catch (e) {
+        } catch (e: any) {
             reportError(
                 e, `Failed to parse URL parameter value: ${String(value)}`);
 

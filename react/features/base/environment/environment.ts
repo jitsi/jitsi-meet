@@ -1,7 +1,6 @@
-// @flow
-
+// @ts-ignore
 import JitsiMeetJS from '../lib-jitsi-meet';
-import Platform from '../react/Platform';
+import Platform from '../react/Platform.web';
 
 import { isMobileBrowser } from './utils';
 
@@ -15,7 +14,7 @@ const DEFAULT_OPTIMAL_BROWSERS = [
     'safari'
 ];
 
-const DEFAULT_UNSUPPORTED_BROWSERS = [];
+const DEFAULT_UNSUPPORTED_BROWSERS: string[] = [];
 
 const browserNameToCheck = {
     chrome: browser.isChrome.bind(browser),
@@ -27,7 +26,8 @@ const browserNameToCheck = {
     safari: browser.isSafari.bind(browser)
 };
 
-declare var interfaceConfig: Object;
+// eslint-disable-next-line no-var
+declare var interfaceConfig: any;
 
 /**
  * Returns whether or not jitsi is optimized and targeted for the  provided
@@ -117,9 +117,9 @@ export function isSupportedMobileBrowser() {
  * @private
  * @returns {boolean}
  */
-function _isCurrentBrowserInList(list) {
+function _isCurrentBrowserInList(list: string[]) {
     return Boolean(list.find(browserName => {
-        const checkFunction = browserNameToCheck[browserName];
+        const checkFunction = browserNameToCheck[browserName as keyof typeof browserNameToCheck];
 
         return checkFunction ? checkFunction.call(browser) : false;
     }));

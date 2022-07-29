@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Returns a new {@code Promise} which settles when a specific {@code Promise}
  * settles and is automatically rejected if the specified {@code Promise}

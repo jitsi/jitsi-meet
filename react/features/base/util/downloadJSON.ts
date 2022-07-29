@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Downloads a JSON object.
  *

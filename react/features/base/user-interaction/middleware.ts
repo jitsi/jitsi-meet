@@ -1,7 +1,5 @@
-// @flow
-
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
-import { MiddlewareRegistry } from '../redux';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { USER_INTERACTION_RECEIVED } from './actionTypes';
 
@@ -11,7 +9,7 @@ import { USER_INTERACTION_RECEIVED } from './actionTypes';
  *
  * @type {Function|null}
  */
-let userInteractionListener = null;
+let userInteractionListener: Function|null = null;
 
 /**
  * Implements the entry point of the middleware of the feature base/user-interaction.
@@ -41,7 +39,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _onUserInteractionReceived(dispatch, event) {
+function _onUserInteractionReceived(dispatch: Function, event: any) {
     if (event.isTrusted) {
         dispatch({
             type: USER_INTERACTION_RECEIVED
@@ -58,12 +56,15 @@ function _onUserInteractionReceived(dispatch, event) {
  * @private
  * @returns {void}
  */
-function _startListeningForUserInteraction({ dispatch }) {
+function _startListeningForUserInteraction({ dispatch }: {dispatch: Function}) {
     _stopListeningForUserInteraction();
 
     userInteractionListener = _onUserInteractionReceived.bind(null, dispatch);
 
+    // @ts-ignore
     window.addEventListener('mousedown', userInteractionListener);
+
+    // @ts-ignore
     window.addEventListener('keydown', userInteractionListener);
 }
 
@@ -74,7 +75,10 @@ function _startListeningForUserInteraction({ dispatch }) {
  * @returns {void}
  */
 function _stopListeningForUserInteraction() {
+    // @ts-ignore
     window.removeEventListener('mousedown', userInteractionListener);
+
+    // @ts-ignore
     window.removeEventListener('keydown', userInteractionListener);
 
     userInteractionListener = null;

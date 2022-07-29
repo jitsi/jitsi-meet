@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Opens URL in the browser.
  *

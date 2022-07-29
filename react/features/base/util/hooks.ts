@@ -1,4 +1,3 @@
-// @flow
 import { useSelector } from 'react-redux';
 
 /**
