@@ -15,6 +15,7 @@ import { ILibJitsiMeetState } from '../base/lib-jitsi-meet/reducer';
 import { ILoggingState } from '../base/logging/reducer';
 import { IMediaState } from '../base/media/reducer';
 import { INetInfoState } from '../base/net-info/reducer';
+import { IParticipantsState } from '../base/participants/reducer';
 import { IResponsiveUIState } from '../base/responsive-ui/reducer';
 import { ISettingsState } from '../base/settings/reducer';
 import { ISoundsState } from '../base/sounds/reducer';
@@ -48,6 +49,7 @@ export interface IState {
     'features/base/media': IMediaState,
     'features/base/net-info': INetInfoState,
     'features/base/no-src-data': INoSrcDataState,
+    'features/base/participants': IParticipantsState,
     'features/base/responsive-ui': IResponsiveUIState,
     'features/base/settings': ISettingsState,
     'features/base/sounds': ISoundsState,

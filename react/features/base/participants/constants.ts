@@ -1,6 +1,4 @@
-// @flow
-
-import { IconPhone } from '../icons';
+import { IconPhone } from '../icons/svg/index';
 
 /**
  * The relative path to the default/stock avatar (image) file used on both
