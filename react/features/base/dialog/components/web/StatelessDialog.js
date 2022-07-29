@@ -317,6 +317,7 @@ class StatelessDialog extends Component<Props> {
         return (
             <Button
                 id = { CANCEL_BUTTON_ID }
+                key = { CANCEL_BUTTON_ID }
                 label = { t(this.props.cancelKey || 'dialog.Cancel') }
                 onClick = { onDecline || this._onCancel }
                 size = 'small'
@@ -343,6 +344,7 @@ class StatelessDialog extends Component<Props> {
             <Button
                 disabled = { this.props.okDisabled }
                 id = { OK_BUTTON_ID }
+                key = { OK_BUTTON_ID }
                 label = { t(this.props.okKey || 'dialog.Ok') }
                 onClick = { this._onSubmit }
                 size = 'small' />
