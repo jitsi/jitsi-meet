@@ -8,6 +8,7 @@ import {
     setSkipPrejoinOnReload
 } from '../../prejoin';
 import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share';
+import { isScreenshotCaptureEnabled, toggleScreenshotCaptureSummary } from '../../screenshot-capture';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { setAudioOnly } from '../audio-only';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
@@ -165,6 +166,9 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
             } else {
                 await dispatch(addLocalTrack(desktopVideoTrack));
             }
+            if (isScreenshotCaptureEnabled(state, false, true)) {
+                dispatch(toggleScreenshotCaptureSummary(true));
+            }
         }
 
         // Apply the AudioMixer effect if there is a local audio track, add the desktop track to the conference
@@ -187,6 +191,8 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
         }
     } else {
         const { desktopAudioTrack } = state['features/screen-share'];
+
+        dispatch(toggleScreenshotCaptureSummary(false));
 
         // Mute the desktop track instead of removing it from the conference since we don't want the client to signal
         // a source-remove to the remote peer for the screenshare track. Later when screenshare is enabled again, the
