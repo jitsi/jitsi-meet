@@ -1,16 +1,18 @@
-// @flow
-import { Checkbox } from '@atlaskit/checkbox';
+/* eslint-disable lines-around-comment */
 import React from 'react';
 
+// @ts-ignore
 import { AbstractDialogTab } from '../../../base/dialog';
+// @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
+// @ts-ignore
 import { translate } from '../../../base/i18n';
+import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
  * The type of the React {@code Component} props of {@link MoreTab}.
  */
-export type Props = {
-    ...$Exact<AbstractDialogTabProps>,
+export type Props = AbstractDialogTabProps & {
 
     /**
      * If set hides the reactions moderation setting.
@@ -34,16 +36,16 @@ export type Props = {
     startAudioMuted: boolean,
 
     /**
-     * Whether or not the user has selected the Start Video Muted feature to be
-     * enabled.
-     */
-    startVideoMuted: boolean,
-
-    /**
      * Whether or not the user has selected the Start Reactions Muted feature to be
      * enabled.
      */
     startReactionsMuted: boolean,
+
+    /**
+     * Whether or not the user has selected the Start Video Muted feature to be
+     * enabled.
+     */
+    startVideoMuted: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -83,8 +85,6 @@ class ModeratorTab extends AbstractDialogTab<Props> {
         return <div className = 'moderator-tab box'>{ this._renderModeratorSettings() }</div>;
     }
 
-    _onStartAudioMutedChanged: (Object) => void;
-
     /**
      * Callback invoked to select if conferences should start
      * with audio muted.
@@ -93,11 +93,9 @@ class ModeratorTab extends AbstractDialogTab<Props> {
      *
      * @returns {void}
      */
-    _onStartAudioMutedChanged({ target: { checked } }) {
+    _onStartAudioMutedChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ startAudioMuted: checked });
     }
-
-    _onStartVideoMutedChanged: (Object) => void;
 
     /**
      * Callback invoked to select if conferences should start
@@ -107,11 +105,9 @@ class ModeratorTab extends AbstractDialogTab<Props> {
      *
      * @returns {void}
      */
-    _onStartVideoMutedChanged({ target: { checked } }) {
+    _onStartVideoMutedChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ startVideoMuted: checked });
     }
-
-    _onStartReactionsMutedChanged: (Object) => void;
 
     /**
      * Callback invoked to select if conferences should start
@@ -121,11 +117,9 @@ class ModeratorTab extends AbstractDialogTab<Props> {
      *
      * @returns {void}
      */
-    _onStartReactionsMutedChanged({ target: { checked } }) {
+    _onStartReactionsMutedChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ startReactionsMuted: checked });
     }
-
-    _onFollowMeEnabledChanged: (Object) => void;
 
     /**
      * Callback invoked to select if follow-me mode
@@ -135,7 +129,7 @@ class ModeratorTab extends AbstractDialogTab<Props> {
      *
      * @returns {void}
      */
-    _onFollowMeEnabledChanged({ target: { checked } }) {
+    _onFollowMeEnabledChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ followMeEnabled: checked });
     }
 
@@ -153,7 +147,7 @@ class ModeratorTab extends AbstractDialogTab<Props> {
             startAudioMuted,
             startVideoMuted,
             startReactionsMuted,
-            t
+            t // @ts-ignore
         } = this.props;
 
         return (
@@ -162,24 +156,28 @@ class ModeratorTab extends AbstractDialogTab<Props> {
                 key = 'moderator'>
                 <div className = 'moderator-settings-wrapper'>
                     <Checkbox
-                        isChecked = { startAudioMuted }
+                        checked = { startAudioMuted }
+                        className = 'settings-checkbox'
                         label = { t('settings.startAudioMuted') }
                         name = 'start-audio-muted'
                         onChange = { this._onStartAudioMutedChanged } />
                     <Checkbox
-                        isChecked = { startVideoMuted }
+                        checked = { startVideoMuted }
+                        className = 'settings-checkbox'
                         label = { t('settings.startVideoMuted') }
                         name = 'start-video-muted'
                         onChange = { this._onStartVideoMutedChanged } />
                     <Checkbox
-                        isChecked = { followMeEnabled && !followMeActive }
-                        isDisabled = { followMeActive }
+                        checked = { followMeEnabled && !followMeActive }
+                        className = 'settings-checkbox'
+                        disabled = { followMeActive }
                         label = { t('settings.followMe') }
                         name = 'follow-me'
                         onChange = { this._onFollowMeEnabledChanged } />
                     { !disableReactionsModeration
                         && <Checkbox
-                            isChecked = { startReactionsMuted }
+                            checked = { startReactionsMuted }
+                            className = 'settings-checkbox'
                             label = { t('settings.startReactionsMuted') }
                             name = 'start-reactions-muted'
                             onChange = { this._onStartReactionsMutedChanged } /> }

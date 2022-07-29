@@ -1,24 +1,28 @@
-// @flow
-
-import Checkbox from '@atlaskit/checkbox';
+/* eslint-disable lines-around-comment */
 import React from 'react';
 
+// @ts-ignore
 import { AbstractDialogTab } from '../../../base/dialog';
+// @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
+// @ts-ignore
 import { translate } from '../../../base/i18n';
-
-declare var APP: Object;
+import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
  * The type of the React {@code Component} props of {@link SoundsTab}.
  */
-export type Props = {
-    ...$Exact<AbstractDialogTabProps>,
+export type Props = AbstractDialogTabProps & {
 
     /**
      * Whether or not the reactions feature is enabled.
      */
     enableReactions: Boolean,
+
+    /**
+     * Whether or not moderator muted the sounds.
+     */
+    moderatorMutedSoundsReactions: Boolean,
 
     /**
      * Whether or not the sound for the incoming message should play.
@@ -41,19 +45,14 @@ export type Props = {
     soundsParticipantLeft: Boolean,
 
     /**
-     * Whether or not the sound for the talk while muted notification should play.
-     */
-    soundsTalkWhileMuted: Boolean,
-
-    /**
     * Whether or not the sound for reactions should play.
     */
     soundsReactions: Boolean,
 
     /**
-     * Whether or not moderator muted the sounds.
+     * Whether or not the sound for the talk while muted notification should play.
      */
-    moderatorMutedSoundsReactions: Boolean,
+    soundsTalkWhileMuted: Boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -80,8 +79,6 @@ class SoundsTab extends AbstractDialogTab<Props> {
         this._onChange = this._onChange.bind(this);
     }
 
-    _onChange: (Object) => void;
-
     /**
      * Changes a sound setting state.
      *
@@ -89,7 +86,7 @@ class SoundsTab extends AbstractDialogTab<Props> {
      *
      * @returns {void}
      */
-    _onChange({ target }) {
+    _onChange({ target }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ [target.name]: target.checked });
     }
 
@@ -109,7 +106,7 @@ class SoundsTab extends AbstractDialogTab<Props> {
             soundsReactions,
             enableReactions,
             moderatorMutedSoundsReactions,
-            t
+            t // @ts-ignore
         } = this.props;
 
         return (
@@ -120,34 +117,40 @@ class SoundsTab extends AbstractDialogTab<Props> {
                     {t('settings.playSounds')}
                 </h2>
                 {enableReactions && <Checkbox
-                    isChecked = { soundsReactions }
-                    isDisabled = { moderatorMutedSoundsReactions }
+                    checked = { soundsReactions }
+                    className = 'settings-checkbox'
+                    disabled = { moderatorMutedSoundsReactions }
                     label = { t('settings.reactions') }
                     name = 'soundsReactions'
                     onChange = { this._onChange } />
                 }
                 <Checkbox
-                    isChecked = { soundsIncomingMessage }
+                    checked = { soundsIncomingMessage }
+                    className = 'settings-checkbox'
                     label = { t('settings.incomingMessage') }
                     name = 'soundsIncomingMessage'
                     onChange = { this._onChange } />
                 <Checkbox
-                    isChecked = { soundsParticipantJoined }
+                    checked = { soundsParticipantJoined }
+                    className = 'settings-checkbox'
                     label = { t('settings.participantJoined') }
                     name = 'soundsParticipantJoined'
                     onChange = { this._onChange } />
                 <Checkbox
-                    isChecked = { soundsParticipantLeft }
+                    checked = { soundsParticipantLeft }
+                    className = 'settings-checkbox'
                     label = { t('settings.participantLeft') }
                     name = 'soundsParticipantLeft'
                     onChange = { this._onChange } />
                 <Checkbox
-                    isChecked = { soundsTalkWhileMuted }
+                    checked = { soundsTalkWhileMuted }
+                    className = 'settings-checkbox'
                     label = { t('settings.talkWhileMuted') }
                     name = 'soundsTalkWhileMuted'
                     onChange = { this._onChange } />
                 <Checkbox
-                    isChecked = { soundsParticipantKnocking }
+                    checked = { soundsParticipantKnocking }
+                    className = 'settings-checkbox'
                     label = { t('settings.participantKnocking') }
                     name = 'soundsParticipantKnocking'
                     onChange = { this._onChange } />

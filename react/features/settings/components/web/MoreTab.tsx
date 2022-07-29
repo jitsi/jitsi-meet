@@ -1,24 +1,30 @@
-// @flow
-import { Checkbox } from '@atlaskit/checkbox';
+/* eslint-disable lines-around-comment */
 import DropdownMenu, {
     DropdownItem,
     DropdownItemGroup
 } from '@atlaskit/dropdown-menu';
 import React from 'react';
 
+// @ts-ignore
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
+// @ts-ignore
 import { AbstractDialogTab } from '../../../base/dialog';
+// @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
+// @ts-ignore
 import { translate } from '../../../base/i18n';
+import Checkbox from '../../../base/ui/components/web/Checkbox';
+// @ts-ignore
 import TouchmoveHack from '../../../chat/components/web/TouchmoveHack';
+// @ts-ignore
 import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip';
+// @ts-ignore
 import { SS_DEFAULT_FRAME_RATE } from '../../constants';
 
 /**
  * The type of the React {@code Component} props of {@link MoreTab}.
  */
-export type Props = {
-    ...$Exact<AbstractDialogTabProps>,
+export type Props = AbstractDialogTabProps & {
 
     /**
      * The currently selected desktop share frame rate in the frame rate select dropdown.
@@ -42,19 +48,24 @@ export type Props = {
     disableHideSelfView: boolean,
 
     /**
+     * The types of enabled notifications that can be configured and their specific visibility.
+     */
+    enabledNotifications: Object,
+
+    /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
     followMeActive: boolean,
 
     /**
+     * Whether or not to hide self-view screen.
+     */
+    hideSelfView: boolean,
+
+    /**
      * All available languages to display in the language select dropdown.
      */
     languages: Array<string>,
-
-    /**
-     * The types of enabled notifications that can be configured and their specific visibility.
-     */
-    enabledNotifications: Object,
 
     /**
      * Whether or not to display the language select dropdown.
@@ -72,19 +83,14 @@ export type Props = {
     showNotificationsSettings: boolean,
 
     /**
-     * Whether or not to display the prejoin settings section.
-     */
-    showPrejoinSettings: boolean,
-
-    /**
      * Whether or not to show prejoin screen.
      */
     showPrejoinPage: boolean,
 
     /**
-     * Whether or not to hide self-view screen.
+     * Whether or not to display the prejoin settings section.
      */
-    hideSelfView: boolean,
+    showPrejoinSettings: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -123,6 +129,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        // @ts-ignore
         this.state = {
             isFramerateSelectOpen: false,
             isLanguageSelectOpen: false,
@@ -164,8 +171,6 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         );
     }
 
-    _onFramerateDropdownOpenChange: (Object) => void;
-
     /**
      * Callback invoked to toggle display of the desktop share framerate select dropdown.
      *
@@ -173,11 +178,10 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onFramerateDropdownOpenChange({ isOpen }) {
+    _onFramerateDropdownOpenChange({ isOpen }: {isOpen: boolean}) {
+        // @ts-ignore
         this.setState({ isFramerateSelectOpen: isOpen });
     }
-
-    _onFramerateItemSelect: (Object) => void;
 
     /**
      * Callback invoked to select a frame rate from the select dropdown.
@@ -186,13 +190,11 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onFramerateItemSelect(e) {
+    _onFramerateItemSelect(e: React.ChangeEvent<HTMLSelectElement>) {
         const frameRate = e.currentTarget.getAttribute('data-framerate');
 
         super._onChange({ currentFramerate: frameRate });
     }
-
-    _onLanguageDropdownOpenChange: (Object) => void;
 
     /**
      * Callback invoked to toggle display of the language select dropdown.
@@ -201,11 +203,10 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onLanguageDropdownOpenChange({ isOpen }) {
+    _onLanguageDropdownOpenChange({ isOpen }: {isOpen: boolean}) {
+        // @ts-ignore
         this.setState({ isLanguageSelectOpen: isOpen });
     }
-
-    _onLanguageItemSelect: (Object) => void;
 
     /**
      * Callback invoked to select a language from select dropdown.
@@ -214,13 +215,11 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      *
      * @returns {void}
      */
-    _onLanguageItemSelect(e) {
+    _onLanguageItemSelect(e: React.ChangeEvent<HTMLSelectElement>) {
         const language = e.currentTarget.getAttribute('data-language');
 
         super._onChange({ currentLanguage: language });
     }
-
-    _onShowPrejoinPageChanged: (Object) => void;
 
     /**
      * Callback invoked to select if the lobby
@@ -230,11 +229,9 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      *
      * @returns {void}
      */
-    _onShowPrejoinPageChanged({ target: { checked } }) {
+    _onShowPrejoinPageChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ showPrejoinPage: checked });
     }
-
-    _onKeyboardShortcutEnableChanged: (Object) => void;
 
     /**
      * Callback invoked to select if the given type of
@@ -245,16 +242,15 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      *
      * @returns {void}
      */
-    _onEnabledNotificationsChanged({ target: { checked } }, type) {
+    _onEnabledNotificationsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>, type: any) {
         super._onChange({
             enabledNotifications: {
+                // @ts-ignore
                 ...this.props.enabledNotifications,
                 [type]: checked
             }
         });
     }
-
-    _onEnabledNotificationsChanged: (Object, string) => void;
 
     /**
      * Callback invoked to select if global keyboard shortcuts
@@ -264,12 +260,10 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      *
      * @returns {void}
      */
-    _onKeyboardShortcutEnableChanged({ target: { checked } }) {
+    _onKeyboardShortcutEnableChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         keyboardShortcut.enable(checked);
         super._onChange({ keyboardShortcutEnable: checked });
     }
-
-    _onHideSelfViewChanged: (Object) => void;
 
     /**
      * Callback invoked to select if hide self view should be enabled.
@@ -278,11 +272,9 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      *
      * @returns {void}
      */
-    _onHideSelfViewChanged({ target: { checked } }) {
+    _onHideSelfViewChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ hideSelfView: checked });
     }
-
-    _onMaxStageParticipantsOpenChange: (Object) => void;
 
     /**
      * Callback invoked to toggle display of the max stage participants select dropdown.
@@ -291,11 +283,10 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onMaxStageParticipantsOpenChange({ isOpen }) {
+    _onMaxStageParticipantsOpenChange({ isOpen }: {isOpen: boolean}) {
+        // @ts-ignore
         this.setState({ isMaxStageParticipantsOpen: isOpen });
     }
-
-    _onMaxStageParticipantsSelect: (Object) => void;
 
     /**
      * Callback invoked to select a max number of stage participants from the select dropdown.
@@ -304,7 +295,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onMaxStageParticipantsSelect(e) {
+    _onMaxStageParticipantsSelect(e: React.ChangeEvent<HTMLSelectElement>) {
         const maxParticipants = e.currentTarget.getAttribute('data-maxparticipants');
 
         super._onChange({ maxStageParticipants: maxParticipants });
@@ -316,8 +307,9 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderFramerateSelect() {
+        // @ts-ignore
         const { currentFramerate, desktopShareFramerates, t } = this.props;
-        const frameRateItems = desktopShareFramerates.map(frameRate => (
+        const frameRateItems = desktopShareFramerates.map((frameRate: string) => (
             <DropdownItem
                 data-framerate = { frameRate }
                 key = { frameRate }
@@ -337,6 +329,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                         flex = { true }
                         isModal = { true }>
                         <DropdownMenu
+                            // @ts-ignore
                             isOpen = { this.state.isFramerateSelectOpen }
                             onOpenChange = { this._onFramerateDropdownOpenChange }
                             shouldFitContainer = { true }
@@ -370,6 +363,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderKeyboardShortcutCheckbox() {
+        // @ts-ignore
         const { t } = this.props;
 
         return (
@@ -380,7 +374,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     { t('keyboardShortcuts.keyboardShortcuts') }
                 </h2>
                 <Checkbox
-                    isChecked = { keyboardShortcut.getEnabled() }
+                    checked = { keyboardShortcut.getEnabled() }
                     label = { t('prejoin.keyboardShortcuts') }
                     name = 'enable-keyboard-shortcuts'
                     onChange = { this._onKeyboardShortcutEnableChanged } />
@@ -395,6 +389,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderSelfViewCheckbox() {
+        // @ts-ignore
         const { hideSelfView, t } = this.props;
 
         return (
@@ -405,7 +400,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     { t('settings.selfView') }
                 </h2>
                 <Checkbox
-                    isChecked = { hideSelfView }
+                    checked = { hideSelfView }
                     label = { t('videothumbnail.hideSelfView') }
                     name = 'hide-self-view'
                     onChange = { this._onHideSelfViewChanged } />
@@ -424,10 +419,11 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             currentLanguage,
             languages,
             t
+        // @ts-ignore
         } = this.props;
 
         const languageItems
-            = languages.map(language => (
+            = languages.map((language: string) => (
                 <DropdownItem
                     data-language = { language }
                     key = { language }
@@ -447,6 +443,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                         flex = { true }
                         isModal = { true }>
                         <DropdownMenu
+                            // @ts-ignore
                             isOpen = { this.state.isLanguageSelectOpen }
                             onOpenChange = { this._onLanguageDropdownOpenChange }
                             shouldFitContainer = { true }
@@ -474,6 +471,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderPrejoinScreenSettings() {
+        // @ts-ignore
         const { t, showPrejoinPage } = this.props;
 
         return (
@@ -484,7 +482,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     { t('prejoin.premeeting') }
                 </h2>
                 <Checkbox
-                    isChecked = { showPrejoinPage }
+                    checked = { showPrejoinPage }
                     label = { t('prejoin.showScreen') }
                     name = 'show-prejoin-page'
                     onChange = { this._onShowPrejoinPageChanged } />
@@ -499,6 +497,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderNotificationsSettings() {
+        // @ts-ignore
         const { t, enabledNotifications } = this.props;
 
         return (
@@ -511,7 +510,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 {
                     Object.keys(enabledNotifications).map(key => (
                         <Checkbox
-                            isChecked = { enabledNotifications[key] }
+                            checked = { enabledNotifications[key] }
                             key = { key }
                             label = { t(key) }
                             name = { `show-${key}` }
@@ -523,14 +522,13 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         );
     }
 
-    _renderMaxStageParticipantsSelect: () => void;
-
     /**
      * Returns the React Element for the max stage participants dropdown.
      *
      * @returns {ReactElement}
      */
     _renderMaxStageParticipantsSelect() {
+        // @ts-ignore
         const { maxStageParticipants, t, stageFilmstripEnabled } = this.props;
 
         if (!stageFilmstripEnabled) {
@@ -557,6 +555,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                         flex = { true }
                         isModal = { true }>
                         <DropdownMenu
+                            // @ts-ignore
                             isOpen = { this.state.isMaxStageParticipantsOpen }
                             onOpenChange = { this._onMaxStageParticipantsOpenChange }
                             shouldFitContainer = { true }
@@ -582,6 +581,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderSettingsRight() {
+        // @ts-ignore
         const { showLanguageSettings } = this.props;
 
         return (
@@ -601,6 +601,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderSettingsLeft() {
+        // @ts-ignore
         const { disableHideSelfView, showNotificationsSettings, showPrejoinSettings } = this.props;
 
         return (
