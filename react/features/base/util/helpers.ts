@@ -1,5 +1,3 @@
-// @flow
-
 import clipboardCopy from 'clipboard-copy';
 
 /**
@@ -15,7 +13,7 @@ export function assignIfDefined(target: Object, source: Object) {
 
     for (const nextKey in source) {
         if (source.hasOwnProperty(nextKey)) {
-            const value = source[nextKey];
+            const value = source[nextKey as keyof typeof source];
 
             if (typeof value !== 'undefined') {
                 to[nextKey] = value;
@@ -49,7 +47,7 @@ export async function copyText(textToCopy: string) {
  * @returns {{promise, resolve, reject}}
  */
 export function createDeferred(): Object {
-    const deferred = {};
+    const deferred: any = {};
 
     deferred.promise = new Promise((resolve, reject) => {
         deferred.resolve = resolve;
@@ -83,7 +81,7 @@ export function escapeRegexp(s: string) {
  * @param {Object} w - Window object to use instead of the built in one.
  * @returns {string}
  */
-export function getBaseUrl(w: Object = window) {
+export function getBaseUrl(w: Window = window) {
     const doc = w.document;
     const base = doc.querySelector('base');
 
@@ -104,14 +102,19 @@ export function getBaseUrl(w: Object = window) {
  * NOTE: After React-ifying everything this should be the only global.
  */
 export function getJitsiMeetGlobalNS() {
+    // @ts-ignore
     if (!window.JitsiMeetJS) {
+        // @ts-ignore
         window.JitsiMeetJS = {};
     }
 
+    // @ts-ignore
     if (!window.JitsiMeetJS.app) {
+        // @ts-ignore
         window.JitsiMeetJS.app = {};
     }
 
+    // @ts-ignore
     return window.JitsiMeetJS.app;
 }
 
@@ -122,9 +125,9 @@ export function getJitsiMeetGlobalNS() {
  * @param {string} msg - A custom message to print in addition to the error.
  * @returns {void}
  */
-export function reportError(e: Object, msg: string = '') {
+export function reportError(e: Error, msg = '') {
     console.error(msg, e);
-    window.onerror && window.onerror(msg, null, null, null, e);
+    window.onerror && window.onerror(msg, undefined, undefined, undefined, e);
 }
 
 /**
@@ -168,7 +171,7 @@ export function setColorAlpha(color: string, opacity: number) {
  * @param {string} color -
  * @returns {Array<number>} - Array containing parsed r, g, b values of the color.
  */
-function parseShorthandColor(color) {
+function parseShorthandColor(color: string) {
     let b, g, r;
 
     r = color.substring(1, 2);

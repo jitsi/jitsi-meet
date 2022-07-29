@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Applies NFKC normalization to the given text.
  *

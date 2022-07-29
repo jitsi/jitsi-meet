@@ -1,5 +1,3 @@
-// @flow
-
 import _ from 'lodash';
 import { NIL, parse as parseUUID } from 'uuid';
 import zxcvbn from 'zxcvbn';
@@ -13,7 +11,7 @@ const NIL_UUID = parseUUID(NIL);
  * @param {string} str - The string to be checked.
  * @returns {boolean} - Whether the string is a valid UUID or not.
  */
-function isValidUUID(str) {
+function isValidUUID(str: string) {
     let uuid;
 
     try {
@@ -31,6 +29,6 @@ function isValidUUID(str) {
  * @param {string} roomName - The room name.
  * @returns {boolean}
  */
-export default function isInsecureRoomName(roomName: string = ''): boolean {
+export default function isInsecureRoomName(roomName = ''): boolean {
     return !isValidUUID(roomName) && zxcvbn(roomName).score < 3;
 }

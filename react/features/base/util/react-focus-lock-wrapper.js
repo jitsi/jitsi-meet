@@ -10,7 +10,7 @@ import FocusLock, { MoveFocusInside } from 'react-focus-lock';
  * @param {Object} props - The props passed to the FocusLock.
  * @returns {ReactElement}
  */
-export default (props: Object) => {
+export default (props: any) => {
     const { children, ...otherProps } = props;
 
     const forwardProps = {

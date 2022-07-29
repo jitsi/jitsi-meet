@@ -1,5 +1,4 @@
-/* @flow */
-
+// @ts-ignore
 const { userAgent, maxTouchPoints, platform } = navigator;
 let OS;
 

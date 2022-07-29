@@ -1,7 +1,6 @@
-// @flow
-
 import { Linking } from 'react-native';
 
+// @ts-ignore
 import logger from './logger';
 
 /**

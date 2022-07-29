@@ -1,6 +1,6 @@
-// @flow
-
 import { parseURLParams } from './parseURLParams';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { normalizeNFKC } from './strings';
 
 /**
@@ -53,7 +53,7 @@ export const URI_PROTOCOL_PATTERN = '^([a-z][a-z0-9\\.\\+-]*:)';
  * @private
  * @returns {?string}
  */
-function _fixPathPart(pathPart: ?string) {
+function _fixPathPart(pathPart?: string) {
     return pathPart
         ? pathPart.replace(new RegExp(_ROOM_EXCLUDE_PATTERN, 'g'), '')
         : pathPart;
@@ -107,7 +107,7 @@ function _fixURIStringScheme(uri: string) {
  * @param {string?} path - The path to convert.
  * @returns {string?}
  */
-export function getBackendSafePath(path: ?string): ?string {
+export function getBackendSafePath(path?: string): string|undefined {
     if (!path) {
         return path;
     }
@@ -124,7 +124,7 @@ export function getBackendSafePath(path: ?string): ?string {
  * @param {string?} room - The room name to convert.
  * @returns {string?}
  */
-export function getBackendSafeRoomName(room: ?string): ?string {
+export function getBackendSafeRoomName(room?: string): string|undefined {
     if (!room) {
         return room;
     }
@@ -146,10 +146,10 @@ export function getBackendSafeRoomName(room: ?string): ?string {
     room = normalizeNFKC(room);
 
     // Only decoded and normalized strings can be lowercased properly.
-    room = room.toLowerCase();
+    room = room?.toLowerCase();
 
     // But we still need to (re)encode it.
-    room = encodeURIComponent(room);
+    room = encodeURIComponent(room ?? '');
     /* eslint-enable no-param-reassign */
 
     // Unfortunately we still need to lowercase it, because encoding a string will
@@ -192,7 +192,7 @@ function _objectToURLParamsArray(obj = {}) {
     for (const key in obj) { // eslint-disable-line guard-for-in
         try {
             params.push(
-                `${key}=${encodeURIComponent(JSON.stringify(obj[key]))}`);
+                `${key}=${encodeURIComponent(JSON.stringify(obj[key as keyof typeof obj]))}`);
         } catch (e) {
             console.warn(`Error encoding ${key}: ${e}`);
         }
@@ -221,7 +221,7 @@ function _objectToURLParamsArray(obj = {}) {
 export function parseStandardURIString(str: string) {
     /* eslint-disable no-param-reassign */
 
-    const obj: Object = {
+    const obj: {[key: string]: any} = {
         toString: _standardURIToString
     };
 
@@ -258,6 +258,7 @@ export function parseStandardURIString(str: string) {
             authority = authority.substring(userinfoEndIndex + 1);
         }
 
+        // @ts-ignore
         obj.host = authority;
 
         // port
@@ -276,7 +277,7 @@ export function parseStandardURIString(str: string) {
     regex = new RegExp(`^${_URI_PATH_PATTERN}`, 'gi');
     match = regex.exec(str);
 
-    let pathname: ?string;
+    let pathname: string|undefined;
 
     if (match) {
         pathname = match[1];
@@ -329,7 +330,7 @@ export function parseStandardURIString(str: string) {
  *     search: string
  * }}
  */
-export function parseURIString(uri: ?string) {
+export function parseURIString(uri?: string) {
     if (typeof uri !== 'string') {
         return undefined;
     }
@@ -338,13 +339,14 @@ export function parseURIString(uri: ?string) {
 
     // XXX While the components/segments of pathname are URI encoded, Jitsi Meet
     // on the client and/or server sides still don't support certain characters.
-    obj.pathname = obj.pathname.split('/').map(pathPart => _fixPathPart(pathPart))
+    obj.pathname = obj.pathname.split('/').map((pathPart: any) => _fixPathPart(pathPart))
         .join('/');
 
     // Add the properties that are specific to a Jitsi Meet resource (location)
     // such as contextRoot, room:
 
     // contextRoot
+    // @ts-ignore
     obj.contextRoot = getLocationContextRoot(obj);
 
     // The room (name) is the last component/segment of pathname.
@@ -371,7 +373,8 @@ export function parseURIString(uri: ?string) {
  * function is invoked on such an instance.
  * @returns {string}
  */
-function _standardURIToString(thiz: ?Object) {
+function _standardURIToString(thiz?: Object) {
+    // @ts-ignore
     // eslint-disable-next-line no-invalid-this
     const { hash, host, pathname, protocol, search } = thiz || this;
     let str = '';
@@ -418,7 +421,7 @@ export function safeDecodeURIComponent(text: string) {
  * @returns {string} - A {@code String} representation of the specified
  * {@code obj} which is supposed to represent a URL.
  */
-export function toURLString(obj: ?(Object | string)): ?string {
+export function toURLString(obj?: (Object | string)): string|undefined|null {
     let str;
 
     switch (typeof obj) {
@@ -449,7 +452,7 @@ export function toURLString(obj: ?(Object | string)): ?string {
  * @returns {string} - A {@code String} representation of the specified
  * {@code Object}.
  */
-export function urlObjectToString(o: Object): ?string {
+export function urlObjectToString(o: {[key: string]: any}): string|undefined {
     // First normalize the given url. It come as o.url or split into o.serverURL
     // and o.room.
     let tmp;
@@ -466,7 +469,7 @@ export function urlObjectToString(o: Object): ?string {
 
     // protocol
     if (!url.protocol) {
-        let protocol: ?string = o.protocol || o.scheme;
+        let protocol: string|undefined = o.protocol || o.scheme;
 
         if (protocol) {
             // Protocol is supposed to be the scheme and the final ':'. Anyway,
@@ -484,7 +487,7 @@ export function urlObjectToString(o: Object): ?string {
         //
         // It may be host/hostname and pathname with the latter denoting the
         // tenant.
-        const domain: ?string = o.domain || o.host || o.hostname;
+        const domain: string|undefined = o.domain || o.host || o.hostname;
 
         if (domain) {
             const { host, hostname, pathname: contextRoot, port }
