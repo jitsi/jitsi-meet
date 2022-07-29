@@ -33,9 +33,9 @@ import {
     removeStageParticipant,
     setFilmstripHeight,
     setFilmstripWidth,
+    setScreenshareFilmstripParticipant,
     setStageParticipants
-} from './actions';
-import { setScreenshareFilmstripParticipant } from './actions.web';
+} from './actions.web';
 import {
     ACTIVE_PARTICIPANT_TIMEOUT,
     DEFAULT_FILMSTRIP_WIDTH,
@@ -46,14 +46,14 @@ import {
 } from './constants';
 import {
     isFilmstripResizable,
+    isTopPanelEnabled,
+    isStageFilmstripAvailable,
     updateRemoteParticipants,
     updateRemoteParticipantsOnLeave,
     getActiveParticipantsIds,
-    getPinnedActiveParticipants,
-    isStageFilmstripAvailable
-} from './functions';
+    getPinnedActiveParticipants
+} from './functions.web';
 import './subscriber';
-import { isTopPanelEnabled } from './functions.web';
 
 /**
  * Map of timers.

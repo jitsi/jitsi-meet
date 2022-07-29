@@ -16,10 +16,10 @@ import {
     setHorizontalViewDimensions,
     setScreensharingTileDimensions,
     setStageFilmstripViewDimensions,
+    setScreenshareFilmstripParticipant,
     setTileViewDimensions,
     setVerticalViewDimensions
-} from './actions';
-import { setScreenshareFilmstripParticipant } from './actions.web';
+} from './actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD
@@ -27,7 +27,7 @@ import {
 import {
     isFilmstripResizable,
     isTopPanelEnabled
-} from './functions';
+} from './functions.web';
 
 import './subscriber.any';
 
