@@ -1,8 +1,17 @@
-// @flow
-
 import { createMuiTheme } from '@material-ui/core/styles';
 
+import { Theme } from './types';
 import { createColorTokens } from './utils';
+
+interface ThemeProps {
+    breakpoints: Object;
+    colorMap: Object;
+    colors: Object;
+    font: Object;
+    shape: Object;
+    spacing: Array<number>;
+    typography: Object;
+}
 
 /**
  * Creates a MUI theme based on local UI tokens.
@@ -10,7 +19,7 @@ import { createColorTokens } from './utils';
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createWebTheme({ font, colors, colorMap, shape, spacing, typography, breakpoints }: Object) {
+export function createWebTheme({ font, colors, colorMap, shape, spacing, typography, breakpoints }: ThemeProps): Theme {
     return createMuiTheme({
         props: {
             // disable ripple effect on buttons globally
@@ -29,7 +38,7 @@ export function createWebTheme({ font, colors, colorMap, shape, spacing, typogra
             ...typography
         },
         breakpoints
-    });
+    }) as unknown as Theme;
 }
 
 /**
@@ -39,7 +48,7 @@ export function createWebTheme({ font, colors, colorMap, shape, spacing, typogra
  * @returns {Object}
  */
 export function formatCommonClasses(stylesObj: Object) {
-    const formatted = {};
+    const formatted: any = {};
 
     for (const [ key, value ] of Object.entries(stylesObj)) {
         formatted[`.${key}`] = value;
