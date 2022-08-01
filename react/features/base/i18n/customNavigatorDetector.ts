@@ -1,6 +1,6 @@
-/* @flow */
 
-declare var navigator: Object;
+// eslint-disable-next-line no-var
+declare var navigator: any;
 
 /**
  * Custom language detection, just returns the config property if any.
@@ -57,7 +57,7 @@ export default {
  * @param {string} language - Language.
  * @returns {string} The normalized language.
  */
-function normalizeLanguage(language) {
+function normalizeLanguage(language: string) {
     const [ lang, variant ] = language.replace('_', '-').split('-');
 
     if (!variant || lang === variant) {

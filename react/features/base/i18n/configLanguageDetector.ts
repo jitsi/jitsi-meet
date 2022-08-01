@@ -1,6 +1,6 @@
-/* @flow */
 
-declare var config: Object;
+// eslint-disable-next-line no-var
+declare var config: any;
 
 /**
  * Custom language detection, just returns the config property if any.

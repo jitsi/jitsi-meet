@@ -1,5 +1,3 @@
-// @flow
-
 import { NativeModules } from 'react-native';
 
 import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
