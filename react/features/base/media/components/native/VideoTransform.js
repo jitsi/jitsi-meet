@@ -5,6 +5,7 @@ import { PanResponder, PixelRatio, View } from 'react-native';
 import { type Dispatch } from 'redux';
 
 import { connect } from '../../../redux';
+import { ASPECT_RATIO_WIDE } from '../../../responsive-ui';
 import { storeVideoTransform } from '../../actions';
 
 import styles from './styles';
@@ -60,6 +61,11 @@ type Transform = {
 };
 
 type Props = {
+
+    /**
+     * The current aspect ratio of the screen.
+     */
+    _aspectRatio: Symbol,
 
     /**
      * The children components of this view.
@@ -213,14 +219,18 @@ class VideoTransform extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { children, style } = this.props;
+        const { _aspectRatio, children, style } = this.props;
+        const isAspectRatioWide = _aspectRatio === ASPECT_RATIO_WIDE;
+
+        const videoTransformedViewContainerStyles
+            = isAspectRatioWide ? styles.videoTransformedViewContainerWide : styles.videoTransformedViewContainer;
 
         return (
             <View
                 onLayout = { this._onLayout }
                 pointerEvents = 'box-only'
                 style = { [
-                    styles.videoTransformedViewContainer,
+                    videoTransformedViewContainerStyles,
                     style
                 ] }
                 { ...this.gestureHandlers.panHandlers }>
@@ -371,7 +381,11 @@ class VideoTransform extends Component<Props, State> {
      * @returns {void}
      */
     _limitAndApplyTransformation(transform: Transform) {
+        const { _aspectRatio } = this.props;
         const { layout } = this.state;
+
+        const isAspectRatioWide = _aspectRatio === ASPECT_RATIO_WIDE;
+
 
         if (layout) {
             const { scale } = this.state.transform;
@@ -421,10 +435,10 @@ class VideoTransform extends Component<Props, State> {
                 }
             };
 
-            let _MAX_OFFSET = MAX_OFFSET;
+            let _MAX_OFFSET = isAspectRatioWide ? 0 : MAX_OFFSET;
 
             if (newScaleUnlimited < scale) {
-                // This is a negative scale event so we dynamycally reduce the
+                // This is a negative scale event so we dynamically reduce the
                 // MAX_OFFSET to get the screen back to the center on
                 // downscaling.
                 _MAX_OFFSET = Math.min(MAX_OFFSET, MAX_OFFSET * (newScale - 1));
@@ -718,6 +732,8 @@ function _mapDispatchToProps(dispatch: Dispatch<any>) {
  */
 function _mapStateToProps(state) {
     return {
+        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
+
         /**
          * The stored transforms retrieved from Redux to be initially applied to
          * different streams.
