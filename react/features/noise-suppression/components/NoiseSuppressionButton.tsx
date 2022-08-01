@@ -4,13 +4,10 @@ import { IState } from '../../app/types';
 import { translate } from '../../base/i18n';
 // @ts-ignore
 import {
-    IconShareAudio,
-    IconStopAudioShare
-    // @ts-ignore
-} from '../../base/icons';
-// @ts-ignore
-import { connect } from '../../base/redux';
-// @ts-ignore
+    IconNoiseSuppressionOn,
+    IconNoiseSuppressionOff
+} from '../../base/icons/svg/index';
+import { connect } from '../../base/redux/functions';
 import {
     AbstractButton,
     type AbstractButtonProps
@@ -35,10 +32,10 @@ type Props = AbstractButtonProps & {
  */
 class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
     accessibilityLabel = 'toolbar.accessibilityLabel.noiseSuppression';
-    icon = IconShareAudio;
+    icon = IconNoiseSuppressionOn;
     label = 'toolbar.noiseSuppression';
     tooltip = 'toolbar.noiseSuppression';
-    toggledIcon = IconStopAudioShare;
+    toggledIcon = IconNoiseSuppressionOff;
     toggledLabel = 'toolbar.disableNoiseSuppression';
 
     private props: Props;

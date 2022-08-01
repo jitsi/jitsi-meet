@@ -30,6 +30,16 @@ export class NoiseSuppressionEffect {
     private _noiseSuppressorNode: AudioWorkletNode;
 
     /**
+     * Audio track extracted from the original MediaStream to which the effect is applied.
+     */
+    private _originalMediaTrack: MediaStreamTrack;
+
+    /**
+     * Noise suppressed audio track extracted from the media destination node.
+     */
+    private _outputMediaTrack: MediaStreamTrack;
+
+    /**
      * Effect interface called by source JitsiLocalTrack.
      * Applies effect that uses a {@code NoiseSuppressor} service initialized with {@code RnnoiseProcessor}
      * for denoising.
@@ -38,10 +48,11 @@ export class NoiseSuppressionEffect {
      * @returns {MediaStream} - MediaStream containing both audio tracks mixed together.
      */
     startEffect(audioStream: MediaStream) : MediaStream {
+        this._originalMediaTrack = audioStream.getAudioTracks()[0];
         this._audioContext = new AudioContext();
-
         this._audioSource = this._audioContext.createMediaStreamSource(audioStream);
         this._audioDestination = this._audioContext.createMediaStreamDestination();
+        this._outputMediaTrack = this._audioDestination.stream.getAudioTracks()[0];
 
         const baseUrl = `${getBaseUrl()}libs/`;
         const workletUrl = `${baseUrl}noise-suppressor-worklet.min.js`;
@@ -56,6 +67,13 @@ export class NoiseSuppressionEffect {
         .catch(error => {
             logger.error('Error while adding audio worklet module: ', error);
         });
+
+        // Sync the effect track muted state with the original track state.
+        this._outputMediaTrack.enabled = this._originalMediaTrack.enabled;
+
+        // We enable the audio on the original track because mute/unmute action will only affect the audio destination
+        // output track from this point on.
+        this._originalMediaTrack.enabled = true;
 
         return this._audioDestination.stream;
     }
@@ -77,6 +95,9 @@ export class NoiseSuppressionEffect {
      * @returns {void}
      */
     stopEffect(): void {
+        // Sync original track muted state with effect state before removing the effect.
+        this._originalMediaTrack.enabled = this._outputMediaTrack.enabled;
+
         // Technically after this process the Audio Worklet along with it's resources should be garbage collected,
         // however on chrome there seems to be a problem as described here:
         // https://bugs.chromium.org/p/chromium/issues/detail?id=1298955

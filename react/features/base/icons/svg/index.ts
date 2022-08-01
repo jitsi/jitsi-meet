@@ -88,6 +88,8 @@ export { default as IconMuteEveryone } from './mute-everyone.svg';
 export { default as IconMuteEveryoneElse } from './mute-everyone-else.svg';
 export { default as IconMuteVideoEveryone } from './mute-video-everyone.svg';
 export { default as IconMuteVideoEveryoneElse } from './mute-video-everyone-else.svg';
+export { default as IconNoiseSuppressionOff } from './noise-suppression-off.svg';
+export { default as IconNoiseSuppressionOn } from './noise-suppression-on.svg';
 export { default as IconNotificationJoin } from './navigate_next.svg';
 export { default as IconOpenInNew } from './open_in_new.svg';
 export { default as IconOutlook } from './office365.svg';
