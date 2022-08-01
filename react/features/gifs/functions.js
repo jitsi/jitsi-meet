@@ -81,6 +81,10 @@ export function isGifEnabled(state) {
     const { disableThirdPartyRequests } = state['features/base/config'];
     const { giphy } = state['features/base/config'];
 
+    if (navigator.product === 'ReactNative' && window.JITSI_MEET_LITE_SDK) {
+        return false;
+    }
+
     return !disableThirdPartyRequests && giphy?.enabled && Boolean(giphy?.sdkKey);
 }
 
