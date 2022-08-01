@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import BaseThemeNative from '../../../ui/components/BaseTheme';
 
 /**
