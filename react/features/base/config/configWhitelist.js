@@ -199,6 +199,7 @@ export default [
     'preferredCodec',
     'prejoinConfig',
     'prejoinPageEnabled',
+    'recordingService',
     'requireDisplayName',
     'remoteVideoMenu',
     'roomPasswordNumberOfDigits',
