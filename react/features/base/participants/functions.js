@@ -244,7 +244,7 @@ export function getParticipantCount(stateful: Object | Function) {
         sortedRemoteVirtualScreenshareParticipants
     } = state['features/base/participants'];
 
-    if (getSourceNameSignalingFeatureFlag(state)) {
+    if (getMultipleVideoSupportFeatureFlag(state)) {
         return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size + (local ? 1 : 0);
     }
 
@@ -286,7 +286,7 @@ export function getFakeParticipants(stateful: Object | Function) {
 export function getRemoteParticipantCount(stateful: Object | Function) {
     const state = toState(stateful)['features/base/participants'];
 
-    if (getSourceNameSignalingFeatureFlag(state)) {
+    if (getMultipleVideoSupportFeatureFlag(state)) {
         return state.remote.size - state.sortedRemoteVirtualScreenshareParticipants.size;
     }
 
@@ -306,7 +306,7 @@ export function getParticipantCountWithFake(stateful: Object | Function) {
     const state = toState(stateful);
     const { local, localScreenShare, remote } = state['features/base/participants'];
 
-    if (getSourceNameSignalingFeatureFlag(state)) {
+    if (getMultipleVideoSupportFeatureFlag(state)) {
         return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
     }
 
