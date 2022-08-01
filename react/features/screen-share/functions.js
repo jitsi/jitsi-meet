@@ -1,6 +1,6 @@
 // @flow
 
-import { getMultipleVideoSupportFeatureFlag } from '../base/config';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config';
 import { isWindows } from '../base/environment';
 import { isMobileBrowser } from '../base/environment/utils';
 import { browser } from '../base/lib-jitsi-meet';
@@ -57,8 +57,7 @@ export function isScreenVideoShared(state: Object) {
     const tracks = state['features/base/tracks'];
     const localScreenshare = getLocalDesktopTrack(tracks);
 
-    if (getMultipleVideoSupportFeatureFlag(state)) {
-
+    if (getMultipleVideoSendingSupportFeatureFlag(state)) {
         return localScreenshare && localScreenshare.jitsiTrack && !localScreenshare.jitsiTrack.isMuted();
     }
     const localVideo = getLocalVideoTrack(tracks);
