@@ -76,6 +76,12 @@ import {
 } from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode, answerKnockingParticipant } from '../../react/features/lobby/actions';
 import {
+    hideNotification,
+    NOTIFICATION_TIMEOUT_TYPE,
+    NOTIFICATION_TYPE,
+    showNotification
+} from '../../react/features/notifications';
+import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
@@ -461,6 +467,58 @@ function initCommands() {
             logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stop'));
             APP.store.dispatch(stopSharedVideo());
+        },
+
+        /**
+         * Shows a custom in-meeting notification.
+         *
+         * @param { string } arg.title - Notification title.
+         * @param { string } arg.description - Notification description.
+         * @param { string } arg.uid - Optional unique identifier for the notification.
+         * @param { string } arg.type - Notification type, either `error`, `info`, `normal`, `success` or `warning`.
+         * Defaults to "normal" if not provided.
+         * @param { string } arg.timeout - Timeout type, either `short`, `medium`, `long` or `sticky`.
+         * Defaults to "short" if not provided.
+         * @returns {void}
+         */
+        'show-notification': ({
+            title,
+            description,
+            uid,
+            type = NOTIFICATION_TYPE.NORMAL,
+            timeout = NOTIFICATION_TIMEOUT_TYPE.SHORT
+        }) => {
+            const validTypes = Object.values(NOTIFICATION_TYPE);
+            const validTimeouts = Object.values(NOTIFICATION_TIMEOUT_TYPE);
+
+            if (!validTypes.includes(type)) {
+                logger.error(`Invalid notification type "${type}". Expecting one of ${validTypes}`);
+
+                return;
+            }
+
+            if (!validTimeouts.includes(timeout)) {
+                logger.error(`Invalid notification timeout "${timeout}". Expecting one of ${validTimeouts}`);
+
+                return;
+            }
+
+            APP.store.dispatch(showNotification({
+                uid,
+                title,
+                description,
+                appearance: type
+            }, timeout));
+        },
+
+        /**
+         * Removes a notification given a unique identifier.
+         *
+         * @param { string } uid - Unique identifier for the notification to be removed.
+         * @returns {void}
+         */
+        'hide-notification': uid => {
+            APP.store.dispatch(hideNotification(uid));
         },
 
         /**
