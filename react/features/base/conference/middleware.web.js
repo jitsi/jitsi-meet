@@ -7,7 +7,7 @@ import {
     setPrejoinPageVisibility,
     setSkipPrejoinOnReload
 } from '../../prejoin';
-import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share';
+import { isAudioOnlySharing, setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share';
 import { isScreenshotCaptureEnabled, toggleScreenshotCaptureSummary } from '../../screenshot-capture';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { setAudioOnly } from '../audio-only';
@@ -134,11 +134,18 @@ async function _maybeApplyAudioMixerEffect(desktopAudioTrack, state) {
 async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
     const { dispatch, getState } = store;
     const state = getState();
+    const audioOnlySharing = isAudioOnlySharing(state);
     const conference = getCurrentConference(state);
     const localAudio = getLocalJitsiAudioTrack(state);
     const localScreenshare = getLocalDesktopTrack(state['features/base/tracks']);
 
-    if (enabled) {
+    // ShareAudioDialog passes undefined when the user hits continue in the share audio demo modal. Audio screen-share
+    // state is toggled based on the current state of audio share in that case.
+    const enable = audioOnly
+        ? enabled ?? !audioOnlySharing
+        : enabled;
+
+    if (enable) {
         let tracks;
 
         try {
@@ -210,6 +217,6 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
     }
 
     if (audioOnly) {
-        dispatch(setScreenAudioShareState(enabled));
+        dispatch(setScreenAudioShareState(enable));
     }
 }
