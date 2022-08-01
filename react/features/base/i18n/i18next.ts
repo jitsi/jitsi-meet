@@ -1,6 +1,5 @@
-// @flow
-
-declare var APP: Object;
+// eslint-disable-next-line no-var
+declare var APP: any;
 
 import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
 import i18next from 'i18next';
@@ -11,6 +10,8 @@ import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
 import MAIN_RESOURCES from '../../../../lang/main.json';
 
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import languageDetector from './languageDetector';
 
 /**
@@ -76,7 +77,7 @@ const options = {
 
 i18next
     .use(navigator.product === 'ReactNative' ? {} : I18nextXHRBackend)
-    .use(languageDetector)
+    .use(languageDetector) // @ts-ignore
     .init(options);
 
 // Add default language which is preloaded from the source code.

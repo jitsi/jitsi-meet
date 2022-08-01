@@ -1,5 +1,3 @@
-// @flow
-
 import moment from 'moment';
 
 import i18next from './i18next';
@@ -94,10 +92,13 @@ export function getLocalizedDurationFormatter(duration: number) {
     // showing the hour and we want to include the hour if the conference is
     // more than an hour long
 
+    // @ts-ignore
     if (moment.duration(duration).format('h') !== '0') {
+        // @ts-ignore
         return moment.duration(duration).format('h:mm:ss');
     }
 
+    // @ts-ignore
     return moment.duration(duration).format('mm:ss', { trim: false });
 }
 

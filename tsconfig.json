@@ -10,7 +10,8 @@
         "moduleResolution": "Node",
         "strict": true,
         "noImplicitAny": true,
-        "strictPropertyInitialization": false
+        "strictPropertyInitialization": false,
+        "resolveJsonModule": true
     },
     "exclude": [
         "node_modules"

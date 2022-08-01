@@ -1,12 +1,10 @@
-/* @flow */
-
 import BrowserLanguageDetector from 'i18next-browser-languagedetector';
 
 import configLanguageDetector from './configLanguageDetector';
 import customNavigatorDetector from './customNavigatorDetector';
 
-
-declare var interfaceConfig: Object;
+// eslint-disable-next-line no-var
+declare var interfaceConfig: any;
 
 /**
  * The ordered list (by name) of language detectors to be utilized as backends
@@ -41,7 +39,10 @@ const languageDetector
 
 // Add the language detector which looks the language up in the config. Its
 // order has already been established above.
+// @ts-ignore
 languageDetector.addDetector(customNavigatorDetector);
+
+// @ts-ignore
 languageDetector.addDetector(configLanguageDetector);
 
 export default languageDetector;
