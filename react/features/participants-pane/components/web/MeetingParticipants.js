@@ -10,10 +10,7 @@ import useContextMenu from '../../../base/components/context-menu/useContextMenu
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media';
-import {
-    getParticipantById,
-    getParticipantCountWithFake
-} from '../../../base/participants';
+import { getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import Input from '../../../base/ui/components/web/Input';
 import { normalizeAccents } from '../../../base/util/strings';
@@ -170,14 +167,9 @@ function _mapStateToProps(state): Object {
         return !participant.isVirtualScreenshareParticipant;
     });
 
-    // This is very important as getRemoteParticipants is not changing its reference object
-    // and we will not re-render on change, but if count changes we will do
-    const participantsCount = getParticipantCountWithFake(state);
-
+    const participantsCount = sortedParticipantIds.length;
     const showInviteButton = shouldRenderInviteButton(state) && isToolbarButtonEnabled('invite', state);
-
     const overflowDrawer = showOverflowDrawer(state);
-
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];
 
