@@ -40,6 +40,7 @@ const commands = {
     email: 'email',
     grantModerator: 'grant-moderator',
     hangup: 'video-hangup',
+    hideNotification: 'hide-notification',
     initiatePrivateChat: 'initiate-private-chat',
     joinBreakoutRoom: 'join-breakout-room',
     localSubject: 'local-subject',

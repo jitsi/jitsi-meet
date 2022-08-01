@@ -75,7 +75,12 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode, answerKnockingParticipant } from '../../react/features/lobby/actions';
-import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE, showNotification } from '../../react/features/notifications';
+import {
+    hideNotification,
+    NOTIFICATION_TIMEOUT_TYPE,
+    NOTIFICATION_TYPE,
+    showNotification
+} from '../../react/features/notifications';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -469,15 +474,17 @@ function initCommands() {
          *
          * @param { string } arg.title - Notification title.
          * @param { string } arg.description - Notification description.
+         * @param { string } arg.uid - Optional unique identifier for the notification.
          * @param { string } arg.type - Notification type, either `error`, `info`, `normal`, `success` or `warning`.
-         *                              Defaults to "normal" if not provided.
+         * Defaults to "normal" if not provided.
          * @param { string } arg.timeout - Timeout type, either `short`, `medium`, `long` or `sticky`.
-         *                                 Defaults to "short" if not provided.
+         * Defaults to "short" if not provided.
          * @returns {void}
          */
         'show-notification': ({
             title,
             description,
+            uid,
             type = NOTIFICATION_TYPE.NORMAL,
             timeout = NOTIFICATION_TIMEOUT_TYPE.SHORT
         }) => {
@@ -497,10 +504,21 @@ function initCommands() {
             }
 
             APP.store.dispatch(showNotification({
+                uid,
                 title,
                 description,
                 appearance: type
             }, timeout));
+        },
+
+        /**
+         * Removes a notification given a unique identifier.
+         *
+         * @param { string } uid - Unique identifier for the notification to be removed.
+         * @returns {void}
+         */
+        'hide-notification': uid => {
+            APP.store.dispatch(hideNotification(uid));
         },
 
         /**
