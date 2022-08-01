@@ -1,26 +1,34 @@
-// @flow
-
-/* eslint-disable react/jsx-handler-names */
+/* eslint-disable lines-around-comment */
 import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
-import { batch } from 'react-redux';
+import { batch, connect } from 'react-redux';
 
-import ConnectionIndicatorContent from
-    '../../../../features/connection-indicator/components/web/ConnectionIndicatorContent';
 import { isMobileBrowser } from '../../../base/environment/utils';
+// @ts-ignore
 import { translate } from '../../../base/i18n';
-import { Icon, IconHorizontalPoints } from '../../../base/icons';
+import { IconHorizontalPoints } from '../../../base/icons/svg/index';
+// @ts-ignore
 import { getParticipantById } from '../../../base/participants';
+// @ts-ignore
 import { Popover } from '../../../base/popover';
-import { connect } from '../../../base/redux';
+// @ts-ignore
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
+import Button from '../../../base/ui/components/web/Button';
+import ConnectionIndicatorContent from
+// @ts-ignore
+    '../../../connection-indicator/components/web/ConnectionIndicatorContent';
+// @ts-ignore
 import { THUMBNAIL_TYPE } from '../../../filmstrip';
+// @ts-ignore
 import { renderConnectionStatus } from '../../actions.web';
 
+// @ts-ignore
 import ParticipantContextMenu from './ParticipantContextMenu';
+// @ts-ignore
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 
 
+// eslint-disable-next-line no-var, @typescript-eslint/no-unused-vars
 declare var $: Object;
 
 /**
@@ -30,19 +38,9 @@ declare var $: Object;
 type Props = {
 
     /**
-     * Hides popover.
+     * Whether the remote video context menu is disabled.
      */
-    hidePopover: Function,
-
-    /**
-     * Whether the popover is visible or not.
-     */
-    popoverVisible: boolean,
-
-    /**
-     * Shows popover.
-     */
-    showPopover: Function,
+    _disabled: Boolean,
 
     /**
      * The position relative to the trigger the remote menu should display
@@ -62,9 +60,19 @@ type Props = {
     _participant: Object,
 
     /**
+     * The ID for the participant on which the remote video menu will act.
+     */
+    _participantDisplayName: string,
+
+    /**
      * The current state of the participant's remote control session.
      */
     _remoteControlState: number,
+
+    /**
+     * Whether the popover should render the Connection Info stats.
+     */
+    _showConnectionInfo: Boolean,
 
     /**
      * Whether or not the button should be visible.
@@ -74,7 +82,7 @@ type Props = {
     /**
      * An object containing the CSS classes.
      */
-    classes: Object,
+    classes: any,
 
     /**
      * The redux dispatch function.
@@ -82,37 +90,40 @@ type Props = {
     dispatch: Function,
 
     /**
+     * Hides popover.
+     */
+    hidePopover: Function,
+
+    /**
      * The ID for the participant on which the remote video menu will act.
      */
     participantID: string,
 
     /**
-     * Whether the remote video context menu is disabled.
+     * Whether the popover is visible or not.
      */
-    _disabled: Boolean,
+    popoverVisible: boolean,
 
     /**
-     * The ID for the participant on which the remote video menu will act.
+     * Shows popover.
      */
-    _participantDisplayName: string,
-
-    /**
-     * Whether the popover should render the Connection Info stats.
-     */
-    _showConnectionInfo: Boolean,
+    showPopover: Function,
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The type of the thumbnail.
+     */
+    thumbnailType: string
 };
 
-const styles = theme => {
+const styles = () => {
     return {
         triggerButton: {
-            backgroundColor: theme.palette.action01,
-            padding: '3px',
-            display: 'inline-block',
+            padding: '3px !important',
             borderRadius: '4px'
         },
 
@@ -188,23 +199,15 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 position = { this.props._menuPosition }
                 visible = { popoverVisible }>
                 {!_overflowDrawer && buttonVisible && !_disabled && (
-                    <span
+                    !isMobileBrowser() && <Button
+                        accessibilityLabel = { this.props.t('dialog.remoteUserControls', { username }) }
                         className = { classes.triggerButton }
-                        role = 'button'>
-                        {!isMobileBrowser() && <Icon
-                            ariaLabel = { this.props.t('dialog.remoteUserControls', { username }) }
-                            size = { 18 }
-                            src = { IconHorizontalPoints }
-                            tabIndex = { 0 }
-                            title = { this.props.t('dialog.remoteUserControls', { username }) } />
-                        }
-                    </span>
+                        icon = { IconHorizontalPoints }
+                        size = 'small' />
                 )}
             </Popover>
         );
     }
-
-    _onPopoverOpen: () => void;
 
     /**
      * Disable and hide toolbox while context menu is open.
@@ -217,8 +220,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         showPopover();
         dispatch(setParticipantContextMenuOpen(true));
     }
-
-    _onPopoverClose: () => void;
 
     /**
      * Render normal context menu next time popover dialog opens.
@@ -264,7 +265,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: any, ownProps: Partial<Props>) {
     const { participantID, thumbnailType } = ownProps;
     let _remoteControlState = null;
     const participant = getParticipantById(state, participantID);
@@ -317,4 +318,5 @@ function _mapStateToProps(state, ownProps) {
 }
 
 export default translate(connect(_mapStateToProps)(
+    // @ts-ignore
     withStyles(styles)(RemoteVideoMenuTriggerButton)));

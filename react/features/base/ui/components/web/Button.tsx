@@ -203,6 +203,7 @@ const Button = ({
             disabled = { disabled }
             { ...(id ? { id } : {}) }
             onClick = { onClick }
+            title = { accessibilityLabel }
             type = { isSubmit ? 'submit' : 'button' }>
             {icon && <Icon
                 size = { 20 }

@@ -1,8 +1,7 @@
-// @flow
-
 import React from 'react';
 
-import { LocalVideoMenuTriggerButton, RemoteVideoMenuTriggerButton } from '../../../video-menu';
+import LocalVideoMenuTriggerButton from '../../../video-menu/components/web/LocalVideoMenuTriggerButton';
+import RemoteVideoMenuTriggerButton from '../../../video-menu/components/web/RemoteVideoMenuTriggerButton';
 
 type Props = {
 

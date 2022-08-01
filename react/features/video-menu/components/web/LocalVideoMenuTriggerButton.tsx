@@ -1,30 +1,46 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
-import { batch } from 'react-redux';
+import { batch, connect } from 'react-redux';
 
+// @ts-ignore
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
+// @ts-ignore
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
+// @ts-ignore
 import { isMobileBrowser } from '../../../base/environment/utils';
+// @ts-ignore
 import { translate } from '../../../base/i18n';
-import { Icon, IconHorizontalPoints } from '../../../base/icons';
+import { IconHorizontalPoints } from '../../../base/icons/svg/index';
 import {
     getLocalParticipant
+    // @ts-ignore
 } from '../../../base/participants';
+// @ts-ignore
 import { Popover } from '../../../base/popover';
-import { connect } from '../../../base/redux';
+// @ts-ignore
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
+// @ts-ignore
 import { getHideSelfView } from '../../../base/settings';
+// @ts-ignore
 import { getLocalVideoTrack } from '../../../base/tracks';
+import Button from '../../../base/ui/components/web/Button';
+// @ts-ignore
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
+// @ts-ignore
 import { THUMBNAIL_TYPE } from '../../../filmstrip';
+// @ts-ignore
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
+// @ts-ignore
 import { renderConnectionStatus } from '../../actions.web';
 
+// @ts-ignore
 import ConnectionStatusButton from './ConnectionStatusButton';
+// @ts-ignore
 import FlipLocalVideoButton from './FlipLocalVideoButton';
+// @ts-ignore
 import HideSelfViewVideoButton from './HideSelfViewVideoButton';
+// @ts-ignore
 import TogglePinToStageButton from './TogglePinToStageButton';
 
 /**
@@ -32,36 +48,6 @@ import TogglePinToStageButton from './TogglePinToStageButton';
  * {@link LocalVideoMenuTriggerButton}.
  */
 type Props = {
-
-    /**
-     * Whether or not the button should be visible.
-     */
-    buttonVisible: boolean,
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: Object,
-
-    /**
-     * The redux dispatch function.
-     */
-    dispatch: Function,
-
-    /**
-     * Hides popover.
-     */
-    hidePopover: Function,
-
-    /**
-     * Whether the popover is visible or not.
-     */
-    popoverVisible: boolean,
-
-    /**
-     * Shows popover.
-     */
-    showPopover: Function,
 
     /**
      * The id of the local participant.
@@ -101,17 +87,50 @@ type Props = {
     _showPinToStage: boolean,
 
     /**
+     * Whether or not the button should be visible.
+     */
+    buttonVisible: boolean,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: any,
+
+    /**
+     * The redux dispatch function.
+     */
+    dispatch: Function,
+
+    /**
+     * Hides popover.
+     */
+    hidePopover: Function,
+
+    /**
+     * Whether the popover is visible or not.
+     */
+    popoverVisible: boolean,
+
+    /**
+     * Shows popover.
+     */
+    showPopover: Function,
+
+    /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The type of the thumbnail.
+     */
+    thumbnailType: string
 };
 
-const styles = theme => {
+const styles = () => {
     return {
         triggerButton: {
-            backgroundColor: theme.palette.action01,
-            padding: '3px',
-            display: 'inline-block',
+            padding: '3px !important',
             borderRadius: '4px'
         },
 
@@ -215,25 +234,17 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
                     overflowDrawer = { _overflowDrawer }
                     position = { _menuPosition }
                     visible = { popoverVisible }>
-                    {!_overflowDrawer && buttonVisible && (
-                        <span
+                    {!_overflowDrawer && buttonVisible && !isMobileBrowser() && (
+                        <Button
+                            accessibilityLabel = { t('dialog.localUserControls') }
                             className = { classes.triggerButton }
-                            role = 'button'>
-                            {!isMobileBrowser() && <Icon
-                                ariaLabel = { t('dialog.localUserControls') }
-                                size = { 18 }
-                                src = { IconHorizontalPoints }
-                                tabIndex = { 0 }
-                                title = { t('dialog.localUserControls') } />
-                            }
-                        </span>
+                            icon = { IconHorizontalPoints }
+                            size = 'small' />
                     )}
                 </Popover>
                 : null
         );
     }
-
-    _onPopoverOpen: () => void;
 
     /**
      * Disable and hide toolbox while context menu is open.
@@ -246,8 +257,6 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
         showPopover();
         dispatch(setParticipantContextMenuOpen(true));
     }
-
-    _onPopoverClose: () => void;
 
     /**
      * Render normal context menu next time popover dialog opens.
@@ -273,7 +282,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: any, ownProps: Partial<Props>) {
     const { thumbnailType } = ownProps;
     const localParticipant = getLocalParticipant(state);
     const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];
@@ -309,4 +318,5 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
+// @ts-ignore
 export default translate(connect(_mapStateToProps)(withStyles(styles)(LocalVideoMenuTriggerButton)));
