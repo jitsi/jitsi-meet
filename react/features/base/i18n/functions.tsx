@@ -1,5 +1,5 @@
 import React from 'react';
-import { withTranslation } from 'react-i18next';
+import { WithTranslation, withTranslation } from 'react-i18next';
 
 import i18next from './i18next';
 
@@ -24,7 +24,7 @@ export async function changeLanguageBundle(language: string, url: string) {
  * @returns {Component} The React Component which wraps {@link component} and
  * enables translations in it.
  */
-export function translate(component: any) {
+export function translate<P extends WithTranslation>(component: React.ComponentType<P>) {
     // Use the default list of namespaces.
     return withTranslation([ 'main', 'languages', 'countries' ])(component);
 }
