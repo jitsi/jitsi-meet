@@ -145,6 +145,11 @@ const styles = theme => {
                 flex: 1
             },
 
+            '& .settings-checkbox': {
+                display: 'flex',
+                marginBottom: `${theme.spacing(2)}px`
+            },
+
             '& .moderator-settings-wrapper': {
                 paddingTop: '20px'
             },
