@@ -64,7 +64,6 @@ export { default as IconHangup } from './hangup.svg';
 export { default as IconHelp } from './help.svg';
 export { default as IconHighlight } from './highlight.svg';
 export { default as IconHome } from './home.svg';
-export { default as IconHorizontalLine } from './horizontal-line.svg';
 export { default as IconHorizontalPoints } from './horizontal-points.svg';
 export { default as IconInfo } from './info.svg';
 export { default as IconInviteMore } from './user-plus.svg';
