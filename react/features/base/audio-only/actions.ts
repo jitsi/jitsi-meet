@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment */
 import type { Dispatch } from 'redux';
 
+// @ts-ignore
 import UIEvents from '../../../../service/UI/UIEvents';
 // @ts-ignore
 import { createAudioOnlyChangedEvent, sendAnalytics } from '../../analytics';
