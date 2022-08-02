@@ -16,6 +16,7 @@ import { ActionButton, InputField, PreMeetingScreen } from '../../base/premeetin
 import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
 import { getLocalJitsiVideoTrack } from '../../base/tracks';
+import { getIsLobbyVisible } from '../../lobby/functions';
 import { PasswordRequiredPrompt } from '../../room-lock/components';
 import {
     joinConference as joinConferenceAction,
@@ -459,8 +460,10 @@ function mapStateToProps(state): Object {
     const name = getDisplayName(state);
     const showErrorOnJoin = isDisplayNameRequired(state) && !name;
     const { id: participantId } = getLocalParticipant(state);
+    const isLobbyVisible = getIsLobbyVisible(state);
     const isAuthInProgress = isDialogOpen(state, WaitForOwnerDialog)
-        || isDialogOpen(state, LoginDialog) || isDialogOpen(state, PasswordRequiredPrompt);
+        || isDialogOpen(state, LoginDialog) || isDialogOpen(state, PasswordRequiredPrompt)
+        || isLobbyVisible;
 
     return {
         canEditDisplayName: isPrejoinDisplayNameVisible(state),
