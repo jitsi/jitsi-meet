@@ -28,30 +28,21 @@
 }
 
 .poll-answer-container {
+    display: flex;
+    padding: 4px;
     background: #3D3D3D;
     border-radius: 3px;
     margin-bottom: 8px;
 
     @media (max-width: 580px) {
-      &> span {
-        padding: 8px 0;
-      }
+        &> span {
+            padding: 8px 0;
+        }
 
-      svg {
-        margin-top: 6px;
-      }
+        svg {
+            margin-top: 6px;
+        }
     }
-}
-
-.poll-answer-option {
-   font-weight: 400;
-   display: block;
-   margin: 4px;
-
-   @media (max-width: 580px) {
-      font-size: 16px;
-      margin: 11px 8px
-   }
 }
 
 .poll-answer-field-list, .poll-answer-list, .poll-result-list {
