@@ -1,14 +1,18 @@
-/* @flow */
-
+/* eslint-disable lines-around-comment */
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
+// @ts-ignore
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
+// @ts-ignore
 import { translate } from '../../base/i18n';
-import { Switch } from '../../base/react';
-import { connect } from '../../base/redux';
+import { connect } from '../../base/redux/functions';
+import Switch from '../../base/ui/components/web/Switch';
+// @ts-ignore
 import { toggleE2EE } from '../actions';
+// @ts-ignore
 import { MAX_MODE } from '../constants';
+// @ts-ignore
 import { doesEveryoneSupportE2EE } from '../functions';
 
 type Props = {
@@ -21,7 +25,7 @@ type Props = {
     /**
      * Custom e2ee labels.
      */
-    _e2eeLabels: Object,
+    _e2eeLabels: any,
 
     /**
      * Whether the switch is currently enabled or not.
@@ -69,7 +73,7 @@ class E2EESection extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, state: Object) {
+    static getDerivedStateFromProps(props: Props, state: State) {
         if (props._toggled !== state.toggled) {
 
             return {
@@ -124,16 +128,14 @@ class E2EESection extends Component<Props, State> {
                         { label }
                     </label>
                     <Switch
+                        checked = { toggled }
                         disabled = { !_enabled }
                         id = 'e2ee-section-switch'
-                        onValueChange = { this._onToggle }
-                        value = { toggled } />
+                        onChange = { this._onToggle } />
                 </div>
             </div>
         );
     }
-
-    _onToggle: () => void;
 
     /**
      * Callback to be invoked when the user toggles E2EE on or off.
@@ -160,11 +162,11 @@ class E2EESection extends Component<Props, State> {
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: any) {
     const { enabled: e2eeEnabled, maxMode } = state['features/e2ee'];
     const { e2eeLabels } = state['features/base/config'];
 
-    let descriptionResource = '';
+    let descriptionResource: string|undefined = '';
 
     if (e2eeLabels) {
         // When e2eeLabels are present, the descriptionResouse is ignored.

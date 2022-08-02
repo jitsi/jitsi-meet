@@ -1,12 +1,15 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React, { PureComponent } from 'react';
 
+// @ts-ignore
 import { translate } from '../../../base/i18n';
+// @ts-ignore
 import { isLocalParticipantModerator } from '../../../base/participants';
-import { Switch } from '../../../base/react';
-import { connect } from '../../../base/redux';
+import { connect } from '../../../base/redux/functions';
+import Switch from '../../../base/ui/components/web/Switch';
+// @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
+// @ts-ignore
 import { toggleLobbyMode } from '../../actions';
 
 type Props = {
@@ -64,7 +67,7 @@ class LobbySection extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, state: Object) {
+    static getDerivedStateFromProps(props: Props, state: State) {
         if (props._lobbyEnabled !== state.lobbyEnabled) {
 
             return {
@@ -100,17 +103,15 @@ class LobbySection extends PureComponent<Props, State> {
                             { t('lobby.toggleLabel') }
                         </label>
                         <Switch
+                            checked = { this.state.lobbyEnabled }
                             id = 'lobby-section-switch'
-                            onValueChange = { this._onToggleLobby }
-                            value = { this.state.lobbyEnabled } />
+                            onChange = { this._onToggleLobby } />
                     </div>
                 </div>
                 <div className = 'separator-line' />
             </>
         );
     }
-
-    _onToggleLobby: () => void;
 
     /**
      * Callback to be invoked when the user toggles the lobby feature on or off.
@@ -134,14 +135,12 @@ class LobbySection extends PureComponent<Props, State> {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function mapStateToProps(state: Object): $Shape<Props> {
+function mapStateToProps(state: any): Partial<Props> {
     const { conference } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
 
     return {
         _lobbyEnabled: state['features/lobby'].lobbyEnabled,
-
-        // $FlowExpectedError
         _visible: conference?.isLobbySupported() && isLocalParticipantModerator(state)
             && !hideLobbyButton && !isInBreakoutRoom(state)
     };
