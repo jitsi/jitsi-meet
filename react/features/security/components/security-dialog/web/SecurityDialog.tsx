@@ -1,22 +1,31 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 
+// @ts-ignore
 import { setPassword as setPass } from '../../../../base/conference';
+// @ts-ignore
 import { Dialog } from '../../../../base/dialog';
+// @ts-ignore
 import { isLocalParticipantModerator } from '../../../../base/participants';
-import { connect } from '../../../../base/redux';
+// @ts-ignore
 import { E2EESection } from '../../../../e2ee/components';
+// @ts-ignore
 import { LobbySection } from '../../../../lobby';
 
 import PasswordSection from './PasswordSection';
+
+export interface NotifyClick {
+    key: string;
+    preventExecution: boolean;
+}
 
 type Props = {
 
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-     _buttonsWithNotifyClick: Array<string | Object>,
+    _buttonsWithNotifyClick: Array<string | NotifyClick>,
 
     /**
      * Whether or not the current user can modify the current password.
@@ -43,7 +52,7 @@ type Props = {
     /**
      * The number of digits to be used in the password.
      */
-    _passwordNumberOfDigits: ?number,
+    _passwordNumberOfDigits?: number,
 
     /**
      * Indicates whether e2ee will be displayed or not.
@@ -117,7 +126,7 @@ function SecurityDialog({
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: any) {
     const {
         conference,
         e2eeSupported,
