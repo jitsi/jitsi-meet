@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component } from 'react';
 
 import {
@@ -12,7 +10,6 @@ import {
 } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import {
-    Button,
     Container,
     Image,
     LoadingIndicator,
@@ -21,6 +18,8 @@ import {
 } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
+import { Button } from '../../../base/ui';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
@@ -435,10 +434,9 @@ class StartRecordingDialogContent extends Component<Props> {
             switchContent = (
                 <Container className = 'recording-switch'>
                     <Button
-                        onValueChange = { this._onSignOut }
-                        style = { styles.signButton }>
-                        { t('recording.signOut') }
-                    </Button>
+                        label = { 'recording.signOut' }
+                        onPress = { this._onSignOut }
+                        type = { BUTTON_TYPES.SECONDARY } />
                 </Container>
             );
 
@@ -446,10 +444,9 @@ class StartRecordingDialogContent extends Component<Props> {
             switchContent = (
                 <Container className = 'recording-switch'>
                     <Button
-                        onValueChange = { this._onSignIn }
-                        style = { styles.signButton }>
-                        { t('recording.signIn') }
-                    </Button>
+                        label = { 'recording.signIn' }
+                        onPress = { this._onSignIn }
+                        type = { BUTTON_TYPES.PRIMARY } />
                 </Container>
             );
         }
