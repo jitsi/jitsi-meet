@@ -146,14 +146,6 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
         color: BaseTheme.palette.text01
     },
 
-    signButton: {
-        backgroundColor: BaseTheme.palette.screen01Header,
-        color: BaseTheme.palette.ui12,
-        fontSize: 16,
-        borderRadius: BaseTheme.shape.borderRadius,
-        padding: BoxModel.padding * 0.5
-    },
-
     switch: {
         color: BaseTheme.palette.ui12
     },
