@@ -12,6 +12,8 @@ import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { FEATURES } from '../../../jaas/constants';
 import { getActiveSession } from '../../functions';
 
+import { getLiveStreaming } from './functions';
+
 
 /**
  * The type of the React {@code Component} props of
@@ -141,12 +143,12 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         // its own to be visible or not.
         const isModerator = isLocalParticipantModerator(state);
         const {
-            enableFeaturesBasedOnToken,
-            liveStreamingEnabled
+            enableFeaturesBasedOnToken
         } = state['features/base/config'];
+        const liveStreaming = getLiveStreaming(state);
         const { features = {} } = getLocalParticipant(state);
 
-        visible = isModerator && liveStreamingEnabled;
+        visible = isModerator && liveStreaming.enabled;
 
         if (enableFeaturesBasedOnToken) {
             visible = visible && String(features.livestreaming) === 'true';

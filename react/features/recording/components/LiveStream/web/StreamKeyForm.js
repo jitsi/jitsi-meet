@@ -4,10 +4,10 @@ import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
+import { connect } from '../../../../base/redux';
 import AbstractStreamKeyForm, {
-    type Props
+    type Props, _mapStateToProps
 } from '../AbstractStreamKeyForm';
-import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.
@@ -62,7 +62,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                                 </span>
                                 : null
                         }
-                        { this.helpURL
+                        { this.props._liveStreaming.helpURL
                             ? <a
                                 aria-label = { t('liveStreaming.streamIdHelp') }
                                 className = 'helper-link'
@@ -77,14 +77,14 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                     </div>
                     <a
                         className = 'helper-link'
-                        href = { YOUTUBE_TERMS_URL }
+                        href = { this.props._liveStreaming.termsURL }
                         rel = 'noopener noreferrer'
                         target = '_blank'>
                         { t('liveStreaming.youtubeTerms') }
                     </a>
                     <a
                         className = 'helper-link'
-                        href = { GOOGLE_PRIVACY_POLICY }
+                        href = { this.props._liveStreaming.dataPrivacyURL }
                         rel = 'noopener noreferrer'
                         target = '_blank'>
                         { t('liveStreaming.googlePrivacyPolicy') }
@@ -106,7 +106,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @returns {void}
      */
     _onOpenHelp() {
-        window.open(this.helpURL, '_blank', 'noopener');
+        window.open(this.props._liveStreaming.helpURL, '_blank', 'noopener');
     }
 
     _onOpenHelpKeyPress: () => void;
@@ -128,4 +128,4 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
     }
 }
 
-export default translate(StreamKeyForm);
+export default translate(connect(_mapStateToProps)(StreamKeyForm));

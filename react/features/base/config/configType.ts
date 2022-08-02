@@ -332,6 +332,13 @@ export interface IConfig {
     lastNLimits?: {
         [key: number]: number;
     };
+    liveStreaming?: {
+        dataPrivacyLink?: string;
+        enabled?: boolean;
+        helpLink?: string;
+        termsLink?: string;
+        validatorRegExpString?: string;
+    };
     liveStreamingEnabled?: boolean;
     localRecording?: {
         disable?: boolean;

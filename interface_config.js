@@ -90,7 +90,6 @@ var interfaceConfig = {
     JITSI_WATERMARK_LINK: 'https://jitsi.org',
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
-    LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live', // Documentation reference for the live streaming feature.
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
 
     /**
@@ -247,6 +246,10 @@ var interfaceConfig = {
 
     // Moved to config.js as `toolbarConfig.initialTimeout`.
     // INITIAL_TOOLBAR_TIMEOUT: 20000,
+
+    // Please use `liveStreaming.helpLink` from config.js
+    // Documentation reference for the live streaming feature.
+    // LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live',
 
     // Moved to config.js as `toolbarConfig.alwaysVisible`.
     // TOOLBAR_ALWAYS_VISIBLE: false,
