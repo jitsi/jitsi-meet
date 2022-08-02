@@ -6,7 +6,7 @@ import { translate } from '../../../base/i18n';
 // @ts-ignore
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux/functions';
-import Toggle from '../../../base/ui/components/web/Toggle';
+import Switch from '../../../base/ui/components/web/Switch';
 // @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 // @ts-ignore
@@ -102,7 +102,7 @@ class LobbySection extends PureComponent<Props, State> {
                         <label htmlFor = 'lobby-section-switch'>
                             { t('lobby.toggleLabel') }
                         </label>
-                        <Toggle
+                        <Switch
                             checked = { this.state.lobbyEnabled }
                             id = 'lobby-section-switch'
                             onChange = { this._onToggleLobby } />

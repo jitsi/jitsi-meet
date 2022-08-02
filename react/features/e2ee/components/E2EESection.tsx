@@ -7,7 +7,7 @@ import { createE2EEEvent, sendAnalytics } from '../../analytics';
 // @ts-ignore
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux/functions';
-import Toggle from '../../base/ui/components/web/Toggle';
+import Switch from '../../base/ui/components/web/Switch';
 // @ts-ignore
 import { toggleE2EE } from '../actions';
 // @ts-ignore
@@ -127,7 +127,7 @@ class E2EESection extends Component<Props, State> {
                     <label htmlFor = 'e2ee-section-switch'>
                         { label }
                     </label>
-                    <Toggle
+                    <Switch
                         checked = { toggled }
                         disabled = { !_enabled }
                         id = 'e2ee-section-switch'

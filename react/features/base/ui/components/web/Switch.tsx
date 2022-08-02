@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 
 import { isMobileBrowser } from '../../../environment/utils';
 
-interface ToggleProps {
+interface SwitchProps {
 
     /**
      * Whether or not the toggle is on.
@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme: any) => {
     };
 });
 
-const Toggle = ({ id, checked, disabled, onChange }: ToggleProps) => {
+const Switch = ({ id, checked, disabled, onChange }: SwitchProps) => {
     const styles = useStyles();
     const isMobile = isMobileBrowser();
 
@@ -101,7 +101,7 @@ const Toggle = ({ id, checked, disabled, onChange }: ToggleProps) => {
     }, []);
 
     return (<label
-        className = { clsx(styles.container, checked && styles.containerOn,
+        className = { clsx('toggle-container', styles.container, checked && styles.containerOn,
             isMobile && 'is-mobile', disabled && 'disabled') }>
         <input
             type = 'checkbox'
@@ -114,4 +114,4 @@ const Toggle = ({ id, checked, disabled, onChange }: ToggleProps) => {
     </label>);
 };
 
-export default Toggle;
+export default Switch;
