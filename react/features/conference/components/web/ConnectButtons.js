@@ -2,9 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { translate } from '../../../base/i18n';
-import { Icon, IconAdd, IconGem, IconBeer, IconEightStreek, IconCyclone, IconDollarGreen } from '../../../base/icons';
+import {
+    Icon,
+    IconAdd,
+    IconGem,
+    IconBeer,
+    IconEightStreek,
+    IconCyclone,
+    IconDollarGreen
+} from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
+import {
+    isButtonEnabled,
+    isToolboxVisible
+} from '../../../toolbox/functions.web';
 // import { Modal, Button } from "react-bootstrap";
 import { openDialog, toggleDialog } from '../../../base/dialog';
 import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../base/flags';
@@ -62,11 +73,12 @@ const listOfAds = [];
 
 const ConnectButtons = (props: Props) => {
 
-    const [timer, setTimer] = useState(0);
-    const [adsList, setAdsList] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [ timer, setTimer ] = useState(0);
+    const [ adsList, setAdsList ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
 
-    const meetingName = props._meetingName.trim()
+
+    const meetingName = props._meetingName.trim();
 
     useEffect(() => {
         let cancel = false;
@@ -74,58 +86,76 @@ const ConnectButtons = (props: Props) => {
             setLoading(true);
             const res = {
                 roomName: meetingName
-            }
+            };
             let webAdsData = await API.request('GET', 'iconAds', res);
-            if(cancel) return;
+            if (cancel) {
+                return;
+            }
             if (webAdsData.status === 1) {
                 for (let i = 0; i < webAdsData.data.length; i++) {
                     listOfAds.push(webAdsData.data[i]);
                 }
-                setAdsList(listOfAds)
+                setAdsList(listOfAds);
                 setLoading(false);
             }
-        })()
+        })();
         return () => {
             cancel = true;
-        }
-    }, [adsList])
+        };
+    }, [ adsList ]);
 
 
-     setTimeout(() => {
-        setTimer(timer + 2 > adsList.length - 1 ? 0 : timer + 2)
-    }, 10000)
+    setTimeout(() => {
+        setTimer(timer + 2 > adsList.length - 1 ? 0 : timer + 2);
+    }, 10000);
     return (
         <div style={{ display: 'flex' }}
              className={`invite-more-container${true ? '' : ' elevated'}`}>
             {adsList.map((value, index) => {
+                console.log('urll', value.url);
+                console.log('urll', value);
                 return (
                     <div key={index}>
                         {timer == index || timer + 1 == index ?
-                            <div>
+                            <div style={{
+                                flexDirection: 'row',
+                                height: '50px',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginLeft: '16px'
+
+                            }}>
                                 <div style={{
-                                    borderRadius: '40%',
-                                    margin: '10px'
-                                }}
-                                     className='invite-more-button'
-                                     onClick={() => {
-                                         window.open(value.url)
-                                     }}>
-                                    <img src={value.iconUrl}/>
-                                </div>
-                                <div>
+                                    marginTop: '3px',
+                                    marginBottom: '3px',
+                                    height: '34px',
+                                    marginLeft: '3px',
+                                    marginRight: '3px',
+                                    width: '49px',
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}>
+                                    <img style={{
+                                        height: '28px',
+                                        width: '40px'
+                                    }}
+                                         onClick={() => {
+                                             window.open(value.url);
+                                         }}
+                                         src={value.iconUrl}/>
                                     <p style={{
                                         textAlign: 'center',
-                                        fontWeight: 'bold',
-                                        color:'#000'
+                                        fontSize: '14px',
+                                        color: 'white'
                                     }}>{value.title}</p>
                                 </div>
                             </div> : null}
                     </div>
-                )
+                );
             })}
         </div>
     );
-}
+};
 
 
 /**
@@ -146,7 +176,7 @@ function mapStateToProps(state) {
         _toolboxVisible: isToolboxEnabled(state),
         _meetingName: getConferenceName(state),
         _meetingNameEnabled:
-            getFeatureFlag(state, MEETING_NAME_ENABLED, true),
+            getFeatureFlag(state, MEETING_NAME_ENABLED, true)
         // _visible: isToolboxVisible(state)
     };
 }
