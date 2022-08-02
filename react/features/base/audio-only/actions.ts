@@ -1,15 +1,15 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import type { Dispatch } from 'redux';
 
 import UIEvents from '../../../../service/UI/UIEvents';
+// @ts-ignore
 import { createAudioOnlyChangedEvent, sendAnalytics } from '../../analytics';
 
 import { SET_AUDIO_ONLY } from './actionTypes';
 import logger from './logger';
 
 
-declare var APP: Object;
+declare let APP: any;
 
 /**
  * Sets the audio-only flag for the current JitsiConference.
@@ -24,7 +24,7 @@ declare var APP: Object;
  *     ensureVideoTrack: boolean
  * }}
  */
-export function setAudioOnly(audioOnly: boolean, ensureVideoTrack: boolean = false) {
+export function setAudioOnly(audioOnly: boolean, ensureVideoTrack = false) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const { enabled: oldValue } = getState()['features/base/audio-only'];
 

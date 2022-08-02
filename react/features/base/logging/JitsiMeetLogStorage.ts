@@ -1,4 +1,4 @@
-
+// @ts-ignore
 import { getCurrentConference } from '../conference';
 
 /**
@@ -6,13 +6,15 @@ import { getCurrentConference } from '../conference';
  * logs are sent to CallStats.
  */
 export default class JitsiMeetLogStorage {
+    counter: number;
+    getState: Function;
 
     /**
      * Creates new <tt>JitsiMeetLogStorage</tt>.
      *
      * @param {Function} getState - The Redux store's {@code getState} method.
      */
-    constructor(getState) {
+    constructor(getState: Function) {
         /**
          * Counts each log entry, increases on every batch log entry stored.
          *
@@ -51,7 +53,7 @@ export default class JitsiMeetLogStorage {
      * representing log lines or aggregated lines objects.
      * @returns {void}
      */
-    storeLogs(logEntries) {
+    storeLogs(logEntries: Array<string|any>) {
         const conference = getCurrentConference(this.getState());
 
         if (!conference || !conference.isCallstatsEnabled()) {

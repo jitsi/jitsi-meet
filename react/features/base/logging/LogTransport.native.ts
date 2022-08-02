@@ -1,5 +1,3 @@
-// @flow
-
 import { NativeModules } from 'react-native';
 import { format } from 'util';
 
@@ -14,7 +12,7 @@ const { LogBridge } = NativeModules;
  * @param {Error} e - The error.
  * @returns {string} - The stack trace.
  */
-function stackToString(e) {
+function stackToString(e: any) {
     let ce;
     let s = e.stack;
 
@@ -38,13 +36,15 @@ function buildTransport() {
         'log',
         'warn',
         'error'
-    ].reduce((logger, logName) => {
+    ].reduce((logger: any, logName) => {
         logger[logName] = (timestamp: string, ...args: Array<string>) => {
             // It ignores the timestamp argument, because LogBridge will add it on the native side anyway
-            const nargs = args.map(arg => {
+            const nargs = args.map((arg: any) => {
                 if (arg instanceof Error) {
                     const errorBody = {
                         message: arg.message,
+
+                        // @ts-ignore
                         code: arg.code,
                         stack: stackToString(arg)
                     };

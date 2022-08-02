@@ -1,14 +1,16 @@
-/* @flow */
-
+/* eslint-disable lines-around-comment */
+// @ts-ignore
 import Logger from '@jitsi/logger';
 
-import { APP_WILL_MOUNT } from '../app';
+import { APP_WILL_MOUNT } from '../app/actionTypes';
+// @ts-ignore
 import { CONFERENCE_JOINED, getCurrentConference } from '../conference';
 import JitsiMeetJS, {
     JitsiConferenceEvents
 } from '../lib-jitsi-meet';
 import { LIB_WILL_INIT } from '../lib-jitsi-meet/actionTypes';
-import { MiddlewareRegistry } from '../redux';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+// @ts-ignore
 import { isTestModeEnabled } from '../testing';
 
 import buildExternalApiLogTransport from './ExternalApiLogTransport';
@@ -17,7 +19,7 @@ import JitsiMeetLogStorage from './JitsiMeetLogStorage';
 import { SET_LOGGING_CONFIG } from './actionTypes';
 import { setLogCollector } from './actions';
 
-declare var APP: Object;
+declare let APP: any;
 
 /**
  * The Redux middleware of the feature base/logging.
@@ -58,7 +60,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _appWillMount({ getState }, next, action) {
+function _appWillMount({ getState }: {getState: Function}, next: Function, action: any) {
     const { config } = getState()['features/base/logging'];
 
     _setLogLevels(Logger, config);
@@ -84,7 +86,7 @@ function _appWillMount({ getState }, next, action) {
  * @private
  * @returns {*}
  */
-function _conferenceJoined({ getState }, next, action) {
+function _conferenceJoined({ getState }: { getState: Function }, next: Function, action: any) {
 
     // Wait until the joined event is processed, so that the JitsiMeetLogStorage
     // will be ready.
@@ -131,7 +133,8 @@ function _conferenceJoined({ getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _initLogging({ dispatch, getState }, loggingConfig, isTestingEnabled) {
+function _initLogging({ dispatch, getState }: {dispatch: Function, getState: Function},
+        loggingConfig: any, isTestingEnabled: boolean) {
     const { logCollector } = getState()['features/base/logging'];
 
     // Create the LogCollector and register it as the global log transport. It
@@ -188,7 +191,7 @@ function _initLogging({ dispatch, getState }, loggingConfig, isTestingEnabled) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _libWillInit({ getState }, next, action) {
+function _libWillInit({ getState }: { getState: Function }, next: Function, action: any) {
     // Adding the if in order to preserve the logic for web after enabling
     // LIB_WILL_INIT action for web in initLib action.
     if (typeof APP === 'undefined') {
@@ -212,7 +215,8 @@ function _libWillInit({ getState }, next, action) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _setLoggingConfig({ dispatch, getState }, next, action) {
+function _setLoggingConfig({ dispatch, getState }: { dispatch: Function, getState: Function },
+        next: Function, action: any) {
     const result = next(action);
     const newValue = getState()['features/base/logging'].config;
     const isTestingEnabled = isTestModeEnabled(getState());
@@ -244,7 +248,7 @@ function _setLoggingConfig({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _setLogLevels(logger, config) {
+function _setLogLevels(logger: any, config: any) {
     // XXX The loggers of the library lib-jitsi-meet and the application
     // jitsi-meet are separate, so the log levels have to be set in both.
 
