@@ -4,7 +4,7 @@ import React from 'react';
 
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
-import { IconCheckMark, IconHorizontalLine } from '../../../icons/svg';
+import { IconCheckMark } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
@@ -26,11 +26,6 @@ interface CheckboxProps {
      * Whether the input is disabled or not.
      */
     disabled?: boolean;
-
-    /**
-     * Whether the input should display the indeterminate icon.
-     */
-    indeterminate?: boolean;
 
     /**
      * The label of the input.
@@ -154,7 +149,6 @@ const Checkbox = ({
     checked,
     className,
     disabled,
-    indeterminate,
     label,
     name,
     onChange
@@ -174,7 +168,7 @@ const Checkbox = ({
                 className = 'checkmark'
                 color = { disabled ? BaseTheme.palette.icon03 : BaseTheme.palette.icon01 }
                 size = { 18 }
-                src = { indeterminate ? IconHorizontalLine : IconCheckMark } />
+                src = { IconCheckMark } />
         </label>
         <label>{label}</label>
     </div>);
