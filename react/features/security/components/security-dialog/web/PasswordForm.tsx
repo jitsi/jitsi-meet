@@ -151,6 +151,7 @@ class PasswordForm extends Component<Props, State> {
                     <Input
                         accessibilityLabel = { this.props.t('info.addPassword') }
                         autoFocus = { true }
+                        id = 'info-password-input'
                         maxLength = { this.props.passwordNumberOfDigits }
                         onChange = { this._onEnteredPasswordChange }
                         onKeyPress = { this._onKeyPress }
