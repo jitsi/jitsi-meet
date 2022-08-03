@@ -17,7 +17,6 @@
   "dependencies": {
     "@amplitude/react-native": "2.7.0",
     "@atlaskit/button": "15.1.4",
-    "@atlaskit/checkbox": "12.0.0",
     "@atlaskit/dropdown-menu": "10.1.2",
     "@atlaskit/field-text": "11.0.4",
     "@atlaskit/field-text-area": "8.0.4",

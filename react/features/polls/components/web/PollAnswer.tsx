@@ -1,9 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { Checkbox } from '@atlaskit/checkbox';
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 
 import Button from '../../../base/ui/components/web/Button';
+import Checkbox from '../../../base/ui/components/web/Checkbox';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { Theme } from '../../../base/ui/types';
 // @ts-ignore
@@ -51,12 +51,11 @@ const PollAnswer = ({
                             className = 'poll-answer-container'
                             key = { index }>
                             <Checkbox
-                                isChecked = { checkBoxStates[index] }
+                                checked = { checkBoxStates[index] }
                                 key = { index }
-                                label = { <span className = 'poll-answer-option'>{ answer.name }</span> }
+                                label = { answer.name }
                                 // eslint-disable-next-line react/jsx-no-bind
-                                onChange = { ev => setCheckbox(index, ev.target.checked) }
-                                size = 'large' />
+                                onChange = { ev => setCheckbox(index, ev.target.checked) } />
                         </li>
                     ))
                 }

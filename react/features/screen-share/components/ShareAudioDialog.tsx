@@ -1,38 +1,36 @@
-// @flow
-
-import { Checkbox } from '@atlaskit/checkbox';
+/* eslint-disable lines-around-comment */
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
+// @ts-ignore
 import { Dialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
+import { translate } from '../../base/i18n/functions';
+import { connect } from '../../base/redux/functions';
 import {
     updateSettings,
     shouldHideShareAudioHelper
+    // @ts-ignore
 } from '../../base/settings';
+// @ts-ignore
 import { toggleScreensharing } from '../../base/tracks';
+import Checkbox from '../../base/ui/components/web/Checkbox';
 
 /**
  * The type of the React {@code Component} props of {@link ShareAudioDialog}.
  */
-export type Props = {
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Dispatch<any>,
+export interface Props extends WithTranslation {
 
     /**
      * Boolean stored in local storage that determines whether or not the dialog will be displayed again.
      */
-     _shouldHideShareAudioHelper: boolean,
+    _shouldHideShareAudioHelper: boolean,
 
     /**
-     * Invoked to obtain translated strings.
+     * The redux {@code dispatch} function.
      */
-    t: Function
-};
+    dispatch: Dispatch<any>
+}
 
 /**
  * Component that displays the audio screen share helper dialog.
@@ -44,14 +42,12 @@ class ShareAudioDialog extends Component<Props> {
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this._onContinue = this._onContinue.bind(this);
         this._onSelectHideShareAudioHelper = this._onSelectHideShareAudioHelper.bind(this);
     }
-
-    _onContinue: () => boolean;
 
     /**
      * Continue the normal screen sharing flow when the user clicks continue.
@@ -65,8 +61,6 @@ class ShareAudioDialog extends Component<Props> {
         return true;
     }
 
-    _onSelectHideShareAudioHelper: (Object) => void;
-
     /**
      * Callback invoked when the hide audio helper checkbox has been selected. This setting will be persisted in
      * the local storage, thus the dialog won't be displayed again.
@@ -74,7 +68,7 @@ class ShareAudioDialog extends Component<Props> {
      * @param {Object} e - The key event to handle.
      * @returns {void}
      */
-    _onSelectHideShareAudioHelper({ target: { checked } }) {
+    _onSelectHideShareAudioHelper({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         this.props.dispatch(updateSettings({ hideShareAudioHelper: checked }));
     }
 
@@ -99,7 +93,7 @@ class ShareAudioDialog extends Component<Props> {
                         className = 'share-audio-animation'
                         src = 'images/share-audio.gif' />
                     <Checkbox
-                        isChecked = { this.props._shouldHideShareAudioHelper }
+                        checked = { this.props._shouldHideShareAudioHelper }
                         label = { t('dialog.hideShareAudioHelper') }
                         name = 'hide-share-audio-helper'
                         // eslint-disable-next-line react/jsx-no-bind
@@ -117,7 +111,7 @@ class ShareAudioDialog extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: Object): $Shape<Props> {
+function _mapStateToProps(state: Object): Partial<Props> {
 
     return {
         _shouldHideShareAudioHelper: shouldHideShareAudioHelper(state)
