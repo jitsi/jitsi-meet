@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment */
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
 // @ts-ignore
@@ -18,7 +19,7 @@ import Checkbox from '../../base/ui/components/web/Checkbox';
 /**
  * The type of the React {@code Component} props of {@link ShareAudioDialog}.
  */
-export type Props = {
+export interface Props extends WithTranslation {
 
     /**
      * Boolean stored in local storage that determines whether or not the dialog will be displayed again.
@@ -28,13 +29,8 @@ export type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    dispatch: Dispatch<any>
+}
 
 /**
  * Component that displays the audio screen share helper dialog.
