@@ -1,12 +1,13 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React from 'react';
 
+// @ts-ignore
 import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { Switch } from '../../../base/react';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+import Switch from '../../../base/ui/components/web/Switch';
 import AbstractMuteEveryonesVideoDialog, { abstractMapStateToProps, type Props }
+// @ts-ignore
     from '../AbstractMuteEveryonesVideoDialog';
 
 /**
@@ -23,9 +24,11 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
      * @returns {void}
      */
     _onToggleModeration() {
+        // @ts-ignore
         this.setState(state => {
             return {
                 moderationEnabled: !state.moderationEnabled,
+                // @ts-ignore
                 content: this.props.t(state.moderationEnabled
                     ? 'dialog.muteEveryonesVideoDialog' : 'dialog.muteEveryonesVideoDialogModerationOn'
                 )
@@ -44,21 +47,26 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
             <Dialog
                 okKey = 'dialog.muteParticipantsVideoButton'
                 onSubmit = { this._onSubmit }
+                // @ts-ignore
                 titleString = { this.props.title }
                 width = 'small'>
                 <div className = 'mute-dialog'>
+                    {/* @ts-ignore */}
                     {this.state.content}
+                    {/* @ts-ignore */}
                     { this.props.isModerationSupported && this.props.exclude.length === 0 && (
                         <>
                             <div className = 'separator-line' />
                             <div className = 'control-row'>
                                 <label htmlFor = 'moderation-switch'>
+                                    {/* @ts-ignore */}
                                     {this.props.t('dialog.moderationVideoLabel')}
                                 </label>
                                 <Switch
+                                    // @ts-ignore
+                                    checked = { !this.state.moderationEnabled }
                                     id = 'moderation-switch'
-                                    onValueChange = { this._onToggleModeration }
-                                    value = { !this.state.moderationEnabled } />
+                                    onChange = { this._onToggleModeration } />
                             </div>
                         </>
                     )}
@@ -70,4 +78,5 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
     _onSubmit: () => boolean;
 }
 
+// @ts-ignore
 export default translate(connect(abstractMapStateToProps)(MuteEveryonesVideoDialog));
