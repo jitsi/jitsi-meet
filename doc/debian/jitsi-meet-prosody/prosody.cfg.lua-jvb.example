@@ -90,7 +90,6 @@ Component "breakout.jitmeet.example.com" "muc"
     modules_enabled = {
         "muc_meeting_id";
         "muc_domain_mapper";
-        --"token_verification";
         "muc_rate_limit";
         "polls";
     }
