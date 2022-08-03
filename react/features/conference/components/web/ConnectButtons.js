@@ -112,8 +112,6 @@ const ConnectButtons = (props: Props) => {
         <div style={{ display: 'flex' }}
              className={`invite-more-container${true ? '' : ' elevated'}`}>
             {adsList.map((value, index) => {
-                console.log('urll', value.url);
-                console.log('urll', value);
                 return (
                     <div key={index}>
                         {timer == index || timer + 1 == index ?

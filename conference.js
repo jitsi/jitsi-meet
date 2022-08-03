@@ -2997,7 +2997,8 @@ export default {
         }
 
         APP.UI.removeAllListeners();
-
+        console.log('windowClosing');
+        close();
         let requestFeedbackPromise;
 
         if (requestFeedback) {
@@ -3027,6 +3028,7 @@ export default {
                 APP.API.notifyReadyToClose();
             }
             APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
+            // window.close();
         });
     },
 
@@ -3038,7 +3040,8 @@ export default {
      */
     async leaveRoom(doDisconnect = true) {
         APP.store.dispatch(conferenceWillLeave(room));
-
+        // console.log('Final Close');
+        // close();
         if (room && room.isJoined()) {
             return room.leave().finally(() => {
                 if (doDisconnect) {

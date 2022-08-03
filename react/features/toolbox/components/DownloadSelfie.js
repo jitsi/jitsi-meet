@@ -80,7 +80,6 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
 
             getParticipantVideo();
 
-            debugger;
             if (participantVideo) {
                 let filtered = arrayRemove(toArr, "largeVideo");
                 for (let i = 0; i < filtered.length; i++) {
