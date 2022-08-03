@@ -7,7 +7,12 @@ import {
     setPrejoinPageVisibility,
     setSkipPrejoinOnReload
 } from '../../prejoin';
-import { isAudioOnlySharing, setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share';
+import {
+    isAudioOnlySharing,
+    isScreenVideoShared,
+    setScreenAudioShareState,
+    setScreenshareAudioTrack
+} from '../../screen-share';
 import { isScreenshotCaptureEnabled, toggleScreenshotCaptureSummary } from '../../screenshot-capture';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { setAudioOnly } from '../audio-only';
@@ -27,6 +32,8 @@ import {
 import { CONFERENCE_FAILED, CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_JOINED } from './actionTypes';
 import { getCurrentConference } from './functions';
 import './middleware.any';
+
+declare var APP: Object;
 
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
@@ -135,15 +142,18 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
     const { dispatch, getState } = store;
     const state = getState();
     const audioOnlySharing = isAudioOnlySharing(state);
+    const screenSharing = isScreenVideoShared(state);
     const conference = getCurrentConference(state);
     const localAudio = getLocalJitsiAudioTrack(state);
     const localScreenshare = getLocalDesktopTrack(state['features/base/tracks']);
 
-    // ShareAudioDialog passes undefined when the user hits continue in the share audio demo modal. Audio screen-share
-    // state is toggled based on the current state of audio share in that case.
+    // Toggle screenshare or audio-only share if the new state is not passed. Happens in the following two cases.
+    // 1. ShareAudioDialog passes undefined when the user hits continue in the share audio demo modal.
+    // 2. Toggle screenshare called from the external API.
     const enable = audioOnly
         ? enabled ?? !audioOnlySharing
-        : enabled;
+        : enabled ?? !screenSharing;
+    const screensharingDetails = {};
 
     if (enable) {
         let tracks;
@@ -176,6 +186,7 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
             if (isScreenshotCaptureEnabled(state, false, true)) {
                 dispatch(toggleScreenshotCaptureSummary(true));
             }
+            screensharingDetails.sourceType = desktopVideoTrack.sourceType;
         }
 
         // Apply the AudioMixer effect if there is a local audio track, add the desktop track to the conference
@@ -218,5 +229,8 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
 
     if (audioOnly) {
         dispatch(setScreenAudioShareState(enable));
+    } else {
+        // Notify the external API.
+        APP.API.notifyScreenSharingStatusChanged(enable, screensharingDetails);
     }
 }
