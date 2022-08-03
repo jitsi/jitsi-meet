@@ -407,13 +407,15 @@ function _translateLegacyConfig(oldValue: IConfig) {
     }
 
     newValue.recordingService = newValue.recordingService || {};
-    if (oldValue.fileRecordingsServiceEnabled !== undefined) {
+    if (oldValue.fileRecordingsServiceEnabled !== undefined
+        && newValue.recordingService.enabled === undefined) {
         newValue.recordingService = {
             ...newValue.recordingService,
             enabled: oldValue.fileRecordingsServiceEnabled
         };
     }
-    if (oldValue.fileRecordingsServiceSharingEnabled !== undefined) {
+    if (oldValue.fileRecordingsServiceSharingEnabled !== undefined
+        && newValue.recordingService.sharingEnabled === undefined) {
         newValue.recordingService = {
             ...newValue.recordingService,
             sharingEnabled: oldValue.fileRecordingsServiceSharingEnabled
