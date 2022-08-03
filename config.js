@@ -1,9 +1,26 @@
-/* eslint-disable comma-dangle, no-unused-vars, no-var */
+/* eslint-disable comma-dangle, no-unused-vars, no-var, prefer-template, vars-on-top */
 
 /*
  * NOTE: If you add a new option please remember to document it here:
  * https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-configuration
  */
+
+var subdir = '<!--# echo var="subdir" default="" -->';
+var subdomain = '<!--# echo var="subdomain" default="" -->';
+
+if (subdomain) {
+    subdomain = subdomain.substr(0, subdomain.length - 1).split('.')
+        .join('_')
+        .toLowerCase() + '.';
+}
+
+// In case of no ssi provided by the webserver, use empty strings
+if (subdir.startsWith('<!--')) {
+    subdir = '';
+}
+if (subdomain.startsWith('<!--')) {
+    subdomain = '';
+}
 
 var config = {
     // Connection
@@ -23,14 +40,14 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com',
+        muc: 'conference.' + subdomain + 'jitsi-meet.example.com',
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    bosh: '//jitsi-meet.example.com/' + subdir + 'http-bind',
 
     // Websocket URL
-    // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
+    // websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
 
     // The real JID of focus participant - can be overridden here
     // Do not change username - FIXME: Make focus username configurable
