@@ -26,11 +26,10 @@
 #import <React/RCTBridge.h>
 #import <React/RCTEventEmitter.h>
 #import <React/RCTUtils.h>
+#import <React/RCTLog.h>
 #import <WebRTC/WebRTC.h>
 
 #import <JitsiMeetSDK/JitsiMeetSDK-Swift.h>
-
-#import "../LogUtils.h"
 #import "JitsiAudioSession.h"
 
 
@@ -73,7 +72,7 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(endCall:(NSString *)callUUID
                   resolve:(RCTPromiseResolveBlock)resolve
                    reject:(RCTPromiseRejectBlock)reject) {
-    DDLogInfo(@"[RNCallKit][endCall] callUUID = %@", callUUID);
+    RCTLogInfo(@"[RNCallKit][endCall] callUUID = %@", callUUID);
 
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
 
@@ -94,7 +93,7 @@ RCT_EXPORT_METHOD(setMuted:(NSString *)callUUID
                      muted:(BOOL)muted
                    resolve:(RCTPromiseResolveBlock)resolve
                     reject:(RCTPromiseRejectBlock)reject) {
-    DDLogInfo(@"[RNCallKit][setMuted] callUUID = %@", callUUID);
+    RCTLogInfo(@"[RNCallKit][setMuted] callUUID = %@", callUUID);
 
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
 
@@ -111,7 +110,7 @@ RCT_EXPORT_METHOD(setMuted:(NSString *)callUUID
 }
 
 RCT_EXPORT_METHOD(setProviderConfiguration:(NSDictionary *)dictionary) {
-    DDLogInfo(@"[RNCallKit][setProviderConfiguration:] dictionary = %@", dictionary);
+    RCTLogInfo(@"[RNCallKit][setProviderConfiguration:] dictionary = %@", dictionary);
 
     if (![JMCallKitProxy isProviderConfigured]) {
         JMCallKitProxy.enabled = true;
@@ -128,7 +127,7 @@ RCT_EXPORT_METHOD(startCall:(NSString *)callUUID
                       video:(BOOL)video
                     resolve:(RCTPromiseResolveBlock)resolve
                      reject:(RCTPromiseRejectBlock)reject) {
-    DDLogInfo(@"[RNCallKit][startCall] callUUID = %@", callUUID);
+    RCTLogInfo(@"[RNCallKit][startCall] callUUID = %@", callUUID);
 
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
 
@@ -192,7 +191,7 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
                      options:(NSDictionary *)options
                      resolve:(RCTPromiseResolveBlock)resolve
                       reject:(RCTPromiseRejectBlock)reject) {
-    DDLogInfo(@"[RNCallKit][updateCall] callUUID = %@ options = %@", callUUID, options);
+    RCTLogInfo(@"[RNCallKit][updateCall] callUUID = %@ options = %@", callUUID, options);
 
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
 
@@ -215,7 +214,7 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 #pragma mark - Helper methods
 
 - (void)configureProviderFromDictionary:(NSDictionary* )dictionary {
-    DDLogInfo(@"[RNCallKit][providerConfigurationFromDictionary: %@]", dictionary);
+    RCTLogInfo(@"[RNCallKit][providerConfigurationFromDictionary: %@]", dictionary);
 
     if (!dictionary) {
         dictionary = @{};
@@ -259,12 +258,12 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 - (void)requestTransaction:(CXTransaction *)transaction
                    resolve:(RCTPromiseResolveBlock)resolve
                     reject:(RCTPromiseRejectBlock)reject {
-    DDLogInfo(@"[RNCallKit][requestTransaction] transaction = %@", transaction);
+    RCTLogInfo(@"[RNCallKit][requestTransaction] transaction = %@", transaction);
 
     [JMCallKitProxy request:transaction
                  completion:^(NSError * _Nullable error) {
         if (error) {
-            DDLogError(@"[RNCallKit][requestTransaction] Error requesting transaction (%@): (%@)", transaction.actions, error);
+            RCTLogError(@"[RNCallKit][requestTransaction] Error requesting transaction (%@): (%@)", transaction.actions, error);
             reject(nil, @"Error processing CallKit transaction", error);
         } else {
             resolve(nil);
@@ -276,14 +275,14 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 
 // Called when the provider has been reset. We should terminate all calls.
 - (void)providerDidReset {
-    DDLogInfo(@"[RNCallKit][CXProviderDelegate][providerDidReset:]");
+    RCTLogInfo(@"[RNCallKit][CXProviderDelegate][providerDidReset:]");
 
     [self sendEventWithName:RNCallKitProviderDidReset body:nil];
 }
 
 // Answering incoming call
 - (void) performAnswerCallWithUUID:(NSUUID *)UUID {
-    DDLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performAnswerCallAction:]");
+    RCTLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performAnswerCallAction:]");
 
     [self sendEventWithName:RNCallKitPerformAnswerCallAction
                        body:@{ @"callUUID": UUID.UUIDString }];
@@ -291,7 +290,7 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 
 // Call ended, user request
 - (void) performEndCallWithUUID:(NSUUID *)UUID {
-    DDLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performEndCallAction:]");
+    RCTLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performEndCallAction:]");
 
     [self sendEventWithName:RNCallKitPerformEndCallAction
                        body:@{ @"callUUID": UUID.UUIDString }];
@@ -300,7 +299,7 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 // Handle audio mute from CallKit view
 - (void) performSetMutedCallWithUUID:(NSUUID *)UUID
                              isMuted:(BOOL)isMuted {
-    DDLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performSetMutedCallAction:]");
+    RCTLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performSetMutedCallAction:]");
 
     [self sendEventWithName:RNCallKitPerformSetMutedCallAction
                        body:@{
@@ -312,26 +311,26 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 // Starting outgoing call
 - (void) performStartCallWithUUID:(NSUUID *)UUID
                           isVideo:(BOOL)isVideo {
-    DDLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performStartCallAction:]");
+    RCTLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performStartCallAction:]");
 
     [JMCallKitProxy reportOutgoingCallWith:UUID
                        startedConnectingAt:nil];
 }
 
 - (void) providerDidActivateAudioSessionWithSession:(AVAudioSession *)session {
-    DDLogInfo(@"[RNCallKit][CXProviderDelegate][provider:didActivateAudioSession:]");
+    RCTLogInfo(@"[RNCallKit][CXProviderDelegate][provider:didActivateAudioSession:]");
 
     [JitsiAudioSession activateWithAudioSession:session];
 }
 
 - (void) providerDidDeactivateAudioSessionWithSession:(AVAudioSession *)session {
-    DDLogInfo(@"[RNCallKit][CXProviderDelegate][provider:didDeactivateAudioSession:]");
+    RCTLogInfo(@"[RNCallKit][CXProviderDelegate][provider:didDeactivateAudioSession:]");
 
     [JitsiAudioSession deactivateWithAudioSession:session];
 }
 
 - (void) providerTimedOutPerformingActionWithAction:(CXAction *)action {
-    DDLogWarn(@"[RNCallKit][CXProviderDelegate][provider:timedOutPerformingAction:]");
+    RCTLogWarn(@"[RNCallKit][CXProviderDelegate][provider:timedOutPerformingAction:]");
 }
 
 
