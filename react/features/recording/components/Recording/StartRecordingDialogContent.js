@@ -760,7 +760,7 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
-        _hideStorageWarning: state['features/base/config'].recording?.hideStorageWarning,
+        _hideStorageWarning: state['features/base/config'].recordingService?.hideStorageWarning,
         _localRecordingEnabled: !state['features/base/config'].localRecording?.disable,
         _localRecordingSelfEnabled: !state['features/base/config'].localRecording?.disableSelfRecording,
         _localRecordingNoNotification: !state['features/base/config'].localRecording?.notifyAllParticipants,
