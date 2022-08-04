@@ -1,7 +1,5 @@
 // @flow
 
-import ButtonGroup from '@atlaskit/button/button-group';
-import Button from '@atlaskit/button/standard-button';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
@@ -10,6 +8,8 @@ import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { isSupportedBrowser } from '../../base/environment';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import { Button } from '../../base/ui/components/web';
+import { BUTTON_TYPES } from '../../base/ui/constants';
 import {
     openWebApp,
     openDesktopApp
@@ -22,7 +22,7 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of
  * {@link DeepLinkingDesktopPage}.
  */
- type Props = {
+type Props = {
 
     /**
      * Used to dispatch actions from the buttons.
@@ -122,19 +122,17 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                                     }
                                 </p>
                                 <div className = 'buttons'>
-                                    <ButtonGroup>
-                                        <Button
-                                            appearance = 'default'
-                                            onClick = { this._onTryAgain }>
-                                            { t(`${_TNS}.tryAgainButton`) }
-                                        </Button>
-                                        {
-                                            isSupportedBrowser()
-                                                && <Button onClick = { this._onLaunchWeb }>
-                                                    { t(`${_TNS}.launchWebButton`) }
-                                                </Button>
-                                        }
-                                    </ButtonGroup>
+                                    <Button
+                                        label = { t(`${_TNS}.tryAgainButton`) }
+                                        onClick = { this._onTryAgain }
+                                        type = { BUTTON_TYPES.SECONDARY } />
+                                    {
+                                        isSupportedBrowser()
+                                                && <Button
+                                                    label = { t(`${_TNS}.launchWebButton`) }
+                                                    onClick = { this._onLaunchWeb }
+                                                    type = { BUTTON_TYPES.SECONDARY } />
+                                    }
                                 </div>
                             </div>
                         </div>

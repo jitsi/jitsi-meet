@@ -170,6 +170,11 @@ const styles = theme => {
                 marginBottom: '20px'
             },
 
+            '& .sign-out-cta-button': {
+                display: 'flex',
+                justifyContent: 'center'
+            },
+
             '@media only screen and (max-width: 700px)': {
                 '& .device-selection': {
                     display: 'flex',
