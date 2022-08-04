@@ -492,7 +492,7 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        if (stream && typeof stream.forceStreamToReattach === 'boolean') {
+        if (stream?.forceStreamToReattach) {
             delete stream.forceStreamToReattach;
         }
 
