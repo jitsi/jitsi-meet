@@ -1,12 +1,10 @@
-// @flow
-
-import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
+// @ts-ignore
 import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { getFieldValue } from '../../../base/react';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+import Input from '../../../base/ui/components/web/Input';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
@@ -14,14 +12,14 @@ import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
  *
  * @returns {React$Element<any>}
  */
-class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
+class SharedVideoDialog extends AbstractSharedVideoDialog<any> {
 
     /**
      * Instantiates a new component.
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: any) {
         super(props);
 
         this.state = {
@@ -34,24 +32,18 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
         this._onSubmitValue = this._onSubmitValue.bind(this);
     }
 
-    _onChange: Object => void;
-
     /**
      * Callback for the onChange event of the field.
      *
-     * @param {Object} evt - The static event.
+     * @param {string} value - The static event.
      * @returns {void}
      */
-    _onChange(evt: Object) {
-        const linkValue = getFieldValue(evt);
-
+    _onChange(value: string) {
         this.setState({
-            value: linkValue,
-            okDisabled: !linkValue
+            value,
+            okDisabled: !value
         });
     }
-
-    _onSubmitValue: () => boolean;
 
     /**
      * Callback to be invoked when the value of the link input is submitted.
@@ -87,24 +79,19 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                 onSubmit = { this._onSubmitValue }
                 titleKey = { t('dialog.shareVideoTitle') }
                 width = { 'small' }>
-                <FieldTextStateless
+                <Input
                     autoFocus = { true }
-                    className = 'input-control'
-                    compact = { false }
-                    isInvalid = { error }
+                    error = { error }
                     label = { t('dialog.videoLink') }
                     name = 'sharedVideoUrl'
                     onChange = { this._onChange }
                     placeholder = { t('dialog.sharedVideoLinkPlaceholder') }
-                    shouldFitContainer = { true }
                     type = 'text'
                     value = { this.state.value } />
                 { error && <span className = 'shared-video-dialog-error'>{ t('dialog.sharedVideoDialogError') }</span> }
             </Dialog>
         );
     }
-
-    _onChange: Object => void;
 }
 
 export default translate(connect()(SharedVideoDialog));

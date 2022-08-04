@@ -1,15 +1,15 @@
-// @flow
-
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
+// @ts-ignore
 import { extractYoutubeIdOrURL } from '../functions';
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractSharedVideoDialog}.
  */
-export type Props = {
+export interface Props extends WithTranslation {
 
     /**
      * Invoked to update the shared video link.
@@ -19,18 +19,13 @@ export type Props = {
     /**
      * Function to be invoked after typing a valid video.
      */
-    onPostSubmit: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    onPostSubmit: Function
+}
 
 /**
  * Implements an abstract class for {@code SharedVideoDialog}.
  */
-export default class AbstractSharedVideoDialog<S: *> extends Component < Props, S > {
+export default class AbstractSharedVideoDialog<S> extends Component < Props, S > {
 
     /**
      * Instantiates a new component.
@@ -42,8 +37,6 @@ export default class AbstractSharedVideoDialog<S: *> extends Component < Props, 
 
         this._onSetVideoLink = this._onSetVideoLink.bind(this);
     }
-
-    _onSetVideoLink: string => boolean;
 
     /**
      * Validates the entered video link by extracting the id and dispatches it.
