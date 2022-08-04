@@ -2,11 +2,8 @@
 
 import { batch } from 'react-redux';
 
-import UIEvents from '../../../../service/UI/UIEvents';
-import { showModeratedNotification } from '../../av-moderation/actions';
-import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
-import { hideNotification, isModerationNotificationDisplayed } from '../../notifications';
+import { hideNotification } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config';
@@ -28,7 +25,6 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 
 import {
-    TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_MUTE_UNMUTE_FAILED,
     TRACK_NO_DATA_FROM_SOURCE,
@@ -156,31 +152,6 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-
-    case TOGGLE_SCREENSHARING:
-        if (typeof APP === 'object') {
-            // check for A/V Moderation when trying to start screen sharing
-            if ((action.enabled || action.enabled === undefined)
-                && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, store.getState())) {
-                if (!isModerationNotificationDisplayed(MEDIA_TYPE.PRESENTER, store.getState())) {
-                    store.dispatch(showModeratedNotification(MEDIA_TYPE.PRESENTER));
-                }
-
-                return;
-            }
-
-            const { enabled, audioOnly, ignoreDidHaveVideo } = action;
-
-            if (!getMultipleVideoSendingSupportFeatureFlag(store.getState())) {
-                APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING,
-                    {
-                        enabled,
-                        audioOnly,
-                        ignoreDidHaveVideo
-                    });
-            }
-        }
-        break;
 
     case TRACK_MUTE_UNMUTE_FAILED: {
         const { jitsiTrack } = action.track;
