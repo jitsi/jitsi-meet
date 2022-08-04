@@ -10,10 +10,14 @@ import { Theme } from '../../../ui/types';
 import { InputProps } from '../types';
 
 interface IInputProps extends InputProps {
+    accessibilityLabel?: string;
+    autoFocus?: boolean;
     bottomLabel?: string;
     className?: string;
     id?: string;
+    maxLength?: number;
     name?: string;
+    onKeyPress?: (e: React.KeyboardEvent) => void;
     type?: 'text' | 'email' | 'number' | 'password';
 }
 
@@ -115,6 +119,8 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 const Input = ({
+    accessibilityLabel,
+    autoFocus,
     bottomLabel,
     className,
     clearable = false,
@@ -123,8 +129,10 @@ const Input = ({
     icon,
     id,
     label,
+    maxLength,
     name,
     onChange,
+    onKeyPress,
     placeholder,
     type = 'text',
     value
@@ -145,12 +153,16 @@ const Input = ({
                 size = { 20 }
                 src = { icon } />}
             <input
+                aria-label = { accessibilityLabel }
+                autoFocus = { autoFocus }
                 className = { clsx(styles.input, isMobile && 'is-mobile',
                     error && 'error', clearable && styles.clearableInput, icon && styles.iconInput) }
                 disabled = { disabled }
                 { ...(id ? { id } : {}) }
+                maxLength = { maxLength }
                 name = { name }
                 onChange = { handleChange }
+                onKeyPress = { onKeyPress }
                 placeholder = { placeholder }
                 type = { type }
                 value = { value } />

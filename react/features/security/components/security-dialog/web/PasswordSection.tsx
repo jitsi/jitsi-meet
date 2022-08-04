@@ -1,24 +1,24 @@
-// @flow
-
-/* eslint-disable react/no-multi-comp, react/jsx-no-bind */
-
+/* eslint-disable react/jsx-no-bind */
 import React, { useRef } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { translate } from '../../../../base/i18n';
-import { copyText } from '../../../../base/util';
+import { translate } from '../../../../base/i18n/functions';
+import { copyText } from '../../../../base/util/helpers';
 import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 
+// @ts-ignore
 import PasswordForm from './PasswordForm';
+import { NotifyClick } from './SecurityDialog';
 
 const DIGITS_ONLY = /^\d+$/;
 const KEY = 'add-passcode';
 
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-     buttonsWithNotifyClick: Array<string | Object>,
+    buttonsWithNotifyClick: Array<string | NotifyClick>,
 
     /**
      * Whether or not the current user can modify the current password.
@@ -29,7 +29,7 @@ type Props = {
      * The JitsiConference for which to display a lock state and change the
      * password.
      */
-    conference: Object,
+    conference: any,
 
     /**
      * The value for how the conference is locked (or undefined if not locked)
@@ -50,7 +50,7 @@ type Props = {
     /**
      * The number of digits to be used in the password.
      */
-    passwordNumberOfDigits: ?number,
+    passwordNumberOfDigits?: number,
 
     /**
      * Action that sets the conference password.
@@ -60,15 +60,10 @@ type Props = {
     /**
      * Method that sets whether the password editing is enabled or not.
      */
-    setPasswordEditEnabled: Function,
+    setPasswordEditEnabled: Function
+}
 
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
-
-declare var APP: Object;
+declare let APP: any;
 
 /**
  * Component that handles the password manipulation from the invite dialog.
@@ -87,7 +82,7 @@ function PasswordSection({
     setPasswordEditEnabled,
     t }: Props) {
 
-    const formRef: Object = useRef(null);
+    const formRef = useRef<HTMLDivElement>(null);
 
     /**
      * Callback invoked to set a password on the current JitsiConference.
@@ -97,7 +92,7 @@ function PasswordSection({
      * @private
      * @returns {void}
      */
-    function onPasswordSubmit(enteredPassword) {
+    function onPasswordSubmit(enteredPassword: string) {
         if (enteredPassword && passwordNumberOfDigits && !DIGITS_ONLY.test(enteredPassword)) {
             // Don't set the password.
             return;
@@ -121,7 +116,7 @@ function PasswordSection({
 
         let notifyMode;
         const notify = buttonsWithNotifyClick.find(
-            (btn: string | Object) =>
+            (btn: string | NotifyClick) =>
                 (typeof btn === 'string' && btn === KEY)
                 || (typeof btn === 'object' && btn.key === KEY)
         );
@@ -147,6 +142,7 @@ function PasswordSection({
      */
     function onPasswordSave() {
         if (formRef.current) {
+            // @ts-ignore
             const { value } = formRef.current.querySelector('div > input');
 
             if (value) {
@@ -182,7 +178,7 @@ function PasswordSection({
      * @private
      * @returns {void}
      */
-    function onTogglePasswordEditStateKeyPressHandler(e) {
+    function onTogglePasswordEditStateKeyPressHandler(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             onTogglePasswordEditState();
@@ -197,7 +193,7 @@ function PasswordSection({
      * @private
      * @returns {void}
      */
-    function onPasswordSaveKeyPressHandler(e) {
+    function onPasswordSaveKeyPressHandler(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             onPasswordSave();
@@ -212,7 +208,7 @@ function PasswordSection({
      * @private
      * @returns {void}
      */
-    function onPasswordRemoveKeyPressHandler(e) {
+    function onPasswordRemoveKeyPressHandler(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             onPasswordRemove();
@@ -227,7 +223,7 @@ function PasswordSection({
      * @private
      * @returns {void}
      */
-    function onPasswordCopyKeyPressHandler(e) {
+    function onPasswordCopyKeyPressHandler(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             onPasswordCopy();
