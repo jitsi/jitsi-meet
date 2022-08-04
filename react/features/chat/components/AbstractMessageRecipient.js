@@ -19,7 +19,7 @@ export type Props = {
     _onRemovePrivateMessageRecipient: Function,
 
      /**
-     * Function to make the lobby message receipient inactive.
+     * Function to make the lobby message recipient inactive.
      */
     _onHideLobbyChatRecipient: Function,
 

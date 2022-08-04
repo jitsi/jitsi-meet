@@ -21,7 +21,6 @@
 #import <WebRTC/WebRTC.h>
 
 #import "JitsiAudioSession+Private.h"
-#import "LogUtils.h"
 
 
 // Audio mode
@@ -178,7 +177,7 @@ RCT_EXPORT_METHOD(setMode:(int)mode
 RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
-    DDLogInfo(@"[AudioMode] Selected device: %@", device);
+    RCTLogInfo(@"[AudioMode] Selected device: %@", device);
     
     RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
     [session lockForConfiguration];
@@ -248,7 +247,7 @@ RCT_EXPORT_METHOD(updateDeviceList) {
 - (void)audioSessionDidChangeRoute:(RTCAudioSession *)session
                             reason:(AVAudioSessionRouteChangeReason)reason
                      previousRoute:(AVAudioSessionRouteDescription *)previousRoute {
-    DDLogInfo(@"[AudioMode] Route changed, reason: %lu", (unsigned long)reason);
+    RCTLogInfo(@"[AudioMode] Route changed, reason: %lu", (unsigned long)reason);
 
     // Update JS about the changes.
     [self notifyDevicesChanged];
@@ -275,7 +274,7 @@ RCT_EXPORT_METHOD(updateDeviceList) {
         // This is to play well with other components which could be integrated
         // into the final application.
         if (self->activeMode != kAudioModeDefault) {
-            DDLogInfo(@"[AudioMode] Route changed, reapplying RTCAudioSession config");
+            RCTLogInfo(@"[AudioMode] Route changed, reapplying RTCAudioSession config");
             RTCAudioSessionConfiguration *config = [self configForMode:self->activeMode];
             [self setConfig:config error:nil];
             if (self->forceSpeaker && !self->isSpeakerOn) {
@@ -288,7 +287,7 @@ RCT_EXPORT_METHOD(updateDeviceList) {
 }
 
 - (void)audioSession:(RTCAudioSession *)audioSession didSetActive:(BOOL)active {
-    DDLogInfo(@"[AudioMode] Audio session didSetActive:%d", active);
+    RCTLogInfo(@"[AudioMode] Audio session didSetActive:%d", active);
 }
 
 #pragma mark - Helper methods

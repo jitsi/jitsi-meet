@@ -136,17 +136,6 @@ export const BASE_INDICATOR = {
     justifyContent: 'center'
 };
 
-const button = {
-    borderRadius: BaseTheme.shape.borderRadius,
-    height: BUTTON_HEIGHT
-};
-
-const buttonLabel = {
-    ...BaseTheme.typography.bodyShortBold,
-    padding: 6,
-    textTransform: 'capitalize'
-};
-
 const iconButtonContainer = {
     alignItems: 'center',
     display: 'flex',
@@ -162,44 +151,6 @@ const iconButtonContainer = {
  */
 export default {
     ...SECTION_LIST_STYLES,
-
-    button: {
-        ...button
-    },
-
-    buttonLabel: {
-        ...buttonLabel
-    },
-
-    buttonLabelDisabled: {
-        ...buttonLabel,
-        color: BaseTheme.palette.text03
-    },
-
-    buttonDisabled: {
-        ...button,
-        backgroundColor: BaseTheme.palette.actionDisabled
-    },
-
-    buttonLabelPrimary: {
-        ...buttonLabel,
-        color: BaseTheme.palette.text01
-    },
-
-    buttonLabelSecondary: {
-        ...buttonLabel,
-        color: BaseTheme.palette.text0
-    },
-
-    buttonLabelDestructive: {
-        ...buttonLabel,
-        color: BaseTheme.palette.text01
-    },
-
-    buttonLabelTertiary: {
-        ...buttonLabel,
-        color: BaseTheme.palette.text01
-    },
 
     iconButtonContainer: {
         ...iconButtonContainer

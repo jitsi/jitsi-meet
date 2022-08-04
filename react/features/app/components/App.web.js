@@ -5,7 +5,7 @@ import React from 'react';
 
 import { DialogContainer } from '../../base/dialog';
 import GlobalStyles from '../../base/ui/components/GlobalStyles';
-import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider';
+import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web';
 import { ChromeExtensionBanner } from '../../chrome-extension-banner';
 
 import { AbstractApp } from './AbstractApp';

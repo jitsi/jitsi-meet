@@ -36,7 +36,6 @@ class ReducerRegistry {
      * @returns {Function}
      */
     combineReducers(additional: NameReducerMap<any> = {}) {
-        // $FlowExpectedError
         return combineReducers({
             ...this._elements,
             ...additional

@@ -13,7 +13,6 @@ import {
 } from '../../../analytics';
 import { IStore } from '../../../app/types';
 
-// @ts-ignore
 import { isMobileBrowser } from '../../../base/environment/utils';
 
 // @ts-ignore
@@ -22,8 +21,8 @@ import { translate } from '../../../base/i18n';
 // @ts-ignore
 import { getLocalParticipant, hasRaisedHand, raiseHand } from '../../../base/participants';
 
-// @ts-ignore
-import { connect } from '../../../base/redux';
+import { connect } from '../../../base/redux/functions';
+import { Theme } from '../../../base/ui/types';
 
 // @ts-ignore
 import { GifsMenu, GifsMenuButton } from '../../../gifs/components';
@@ -97,7 +96,7 @@ type Props = {
     t: Function
 };
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         overflow: {
             width: 'auto',

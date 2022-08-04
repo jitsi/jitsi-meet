@@ -87,7 +87,7 @@ type Props = {
      * The participant ID.
      *
      * NOTE: This ID may be different from participantID prop in the case when we pass undefined for the local
-     * participant. In this case the local participant ID will be filled trough _participantID prop.
+     * participant. In this case the local participant ID will be filled through _participantID prop.
      */
     _participantID: string,
 

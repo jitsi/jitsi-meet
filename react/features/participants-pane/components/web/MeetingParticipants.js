@@ -10,11 +10,9 @@ import useContextMenu from '../../../base/components/context-menu/useContextMenu
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media';
-import {
-    getParticipantById,
-    getParticipantCountWithFake
-} from '../../../base/participants';
+import { getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import Input from '../../../base/ui/components/web/Input';
 import { normalizeAccents } from '../../../base/util/strings';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../toolbox/functions';
@@ -22,7 +20,6 @@ import { muteRemote } from '../../../video-menu/actions.any';
 import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
 
-import ClearableInput from './ClearableInput';
 import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
 import MeetingParticipantItems from './MeetingParticipantItems';
@@ -38,6 +35,13 @@ const useStyles = makeStyles(theme => {
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
                 ...theme.typography.labelButtonLarge,
                 lineHeight: `${theme.typography.labelButtonLarge.lineHeight}px`
+            }
+        },
+
+        search: {
+            '& input': {
+                textAlign: 'center',
+                paddingRight: '16px'
             }
         }
     };
@@ -107,7 +111,9 @@ function MeetingParticipants({
                     : t('participantsPane.headings.participantsList', { count: participantsCount })}
             </div>
             {showInviteButton && <InviteButton />}
-            <ClearableInput
+            <Input
+                className = { styles.search }
+                clearable = { true }
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
@@ -161,14 +167,9 @@ function _mapStateToProps(state): Object {
         return !participant.isVirtualScreenshareParticipant;
     });
 
-    // This is very important as getRemoteParticipants is not changing its reference object
-    // and we will not re-render on change, but if count changes we will do
-    const participantsCount = getParticipantCountWithFake(state);
-
+    const participantsCount = sortedParticipantIds.length;
     const showInviteButton = shouldRenderInviteButton(state) && isToolbarButtonEnabled('invite', state);
-
     const overflowDrawer = showOverflowDrawer(state);
-
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];
 

@@ -52,7 +52,7 @@ export function shouldRemoteVideosBeVisible(state: Object) {
         return false;
     }
 
-    // Include fake participants to derive how many thumbnails are dispalyed,
+    // Include fake participants to derive how many thumbnails are displayed,
     // as it is assumed all participants, including fake, will be displayed
     // in the filmstrip.
     const participantCount = getParticipantCountWithFake(state);

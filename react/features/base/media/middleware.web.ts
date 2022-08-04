@@ -13,8 +13,7 @@ import StopRecordingDialog from '../../recording/components/Recording/web/StopRe
 // @ts-ignore
 import { openDialog } from '../dialog';
 
-// @ts-ignore
-import { MiddlewareRegistry } from '../redux';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { SET_VIDEO_MUTED } from './actionTypes';
 

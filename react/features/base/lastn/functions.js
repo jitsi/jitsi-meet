@@ -24,7 +24,7 @@ export function getLastNForQualityLevel(qualityLevel, channelLastN) {
 }
 
 /**
- * Checks if the given Object is a correct last N limit mapping, coverts both keys and values to numbers and sorts
+ * Checks if the given Object is a correct last N limit mapping, converts both keys and values to numbers and sorts
  * the keys in ascending order.
  *
  * @param {Object} lastNLimits - The Object to be verified.

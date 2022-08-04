@@ -1,14 +1,6 @@
 import { TransitionPresets } from '@react-navigation/stack';
-import React from 'react';
 import { Platform } from 'react-native';
 
-import {
-    Icon,
-    IconHelp,
-    IconHome,
-    IconInfo,
-    IconSettings
-} from '../../base/icons';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 import { goBack } from './components/conference/ConferenceNavigationContainerRef';
@@ -34,6 +26,14 @@ export const fullScreenOptions = {
     headerShown: false
 };
 
+export const linkScreenOptions = {
+    gestureEnabled: true,
+    headerShown: true,
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
+};
+
 /**
  * Navigation container theme.
  */
@@ -44,106 +44,15 @@ export const navigationContainerTheme = {
 };
 
 /**
- * Drawer navigator screens options and transition types.
- */
-export const drawerNavigatorScreenOptions = {
-    ...TransitionPresets.ModalTransition,
-    gestureEnabled: true,
-    headerShown: false
-};
-
-
-/**
- * Drawer screen options and transition types.
- */
-export const drawerScreenOptions = {
-    ...TransitionPresets.ModalTransition,
-    gestureEnabled: true,
-    headerShown: true,
-    headerStyle: {
-        backgroundColor: BaseTheme.palette.screen02Header
-    }
-};
-
-/**
- * Drawer content options.
- */
-export const drawerContentOptions = {
-    drawerActiveBackgroundColor: BaseTheme.palette.uiBackground,
-    drawerActiveTintColor: BaseTheme.palette.screen01Header,
-    drawerInactiveTintColor: BaseTheme.palette.text01,
-    drawerLabelStyle: {
-        marginLeft: BaseTheme.spacing[2]
-    },
-    drawerStyle: {
-        backgroundColor: BaseTheme.palette.uiBackground,
-        maxWidth: 400,
-        width: '75%'
-    }
-};
-
-/**
  * Screen options for welcome page.
  */
 export const welcomeScreenOptions = {
-    ...drawerScreenOptions,
-    drawerIcon: ({ focused }) => (
-        <Icon
-            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon01 }
-            size = { 20 }
-            src = { IconHome } />
-    ),
+    ...TransitionPresets.ModalTransition,
+    gestureEnabled: false,
+    headerShown: true,
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen01Header
     },
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    }
-};
-
-/**
- * Screen options for settings screen.
- */
-export const settingsScreenOptions = {
-    ...drawerScreenOptions,
-    drawerIcon: ({ focused }) => (
-        <Icon
-            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon01 }
-            size = { 20 }
-            src = { IconSettings } />
-    ),
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    }
-};
-
-/**
- * Screen options for terms/privacy screens.
- */
-export const termsAndPrivacyScreenOptions = {
-    ...drawerScreenOptions,
-    drawerIcon: ({ focused }) => (
-        <Icon
-            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon01 }
-            size = { 20 }
-            src = { IconInfo } />
-    ),
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    }
-};
-
-/**
- * Screen options for help screen.
- */
-export const helpScreenOptions = {
-    ...drawerScreenOptions,
-    drawerIcon: ({ focused }) => (
-        <Icon
-            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon01 }
-            size = { 20 }
-            src = { IconHelp } />
-    ),
     headerTitleStyle: {
         color: BaseTheme.palette.text01
     }
@@ -270,6 +179,11 @@ export const gifsMenuOptions = presentationScreenOptions;
 export const sharedDocumentScreenOptions = presentationScreenOptions;
 
 /**
+ * Screen options for settings modal.
+ */
+export const settingsScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for connecting screen.
  */
 export const connectingScreenOptions = {
@@ -301,5 +215,13 @@ export const conferenceNavigationContainerScreenOptions = {
  */
 export const lobbyNavigationContainerScreenOptions = {
     gestureEnabled: false,
+    headerShown: false
+};
+
+/**
+ * Screen options for settings navigation container screen.
+ */
+export const settingsNavigationContainerScreenOptions = {
+    gestureEnabled: true,
     headerShown: false
 };

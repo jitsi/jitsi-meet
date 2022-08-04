@@ -6,11 +6,11 @@ import { Text, View, TextInput } from 'react-native';
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
-import Button from '../../../base/react/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { BrandingImageBackground } from '../../../dynamic-branding';
 import { LargeVideo } from '../../../large-video/components';
 import { navigate }
@@ -247,7 +247,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                         accessibilityLabel = 'toolbar.openChat'
                         label = 'toolbar.openChat'
                         onPress = { this._onNavigateToLobbyChat }
-                        style = { styles.lobbyButton }
+                        style = { styles.openChatButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
                 {

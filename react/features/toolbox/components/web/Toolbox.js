@@ -36,6 +36,7 @@ import { isGifEnabled } from '../../../gifs/functions';
 import { InviteButton } from '../../../invite/components/add-people-dialog';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { KeyboardShortcutsButton } from '../../../keyboard-shortcuts';
+import { NoiseSuppressionButton } from '../../../noise-suppression/components';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -761,6 +762,13 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
+        const noiseSuppression = {
+            key: 'noisesuppression',
+            Content: NoiseSuppressionButton,
+            group: 3
+        };
+
+
         const etherpad = {
             key: 'etherpad',
             Content: SharedDocumentButton,
@@ -847,6 +855,7 @@ class Toolbox extends Component<Props> {
             linkToSalesforce,
             shareVideo,
             shareAudio,
+            noiseSuppression,
             etherpad,
             virtualBackground,
             dockIframe,

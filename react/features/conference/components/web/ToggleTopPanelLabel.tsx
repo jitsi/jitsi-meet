@@ -3,8 +3,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-// @ts-ignore
-import { IconMenuDown } from '../../../base/icons';
+import { IconMenuDown } from '../../../base/icons/svg/index';
 
 // @ts-ignore
 import { Label } from '../../../base/label';

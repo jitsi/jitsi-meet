@@ -465,8 +465,6 @@ PODS:
   - RNGoogleSignin (7.0.4):
     - GoogleSignIn (~> 6.0.0)
     - React-Core
-  - RNReanimated (1.13.4):
-    - React-Core
   - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
@@ -477,7 +475,7 @@ PODS:
     - React-Core
   - RNSVG (12.1.0):
     - React
-  - RNWatch (1.0.4):
+  - RNWatch (1.0.11):
     - React
   - Yoga (1.14.0)
 
@@ -541,7 +539,6 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
-  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -678,8 +675,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-google-signin/google-signin"
-  RNReanimated:
-    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSound:
@@ -766,11 +761,10 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 0400a6d0c94186d1120c3cbd97b23abc022187a9
   RNGestureHandler: e5c7cab5f214503dcefd6b2b0cefb050e1f51c4a
   RNGoogleSignin: c4381751eefd73c552b923ba347a9bfc6f18771c
-  RNReanimated: c1b56d030d1616239861534d9adb531f8cffab68
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
   RNSound: 27e8268bdb0a1f191f219a33267f7e0445e8d62f
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
-  RNWatch: 99637948ec9b5c9ec5a41920642594ad5ba07e80
+  RNWatch: dae6c858a2051dbdcfb00b9a86cf4d90400263b4
   Yoga: 17cd9a50243093b547c1e539c749928dd68152da
 
 PODFILE CHECKSUM: 0e8826a5cb9ee147354a83321ecb3104132f510b

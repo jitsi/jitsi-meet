@@ -1,12 +1,16 @@
+/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
+// @ts-ignore
 import { createToolbarEvent, sendAnalytics } from '../../../../analytics';
+// @ts-ignore
 import { appNavigate } from '../../../../app/actions';
-import Button from '../../../../base/react/components/native/Button';
-import { BUTTON_TYPES } from '../../../../base/react/constants';
+import Button from '../../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../../base/ui/constants';
 
 import EndMeetingIcon from './EndMeetingIcon';
+// @ts-ignore
 import styles from './styles';
 
 /**
@@ -26,6 +30,7 @@ const EndMeetingButton = () : JSX.Element => {
     return (
         <Button
             accessibilityLabel = 'carmode.actions.leaveMeeting'
+            // @ts-ignore
             icon = { EndMeetingIcon }
             label = 'carmode.actions.leaveMeeting'
             onPress = { onSelect }

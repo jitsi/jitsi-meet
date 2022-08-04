@@ -2,14 +2,13 @@ import React from 'react';
 import { Image, ImageStyle, StyleProp, ViewStyle } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 
-// @ts-ignore
-import { connect } from '../../../base/redux';
+import { connect } from '../../../base/redux/functions';
 
 import styles from './styles';
 
 
 interface Props {
-    uri: any;
+    uri?: any;
 }
 
 /**

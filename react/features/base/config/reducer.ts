@@ -407,16 +407,38 @@ function _translateLegacyConfig(oldValue: IConfig) {
     }
 
     newValue.recordingService = newValue.recordingService || {};
-    if (oldValue.fileRecordingsServiceEnabled !== undefined) {
+    if (oldValue.fileRecordingsServiceEnabled !== undefined
+        && newValue.recordingService.enabled === undefined) {
         newValue.recordingService = {
             ...newValue.recordingService,
             enabled: oldValue.fileRecordingsServiceEnabled
         };
     }
-    if (oldValue.fileRecordingsServiceSharingEnabled !== undefined) {
+    if (oldValue.fileRecordingsServiceSharingEnabled !== undefined
+        && newValue.recordingService.sharingEnabled === undefined) {
         newValue.recordingService = {
             ...newValue.recordingService,
             sharingEnabled: oldValue.fileRecordingsServiceSharingEnabled
+        };
+    }
+
+    newValue.liveStreaming = newValue.liveStreaming || {};
+
+    // Migrate config.liveStreamingEnabled
+    if (oldValue.liveStreamingEnabled !== undefined) {
+        newValue.liveStreaming = {
+            ...newValue.liveStreaming,
+            enabled: oldValue.liveStreamingEnabled
+        };
+    }
+
+    // Migrate interfaceConfig.LIVE_STREAMING_HELP_LINK
+    if (oldValue.liveStreaming === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('LIVE_STREAMING_HELP_LINK')) {
+        newValue.liveStreaming = {
+            ...newValue.liveStreaming,
+            helpLink: interfaceConfig.LIVE_STREAMING_HELP_LINK
         };
     }
 

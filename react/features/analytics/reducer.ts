@@ -36,11 +36,11 @@ interface Value {
 export interface IAnalyticsState {
     localTracksDuration: {
         audio: Value,
+        conference: Value,
         video: {
             camera: Value,
             desktop: Value
-        },
-        conference: Value
+        }
     }
 }
 

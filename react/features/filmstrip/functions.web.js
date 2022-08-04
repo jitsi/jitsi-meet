@@ -82,7 +82,7 @@ export function shouldRemoteVideosBeVisible(state: Object) {
         return false;
     }
 
-    // Include fake participants to derive how many thumbnails are dispalyed,
+    // Include fake participants to derive how many thumbnails are displayed,
     // as it is assumed all participants, including fake, will be displayed
     // in the filmstrip.
     const participantCount = getParticipantCountWithFake(state);
@@ -358,7 +358,7 @@ export function calculateResponsiveTileViewDimensions({
                             && oldNumberOfVisibleParticipants >= numberOfParticipants)
                         || (oldNumberOfVisibleParticipants < numberOfParticipants
                             && numberOfVisibleParticipants <= desiredNumberOfVisibleTiles))
-                ) { // If the area of the new candidates and the old ones are equal we preffer the one that will have
+                ) { // If the area of the new candidates and the old ones are equal we prefer the one that will have
                     // closer number of visible participants to desiredNumberOfVisibleTiles config.
                     dimensions = currentDimensions;
                 }

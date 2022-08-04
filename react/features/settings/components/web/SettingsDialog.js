@@ -125,7 +125,8 @@ const styles = theme => {
 
             '& .profile-edit-field': {
                 flex: 0.5,
-                marginRight: '20px'
+                marginRight: '20px',
+                marginTop: `${theme.spacing(3)}px`
             },
 
             '& .settings-sub-pane': {
@@ -142,6 +143,11 @@ const styles = theme => {
             '& .settings-sub-pane-element': {
                 textAlign: 'left',
                 flex: 1
+            },
+
+            '& .settings-checkbox': {
+                display: 'flex',
+                marginBottom: `${theme.spacing(2)}px`
             },
 
             '& .moderator-settings-wrapper': {
@@ -162,6 +168,11 @@ const styles = theme => {
 
             '& .sign-out-cta': {
                 marginBottom: '20px'
+            },
+
+            '& .sign-out-cta-button': {
+                display: 'flex',
+                justifyContent: 'center'
             },
 
             '@media only screen and (max-width: 700px)': {

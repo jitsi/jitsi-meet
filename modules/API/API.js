@@ -76,6 +76,12 @@ import {
 } from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode, answerKnockingParticipant } from '../../react/features/lobby/actions';
 import {
+    hideNotification,
+    NOTIFICATION_TIMEOUT_TYPE,
+    NOTIFICATION_TYPE,
+    showNotification
+} from '../../react/features/notifications';
+import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
@@ -464,6 +470,58 @@ function initCommands() {
         },
 
         /**
+         * Shows a custom in-meeting notification.
+         *
+         * @param { string } arg.title - Notification title.
+         * @param { string } arg.description - Notification description.
+         * @param { string } arg.uid - Optional unique identifier for the notification.
+         * @param { string } arg.type - Notification type, either `error`, `info`, `normal`, `success` or `warning`.
+         * Defaults to "normal" if not provided.
+         * @param { string } arg.timeout - Timeout type, either `short`, `medium`, `long` or `sticky`.
+         * Defaults to "short" if not provided.
+         * @returns {void}
+         */
+        'show-notification': ({
+            title,
+            description,
+            uid,
+            type = NOTIFICATION_TYPE.NORMAL,
+            timeout = NOTIFICATION_TIMEOUT_TYPE.SHORT
+        }) => {
+            const validTypes = Object.values(NOTIFICATION_TYPE);
+            const validTimeouts = Object.values(NOTIFICATION_TIMEOUT_TYPE);
+
+            if (!validTypes.includes(type)) {
+                logger.error(`Invalid notification type "${type}". Expecting one of ${validTypes}`);
+
+                return;
+            }
+
+            if (!validTimeouts.includes(timeout)) {
+                logger.error(`Invalid notification timeout "${timeout}". Expecting one of ${validTimeouts}`);
+
+                return;
+            }
+
+            APP.store.dispatch(showNotification({
+                uid,
+                title,
+                description,
+                appearance: type
+            }, timeout));
+        },
+
+        /**
+         * Removes a notification given a unique identifier.
+         *
+         * @param { string } uid - Unique identifier for the notification to be removed.
+         * @returns {void}
+         */
+        'hide-notification': uid => {
+            APP.store.dispatch(hideNotification(uid));
+        },
+
+        /**
          * Starts a file recording or streaming session depending on the passed on params.
          * For RTMP streams, `rtmpStreamKey` must be passed on. `rtmpBroadcastID` is optional.
          * For youtube streams, `youtubeStreamKey` must be passed on. `youtubeBroadcastID` is optional.
@@ -474,11 +532,11 @@ function initCommands() {
          * @param { string } arg.mode - Recording mode, either `file` or `stream`.
          * @param { string } arg.dropboxToken - Dropbox oauth2 token.
          * @param { string } arg.rtmpStreamKey - The RTMP stream key.
-         * @param { string } arg.rtmpBroadcastID - The RTMP braodcast ID.
+         * @param { string } arg.rtmpBroadcastID - The RTMP broadcast ID.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
          * Only applies to certain jitsi meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
-         * @param { string } arg.youtubeBroadcastID - The youtube broacast ID.
+         * @param { string } arg.youtubeBroadcastID - The youtube broadcast ID.
          * @returns {void}
          */
         'start-recording': ({
@@ -1599,7 +1657,7 @@ class API {
      * Notify external application (if API is enabled) that recording has started or stopped.
      *
      * @param {boolean} on - True if recording is on, false otherwise.
-     * @param {string} mode - Stream or file.
+     * @param {string} mode - Stream or file or local.
      * @param {string} error - Error type or null if success.
      * @returns {void}
      */
@@ -1642,7 +1700,7 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that an error occured.
+     * Notify external application (if API is enabled) that an error occurred.
      *
      * @param {Object} error - The error.
      * @returns {void}
@@ -1670,7 +1728,7 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) wether the used browser is supported or not.
+     * Notify external application (if API is enabled) whether the used browser is supported or not.
      *
      * @param {boolean} supported - If browser is supported or not.
      * @returns {void}
@@ -1698,7 +1756,7 @@ class API {
     /**
      * Notify the external application that the state of the participants pane changed.
      *
-     * @param {boolean} open - Wether the panel is open or not.
+     * @param {boolean} open - Whether the panel is open or not.
      * @returns {void}
      */
     notifyParticipantsPaneToggled(open) {

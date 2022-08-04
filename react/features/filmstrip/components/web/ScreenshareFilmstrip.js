@@ -101,18 +101,26 @@ const ScreenshareFilmstrip = (props: Props) => props._currentLayout === LAYOUTS.
  */
 function _mapStateToProps(state) {
     const {
-        filmstripHeight,
-        filmstripWidth,
-        thumbnailSize
-    } = state['features/filmstrip'].screenshareFilmstripDimensions;
+        screenshareFilmstripDimensions: {
+            filmstripHeight,
+            filmstripWidth,
+            thumbnailSize
+        },
+        screenshareFilmstripParticipantId
+    } = state['features/filmstrip'];
     const screenshares = state['features/video-layout'].remoteScreenShares;
+    let id = screenshares.find(sId => sId === screenshareFilmstripParticipantId);
+
+    if (!id && screenshares.length) {
+        id = screenshares[0];
+    }
 
     return {
         _columns: 1,
         _currentLayout: getCurrentLayout(state),
         _filmstripHeight: filmstripHeight,
         _filmstripWidth: filmstripWidth,
-        _remoteParticipants: screenshares.length ? [ screenshares[0] ] : [],
+        _remoteParticipants: id ? [ id ] : [],
         _resizableFilmstrip: false,
         _rows: 1,
         _thumbnailWidth: thumbnailSize?.width,

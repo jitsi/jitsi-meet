@@ -47,6 +47,59 @@ const AVATAR_CHECKER_FUNCTIONS = [
 /* eslint-enable arrow-body-style, no-unused-vars */
 
 /**
+ * Returns the list of active speakers that should be moved to the top of the sorted list of participants so that the
+ * dominant speaker is visible always on the vertical filmstrip in stage layout.
+ *
+ * @param {Function | Object} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
+ * @returns {Array<string>}
+ */
+export function getActiveSpeakersToBeDisplayed(stateful: Object | Function) {
+    const state = toState(stateful);
+    const {
+        fakeParticipants,
+        sortedRemoteScreenshares,
+        sortedRemoteVirtualScreenshareParticipants,
+        speakersList
+    } = state['features/base/participants'];
+    const { visibleRemoteParticipants } = state['features/filmstrip'];
+    const activeSpeakers = new Map(speakersList);
+
+    // Do not re-sort the active speakers if all of them are currently visible.
+    if (typeof visibleRemoteParticipants === 'undefined' || activeSpeakers.size <= visibleRemoteParticipants.size) {
+        return activeSpeakers;
+    }
+    let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
+
+    // Remove screenshares from the count.
+    if (getMultipleVideoSupportFeatureFlag(state)) {
+        if (sortedRemoteVirtualScreenshareParticipants) {
+            availableSlotsForActiveSpeakers -= sortedRemoteVirtualScreenshareParticipants.size * 2;
+            for (const screenshare of Array.from(sortedRemoteVirtualScreenshareParticipants.keys())) {
+                const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
+
+                activeSpeakers.delete(ownerId);
+            }
+        }
+    } else if (sortedRemoteScreenshares) {
+        availableSlotsForActiveSpeakers -= sortedRemoteScreenshares.size;
+        for (const id of Array.from(sortedRemoteScreenshares.keys())) {
+            activeSpeakers.delete(id);
+        }
+    }
+
+    // Remove shared video from the count.
+    if (fakeParticipants) {
+        availableSlotsForActiveSpeakers -= fakeParticipants.size;
+    }
+    const truncatedSpeakersList = Array.from(activeSpeakers).slice(0, availableSlotsForActiveSpeakers);
+
+    truncatedSpeakersList.sort((a, b) => a[1].localeCompare(b[1]));
+
+    return new Map(truncatedSpeakersList);
+}
+
+/**
  * Resolves the first loadable avatar URL for a participant.
  *
  * @param {Object} participant - The participant to resolve avatars for.
@@ -191,7 +244,7 @@ export function getParticipantCount(stateful: Object | Function) {
         sortedRemoteVirtualScreenshareParticipants
     } = state['features/base/participants'];
 
-    if (getSourceNameSignalingFeatureFlag(state)) {
+    if (getMultipleVideoSupportFeatureFlag(state)) {
         return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size + (local ? 1 : 0);
     }
 
@@ -233,7 +286,7 @@ export function getFakeParticipants(stateful: Object | Function) {
 export function getRemoteParticipantCount(stateful: Object | Function) {
     const state = toState(stateful)['features/base/participants'];
 
-    if (getSourceNameSignalingFeatureFlag(state)) {
+    if (getMultipleVideoSupportFeatureFlag(state)) {
         return state.remote.size - state.sortedRemoteVirtualScreenshareParticipants.size;
     }
 
@@ -253,7 +306,7 @@ export function getParticipantCountWithFake(stateful: Object | Function) {
     const state = toState(stateful);
     const { local, localScreenShare, remote } = state['features/base/participants'];
 
-    if (getSourceNameSignalingFeatureFlag(state)) {
+    if (getMultipleVideoSupportFeatureFlag(state)) {
         return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
     }
 

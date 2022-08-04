@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component } from 'react';
 
 import {
@@ -12,7 +10,6 @@ import {
 } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import {
-    Button,
     Container,
     Image,
     LoadingIndicator,
@@ -21,6 +18,8 @@ import {
 } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
+import { Button } from '../../../base/ui';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
@@ -56,6 +55,11 @@ type Props = {
      * Whether we won't notify the other participants about the recording.
      */
     _localRecordingNoNotification: boolean,
+
+    /**
+     * Whether self local recording is enabled or not.
+     */
+    _localRecordingSelfEnabled: boolean,
 
     /**
      * The color-schemed stylesheet of this component.
@@ -430,10 +434,9 @@ class StartRecordingDialogContent extends Component<Props> {
             switchContent = (
                 <Container className = 'recording-switch'>
                     <Button
-                        onValueChange = { this._onSignOut }
-                        style = { styles.signButton }>
-                        { t('recording.signOut') }
-                    </Button>
+                        label = { 'recording.signOut' }
+                        onPress = { this._onSignOut }
+                        type = { BUTTON_TYPES.SECONDARY } />
                 </Container>
             );
 
@@ -441,10 +444,9 @@ class StartRecordingDialogContent extends Component<Props> {
             switchContent = (
                 <Container className = 'recording-switch'>
                     <Button
-                        onValueChange = { this._onSignIn }
-                        style = { styles.signButton }>
-                        { t('recording.signIn') }
-                    </Button>
+                        label = { 'recording.signIn' }
+                        onPress = { this._onSignIn }
+                        type = { BUTTON_TYPES.PRIMARY } />
                 </Container>
             );
         }
@@ -679,33 +681,35 @@ class StartRecordingDialogContent extends Component<Props> {
                 </Container>
                 {selectedRecordingService === RECORDING_TYPES.LOCAL && (
                     <>
-                        <Container>
-                            <Container
-                                className = 'recording-header space-top'
-                                style = { styles.header }>
-                                <Container className = 'recording-icon-container file-sharing-icon-container'>
-                                    <Image
-                                        className = 'recording-file-sharing-icon'
-                                        src = { ICON_USERS }
-                                        style = { styles.recordingIcon } />
+                        {this.props._localRecordingSelfEnabled && (
+                            <Container>
+                                <Container
+                                    className = 'recording-header space-top'
+                                    style = { styles.header }>
+                                    <Container className = 'recording-icon-container file-sharing-icon-container'>
+                                        <Image
+                                            className = 'recording-file-sharing-icon'
+                                            src = { ICON_USERS }
+                                            style = { styles.recordingIcon } />
+                                    </Container>
+                                    <Text
+                                        className = 'recording-title'
+                                        style = {{
+                                            ..._dialogStyles.text,
+                                            ...styles.title
+                                        }}>
+                                        {t('recording.onlyRecordSelf')}
+                                    </Text>
+                                    <Switch
+                                        className = 'recording-switch'
+                                        disabled = { isValidating }
+                                        onValueChange = { this.props.onLocalRecordingSelfChange }
+                                        style = { styles.switch }
+                                        trackColor = {{ false: TRACK_COLOR }}
+                                        value = { this.props.localRecordingOnlySelf } />
                                 </Container>
-                                <Text
-                                    className = 'recording-title'
-                                    style = {{
-                                        ..._dialogStyles.text,
-                                        ...styles.title
-                                    }}>
-                                    {t('recording.onlyRecordSelf')}
-                                </Text>
-                                <Switch
-                                    className = 'recording-switch'
-                                    disabled = { isValidating }
-                                    onValueChange = { this.props.onLocalRecordingSelfChange }
-                                    style = { styles.switch }
-                                    trackColor = {{ false: TRACK_COLOR }}
-                                    value = { this.props.localRecordingOnlySelf } />
                             </Container>
-                        </Container>
+                        )}
                         <Text className = 'local-recording-warning text'>
                             {t('recording.localRecordingWarning')}
                         </Text>
@@ -756,8 +760,9 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
-        _hideStorageWarning: state['features/base/config'].recording?.hideStorageWarning,
+        _hideStorageWarning: state['features/base/config'].recordingService?.hideStorageWarning,
         _localRecordingEnabled: !state['features/base/config'].localRecording?.disable,
+        _localRecordingSelfEnabled: !state['features/base/config'].localRecording?.disableSelfRecording,
         _localRecordingNoNotification: !state['features/base/config'].localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
     };

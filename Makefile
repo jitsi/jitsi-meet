@@ -4,7 +4,7 @@ DEPLOY_DIR = libs
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
 OLM_DIR = node_modules/@matrix-org/olm
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
-RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist
+RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
 MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models
 FACE_MODELS_DIR = node_modules/@vladmandic/human-models/models
@@ -49,6 +49,8 @@ deploy-appbundle:
 		$(BUILD_DIR)/analytics-ga.min.js.map \
 		$(BUILD_DIR)/face-landmarks-worker.min.js \
 		$(BUILD_DIR)/face-landmarks-worker.min.js.map \
+		$(BUILD_DIR)/noise-suppressor-worklet.min.js \
+		$(BUILD_DIR)/noise-suppressor-worklet.min.js.map \
 		$(DEPLOY_DIR)
 	cp \
 		$(BUILD_DIR)/close3.min.js \

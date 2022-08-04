@@ -33,8 +33,9 @@ import {
     removeStageParticipant,
     setFilmstripHeight,
     setFilmstripWidth,
+    setScreenshareFilmstripParticipant,
     setStageParticipants
-} from './actions';
+} from './actions.web';
 import {
     ACTIVE_PARTICIPANT_TIMEOUT,
     DEFAULT_FILMSTRIP_WIDTH,
@@ -45,12 +46,13 @@ import {
 } from './constants';
 import {
     isFilmstripResizable,
+    isTopPanelEnabled,
+    isStageFilmstripAvailable,
     updateRemoteParticipants,
     updateRemoteParticipantsOnLeave,
     getActiveParticipantsIds,
-    getPinnedActiveParticipants,
-    isStageFilmstripAvailable
-} from './functions';
+    getPinnedActiveParticipants
+} from './functions.web';
 import './subscriber';
 
 /**
@@ -67,7 +69,7 @@ MiddlewareRegistry.register(store => next => action => {
     if (action.type === PARTICIPANT_LEFT) {
         // This has to be executed before we remove the participant from features/base/participants state in order to
         // remove the related thumbnail component before we need to re-render it. If we do this after next()
-        // we will be in sitation where the participant exists in the remoteParticipants array in features/filmstrip
+        // we will be in situation where the participant exists in the remoteParticipants array in features/filmstrip
         // but doesn't exist in features/base/participants state which will lead to rendering a thumbnail for
         // non-existing participant.
         updateRemoteParticipantsOnLeave(store, action.participant?.id);
@@ -275,6 +277,15 @@ MiddlewareRegistry.register(store => next => action => {
         const { participantId } = action;
         const pinnedParticipants = getPinnedActiveParticipants(state);
         const dominant = getDominantSpeakerParticipant(state);
+
+        if (isTopPanelEnabled(state)) {
+            const screenshares = state['features/video-layout'].remoteScreenShares;
+
+            if (screenshares.find(sId => sId === participantId)) {
+                dispatch(setScreenshareFilmstripParticipant(participantId));
+                break;
+            }
+        }
 
         if (pinnedParticipants.find(p => p.participantId === participantId)) {
             if (dominant?.id === participantId) {

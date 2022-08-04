@@ -1,19 +1,28 @@
+/* eslint-disable lines-around-comment */
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 
+// @ts-ignore
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
+// @ts-ignore
 import { LoadingIndicator, TintedView } from '../../../../base/react';
+// @ts-ignore
 import { isLocalVideoTrackDesktop } from '../../../../base/tracks';
+// @ts-ignore
 import { setPictureInPictureEnabled } from '../../../../mobile/picture-in-picture/functions';
+// @ts-ignore
 import { setIsCarmode } from '../../../../video-layout/actions';
+// @ts-ignore
 import ConferenceTimer from '../../ConferenceTimer';
+// @ts-ignore
 import { isConnecting } from '../../functions';
 
 import CarModeFooter from './CarModeFooter';
 import MicrophoneButton from './MicrophoneButton';
 import TitleBar from './TitleBar';
+// @ts-ignore
 import styles from './styles';
 
 /**
@@ -56,6 +65,7 @@ const CarMode = (): JSX.Element => {
                 style = { styles.titleBarSafeViewColor }>
                 <View
                     style = { styles.titleBar }>
+                    {/* @ts-ignore */}
                     <TitleBar />
                 </View>
                 <ConferenceTimer textStyle = { styles.roomTimer } />

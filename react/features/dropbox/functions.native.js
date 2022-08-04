@@ -23,7 +23,7 @@ export async function _authorizeDropbox(): Promise<Object> {
 }
 
 /**
- * Gets a new acccess token based on the refresh token.
+ * Gets a new access token based on the refresh token.
  *
  * @returns {Promise}
  */

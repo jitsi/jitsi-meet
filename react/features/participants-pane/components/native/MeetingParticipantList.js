@@ -7,15 +7,14 @@ import { FlatList } from 'react-native';
 import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
-import Button from '../../../base/react/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import Button from '../../../base/ui/components/native/Button';
+import Input from '../../../base/ui/components/native/Input';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
 
-import ClearableInput from './ClearableInput';
 import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
@@ -235,10 +234,13 @@ class MeetingParticipantList extends PureComponent<Props> {
                         style = { styles.inviteButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
-                <ClearableInput
+                <Input
+                    clearable = { true }
+                    customStyles = {{ container: styles.inputContainer,
+                        input: styles.centerInput }}
                     onChange = { this._onSearchStringChange }
                     placeholder = { t('participantsPane.search') }
-                    selectionColor = { BaseTheme.palette.text01 } />
+                    value = { this.props.searchString } />
                 <FlatList
                     bounces = { false }
                     data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }

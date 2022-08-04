@@ -80,7 +80,7 @@ type Props = AbstractProps & {
     _connectionIndicatorInactiveDisabled: boolean,
 
     /**
-     * Wether the indicator popover is disabled.
+     * Whether the indicator popover is disabled.
      */
     _popoverDisabled: boolean,
 

@@ -9,6 +9,8 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
@@ -21,7 +23,6 @@ import {
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
-import FooterButton from './FooterButton';
 import { FooterContextMenu } from './FooterContextMenu';
 import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
@@ -258,21 +259,20 @@ class ParticipantsPane extends Component<Props, State> {
                     {_showFooter && (
                         <div className = { classes.footer }>
                             {_showMuteAllButton && (
-                                <FooterButton
+                                <Button
                                     accessibilityLabel = { t('participantsPane.actions.muteAll') }
-                                    onClick = { this._onMuteAll }>
-                                    {t('participantsPane.actions.muteAll')}
-                                </FooterButton>
+                                    label = { t('participantsPane.actions.muteAll') }
+                                    onClick = { this._onMuteAll }
+                                    type = { BUTTON_TYPES.SECONDARY } />
                             )}
                             {_showMoreActionsButton && (
                                 <div className = { classes.footerMoreContainer }>
-                                    <FooterButton
+                                    <Button
                                         accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
+                                        icon = { IconHorizontalPoints }
                                         id = 'participants-pane-context-menu'
-                                        isIconButton = { true }
-                                        onClick = { this._onToggleContext }>
-                                        <Icon src = { IconHorizontalPoints } />
-                                    </FooterButton>
+                                        onClick = { this._onToggleContext }
+                                        type = { BUTTON_TYPES.SECONDARY } />
                                     <FooterContextMenu
                                         isOpen = { contextOpen }
                                         onDrawerClose = { this._onDrawerClose }

@@ -1,8 +1,9 @@
 server_names_hash_bucket_size 64;
 
 types {
-# nginx's default mime.types doesn't include a mapping for wasm
+# nginx's default mime.types doesn't include a mapping for wasm or wav.
     application/wasm     wasm;
+    audio/wav            wav;
 }
 upstream prosody {
     zone upstreams 64K;

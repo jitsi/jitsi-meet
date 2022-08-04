@@ -4,11 +4,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, FlatList, Platform } from 'react-native';
 import { Divider, TouchableRipple } from 'react-native-paper';
 
-import Button from '../../../base/react/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/react/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import styles
-    from '../../../welcome/components/native/settings/components/styles';
+    from '../../../settings/components/native/styles';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate from '../AbstractPollCreate';
 import type { AbstractProps } from '../AbstractPollCreate';

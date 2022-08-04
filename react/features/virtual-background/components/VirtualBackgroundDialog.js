@@ -330,7 +330,7 @@ function VirtualBackground({
             blurValue: 25,
             selectedThumbnail: 'blur'
         });
-        logger.info('"Blur" option setted for virtual background preview!');
+        logger.info('"Blur" option set for virtual background preview!');
 
     }, []);
 
@@ -348,7 +348,7 @@ function VirtualBackground({
             blurValue: 8,
             selectedThumbnail: 'slight-blur'
         });
-        logger.info('"Slight-blur" option setted for virtual background preview!');
+        logger.info('"Slight-blur" option set for virtual background preview!');
 
     }, []);
 
@@ -413,7 +413,7 @@ function VirtualBackground({
             dispatch(openDialog(VirtualBackgroundDialog, { initialOptions: newOptions }));
         } else {
             setOptions(newOptions);
-            logger.info('"Desktop-share" option setted for virtual background preview!');
+            logger.info('"Desktop-share" option set for virtual background preview!');
         }
     }, [ dispatch, options ]);
 
@@ -429,7 +429,7 @@ function VirtualBackground({
             enabled: false,
             selectedThumbnail: 'none'
         });
-        logger.info('"None" option setted for virtual background preview!');
+        logger.info('"None" option set for virtual background preview!');
 
     }, []);
 
@@ -451,7 +451,7 @@ function VirtualBackground({
                 url: image.src,
                 selectedThumbnail: image.id
             });
-            logger.info('Uploaded image setted for virtual background preview!');
+            logger.info('Uploaded image set for virtual background preview!');
         }
     }, [ storedImages ]);
 

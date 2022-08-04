@@ -5,6 +5,7 @@ import React, { useCallback } from 'react';
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
 import Prejoin from '../../../prejoin/components/Prejoin.native';
+import WelcomePage from '../../../welcome/components/WelcomePage';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
@@ -13,16 +14,14 @@ import {
     conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
     dialInSummaryScreenOptions,
-    drawerNavigatorScreenOptions,
     navigationContainerTheme,
-    preJoinScreenOptions
+    preJoinScreenOptions,
+    welcomeScreenOptions
 } from '../screenOptions';
 
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
-import WelcomePageNavigationContainer
-    from './welcome/components/WelcomePageNavigationContainer';
 
 const RootStack = createStackNavigator();
 
@@ -43,7 +42,7 @@ type Props = {
 
 const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) => {
     const initialRouteName = isWelcomePageAvailable
-        ? screen.root : screen.connecting;
+        ? screen.welcome.main : screen.connecting;
     const onReady = useCallback(() => {
         dispatch({
             type: _ROOT_NAVIGATION_READY,
@@ -63,9 +62,9 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                     isWelcomePageAvailable
                         && <>
                             <RootStack.Screen
-                                component = { WelcomePageNavigationContainer }
-                                name = { screen.root }
-                                options = { drawerNavigatorScreenOptions } />
+                                component = { WelcomePage }
+                                name = { screen.welcome.main }
+                                options = { welcomeScreenOptions } />
                             <RootStack.Screen
                                 component = { DialInSummary }
                                 name = { screen.dialInSummary }

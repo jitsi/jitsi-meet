@@ -47,24 +47,24 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceState {
+    authEnabled?: boolean|undefined;
+    authLogin?: string|undefined;
+    authRequired?: Object;
     conference: Object|undefined;
+    conferenceTimestamp?: number;
     e2eeSupported: boolean|undefined;
+    followMeEnabled?: boolean;
     joining: Object|undefined;
     leaving: Object|undefined;
+    localSubject?: string;
     locked: string|undefined;
     membersOnly: boolean|undefined;
     password: string|undefined;
     passwordRequired: boolean|undefined;
-    authEnabled?: boolean|undefined;
-    authLogin?: string|undefined;
-    subject?: string;
-    localSubject?: string;
-    conferenceTimestamp?: number;
-    authRequired?: Object;
-    followMeEnabled?: boolean;
-    startReactionsMuted?: boolean;
-    room?: Object;
     pendingSubjectChange?: string;
+    room?: Object;
+    startReactionsMuted?: boolean;
+    subject?: string;
 }
 
 /**

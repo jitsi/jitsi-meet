@@ -25,7 +25,7 @@ Util.__index = Util
 --- Constructs util class for token verifications.
 -- Constructor that uses the passed module to extract all the
 -- needed configurations.
--- If confuguration is missing returns nil
+-- If configuration is missing returns nil
 -- @param module the module in which options to check for configs.
 -- @return the new instance or nil
 function Util.new(module)
@@ -261,7 +261,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
     end
 end
 
---- Verifies room name and domain if necesarry.
+--- Verifies room name and domain if necessary.
 -- Checks configs and if necessary checks the room name extracted from
 -- room_address against the one saved in the session when token was verified.
 -- Also verifies domain name from token against the domain in the room_address,

@@ -20,19 +20,19 @@ type InitInput = {
 }
 
 type DetectOutput = {
-    faceExpression?: string,
     faceBox?: FaceBox,
-    faceCount: number
+    faceCount: number,
+    faceExpression?: string
 };
 
 export interface FaceLandmarksHelper {
-    getFaceBox(detections: Array<FaceResult>, threshold: number): FaceBox | undefined;
-    getFaceExpression(detections: Array<FaceResult>): string | undefined;
-    getFaceCount(detections : Array<FaceResult>): number;
-    getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>>;
-    init(): Promise<void>;
     detect({ image, threshold } : DetectInput): Promise<DetectOutput>;
     getDetectionInProgress(): boolean;
+    getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>>;
+    getFaceBox(detections: Array<FaceResult>, threshold: number): FaceBox | undefined;
+    getFaceCount(detections : Array<FaceResult>): number;
+    getFaceExpression(detections: Array<FaceResult>): string | undefined;
+    init(): Promise<void>;
 }
 
 /**

@@ -26,23 +26,23 @@ interface SelfRecording {
 }
 
 interface ILocalRecordingManager {
-    recordingData: Blob[];
-    recorder: MediaRecorder|undefined;
-    stream: MediaStream|undefined;
+    addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
     audioContext: AudioContext|undefined;
     audioDestination: MediaStreamAudioDestinationNode|undefined;
-    roomName: string;
-    mediaType: string;
-    initializeAudioMixer: () => void;
-    mixAudioStream: (stream: MediaStream) => void;
-    addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
     getFilename: () => string;
-    saveRecording: (recordingData: Blob[], filename: string) => void;
-    stopLocalRecording: () => void;
-    startLocalRecording: (store: IStore, onlySelf: boolean) => void;
+    initializeAudioMixer: () => void;
     isRecordingLocally: () => boolean;
-    totalSize: number;
+    mediaType: string;
+    mixAudioStream: (stream: MediaStream) => void;
+    recorder: MediaRecorder|undefined;
+    recordingData: Blob[];
+    roomName: string;
+    saveRecording: (recordingData: Blob[], filename: string) => void;
     selfRecording: SelfRecording;
+    startLocalRecording: (store: IStore, onlySelf: boolean) => void;
+    stopLocalRecording: () => void;
+    stream: MediaStream|undefined;
+    totalSize: number;
 }
 
 const getMimeType = (): string => {

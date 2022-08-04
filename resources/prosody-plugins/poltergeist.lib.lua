@@ -152,8 +152,8 @@ end
 -- State for toggling the tagging of presence stanzas with ignored tag.
 --
 -- A poltergeist with it's full room/nick set to ignore will have a jitsi ignore
--- tag applied to all presence stanza's broadcasted. The following funcitons
--- assisst in managing this state.
+-- tag applied to all presence stanza's broadcasted. The following functions
+-- assist in managing this state.
 --------------------------------------------------------------------------------
 local presence_ignored = {}
 

@@ -51,15 +51,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation "androidx.startup:startup-runtime:1.1.0"
 
-    if (rootProject.ext.libreBuild) {
-        implementation(project(':react-native-device-info')) {
-            exclude group: 'com.google.firebase'
-            exclude group: 'com.google.android.gms'
-            exclude group: 'com.android.installreferrer'
-        }
-    } else {
+    // Only add these packages if we are NOT doing a LIBRE_BUILD
+    if (!rootProject.ext.libreBuild) {
         implementation project(':react-native-amplitude')
-        implementation project(':react-native-device-info')
+        implementation project(':react-native-giphy')
         implementation(project(":react-native-google-signin")) {
             exclude group: 'com.google.android.gms'
             exclude group: 'androidx'
@@ -72,15 +67,18 @@ dependencies {
     implementation project(':react-native-community_clipboard')
     implementation project(':react-native-community_netinfo')
     implementation project(':react-native-default-preference')
+    implementation(project(':react-native-device-info')) {
+        exclude group: 'com.google.firebase'
+        exclude group: 'com.google.android.gms'
+        exclude group: 'com.android.installreferrer'
+    }
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-get-random-values')
-    implementation project(':react-native-giphy')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-masked-view_masked-view')
     implementation project(':react-native-pager-view')
     implementation project(':react-native-performance')
-    implementation project(':react-native-reanimated')
     implementation project(':react-native-safe-area-context')
     implementation project(':react-native-screens')
     implementation project(':react-native-slider')

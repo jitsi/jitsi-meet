@@ -1,10 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 
-interface Theme {
-    palette: any;
-    text01: string;
-}
+import { Theme } from '../../../base/ui/types';
 
 const useStyles = makeStyles((theme: Theme) => {
     const { text01 } = theme.palette;

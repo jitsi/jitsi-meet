@@ -130,7 +130,7 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
 /**
  * Check if local recording is supported.
  *
- * @returns {boolean} - Wether local recording is supported or not.
+ * @returns {boolean} - Whether local recording is supported or not.
  */
 export function supportsLocalRecording() {
     return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()

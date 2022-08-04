@@ -378,6 +378,7 @@ export function hiddenParticipantLeft(id) {
  * participant is allowed to not specify an associated {@code JitsiConference}
  * instance.
  * @param {boolean} isReplaced - Whether the participant is to be replaced in the meeting.
+ * @param {boolean} isVirtualScreenshareParticipant - Whether the participant is a virtual screen share participant.
  * @returns {{
  *     type: PARTICIPANT_LEFT,
  *     participant: {
@@ -386,13 +387,14 @@ export function hiddenParticipantLeft(id) {
  *     }
  * }}
  */
-export function participantLeft(id, conference, isReplaced) {
+export function participantLeft(id, conference, isReplaced, isVirtualScreenshareParticipant) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
             conference,
             id,
-            isReplaced
+            isReplaced,
+            isVirtualScreenshareParticipant
         }
     };
 }
