@@ -1,5 +1,3 @@
-/* @flow */
-
 import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
 
 /**
@@ -13,7 +11,7 @@ import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
  *     logCollector: Object
  * }}
  */
-export function setLogCollector(logCollector: ?Object) {
+export function setLogCollector(logCollector?: Object) {
     return {
         type: SET_LOG_COLLECTOR,
         logCollector
