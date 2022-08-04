@@ -24,7 +24,7 @@ import { isScreenshotCaptureEnabled, toggleScreenshotCaptureSummary } from '../.
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { setAudioOnly } from '../audio-only';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
-import { JitsiConferenceErrors, JitsiTrackErrors } from '../lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, setScreenshareMuted, VIDEO_TYPE } from '../media';
 import { MiddlewareRegistry } from '../redux';
 import {
@@ -33,6 +33,7 @@ import {
     getLocalDesktopTrack,
     getLocalJitsiAudioTrack,
     replaceLocalTrack,
+    toggleScreensharing,
     TOGGLE_SCREENSHARING
 } from '../tracks';
 
@@ -200,8 +201,8 @@ async function _toggleScreenSharing({ enabled, audioOnly = false, shareOptions =
         const desktopAudioTrack = tracks.find(track => track.getType() === MEDIA_TYPE.AUDIO);
         const desktopVideoTrack = tracks.find(track => track.getType() === MEDIA_TYPE.VIDEO);
 
-        // Dispose the desktop track for audio-only screensharing.
         if (audioOnly) {
+            // Dispose the desktop track for audio-only screensharing.
             desktopVideoTrack.dispose();
 
             if (!desktopAudioTrack) {
@@ -224,12 +225,18 @@ async function _toggleScreenSharing({ enabled, audioOnly = false, shareOptions =
         // Apply the AudioMixer effect if there is a local audio track, add the desktop track to the conference
         // otherwise without unmuting the microphone.
         if (desktopAudioTrack) {
-            // Noise suppression doesn't work with desktop audio because we can't chain
-            // track effects yet, disable it first.
-            // We need to to wait for the effect to clear first or it might interfere with the audio mixer.
+            // Noise suppression doesn't work with desktop audio because we can't chain track effects yet, disable it
+            // first. We need to to wait for the effect to clear first or it might interfere with the audio mixer.
             await dispatch(setNoiseSuppressionEnabled(false));
             _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
+
+            // Handle the case where screen share was stopped from  the browsers 'screen share in progress' window.
+            desktopAudioTrack.on(
+                JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+                () => {
+                    dispatch(toggleScreensharing(undefined, true));
+                });
         }
 
         // Disable audio-only or best performance mode if the user starts screensharing. This doesn't apply to
