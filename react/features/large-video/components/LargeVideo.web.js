@@ -3,21 +3,22 @@
 import React, { Component } from 'react';
 
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
+import { getLocalParticipant } from '../../base/participants';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
+import { getVideoTrackByParticipant } from '../../base/tracks';
 import { setColorAlpha } from '../../base/util';
 import { StageParticipantNameLabel } from '../../display-name';
 import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../filmstrip';
 import { getVerticalViewMaxWidth } from '../../filmstrip/functions.web';
+import { getLargeVideoParticipant } from '../../large-video/functions';
 import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
 import { setTileView } from '../../video-layout/actions';
-import { getLocalParticipant } from '../../base/participants';
-import { getVideoTrackByParticipant } from '../../base/tracks';
-import { getLargeVideoParticipant } from '../../large-video/functions';
 import { setSeeWhatIsBeingShared } from '../actions.web';
+
 import ScreenSharePlaceholder from './ScreenSharePlaceholder.web';
-import { commonUserLeftHandling } from '../../base/conference';
+
 
 declare var interfaceConfig: Object;
 
@@ -73,6 +74,21 @@ type Props = {
      * Whether or not the filmstrip is visible.
      */
     _visibleFilmstrip: boolean,
+
+    /**
+     * The large video participant id.
+     */
+     _largeVideoParticipantId: string,
+
+        /**
+     * Whether or not the screen sharing is on.
+     */
+        _isScreenSharing: boolean,
+
+    /**
+     * Whether or not the screen sharing is visible.
+     */
+     _seeWhatIsBeingShared: boolean,
 
     /**
      * The Redux dispatch function.
@@ -176,18 +192,18 @@ class LargeVideo extends Component<Props> {
                       * another container for the background and the
                       * largeVideoWrapper in order to hide/show them.
                       */}
-                        <div
-                            id = 'largeVideoWrapper'
-                            onTouchEnd = { this._onDoubleTap }
-                            ref = { this._wrapperRef }
-                            role = 'figure' >
-                                {_isScreenSharing && !_seeWhatIsBeingShared ? <ScreenSharePlaceholder /> :<video
-                                    autoPlay = { !_noAutoPlayVideo }
-                                    id = 'largeVideo'
-                                    muted = { true }
-                                    playsInline = { true } /* for Safari on iOS to work */ />}
-                            </div>
-                        </div>
+                    <div
+                        id = 'largeVideoWrapper'
+                        onTouchEnd = { this._onDoubleTap }
+                        ref = { this._wrapperRef }
+                        role = 'figure' >
+                        {_isScreenSharing && !_seeWhatIsBeingShared ? <ScreenSharePlaceholder /> : <video
+                            autoPlay = { !_noAutoPlayVideo }
+                            id = 'largeVideo'
+                            muted = { true }
+                            playsInline = { true } /* for Safari on iOS to work */ />}
+                    </div>
+                </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
                     || <Captions /> }
                 {_showDominantSpeakerBadge && <StageParticipantNameLabel />}
@@ -306,12 +322,13 @@ function _mapStateToProps(state) {
     const { isOpen: isChatOpen } = state['features/chat'];
     const { width: verticalFilmstripWidth, visible } = state['features/filmstrip'];
     const { hideDominantSpeakerBadge } = state['features/base/config'];
-    
+
     const tracks = state['features/base/tracks'];
     const localParticipantId = getLocalParticipant(state)?.id;
     const largeVideoParticipant = getLargeVideoParticipant(state);
     const videoTrack = getVideoTrackByParticipant(tracks, largeVideoParticipant);
-    const isScreenSharing = (largeVideoParticipant?.id)?.includes(localParticipantId) && videoTrack?.videoType === 'desktop';
+    const localParticipantisSharingTheScreen = largeVideoParticipant?.id?.includes(localParticipantId);
+    const isScreenSharing = localParticipantisSharingTheScreen && videoTrack?.videoType === 'desktop';
 
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
