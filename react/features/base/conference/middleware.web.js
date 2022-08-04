@@ -1,8 +1,15 @@
 // @flow
 
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
+import UIEvents from '../../../../service/UI/UIEvents';
+import { showModeratedNotification } from '../../av-moderation/actions';
+import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
-import { showNotification, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
+import {
+    showNotification,
+    NOTIFICATION_TIMEOUT_TYPE,
+    isModerationNotificationDisplayed
+} from '../../notifications';
 import {
     setPrejoinPageVisibility,
     setSkipPrejoinOnReload
@@ -61,11 +68,32 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
     }
-    case TOGGLE_SCREENSHARING: {
-        getMultipleVideoSendingSupportFeatureFlag(getState()) && _toggleScreenSharing(action, store);
+    case TOGGLE_SCREENSHARING:
+        if (typeof APP === 'object') {
+            // check for A/V Moderation when trying to start screen sharing
+            if ((action.enabled || action.enabled === undefined)
+                && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, store.getState())) {
+                if (!isModerationNotificationDisplayed(MEDIA_TYPE.PRESENTER, store.getState())) {
+                    store.dispatch(showModeratedNotification(MEDIA_TYPE.PRESENTER));
+                }
 
+                return;
+            }
+
+            const { enabled, audioOnly, ignoreDidHaveVideo } = action;
+
+            if (getMultipleVideoSendingSupportFeatureFlag(store.getState())) {
+                _toggleScreenSharing(action, store);
+            } else {
+                APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING,
+                    {
+                        enabled,
+                        audioOnly,
+                        ignoreDidHaveVideo
+                    });
+            }
+        }
         break;
-    }
     }
 
     return next(action);
