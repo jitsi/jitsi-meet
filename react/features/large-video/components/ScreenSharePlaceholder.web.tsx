@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core';
 
 import { useStore } from 'react-redux';
 
@@ -7,8 +7,10 @@ import { useStore } from 'react-redux';
 import { setSeeWhatIsBeingShared } from '../actions.web';
 // @ts-ignore
 import { translate } from '../../base/i18n';
+import { Theme } from '../../base/ui/types';
 
-const useStyles = makeStyles( (theme: any) => {
+
+const useStyles = makeStyles( (theme: Theme) => {
 
     return createStyles({
         overlayContainer: {

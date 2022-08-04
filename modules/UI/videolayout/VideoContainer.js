@@ -496,8 +496,6 @@ export class VideoContainer extends LargeContainer {
             delete stream.forceStreamToReattach;
         }
 
-        console.log('setStream video --------------------->', this.$video[0]);
-
         // detach old stream
         if (this.stream && this.$video[0]) {
             this.stream.detach(this.$video[0]);
@@ -524,8 +522,6 @@ export class VideoContainer extends LargeContainer {
             });
             this._updateBackground();
         }
-
-        
     }
 
     /**
