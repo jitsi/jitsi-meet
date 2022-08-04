@@ -138,7 +138,7 @@ async function _maybeApplyAudioMixerEffect(desktopAudioTrack, state) {
  * @param {Store} store - The redux store.
  * @returns {void}
  */
-async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
+async function _toggleScreenSharing({ enabled, audioOnly = false, shareOptions = {} }, store) {
     const { dispatch, getState } = store;
     const state = getState();
     const audioOnlySharing = isAudioOnlySharing(state);
@@ -157,9 +157,13 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
 
     if (enable) {
         let tracks;
+        const options = {
+            devices: [ VIDEO_TYPE.DESKTOP ],
+            ...shareOptions
+        };
 
         try {
-            tracks = await createLocalTracksF({ devices: [ VIDEO_TYPE.DESKTOP ] });
+            tracks = await createLocalTracksF(options);
         } catch (error) {
             _handleScreensharingError(error, store);
 
