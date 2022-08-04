@@ -75,6 +75,7 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode, answerKnockingParticipant } from '../../react/features/lobby/actions';
+import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
 import {
     hideNotification,
     NOTIFICATION_TIMEOUT_TYPE,
@@ -379,6 +380,9 @@ function initCommands() {
         'toggle-share-screen': (options = {}) => {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing(options.enable);
+        },
+        'set-noise-suppression-enabled': (options = {}) => {
+            APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
         },
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
