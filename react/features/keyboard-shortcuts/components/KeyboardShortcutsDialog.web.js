@@ -1,6 +1,5 @@
 /* @flow */
 
-import Lozenge from '@atlaskit/lozenge';
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
@@ -47,6 +46,13 @@ const styles = theme => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 marginBottom: theme.spacing(2)
+            },
+
+            '& .item-action': {
+                backgroundColor: theme.palette.ui04,
+                fontWeight: 'bold',
+                padding: '1px 4px',
+                borderRadius: '4px'
             }
         }
     };
@@ -114,11 +120,9 @@ class KeyboardShortcutsDialog extends Component<Props> {
                     { this.props.t(translationKey) }
                 </span>
                 <span className = 'item-action'>
-                    <Lozenge isBold = { true }>
-                        { keyboardKey.startsWith(':')
-                            ? `${modifierKey} + ${keyboardKey.slice(1)}`
-                            : keyboardKey }
-                    </Lozenge>
+                    { keyboardKey.startsWith(':')
+                        ? `${modifierKey} + ${keyboardKey.slice(1)}`
+                        : keyboardKey }
                 </span>
             </li>
         );

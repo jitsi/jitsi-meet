@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import Button from '@atlaskit/button/standard-button';
 import React from 'react';
 
 // @ts-ignore
@@ -15,6 +14,7 @@ import { AbstractDialogTab } from '../../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
+import { Button } from '../../../base/ui/components/web';
 import Input from '../../../base/ui/components/web/Input';
 // @ts-ignore
 import { openLogoutDialog } from '../../actions';
@@ -202,12 +202,10 @@ class ProfileTab extends AbstractDialogTab<Props> {
                         { t('settings.loggedIn', { name: authLogin }) }
                     </div> }
                 <Button
-                    appearance = 'primary'
+                    accessibilityLabel = { authLogin ? t('toolbar.logout') : t('toolbar.login') }
                     id = 'login_button'
-                    onClick = { this._onAuthToggle }
-                    type = 'button'>
-                    { authLogin ? t('toolbar.logout') : t('toolbar.login') }
-                </Button>
+                    label = { authLogin ? t('toolbar.logout') : t('toolbar.login') }
+                    onClick = { this._onAuthToggle } />
             </div>
         );
     }
