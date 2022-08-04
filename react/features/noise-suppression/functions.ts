@@ -24,6 +24,15 @@ export function isNoiseSuppressionEnabled(state: IState): boolean {
  * @returns {boolean}
  */
 export function canEnableNoiseSuppression(state: IState, dispatch: Function, localAudio: any) : boolean {
+    if (!localAudio) {
+        dispatch(showWarningNotification({
+            titleKey: 'notify.noiseSuppressionFailedTitle',
+            descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+        return false;
+    }
+
     const { channelCount } = localAudio.track.getSettings();
 
     // Sharing screen audio implies an effect being applied to the local track, because currently we don't support
