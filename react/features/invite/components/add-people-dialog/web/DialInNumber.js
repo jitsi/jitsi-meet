@@ -106,7 +106,7 @@ class DialInNumber extends Component<Props> {
                             { phoneNumber }
                         </span>
                     </span>
-                    <br/>
+                    <br />
                     <span className = 'conference-id'>
                         <span className = 'info-label'>
                             { t('info.dialInConferenceID') }
