@@ -79,6 +79,7 @@ const commands = {
     toggleFilmStrip: 'toggle-film-strip',
     toggleLobby: 'toggle-lobby',
     toggleModeration: 'toggle-moderation',
+    toggleNoiseSuppression: 'toggle-noise-suppression',
     toggleParticipantsPane: 'toggle-participants-pane',
     toggleRaiseHand: 'toggle-raise-hand',
     toggleShareAudio: 'toggle-share-audio',
