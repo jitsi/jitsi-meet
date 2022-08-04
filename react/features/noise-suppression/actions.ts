@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 // @ts-ignore
 import { getLocalJitsiAudioTrack } from '../base/tracks';
 // @ts-ignore
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showWarningNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../notifications';
 // @ts-ignore
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
@@ -59,16 +59,6 @@ export function setNoiseSuppressionEnabled(enabled: boolean) : any {
 
         logger.info(`Attempting to set noise suppression enabled state: ${enabled}`);
 
-        if (!localAudio) {
-            logger.warn('Can not apply noise suppression without any local track active.');
-
-            dispatch(showWarningNotification({
-                titleKey: 'notify.noiseSuppressionFailedTitle',
-                descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
-            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-
-            return;
-        }
         try {
             if (enabled && !noiseSuppressionEnabled) {
                 if (!canEnableNoiseSuppression(state, dispatch, localAudio)) {
