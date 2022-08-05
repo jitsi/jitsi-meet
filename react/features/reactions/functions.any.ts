@@ -3,9 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // @ts-ignore
 import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
-
-// @ts-ignore
-import { getLocalParticipant } from '../base/participants';
+import { getLocalParticipant } from '../base/participants/functions';
 
 // @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';

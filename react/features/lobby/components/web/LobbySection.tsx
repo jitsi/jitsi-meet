@@ -3,8 +3,7 @@ import React, { PureComponent } from 'react';
 
 // @ts-ignore
 import { translate } from '../../../base/i18n';
-// @ts-ignore
-import { isLocalParticipantModerator } from '../../../base/participants';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import Switch from '../../../base/ui/components/web/Switch';
 // @ts-ignore

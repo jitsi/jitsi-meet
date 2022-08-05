@@ -12,10 +12,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons/svg/index';
-import {
-    getLocalParticipant
-    // @ts-ignore
-} from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants/functions';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
 // @ts-ignore

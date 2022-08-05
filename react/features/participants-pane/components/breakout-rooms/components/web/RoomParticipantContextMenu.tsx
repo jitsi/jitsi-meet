@@ -9,9 +9,7 @@ import { Avatar } from '../../../../../base/avatar';
 
 // @ts-ignore
 import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/components';
-
-// @ts-ignore
-import { isLocalParticipantModerator } from '../../../../../base/participants';
+import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import { Theme } from '../../../../../base/ui/types';
 
 // @ts-ignore

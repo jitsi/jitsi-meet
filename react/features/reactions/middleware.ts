@@ -17,9 +17,7 @@ import {
     getParticipantById,
     getParticipantCount,
     isLocalParticipantModerator
-
-    // @ts-ignore
-} from '../base/participants';
+} from '../base/participants/functions';
 
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';

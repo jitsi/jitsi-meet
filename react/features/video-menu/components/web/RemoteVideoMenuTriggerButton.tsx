@@ -7,8 +7,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons/svg/index';
-// @ts-ignore
-import { getParticipantById } from '../../../base/participants';
+import { getParticipantById } from '../../../base/participants/functions';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
 // @ts-ignore
@@ -268,7 +267,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 function _mapStateToProps(state: any, ownProps: Partial<Props>) {
     const { participantID, thumbnailType } = ownProps;
     let _remoteControlState = null;
-    const participant = getParticipantById(state, participantID);
+    const participant = getParticipantById(state, participantID ?? '');
     const _participantDisplayName = participant?.name;
     const _isRemoteControlSessionActive = participant?.remoteControlSessionStatus ?? false;
     const _supportsRemoteControl = participant?.supportsRemoteControl ?? false;

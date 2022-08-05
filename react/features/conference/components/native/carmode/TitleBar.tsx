@@ -9,8 +9,7 @@ import { getConferenceName } from '../../../../base/conference/functions';
 import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../../base/flags';
 // @ts-ignore
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
-// @ts-ignore
-import { getLocalParticipant } from '../../../../base/participants';
+import { getLocalParticipant } from '../../../../base/participants/functions';
 import { connect } from '../../../../base/redux/functions';
 // @ts-ignore
 import ConnectionIndicator from '../../../../connection-indicator/components/native/ConnectionIndicator';

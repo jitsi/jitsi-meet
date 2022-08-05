@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The base URL for gravatar images.
  */
