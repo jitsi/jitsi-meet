@@ -262,11 +262,11 @@ function _onMuteReactionsCommand(attributes: MuteCommandAttributes = {}, id: str
 
     // The Command(s) API will send us our own commands and we don't want
     // to act upon them.
-    if (participantSendingCommand.local) {
+    if (participantSendingCommand?.local) {
         return;
     }
 
-    if (participantSendingCommand.role !== 'moderator') {
+    if (participantSendingCommand?.role !== 'moderator') {
         logger.warn('Received mute-reactions command not from moderator');
 
         return;
