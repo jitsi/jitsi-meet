@@ -4,6 +4,7 @@ import DropdownMenu, {
     DropdownItemGroup
 } from '@atlaskit/dropdown-menu';
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
@@ -11,8 +12,7 @@ import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardsh
 import { AbstractDialogTab } from '../../../base/dialog';
 // @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 // @ts-ignore
 import TouchmoveHack from '../../../chat/components/web/TouchmoveHack';
@@ -24,7 +24,7 @@ import { SS_DEFAULT_FRAME_RATE } from '../../constants';
 /**
  * The type of the React {@code Component} props of {@link MoreTab}.
  */
-export type Props = AbstractDialogTabProps & {
+export type Props = AbstractDialogTabProps & WithTranslation & {
 
     /**
      * The currently selected desktop share frame rate in the frame rate select dropdown.
@@ -617,4 +617,5 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     }
 }
 
+// @ts-ignore
 export default translate(MoreTab);

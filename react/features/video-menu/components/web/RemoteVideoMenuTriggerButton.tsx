@@ -1,11 +1,11 @@
 /* eslint-disable lines-around-comment */
 import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import { IconHorizontalPoints } from '../../../base/icons/svg/index';
 import { getParticipantById } from '../../../base/participants/functions';
 // @ts-ignore
@@ -34,7 +34,7 @@ declare var $: Object;
  * The type of the React {@code Component} props of
  * {@link RemoteVideoMenuTriggerButton}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * Whether the remote video context menu is disabled.
@@ -109,15 +109,10 @@ type Props = {
     showPopover: Function,
 
     /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
-
-    /**
      * The type of the thumbnail.
      */
     thumbnailType: string
-};
+}
 
 const styles = () => {
     return {
