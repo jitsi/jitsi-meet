@@ -1,14 +1,20 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Button from '../../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../../base/ui/constants';
+// @ts-ignore
 import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
 
+// @ts-ignore
 import styles from './styles';
 
+/**
+ * Button to add a breakout room.
+ *
+ * @returns {JSX.Element} - The add breakout room button.
+ */
 const AddBreakoutRoomButton = () => {
     const dispatch = useDispatch();
 
@@ -21,7 +27,7 @@ const AddBreakoutRoomButton = () => {
             accessibilityLabel = 'breakoutRooms.actions.add'
             label = 'breakoutRooms.actions.add'
             onPress = { onAdd }
-            style = { styles.addButton }
+            style = { styles.button }
             type = { BUTTON_TYPES.SECONDARY } />
     );
 };
