@@ -1,36 +1,50 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import { withStyles } from '@material-ui/core';
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
+import { IState } from '../../../app/types';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
+// @ts-ignore
 import { openDialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
+import { translate } from '../../../base/i18n/functions';
+import { IconClose, IconHorizontalPoints } from '../../../base/icons/svg/index';
+// @ts-ignore
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux';
+import { connect } from '../../../base/redux/functions';
 import Button from '../../../base/ui/components/web/Button';
+import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { Theme } from '../../../base/ui/types';
+// @ts-ignore
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
+// @ts-ignore
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
+// @ts-ignore
 import { close } from '../../actions';
 import {
     findAncestorByClass,
     getParticipantsPaneOpen,
     isMoreActionsVisible,
     isMuteAllVisible
+    // @ts-ignore
 } from '../../functions';
+// @ts-ignore
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
+// @ts-ignore
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
+// @ts-ignore
 import { FooterContextMenu } from './FooterContextMenu';
+// @ts-ignore
 import LobbyParticipants from './LobbyParticipants';
+// @ts-ignore
 import MeetingParticipants from './MeetingParticipants';
 
 /**
  * The type of the React {@code Component} props of {@link ParticipantsPane}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * Whether there is backend support for Breakout Rooms.
@@ -53,6 +67,11 @@ type Props = {
     _showAddRoomButton: boolean,
 
     /**
+     * Whether to show the footer menu.
+     */
+    _showFooter: boolean,
+
+    /**
      * Whether to show the more actions button.
      */
     _showMoreActionsButton: boolean,
@@ -63,25 +82,15 @@ type Props = {
     _showMuteAllButton: boolean,
 
     /**
-     * Whether to show the footer menu.
+     * An object containing the CSS classes.
      */
-    _showFooter: boolean,
+    classes: any,
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: Object,
-
-    /**
-     * The i18n translate function.
-     */
-    t: Function
-};
+    dispatch: Function
+}
 
 /**
  * The type of the React {@code Component} state of {@link ParticipantsPane}.
@@ -99,7 +108,7 @@ type State = {
     searchString: string
 };
 
-const styles = theme => {
+const styles = (theme: Theme) => {
     return {
         container: {
             boxSizing: 'border-box',
@@ -170,7 +179,7 @@ class ParticipantsPane extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -181,7 +190,6 @@ class ParticipantsPane extends Component<Props, State> {
         // Bind event handlers so they are only bound once per instance.
         this._onClosePane = this._onClosePane.bind(this);
         this._onDrawerClose = this._onDrawerClose.bind(this);
-        this._onKeyPress = this._onKeyPress.bind(this);
         this._onMuteAll = this._onMuteAll.bind(this);
         this._onToggleContext = this._onToggleContext.bind(this);
         this._onWindowClickListener = this._onWindowClickListener.bind(this);
@@ -235,17 +243,10 @@ class ParticipantsPane extends Component<Props, State> {
             <div className = 'participants_pane'>
                 <div className = 'participants_pane-content'>
                     <div className = { classes.header }>
-                        <div
-                            aria-label = { t('participantsPane.close', 'Close') }
-                            className = { classes.closeButton }
-                            onClick = { this._onClosePane }
-                            onKeyPress = { this._onKeyPress }
-                            role = 'button'
-                            tabIndex = { 0 }>
-                            <Icon
-                                size = { 24 }
-                                src = { IconClose } />
-                        </div>
+                        <ClickableIcon
+                            accessibilityLabel = { t('participantsPane.close', 'Close') }
+                            icon = { IconClose }
+                            onClick = { this._onClosePane } />
                     </div>
                     <div className = { classes.container }>
                         <LobbyParticipants />
@@ -286,21 +287,17 @@ class ParticipantsPane extends Component<Props, State> {
         );
     }
 
-    setSearchString: (string) => void;
-
     /**
      * Sets the search string.
      *
      * @param {string} newSearchString - The new search string.
      * @returns {void}
      */
-    setSearchString(newSearchString) {
+    setSearchString(newSearchString: string) {
         this.setState({
             searchString: newSearchString
         });
     }
-
-    _onClosePane: () => void;
 
     /**
      * Callback for closing the participant pane.
@@ -311,8 +308,6 @@ class ParticipantsPane extends Component<Props, State> {
     _onClosePane() {
         this.props.dispatch(close());
     }
-
-    _onDrawerClose: () => void;
 
     /**
      * Callback for closing the drawer.
@@ -326,24 +321,6 @@ class ParticipantsPane extends Component<Props, State> {
         });
     }
 
-    _onKeyPress: (Object) => void;
-
-    /**
-     * KeyPress handler for accessibility for closing the participants pane.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onKeyPress(e) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onClosePane();
-        }
-    }
-
-    _onMuteAll: () => void;
-
     /**
      * The handler for clicking mute all button.
      *
@@ -352,8 +329,6 @@ class ParticipantsPane extends Component<Props, State> {
     _onMuteAll() {
         this.props.dispatch(openDialog(MuteEveryoneDialog));
     }
-
-    _onToggleContext: () => void;
 
     /**
      * Handler for toggling open/close of the footer context menu.
@@ -366,15 +341,13 @@ class ParticipantsPane extends Component<Props, State> {
         });
     }
 
-    _onWindowClickListener: (event: Object) => void;
-
     /**
      * Window click event listener.
      *
      * @param {Event} e - The click event.
      * @returns {void}
      */
-    _onWindowClickListener(e) {
+    _onWindowClickListener(e: any) {
         if (this.state.contextOpen && !findAncestorByClass(e.target, this.props.classes.footerMoreContainer)) {
             this.setState({
                 contextOpen: false
@@ -393,7 +366,7 @@ class ParticipantsPane extends Component<Props, State> {
  * @protected
  * @returns {Props}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: IState) {
     const isPaneOpen = getParticipantsPaneOpen(state);
     const { conference } = state['features/base/conference'];
     const _isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
@@ -408,4 +381,5 @@ function _mapStateToProps(state: Object) {
     };
 }
 
+// @ts-ignore
 export default translate(connect(_mapStateToProps)(withStyles(styles)(ParticipantsPane)));
