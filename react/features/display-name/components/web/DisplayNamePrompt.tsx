@@ -1,14 +1,11 @@
-/* @flow */
-
-import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React from 'react';
 
+// @ts-ignore
 import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
-import AbstractDisplayNamePrompt, {
-    type Props
-} from '../AbstractDisplayNamePrompt';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+import Input from '../../../base/ui/components/web/Input';
+import AbstractDisplayNamePrompt, { Props } from '../AbstractDisplayNamePrompt';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
@@ -59,37 +56,28 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.displayNameRequired'
                 width = 'small'>
-                <TextField
+                <Input
                     autoFocus = { true }
-                    compact = { true }
                     label = { this.props.t('dialog.enterDisplayName') }
                     name = 'displayName'
                     onChange = { this._onDisplayNameChange }
-                    shouldFitContainer = { true }
                     type = 'text'
                     value = { this.state.displayName } />
             </Dialog>);
     }
 
-    _onDisplayNameChange: (Object) => void;
-
     /**
      * Updates the entered display name.
      *
-     * @param {Object} event - The DOM event triggered from the entered display
-     * name value having changed.
+     * @param {string} value - The new value of the input.
      * @private
      * @returns {void}
      */
-    _onDisplayNameChange(event) {
+    _onDisplayNameChange(value: string) {
         this.setState({
-            displayName: event.target.value
+            displayName: value
         });
     }
-
-    _onSetDisplayName: string => boolean;
-
-    _onSubmit: () => boolean;
 
     /**
      * Dispatches an action to update the local participant's display name. A

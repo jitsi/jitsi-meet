@@ -1,15 +1,15 @@
-// @flow
-
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
+// @ts-ignore
 import { updateSettings } from '../../base/settings';
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractDisplayNamePrompt}.
  */
-export type Props = {
+export interface Props extends WithTranslation {
 
     /**
      * Invoked to update the local participant's display name.
@@ -19,18 +19,13 @@ export type Props = {
     /**
      * Function to be invoked after a successful display name change.
      */
-    onPostSubmit: ?Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    onPostSubmit?: Function
+}
 
 /**
  * Implements an abstract class for {@code DisplayNamePrompt}.
  */
-export default class AbstractDisplayNamePrompt<S: *>
+export default class AbstractDisplayNamePrompt<S>
     extends Component<Props, S> {
     /**
      * Instantiates a new component.
@@ -43,8 +38,6 @@ export default class AbstractDisplayNamePrompt<S: *>
         this._onSetDisplayName = this._onSetDisplayName.bind(this);
     }
 
-    _onSetDisplayName: string => boolean;
-
     /**
      * Dispatches an action to update the local participant's display name. A
      * name must be entered for the action to dispatch.
@@ -56,7 +49,7 @@ export default class AbstractDisplayNamePrompt<S: *>
      * @param {string} displayName - The display name to save.
      * @returns {boolean}
      */
-    _onSetDisplayName(displayName) {
+    _onSetDisplayName(displayName: string) {
         if (!displayName || !displayName.trim()) {
             return false;
         }
