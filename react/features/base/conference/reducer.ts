@@ -50,7 +50,7 @@ export interface IConferenceState {
     authEnabled?: boolean|undefined;
     authLogin?: string|undefined;
     authRequired?: Object;
-    conference: Object|undefined;
+    conference: any|undefined;
     conferenceTimestamp?: number;
     e2eeSupported: boolean|undefined;
     followMeEnabled?: boolean;
