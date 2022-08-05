@@ -27,6 +27,12 @@ case "$1" in
         # loading debconf
         . /usr/share/debconf/confmodule
 
+        # Skip all processing if running with DEBIAN_FRONTEND=noninteractive
+        XDEB_FRONTEND=$(echo "$DEBIAN_FRONTEND" | tr '[:upper:]' '[:lower:]')
+        if [ "$XDEB_FRONTEND" = "noninteractive"]; then
+            exit 0
+        fi
+
         # try to get host from jitsi-videobridge
         db_get jitsi-videobridge/jvb-hostname
         if [ -z "$RET" ] ; then
