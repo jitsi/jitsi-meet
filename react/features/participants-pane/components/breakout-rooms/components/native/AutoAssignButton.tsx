@@ -1,15 +1,20 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Button from '../../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../../base/ui/constants';
+// @ts-ignore
 import { autoAssignToBreakoutRooms } from '../../../../../breakout-rooms/actions';
 
+// @ts-ignore
 import styles from './styles';
 
-
+/**
+ * Button to auto assign participants to breakout rooms.
+ *
+ * @returns {JSX.Element} - The auto assign button.
+ */
 const AutoAssignButton = () => {
     const dispatch = useDispatch();
 

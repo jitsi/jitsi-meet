@@ -1,17 +1,23 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
+// @ts-ignore
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
+import Button from '../../../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../../../base/ui/constants';
+// @ts-ignore
 import { moveToRoom } from '../../../../../breakout-rooms/actions';
 
+// @ts-ignore
 import styles from './styles';
 
+/**
+ * Button to leave a breakout rooms.
+ *
+ * @returns {JSX.Element} - The leave breakout room button.
+ */
 const LeaveBreakoutRoomButton = () => {
-    const { t } = useTranslation();
     const dispatch = useDispatch();
 
     const onLeave = useCallback(() => {
@@ -22,12 +28,11 @@ const LeaveBreakoutRoomButton = () => {
 
     return (
         <Button
-            accessibilityLabel = { t('breakoutRooms.actions.leaveBreakoutRoom') }
-            children = { t('breakoutRooms.actions.leaveBreakoutRoom') }
-            labelStyle = { styles.leaveButtonLabel }
-            mode = 'contained'
+            accessibilityLabel = 'breakoutRooms.actions.leaveBreakoutRoom'
+            label = 'breakoutRooms.actions.leaveBreakoutRoom'
             onPress = { onLeave }
-            style = { styles.transparentButton } />
+            style = { styles.button }
+            type = { BUTTON_TYPES.DESTRUCTIVE } />
     );
 };
 
