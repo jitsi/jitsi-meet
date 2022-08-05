@@ -6,7 +6,7 @@ import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { MEDIA_TYPE } from '../base/media';
 import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 
-import { UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT } from './actionTypes';
+import { UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT, SET_SEE_WHAT_IS_BEING_SHARED } from './actionTypes';
 
 export * from './actions.any';
 
@@ -99,5 +99,21 @@ export function updateLastLargeVideoMediaEvent(name: String) {
     return {
         type: UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT,
         name
+    };
+}
+
+/**
+ * Updates the value used to display what is being shared.
+ *
+ * @param {boolean} seeWhatIsBeingShared - The current value.
+ * @returns {{
+ *     type: SET_SEE_WHAT_IS_BEING_SHARED,
+ *     seeWhatIsBeingShared: boolean
+ * }}
+ */
+export function setSeeWhatIsBeingShared(seeWhatIsBeingShared: boolean) {
+    return {
+        type: SET_SEE_WHAT_IS_BEING_SHARED,
+        seeWhatIsBeingShared
     };
 }

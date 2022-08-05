@@ -3,15 +3,22 @@
 import React, { Component } from 'react';
 
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
+import { getLocalParticipant } from '../../base/participants';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
+import { getVideoTrackByParticipant } from '../../base/tracks';
 import { setColorAlpha } from '../../base/util';
 import { StageParticipantNameLabel } from '../../display-name';
 import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../filmstrip';
 import { getVerticalViewMaxWidth } from '../../filmstrip/functions.web';
+import { getLargeVideoParticipant } from '../../large-video/functions';
 import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
 import { setTileView } from '../../video-layout/actions';
+import { setSeeWhatIsBeingShared } from '../actions.web';
+
+import ScreenSharePlaceholder from './ScreenSharePlaceholder.web';
+
 
 declare var interfaceConfig: Object;
 
@@ -69,6 +76,21 @@ type Props = {
     _visibleFilmstrip: boolean,
 
     /**
+     * The large video participant id.
+     */
+     _largeVideoParticipantId: string,
+
+        /**
+     * Whether or not the screen sharing is on.
+     */
+        _isScreenSharing: boolean,
+
+    /**
+     * Whether or not the screen sharing is visible.
+     */
+     _seeWhatIsBeingShared: boolean,
+
+    /**
      * The Redux dispatch function.
      */
     dispatch: Function
@@ -109,10 +131,18 @@ class LargeVideo extends Component<Props> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: Props) {
-        const { _visibleFilmstrip } = this.props;
+        const { _visibleFilmstrip, _isScreenSharing, _seeWhatIsBeingShared, _largeVideoParticipantId } = this.props;
 
         if (prevProps._visibleFilmstrip !== _visibleFilmstrip) {
             this._updateLayout();
+        }
+
+        if (prevProps._isScreenSharing !== _isScreenSharing && !_isScreenSharing) {
+            this.props.dispatch(setSeeWhatIsBeingShared(false));
+        }
+
+        if (_isScreenSharing && _seeWhatIsBeingShared) {
+            VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, true);
         }
     }
 
@@ -126,7 +156,9 @@ class LargeVideo extends Component<Props> {
         const {
             _isChatOpen,
             _noAutoPlayVideo,
-            _showDominantSpeakerBadge
+            _showDominantSpeakerBadge,
+            _isScreenSharing,
+            _seeWhatIsBeingShared
         } = this.props;
         const style = this._getCustomSyles();
         const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
@@ -152,7 +184,6 @@ class LargeVideo extends Component<Props> {
                 <span id = 'remoteConnectionMessage' />
                 <div id = 'largeVideoElementsContainer'>
                     <div id = 'largeVideoBackgroundContainer' />
-
                     {/*
                       * FIXME: the architecture of elements related to the large
                       * video and the naming. The background is not part of
@@ -166,11 +197,11 @@ class LargeVideo extends Component<Props> {
                         onTouchEnd = { this._onDoubleTap }
                         ref = { this._wrapperRef }
                         role = 'figure' >
-                        <video
+                        {_isScreenSharing && !_seeWhatIsBeingShared ? <ScreenSharePlaceholder /> : <video
                             autoPlay = { !_noAutoPlayVideo }
                             id = 'largeVideo'
                             muted = { true }
-                            playsInline = { true } /* for Safari on iOS to work */ />
+                            playsInline = { true } /* for Safari on iOS to work */ />}
                     </div>
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
@@ -292,13 +323,23 @@ function _mapStateToProps(state) {
     const { width: verticalFilmstripWidth, visible } = state['features/filmstrip'];
     const { hideDominantSpeakerBadge } = state['features/base/config'];
 
+    const tracks = state['features/base/tracks'];
+    const localParticipantId = getLocalParticipant(state)?.id;
+    const largeVideoParticipant = getLargeVideoParticipant(state);
+    const videoTrack = getVideoTrackByParticipant(tracks, largeVideoParticipant);
+    const localParticipantisSharingTheScreen = largeVideoParticipant?.id?.includes(localParticipantId);
+    const isScreenSharing = localParticipantisSharingTheScreen && videoTrack?.videoType === 'desktop';
+
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
         _isChatOpen: isChatOpen,
+        _isScreenSharing: isScreenSharing,
+        _largeVideoParticipantId: largeVideoParticipant?.id,
         _noAutoPlayVideo: testingConfig?.noAutoPlayVideo,
         _resizableFilmstrip: isFilmstripResizable(state),
+        _seeWhatIsBeingShared: state['features/large-video'].seeWhatIsBeingShared,
         _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),

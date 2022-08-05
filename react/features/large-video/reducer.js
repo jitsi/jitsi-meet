@@ -5,7 +5,9 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
-    UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION, UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT
+    UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION,
+    UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT,
+    SET_SEE_WHAT_IS_BEING_SHARED
 } from './actionTypes';
 
 ReducerRegistry.register('features/large-video', (state = {}, action) => {
@@ -41,6 +43,12 @@ ReducerRegistry.register('features/large-video', (state = {}, action) => {
         return {
             ...state,
             lastMediaEvent: action.name
+        };
+
+    case SET_SEE_WHAT_IS_BEING_SHARED:
+        return {
+            ...state,
+            seeWhatIsBeingShared: action.seeWhatIsBeingShared
         };
 
     }
