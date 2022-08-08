@@ -1389,6 +1389,7 @@ var config = {
     //     'notify.leftTwoMembers', // show when two participants left simultaneously
     //     'notify.leftThreePlusMembers', // show when more than 2 participants left simultaneously
     //     'notify.grantedTo', // shown when moderator rights were granted to a participant
+    //     'notify.hostAskedUnmute', // shown to participant when host asks them to unmute
     //     'notify.invitedOneMember', // shown when 1 participant has been invited
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
     //     'notify.invitedTwoMembers', // shown when 2 participants have been invited
@@ -1409,7 +1410,7 @@ var config = {
     //     'notify.raisedHand', // shown when a partcipant used raise hand,
     //     'notify.startSilentTitle', // shown when user joined with no audio
     //     'notify.unmute', // shown to moderator when user raises hand during AV moderation
-    //     'notify.hostAskedUnmute', // shown to participant when host asks them to unmute
+    //     'notify.videoMutedRemotelyTitle', // shown when user's video is muted by a remote party,
     //     'prejoin.errorDialOut',
     //     'prejoin.errorDialOutDisconnected',
     //     'prejoin.errorDialOutFailed',
