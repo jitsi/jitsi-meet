@@ -5,7 +5,8 @@ import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n/functions';
+// @ts-ignore
+import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons/svg/index';
 import { getParticipantById } from '../../../base/participants/functions';
 // @ts-ignore

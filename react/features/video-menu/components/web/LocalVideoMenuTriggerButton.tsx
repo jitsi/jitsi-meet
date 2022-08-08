@@ -8,9 +8,9 @@ import { batch, connect } from 'react-redux';
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
 // @ts-ignore
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
-// @ts-ignore
 import { isMobileBrowser } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n/functions';
+// @ts-ignore
+import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons/svg/index';
 import { getLocalParticipant } from '../../../base/participants/functions';
 // @ts-ignore
@@ -44,7 +44,7 @@ import TogglePinToStageButton from './TogglePinToStageButton';
  * The type of the React {@code Component} props of
  * {@link LocalVideoMenuTriggerButton}.
  */
-interface Props extends WithTranslation {
+type Props = WithTranslation & {
 
     /**
      * The id of the local participant.
