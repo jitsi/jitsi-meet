@@ -2,7 +2,7 @@
 // @ts-ignore
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
-import { IStore } from '../../app/types';
+import { IState, IStore } from '../../app/types';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
@@ -508,7 +508,7 @@ export function isIconUrl(icon?: string | Object) {
  * to the Redux state.
  * @returns {boolean}
  */
-export function isLocalParticipantModerator(stateful: IStore | Function) {
+export function isLocalParticipantModerator(stateful: IStore | Function | IState) {
     const state = toState(stateful)['features/base/participants'];
 
     const { local } = state;
