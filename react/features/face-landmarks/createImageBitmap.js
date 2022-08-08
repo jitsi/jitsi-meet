@@ -1,5 +1,5 @@
 /*
-* Safari polyfill for createImageBitmap
+* Safari < 15 polyfill for createImageBitmap
 * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
 *
 * Support source image types: Canvas.
@@ -15,6 +15,9 @@ if (!('createImageBitmap' in window)) {
                 reject(new Error('createImageBitmap does not handle the provided image source type'));
             }
             const img = document.createElement('img');
+
+            // eslint-disable-next-line no-empty-function
+            img.close = () => {};
 
             img.addEventListener('load', () => {
                 resolve(img);
