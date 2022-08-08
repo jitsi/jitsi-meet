@@ -67,7 +67,7 @@ export interface Participant {
     supportsRemoteControl?: boolean;
 }
 
-interface LocalParticipant extends Participant {
+export interface LocalParticipant extends Participant {
     audioOutputDeviceId?: string;
     cameraDeviceId?: string;
     micDeviceId?: string;

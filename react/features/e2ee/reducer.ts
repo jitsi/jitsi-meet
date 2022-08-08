@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     SET_EVERYONE_ENABLED_E2EE,
@@ -15,10 +13,17 @@ const DEFAULT_STATE = {
     maxMode: MAX_MODE.DISABLED
 };
 
+export interface IE2EEState {
+    enabled: boolean;
+    everyoneEnabledE2EE?: boolean;
+    everyoneSupportE2EE?: boolean;
+    maxMode: string;
+}
+
 /**
  * Reduces the Redux actions of the feature features/e2ee.
  */
-ReducerRegistry.register('features/e2ee', (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register('features/e2ee', (state: IE2EEState = DEFAULT_STATE, action) => {
     switch (action.type) {
     case TOGGLE_E2EE:
         return {

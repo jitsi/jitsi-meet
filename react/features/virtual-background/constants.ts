@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * An enumeration of the different virtual background types.
  *
@@ -14,9 +12,9 @@ export const VIRTUAL_BACKGROUND_TYPE = {
 
 
 export type Image = {
-    tooltip?: string,
     id: string,
-    src: string
+    src: string,
+    tooltip?: string
 }
 
 // The limit of virtual background uploads is 24. When the number

@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The identifier of the sound to be played when e2ee is disabled.
  *
