@@ -1,19 +1,19 @@
 const assert = require('assert');
 const wdio = require('webdriverio');
 
-const AndroidOnePlusA5000 = {
+const options = {
     path: '/wd/hub',
     port: 4723,
     capabilities: {
-        platformName: 'Android',
-        automationName: 'UiAutomator2',
-        uid: '2ff2f58d',
+        appActivity: '.MainActivity',
         appPackage: 'org.jitsi.meet',
-        appActivity: '.MainActivity'
+        appiumVersion: '1.22.3',
+        automationName: 'UiAutomator2',
+        platformName: 'Android',
+        platformVersion: '10.0',
+        uid: '2ff2f58d'
     }
 };
-
-const client = wdio.remote(AndroidOnePlusA5000);
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -23,9 +23,9 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
  * @returns { Promise }
  */
 async function main() {
-    // eslint-disable-next-line no-undef
+    const client = wdio.remote(options);
 
-    const field = await client.$$('#search');
+    const field = await (await client).findElement('#search');
 
     await delay(5000);
     await client.setValue(field, 'testestest123');
