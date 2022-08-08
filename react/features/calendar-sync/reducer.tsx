@@ -1,6 +1,6 @@
-// @flow
-
-import { PersistenceRegistry, ReducerRegistry, set } from '../base/redux';
+import PersistenceRegistry from '../base/redux/PersistenceRegistry';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { set } from '../base/redux/functions';
 
 import {
     CLEAR_CALENDAR_INTEGRATION,
@@ -26,6 +26,17 @@ const DEFAULT_STATE = {
     msAuthState: undefined
 };
 
+export interface ICalendarSyncState {
+    authorization?: string;
+    error?: Object;
+    events: Array<Object>;
+    integrationReady: boolean;
+    integrationType?: string;
+    isLoadingEvents?: boolean;
+    msAuthState?: Object;
+    profileEmail?: string;
+}
+
 /**
  * Constant for the Redux subtree of the calendar feature.
  *
@@ -47,7 +58,7 @@ PersistenceRegistry.register(STORE_NAME, {
     msAuthState: true
 });
 
-ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register(STORE_NAME, (state: ICalendarSyncState = DEFAULT_STATE, action) => {
     switch (action.type) {
     case CLEAR_CALENDAR_INTEGRATION:
         return DEFAULT_STATE;

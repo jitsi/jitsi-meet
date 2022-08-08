@@ -22,6 +22,14 @@ import { ISoundsState } from '../base/sounds/reducer';
 import { ITestingState } from '../base/testing/reducer';
 import { INoSrcDataState, ITracksState } from '../base/tracks/reducer';
 import { IUserInteractionState } from '../base/user-interaction/reducer';
+import { IBreakoutRoomsState } from '../breakout-rooms/reducer';
+import { ICalendarSyncState } from '../calendar-sync/reducer';
+import { IChatState } from '../chat/reducer';
+import { IDeepLinkingState } from '../deep-linking/reducer';
+import { IDropboxState } from '../dropbox/reducer';
+import { IDynamicBrandingState } from '../dynamic-branding/reducer';
+import { IE2EEState } from '../e2ee/reducer';
+import { IEtherpadState } from '../etherpad/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
 
 export interface IStore {
@@ -55,6 +63,14 @@ export interface IState {
     'features/base/sounds': ISoundsState,
     'features/base/tracks': ITracksState,
     'features/base/user-interaction': IUserInteractionState,
+    'features/breakout-rooms': IBreakoutRoomsState,
+    'features/calendar-sync': ICalendarSyncState,
+    'features/chat': IChatState,
+    'features/deep-linking': IDeepLinkingState,
+    'features/dropbox': IDropboxState,
+    'features/dynamic-branding': IDynamicBrandingState,
+    'features/e2ee': IE2EEState,
+    'features/etherpad': IEtherpadState,
     'features/noise-suppression': INoiseSuppressionState,
     'features/testing': ITestingState
 }

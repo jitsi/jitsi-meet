@@ -1,8 +1,7 @@
-// @flow
-
 import { v4 as uuidv4 } from 'uuid';
 
-import { ReducerRegistry } from '../base/redux';
+import { LocalParticipant, Participant } from '../base/participants/reducer';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     ADD_MESSAGE,
@@ -21,7 +20,6 @@ const DEFAULT_STATE = {
     isOpen: false,
     isPollsTabFocused: false,
     lastReadMessage: undefined,
-    lastReadPoll: undefined,
     messages: [],
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
@@ -29,10 +27,38 @@ const DEFAULT_STATE = {
     isLobbyChatActive: false
 };
 
-ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
+interface IMessage {
+    displayName: string;
+    error?: Object;
+    id: string;
+    isReaction: boolean;
+    lobbyChat: boolean;
+    message: string;
+    messageId: string;
+    messageType: string;
+    privateMessage: boolean;
+    recipient: string;
+    timestamp: string;
+}
+
+export interface IChatState {
+    isLobbyChatActive: boolean;
+    isOpen: boolean;
+    isPollsTabFocused: boolean;
+    lastReadMessage?: IMessage;
+    lobbyMessageRecipient?: {
+        id: string;
+        name: string;
+    } | LocalParticipant,
+    messages: IMessage[];
+    nbUnreadMessages: number;
+    privateMessageRecipient?: Participant;
+}
+
+ReducerRegistry.register('features/chat', (state: IChatState = DEFAULT_STATE, action) => {
     switch (action.type) {
     case ADD_MESSAGE: {
-        const newMessage = {
+        const newMessage: IMessage = {
             displayName: action.displayName,
             error: action.error,
             id: action.id,

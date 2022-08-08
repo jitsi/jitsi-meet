@@ -1,6 +1,5 @@
-// @flow
-
-import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
+import PersistenceRegistry from '../base/redux/PersistenceRegistry';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
 
@@ -9,12 +8,18 @@ import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
  */
 const STORE_NAME = 'features/dropbox';
 
+export interface IDropboxState {
+    expireDate?: number;
+    rToken?: string;
+    token?: string;
+}
+
 /**
  * Sets up the persistence of the feature {@code dropbox}.
  */
 PersistenceRegistry.register(STORE_NAME);
 
-ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
+ReducerRegistry.register(STORE_NAME, (state: IDropboxState = {}, action) => {
     switch (action.type) {
     case UPDATE_DROPBOX_TOKEN:
         return {

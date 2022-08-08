@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { type Image } from '../virtual-background/constants';
 
 import {
@@ -144,10 +142,28 @@ const DEFAULT_STATE = {
     virtualBackgrounds: []
 };
 
+export interface IDynamicBrandingState {
+    avatarBackgrounds: string[];
+    backgroundColor: string;
+    backgroundImageUrl: string;
+    customizationFailed: boolean;
+    customizationReady: boolean;
+    defaultBranding: boolean;
+    didPageUrl: string;
+    inviteDomain: string;
+    labels: Object|null;
+    logoClickUrl: string;
+    logoImageUrl: string;
+    muiBrandedTheme?: boolean;
+    premeetingBackground: string;
+    useDynamicBrandingData: boolean;
+    virtualBackgrounds: Array<Image>;
+}
+
 /**
  * Reduces redux actions for the purposes of the feature {@code dynamic-branding}.
  */
-ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register(STORE_NAME, (state: IDynamicBrandingState = DEFAULT_STATE, action) => {
     switch (action.type) {
     case SET_DYNAMIC_BRANDING_DATA: {
         const {
@@ -212,7 +228,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
  * @private
  * @returns {{Props}}
  */
-function formatImages(images: Array<string> | Array<Object>): Array<Image> {
+function formatImages(images: Array<string> | Array<{src: string; tooltip?: string}>): Array<Image> {
     return images.map((img, i) => {
         let src;
         let tooltip;

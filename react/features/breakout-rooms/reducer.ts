@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     _RESET_BREAKOUT_ROOMS,
@@ -14,10 +12,29 @@ const DEFAULT_STATE = {
     roomCounter: 0
 };
 
+export interface IBreakoutRoomsState {
+    roomCounter: number;
+    rooms: {
+        [id: string]: {
+            id: string;
+            isMainRoom?: boolean;
+            jid: string;
+            name: string;
+            participants: {
+                [jid: string]: {
+                    displayName: string;
+                    jid: string;
+                    role: string;
+                }
+            }
+        }
+    };
+}
+
 /**
  * Listen for actions for the breakout-rooms feature.
  */
-ReducerRegistry.register(FEATURE_KEY, (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register(FEATURE_KEY, (state: IBreakoutRoomsState = DEFAULT_STATE, action: any) => {
     switch (action.type) {
     case _UPDATE_ROOM_COUNTER:
         return {
