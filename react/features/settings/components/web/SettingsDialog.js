@@ -278,9 +278,7 @@ function _mapStateToProps(state, ownProps) {
     const moreTabProps = getMoreTabProps(state);
     const moderatorTabProps = getModeratorTabProps(state);
     const { showModeratorSettings } = moderatorTabProps;
-    const { showLanguageSettings, showNotificationsSettings, showPrejoinSettings } = moreTabProps;
-    const showMoreTab
-        = configuredTabs.includes('more') && (showLanguageSettings || showNotificationsSettings || showPrejoinSettings);
+    const showMoreTab = configuredTabs.includes('more');
     const showProfileSettings
         = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
