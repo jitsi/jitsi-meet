@@ -1,5 +1,8 @@
+import { Dispatch } from 'redux';
+
+// @ts-ignore
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../notifications';
-import { set } from '../redux';
+import { set } from '../redux/functions';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -34,6 +37,7 @@ import {
     getParticipantById
 } from './functions';
 import logger from './logger';
+import { Participant } from './reducer';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -53,7 +57,7 @@ import logger from './logger';
  *     }
  * }}
  */
-export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, conference) {
+export function dominantSpeakerChanged(dominantSpeaker: string, previousSpeakers: string[], conference: any) {
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
@@ -73,7 +77,7 @@ export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, confer
  *     id: string
  * }}
  */
-export function grantModerator(id) {
+export function grantModerator(id: string) {
     return {
         type: GRANT_MODERATOR,
         id
@@ -89,7 +93,7 @@ export function grantModerator(id) {
  *     id: string
  * }}
  */
-export function kickParticipant(id) {
+export function kickParticipant(id: string) {
     return {
         type: KICK_PARTICIPANT,
         id
@@ -105,8 +109,8 @@ export function kickParticipant(id) {
  * constants.
  * @returns {Function}
  */
-export function localParticipantConnectionStatusChanged(connectionStatus) {
-    return (dispatch, getState) => {
+export function localParticipantConnectionStatusChanged(connectionStatus: string) {
+    return (dispatch: Dispatch, getState: Function) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -125,8 +129,8 @@ export function localParticipantConnectionStatusChanged(connectionStatus) {
  * @param {string} id - New ID for local participant.
  * @returns {Function}
  */
-export function localParticipantIdChanged(id) {
-    return (dispatch, getState) => {
+export function localParticipantIdChanged(id: string) {
+    return (dispatch: Dispatch, getState: Function) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -152,7 +156,7 @@ export function localParticipantIdChanged(id) {
  *     participant: Participant
  * }}
  */
-export function localParticipantJoined(participant = {}) {
+export function localParticipantJoined(participant: Participant = { id: '' }) {
     return participantJoined(set(participant, 'local', true));
 }
 
@@ -162,7 +166,7 @@ export function localParticipantJoined(participant = {}) {
  * @returns {Function}
  */
 export function localParticipantLeft() {
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch, getState: Function) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -191,8 +195,8 @@ export function localParticipantLeft() {
  * @param {string} role - The new role of the local participant.
  * @returns {Function}
  */
-export function localParticipantRoleChanged(role) {
-    return (dispatch, getState) => {
+export function localParticipantRoleChanged(role: string) {
+    return (dispatch: Dispatch, getState: Function) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -212,7 +216,7 @@ export function localParticipantRoleChanged(role) {
  *     mediaType: MEDIA_TYPE
  * }}
  */
-export function muteRemoteParticipant(id, mediaType) {
+export function muteRemoteParticipant(id: string, mediaType: string) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
         id,
@@ -234,7 +238,7 @@ export function muteRemoteParticipant(id, mediaType) {
  *     }
  * }}
  */
-export function participantConnectionStatusChanged(id, connectionStatus) {
+export function participantConnectionStatusChanged(id: string, connectionStatus: string) {
     return {
         type: PARTICIPANT_UPDATED,
         participant: {
@@ -253,7 +257,7 @@ export function participantConnectionStatusChanged(id, connectionStatus) {
  *     participant: Participant
  * }}
  */
-export function participantJoined(participant) {
+export function participantJoined(participant: Participant) {
     // Only the local participant is not identified with an id-conference pair.
     if (participant.local) {
         return {
@@ -271,7 +275,7 @@ export function participantJoined(participant) {
             'A remote participant must be associated with a JitsiConference!');
     }
 
-    return (dispatch, getState) => {
+    return (dispatch: Dispatch, getState: Function) => {
         // A remote participant is only expected to join in a joined or joining
         // conference. The following check is really necessary because a
         // JitsiConference may have moved into leaving but may still manage to
@@ -300,8 +304,8 @@ export function participantJoined(participant) {
 *     participant: Participant
 * }}
 */
-export function updateRemoteParticipantFeatures(jitsiParticipant) {
-    return (dispatch, getState) => {
+export function updateRemoteParticipantFeatures(jitsiParticipant: any) {
+    return (dispatch: Dispatch, getState: Function) => {
         if (!jitsiParticipant) {
             return;
         }
@@ -309,7 +313,7 @@ export function updateRemoteParticipantFeatures(jitsiParticipant) {
         const id = jitsiParticipant.getId();
 
         jitsiParticipant.getFeatures()
-            .then(features => {
+            .then((features: Map<string, string>) => {
                 const supportsRemoteControl = features.has(DISCO_REMOTE_CONTROL_FEATURE);
                 const participant = getParticipantById(getState(), id);
 
@@ -327,7 +331,7 @@ export function updateRemoteParticipantFeatures(jitsiParticipant) {
                     });
                 }
             })
-            .catch(error => {
+            .catch((error: any) => {
                 logger.error(`Failed to get participant features for ${id}!`, error);
             });
     };
@@ -345,7 +349,7 @@ export function updateRemoteParticipantFeatures(jitsiParticipant) {
  *     id: string
  * }}
  */
-export function hiddenParticipantJoined(id, displayName) {
+export function hiddenParticipantJoined(id: string, displayName: string) {
     return {
         type: HIDDEN_PARTICIPANT_JOINED,
         id,
@@ -362,7 +366,7 @@ export function hiddenParticipantJoined(id, displayName) {
  *     id: string
  * }}
  */
-export function hiddenParticipantLeft(id) {
+export function hiddenParticipantLeft(id: string) {
     return {
         type: HIDDEN_PARTICIPANT_LEFT,
         id
@@ -387,7 +391,8 @@ export function hiddenParticipantLeft(id) {
  *     }
  * }}
  */
-export function participantLeft(id, conference, isReplaced, isVirtualScreenshareParticipant) {
+export function participantLeft(id: string, conference: any,
+        isReplaced?: boolean, isVirtualScreenshareParticipant?: boolean) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
@@ -412,7 +417,7 @@ export function participantLeft(id, conference, isReplaced, isVirtualScreenshare
  *     }
  * }}
  */
-export function participantPresenceChanged(id, presence) {
+export function participantPresenceChanged(id: string, presence: string) {
     return participantUpdated({
         id,
         presence
@@ -432,7 +437,7 @@ export function participantPresenceChanged(id, presence) {
  *     }
  * }}
  */
-export function participantRoleChanged(id, role) {
+export function participantRoleChanged(id: string, role: string) {
     return participantUpdated({
         id,
         role
@@ -450,7 +455,7 @@ export function participantRoleChanged(id, role) {
  *     name: string
  * }}
  */
-export function screenshareParticipantDisplayNameChanged(id, name) {
+export function screenshareParticipantDisplayNameChanged(id: string, name: string) {
     return {
         type: SCREENSHARE_PARTICIPANT_NAME_CHANGED,
         id,
@@ -470,7 +475,7 @@ export function screenshareParticipantDisplayNameChanged(id, name) {
  *     participant: Participant
  * }}
  */
-export function participantUpdated(participant = {}) {
+export function participantUpdated(participant: Participant = { id: '' }) {
     const participantToUpdate = {
         ...participant
     };
@@ -492,8 +497,8 @@ export function participantUpdated(participant = {}) {
  * @param {JitsiLocalTrack} track - Information about the track that has been muted.
  * @returns {Promise}
  */
-export function participantMutedUs(participant, track) {
-    return (dispatch, getState) => {
+export function participantMutedUs(participant: any, track: any) {
+    return (dispatch: Dispatch, getState: Function) => {
         if (!participant) {
             return;
         }
@@ -516,8 +521,8 @@ export function participantMutedUs(participant, track) {
  * @param {(boolean)} local - JitsiTrack instance.
  * @returns {Function}
  */
-export function createVirtualScreenshareParticipant(sourceName, local) {
-    return (dispatch, getState) => {
+export function createVirtualScreenshareParticipant(sourceName: string, local: boolean) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const ownerId = getVirtualScreenshareParticipantOwnerId(sourceName);
         const ownerName = getParticipantDisplayName(state, ownerId);
@@ -539,8 +544,8 @@ export function createVirtualScreenshareParticipant(sourceName, local) {
  * @param {JitsiParticipant} kicked - Information about participant that was kicked.
  * @returns {Promise}
  */
-export function participantKicked(kicker, kicked) {
-    return (dispatch, getState) => {
+export function participantKicked(kicker: any, kicked: any) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
 
         dispatch({
             type: PARTICIPANT_KICKED,
@@ -576,7 +581,7 @@ export function participantKicked(kicker, kicked) {
  *     }
  * }}
  */
-export function pinParticipant(id) {
+export function pinParticipant(id: string) {
     return {
         type: PIN_PARTICIPANT,
         participant: {
@@ -600,7 +605,7 @@ export function pinParticipant(id) {
  *     }
  * }}
 */
-export function setLoadableAvatarUrl(participantId, url, useCORS) {
+export function setLoadableAvatarUrl(participantId: string, url: string, useCORS: boolean) {
     return {
         type: SET_LOADABLE_AVATAR_URL,
         participant: {
@@ -620,7 +625,7 @@ export function setLoadableAvatarUrl(participantId, url, useCORS) {
  *     raisedHandTimestamp: number
  * }}
  */
-export function raiseHand(enabled) {
+export function raiseHand(enabled: boolean) {
     return {
         type: LOCAL_PARTICIPANT_RAISE_HAND,
         raisedHandTimestamp: enabled ? Date.now() : 0
@@ -636,7 +641,7 @@ export function raiseHand(enabled) {
  *      participant: Object
  * }}
  */
-export function raiseHandUpdateQueue(participant) {
+export function raiseHandUpdateQueue(participant: Participant) {
     return {
         type: RAISE_HAND_UPDATED,
         participant
@@ -652,7 +657,7 @@ export function raiseHandUpdateQueue(participant) {
  *      level: number
  * }}
  */
-export function localParticipantAudioLevelChanged(level) {
+export function localParticipantAudioLevelChanged(level: number) {
     return {
         type: LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
         level
@@ -666,7 +671,7 @@ export function localParticipantAudioLevelChanged(level) {
  * @param {string} name - New participant name.
  * @returns {Object}
  */
-export function overwriteParticipantName(id, name) {
+export function overwriteParticipantName(id: string, name: string) {
     return {
         type: OVERWRITE_PARTICIPANT_NAME,
         id,
@@ -680,7 +685,7 @@ export function overwriteParticipantName(id, name) {
  * @param {Array<Object>} participantList - The list of participants to overwrite.
  * @returns {Object}
  */
-export function overwriteParticipantsNames(participantList) {
+export function overwriteParticipantsNames(participantList: Participant[]) {
     return {
         type: OVERWRITE_PARTICIPANTS_NAMES,
         participantList
@@ -697,7 +702,7 @@ export function overwriteParticipantsNames(participantList) {
  *     recording: boolean
  * }}
  */
-export function updateLocalRecordingStatus(recording, onlySelf) {
+export function updateLocalRecordingStatus(recording: boolean, onlySelf: boolean) {
     return {
         type: SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
         recording,

@@ -21,8 +21,7 @@ import { connect } from '../../base/connection/actions.native';
 import { IconClose } from '../../base/icons/svg/index';
 // @ts-ignore
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
-// @ts-ignore
-import { getLocalParticipant } from '../../base/participants';
+import { getLocalParticipant } from '../../base/participants/functions';
 // @ts-ignore
 import { getFieldValue } from '../../base/react';
 // @ts-ignore
@@ -60,7 +59,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const aspectRatio = useSelector(
         (state: any) => state['features/base/responsive-ui']?.aspectRatio
     );
-    const localParticipant = useSelector(state => getLocalParticipant(state));
+    const localParticipant = useSelector((state: any) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector(state => isDisplayNameRequired(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]

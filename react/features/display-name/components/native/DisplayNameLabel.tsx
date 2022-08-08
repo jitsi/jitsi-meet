@@ -4,8 +4,6 @@ import { Text, View } from 'react-native';
 import {
     getParticipantById,
     getParticipantDisplayName
-
-    // @ts-ignore
 } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 

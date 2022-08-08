@@ -17,9 +17,8 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 
 // @ts-ignore
 import { translate } from '../../../base/i18n';
-
-// @ts-ignore
-import { getLocalParticipant, hasRaisedHand, raiseHand } from '../../../base/participants';
+import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
+import { raiseHand } from '../../../base/participants/actions';
 
 import { connect } from '../../../base/redux/functions';
 import { Theme } from '../../../base/ui/types';

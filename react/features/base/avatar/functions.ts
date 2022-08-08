@@ -1,5 +1,3 @@
-// @flow
-
 import GraphemeSplitter from 'grapheme-splitter';
 import _ from 'lodash';
 
@@ -24,7 +22,7 @@ const splitter = new GraphemeSplitter();
  * @param {Array<string>} customAvatarBackgrounds - Custom avatar background values.
  * @returns {string}
  */
-export function getAvatarColor(initials: ?string, customAvatarBackgrounds: Array<string>) {
+export function getAvatarColor(initials: string|undefined, customAvatarBackgrounds: Array<string>) {
     const hasCustomAvatarBackgronds = customAvatarBackgrounds && customAvatarBackgrounds.length;
     const colorsBase = hasCustomAvatarBackgronds ? customAvatarBackgrounds : AVATAR_COLORS;
 
@@ -34,7 +32,7 @@ export function getAvatarColor(initials: ?string, customAvatarBackgrounds: Array
         let nameHash = 0;
 
         for (const s of initials) {
-            nameHash += s.codePointAt(0);
+            nameHash += Number(s.codePointAt(0));
         }
 
         colorIndex = nameHash % colorsBase.length;
@@ -49,7 +47,7 @@ export function getAvatarColor(initials: ?string, customAvatarBackgrounds: Array
  * @param {string} word - The string to get grapheme from.
  * @returns {string}
  */
-function getFirstGraphemeUpper(word) {
+function getFirstGraphemeUpper(word: string) {
     if (!word?.length) {
         return '';
     }
@@ -63,7 +61,7 @@ function getFirstGraphemeUpper(word) {
  * @param {string?} s - The string to generate initials for.
  * @returns {string?}
  */
-export function getInitials(s: ?string) {
+export function getInitials(s?: string) {
     // We don't want to use the domain part of an email address, if it is one
     const initialsBasis = _.split(s, '@')[0];
     const [ firstWord, secondWord ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
