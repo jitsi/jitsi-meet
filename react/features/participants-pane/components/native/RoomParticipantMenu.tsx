@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment */
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 // @ts-ignore
@@ -8,8 +9,7 @@ import { Avatar } from '../../../base/avatar';
 import { BottomSheet, hideSheet } from '../../../base/dialog';
 // @ts-ignore
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { getBreakoutRooms } from '../../../breakout-rooms/functions';
@@ -23,7 +23,7 @@ import styles from '../../../video-menu/components/native/styles';
  */
 const AVATAR_SIZE = 24;
 
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * The list of all breakout rooms.
@@ -48,12 +48,7 @@ type Props = {
     /**
      * The room the participant is in.
      */
-    room: any,
-
-    /**
-     * Translation function.
-     */
-    t: Function
+    room: any
 }
 
 /**

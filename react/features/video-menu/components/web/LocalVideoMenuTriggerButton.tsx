@@ -1,13 +1,13 @@
 /* eslint-disable lines-around-comment */
 import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
 // @ts-ignore
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
 // @ts-ignore
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
-// @ts-ignore
 import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
@@ -44,7 +44,7 @@ import TogglePinToStageButton from './TogglePinToStageButton';
  * The type of the React {@code Component} props of
  * {@link LocalVideoMenuTriggerButton}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * The id of the local participant.
@@ -111,18 +111,13 @@ type Props = {
     /**
      * Shows popover.
      */
-    showPopover: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
+    showPopover: Function
 
     /**
      * The type of the thumbnail.
      */
     thumbnailType: string
-};
+}
 
 const styles = () => {
     return {
