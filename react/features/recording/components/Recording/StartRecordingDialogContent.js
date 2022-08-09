@@ -434,7 +434,8 @@ class StartRecordingDialogContent extends Component<Props> {
             switchContent = (
                 <Container className = 'recording-switch'>
                     <Button
-                        label = { 'recording.signOut' }
+                        label = { t('recording.signOut') }
+                        onClick = { this._onSignOut }
                         onPress = { this._onSignOut }
                         type = { BUTTON_TYPES.SECONDARY } />
                 </Container>
@@ -444,7 +445,8 @@ class StartRecordingDialogContent extends Component<Props> {
             switchContent = (
                 <Container className = 'recording-switch'>
                     <Button
-                        label = { 'recording.signIn' }
+                        label = { t('recording.signIn') }
+                        onClick = { this._onSignIn }
                         onPress = { this._onSignIn }
                         type = { BUTTON_TYPES.PRIMARY } />
                 </Container>
