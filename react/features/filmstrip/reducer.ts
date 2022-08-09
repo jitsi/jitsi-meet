@@ -1,7 +1,5 @@
-// @flow
-
-import { PARTICIPANT_LEFT } from '../base/participants';
-import { ReducerRegistry } from '../base/redux';
+import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     REMOVE_STAGE_PARTICIPANT,
@@ -167,7 +165,7 @@ const DEFAULT_STATE = {
      * @public
      * @type {Set<string>}
      */
-    visibleRemoteParticipants: new Set(),
+    visibleRemoteParticipants: new Set<string>(),
 
     /**
      * The width of the resizable filmstrip.
@@ -189,9 +187,80 @@ const DEFAULT_STATE = {
     }
 };
 
+interface Dimensions {
+    height: number;
+    width: number;
+}
+
+interface FilmstripDimensions {
+    filmstripHeight?: number;
+    filmstripWidth?: number;
+    gridDimensions?: {
+        columns: number;
+        rows: number;
+    }
+    hasScroll?: boolean;
+    thumbnailSize?: Dimensions;
+}
+
+export interface IFilmstripState {
+    activeParticipants: Array<{
+        participantId: string;
+        pinned?: boolean
+    }>;
+    enabled: boolean;
+    horizontalViewDimensions: {
+        hasScroll?: boolean;
+        local?: Dimensions;
+        remote?: Dimensions;
+        remoteVideosContainer?: Dimensions;
+    };
+    isResizing: boolean;
+    maxStageParticipants: number;
+    participantsVolume: {
+        [participantId: string]: number;
+    };
+    remoteParticipants: string[];
+    screenshareFilmstripDimensions: {
+        filmstripHeight?: number;
+        filmstripWidth?: number;
+        thumbnailSize?: Dimensions;
+    };
+    screenshareFilmstripParticipantId?: string|null;
+    stageFilmstripDimensions: FilmstripDimensions;
+    tileViewDimensions?: FilmstripDimensions;
+    topPanelHeight: {
+        current: number|null;
+        userSet: number|null;
+    };
+    topPanelVisible: boolean;
+    verticalViewDimensions: {
+        gridView?: {
+            gridDimensions: {
+                columns: number;
+                rows: number;
+            };
+            hasScroll: boolean;
+            thumbnailSize: Dimensions;
+        };
+        hasScroll?: boolean;
+        local?: Dimensions;
+        remote?: Dimensions;
+        remoteVideosContainer?: Dimensions;
+    };
+    visible: boolean;
+    visibleParticipantsEndIndex: number;
+    visibleParticipantsStartIndex: number;
+    visibleRemoteParticipants: Set<string>;
+    width: {
+        current: number|null;
+        userSet: number|null;
+    }
+}
+
 ReducerRegistry.register(
     'features/filmstrip',
-    (state = DEFAULT_STATE, action) => {
+    (state: IFilmstripState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case SET_FILMSTRIP_ENABLED:
             return {
