@@ -26,6 +26,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
         return (
             <div
                 className = 'chatmessage-wrapper'
+                id = { this.props.message.messageId }
                 tabIndex = { -1 }>
                 <div
                     className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''} ${

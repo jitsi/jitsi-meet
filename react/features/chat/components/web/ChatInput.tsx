@@ -32,16 +32,9 @@ interface Props extends WithTranslation {
     dispatch: Dispatch<any>,
 
     /**
-     * Optional callback to invoke when the chat textarea has auto-resized to
-     * fit overflowing text.
-     */
-    onResize?: Function,
-
-    /**
      * Callback to invoke on message send.
      */
     onSend: Function
-
 }
 
 /**
@@ -66,7 +59,7 @@ type State = {
  * @augments Component
  */
 class ChatInput extends Component<Props, State> {
-    _textArea?: HTMLTextAreaElement;
+    _textArea?: any;
 
     state = {
         message: '',
@@ -82,15 +75,13 @@ class ChatInput extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this._textArea = undefined;
+        this._textArea = React.createRef<any>();
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDetectSubmit = this._onDetectSubmit.bind(this);
         this._onMessageChange = this._onMessageChange.bind(this);
         this._onSmileySelect = this._onSmileySelect.bind(this);
         this._onSubmitMessage = this._onSubmitMessage.bind(this);
-        this._toggleSmileysPanel = this._toggleSmileysPanel.bind(this);
-        this._setTextAreaRef = this._setTextAreaRef.bind(this);
     }
 
     /**
@@ -101,7 +92,7 @@ class ChatInput extends Component<Props, State> {
     componentDidMount() {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
-            this._textArea && this._textArea.blur();
+            this._textArea && this._textArea.current.blur();
         }
     }
 
@@ -134,7 +125,7 @@ class ChatInput extends Component<Props, State> {
                         onChange = { this._onMessageChange }
                         onKeyPress = { this._onDetectSubmit }
                         placeholder = { this.props.t('chat.messagebox') }
-                        ref = { this._setTextAreaRef }
+                        ref = { this._textArea }
                         textarea = { true }
                         value = { this.state.message } />
                     <Button
@@ -155,7 +146,7 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _focus() {
-        this._textArea && this._textArea.focus();
+        this._textArea && this._textArea.current.focus();
     }
 
     /**
@@ -253,17 +244,6 @@ class ChatInput extends Component<Props, State> {
             this._focus();
         }
         this.setState({ showSmileysPanel: !this.state.showSmileysPanel });
-    }
-
-    /**
-     * Sets the reference to the HTML TextArea.
-     *
-     * @param {HTMLAudioElement} textAreaElement - The HTML text area element.
-     * @private
-     * @returns {void}
-     */
-    _setTextAreaRef(textAreaElement?: HTMLTextAreaElement) {
-        this._textArea = textAreaElement;
     }
 }
 

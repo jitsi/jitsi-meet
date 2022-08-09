@@ -44,32 +44,9 @@ class Chat extends AbstractChat<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onChatTabKeyDown = this._onChatTabKeyDown.bind(this);
-        this._onChatInputResize = this._onChatInputResize.bind(this);
         this._onEscClick = this._onEscClick.bind(this);
         this._onPollsTabKeyDown = this._onPollsTabKeyDown.bind(this);
         this._onToggleChat = this._onToggleChat.bind(this);
-    }
-
-    /**
-     * Implements {@code Component#componentDidMount}.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this._scrollMessageContainerToBottom(true);
-    }
-
-    /**
-     * Implements {@code Component#componentDidUpdate}.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps) {
-        if (this.props._messages !== prevProps._messages) {
-            this._scrollMessageContainerToBottom(true);
-        } else if (this.props._isOpen && !prevProps._isOpen) {
-            this._scrollMessageContainerToBottom(false);
-        }
     }
 
     /**
@@ -96,19 +73,6 @@ class Chat extends AbstractChat<Props> {
                     : this._renderChat() }
             </div> : null
         );
-    }
-
-    _onChatInputResize: () => void;
-
-    /**
-     * Callback invoked when {@code ChatInput} changes height. Preserves
-     * displaying the latest message if it is scrolled to.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onChatInputResize() {
-        this._messageContainerRef.current.maybeUpdateBottomScroll();
     }
 
     _onChatTabKeyDown: (KeyboardEvent) => void;
@@ -172,7 +136,7 @@ class Chat extends AbstractChat<Props> {
         if (_isPollsTabFocused) {
             return (
                 <>
-                    {_isPollsEnabled && this._renderTabs()}
+                    { _isPollsEnabled && this._renderTabs() }
                     <div
                         aria-labelledby = 'polls-tab'
                         id = 'polls-panel'
@@ -186,16 +150,16 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <>
-                {_isPollsEnabled && this._renderTabs()}
+                { _isPollsEnabled && this._renderTabs() }
                 <div
                     aria-labelledby = 'chat-tab'
                     className = { clsx('chat-panel', !_isPollsEnabled && 'chat-panel-no-tabs') }
                     id = 'chat-panel'
                     role = 'tabpanel'>
                     <MessageContainer
-                        messages = { this.props._messages }
-                        ref = { this._messageContainerRef } />
+                        messages = { this.props._messages } />
                     <MessageRecipient />
+
                     <ChatInput
                         onResize = { this._onChatInputResize }
                         onSend = { this._onSendMessage } />
@@ -222,8 +186,7 @@ class Chat extends AbstractChat<Props> {
                     aria-controls = 'chat-panel'
                     aria-label = { t('chat.tabs.chat') }
                     aria-selected = { !_isPollsTabFocused }
-                    className = { `chat-tab ${
-                        _isPollsTabFocused ? '' : 'chat-tab-focus'
+                    className = { `chat-tab ${_isPollsTabFocused ? '' : 'chat-tab-focus'
                     }` }
                     id = 'chat-tab'
                     onClick = { this._onToggleChatTab }
@@ -232,21 +195,20 @@ class Chat extends AbstractChat<Props> {
                     tabIndex = '0'>
                     <span
                         className = { 'chat-tab-title' }>
-                        {t('chat.tabs.chat')}
+                        { t('chat.tabs.chat') }
                     </span>
-                    {this.props._isPollsTabFocused
+                    { this.props._isPollsTabFocused
                         && _nbUnreadMessages > 0 && (
                         <span className = { 'chat-tab-badge' }>
-                            {_nbUnreadMessages}
+                            { _nbUnreadMessages }
                         </span>
-                    )}
+                    ) }
                 </div>
                 <div
                     aria-controls = 'polls-panel'
                     aria-label = { t('chat.tabs.polls') }
                     aria-selected = { _isPollsTabFocused }
-                    className = { `chat-tab ${
-                        _isPollsTabFocused ? 'chat-tab-focus' : ''
+                    className = { `chat-tab ${_isPollsTabFocused ? 'chat-tab-focus' : ''
                     }` }
                     id = 'polls-tab'
                     onClick = { this._onTogglePollsTab }
@@ -254,31 +216,17 @@ class Chat extends AbstractChat<Props> {
                     role = 'tab'
                     tabIndex = '0'>
                     <span className = { 'chat-tab-title' }>
-                        {t('chat.tabs.polls')}
+                        { t('chat.tabs.polls') }
                     </span>
-                    {!_isPollsTabFocused
+                    { !_isPollsTabFocused
                         && this.props._nbUnreadPolls > 0 && (
                         <span className = { 'chat-tab-badge' }>
-                            {_nbUnreadPolls}
+                            { _nbUnreadPolls }
                         </span>
-                    )}
+                    ) }
                 </div>
             </div>
         );
-    }
-
-    /**
-     * Scrolls the chat messages so the latest message is visible.
-     *
-     * @param {boolean} withAnimation - Whether or not to show a scrolling
-     * animation.
-     * @private
-     * @returns {void}
-     */
-    _scrollMessageContainerToBottom(withAnimation) {
-        if (this._messageContainerRef.current) {
-            this._messageContainerRef.current.scrollToBottom(withAnimation);
-        }
     }
 
     _onSendMessage: (string) => void;
@@ -295,7 +243,6 @@ class Chat extends AbstractChat<Props> {
     }
     _onTogglePollsTab: () => void;
     _onToggleChatTab: () => void;
-
 }
 
 export default translate(connect(_mapStateToProps)(Chat));

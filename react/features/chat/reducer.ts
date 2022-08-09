@@ -24,7 +24,8 @@ const DEFAULT_STATE = {
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
     lobbyMessageRecipient: undefined,
-    isLobbyChatActive: false
+    isLobbyChatActive: false,
+    inputChatHeight: 0
 };
 
 interface IMessage {
@@ -168,6 +169,7 @@ ReducerRegistry.register('features/chat', (state: IChatState = DEFAULT_STATE, ac
             isOpen: action.payload || state.isOpen,
             privateMessageRecipient: undefined
         };
+
     case REMOVE_LOBBY_CHAT_PARTICIPANT:
         return {
             ...state,

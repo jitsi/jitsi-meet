@@ -44,15 +44,13 @@ class ChatMessageGroup extends Component<Props> {
 
         return (
             <div className = { `chat-message-group ${className}` }>
-                {
-                    messages.map((message, i) => (
-                        <ChatMessage
-                            key = { i }
-                            message = { message }
-                            showDisplayName = { i === 0 }
-                            showTimestamp = { i === messages.length - 1 } />
-                    ))
-                }
+                { messages.map((message, i) => (
+                    <ChatMessage
+                        key = { i }
+                        message = { message }
+                        showDisplayName = { i === 0 }
+                        showTimestamp = { i === messages.length - 1 } />
+                ))}
             </div>
         );
     }
