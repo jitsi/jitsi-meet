@@ -164,7 +164,6 @@ import UIEvents from './service/UI/UIEvents';
 const logger = Logger.getLogger(__filename);
 
 const eventEmitter = new EventEmitter();
-
 let room;
 let connection;
 
@@ -2997,7 +2996,11 @@ export default {
         }
 
         APP.UI.removeAllListeners();
-        console.log('windowClosing');
+        console.log('windowClosing',isFlutterInAppWebViewReady,   window.flutter_inappwebview);
+        if (isFlutterInAppWebViewReady) {
+
+            window.flutter_inappwebview.callHandler('myHandlerName');
+        }
         close();
         let requestFeedbackPromise;
 
@@ -3028,7 +3031,6 @@ export default {
                 APP.API.notifyReadyToClose();
             }
             APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
-            // window.close();
         });
     },
 
@@ -3040,8 +3042,6 @@ export default {
      */
     async leaveRoom(doDisconnect = true) {
         APP.store.dispatch(conferenceWillLeave(room));
-        // console.log('Final Close');
-        // close();
         if (room && room.isJoined()) {
             return room.leave().finally(() => {
                 if (doDisconnect) {
