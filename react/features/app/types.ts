@@ -30,6 +30,12 @@ import { IDropboxState } from '../dropbox/reducer';
 import { IDynamicBrandingState } from '../dynamic-branding/reducer';
 import { IE2EEState } from '../e2ee/reducer';
 import { IEtherpadState } from '../etherpad/reducer';
+import { IFaceLandmarksState } from '../face-landmarks/reducer';
+import { IFeedbackState } from '../feedback/reducer';
+import { IFilmstripState } from '../filmstrip/reducer';
+import { IFollowMeState } from '../follow-me/reducer';
+import { IGifsState } from '../gifs/reducer';
+import { IGoogleApiState } from '../google-api/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
 
 export interface IStore {
@@ -71,6 +77,12 @@ export interface IState {
     'features/dynamic-branding': IDynamicBrandingState,
     'features/e2ee': IE2EEState,
     'features/etherpad': IEtherpadState,
+    'features/face-landmarks': IFaceLandmarksState,
+    'features/feedback': IFeedbackState,
+    'features/filmstrip': IFilmstripState,
+    'features/follow-me': IFollowMeState,
+    'features/gifs': IGifsState,
+    'features/google-api': IGoogleApiState,
     'features/noise-suppression': INoiseSuppressionState,
     'features/testing': ITestingState
 }

@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     ADD_FACE_EXPRESSION,
@@ -26,14 +24,37 @@ const defaultState = {
     recognitionActive: false
 };
 
-ReducerRegistry.register('features/face-landmarks', (state = defaultState, action) => {
+export interface IFaceLandmarksState {
+    faceBoxes: {
+        left?: number;
+        right?: number;
+        width?: number;
+    };
+    faceExpressions: {
+        angry: number;
+        disgusted: number;
+        fearful: number;
+        happy: number;
+        neutral: number;
+        sad: number;
+        surprised: number;
+    };
+    faceExpressionsBuffer: Array<{
+        emotion: string;
+        timestamp: string;
+    }>;
+    recognitionActive: boolean;
+}
+
+ReducerRegistry.register('features/face-landmarks', (state: IFaceLandmarksState = defaultState, action) => {
     switch (action.type) {
     case ADD_FACE_EXPRESSION: {
         return {
             ...state,
             faceExpressions: {
                 ...state.faceExpressions,
-                [action.faceExpression]: state.faceExpressions[action.faceExpression] + action.duration
+                [action.faceExpression]: state.faceExpressions[
+                    action.faceExpression as keyof typeof state.faceExpressions] + action.duration
             }
         };
     }

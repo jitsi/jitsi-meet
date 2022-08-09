@@ -1,6 +1,4 @@
-import {
-    ReducerRegistry
-} from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CANCEL_FEEDBACK,
@@ -17,12 +15,18 @@ const DEFAULT_STATE = {
     submitted: false
 };
 
+export interface IFeedbackState {
+    message: string;
+    score: number;
+    submitted: boolean;
+}
+
 /**
  * Reduces the Redux actions of the feature features/feedback.
  */
 ReducerRegistry.register(
     'features/feedback',
-    (state = DEFAULT_STATE, action) => {
+    (state: IFeedbackState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case CANCEL_FEEDBACK: {
             return {

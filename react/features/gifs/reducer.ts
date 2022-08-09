@@ -1,5 +1,4 @@
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     ADD_GIF_FOR_PARTICIPANT,
@@ -14,6 +13,15 @@ const initialState = {
     gifList: new Map(),
     menuOpen: false
 };
+
+export interface IGifsState {
+    drawerVisible: boolean;
+    gifList: Map<string, {
+        gifUrl: string;
+        timeoutID: number;
+    }>;
+    menuOpen: boolean;
+}
 
 ReducerRegistry.register(
     'features/gifs',

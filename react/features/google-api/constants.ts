@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Google API URL to retrieve streams for a live broadcast of a user.
  *

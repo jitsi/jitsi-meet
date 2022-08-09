@@ -1,18 +1,24 @@
-// @flow
-
-import { ReducerRegistry, set } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { set } from '../base/redux/functions';
 
 import {
     SET_FOLLOW_ME_MODERATOR,
     SET_FOLLOW_ME_STATE
 } from './actionTypes';
 
+export interface IFollowMeState {
+    moderator?: string;
+    state?: {
+        [key: string]: string;
+    }
+}
+
 /**
  * Listen for actions that contain the Follow Me feature active state, so that it can be stored.
  */
 ReducerRegistry.register(
     'features/follow-me',
-    (state = {}, action) => {
+    (state: IFollowMeState = {}, action) => {
         switch (action.type) {
 
         case SET_FOLLOW_ME_MODERATOR: {

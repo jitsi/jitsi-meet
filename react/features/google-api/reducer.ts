@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     SET_GOOGLE_API_PROFILE,
@@ -18,11 +16,17 @@ const DEFAULT_STATE = {
     profileEmail: ''
 };
 
+export interface IGoogleApiState {
+    googleAPIState: number;
+    googleResponse?: Object;
+    profileEmail: string;
+}
+
 /**
  * Reduces the Redux actions of the feature features/google-api.
  */
 ReducerRegistry.register('features/google-api',
-    (state = DEFAULT_STATE, action) => {
+    (state: IGoogleApiState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case SET_GOOGLE_API_STATE:
             return {
