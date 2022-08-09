@@ -119,63 +119,18 @@
 
 .chat-input-container {
     padding: 0 16px 16px;
-
-    &.populated {
-        #chat-input {
-            .send-button {
-                background: #1B67EC;
-                cursor: pointer;
-                margin-left: 0.3rem;
-
-                @media (hover: hover) and (pointer: fine) {
-                    &:hover {
-                        background: #3D82FB;
-                    }
-                }
-
-                &:active {
-                    background: #0852D4;
-                }
-
-                path {
-                    fill: #fff;
-                }
-            }
-        }
-    }
 }
 
 #chat-input {
-    border: 1px solid $chatInputSeparatorColor;
     display: flex;
+    align-items: flex-end;
     padding: 4px;
-    border-radius: 3px;
-
-    &:focus-within {
-        border: 1px solid #619CF4;
-    }
-
-    * {
-        background-color: transparent;
-    }
+    position: relative;
 }
 
-.send-button-container {
-    display: flex;
-    align-items: center;
-}
-
-.send-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    width: 40px;
-    border-radius: 3px;
-
-    path {
-        fill: $chatInputSeparatorColor;
-    }
+.chat-input {
+    flex: 1;
+    margin-right: 8px;
 }
 
 .smiley-button {
@@ -395,7 +350,9 @@
 
 .smiley-input {
     display: flex;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .smileys-panel {
@@ -403,7 +360,7 @@
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, .6) !important;
     height: auto;
-    display: none;
+    display: flex;
     overflow: hidden;
     position: absolute;
     width: calc(#{$sidebarWidth} - 32px);
@@ -417,11 +374,6 @@
      * of that.
      */
     transition: max-height 0.3s;
-
-    &.show-smileys {
-        display: flex;
-        max-height: 500%;
-    }
 
     #smileysContainer {
         background-color: $chatBackgroundColor;
