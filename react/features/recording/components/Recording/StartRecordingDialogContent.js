@@ -190,6 +190,19 @@ class StartRecordingDialogContent extends Component<Props> {
     }
 
     /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps) {
+        // Auto sign-out when the use chooses another recording service.
+        if (prevProps.selectedRecordingService === RECORDING_TYPES.DROPBOX
+                && this.props.selectedRecordingService !== RECORDING_TYPES.DROPBOX && this.props.isTokenValid) {
+            this._onSignOut();
+        }
+    }
+
+    /**
      * Renders the component.
      *
      * @protected
@@ -508,7 +521,6 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _onRecordingServiceSwitchChange() {
         const {
-            isTokenValid,
             onChange,
             selectedRecordingService
         } = this.props;
@@ -519,10 +531,6 @@ class StartRecordingDialogContent extends Component<Props> {
         }
 
         onChange(RECORDING_TYPES.JITSI_REC_SERVICE);
-
-        if (isTokenValid) {
-            this._onSignOut();
-        }
     }
 
     /**
