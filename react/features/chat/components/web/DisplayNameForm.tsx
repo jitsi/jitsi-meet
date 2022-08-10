@@ -1,19 +1,22 @@
-// @flow
-
-import { FieldTextStateless } from '@atlaskit/field-text';
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { updateSettings } from '../../../base/settings';
+import { Button } from '../../../base/ui/components/web';
+import Input from '../../../base/ui/components/web/Input';
 
+// @ts-ignore
 import KeyboardAvoider from './KeyboardAvoider';
 
 /**
  * The type of the React {@code Component} props of {@DisplayNameForm}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * Invoked to set the local participant display name.
@@ -23,13 +26,8 @@ type Props = {
     /**
      * Whether the polls feature is enabled or not.
      */
-    isPollsEnabled: boolean,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    isPollsEnabled: boolean
+}
 
 /**
  * The type of the React {@code Component} state of {@DisplayNameForm}.
@@ -79,46 +77,39 @@ class DisplayNameForm extends Component<Props, State> {
         return (
             <div id = 'nickname'>
                 <form onSubmit = { this._onSubmit }>
-                    <FieldTextStateless
-                        aria-describedby = 'nickname-title'
-                        autoComplete = 'name'
+                    <Input
+                        accessibilityLabel = { t('chat.nickname.title') }
                         autoFocus = { true }
-                        compact = { true }
                         id = 'nickinput'
                         label = { t(isPollsEnabled ? 'chat.nickname.titleWithPolls' : 'chat.nickname.title') }
+                        name = 'name'
                         onChange = { this._onDisplayNameChange }
                         placeholder = { t('chat.nickname.popover') }
-                        shouldFitContainer = { true }
                         type = 'text'
                         value = { this.state.displayName } />
                 </form>
-                <div
-                    className = { `enter-chat${this.state.displayName.trim() ? '' : ' disabled'}` }
-                    onClick = { this._onSubmit }
-                    onKeyPress = { this._onKeyPress }
-                    role = 'button'
-                    tabIndex = { 0 }>
-                    { t('chat.enter') }
-                </div>
+                <br />
+                <Button
+                    accessibilityLabel = { t('chat.enter') }
+                    disabled = { !this.state.displayName.trim() }
+                    fullWidth = { true }
+                    label = { t('chat.enter') }
+                    onClick = { this._onSubmit } />
                 <KeyboardAvoider />
             </div>
         );
     }
 
-    _onDisplayNameChange: (Object) => void;
-
     /**
      * Dispatches an action update the entered display name.
      *
-     * @param {event} event - Keyboard event.
+     * @param {string} value - Keyboard event.
      * @private
      * @returns {void}
      */
-    _onDisplayNameChange(event: Object) {
-        this.setState({ displayName: event.target.value });
+    _onDisplayNameChange(value: string) {
+        this.setState({ displayName: value });
     }
-
-    _onSubmit: (Object) => void;
 
     /**
      * Dispatches an action to hit enter to change your display name.
@@ -128,16 +119,14 @@ class DisplayNameForm extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onSubmit(event: Object) {
-        event.preventDefault();
+    _onSubmit(event: any) {
+        event?.preventDefault && event.preventDefault();
 
         // Store display name in settings
         this.props.dispatch(updateSettings({
             displayName: this.state.displayName
         }));
     }
-
-    _onKeyPress: (Object) => void;
 
     /**
      * KeyPress handler for accessibility.
@@ -146,7 +135,7 @@ class DisplayNameForm extends Component<Props, State> {
      *
      * @returns {void}
      */
-    _onKeyPress(e) {
+    _onKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             this._onSubmit(e);
         }

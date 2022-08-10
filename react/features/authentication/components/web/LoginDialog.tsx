@@ -1,24 +1,29 @@
-// @flow
-
-import { FieldTextStateless as TextField } from '@atlaskit/field-text';
+/* eslint-disable lines-around-comment */
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
+// @ts-ignore
 import { connect } from '../../../../../connection';
+// @ts-ignore
 import { toJid } from '../../../base/connection/functions';
+// @ts-ignore
 import { Dialog } from '../../../base/dialog';
-import { translate, translateToHTML } from '../../../base/i18n';
+import { translate, translateToHTML } from '../../../base/i18n/functions';
+// @ts-ignore
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
-import { connect as reduxConnect } from '../../../base/redux';
+import { connect as reduxConnect } from '../../../base/redux/functions';
+import Input from '../../../base/ui/components/web/Input';
 import {
     authenticateAndUpgradeRole,
     cancelLogin
+    // @ts-ignore
 } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * {@link JitsiConference} That needs authentication - will hold a valid
@@ -39,7 +44,7 @@ type Props = {
     /**
      * The error which occurred during login/authentication.
      */
-    _error: Object,
+    _error: any,
 
     /**
      * The progress in the floating range between 0 and 1 of the authenticating
@@ -60,18 +65,18 @@ type Props = {
     /**
      * Conference room name.
      */
-    roomName: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
+    roomName: string
 }
 
 /**
  * The type of the React {@code Component} state of {@link LoginDialog}.
  */
 type State = {
+
+    /**
+     * Authentication process starts before joining the conference room.
+     */
+    loginStarted: boolean,
 
     /**
      * The user entered password for the conference.
@@ -81,12 +86,7 @@ type State = {
     /**
      * The user entered local participant name.
      */
-    username: string,
-
-    /**
-     * Authentication process starts before joining the conference room.
-     */
-    loginStarted: boolean
+    username: string
 }
 
 /**
@@ -111,10 +111,9 @@ class LoginDialog extends Component<Props, State> {
 
         this._onCancelLogin = this._onCancelLogin.bind(this);
         this._onLogin = this._onLogin.bind(this);
-        this._onChange = this._onChange.bind(this);
+        this._onUsernameChange = this._onUsernameChange.bind(this);
+        this._onPasswordChange = this._onPasswordChange.bind(this);
     }
-
-    _onCancelLogin: () => void;
 
     /**
      * Called when the cancel button is clicked.
@@ -127,8 +126,6 @@ class LoginDialog extends Component<Props, State> {
 
         dispatch(cancelLogin());
     }
-
-    _onLogin: () => void;
 
     /**
      * Notifies this LoginDialog that the login button (OK) has been pressed by
@@ -156,7 +153,7 @@ class LoginDialog extends Component<Props, State> {
             });
 
             connect(jid, password, roomName)
-                .then(connection => {
+                .then((connection: any) => {
                     onSuccess && onSuccess(connection);
                 })
                 .catch(() => {
@@ -167,17 +164,27 @@ class LoginDialog extends Component<Props, State> {
         }
     }
 
-    _onChange: Object => void;
-
     /**
      * Callback for the onChange event of the field.
      *
-     * @param {Object} evt - The static event.
+     * @param {string} value - The static event.
      * @returns {void}
      */
-    _onChange(evt: Object) {
+    _onPasswordChange(value: string) {
         this.setState({
-            [evt.target.name]: evt.target.value
+            password: value
+        });
+    }
+
+    /**
+     * Callback for the onChange event of the username input.
+     *
+     * @param {string} value - The new value.
+     * @returns {void}
+     */
+    _onUsernameChange(value: string) {
+        this.setState({
+            username: value
         });
     }
 
@@ -196,7 +203,7 @@ class LoginDialog extends Component<Props, State> {
             t
         } = this.props;
         const { username, password } = this.state;
-        const messageOptions = {};
+        const messageOptions: any = {};
         let messageKey;
 
         if (progress && progress < 1) {
@@ -258,25 +265,20 @@ class LoginDialog extends Component<Props, State> {
                 onSubmit = { this._onLogin }
                 titleKey = { t('dialog.authenticationRequired') }
                 width = { 'small' }>
-                <TextField
+                <Input
                     autoFocus = { true }
-                    className = 'input-control'
-                    compact = { false }
                     label = { t('dialog.user') }
                     name = 'username'
-                    onChange = { this._onChange }
+                    onChange = { this._onUsernameChange }
                     placeholder = { t('dialog.userIdentifier') }
-                    shouldFitContainer = { true }
                     type = 'text'
                     value = { username } />
-                <TextField
-                    className = 'input-control'
-                    compact = { false }
+                <br />
+                <Input
                     label = { t('dialog.userPassword') }
                     name = 'password'
-                    onChange = { this._onChange }
+                    onChange = { this._onPasswordChange }
                     placeholder = { t('dialog.password') }
-                    shouldFitContainer = { true }
                     type = 'password'
                     value = { password } />
                 { this.renderMessage() }
@@ -293,7 +295,7 @@ class LoginDialog extends Component<Props, State> {
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: any) {
     const {
         error: authenticateAndUpgradeRoleError,
         progress,
