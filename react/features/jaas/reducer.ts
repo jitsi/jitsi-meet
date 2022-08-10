@@ -1,4 +1,4 @@
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     SET_DETAILS
@@ -10,11 +10,15 @@ const DEFAULT_STATE = {
     status: STATUSES.ACTIVE
 };
 
+export interface IJaaSState {
+    [key: string]: any
+}
+
 /**
  * Listen for actions that mutate the billing-counter state.
  */
 ReducerRegistry.register(
-    'features/jaas', (state = DEFAULT_STATE, action) => {
+    'features/jaas', (state: IJaaSState = DEFAULT_STATE, action) => {
         switch (action.type) {
 
         case SET_DETAILS: {

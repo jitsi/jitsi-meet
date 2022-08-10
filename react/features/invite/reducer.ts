@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     ADD_PENDING_INVITE_REQUEST,
@@ -24,7 +22,22 @@ const DEFAULT_STATE = {
     pendingInviteRequests: []
 };
 
-ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
+export interface IInviteState {
+    calleeInfoVisible?: boolean;
+    conferenceID?: string;
+    error?: Error;
+    initialCalleeInfo?: Object;
+    numbers?: string;
+    numbersEnabled: boolean;
+    numbersFetched: boolean;
+    pendingInviteRequests: Array<{
+        callback: Function;
+        invitees: Array<Object>;
+    }>;
+    sipUri?: string;
+}
+
+ReducerRegistry.register('features/invite', (state: IInviteState = DEFAULT_STATE, action) => {
     switch (action.type) {
     case ADD_PENDING_INVITE_REQUEST:
         return {

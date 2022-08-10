@@ -1,7 +1,5 @@
-// @flow
-
-import { PARTICIPANT_ID_CHANGED } from '../base/participants';
-import { ReducerRegistry } from '../base/redux';
+import { PARTICIPANT_ID_CHANGED } from '../base/participants/actionTypes';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -10,7 +8,14 @@ import {
     SET_SEE_WHAT_IS_BEING_SHARED
 } from './actionTypes';
 
-ReducerRegistry.register('features/large-video', (state = {}, action) => {
+export interface ILargeVideoState {
+    lastMediaEvent?: string;
+    participantId?: string;
+    resolution?: number;
+    seeWhatIsBeingShared?: boolean;
+}
+
+ReducerRegistry.register('features/large-video', (state: ILargeVideoState = {}, action) => {
     switch (action.type) {
 
     // When conference is joined, we update ID of local participant from default
