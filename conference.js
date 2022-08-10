@@ -3000,8 +3000,12 @@ export default {
         APP.UI.removeAllListeners();
        if(isMobileBrowser()){
            console.log('windowClosing ', window.flutter_inappwebview ?  window.flutter_inappwebview._platformReady : ' InAppWebview is NOT Platform Ready');
-           if (window.flutter_inappwebview._platformReady) {
+           if (window.flutter_inappwebview) {
+               console.log('CallingMyHandlerName');
                window.flutter_inappwebview.callHandler('myHandlerName');
+           }
+           else {
+               console.log('InAppWebViewNotLoaded');
            }
        }
        else {
