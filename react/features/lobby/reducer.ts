@@ -1,7 +1,7 @@
-// @flow
-
+// @ts-ignore
 import { CONFERENCE_JOINED, CONFERENCE_LEFT, SET_PASSWORD } from '../base/conference';
-import { ReducerRegistry } from '../base/redux';
+import { Participant } from '../base/participants/reducer';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
@@ -22,6 +22,18 @@ const DEFAULT_STATE = {
     passwordJoinFailed: false
 };
 
+interface KnockingParticipant extends Participant {
+    chattingWithModerator?: string;
+}
+
+export interface ILobbyState {
+    knocking: boolean;
+    knockingParticipants: KnockingParticipant[];
+    lobbyEnabled: boolean;
+    lobbyVisible: boolean;
+    passwordJoinFailed: boolean;
+}
+
 /**
  * Reduces redux actions which affect the display of notifications.
  *
@@ -30,7 +42,7 @@ const DEFAULT_STATE = {
  * @returns {Object} The next redux state which is the result of reducing the
  * specified {@code action}.
  */
-ReducerRegistry.register('features/lobby', (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register('features/lobby', (state: ILobbyState = DEFAULT_STATE, action) => {
     switch (action.type) {
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
@@ -112,7 +124,7 @@ ReducerRegistry.register('features/lobby', (state = DEFAULT_STATE, action) => {
  * @param {Object} state - The current Redux state of the feature.
  * @returns {Object}
  */
-function _knockingParticipantArrivedOrUpdated(participant, state) {
+function _knockingParticipantArrivedOrUpdated(participant: KnockingParticipant, state: ILobbyState) {
     let existingParticipant = state.knockingParticipants.find(p => p.id === participant.id);
 
     existingParticipant = {

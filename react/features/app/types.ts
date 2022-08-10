@@ -36,6 +36,10 @@ import { IFilmstripState } from '../filmstrip/reducer';
 import { IFollowMeState } from '../follow-me/reducer';
 import { IGifsState } from '../gifs/reducer';
 import { IGoogleApiState } from '../google-api/reducer';
+import { IInviteState } from '../invite/reducer';
+import { IJaaSState } from '../jaas/reducer';
+import { ILargeVideoState } from '../large-video/reducer';
+import { ILobbyState } from '../lobby/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
 
 export interface IStore {
@@ -83,6 +87,10 @@ export interface IState {
     'features/follow-me': IFollowMeState,
     'features/gifs': IGifsState,
     'features/google-api': IGoogleApiState,
+    'features/invite': IInviteState,
+    'features/jaas': IJaaSState,
+    'features/large-video': ILargeVideoState,
+    'features/lobby': ILobbyState,
     'features/noise-suppression': INoiseSuppressionState,
     'features/testing': ITestingState
 }
