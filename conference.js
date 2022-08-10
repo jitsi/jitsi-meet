@@ -160,6 +160,8 @@ import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise'
 import { endpointMessageReceived } from './react/features/subtitles';
 import { muteLocal } from './react/features/video-menu/actions.any';
 import UIEvents from './service/UI/UIEvents';
+import {isMobileBrowser} from './react/features/base/environment/utils';
+import { platform } from 'process';
 
 const logger = Logger.getLogger(__filename);
 
@@ -2996,12 +2998,15 @@ export default {
         }
 
         APP.UI.removeAllListeners();
-        console.log('windowClosing',isFlutterInAppWebViewReady,   window.flutter_inappwebview);
-        if (isFlutterInAppWebViewReady) {
-
-            window.flutter_inappwebview.callHandler('myHandlerName');
-        }
-        close();
+       if(isMobileBrowser()){
+           console.log('windowClosing ', window.flutter_inappwebview ?  window.flutter_inappwebview._platformReady : ' InAppWebview is NOT Platform Ready');
+           if (window.flutter_inappwebview._platformReady) {
+               window.flutter_inappwebview.callHandler('myHandlerName');
+           }
+       }
+       else {
+           close();
+       }
         let requestFeedbackPromise;
 
         if (requestFeedback) {
