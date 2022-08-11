@@ -1,6 +1,7 @@
 // @flow
 
 import { batch } from 'react-redux';
+import Logger from '@jitsi/logger';
 
 import { CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_LEFT } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
@@ -18,8 +19,12 @@ import {
     resetSharedVideoStatus,
     setSharedVideoStatus
 } from './actions.any';
-import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
+import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME, VIDEO, PLAYBACK_STATUSES } from './constants';
 import { isSharingStatus } from './functions';
+
+const logger = Logger.getLogger(__filename);
+
+declare var APP: Object;
 
 /**
  * Middleware that captures actions related to video sharing and updates
@@ -74,6 +79,8 @@ MiddlewareRegistry.register(store => next => action => {
         const conference = getCurrentConference(state);
         const localParticipantId = getLocalParticipant(state)?.id;
         const { videoUrl, status, ownerId, time, muted, volume } = action;
+        logger.debug(`User with id: ${ownerId} ${status === PLAYBACK_STATUSES.PLAYING ? 'is': ''} ${status} video sharing.`);
+        APP.API.notifyAudioOrVideoSharingToggled(VIDEO, status , ownerId);
 
         if (localParticipantId === ownerId) {
             sendShareVideoCommand({
@@ -91,7 +98,8 @@ MiddlewareRegistry.register(store => next => action => {
     case RESET_SHARED_VIDEO_STATUS: {
         const localParticipantId = getLocalParticipant(state)?.id;
         const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
-
+        logger.debug(`User with id: ${stateOwnerId} stop video sharing.`);
+        APP.API.notifyAudioOrVideoSharingToggled(VIDEO, 'stop', stateOwnerId);
         if (localParticipantId === stateOwnerId) {
             const conference = getCurrentConference(state);
 
