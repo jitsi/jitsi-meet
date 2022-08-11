@@ -1,8 +1,6 @@
-// @flow
-
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useEffect, useRef } from 'react';
+import React, { ReactElement, useEffect, useRef } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 
@@ -11,7 +9,7 @@ type Props = {
     /**
      * The component(s) that need to be scrollable on mobile.
      */
-   children: React$Node,
+    children: ReactElement,
 
     /**
      * Whether the component should be flex container or not.
@@ -48,7 +46,7 @@ function TouchmoveHack({ children, isModal, flex }: Props) {
         return children;
     }
 
-    const touchMoveElementRef = useRef(null);
+    const touchMoveElementRef = useRef<HTMLDivElement>(null);
 
     /**
      * Atlaskit's {@code Modal} uses a third party library to disable touchmove events

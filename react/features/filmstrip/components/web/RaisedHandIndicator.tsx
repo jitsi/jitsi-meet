@@ -1,13 +1,13 @@
-/* @flow */
-
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { IconRaisedHand } from '../../../base/icons';
-import { getParticipantById, hasRaisedHand } from '../../../base/participants';
-import { BaseIndicator } from '../../../base/react';
-import BaseTheme from '../../../base/ui/components/BaseTheme';
+import { IState } from '../../../app/types';
+import { IconRaisedHand } from '../../../base/icons/svg/index';
+import { getParticipantById, hasRaisedHand } from '../../../base/participants/functions';
+import { Participant } from '../../../base/participants/reducer';
+import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
+import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 
 /**
  * The type of the React {@code Component} props of {@link RaisedHandIndicator}.
@@ -31,7 +31,7 @@ type Props = {
     tooltipPosition: string
 };
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme: any) => {
     return {
         raisedHandIndicator: {
             backgroundColor: theme.palette.warning02,
@@ -54,8 +54,9 @@ const RaisedHandIndicator = ({
     participantId,
     tooltipPosition
 }: Props) => {
-    const _raisedHand = hasRaisedHand(useSelector(state =>
-        getParticipantById(state, participantId)));
+    const participant: Participant|undefined = useSelector((state: IState) =>
+        getParticipantById(state, participantId));
+    const _raisedHand = hasRaisedHand(participant);
     const styles = useStyles();
 
     if (!_raisedHand) {

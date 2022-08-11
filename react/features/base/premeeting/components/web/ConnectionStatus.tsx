@@ -1,16 +1,21 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useState } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { translate } from '../../../i18n';
-import { Icon, IconArrowDownSmall, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons';
-import { connect } from '../../../redux';
+import { IState } from '../../../../app/types';
+import { translate } from '../../../i18n/functions';
+import Icon from '../../../icons/components/Icon';
+import { IconArrowDownSmall, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg/index';
+import { connect } from '../../../redux/functions';
+// @ts-ignore
 import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
+// @ts-ignore
 import { CONNECTION_TYPE } from '../../constants';
+// @ts-ignore
 import { getConnectionData } from '../../functions';
 
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * List of strings with details about the connection.
@@ -20,15 +25,10 @@ type Props = {
     /**
      * The type of the connection. Can be: 'none', 'poor', 'nonOptimal' or 'good'.
      */
-    connectionType: string,
-
-    /**
-     * Used for translation.
-     */
-    t: Function
+    connectionType: string
 }
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme: any) => {
     return {
         connectionStatus: {
             borderRadius: '6px',
@@ -121,7 +121,7 @@ const useStyles = makeStyles(theme => {
     };
 });
 
-const CONNECTION_TYPE_MAP = {
+const CONNECTION_TYPE_MAP: any = {
     [CONNECTION_TYPE.POOR]: {
         connectionClass: 'con-status--poor',
         icon: IconWifi1Bar,
@@ -152,7 +152,7 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
     const arrowClassName = showDetails
         ? 'con-status-arrow con-status-arrow--up'
         : 'con-status-arrow';
-    const detailsText = connectionDetails.map(t).join(' ');
+    const detailsText = connectionDetails.map(d => t(d)).join(' ');
     const detailsClassName = showDetails
         ? 'con-status-details-visible'
         : 'con-status-details-hidden';
@@ -202,7 +202,7 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
                     tabIndex = { 0 } />
             </div>
             <div
-                aria-level = '2'
+                aria-level = { 2 }
                 className = { `con-status-details ${detailsClassName}` }
                 role = 'heading'>
                 {detailsText}</div>
@@ -216,7 +216,7 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
  * @param {Object} state - The redux state.
  * @returns {Object}
  */
-function mapStateToProps(state): Object {
+function mapStateToProps(state: IState): Object {
     const { connectionDetails, connectionType } = getConnectionData(state);
 
     return {

@@ -1,24 +1,22 @@
-// @flow
-
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React from 'react';
 
-import { Icon } from '../../../icons';
+import Icon from '../../../icons/components/Icon';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
 
 type Props = AbstractProps & {
 
     /**
-     * An object containing the CSS classes.
-     */
-    classes: Object,
-
-    /**
      * External class name passed through props.
      */
     className?: string,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: any,
 
     /**
      * The default avatar URL if we want to override the app bundled one (e.g. AlwaysOnTop).
@@ -33,7 +31,7 @@ type Props = AbstractProps & {
     /**
      * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
      */
-    status?: ?string,
+    status?: string,
 
     /**
      * TestId of the element, if any.
@@ -43,7 +41,7 @@ type Props = AbstractProps & {
     /**
      * Indicates whether to load the avatar using CORS or not.
      */
-    useCORS?: ?boolean
+    useCORS?: boolean
 };
 
 /**
@@ -211,10 +209,10 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     /**
      * Constructs a style object to be used on the avatars.
      *
-     * @param {string?} color - The desired background color.
+     * @param {string} color - The desired background color.
      * @returns {Object}
      */
-    _getAvatarStyle(color) {
+    _getAvatarStyle(color?: string) {
         const { size } = this.props;
 
         return {
@@ -231,7 +229,7 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
      * @param {string} additional - Any additional class to add.
      * @returns {string}
      */
-    _getAvatarClassName(additional) {
+    _getAvatarClassName(additional?: string) {
         return clsx('avatar', additional, this.props.className, this.props.classes.avatar);
     }
 
@@ -250,10 +248,6 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         return '';
     }
 
-    _isIcon: (?string | ?Object) => boolean;
-
-    _onAvatarLoadError: () => void;
-
     /**
      * Handles avatar load errors.
      *
@@ -268,4 +262,5 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     }
 }
 
+// @ts-ignore
 export default withStyles(styles)(StatelessAvatar);

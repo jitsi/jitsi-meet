@@ -1,12 +1,11 @@
-// @flow
-
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 
+// @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
-import { Icon } from '../../icons';
+import Icon from '../../icons/components/Icon';
 
 export type Props = {
 
@@ -24,7 +23,7 @@ export type Props = {
      * Custom icon. If used, the icon prop is ignored.
      * Used to allow custom children instead of just the default icons.
      */
-    customIcon?: React$Node,
+    customIcon?: ReactNode,
 
     /**
      * Whether or not the action is disabled.
@@ -32,29 +31,29 @@ export type Props = {
     disabled?: boolean,
 
     /**
-     * Id of the action container.
-     */
-    id?: string,
-
-    /**
      * Default icon for action.
      */
     icon?: Function,
 
     /**
+     * Id of the action container.
+     */
+    id?: string,
+
+    /**
      * Click handler.
      */
-    onClick?: Function,
+    onClick?: (e?: React.MouseEvent) => void,
 
     /**
      * Keydown handler.
      */
-    onKeyDown?: Function,
+    onKeyDown?: (e?: React.KeyboardEvent) => void,
 
     /**
      * Keypress handler.
      */
-    onKeyPress?: Function,
+    onKeyPress?: (e?: React.KeyboardEvent) => void,
 
     /**
      * TestId of the element, if any.
@@ -72,7 +71,7 @@ export type Props = {
     textClassName?: string
 }
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme: any) => {
     return {
         contextMenuItem: {
             alignItems: 'center',
@@ -121,7 +120,7 @@ const ContextMenuItem = ({
     text,
     textClassName }: Props) => {
     const styles = useStyles();
-    const _overflowDrawer = useSelector(showOverflowDrawer);
+    const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
 
     return (
         <div

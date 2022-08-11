@@ -1,8 +1,7 @@
-// @flow
 import { makeStyles } from '@material-ui/core';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-import ContextMenuItem from './ContextMenuItem';
+import ContextMenuItem, { Props as ItemProps } from './ContextMenuItem';
 
 
 type Props = {
@@ -10,15 +9,15 @@ type Props = {
     /**
      * List of actions in this group.
      */
-    actions?: Array<Object>,
+    actions?: Array<ItemProps>,
 
     /**
      * The children of the component.
      */
-    children?: React$Node,
+    children?: ReactNode,
 };
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme: any) => {
     return {
         contextMenuItemGroup: {
             '&:not(:empty)': {

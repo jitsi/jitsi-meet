@@ -1,5 +1,3 @@
-// @flow
-
 import { createMuiTheme } from '@material-ui/core/styles';
 
 import { font, colors, colorMap, spacing, shape, typography, breakpoints } from '../base/ui/Tokens';
@@ -11,7 +9,7 @@ import { createColorTokens } from '../base/ui/utils';
  * @param {Object} customTheme - The branded custom theme.
  * @returns {Object} - The MUI theme.
  */
-export function createMuiBrandingTheme(customTheme: Object) {
+export function createMuiBrandingTheme(customTheme: any) {
     const {
         palette: customPalette,
         shape: customShape,
@@ -82,9 +80,10 @@ export function createMuiBrandingTheme(customTheme: Object) {
 function overwriteRecurrsive(obj1: Object, obj2: Object) {
     Object.keys(obj2).forEach(key => {
         if (obj1.hasOwnProperty(key)) {
-            if (typeof obj1[key] === 'object') {
-                overwriteRecurrsive(obj1[key], obj2[key]);
+            if (typeof obj1[key as keyof typeof obj1] === 'object') {
+                overwriteRecurrsive(obj1[key as keyof typeof obj1], obj2[key as keyof typeof obj2]);
             } else {
+                // @ts-ignore
                 obj1[key] = obj2[key];
             }
         }

@@ -1,18 +1,22 @@
-/* @flow */
-
 import { withStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { isMobileBrowser } from '../../../features/base/environment/utils';
 import ContextMenu from '../../base/components/context-menu/ContextMenu';
-import { translate } from '../../base/i18n';
+import { isMobileBrowser } from '../../base/environment/utils';
+import { translate } from '../../base/i18n/functions';
+
+type DownloadUpload = {
+    download: number;
+    upload: number;
+}
 
 /**
  * The type of the React {@code Component} props of
  * {@link ConnectionStatsTable}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * The audio SSRC of this client.
@@ -26,7 +30,7 @@ type Props = {
      *     upload: Number
      * }}.
      */
-    bandwidth: Object,
+    bandwidth: DownloadUpload,
 
     /**
      * Statistics related to bitrate.
@@ -35,7 +39,7 @@ type Props = {
      *     upload: Number
      * }}.
      */
-    bitrate: Object,
+    bitrate: DownloadUpload,
 
     /**
      * The number of bridges (aka media servers) currently used in the
@@ -46,17 +50,27 @@ type Props = {
     /**
      * An object containing the CSS classes.
      */
-    classes: Object,
+    classes: any,
 
     /**
      * Audio/video codecs in use for the connection.
      */
-    codec: Object,
+    codec: {
+        [key: string]: {
+            audio: string;
+            video: string;
+        }
+    },
 
     /**
      * A message describing the connection quality.
      */
     connectionSummary: string,
+
+    /**
+     * Whether or not should display the "Show More" link.
+     */
+    disableShowMoreStats: boolean,
 
     /**
      * The end-to-end round-trip-time.
@@ -67,16 +81,6 @@ type Props = {
      * Whether or not should display the "Save Logs" link.
      */
     enableSaveLogs: boolean,
-
-    /**
-     * Whether or not should display the "Show More" link.
-     */
-    disableShowMoreStats: boolean,
-
-    /**
-     * The endpoint id of this client.
-     */
-    participantId: string,
 
     /**
      * Statistics related to frame rates for each ssrc.
@@ -105,12 +109,12 @@ type Props = {
     /**
      * Callback to invoke when the user clicks on the download logs link.
      */
-    onSaveLogs: Function,
+    onSaveLogs: () => void,
 
     /**
      * Callback to invoke when the show additional stats link is clicked.
      */
-    onShowMore: Function,
+    onShowMore: (e?: React.MouseEvent) => void,
 
     /**
      * Statistics related to packet loss.
@@ -119,7 +123,12 @@ type Props = {
      *     upload: Number
      * }}.
      */
-    packetLoss: Object,
+    packetLoss: DownloadUpload,
+
+    /**
+     * The endpoint id of this client.
+     */
+    participantId: string,
 
     /**
      * The region that we think the client is in.
@@ -135,7 +144,12 @@ type Props = {
      *     }
      * }}.
      */
-    resolution: Object,
+    resolution: {
+        [ssrc: string]: {
+            height: number;
+            width: number;
+        }
+    },
 
     /**
      * The region of the media server that we are connected to.
@@ -149,25 +163,28 @@ type Props = {
     shouldShowMore: boolean,
 
     /**
-     * Invoked to obtain translated strings.
+     * Whether source name signaling is enabled.
      */
-    t: Function,
-
-    /**
-     * The video SSRC of this client.
-     */
-    videoSsrc: number,
+    sourceNameSignalingEnabled: boolean,
 
     /**
      * Statistics related to transports.
      */
-    transport: Array<Object>,
+    transport: Array<{
+        ip: string;
+        localCandidateType: string;
+        localip: string;
+        p2p: boolean;
+        remoteCandidateType: string;
+        transportType: string;
+        type: string;
+    }>,
 
     /**
-     * Whether source name signaling is enabled.
+     * The video SSRC of this client.
      */
-    sourceNameSignalingEnabled: boolean
-};
+    videoSsrc: number
+}
 
 /**
  * Click handler.
@@ -175,13 +192,13 @@ type Props = {
  * @param {SyntheticEvent} event - The click event.
  * @returns {void}
  */
-function onClick(event) {
+function onClick(event: React.MouseEvent) {
     // If the event is propagated to the thumbnail container the participant will be pinned. That's why the propagation
     // needs to be stopped.
     event.stopPropagation();
 }
 
-const styles = theme => {
+const styles = (theme: any) => {
     return {
         actions: {
             margin: '10px auto',
@@ -599,7 +616,7 @@ class ConnectionStatsTable extends Component<Props> {
             frameRateString = framerate || 'N/A';
         } else {
             frameRateString = Object.keys(framerate || {})
-                .map(ssrc => framerate[ssrc])
+                .map(ssrc => framerate[ssrc as keyof typeof framerate])
                 .join(', ') || 'N/A';
         }
 
@@ -791,7 +808,13 @@ class ConnectionStatsTable extends Component<Props> {
             return [ NA ];
         }
 
-        const data = {
+        const data: {
+            localIP: string[],
+            localPort: string[],
+            remoteIP: string[],
+            remotePort: string[],
+            transportType: string[]
+        } = {
             localIP: [],
             localPort: [],
             remoteIP: [],
@@ -897,7 +920,7 @@ class ConnectionStatsTable extends Component<Props> {
      * @private
      * @returns {ReactElement}
      */
-    _renderTransportTableRow(config: Object) {
+    _renderTransportTableRow(config: any) {
         const { additionalData, data, key, label } = config;
 
         return (
@@ -924,7 +947,7 @@ class ConnectionStatsTable extends Component<Props> {
  * @private
  * @returns {string}
  */
-function getIP(value) {
+function getIP(value: string) {
     if (!value) {
         return '';
     }
@@ -940,7 +963,7 @@ function getIP(value) {
  * @private
  * @returns {string}
  */
-function getPort(value) {
+function getPort(value: string) {
     if (!value) {
         return '';
     }
@@ -955,7 +978,7 @@ function getPort(value) {
  * @private
  * @returns {string}
  */
-function getStringFromArray(array) {
+function getStringFromArray(array: string[]) {
     let res = '';
 
     for (let i = 0; i < array.length; i++) {
@@ -965,4 +988,5 @@ function getStringFromArray(array) {
     return res;
 }
 
+// @ts-ignore
 export default translate(withStyles(styles)(ConnectionStatsTable));

@@ -1,9 +1,9 @@
-/* @flow */
-
+/* eslint-disable lines-around-comment */
 import { withStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { FixedSizeList, FixedSizeGrid } from 'react-window';
 import type { Dispatch } from 'redux';
 
@@ -11,15 +11,23 @@ import {
     createShortcutEvent,
     createToolbarEvent,
     sendAnalytics
+    // @ts-ignore
 } from '../../../analytics';
+// @ts-ignore
 import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n';
-import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import Icon from '../../../base/icons/components/Icon';
+import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg/index';
+import { Participant } from '../../../base/participants/reducer';
+import { connect } from '../../../base/redux/functions';
+// @ts-ignore
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
+// @ts-ignore
 import { showToolbox } from '../../../toolbox/actions.web';
+// @ts-ignore
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
+// @ts-ignore
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import {
     setFilmstripVisible,
@@ -28,6 +36,7 @@ import {
     setUserIsResizing,
     setTopPanelVisible,
     setVisibleRemoteParticipants
+    // @ts-ignore
 } from '../../actions';
 import {
     ASPECT_RATIO_BREAKPOINT,
@@ -43,20 +52,24 @@ import {
     getVerticalViewMaxWidth,
     shouldRemoteVideosBeVisible,
     isStageFilmstripTopPanel
+    // @ts-ignore
 } from '../../functions';
 
+// @ts-ignore
 import AudioTracksContainer from './AudioTracksContainer';
+// @ts-ignore
 import Thumbnail from './Thumbnail';
+// @ts-ignore
 import ThumbnailWrapper from './ThumbnailWrapper';
+// @ts-ignore
 import { styles } from './styles';
 
-declare var APP: Object;
-declare var interfaceConfig: Object;
+declare let APP: any;
 
 /**
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * Additional CSS class names top add to the root.
@@ -64,14 +77,14 @@ type Props = {
     _className: string,
 
     /**
-     * The current layout of the filmstrip.
-     */
-    _currentLayout: string,
-
-    /**
      * The number of columns in tile view.
      */
     _columns: number,
+
+    /**
+     * The current layout of the filmstrip.
+     */
+    _currentLayout: string,
 
     /**
      * Whether or not to hide the self view.
@@ -79,14 +92,14 @@ type Props = {
     _disableSelfView: boolean,
 
     /**
-     * The width of the filmstrip.
-     */
-    _filmstripWidth: number,
-
-    /**
      * The height of the filmstrip.
      */
     _filmstripHeight: number,
+
+    /**
+     * The width of the filmstrip.
+     */
+    _filmstripWidth: number,
 
     /**
      * Whether or not we have scroll on the filmstrip.
@@ -116,7 +129,7 @@ type Props = {
     /**
      * The local screen share participant. This prop is behind the sourceNameSignaling feature flag.
      */
-    _localScreenShare: Object,
+    _localScreenShare: Participant,
 
     /**
      * Whether or not the filmstrip videos should currently be displayed.
@@ -174,14 +187,14 @@ type Props = {
     _topPanelFilmstrip: boolean,
 
     /**
+     * The height of the top panel (user resized).
+     */
+    _topPanelHeight?: number,
+
+    /**
      * The max height of the top panel.
      */
     _topPanelMaxHeight: number,
-
-    /**
-     * The height of the top panel (user resized).
-     */
-    _topPanelHeight: ?number,
 
     /**
      * Whether or not the top panel is visible.
@@ -191,7 +204,7 @@ type Props = {
     /**
      * The width of the vertical filmstrip (user resized).
      */
-    _verticalFilmstripWidth: ?number,
+    _verticalFilmstripWidth?: number,
 
     /**
      * Whether or not the vertical filmstrip should have a background color.
@@ -216,7 +229,7 @@ type Props = {
     /**
      * An object containing the CSS classes.
      */
-    classes: Object,
+    classes: any,
 
     /**
      * The redux {@code dispatch} function.
@@ -226,15 +239,20 @@ type Props = {
     /**
      * The type of filmstrip to be displayed.
      */
-    filmstripType: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    filmstripType: string
+}
 
 type State = {
+
+    /**
+     * Initial top panel height on drag handle mouse down.
+     */
+    dragFilmstripHeight?: number,
+
+    /**
+     * Initial filmstrip width on drag handle mouse down.
+     */
+    dragFilmstripWidth?: number|null,
 
     /**
      * Whether or not the mouse is pressed.
@@ -244,17 +262,7 @@ type State = {
     /**
      * Initial mouse position on drag handle mouse down.
      */
-    mousePosition: ?number,
-
-    /**
-     * Initial filmstrip width on drag handle mouse down.
-     */
-    dragFilmstripWidth: ?number,
-
-    /**
-     * Initial top panel height on drag handle mouse down.
-     */
-    dragFilmstripHeight: ?number
+    mousePosition?: number|null
 }
 
 /**
@@ -317,6 +325,7 @@ class Filmstrip extends PureComponent <Props, State> {
             'keyboardShortcuts.toggleFilmstrip'
         );
         document.addEventListener('mouseup', this._onDragMouseUp);
+        // @ts-ignore
         document.addEventListener('mousemove', this._throttledResize);
     }
 
@@ -328,6 +337,7 @@ class Filmstrip extends PureComponent <Props, State> {
     componentWillUnmount() {
         APP.keyboardshortcut.unregisterShortcut('F');
         document.removeEventListener('mouseup', this._onDragMouseUp);
+        // @ts-ignore
         document.removeEventListener('mousemove', this._throttledResize);
     }
 
@@ -338,7 +348,7 @@ class Filmstrip extends PureComponent <Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const filmstripStyle = { };
+        const filmstripStyle: any = { };
         const {
             _currentLayout,
             _disableSelfView,
@@ -466,15 +476,13 @@ class Filmstrip extends PureComponent <Props, State> {
         );
     }
 
-    _onDragHandleMouseDown: (MouseEvent) => void;
-
     /**
      * Handles mouse down on the drag handle.
      *
      * @param {MouseEvent} e - The mouse down event.
      * @returns {void}
      */
-    _onDragHandleMouseDown(e) {
+    _onDragHandleMouseDown(e: React.MouseEvent) {
         const { _topPanelFilmstrip, _topPanelHeight, _verticalFilmstripWidth } = this.props;
 
         this.setState({
@@ -485,8 +493,6 @@ class Filmstrip extends PureComponent <Props, State> {
         });
         this.props.dispatch(setUserIsResizing(true));
     }
-
-    _onDragMouseUp: () => void;
 
     /**
      * Drag handle mouse up handler.
@@ -502,15 +508,13 @@ class Filmstrip extends PureComponent <Props, State> {
         }
     }
 
-    _onFilmstripResize: (MouseEvent) => void;
-
     /**
      * Handles drag handle mouse move.
      *
      * @param {MouseEvent} e - The mousemove event.
      * @returns {void}
      */
-    _onFilmstripResize(e) {
+    _onFilmstripResize(e: React.MouseEvent) {
         if (this.state.isMouseDown) {
             const {
                 dispatch,
@@ -523,9 +527,9 @@ class Filmstrip extends PureComponent <Props, State> {
             const { dragFilmstripWidth, dragFilmstripHeight, mousePosition } = this.state;
 
             if (_topPanelFilmstrip) {
-                const diff = e.clientY - mousePosition;
+                const diff = e.clientY - (mousePosition ?? 0);
                 const height = Math.max(
-                    Math.min(dragFilmstripHeight + diff, _maxTopPanelHeight),
+                    Math.min((dragFilmstripHeight ?? 0) + diff, _maxTopPanelHeight),
                     TOP_FILMSTRIP_HEIGHT
                 );
 
@@ -533,9 +537,9 @@ class Filmstrip extends PureComponent <Props, State> {
                     dispatch(setUserFilmstripHeight(height));
                 }
             } else {
-                const diff = mousePosition - e.clientX;
+                const diff = (mousePosition ?? 0) - e.clientX;
                 const width = Math.max(
-                    Math.min(dragFilmstripWidth + diff, _maxFilmstripWidth),
+                    Math.min((dragFilmstripWidth ?? 0) + diff, _maxFilmstripWidth),
                     DEFAULT_FILMSTRIP_WIDTH
                 );
 
@@ -553,7 +557,7 @@ class Filmstrip extends PureComponent <Props, State> {
      * @param {number} stopIndex - The stop index.
      * @returns {Object}
      */
-    _calculateIndices(startIndex, stopIndex) {
+    _calculateIndices(startIndex: number, stopIndex: number) {
         const { _currentLayout, _iAmRecorder, _thumbnailsReordered, _disableSelfView } = this.props;
         let start = startIndex;
         let stop = stopIndex;
@@ -573,8 +577,6 @@ class Filmstrip extends PureComponent <Props, State> {
         };
     }
 
-    _onTabIn: () => void;
-
     /**
      * Toggle the toolbar visibility when tabbing into it.
      *
@@ -586,15 +588,13 @@ class Filmstrip extends PureComponent <Props, State> {
         }
     }
 
-    _listItemKey: number => string;
-
     /**
      * The key to be used for every ThumbnailWrapper element in stage view.
      *
      * @param {number} index - The index of the ThumbnailWrapper instance.
      * @returns {string} - The key.
      */
-    _listItemKey(index) {
+    _listItemKey(index: number) {
         const { _remoteParticipants, _remoteParticipantsLength } = this.props;
 
         if (typeof index !== 'number' || _remoteParticipantsLength <= index) {
@@ -604,15 +604,13 @@ class Filmstrip extends PureComponent <Props, State> {
         return _remoteParticipants[index];
     }
 
-    _gridItemKey: Object => string;
-
     /**
      * The key to be used for every ThumbnailWrapper element in tile views.
      *
      * @param {Object} data - An object with the indexes identifying the ThumbnailWrapper instance.
      * @returns {string} - The key.
      */
-    _gridItemKey({ columnIndex, rowIndex }) {
+    _gridItemKey({ columnIndex, rowIndex }: {columnIndex: number, rowIndex: number}) {
         const {
             _disableSelfView,
             _columns,
@@ -638,22 +636,19 @@ class Filmstrip extends PureComponent <Props, State> {
         return _remoteParticipants[remoteIndex];
     }
 
-    _onListItemsRendered: Object => void;
-
     /**
      * Handles items rendered changes in stage view.
      *
      * @param {Object} data - Information about the rendered items.
      * @returns {void}
      */
-    _onListItemsRendered({ visibleStartIndex, visibleStopIndex }) {
+    _onListItemsRendered({ visibleStartIndex, visibleStopIndex }
+        : { visibleStartIndex: number, visibleStopIndex: number }) {
         const { dispatch } = this.props;
         const { startIndex, stopIndex } = this._calculateIndices(visibleStartIndex, visibleStopIndex);
 
         dispatch(setVisibleRemoteParticipants(startIndex, stopIndex));
     }
-
-    _onGridItemsRendered: Object => void;
 
     /**
      * Handles items rendered changes in tile view.
@@ -666,6 +661,11 @@ class Filmstrip extends PureComponent <Props, State> {
         visibleColumnStopIndex,
         visibleRowStartIndex,
         visibleRowStopIndex
+    }: {
+        visibleColumnStartIndex: number,
+        visibleColumnStopIndex: number,
+        visibleRowStartIndex: number,
+        visibleRowStopIndex: number
     }) {
         const { _columns, dispatch } = this.props;
         const start = (visibleRowStartIndex * _columns) + visibleColumnStartIndex;
@@ -713,6 +713,7 @@ class Filmstrip extends PureComponent <Props, State> {
                     initialScrollLeft = { 0 }
                     initialScrollTop = { 0 }
                     itemData = {{ filmstripType }}
+                    // @ts-ignore
                     itemKey = { this._gridItemKey }
                     onItemsRendered = { this._onGridItemsRendered }
                     overscanRowCount = { 1 }
@@ -727,7 +728,7 @@ class Filmstrip extends PureComponent <Props, State> {
         }
 
 
-        const props = {
+        const props: any = {
             itemCount: _remoteParticipantsLength,
             className: `filmstrip__videos remote-videos ${_resizableFilmstrip ? '' : 'height-transition'}`,
             height: _filmstripHeight,
@@ -746,8 +747,6 @@ class Filmstrip extends PureComponent <Props, State> {
             const isNotOverflowing = !_hasScroll;
 
             props.itemSize = itemSize;
-
-            // $FlowFixMe
             props.layout = 'horizontal';
             if (isNotOverflowing) {
                 props.className += ' is-not-overflowing';
@@ -787,8 +786,6 @@ class Filmstrip extends PureComponent <Props, State> {
             : dispatch(setFilmstripVisible(!_mainFilmstripVisible));
     }
 
-    _onShortcutToggleFilmstrip: () => void;
-
     /**
      * Creates an analytics keyboard shortcut event and dispatches an action for
      * toggling filmstrip visibility.
@@ -805,8 +802,6 @@ class Filmstrip extends PureComponent <Props, State> {
 
         this._doToggleFilmstrip();
     }
-
-    _onToolbarToggleFilmstrip: () => void;
 
     /**
      * Creates an analytics toolbar event and dispatches an action for opening
@@ -825,8 +820,6 @@ class Filmstrip extends PureComponent <Props, State> {
         this._doToggleFilmstrip();
     }
 
-    _onToggleButtonTouch: (SyntheticEvent<HTMLButtonElement>) => void;
-
     /**
      * Handler for touch start event of the 'toggle button'.
      *
@@ -834,7 +827,7 @@ class Filmstrip extends PureComponent <Props, State> {
      * @param {Object} e - The synthetic event.
      * @returns {void}
      */
-    _onToggleButtonTouch(e: SyntheticEvent<HTMLButtonElement>) {
+    _onToggleButtonTouch(e: React.TouchEvent) {
         // Don't propagate the touchStart event so the toolbar doesn't get toggled.
         e.stopPropagation();
         this._onToolbarToggleFilmstrip();
@@ -893,7 +886,7 @@ class Filmstrip extends PureComponent <Props, State> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: any, ownProps: any) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];
