@@ -98,6 +98,7 @@ const events = {
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
+    'audio-or-video-sharing-toggled': 'audioOrVideoSharingToggled',
     'breakout-rooms-updated': 'breakoutRoomsUpdated',
     'browser-support': 'browserSupport',
     'camera-error': 'cameraError',
