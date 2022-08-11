@@ -231,12 +231,12 @@ async function _toggleScreenSharing({ enabled, audioOnly = false, shareOptions =
             _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
 
-            // Handle the case where screen share was stopped from  the browsers 'screen share in progress' window.
-            desktopAudioTrack.on(
-                JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                () => {
-                    dispatch(toggleScreensharing(undefined, true));
-                });
+            // Handle the case where screen share was stopped from the browsers 'screen share in progress' window.
+            if (audioOnly) {
+                desktopAudioTrack?.on(
+                    JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+                    () => dispatch(toggleScreensharing(undefined, true)));
+            }
         }
 
         // Disable audio-only or best performance mode if the user starts screensharing. This doesn't apply to
