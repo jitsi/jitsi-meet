@@ -1,21 +1,30 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React, { Component } from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
+import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
+import { IState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n';
-import { Icon, IconPlane, IconSmile } from '../../../base/icons';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import { IconPlane, IconSmile } from '../../../base/icons/svg/index';
+import { connect } from '../../../base/redux/functions';
+import Button from '../../../base/ui/components/web/Button';
+import Input from '../../../base/ui/components/web/Input';
+// @ts-ignore
 import { areSmileysDisabled } from '../../functions';
 
+// @ts-ignore
 import SmileysPanel from './SmileysPanel';
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
  */
-type Props = {
+interface Props extends WithTranslation {
+
+    /**
+     * Whether chat emoticons are disabled.
+     */
+    _areSmileysDisabled: boolean,
 
     /**
      * Invoked to send chat messages.
@@ -26,24 +35,14 @@ type Props = {
      * Optional callback to invoke when the chat textarea has auto-resized to
      * fit overflowing text.
      */
-    onResize: ?Function,
+    onResize?: Function,
 
     /**
      * Callback to invoke on message send.
      */
-    onSend: Function,
+    onSend: Function
 
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
-
-    /**
-     * Whether chat emoticons are disabled.
-     */
-    _areSmileysDisabled: boolean
-
-};
+}
 
 /**
  * The type of the React {@code Component} state of {@link ChatInput}.
@@ -67,7 +66,7 @@ type State = {
  * @augments Component
  */
 class ChatInput extends Component<Props, State> {
-    _textArea: ?HTMLTextAreaElement;
+    _textArea?: HTMLTextAreaElement;
 
     state = {
         message: '',
@@ -83,17 +82,14 @@ class ChatInput extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this._textArea = null;
+        this._textArea = undefined;
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDetectSubmit = this._onDetectSubmit.bind(this);
         this._onMessageChange = this._onMessageChange.bind(this);
         this._onSmileySelect = this._onSmileySelect.bind(this);
         this._onSubmitMessage = this._onSubmitMessage.bind(this);
-        this._onToggleSmileysPanel = this._onToggleSmileysPanel.bind(this);
-        this._onEscHandler = this._onEscHandler.bind(this);
-        this._onToggleSmileysPanelKeyPress = this._onToggleSmileysPanelKeyPress.bind(this);
-        this._onSubmitMessageKeyPress = this._onSubmitMessageKeyPress.bind(this);
+        this._toggleSmileysPanel = this._toggleSmileysPanel.bind(this);
         this._setTextAreaRef = this._setTextAreaRef.bind(this);
     }
 
@@ -116,62 +112,37 @@ class ChatInput extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const smileysPanelClassName = `${this.state.showSmileysPanel
-            ? 'show-smileys' : 'hide-smileys'} smileys-panel`;
-
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
                 <div id = 'chat-input' >
-                    { this.props._areSmileysDisabled ? null : (
-                        <div className = 'smiley-input'>
-                            <div id = 'smileysarea'>
-                                <div id = 'smileys'>
-                                    <div
-                                        aria-expanded = { this.state.showSmileysPanel }
-                                        aria-haspopup = 'smileysContainer'
-                                        aria-label = { this.props.t('chat.smileysPanel') }
-                                        className = 'smiley-button'
-                                        onClick = { this._onToggleSmileysPanel }
-                                        onKeyDown = { this._onEscHandler }
-                                        onKeyPress = { this._onToggleSmileysPanelKeyPress }
-                                        role = 'button'
-                                        tabIndex = { 0 }>
-                                        <Icon src = { IconSmile } />
-                                    </div>
-                                </div>
-                            </div>
+                    {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
+                        <div
+                            className = 'smiley-input'>
                             <div
-                                className = { smileysPanelClassName } >
+                                className = 'smileys-panel' >
                                 <SmileysPanel
                                     onSmileySelect = { this._onSmileySelect } />
                             </div>
                         </div>
-                    ) }
-                    <div className = 'usrmsg-form'>
-                        <TextareaAutosize
-                            autoComplete = 'off'
-                            autoFocus = { true }
-                            id = 'usermsg'
-                            maxRows = { 5 }
-                            onChange = { this._onMessageChange }
-                            onHeightChange = { this.props.onResize }
-                            onKeyDown = { this._onDetectSubmit }
-                            placeholder = { this.props.t('chat.messagebox') }
-                            ref = { this._setTextAreaRef }
-                            tabIndex = { 0 }
-                            value = { this.state.message } />
-                    </div>
-                    <div className = 'send-button-container'>
-                        <div
-                            aria-label = { this.props.t('chat.sendButton') }
-                            className = 'send-button'
-                            onClick = { this._onSubmitMessage }
-                            onKeyPress = { this._onSubmitMessageKeyPress }
-                            role = 'button'
-                            tabIndex = { this.state.message.trim() ? 0 : -1 } >
-                            <Icon src = { IconPlane } />
-                        </div>
-                    </div>
+                    )}
+                    <Input
+                        autoFocus = { true }
+                        className = 'chat-input'
+                        icon = { this.props._areSmileysDisabled ? undefined : IconSmile }
+                        iconClick = { this._toggleSmileysPanel }
+                        maxRows = { 5 }
+                        onChange = { this._onMessageChange }
+                        onKeyPress = { this._onDetectSubmit }
+                        placeholder = { this.props.t('chat.messagebox') }
+                        ref = { this._setTextAreaRef }
+                        textarea = { true }
+                        value = { this.state.message } />
+                    <Button
+                        accessibilityLabel = { this.props.t('chat.sendButton') }
+                        disabled = { !this.state.message.trim() }
+                        icon = { IconPlane }
+                        onClick = { this._onSubmitMessage }
+                        size = { isMobileBrowser() ? 'large' : 'medium' } />
                 </div>
             </div>
         );
@@ -186,9 +157,6 @@ class ChatInput extends Component<Props, State> {
     _focus() {
         this._textArea && this._textArea.focus();
     }
-
-
-    _onSubmitMessage: () => void;
 
     /**
      * Submits the message to the chat window.
@@ -208,7 +176,6 @@ class ChatInput extends Component<Props, State> {
         }
 
     }
-    _onDetectSubmit: (Object) => void;
 
     /**
      * Detects if enter has been pressed. If so, submit the message in the chat
@@ -218,7 +185,7 @@ class ChatInput extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onDetectSubmit(event) {
+    _onDetectSubmit(event: any) {
         // Composition events used to add accents to characters
         // despite their absence from standard US keyboards,
         // to build up logograms of many Asian languages
@@ -241,36 +208,16 @@ class ChatInput extends Component<Props, State> {
         }
     }
 
-    _onSubmitMessageKeyPress: (Object) => void;
-
-    /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onSubmitMessageKeyPress(e) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onSubmitMessage();
-        }
-    }
-
-    _onMessageChange: (Object) => void;
-
     /**
      * Updates the known message the user is drafting.
      *
-     * @param {string} event - Keyboard event.
+     * @param {string} value - Keyboard event.
      * @private
      * @returns {void}
      */
-    _onMessageChange(event) {
-        this.setState({ message: event.target.value });
+    _onMessageChange(value: string) {
+        this.setState({ message: value });
     }
-
-    _onSmileySelect: (string) => void;
 
     /**
      * Appends a selected smileys to the chat message draft.
@@ -280,7 +227,7 @@ class ChatInput extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onSmileySelect(smileyText) {
+    _onSmileySelect(smileyText: string) {
         if (smileyText) {
             this.setState({
                 message: `${this.state.message} ${smileyText}`,
@@ -295,56 +242,18 @@ class ChatInput extends Component<Props, State> {
         this._focus();
     }
 
-    _onToggleSmileysPanel: () => void;
-
     /**
      * Callback invoked to hide or show the smileys selector.
      *
      * @private
      * @returns {void}
      */
-    _onToggleSmileysPanel() {
+    _toggleSmileysPanel() {
         if (this.state.showSmileysPanel) {
             this._focus();
         }
         this.setState({ showSmileysPanel: !this.state.showSmileysPanel });
     }
-
-    _onEscHandler: (Object) => void;
-
-    /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onEscHandler(e) {
-        // Escape handling does not work in onKeyPress
-        if (this.state.showSmileysPanel && e.key === 'Escape') {
-            e.preventDefault();
-            e.stopPropagation();
-            this._onToggleSmileysPanel();
-        }
-    }
-
-    _onToggleSmileysPanelKeyPress: (Object) => void;
-
-    /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onToggleSmileysPanelKeyPress(e) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onToggleSmileysPanel();
-        }
-    }
-
-    _setTextAreaRef: (?HTMLTextAreaElement) => void;
 
     /**
      * Sets the reference to the HTML TextArea.
@@ -353,7 +262,7 @@ class ChatInput extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _setTextAreaRef(textAreaElement: ?HTMLTextAreaElement) {
+    _setTextAreaRef(textAreaElement?: HTMLTextAreaElement) {
         this._textArea = textAreaElement;
     }
 }
@@ -367,7 +276,7 @@ class ChatInput extends Component<Props, State> {
  *     _areSmileysDisabled: boolean
  * }}
  */
-const mapStateToProps = state => {
+const mapStateToProps = (state: IState) => {
     return {
         _areSmileysDisabled: areSmileysDisabled(state)
     };
