@@ -246,7 +246,7 @@ export default class LargeVideoManager {
 
             this.newStreamData = null;
 
-            logger.info(`hover in ${id}`);
+            logger.debug(`Scheduled large video update for ${id}`);
             this.state = videoType;
             // eslint-disable-next-line no-shadow
             const container = this.getCurrentContainer();
@@ -288,12 +288,13 @@ export default class LargeVideoManager {
                             this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
                     }
                 }
+                const streamingStatusActive = isTrackStreamingStatusActive(videoTrack);
 
-                isVideoRenderable = !isVideoMuted && (
-                    APP.conference.isLocalId(id)
-                    || participant?.isLocalScreenShare
-                    || isTrackStreamingStatusActive(videoTrack)
-                );
+                isVideoRenderable = !isVideoMuted
+                    && (APP.conference.isLocalId(id) || participant?.isLocalScreenShare || streamingStatusActive);
+                this.videoTrack?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP
+                    && logger.debug(`Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${isVideoMuted},`
+                    + ` streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${isVideoRenderable}`);
             } else {
                 isVideoRenderable = !isVideoMuted
                     && (APP.conference.isLocalId(id) || isParticipantConnectionStatusActive(participant));
