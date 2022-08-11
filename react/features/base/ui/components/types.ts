@@ -7,7 +7,7 @@ export interface ButtonProps {
     /**
      * Label used for accessibility.
      */
-    accessibilityLabel: string;
+    accessibilityLabel?: string;
 
     /**
      * Whether or not the button is disabled.
