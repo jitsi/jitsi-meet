@@ -297,25 +297,27 @@ export function showNoDataFromSourceVideoError(jitsiTrack) {
 }
 
 /**
- * Signals that the local participant is ending screensharing or beginning the
- * screensharing flow.
+ * Signals that the local participant is ending screensharing or beginning the screensharing flow.
  *
  * @param {boolean} enabled - The state to toggle screen sharing to.
  * @param {boolean} audioOnly - Only share system audio.
  * @param {boolean} ignoreDidHaveVideo - Whether or not to ignore if video was on when sharing started.
+ * @param {Object} shareOptions - The options to be passed for capturing screenshare.
  * @returns {{
  *     type: TOGGLE_SCREENSHARING,
  *     on: boolean,
  *     audioOnly: boolean,
- *     ignoreDidHaveVideo: boolean
+ *     ignoreDidHaveVideo: boolean,
+ *     shareOptions: Object
  * }}
  */
-export function toggleScreensharing(enabled, audioOnly = false, ignoreDidHaveVideo = false) {
+export function toggleScreensharing(enabled, audioOnly = false, ignoreDidHaveVideo = false, shareOptions = {}) {
     return {
         type: TOGGLE_SCREENSHARING,
         enabled,
         audioOnly,
-        ignoreDidHaveVideo
+        ignoreDidHaveVideo,
+        shareOptions
     };
 }
 

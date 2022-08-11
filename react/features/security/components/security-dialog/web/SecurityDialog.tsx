@@ -6,8 +6,7 @@ import { connect } from 'react-redux';
 import { setPassword as setPass } from '../../../../base/conference';
 // @ts-ignore
 import { Dialog } from '../../../../base/dialog';
-// @ts-ignore
-import { isLocalParticipantModerator } from '../../../../base/participants';
+import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 // @ts-ignore
 import { E2EESection } from '../../../../e2ee/components';
 // @ts-ignore

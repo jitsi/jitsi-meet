@@ -17,7 +17,6 @@
   "dependencies": {
     "@amplitude/react-native": "2.7.0",
     "@atlaskit/dropdown-menu": "10.1.2",
-    "@atlaskit/field-text": "11.0.4",
     "@atlaskit/field-text-area": "8.0.4",
     "@atlaskit/flag": "14.1.0",
     "@atlaskit/icon": "21.2.0",
@@ -76,7 +75,7 @@
     "js-md5": "0.6.1",
     "js-sha512": "0.8.0",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1484.0.0+6d5ca18b/lib-jitsi-meet.tgz",
+    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1487.0.0+f3f922a8/lib-jitsi-meet.tgz",
     "lodash": "4.17.21",
     "moment": "2.29.4",
     "moment-duration-format": "2.2.2",

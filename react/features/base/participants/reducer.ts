@@ -38,7 +38,7 @@ import { isParticipantModerator } from './functions';
  * @property {string} email - Participant email.
  */
 
-interface Participant {
+export interface Participant {
     avatarURL?: string;
     botType?: string;
     conference?: Object;
@@ -58,14 +58,16 @@ interface Participant {
     loadableAvatarUrl?: string;
     loadableAvatarUrlUseCORS?: boolean;
     local?: boolean;
-    name: string;
+    name?: string;
     pinned?: boolean;
     presence?: string;
+    raisedHandTimestamp?: number;
+    remoteControlSessionStatus?: boolean;
     role?: string;
     supportsRemoteControl?: boolean;
 }
 
-interface LocalParticipant extends Participant {
+export interface LocalParticipant extends Participant {
     audioOutputDeviceId?: string;
     cameraDeviceId?: string;
     micDeviceId?: string;
@@ -349,7 +351,7 @@ ReducerRegistry.register('features/base/participants', (state: IParticipantsStat
         if (isVirtualScreenshareParticipant) {
             const sortedRemoteVirtualScreenshareParticipants = [ ...state.sortedRemoteVirtualScreenshareParticipants ];
 
-            sortedRemoteVirtualScreenshareParticipants.push([ id, name ]);
+            sortedRemoteVirtualScreenshareParticipants.push([ id, name ?? '' ]);
             sortedRemoteVirtualScreenshareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
 
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);

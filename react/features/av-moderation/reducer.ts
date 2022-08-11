@@ -3,9 +3,7 @@ import type { MediaType } from '../base/media/constants';
 import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
-
-    // @ts-ignore
-} from '../base/participants';
+} from '../base/participants/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {

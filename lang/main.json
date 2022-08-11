@@ -518,6 +518,10 @@
         "toggleShortcuts": "Show or hide keyboard shortcuts",
         "videoMute": "Start or stop your camera"
     },
+    "largeVideo": {
+        "screenIsShared": "You are sharing your screen",
+        "showMeWhatImSharing": "Show me what I'm sharing"
+    },
     "liveStreaming": {
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",

@@ -246,6 +246,28 @@ case "$1" in
         echo ""
         echo "----------------"
 
+        echo ""
+        echo ""
+        echo "       ;dOocd;"
+        echo "     .dNMM0dKO."
+        echo "     lNMMMKd0K,"
+        echo "    .xMMMMNxkNc"
+        echo "     dMMMMMkxXc"
+        echo "     cNMMMNl.."
+        echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
+        echo "      ;XMMMO'"
+        echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/#/components"
+        echo "        lNMMM0,                        and follow the guide in the dev console."
+        echo "         lXMMMK:."
+        echo "          ;KMMMNKd.  'oo,"
+        echo "           'xNMMMMXkkkkOKOl'"
+        echo "             :0WMMMMMMNOkk0Kk,"
+        echo "              .cdOWMMMMMWXOkOl"
+        echo "                 .;dKWMMMMMXc."
+        echo "                    .,:cll:'"
+        echo ""
+        echo ""
+
         # and we're done with debconf
         db_stop
     ;;
