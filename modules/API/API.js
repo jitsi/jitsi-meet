@@ -1775,10 +1775,11 @@ class API {
      *
      * @param {string} mediaType - Whether the content which is being shared is audio or video.
      * @param {string} value - Whether the sharing is playing, pause or stop (on audio there is only playing and stop).
-     * @param {string} participantId - Participant id of the participant which started or ended the video or audio sharing.
+     * @param {string} participantId - Participant id of the participant which started or ended
+     *  the video or audio sharing.
      * @returns {void}
      */
-     notifyAudioOrVideoSharingToggled(mediaType, value, participantId) {
+    notifyAudioOrVideoSharingToggled(mediaType, value, participantId) {
         this._sendEvent({
             name: 'audio-or-video-sharing-toggled',
             mediaType,
