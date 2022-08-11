@@ -27,7 +27,7 @@ export const SHARED_VIDEO = 'shared-video';
  *
  * @type {string}
  */
- export const VIDEO = 'video';
+export const VIDEO = 'video';
 
 /**
  * Available playback statuses.
