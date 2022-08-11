@@ -284,6 +284,7 @@ class StartRecordingDialogContent extends
             content = this._renderSignOut();
             switchContent = (
                 <Button
+                    accessibilityLabel = 'recording.signOut'
                     label = 'recording.signOut'
                     onPress = { this._onSignOut }
                     type = { BUTTON_TYPES.SECONDARY } />
@@ -292,6 +293,7 @@ class StartRecordingDialogContent extends
         } else {
             switchContent = (
                 <Button
+                    accessibilityLabel = 'recording.signIn'
                     label = 'recording.signIn'
                     onPress = { this._onSignIn }
                     type = { BUTTON_TYPES.PRIMARY } />
