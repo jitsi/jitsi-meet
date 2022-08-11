@@ -30,7 +30,7 @@ export type Props = {
     /**
      * The URL of the avatar to render.
      */
-    url?: any
+    url?: string|Function
 };
 
 /**
@@ -44,7 +44,7 @@ export default class AbstractStatelessAvatar<P extends Props> extends PureCompon
      * @param {string? | Object?} iconProp - The prop to check.
      * @returns {boolean}
      */
-    _isIcon(iconProp?: string | Object): boolean {
+    _isIcon(iconProp?: string | Function): iconProp is Function {
         return Boolean(iconProp) && (typeof iconProp === 'object' || typeof iconProp === 'function');
     }
 }
