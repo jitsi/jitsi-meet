@@ -64,6 +64,7 @@ const AVATAR_CHECKER_FUNCTIONS = [
 export function getActiveSpeakersToBeDisplayed(stateful: IStore | Function) {
     const state = toState(stateful);
     const {
+        dominantSpeaker,
         fakeParticipants,
         sortedRemoteScreenshares,
         sortedRemoteVirtualScreenshareParticipants,
@@ -72,8 +73,8 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStore | Function) {
     const { visibleRemoteParticipants } = state['features/filmstrip'];
     const activeSpeakers = new Map(speakersList);
 
-    // Do not re-sort the active speakers if all of them are currently visible.
-    if (typeof visibleRemoteParticipants === 'undefined' || activeSpeakers.size <= visibleRemoteParticipants.size) {
+    // Do not re-sort the active speakers if dominant speaker is currently visible.
+    if (dominantSpeaker && visibleRemoteParticipants.has(dominantSpeaker)) {
         return activeSpeakers;
     }
     let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
