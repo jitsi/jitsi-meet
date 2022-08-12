@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
 
-import VideoQualitySlider from './VideoQualitySlider';
+import VideoQualitySlider from './VideoQualitySlider.web';
 
 /**
  * Implements a React {@link Component} which displays the component

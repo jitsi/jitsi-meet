@@ -177,7 +177,7 @@ const useStyles = makeStyles((theme: Theme) => {
     };
 });
 
-const Button = ({
+const Button = React.forwardRef<any, any>(({
     accessibilityLabel,
     className,
     disabled,
@@ -191,7 +191,7 @@ const Button = ({
     size = 'medium',
     testId,
     type = BUTTON_TYPES.PRIMARY
-}: IButtonProps) => {
+}: IButtonProps, ref) => {
     const styles = useStyles();
     const { t } = useTranslation();
 
@@ -206,6 +206,7 @@ const Button = ({
             disabled = { disabled }
             { ...(id ? { id } : {}) }
             onClick = { onClick }
+            ref = { ref }
             title = { accessibilityLabel }
             type = { isSubmit ? 'submit' : 'button' }>
             {icon && <Icon
@@ -216,6 +217,6 @@ const Button = ({
             </span>}
         </button>
     );
-};
+});
 
 export default Button;
