@@ -23,7 +23,7 @@ export const LeaveButton = () => {
         <Button
             accessibilityLabel = { t('breakoutRooms.actions.leaveBreakoutRoom') }
             fullWidth = { true }
-            label = { t('breakoutRooms.actions.leaveBreakoutRoom') }
+            labelKey = { 'breakoutRooms.actions.leaveBreakoutRoom' }
             onClick = { onLeave }
             type = { BUTTON_TYPES.DESTRUCTIVE } />
     );

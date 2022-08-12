@@ -158,14 +158,14 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
                     <Button
                         accessibilityLabel = 'prejoin.joinMeeting'
                         disabled = { joinButtonDisabled }
-                        label = 'prejoin.joinMeeting'
-                        onPress = { onJoin }
+                        labelKey = 'prejoin.joinMeeting'
+                        onClick = { onJoin }
                         style = { styles.prejoinButton }
                         type = { PRIMARY } />
                     <Button
                         accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
-                        label = 'prejoin.joinMeetingInLowBandwidthMode'
-                        onPress = { onJoinLowBandwidth }
+                        labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
+                        onClick = { onJoinLowBandwidth }
                         style = { styles.prejoinButton }
                         type = { SECONDARY } />
                 </View>

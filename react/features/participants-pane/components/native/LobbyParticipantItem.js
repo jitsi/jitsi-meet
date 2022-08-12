@@ -39,8 +39,8 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             videoMediaState = { MEDIA_STATE.NONE }>
             <Button
                 accessibilityLabel = 'lobby.admit'
-                label = 'lobby.admit'
-                onPress = { admit }
+                labelKey = 'lobby.admit'
+                onClick = { admit }
                 style = { styles.participantActionsButtonAdmit }
                 type = { BUTTON_TYPES.PRIMARY } />
         </ParticipantItem>

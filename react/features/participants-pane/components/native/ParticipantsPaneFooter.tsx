@@ -40,8 +40,8 @@ const ParticipantsPaneFooter = (): JSX.Element => {
                 showMuteAll && (
                     <Button
                         accessibilityLabel = 'participantsPane.actions.muteAll'
-                        label = 'participantsPane.actions.muteAll'
-                        onPress = { muteAll }
+                        labelKey = 'participantsPane.actions.muteAll'
+                        onClick = { muteAll }
                         type = { BUTTON_TYPES.SECONDARY } />
                 )
             }

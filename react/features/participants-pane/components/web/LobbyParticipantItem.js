@@ -74,7 +74,7 @@ export const LobbyParticipantItem = ({
         <Button
             accessibilityLabel = { `${t('lobby.admit')} ${p.name}` }
             className = { styles.button }
-            label = { t('lobby.admit') }
+            labelKey = { 'lobby.admit' }
             onClick = { admit }
             size = 'small'
             testId = { `admit-${id}` } />);
@@ -127,7 +127,7 @@ export const LobbyParticipantItem = ({
                 <Button
                     accessibilityLabel = { `${t('lobby.reject')} ${p.name}` }
                     className = { styles.button }
-                    label = { t('lobby.reject') }
+                    labelKey = { 'lobby.reject' }
                     onClick = { reject }
                     size = 'small'
                     testId = { `reject-${id}` }
