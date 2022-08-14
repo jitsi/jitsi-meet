@@ -69,6 +69,7 @@ VirtualHost "jitmeet.example.com"
     breakout_rooms_muc = "breakout.jitmeet.example.com"
     main_muc = "conference.jitmeet.example.com"
     -- muc_lobby_whitelist = { "recorder.jitmeet.example.com" } -- Here we can whitelist jibri to enter lobby enabled rooms
+    -- muc_token_verification_whitelist = { "recorder.jitmeet.example.com" } -- Here we can whitelist jibri to enter jwt auth enabled rooms
 
 Component "conference.jitmeet.example.com" "muc"
     restrict_room_creation = true

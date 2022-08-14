@@ -39,7 +39,9 @@ log("debug",
 
 -- option to disable room modification (sending muc config form) for guest that do not provide token
 local require_token_for_moderation;
+local whitelist;
 local function load_config()
+    whitelist = module:get_option_set('muc_token_verification_whitelist', {});
     require_token_for_moderation = module:get_option_boolean("token_verification_require_token_for_moderation");
 end
 load_config();
@@ -50,9 +52,9 @@ local function verify_user(session, stanza)
 		tostring(session.auth_token),
 		tostring(session.jitsi_meet_room));
 
-	-- token not required for admin users
+	-- token not required for admin and whitelist users
 	local user_jid = stanza.attr.from;
-	if is_admin(user_jid) then
+	if is_admin(user_jid) or whitelist:contains(user_jid) then
 		log("debug", "Token not required from admin user: %s", user_jid);
 		return true;
 	end
