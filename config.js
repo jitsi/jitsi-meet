@@ -701,7 +701,7 @@ var config = {
     //    'chat',
     //    'closedcaptions',
     //    'desktop',
-    //    'dock-iframe'
+    //    'dock-iframe',
     //    'download',
     //    'embedmeeting',
     //    'etherpad',
