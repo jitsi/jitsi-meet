@@ -22,6 +22,7 @@ import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../base/flags';
 import { getConferenceName } from '../../../base/conference/functions';
 import { isToolboxEnabled } from '../../../toolbox/functions.web';
 import API from '../services';
+import { isMobileBrowser } from '../../../base/environment/utils';
 
 declare var interfaceConfig: Object;
 
@@ -76,7 +77,6 @@ const ConnectButtons = (props: Props) => {
     const [ timer, setTimer ] = useState(0);
     const [ adsList, setAdsList ] = useState([]);
     const [ loading, setLoading ] = useState(false);
-
 
     const meetingName = props._meetingName.trim();
 
@@ -138,6 +138,19 @@ const ConnectButtons = (props: Props) => {
                                         width: '40px'
                                     }}
                                          onClick={() => {
+                                             if(isMobileBrowser()){
+                                                 console.log('openUrl!!!!!', window.flutter_inappwebview ?  window.flutter_inappwebview._platformReady : ' url is not ready to open');
+                                                 if (window.flutter_inappwebview) {
+                                                     console.log('beforeArgs');
+                                                     const args = value.url;
+                                                     console.log('afterArgs',args);
+                                                     window.flutter_inappwebview.callHandler('openUrl', ...args);
+                                                     console.log('addsUrl',args);
+                                                 }
+                                                 else {
+                                                     console.log('InAppWebViewNotLoaded');
+                                                 }
+                                             }
                                              window.open(value.url);
                                          }}
                                          src={value.iconUrl}/>
