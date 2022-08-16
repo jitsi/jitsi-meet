@@ -403,17 +403,6 @@ export function getParticipantPresenceStatus(
 }
 
 /**
- * Returns true if there is at least 1 participant with screen sharing feature and false otherwise.
- *
- * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state.
- * @returns {boolean}
- */
-export function haveParticipantWithScreenSharingFeature(stateful: IStore | Function) {
-    return toState(stateful)['features/base/participants'].haveParticipantWithScreenSharingFeature;
-}
-
-/**
  * Selectors for getting all remote participants.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's

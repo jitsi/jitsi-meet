@@ -5,9 +5,8 @@ import React from 'react';
 import type { Dispatch } from 'redux';
 
 import { Avatar } from '../../../../base/avatar';
-import { translate, translateToHTML } from '../../../../base/i18n';
+import { translate } from '../../../../base/i18n';
 import { Icon, IconPhone } from '../../../../base/icons';
-import { getLocalParticipant } from '../../../../base/participants';
 import { MultiSelectAutocomplete } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import { isVpaasMeeting } from '../../../../jaas/functions';
@@ -27,11 +26,6 @@ type Props = AbstractProps & {
      * The {@link JitsiMeetConference} which will be used to invite "room" participants.
      */
     _conference: Object,
-
-    /**
-     * Whether to show a footer text after the search results as a last element.
-     */
-    _footerTextEnabled: boolean,
 
     /**
      * Whether the meeting belongs to JaaS user.
@@ -83,7 +77,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         this._onSubmitKeyPress = this._onSubmitKeyPress.bind(this);
         this._parseQueryResults = this._parseQueryResults.bind(this);
         this._setMultiSelectElement = this._setMultiSelectElement.bind(this);
-        this._renderFooterText = this._renderFooterText.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
 
         this._resourceClient = {
@@ -135,7 +128,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
             _sipInviteEnabled,
             t
         } = this.props;
-        const footerText = this._renderFooterText();
         let isMultiSelectDisabled = this.state.addToCallInProgress;
         const loadingMessage = 'addPeople.searching';
         const noMatches = 'addPeople.noResults';
@@ -163,7 +155,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                 onKeyDown = { this._onKeyDown }>
                 { this._renderErrorMessage() }
                 <MultiSelectAutocomplete
-                    footer = { footerText }
                     isDisabled = { isMultiSelectDisabled }
                     loadingMessage = { t(loadingMessage) }
                     noMatchesFound = { t(noMatches) }
@@ -404,33 +395,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
 
     _query: (string) => Promise<Array<Object>>;
 
-    _renderFooterText: () => Object;
-
-    /**
-     * Sets up the rendering of the footer text, if enabled.
-     *
-     * @returns {Object | undefined}
-     */
-    _renderFooterText() {
-        const { _footerTextEnabled, t } = this.props;
-        let footerText;
-
-        if (_footerTextEnabled) {
-            footerText = {
-                content: <div className = 'footer-text-wrap'>
-                    <div>
-                        <span className = 'footer-telephone-icon'>
-                            <Icon src = { IconPhone } />
-                        </span>
-                    </div>
-                    { translateToHTML(t, 'addPeople.footerText') }
-                </div>
-            };
-        }
-
-        return footerText;
-    }
-
     _onClearItems: () => void;
 
     /**
@@ -580,20 +544,8 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { enableFeaturesBasedOnToken } = state['features/base/config'];
-    let footerTextEnabled = false;
-
-    if (enableFeaturesBasedOnToken) {
-        const { features = {} } = getLocalParticipant(state);
-
-        if (String(features['outbound-call']) !== 'true') {
-            footerTextEnabled = true;
-        }
-    }
-
     return {
         ..._abstractMapStateToProps(state),
-        _footerTextEnabled: footerTextEnabled,
         _isVpaas: isVpaasMeeting(state)
     };
 }

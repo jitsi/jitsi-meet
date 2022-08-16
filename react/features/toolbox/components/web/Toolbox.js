@@ -21,7 +21,6 @@ import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     hasRaisedHand,
-    haveParticipantWithScreenSharingFeature,
     raiseHand
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -132,12 +131,6 @@ type Props = {
      * Whether or not screensharing button is disabled.
      */
     _desktopSharingButtonDisabled: boolean,
-
-    /**
-     * The tooltip key to use when screensharing is disabled. Or undefined
-     * if non to be shown and the button to be hidden.
-     */
-    _desktopSharingDisabledTooltipKey: boolean,
 
     /**
      * Whether or not screensharing is initialized.
@@ -1274,12 +1267,7 @@ class Toolbox extends Component<Props> {
      * @returns {boolean}
      */
     _showDesktopSharingButton() {
-        const {
-            _desktopSharingEnabled,
-            _desktopSharingDisabledTooltipKey
-        } = this.props;
-
-        return _desktopSharingEnabled || _desktopSharingDisabledTooltipKey;
+        return this.props._desktopSharingEnabled;
     }
 
     /**
@@ -1408,12 +1396,10 @@ class Toolbox extends Component<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const { conference } = state['features/base/conference'];
-    let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const {
         buttonsWithNotifyClick,
         callStatsID,
         disableProfile,
-        enableFeaturesBasedOnToken,
         iAmRecorder,
         iAmSipGateway
     } = state['features/base/config'];
@@ -1425,18 +1411,6 @@ function _mapStateToProps(state, ownProps) {
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const { clientWidth } = state['features/base/responsive-ui'];
-
-    let desktopSharingDisabledTooltipKey;
-
-    if (enableFeaturesBasedOnToken) {
-        if (desktopSharingEnabled) {
-            // we enable desktop sharing if any participant already have this
-            // feature enabled and if the user supports it.
-            desktopSharingEnabled = haveParticipantWithScreenSharingFeature(state);
-            desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
-        }
-    }
-
     const toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
 
     return {
@@ -1445,9 +1419,8 @@ function _mapStateToProps(state, ownProps) {
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
-        _desktopSharingEnabled: desktopSharingEnabled,
+        _desktopSharingEnabled: JitsiMeetJS.isDesktopSharingEnabled(),
         _desktopSharingButtonDisabled: isDesktopShareButtonDisabled(state),
-        _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _disabled: Boolean(iAmRecorder || iAmSipGateway),
         _feedbackConfigured: Boolean(callStatsID),

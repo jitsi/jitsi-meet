@@ -5,6 +5,7 @@ import { getRoomName } from '../base/conference';
 import { getInviteURL } from '../base/connection';
 import { isIosMobileBrowser } from '../base/environment/utils';
 import { i18next } from '../base/i18n';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
@@ -410,11 +411,8 @@ export function isDialOutEnabled(state: Object): boolean {
  */
 export function isSipInviteEnabled(state: Object): boolean {
     const { sipInviteUrl } = state['features/base/config'];
-    const { features = {} } = getLocalParticipant(state) || {};
 
-    return state['features/base/jwt'].jwt
-        && Boolean(sipInviteUrl)
-        && String(features['sip-outbound-call']) === 'true';
+    return isJwtFeatureEnabled(state, 'sip-outbound-call') && Boolean(sipInviteUrl);
 }
 
 /**
