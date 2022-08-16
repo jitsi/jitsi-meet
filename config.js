@@ -618,9 +618,6 @@ var config = {
     // Hides the email section under profile settings.
     // hideEmailInSettings: false,
 
-    // Whether or not some features are checked based on token.
-    // enableFeaturesBasedOnToken: false,
-
     // When enabled the password used for locking a room is restricted to up to the number of digits specified
     // default: roomPasswordNumberOfDigits: false,
     // roomPasswordNumberOfDigits: 10,
