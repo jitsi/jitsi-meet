@@ -10,6 +10,17 @@ export const SELECT_LARGE_VIDEO_PARTICIPANT
     = 'SELECT_LARGE_VIDEO_PARTICIPANT';
 
 /**
+ * Action to set the dimensions of the large video.
+ *
+ * {
+ *     type: SET_LARGE_VIDEO_DIMENSIONS,
+ *     height: number,
+ *     width: number
+ * }
+ */
+export const SET_LARGE_VIDEO_DIMENSIONS = 'SET_LARGE_VIDEO_DIMENSIONS';
+
+/**
  * Action to update the redux store with the current resolution of large video.
  *
  * @returns {{
