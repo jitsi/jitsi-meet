@@ -968,7 +968,7 @@ var config = {
         // The interval at which rtcstats will poll getStats, defaults to 1000ms.
         // If the value is set to 0 getStats won't be polled and the rtcstats client
         // will only send data related to RTCPeerConnection events.
-        // rtcstatsPolIInterval: 1000,
+        // rtcstatsPollInterval: 1000,
 
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
