@@ -1,9 +1,15 @@
+const { ONEPLUSA5000, iPhone13ProSimulator } = require('./modules/mobile-tests/capabilities');
+
+
 exports.config = {
     //
     // ====================
     // Runner Configuration
     // ====================
-    //
+    // WebdriverIO allows it to run your tests in arbitrary locations (e.g. locally or
+    // on a remote machine).
+    runner: 'local',
+
     port: 4723,
 
     //
@@ -23,7 +29,7 @@ exports.config = {
     // will be called from there.
     //
     specs: [
-        './modules/mobile-tests/test.e2e.js'
+        './modules/mobile-tests/test.e2e.ts'
     ],
 
     // Patterns to exclude.
@@ -55,30 +61,24 @@ exports.config = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    capabilities: [ {
+    capabilities: [
+        {
 
-        // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-        // grid with only 5 firefox instances available you can make sure that not more than
-        // 5 instances get started at a time.
-        maxInstances: 5,
+            // maxInstances can get overwritten per capability. So if you have an in-house Selenium
+            // grid with only 5 firefox instances available you can make sure that not more than
+            // 5 instances get started at a time.
+            maxInstances: 5,
 
-        //
-        browserName: 'chrome',
-        acceptInsecureCerts: true
+            //
+            browserName: 'chrome',
+            acceptInsecureCerts: true
 
         // If outputDir is provided WebdriverIO can capture driver session logs
         // it is possible to configure which logTypes to include/exclude.
         // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
         // excludeDriverLogs: ['bugreport', 'server'],
-    }, {
-        appActivity: '.MainActivity',
-        appPackage: 'org.jitsi.meet',
-        appiumVersion: '1.22.3',
-        automationName: 'UiAutomator2',
-        platformName: 'Android',
-        platformVersion: '10.0',
-        uid: '2ff2f58d'
-    } ],
+        }, ONEPLUSA5000, iPhone13ProSimulator
+    ],
 
     //
     // ===================
@@ -112,7 +112,7 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'http://localhost',
+    baseUrl: 'https://127.0.0.1:8080/',
 
     //
     // Default timeout for all waitFor* commands.
@@ -132,7 +132,18 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: [ 'selenium-standalone', 'electron', 'appium', 'crossbrowsertesting', 'eslinter', 'slack' ]
+    services: [ 'selenium-standalone', 'electron', [ 'appium', {
+        command: 'appium',
+        args: {
+            // This is needed to tell Appium that we can execute local ADB commands
+            // and to automatically download the latest version of ChromeDriver
+            relaxedSecurity: true,
+            address: 'localhost',
+
+            // Write the Appium logs to a file in the root of the directory
+            log: './appium.log'
+        }
+    } ], 'crossbrowsertesting', 'eslinter', 'slack' ]
 
     //
     // The number of times to retry the entire specfile when it fails as a whole
