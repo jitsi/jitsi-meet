@@ -138,20 +138,20 @@ const ConnectButtons = (props: Props) => {
                                         width: '40px'
                                     }}
                                          onClick={() => {
-                                             if(isMobileBrowser()){
-                                                 console.log('openUrl!!!!!', window.flutter_inappwebview ?  window.flutter_inappwebview._platformReady : ' url is not ready to open');
+                                             if (isMobileBrowser()) {
                                                  if (window.flutter_inappwebview) {
                                                      console.log('beforeArgs');
-                                                     const args = value.url;
-                                                     console.log('afterArgs',args);
-                                                     window.flutter_inappwebview.callHandler('openUrl', ...args);
-                                                     console.log('addsUrl',args);
-                                                 }
-                                                 else {
+                                                     const args = `${value.url}`;
+                                                     console.log('afterArgs', args);
+                                                     window.flutter_inappwebview.callHandler('openUrl', args);
+                                                     console.log('addsUrl', args);
+                                                 } else {
                                                      console.log('InAppWebViewNotLoaded');
                                                  }
+                                             } else {
+                                                 window.open(value.url);
                                              }
-                                             window.open(value.url);
+
                                          }}
                                          src={value.iconUrl}/>
                                     <p style={{
