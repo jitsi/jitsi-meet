@@ -101,7 +101,6 @@ const DEFAULT_STATE = {
     dominantSpeaker: undefined,
     everyoneIsModerator: false,
     fakeParticipants: new Map(),
-    haveParticipantWithScreenSharingFeature: false,
     local: undefined,
     localScreenShare: undefined,
     overwrittenNameList: {},
@@ -118,7 +117,6 @@ export interface IParticipantsState {
     dominantSpeaker?: string;
     everyoneIsModerator: boolean;
     fakeParticipants: Map<string, Participant>;
-    haveParticipantWithScreenSharingFeature: boolean;
     local?: LocalParticipant;
     localScreenShare?: Participant;
     overwrittenNameList: Object;
@@ -254,14 +252,6 @@ ReducerRegistry.register('features/base/participants', (state: IParticipantsStat
                 state.everyoneIsModerator = false;
             } else if (!state.everyoneIsModerator && isModerator) {
                 state.everyoneIsModerator = _isEveryoneModerator(state);
-            }
-
-            // haveParticipantWithScreenSharingFeature calculation:
-            const { features = {} } = participant;
-
-            // Currently we use only PARTICIPANT_UPDATED to set a feature to enabled and we never disable it.
-            if (String(features['screen-sharing']) === 'true') {
-                state.haveParticipantWithScreenSharingFeature = true;
             }
         }
 
@@ -399,26 +389,6 @@ ReducerRegistry.register('features/base/participants', (state: IParticipantsStat
 
         if (!state.everyoneIsModerator && !isParticipantModerator(oldParticipant)) {
             state.everyoneIsModerator = _isEveryoneModerator(state);
-        }
-
-        const { features = {} } = oldParticipant || {};
-
-        if (state.haveParticipantWithScreenSharingFeature && String(features['screen-sharing']) === 'true') {
-            const { features: localFeatures = {} } = state.local || {};
-
-            if (String(localFeatures['screen-sharing']) !== 'true') {
-                state.haveParticipantWithScreenSharingFeature = false;
-
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                for (const [ key, participant ] of state.remote) {
-                    const { features: f = {} } = participant;
-
-                    if (String(f['screen-sharing']) === 'true') {
-                        state.haveParticipantWithScreenSharingFeature = true;
-                        break;
-                    }
-                }
-            }
         }
 
         if (dominantSpeaker === id) {
