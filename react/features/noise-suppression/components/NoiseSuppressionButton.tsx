@@ -78,4 +78,5 @@ function _mapStateToProps(state: IState): Object {
     };
 }
 
+// @ts-ignore
 export default translate(connect(_mapStateToProps)(NoiseSuppressionButton));
