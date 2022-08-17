@@ -236,7 +236,8 @@ class MeetingParticipantList extends PureComponent<Props> {
                 }
                 <Input
                     clearable = { true }
-                    customStyles = {{ container: styles.inputContainer,
+                    customStyles = {{
+                        container: styles.inputContainer,
                         input: styles.centerInput }}
                     onChange = { this._onSearchStringChange }
                     placeholder = { t('participantsPane.search') }

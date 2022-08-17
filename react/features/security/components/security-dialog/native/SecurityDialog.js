@@ -1,15 +1,11 @@
-// @flow
-
 import Clipboard from '@react-native-community/clipboard';
 import React, { PureComponent } from 'react';
 import {
     Text,
-    TextInput,
     View
 } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import { FIELD_UNDERLINE } from '../../../../base/dialog';
 import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
@@ -17,6 +13,7 @@ import { isLocalParticipantModerator } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import Button from '../../../../base/ui/components/native/Button';
+import Input from '../../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
@@ -353,14 +350,14 @@ class SecurityDialog extends PureComponent<Props, State> {
         if (showElement) {
             if (typeof _locked === 'undefined') {
                 return (
-                    <TextInput
+                    <Input
+                        accessibilityLabel = { t('info.addPassword') }
                         autoFocus = { true }
-                        onChangeText = { this._onChangeText }
-                        placeholder = { t('lobby.passwordField') }
+                        clearable = { true }
+                        customStyles = {{ container: styles.passwordInput }}
+                        onChange = { this._onChangeText }
+                        placeholder = { t('dialog.password') }
                         placeholderTextColor = { BaseTheme.palette.text03 }
-                        selectionColor = { BaseTheme.palette.action01 }
-                        style = { styles.passwordInput }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { passwordInputValue }
                         { ...textInputProps } />
                 );
