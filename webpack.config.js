@@ -12,7 +12,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
  * development with webpack-dev-server.
  */
 const devServerProxyTarget
-    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
+    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://custommeet7.centralus.cloudapp.azure.com/' || 'https://alpha.jitsi.net';
 
 /**
  * Build a Performance configuration object for the given size.
@@ -257,7 +257,7 @@ function getDevServerConfig() {
                 warnings: false
             }
         },
-        host: '192.168.0.113',
+        host: '192.168.0.124',
         hot: true,
         proxy: {
             '/': {

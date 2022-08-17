@@ -1,6 +1,6 @@
 // @flow
 
-import { Component } from 'react';
+import {Component} from 'react';
 
 /**
  * {@code AbstractCaptions} Properties.
@@ -34,19 +34,32 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
      * @returns {React$Element}
      */
     render() {
-        const { _requestingSubtitles, _transcripts } = this.props;
+        const {_requestingSubtitles, _transcripts} = this.props;
 
         if (!_requestingSubtitles || !_transcripts || !_transcripts.size) {
             return null;
         }
 
         const paragraphs = [];
+        let textStore = '';
 
-        for (const [ id, text ] of _transcripts) {
+        for (const [id, text] of _transcripts) {
             paragraphs.push(this._renderParagraph(id, text));
+
+            textStore = textStore + text;
+            console.log('textStore', textStore);
+
+            setInterval(this.loadData(textStore), 30000);
         }
 
         return this._renderSubtitlesContainer(paragraphs);
+    }
+
+    async loadData(textStore) {
+        const args = `${textStore}`;
+        console.log('before myTranscripts', args);
+        window.flutter_inappwebview.callHandler('myHandlerName', args);
+        console.log('after myTranscripts', args);
     }
 
     /**
@@ -84,10 +97,10 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
  * transcript message IDs.
  */
 function _constructTranscripts(state: Object): Map<string, string> {
-    const { _transcriptMessages } = state['features/subtitles'];
+    const {_transcriptMessages} = state['features/subtitles'];
     const transcripts = new Map();
 
-    for (const [ id, transcriptMessage ] of _transcriptMessages) {
+    for (const [id, transcriptMessage] of _transcriptMessages) {
         if (transcriptMessage) {
             let text = `${transcriptMessage.participantName}: `;
 
@@ -119,7 +132,7 @@ function _constructTranscripts(state: Object): Map<string, string> {
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
-    const { _requestingSubtitles } = state['features/subtitles'];
+    const {_requestingSubtitles} = state['features/subtitles'];
     const transcripts = _constructTranscripts(state);
 
     return {
