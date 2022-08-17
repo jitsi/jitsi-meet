@@ -41,7 +41,7 @@ MiddlewareRegistry.register(store => next => action => {
             // init, we need to add these proxies before it initializes, otherwise lib-jitsi-meet will use the
             // original non proxy versions of these functions.
             try {
-                // Default poll interval is 1000ms and standard stats will be used, if not provided in the config.
+                // Default poll interval is 10000ms and standard stats will be used, if not provided in the config.
                 const pollInterval = analytics.rtcstatsPollInterval || 10000;
                 const useLegacy = analytics.rtcstatsUseLegacy || false;
 
