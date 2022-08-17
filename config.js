@@ -1470,4 +1470,18 @@ var config = {
     //     // How long the GIF should be displayed on the tile (in miliseconds).
     //     tileTime: 5000,
     // },
+
+    // Logging
+    // logging: {
+    //      // Default log level for the app and lib-jitsi-meet.
+    //      defaultLogLevel: 'trace',
+    //      // Option to disable LogCollector (which stores the logs on CallStats).
+    //      //disableLogCollector: true,
+    //      // Indivual loggers are customizable.
+    //      loggers: {
+    //      // The following are too verbose in their logging with the default level.
+    //      'modules/RTC/TraceablePeerConnection.js': 'info',
+    //      'modules/statistics/CallStats.js': 'info',
+    //      'modules/xmpp/strophe.util.js': 'log',
+    // },
 };

@@ -5,6 +5,7 @@ import Logger from '@jitsi/logger';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
 // @ts-ignore
 import { CONFERENCE_JOINED, getCurrentConference } from '../conference';
+import { SET_CONFIG } from '../config/actionTypes';
 import JitsiMeetJS, {
     JitsiConferenceEvents
 } from '../lib-jitsi-meet';
@@ -17,7 +18,7 @@ import buildExternalApiLogTransport from './ExternalApiLogTransport';
 import JitsiMeetInMemoryLogStorage from './JitsiMeetInMemoryLogStorage';
 import JitsiMeetLogStorage from './JitsiMeetLogStorage';
 import { SET_LOGGING_CONFIG } from './actionTypes';
-import { setLogCollector } from './actions';
+import { setLogCollector, setLoggingConfig } from './actions';
 
 declare let APP: any;
 
@@ -38,6 +39,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case LIB_WILL_INIT:
         return _libWillInit(store, next, action);
+
+    case SET_CONFIG:
+        return _setConfig(store, next, action);
 
     case SET_LOGGING_CONFIG:
         return _setLoggingConfig(store, next, action);
@@ -142,8 +146,7 @@ function _initLogging({ dispatch, getState }: {dispatch: Function, getState: Fun
     // cached, before the JitsiMeetLogStorage gets ready (statistics module is
     // initialized).
     if (!logCollector && !loggingConfig.disableLogCollector) {
-        const _logCollector
-            = new Logger.LogCollector(new JitsiMeetLogStorage(getState));
+        const _logCollector = new Logger.LogCollector(new JitsiMeetLogStorage(getState));
 
         const { apiLogLevels } = getState()['features/base/config'];
 
@@ -202,6 +205,28 @@ function _libWillInit({ getState }: { getState: Function }, next: Function, acti
 }
 
 /**
+ * This feature that the action SET_CONFIG is being
+ * dispatched within a specific Redux store.
+ *
+ * @param {Store} store - The Redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The Redux action SET_CONFIG which is being
+ * dispatched in the specified store.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified action.
+ */
+function _setConfig({ dispatch }: { dispatch: Function }, next: Function, action: any) {
+    const result = next(action);
+
+    dispatch(setLoggingConfig(action.config?.logging));
+
+    return result;
+}
+
+/**
  * Notifies the feature base/logging that the action {@link SET_LOGGING_CONFIG}
  * is being dispatched within a specific Redux {@code store}.
  *
@@ -256,7 +281,7 @@ function _setLogLevels(logger: any, config: any) {
     logger.setLogLevel(config.defaultLogLevel);
 
     // Second, set the log level of each logger explicitly overridden by config.
-    Object.keys(config).forEach(
-        id =>
-            id === 'defaultLogLevel' || logger.setLogLevelById(config[id], id));
+    for (const [ id, level ] of Object.entries(config.loggers)) {
+        logger.setLogLevelById(level, id);
+    }
 }
