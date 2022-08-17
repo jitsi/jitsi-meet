@@ -1,7 +1,4 @@
-/* @flow */
-
 import { SET_CONFIG } from '../config';
-import { setLoggingConfig } from '../logging';
 import { SET_NETWORK_INFO } from '../net-info';
 import { PARTICIPANT_LEFT } from '../participants';
 import { MiddlewareRegistry } from '../redux';
@@ -78,14 +75,6 @@ function _setConfig({ dispatch, getState }, next, action) {
     // Let the new config into the Redux store (because initLib will read it
     // from there).
     const result = next(action);
-
-    // FIXME Obviously, the following is bad design. However, I'm currently
-    // introducing the features base/config and base/logging and I'm trying to
-    // minimize the scope of the changes while I'm attempting to preserve
-    // compatibility with the existing partially React-ified Web source code and
-    // what was already executing on React Native. Additionally, I do not care
-    // to load logging_config.js on React Native.
-    dispatch(setLoggingConfig(window.loggingConfig));
 
     dispatch(initLib());
 
