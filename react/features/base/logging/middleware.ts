@@ -219,9 +219,11 @@ function _libWillInit({ getState }: { getState: Function }, next: Function, acti
  * specified action.
  */
 function _setConfig({ dispatch }: { dispatch: Function }, next: Function, action: any) {
+    const result = next(action);
+
     dispatch(setLoggingConfig(action.config?.logging));
 
-    return next(action);
+    return result;
 }
 
 /**
