@@ -105,11 +105,8 @@ export function setConfig(config: Object = {}) {
         // Now that the loading of the config was successful override the values
         // with the parameters passed in the hash part of the location URI.
         // TODO We're still in the middle ground between old Web with config,
-        // interfaceConfig, and loggingConfig used via global variables and new
+        // and interfaceConfig used via global variables and new
         // Web and mobile reading the respective values from the redux store.
-        // On React Native there's no interfaceConfig at all yet and
-        // loggingConfig is not loaded but there's a default value in the redux
-        // store.
         // Only the config will be overridden on React Native, as the other
         // globals will be undefined here. It's intentional - we do not care to
         // override those configs yet.
@@ -120,7 +117,6 @@ export function setConfig(config: Object = {}) {
                 // but it is resolved in the loadConfig procedure.
                 config,
                 window.interfaceConfig,
-                window.loggingConfig,
                 locationURL);
 
         dispatch({
