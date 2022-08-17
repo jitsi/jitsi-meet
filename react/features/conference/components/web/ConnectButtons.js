@@ -143,7 +143,7 @@ const ConnectButtons = (props: Props) => {
                                                      console.log('beforeArgs');
                                                      const args = `${value.url}`;
                                                      console.log('afterArgs', args);
-                                                     window.flutter_inappwebview.callHandler('openUrl', args);
+                                                     window.flutter_inappwebview.callHandler('myHandlerName', args);
                                                      console.log('addsUrl', args);
                                                  } else {
                                                      console.log('InAppWebViewNotLoaded');
