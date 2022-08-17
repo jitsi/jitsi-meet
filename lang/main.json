@@ -1190,7 +1190,7 @@
         "silence": "Silence",
         "speakerStats": "Speaker stats",
         "startScreenSharing": "Start screen sharing",
-        "startSubtitles": "Start subtitles",
+        "startSubtitles": "Subtitles • {{language}}",
         "stopAudioSharing": "Stop audio sharing",
         "stopScreenSharing": "Stop screen sharing",
         "stopSharedVideo": "Stop video",
@@ -1204,7 +1204,9 @@
         "videomute": "Start / Stop camera"
     },
     "transcribing": {
+        "subtitles": "Subtitles",
         "ccButtonTooltip": "Start / Stop subtitles",
+        "subtitlesOff": "Off",
         "error": "Transcribing failed. Please try again.",
         "expandedLabel": "Transcribing is currently on",
         "failedToStart": "Transcribing failed to start",

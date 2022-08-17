@@ -1,12 +1,16 @@
 // @flow
 
+import { toggleDialog } from '../base/dialog';
+
 import {
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
     TOGGLE_REQUESTING_SUBTITLES,
     SET_REQUESTING_SUBTITLES,
-    UPDATE_TRANSCRIPT_MESSAGE
+    UPDATE_TRANSCRIPT_MESSAGE,
+    UPDATE_TRANSLATION_LANGUAGE
 } from './actionTypes';
+import LanguageSelectorDialogWeb from './components/LanguageSelectorDialog.web';
 
 /**
  * Signals that a participant sent an endpoint message on the data channel.
@@ -90,5 +94,33 @@ export function setRequestingSubtitles(enabled: boolean) {
     return {
         type: SET_REQUESTING_SUBTITLES,
         enabled
+    };
+}
+
+/**
+ * Signals that the local user has selected language for the translation.
+ *
+ * @param {boolean} value - The selected language for translation.
+ * @returns {{
+ *      type: UPDATE_TRANSLATION_LANGUAGE
+ * }}
+ */
+export function updateTranslationLanguage(value) {
+    return {
+        type: UPDATE_TRANSLATION_LANGUAGE,
+        value
+    };
+}
+
+/**
+ * Signals that the local user has toggled the LanguageSelector button.
+ *
+ * @returns {{
+ *      type: UPDATE_TRANSLATION_LANGUAGE
+ * }}
+ */
+export function toggleLangugeSelectorDialog() {
+    return function(dispatch: (Object) => Object) {
+        dispatch(toggleDialog(LanguageSelectorDialogWeb));
     };
 }
