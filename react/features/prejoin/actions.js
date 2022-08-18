@@ -359,10 +359,12 @@ export function replaceAudioTrackById(deviceId: string) {
             const tracks = getState()['features/base/tracks'];
             const newTrack = await createLocalTrack('audio', deviceId);
             const oldTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
+            const micDeviceId = newTrack.getDeviceId();
 
+            logger.info(`Switching audio input device to ${micDeviceId}`);
             dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
                 dispatch(updateSettings({
-                    micDeviceId: newTrack.getDeviceId()
+                    micDeviceId
                 }));
             });
         } catch (err) {
@@ -390,10 +392,12 @@ export function replaceVideoTrackById(deviceId: Object) {
                     getState }
             );
             const oldTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+            const cameraDeviceId = newTrack.getDeviceId();
 
+            logger.info(`Switching camera to ${cameraDeviceId}`);
             dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
                 dispatch(updateSettings({
-                    cameraDeviceId: newTrack.getDeviceId()
+                    cameraDeviceId
                 }));
             });
             wasVideoMuted && newTrack.mute();
