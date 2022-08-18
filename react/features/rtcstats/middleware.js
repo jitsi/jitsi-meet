@@ -44,6 +44,7 @@ MiddlewareRegistry.register(store => next => action => {
                 // Default poll interval is 10000ms and standard stats will be used, if not provided in the config.
                 const pollInterval = analytics.rtcstatsPollInterval || 10000;
                 const useLegacy = analytics.rtcstatsUseLegacy || false;
+                const sendSdp = analytics.rtcstatsSendSdp || false;
 
 
                 // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
@@ -51,7 +52,8 @@ MiddlewareRegistry.register(store => next => action => {
                 RTCStats.init({
                     endpoint: analytics.rtcstatsEndpoint,
                     useLegacy,
-                    pollInterval
+                    pollInterval,
+                    sendSdp
                 });
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);
