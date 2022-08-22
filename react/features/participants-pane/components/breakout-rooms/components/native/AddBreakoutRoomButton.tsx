@@ -25,8 +25,8 @@ const AddBreakoutRoomButton = () => {
     return (
         <Button
             accessibilityLabel = 'breakoutRooms.actions.add'
-            label = 'breakoutRooms.actions.add'
-            onPress = { onAdd }
+            labelKey = 'breakoutRooms.actions.add'
+            onClick = { onAdd }
             style = { styles.button }
             type = { BUTTON_TYPES.SECONDARY } />
     );

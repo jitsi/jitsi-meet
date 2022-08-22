@@ -1,13 +1,13 @@
 import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { BUTTON_TYPES } from '../../constants';
 import { Theme } from '../../types';
 import { ButtonProps } from '../types';
-
 
 interface IButtonProps extends ButtonProps {
 
@@ -32,9 +32,10 @@ interface IButtonProps extends ButtonProps {
     isSubmit?: boolean;
 
     /**
-     * Click callback.
+     * Text to be displayed on the component.
+     * Used when there's no labelKey.
      */
-    onClick?: (e?: React.MouseEvent<HTMLButtonElement>) => void;
+    label?: string;
 
     /**
      * Which size the button should be.
@@ -185,19 +186,21 @@ const Button = ({
     id,
     isSubmit,
     label,
+    labelKey,
     onClick = () => null,
     size = 'medium',
     testId,
     type = BUTTON_TYPES.PRIMARY
 }: IButtonProps) => {
     const styles = useStyles();
+    const { t } = useTranslation();
 
     return (
         <button
             aria-label = { accessibilityLabel }
             className = { clsx(styles.button, styles[type],
                 disabled && styles.disabled,
-                icon && !label && `${styles.iconButton} iconButton`,
+                icon && !(labelKey || label) && `${styles.iconButton} iconButton`,
                 styles[size], fullWidth && styles.fullWidth, className) }
             data-testid = { testId }
             disabled = { disabled }
@@ -208,7 +211,9 @@ const Button = ({
             {icon && <Icon
                 size = { 20 }
                 src = { icon } />}
-            {label && <span className = { icon ? styles.textWithIcon : '' }>{label}</span>}
+            {(labelKey || label) && <span className = { icon ? styles.textWithIcon : '' }>
+                {labelKey ? t(labelKey) : label}
+            </span>}
         </button>
     );
 };

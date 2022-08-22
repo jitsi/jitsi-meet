@@ -39,9 +39,9 @@ const LobbyParticipantList = () => {
                 participants.length > 1 && (
                     <Button
                         accessibilityLabel = 'lobby.admitAll'
-                        label = 'lobby.admitAll'
+                        labelKey = 'lobby.admitAll'
                         labelStyle = { styles.admitAllButtonLabel }
-                        onPress = { admitAll }
+                        onClick = { admitAll }
                         type = { BUTTON_TYPES.TERTIARY } />
                 )
             }
