@@ -277,7 +277,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
                 <Container className = 'recording-switch'>
                     <Button
                         accessibilityLabel = { t('recording.signOut') }
-                        label = { t('recording.signOut') }
+                        labelKey = 'recording.signOut'
                         onClick = { this._onSignOut }
                         type = { BUTTON_TYPES.SECONDARY } />
                 </Container>
@@ -288,7 +288,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
                 <Container className = 'recording-switch'>
                     <Button
                         accessibilityLabel = { t('recording.signIn') }
-                        label = { t('recording.signIn') }
+                        labelKey = 'recording.signIn'
                         onClick = { this._onSignIn }
                         type = { BUTTON_TYPES.PRIMARY } />
                 </Container>
