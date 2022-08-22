@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 
 import { LoginDialog, WaitForOwnerDialog } from '../../authentication/components';
 import { Avatar } from '../../base/avatar';
-import { getRoomName } from '../../base/conference';
 import { isNameReadOnly } from '../../base/config';
 import { isDialogOpen } from '../../base/dialog/functions';
 import { translate } from '../../base/i18n';
@@ -90,11 +89,6 @@ type Props = {
      * Whether the name input should be read only or not.
      */
     readOnlyName: boolean,
-
-    /**
-     * The name of the meeting that is about to be joined.
-     */
-    roomName: string,
 
     /**
      * Sets visibility of the 'JoinByPhoneDialog'.
@@ -474,7 +468,6 @@ function mapStateToProps(state): Object {
         participantId,
         prejoinConfig: state['features/base/config'].prejoinConfig,
         readOnlyName: isNameReadOnly(state),
-        roomName: getRoomName(state),
         showCameraPreview: !isVideoMutedByUser(state),
         showDialog: isJoinByPhoneDialogVisible(state),
         showErrorOnJoin,
