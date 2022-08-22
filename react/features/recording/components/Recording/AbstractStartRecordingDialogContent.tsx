@@ -1,11 +1,11 @@
 /* eslint-disable lines-around-comment  */
 import { Component } from 'react';
-
 // @ts-ignore
+import { WithTranslation } from 'react-i18next';
+
 import {
     createRecordingDialogEvent,
     sendAnalytics
-
     // @ts-ignore
 } from '../../../analytics';
 // @ts-ignore
@@ -26,7 +26,11 @@ import { RECORDING_TYPES } from '../../constants';
 // @ts-ignore
 import { supportsLocalRecording } from '../../functions';
 
-export type Props = {
+/**
+ * The type of the React {@code Component} props of
+ * {@link AbstractStartRecordingDialogContent}.
+ */
+export interface Props extends WithTranslation {
 
     /**
      * Style of the dialogs feature.
@@ -137,28 +141,23 @@ export type Props = {
     spaceLeft: number | null,
 
     /**
-     * The translate function.
-     */
-    t: Function,
-
-    /**
      * The display name of the user's Dropbox account.
      */
     userName: string | null
-};
+}
 
 /**
  * React Component for getting confirmation to start a file recording session.
  *
  * @augments Component
  */
-class AbstractStartRecordingDialogContent extends Component<Props> {
+class AbstractStartRecordingDialogContent<P extends Props> extends Component<P> {
     /**
      * Initializes a new {@code AbstractStartRecordingDialogContent} instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handler; it bounds once for every instance.
@@ -342,7 +341,7 @@ class AbstractStartRecordingDialogContent extends Component<Props> {
  * @param {Object} ownProps - The own props of the component.
  * @returns {Props}
  */
-export function mapStateToProps(state: any, ownProps: any) {
+export function mapStateToProps(state: any, ownProps: Props) {
     const localRecordingAvailable
         = ownProps._localRecordingEnabled && supportsLocalRecording();
 

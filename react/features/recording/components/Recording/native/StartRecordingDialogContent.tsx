@@ -3,12 +3,10 @@ import React from 'react';
 import { Image, View } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
 
-// @ts-ignore
-import { translate } from '../../../../base/i18n';
+import { translate } from '../../../../base/i18n/functions';
 // @ts-ignore
 import { LoadingIndicator } from '../../../../base/react';
-// @ts-ignore
-import { connect } from '../../../../base/redux';
+import { connect } from '../../../../base/redux/functions';
 import Button from '../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
 // @ts-ignore
@@ -16,7 +14,7 @@ import { RECORDING_TYPES } from '../../../constants';
 // @ts-ignore
 import { getRecordingDurationEstimation } from '../../../functions';
 import AbstractStartRecordingDialogContent, {
-    type Props,
+    Props,
     mapStateToProps
 } from '../AbstractStartRecordingDialogContent';
 import {
@@ -32,9 +30,7 @@ import {
 /**
  * The start recording dialog content for the mobile application.
  */
-class StartRecordingDialogContent extends
-// @ts-ignore
-    AbstractStartRecordingDialogContent<Props> {
+class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Props> {
     /**
      * Renders the component.
      *
@@ -42,7 +38,6 @@ class StartRecordingDialogContent extends
      * @returns {React$Component}
      */
     render() {
-        // @ts-ignore
         const { _styles: styles } = this.props;
 
         return (
@@ -73,7 +68,6 @@ class StartRecordingDialogContent extends
             isValidating,
             selectedRecordingService,
             t
-            // @ts-ignore
         } = this.props;
 
         if (!this._shouldRenderNoIntegrationsContent()) {
@@ -129,7 +123,6 @@ class StartRecordingDialogContent extends
             onSharingSettingChanged,
             sharingSetting,
             t
-            // @ts-ignore
         } = this.props;
 
         return (
@@ -148,8 +141,8 @@ class StartRecordingDialogContent extends
                 </Text>
                 <Switch
                     disabled = { isValidating }
-                    onValueChange
-                        = { onSharingSettingChanged }
+                    // @ts-ignore
+                    onValueChange = { onSharingSettingChanged }
                     style = { styles.switch }
                     trackColor = {{ false: TRACK_COLOR }}
                     value = { sharingSetting } />
@@ -170,7 +163,6 @@ class StartRecordingDialogContent extends
             isVpaas,
             selectedRecordingService,
             t
-            // @ts-ignore
         } = this.props;
 
         if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) || _hideStorageWarning) {
@@ -214,7 +206,6 @@ class StartRecordingDialogContent extends
      * @returns {React$Component}
      */
     _renderSignOut() {
-        // @ts-ignore
         const { _styles: styles, spaceLeft, t, userName } = this.props;
         const duration = getRecordingDurationEstimation(spaceLeft);
 
@@ -271,7 +262,6 @@ class StartRecordingDialogContent extends
             isValidating,
             selectedRecordingService,
             t
-            // @ts-ignore
         } = this.props;
 
         let content = null;

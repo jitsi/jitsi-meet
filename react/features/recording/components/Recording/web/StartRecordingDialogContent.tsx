@@ -1,9 +1,7 @@
 /* eslint-disable lines-around-comment  */
 import React from 'react';
 
-// @ts-ignore
-import { translate } from '../../../../base/i18n';
-// @ts-ignore
+import { translate } from '../../../../base/i18n/functions';
 import {
     Container,
     Image,
@@ -12,8 +10,7 @@ import {
     Text
     // @ts-ignore
 } from '../../../../base/react';
-// @ts-ignore
-import { connect } from '../../../../base/redux';
+import { connect } from '../../../../base/redux/functions';
 import Button from '../../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
 // @ts-ignore
@@ -21,7 +18,7 @@ import { RECORDING_TYPES } from '../../../constants';
 // @ts-ignore
 import { getRecordingDurationEstimation } from '../../../functions';
 import AbstractStartRecordingDialogContent, {
-    type Props,
+    Props,
     mapStateToProps
 } from '../AbstractStartRecordingDialogContent';
 import {
@@ -38,9 +35,7 @@ import {
 /**
  * The start recording dialog content for the mobile application.
  */
-class StartRecordingDialogContent extends
-// @ts-ignore
-    AbstractStartRecordingDialogContent<Props> {
+class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Props> {
     /**
      * Renders the component.
      *
@@ -81,7 +76,6 @@ class StartRecordingDialogContent extends
             isVpaas,
             selectedRecordingService,
             t
-            // @ts-ignore
         } = this.props;
 
         const switchContent
@@ -157,8 +151,7 @@ class StartRecordingDialogContent extends
                 <Switch
                     className = 'recording-switch'
                     disabled = { isValidating }
-                    onValueChange
-                        = { onSharingSettingChanged }
+                    onValueChange = { onSharingSettingChanged }
                     trackColor = {{ false: TRACK_COLOR }}
                     value = { sharingSetting } />
             </Container>
@@ -176,7 +169,6 @@ class StartRecordingDialogContent extends
             isVpaas,
             selectedRecordingService,
             t
-            // @ts-ignore
         } = this.props;
 
         if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) || _hideStorageWarning) {
@@ -220,7 +212,6 @@ class StartRecordingDialogContent extends
             spaceLeft,
             t,
             userName
-            // @ts-ignore
         } = this.props;
         const duration = getRecordingDurationEstimation(spaceLeft);
 
@@ -273,7 +264,6 @@ class StartRecordingDialogContent extends
             isValidating,
             selectedRecordingService,
             t
-            // @ts-ignore
         } = this.props;
         let content = null;
         let switchContent = null;
@@ -358,7 +348,6 @@ class StartRecordingDialogContent extends
             onLocalRecordingSelfChange,
             t,
             selectedRecordingService
-            // @ts-ignore
         } = this.props;
 
         if (!_localRecordingAvailable) {
