@@ -160,7 +160,7 @@ class LargeVideo extends Component<Props> {
             _isScreenSharing,
             _seeWhatIsBeingShared
         } = this.props;
-        const style = this._getCustomSyles();
+        const style = this._getCustomStyles();
         const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
 
         return (
@@ -256,7 +256,7 @@ class LargeVideo extends Component<Props> {
      * @private
      * @returns {Object}
      */
-    _getCustomSyles() {
+    _getCustomStyles() {
         const styles = {};
         const {
             _customBackgroundColor,
