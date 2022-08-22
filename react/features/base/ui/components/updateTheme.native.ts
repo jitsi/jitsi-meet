@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Custom theme for setting client branding.
  *

@@ -29,8 +29,8 @@ const LeaveBreakoutRoomButton = () => {
     return (
         <Button
             accessibilityLabel = 'breakoutRooms.actions.leaveBreakoutRoom'
-            label = 'breakoutRooms.actions.leaveBreakoutRoom'
-            onPress = { onLeave }
+            labelKey = 'breakoutRooms.actions.leaveBreakoutRoom'
+            onClick = { onLeave }
             style = { styles.button }
             type = { BUTTON_TYPES.DESTRUCTIVE } />
     );
