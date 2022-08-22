@@ -186,7 +186,7 @@ class AbstractStartRecordingDialogContent<P extends Props> extends Component<P> 
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: P) {
         // Auto sign-out when the use chooses another recording service.
         if (prevProps.selectedRecordingService === RECORDING_TYPES.DROPBOX
                 && this.props.selectedRecordingService !== RECORDING_TYPES.DROPBOX && this.props.isTokenValid) {

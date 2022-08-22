@@ -50,11 +50,6 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
         );
     }
 
-    _shouldRenderNoIntegrationsContent: () => boolean;
-
-    _onRecordingServiceSwitchChange: () => void;
-
-
     /**
      * Renders the content in case no integrations were enabled.
      *
@@ -103,8 +98,6 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
             </View>
         );
     }
-
-    _shouldRenderFileSharingContent: () => boolean;
 
     /**
      * Renders the file recording service sharing options, if enabled.
@@ -234,14 +227,6 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
             </View>
         );
     }
-
-    _shouldRenderIntegrationsContent: () => boolean;
-
-    _onSignIn: () => void;
-
-    _onSignOut: () => void;
-
-    _onDropboxSwitchChange: () => void;
 
     /**
      * Renders the content in case integrations were enabled.
