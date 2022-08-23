@@ -338,21 +338,21 @@ class AbstractStartRecordingDialogContent<P extends Props> extends Component<P> 
  * Maps part of the redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @param {Object} ownProps - The own props of the component.
  * @returns {Props}
  */
-export function mapStateToProps(state: any, ownProps: Props) {
-    const localRecordingAvailable
-        = ownProps._localRecordingEnabled && supportsLocalRecording();
+export function mapStateToProps(state: any) {
+    const { localRecording, recordingService } = state['features/base/config'];
+    const _localRecordingAvailable
+        = !localRecording?.disable && supportsLocalRecording();
 
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
-        _hideStorageWarning: state['features/base/config'].recordingService?.hideStorageWarning,
-        _localRecordingAvailable: localRecordingAvailable,
-        _localRecordingEnabled: !state['features/base/config'].localRecording?.disable,
-        _localRecordingSelfEnabled: !state['features/base/config'].localRecording?.disableSelfRecording,
-        _localRecordingNoNotification: !state['features/base/config'].localRecording?.notifyAllParticipants,
+        _hideStorageWarning: recordingService?.hideStorageWarning,
+        _localRecordingAvailable,
+        _localRecordingEnabled: !localRecording?.disable,
+        _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
+        _localRecordingNoNotification: !localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
     };
 }

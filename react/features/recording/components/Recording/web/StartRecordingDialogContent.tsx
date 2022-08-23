@@ -65,7 +65,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
         }
 
         const {
-            _localRecordingEnabled,
+            _localRecordingAvailable,
             integrationsEnabled,
             isValidating,
             isVpaas,
@@ -74,7 +74,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
         } = this.props;
 
         const switchContent
-            = integrationsEnabled || _localRecordingEnabled
+            = integrationsEnabled || _localRecordingAvailable
                 ? (
                     <Switch
                         className = 'recording-switch'
@@ -86,7 +86,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
 
         const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
         const jitsiContentRecordingIconContainer
-            = integrationsEnabled || _localRecordingEnabled
+            = integrationsEnabled || _localRecordingAvailable
                 ? 'jitsi-content-recording-icon-container-with-switch'
                 : 'jitsi-content-recording-icon-container-without-switch';
         const contentRecordingClass = isVpaas
