@@ -1,10 +1,10 @@
 // @flow
 
 import { CONFERENCE_JOINED } from '../base/conference';
+import { MEDIA_TYPE } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_SCREENSHARE_CAPTURE_FRAME_RATE, SET_SCREEN_AUDIO_SHARE_STATE } from './actionTypes';
-import AUDIO from './constants';
 import logger from './logger';
 
 declare var APP: Object;
@@ -38,10 +38,10 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (isSharingAudio) {
             logger.debug(`User with id: ${participantId} playing audio sharing.`);
-            APP.API.notifyAudioOrVideoSharingToggled(AUDIO, 'playing', participantId);
+            APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.AUDIO, 'playing', participantId);
         } else {
-            logger.debug(`User with id: ${participantId} stop video sharing.`);
-            APP.API.notifyAudioOrVideoSharingToggled(AUDIO, 'stop', participantId);
+            logger.debug(`User with id: ${participantId} stop audio sharing.`);
+            APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.AUDIO, 'stop', participantId);
         }
     }
     }
