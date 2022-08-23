@@ -2651,29 +2651,8 @@ export default {
             }
         );
 
-        APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly => {
-
-            // FIXME On web video track is stored both in redux and in
-            // 'localVideo' field, video is attempted to be unmuted twice when
-            // turning off the audio only mode. This will crash the app with
-            // 'unmute operation is already in progress'.
-            // Because there's no logic in redux about creating new track in
-            // case unmute when not track exists the things have to go through
-            // muteVideo logic in such case.
-            const tracks = APP.store.getState()['features/base/tracks'];
-            const isTrackInRedux
-                = Boolean(tracks.find(track => track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.VIDEO));
-
-            if (isTrackInRedux && !this.isSharingScreen) {
-                this.muteVideo(audioOnly);
-            }
-
-            // Immediately update the UI by having remote videos and the large
-            // video update themselves instead of waiting for some other event
-            // to cause the update, usually PARTICIPANT_CONN_STATUS_CHANGED.
-            // There is no guarantee another event will trigger the update
-            // immediately and in all situations, for example because a remote
-            // participant is having connection trouble so no status changes.
+        APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, () => {
+            // Immediately update the UI by having remote videos and the large video update themselves.
             const displayedUserId = APP.UI.getLargeVideoID();
 
             if (displayedUserId) {

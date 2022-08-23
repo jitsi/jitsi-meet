@@ -160,8 +160,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     _setVideoMuted(videoMuted: boolean) {
         sendAnalytics(createToolbarEvent(VIDEO_MUTE, { enable: videoMuted }));
         if (this.props._audioOnly) {
-            this.props.dispatch(
-                setAudioOnly(false, /* ensureTrack */ true));
+            this.props.dispatch(setAudioOnly(false));
         }
         const mediaType = this.props._videoMediaType;
 

@@ -181,17 +181,12 @@ export function setVideoMuted(
             return;
         }
 
-        const oldValue = state['features/base/media'].video.muted;
-
-        // eslint-disable-next-line no-bitwise
-        const newValue = muted ? oldValue | authority : oldValue & ~authority;
-
         return dispatch({
             type: SET_VIDEO_MUTED,
             authority,
             mediaType,
             ensureTrack,
-            muted: newValue
+            muted
         });
     };
 }
