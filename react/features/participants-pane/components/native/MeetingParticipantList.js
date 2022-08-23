@@ -229,14 +229,15 @@ class MeetingParticipantList extends PureComponent<Props> {
                     && <Button
                         accessibilityLabel = 'participantsPane.actions.invite'
                         icon = { this._renderInviteMoreIcon }
-                        label = 'participantsPane.actions.invite'
-                        onPress = { this._onInvite }
+                        labelKey = 'participantsPane.actions.invite'
+                        onClick = { this._onInvite }
                         style = { styles.inviteButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
                 <Input
                     clearable = { true }
-                    customStyles = {{ container: styles.inputContainer,
+                    customStyles = {{
+                        container: styles.inputContainer,
                         input: styles.centerInput }}
                     onChange = { this._onSearchStringChange }
                     placeholder = { t('participantsPane.search') }

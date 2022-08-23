@@ -10,6 +10,8 @@ import { Label } from '../../../../base/label';
 import { connect } from '../../../../base/redux';
 import { Tooltip } from '../../../../base/tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
+import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
+import { FEATURES } from '../../../../jaas/constants';
 import { StartRecordingDialog } from '../../../components';
 import AbstractHighlightButton, {
     _abstractMapStateToProps,
@@ -129,8 +131,13 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
     *
     * @returns {void}
     */
-    _onOpenDialog() {
-        this.props.dispatch(openDialog(StartRecordingDialog));
+    async _onOpenDialog() {
+        const { dispatch } = this.props;
+        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+
+        if (!dialogShown) {
+            dispatch(openDialog(StartRecordingDialog));
+        }
     }
 
     /**

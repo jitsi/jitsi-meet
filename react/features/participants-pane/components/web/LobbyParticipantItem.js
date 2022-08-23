@@ -8,8 +8,8 @@ import { useSelector } from 'react-redux';
 import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
 import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons';
 import { hasRaisedHand } from '../../../base/participants';
-import { BUTTON_TYPES } from '../../../base/react/constants';
 import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { showLobbyChatButton } from '../../../lobby/functions';
 import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
 import { useLobbyActions } from '../../hooks';
@@ -74,7 +74,7 @@ export const LobbyParticipantItem = ({
         <Button
             accessibilityLabel = { `${t('lobby.admit')} ${p.name}` }
             className = { styles.button }
-            label = { t('lobby.admit') }
+            labelKey = { 'lobby.admit' }
             onClick = { admit }
             size = 'small'
             testId = { `admit-${id}` } />);
@@ -127,7 +127,7 @@ export const LobbyParticipantItem = ({
                 <Button
                     accessibilityLabel = { `${t('lobby.reject')} ${p.name}` }
                     className = { styles.button }
-                    label = { t('lobby.reject') }
+                    labelKey = { 'lobby.reject' }
                     onClick = { reject }
                     size = 'small'
                     testId = { `reject-${id}` }

@@ -1,5 +1,3 @@
-// @flow
-
 import { DefaultTheme } from 'react-native-paper';
 
 import { createColorTokens } from './utils';
@@ -10,7 +8,7 @@ import { createColorTokens } from './utils';
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createNativeTheme({ font, colors, colorMap, shape, spacing, typography }: Object) {
+export function createNativeTheme({ font, colors, colorMap, shape, spacing, typography }: any): any {
     return {
         ...DefaultTheme,
         palette: createColorTokens(colorMap, colors),

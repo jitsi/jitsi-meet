@@ -1,10 +1,25 @@
+import _ from 'lodash';
+
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { equals, set } from '../redux/functions';
 
 import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
 
-// eslint-disable-next-line
-const LOGGING_CONFIG = require('../../../../logging_config.js');
+const DEFAULT_LOGGING_CONFIG = {
+    // default log level for the app and lib-jitsi-meet
+    defaultLogLevel: 'trace' as LogLevel,
+
+    // Option to disable LogCollector (which stores the logs on CallStats)
+    // disableLogCollector: true,
+
+    loggers: {
+        // The following are too verbose in their logging with the
+        // {@link #defaultLogLevel}:
+        'modules/RTC/TraceablePeerConnection.js': 'info' as LogLevel,
+        'modules/statistics/CallStats.js': 'info' as LogLevel,
+        'modules/xmpp/strophe.util.js': 'log' as LogLevel
+    }
+};
 
 /**
  * The default/initial redux state of the feature base/logging.
@@ -14,7 +29,7 @@ const LOGGING_CONFIG = require('../../../../logging_config.js');
  * }}
  */
 const DEFAULT_STATE = {
-    config: LOGGING_CONFIG,
+    config: DEFAULT_LOGGING_CONFIG,
 
     /**
      * The log collector.
@@ -22,31 +37,30 @@ const DEFAULT_STATE = {
     logCollector: undefined
 };
 
-// Reduce verbosity on mobile, it kills performance.
+// Reduce default verbosity on mobile, it kills performance.
 if (navigator.product === 'ReactNative') {
-    const RN_LOGGING_CONFIG = {
-        'modules/sdp/SDPUtil.js': 'info',
-        'modules/xmpp/ChatRoom.js': 'warn',
-        'modules/xmpp/JingleSessionPC.js': 'info',
-        'modules/xmpp/strophe.jingle.js': 'info'
+    const RN_LOGGERS = {
+        'modules/sdp/SDPUtil.js': 'info' as LogLevel,
+        'modules/xmpp/ChatRoom.js': 'warn' as LogLevel,
+        'modules/xmpp/JingleSessionPC.js': 'info' as LogLevel,
+        'modules/xmpp/strophe.jingle.js': 'info' as LogLevel
     };
 
-    DEFAULT_STATE.config = {
-        ...LOGGING_CONFIG,
-        ...RN_LOGGING_CONFIG
+    DEFAULT_STATE.config.loggers = {
+        ...DEFAULT_LOGGING_CONFIG.loggers,
+        ...RN_LOGGERS
     };
 }
 
 type LogLevel = 'trace' | 'log' | 'info' | 'warn' | 'error';
 
-interface LoggingLevel {
-    [key: string]: LogLevel;
-}
-
 export interface ILoggingState {
-    config: LoggingLevel & {
+    config: {
         defaultLogLevel: LogLevel;
         disableLogCollector?: boolean;
+        loggers: {
+            [key: string]: LogLevel;
+        }
     };
     logCollector?: Object;
 }
@@ -77,20 +91,15 @@ ReducerRegistry.register(
  * reduction of the specified action.
  */
 function _setLoggingConfig(state: ILoggingState, action: any) {
-    const config = {
-        // The config of DEFAULT_STATE is the default configuration of the
-        // feature base/logging.
-        ...DEFAULT_STATE.config,
-        ...action.config
-    };
+    const newConfig = _.merge({}, DEFAULT_STATE.config, action.config);
 
-    if (equals(state.config, config)) {
+    if (equals(state.config, newConfig)) {
         return state;
     }
 
     return {
         ...state,
-        config
+        config: newConfig
     };
 }
 

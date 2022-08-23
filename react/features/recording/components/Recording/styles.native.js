@@ -131,7 +131,7 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
     },
 
     loggedIn: {
-        paddingBottom: _PADDING
+        paddingHorizontal: _PADDING
     },
 
     recordingIcon: {

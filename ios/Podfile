@@ -29,11 +29,43 @@ target 'JitsiMeetSDK' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # We use auto linking, but some dependencies are excluded from the lite build
+  # (see react-native.config.js) so we add them here.
+
+  pod 'giphy-react-native-sdk', :path => '../node_modules/@giphy/react-native-sdk'
+  pod 'RNCalendarEvents', :path => '../node_modules/react-native-calendar-events'
+  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
+  pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
+
   # Native pod dependencies
   #
 
   pod 'CocoaLumberjack', '3.7.2'
   pod 'ObjectiveDropboxOfficial', '6.2.3'
+end
+
+target 'JitsiMeetSDKLite' do
+    project 'sdk/sdk.xcodeproj'
+
+    # This is a more lightweight target, which removes some functionality.
+    # Check the react-native.config.js for the list of excluded packages.
+
+    # React Native and its dependencies
+    #
+  
+    config = use_native_modules!
+    use_react_native!(
+      :path => config["reactNativePath"],
+      :hermes_enabled => false,
+      :fabric_enabled => false,
+      # An absolute path to your application root.
+      :app_path => "#{Pod::Config.instance.installation_root}/.."
+    )
+  
+    # Native pod dependencies
+    #
+  
+    pod 'CocoaLumberjack', '3.7.2'
 end
 
 post_install do |installer|

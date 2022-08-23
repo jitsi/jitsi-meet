@@ -53,15 +53,15 @@ const PollAnswer = (props: AbstractProps) => {
             <View style = { chatStyles.buttonRow }>
                 <Button
                     accessibilityLabel = 'polls.answer.skip'
-                    label = 'polls.answer.skip'
-                    onPress = { changingVote ? skipChangeVote : skipAnswer }
+                    labelKey = 'polls.answer.skip'
+                    onClick = { changingVote ? skipChangeVote : skipAnswer }
                     style = { chatStyles.pollCreateButton }
                     type = { SECONDARY } />
                 <Button
                     accessibilityLabel = 'polls.answer.submit'
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
-                    label = 'polls.answer.submit'
-                    onPress = { submitAnswer }
+                    labelKey = 'polls.answer.submit'
+                    onClick = { submitAnswer }
                     style = { chatStyles.pollCreateButton }
                     type = { PRIMARY } />
             </View>

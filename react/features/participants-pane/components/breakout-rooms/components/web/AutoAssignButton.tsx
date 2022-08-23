@@ -20,7 +20,7 @@ export const AutoAssignButton = () => {
         <Button
             accessibilityLabel = { t('breakoutRooms.actions.autoAssign') }
             fullWidth = { true }
-            label = { t('breakoutRooms.actions.autoAssign') }
+            labelKey = { 'breakoutRooms.actions.autoAssign' }
             onClick = { onAutoAssign }
             type = { BUTTON_TYPES.TERTIARY } />
     );

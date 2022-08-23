@@ -1,15 +1,11 @@
-// @flow
-
 import Clipboard from '@react-native-community/clipboard';
 import React, { PureComponent } from 'react';
 import {
     Text,
-    TextInput,
     View
 } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import { FIELD_UNDERLINE } from '../../../../base/dialog';
 import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
@@ -17,6 +13,7 @@ import { isLocalParticipantModerator } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import Button from '../../../../base/ui/components/native/Button';
+import Input from '../../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
@@ -224,17 +221,17 @@ class SecurityDialog extends PureComponent<Props, State> {
                 <>
                     <Button
                         accessibilityLabel = 'dialog.Remove'
-                        label = 'dialog.Remove'
+                        labelKey = 'dialog.Remove'
                         labelStyle = { styles.passwordSetupButtonLabel }
-                        onPress = { this._onCancel }
+                        onClick = { this._onCancel }
                         type = { BUTTON_TYPES.TERTIARY } />
                     {
                         _password
                         && <Button
                             accessibilityLabel = 'dialog.copy'
-                            label = 'dialog.copy'
+                            labelKey = 'dialog.copy'
                             labelStyle = { styles.passwordSetupButtonLabel }
-                            onPress = { this._onCopy }
+                            onClick = { this._onCopy }
                             type = { BUTTON_TYPES.TERTIARY } />
                     }
                 </>
@@ -244,15 +241,15 @@ class SecurityDialog extends PureComponent<Props, State> {
                 <>
                     <Button
                         accessibilityLabel = 'dialog.Cancel'
-                        label = 'dialog.Cancel'
+                        labelKey = 'dialog.Cancel'
                         labelStyle = { styles.passwordSetupButtonLabel }
-                        onPress = { this._onCancel }
+                        onClick = { this._onCancel }
                         type = { BUTTON_TYPES.TERTIARY } />
                     <Button
                         accessibilityLabel = 'dialog.add'
-                        label = 'dialog.add'
+                        labelKey = 'dialog.add'
                         labelStyle = { styles.passwordSetupButtonLabel }
-                        onPress = { this._onSubmit }
+                        onClick = { this._onSubmit }
                         type = { BUTTON_TYPES.TERTIARY } />
                 </>
             );
@@ -261,9 +258,9 @@ class SecurityDialog extends PureComponent<Props, State> {
                 <Button
                     accessibilityLabel = 'info.addPassword'
                     disabled = { !_isModerator }
-                    label = 'info.addPassword'
+                    labelKey = 'info.addPassword'
                     labelStyle = { styles.passwordSetupButtonLabel }
-                    onPress = { this._onAddPassword }
+                    onClick = { this._onAddPassword }
                     type = { BUTTON_TYPES.TERTIARY } />
             );
         }
@@ -277,9 +274,9 @@ class SecurityDialog extends PureComponent<Props, State> {
                         </Text>
                         <Button
                             accessibilityLabel = 'dialog.Remove'
-                            label = 'dialog.Remove'
+                            labelKey = 'dialog.Remove'
                             labelStyle = { styles.passwordSetupButtonLabel }
-                            onPress = { this._onCancel }
+                            onClick = { this._onCancel }
                             type = { BUTTON_TYPES.TERTIARY } />
                     </View>
                 );
@@ -292,9 +289,9 @@ class SecurityDialog extends PureComponent<Props, State> {
                         <Button
                             accessibilityLabel = 'info.addPassword'
                             disabled = { !_isModerator }
-                            label = 'info.addPassword'
+                            labelKey = 'info.addPassword'
                             labelStyle = { styles.passwordSetupButtonLabel }
-                            onPress = { this._onAddPassword }
+                            onClick = { this._onAddPassword }
                             type = { BUTTON_TYPES.TERTIARY } />
                     </View>
                 );
@@ -353,14 +350,14 @@ class SecurityDialog extends PureComponent<Props, State> {
         if (showElement) {
             if (typeof _locked === 'undefined') {
                 return (
-                    <TextInput
+                    <Input
+                        accessibilityLabel = { t('info.addPassword') }
                         autoFocus = { true }
-                        onChangeText = { this._onChangeText }
-                        placeholder = { t('lobby.passwordField') }
+                        clearable = { true }
+                        customStyles = {{ container: styles.passwordInput }}
+                        onChange = { this._onChangeText }
+                        placeholder = { t('dialog.password') }
                         placeholderTextColor = { BaseTheme.palette.text03 }
-                        selectionColor = { BaseTheme.palette.action01 }
-                        style = { styles.passwordInput }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { passwordInputValue }
                         { ...textInputProps } />
                 );

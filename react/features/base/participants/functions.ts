@@ -64,19 +64,33 @@ const AVATAR_CHECKER_FUNCTIONS = [
 export function getActiveSpeakersToBeDisplayed(stateful: IStore | Function) {
     const state = toState(stateful);
     const {
+        dominantSpeaker,
         fakeParticipants,
         sortedRemoteScreenshares,
         sortedRemoteVirtualScreenshareParticipants,
         speakersList
     } = state['features/base/participants'];
     const { visibleRemoteParticipants } = state['features/filmstrip'];
-    const activeSpeakers = new Map(speakersList);
+    let activeSpeakers = new Map(speakersList);
 
-    // Do not re-sort the active speakers if all of them are currently visible.
-    if (typeof visibleRemoteParticipants === 'undefined' || activeSpeakers.size <= visibleRemoteParticipants.size) {
+    // Do not re-sort the active speakers if dominant speaker is currently visible.
+    if (dominantSpeaker && visibleRemoteParticipants.has(dominantSpeaker)) {
         return activeSpeakers;
     }
     let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
+
+    if (activeSpeakers.has(dominantSpeaker)) {
+        activeSpeakers.delete(dominantSpeaker);
+    }
+
+    // Add dominant speaker to the beginning of the list (not including self) since the active speaker list is always
+    // alphabetically sorted.
+    if (dominantSpeaker && dominantSpeaker !== getLocalParticipant(state).id) {
+        const updatedSpeakers = Array.from(activeSpeakers);
+
+        updatedSpeakers.splice(0, 0, [ dominantSpeaker, getParticipantById(state, dominantSpeaker)?.name ]);
+        activeSpeakers = new Map(updatedSpeakers);
+    }
 
     // Remove screenshares from the count.
     if (getMultipleVideoSupportFeatureFlag(state)) {
@@ -386,17 +400,6 @@ export function getParticipantPresenceStatus(
     }
 
     return participantById.presence;
-}
-
-/**
- * Returns true if there is at least 1 participant with screen sharing feature and false otherwise.
- *
- * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state.
- * @returns {boolean}
- */
-export function haveParticipantWithScreenSharingFeature(stateful: IStore | Function) {
-    return toState(stateful)['features/base/participants'].haveParticipantWithScreenSharingFeature;
 }
 
 /**
