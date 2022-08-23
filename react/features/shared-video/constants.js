@@ -23,13 +23,6 @@ export const YOUTUBE_PLAYER_PARTICIPANT_NAME = 'YouTube';
 export const SHARED_VIDEO = 'shared-video';
 
 /**
- * Shared video type.
- *
- * @type {string}
- */
-export const VIDEO = 'video';
-
-/**
  * Available playback statuses.
  */
 export const PLAYBACK_STATUSES = {
