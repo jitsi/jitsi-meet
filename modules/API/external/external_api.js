@@ -39,6 +39,7 @@ const commands = {
     e2eeKey: 'e2ee-key',
     email: 'email',
     grantModerator: 'grant-moderator',
+    roomsInfo: 'rooms-info',
     hangup: 'video-hangup',
     hideNotification: 'hide-notification',
     initiatePrivateChat: 'initiate-private-chat',
@@ -619,6 +620,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             case 'video-quality-changed':
                 this._videoQuality = data.videoQuality;
                 break;
+            case 'breakout-rooms-updated':
+                this.updateNumberOfParticipants(data.rooms);
+                break;
             case 'local-storage-changed':
                 jitsiLocalStorage.setItem('jitsiLocalStorage', data.localStorageContent);
 
@@ -635,6 +639,40 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             }
 
             return false;
+        });
+    }
+
+    /**
+     * Update number of participants based on all rooms.
+     *
+     * @param {Object} rooms - Rooms available rooms in the conference.
+     * @returns {void}
+     */
+    updateNumberOfParticipants(rooms) {
+        if (!rooms || !Object.keys(rooms).length) {
+            return;
+        }
+
+        const allParticipants = Object.keys(rooms).reduce((prev, roomItemKey) => {
+            if (rooms[roomItemKey]?.participants) {
+                return Object.keys(rooms[roomItemKey].participants).length + prev;
+            }
+
+            return prev;
+        }, 0);
+
+        this._numberOfParticipants = allParticipants;
+    }
+
+
+    /**
+     * Returns the rooms info in the conference.
+     *
+     * @returns {Object} Rooms info.
+     */
+    async getRoomsInfo() {
+        return this._transport.sendRequest({
+            name: 'rooms-info'
         });
     }
 
@@ -1101,7 +1139,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Returns the number of participants in the conference. The local
+     * Returns the number of participants in the conference from all rooms. The local
      * participant is included.
      *
      * @returns {int} The number of participants in the conference.
