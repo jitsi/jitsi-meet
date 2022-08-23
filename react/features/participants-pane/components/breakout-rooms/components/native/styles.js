@@ -8,18 +8,12 @@ const baseButton = {
     marginRight: BaseTheme.spacing[3]
 };
 
-const baseLabel = {
-    fontSize: 15,
-    lineHeight: 30,
-    textTransform: 'capitalize'
-};
-
 /**
  * The styles of the native components of the feature {@code breakout rooms}.
  */
 export default {
 
-    addButton: {
+    button: {
         marginTop: BaseTheme.spacing[3],
         marginLeft: BaseTheme.spacing[3],
         marginRight: BaseTheme.spacing[3]
@@ -64,11 +58,6 @@ export default {
         color: BaseTheme.palette.text01,
         fontWeight: 'bold',
         marginLeft: BaseTheme.spacing[2]
-    },
-
-    leaveButtonLabel: {
-        ...baseLabel,
-        color: BaseTheme.palette.textError
     },
 
     autoAssignLabel: {

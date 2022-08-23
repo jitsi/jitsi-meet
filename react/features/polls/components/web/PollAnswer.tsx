@@ -65,14 +65,14 @@ const PollAnswer = ({
                     accessibilityLabel = { t('polls.answer.skip') }
                     className = { styles.buttonMargin }
                     fullWidth = { true }
-                    label = { t('polls.answer.skip') }
+                    labelKey = { 'polls.answer.skip' }
                     onClick = { changingVote ? skipChangeVote : skipAnswer }
                     type = { BUTTON_TYPES.SECONDARY } />
                 <Button
                     accessibilityLabel = { t('polls.answer.submit') }
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                     fullWidth = { true }
-                    label = { t('polls.answer.submit') }
+                    labelKey = { 'polls.answer.submit' }
                     onClick = { submitAnswer } />
             </div>
         </div>

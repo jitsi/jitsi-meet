@@ -8,7 +8,6 @@ import {
 } from 'react-native-paper';
 
 import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
-// @ts-ignore
 import BaseTheme from '../BaseTheme.native';
 import { ButtonProps } from '../types';
 
@@ -17,7 +16,6 @@ import styles from './buttonStyles';
 export interface IButtonProps extends ButtonProps {
     color?: string;
     labelStyle?: Object | undefined;
-    onPress?: Function;
     style?: Object | undefined;
 }
 
@@ -26,9 +24,9 @@ const Button: React.FC<IButtonProps> = ({
     color: buttonColor,
     disabled,
     icon,
-    label,
+    labelKey,
     labelStyle,
-    onPress,
+    onClick: onPress,
     style,
     type
 }: IButtonProps) => {
@@ -70,7 +68,6 @@ const Button: React.FC<IButtonProps> = ({
             <TouchableRipple
                 accessibilityLabel = { accessibilityLabel }
                 disabled = { disabled }
-                // @ts-ignore
                 onPress = { onPress }
                 rippleColor = 'transparent'
                 style = { [
@@ -81,18 +78,18 @@ const Button: React.FC<IButtonProps> = ({
                     style = { [
                         buttonLabelStyles,
                         labelStyle
-                    ] }>{ t(label ?? '') }</Text>
+                    ] }>{ t(labelKey ?? '') }</Text>
             </TouchableRipple>
         );
     }
 
     return (
-        // @ts-ignore
         <NativePaperButton
             accessibilityLabel = { t(accessibilityLabel ?? '') }
-            children = { t(label ?? '') }
+            children = { t(labelKey ?? '') }
             color = { color }
             disabled = { disabled }
+            // @ts-ignore
             icon = { icon }
             labelStyle = { [
                 buttonLabelStyles,

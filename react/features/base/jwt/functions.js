@@ -2,6 +2,7 @@
 
 import jwtDecode from 'jwt-decode';
 
+import { getLocalParticipant } from '../participants/functions';
 import { parseURLParams } from '../util';
 
 import { MEET_FEATURES } from './constants';
@@ -29,6 +30,31 @@ export function getJwtName(state: Object) {
     const { user } = state['features/base/jwt'];
 
     return user?.name;
+}
+
+/**
+ * Check if the given JWT feature is enabled.
+ *
+ * @param {Object} state - The app state.
+ * @param {string} feature - The feature we want to check.
+ * @param {boolean} ifNoToken - Default value if there is no token.
+ * @returns {string}
+ */
+export function isJwtFeatureEnabled(state: Object, feature: string, ifNoToken: boolean = false) {
+    const { jwt } = state['features/base/jwt'];
+
+    if (!jwt) {
+        return ifNoToken;
+    }
+
+    const { features } = getLocalParticipant(state) || {};
+
+    // If `features` is undefined, act as if everything is enabled.
+    if (typeof features === 'undefined') {
+        return true;
+    }
+
+    return String(features[feature]) === 'true';
 }
 
 /**

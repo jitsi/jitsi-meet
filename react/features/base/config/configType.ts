@@ -99,7 +99,7 @@ export interface IConfig {
         obfuscateRoomName?: boolean;
         rtcstatsEnabled?: boolean;
         rtcstatsEndpoint?: string;
-        rtcstatsPolIInterval?: number;
+        rtcstatsPollInterval?: number;
         scriptURLs?: Array<string>;
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
@@ -260,7 +260,6 @@ export interface IConfig {
     enableDisplayNameInStats?: boolean;
     enableEmailInStats?: boolean;
     enableEncodedTransformSupport?: boolean;
-    enableFeaturesBasedOnToken?: boolean;
     enableForcedReload?: boolean;
     enableIceRestart?: boolean;
     enableInsecureRoomNameWarning?: boolean;

@@ -40,7 +40,7 @@ export default {
 
     buttonLabelSecondary: {
         ...buttonLabel,
-        color: BaseTheme.palette.text0
+        color: BaseTheme.palette.text04
     },
 
     buttonLabelDestructive: {

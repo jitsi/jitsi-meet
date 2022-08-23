@@ -1,30 +1,39 @@
 /* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 // @ts-ignore
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
-import Button from '../../../../../base/ui/components/web/Button';
+import Button from '../../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../../base/ui/constants';
 // @ts-ignore
 import { moveToRoom } from '../../../../../breakout-rooms/actions';
 
-export const LeaveButton = () => {
-    const { t } = useTranslation();
+// @ts-ignore
+import styles from './styles';
+
+/**
+ * Button to leave a breakout rooms.
+ *
+ * @returns {JSX.Element} - The leave breakout room button.
+ */
+const LeaveBreakoutRoomButton = () => {
     const dispatch = useDispatch();
 
     const onLeave = useCallback(() => {
         sendAnalytics(createBreakoutRoomsEvent('leave'));
         dispatch(moveToRoom());
-    }, [ dispatch ]);
+    }
+    , [ dispatch ]);
 
     return (
         <Button
-            accessibilityLabel = { t('breakoutRooms.actions.leaveBreakoutRoom') }
-            fullWidth = { true }
-            labelKey = { 'breakoutRooms.actions.leaveBreakoutRoom' }
+            accessibilityLabel = 'breakoutRooms.actions.leaveBreakoutRoom'
+            labelKey = 'breakoutRooms.actions.leaveBreakoutRoom'
             onClick = { onLeave }
+            style = { styles.button }
             type = { BUTTON_TYPES.DESTRUCTIVE } />
     );
 };
+
+export default LeaveBreakoutRoomButton;

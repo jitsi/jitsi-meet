@@ -1,3 +1,5 @@
+import { GestureResponderEvent } from 'react-native';
+
 import { BUTTON_TYPES } from '../constants';
 
 export interface ButtonProps {
@@ -18,9 +20,14 @@ export interface ButtonProps {
     icon?: Function;
 
     /**
-     * The text to be displayed on the button.
+     * The translation key of the text to be displayed on the button.
      */
-    label?: string;
+    labelKey?: string;
+
+    /**
+     * Click callback.
+     */
+    onClick?: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
 
     /**
      * The type of button to be displayed.

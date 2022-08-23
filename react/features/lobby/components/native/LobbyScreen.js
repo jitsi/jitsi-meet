@@ -190,15 +190,15 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
             <View style = { styles.passwordJoinButtonsWrapper }>
                 <Button
                     accessibilityLabel = 'lobby.backToKnockModeButton'
-                    label = 'lobby.backToKnockModeButton'
-                    onPress = { this._onSwitchToKnockMode }
+                    labelKey = 'lobby.backToKnockModeButton'
+                    onClick = { this._onSwitchToKnockMode }
                     style = { styles.lobbyButton }
                     type = { BUTTON_TYPES.PRIMARY } />
                 <Button
                     accessibilityLabel = 'lobby.passwordJoinButton'
                     disabled = { !this.state.password }
-                    label = 'lobby.passwordJoinButton'
-                    onPress = { this._onJoinWithPassword }
+                    labelKey = 'lobby.passwordJoinButton'
+                    onClick = { this._onJoinWithPassword }
                     style = { styles.lobbyButton }
                     type = { BUTTON_TYPES.PRIMARY } />
             </View>
@@ -245,8 +245,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     _knocking && _isLobbyChatActive
                     && <Button
                         accessibilityLabel = 'toolbar.openChat'
-                        label = 'toolbar.openChat'
-                        onPress = { this._onNavigateToLobbyChat }
+                        labelKey = 'toolbar.openChat'
+                        onClick = { this._onNavigateToLobbyChat }
                         style = { styles.openChatButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
@@ -255,8 +255,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     || <Button
                         accessibilityLabel = 'lobby.knockButton'
                         disabled = { !displayName }
-                        label = 'lobby.knockButton'
-                        onPress = { this._onAskToJoin }
+                        labelKey = 'lobby.knockButton'
+                        onClick = { this._onAskToJoin }
                         style = { styles.lobbyButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
@@ -264,8 +264,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     _renderPassword
                     && <Button
                         accessibilityLabel = 'lobby.enterPasswordButton'
-                        label = 'lobby.enterPasswordButton'
-                        onPress = { this._onSwitchToPasswordMode }
+                        labelKey = 'lobby.enterPasswordButton'
+                        onClick = { this._onSwitchToPasswordMode }
                         style = { styles.enterPasswordButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }

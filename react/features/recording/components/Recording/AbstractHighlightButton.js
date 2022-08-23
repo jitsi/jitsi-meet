@@ -1,11 +1,12 @@
 // @flow
 
 import { Component } from 'react';
-import { batch } from 'react-redux';
 
 import { getActiveSession, isHighlightMeetingMomentDisabled } from '../..';
 import { openDialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
+import { FEATURES } from '../../../jaas/constants';
 import {
     hideNotification,
     NOTIFICATION_TIMEOUT_TYPE,
@@ -76,11 +77,13 @@ export default class AbstractHighlightButton<P: Props> extends Component<P> {
                 titleKey: 'recording.highlightMoment',
                 uid: PROMPT_RECORDING_NOTIFICATION_ID,
                 customActionNameKey: [ 'localRecording.start' ],
-                customActionHandler: [ () => {
-                    batch(() => {
-                        dispatch(hideNotification(PROMPT_RECORDING_NOTIFICATION_ID));
+                customActionHandler: [ async () => {
+                    dispatch(hideNotification(PROMPT_RECORDING_NOTIFICATION_ID));
+                    const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+
+                    if (!dialogShown) {
                         dispatch(openDialog(StartRecordingDialog));
-                    });
+                    }
                 } ],
                 appearance: NOTIFICATION_TYPE.NORMAL
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));

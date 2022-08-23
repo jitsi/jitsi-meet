@@ -1,4 +1,3 @@
-import { APP_WILL_MOUNT } from '../app/actionTypes';
 import PersistenceRegistry from '../redux/PersistenceRegistry';
 import ReducerRegistry from '../redux/ReducerRegistry';
 
@@ -29,11 +28,6 @@ ReducerRegistry.register(STORE_NAME, (state: Array<string> = DEFAULT_STATE, acti
     switch (action.type) {
     case ADD_KNOWN_DOMAINS:
         return _addKnownDomains(state, action.knownDomains);
-
-    case APP_WILL_MOUNT:
-        // In case persistence has deserialized a weird redux state:
-        return _addKnownDomains(state, DEFAULT_STATE);
-
     default:
         return state;
     }
