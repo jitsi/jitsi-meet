@@ -190,14 +190,12 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
 
     sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
 
-    if (audioOnly) {
-        // Make sure we mute both the desktop and video tracks.
-        dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
-        if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-            dispatch(setScreenshareMuted(audioOnly, MEDIA_TYPE.SCREENSHARE, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
-        } else if (navigator.product !== 'ReactNative') {
-            dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.PRESENTER, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
-        }
+    // Make sure we mute both the desktop and video tracks.
+    dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
+    if (getMultipleVideoSendingSupportFeatureFlag(state)) {
+        dispatch(setScreenshareMuted(audioOnly, MEDIA_TYPE.SCREENSHARE, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
+    } else if (navigator.product !== 'ReactNative') {
+        dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.PRESENTER, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
     }
 
     return next(action);
