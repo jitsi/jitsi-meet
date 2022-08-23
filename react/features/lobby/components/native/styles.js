@@ -4,6 +4,12 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const SECONDARY_COLOR = BaseTheme.palette.border04;
 
+const lobbyText = {
+    ...BaseTheme.typography.heading5,
+    color: BaseTheme.palette.text01,
+    textAlign: 'center'
+};
+
 export default {
 
     buttonStylesBorderless: {
@@ -236,5 +242,14 @@ export default {
 
     lobbySwitchIcon: {
         alignSelf: 'flex-end'
+    },
+
+    lobbyTitle: {
+        ...lobbyText
+    },
+
+    lobbyRoomName: {
+        ...lobbyText,
+        marginBottom: BaseTheme.spacing[2]
     }
 };
