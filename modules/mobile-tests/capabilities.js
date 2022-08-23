@@ -19,7 +19,9 @@ module.exports = {
         'appium:deviceName': 'iPhone 13 Pro',
         'appium:newCommandTimeout': 240,
         platformName: 'iOS',
-        'appium:udid': '00008110-001819C63A32801E'
+        'appium:platformVersion': '15.6',
+        'appium:udid': '00008110-001819C63A32801E',
+        'appium:xcodeOrgId': 'AJT772J42H'
     },
 
     ONEPLUSA5000: {

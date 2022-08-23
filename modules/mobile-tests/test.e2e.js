@@ -11,12 +11,13 @@ const options = {
     port: 4723,
     capabilities: iPhone13Pro
 };
+const { capabilities } = options;
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const androidInput = '//android.widget.EditText[@content-desc="Enter room name"]';
 const iosInput = '//XCUIElementTypeTextField[@name="Enter room name"]';
 const input
-    = options.capabilities === iPhone13Pro ? iosInput : androidInput;
+    = capabilities === iPhone13Pro ? iosInput : androidInput;
 
 /**
  * Constructs a test session.
