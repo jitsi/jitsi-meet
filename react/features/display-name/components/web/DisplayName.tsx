@@ -312,7 +312,7 @@ class DisplayName extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _setNameInputRef(element: any) {
+    _setNameInputRef(element: HTMLInputElement) {
         this._nameInput = element;
     }
 }
@@ -328,13 +328,13 @@ class DisplayName extends Component<Props, State> {
  *     _nameToDisplay: string
  * }}
  */
-function _mapStateToProps(state: IState, ownProps: any) {
+function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { participantID } = ownProps;
-    const participant = getParticipantById(state, participantID);
+    const participant = getParticipantById(state, participantID ?? '');
 
     return {
         _configuredDisplayName: participant && participant.name,
-        _nameToDisplay: getParticipantDisplayName(state, participantID)
+        _nameToDisplay: getParticipantDisplayName(state, participantID ?? '')
     };
 }
 
