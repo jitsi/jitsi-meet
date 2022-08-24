@@ -276,7 +276,7 @@ class StatelessDialog extends Component<Props> {
      * @param {string} value - The submitted value if any.
      * @returns {void}
      */
-    _onSubmit(value?: React.FormEvent|React.MouseEvent) {
+    _onSubmit(value?: any) {
         const { onSubmit } = this.props;
 
         onSubmit && onSubmit(value);

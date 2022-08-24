@@ -41,7 +41,7 @@ interface Props extends WithTranslation {
     hideCloseIconButton: boolean,
     id?: string,
     isHeadingMultiline: boolean,
-    onClose: (e?: React.MouseEvent) => void,
+    onClose: (e?: any) => void,
     showKeyline: boolean,
     testId?: string
 }
