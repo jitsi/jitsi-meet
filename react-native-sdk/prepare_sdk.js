@@ -22,8 +22,6 @@ function copyFileSync(source, target) {
 
 /**
  * Copies a specified directory recursively.
- * @param {string} source Source directory.
- * @param {string} num2 The second number.
  */
 function copyFolderRecursiveSync(source, target) {
     let files = [];
