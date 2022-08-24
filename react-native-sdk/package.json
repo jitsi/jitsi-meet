@@ -119,6 +119,6 @@
     "react-native-youtube-iframe": "*"
   },
   "scripts": {
-    "prepare": "sh ./prepare_sdk.sh"
+    "prepare": "node prepare_sdk.js"
   }
 }
