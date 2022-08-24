@@ -146,29 +146,32 @@ function GifsMenu() {
     }, []);
 
     const handleKeyDown = useCallback(e => {
+        if (!document.activeElement) {
+            return;
+        }
         if (e.keyCode === 38) { // up arrow
             e.preventDefault();
 
             // if the first gif is focused move focus to the input
-            if (document.activeElement?.previousElementSibling === null) {
+            if (document.activeElement.previousElementSibling === null) {
                 const element = document.querySelector('.gif-input') as HTMLElement;
 
                 element?.focus();
             } else {
-                const element = document.activeElement?.previousElementSibling as HTMLElement;
+                const element = document.activeElement.previousElementSibling as HTMLElement;
 
-                element.focus();
+                element?.focus();
             }
         } else if (e.keyCode === 40) { // down arrow
             e.preventDefault();
 
             // if the input is focused move focus to the first gif
-            if (document.activeElement?.classList.contains('gif-input')) {
+            if (document.activeElement.classList.contains('gif-input')) {
                 const element = document.querySelector('.giphy-gif') as HTMLElement;
 
                 element?.focus();
             } else {
-                const element = document.activeElement?.nextElementSibling as HTMLElement;
+                const element = document.activeElement.nextElementSibling as HTMLElement;
 
                 element?.focus();
             }

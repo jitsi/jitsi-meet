@@ -15,7 +15,7 @@ import {
     // @ts-ignore
 } from '../../functions';
 
-export type Props = WithTranslation & {
+export interface Props extends WithTranslation {
 
     /**
      * The text to be displayed in relation to the status of the audio/video devices.
@@ -27,7 +27,7 @@ export type Props = WithTranslation & {
      * Can be `ok` or `warning`.
      */
     deviceStatusType: string
-};
+}
 
 const useStyles = makeStyles((theme: any) => {
     return {

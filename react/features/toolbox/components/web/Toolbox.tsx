@@ -1405,7 +1405,7 @@ class Toolbox extends Component<Props> {
  * @private
  * @returns {{}}
  */
-function _mapStateToProps(state: any, ownProps: any) {
+function _mapStateToProps(state: any, ownProps: Partial<Props>) {
     const { conference } = state['features/base/conference'];
     const {
         buttonsWithNotifyClick,
