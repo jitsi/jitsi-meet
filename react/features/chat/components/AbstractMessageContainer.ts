@@ -1,13 +1,13 @@
-// @flow
+import { Component } from 'react';
 
-import { PureComponent } from 'react';
+import { IMessage } from '../reducer';
 
-export type Props = {
+export interface Props {
 
     /**
      * The messages array to render.
      */
-    messages: Array<Object>
+    messages: IMessage[]
 }
 
 /**
@@ -15,9 +15,9 @@ export type Props = {
  *
  * @augments PureComponent
  */
-export default class AbstractMessageContainer<P: Props> extends PureComponent<P> {
+export default class AbstractMessageContainer<P extends Props, S> extends Component<P, S> {
     static defaultProps = {
-        messages: []
+        messages: [] as IMessage[]
     };
 
     /**
@@ -29,8 +29,8 @@ export default class AbstractMessageContainer<P: Props> extends PureComponent<P>
      */
     _getMessagesGroupedBySender() {
         const messagesCount = this.props.messages.length;
-        const groups = [];
-        let currentGrouping = [];
+        const groups: IMessage[][] = [];
+        let currentGrouping: IMessage[] = [];
         let currentGroupParticipantId;
 
         for (let i = 0; i < messagesCount; i++) {

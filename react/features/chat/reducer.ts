@@ -24,11 +24,10 @@ const DEFAULT_STATE = {
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
     lobbyMessageRecipient: undefined,
-    isLobbyChatActive: false,
-    inputChatHeight: 0
+    isLobbyChatActive: false
 };
 
-interface IMessage {
+export interface IMessage {
     displayName: string;
     error?: Object;
     id: string;

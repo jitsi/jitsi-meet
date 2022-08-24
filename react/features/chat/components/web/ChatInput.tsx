@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-import React, { Component } from 'react';
+import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
@@ -59,7 +59,7 @@ type State = {
  * @augments Component
  */
 class ChatInput extends Component<Props, State> {
-    _textArea?: any;
+    _textArea?: RefObject<HTMLTextAreaElement>;
 
     state = {
         message: '',
@@ -75,13 +75,14 @@ class ChatInput extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this._textArea = React.createRef<any>();
+        this._textArea = React.createRef<HTMLTextAreaElement>();
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDetectSubmit = this._onDetectSubmit.bind(this);
         this._onMessageChange = this._onMessageChange.bind(this);
         this._onSmileySelect = this._onSmileySelect.bind(this);
         this._onSubmitMessage = this._onSubmitMessage.bind(this);
+        this._toggleSmileysPanel = this._toggleSmileysPanel.bind(this);
     }
 
     /**
@@ -92,7 +93,9 @@ class ChatInput extends Component<Props, State> {
     componentDidMount() {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
-            this._textArea && this._textArea.current.blur();
+            if (this._textArea && this._textArea.current) {
+                this._textArea.current.blur();
+            }
         }
     }
 
@@ -146,7 +149,9 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _focus() {
-        this._textArea && this._textArea.current.focus();
+        if (this._textArea && this._textArea.current) {
+            this._textArea.current.focus();
+        }
     }
 
     /**

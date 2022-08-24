@@ -1,48 +1,66 @@
-// @flow
+/* eslint-disable lines-around-comment */
 import throttle from 'lodash/throttle';
-import React from 'react';
+import React, { RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
+// @ts-ignore
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
-import AbstractMessageContainer, { type Props }
-    from '../AbstractMessageContainer';
+// @ts-ignore
+import AbstractMessageContainer, { type Props } from '../AbstractMessageContainer';
 
+// @ts-ignore
 import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
 
-type State = {
-    isScrolledToBottom: boolean;
+interface State {
+
+    /**
+     * Weather or not message container has received new messages.
+     */
+
     hasNewMessages: boolean;
+
+    /**
+     * Weather or not scroll position is at the bottom of container.
+     */
+    isScrolledToBottom: boolean;
+
+    /**
+     * The id of the last read message.
+     */
     lastReadMessageId: string;
-};
+}
 
 /**
  * Displays all received chat messages, grouped by sender.
  *
  * @augments AbstractMessageContainer
  */
-class MessageContainer extends AbstractMessageContainer<Props, State> {
+export default class MessageContainer extends AbstractMessageContainer<Props, State> {
+    /**
+     * Component state used to decide when the hasNewMessages button to appear
+     * and where to scroll when click on hasNewMessages button.
+     */
     state: State = {
-        isScrolledToBottom: true,
         hasNewMessages: false,
-        lastReadMessageId: null
+        isScrolledToBottom: true,
+        lastReadMessageId: ''
     };
-
 
     /**
      * Reference to the HTML element at the end of the list of displayed chat
      * messages. Used for scrolling to the end of the chat messages.
      */
-    _messagesListEndRef: Object;
+    _messagesListEndRef: RefObject<HTMLDivElement>;
 
     /**
      * A React ref to the HTML element containing all {@code ChatMessageGroup}
      * instances.
      */
-    _messageListRef: Object;
+    _messageListRef: RefObject<HTMLDivElement>;
 
     /**
-     * Intersection observer of the Intersection Observer API.
+     * Intersection observer used to detect intersections of messages with the bottom of the message container.
      */
     _bottomListObserver: IntersectionObserver;
 
@@ -55,16 +73,15 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this._messageListRef = React.createRef();
-        this._messagesListEndRef = React.createRef();
+        this._messageListRef = React.createRef<HTMLDivElement>();
+        this._messagesListEndRef = React.createRef<HTMLDivElement>();
 
         // Bind event handlers so they are only bound once for every instance.
-        this._createBottomListObserver = this._createBottomListObserver.bind(this);
         this._handleIntersectBottomList = this._handleIntersectBottomList.bind(this);
 
         this._findFirstUnreadMessage = this._findFirstUnreadMessage.bind(this);
         this._isMessageVisible = this._isMessageVisible.bind(this);
-        this._onChatScroll = throttle(this._onChatScroll.bind(this), 2000, { leading: true });
+        this._onChatScroll = throttle(this._onChatScroll.bind(this), 300, { leading: true });
         this._onGoToFirstUnreadMessage = this._onGoToFirstUnreadMessage.bind(this);
     }
 
@@ -95,7 +112,6 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
                     ref = { this._messageListRef }
                     role = 'log'
                     tabIndex = { 0 }>
-                    <div />
                     { messages }
 
                     { !this.state.isScrolledToBottom && this.state.hasNewMessages
@@ -111,7 +127,7 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
 
 
     /**
-     * Implements {@code Component#componentDidUpdate}.
+     * Implements {@code Component#componentDidMount}.
      * When Component mount scroll message container to bottom.
      * Create observer to react when scroll position is at bottom or leave the bottom.
      *
@@ -124,18 +140,18 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
 
     /**
      * Implements {@code Component#componentDidUpdate}.
-     * If user receive a new message either scroll automatically to the bottom if scroll position was at the bottom.
+     * If the user receive a new message scroll automatically to the bottom if scroll position was at the bottom.
      * Otherwise update hasNewMessages from component state.
      *
      * @inheritdoc
-     * * @returns {void}
+     * @returns {void}
      */
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: Props) {
         const hasNewMessages = this.props.messages !== prevProps.messages
             && this.props.messages.length !== prevProps.messages.length;
 
         if (hasNewMessages && this.state.isScrolledToBottom) {
-            this.scrollToElement(true, null);
+            this.scrollToElement(false, null);
         }
 
         if (hasNewMessages && !this.state.isScrolledToBottom) {
@@ -153,7 +169,7 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
     componentWillUnmount() {
         const target = document.querySelector('#messagesListEnd');
 
-        this._bottomListObserver.unobserve(target);
+        this._bottomListObserver.unobserve(target as Element);
     }
 
     /**
@@ -164,23 +180,21 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
      * Animation.
      * @returns {void}
      */
-    scrollToElement(withAnimation, element) {
+    scrollToElement(withAnimation: boolean, element: Element | null) {
         const scrollTo = element ? element : this._messagesListEndRef.current;
         const block = element ? 'center' : 'nearest';
 
-        scrollIntoView(scrollTo, {
+        scrollIntoView(scrollTo as Element, {
             behavior: withAnimation ? 'smooth' : 'auto',
             block
         });
     }
 
-    _getMessagesGroupedBySender: () => Array<Array<Object>>;
-
-    _onChatScroll: () => void;
+    _getMessagesGroupedBySender: () => Array<Array<any>>;
 
     /**
      * Callback invoked to listen to current scroll position and update next unread message.
-     * The callback is invoked inside a throttle with 2000 ms to decrease the number of function calls.
+     * The callback is invoked inside a throttle with 300 ms to decrease the number of function calls.
      *
      * @private
      * @returns {void}
@@ -192,23 +206,6 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
             this.setState({ lastReadMessageId: firstUnreadMessage?.id });
         }
     }
-
-    /**
-     * Callback invoked to listen to current scroll position and update next unread message.
-     * The callback is invoked inside a throttle with 2000 ms to decrease the number of function calls.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onChatScroll() {
-        const firstUnreadMessage = this._findFirstUnreadMessage();
-
-        if (firstUnreadMessage && firstUnreadMessage.id !== this.state.lastReadMessageId) {
-            this.setState({ lastReadMessageId: firstUnreadMessage?.id });
-        }
-    }
-
-    _onGoToFirstUnreadMessage: () => void;
 
     /**
      * Find the first unread message.
@@ -221,10 +218,8 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
         const firstUnreadMessage = this._findFirstUnreadMessage();
 
         this.setState({ lastReadMessageId: firstUnreadMessage?.id || null });
-        this.scrollToElement(true, firstUnreadMessage);
+        this.scrollToElement(true, firstUnreadMessage as Element);
     }
-
-    _createBottomListObserver: () => void;
 
     /**
     * Create observer to react when scroll position is at bottom or leave the bottom.
@@ -247,8 +242,6 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
         }
     }
 
-    _handleIntersectBottomList: () => void;
-
     /** .
     * _HandleIntersectBottomList.
     * When entry is intersecting with bottom of container set last message as last read message.
@@ -258,8 +251,8 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
     * @private
     * @returns {void}
     */
-    _handleIntersectBottomList(entries) {
-        entries.forEach(entry => {
+    _handleIntersectBottomList(entries: IntersectionObserverEntry[]) {
+        entries.forEach((entry: IntersectionObserverEntry) => {
             if (entry.isIntersecting && this.props.messages.length) {
                 const lastMessageIndex = this.props.messages.length - 1;
                 const lastMessage = this.props.messages[lastMessageIndex];
@@ -282,45 +275,47 @@ class MessageContainer extends AbstractMessageContainer<Props, State> {
         });
     }
 
-    _findFirstUnreadMessage: () => HtmlElement;
-
     /**
     * Find first unread message.
     * MessageIsAfterLastSeenMessage filter elements which are not visible but are before the last read message.
     *
     * @private
-    * @returns {HtmlElement}
+    * @returns {Element}
     */
     _findFirstUnreadMessage() {
         const messagesNodeList = document.querySelectorAll('.chatmessage-wrapper');
+        // @ts-ignore
         const messagesToArray = [ ...messagesNodeList ];
 
-        const previousIndex = messagesToArray.findIndex(message => message.id === this.state.lastReadMessageId);
+        const previousIndex = messagesToArray.findIndex((message: Element) =>
+            message.id === this.state.lastReadMessageId);
 
-        const firstUnreadMessage = messagesToArray.find((message, index) => {
-            const messageIsAfterLastSeenMessage = index > previousIndex;
-
-            return !this._isMessageVisible(message) && messageIsAfterLastSeenMessage;
-        });
-
-        return firstUnreadMessage;
+        if (previousIndex !== -1) {
+            for (let i = previousIndex; i < messagesToArray.length; i++) {
+                if (!this._isMessageVisible(messagesToArray[i])) {
+                    return messagesToArray[i];
+                }
+            }
+        }
     }
-
-    _isMessageVisible: () => boolean;
 
     /**
      * Check if a message is visible in view.
      *
-     * @param {HtmlElement} message -
+     * @param {Element} message -
      *
-     * @returns {void}
+     * @returns {boolean}
      */
-    _isMessageVisible(message) {
+    _isMessageVisible(message: Element): boolean {
         const { bottom, height, top } = message.getBoundingClientRect();
-        const containerRect = this._messageListRef.current.getBoundingClientRect();
 
-        return top <= containerRect.top ? containerRect.top - top <= height : bottom - containerRect.bottom <= height;
+        if (this._messageListRef.current) {
+            const containerRect = this._messageListRef.current.getBoundingClientRect();
+
+            return top <= containerRect.top
+                ? containerRect.top - top <= height : bottom - containerRect.bottom <= height;
+        }
+
+        return false;
     }
 }
-
-export default MessageContainer;

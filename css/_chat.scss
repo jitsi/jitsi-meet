@@ -33,7 +33,7 @@
 #chat-conversation-container {
     // extract message input height
     height: calc(100% - 68px);
-    overflow: auto;
+    overflow: hidden;
     position: relative;
 }
 
