@@ -1,16 +1,17 @@
-// @flow
-
-import React, { useCallback, useState } from 'react';
-import type { AbstractComponent } from 'react';
+/* eslint-disable lines-around-comment */
+import React, { ComponentType, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+// @ts-ignore
 import { sendAnalytics, createPollEvent } from '../../analytics';
-import { getLocalParticipant, getParticipantById } from '../../base/participants';
+import { IState } from '../../app/types';
+import { getLocalParticipant, getParticipantById } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
+// @ts-ignore
 import { registerVote, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
-import type { Poll } from '../types';
+import { Poll } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -24,13 +25,13 @@ type InputProps = {
  * concrete implementations (web/native).
  **/
 export type AbstractProps = {
-    checkBoxStates: Function,
+    checkBoxStates: boolean[],
     creatorName: string,
     poll: Poll,
     setCheckbox: Function,
-    skipAnswer: Function,
-    skipChangeVote: Function,
-    submitAnswer: Function,
+    skipAnswer: () => void,
+    skipChangeVote: () => void,
+    submitAnswer: () => void,
     t: Function,
 };
 
@@ -41,13 +42,13 @@ export type AbstractProps = {
  * @param {React.AbstractComponent} Component - The concrete component.
  * @returns {React.AbstractComponent}
  */
-const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
+const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: InputProps) => {
 
     const { pollId } = props;
 
-    const conference: Object = useSelector(state => state['features/base/conference'].conference);
+    const conference: any = useSelector((state: IState) => state['features/base/conference'].conference);
 
-    const poll: Poll = useSelector(state => state['features/polls'].polls[pollId]);
+    const poll: Poll = useSelector((state: any) => state['features/polls'].polls[pollId]);
 
     const { id: localId } = useSelector(getLocalParticipant);
 

@@ -123,7 +123,7 @@ export interface Props extends WithTranslation {
     /**
      * Callback to be invoked on sharing setting change.
      */
-    onSharingSettingChanged: Function,
+    onSharingSettingChanged: () => void,
 
     /**
      * The currently selected recording service of type: RECORDING_TYPES.

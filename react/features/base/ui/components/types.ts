@@ -77,3 +77,21 @@ export interface InputProps {
      */
     value: string | number;
 }
+
+export interface SwitchProps {
+
+    /**
+     * Whether or not the toggle is on.
+     */
+    checked: boolean;
+
+    /**
+     * Whether or not the toggle is disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * Toggle change callback.
+     */
+    onChange: (on?: boolean) => void;
+}
