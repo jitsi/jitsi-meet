@@ -30,7 +30,7 @@ function copyFolderRecursiveSync(source, target) {
     const targetFolder = path.join(target, path.basename(source));
 
     if (!fs.existsSync(targetFolder)) {
-        fs.mkdirSync(targetFolder);
+        fs.mkdirSync(targetFolder, { recursive: true });
     }
 
     if (fs.lstatSync(source).isDirectory()) {
@@ -58,6 +58,15 @@ copyFolderRecursiveSync('../ios/sdk/sdk.xcodeproj', './ios');
 copyFolderRecursiveSync('../ios/sdk/src/callkit', './ios/src');
 copyFolderRecursiveSync('../ios/sdk/src/dropbox', './ios/src');
 copyFolderRecursiveSync('../ios/sdk/src/picture-in-picture', './ios/src');
-copyFolderRecursiveSync('../ios/sdk/src/AppInfo.m', './ios/src');
-
+fs.copyFileSync('../ios/sdk/src/AppInfo.m', './ios/src/AppInfo.m');
+fs.copyFileSync('../ios/sdk/src/AudioMode.m', './ios/src/AudioMode.m');
+fs.copyFileSync('../ios/sdk/src/InfoPlistUtil.m', './ios/src/InfoPlistUtil.m');
+fs.copyFileSync('../ios/sdk/src/InfoPlistUtil.h', './ios/src/InfoPlistUtil.h');
+fs.copyFileSync('../ios/sdk/src/JavaScriptSandbox.m', './ios/src/JavaScriptSandbox.m');
+fs.copyFileSync('../ios/sdk/src/JitsiAudioSession.m', './ios/src/JitsiAudioSession.m');
+fs.copyFileSync('../ios/sdk/src/JitsiAudioSession.h', './ios/src/JitsiAudioSession.h');
+fs.copyFileSync('../ios/sdk/src/JitsiAudioSession+Private.h', './ios/src/JitsiAudioSession+Private.h');
+fs.copyFileSync('../ios/sdk/src/LocaleDetector.m', './ios/src/LocaleDetector.m');
+fs.copyFileSync('../ios/sdk/src/POSIX.m', './ios/src/POSIX.m');
+fs.copyFileSync('../ios/sdk/src/Proximity.m', './ios/src/Proximity.m');
 
