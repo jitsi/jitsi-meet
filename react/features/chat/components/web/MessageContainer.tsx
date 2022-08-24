@@ -147,8 +147,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
      * @returns {void}
      */
     componentDidUpdate(prevProps: Props) {
-        const hasNewMessages = this.props.messages !== prevProps.messages
-            && this.props.messages.length !== prevProps.messages.length;
+        const hasNewMessages = this.props.messages.length !== prevProps.messages.length;
 
         if (hasNewMessages && this.state.isScrolledToBottom) {
             this.scrollToElement(false, null);

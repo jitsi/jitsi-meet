@@ -168,7 +168,6 @@ ReducerRegistry.register('features/chat', (state: IChatState = DEFAULT_STATE, ac
             isOpen: action.payload || state.isOpen,
             privateMessageRecipient: undefined
         };
-
     case REMOVE_LOBBY_CHAT_PARTICIPANT:
         return {
             ...state,
