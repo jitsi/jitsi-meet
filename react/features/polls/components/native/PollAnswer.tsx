@@ -1,17 +1,18 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React from 'react';
-import { Switch, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { getLocalParticipant } from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
+import Switch from '../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
+// @ts-ignore
 import { isSubmitAnswerDisabled } from '../../functions';
-import AbstractPollAnswer from '../AbstractPollAnswer';
-import type { AbstractProps } from '../AbstractPollAnswer';
+import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
+// @ts-ignore
 import { chatStyles, dialogStyles } from './styles';
 
 
@@ -42,10 +43,10 @@ const PollAnswer = (props: AbstractProps) => {
                         key = { index }
                         style = { chatStyles.switchRow } >
                         <Switch
-                            /* eslint-disable react/jsx-no-bind */
-                            onValueChange = { state => setCheckbox(index, state) }
-                            trackColor = {{ true: BaseTheme.palette.action01 }}
-                            value = { checkBoxStates[index] } />
+                            checked = { checkBoxStates[index] }
+                            /* eslint-disable-next-line react/jsx-no-bind */
+                            onChange = { state => setCheckbox(index, state) }
+                            trackColor = {{ true: BaseTheme.palette.action01 }} />
                         <Text style = { chatStyles.switchLabel }>{answer.name}</Text>
                     </View>
                 ))}

@@ -1,13 +1,14 @@
 /* eslint-disable lines-around-comment  */
 import React from 'react';
 import { Image, View } from 'react-native';
-import { Switch, Text } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 import { translate } from '../../../../base/i18n/functions';
 // @ts-ignore
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux/functions';
 import Button from '../../../../base/ui/components/native/Button';
+import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
 // @ts-ignore
 import { RECORDING_TYPES } from '../../../constants';
@@ -73,11 +74,11 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
             = integrationsEnabled
                 ? (
                     <Switch
+                        checked = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE }
                         disabled = { isValidating }
-                        onValueChange = { this._onRecordingServiceSwitchChange }
+                        onChange = { this._onRecordingServiceSwitchChange }
                         style = { styles.switch }
-                        trackColor = {{ false: TRACK_COLOR }}
-                        value = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE } />
+                        trackColor = {{ false: TRACK_COLOR }} />
                 ) : null;
 
         return (
@@ -133,12 +134,11 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
                     { t('recording.fileSharingdescription') }
                 </Text>
                 <Switch
+                    checked = { sharingSetting }
                     disabled = { isValidating }
-                    // @ts-ignore
-                    onValueChange = { onSharingSettingChanged }
+                    onChange = { onSharingSettingChanged }
                     style = { styles.switch }
-                    trackColor = {{ false: TRACK_COLOR }}
-                    value = { sharingSetting } />
+                    trackColor = {{ false: TRACK_COLOR }} />
             </View>
         );
     }
@@ -278,12 +278,11 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
         if (fileRecordingsServiceEnabled) {
             switchContent = (
                 <Switch
+                    checked = { selectedRecordingService === RECORDING_TYPES.DROPBOX }
                     disabled = { isValidating }
-                    onValueChange = { this._onDropboxSwitchChange }
+                    onChange = { this._onDropboxSwitchChange }
                     style = { styles.switch }
-                    trackColor = {{ false: TRACK_COLOR }}
-                    value = { selectedRecordingService
-                        === RECORDING_TYPES.DROPBOX } />
+                    trackColor = {{ false: TRACK_COLOR }} />
             );
         }
 
