@@ -3,11 +3,12 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import {
     BackHandler,
-    View,
-    TextInput,
     Platform,
     StyleProp,
+    Text,
+    TextInput,
     TextStyle,
+    View,
     ViewStyle
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +17,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { appNavigate } from '../../app/actions.native';
 // @ts-ignore
 import { setAudioOnly } from '../../base/audio-only/actions';
+// @ts-ignore
+import { getRoomName } from '../../base/conference/functions';
 // @ts-ignore
 import { connect } from '../../base/connection/actions.native';
 import { IconClose } from '../../base/icons/svg/index';
@@ -61,6 +64,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     );
     const localParticipant = useSelector((state: any) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector(state => isDisplayNameRequired(state));
+    const roomName = useSelector(state => getRoomName(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -149,6 +153,14 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
             </View>
             <View style = { contentContainerStyles }>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
+                    <Text style = { styles.preJoinTitle as StyleProp<TextStyle> }>
+                        { t('prejoin.joinMeeting') }
+                    </Text>
+                    <Text
+                        numberOfLines = { 1 }
+                        style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                        { roomName }
+                    </Text>
                     <TextInput
                         onChangeText = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }

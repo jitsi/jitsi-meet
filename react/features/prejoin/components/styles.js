@@ -2,6 +2,11 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 const SECONDARY_COLOR = BaseTheme.palette.border04;
 
+const preJoinText = {
+    ...BaseTheme.typography.heading5,
+    color: BaseTheme.palette.text01,
+    textAlign: 'center'
+};
 
 export default {
     prejoinButton: {
@@ -67,13 +72,13 @@ export default {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: BaseTheme.spacing[4]
+        marginTop: BaseTheme.spacing[3]
     },
 
     toolboxContainerWide: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: BaseTheme.spacing[4]
+        marginTop: BaseTheme.spacing[3]
     },
 
     formWrapper: {
@@ -91,5 +96,13 @@ export default {
         height: BaseTheme.spacing[7],
         marginTop: BaseTheme.spacing[3],
         textAlign: 'center'
+    },
+
+    preJoinTitle: {
+        ...preJoinText
+    },
+
+    preJoinRoomName: {
+        ...preJoinText
     }
 };
