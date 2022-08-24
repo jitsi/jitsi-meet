@@ -46,6 +46,7 @@ const PollAnswer = (props: AbstractProps) => {
                             checked = { checkBoxStates[index] }
                             /* eslint-disable-next-line react/jsx-no-bind */
                             onChange = { state => setCheckbox(index, state) }
+                            thumbColor = { BaseTheme.palette.icon01 }
                             trackColor = {{ true: BaseTheme.palette.action01 }} />
                         <Text style = { chatStyles.switchLabel }>{answer.name}</Text>
                     </View>
