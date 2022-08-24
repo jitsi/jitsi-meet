@@ -126,7 +126,9 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                 <Text style = { styles.lobbyTitle }>
                     { this.props.t('lobby.joiningTitle') }
                 </Text>
-                <Text style = { styles.lobbyRoomName }>
+                <Text
+                    numberOfLines = { 1 }
+                    style = { styles.lobbyRoomName }>
                     { this.props._roomName }
                 </Text>
                 <LoadingIndicator

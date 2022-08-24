@@ -156,7 +156,9 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
                     <Text style = { styles.preJoinTitle as StyleProp<TextStyle> }>
                         { t('prejoin.joinMeeting') }
                     </Text>
-                    <Text style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                    <Text
+                        numberOfLines = { 1 }
+                        style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
                         { roomName }
                     </Text>
                     <TextInput
