@@ -8,6 +8,7 @@ import { createBreakoutRoomsEvent, sendAnalytics } from '../analytics';
 import {
     conferenceLeft,
     conferenceWillLeave,
+    CONFERENCE_LEAVE_REASONS,
     createConference,
     getCurrentConference
 } from '../base/conference';
@@ -225,7 +226,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(conferenceWillLeave(conference));
 
             try {
-                await conference.leave();
+                await conference.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
             } catch (error) {
                 logger.warn('JitsiConference.leave() rejected with:', error);
 
@@ -246,7 +247,7 @@ export function moveToRoom(roomId?: string) {
 
             try {
                 // all places we fire notifyConferenceLeft we pass the room name from APP.conference
-                await APP.conference.leaveRoom(false /* doDisconnect */).then(
+                await APP.conference.leaveRoom(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM, false /* doDisconnect */).then(
                     () => APP.API.notifyConferenceLeft(APP.conference.roomName));
             } catch (error) {
                 logger.warn('APP.conference.leaveRoom() rejected with:', error);
