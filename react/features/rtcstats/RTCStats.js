@@ -86,6 +86,16 @@ class RTCStats {
     }
 
     /**
+     * Send console logs to rtcstats server.
+     *
+     * @param {Array<string|any>} logEntries - The log entries to send to the rtcstats server.
+     * @returns {void}
+     */
+    sendLogs(logEntries) {
+        this.trace && this.trace.statsEntry('logs', null, logEntries);
+    }
+
+    /**
      * Send dominant speaker data, the data will be processed by rtcstats-server and saved in the dump file.
      *
      * @param {Object} dominantSpeakerData - Dominant speaker data to be saved in the rtcstats dump.
