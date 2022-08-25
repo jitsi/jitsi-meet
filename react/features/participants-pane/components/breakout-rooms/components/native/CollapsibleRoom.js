@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
-
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
@@ -59,7 +57,9 @@ export const CollapsibleRoom = ({ room, searchString }: Props) => {
 
                 // For FlatList as a nested list of any other FlatList or SectionList
                 // we have to pass a unique value to this prop
-                listKey = { _keyExtractor }
+                listKey = { 'Breakout rooms' }
+
+                /* eslint-disable-next-line react/jsx-no-bind */
                 renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)
                     && <BreakoutRoomParticipantItem
                         item = { participant }

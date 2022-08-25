@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
-
 import React, { useState } from 'react';
 import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
@@ -96,14 +94,18 @@ const ParticipantsPane = () => {
             footerComponent = { isLocalModerator && ParticipantsPaneFooter }
             style = { styles.participantsPaneContainer }>
             <FlatList
+
+                /* eslint-disable-next-line react/jsx-no-bind */
                 ListFooterComponent = { renderFooter }
+
+                /* eslint-disable-next-line react/jsx-no-bind */
                 ListHeaderComponent = { renderHeader }
                 data = { null }
                 keyExtractor = { _keyExtractor }
 
                 // For FlatList as a nested list of any other FlatList or SectionList
                 // we have to pass a unique value to this prop
-                listKey = { _keyExtractor }
+                listKey = { 'Participants' }
                 renderItem = { null } />
         </JitsiScreen>
     );

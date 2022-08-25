@@ -230,8 +230,7 @@ class MeetingParticipantList extends PureComponent<Props> {
 
                     // For FlatList as a nested list of any other FlatList or SectionList
                     // we have to pass a unique value to this prop
-
-                    listKey = { (item, index) => `_key${index.toString()}` }
+                    listKey = { 'Meeting participants' }
                     renderItem = { this._renderParticipant }
                     scrollEnabled = { true }
                     showsHorizontalScrollIndicator = { false }

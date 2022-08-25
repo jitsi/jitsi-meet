@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../../../base/ui/components/native/Button';
@@ -51,7 +51,7 @@ const LobbyParticipantList = () => {
     return (
         <CollapsibleList
             title = { title }>
-            <ScrollView>
+            <View>
                 {
                     participants.map(p => (
                         <LobbyParticipantItem
@@ -59,7 +59,7 @@ const LobbyParticipantList = () => {
                             participant = { p } />)
                     )
                 }
-            </ScrollView>
+            </View>
         </CollapsibleList>
     );
 };
