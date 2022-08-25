@@ -9,6 +9,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons/svg/index';
 import { getParticipantById } from '../../../base/participants/functions';
+import { Participant } from '../../../base/participants/reducer';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
 // @ts-ignore
@@ -57,7 +58,7 @@ interface Props extends WithTranslation {
     /**
      * Participant reference.
      */
-    _participant: Object,
+    _participant: Participant,
 
     /**
      * The ID for the participant on which the remote video menu will act.

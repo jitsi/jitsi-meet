@@ -224,7 +224,7 @@ export function getNormalizedDisplayName(name: string) {
  * @returns {(Participant|undefined)}
  */
 export function getParticipantById(
-        stateful: IStore | Function, id: string): Participant|undefined {
+        stateful: IStore | Function | IState, id: string): Participant|undefined {
     const state = toState(stateful)['features/base/participants'];
     const { local, localScreenShare, remote } = state;
 

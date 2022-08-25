@@ -581,7 +581,7 @@ export function participantKicked(kicker: any, kicked: any) {
  *     }
  * }}
  */
-export function pinParticipant(id: string) {
+export function pinParticipant(id: string|null) {
     return {
         type: PIN_PARTICIPANT,
         participant: {
