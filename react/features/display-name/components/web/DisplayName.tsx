@@ -2,6 +2,7 @@
 import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { IState } from '../../../app/types';
@@ -10,7 +11,6 @@ import {
     getParticipantDisplayName,
     getParticipantById
 } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { updateSettings } from '../../../base/settings';
 // @ts-ignore

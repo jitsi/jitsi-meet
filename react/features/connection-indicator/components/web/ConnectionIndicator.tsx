@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { IState } from '../../../app/types';
@@ -13,7 +14,6 @@ import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants/functions';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
-import { connect } from '../../../base/redux/functions';
 import {
     getVirtualScreenshareParticipantTrack,
     getSourceNameByParticipantId, // @ts-ignore
