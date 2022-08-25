@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The standard time when auto-disappearing notifications should disappear.
  */

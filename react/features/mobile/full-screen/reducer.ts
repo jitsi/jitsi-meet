@@ -1,10 +1,12 @@
-// @flow
-
-import { ReducerRegistry } from '../../base/redux';
+import ReducerRegistry from '../../base/redux/ReducerRegistry';
 
 import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
 
-ReducerRegistry.register('features/full-screen', (state = {}, action) => {
+export interface IFullScreenState {
+    listener?: Function;
+}
+
+ReducerRegistry.register('features/full-screen', (state: IFullScreenState = {}, action) => {
     switch (action.type) {
     case _SET_IMMERSIVE_LISTENER:
         return {

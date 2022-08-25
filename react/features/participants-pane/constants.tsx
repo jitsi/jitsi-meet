@@ -1,14 +1,12 @@
-// @flow
-
 import React from 'react';
 
+import Icon from '../base/icons/components/Icon';
 import {
-    Icon,
     IconCameraEmpty,
     IconCameraEmptyDisabled,
     IconMicrophoneEmpty,
     IconMicrophoneEmptySlash
-} from '../base/icons';
+} from '../base/icons/svg';
 
 /**
  * Reducer key for the feature.
@@ -44,8 +42,8 @@ export type QuickActionButtonType = 'Mute' | 'AskToUnmute' | 'None';
  * Enum of possible participant mute button states.
  */
 export const QUICK_ACTION_BUTTON: {
-    MUTE: QuickActionButtonType,
     ASK_TO_UNMUTE: QuickActionButtonType,
+    MUTE: QuickActionButtonType,
     NONE: QuickActionButtonType
 } = {
     MUTE: 'Mute',
@@ -56,7 +54,7 @@ export const QUICK_ACTION_BUTTON: {
 /**
  * Icon mapping for possible participant audio states.
  */
-export const AudioStateIcons: {[MediaState]: React$Element<any> | null} = {
+export const AudioStateIcons = {
     [MEDIA_STATE.DOMINANT_SPEAKER]: (
         <Icon
             className = 'jitsi-icon-dominant-speaker'

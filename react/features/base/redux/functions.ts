@@ -16,7 +16,7 @@ import { IState, IStore } from '../../app/types';
  * from the specified target by setting the specified properties to the
  * specified values.
  */
-export function assign<T extends Object>(target: T, source: T): T {
+export function assign<T extends Object>(target: T, source: Partial<T>): T {
     let t = target;
 
     for (const property in source) { // eslint-disable-line guard-for-in
