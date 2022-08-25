@@ -1,6 +1,7 @@
-// @flow
+/* eslint-disable react/jsx-no-bind */
 
 import React, { useState } from 'react';
+import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -26,6 +27,17 @@ import MeetingParticipantList from './MeetingParticipantList';
 import ParticipantsPaneFooter from './ParticipantsPaneFooter';
 import styles from './styles';
 
+/**
+ * Key extractor for the flatlist.
+ *
+ * @param {Object} item - The flatlist item that we need the key to be
+ * generated for.
+ * @param {number} index - The index of the element.
+ * @returns {string}
+ */
+function _keyExtractor(item, index) {
+    return `key_${index}`;
+}
 
 /**
  * Participants pane.
@@ -45,11 +57,8 @@ const ParticipantsPane = () => {
     const showAddBreakoutRoom = useSelector(isAddBreakoutRoomButtonVisible);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
     const lobbyParticipants = useSelector(getKnockingParticipants);
-
-    return (
-        <JitsiScreen
-            footerComponent = { isLocalModerator && ParticipantsPaneFooter }
-            style = { styles.participantsPaneContainer }>
+    const renderHeader = () => (
+        <>
             <LobbyParticipantList />
             <MeetingParticipantList
                 breakoutRooms = { rooms }
@@ -57,22 +66,45 @@ const ParticipantsPane = () => {
                 lobbyParticipants = { lobbyParticipants }
                 searchString = { searchString }
                 setSearchString = { setSearchString } />
-            {
-                showAutoAssign && <AutoAssignButton />
-            }
+        </>
+    );
+    const renderFooter = () => (
+        <>
             {
                 inBreakoutRoom && <LeaveBreakoutRoomButton />
             }
             {
-                _isBreakoutRoomsSupported
-                && rooms.map(room => (<CollapsibleRoom
-                    key = { room.id }
-                    room = { room }
-                    searchString = { searchString } />))
+                showAutoAssign && <AutoAssignButton />
             }
             {
                 showAddBreakoutRoom && <AddBreakoutRoomButton />
             }
+            {
+                _isBreakoutRoomsSupported
+                && rooms.map(room => (
+                    <CollapsibleRoom
+                        key = { room.id }
+                        room = { room }
+                        searchString = { searchString } />
+                ))
+            }
+        </>
+    );
+
+    return (
+        <JitsiScreen
+            footerComponent = { isLocalModerator && ParticipantsPaneFooter }
+            style = { styles.participantsPaneContainer }>
+            <FlatList
+                ListFooterComponent = { renderFooter }
+                ListHeaderComponent = { renderHeader }
+                data = { null }
+                keyExtractor = { _keyExtractor }
+
+                // For FlatList as a nested list of any other FlatList or SectionList
+                // we have to pass a unique value to this prop
+                listKey = { _keyExtractor }
+                renderItem = { null } />
         </JitsiScreen>
     );
 };

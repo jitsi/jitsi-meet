@@ -2,18 +2,6 @@ import { MD_ITEM_HEIGHT } from '../../../base/dialog/components/native/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
- * The style for participant list description.
- */
-const participantListDescription = {
-    ...BaseTheme.typography.heading6,
-    color: BaseTheme.palette.text02,
-    paddingBottom: BaseTheme.spacing[3],
-    paddingTop: BaseTheme.spacing[3],
-    position: 'relative',
-    width: '55%'
-};
-
-/**
  * The style for content.
  */
 const flexContent = {
@@ -145,10 +133,6 @@ export default {
         color: BaseTheme.palette.uiBackground
     },
 
-    lobbyListContent: {
-        height: '16%'
-    },
-
     lobbyListDescription: {
         fontSize: 15,
         color: BaseTheme.palette.text01,
@@ -164,27 +148,6 @@ export default {
         overflow: 'hidden',
         position: 'relative',
         width: '100%'
-    },
-
-    notLocalModeratorContainer: {
-        height: '100%'
-    },
-
-    meetingListContainer: {
-        height: '58%'
-    },
-
-    meetingListFullContainer: {
-        height: '82%'
-    },
-
-    meetingListDescription: {
-        ...participantListDescription,
-        marginLeft: BaseTheme.spacing[3]
-    },
-
-    collapsibleRoomContainer: {
-        height: '30%'
     },
 
     participantsPaneContainer: {

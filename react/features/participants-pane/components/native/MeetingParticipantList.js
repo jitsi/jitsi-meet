@@ -1,4 +1,4 @@
-// @flow
+/* eslint-disable react/jsx-no-bind */
 
 import React, { PureComponent } from 'react';
 import { FlatList } from 'react-native';
@@ -192,9 +192,6 @@ class MeetingParticipantList extends PureComponent<Props> {
             _participantsCount,
             _showInviteButton,
             _sortedRemoteParticipants,
-            breakoutRooms,
-            isLocalModerator,
-            lobbyParticipants,
             t
         } = this.props;
         const title = _currentRoom?.name
@@ -204,25 +201,8 @@ class MeetingParticipantList extends PureComponent<Props> {
             : t('participantsPane.headings.participantsList',
                 { count: _participantsCount });
 
-        // Regarding the fact that we have 3 sections, we apply
-        // a certain height percentage for every section in order for all to fit
-        // inside the participants pane container
-        // If there are only meeting participants available,
-        // we take the full container height
-        const onlyMeetingParticipants
-            = breakoutRooms?.length === 0 && lobbyParticipants?.length === 0;
-        const containerStyleModerator
-            = onlyMeetingParticipants
-                ? styles.meetingListFullContainer : styles.meetingListContainer;
-        const containerStyle
-            = isLocalModerator
-                ? containerStyleModerator : styles.notLocalModeratorContainer;
-        const finalContainerStyle
-            = _participantsCount > 6 && containerStyle;
-
         return (
             <CollapsibleList
-                containerStyle = { finalContainerStyle }
                 title = { title } >
                 {
                     _showInviteButton
@@ -247,10 +227,15 @@ class MeetingParticipantList extends PureComponent<Props> {
                     data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
                     horizontal = { false }
                     keyExtractor = { this._keyExtractor }
+
+                    // For FlatList as a nested list of any other FlatList or SectionList
+                    // we have to pass a unique value to this prop
+
+                    listKey = { (item, index) => `_key${index.toString()}` }
                     renderItem = { this._renderParticipant }
                     scrollEnabled = { true }
                     showsHorizontalScrollIndicator = { false }
-                    windowSize = { 2 } />
+                    windowSize = { 6 } />
             </CollapsibleList>
         );
     }

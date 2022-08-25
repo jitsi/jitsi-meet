@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-bind */
+
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
@@ -6,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import { openSheet } from '../../../../../base/dialog';
 import { participantMatchesSearch } from '../../../../functions';
 import CollapsibleList from '../../../native/CollapsibleList';
-import styles from '../../../native/styles';
 
 import BreakoutRoomContextMenu from './BreakoutRoomContextMenu';
 import BreakoutRoomParticipantItem from './BreakoutRoomParticipantItem';
@@ -46,15 +47,8 @@ export const CollapsibleRoom = ({ room, searchString }: Props) => {
         = `${room.name
     || t('breakoutRooms.mainRoom')} (${roomParticipantsNr})`;
 
-    // Regarding the fact that we have 3 sections, we apply
-    // a certain height percentage for every section in order for all to fit
-    // inside the participants pane container
-    const containerStyle
-        = roomParticipantsNr > 2 && styles.collapsibleRoomContainer;
-
     return (
         <CollapsibleList
-            containerStyle = { containerStyle }
             onLongPress = { _openContextMenu }
             title = { title }>
             <FlatList
@@ -62,7 +56,10 @@ export const CollapsibleRoom = ({ room, searchString }: Props) => {
                 data = { Object.values(room.participants || {}) }
                 horizontal = { false }
                 keyExtractor = { _keyExtractor }
-                // eslint-disable-next-line react/jsx-no-bind
+
+                // For FlatList as a nested list of any other FlatList or SectionList
+                // we have to pass a unique value to this prop
+                listKey = { _keyExtractor }
                 renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)
                     && <BreakoutRoomParticipantItem
                         item = { participant }
