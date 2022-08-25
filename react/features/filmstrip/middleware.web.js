@@ -46,12 +46,12 @@ import {
 } from './constants';
 import {
     isFilmstripResizable,
-    isTopPanelEnabled,
     isStageFilmstripAvailable,
     updateRemoteParticipants,
     updateRemoteParticipantsOnLeave,
     getActiveParticipantsIds,
-    getPinnedActiveParticipants
+    getPinnedActiveParticipants,
+    isStageFilmstripTopPanel
 } from './functions.web';
 import './subscriber';
 
@@ -278,7 +278,7 @@ MiddlewareRegistry.register(store => next => action => {
         const pinnedParticipants = getPinnedActiveParticipants(state);
         const dominant = getDominantSpeakerParticipant(state);
 
-        if (isTopPanelEnabled(state)) {
+        if (isStageFilmstripTopPanel(state, 2)) {
             const screenshares = state['features/video-layout'].remoteScreenShares;
 
             if (screenshares.find(sId => sId === participantId)) {
