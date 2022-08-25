@@ -14,11 +14,10 @@ import { connect } from '../../../../base/redux';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import Button from '../../../../base/ui/components/native/Button';
 import Input from '../../../../base/ui/components/native/Input';
+import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
-import LobbyModeSwitch
-    from '../../../../lobby/components/native/LobbyModeSwitch';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../../../room-lock';
 import {
     endRoomLockRequest,
@@ -26,7 +25,6 @@ import {
 } from '../../../../room-lock/actions';
 
 import styles from './styles';
-
 
 /**
  * The style of the {@link TextInput} rendered by {@code SecurityDialog}. As it
@@ -185,9 +183,9 @@ class SecurityDialog extends PureComponent<Props, State> {
                         <Text style = { styles.lobbyModeLabel } >
                             { t('lobby.toggleLabel') }
                         </Text>
-                        <LobbyModeSwitch
-                            lobbyEnabled = { _lobbyEnabled }
-                            onToggleLobbyMode = { this._onToggleLobbyMode } />
+                        <Switch
+                            checked = { _lobbyEnabled }
+                            onChange = { this._onToggleLobbyMode } />
                     </View>
                 </View>
             </View>

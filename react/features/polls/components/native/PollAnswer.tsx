@@ -4,7 +4,6 @@ import { Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants/functions';
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import Switch from '../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
@@ -45,9 +44,7 @@ const PollAnswer = (props: AbstractProps) => {
                         <Switch
                             checked = { checkBoxStates[index] }
                             /* eslint-disable-next-line react/jsx-no-bind */
-                            onChange = { state => setCheckbox(index, state) }
-                            thumbColor = { BaseTheme.palette.icon01 }
-                            trackColor = {{ true: BaseTheme.palette.action01 }} />
+                            onChange = { state => setCheckbox(index, state) } />
                         <Text style = { chatStyles.switchLabel }>{answer.name}</Text>
                     </View>
                 ))}

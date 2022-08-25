@@ -4,6 +4,12 @@ import { Switch as NativeSwitch } from 'react-native-paper';
 
 import { SwitchProps } from '../types';
 
+import {
+    DISABLED_TRACK_COLOR,
+    ENABLED_TRACK_COLOR,
+    THUMB_COLOR
+} from './switchStyles';
+
 interface Props extends SwitchProps {
 
     /**
@@ -22,7 +28,17 @@ interface Props extends SwitchProps {
     trackColor?: Object;
 }
 
-const Switch = ({ checked, disabled, onChange, thumbColor, trackColor, style }: Props) => (
+const Switch = ({
+    checked,
+    disabled,
+    onChange,
+    thumbColor = THUMB_COLOR,
+    trackColor = {
+        true: ENABLED_TRACK_COLOR,
+        false: DISABLED_TRACK_COLOR
+    },
+    style
+}: Props) => (
     <NativeSwitch
         disabled = { disabled }
         onValueChange = { onChange }
