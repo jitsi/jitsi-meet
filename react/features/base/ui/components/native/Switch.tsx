@@ -2,8 +2,13 @@ import React from 'react';
 import { ColorValue } from 'react-native';
 import { Switch as NativeSwitch } from 'react-native-paper';
 
-import BaseThemeNative from '../BaseTheme.native';
 import { SwitchProps } from '../types';
+
+import {
+    DISABLED_TRACK_COLOR,
+    ENABLED_TRACK_COLOR,
+    THUMB_COLOR
+} from './switchStyles';
 
 interface Props extends SwitchProps {
 
@@ -27,8 +32,11 @@ const Switch = ({
     checked,
     disabled,
     onChange,
-    thumbColor = BaseThemeNative.palette.icon01,
-    trackColor,
+    thumbColor = THUMB_COLOR,
+    trackColor = {
+        true: ENABLED_TRACK_COLOR,
+        false: DISABLED_TRACK_COLOR
+    },
     style
 }: Props) => (
     <NativeSwitch

@@ -22,8 +22,7 @@ import {
     DROPBOX_LOGO,
     ICON_CLOUD,
     ICON_INFO,
-    ICON_USERS,
-    TRACK_COLOR
+    ICON_USERS
     // @ts-ignore
 } from '../styles.native';
 
@@ -77,8 +76,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
                         checked = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE }
                         disabled = { isValidating }
                         onChange = { this._onRecordingServiceSwitchChange }
-                        style = { styles.switch }
-                        trackColor = {{ false: TRACK_COLOR }} />
+                        style = { styles.switch } />
                 ) : null;
 
         return (
@@ -137,8 +135,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
                     checked = { sharingSetting }
                     disabled = { isValidating }
                     onChange = { onSharingSettingChanged }
-                    style = { styles.switch }
-                    trackColor = {{ false: TRACK_COLOR }} />
+                    style = { styles.switch } />
             </View>
         );
     }
@@ -281,8 +278,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Pr
                     checked = { selectedRecordingService === RECORDING_TYPES.DROPBOX }
                     disabled = { isValidating }
                     onChange = { this._onDropboxSwitchChange }
-                    style = { styles.switch }
-                    trackColor = {{ false: TRACK_COLOR }} />
+                    style = { styles.switch } />
             );
         }
 

@@ -35,12 +35,7 @@ import {
 
 import FormRow from './FormRow';
 import FormSectionAccordion from './FormSectionAccordion';
-import styles, {
-    DISABLED_TRACK_COLOR,
-    ENABLED_TRACK_COLOR,
-    THUMB_COLOR
-} from './styles';
-
+import styles from './styles';
 
 /**
  * Application information module.
@@ -270,23 +265,13 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             label = 'settingsView.startWithAudioMuted'>
                             <Switch
                                 checked = { startWithAudioMuted }
-                                onChange = { this._onStartAudioMutedChange }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{
-                                    true: ENABLED_TRACK_COLOR,
-                                    false: DISABLED_TRACK_COLOR
-                                }} />
+                                onChange = { this._onStartAudioMutedChange } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startWithVideoMuted'>
                             <Switch
                                 checked = { startWithVideoMuted }
-                                onChange = { this._onStartVideoMutedChange }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{
-                                    true: ENABLED_TRACK_COLOR,
-                                    false: DISABLED_TRACK_COLOR
-                                }} />
+                                onChange = { this._onStartVideoMutedChange } />
                         </FormRow>
                     </FormSectionAccordion>
                     <FormSectionAccordion
@@ -326,12 +311,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                     label = 'settingsView.disableCallIntegration'>
                                     <Switch
                                         checked = { disableCallIntegration }
-                                        onChange = { this._onDisableCallIntegration }
-                                        thumbColor = { THUMB_COLOR }
-                                        trackColor = {{
-                                            true: ENABLED_TRACK_COLOR,
-                                            false: DISABLED_TRACK_COLOR
-                                        }} />
+                                        onChange = { this._onDisableCallIntegration } />
                                 </FormRow>
                                 <Divider style = { styles.fieldSeparator } />
                             </>
@@ -340,12 +320,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             label = 'settingsView.disableP2P'>
                             <Switch
                                 checked = { disableP2P }
-                                onChange = { this._onDisableP2P }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{
-                                    true: ENABLED_TRACK_COLOR,
-                                    false: DISABLED_TRACK_COLOR
-                                }} />
+                                onChange = { this._onDisableP2P } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
                         {AppInfo.GOOGLE_SERVICES_ENABLED && (
@@ -354,12 +329,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 label = 'settingsView.disableCrashReporting'>
                                 <Switch
                                     checked = { disableCrashReporting }
-                                    onChange = { this._onDisableCrashReporting }
-                                    thumbColor = { THUMB_COLOR }
-                                    trackColor = {{
-                                        true: ENABLED_TRACK_COLOR,
-                                        false: DISABLED_TRACK_COLOR
-                                    }} />
+                                    onChange = { this._onDisableCrashReporting } />
                             </FormRow>
                         )}
                     </FormSectionAccordion>
