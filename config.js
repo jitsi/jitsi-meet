@@ -822,6 +822,7 @@ var config = {
     // Application ID and Secret.
     // callStatsID: '',
     // callStatsSecret: '',
+    // callstatsStoreLogs: true,
 
     // The callstats initialize config params as described in the API:
     // https://docs.callstats.io/docs/javascript#callstatsinitialize-with-app-secret
@@ -958,6 +959,7 @@ var config = {
         // PeerConnection states along with getStats metrics polled at the specified
         // interval.
         // rtcstatsEnabled: false,
+        // rtcstatsStoreLogs: false,
 
         // In order to enable rtcstats one needs to provide a endpoint url.
         // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
