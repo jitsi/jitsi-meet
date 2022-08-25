@@ -133,13 +133,6 @@ class StatelessDialog extends Component<Props> {
     };
 
     /**
-     * The functional component to be used for rendering the modal footer.
-     */
-    _Footer?: Function;
-
-    _dialogElement?: HTMLElement;
-
-    /**
      * Initializes a new {@code StatelessDialog} instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -325,7 +318,7 @@ class StatelessDialog extends Component<Props> {
         }
 
         const {
-            t /* The following fixes a flow error: */ = _.identity
+            t = _.identity
         } = this.props;
 
         return (
