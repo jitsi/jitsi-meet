@@ -93,9 +93,7 @@ class ChatInput extends Component<Props, State> {
     componentDidMount() {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
-            if (this._textArea && this._textArea.current) {
-                this._textArea.current.blur();
-            }
+            this._textArea?.current && this._textArea.current.blur();
         }
     }
 
@@ -149,9 +147,7 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _focus() {
-        if (this._textArea && this._textArea.current) {
-            this._textArea.current.focus();
-        }
+        this._textArea?.current && this._textArea.current.focus();
     }
 
     /**

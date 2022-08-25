@@ -6,6 +6,7 @@ import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown } from '../../../base/icons/svg/index';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+
 export interface INewMessagesButtonProps extends WithTranslation {
 
     /**
@@ -74,7 +75,6 @@ function NewMessagesButton({ onGoToFirstUnreadMessage, t }: INewMessagesButtonPr
     return (
         <div
             className = { styles.container }>
-
             <button
                 aria-label = { t('chat.newMessages') }
                 className = { styles.newMessagesButton }

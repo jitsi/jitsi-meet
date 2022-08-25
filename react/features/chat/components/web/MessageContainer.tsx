@@ -5,26 +5,21 @@ import { scrollIntoView } from 'seamless-scroll-polyfill';
 
 // @ts-ignore
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
-// @ts-ignore
-import AbstractMessageContainer, { type Props } from '../AbstractMessageContainer';
+import AbstractMessageContainer, { Props } from '../AbstractMessageContainer';
 
 // @ts-ignore
 import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
 
 interface State {
-
     /**
-     * Weather or not message container has received new messages.
+     * Whether or not message container has received new messages.
      */
-
     hasNewMessages: boolean;
-
     /**
-     * Weather or not scroll position is at the bottom of container.
+     * Whether or not scroll position is at the bottom of container.
      */
     isScrolledToBottom: boolean;
-
     /**
      * The id of the last read message.
      */
@@ -78,7 +73,6 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
 
         // Bind event handlers so they are only bound once for every instance.
         this._handleIntersectBottomList = this._handleIntersectBottomList.bind(this);
-
         this._findFirstUnreadMessage = this._findFirstUnreadMessage.bind(this);
         this._isMessageVisible = this._isMessageVisible.bind(this);
         this._onChatScroll = throttle(this._onChatScroll.bind(this), 300, { leading: true });
@@ -149,13 +143,13 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
     componentDidUpdate(prevProps: Props) {
         const hasNewMessages = this.props.messages.length !== prevProps.messages.length;
 
-        if (hasNewMessages && this.state.isScrolledToBottom) {
-            this.scrollToElement(false, null);
-        }
-
-        if (hasNewMessages && !this.state.isScrolledToBottom) {
-            // eslint-disable-next-line react/no-did-update-set-state
-            this.setState({ hasNewMessages: true });
+        if (hasNewMessages) {
+            if (this.state.isScrolledToBottom) {
+                this.scrollToElement(false, null);
+            } else {
+                // eslint-disable-next-line react/no-did-update-set-state
+                this.setState({ hasNewMessages: true });
+            }
         }
     }
 
@@ -189,7 +183,6 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
         });
     }
 
-    _getMessagesGroupedBySender: () => Array<Array<any>>;
 
     /**
      * Callback invoked to listen to current scroll position and update next unread message.
