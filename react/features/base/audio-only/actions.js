@@ -14,17 +14,13 @@ declare var APP: Object;
 /**
  * Sets the audio-only flag for the current JitsiConference.
  *
- * @param {boolean} audioOnly - True if the conference should be audio only;
- * false, otherwise.
- * @param {boolean} ensureVideoTrack - Define if conference should ensure
- * to create a video track.
+ * @param {boolean} audioOnly - True if the conference should be audio only; false, otherwise.
  * @returns {{
  *     type: SET_AUDIO_ONLY,
- *     audioOnly: boolean,
- *     ensureVideoTrack: boolean
+ *     audioOnly: boolean
  * }}
  */
-export function setAudioOnly(audioOnly: boolean, ensureVideoTrack: boolean = false) {
+export function setAudioOnly(audioOnly: boolean) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const { enabled: oldValue } = getState()['features/base/audio-only'];
 
@@ -34,8 +30,7 @@ export function setAudioOnly(audioOnly: boolean, ensureVideoTrack: boolean = fal
 
             dispatch({
                 type: SET_AUDIO_ONLY,
-                audioOnly,
-                ensureVideoTrack
+                audioOnly
             });
 
             if (typeof APP !== 'undefined') {
@@ -56,6 +51,6 @@ export function toggleAudioOnly() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const { enabled } = getState()['features/base/audio-only'];
 
-        return dispatch(setAudioOnly(!enabled, true));
+        return dispatch(setAudioOnly(!enabled));
     };
 }
