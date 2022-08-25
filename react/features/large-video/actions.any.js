@@ -107,17 +107,12 @@ function _electLastVisibleRemoteVideo(tracks) {
  * @returns {(string|undefined)}
  */
 function _electParticipantInLargeVideo(state) {
-    const stageFilmstrip = isStageFilmstripAvailable(state);
-    let participant;
+    // If a participant is pinned, they will be shown in the LargeVideo (regardless of whether they are local or
+    // remote) when the filmstrip on stage is disabled.
+    let participant = getPinnedParticipant(state);
 
-    if (!stageFilmstrip) {
-        // If a participant is pinned, they will be shown in the LargeVideo (regardless of whether they are local or
-        // remote) when the filmstrip on stage is disabled.
-        participant = getPinnedParticipant(state);
-
-        if (participant) {
-            return participant.id;
-        }
+    if (participant) {
+        return participant.id;
     }
 
     // Pick the most recent remote screenshare that was added to the conference.
@@ -125,15 +120,6 @@ function _electParticipantInLargeVideo(state) {
 
     if (remoteScreenShares?.length) {
         return remoteScreenShares[remoteScreenShares.length - 1];
-    }
-
-    // Next, pick the pinned participant when filmstrip on stage is enabled.
-    if (stageFilmstrip) {
-        participant = getPinnedParticipant(state);
-
-        if (participant) {
-            return participant.id;
-        }
     }
 
     // Next, pick the dominant speaker (other than self).
