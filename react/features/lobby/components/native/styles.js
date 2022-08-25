@@ -235,15 +235,6 @@ export default {
         color: 'white'
     },
 
-    lobbySwitchContainer: {
-        flexDirection: 'column',
-        marginTop: BaseTheme.spacing[2]
-    },
-
-    lobbySwitchIcon: {
-        alignSelf: 'flex-end'
-    },
-
     lobbyTitle: {
         ...lobbyText
     },
