@@ -7,7 +7,7 @@ import { StartRecordingDialog } from '../..';
 // @ts-ignore
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n/functions';
-import { IconHighlight } from '../../../../base/icons/svg/index';
+import { IconHighlight } from '../../../../base/icons/svg';
 // @ts-ignore
 import { Label } from '../../../../base/label';
 import { connect } from '../../../../base/redux/functions';

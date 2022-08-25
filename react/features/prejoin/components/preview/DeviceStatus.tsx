@@ -6,7 +6,7 @@ import { WithTranslation } from 'react-i18next';
 import { IState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
-import { IconCheckSolid, IconExclamationTriangle } from '../../../base/icons/svg/index';
+import { IconCheckSolid, IconExclamationTriangle } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 import {
     getDeviceStatusType,

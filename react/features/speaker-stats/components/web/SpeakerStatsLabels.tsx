@@ -34,22 +34,6 @@ type Props = {
 const SpeakerStatsLabels = (props: Props) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    const FaceExpressionsLabels = () => Object.keys(FACE_EXPRESSIONS_EMOJIS).map(
-            expression => (
-                <div
-                    className = 'expression'
-                    key = { expression }>
-                    <Tooltip
-                        content = { t(`speakerStats.${expression}`) }
-                        position = { 'top' } >
-                        <div>
-                            {FACE_EXPRESSIONS_EMOJIS[expression as keyof typeof FACE_EXPRESSIONS_EMOJIS] }
-                        </div>
-
-                    </Tooltip>
-                </div>
-            )
-    );
     const nameTimeClass = `name-time${
         props.showFaceExpressions ? ' name-time_expressions-on' : ''
     }`;
@@ -69,8 +53,22 @@ const SpeakerStatsLabels = (props: Props) => {
             {
                 props.showFaceExpressions
                 && <div className = { `expressions ${classes.emojis}` }>
-                    {/* @ts-ignore */}
-                    <FaceExpressionsLabels />
+                    {Object.keys(FACE_EXPRESSIONS_EMOJIS).map(
+                        expression => (
+                            <div
+                                className = 'expression'
+                                key = { expression }>
+                                <Tooltip
+                                    content = { t(`speakerStats.${expression}`) }
+                                    position = { 'top' } >
+                                    <div>
+                                        {FACE_EXPRESSIONS_EMOJIS[expression as keyof typeof FACE_EXPRESSIONS_EMOJIS]}
+                                    </div>
+
+                                </Tooltip>
+                            </div>
+                        )
+                    )}
                 </div>
             }
         </div>

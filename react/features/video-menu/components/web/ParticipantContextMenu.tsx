@@ -55,7 +55,7 @@ import {
     TogglePinToStageButton,
     VolumeSlider
     // @ts-ignore
-} from '.';
+} from './';
 
 type Props = {
 

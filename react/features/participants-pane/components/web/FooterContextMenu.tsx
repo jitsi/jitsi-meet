@@ -24,7 +24,7 @@ import {
     IconCheck,
     IconHorizontalPoints,
     IconVideoOff
-} from '../../../base/icons/svg/index';
+} from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
     getParticipantCount,

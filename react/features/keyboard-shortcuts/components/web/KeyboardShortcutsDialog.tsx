@@ -112,12 +112,12 @@ class KeyboardShortcutsDialog extends Component<Props> {
                 <span
                     aria-label = { this.props.t(translationKey) }
                     className = 'shortcuts-list__description'>
-                    {this.props.t(translationKey)}
+                    { this.props.t(translationKey) }
                 </span>
                 <span className = 'item-action'>
-                    {keyboardKey.startsWith(':')
+                    { keyboardKey.startsWith(':')
                         ? `${modifierKey} + ${keyboardKey.slice(1)}`
-                        : keyboardKey}
+                        : keyboardKey }
                 </span>
             </li>
         );
