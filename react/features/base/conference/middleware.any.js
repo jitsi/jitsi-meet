@@ -177,7 +177,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     if (typeof APP === 'undefined') {
         !error.recoverable
         && conference
-        && conference.leave(true, CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).catch(reason => {
+        && conference.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).catch(reason => {
             // Even though we don't care too much about the failure, it may be
             // good to know that it happen, so log it (on the info level).
             logger.info('JitsiConference.leave() rejected with:', reason);

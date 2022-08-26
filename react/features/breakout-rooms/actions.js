@@ -226,7 +226,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(conferenceWillLeave(conference));
 
             try {
-                await conference.leave(true, CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
+                await conference.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
             } catch (error) {
                 logger.warn('JitsiConference.leave() rejected with:', error);
 
