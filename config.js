@@ -969,6 +969,10 @@ var config = {
         // will only send data related to RTCPeerConnection events.
         // rtcstatsPollInterval: 10000,
 
+        // This determines if rtcstats sends the SDP to the rtcstats server or replaces
+        // all SDPs with an emtpy string instead.
+        // rtcstatsSendSdp: false,
+
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
         //      "libs/analytics-ga.min.js", // google-analytics
