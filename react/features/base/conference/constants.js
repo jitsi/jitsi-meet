@@ -31,3 +31,11 @@ export const JITSI_CONFERENCE_URL_KEY = Symbol('url');
 export const TRIGGER_READY_TO_CLOSE_REASONS = [
     'The meeting has been terminated'
 ];
+
+/**
+ * Conference leave reasons.
+ */
+export const CONFERENCE_LEAVE_REASONS = {
+    SWITCH_ROOM: 'switch_room',
+    UNRECOVERABLE_ERROR: 'unrecoverable_error'
+};

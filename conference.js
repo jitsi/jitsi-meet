@@ -52,7 +52,8 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    nonParticipantMessageReceived
+    nonParticipantMessageReceived,
+    CONFERENCE_LEAVE_REASONS
 } from './react/features/base/conference';
 import {
     getReplaceParticipant,
@@ -381,7 +382,7 @@ class ConferenceConnector {
             // FIXME the conference should be stopped by the library and not by
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
-            room.leave().then(() => connection.disconnect());
+            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).then(() => connection.disconnect());
             break;
 
         case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
@@ -464,7 +465,7 @@ function _connectionFailedHandler(error) {
             _connectionFailedHandler);
         if (room) {
             APP.store.dispatch(conferenceWillLeave(room));
-            room.leave();
+            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR);
         }
     }
 }
@@ -3059,13 +3060,14 @@ export default {
      * Leaves the room.
      *
      * @param {boolean} doDisconnect - Whether leaving the room should also terminate the connection.
+     * @param {string} reason - reason for leaving the room.
      * @returns {Promise}
      */
-    async leaveRoom(doDisconnect = true) {
+    async leaveRoom(doDisconnect = true, reason = '') {
         APP.store.dispatch(conferenceWillLeave(room));
 
         if (room && room.isJoined()) {
-            return room.leave().finally(() => {
+            return room.leave(reason).finally(() => {
                 if (doDisconnect) {
                     return disconnect();
                 }
