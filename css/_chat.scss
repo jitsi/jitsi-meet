@@ -30,12 +30,18 @@
     height: calc(100% - 70px);
 }
 
+#chat-conversation-container {
+    // extract message input height
+    height: calc(100% - 68px);
+    overflow: hidden;
+    position: relative;
+}
+
 #chatconversation {
     box-sizing: border-box;
     flex: 1;
     font-size: 10pt;
-    // extract message input height
-    height: calc(100% - 68px);
+    height: 100%;
     line-height: 20px;
     overflow: auto;
     padding: 16px;

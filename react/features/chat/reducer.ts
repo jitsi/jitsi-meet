@@ -27,7 +27,7 @@ const DEFAULT_STATE = {
     isLobbyChatActive: false
 };
 
-interface IMessage {
+export interface IMessage {
     displayName: string;
     error?: Object;
     id: string;
