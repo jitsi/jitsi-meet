@@ -1,24 +1,28 @@
-/* @flow */
-
+/* eslint-disable lines-around-comment */
 import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { translate } from '../../../base/i18n';
+import { IState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
 import {
     getParticipantDisplayName,
     getParticipantById
-} from '../../../base/participants';
-import { connect } from '../../../base/redux';
+} from '../../../base/participants/functions';
+// @ts-ignore
 import { updateSettings } from '../../../base/settings';
+// @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
+// @ts-ignore
 import { getIndicatorsTooltipPosition } from '../../../filmstrip/functions.web';
 import { appendSuffix } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayName}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * The participant's current display name which should be shown when in
@@ -37,6 +41,11 @@ type Props = {
     allowEditing: boolean,
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: any,
+
+    /**
      * Invoked to update the participant's display name.
      */
     dispatch: Dispatch<any>,
@@ -45,11 +54,6 @@ type Props = {
      * A string to append to the displayName, if provided.
      */
     displayNameSuffix: string,
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: Object,
 
     /**
      * The ID attribute to add to the component. Useful for global querying for
@@ -63,15 +67,10 @@ type Props = {
     participantID: string,
 
     /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
-
-    /**
      * The type of thumbnail.
      */
     thumbnailType: string
-};
+}
 
 /**
  * The type of the React {@code Component} state of {@link DisplayName}.
@@ -89,7 +88,7 @@ type State = {
     isEditing: boolean
 };
 
-const styles = theme => {
+const styles = (theme: any) => {
     return {
         displayName: {
             ...theme.typography.labelBold,
@@ -119,7 +118,7 @@ const styles = theme => {
  * @augments Component
  */
 class DisplayName extends Component<Props, State> {
-    _nameInput: ?HTMLInputElement;
+    _nameInput?: HTMLInputElement;
 
     static defaultProps = {
         _configuredDisplayName: ''
@@ -148,7 +147,7 @@ class DisplayName extends Component<Props, State> {
          * @private
          * @type {HTMLInputElement}
          */
-        this._nameInput = null;
+        this._nameInput = undefined;
 
         // Bind event handlers so they are only bound once for every instance.
         this._onChange = this._onChange.bind(this);
@@ -165,7 +164,7 @@ class DisplayName extends Component<Props, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(previousProps, previousState) {
+    componentDidUpdate(previousProps: Props, previousState: State) {
         if (!previousState.isEditing
             && this.state.isEditing
             && this._nameInput) {
@@ -229,11 +228,9 @@ class DisplayName extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onClick(e) {
+    _onClick(e: React.MouseEvent) {
         e.stopPropagation();
     }
-
-    _onChange: () => void;
 
     /**
      * Updates the internal state of the display name entered into the edit
@@ -243,13 +240,11 @@ class DisplayName extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onChange(event) {
+    _onChange(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState({
             editDisplayNameValue: event.target.value
         });
     }
-
-    _onKeyDown: () => void;
 
     /**
      * Submits the edited display name update if the enter key is pressed.
@@ -258,13 +253,11 @@ class DisplayName extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onKeyDown(event) {
+    _onKeyDown(event: React.KeyboardEvent) {
         if (event.key === 'Enter') {
             this._onSubmit();
         }
     }
-
-    _onStartEditing: () => void;
 
     /**
      * Updates the component to display an editable input field and sets the
@@ -274,7 +267,7 @@ class DisplayName extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onStartEditing(e) {
+    _onStartEditing(e: React.MouseEvent) {
         if (this.props.allowEditing) {
             e.stopPropagation();
             this.setState({
@@ -283,8 +276,6 @@ class DisplayName extends Component<Props, State> {
             });
         }
     }
-
-    _onSubmit: () => void;
 
     /**
      * Dispatches an action to update the display name if any change has
@@ -309,10 +300,8 @@ class DisplayName extends Component<Props, State> {
             editDisplayNameValue: ''
         });
 
-        this._nameInput = null;
+        this._nameInput = undefined;
     }
-
-    _setNameInputRef: (HTMLInputElement | null) => void;
 
     /**
      * Sets the internal reference to the HTML element backing the React
@@ -323,7 +312,7 @@ class DisplayName extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _setNameInputRef(element) {
+    _setNameInputRef(element: HTMLInputElement) {
         this._nameInput = element;
     }
 }
@@ -339,13 +328,13 @@ class DisplayName extends Component<Props, State> {
  *     _nameToDisplay: string
  * }}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { participantID } = ownProps;
-    const participant = getParticipantById(state, participantID);
+    const participant = getParticipantById(state, participantID ?? '');
 
     return {
         _configuredDisplayName: participant && participant.name,
-        _nameToDisplay: getParticipantDisplayName(state, participantID)
+        _nameToDisplay: getParticipantDisplayName(state, participantID ?? '')
     };
 }
 

@@ -1,8 +1,8 @@
-// @flow
-
 import { createStyles, makeStyles } from '@material-ui/core';
 
 import { commonStyles, getGlobalStyles } from '../constants';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { formatCommonClasses } from '../functions';
 
 /**
@@ -12,7 +12,7 @@ import { formatCommonClasses } from '../functions';
  *
  * @returns {Object}
  */
-const useStyles = makeStyles(theme =>
+const useStyles = makeStyles((theme: any) =>
     createStyles({
         '@global': {
             ...formatCommonClasses(commonStyles(theme)),

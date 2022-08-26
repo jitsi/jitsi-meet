@@ -1,5 +1,3 @@
-// @flow
-
 import { PureComponent } from 'react';
 
 export type Props = {
@@ -32,21 +30,21 @@ export type Props = {
     /**
      * The URL of the avatar to render.
      */
-    url?: ?string | Object
+    url?: string|Function
 };
 
 /**
  * Implements an abstract stateless avatar component that renders an avatar purely from what gets passed through
  * props.
  */
-export default class AbstractStatelessAvatar<P: Props> extends PureComponent<P> {
+export default class AbstractStatelessAvatar<P extends Props> extends PureComponent<P> {
     /**
      * Checks if the passed prop is a loaded icon or not.
      *
      * @param {string? | Object?} iconProp - The prop to check.
      * @returns {boolean}
      */
-    _isIcon(iconProp: ?string | ?Object): boolean {
+    _isIcon(iconProp?: string | Function): iconProp is Function {
         return Boolean(iconProp) && (typeof iconProp === 'object' || typeof iconProp === 'function');
     }
 }

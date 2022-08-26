@@ -1,36 +1,37 @@
-/* @flow */
-
 import { makeStyles } from '@material-ui/core';
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { translate } from '../../../i18n';
-import { Icon } from '../../../icons';
+import { translate } from '../../../i18n/functions';
+import Icon from '../../../icons/components/Icon';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { Tooltip } from '../../../tooltip';
 
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * Additional CSS class name.
      */
-    className: string,
+    className?: string,
 
     /**
      * The icon component to use.
      */
-    icon: Object,
+    icon: Function,
 
     /**
      * The CSS classnames to set on the icon element of the component.
     */
-    iconClassName: string,
+    iconClassName?: string,
 
     /**
      * The color of the icon.
      */
-    iconColor: ?string,
+    iconColor?: string,
 
     /**
      * Id of the icon to be rendered.
@@ -45,12 +46,7 @@ type Props = {
     /**
      * The ID attribute to set on the root element of the component.
      */
-    id: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
+    id?: string,
 
     /**
      * The translation key to use for displaying a tooltip when hovering over
@@ -63,7 +59,7 @@ type Props = {
      * defaulting to "top".
      */
     tooltipPosition: string
-};
+}
 
 const useStyles = makeStyles(() => {
     return {
@@ -95,7 +91,7 @@ const BaseIndicator = ({
     tooltipPosition = 'top'
 }: Props) => {
     const styles = useStyles();
-    const style = {};
+    const style: any = {};
 
     if (iconSize) {
         style.fontSize = iconSize;

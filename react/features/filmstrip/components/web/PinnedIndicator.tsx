@@ -1,12 +1,13 @@
-/* @flow */
-
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { IconPinParticipant } from '../../../base/icons';
-import { getParticipantById } from '../../../base/participants';
-import { BaseIndicator } from '../../../base/react';
+import { IState } from '../../../app/types';
+import { IconPinParticipant } from '../../../base/icons/svg/index';
+import { getParticipantById } from '../../../base/participants/functions';
+import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../functions.web';
 
 /**
@@ -55,8 +56,10 @@ const PinnedIndicator = ({
     tooltipPosition
 }: Props) => {
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
-    const pinned = useSelector(state => getParticipantById(state, participantId))?.pinned;
-    const isPinned = useSelector(getPinnedActiveParticipants).find(p => p.participantId === participantId);
+    const pinned = useSelector((state: IState) => getParticipantById(state, participantId))?.pinned;
+    const activePinnedParticipants: Array<{participantId: string; pinned: boolean}>
+        = useSelector(getPinnedActiveParticipants);
+    const isPinned = activePinnedParticipants.find(p => p.participantId === participantId);
     const styles = useStyles();
 
     if ((stageFilmstrip && !isPinned) || (!stageFilmstrip && !pinned)) {

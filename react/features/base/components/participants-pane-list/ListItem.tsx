@@ -1,9 +1,8 @@
-// @flow
-
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
+// @ts-ignore
 import { ACTION_TRIGGER } from '../../../participants-pane/constants';
 import { isMobileBrowser } from '../../environment/utils';
 import participantsPaneTheme from '../themes/participantsPaneTheme.json';
@@ -13,7 +12,7 @@ type Props = {
     /**
      * List item actions.
      */
-    actions: React$Node,
+    actions: ReactNode,
 
     /**
      * List item container class name.
@@ -21,9 +20,14 @@ type Props = {
     className: string,
 
     /**
+     * Whether or not the actions should be hidden.
+     */
+    hideActions?: boolean,
+
+    /**
      * Icon to be displayed on the list item. (Avatar for participants).
      */
-    icon: React$Node,
+    icon: ReactNode,
 
     /**
      * Id of the container.
@@ -31,14 +35,9 @@ type Props = {
     id: string,
 
     /**
-     * Whether or not the actions should be hidden.
-     */
-    hideActions?: Boolean,
-
-    /**
      * Indicators to be displayed on the list item.
      */
-    indicators?: React$Node,
+    indicators?: ReactNode,
 
     /**
      * Whether or not the item is highlighted.
@@ -48,17 +47,17 @@ type Props = {
     /**
      * Click handler.
      */
-    onClick: Function,
+    onClick: (e?: React.MouseEvent) => void,
 
     /**
      * Long press handler.
      */
-    onLongPress: Function,
+    onLongPress: (e?: EventTarget) => void,
 
     /**
      * Mouse leave handler.
      */
-    onMouseLeave: Function,
+    onMouseLeave: (e?: React.MouseEvent) => void,
 
     /**
      * Data test id.
@@ -68,7 +67,7 @@ type Props = {
     /**
      * Text children to be displayed on the list item.
      */
-    textChildren: React$Node | string,
+    textChildren: ReactNode | string,
 
     /**
      * The actions trigger. Can be Hover or Permanent.
@@ -77,7 +76,7 @@ type Props = {
 
 }
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme: any) => {
     return {
         container: {
             alignItems: 'center',
@@ -194,7 +193,7 @@ const ListItem = ({
 }: Props) => {
     const styles = useStyles();
     const _isMobile = isMobileBrowser();
-    let timeoutHandler;
+    let timeoutHandler: number;
 
     /**
      * Set calling long press handler after x milliseconds.
@@ -202,10 +201,10 @@ const ListItem = ({
      * @param {TouchEvent} e - Touch start event.
      * @returns {void}
      */
-    function _onTouchStart(e) {
+    function _onTouchStart(e: React.TouchEvent) {
         const target = e.touches[0].target;
 
-        timeoutHandler = setTimeout(() => onLongPress(target), 600);
+        timeoutHandler = window.setTimeout(() => onLongPress(target), 600);
     }
 
     /**

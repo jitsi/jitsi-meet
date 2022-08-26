@@ -1,5 +1,3 @@
-// @flow
-
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 

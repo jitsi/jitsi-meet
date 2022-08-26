@@ -1,9 +1,8 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import Modal, { ModalFooter } from '@atlaskit/modal-dialog';
 import { withStyles } from '@material-ui/core/styles';
-import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { Component, ReactElement } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../i18n/functions';
 import Button from '../../../ui/components/web/Button';
@@ -31,17 +30,23 @@ const OK_BUTTON_ID = 'modal-dialog-ok-button';
  *
  * @static
  */
-type Props = DialogProps & {
+interface Props extends DialogProps, WithTranslation {
 
     /**
      * An object containing the CSS classes.
      */
-    classes: Object,
+    classes: any,
 
     /**
      * Custom dialog header that replaces the standard heading.
      */
-    customHeader?: React$Element<any> | Function,
+    customHeader?: ReactElement<any> | Function,
+
+    /**
+     * Disables dismissing the dialog when the blanket is clicked. Enabled
+     * by default.
+     */
+    disableBlanketClickDismiss: boolean,
 
     /*
      * True if listening for the Enter key should be disabled.
@@ -49,10 +54,9 @@ type Props = DialogProps & {
     disableEnter: boolean,
 
     /**
-     * Disables dismissing the dialog when the blanket is clicked. Enabled
-     * by default.
+     * If true, no footer will be displayed.
      */
-    disableBlanketClickDismiss: boolean,
+    disableFooter?: boolean,
 
     /**
      * If true, the cancel button will not display but cancel actions, like
@@ -66,13 +70,6 @@ type Props = DialogProps & {
     hideCloseIconButton: boolean,
 
     /**
-     * If true, no footer will be displayed.
-     */
-    disableFooter?: boolean,
-
-    i18n: Object,
-
-    /**
      * Whether the dialog is modal. This means clicking on the blanket will
      * leave the dialog open. No cancel button.
      */
@@ -82,7 +79,7 @@ type Props = DialogProps & {
      * The handler for the event when clicking the 'confirmNo' button.
      * Defaults to onCancel if absent.
      */
-    onDecline?: Function,
+    onDecline?: () => void,
 
     /**
      * Callback invoked when setting the ref of the Dialog.
@@ -95,11 +92,6 @@ type Props = DialogProps & {
     submitDisabled: boolean,
 
     /**
-     * Function to be used to retrieve translated i18n labels.
-     */
-    t: Function,
-
-    /**
      * Width of the dialog, can be:
      * - 'small' (400px), 'medium' (600px), 'large' (800px),
      *   'x-large' (968px)
@@ -107,7 +99,7 @@ type Props = DialogProps & {
      * - string value for percentage.
      */
     width: string
-};
+}
 
 /**
  * Creates the styles for the component.
@@ -115,7 +107,7 @@ type Props = DialogProps & {
  * @param {Object} theme - The theme.
  * @returns {Object}
  */
-const styles = theme => {
+const styles = (theme: any) => {
     return {
         footer: {
             boxShadow: 'none'
@@ -140,19 +132,12 @@ class StatelessDialog extends Component<Props> {
     };
 
     /**
-     * The functional component to be used for rendering the modal footer.
-     */
-    _Footer: ?Function;
-
-    _dialogElement: ?HTMLElement;
-
-    /**
      * Initializes a new {@code StatelessDialog} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -175,7 +160,7 @@ class StatelessDialog extends Component<Props> {
             customHeader,
             children,
             hideCloseIconButton,
-            t /* The following fixes a flow error: */ = _.identity,
+            t,
             titleString,
             titleKey,
             width
@@ -185,10 +170,12 @@ class StatelessDialog extends Component<Props> {
             <Modal
                 autoFocus = { true }
                 components = {{
+                    // @ts-ignore
                     Header: customHeader ? customHeader : props => (
+                        // @ts-ignore
                         <ModalHeader
                             { ...props }
-                            heading = { titleString || t(titleKey) }
+                            heading = { titleString || t(titleKey ?? '') }
                             hideCloseIconButton = { hideCloseIconButton } />
                     )
                 }}
@@ -212,8 +199,6 @@ class StatelessDialog extends Component<Props> {
         );
     }
 
-    _renderFooter: () => React$Node;
-
     /**
      * Returns a ReactElement to display buttons for closing the modal.
      *
@@ -222,7 +207,7 @@ class StatelessDialog extends Component<Props> {
      * @private
      * @returns {ReactElement}
      */
-    _renderFooter(propsFromModalFooter) {
+    _renderFooter(propsFromModalFooter: any) {
         // Filter out falsy (null) values because {@code ButtonGroup} will error
         // if passed in anything but buttons with valid type props.
         const buttons = [
@@ -252,8 +237,6 @@ class StatelessDialog extends Component<Props> {
         );
     }
 
-    _onCancel: () => void;
-
     /**
      * Dispatches action to hide the dialog.
      *
@@ -267,8 +250,6 @@ class StatelessDialog extends Component<Props> {
         }
     }
 
-    _onDialogDismissed: () => void;
-
     /**
      * Handles click on the blanket area.
      *
@@ -280,8 +261,6 @@ class StatelessDialog extends Component<Props> {
         }
     }
 
-    _onSubmit: (?string) => void;
-
     /**
      * Dispatches the action when submitting the dialog.
      *
@@ -289,7 +268,7 @@ class StatelessDialog extends Component<Props> {
      * @param {string} value - The submitted value if any.
      * @returns {void}
      */
-    _onSubmit(value) {
+    _onSubmit(value?: any) {
         const { onSubmit } = this.props;
 
         onSubmit && onSubmit(value);
@@ -310,12 +289,13 @@ class StatelessDialog extends Component<Props> {
         }
 
         const {
-            t /* The following fixes a flow error: */ = _.identity,
+            t,
             onDecline
         } = this.props;
 
         return (
             <Button
+                accessibilityLabel = { t(this.props.cancelKey || 'dialog.Cancel') }
                 id = { CANCEL_BUTTON_ID }
                 key = { CANCEL_BUTTON_ID }
                 label = { t(this.props.cancelKey || 'dialog.Cancel') }
@@ -332,16 +312,18 @@ class StatelessDialog extends Component<Props> {
      * @returns {ReactElement|null} The OK button if enabled.
      */
     _renderOKButton() {
-        if (this.props.submitDisabled) {
+        const {
+            submitDisabled,
+            t
+        } = this.props;
+
+        if (submitDisabled) {
             return null;
         }
 
-        const {
-            t /* The following fixes a flow error: */ = _.identity
-        } = this.props;
-
         return (
             <Button
+                accessibilityLabel = { t(this.props.okKey || 'dialog.Ok') }
                 disabled = { this.props.okDisabled }
                 id = { OK_BUTTON_ID }
                 key = { OK_BUTTON_ID }
@@ -351,8 +333,6 @@ class StatelessDialog extends Component<Props> {
         );
     }
 
-    _onDialogRef: (?Element) => void;
-
     /**
      * Callback invoked when setting the ref of the dialog's child passing the Modal ref.
      * It is done this way because we cannot directly access the ref of the Modal component.
@@ -361,11 +341,9 @@ class StatelessDialog extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _onDialogRef(element: ?Element) {
+    _onDialogRef(element?: any) {
         this.props.onDialogRef && this.props.onDialogRef(element && element.parentNode);
     }
-
-    _onKeyPress: (Object) => void;
 
     /**
      * Handles 'Enter' key in the dialog to submit/hide dialog depending on
@@ -375,7 +353,7 @@ class StatelessDialog extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _onKeyPress(event) {
+    _onKeyPress(event: React.KeyboardEvent) {
         // If the event coming to the dialog has been subject to preventDefault
         // we don't handle it here.
         if (event.defaultPrevented) {

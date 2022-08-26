@@ -1,28 +1,47 @@
-// @flow
-
 import { withStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import React, { useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 
-import { Icon, IconArrowDown } from '../../../icons';
+import Icon from '../../../icons/components/Icon';
+import { IconArrowDown } from '../../../icons/svg/index';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 type Props = {
 
     /**
-     * Text of the button.
+     * Icon to display in the options section.
      */
-    children: React$Node,
+    OptionsIcon?: Function,
 
     /**
-     * An object containing the CSS classes.
+     * The Label of the child element.
      */
-    classes: Object,
+    ariaDropDownLabel?: string,
+
+    /**
+     * The Label of the current element.
+     */
+    ariaLabel?: string,
+
+    /**
+     * To give a aria-pressed to the icon.
+     */
+    ariaPressed?: boolean,
+
+    /**
+     * Text of the button.
+     */
+    children: ReactNode,
 
     /**
      * Text css class of the button.
      */
     className?: string,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: any,
 
     /**
      * If the button is disabled or not.
@@ -34,10 +53,26 @@ type Props = {
      */
     hasOptions?: boolean,
 
+
     /**
-     * Icon to display in the options section.
+     * OnClick button handler.
      */
-    OptionsIcon?: React$Node,
+    onClick?: (e?: React.MouseEvent) => void,
+
+    /**
+     * Click handler for options.
+     */
+    onOptionsClick?: (e?: React.KeyboardEvent | React.MouseEvent) => void,
+
+    /**
+     * To give a role to the icon.
+     */
+    role?: string,
+
+    /**
+     * To navigate with the keyboard.
+     */
+    tabIndex?: number,
 
     /**
      * TestId of the button. Can be used to locate element when testing UI.
@@ -47,43 +82,7 @@ type Props = {
     /**
      * The type of th button: primary, secondary, text.
      */
-    type: string,
-
-    /**
-     * OnClick button handler.
-     */
-    onClick: Function,
-
-
-    /**
-     * Click handler for options.
-     */
-    onOptionsClick?: Function,
-
-    /**
-     * To navigate with the keyboard.
-     */
-    tabIndex?: number,
-
-    /**
-     * To give a role to the icon.
-     */
-    role?: string,
-
-    /**
-     * To give a aria-pressed to the icon.
-     */
-    ariaPressed?: boolean,
-
-    /**
-     * The Label of the current element.
-     */
-    ariaLabel?: string,
-
-    /**
-     * The Label of the child element.
-     */
-    ariaDropDownLabel?: string
+    type: string
 };
 
 /**
@@ -93,7 +92,7 @@ type Props = {
  *
  * @returns {Object}
  */
-const styles = theme => {
+const styles = (theme: any) => {
     return {
         actionButton: {
             ...withPixelLineHeight(theme.typography.bodyLongBold),
@@ -254,4 +253,5 @@ function ActionButton({
     );
 }
 
+// @ts-ignore
 export default withStyles(styles)(ActionButton);

@@ -1,11 +1,14 @@
-// @flow
+/* eslint-disable lines-around-comment */
 import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+// @ts-ignore
 import { getComputedOuterHeight } from '../../../participants-pane/functions';
+// @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
+// @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import participantsPaneTheme from '../themes/participantsPaneTheme.json';
 
@@ -19,12 +22,12 @@ type Props = {
     /**
      * Children of the context menu.
      */
-    children: React$Node,
+    children: ReactNode,
 
     /**
      * Class name for context menu. Used to overwrite default styles.
      */
-    className?: ?string,
+    className?: string,
 
     /**
      * The entity for which the context menu is displayed.
@@ -39,7 +42,7 @@ type Props = {
     /**
      * Whether or not the menu is already in a drawer.
      */
-    inDrawer?: ?boolean,
+    inDrawer?: boolean,
 
     /**
      * Whether or not drawer should be open.
@@ -54,32 +57,32 @@ type Props = {
     /**
      * Callback for click on an item in the menu.
      */
-    onClick?: Function,
-
-    /**
-     * Keydown handler.
-     */
-    onKeyDown?: Function,
+    onClick?: (e?: React.MouseEvent) => void,
 
     /**
      * Callback for drawer close.
      */
-    onDrawerClose?: Function,
+    onDrawerClose?: (e?: React.MouseEvent) => void,
+
+    /**
+     * Keydown handler.
+     */
+    onKeyDown?: (e?: React.KeyboardEvent) => void,
 
     /**
      * Callback for the mouse entering the component.
      */
-    onMouseEnter?: Function,
+    onMouseEnter?: (e?: React.MouseEvent) => void,
 
     /**
      * Callback for the mouse leaving the component.
      */
-    onMouseLeave?: Function
+    onMouseLeave?: (e?: React.MouseEvent) => void
 };
 
 const MAX_HEIGHT = 400;
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme: any) => {
     return {
         contextMenu: {
             backgroundColor: theme.palette.ui02,

@@ -67,7 +67,7 @@ type Props = {
     /**
      * Closes a drawer if open.
      */
-    closeDrawer?: Function,
+    closeDrawer?: () => void,
 
     /**
      * The participant for which the drawer is open.
@@ -91,17 +91,17 @@ type Props = {
     /**
      * Callback for the mouse entering the component.
      */
-    onEnter?: Function,
+    onEnter?: (e?: React.MouseEvent) => void,
 
     /**
      * Callback for the mouse leaving the component.
      */
-    onLeave?: Function,
+    onLeave?: (e?: React.MouseEvent) => void,
 
     /**
      * Callback for making a selection in the menu.
      */
-    onSelect: Function,
+    onSelect: (value?: boolean | React.MouseEvent) => void,
 
     /**
      * Participant reference.
@@ -157,7 +157,7 @@ const ParticipantContextMenu = ({
     const _isVideoForceMuted = useSelector(state =>
         isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
     const _isAudioMuted = useSelector(state => isParticipantAudioMuted(participant, state));
-    const _overflowDrawer = useSelector(showOverflowDrawer);
+    const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent }
         = useSelector((state: IState) => state['features/base/config']);
     const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
@@ -315,7 +315,7 @@ const ParticipantContextMenu = ({
             entity = { participant }
             hidden = { thumbnailMenu ? false : undefined }
             inDrawer = { thumbnailMenu && _overflowDrawer }
-            isDrawerOpen = { drawerParticipant }
+            isDrawerOpen = { Boolean(drawerParticipant) }
             offsetTarget = { offsetTarget }
             onClick = { onSelect }
             onDrawerClose = { thumbnailMenu ? onSelect : closeDrawer }

@@ -1,4 +1,4 @@
-// @flow
+/* eslint-disable lines-around-comment */
 /* eslint-disable react/no-multi-comp */
 import ErrorIcon from '@atlaskit/icon/glyph/error';
 import WarningIcon from '@atlaskit/icon/glyph/warning';
@@ -7,12 +7,15 @@ import {
     Title,
     titleIconWrapperStyles,
     TitleText
+    // @ts-ignore
 } from '@atlaskit/modal-dialog/dist/es2019/styled/Content';
 import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { translate } from '../../../i18n';
+import { translate } from '../../../i18n/functions';
 import { IconClose } from '../../../icons/svg/index';
+// @ts-ignore
 import { withPixelLineHeight } from '../../../styles/functions';
 import Button from '../../../ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../ui/constants';
@@ -31,17 +34,16 @@ const TitleIcon = ({ appearance }: { appearance?: 'danger' | 'warning' }) => {
     );
 };
 
-type Props = {
-    id: string,
+interface Props extends WithTranslation {
     appearance?: 'danger' | 'warning',
-    classes: Object,
+    classes: any,
     heading: string,
     hideCloseIconButton: boolean,
-    onClose: Function,
-    showKeyline: boolean,
+    id?: string,
     isHeadingMultiline: boolean,
-    testId: string,
-    t: Function
+    onClose: (e?: any) => void,
+    showKeyline: boolean,
+    testId?: string
 }
 
 /**
@@ -51,7 +53,7 @@ type Props = {
  *
  * @returns {Object}
  */
-const styles = theme => {
+const styles = (theme: any) => {
     return {
         closeButton: {
             borderRadius: theme.shape.borderRadius,
@@ -95,14 +97,12 @@ class ModalHeader extends React.Component<Props> {
      * @param {*} props - The read-only properties with which the new instance
      * is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
         this._onKeyPress = this._onKeyPress.bind(this);
     }
-
-    _onKeyPress: (Object) => void;
 
     /**
      * KeyPress handler for accessibility.
@@ -111,7 +111,7 @@ class ModalHeader extends React.Component<Props> {
      *
      * @returns {void}
      */
-    _onKeyPress(e) {
+    _onKeyPress(e: React.KeyboardEvent) {
         if (this.props.onClose && (e.key === ' ' || e.key === 'Enter')) {
             e.preventDefault();
             this.props.onClose();

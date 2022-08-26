@@ -1,17 +1,15 @@
-// @flow
-
 /* eslint-disable react/jsx-no-bind */
-
 import { withStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 
-import { Icon, IconCheck, IconCopy } from '../../base/icons';
+import Icon from '../icons/components/Icon';
+import { IconCheck, IconCopy } from '../icons/svg/index';
 import { withPixelLineHeight } from '../styles/functions.web';
-import { copyText } from '../util';
+import { Theme } from '../ui/types';
+import { copyText } from '../util/helpers';
 
-
-const styles = theme => {
+const styles = (theme: Theme) => {
     return {
         copyButton: {
             ...withPixelLineHeight(theme.typography.bodyLongRegular),
@@ -54,14 +52,9 @@ const styles = theme => {
     };
 };
 
-let mounted;
+let mounted: boolean;
 
 type Props = {
-
-    /**
-     * An object containing the CSS classes.
-     */
-     classes: Object,
 
     /**
      * Css class to apply on container.
@@ -69,19 +62,19 @@ type Props = {
     className: string,
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: any,
+
+    /**
      * The displayed text.
      */
     displayedText: string,
 
     /**
-     * The text that needs to be copied (might differ from the displayedText).
+     * The id of the button.
      */
-    textToCopy: string,
-
-    /**
-     * The text displayed on mouse hover.
-     */
-    textOnHover: string,
+    id?: string,
 
     /**
      * The text displayed on copy success.
@@ -89,9 +82,14 @@ type Props = {
     textOnCopySuccess: string,
 
     /**
-     * The id of the button.
+     * The text displayed on mouse hover.
      */
-    id?: string,
+    textOnHover: string,
+
+    /**
+     * The text that needs to be copied (might differ from the displayedText).
+     */
+    textToCopy: string
 };
 
 /**
@@ -160,7 +158,7 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
      *
      * @returns {void}
      */
-    function onKeyPress(e) {
+    function onKeyPress(e: React.KeyboardEvent) {
         if (onClick && (e.key === ' ' || e.key === 'Enter')) {
             e.preventDefault();
             onClick();
@@ -216,4 +214,5 @@ CopyButton.defaultProps = {
     className: ''
 };
 
+// @ts-ignore
 export default withStyles(styles)(CopyButton);

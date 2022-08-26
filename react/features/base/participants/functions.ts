@@ -159,7 +159,7 @@ export function getFirstLoadableAvatarUrl(participant: Participant, store: IStor
  * features/base/participants.
  * @returns {(Participant|undefined)}
  */
-export function getLocalParticipant(stateful: IStore | Function) {
+export function getLocalParticipant(stateful: IStore | Function | IState) {
     const state = toState(stateful)['features/base/participants'];
 
     return state.local;
@@ -342,7 +342,7 @@ export function getParticipantCountWithFake(stateful: IStore | Function) {
  * @param {string} id - The ID of the participant's display name to retrieve.
  * @returns {string}
  */
-export function getParticipantDisplayName(stateful: IStore | Function, id: string): string {
+export function getParticipantDisplayName(stateful: IStore | Function | IState, id: string): string {
     const participant = getParticipantById(stateful, id);
     const {
         defaultLocalDisplayName,
@@ -374,7 +374,7 @@ export function getParticipantDisplayName(stateful: IStore | Function, id: strin
  * @param {string} id - The ID of the screenshare participant's display name to retrieve.
  * @returns {string}
  */
-export function getScreenshareParticipantDisplayName(stateful: IStore | Function, id: string) {
+export function getScreenshareParticipantDisplayName(stateful: IStore | Function| IState, id: string) {
     const ownerDisplayName = getParticipantDisplayName(stateful, getVirtualScreenshareParticipantOwnerId(id));
 
     return i18next.t('screenshareDisplayName', { name: ownerDisplayName });
@@ -648,6 +648,6 @@ export function getRaiseHandsQueue(stateful: IStore | Function): Array<Object> {
  * @param {Object} participant - The participant.
  * @returns {boolean} - Whether participant has raise hand or not.
  */
-export function hasRaisedHand(participant: Participant): boolean {
-    return Boolean(participant && participant.raisedHandTimestamp);
+export function hasRaisedHand(participant?: Participant): boolean {
+    return Boolean(participant?.raisedHandTimestamp);
 }
