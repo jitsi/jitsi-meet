@@ -36,6 +36,6 @@ export const TRIGGER_READY_TO_CLOSE_REASONS = [
  * Conference leave reasons.
  */
 export const CONFERENCE_LEAVE_REASONS = {
-    'SWITCH_ROOM': 'switch_room',
-    'UNRECOVERABLE_ERROR': 'unrecoverable_error'
+    SWITCH_ROOM: 'switch_room',
+    UNRECOVERABLE_ERROR: 'unrecoverable_error'
 };
