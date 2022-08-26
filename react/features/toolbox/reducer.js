@@ -5,6 +5,7 @@ import { ReducerRegistry, set } from '../base/redux';
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     FULL_SCREEN_CHANGED,
+    SET_HANGUP_MENU_VISIBLE,
     SET_OVERFLOW_DRAWER,
     SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
@@ -25,6 +26,13 @@ const INITIAL_STATE = {
      * @type {boolean}
      */
     enabled: true,
+
+    /**
+     * The indicator which determines whether the hangup menu is visible.
+     *
+     * @type {boolean}
+     */
+    hangupMenuVisible: false,
 
     /**
      * The indicator which determines whether a Toolbar in the Toolbox is
@@ -79,6 +87,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 fullScreen: action.fullScreen
+            };
+
+        case SET_HANGUP_MENU_VISIBLE:
+            return {
+                ...state,
+                hangupMenuVisible: action.visible
             };
 
         case SET_OVERFLOW_DRAWER:

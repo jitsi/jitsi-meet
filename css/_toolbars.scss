@@ -134,6 +134,20 @@
     }
 }
 
+.hangup-menu-button {
+    background-color: $hangupMenuButtonColor;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background-color: $hangupMenuButtonHoverColor;
+        }
+    }
+
+    svg {
+        fill: #fff;
+    }
+}
+
 .profile-button-avatar {
     align-items: center;
 }

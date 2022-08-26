@@ -79,7 +79,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": "اترك الاجتماع",
             "selectSoundDevice": "حدد جهاز الصوت"
         },
         "labels": {
@@ -1072,6 +1071,7 @@
             "invite": "ادعُ آخرين",
             "kick": "اطرد مشاركًا",
             "laugh": "يضحك",
+            "leaveConference": "اترك الاجتماع",
             "like": "رفع الإبهام متمنيا النجاح",
             "linkToSalesforce": "ارتباط إلى Salesforce",
             "lobbyButton": "فعِّل/عطِّل وضع غرفة الانتظار",
@@ -1146,6 +1146,7 @@
         "joinBreakoutRoom": "انضم إلى غرفة الجانبية",
         "laugh": "يضحك",
         "leaveBreakoutRoom": "اترك إلى غرفة الجانبية",
+        "leaveConference": "اترك الاجتماع",
         "like": "رفع الإبهام متمنيا النجاح",
         "linkToSalesforce": "ارتباط إلى Salesforce",
         "lobbyButtonDisable": "عطِّل وضع غرفة الانتظار",
