@@ -43,14 +43,6 @@ case "$1" in
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
         fi
 
-        JVB_SERVE="false"
-        # this detect only old installations
-        RET=""
-        db_get jitsi-meet/jvb-serve || true
-        if [ "$RET" = "true" ] ; then
-            JVB_SERVE="true"
-        fi
-
         # stores the hostname so we will reuse it later, like in purge
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
 
@@ -128,53 +120,6 @@ case "$1" in
                 sed -i "s/conference.jitsi-meet.example.com/conference.<\!--# echo var=\"subdomain\" default=\"\" -->jitsi-meet.example.com/g" $JITSI_MEET_CONFIG
             fi
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
-        fi
-
-        # getting rid of jetty serving web
-        if [[ "$JVB_SERVE" = "true" ]] ; then
-            JVB_CONFIG="/etc/jitsi/videobridge/sip-communicator.properties"
-
-            # we will write to the file if missing create it
-            if [ -f $JVB_CONFIG ] ; then
-                echo ""
-                echo "------------------------------------------------"
-                echo ""
-                echo "You are using jetty to serve jitsi-meet, we are now upgrading you to use nginx!"
-                echo ""
-                echo "If you are using Let’s Encrypt certificates please re-run the script."
-                echo ""
-                echo "------------------------------------------------"
-                echo ""
-
-                sed -i "s/org.jitsi.videobridge.rest.jetty/#org.jitsi.videobridge.rest.jetty/g" $JVB_CONFIG
-                sed -i "s/org.jitsi.videobridge.TCP_HARVESTER_PORT/#org.jitsi.videobridge.TCP_HARVESTER_PORT/g" $JVB_CONFIG
-
-                if [ -d /run/systemd/system ]; then
-                    systemctl restart jitsi-videobridge2.service >/dev/null || true
-                fi
-
-                # Removing this value will force nginx or apache to be locally configured
-                JVB_HOSTNAME_OLD=""
-
-                RET=""
-                db_get jitsi-meet/cert-choice
-                CERT_CHOICE="$RET"
-                # Fix certs on upgrade from jetty
-                if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
-                    RET=""
-                    db_get jitsi-meet/cert-path-key
-                    CERT_KEY="$RET"
-                    RET=""
-                    db_get jitsi-meet/cert-path-crt
-                    CERT_CRT="$RET"
-                else
-                    # create self-signed certs
-                    CERT_KEY="/etc/jitsi/meet/$JVB_HOSTNAME.key"
-                    CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
-                fi
-            fi
-
-            db_set jitsi-meet/jvb-serve "false"
         fi
 
         if [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
