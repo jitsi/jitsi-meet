@@ -79,7 +79,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": "Abandona la reunió",
             "selectSoundDevice": "Seleccioneu l'aparell d'àudio"
         },
         "labels": {
@@ -1039,6 +1038,7 @@
             "invite": "Convida-hi persones",
             "kick": "Expulsa el participant",
             "laugh": "Riure",
+            "leaveConference": "Abandona la reunió",
             "like": "Polzes amunt",
             "linkToSalesforce": "Enllaç a Salesforce",
             "lobbyButton": "Activa o desactiva la sala d'espera",
@@ -1111,6 +1111,7 @@
         "joinBreakoutRoom": "Entra a la sala de descans",
         "laugh": "Riure",
         "leaveBreakoutRoom": "Surt de la sala de descans",
+        "leaveConference": "Abandona la reunió",
         "like": "Polzes amunt",
         "linkToSalesforce": "Enllaç a Salesforce",
         "lobbyButtonDisable": "Desactiva el mode de sala d'espera",

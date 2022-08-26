@@ -29,9 +29,9 @@ const EndMeetingButton = () : JSX.Element => {
 
     return (
         <Button
-            accessibilityLabel = 'carmode.actions.leaveMeeting'
+            accessibilityLabel = 'toolbar.accessibilityLabel.leaveConference'
             icon = { EndMeetingIcon }
-            labelKey = 'carmode.actions.leaveMeeting'
+            labelKey = 'toolbar.leaveConference'
             onClick = { onSelect }
             style = { styles.endMeetingButton }
             type = { BUTTON_TYPES.DESTRUCTIVE } />

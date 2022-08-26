@@ -213,7 +213,7 @@ end
 function destroy_breakout_room(room_jid, message)
     local main_room, main_room_jid = get_main_room(room_jid);
 
-    if room_jid == main_room_jid or not main_room then
+    if room_jid == main_room_jid then
         return;
     end
 
@@ -221,7 +221,7 @@ function destroy_breakout_room(room_jid, message)
 
     if breakout_room then
         message = message or 'Breakout room removed.';
-        breakout_room:destroy(main_room_jid, message);
+        breakout_room:destroy(main_room and main_room_jid or nil, message);
     end
     if main_room then
         if main_room._data.breakout_rooms then
@@ -418,10 +418,8 @@ function on_main_room_destroyed(event)
         return;
     end
 
-    local message = 'Conference ended.';
-
     for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
-        destroy_breakout_room(breakout_room_jid, message)
+        destroy_breakout_room(breakout_room_jid, event.reason)
     end
 end
 

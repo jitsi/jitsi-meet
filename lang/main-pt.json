@@ -79,7 +79,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": " Deixar a reunião",
             "selectSoundDevice": "Seleccionar dispositivo de som"
         },
         "labels": {
@@ -1076,6 +1075,7 @@
             "invite": "Convidar pessoas",
             "kick": "Remover participante",
             "laugh": "Risos",
+            "leaveConference": "Deixar a reunião",
             "like": "Aprovado",
             "linkToSalesforce": "Link para a Salesforce",
             "lobbyButton": "Ativar/desativar sala de espera",
@@ -1150,6 +1150,7 @@
         "joinBreakoutRoom": "Entrar na sala",
         "laugh": "Risos",
         "leaveBreakoutRoom": "Sair da sala",
+        "leaveConference": "Deixar a reunião",
         "like": "Aprovado",
         "linkToSalesforce": "Link para a Salesforce",
         "lobbyButtonDisable": "Desativar sala de espera",

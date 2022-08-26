@@ -133,6 +133,17 @@ ColorSchemeRegistry.register('Toolbox', {
         backgroundColor: BaseTheme.palette.ui13
     },
 
+    hangupMenuContainer: {
+        marginHorizontal: BaseTheme.spacing[2],
+        marginVertical: BaseTheme.spacing[2]
+    },
+
+    hangupButton: {
+        flex: 1,
+        marginHorizontal: BaseTheme.spacing[2],
+        marginVertical: BaseTheme.spacing[2]
+    },
+
     hangupButtonStyles: {
         iconStyle: whiteToolbarButtonIcon,
         style: {
