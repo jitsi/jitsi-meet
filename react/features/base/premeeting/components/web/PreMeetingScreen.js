@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import { connect } from '../../../../base/redux';
 import DeviceStatus from '../../../../prejoin/components/preview/DeviceStatus';
 import { Toolbox } from '../../../../toolbox/components/web';
-import { getRoomName } from '../../../conference';
+import { getConferenceName } from '../../../conference/functions';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
 import { getToolbarButtons, isToolbarButtonEnabled } from '../../../config/functions.web';
 import { withPixelLineHeight } from '../../../styles/functions.web';
@@ -206,7 +206,7 @@ function mapStateToProps(state, ownProps): Object {
             ? premeetingButtons
             : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
-        _roomName: getRoomName(state)
+        _roomName: getConferenceName(state)
     };
 }
 

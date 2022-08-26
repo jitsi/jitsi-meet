@@ -18,7 +18,7 @@ import { appNavigate } from '../../app/actions.native';
 // @ts-ignore
 import { setAudioOnly } from '../../base/audio-only/actions';
 // @ts-ignore
-import { getRoomName } from '../../base/conference/functions';
+import { getConferenceName } from '../../base/conference/functions';
 // @ts-ignore
 import { connect } from '../../base/connection/actions.native';
 import { IconClose } from '../../base/icons/svg/index';
@@ -64,7 +64,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     );
     const localParticipant = useSelector((state: any) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector(state => isDisplayNameRequired(state));
-    const roomName = useSelector(state => getRoomName(state));
+    const roomName = useSelector(state => getConferenceName(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');

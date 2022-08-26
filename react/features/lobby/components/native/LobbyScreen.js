@@ -3,7 +3,7 @@
 import React from 'react';
 import { Text, View, TextInput } from 'react-native';
 
-import { getRoomName } from '../../../base/conference';
+import { getConferenceName } from '../../../base/conference/functions';
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
@@ -301,7 +301,7 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     return {
         ...abstractMapStateToProps(state, ownProps),
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
-        _roomName: getRoomName(state)
+        _roomName: getConferenceName(state)
     };
 }
 
