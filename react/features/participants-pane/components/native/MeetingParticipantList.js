@@ -19,7 +19,6 @@ import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
-
 type Props = {
 
     /**
@@ -227,14 +226,10 @@ class MeetingParticipantList extends PureComponent<Props> {
                     data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
                     horizontal = { false }
                     keyExtractor = { this._keyExtractor }
-
-                    // For FlatList as a nested list of any other FlatList or SectionList
-                    // we have to pass a unique value to this prop
-                    listKey = { 'Meeting participants' }
                     renderItem = { this._renderParticipant }
-                    scrollEnabled = { true }
+                    scrollEnabled = { false }
                     showsHorizontalScrollIndicator = { false }
-                    windowSize = { 6 } />
+                    windowSize = { 2 } />
             </CollapsibleList>
         );
     }

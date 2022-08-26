@@ -158,17 +158,16 @@ export default {
 
     participantsPaneFooter: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.ui01,
+        backgroundColor: 'transparent',
         bottom: 0,
         flexDirection: 'row',
         height: BaseTheme.spacing[12],
         justifyContent: 'flex-end',
-        left: 0,
         right: 0,
         position: 'absolute',
-        paddingBottom: BaseTheme.spacing[2],
         paddingLeft: BaseTheme.spacing[3],
-        paddingRight: BaseTheme.spacing[3]
+        paddingRight: BaseTheme.spacing[3],
+        width: '40%'
     },
 
     headerCloseIcon: {

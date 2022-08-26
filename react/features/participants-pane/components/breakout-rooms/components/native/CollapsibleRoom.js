@@ -57,14 +57,16 @@ export const CollapsibleRoom = ({ room, searchString }: Props) => {
 
                 // For FlatList as a nested list of any other FlatList or SectionList
                 // we have to pass a unique value to this prop
-                listKey = { 'Breakout rooms' }
+
+                /* eslint-disable-next-line react/jsx-no-bind */
+                listKey = { (item, index) => `key_${index}` }
 
                 /* eslint-disable-next-line react/jsx-no-bind */
                 renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)
                     && <BreakoutRoomParticipantItem
                         item = { participant }
                         room = { room } /> }
-                scrollEnabled = { true }
+                scrollEnabled = { false }
                 showsHorizontalScrollIndicator = { false }
                 windowSize = { 2 } />
         </CollapsibleList>

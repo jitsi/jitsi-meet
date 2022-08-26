@@ -25,17 +25,6 @@ import MeetingParticipantList from './MeetingParticipantList';
 import ParticipantsPaneFooter from './ParticipantsPaneFooter';
 import styles from './styles';
 
-/**
- * Key extractor for the flatlist.
- *
- * @param {Object} item - The flatlist item that we need the key to be
- * generated for.
- * @param {number} index - The index of the element.
- * @returns {string}
- */
-function _keyExtractor(item, index) {
-    return `key_${index}`;
-}
 
 /**
  * Participants pane.
@@ -49,7 +38,7 @@ const ParticipantsPane = () => {
     const _isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
     const currentRoomId = useSelector(getCurrentRoomId);
     const rooms: Array<Object> = Object.values(useSelector(getBreakoutRooms, equals))
-        .filter((room: Object) => room.id !== currentRoomId)
+        .filter((room: Object) => room?.id !== currentRoomId)
         .sort((p1: Object, p2: Object) => (p1?.name || '').localeCompare(p2?.name || ''));
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const showAddBreakoutRoom = useSelector(isAddBreakoutRoomButtonVisible);
@@ -94,18 +83,12 @@ const ParticipantsPane = () => {
             footerComponent = { isLocalModerator && ParticipantsPaneFooter }
             style = { styles.participantsPaneContainer }>
             <FlatList
-
                 /* eslint-disable-next-line react/jsx-no-bind */
                 ListFooterComponent = { renderFooter }
 
                 /* eslint-disable-next-line react/jsx-no-bind */
                 ListHeaderComponent = { renderHeader }
                 data = { null }
-                keyExtractor = { _keyExtractor }
-
-                // For FlatList as a nested list of any other FlatList or SectionList
-                // we have to pass a unique value to this prop
-                listKey = { 'Participants' }
                 renderItem = { null } />
         </JitsiScreen>
     );

@@ -51,15 +51,13 @@ const LobbyParticipantList = () => {
     return (
         <CollapsibleList
             title = { title }>
-            <View>
-                {
-                    participants.map(p => (
-                        <LobbyParticipantItem
-                            key = { p.id }
-                            participant = { p } />)
-                    )
-                }
-            </View>
+            {
+                participants.map(p => (
+                    <LobbyParticipantItem
+                        key = { p.id }
+                        participant = { p } />)
+                )
+            }
         </CollapsibleList>
     );
 };
