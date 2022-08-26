@@ -83,6 +83,18 @@ case "$1" in
             TURN_SECRET="$RET"
         fi
 
+        db_get jitsi-meet/jaas-choice
+        JAAS_INPUT="$RET"
+        # In the case of updating from an older version the configure of -prosody package may happen before the -config
+        # one, so if JAAS_INPUT is empty (the question is not asked), let's ask it now.
+        if [ -z "$JAAS_INPUT" ] ; then
+            db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
+            db_input critical jitsi-meet/jaas-choice || true
+            db_go
+            db_get jitsi-meet/jaas-choice
+            JAAS_INPUT="$RET"
+        fi
+
         # and we're done with debconf
         db_stop
 
@@ -141,7 +153,7 @@ case "$1" in
         # New:
         # Component "focus.jitmeet.example.com" "client_proxy"
         #    target_address = "focus@auth.jitmeet.example.com"
-        if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
+        if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep -q "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
             sed -i "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\"/g" $PROSODY_HOST_CONFIG
             PROSODY_CONFIG_PRESENT="false"
         fi
@@ -164,6 +176,29 @@ case "$1" in
             sed -i "1s/^/unlimited_jids = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\", \"jvb@$JICOFO_AUTH_DOMAIN\" }\n/" $PROSODY_HOST_CONFIG
             sed -i "s/VirtualHost \"$JICOFO_AUTH_DOMAIN\"/VirtualHost \"$JICOFO_AUTH_DOMAIN\"\n    modules_enabled = { \"limits_exception\"; }/g" $PROSODY_HOST_CONFIG
             PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        JAAS_HOST_CONFIG="/etc/prosody/conf.avail/jaas.cfg.lua"
+        if [ "${JAAS_INPUT}" = "true" ] && [ ! -f $JAAS_HOST_CONFIG ]; then
+            sed -i "s/enabled = false -- Jitsi meet components/enabled = true -- Jitsi meet components/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # For those deployments that don't have the config in the jitsi-meet prosody config add the new jaas file
+        if [ ! -f $JAAS_HOST_CONFIG ] && ! grep -q "VirtualHost \"jigasi.meet.jitsi\"" $PROSODY_HOST_CONFIG; then
+            PROSODY_CONFIG_PRESENT="false"
+            cp /usr/share/jitsi-meet-prosody/jaas.cfg.lua $JAAS_HOST_CONFIG
+            sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $JAAS_HOST_CONFIG
+        fi
+
+        if [ "${JAAS_INPUT}" = "true" ]; then
+            JAAS_HOST_CONFIG_ENABLED="/etc/prosody/conf.d/jaas.cfg.lua "
+            if [ ! -f $JAAS_HOST_CONFIG_ENABLED ] && ! grep -q "VirtualHost \"jigasi.meet.jitsi\"" $PROSODY_HOST_CONFIG; then
+                if [ -f $JAAS_HOST_CONFIG ]; then
+                    ln -s $JAAS_HOST_CONFIG $JAAS_HOST_CONFIG_ENABLED
+                    PROSODY_CONFIG_PRESENT="false"
+                fi
+            fi
         fi
 
         # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)

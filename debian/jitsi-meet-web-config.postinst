@@ -68,10 +68,18 @@ case "$1" in
             FORCE_NGINX="false"
         fi
 
+        db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
+        db_input critical jitsi-meet/jaas-choice || true
+        db_go
+        db_get jitsi-meet/jaas-choice
+        JAAS_INPUT="$RET"
+
         UPLOADED_CERT_CHOICE="I want to use my own certificate"
         # if first time config ask for certs, or if we are reconfiguring
         if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
             RET=""
+            db_input critical jitsi-meet/cert-choice || true
+            db_go
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
 
@@ -120,6 +128,22 @@ case "$1" in
                 sed -i "s/conference.jitsi-meet.example.com/conference.<\!--# echo var=\"subdomain\" default=\"\" -->jitsi-meet.example.com/g" $JITSI_MEET_CONFIG
             fi
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
+        fi
+
+        if [ "${JAAS_INPUT}" = "true" ] && ! grep -q "^var enableJaaS = true;$" $JITSI_MEET_CONFIG;  then
+            if grep -q "^var enableJaaS = false;$" $JITSI_MEET_CONFIG; then
+                sed -i "s/^var enableJaaS = false;$/var enableJaaS = true;/g" $JITSI_MEET_CONFIG
+            else
+                # old config, let's add the lines at the end. Adding var enableJaaS to avoid adding it on update again
+                echo "var enableJaaS = true;" >> $JITSI_MEET_CONFIG
+                echo "config.dialInNumbersUrl = 'https://conference-mapper.jitsi.net/v1/access/dids';" >> $JITSI_MEET_CONFIG
+                echo "config.dialInConfCodeUrl = 'https://conference-mapper.jitsi.net/v1/access';" >> $JITSI_MEET_CONFIG
+
+                # Sets roomPasswordNumberOfDigits only if there was not already set
+                if ! cat $JITSI_MEET_CONFIG | grep roomPasswordNumberOfDigits | grep -qv //; then
+                    echo "config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)" >> $JITSI_MEET_CONFIG
+                fi
+            fi
         fi
 
         if [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
@@ -191,27 +215,29 @@ case "$1" in
         echo ""
         echo "----------------"
 
-        echo ""
-        echo ""
-        echo "       ;dOocd;"
-        echo "     .dNMM0dKO."
-        echo "     lNMMMKd0K,"
-        echo "    .xMMMMNxkNc"
-        echo "     dMMMMMkxXc"
-        echo "     cNMMMNl.."
-        echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
-        echo "      ;XMMMO'"
-        echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/#/components"
-        echo "        lNMMM0,                        and follow the guide in the dev console."
-        echo "         lXMMMK:."
-        echo "          ;KMMMNKd.  'oo,"
-        echo "           'xNMMMMXkkkkOKOl'"
-        echo "             :0WMMMMMMNOkk0Kk,"
-        echo "              .cdOWMMMMMWXOkOl"
-        echo "                 .;dKWMMMMMXc."
-        echo "                    .,:cll:'"
-        echo ""
-        echo ""
+        if [ "${JAAS_INPUT}" != "true" ]; then
+            echo ""
+            echo ""
+            echo "       ;dOocd;"
+            echo "     .dNMM0dKO."
+            echo "     lNMMMKd0K,"
+            echo "    .xMMMMNxkNc"
+            echo "     dMMMMMkxXc"
+            echo "     cNMMMNl.."
+            echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
+            echo "      ;XMMMO'"
+            echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
+            echo "        lNMMM0,                        and follow the guide in the dev console."
+            echo "         lXMMMK:."
+            echo "          ;KMMMNKd.  'oo,"
+            echo "           'xNMMMMXkkkkOKOl'"
+            echo "             :0WMMMMMMNOkk0Kk,"
+            echo "              .cdOWMMMMMWXOkOl"
+            echo "                 .;dKWMMMMMXc."
+            echo "                    .,:cll:'"
+            echo ""
+            echo ""
+        fi
 
         # and we're done with debconf
         db_stop
