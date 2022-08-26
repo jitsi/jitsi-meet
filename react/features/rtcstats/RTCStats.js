@@ -41,7 +41,7 @@ class RTCStats {
      * @param {string} options.useLegacy - Switch to legacy chrome webrtc statistics. Parameter will only have
      * an effect on chrome based applications.
      * @param {number} options.pollInterval - The getstats poll interval in ms.
-     * @param {boolean} options.sendSdp - Determines if the client sends SDP to the rtcstats server
+     * @param {boolean} options.sendSdp - Determines if the client sends SDP to the rtcstats server.
      * @returns {void}
      */
     init(options) {
