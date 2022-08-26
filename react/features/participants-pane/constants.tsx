@@ -28,7 +28,7 @@ export type MediaState = 'DominantSpeaker' | 'Muted' | 'ForceMuted' | 'Unmuted' 
 /**
  * Enum of possible participant media states.
  */
-export const MEDIA_STATE = {
+export const MEDIA_STATE: { [key: string]: MediaState } = {
     DOMINANT_SPEAKER: 'DominantSpeaker',
     MUTED: 'Muted',
     FORCE_MUTED: 'ForceMuted',
