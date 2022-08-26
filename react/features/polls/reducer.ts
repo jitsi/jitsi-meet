@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CHANGE_VOTE,
@@ -11,7 +9,7 @@ import {
     RETRACT_VOTE,
     RESET_NB_UNREAD_POLLS
 } from './actionTypes';
-import type { Answer } from './types';
+import { Answer, Poll } from './types';
 
 const INITIAL_STATE = {
     polls: {},
@@ -20,7 +18,14 @@ const INITIAL_STATE = {
     nbUnreadPolls: 0
 };
 
-ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
+export interface IPollsState {
+    nbUnreadPolls: number;
+    polls: {
+        [pollId: string]: Poll
+    };
+}
+
+ReducerRegistry.register('features/polls', (state: IPollsState = INITIAL_STATE, action) => {
     switch (action.type) {
 
     case CHANGE_VOTE: {
@@ -66,7 +71,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
     // The answer is added  to an existing poll
     case RECEIVE_ANSWER: {
 
-        const { pollId, answer }: { pollId: string; answer: Answer } = action;
+        const { pollId, answer }: { answer: Answer, pollId: string; } = action;
 
         // if the poll doesn't exist
         if (!(pollId in state.polls)) {

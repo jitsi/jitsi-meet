@@ -1,8 +1,13 @@
-// @flow
-
-import { assign, ReducerRegistry } from '../../base/redux';
+import ReducerRegistry from '../../base/redux/ReducerRegistry';
+import { assign } from '../../base/redux/functions';
 
 import { SET_CONFERENCE_TIMESTAMP, SET_SESSION_ID, SET_WATCH_REACHABLE } from './actionTypes';
+
+export interface IMobileWatchOSState {
+    conferenceTimestamp?: number;
+    sessionID: number;
+    watchReachable?: boolean;
+}
 
 const INITIAL_STATE = {
     sessionID: new Date().getTime()
@@ -11,7 +16,7 @@ const INITIAL_STATE = {
 /**
  * Reduces the Redux actions of the feature features/mobile/watchos.
  */
-ReducerRegistry.register('features/mobile/watchos', (state = INITIAL_STATE, action) => {
+ReducerRegistry.register('features/mobile/watchos', (state: IMobileWatchOSState = INITIAL_STATE, action) => {
     switch (action.type) {
     case SET_CONFERENCE_TIMESTAMP: {
         return assign(state, {

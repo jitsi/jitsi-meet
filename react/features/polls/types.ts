@@ -34,7 +34,6 @@ export type Poll = {
      */
     changingVote: boolean,
 
-
     /**
      * The last sent votes for this poll, or null if voting was skipped
      * Note: This is reset when voting/skipping, not when clicking "Change vote".

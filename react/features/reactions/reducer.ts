@@ -9,7 +9,7 @@ import {
 } from './actionTypes';
 import { ReactionEmojiProps } from './constants';
 
-interface IReactionsState {
+export interface IReactionsState {
 
     /**
      * An array that contains the reactions buffer to be sent.

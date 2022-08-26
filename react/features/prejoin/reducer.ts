@@ -1,4 +1,5 @@
-import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
+import PersistenceRegistry from '../base/redux/PersistenceRegistry';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     PREJOIN_JOINING_IN_PROGRESS,
@@ -33,16 +34,31 @@ const DEFAULT_STATE = {
     showJoinByPhoneDialog: false
 };
 
-/**
- * The name of the redux store/state property which is the root of the redux
- * state of the feature {@code prejoin}.
- */
-const STORE_NAME = 'features/prejoin';
+export interface IPrejoinState {
+    country: string;
+    deviceStatusText: string;
+    deviceStatusType: string;
+    dialOutCountry: {
+        code: string;
+        dialCode: string;
+        name: string;
+    };
+    dialOutNumber: string;
+    dialOutStatus: string;
+    isDisplayNameRequired: boolean;
+    joiningInProgress?: boolean;
+    name: string;
+    precallTestResults?: Object;
+    rawError: string;
+    showJoinByPhoneDialog: boolean;
+    showPrejoin: boolean;
+    skipPrejoinOnReload: boolean;
+}
 
 /**
  * Sets up the persistence of the feature {@code prejoin}.
  */
-PersistenceRegistry.register(STORE_NAME, {
+PersistenceRegistry.register('features/prejoin', {
     skipPrejoinOnReload: true
 }, DEFAULT_STATE);
 
@@ -50,7 +66,7 @@ PersistenceRegistry.register(STORE_NAME, {
  * Listen for actions that mutate the prejoin state.
  */
 ReducerRegistry.register(
-    'features/prejoin', (state = DEFAULT_STATE, action) => {
+    'features/prejoin', (state: IPrejoinState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case PREJOIN_JOINING_IN_PROGRESS:
             return {
@@ -142,7 +158,11 @@ ReducerRegistry.register(
  * @param {Object} errors - The errors got while creating local tracks.
  * @returns {Object}
  */
-function getStatusFromErrors(errors) {
+function getStatusFromErrors(errors: {
+    audioAndVideoError?: {message: string},
+    audioOnlyError?: { message: string },
+    videoOnlyError?: Object }
+) {
     const { audioOnlyError, videoOnlyError, audioAndVideoError } = errors;
 
     if (audioAndVideoError) {

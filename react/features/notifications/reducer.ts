@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CLEAR_NOTIFICATIONS,
@@ -20,6 +18,22 @@ const DEFAULT_STATE = {
     notifications: []
 };
 
+interface INotification {
+    component: Object;
+    props: {
+        appearance?: string;
+        descriptionKey?: string;
+        titleKey: string;
+    };
+    timeout: number;
+    uid: string;
+}
+
+export interface INotificationsState {
+    enabled: boolean;
+    notifications: INotification[];
+}
+
 /**
  * Reduces redux actions which affect the display of notifications.
  *
@@ -29,7 +43,7 @@ const DEFAULT_STATE = {
  * specified {@code action}.
  */
 ReducerRegistry.register('features/notifications',
-    (state = DEFAULT_STATE, action) => {
+    (state: INotificationsState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case CLEAR_NOTIFICATIONS:
             return {
@@ -75,9 +89,9 @@ ReducerRegistry.register('features/notifications',
  * @returns {Object[]} A new array with an updated order of the notification
  * queue.
  */
-function _insertNotificationByPriority(notifications, notification) {
+function _insertNotificationByPriority(notifications: INotification[], notification: INotification) {
     const newNotificationPriority
-        = NOTIFICATION_TYPE_PRIORITIES[notification.props.appearance] || 0;
+        = NOTIFICATION_TYPE_PRIORITIES[notification.props.appearance ?? ''] || 0;
 
     // Default to putting the new notification at the end of the queue.
     let insertAtLocation = notifications.length;
@@ -88,7 +102,7 @@ function _insertNotificationByPriority(notifications, notification) {
     for (let i = 1; i < notifications.length; i++) {
         const queuedNotification = notifications[i];
         const queuedNotificationPriority
-            = NOTIFICATION_TYPE_PRIORITIES[queuedNotification.props.appearance]
+            = NOTIFICATION_TYPE_PRIORITIES[queuedNotification.props.appearance ?? '']
                 || 0;
 
         if (queuedNotificationPriority < newNotificationPriority) {
