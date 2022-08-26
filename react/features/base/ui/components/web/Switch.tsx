@@ -3,28 +3,14 @@ import clsx from 'clsx';
 import React, { useCallback } from 'react';
 
 import { isMobileBrowser } from '../../../environment/utils';
+import { SwitchProps } from '../types';
 
-interface SwitchProps {
-
-    /**
-     * Whether or not the toggle is on.
-     */
-    checked: boolean;
-
-    /**
-     * Whether or not the toggle is disabled.
-     */
-    disabled?: boolean;
+interface Props extends SwitchProps {
 
     /**
      * Id of the toggle.
      */
     id?: string;
-
-    /**
-     * Toggle change callback.
-     */
-    onChange: (on?: boolean) => void;
 }
 
 const useStyles = makeStyles((theme: any) => {
@@ -92,7 +78,7 @@ const useStyles = makeStyles((theme: any) => {
     };
 });
 
-const Switch = ({ id, checked, disabled, onChange }: SwitchProps) => {
+const Switch = ({ id, checked, disabled, onChange }: Props) => {
     const styles = useStyles();
     const isMobile = isMobileBrowser();
 

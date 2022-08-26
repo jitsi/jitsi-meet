@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
@@ -14,8 +12,10 @@ import AbstractStartRecordingDialog, {
     type Props,
     mapStateToProps
 } from '../AbstractStartRecordingDialog';
-import StartRecordingDialogContent from '../StartRecordingDialogContent';
 import styles from '../styles.native';
+
+import StartRecordingDialogContent from './StartRecordingDialogContent';
+
 
 /**
  * React Component for getting confirmation to start a file recording session in

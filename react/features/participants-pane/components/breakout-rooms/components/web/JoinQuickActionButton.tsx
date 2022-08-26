@@ -45,7 +45,7 @@ const JoinActionButton = ({ room }: Props) => {
         <Button
             accessibilityLabel = { t('breakoutRooms.actions.join') }
             className = { styles.button }
-            label = { t('breakoutRooms.actions.join') }
+            labelKey = { 'breakoutRooms.actions.join' }
             onClick = { onJoinRoom }
             size = 'small'
             testId = { `join-room-${room.id}` } />

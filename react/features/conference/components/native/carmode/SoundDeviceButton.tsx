@@ -28,10 +28,9 @@ const SelectSoundDevice = () : JSX.Element => {
     return (
         <Button
             accessibilityLabel = 'carmode.actions.selectSoundDevice'
-            // @ts-ignore
             icon = { AudioIcon }
-            label = 'carmode.actions.selectSoundDevice'
-            onPress = { onSelect }
+            labelKey = 'carmode.actions.selectSoundDevice'
+            onClick = { onSelect }
             style = { styles.soundDeviceButton }
             type = { BUTTON_TYPES.SECONDARY } />
     );

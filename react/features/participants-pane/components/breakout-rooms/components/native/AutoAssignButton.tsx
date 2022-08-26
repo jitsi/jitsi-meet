@@ -25,9 +25,9 @@ const AutoAssignButton = () => {
     return (
         <Button
             accessibilityLabel = 'breakoutRooms.actions.autoAssign'
-            label = 'breakoutRooms.actions.autoAssign'
+            labelKey = 'breakoutRooms.actions.autoAssign'
             labelStyle = { styles.autoAssignLabel }
-            onPress = { onAutoAssign }
+            onClick = { onAutoAssign }
             style = { styles.autoAssignButton }
             type = { BUTTON_TYPES.TERTIARY } />
     );

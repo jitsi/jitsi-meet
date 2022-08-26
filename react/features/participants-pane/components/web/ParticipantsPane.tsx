@@ -262,7 +262,7 @@ class ParticipantsPane extends Component<Props, State> {
                             {_showMuteAllButton && (
                                 <Button
                                     accessibilityLabel = { t('participantsPane.actions.muteAll') }
-                                    label = { t('participantsPane.actions.muteAll') }
+                                    labelKey = { 'participantsPane.actions.muteAll' }
                                     onClick = { this._onMuteAll }
                                     type = { BUTTON_TYPES.SECONDARY } />
                             )}

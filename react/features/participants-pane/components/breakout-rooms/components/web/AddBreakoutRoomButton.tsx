@@ -20,7 +20,7 @@ export const AddBreakoutRoomButton = () => {
         <Button
             accessibilityLabel = { t('breakoutRooms.actions.add') }
             fullWidth = { true }
-            label = { t('breakoutRooms.actions.add') }
+            labelKey = { 'breakoutRooms.actions.add' }
             onClick = { onAdd }
             type = { BUTTON_TYPES.SECONDARY } />
     );
