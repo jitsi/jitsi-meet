@@ -193,7 +193,7 @@ const ListItem = ({
 }: Props) => {
     const styles = useStyles();
     const _isMobile = isMobileBrowser();
-    let timeoutHandler: ReturnType<typeof setTimeout>;
+    let timeoutHandler: number;
 
     /**
      * Set calling long press handler after x milliseconds.
@@ -204,7 +204,7 @@ const ListItem = ({
     function _onTouchStart(e: React.TouchEvent) {
         const target = e.touches[0].target;
 
-        timeoutHandler = setTimeout(() => onLongPress(target), 600);
+        timeoutHandler = window.setTimeout(() => onLongPress(target), 600);
     }
 
     /**

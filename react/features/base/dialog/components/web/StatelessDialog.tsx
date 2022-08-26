@@ -1,7 +1,6 @@
 /* eslint-disable lines-around-comment */
 import Modal, { ModalFooter } from '@atlaskit/modal-dialog';
 import { withStyles } from '@material-ui/core/styles';
-import _ from 'lodash';
 import React, { Component, ReactElement } from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -31,7 +30,7 @@ const OK_BUTTON_ID = 'modal-dialog-ok-button';
  *
  * @static
  */
-type Props = DialogProps & WithTranslation & {
+interface Props extends DialogProps, WithTranslation {
 
     /**
      * An object containing the CSS classes.
@@ -100,7 +99,7 @@ type Props = DialogProps & WithTranslation & {
      * - string value for percentage.
      */
     width: string
-};
+}
 
 /**
  * Creates the styles for the component.
@@ -161,7 +160,7 @@ class StatelessDialog extends Component<Props> {
             customHeader,
             children,
             hideCloseIconButton,
-            t /* The following fixes a flow error: */ = _.identity,
+            t,
             titleString,
             titleKey,
             width
@@ -290,7 +289,7 @@ class StatelessDialog extends Component<Props> {
         }
 
         const {
-            t /* The following fixes a flow error: */ = _.identity,
+            t,
             onDecline
         } = this.props;
 
@@ -313,13 +312,14 @@ class StatelessDialog extends Component<Props> {
      * @returns {ReactElement|null} The OK button if enabled.
      */
     _renderOKButton() {
-        if (this.props.submitDisabled) {
+        const {
+            submitDisabled,
+            t
+        } = this.props;
+
+        if (submitDisabled) {
             return null;
         }
-
-        const {
-            t = _.identity
-        } = this.props;
 
         return (
             <Button
