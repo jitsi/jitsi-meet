@@ -502,7 +502,6 @@ export default {
         let requestedVideo = false;
 
         if (!config.disableInitialGUM
-                && !options.startWithVideoMuted
                 && !options.startAudioOnly
                 && !options.startScreenSharing) {
             initialDevices.push(MEDIA_TYPE.VIDEO);

@@ -61,8 +61,8 @@ export default class AlwaysOnTop extends Component<*, State> {
         this._avatarChangedListener = this._avatarChangedListener.bind(this);
         this._displayNameChangedListener
             = this._displayNameChangedListener.bind(this);
-        this._largeVideoChangedListener
-            = this._largeVideoChangedListener.bind(this);
+        this._videoChangedListener
+            = this._videoChangedListener.bind(this);
         this._mouseMove = this._mouseMove.bind(this);
         this._onMouseOut = this._onMouseOut.bind(this);
         this._onMouseOver = this._onMouseOver.bind(this);
@@ -118,19 +118,19 @@ export default class AlwaysOnTop extends Component<*, State> {
             TOOLBAR_TIMEOUT);
     }
 
-    _largeVideoChangedListener: () => void;
+    _videoChangedListener: () => void;
 
     /**
      * Handles large video changed api events.
      *
      * @returns {void}
      */
-    _largeVideoChangedListener() {
+    _videoChangedListener() {
         const userID = api._getOnStageParticipant();
         const avatarURL = api.getAvatarURL(userID);
         const displayName = api.getDisplayName(userID);
         const formattedDisplayName = api._getFormattedDisplayName(userID);
-        const isVideoDisplayed = Boolean(api._getLargeVideo());
+        const isVideoDisplayed = Boolean(api._getPrejoinVideo?.() || api._getLargeVideo());
 
         this.setState({
             avatarURL,
@@ -185,8 +185,7 @@ export default class AlwaysOnTop extends Component<*, State> {
             customAvatarBackgrounds,
             displayName,
             formattedDisplayName,
-            isVideoDisplayed,
-            userID
+            isVideoDisplayed
         } = this.state;
 
         if (isVideoDisplayed) {
@@ -197,10 +196,10 @@ export default class AlwaysOnTop extends Component<*, State> {
             <div id = 'videoNotAvailableScreen'>
                 <div id = 'avatarContainer'>
                     <StatelessAvatar
-                        color = { getAvatarColor(userID, customAvatarBackgrounds) }
+                        color = { getAvatarColor(displayName, customAvatarBackgrounds) }
                         id = 'avatar'
                         initials = { getInitials(displayName) }
-                        url = { avatarURL } />)
+                        url = { displayName ? null : avatarURL } />)
                 </div>
                 <div
                     className = 'displayname'
@@ -220,9 +219,11 @@ export default class AlwaysOnTop extends Component<*, State> {
     componentDidMount() {
         api.on('avatarChanged', this._avatarChangedListener);
         api.on('displayNameChange', this._displayNameChangedListener);
-        api.on('largeVideoChanged', this._largeVideoChangedListener);
+        api.on('largeVideoChanged', this._videoChangedListener);
+        api.on('prejoinVideoChanged', this._videoChangedListener);
+        api.on('videoConferenceJoined', this._videoChangedListener);
 
-        this._largeVideoChangedListener();
+        this._videoChangedListener();
 
         window.addEventListener('mousemove', this._mouseMove);
 
@@ -260,7 +261,13 @@ export default class AlwaysOnTop extends Component<*, State> {
             this._displayNameChangedListener);
         api.removeListener(
             'largeVideoChanged',
-            this._largeVideoChangedListener);
+            this._videoChangedListener);
+        api.removeListener(
+            'prejoinVideoChanged',
+            this._videoChangedListener);
+        api.removeListener(
+            'videoConferenceJoined',
+            this._videoChangedListener);
 
         window.removeEventListener('mousemove', this._mouseMove);
     }

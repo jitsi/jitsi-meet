@@ -44,6 +44,7 @@ import {
     overwriteParticipantsNames
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
+import { getDisplayName } from '../../react/features/base/settings/functions.web';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
 import {
     autoAssignToBreakoutRooms,
@@ -63,6 +64,7 @@ import { openChat } from '../../react/features/chat/actions.web';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
+import { appendSuffix } from '../../react/features/display-name';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
 import { setVolume } from '../../react/features/filmstrip';
@@ -1448,6 +1450,40 @@ class API {
         this._sendEvent({
             name: 'on-stage-participant-changed',
             id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the prejoin video
+     * visibility had changed.
+     *
+     * @param {boolean} isVisible - Whether the prejoin video is visible.
+     * @returns {void}
+     */
+    notifyPrejoinVideoVisibilityChanged(isVisible: boolean) {
+        this._sendEvent({
+            name: 'on-prejoin-video-changed',
+            isVisible
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the prejoin
+     * screen was loaded.
+     *
+     * @returns {void}
+     */
+    notifyPrejoinLoaded() {
+        const state = APP.store.getState();
+        const localParticipant = getLocalParticipant(state);
+        const { defaultLocalDisplayName } = state['features/base/config'];
+        const displayName = getDisplayName(state);
+
+        this._sendEvent({
+            name: 'prejoin-screen-loaded',
+            id: localParticipant.id, // the id is 'local' when in prejoin.
+            displayName,
+            formattedDisplayName: appendSuffix(displayName, defaultLocalDisplayName)
         });
     }
 
