@@ -178,32 +178,6 @@ case "$1" in
             ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
         fi
 
-        PRTRUNK_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-trunk' 2>/dev/null | awk '{print $3}' || true)"
-        PR10_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.10' 2>/dev/null | awk '{print $3}' || true)"
-        PR_VER_INSTALLED=$(dpkg-query -f='${Version}\n' --show prosody  2>/dev/null || true)
-        if [ "$PRTRUNK_INSTALL_CHECK" = "installed" ] \
-            || [ "$PRTRUNK_INSTALL_CHECK" = "unpacked" ] ; then
-            if [ -f $PROSODY_HOST_CONFIG ]; then
-                sed -i 's/storage = \"memory\"/storage = \"null\"/g' $PROSODY_HOST_CONFIG
-
-                # trigger a restart
-                PROSODY_CONFIG_PRESENT="false"
-            fi
-        fi
-        if [ "$PR10_INSTALL_CHECK" = "installed" ] \
-            || [ "$PR10_INSTALL_CHECK" = "unpacked" ] \
-            || dpkg --compare-versions "$PR_VER_INSTALLED" gt "0.10" ; then
-
-            # if the version is 0.10.X (>0.10 and <0.11)
-            if [ -f $PROSODY_HOST_CONFIG ] \
-                && dpkg --compare-versions "$PR_VER_INSTALLED" lt "0.11" ; then
-                sed -i 's/storage = \"memory\"/storage = \"none\"/g' $PROSODY_HOST_CONFIG
-
-                # trigger a restart
-                PROSODY_CONFIG_PRESENT="false"
-            fi
-        fi
-
         CERT_ADDED_TO_TRUST="false"
 
         if [ ! -f /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt ]; then
