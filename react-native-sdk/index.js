@@ -8,12 +8,10 @@ import { App } from './react/features/app/components/App.native';
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider';
 
 import React, { useState, useEffect } from 'react';
-import { View, Button, TextInput } from 'react-native';
 
 
 /**
- * @param {*} props
- * @returns nothing
+ * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
 export default function JitsiMeetView(props) {
     const [ appProps, setAppProps ] = useState({});
