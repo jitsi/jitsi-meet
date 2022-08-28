@@ -4,10 +4,13 @@ import 'react-native-gesture-handler';
 // sees them.
 import 'react-native-get-random-values';
 import './react/features/mobile/polyfills';
-import { App } from './react/features/app/components/App.native';
-import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider';
-
+// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
+
+// eslint-disable-next-line no-unused-vars
+import { App } from './react/features/app/components/App.native';
+// eslint-disable-next-line no-unused-vars
+import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider';
 
 
 /**
