@@ -88,7 +88,7 @@
     "@react-navigation/elements": "*",
     "@react-navigation/material-top-tabs": "*",
     "@react-navigation/native": "*",
-    "@react-navigation/native-stack": "*",
+    "@react-navigation/stack": "*",
     "react-native": "*",
     "react": "*",
     "react-dom": "*",
