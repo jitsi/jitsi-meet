@@ -29,8 +29,8 @@
 #import <React/RCTLog.h>
 #import <WebRTC/WebRTC.h>
 
-#import <JitsiMeetSDK/JitsiMeetSDK-Swift.h>
-#import "JitsiAudioSession.h"
+#import "../JitsiAudioSession.h"
+#import "../JitsiMeetSDK-Swift.h"
 
 
 // The events emitted/supported by RNCallKit:

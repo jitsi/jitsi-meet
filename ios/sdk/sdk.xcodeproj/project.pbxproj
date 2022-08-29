@@ -49,6 +49,8 @@
 		DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = DE438CD82350934700DD541D /* JavaScriptSandbox.m */; };
 		DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AAC92317FFCD00290BEC /* LogUtils.h */; };
 		DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */; };
+		DE66914428BCC1C7007C4533 /* JitsiMeetSDK-Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = DE66914328BCC1C7007C4533 /* JitsiMeetSDK-Swift.h */; };
+		DE66914528BCC1C7007C4533 /* JitsiMeetSDK-Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = DE66914328BCC1C7007C4533 /* JitsiMeetSDK-Swift.h */; };
 		DE762DB422AFDE76000DEBD6 /* JitsiMeetUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE762DB622AFDE8D000DEBD6 /* JitsiMeetUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = DE762DB522AFDE8D000DEBD6 /* JitsiMeetUserInfo.m */; };
 		DE81A2D42316AC4D00AE1940 /* JitsiMeetLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DE81A2D22316AC4D00AE1940 /* JitsiMeetLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -170,6 +172,7 @@
 		DE438CD82350934700DD541D /* JavaScriptSandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JavaScriptSandbox.m; sourceTree = "<group>"; };
 		DE65AAC92317FFCD00290BEC /* LogUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
 		DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetBaseLogHandler+Private.h"; sourceTree = "<group>"; };
+		DE66914328BCC1C7007C4533 /* JitsiMeetSDK-Swift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetSDK-Swift.h"; sourceTree = "<group>"; };
 		DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetUserInfo.h; sourceTree = "<group>"; };
 		DE762DB522AFDE8D000DEBD6 /* JitsiMeetUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetUserInfo.m; sourceTree = "<group>"; };
 		DE762DB722AFE166000DEBD6 /* JitsiMeetUserInfo+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetUserInfo+Private.h"; sourceTree = "<group>"; };
@@ -303,6 +306,7 @@
 				4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */,
 				4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */,
 				DE9A0170289A9A9A00E41CBB /* Lite-Info.plist */,
+				DE66914328BCC1C7007C4533 /* JitsiMeetSDK-Swift.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -375,6 +379,7 @@
 				DEA9F284258A5D9900D4CD74 /* JitsiMeetSDK.h in Headers */,
 				4E51B76425E5345E0038575A /* ScheenshareEventEmiter.h in Headers */,
 				DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */,
+				DE66914428BCC1C7007C4533 /* JitsiMeetSDK-Swift.h in Headers */,
 				4EBA6E652860B1E800B31882 /* JitsiMeetRenderingView.h in Headers */,
 				0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */,
 				4ED4FFF32721B9B90074E620 /* JitsiAudioSession.h in Headers */,
@@ -400,6 +405,7 @@
 				DE9A0134289A9A9A00E41CBB /* JitsiMeetSDK.h in Headers */,
 				DE9A0135289A9A9A00E41CBB /* ScheenshareEventEmiter.h in Headers */,
 				DE9A0136289A9A9A00E41CBB /* JitsiMeetBaseLogHandler+Private.h in Headers */,
+				DE66914528BCC1C7007C4533 /* JitsiMeetSDK-Swift.h in Headers */,
 				DE9A0137289A9A9A00E41CBB /* JitsiMeetRenderingView.h in Headers */,
 				DE9A0138289A9A9A00E41CBB /* JitsiMeetViewDelegate.h in Headers */,
 				DE9A0139289A9A9A00E41CBB /* JitsiAudioSession.h in Headers */,
@@ -885,7 +891,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -914,7 +921,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -947,7 +955,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -981,7 +990,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
