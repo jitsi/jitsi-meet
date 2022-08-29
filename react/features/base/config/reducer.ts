@@ -273,6 +273,12 @@ function _translateInterfaceConfig(oldValue: IConfig) {
         newValue.defaultRemoteDisplayName = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
     }
 
+    if (oldValue.defaultLogoUrl === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DEFAULT_LOGO_URL')) {
+        newValue.defaultLogoUrl = interfaceConfig.DEFAULT_LOGO_URL;
+    }
+
     return newValue;
 }
 
