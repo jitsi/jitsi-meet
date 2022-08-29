@@ -387,7 +387,7 @@ class Thumbnail extends PureComponent<Props> {
                     : <>
                         <ParticipantView
                             avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
-                            disableVideo = { (isScreenShare && !_isVirtualScreenshare) || _isFakeParticipant }
+                            disableVideo = { isScreenShare || _isFakeParticipant }
                             participantId = { participantId }
                             zOrder = { 1 } />
                         {
