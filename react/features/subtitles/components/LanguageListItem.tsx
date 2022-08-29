@@ -5,13 +5,14 @@ import React, { useCallback } from 'react';
 // @ts-ignore
 // eslint-disable-next-line import/order
 import { translate } from '../../base/i18n';
+import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import { Icon } from '../../base/icons/components';
 import { IconCheck } from '../../base/icons/svg/index';
 import { Theme } from '../../base/ui/types';
 
-interface ILanguageListItemProps {
+interface ILanguageListItemProps extends WithTranslation {
 
     /**
      * Whether or not the button should be full width.
@@ -27,8 +28,6 @@ interface ILanguageListItemProps {
      * The id of the button.
      */
     selected?: boolean;
-
-    t: Function,
 }
 
 const useStyles = makeStyles((theme: Theme) => {
