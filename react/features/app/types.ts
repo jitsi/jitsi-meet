@@ -22,7 +22,38 @@ import { ISoundsState } from '../base/sounds/reducer';
 import { ITestingState } from '../base/testing/reducer';
 import { INoSrcDataState, ITracksState } from '../base/tracks/reducer';
 import { IUserInteractionState } from '../base/user-interaction/reducer';
+import { IBreakoutRoomsState } from '../breakout-rooms/reducer';
+import { ICalendarSyncState } from '../calendar-sync/reducer';
+import { IChatState } from '../chat/reducer';
+import { IDeepLinkingState } from '../deep-linking/reducer';
+import { IDropboxState } from '../dropbox/reducer';
+import { IDynamicBrandingState } from '../dynamic-branding/reducer';
+import { IE2EEState } from '../e2ee/reducer';
+import { IEtherpadState } from '../etherpad/reducer';
+import { IFaceLandmarksState } from '../face-landmarks/reducer';
+import { IFeedbackState } from '../feedback/reducer';
+import { IFilmstripState } from '../filmstrip/reducer';
+import { IFollowMeState } from '../follow-me/reducer';
+import { IGifsState } from '../gifs/reducer';
+import { IGoogleApiState } from '../google-api/reducer';
+import { IInviteState } from '../invite/reducer';
+import { IJaaSState } from '../jaas/reducer';
+import { ILargeVideoState } from '../large-video/reducer';
+import { ILobbyState } from '../lobby/reducer';
+import { IMobileAudioModeState } from '../mobile/audio-mode/reducer';
+import { IBackgroundState } from '../mobile/background/reducer';
+import { IMobileExternalApiState } from '../mobile/external-api/reducer';
+import { IFullScreenState } from '../mobile/full-screen/reducer';
+import { IMobileWatchOSState } from '../mobile/watchos/reducer';
+import { INoAudioSignalState } from '../no-audio-signal/reducer';
+import { INoiseDetectionState } from '../noise-detection/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
+import { INotificationsState } from '../notifications/reducer';
+import { IOverlayState } from '../overlay/reducer';
+import { IPollsState } from '../polls/reducer';
+import { IPowerMonitorState } from '../power-monitor/reducer';
+import { IPrejoinState } from '../prejoin/reducer';
+import { IReactionsState } from '../reactions/reducer';
 
 export interface IStore {
     dispatch: Function,
@@ -33,6 +64,7 @@ export interface IState {
     'features/analytics': IAnalyticsState,
     'features/authentication': IAuthenticationState,
     'features/av-moderation': IAVModerationState,
+    'features/background': IBackgroundState,
     'features/base/app': IAppState,
     'features/base/audio-only': IAudioOnlyState,
     'features/base/conference': IConferenceState,
@@ -55,6 +87,37 @@ export interface IState {
     'features/base/sounds': ISoundsState,
     'features/base/tracks': ITracksState,
     'features/base/user-interaction': IUserInteractionState,
+    'features/breakout-rooms': IBreakoutRoomsState,
+    'features/calendar-sync': ICalendarSyncState,
+    'features/chat': IChatState,
+    'features/deep-linking': IDeepLinkingState,
+    'features/dropbox': IDropboxState,
+    'features/dynamic-branding': IDynamicBrandingState,
+    'features/e2ee': IE2EEState,
+    'features/etherpad': IEtherpadState,
+    'features/face-landmarks': IFaceLandmarksState,
+    'features/feedback': IFeedbackState,
+    'features/filmstrip': IFilmstripState,
+    'features/follow-me': IFollowMeState,
+    'features/full-screen': IFullScreenState,
+    'features/gifs': IGifsState,
+    'features/google-api': IGoogleApiState,
+    'features/invite': IInviteState,
+    'features/jaas': IJaaSState,
+    'features/large-video': ILargeVideoState,
+    'features/lobby': ILobbyState,
+    'features/mobile/audio-mode': IMobileAudioModeState,
+    'features/mobile/external-api': IMobileExternalApiState,
+    'features/mobile/watchos': IMobileWatchOSState,
+    'features/no-audio-signal': INoAudioSignalState,
+    'features/noise-detection': INoiseDetectionState,
     'features/noise-suppression': INoiseSuppressionState,
+    'features/notifications': INotificationsState,
+    'features/overlay': IOverlayState,
+    'features/participants-pane': IParticipantsState,
+    'features/polls': IPollsState,
+    'features/power-monitor': IPowerMonitorState,
+    'features/prejoin': IPrejoinState,
+    'features/reactions': IReactionsState,
     'features/testing': ITestingState
 }

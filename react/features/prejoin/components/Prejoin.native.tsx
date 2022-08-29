@@ -3,11 +3,12 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import {
     BackHandler,
-    View,
-    TextInput,
     Platform,
     StyleProp,
+    Text,
+    TextInput,
     TextStyle,
+    View,
     ViewStyle
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,12 +18,13 @@ import { appNavigate } from '../../app/actions.native';
 // @ts-ignore
 import { setAudioOnly } from '../../base/audio-only/actions';
 // @ts-ignore
+import { getConferenceName } from '../../base/conference/functions';
+// @ts-ignore
 import { connect } from '../../base/connection/actions.native';
 import { IconClose } from '../../base/icons/svg/index';
 // @ts-ignore
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
-// @ts-ignore
-import { getLocalParticipant } from '../../base/participants';
+import { getLocalParticipant } from '../../base/participants/functions';
 // @ts-ignore
 import { getFieldValue } from '../../base/react';
 // @ts-ignore
@@ -60,8 +62,9 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const aspectRatio = useSelector(
         (state: any) => state['features/base/responsive-ui']?.aspectRatio
     );
-    const localParticipant = useSelector(state => getLocalParticipant(state));
+    const localParticipant = useSelector((state: any) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector(state => isDisplayNameRequired(state));
+    const roomName = useSelector(state => getConferenceName(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -150,6 +153,14 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
             </View>
             <View style = { contentContainerStyles }>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
+                    <Text style = { styles.preJoinTitle as StyleProp<TextStyle> }>
+                        { t('prejoin.joinMeeting') }
+                    </Text>
+                    <Text
+                        numberOfLines = { 1 }
+                        style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                        { roomName }
+                    </Text>
                     <TextInput
                         onChangeText = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
@@ -159,14 +170,14 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
                     <Button
                         accessibilityLabel = 'prejoin.joinMeeting'
                         disabled = { joinButtonDisabled }
-                        label = 'prejoin.joinMeeting'
-                        onPress = { onJoin }
+                        labelKey = 'prejoin.joinMeeting'
+                        onClick = { onJoin }
                         style = { styles.prejoinButton }
                         type = { PRIMARY } />
                     <Button
                         accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
-                        label = 'prejoin.joinMeetingInLowBandwidthMode'
-                        onPress = { onJoinLowBandwidth }
+                        labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
+                        onClick = { onJoinLowBandwidth }
                         style = { styles.prejoinButton }
                         type = { SECONDARY } />
                 </View>

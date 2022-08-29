@@ -41,11 +41,12 @@ class RTCStats {
      * @param {string} options.useLegacy - Switch to legacy chrome webrtc statistics. Parameter will only have
      * an effect on chrome based applications.
      * @param {number} options.pollInterval - The getstats poll interval in ms.
+     * @param {boolean} options.sendSdp - Determines if the client sends SDP to the rtcstats server.
      * @returns {void}
      */
     init(options) {
 
-        const { endpoint, useLegacy, pollInterval } = options;
+        const { endpoint, useLegacy, pollInterval, sendSdp } = options;
 
         const traceOptions = {
             endpoint,
@@ -56,7 +57,8 @@ class RTCStats {
         const rtcstatsOptions = {
             connectionFilter,
             pollInterval,
-            useLegacy
+            useLegacy,
+            sendSdp
         };
 
         this.trace = traceInit(traceOptions);
@@ -83,6 +85,16 @@ class RTCStats {
      */
     sendIdentityData(identityData) {
         this.trace && this.trace.identity('identity', null, identityData);
+    }
+
+    /**
+     * Send console logs to rtcstats server.
+     *
+     * @param {Array<string|any>} logEntries - The log entries to send to the rtcstats server.
+     * @returns {void}
+     */
+    sendLogs(logEntries) {
+        this.trace && this.trace.statsEntry('logs', null, logEntries);
     }
 
     /**

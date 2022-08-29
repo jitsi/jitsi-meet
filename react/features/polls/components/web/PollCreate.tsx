@@ -253,7 +253,7 @@ const PollCreate = ({
                     accessibilityLabel = { t('polls.create.addOption') }
                     disabled = { answers.length >= ANSWERS_LIMIT }
                     fullWidth = { true }
-                    label = { t('polls.create.addOption') }
+                    labelKey = { 'polls.create.addOption' }
                     onClick = { () => {
                         addAnswer();
                         requestFocus(answers.length);
@@ -266,7 +266,7 @@ const PollCreate = ({
                 accessibilityLabel = { t('polls.create.cancel') }
                 className = { styles.buttonMargin }
                 fullWidth = { true }
-                label = { t('polls.create.cancel') }
+                labelKey = { 'polls.create.cancel' }
                 onClick = { () => setCreateMode(false) }
                 type = { BUTTON_TYPES.SECONDARY } />
             <Button
@@ -274,7 +274,7 @@ const PollCreate = ({
                 disabled = { isSubmitDisabled }
                 fullWidth = { true }
                 isSubmit = { true }
-                label = { t('polls.create.send') } />
+                labelKey = { 'polls.create.send' } />
         </div>
     </form>);
 

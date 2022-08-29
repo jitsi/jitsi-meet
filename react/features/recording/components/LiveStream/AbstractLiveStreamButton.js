@@ -1,11 +1,9 @@
 // @flow
 
 import { IconLiveStreaming } from '../../../base/icons';
+import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import {
-    getLocalParticipant,
-    isLocalParticipantModerator
-} from '../../../base/participants';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
@@ -134,36 +132,22 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
 
     // A button can be disabled/enabled only if enableFeaturesBasedOnToken
     // is on or if the recording is running.
-    let _disabled;
+    let _disabled = false;
     let _tooltip = '';
 
     if (typeof visible === 'undefined') {
         // If the containing component provides the visible prop, that is one
-        // above all, but if not, the button should be autonomus and decide on
+        // above all, but if not, the button should be autonomous and decide on
         // its own to be visible or not.
         const isModerator = isLocalParticipantModerator(state);
-        const {
-            enableFeaturesBasedOnToken
-        } = state['features/base/config'];
         const liveStreaming = getLiveStreaming(state);
-        const { features = {} } = getLocalParticipant(state);
 
         visible = isModerator && liveStreaming.enabled;
-
-        if (enableFeaturesBasedOnToken) {
-            visible = visible && String(features.livestreaming) === 'true';
-            _disabled = String(features.livestreaming) === 'disabled';
-
-            if (!visible && !_disabled) {
-                _disabled = true;
-                visible = true;
-                _tooltip = 'dialog.liveStreamingDisabledTooltip';
-            }
-        }
+        visible = isJwtFeatureEnabled(state, 'livestreaming', visible);
     }
 
     // disable the button if the recording is running.
-    if (getActiveSession(state, JitsiRecordingConstants.mode.FILE)) {
+    if (visible && getActiveSession(state, JitsiRecordingConstants.mode.FILE)) {
         _disabled = true;
         _tooltip = 'dialog.liveStreamingDisabledBecauseOfActiveRecordingTooltip';
     }
@@ -176,8 +160,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
 
     return {
         _disabled,
-        _isLiveStreamRunning: Boolean(
-            getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
+        _isLiveStreamRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
         _tooltip,
         visible
     };

@@ -187,6 +187,7 @@ export default [
     'liveStreamingEnabled',
     'localRecording',
     'localSubject',
+    'logging',
     'maxFullResolutionParticipants',
     'mouseMoveCallbackInterval',
     'notifications',

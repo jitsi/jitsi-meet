@@ -1,12 +1,15 @@
 // @flow
 
+import { withStyles } from '@material-ui/styles';
 import React, { PureComponent } from 'react';
 
 import { connect } from '../../../../base/redux';
 import DeviceStatus from '../../../../prejoin/components/preview/DeviceStatus';
 import { Toolbox } from '../../../../toolbox/components/web';
+import { getConferenceName } from '../../../conference/functions';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
 import { getToolbarButtons, isToolbarButtonEnabled } from '../../../config/functions.web';
+import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import ConnectionStatus from './ConnectionStatus';
 import Preview from './Preview';
@@ -24,9 +27,19 @@ type Props = {
     _premeetingBackground: string,
 
     /**
+     * The name of the meeting that is about to be joined.
+     */
+    _roomName: string,
+
+    /**
      * Children component(s) to be rendered on the screen.
      */
     children?: React$Node,
+
+    /**
+     * Classes prop injected by withStyles.
+     */
+    classes: Object,
 
     /**
      * Additional CSS class names to set on the icon container.
@@ -75,6 +88,28 @@ type Props = {
 }
 
 /**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    return {
+        subtitle: {
+            ...withPixelLineHeight(theme.typography.heading5),
+            color: theme.palette.text01,
+            marginBottom: theme.spacing(4),
+            overflow: 'hidden',
+            textAlign: 'center',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            width: '100%'
+        }
+    };
+};
+
+/**
  * Implements a pre-meeting screen that can be used at various pre-meeting phases, for example
  * on the prejoin screen (pre-connection) or lobby (post-connection).
  */
@@ -98,7 +133,9 @@ class PreMeetingScreen extends PureComponent<Props> {
         const {
             _buttons,
             _premeetingBackground,
+            _roomName,
             children,
+            classes,
             className,
             showDeviceStatus,
             skipPrejoinButton,
@@ -124,6 +161,9 @@ class PreMeetingScreen extends PureComponent<Props> {
                             <h1 className = 'title'>
                                 { title }
                             </h1>
+                            <span className = { classes.subtitle }>
+                                {_roomName}
+                            </span>
                             { children }
                             { _buttons.length && <Toolbox toolbarButtons = { _buttons } /> }
                             { skipPrejoinButton }
@@ -165,8 +205,9 @@ function mapStateToProps(state, ownProps): Object {
         _buttons: hiddenPremeetingButtons
             ? premeetingButtons
             : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
-        _premeetingBackground: premeetingBackground
+        _premeetingBackground: premeetingBackground,
+        _roomName: getConferenceName(state)
     };
 }
 
-export default connect(mapStateToProps)(PreMeetingScreen);
+export default connect(mapStateToProps)(withStyles(styles)(PreMeetingScreen));

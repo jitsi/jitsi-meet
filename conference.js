@@ -52,7 +52,8 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    nonParticipantMessageReceived
+    nonParticipantMessageReceived,
+    CONFERENCE_LEAVE_REASONS
 } from './react/features/base/conference';
 import {
     getReplaceParticipant,
@@ -381,7 +382,7 @@ class ConferenceConnector {
             // FIXME the conference should be stopped by the library and not by
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
-            room.leave().then(() => connection.disconnect());
+            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).then(() => connection.disconnect());
             break;
 
         case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
@@ -464,7 +465,7 @@ function _connectionFailedHandler(error) {
             _connectionFailedHandler);
         if (room) {
             APP.store.dispatch(conferenceWillLeave(room));
-            room.leave();
+            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR);
         }
     }
 }
@@ -2577,16 +2578,16 @@ export default {
                         return stream;
                     })
                     .then(stream => {
-                        logger.log('Switching the local video device.');
+                        logger.info(`Switching the local video device to ${cameraDeviceId}.`);
 
                         return this.useVideoStream(stream);
                     })
                     .then(() => {
-                        logger.log('Switched local video device.');
+                        logger.info(`Switched local video device to ${cameraDeviceId}.`);
                         this._updateVideoDeviceId();
                     })
                     .catch(error => {
-                        logger.error(`Switching the local video device failed: ${error}`);
+                        logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
 
                         return APP.store.dispatch(notifyCameraError(error));
                     });
@@ -2602,20 +2603,20 @@ export default {
                 // Disable noise suppression if it was enabled on the previous track.
                 await APP.store.dispatch(setNoiseSuppressionEnabled(false));
 
-                // When the 'default' mic needs to be selected, we need to
-                // pass the real device id to gUM instead of 'default' in order
-                // to get the correct MediaStreamTrack from chrome because of the
-                // following bug.
-                // https://bugs.chromium.org/p/chromium/issues/detail?id=997689
-                const hasDefaultMicChanged = micDeviceId === 'default';
+                // When the 'default' mic needs to be selected, we need to pass the real device id to gUM instead of
+                // 'default' in order to get the correct MediaStreamTrack from chrome because of the following bug.
+                // https://bugs.chromium.org/p/chromium/issues/detail?id=997689.
+                const isDefaultMicSelected = micDeviceId === 'default';
+                const selectedDeviceId = isDefaultMicSelected
+                    ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
+                    : micDeviceId;
 
+                logger.info(`Switching audio input device to ${selectedDeviceId}`);
                 sendAnalytics(createDeviceChangedEvent('audio', 'input'));
                 createLocalTracksF({
                     devices: [ 'audio' ],
                     cameraDeviceId: null,
-                    micDeviceId: hasDefaultMicChanged
-                        ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
-                        : micDeviceId
+                    micDeviceId: selectedDeviceId
                 })
                 .then(([ stream ]) => {
                     // if audio was muted before changing the device, mute
@@ -2635,45 +2636,24 @@ export default {
                 .then(() => {
                     const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
 
-                    if (localAudio && hasDefaultMicChanged) {
+                    if (localAudio && isDefaultMicSelected) {
                         // workaround for the default device to be shown as selected in the
                         // settings even when the real device id was passed to gUM because of the
                         // above mentioned chrome bug.
                         localAudio._realDeviceId = localAudio.deviceId = 'default';
                     }
-                    logger.log(`switched local audio device: ${localAudio?.getDeviceId()}`);
-
+                    logger.info(`switched local audio input device to: ${selectedDeviceId}`);
                     this._updateAudioDeviceId();
                 })
                 .catch(err => {
+                    logger.error(`Failed to switch to selected audio input device ${selectedDeviceId}, error=${err}`);
                     APP.store.dispatch(notifyMicError(err));
                 });
             }
         );
 
-        APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly => {
-
-            // FIXME On web video track is stored both in redux and in
-            // 'localVideo' field, video is attempted to be unmuted twice when
-            // turning off the audio only mode. This will crash the app with
-            // 'unmute operation is already in progress'.
-            // Because there's no logic in redux about creating new track in
-            // case unmute when not track exists the things have to go through
-            // muteVideo logic in such case.
-            const tracks = APP.store.getState()['features/base/tracks'];
-            const isTrackInRedux
-                = Boolean(tracks.find(track => track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.VIDEO));
-
-            if (isTrackInRedux && !this.isSharingScreen) {
-                this.muteVideo(audioOnly);
-            }
-
-            // Immediately update the UI by having remote videos and the large
-            // video update themselves instead of waiting for some other event
-            // to cause the update, usually PARTICIPANT_CONN_STATUS_CHANGED.
-            // There is no guarantee another event will trigger the update
-            // immediately and in all situations, for example because a remote
-            // participant is having connection trouble so no status changes.
+        APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, () => {
+            // Immediately update the UI by having remote videos and the large video update themselves.
             const displayedUserId = APP.UI.getLargeVideoID();
 
             if (displayedUserId) {
@@ -3080,13 +3060,14 @@ export default {
      * Leaves the room.
      *
      * @param {boolean} doDisconnect - Whether leaving the room should also terminate the connection.
+     * @param {string} reason - reason for leaving the room.
      * @returns {Promise}
      */
-    async leaveRoom(doDisconnect = true) {
+    async leaveRoom(doDisconnect = true, reason = '') {
         APP.store.dispatch(conferenceWillLeave(room));
 
         if (room && room.isJoined()) {
-            return room.leave().finally(() => {
+            return room.leave(reason).finally(() => {
                 if (doDisconnect) {
                     return disconnect();
                 }

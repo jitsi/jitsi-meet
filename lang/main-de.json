@@ -79,7 +79,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": "Konferenz verlassen",
             "selectSoundDevice": "Audiogerät auswählen"
         },
         "labels": {
@@ -1066,6 +1065,7 @@
             "invite": "Person einladen",
             "kick": "Person entfernen",
             "laugh": "Lachen",
+            "leaveConference": "Konferenz verlassen",
             "like": "Daumen nach oben",
             "linkToSalesforce": "Mit Salesforce verlinken",
             "lobbyButton": "Lobbymodus ein-/ausschalten",
@@ -1140,6 +1140,7 @@
         "joinBreakoutRoom": "In Breakout-Raum wechseln",
         "laugh": "Lachen",
         "leaveBreakoutRoom": "Breakout-Raum verlassen",
+        "leaveConference": "Konferenz verlassen",
         "like": "Daumen hoch",
         "linkToSalesforce": "Mit Salesforce verknüpfen",
         "lobbyButtonDisable": "Lobbymodus deaktivieren",

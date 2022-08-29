@@ -3,6 +3,7 @@
 import React from 'react';
 import { Text, View, TextInput } from 'react-native';
 
+import { getConferenceName } from '../../../base/conference/functions';
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
@@ -29,7 +30,12 @@ type Props = AbstractProps & {
     /**
      * The current aspect ratio of the screen.
      */
-    _aspectRatio: Symbol
+    _aspectRatio: Symbol,
+
+    /**
+     * The room name.
+     */
+    _roomName: string
 }
 
 /**
@@ -117,6 +123,14 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
     _renderJoining() {
         return (
             <View>
+                <Text style = { styles.lobbyTitle }>
+                    { this.props.t('lobby.joiningTitle') }
+                </Text>
+                <Text
+                    numberOfLines = { 1 }
+                    style = { styles.lobbyRoomName }>
+                    { this.props._roomName }
+                </Text>
                 <LoadingIndicator
                     color = { BaseTheme.palette.icon01 }
                     style = { styles.loadingIndicator } />
@@ -190,15 +204,15 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
             <View style = { styles.passwordJoinButtonsWrapper }>
                 <Button
                     accessibilityLabel = 'lobby.backToKnockModeButton'
-                    label = 'lobby.backToKnockModeButton'
-                    onPress = { this._onSwitchToKnockMode }
+                    labelKey = 'lobby.backToKnockModeButton'
+                    onClick = { this._onSwitchToKnockMode }
                     style = { styles.lobbyButton }
                     type = { BUTTON_TYPES.PRIMARY } />
                 <Button
                     accessibilityLabel = 'lobby.passwordJoinButton'
                     disabled = { !this.state.password }
-                    label = 'lobby.passwordJoinButton'
-                    onPress = { this._onJoinWithPassword }
+                    labelKey = 'lobby.passwordJoinButton'
+                    onClick = { this._onJoinWithPassword }
                     style = { styles.lobbyButton }
                     type = { BUTTON_TYPES.PRIMARY } />
             </View>
@@ -245,8 +259,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     _knocking && _isLobbyChatActive
                     && <Button
                         accessibilityLabel = 'toolbar.openChat'
-                        label = 'toolbar.openChat'
-                        onPress = { this._onNavigateToLobbyChat }
+                        labelKey = 'toolbar.openChat'
+                        onClick = { this._onNavigateToLobbyChat }
                         style = { styles.openChatButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
@@ -255,8 +269,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     || <Button
                         accessibilityLabel = 'lobby.knockButton'
                         disabled = { !displayName }
-                        label = 'lobby.knockButton'
-                        onPress = { this._onAskToJoin }
+                        labelKey = 'lobby.knockButton'
+                        onClick = { this._onAskToJoin }
                         style = { styles.lobbyButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
@@ -264,8 +278,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     _renderPassword
                     && <Button
                         accessibilityLabel = 'lobby.enterPasswordButton'
-                        label = 'lobby.enterPasswordButton'
-                        onPress = { this._onSwitchToPasswordMode }
+                        labelKey = 'lobby.enterPasswordButton'
+                        onClick = { this._onSwitchToPasswordMode }
                         style = { styles.enterPasswordButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
@@ -286,7 +300,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 function _mapStateToProps(state: Object, ownProps: Props) {
     return {
         ...abstractMapStateToProps(state, ownProps),
-        _aspectRatio: state['features/base/responsive-ui'].aspectRatio
+        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
+        _roomName: getConferenceName(state)
     };
 }
 

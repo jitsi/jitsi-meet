@@ -1,7 +1,6 @@
 /* eslint-disable lines-around-comment */
 import { IState } from '../../app/types';
-// @ts-ignore
-import { translate } from '../../base/i18n';
+import { translate } from '../../base/i18n/functions';
 import {
     IconNoiseSuppressionOn,
     IconNoiseSuppressionOff

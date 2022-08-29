@@ -1,7 +1,5 @@
 import { StyleSheet } from 'react-native';
 
-import BaseThemeNative from '../../../ui/components/BaseTheme';
-
 /**
  * The styles of the feature base/media.
  */
@@ -25,7 +23,7 @@ export default StyleSheet.create({
 
     videoTransformedViewContainerWide: {
         overflow: 'hidden',
-        paddingRight: BaseThemeNative.spacing[10]
+        paddingRight: '14%'
     },
 
     /**

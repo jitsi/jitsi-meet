@@ -1,6 +1,6 @@
 /* eslint-disable lines-around-comment */
-import Button from '@atlaskit/button/standard-button';
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import UIEvents from '../../../../../service/UI/UIEvents';
@@ -13,8 +13,8 @@ import {
 import { AbstractDialogTab } from '../../../base/dialog';
 // @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
+import { Button } from '../../../base/ui/components/web';
 import Input from '../../../base/ui/components/web/Input';
 // @ts-ignore
 import { openLogoutDialog } from '../../actions';
@@ -25,7 +25,7 @@ declare var APP: any;
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.
  */
-export type Props = AbstractDialogTabProps & {
+export type Props = AbstractDialogTabProps & WithTranslation & {
 
     /**
      * Whether or not server-side authentication is available.
@@ -202,15 +202,14 @@ class ProfileTab extends AbstractDialogTab<Props> {
                         { t('settings.loggedIn', { name: authLogin }) }
                     </div> }
                 <Button
-                    appearance = 'primary'
+                    accessibilityLabel = { authLogin ? t('toolbar.logout') : t('toolbar.login') }
                     id = 'login_button'
-                    onClick = { this._onAuthToggle }
-                    type = 'button'>
-                    { authLogin ? t('toolbar.logout') : t('toolbar.login') }
-                </Button>
+                    label = { authLogin ? t('toolbar.logout') : t('toolbar.login') }
+                    onClick = { this._onAuthToggle } />
             </div>
         );
     }
 }
 
+// @ts-ignore
 export default translate(ProfileTab);

@@ -37,8 +37,10 @@ RCT_EXPORT_MODULE();
         = [[NSBundle mainBundle] infoDictionary];
 
     // calendarEnabled
-    BOOL calendarEnabled
-        = infoDictionary[@"NSCalendarsUsageDescription"] != nil;
+    BOOL calendarEnabled = NO;
+#if !defined(JITSI_MEET_SDK_LITE)
+    calendarEnabled = infoDictionary[@"NSCalendarsUsageDescription"] != nil;
+#endif
 
     // name
     NSString *name = infoDictionary[@"CFBundleDisplayName"];
@@ -63,19 +65,39 @@ RCT_EXPORT_MODULE();
         }
     }
 
+    // SDK version
+    NSDictionary<NSString *, id> *sdkInfoDictionary
+        = [[NSBundle bundleForClass:self.class] infoDictionary];
+    NSString *sdkVersion = sdkInfoDictionary[@"CFBundleShortVersionString"];
+    if (sdkVersion == nil) {
+        sdkVersion = sdkInfoDictionary[@"CFBundleVersion"];
+        if (sdkVersion == nil) {
+            sdkVersion = @"";
+        }
+    }
+
     // build number
     NSString *buildNumber = infoDictionary[@"CFBundleVersion"];
     if (buildNumber == nil) {
         buildNumber = @"";
     }
 
+    // google services (sign in)
     BOOL isGoogleServiceEnabled = [InfoPlistUtil containsRealServiceInfoPlistInBundle:[NSBundle mainBundle]];
     
+    // lite SDK
+    BOOL isLiteSDK = NO;
+#if defined(JITSI_MEET_SDK_LITE)
+    isLiteSDK = YES;
+#endif
+
     return @{
         @"calendarEnabled": [NSNumber numberWithBool:calendarEnabled],
         @"buildNumber": buildNumber,
+        @"isLiteSDK": [NSNumber numberWithBool:isLiteSDK],
         @"name": name,
         @"sdkBundlePath": sdkBundlePath,
+        @"sdkVersion": sdkVersion,
         @"version": version,
         @"GOOGLE_SERVICES_ENABLED": [NSNumber numberWithBool:isGoogleServiceEnabled]
     };

@@ -11,7 +11,6 @@
         "defaultEmail": "Your Default Email",
         "disabled": "You can't invite people.",
         "failedToAdd": "Failed to add participants",
-        "footerText": "Dialing out is disabled.",
         "googleEmail": "Google Email",
         "inviteMoreHeader": "You are the only one in the meeting",
         "inviteMoreMailSubject": "Join {{appName}} meeting",
@@ -79,7 +78,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": " Leave meeting",
             "selectSoundDevice": "Select sound device"
         },
         "labels": {
@@ -98,6 +96,7 @@
         "messageAccessibleTitleMe": "me says:",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
+        "newMessages": "new messages",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
@@ -286,7 +285,6 @@
         "linkMeetingTitle": "Link meeting to Salesforce",
         "liveStreaming": "Live Streaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Not possible while recording is active",
-        "liveStreamingDisabledTooltip": "Start live stream disabled.",
         "localUserControls": "Local user controls",
         "lockMessage": "Failed to lock the conference.",
         "lockRoom": "Add meeting $t(lockRoomPassword)",
@@ -341,7 +339,6 @@
         "recentlyUsedObjects": "Your recently used objects",
         "recording": "Recording",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Not possible while a live stream is active",
-        "recordingDisabledTooltip": "Start recording disabled.",
         "rejoinNow": "Rejoin now",
         "remoteControlAllowedMessage": "{{user}} accepted your remote control request!",
         "remoteControlDeniedMessage": "{{user}} rejected your remote control request!",
@@ -517,6 +514,10 @@
         "toggleScreensharing": "Switch between camera and screen sharing",
         "toggleShortcuts": "Show or hide keyboard shortcuts",
         "videoMute": "Start or stop your camera"
+    },
+    "largeVideo": {
+        "screenIsShared": "You are sharing your screen",
+        "showMeWhatImSharing": "Show me what I'm sharing"
     },
     "liveStreaming": {
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
@@ -1062,6 +1063,7 @@
             "document": "Toggle shared document",
             "download": "Download our apps",
             "embedMeeting": "Embed meeting",
+            "endConference": "End meeting for all",
             "expand": "Expand",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
@@ -1072,6 +1074,7 @@
             "invite": "Invite people",
             "kick": "Kick participant",
             "laugh": "Laugh",
+            "leaveConference": "Leave meeting",
             "like": "Thumbs Up",
             "linkToSalesforce": "Link to Salesforce",
             "lobbyButton": "Enable/disable lobby mode",
@@ -1134,6 +1137,7 @@
         "download": "Download our apps",
         "e2ee": "End-to-End Encryption",
         "embedMeeting": "Embed meeting",
+        "endConference": "End meeting for all",
         "enterFullScreen": "View full screen",
         "enterTileView": "Enter tile view",
         "exitFullScreen": "Exit full screen",
@@ -1146,6 +1150,7 @@
         "joinBreakoutRoom": "Join breakout room",
         "laugh": "Laugh",
         "leaveBreakoutRoom": "Leave breakout room",
+        "leaveConference": "Leave meeting",
         "like": "Thumbs Up",
         "linkToSalesforce": "Link to Salesforce",
         "lobbyButtonDisable": "Disable lobby mode",

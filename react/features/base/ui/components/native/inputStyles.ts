@@ -26,16 +26,14 @@ export default {
     },
 
     input: {
-        backgroundColor: BaseTheme.palette.ui03,
-        color: BaseTheme.palette.text01,
-        paddingVertical: 13,
-        paddingHorizontal: BaseTheme.spacing[3],
-        borderRadius: BaseTheme.shape.borderRadius,
         ...BaseTheme.typography.bodyShortRegularLarge,
-        lineHeight: 0,
-        height: 48,
+        backgroundColor: BaseTheme.palette.ui03,
+        borderColor: BaseTheme.palette.ui03,
+        borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
-        borderColor: BaseTheme.palette.ui03
+        color: BaseTheme.palette.text01,
+        paddingHorizontal: BaseTheme.spacing[3],
+        height: 48
     },
 
     inputDisabled: {

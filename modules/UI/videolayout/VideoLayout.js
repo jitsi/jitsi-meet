@@ -177,7 +177,7 @@ const VideoLayout = {
         return largeVideo && largeVideo.id === id;
     },
 
-    updateLargeVideo(id, forceUpdate) {
+    updateLargeVideo(id, forceUpdate, forceStreamToReattach = false) {
         if (!largeVideo) {
             return;
         }
@@ -197,6 +197,10 @@ const VideoLayout = {
         }
 
         const videoStream = videoTrack?.jitsiTrack;
+
+        if (videoStream && forceStreamToReattach) {
+            videoStream.forceStreamToReattach = forceStreamToReattach;
+        }
 
         if (isOnLarge && !forceUpdate
                 && LargeVideoManager.isVideoContainer(currentContainerType)
@@ -330,7 +334,7 @@ const VideoLayout = {
      */
     _updateLargeVideoIfDisplayed(participantId, force = false) {
         if (this.isCurrentlyOnLarge(participantId)) {
-            this.updateLargeVideo(participantId, force);
+            this.updateLargeVideo(participantId, force, false);
         }
     },
 

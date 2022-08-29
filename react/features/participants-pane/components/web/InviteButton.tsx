@@ -25,7 +25,7 @@ export const InviteButton = () => {
             accessibilityLabel = { t('participantsPane.actions.invite') }
             fullWidth = { true }
             icon = { IconInviteMore }
-            label = { t('participantsPane.actions.invite') }
+            labelKey = { 'participantsPane.actions.invite' }
             onClick = { onInvite }
             type = { BUTTON_TYPES.PRIMARY } />
     );

@@ -212,8 +212,10 @@ export function startFaceLandmarksDetection(track) {
  * @returns {void}
  */
 export function stopFaceLandmarksDetection() {
-    return function(dispatch: Function) {
-        if (lastFaceExpression && lastFaceExpressionTimestamp) {
+    return function(dispatch: Function, getState: Function) {
+        const { recognitionActive } = getState()['features/face-landmarks'];
+
+        if (lastFaceExpression && lastFaceExpressionTimestamp && recognitionActive) {
             dispatch(
                 addFaceExpression(
                     lastFaceExpression,
@@ -227,6 +229,8 @@ export function stopFaceLandmarksDetection() {
         clearInterval(detectionInterval);
 
         duplicateConsecutiveExpressions = 0;
+        lastFaceExpression = null;
+        lastFaceExpressionTimestamp = null;
         webhookSendInterval = null;
         detectionInterval = null;
         imageCapture = null;

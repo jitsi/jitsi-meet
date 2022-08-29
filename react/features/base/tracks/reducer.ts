@@ -23,6 +23,7 @@ interface ITrack {
     mirror: boolean;
     muted: boolean;
     participantId: string;
+    streamingStatus?: string;
     videoStarted: boolean;
     videoType?: string|null;
 }

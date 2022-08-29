@@ -369,6 +369,7 @@
 				DEF4813D224925A2002AD03A /* Copy Google Plist file */,
 				DE11877A21EE09640078D059 /* Setup Google reverse URL handler */,
 				DE4F6D6E22005C0400DE699E /* Setup Dropbox */,
+				4E81688528A408E600F8FA9E /* Update App Entitlements */,
 				0BEA5C491F7B8F73000D0AB4 /* Embed Watch Content */,
 				4EC49B9025BED71300E76218 /* Embed App Extensions */,
 			);
@@ -521,6 +522,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "../scripts/run-packager.sh\n";
+		};
+		4E81688528A408E600F8FA9E /* Update App Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Update App Entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if test \"$PRODUCT_BUNDLE_IDENTIFIER\" = \"com.atlassian.JitsiMeet.ios\"; then\n    ENTITLEMENTS_PLIST=\"$PROJECT_DIR/app.entitlements\"\n    \n    /usr/libexec/PlistBuddy -c \"Add :com.apple.developer.avfoundation.multitasking-camera-access bool 1\" $ENTITLEMENTS_PLIST\nfi\n";
 		};
 		69BC5020DBE393B56BD76636 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

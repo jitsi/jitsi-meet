@@ -7,11 +7,11 @@ import {
     NativeModules,
     Platform,
     ScrollView,
-    Text, View
+    Text,
+    View
 } from 'react-native';
 import {
     Divider,
-    Switch,
     TextInput,
     withTheme
 } from 'react-native-paper';
@@ -24,6 +24,7 @@ import {
     getParticipantDisplayName
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import Switch from '../../../base/ui/components/native/Switch';
 import { screen } from '../../../mobile/navigation/routes';
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
 import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
@@ -35,12 +36,7 @@ import {
 
 import FormRow from './FormRow';
 import FormSectionAccordion from './FormSectionAccordion';
-import styles, {
-    DISABLED_TRACK_COLOR,
-    ENABLED_TRACK_COLOR,
-    THUMB_COLOR
-} from './styles';
-
+import styles, { PLACEHOLDER_COLOR, PLACEHOLDER_TEXT_COLOR } from './styles';
 
 /**
  * Application information module.
@@ -201,7 +197,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             colors: {
                 background: palette.ui01,
                 placeholder: palette.text01,
-                primary: palette.screen01Header,
+                primary: PLACEHOLDER_COLOR,
                 underlineColor: 'transparent',
                 text: palette.text01
             }
@@ -228,6 +224,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             mode = 'outlined'
                             onChangeText = { this._onChangeDisplayName }
                             placeholder = { this.props.t('settingsView.displayNamePlaceholderText') }
+                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                             spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'name' } // iOS only
@@ -242,6 +239,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             mode = 'outlined'
                             onChangeText = { this._onChangeEmail }
                             placeholder = 'email@example.com'
+                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                             spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'emailAddress' } // iOS only
@@ -260,6 +258,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
+                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                             spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'URL' } // iOS only
@@ -269,24 +268,14 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         <FormRow
                             label = 'settingsView.startWithAudioMuted'>
                             <Switch
-                                onValueChange = { this._onStartAudioMutedChange }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{
-                                    true: ENABLED_TRACK_COLOR,
-                                    false: DISABLED_TRACK_COLOR
-                                }}
-                                value = { startWithAudioMuted } />
+                                checked = { startWithAudioMuted }
+                                onChange = { this._onStartAudioMutedChange } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startWithVideoMuted'>
                             <Switch
-                                onValueChange = { this._onStartVideoMutedChange }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{
-                                    true: ENABLED_TRACK_COLOR,
-                                    false: DISABLED_TRACK_COLOR
-                                }}
-                                value = { startWithVideoMuted } />
+                                checked = { startWithVideoMuted }
+                                onChange = { this._onStartVideoMutedChange } />
                         </FormRow>
                     </FormSectionAccordion>
                     <FormSectionAccordion
@@ -325,13 +314,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 <FormRow
                                     label = 'settingsView.disableCallIntegration'>
                                     <Switch
-                                        onValueChange = { this._onDisableCallIntegration }
-                                        thumbColor = { THUMB_COLOR }
-                                        trackColor = {{
-                                            true: ENABLED_TRACK_COLOR,
-                                            false: DISABLED_TRACK_COLOR
-                                        }}
-                                        value = { disableCallIntegration } />
+                                        checked = { disableCallIntegration }
+                                        onChange = { this._onDisableCallIntegration } />
                                 </FormRow>
                                 <Divider style = { styles.fieldSeparator } />
                             </>
@@ -339,13 +323,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         <FormRow
                             label = 'settingsView.disableP2P'>
                             <Switch
-                                onValueChange = { this._onDisableP2P }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{
-                                    true: ENABLED_TRACK_COLOR,
-                                    false: DISABLED_TRACK_COLOR
-                                }}
-                                value = { disableP2P } />
+                                checked = { disableP2P }
+                                onChange = { this._onDisableP2P } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
                         {AppInfo.GOOGLE_SERVICES_ENABLED && (
@@ -353,13 +332,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 fieldSeparator = { true }
                                 label = 'settingsView.disableCrashReporting'>
                                 <Switch
-                                    onValueChange = { this._onDisableCrashReporting }
-                                    thumbColor = { THUMB_COLOR }
-                                    trackColor = {{
-                                        true: ENABLED_TRACK_COLOR,
-                                        false: DISABLED_TRACK_COLOR
-                                    }}
-                                    value = { disableCrashReporting } />
+                                    checked = { disableCrashReporting }
+                                    onChange = { this._onDisableCrashReporting } />
                             </FormRow>
                         )}
                     </FormSectionAccordion>

@@ -11,7 +11,6 @@
         "defaultEmail": "O seu email predefinido",
         "disabled": "Não pode convidar outras pessoas.",
         "failedToAdd": "Falha ao adicionar participantes",
-        "footerText": "A marcação está desactivada.",
         "googleEmail": "Email do Google",
         "inviteMoreHeader": "É o único na reunião",
         "inviteMoreMailSubject": "Participar na reunião {{appName}}",
@@ -79,7 +78,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": " Deixar a reunião",
             "selectSoundDevice": "Seleccionar dispositivo de som"
         },
         "labels": {
@@ -98,6 +96,7 @@
         "messageAccessibleTitleMe": "Eu disse:",
         "messageTo": "Mensagem privada para {{recipient}}",
         "messagebox": "Escreva uma mensagem",
+        "newMessages": "novas mensagens",
         "nickname": {
             "popover": "Escolha um apelido",
             "title": "Introduza um apelido para usar o chat",
@@ -286,7 +285,6 @@
         "linkMeetingTitle": "Link da reunião à Força de Vendas",
         "liveStreaming": "Transmissão em direto",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Não é possível enquanto a gravação estiver activa",
-        "liveStreamingDisabledTooltip": "Início de transmissão em direto desactivada",
         "localUserControls": "Controlos locais de utilizador",
         "lockMessage": "Falha no bloqueio da conferência.",
         "lockRoom": "Adicionar reunião $t(lockRoomPassword)",
@@ -341,7 +339,6 @@
         "recentlyUsedObjects": "Os seus objetos recentemente utilizados",
         "recording": "A gravar",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Não possível enquanto a transmissão em direto estiver activa",
-        "recordingDisabledTooltip": "Início de gravação desactivada.",
         "rejoinNow": "Reingressar agora",
         "remoteControlAllowedMessage": "{{user}} aceitou o seu pedido de controlo remoto!",
         "remoteControlDeniedMessage": "{{user}} rejeitou o seu pedido de controlo remoto!",
@@ -518,6 +515,10 @@
         "toggleShortcuts": "Mostrar ou ocultar atalhos de teclado",
         "videoMute": "Iniciar ou parar a sua câmara"
     },
+    "largeVideo": {
+        "screenIsShared": "Está a partilhar o seu ecrã",
+        "showMeWhatImSharing": "Mostre-me o que estou a partilhar"
+    },
     "liveStreaming": {
         "busy": "Estamos trabalhando para liberar os recursos de transmissão. Tente novamente em alguns minutos.",
         "busyTitle": "Todas as transmissões estão atualmente ocupadas",
@@ -683,6 +684,10 @@
         "newDeviceAction": "Usar",
         "newDeviceAudioTitle": "Novo dispositivo de áudio detetado",
         "newDeviceCameraTitle": "Nova câmara detetada",
+        "noiseSuppressionDesktopAudioDescription": "A supressão de ruído não pode ser ativada enquanto se partilha o áudio do ambiente de trabalho, por favor desative-o e tente novamente.",
+        "noiseSuppressionFailedTitle": "Falha ao iniciar a supressão de ruído",
+        "noiseSuppressionNoTrackDescription": "Por favor, ligue primeiro o seu microfone.",
+        "noiseSuppressionStereoDescription": "A supressão do ruído de áudio estéreo não é atualmente suportada.",
         "oldElectronClientDescription1": "Parece estar a utilizar uma versão antiga do cliente Jitsi Meet que tem vulnerabilidades de segurança conhecidas. Por favor, certifique-se de que actualiza a nossa ",
         "oldElectronClientDescription2": "compilação mais recente",
         "oldElectronClientDescription3": " agora!",
@@ -700,7 +705,7 @@
         "selfViewTitle": "Pode sempre reexibir a autovisualização a partir das definições",
         "somebody": "Alguém",
         "startSilentDescription": "Volte à reunião para habilitar o áudio",
-        "startSilentTitle": "Entrou sem saída de áudio!",
+        "startSilentTitle": "Entrou sem áudio!",
         "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores completamente suportados</a>.",
         "suboptimalExperienceTitle": "Alerta do navegador",
         "unmute": "Ativar som",
@@ -934,6 +939,7 @@
         "insecureRoomNameWarning": "O nome da sala é inseguro. Participantes indesejados podem juntar-se à sua conferência. Considere proteger a sua reunião utilizando o botão de segurança."
     },
     "settings": {
+        "buttonLabel": "Definições",
         "calendar": {
             "about": "A integração do calendário {{appName}} é utilizada para aceder com segurança ao seu calendário para que este possa ler os próximos eventos.",
             "disconnect": "Desligar",
@@ -957,7 +963,7 @@
         "name": "Nome",
         "noDevice": "Nenhum",
         "participantJoined": "Entrar um participante",
-        "participantKnocking": "Participante entrou na sala de espera",
+        "participantKnocking": "Entrar um participante na sala de espera",
         "participantLeft": "Sair um participante",
         "playSounds": "Reproduzir som quando",
         "reactions": "Expressarem uma reação",
@@ -972,7 +978,7 @@
         "startAudioMuted": "Todos começam com microfone desligado",
         "startReactionsMuted": "Sons de reação silenciados para todos",
         "startVideoMuted": "Todos começam com câmara desligada",
-        "talkWhileMuted": "Se fala e está com microfone desligado",
+        "talkWhileMuted": "Falar com o microfone desligado",
         "title": "Definições"
     },
     "settingsView": {
@@ -990,12 +996,17 @@
         "displayName": "Nome de exibição",
         "displayNamePlaceholderText": "Ex: João Dias",
         "email": "Email",
+        "goTo": "Ir para",
         "header": "Configurações",
+        "help": "Ajuda",
+        "links": "Links",
+        "privacy": "Privacidade",
         "profileSection": "Perfil",
         "serverURL": "URL do servidor",
         "showAdvanced": "",
         "startWithAudioMuted": "Iniciar sem áudio",
         "startWithVideoMuted": "Iniciar sem vídeo",
+        "terms": "Termos",
         "version": "Versão"
     },
     "share": {
@@ -1052,6 +1063,7 @@
             "document": "Mudar para documento partilhado",
             "download": "Descarregar as nossas aplicações",
             "embedMeeting": "Reunião incorporada",
+            "endConference": "Terminar reunião para todos",
             "expand": "Expandir",
             "feedback": "Deixar comentários",
             "fullScreen": "Mudar para ecrã completo",
@@ -1062,6 +1074,7 @@
             "invite": "Convidar pessoas",
             "kick": "Remover participante",
             "laugh": "Risos",
+            "leaveConference": "Sair da reunião",
             "like": "Aprovado",
             "linkToSalesforce": "Link para a Salesforce",
             "lobbyButton": "Ativar/desativar sala de espera",
@@ -1075,6 +1088,7 @@
             "muteEveryoneElse": "Silenciar todos os outros",
             "muteEveryoneElsesVideo": "Parar o vídeo de todos os outros",
             "muteEveryonesVideo": "Parar o vídeo de todos",
+            "noiseSuppression": "Supressão de ruído",
             "participants": "Participantes",
             "pip": "Mudar para o modo Picture-in-Picture",
             "privateMessage": "Enviar mensagem privada",
@@ -1115,6 +1129,7 @@
         "clap": "Aplausos",
         "closeChat": "Fechar chat",
         "closeReactionsMenu": "Fechar menu de reações",
+        "disableNoiseSuppression": "Desativar a supressão de ruído",
         "disableReactionSounds": "Pode desactivar os sons de reacção para esta reunião",
         "dock": "Ancorar na janela principal",
         "documentClose": "Fechar documento partilhado",
@@ -1122,6 +1137,7 @@
         "download": "Descarregar as nossas aplicações",
         "e2ee": "Criptografia ponta a ponta",
         "embedMeeting": "Incorporar reunião",
+        "endConference": "Terminar reunião para todos",
         "enterFullScreen": "Ver em ecrã completo",
         "enterTileView": "Ver em quadrícula",
         "exitFullScreen": "Sair de ecrã completo",
@@ -1134,6 +1150,7 @@
         "joinBreakoutRoom": "Entrar na sala",
         "laugh": "Risos",
         "leaveBreakoutRoom": "Sair da sala",
+        "leaveConference": "Sair da reunião",
         "like": "Aprovado",
         "linkToSalesforce": "Link para a Salesforce",
         "lobbyButtonDisable": "Desativar sala de espera",
@@ -1151,6 +1168,7 @@
         "noAudioSignalDialInDesc": "Também pode marcar usando:",
         "noAudioSignalDialInLinkDesc": "Números de marcação",
         "noAudioSignalTitle": "Não há nenhuma entrada vinda do seu microfone!",
+        "noiseSuppression": "Supressão de ruído",
         "noisyAudioInputDesc": "Parece que o seu microfone está a fazer barulho, por favor considere silenciar ou mudar de dispositivo.",
         "noisyAudioInputTitle": "Seu microfone parece estar barulhento!",
         "openChat": "Abrir chat",

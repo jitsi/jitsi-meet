@@ -9,6 +9,7 @@ import {
     CLEAR_TOOLBOX_TIMEOUT,
     FULL_SCREEN_CHANGED,
     SET_FULL_SCREEN,
+    SET_HANGUP_MENU_VISIBLE,
     SET_OVERFLOW_DRAWER,
     SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
@@ -185,6 +186,22 @@ export function setOverflowDrawer(displayAsDrawer: boolean) {
 export function clearToolboxTimeout(): Object {
     return {
         type: CLEAR_TOOLBOX_TIMEOUT
+    };
+}
+
+/**
+ * Shows/hides the hangup menu.
+ *
+ * @param {boolean} visible - True to show it or false to hide it.
+ * @returns {{
+ *     type: SET_HANGUP_MENU_VISIBLE,
+ *     visible: boolean
+ * }}
+ */
+export function setHangupMenuVisible(visible: boolean): Object {
+    return {
+        type: SET_HANGUP_MENU_VISIBLE,
+        visible
     };
 }
 

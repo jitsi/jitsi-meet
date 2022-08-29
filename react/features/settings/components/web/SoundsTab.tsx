@@ -1,18 +1,18 @@
 /* eslint-disable lines-around-comment */
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import { AbstractDialogTab } from '../../../base/dialog';
 // @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
  * The type of the React {@code Component} props of {@link SoundsTab}.
  */
-export type Props = AbstractDialogTabProps & {
+export type Props = AbstractDialogTabProps & WithTranslation & {
 
     /**
      * Whether or not the reactions feature is enabled.
@@ -159,4 +159,5 @@ class SoundsTab extends AbstractDialogTab<Props> {
     }
 }
 
+// @ts-ignore
 export default translate(SoundsTab);

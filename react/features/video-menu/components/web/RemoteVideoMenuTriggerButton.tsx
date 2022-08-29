@@ -1,14 +1,15 @@
 /* eslint-disable lines-around-comment */
 import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons/svg/index';
-// @ts-ignore
-import { getParticipantById } from '../../../base/participants';
+import { getParticipantById } from '../../../base/participants/functions';
+import { Participant } from '../../../base/participants/reducer';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
 // @ts-ignore
@@ -35,7 +36,7 @@ declare var $: Object;
  * The type of the React {@code Component} props of
  * {@link RemoteVideoMenuTriggerButton}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * Whether the remote video context menu is disabled.
@@ -57,7 +58,7 @@ type Props = {
     /**
      * Participant reference.
      */
-    _participant: Object,
+    _participant: Participant,
 
     /**
      * The ID for the participant on which the remote video menu will act.
@@ -110,15 +111,10 @@ type Props = {
     showPopover: Function,
 
     /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
-
-    /**
      * The type of the thumbnail.
      */
     thumbnailType: string
-};
+}
 
 const styles = () => {
     return {
@@ -268,7 +264,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 function _mapStateToProps(state: any, ownProps: Partial<Props>) {
     const { participantID, thumbnailType } = ownProps;
     let _remoteControlState = null;
-    const participant = getParticipantById(state, participantID);
+    const participant = getParticipantById(state, participantID ?? '');
     const _participantDisplayName = participant?.name;
     const _isRemoteControlSessionActive = participant?.remoteControlSessionStatus ?? false;
     const _supportsRemoteControl = participant?.supportsRemoteControl ?? false;

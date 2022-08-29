@@ -774,6 +774,7 @@
         "unavailable": "Oeps! {{serviceName}} is momenteel niet beschikbaar. Er wordt aan een oplossing gewerkt. Probeer het later opnieuw.",
         "unavailableTitle": "Opname niet beschikbaar"
     },
+    "screenshareDisplayName": "Scherm van {{name}}",
     "sectionList": {
         "pullToRefresh": "Naar beneden slepen om te vernieuwen"
     },
@@ -890,6 +891,7 @@
             "mute": "Audio dempen in- of uitschakelen",
             "muteEveryone": "Iedereen dempen",
             "muteEveryoneElse": "Alle anderen dempen",
+            "noiseSuppression": "Ruisonderdrukking",
             "participants": "Deelnemers",
             "pip": "Picture-in-Picture-modus in- of uitschakelen",
             "privateMessage": "Verstuur privébericht",
@@ -922,6 +924,7 @@
         "chat": "Chat openen / sluiten",
         "closeChat": "Chat sluiten",
         "closeReactionsMenu": "Reactiemenu sluiten",
+        "disableNoiseSuppression": "Ruisonderdrukking uitschakelen",
         "disableReactionSounds": "U kunt reactiegeluiden uitschakelen voor deze vergadering",
         "documentClose": "Gedeeld document sluiten",
         "documentOpen": "Gedeeld document openen",

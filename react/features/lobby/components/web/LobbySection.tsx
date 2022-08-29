@@ -1,10 +1,9 @@
 /* eslint-disable lines-around-comment */
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-// @ts-ignore
-import { translate } from '../../../base/i18n';
-// @ts-ignore
-import { isLocalParticipantModerator } from '../../../base/participants';
+import { translate } from '../../../base/i18n/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import Switch from '../../../base/ui/components/web/Switch';
 // @ts-ignore
@@ -12,7 +11,7 @@ import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import { toggleLobbyMode } from '../../actions';
 
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * True if lobby is currently enabled in the conference.
@@ -27,13 +26,8 @@ type Props = {
     /**
      * The Redux Dispatch function.
      */
-    dispatch: Function,
-
-    /**
-     * Function to be used to translate i18n labels.
-     */
-    t: Function
-};
+    dispatch: Function
+}
 
 type State = {
 

@@ -618,9 +618,6 @@ var config = {
     // Hides the email section under profile settings.
     // hideEmailInSettings: false,
 
-    // Whether or not some features are checked based on token.
-    // enableFeaturesBasedOnToken: false,
-
     // When enabled the password used for locking a room is restricted to up to the number of digits specified
     // default: roomPasswordNumberOfDigits: false,
     // roomPasswordNumberOfDigits: 10,
@@ -701,7 +698,7 @@ var config = {
     //    'chat',
     //    'closedcaptions',
     //    'desktop',
-    //    'dock-iframe'
+    //    'dock-iframe',
     //    'download',
     //    'embedmeeting',
     //    'etherpad',
@@ -825,6 +822,7 @@ var config = {
     // Application ID and Secret.
     // callStatsID: '',
     // callStatsSecret: '',
+    // callstatsStoreLogs: true,
 
     // The callstats initialize config params as described in the API:
     // https://docs.callstats.io/docs/javascript#callstatsinitialize-with-app-secret
@@ -961,14 +959,19 @@ var config = {
         // PeerConnection states along with getStats metrics polled at the specified
         // interval.
         // rtcstatsEnabled: false,
+        // rtcstatsStoreLogs: false,
 
         // In order to enable rtcstats one needs to provide a endpoint url.
         // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
 
-        // The interval at which rtcstats will poll getStats, defaults to 1000ms.
+        // The interval at which rtcstats will poll getStats, defaults to 10000ms.
         // If the value is set to 0 getStats won't be polled and the rtcstats client
         // will only send data related to RTCPeerConnection events.
-        // rtcstatsPolIInterval: 1000,
+        // rtcstatsPollInterval: 10000,
+
+        // This determines if rtcstats sends the SDP to the rtcstats server or replaces
+        // all SDPs with an emtpy string instead.
+        // rtcstatsSendSdp: false,
 
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
@@ -1389,6 +1392,7 @@ var config = {
     //     'notify.leftTwoMembers', // show when two participants left simultaneously
     //     'notify.leftThreePlusMembers', // show when more than 2 participants left simultaneously
     //     'notify.grantedTo', // shown when moderator rights were granted to a participant
+    //     'notify.hostAskedUnmute', // shown to participant when host asks them to unmute
     //     'notify.invitedOneMember', // shown when 1 participant has been invited
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
     //     'notify.invitedTwoMembers', // shown when 2 participants have been invited
@@ -1409,7 +1413,7 @@ var config = {
     //     'notify.raisedHand', // shown when a partcipant used raise hand,
     //     'notify.startSilentTitle', // shown when user joined with no audio
     //     'notify.unmute', // shown to moderator when user raises hand during AV moderation
-    //     'notify.hostAskedUnmute', // shown to participant when host asks them to unmute
+    //     'notify.videoMutedRemotelyTitle', // shown when user's video is muted by a remote party,
     //     'prejoin.errorDialOut',
     //     'prejoin.errorDialOutDisconnected',
     //     'prejoin.errorDialOutFailed',
@@ -1471,5 +1475,19 @@ var config = {
     //     displayMode: 'all',
     //     // How long the GIF should be displayed on the tile (in miliseconds).
     //     tileTime: 5000,
+    // },
+
+    // Logging
+    // logging: {
+    //      // Default log level for the app and lib-jitsi-meet.
+    //      defaultLogLevel: 'trace',
+    //      // Option to disable LogCollector (which stores the logs on CallStats).
+    //      //disableLogCollector: true,
+    //      // Indivual loggers are customizable.
+    //      loggers: {
+    //      // The following are too verbose in their logging with the default level.
+    //      'modules/RTC/TraceablePeerConnection.js': 'info',
+    //      'modules/statistics/CallStats.js': 'info',
+    //      'modules/xmpp/strophe.util.js': 'log',
     // },
 };

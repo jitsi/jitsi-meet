@@ -1,10 +1,10 @@
 // @flow
 
-import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
+import Input from '../../../../base/ui/components/web/Input';
 import AbstractStreamKeyForm, {
     type Props, _mapStateToProps
 } from '../AbstractStreamKeyForm';
@@ -41,18 +41,14 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
 
         return (
             <div className = 'stream-key-form'>
-                <FieldTextStateless
+                <Input
                     autoFocus = { true }
-                    compact = { true }
-                    isSpellCheckEnabled = { false }
                     label = { t('dialog.streamKey') }
                     name = 'streamId'
-                    okDisabled = { !value }
                     onChange = { this._onInputChange }
                     placeholder = { t('liveStreaming.enterStreamKey') }
-                    shouldFitContainer = { true }
                     type = 'text'
-                    value = { this.props.value } />
+                    value = { value } />
                 <div className = 'form-footer'>
                     <div className = 'help-container'>
                         {

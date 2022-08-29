@@ -150,8 +150,10 @@ function _setJWT(store, next, action) {
                     action.tenant = context.tenant || sub || undefined;
                     action.user = user;
 
-                    user && _overwriteLocalParticipant(
-                        store, { ...user,
+                    const newUser = user ? { ...user } : {};
+
+                    _overwriteLocalParticipant(
+                        store, { ...newUser,
                             features: context.features });
                 }
             }

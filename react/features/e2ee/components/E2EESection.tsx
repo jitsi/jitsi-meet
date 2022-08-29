@@ -1,11 +1,11 @@
 /* eslint-disable lines-around-comment */
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
 // @ts-ignore
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
-// @ts-ignore
-import { translate } from '../../base/i18n';
+import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import Switch from '../../base/ui/components/web/Switch';
 // @ts-ignore
@@ -15,7 +15,7 @@ import { MAX_MODE } from '../constants';
 // @ts-ignore
 import { doesEveryoneSupportE2EE } from '../functions';
 
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * The resource for the description, computed based on the maxMode and whether the switch is toggled or not.
@@ -45,13 +45,8 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    dispatch: Dispatch<any>
+}
 
 type State = {
 

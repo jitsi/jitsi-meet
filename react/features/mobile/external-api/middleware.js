@@ -182,6 +182,10 @@ MiddlewareRegistry.register(store => next => action => {
 
         const { participant } = action;
 
+        if (participant.isVirtualScreenshareParticipant) {
+            break;
+        }
+
         sendEvent(
             store,
             action.type,

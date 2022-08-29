@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect as reduxConnect } from 'react-redux';
 
-import { IStore } from '../../app/types';
+import { IState, IStore } from '../../app/types';
 
 /**
  * Sets specific properties of a specific state to specific values and prevents
@@ -16,7 +16,7 @@ import { IStore } from '../../app/types';
  * from the specified target by setting the specified properties to the
  * specified values.
  */
-export function assign<T extends Object>(target: T, source: T): T {
+export function assign<T extends Object>(target: T, source: Partial<T>): T {
     let t = target;
 
     for (const property in source) { // eslint-disable-line guard-for-in
@@ -135,12 +135,13 @@ function _set<T extends Object>(
  * returned.
  * @returns {Object} The redux state.
  */
-export function toState(stateful: Function | IStore) {
+export function toState(stateful: Function | IStore | IState) {
     if (stateful) {
         if (typeof stateful === 'function') {
             return stateful();
         }
 
+        // @ts-ignore
         const { getState } = stateful;
 
         if (typeof getState === 'function') {
