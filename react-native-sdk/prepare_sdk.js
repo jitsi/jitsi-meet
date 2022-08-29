@@ -63,6 +63,7 @@ fs.copyFileSync('../ios/sdk/src/InfoPlistUtil.h', './ios/src/InfoPlistUtil.h');
 fs.copyFileSync('../ios/sdk/src/JavaScriptSandbox.m', './ios/src/JavaScriptSandbox.m');
 fs.copyFileSync('../ios/sdk/src/JitsiAudioSession.m', './ios/src/JitsiAudioSession.m');
 fs.copyFileSync('../ios/sdk/src/JitsiAudioSession.h', './ios/src/JitsiAudioSession.h');
+fs.copyFileSync('../ios/sdk/src/JitsiMeetSDK-Swift.h', './ios/src/JitsiMeetSDK-Swift.h');
 fs.copyFileSync('../ios/sdk/src/JitsiAudioSession+Private.h', './ios/src/JitsiAudioSession+Private.h');
 fs.copyFileSync('../ios/sdk/src/LocaleDetector.m', './ios/src/LocaleDetector.m');
 fs.copyFileSync('../ios/sdk/src/POSIX.m', './ios/src/POSIX.m');
