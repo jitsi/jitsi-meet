@@ -7,7 +7,8 @@ import {
     NativeModules,
     Platform,
     ScrollView,
-    Text, View
+    Text,
+    View
 } from 'react-native';
 import {
     Divider,
@@ -35,7 +36,7 @@ import {
 
 import FormRow from './FormRow';
 import FormSectionAccordion from './FormSectionAccordion';
-import styles from './styles';
+import styles, { PLACEHOLDER_COLOR, PLACEHOLDER_TEXT_COLOR } from './styles';
 
 /**
  * Application information module.
@@ -196,7 +197,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             colors: {
                 background: palette.ui01,
                 placeholder: palette.text01,
-                primary: palette.screen01Header,
+                primary: PLACEHOLDER_COLOR,
                 underlineColor: 'transparent',
                 text: palette.text01
             }
@@ -223,6 +224,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             mode = 'outlined'
                             onChangeText = { this._onChangeDisplayName }
                             placeholder = { this.props.t('settingsView.displayNamePlaceholderText') }
+                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                             spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'name' } // iOS only
@@ -237,6 +239,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             mode = 'outlined'
                             onChangeText = { this._onChangeEmail }
                             placeholder = 'email@example.com'
+                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                             spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'emailAddress' } // iOS only
@@ -255,6 +258,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
+                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                             spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'URL' } // iOS only
