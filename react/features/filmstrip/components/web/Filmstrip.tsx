@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';

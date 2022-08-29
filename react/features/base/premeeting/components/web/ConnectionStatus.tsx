@@ -1,7 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
@@ -26,7 +28,7 @@ interface Props extends WithTranslation {
     connectionType: string;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         connectionStatus: {
             borderRadius: '6px',
@@ -37,7 +39,7 @@ const useStyles = makeStyles((theme: any) => {
             position: 'absolute',
             width: '100%',
 
-            [theme.breakpoints.down('400')]: {
+            [theme.breakpoints.down(400)]: {
                 margin: 0,
                 width: '100%'
             },
@@ -150,7 +152,7 @@ const CONNECTION_TYPE_MAP: {
  * @returns {ReactElement}
  */
 function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const [ showDetails, toggleDetails ] = useState(false);
     const arrowClassName = showDetails

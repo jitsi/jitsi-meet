@@ -1,7 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
@@ -46,14 +48,14 @@ interface Props extends WithTranslation {
     passCode: string;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         dialInDialog: {
             textAlign: 'center',
 
             '& .prejoin-dialog-dialin-header': {
                 alignItems: 'center',
-                margin: `${theme.spacing(3)}px 0 ${theme.spacing(5)}px ${theme.spacing(3)}px`,
+                margin: `${theme.spacing(3)} 0 ${theme.spacing(5)} ${theme.spacing(3)}`,
                 display: 'flex'
             },
             '& .prejoin-dialog-dialin-icon': {
@@ -70,7 +72,7 @@ const useStyles = makeStyles((theme: any) => {
 
                 '& .prejoin-dialog-dialin-num-container': {
                     minHeight: '48px',
-                    margin: `${theme.spacing(2)}px 0`
+                    margin: `${theme.spacing(2)} 0`
                 }
             },
 
@@ -110,7 +112,7 @@ function DialinDialog(props: Props) {
         passCode,
         t
     } = props;
-    const classes = useStyles();
+    const { classes } = useStyles();
     const flagClassName = `prejoin-dialog-flag iti-flag ${getCountryCodeFromPhone(
         number
     )}`;

@@ -1,6 +1,6 @@
 // @flow
 
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import React, { PureComponent } from 'react';
 
 import { connect } from '../../../../base/redux';

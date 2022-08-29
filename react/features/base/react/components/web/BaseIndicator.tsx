@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
@@ -61,7 +61,7 @@ interface Props extends WithTranslation {
     tooltipPosition: string;
 }
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         indicator: {
             width: '20px',
@@ -90,7 +90,7 @@ const BaseIndicator = ({
     tooltipKey,
     tooltipPosition = 'top'
 }: Props) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
     const style: any = {};
 
     if (iconSize) {

@@ -1,11 +1,11 @@
-import { makeStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCheck } from '../../base/icons/svg';
-import { Theme } from '../../base/ui/types';
 
 interface ILanguageListItemProps extends WithTranslation {
 
@@ -25,7 +25,7 @@ interface ILanguageListItemProps extends WithTranslation {
     selected?: boolean;
 }
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         itemContainer: {
             display: 'flex',
@@ -56,7 +56,7 @@ const LanguageListItem = ({
     selected,
     onLanguageSelected
 }: ILanguageListItemProps) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
     const onLanguageSelectedWrapper = useCallback(() => onLanguageSelected(lang), [ lang ]);
 
     return (

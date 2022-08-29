@@ -1,5 +1,6 @@
-import { makeStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
 import React, { ReactNode } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import ContextMenuItem, { Props as ItemProps } from './ContextMenuItem';
 
@@ -17,11 +18,11 @@ type Props = {
     children?: ReactNode;
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         contextMenuItemGroup: {
             '&:not(:empty)': {
-                padding: `${theme.spacing(2)}px 0`
+                padding: `${theme.spacing(2)} 0`
             },
 
             '& + &:not(:empty)': {
@@ -35,7 +36,7 @@ const ContextMenuItemGroup = ({
     actions,
     children
 }: Props) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     return (
         <div className = { styles.contextMenuItemGroup }>

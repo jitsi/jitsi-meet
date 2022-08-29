@@ -1,4 +1,5 @@
-import { withStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 
@@ -51,14 +52,13 @@ type Props = AbstractProps & {
  *
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         label: {
             ...withPixelLineHeight(theme.typography.labelRegular),
-
             alignItems: 'center',
             background: theme.palette.ui04,
-            borderRadius: theme.shape.borderRadius / 2,
+            borderRadius: Number(theme.shape.borderRadius) / 2,
             color: theme.palette.text01,
             display: 'flex',
             height: 28,

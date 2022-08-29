@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -44,13 +45,13 @@ type State = {
     volumeLevel: number;
 };
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         container: {
             minHeight: '40px',
             minWidth: '180px',
             width: '100%',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box' as const,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -64,17 +65,17 @@ const styles = (theme: any) => {
         icon: {
             minWidth: '20px',
             padding: '5px',
-            position: 'relative'
+            position: 'relative' as const
         },
 
         sliderContainer: {
-            position: 'relative',
+            position: 'relative' as const,
             width: '100%',
             paddingRight: '5px'
         },
 
         slider: {
-            position: 'absolute',
+            position: 'absolute' as const,
             width: '100%',
             top: '50%',
             transform: 'translate(0, -50%)'
@@ -168,5 +169,4 @@ class VolumeSlider extends Component<Props, State> {
     }
 }
 
-// @ts-ignore
 export default translate(withStyles(styles)(VolumeSlider));

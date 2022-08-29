@@ -1,8 +1,8 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { batch, connect } from 'react-redux';
+import { batch } from 'react-redux';
 
 import { IState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -13,6 +13,7 @@ import { getParticipantById } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
+import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import Button from '../../../base/ui/components/web/Button';
@@ -120,7 +121,7 @@ const styles = () => {
         },
 
         contextMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             marginTop: 0,
             right: 'auto',
             padding: '0',
@@ -302,13 +303,12 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _disabled: remoteVideoMenu?.disabled,
         _menuPosition,
         _overflowDrawer: overflowDrawer,
-        _participant: participant,
-        _participantDisplayName,
+        _participant: participant ?? { id: '' },
+        _participantDisplayName: _participantDisplayName ?? '',
         _remoteControlState,
         _showConnectionInfo: showConnectionInfo
     };
 }
 
 export default translate(connect(_mapStateToProps)(
-    // @ts-ignore
     withStyles(styles)(RemoteVideoMenuTriggerButton)));

@@ -1,7 +1,7 @@
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
@@ -71,7 +71,7 @@ export type Props = {
     textClassName?: string;
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         contextMenuItem: {
             alignItems: 'center',
@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme: any) => {
             boxSizing: 'border-box',
 
             '& > *:not(:last-child)': {
-                marginRight: `${theme.spacing(3)}px`
+                marginRight: theme.spacing(3)
             },
 
             '&:hover': {
@@ -119,14 +119,14 @@ const ContextMenuItem = ({
     testId,
     text,
     textClassName }: Props) => {
-    const styles = useStyles();
+    const { classes: styles, cx } = useStyles();
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
 
     return (
         <div
             aria-disabled = { disabled }
             aria-label = { accessibilityLabel }
-            className = { clsx(styles.contextMenuItem,
+            className = { cx(styles.contextMenuItem,
                     _overflowDrawer && styles.contextMenuItemDrawer,
                     disabled && styles.contextMenuItemDisabled,
                     className

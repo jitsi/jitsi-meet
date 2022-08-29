@@ -1,7 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 import { v4 as uuidv4 } from 'uuid';
 
 import { translate } from '../../base/i18n/functions';
@@ -42,10 +44,10 @@ interface Props extends WithTranslation {
 }
 
 // @ts-ignore
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         addBackground: {
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         },
         button: {
             display: 'none'
@@ -55,8 +57,8 @@ const useStyles = makeStyles((theme: any) => {
             fontWeight: '600',
             lineHeight: '20px',
             marginLeft: '-10px',
-            marginTop: `${theme.spacing(3)}px`,
-            marginBottom: `${theme.spacing(2)}px`,
+            marginTop: theme.spacing(3),
+            marginBottom: theme.spacing(2),
             color: '#669aec',
             display: 'inline-flex',
             cursor: 'pointer'
@@ -78,7 +80,7 @@ function UploadImageButton({
     storedImages,
     t
 }: Props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const uploadImageButton = useRef<HTMLInputElement>(null);
     const uploadImageKeyPress = useCallback(e => {
         if (uploadImageButton.current && (e.key === ' ' || e.key === 'Enter')) {

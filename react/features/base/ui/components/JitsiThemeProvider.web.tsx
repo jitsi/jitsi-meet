@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
@@ -26,7 +26,11 @@ type Props = {
  * @returns {React.ReactNode}
  */
 function JitsiThemeProvider(props: Props) {
-    return <ThemeProvider theme = { props._theme }>{ props.children }</ThemeProvider>;
+    return (
+        <StyledEngineProvider injectFirst = { true }>
+            <ThemeProvider theme = { props._theme }>{ props.children }</ThemeProvider>
+        </StyledEngineProvider>
+    );
 }
 
 /**

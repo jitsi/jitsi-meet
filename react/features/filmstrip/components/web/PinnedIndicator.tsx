@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
 import { IconPinParticipant } from '../../../base/icons/svg';
@@ -32,7 +32,7 @@ type Props = {
     tooltipPosition: string;
 };
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         pinnedIndicator: {
             backgroundColor: 'rgba(0, 0, 0, .7)',
@@ -60,7 +60,7 @@ const PinnedIndicator = ({
     const activePinnedParticipants: Array<{ participantId: string; pinned: boolean; }>
         = useSelector(getPinnedActiveParticipants);
     const isPinned = activePinnedParticipants.find(p => p.participantId === participantId);
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     if ((stageFilmstrip && !isPinned) || (!stageFilmstrip && !pinned)) {
         return null;

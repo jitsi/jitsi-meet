@@ -1,13 +1,13 @@
-import { makeStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
 import { IconRaisedHand } from '../../../base/icons/svg';
 import { getParticipantById, hasRaisedHand } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
-import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 
 /**
  * The type of the React {@code Component} props of {@link RaisedHandIndicator}.
@@ -31,7 +31,7 @@ type Props = {
     tooltipPosition: string;
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         raisedHandIndicator: {
             backgroundColor: theme.palette.warning02,
@@ -57,7 +57,7 @@ const RaisedHandIndicator = ({
     const participant: Participant | undefined = useSelector((state: IState) =>
         getParticipantById(state, participantId));
     const _raisedHand = hasRaisedHand(participant);
-    const styles = useStyles();
+    const { classes: styles, theme } = useStyles();
 
     if (!_raisedHand) {
         return null;
@@ -67,7 +67,7 @@ const RaisedHandIndicator = ({
         <div className = { styles.raisedHandIndicator }>
             <BaseIndicator
                 icon = { IconRaisedHand }
-                iconColor = { BaseTheme.palette.uiBackground }
+                iconColor = { theme.palette.uiBackground }
                 iconSize = { `${iconSize}px` }
                 tooltipKey = 'raisedHand'
                 tooltipPosition = { tooltipPosition } />

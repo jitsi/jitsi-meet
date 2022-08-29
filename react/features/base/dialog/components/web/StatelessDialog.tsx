@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment */
 import Modal, { ModalFooter } from '@atlaskit/modal-dialog';
-import { withStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React, { Component, ReactElement } from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -107,7 +108,7 @@ interface Props extends DialogProps, WithTranslation {
  * @param {Object} theme - The theme.
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         footer: {
             boxShadow: 'none'
@@ -117,7 +118,7 @@ const styles = (theme: any) => {
             display: 'flex',
 
             '& > button:first-child': {
-                marginRight: `${theme.spacing(2)}px`
+                marginRight: theme.spacing(2)
             }
         }
     };

@@ -1,8 +1,10 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
 // @ts-ignore
@@ -117,7 +119,7 @@ type Props = {
     thumbnailMenu?: boolean;
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         text: {
             color: theme.palette.text02,
@@ -146,7 +148,7 @@ const ParticipantContextMenu = ({
 }: Props) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     const localParticipant = useSelector(getLocalParticipant);
     const _isModerator = Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR);

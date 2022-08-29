@@ -1,15 +1,15 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
 import { Avatar } from '../../../../../base/avatar';
 // @ts-ignore
 import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/components';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
-import { Theme } from '../../../../../base/ui/types';
 // @ts-ignore
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
 // @ts-ignore
@@ -17,6 +17,7 @@ import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 // @ts-ignore
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
 import { AVATAR_SIZE } from '../../../../constants';
+
 
 type Props = {
 
@@ -50,7 +51,7 @@ type Props = {
     onSelect: Function;
 };
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         text: {
             color: theme.palette.text02,
@@ -71,7 +72,7 @@ export const RoomParticipantContextMenu = ({
     onLeave,
     onSelect
 }: Props) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
     const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const lowerMenu = useCallback(() => onSelect(true), [ onSelect ]);

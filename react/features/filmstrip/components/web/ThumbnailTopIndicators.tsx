@@ -1,8 +1,8 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
+
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
 // @ts-ignore
@@ -72,7 +72,7 @@ type Props = {
     thumbnailType: string;
 };
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         container: {
             display: 'flex',
@@ -95,7 +95,7 @@ const ThumbnailTopIndicators = ({
     showPopover,
     thumbnailType
 }: Props) => {
-    const styles = useStyles();
+    const { classes: styles, cx } = useStyles();
 
     const _isMobile = isMobileBrowser();
     const { NORMAL = 16 } = interfaceConfig.INDICATOR_FONT_SIZES || {};
@@ -124,44 +124,43 @@ const ThumbnailTopIndicators = ({
 
     const tooltipPosition = getIndicatorsTooltipPosition(thumbnailType);
 
-    return (
-        <>
-            <div className = { styles.container }>
-                <PinnedIndicator
+    return (<>
+        <div className = { styles.container }>
+            <PinnedIndicator
+                iconSize = { _indicatorIconSize }
+                participantId = { participantId }
+                tooltipPosition = { tooltipPosition } />
+            {!_connectionIndicatorDisabled
+                && <ConnectionIndicator
+                    alwaysVisible = { showConnectionIndicator }
+                    enableStatsDisplay = { true }
                     iconSize = { _indicatorIconSize }
                     participantId = { participantId }
-                    tooltipPosition = { tooltipPosition } />
-                {!_connectionIndicatorDisabled
-                    && <ConnectionIndicator
-                        alwaysVisible = { showConnectionIndicator }
-                        enableStatsDisplay = { true }
-                        iconSize = { _indicatorIconSize }
-                        participantId = { participantId }
-                        statsPopoverPosition = { STATS_POPOVER_POSITION[thumbnailType] } />
-                }
-                <RaisedHandIndicator
-                    iconSize = { _indicatorIconSize }
-                    participantId = { participantId }
-                    tooltipPosition = { tooltipPosition } />
-                {thumbnailType !== THUMBNAIL_TYPE.TILE && (
-                    <div className = { clsx(indicatorsClassName, 'top-indicators') }>
-                        <StatusIndicators
-                            participantID = { participantId }
-                            screenshare = { !_isMultiStreamEnabled } />
-                    </div>
-                )}
-            </div>
-            <div className = { styles.container }>
-                <VideoMenuTriggerButton
-                    hidePopover = { hidePopover }
-                    local = { local }
-                    participantId = { participantId }
-                    popoverVisible = { popoverVisible }
-                    showPopover = { showPopover }
-                    thumbnailType = { thumbnailType }
-                    visible = { isHovered } />
-            </div>
-        </>);
+                    statsPopoverPosition = { STATS_POPOVER_POSITION[thumbnailType] } />
+            }
+            <RaisedHandIndicator
+                iconSize = { _indicatorIconSize }
+                participantId = { participantId }
+                tooltipPosition = { tooltipPosition } />
+            {thumbnailType !== THUMBNAIL_TYPE.TILE && (
+                <div className = { cx(indicatorsClassName, 'top-indicators') }>
+                    <StatusIndicators
+                        participantID = { participantId }
+                        screenshare = { !_isMultiStreamEnabled } />
+                </div>
+            )}
+        </div>
+        <div className = { styles.container }>
+            <VideoMenuTriggerButton
+                hidePopover = { hidePopover }
+                local = { local }
+                participantId = { participantId }
+                popoverVisible = { popoverVisible }
+                showPopover = { showPopover }
+                thumbnailType = { thumbnailType }
+                visible = { isHovered } />
+        </div>
+    </>);
 };
 
 export default ThumbnailTopIndicators;

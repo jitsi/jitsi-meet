@@ -1,8 +1,10 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import debounce from 'lodash/debounce';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -23,7 +25,6 @@ import {
     hasRaisedHand
 } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
-import { connect } from '../../../base/redux/functions';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 // @ts-ignore
 import { isTestModeEnabled } from '../../../base/testing';
@@ -279,19 +280,19 @@ export type Props = {
     width?: number;
 };
 
-const defaultStyles = (theme: any) => {
+const defaultStyles = (theme: Theme) => {
     return {
         indicatorsContainer: {
-            position: 'absolute',
-            padding: `${theme.spacing(1)}px`,
+            position: 'absolute' as const,
+            padding: theme.spacing(1),
             zIndex: 10,
             width: '100%',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box' as const,
             display: 'flex',
             left: 0,
 
             '&.tile-view-mode': {
-                padding: `${theme.spacing(2)}px`
+                padding: theme.spacing(2)
             }
         },
 
@@ -326,7 +327,7 @@ const defaultStyles = (theme: any) => {
         },
 
         containerBackground: {
-            position: 'absolute',
+            position: 'absolute' as const,
             top: 0,
             left: 0,
             height: '100%',
@@ -336,7 +337,7 @@ const defaultStyles = (theme: any) => {
         },
 
         borderIndicator: {
-            position: 'absolute',
+            position: 'absolute' as const,
             width: '100%',
             height: '100%',
             zIndex: 9,
@@ -360,7 +361,7 @@ const defaultStyles = (theme: any) => {
         },
 
         gif: {
-            position: 'absolute',
+            position: 'absolute' as const,
             width: '100%',
             height: '100%',
             zIndex: 11,
@@ -1309,5 +1310,4 @@ function _mapStateToProps(state: IState, ownProps: any): Object {
     };
 }
 
-// @ts-ignore
 export default connect(_mapStateToProps)(withStyles(defaultStyles)(Thumbnail));

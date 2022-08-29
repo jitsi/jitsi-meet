@@ -1,13 +1,14 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../../analytics/functions';
 import Button from '../../../../../base/ui/components/web/Button';
-import { Theme } from '../../../../../base/ui/types';
 // @ts-ignore
 import { moveToRoom } from '../../../../../breakout-rooms/actions';
 
@@ -22,16 +23,16 @@ type Props = {
     };
 };
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         button: {
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         }
     };
 });
 
 const JoinActionButton = ({ room }: Props) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
     const { t } = useTranslation();
     const dispatch = useDispatch();
 

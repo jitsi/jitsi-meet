@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment */
 import Spinner from '@atlaskit/spinner';
-import { withStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -89,7 +90,7 @@ type State = {
  *
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         virtualBackgroundPreview: {
             '& .video-preview': {
@@ -100,7 +101,7 @@ const styles = (theme: any) => {
                 marginLeft: '-10px',
                 height: '250px',
                 width: '570px',
-                marginBottom: `${theme.spacing(2)}px`,
+                marginBottom: theme.spacing(2),
                 zIndex: 2,
 
                 '@media (max-width: 632px)': {
@@ -112,7 +113,7 @@ const styles = (theme: any) => {
                 borderRadius: '6px',
                 backgroundColor: 'transparent',
                 height: '250px',
-                marginBottom: `${theme.spacing(2)}px`,
+                marginBottom: theme.spacing(2),
                 width: '572px',
                 position: 'fixed',
                 zIndex: 2,
