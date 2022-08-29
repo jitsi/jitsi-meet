@@ -300,7 +300,7 @@ class SecurityDialog extends PureComponent<Props, State> {
             <View
                 style = { styles.passwordContainer } >
                 <Text style = { styles.passwordContainerText }>
-                    { t('security.about') }
+                    { t(_isModerator ? 'security.about' : 'security.aboutReadOnly') }
                 </Text>
                 <View
                     style = {
@@ -310,7 +310,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                     <View>
                         { this._setRoomPasswordMessage() }
                     </View>
-                    { setPasswordControls }
+                    { _isModerator && setPasswordControls }
                 </View>
             </View>
         );
@@ -367,7 +367,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                                 { t('info.password') }
                             </Text>
                             <Text style = { styles.savedPassword }>
-                                { passwordInputValue }
+                                { _password }
                             </Text>
                         </View>
                     );
