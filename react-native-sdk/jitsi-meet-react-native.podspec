@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.platform       = :ios, '12.4'
 
   s.preserve_paths = 'ios/**/*'
-  s.source_files   =  'ios/**/*.{h,m}' 
+  s.source_files   =  'ios/**/*.{h,m,swift}'
 
 
   s.dependency 'React-Core'
