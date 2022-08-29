@@ -218,10 +218,12 @@ MiddlewareRegistry.register(store => next => action => {
 
             return result;
         }
-        const { jitsiTrack } = action.track;
 
-        if (jitsiTrack.isMuted()
-            && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+        // Mobile.
+        const { jitsiTrack, local } = action.track;
+
+        if (local && jitsiTrack.isMuted()
+                && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
             store.dispatch(toggleScreensharing(false));
         }
         break;
