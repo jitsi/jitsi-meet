@@ -68,5 +68,4 @@ fs.copyFileSync('../ios/sdk/src/JitsiAudioSession+Private.h', './ios/src/JitsiAu
 fs.copyFileSync('../ios/sdk/src/LocaleDetector.m', './ios/src/LocaleDetector.m');
 fs.copyFileSync('../ios/sdk/src/POSIX.m', './ios/src/POSIX.m');
 fs.copyFileSync('../ios/sdk/src/Proximity.m', './ios/src/Proximity.m');
-fs.copyFileSync('../logging_config.js', './logging_config.js');
 
