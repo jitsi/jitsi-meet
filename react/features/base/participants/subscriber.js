@@ -3,7 +3,10 @@
 import _ from 'lodash';
 
 import { getCurrentConference } from '../conference';
-import { getMultipleVideoSupportFeatureFlag } from '../config';
+import {
+    getMultipleVideoSendingSupportFeatureFlag,
+    getMultipleVideoSupportFeatureFlag
+} from '../config/functions.any';
 import { StateListenerRegistry } from '../redux';
 
 import { createVirtualScreenshareParticipant, participantLeft } from './actions';
@@ -47,12 +50,14 @@ function _updateScreenshareParticipants({ getState, dispatch }) {
         return acc;
     }, []);
 
-    if (!localScreenShare && newLocalSceenshareSourceName) {
-        dispatch(createVirtualScreenshareParticipant(newLocalSceenshareSourceName, true));
-    }
+    if (getMultipleVideoSendingSupportFeatureFlag(state)) {
+        if (!localScreenShare && newLocalSceenshareSourceName) {
+            dispatch(createVirtualScreenshareParticipant(newLocalSceenshareSourceName, true));
+        }
 
-    if (localScreenShare && !newLocalSceenshareSourceName) {
-        dispatch(participantLeft(localScreenShare.id, conference, undefined, true));
+        if (localScreenShare && !newLocalSceenshareSourceName) {
+            dispatch(participantLeft(localScreenShare.id, conference, undefined, true));
+        }
     }
 
     const removedScreenshareSourceNames = _.difference(previousScreenshareSourceNames, currentScreenshareSourceNames);
