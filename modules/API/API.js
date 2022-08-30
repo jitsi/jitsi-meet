@@ -41,7 +41,8 @@ import {
     isLocalParticipantModerator,
     hasRaisedHand,
     grantModerator,
-    overwriteParticipantsNames
+    overwriteParticipantsNames,
+    LOCAL_PARTICIPANT_DEFAULT_ID
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { getDisplayName } from '../../react/features/base/settings/functions.web';
@@ -1475,13 +1476,12 @@ class API {
      */
     notifyPrejoinLoaded() {
         const state = APP.store.getState();
-        const localParticipant = getLocalParticipant(state);
         const { defaultLocalDisplayName } = state['features/base/config'];
         const displayName = getDisplayName(state);
 
         this._sendEvent({
             name: 'prejoin-screen-loaded',
-            id: localParticipant.id, // the id is 'local' when in prejoin.
+            id: LOCAL_PARTICIPANT_DEFAULT_ID,
             displayName,
             formattedDisplayName: appendSuffix(displayName, defaultLocalDisplayName)
         });
