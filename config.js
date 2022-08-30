@@ -1490,4 +1490,7 @@ var config = {
     //      'modules/statistics/CallStats.js': 'info',
     //      'modules/xmpp/strophe.util.js': 'log',
     // },
+
+    // Application logo url
+    // defaultLogoUrl: 'images/watermark.svg',
 };

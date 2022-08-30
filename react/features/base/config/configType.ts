@@ -169,6 +169,7 @@ export interface IConfig {
     corsAvatarURLs?: Array<string>;
     defaultLanguage?: string;
     defaultLocalDisplayName?: string;
+    defaultLogoUrl?: string;
     defaultRemoteDisplayName?: string;
     deploymentInfo?: {
         region?: string;

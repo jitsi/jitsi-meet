@@ -273,6 +273,15 @@ function _translateInterfaceConfig(oldValue: IConfig) {
         newValue.defaultRemoteDisplayName = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
     }
 
+    if (oldValue.defaultLogoUrl === undefined) {
+        if (typeof interfaceConfig === 'object'
+            && interfaceConfig.hasOwnProperty('DEFAULT_LOGO_URL')) {
+            newValue.defaultLogoUrl = interfaceConfig.DEFAULT_LOGO_URL;
+        } else {
+            newValue.defaultLogoUrl = 'images/watermark.svg';
+        }
+    }
+
     return newValue;
 }
 
