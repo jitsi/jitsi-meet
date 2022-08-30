@@ -1,13 +1,18 @@
+/* eslint-disable lines-around-comment */
 import logger from '../logger';
 
-import AbstractHandler from './AbstractHandler';
+import AbstractHandler, { IEvent } from './AbstractHandler';
+// @ts-ignore
 import { fixDeviceID } from './amplitude/fixDeviceID';
+// @ts-ignore
 import amplitude from './amplitude/lib';
 
 /**
  * Analytics handler for Amplitude.
  */
 export default class AmplitudeHandler extends AbstractHandler {
+    _deviceId: string;
+    _userId: Object;
     /**
      * Creates new instance of the Amplitude analytics handler.
      *
@@ -15,14 +20,14 @@ export default class AmplitudeHandler extends AbstractHandler {
      * @param {string} options.amplitudeAPPKey - The Amplitude app key required
      * by the Amplitude API.
      */
-    constructor(options) {
+    constructor(options: any) {
         super(options);
 
         const { amplitudeAPPKey, user } = options;
 
         this._enabled = true;
 
-        const onError = e => {
+        const onError = (e: Error) => {
             logger.error('Error initializing Amplitude', e);
             this._enabled = false;
         };
@@ -31,7 +36,7 @@ export default class AmplitudeHandler extends AbstractHandler {
             amplitude.getInstance().init(amplitudeAPPKey);
             fixDeviceID(amplitude.getInstance()).then(() => {
                 amplitude.getInstance().getDeviceId()
-                    .then(deviceId => {
+                    .then((deviceId: string) => {
                         this._deviceId = deviceId;
                     });
             });
@@ -57,7 +62,7 @@ export default class AmplitudeHandler extends AbstractHandler {
      * @param {Object} userProps - The user portperties.
      * @returns {void}
      */
-    setUserProperties(userProps) {
+    setUserProperties(userProps: Object) {
         if (this._enabled) {
             amplitude.getInstance().setUserProperties(userProps);
         }
@@ -71,7 +76,7 @@ export default class AmplitudeHandler extends AbstractHandler {
      * lib-jitsi-meet.
      * @returns {void}
      */
-    sendEvent(event) {
+    sendEvent(event: IEvent) {
         if (this._shouldIgnore(event)) {
             return;
         }

@@ -1,13 +1,14 @@
 /* global _paq */
 
-import { getJitsiMeetGlobalNS } from '../../base/util';
+import { getJitsiMeetGlobalNS } from '../../base/util/helpers';
 
-import AbstractHandler from './AbstractHandler';
+import AbstractHandler, { IEvent } from './AbstractHandler';
 
 /**
  * Analytics handler for Matomo.
  */
 export default class MatomoHandler extends AbstractHandler {
+    _userProperties: Object;
 
     /**
      * Creates new instance of the Matomo handler.
@@ -16,7 +17,7 @@ export default class MatomoHandler extends AbstractHandler {
      * @param {string} options.matomoEndpoint - The Matomo endpoint.
      * @param {string} options.matomoSiteID   - The site ID.
      */
-    constructor(options) {
+    constructor(options: any) {
         super(options);
         this._userProperties = {};
 
@@ -43,9 +44,11 @@ export default class MatomoHandler extends AbstractHandler {
      * @param {string} options.matomoSiteID   - The site ID.
      * @returns {void}
      */
-    _initMatomo(options) {
+    _initMatomo(options: any) {
+        // @ts-ignore
         const _paq = window._paq || [];
 
+        // @ts-ignore
         window._paq = _paq;
 
         _paq.push([ 'trackPageView' ]);
@@ -70,7 +73,7 @@ export default class MatomoHandler extends AbstractHandler {
             g.async = true;
             g.defer = true;
             g.src = `${u}matomo.js`;
-            s.parentNode.insertBefore(g, s);
+            s.parentNode?.insertBefore(g, s);
         })();
     }
 
@@ -84,11 +87,11 @@ export default class MatomoHandler extends AbstractHandler {
      * suitable value.
      * @private
      */
-    _extractValue(event) {
+    _extractValue(event: IEvent) {
         const value = event && event.attributes && event.attributes.value;
 
         // Try to extract an integer from the 'value' attribute.
-        return Math.round(parseFloat(value));
+        return Math.round(parseFloat(value ?? ''));
     }
 
     /**
@@ -97,7 +100,7 @@ export default class MatomoHandler extends AbstractHandler {
      * @param {Object} userProps - The permanent properties.
      * @returns {void}
      */
-    setUserProperties(userProps = {}) {
+    setUserProperties(userProps: any = {}) {
         if (!this._enabled) {
             return;
         }
@@ -108,6 +111,7 @@ export default class MatomoHandler extends AbstractHandler {
         Object.keys(userProps)
             .filter(key => visitScope.indexOf(key) === -1)
             .forEach((key, index) => {
+                // @ts-ignore
                 _paq.push([
                     'setCustomVariable',
                     1 + index,
@@ -122,6 +126,7 @@ export default class MatomoHandler extends AbstractHandler {
         Object.keys(userProps)
             .filter(key => visitScope.indexOf(key) !== -1)
             .forEach((key, index) => {
+                // @ts-ignore
                 _paq.push([
                     'setCustomVariable',
                     1 + index,
@@ -141,18 +146,19 @@ export default class MatomoHandler extends AbstractHandler {
      * lib-jitsi-meet.
      * @returns {void}
      */
-    sendEvent(event) {
+    sendEvent(event: IEvent) {
         if (this._shouldIgnore(event)) {
             return;
         }
 
         const value = this._extractValue(event);
-        const matomoEvent = [ 'trackEvent', 'jitsi-meet', this._extractName(event) ];
+        const matomoEvent: Array<string|number|undefined> = [ 'trackEvent', 'jitsi-meet', this._extractName(event) ];
 
         if (!isNaN(value)) {
             matomoEvent.push(value);
         }
 
+        // @ts-ignore
         _paq.push(matomoEvent);
     }
 }
