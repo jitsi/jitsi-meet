@@ -1,10 +1,10 @@
 /*  @flow */
 
+import $ from 'jquery';
 import jqueryI18next from 'jquery-i18next';
 
 import { i18next } from '../../react/features/base/i18n';
 
-declare var $: Function;
 
 type DocumentElement = {
     lang: string

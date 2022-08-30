@@ -1,7 +1,5 @@
 /* application specific logic */
 
-import 'jquery';
-
 import '@matrix-org/olm';
 
 import 'focus-visible';
