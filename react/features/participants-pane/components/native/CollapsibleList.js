@@ -25,7 +25,7 @@ type Props = {
     onLongPress?: Function,
 
     /**
-     * Collapsable list title.
+     * Collapsible list title.
      */
     title: Object
 }

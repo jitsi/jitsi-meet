@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 /**
- * Component that displays a placehoder for when the screen is shared.
+ * Component that displays a placeholder for when the screen is shared.
  * * @param {Function} t - Function which translate strings.
  *
  * @returns {ReactElement}

@@ -218,7 +218,7 @@ export function getVideoObjectPosition(state: Object, id: string) {
  * Gets the video object position for a participant id.
  *
  * @param {Object} state - The redux state.
- * @returns {number} - Number of miliseconds for doing face detection.
+ * @returns {number} - Number of milliseconds for doing face detection.
  */
 export function getDetectionInterval(state: Object) {
     const { faceLandmarks } = state['features/base/config'];

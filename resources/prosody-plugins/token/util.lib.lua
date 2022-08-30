@@ -50,7 +50,7 @@ function Util.new(module)
         conference.domain and the actual presentation of the room in that muc
         component is [subdomain]roomName@conference.domain.
         These setups relay on configuration 'muc_domain_base' which holds
-        the main domain and we use it to substract subdomains from the
+        the main domain and we use it to subtract subdomains from the
         virtual addresses.
         The following confgurations are for multidomain setups and domain name
         verification:
