@@ -132,6 +132,7 @@ const events = {
     'participant-role-changed': 'participantRoleChanged',
     'participants-pane-toggled': 'participantsPaneToggled',
     'password-required': 'passwordRequired',
+    'prejoin-screen-loaded': 'prejoinScreenLoaded',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
     'recording-link-available': 'recordingLinkAvailable',
@@ -356,7 +357,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             this.invite(invitees);
         }
         this._tmpE2EEKey = e2eeKey;
-        this._isLargeVideoVisible = true;
+        this._isLargeVideoVisible = false;
+        this._isPrejoinVideoVisible = false;
         this._numberOfParticipants = 0;
         this._participants = {};
         this._myUserID = undefined;
@@ -462,6 +464,24 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         }
 
         return iframe.contentWindow.document.getElementById('largeVideo');
+    }
+
+    /**
+     * Getter for the prejoin video element in Jitsi Meet.
+     *
+     * @returns {HTMLElement|undefined} - The prejoin video.
+     */
+    _getPrejoinVideo() {
+        const iframe = this.getIFrame();
+
+        if (!this._isPrejoinVideoVisible
+                || !iframe
+                || !iframe.contentWindow
+                || !iframe.contentWindow.document) {
+            return;
+        }
+
+        return iframe.contentWindow.document.getElementById('prejoinVideo');
     }
 
     /**
@@ -581,6 +601,16 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             case 'large-video-visibility-changed':
                 this._isLargeVideoVisible = data.isVisible;
                 this.emit('largeVideoChanged');
+                break;
+            case 'prejoin-screen-loaded':
+                this._participants[userID] = {
+                    displayName: data.displayName,
+                    formattedDisplayName: data.formattedDisplayName
+                };
+                break;
+            case 'on-prejoin-video-changed':
+                this._isPrejoinVideoVisible = data.isVisible;
+                this.emit('prejoinVideoChanged');
                 break;
             case 'video-conference-left':
                 changeParticipantNumber(this, -1);
