@@ -149,6 +149,8 @@ PODS:
   - nanopb/encode (2.30908.0)
   - ObjectiveDropboxOfficial (6.2.3)
   - PromisesObjC (2.1.1)
+  - PromisesSwift (2.1.1):
+    - PromisesObjC (= 2.1.1)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
     - DoubleConversion
@@ -374,10 +376,11 @@ PODS:
     - React-Core
   - react-native-splash-screen (3.3.0):
     - React-Core
-  - react-native-video (5.2.0):
+  - react-native-video (6.0.0-alpha.1):
     - React-Core
-    - react-native-video/Video (= 5.2.0)
-  - react-native-video/Video (5.2.0):
+    - react-native-video/Video (= 6.0.0-alpha.1)
+  - react-native-video/Video (6.0.0-alpha.1):
+    - PromisesSwift
     - React-Core
   - react-native-webrtc (1.100.1):
     - React-Core
@@ -569,6 +572,7 @@ SPEC REPOS:
     - nanopb
     - ObjectiveDropboxOfficial
     - PromisesObjC
+    - PromisesSwift
 
 EXTERNAL SOURCES:
   amplitude-react-native:
@@ -716,6 +720,7 @@ SPEC CHECKSUMS:
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
+  PromisesSwift: 99fddfe4a0ec88a56486644c0da106694c92a604
   RCT-Folly: 4d8508a426467c48885f1151029bc15fa5d7b3b8
   RCTRequired: 00581111c53531e39e3c6346ef0d2c0cf52a5a37
   RCTTypeSafety: 07e03ee7800e7dd65cba8e52ad0c2edb06c96604
@@ -738,7 +743,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
-  react-native-video: a4c2635d0802f983594b7057e1bce8f442f0ad28
+  react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
   react-native-webrtc: 206a0ac12a5633d2ec4605174d7c9f12f0d674b2
   react-native-webview: ea4899a1056c782afa96dd082179a66cbebf5504
   React-perflogger: 30ab8d6db10e175626069e742eead3ebe8f24fd5
