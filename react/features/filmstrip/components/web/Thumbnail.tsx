@@ -784,7 +784,7 @@ class Thumbnail extends Component<Props, State> {
     }
 
     /**
-     * Cancel showing popover context menu after x miliseconds if the no. Of miliseconds is not reached yet,
+     * Cancel showing popover context menu after x milliseconds if the no. Of milliseconds is not reached yet,
      * or just clears the timeout.
      *
      * @returns {void}
@@ -794,7 +794,7 @@ class Thumbnail extends Component<Props, State> {
     }
 
     /**
-     * Cancel showing Context menu after x miliseconds if the number of miliseconds is not reached
+     * Cancel showing Context menu after x milliseconds if the number of milliseconds is not reached
      * before a touch move(drag), or just clears the timeout.
      *
      * @returns {void}

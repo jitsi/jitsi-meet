@@ -89,7 +89,7 @@ export default class JitsiStreamPresenterEffect {
      * @returns {void}
      */
     _renderVideo() {
-        // adjust the canvas width/height on every frame incase the window has been resized.
+        // adjust the canvas width/height on every frame in case the window has been resized.
         const [ track ] = this._desktopStream.getVideoTracks();
         const { height, width } = track.getSettings() ?? track.getConstraints();
 

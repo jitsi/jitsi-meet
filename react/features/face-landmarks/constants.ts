@@ -38,7 +38,7 @@ export const INIT_WORKER = 'INIT_WORKER';
 export const FACE_BOX_EVENT_TYPE = 'face-box';
 
 /**
- * Miliseconds interval value for sending new image data to the worker.
+ * Milliseconds interval value for sending new image data to the worker.
  */
 export const SEND_IMAGE_INTERVAL_MS = 1000;
 

@@ -109,7 +109,7 @@ function getConfig(options = {}) {
                     // Avoid loading babel.config.js, since we only use it for React Native.
                     configFile: false,
 
-                    // XXX The require.resolve bellow solves failures to locate the
+                    // XXX The require.resolve below solves failures to locate the
                     // presets when lib-jitsi-meet, for example, is npm linked in
                     // jitsi-meet.
                     plugins: [
@@ -399,7 +399,7 @@ module.exports = (_env, argv) => {
              * context as a normal window, (e.g. self/window is not defined).
              * While running a production build webpack's boilerplate code doesn't introduce any
              * audio worklet "unfriendly" code however when running the dev server, hot module replacement
-             * and live reload add javascript code that can't be ran by the worklet, so we explicity ignore
+             * and live reload add javascript code that can't be ran by the worklet, so we explicitly ignore
              * those parts with the null-loader.
              * The dev server also expects a `self` global object that's not available in the `AudioWorkletGlobalScope`,
              * so we replace it.

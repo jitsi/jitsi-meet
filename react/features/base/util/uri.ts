@@ -139,7 +139,7 @@ export function getBackendSafeRoomName(room?: string): string|undefined {
     } catch (e) {
         // This can happen though if we get an unencoded string and it contains
         // some characters that look like an encoded entity, but it's not.
-        // But in this case we're fine goin on...
+        // But in this case we're fine going on...
     }
 
     // Normalize the character set.

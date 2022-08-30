@@ -250,7 +250,7 @@
         "micNotSendingData": "మీ కంప్యూటర్ అమరికల లోనికి వెళ్ళి మైకుని అమౌనించండి, దాని ధ్వనిస్థాయిని సర్దుబాటుచేయండి",
         "micNotSendingDataTitle": "మీ కంప్యూటర్ అమరికలు మీ మైకును మౌనించాయి",
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
-        "micTimeoutError": "Could not start audio source. Timeout occured!",
+        "micTimeoutError": "Could not start audio source. Timeout occurred!",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
         "muteEveryoneDialog": "Are you sure you want to mute everyone? You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteEveryoneElseDialog": "Once muted, you won't be able to unmute them, but they can unmute themselves at any time.",
