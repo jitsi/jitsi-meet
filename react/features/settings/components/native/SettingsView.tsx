@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment  */
 
 import { Link } from '@react-navigation/native';
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import {
@@ -24,10 +25,7 @@ import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n/functions';
 // @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import {
-    getLocalParticipant,
-    getParticipantDisplayName
-} from '../../../base/participants/functions';
+import { getLocalParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { updateSettings } from '../../../base/settings';
@@ -129,11 +127,6 @@ interface Props extends WithTranslation {
     _visible: boolean,
 
     /**
-     * Avatar label.
-     */
-    avatarLabel: string,
-
-    /**
      * Redux store dispatch function.
      */
     dispatch: Function,
@@ -228,7 +221,7 @@ class SettingsView extends Component<Props, State> {
     }
 
     /**
-     * Sets a timeout to hide the toolbar when the toolbar is shown.
+     * Updates and syncs settings.
      *
      * @inheritdoc
      * @returns {void}
@@ -236,7 +229,7 @@ class SettingsView extends Component<Props, State> {
     componentDidUpdate(prevProps: Props) {
         const { settings } = this.props;
 
-        if (prevProps.settings !== settings) {
+        if (!_.isEqual(prevProps.settings, settings)) {
             // @ts-ignore
             // eslint-disable-next-line react/no-did-update-set-state
             this.setState(settings);
@@ -284,7 +277,7 @@ class SettingsView extends Component<Props, State> {
                             participantId = { this.props.localParticipantId }
                             size = { AVATAR_SIZE } />
                         <Text style = { styles.avatarLabel }>
-                            { this.props.avatarLabel }
+                            { displayName || t('settingsView.displayNamePlaceholderText') }
                         </Text>
                     </View>
                     <FormSectionAccordion
@@ -738,15 +731,12 @@ class SettingsView extends Component<Props, State> {
  */
 function _mapStateToProps(state: any) {
     const localParticipant = getLocalParticipant(state);
-    const localParticipantId = localParticipant?.id;
-    const avatarLabel = localParticipant && getParticipantDisplayName(state, localParticipantId);
 
     return {
         _serverURL: getDefaultURL(state),
         _serverURLChangeEnabled: isServerURLChangeEnabled(state),
         _visible: state['features/settings'].visible,
-        avatarLabel,
-        localParticipantId,
+        localParticipantId: localParticipant?.id,
         settings: state['features/base/settings']
     };
 }
