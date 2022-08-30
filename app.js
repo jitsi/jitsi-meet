@@ -1,5 +1,11 @@
 /* application specific logic */
 
+// Re-export jQuery
+// FIXME: Remove this requirement from torture tests.
+import $ from 'jquery';
+
+window.$ = window.jQuery = $;
+
 import '@matrix-org/olm';
 
 import 'focus-visible';
