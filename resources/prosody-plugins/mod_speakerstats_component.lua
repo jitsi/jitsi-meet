@@ -20,12 +20,12 @@ local muc_component_host = module:get_option_string("muc_component");
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
 
 if muc_component_host == nil or muc_domain_base == nil then
-    log("error", "No muc_component specified. No muc to operate on!");
+    module:log("error", "No muc_component specified. No muc to operate on!");
     return;
 end
 local breakout_room_component_host = "breakout." .. muc_domain_base;
 
-log("info", "Starting speakerstats for %s", muc_component_host);
+module:log("info", "Starting speakerstats for %s", muc_component_host);
 
 local main_muc_service;
 
