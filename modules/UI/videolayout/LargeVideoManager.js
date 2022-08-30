@@ -1,6 +1,7 @@
-/* global $, APP */
+/* global APP */
 /* eslint-disable no-unused-vars */
 import Logger from '@jitsi/logger';
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
