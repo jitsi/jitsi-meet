@@ -1205,8 +1205,8 @@
     },
     "transcribing": {
         "subtitles": "Subtitles",
-        "ccButtonTooltip": "Start / Stop subtitles",
         "subtitlesOff": "Off",
+        "ccButtonTooltip": "Start / Stop subtitles",
         "error": "Transcribing failed. Please try again.",
         "expandedLabel": "Transcribing is currently on",
         "failedToStart": "Transcribing failed to start",
