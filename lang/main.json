@@ -1194,7 +1194,7 @@
         "silence": "Silence",
         "speakerStats": "Speaker stats",
         "startScreenSharing": "Start screen sharing",
-        "startSubtitles": "Start subtitles",
+        "startSubtitles": "Subtitles • {{language}}",
         "stopAudioSharing": "Stop audio sharing",
         "stopScreenSharing": "Stop screen sharing",
         "stopSharedVideo": "Stop video",
@@ -1217,6 +1217,8 @@
         "pending": "Preparing to transcribe the meeting...",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
+        "subtitles": "Subtitles",
+        "subtitlesOff": "Off",
         "tr": "TR"
     },
     "userMedia": {

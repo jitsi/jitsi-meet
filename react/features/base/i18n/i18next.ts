@@ -37,6 +37,23 @@ const COUNTRIES = _.merge({}, COUNTRIES_RESOURCES, COUNTRIES_RESOURCES_OVERRIDES
 export const LANGUAGES: Array<string> = Object.keys(LANGUAGES_RESOURCES);
 
 /**
+ * The languages for the top section of the translation language list.
+ *
+ * @public
+ * @type {Array<string>}
+ */
+export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [ 'en' ];
+
+/**
+ * The languages to explude from the translation language list.
+ *
+ * @public
+ * @type {Array<string>}
+ */
+export const TRANSLATION_LANGUAGES_EXCLUDE: Array<string>
+= [ 'enGB', 'esUS', 'frCA', 'hsb', 'kab', 'ptBR', 'zhCN', 'zhTW' ];
+
+/**
  * The default language.
  *
  * English is the default language.
