@@ -1,11 +1,18 @@
-// @flow
-
-import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
+import PersistenceRegistry from '../base/redux/PersistenceRegistry';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
 import { VIRTUAL_BACKGROUND_TYPE } from './constants';
 
 const STORE_NAME = 'features/virtual-background';
+
+export interface IVirtualBackground {
+    backgroundEffectEnabled?: boolean;
+    backgroundType?: string;
+    blurValue?: number;
+    selectedThumbnail?: string;
+    virtualSource?: string;
+}
 
 /**
  * Reduces redux actions which activate/deactivate virtual background image, or
@@ -18,7 +25,7 @@ const STORE_NAME = 'features/virtual-background';
  * @returns {State} The next redux state that is the result of reducing the
  * specified action.
  */
-ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
+ReducerRegistry.register(STORE_NAME, (state: IVirtualBackground = {}, action): IVirtualBackground => {
     const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail } = action;
 
     /**

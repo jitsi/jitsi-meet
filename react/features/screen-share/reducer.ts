@@ -1,5 +1,5 @@
 
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     SET_SCREEN_AUDIO_SHARE_STATE,
@@ -7,10 +7,16 @@ import {
     SET_SCREENSHARE_TRACKS
 } from './actionTypes';
 
+export interface IScreenShareState {
+    captureFrameRate?: number;
+    desktopAudioTrack?: Object;
+    isSharingAudio?: boolean;
+}
+
 /**
  * Reduces the Redux actions of the feature features/screen-share.
  */
-ReducerRegistry.register('features/screen-share', (state = {}, action) => {
+ReducerRegistry.register('features/screen-share', (state: IScreenShareState = {}, action) => {
     const { captureFrameRate, isSharingAudio, desktopAudioTrack } = action;
 
     switch (action.type) {

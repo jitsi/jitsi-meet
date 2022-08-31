@@ -1,6 +1,5 @@
-// @flow
-
-import { ReducerRegistry, set } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { set } from '../base/redux/functions';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -73,9 +72,20 @@ const INITIAL_STATE = {
     visible: false
 };
 
+export interface IToolboxState {
+    enabled: boolean;
+    fullScreen?: boolean;
+    hangupMenuVisible: boolean;
+    hovered: boolean;
+    overflowDrawer: boolean;
+    overflowMenuVisible: boolean;
+    timeoutID?: number|null;
+    visible: boolean;
+}
+
 ReducerRegistry.register(
     'features/toolbox',
-    (state: Object = INITIAL_STATE, action: Object) => {
+    (state: IToolboxState = INITIAL_STATE, action): IToolboxState => {
         switch (action.type) {
         case CLEAR_TOOLBOX_TIMEOUT:
             return {

@@ -1,5 +1,4 @@
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     _TRANSCRIBER_JOINED,
@@ -59,11 +58,20 @@ function _getInitialState() {
     };
 }
 
+export interface ITranscribingState {
+    isDialing: boolean;
+    isTerminating: boolean;
+    isTranscribing: boolean;
+    pendingNotificationUid?: number;
+    potentialTranscriberJIDs: string[];
+    transcriberJID?: string|null;
+}
+
 /**
  * Reduces the Redux actions of the feature features/transcribing.
  */
 ReducerRegistry.register('features/transcribing',
-    (state = _getInitialState(), action) => {
+    (state: ITranscribingState = _getInitialState(), action): ITranscribingState => {
         switch (action.type) {
         case _TRANSCRIBER_JOINED:
             return {
