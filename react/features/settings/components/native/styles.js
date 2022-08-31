@@ -21,17 +21,6 @@ export default {
     },
 
     /**
-     * The style of the display name label.
-     */
-    avatarLabel: {
-        color: BaseTheme.palette.text01,
-        fontSize: 16,
-        marginTop: BoxModel.margin,
-        textAlign: 'center'
-    },
-
-
-    /**
      * Style for screen container.
      */
     settingsViewContainer: {

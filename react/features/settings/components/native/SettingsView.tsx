@@ -149,7 +149,17 @@ interface Props extends WithTranslation {
     /**
      * The current settings object.
      */
-    settings: Object
+    settings: {
+        disableCallIntegration: boolean;
+        disableCrashReporting: boolean;
+        disableP2P: boolean;
+        disableSelfView: boolean;
+        displayName: string;
+        email: string;
+        serverURL: string;
+        startWithAudioMuted: boolean;
+        startWithVideoMuted: boolean;
+    }
 }
 
 /**
@@ -168,23 +178,14 @@ class SettingsView extends Component<Props, State> {
         super(props);
 
         const {
-            // @ts-ignore
             disableCallIntegration,
-            // @ts-ignore
             disableCrashReporting,
-            // @ts-ignore
             disableP2P,
-            // @ts-ignore
             disableSelfView,
-            // @ts-ignore
             displayName,
-            // @ts-ignore
             email,
-            // @ts-ignore
             serverURL,
-            // @ts-ignore
             startWithAudioMuted,
-            // @ts-ignore
             startWithVideoMuted
         } = props.settings || {};
 
@@ -276,9 +277,6 @@ class SettingsView extends Component<Props, State> {
                         <Avatar
                             participantId = { this.props.localParticipantId }
                             size = { AVATAR_SIZE } />
-                        <Text style = { styles.avatarLabel }>
-                            { displayName || t('settingsView.displayNamePlaceholderText') }
-                        </Text>
                     </View>
                     <FormSectionAccordion
                         label = 'settingsView.profileSection'>
