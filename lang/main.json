@@ -1204,8 +1204,6 @@
         "videomute": "Start / Stop camera"
     },
     "transcribing": {
-        "subtitles": "Subtitles",
-        "subtitlesOff": "Off",
         "ccButtonTooltip": "Start / Stop subtitles",
         "error": "Transcribing failed. Please try again.",
         "expandedLabel": "Transcribing is currently on",
@@ -1215,6 +1213,8 @@
         "pending": "Preparing to transcribe the meeting...",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
+        "subtitles": "Subtitles",
+        "subtitlesOff": "Off",
         "tr": "TR"
     },
     "userMedia": {
