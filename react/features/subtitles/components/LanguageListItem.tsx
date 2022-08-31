@@ -1,11 +1,11 @@
 // @ts-ignore
 import { makeStyles } from '@material-ui/styles';
 import React, { useCallback } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 // eslint-disable-next-line import/order
 import { translate } from '../../base/i18n';
-import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import { Icon } from '../../base/icons/components';
