@@ -1,4 +1,3 @@
-import { BoxModel } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
