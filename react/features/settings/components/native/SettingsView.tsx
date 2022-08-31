@@ -21,7 +21,6 @@ import {
 import { getDefaultURL } from '../../../app/functions';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-// @ts-ignore
 import { translate } from '../../../base/i18n/functions';
 // @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
