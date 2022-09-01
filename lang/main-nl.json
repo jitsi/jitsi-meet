@@ -446,6 +446,10 @@
         "toggleShortcuts": "Sneltoetsen weergeven of verbergen",
         "videoMute": "Uw camera aanzetten of uitzetten"
     },
+    "largeVideo": {
+        "screenIsShared": "U deelt uw scherm",
+        "showMeWhatImSharing": "Laat me zien wat ik deel"
+    },
     "liveStreaming": {
         "busy": "Er wordt gewerkt aan het vrijmaken van streamingmiddelen. Probeer het over enkele minuten opnieuw.",
         "busyTitle": "Alle streamers zijn momenteel bezet",
