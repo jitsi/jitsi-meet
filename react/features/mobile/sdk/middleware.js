@@ -10,7 +10,7 @@ let eventEmitter;
 /**
  * Check if native modules are being used or not. If not then the init of middleware doesn't happen
  */
-if (ExternalAPI == undefined) {
+if (ExternalAPI === null) {
     eventEmitter = null;
 }
 
