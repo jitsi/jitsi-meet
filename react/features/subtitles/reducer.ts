@@ -1,4 +1,4 @@
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     REMOVE_TRANSCRIPT_MESSAGE,
@@ -14,12 +14,18 @@ const defaultState = {
     _language: 'transcribing.subtitlesOff'
 };
 
+export interface ISubtitlesState {
+    _language: string;
+    _requestingSubtitles: boolean;
+    _transcriptMessages: Map<string, Object>;
+}
+
 /**
  * Listen for actions for the transcription feature to be used by the actions
  * to update the rendered transcription subtitles.
  */
 ReducerRegistry.register('features/subtitles', (
-        state = defaultState, action) => {
+        state: ISubtitlesState = defaultState, action) => {
     switch (action.type) {
     case REMOVE_TRANSCRIPT_MESSAGE:
         return _removeTranscriptMessage(state, action);
@@ -49,7 +55,7 @@ ReducerRegistry.register('features/subtitles', (
  * @returns {Object} The new state of the feature transcription after the
  * reduction of the specified action.
  */
-function _removeTranscriptMessage(state, { transcriptMessageID }) {
+function _removeTranscriptMessage(state: ISubtitlesState, { transcriptMessageID }: { transcriptMessageID: string }) {
     const newTranscriptMessages = new Map(state._transcriptMessages);
 
     // Deletes the key from Map once a final message arrives.
@@ -70,8 +76,8 @@ function _removeTranscriptMessage(state, { transcriptMessageID }) {
  * @returns {Object} The new state of the feature transcription after the
  * reduction of the specified action.
  */
-function _updateTranscriptMessage(state,
-        { transcriptMessageID, newTranscriptMessage }) {
+function _updateTranscriptMessage(state: ISubtitlesState, { transcriptMessageID, newTranscriptMessage }:
+    { newTranscriptMessage: Object, transcriptMessageID: string }) {
     const newTranscriptMessages = new Map(state._transcriptMessages);
 
     // Updates the new message for the given key in the Map.

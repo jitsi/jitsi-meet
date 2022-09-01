@@ -1,8 +1,6 @@
-// @flow
-
 import _ from 'lodash';
 
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     INIT_SEARCH,
@@ -25,7 +23,15 @@ const INITIAL_STATE = {
     showFaceExpressions: false
 };
 
-ReducerRegistry.register('features/speaker-stats', (state = _getInitialState(), action) => {
+export interface ISpeakerStatsState {
+    criteria: string|null;
+    isOpen: boolean;
+    pendingReorder: boolean;
+    showFaceExpressions: boolean;
+    stats: Object;
+}
+
+ReducerRegistry.register('features/speaker-stats', (state: ISpeakerStatsState = INITIAL_STATE, action) => {
     switch (action.type) {
     case INIT_SEARCH:
         return _updateCriteria(state, action);
@@ -47,15 +53,6 @@ ReducerRegistry.register('features/speaker-stats', (state = _getInitialState(), 
 });
 
 /**
- * Gets the initial state of the feature speaker-stats.
- *
- * @returns {Object}
- */
-function _getInitialState() {
-    return INITIAL_STATE;
-}
-
-/**
  * Reduces a specific Redux action INIT_SEARCH of the feature
  * speaker-stats.
  *
@@ -64,7 +61,7 @@ function _getInitialState() {
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _updateCriteria(state, { criteria }) {
+function _updateCriteria(state: ISpeakerStatsState, { criteria }: { criteria: string|null }) {
     return _.assign(
         {},
         state,
@@ -86,7 +83,7 @@ function _updateCriteria(state, { criteria }) {
  * @private
  * @returns {Object} - The new state after the reduction of the specified action.
  */
-function _updateStats(state, { stats }) {
+function _updateStats(state: ISpeakerStatsState, { stats }: { stats: any }) {
     const finalStats = state.pendingReorder ? stats : state.stats;
 
     if (!state.pendingReorder) {
@@ -122,7 +119,7 @@ function _updateStats(state, { stats }) {
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _initReorderStats(state) {
+function _initReorderStats(state: ISpeakerStatsState) {
     return _.assign(
         {},
         state,

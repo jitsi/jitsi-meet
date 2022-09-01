@@ -1,6 +1,4 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
@@ -33,9 +31,15 @@ const DEFAULT_STATE = {
     tileViewEnabled: undefined
 };
 
+export interface IVideoLayoutState {
+    carMode: boolean;
+    remoteScreenShares: string[];
+    tileViewEnabled?: boolean;
+}
+
 const STORE_NAME = 'features/video-layout';
 
-ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register(STORE_NAME, (state: IVideoLayoutState = DEFAULT_STATE, action): IVideoLayoutState => {
     switch (action.type) {
     case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
     case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:

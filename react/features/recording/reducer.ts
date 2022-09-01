@@ -1,4 +1,4 @@
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CLEAR_RECORDING_SESSIONS,
@@ -16,6 +16,27 @@ const DEFAULT_STATE = {
     sessionDatas: []
 };
 
+interface SessionData {
+    error?: Error;
+    id?: string;
+    initiator?: Object;
+    liveStreamViewURL?: string;
+    mode?: string;
+    status?: string;
+    terminator?: Object;
+    timestamp?: number;
+}
+
+export interface IRecordingState {
+    disableHighlightMeetingMoment: boolean;
+    pendingNotificationUids: {
+        [key: string]: number|undefined;
+    };
+    selectedRecordingService: string;
+    sessionDatas: Array<SessionData>;
+    streamKey?: string;
+}
+
 /**
  * The name of the Redux store this feature stores its state in.
  */
@@ -25,7 +46,7 @@ const STORE_NAME = 'features/recording';
  * Reduces the Redux actions of the feature features/recording.
  */
 ReducerRegistry.register(STORE_NAME,
-    (state = DEFAULT_STATE, action) => {
+    (state: IRecordingState = DEFAULT_STATE, action) => {
         switch (action.type) {
 
         case CLEAR_RECORDING_SESSIONS:
@@ -86,7 +107,7 @@ ReducerRegistry.register(STORE_NAME,
  * @private
  * @returns {Array} The session datas with the updated session data added.
  */
-function _updateSessionDatas(sessionDatas, newSessionData) {
+function _updateSessionDatas(sessionDatas: SessionData[], newSessionData: SessionData) {
     const hasExistingSessionData = sessionDatas.find(
         sessionData => sessionData.id === newSessionData.id);
     let newSessionDatas;

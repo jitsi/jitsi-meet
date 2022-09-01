@@ -54,7 +54,21 @@ import { IPollsState } from '../polls/reducer';
 import { IPowerMonitorState } from '../power-monitor/reducer';
 import { IPrejoinState } from '../prejoin/reducer';
 import { IReactionsState } from '../reactions/reducer';
+import { IRecentListState } from '../recent-list/reducer';
+import { IRecordingState } from '../recording/reducer';
+import { IRemoteControlState } from '../remote-control/reducer';
+import { IScreenShareState } from '../screen-share/reducer';
+import { IScreenshotCaptureState } from '../screenshot-capture/reducer';
 import { ISharedVideoState } from '../shared-video/reducer';
+import { ISpeakerStatsState } from '../speaker-stats/reducer';
+import { ISubtitlesState } from '../subtitles/reducer';
+import { ITalkWhileMutedState } from '../talk-while-muted/reducer';
+import { IToolboxState } from '../toolbox/reducer';
+import { ITranscribingState } from '../transcribing/reducer';
+import { IVideoLayoutState } from '../video-layout/reducer';
+import { IVideoQualityPersistedState, IVideoQualityState } from '../video-quality/reducer';
+import { IVideoSipGW } from '../videosipgw/reducer';
+import { IVirtualBackground } from '../virtual-background/reducer';
 
 export interface IStore {
     dispatch: Function,
@@ -120,6 +134,22 @@ export interface IState {
     'features/power-monitor': IPowerMonitorState,
     'features/prejoin': IPrejoinState,
     'features/reactions': IReactionsState,
+    'features/recent-list': IRecentListState,
+    'features/recording': IRecordingState,
+    'features/remote-control': IRemoteControlState,
+    'features/screen-share': IScreenShareState,
+    'features/screenshot-capture': IScreenshotCaptureState,
+    'features/settings': ISettingsState,
     'features/shared-video': ISharedVideoState,
-    'features/testing': ITestingState
+    'features/speaker-stats': ISpeakerStatsState,
+    'features/subtitles': ISubtitlesState,
+    'features/talk-while-muted': ITalkWhileMutedState,
+    'features/testing': ITestingState,
+    'features/toolbox': IToolboxState,
+    'features/transcribing': ITranscribingState,
+    'features/video-layout': IVideoLayoutState,
+    'features/video-quality': IVideoQualityState,
+    'features/video-quality-persistent-storage': IVideoQualityPersistedState,
+    'features/videosipgw': IVideoSipGW,
+    'features/virtual-background': IVirtualBackground
 }

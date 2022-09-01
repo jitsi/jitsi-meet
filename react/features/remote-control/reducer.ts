@@ -1,4 +1,5 @@
-import { ReducerRegistry, set } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { set } from '../base/redux/functions';
 
 import {
     CAPTURE_EVENTS,
@@ -23,11 +24,25 @@ const DEFAULT_STATE = {
     }
 };
 
+export interface IRemoteControlState {
+    active: boolean;
+    controller: {
+        controlled?: string;
+        isCapturingEvents: boolean;
+        requestedParticipant?: string;
+    };
+    receiver: {
+        controller?: string;
+        enabled: boolean;
+        transport?: Object;
+    }
+}
+
 /**
  * Listen for actions that mutate the remote control state.
  */
 ReducerRegistry.register(
-    'features/remote-control', (state = DEFAULT_STATE, action) => {
+    'features/remote-control', (state: IRemoteControlState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case CAPTURE_EVENTS:
             return {
