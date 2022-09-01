@@ -84,7 +84,17 @@ const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
 const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
 
 const { ExternalAPI } = NativeModules;
-const eventEmitter = new NativeEventEmitter(ExternalAPI);
+let eventEmitter;
+
+/**
+ * Check if native modules are being used or not. If not then the init of middleware doesn't happen
+ */
+if (ExternalAPI == undefined) {
+    eventEmitter = null;
+} else {
+    eventEmitter = new NativeEventEmitter(ExternalAPI);
+}
+
 
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
@@ -93,148 +103,151 @@ const eventEmitter = new NativeEventEmitter(ExternalAPI);
  * @param {Store} store - Redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => action => {
-    const oldAudioMuted = store.getState()['features/base/media'].audio.muted;
-    const result = next(action);
-    const { type } = action;
+if (eventEmitter !== null) {
+    MiddlewareRegistry.register(store => next => action => {
+        const oldAudioMuted = store.getState()['features/base/media'].audio.muted;
+        const result = next(action);
+        const { type } = action;
 
-    switch (type) {
-    case APP_WILL_MOUNT:
-        _registerForNativeEvents(store);
-        break;
-    case APP_WILL_UNMOUNT:
-        _unregisterForNativeEvents();
-        break;
-    case CONFERENCE_FAILED: {
-        const { error, ...data } = action;
+        switch (type) {
+        case APP_WILL_MOUNT:
+            _registerForNativeEvents(store);
+            break;
+        case APP_WILL_UNMOUNT:
+            _unregisterForNativeEvents();
+            break;
+        case CONFERENCE_FAILED: {
+            const { error, ...data } = action;
 
-        // XXX Certain CONFERENCE_FAILED errors are recoverable i.e. they have
-        // prevented the user from joining a specific conference but the app may
-        // be able to eventually join the conference. For example, the app will
-        // ask the user for a password upon
-        // JitsiConferenceErrors.PASSWORD_REQUIRED and will retry joining the
-        // conference afterwards. Such errors are to not reach the native
-        // counterpart of the External API (or at least not in the
-        // fatality/finality semantics attributed to
-        // conferenceFailed:/onConferenceFailed).
-        if (!error.recoverable) {
-            _sendConferenceEvent(store, /* action */ {
-                error: _toErrorString(error),
-                ...data
-            });
+            // XXX Certain CONFERENCE_FAILED errors are recoverable i.e. they have
+            // prevented the user from joining a specific conference but the app may
+            // be able to eventually join the conference. For example, the app will
+            // ask the user for a password upon
+            // JitsiConferenceErrors.PASSWORD_REQUIRED and will retry joining the
+            // conference afterwards. Such errors are to not reach the native
+            // counterpart of the External API (or at least not in the
+            // fatality/finality semantics attributed to
+            // conferenceFailed:/onConferenceFailed).
+            if (!error.recoverable) {
+                _sendConferenceEvent(store, /* action */ {
+                    error: _toErrorString(error),
+                    ...data
+                });
+            }
+            break;
         }
-        break;
-    }
 
-    case CONFERENCE_LEFT:
-        _sendConferenceEvent(store, action);
-        break;
+        case CONFERENCE_LEFT:
+            _sendConferenceEvent(store, action);
+            break;
 
-    case CONFERENCE_JOINED:
-        _sendConferenceEvent(store, action);
-        _registerForEndpointTextMessages(store);
-        break;
+        case CONFERENCE_JOINED:
+            _sendConferenceEvent(store, action);
+            _registerForEndpointTextMessages(store);
+            break;
 
-    case CONNECTION_DISCONNECTED: {
-        // FIXME: This is a hack. See the description in the JITSI_CONNECTION_CONFERENCE_KEY constant definition.
-        // Check if this connection was attached to any conference. If it wasn't, fake a CONFERENCE_TERMINATED event.
-        const { connection } = action;
-        const conference = connection[JITSI_CONNECTION_CONFERENCE_KEY];
+        case CONNECTION_DISCONNECTED: {
+            // FIXME: This is a hack. See the description in the JITSI_CONNECTION_CONFERENCE_KEY constant definition.
+            // Check if this connection was attached to any conference.
+            // If it wasn't, fake a CONFERENCE_TERMINATED event.
+            const { connection } = action;
+            const conference = connection[JITSI_CONNECTION_CONFERENCE_KEY];
 
-        if (!conference) {
-            // This action will arrive late, so the locationURL stored on the state is no longer valid.
-            const locationURL = connection[JITSI_CONNECTION_URL_KEY];
+            if (!conference) {
+                // This action will arrive late, so the locationURL stored on the state is no longer valid.
+                const locationURL = connection[JITSI_CONNECTION_URL_KEY];
 
+                sendEvent(
+                    store,
+                    CONFERENCE_TERMINATED,
+                    /* data */ {
+                        url: _normalizeUrl(locationURL)
+                    });
+            }
+
+            break;
+        }
+
+        case ENTER_PICTURE_IN_PICTURE:
+            sendEvent(store, type, /* data */ {});
+            break;
+
+        case OPEN_CHAT:
+        case CLOSE_CHAT: {
+            sendEvent(
+                store,
+                CHAT_TOGGLED,
+                /* data */ {
+                    isOpen: action.type === OPEN_CHAT
+                });
+            break;
+        }
+
+        case PARTICIPANT_JOINED:
+        case PARTICIPANT_LEFT: {
+            // Skip these events while not in a conference. SDK users can still retrieve them.
+            const { conference } = store.getState()['features/base/conference'];
+
+            if (!conference) {
+                break;
+            }
+
+            const { participant } = action;
+
+            if (participant.isVirtualScreenshareParticipant) {
+                break;
+            }
+
+            sendEvent(
+                store,
+                action.type,
+                _participantToParticipantInfo(participant) /* data */
+            );
+            break;
+        }
+
+        case READY_TO_CLOSE:
+            sendEvent(store, type, /* data */ {});
+            break;
+
+        case SET_ROOM:
+            _maybeTriggerEarlyConferenceWillJoin(store, action);
+            break;
+
+        case SET_AUDIO_MUTED:
+            if (action.muted !== oldAudioMuted) {
+                sendEvent(
+                    store,
+                    'AUDIO_MUTED_CHANGED',
+                    /* data */ {
+                        muted: action.muted
+                    });
+            }
+            break;
+
+        case SET_PAGE_RELOAD_OVERLAY_CANCELED:
             sendEvent(
                 store,
                 CONFERENCE_TERMINATED,
                 /* data */ {
-                    url: _normalizeUrl(locationURL)
+                    error: _toErrorString(action.error),
+                    url: _normalizeUrl(store.getState()['features/base/connection'].locationURL)
                 });
-        }
 
-        break;
-    }
-
-    case ENTER_PICTURE_IN_PICTURE:
-        sendEvent(store, type, /* data */ {});
-        break;
-
-    case OPEN_CHAT:
-    case CLOSE_CHAT: {
-        sendEvent(
-            store,
-            CHAT_TOGGLED,
-            /* data */ {
-                isOpen: action.type === OPEN_CHAT
-            });
-        break;
-    }
-
-    case PARTICIPANT_JOINED:
-    case PARTICIPANT_LEFT: {
-        // Skip these events while not in a conference. SDK users can still retrieve them.
-        const { conference } = store.getState()['features/base/conference'];
-
-        if (!conference) {
             break;
-        }
-
-        const { participant } = action;
-
-        if (participant.isVirtualScreenshareParticipant) {
-            break;
-        }
-
-        sendEvent(
-            store,
-            action.type,
-            _participantToParticipantInfo(participant) /* data */
-        );
-        break;
-    }
-
-    case READY_TO_CLOSE:
-        sendEvent(store, type, /* data */ {});
-        break;
-
-    case SET_ROOM:
-        _maybeTriggerEarlyConferenceWillJoin(store, action);
-        break;
-
-    case SET_AUDIO_MUTED:
-        if (action.muted !== oldAudioMuted) {
+        case SET_VIDEO_MUTED:
             sendEvent(
                 store,
-                'AUDIO_MUTED_CHANGED',
+                'VIDEO_MUTED_CHANGED',
                 /* data */ {
                     muted: action.muted
                 });
+            break;
         }
-        break;
 
-    case SET_PAGE_RELOAD_OVERLAY_CANCELED:
-        sendEvent(
-            store,
-            CONFERENCE_TERMINATED,
-            /* data */ {
-                error: _toErrorString(action.error),
-                url: _normalizeUrl(store.getState()['features/base/connection'].locationURL)
-            });
-
-        break;
-    case SET_VIDEO_MUTED:
-        sendEvent(
-            store,
-            'VIDEO_MUTED_CHANGED',
-            /* data */ {
-                muted: action.muted
-            });
-        break;
-    }
-
-    return result;
-});
+        return result;
+    });
+}
 
 /**
  * Listen for changes to the known media tracks and look
@@ -242,41 +255,43 @@ MiddlewareRegistry.register(store => next => action => {
  * The listener is debounced to avoid state thrashing that might occur,
  * especially when switching in or out of p2p.
  */
-StateListenerRegistry.register(
-    /* selector */ state => state['features/base/tracks'],
-    /* listener */ debounce((tracks, store) => {
-        const oldScreenShares = store.getState()['features/mobile/external-api'].screenShares || [];
-        const newScreenShares = tracks
-            .filter(track => track.mediaType === 'video' && track.videoType === 'desktop')
-            .map(track => track.participantId);
+if (eventEmitter !== null) {
+    StateListenerRegistry.register(
+        /* selector */ state => state['features/base/tracks'],
+        /* listener */ debounce((tracks, store) => {
+            const oldScreenShares = store.getState()['features/mobile/external-api'].screenShares || [];
+            const newScreenShares = tracks
+                .filter(track => track.mediaType === 'video' && track.videoType === 'desktop')
+                .map(track => track.participantId);
 
-        oldScreenShares.forEach(participantId => {
-            if (!newScreenShares.includes(participantId)) {
-                sendEvent(
-                    store,
-                    SCREEN_SHARE_TOGGLED,
-                    /* data */ {
-                        participantId,
-                        sharing: false
-                    });
-            }
-        });
+            oldScreenShares.forEach(participantId => {
+                if (!newScreenShares.includes(participantId)) {
+                    sendEvent(
+                        store,
+                        SCREEN_SHARE_TOGGLED,
+                        /* data */ {
+                            participantId,
+                            sharing: false
+                        });
+                }
+            });
 
-        newScreenShares.forEach(participantId => {
-            if (!oldScreenShares.includes(participantId)) {
-                sendEvent(
-                    store,
-                    SCREEN_SHARE_TOGGLED,
-                    /* data */ {
-                        participantId,
-                        sharing: true
-                    });
-            }
-        });
+            newScreenShares.forEach(participantId => {
+                if (!oldScreenShares.includes(participantId)) {
+                    sendEvent(
+                        store,
+                        SCREEN_SHARE_TOGGLED,
+                        /* data */ {
+                            participantId,
+                            sharing: true
+                        });
+                }
+            });
 
-        store.dispatch(setParticipantsWithScreenShare(newScreenShares));
+            store.dispatch(setParticipantsWithScreenShare(newScreenShares));
 
-    }, 100));
+        }, 100));
+}
 
 /**
  * Returns a participant info object based on the passed participant object from redux.

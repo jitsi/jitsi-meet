@@ -31,7 +31,8 @@ export default function JitsiMeetView(props) {
     useEffect(
         () => {
             setAppProps({ 'url': props.url,
-                'onLeave': onLeave });
+                'onLeave': onLeave,
+                'flags': [] });
         }, []
     );
 
