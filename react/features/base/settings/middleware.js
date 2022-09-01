@@ -149,14 +149,17 @@ function _maybeSetAudioOnly(
 function _maybeUpdateDisplayName({ dispatch, getState }) {
     const state = getState();
     const hasJwt = Boolean(state['features/base/jwt'].jwt);
+    console.log('hasJwt',hasJwt);
 
     if (hasJwt) {
         const displayName = getJwtName(state);
+        console.log('displayNamehasJwt',displayName);
 
         if (displayName) {
             dispatch(updateSettings({
                 displayName
             }));
+            console.log('displayNameJwt',displayName)
         }
     }
 }

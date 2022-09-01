@@ -22,6 +22,7 @@ const API = {
         }
         try {
             const res = await fetch(url,dataObj)
+            console.log('ressss',res);
             return await res.json()
         }
         catch(err){

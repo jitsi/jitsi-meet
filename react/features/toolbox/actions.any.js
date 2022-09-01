@@ -5,6 +5,7 @@ import type { Dispatch } from 'redux';
 import {
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_VISIBLE,
+    TOGGLE_RECORD_TIMER,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
 
@@ -62,6 +63,23 @@ export function toggleToolboxVisible() {
 
         dispatch({
             type: TOGGLE_TOOLBOX_VISIBLE
+        });
+    };
+}
+
+/**
+ * Enables/disables the toolbox.
+ *
+ * @param {boolean} enabled - True to enable the toggleRecordTimer or false to disable it.
+ * @returns {{
+ *     type: TOGGLE_RECORD_TIMER,
+ * }}
+ */
+export function toggleRecordTimer(): Object {
+    console.log('RecordTrigger')
+    return(dispatch: Dispatch<any>, getState: Function)=> {
+        dispatch({
+            type: TOGGLE_RECORD_TIMER
         });
     };
 }

@@ -8,7 +8,8 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
 import { E2EELabel } from '../../../e2ee';
 import { RecordingLabel } from '../../../recording';
-import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
+import HighlightButton
+    from '../../../recording/components/Recording/web/HighlightButton';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import { TranscribingLabel } from '../../../transcribing';
 import { VideoQualityLabel } from '../../../video-quality';
@@ -20,11 +21,14 @@ import InsecureRoomNameLabel from './InsecureRoomNameLabel';
 import ParticipantsCount from './ParticipantsCount';
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
 import SubjectText from './SubjectText';
+import RecordTimer from './RecordTimer';
 
 /**
  * The type of the React {@code Component} props of {@link Subject}.
  */
 type Props = {
+
+    _toggleRecordTimer: boolean;
 
     /**
      * The conference info labels to be shown in the conference header.
@@ -61,8 +65,8 @@ const COMPONENTS = [
     {
         Component: () => (
             <>
-                <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
-                <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
+                <RecordingLabel mode={JitsiRecordingConstants.mode.FILE}/>
+                <RecordingLabel mode={JitsiRecordingConstants.mode.STREAM}/>
             </>
         ),
         id: 'recording'
@@ -121,13 +125,13 @@ class ConferenceInfo extends Component<Props> {
 
         return (
             <ConferenceInfoContainer
-                id = 'autoHide'
-                visible = { this.props._visible }>
+                id="autoHide"
+                visible={this.props._visible}>
                 {
                     COMPONENTS
                         .filter(comp => autoHide.includes(comp.id))
                         .map(c =>
-                            <c.Component key = { c.id } />
+                            <c.Component key={c.id}/>
                         )
                 }
             </ConferenceInfoContainer>
@@ -150,16 +154,37 @@ class ConferenceInfo extends Component<Props> {
 
         return (
             <ConferenceInfoContainer
-                id = 'alwaysVisible'
-                visible = { true } >
+                id="alwaysVisible"
+                visible={true}>
                 {
                     COMPONENTS
                         .filter(comp => alwaysVisible.includes(comp.id))
                         .map(c =>
-                            <c.Component key = { c.id } />
+                            <c.Component key={c.id}/>
                         )
                 }
             </ConferenceInfoContainer>
+        );
+    }
+
+    /**
+     * Renders the always visible info header labels.
+     *
+     * @returns {void}
+     */
+    _renderRecordTimer() {
+        const { alwaysVisible } = this.props._conferenceInfo;
+
+        if (!alwaysVisible || !alwaysVisible.length) {
+            return null;
+        }
+        return (
+        <ConferenceInfoContainer
+            id="alwaysVisible"
+            visible={true}>
+            <RecordTimer
+                _toggleRecordTimer={this.props._toggleRecordTimer}/>
+        </ConferenceInfoContainer>
         );
     }
 
@@ -171,9 +196,14 @@ class ConferenceInfo extends Component<Props> {
      */
     render() {
         return (
-            <div className = 'details-container' >
-                { this._renderAlwaysVisible() }
-                { this._renderAutoHide() }
+            <div style={{flexDirection: 'column'}}>
+                <div className="details-container">
+                    {this._renderAlwaysVisible()}
+                    {this._renderAutoHide()}
+                </div>
+                <div className="details-container" style={{paddingTop: '32px'}}>
+                    {this._renderRecordTimer()}
+                </div>
             </div>
         );
     }
@@ -191,9 +221,11 @@ class ConferenceInfo extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
+    const { toggleRecordTimer } = state['features/toolbox'];
     return {
         _visible: isToolboxVisible(state),
-        _conferenceInfo: getConferenceInfo(state)
+        _conferenceInfo: getConferenceInfo(state),
+        _toggleRecordTimer: toggleRecordTimer
     };
 }
 

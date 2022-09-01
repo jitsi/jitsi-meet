@@ -95,3 +95,12 @@ export const SET_TOOLBOX_VISIBLE = 'SET_TOOLBOX_VISIBLE';
  * }
  */
 export const TOGGLE_TOOLBOX_VISIBLE = 'TOGGLE_TOOLBOX_VISIBLE';
+
+/**
+ * The type of the redux action which toggles the toolbox visibility regardless of it's current state.
+ *
+ * {
+ *     type: TOGGLE_TOOLBOX_VISIBLE
+ * }
+ */
+export const TOGGLE_RECORD_TIMER = 'TOGGLE_RECORD_TIMER';

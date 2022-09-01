@@ -10,7 +10,7 @@ import {
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_TIMEOUT,
-    SET_TOOLBOX_VISIBLE,
+    SET_TOOLBOX_VISIBLE, TOGGLE_RECORD_TIMER,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
 
@@ -62,7 +62,15 @@ const INITIAL_STATE = {
      *
      * @type {boolean}
      */
-    visible: false
+    visible: false,
+
+    /**
+     * The indicator that determines whether the Timer is visible.
+     *
+     * @type {boolean}
+     */
+    toggleRecordTimer: false
+
 };
 
 ReducerRegistry.register(
@@ -116,6 +124,13 @@ ReducerRegistry.register(
 
         case TOGGLE_TOOLBOX_VISIBLE:
             return set(state, 'visible', !state.visible);
+
+        case TOGGLE_RECORD_TIMER :
+            console.log('ttttttt',state.toggleRecordTimer)
+            return {
+                    ...state,
+                toggleRecordTimer : !state.toggleRecordTimer,
+            }
         }
 
         return state;
