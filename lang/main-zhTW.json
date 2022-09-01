@@ -290,7 +290,7 @@
         "lockRoom": "增加會議$t(lockRoomPasswordUppercase)",
         "lockTitle": "鎖定失敗",
         "login": "登入",
-        "logoutQuestion": "您確定要登出並停用會議嗎？",
+        "logoutQuestion": "您確定要登出並停止會議嗎？",
         "logoutTitle": "登出",
         "maxUsersLimitReached": "與會人數已達上限，請聯絡會議主辦人，或是稍後再試！",
         "maxUsersLimitReachedTitle": "與會人數已達上限",
