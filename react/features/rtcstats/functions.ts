@@ -40,7 +40,6 @@ export function isRtcstatsEnabled(stateful: Function | Object) {
  * @returns {boolean}
  */
 export function canSendRtcstatsData(stateful: Function | Object) {
-
     return isRtcstatsEnabled(stateful) && RTCStats.isInitialized();
 }
 
@@ -69,10 +68,8 @@ export function connectAndSendIdentity(dispatch: Function, stateful: Function | 
         // Once the conference started connect to the rtcstats server and send data.
         try {
             RTCStats.connect(identity.isBreakoutRoom);
-
             const localParticipant = getLocalParticipant(state);
             const options = getConferenceOptions(state);
-
 
             // The current implementation of rtcstats-server is configured to send data to amplitude, thus
             // we add identity specific information so we can correlate on the amplitude side. If amplitude is
