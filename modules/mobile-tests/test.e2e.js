@@ -3,13 +3,13 @@ const assert = require('assert');
 const wdio = require('webdriverio');
 
 const {
-    iPhone13Pro
+    iPhoneXs
 } = require('./capabilities');
 
 const options = {
     path: '/wd/hub',
     port: 4723,
-    capabilities: iPhone13Pro
+    capabilities: iPhoneXs
 };
 const { capabilities } = options;
 
@@ -17,7 +17,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 const androidInput = '//android.widget.EditText[@content-desc="Enter room name"]';
 const iosInput = '//XCUIElementTypeTextField[@name="Enter room name"]';
 const input
-    = capabilities === iPhone13Pro ? iosInput : androidInput;
+    = capabilities === iPhoneXs ? iosInput : androidInput;
 
 /**
  * Constructs a test session.

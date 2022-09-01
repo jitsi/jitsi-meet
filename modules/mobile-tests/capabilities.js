@@ -1,4 +1,4 @@
-const { APP_PATH } = require('./constants');
+const { APP_PATH, RELEASE_APP_PATH } = require('./constants');
 
 module.exports = {
     iPhone13ProSimulator: {
@@ -13,7 +13,7 @@ module.exports = {
     },
 
     iPhone13Pro: {
-        'appium:app': APP_PATH,
+        'appium:app': RELEASE_APP_PATH,
         'appium:appiumVersion': '1.22.3',
         'appium:automationName': 'XCUITest',
         'appium:deviceName': 'iPhone 13 Pro',
@@ -22,6 +22,17 @@ module.exports = {
         'appium:platformVersion': '15.6',
         'appium:udid': '00008110-001819C63A32801E',
         'appium:xcodeOrgId': 'AJT772J42H'
+    },
+
+    iPhoneXs: {
+        'appium:app': APP_PATH,
+        'appium:appiumVersion': '1.22.3',
+        'appium:automationName': 'XCUITest',
+        'appium:deviceName': 'iPhone Xs',
+        'appium:newCommandTimeout': 240,
+        platformName: 'iOS',
+        'appium:platformVersion': '15.1',
+        'appium:udid': '00008020-001E59493AE1002E'
     },
 
     ONEPLUSA5000: {

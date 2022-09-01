@@ -61,6 +61,7 @@
     "@vladmandic/human": "2.6.5",
     "@vladmandic/human-models": "2.5.9",
     "@wdio/cli": "7.20.9",
+    "@wdio/mocha-framework": "7.23.0",
     "@wdio/sync": "7.20.9",
     "@xmldom/xmldom": "0.7.5",
     "amplitude-js": "8.2.1",
