@@ -6,6 +6,8 @@ import 'react-native-get-random-values';
 import './react/features/mobile/polyfills';
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
+import { View } from 'react-native';
 
 // eslint-disable-next-line no-unused-vars
 import { App } from './react/features/app/components/App.native';
