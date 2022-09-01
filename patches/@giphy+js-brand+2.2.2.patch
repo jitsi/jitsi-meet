@@ -1,0 +1,165 @@
+diff --git a/node_modules/@giphy/js-brand/README.md b/node_modules/@giphy/js-brand/README.md
+index 96e7b71..3e32382 100644
+--- a/node_modules/@giphy/js-brand/README.md
++++ b/node_modules/@giphy/js-brand/README.md
+@@ -1,3 +1,5 @@
+ # @giphy/js-brand
+ 
+-Colors, fonts - WIP
++Colors, fonts
++
++To stop fonts from loading set the environment variable `GIPHY_SDK_NO_FONTS=true`, this is not recommended as it could cause inconsistencies in the ui components 
+diff --git a/node_modules/@giphy/js-brand/dist/index.js b/node_modules/@giphy/js-brand/dist/index.js
+index 4e306e0..77fbd48 100644
+--- a/node_modules/@giphy/js-brand/dist/index.js
++++ b/node_modules/@giphy/js-brand/dist/index.js
+@@ -1,7 +1,11 @@
+ "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+     if (k2 === undefined) k2 = k;
+-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
+ }) : (function(o, m, k, k2) {
+     if (k2 === undefined) k2 = k;
+     o[k2] = m[k];
+diff --git a/node_modules/@giphy/js-brand/dist/index.js.map b/node_modules/@giphy/js-brand/dist/index.js.map
+index f51fb92..1aad15f 100644
+--- a/node_modules/@giphy/js-brand/dist/index.js.map
++++ b/node_modules/@giphy/js-brand/dist/index.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;AAAA,2CAAwB;AACxB,mCAA4C;AAAnC,iHAAA,OAAO,OAAU;AAC1B,+CAA4B"}
+\ No newline at end of file
++{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;AAAA,2CAAwB;AACxB,mCAA4C;AAAnC,iHAAA,OAAO,OAAU;AAC1B,+CAA4B"}
+\ No newline at end of file
+diff --git a/node_modules/@giphy/js-brand/dist/loader.js b/node_modules/@giphy/js-brand/dist/loader.js
+index c8b9c0f..9c9a785 100644
+--- a/node_modules/@giphy/js-brand/dist/loader.js
++++ b/node_modules/@giphy/js-brand/dist/loader.js
+@@ -6,9 +6,9 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
+ Object.defineProperty(exports, "__esModule", { value: true });
+ var emotion_1 = require("emotion");
+ var colors_1 = require("./colors");
+-var bouncer = emotion_1.keyframes(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n     to {\n    transform: scale(1.75) translateY(-20px);\n  }\n"], ["\n     to {\n    transform: scale(1.75) translateY(-20px);\n  }\n"])));
++var bouncer = (0, emotion_1.keyframes)(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n     to {\n    transform: scale(1.75) translateY(-20px);\n  }\n"], ["\n     to {\n    transform: scale(1.75) translateY(-20px);\n  }\n"])));
+ var loaderHeight = 37;
+-var loader = emotion_1.css(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n    display: flex;\n    align-items: center;\n    height: ", "px;\n    padding-top: 15px;\n    margin: 0 auto;\n    text-align: center;\n    justify-content: center;\n    animation: pulse 0.8s ease-in-out 0s infinite alternate backwards;\n    div {\n        display: inline-block;\n        height: 10px;\n        width: 10px;\n        margin: ", "px 10px 10px 10px;\n        position: relative;\n        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);\n        animation: ", " cubic-bezier(0.455, 0.03, 0.515, 0.955) 0.75s infinite alternate;\n        &:nth-child(5n + 1) {\n            background: ", ";\n            animation-delay: 0;\n        }\n        &:nth-child(5n + 2) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 1));\n        }\n        &:nth-child(5n + 3) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 2));\n        }\n        &:nth-child(5n + 4) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 3));\n        }\n        &:nth-child(5n + 5) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 4));\n        }\n    }\n"], ["\n    display: flex;\n    align-items: center;\n    height: ", "px;\n    padding-top: 15px;\n    margin: 0 auto;\n    text-align: center;\n    justify-content: center;\n    animation: pulse 0.8s ease-in-out 0s infinite alternate backwards;\n    div {\n        display: inline-block;\n        height: 10px;\n        width: 10px;\n        margin: ", "px 10px 10px 10px;\n        position: relative;\n        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);\n        animation: ", " cubic-bezier(0.455, 0.03, 0.515, 0.955) 0.75s infinite alternate;\n        &:nth-child(5n + 1) {\n            background: ", ";\n            animation-delay: 0;\n        }\n        &:nth-child(5n + 2) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 1));\n        }\n        &:nth-child(5n + 3) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 2));\n        }\n        &:nth-child(5n + 4) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 3));\n        }\n        &:nth-child(5n + 5) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 4));\n        }\n    }\n"])), loaderHeight, loaderHeight, bouncer, colors_1.giphyGreen, colors_1.giphyBlue, colors_1.giphyPurple, colors_1.giphyRed, colors_1.giphyYellow);
++var loader = (0, emotion_1.css)(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n    display: flex;\n    align-items: center;\n    height: ", "px;\n    padding-top: 15px;\n    margin: 0 auto;\n    text-align: center;\n    justify-content: center;\n    animation: pulse 0.8s ease-in-out 0s infinite alternate backwards;\n    div {\n        display: inline-block;\n        height: 10px;\n        width: 10px;\n        margin: ", "px 10px 10px 10px;\n        position: relative;\n        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);\n        animation: ", " cubic-bezier(0.455, 0.03, 0.515, 0.955) 0.75s infinite alternate;\n        &:nth-child(5n + 1) {\n            background: ", ";\n            animation-delay: 0;\n        }\n        &:nth-child(5n + 2) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 1));\n        }\n        &:nth-child(5n + 3) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 2));\n        }\n        &:nth-child(5n + 4) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 3));\n        }\n        &:nth-child(5n + 5) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 4));\n        }\n    }\n"], ["\n    display: flex;\n    align-items: center;\n    height: ", "px;\n    padding-top: 15px;\n    margin: 0 auto;\n    text-align: center;\n    justify-content: center;\n    animation: pulse 0.8s ease-in-out 0s infinite alternate backwards;\n    div {\n        display: inline-block;\n        height: 10px;\n        width: 10px;\n        margin: ", "px 10px 10px 10px;\n        position: relative;\n        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);\n        animation: ", " cubic-bezier(0.455, 0.03, 0.515, 0.955) 0.75s infinite alternate;\n        &:nth-child(5n + 1) {\n            background: ", ";\n            animation-delay: 0;\n        }\n        &:nth-child(5n + 2) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 1));\n        }\n        &:nth-child(5n + 3) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 2));\n        }\n        &:nth-child(5n + 4) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 3));\n        }\n        &:nth-child(5n + 5) {\n            background: ", ";\n            animation-delay: calc(0s + (0.1s * 4));\n        }\n    }\n"])), loaderHeight, loaderHeight, bouncer, colors_1.giphyGreen, colors_1.giphyBlue, colors_1.giphyPurple, colors_1.giphyRed, colors_1.giphyYellow);
+ exports.default = loader;
+ var templateObject_1, templateObject_2;
+ //# sourceMappingURL=loader.js.map
+\ No newline at end of file
+diff --git a/node_modules/@giphy/js-brand/dist/loader.js.map b/node_modules/@giphy/js-brand/dist/loader.js.map
+index 1af55e1..42c8602 100644
+--- a/node_modules/@giphy/js-brand/dist/loader.js.map
++++ b/node_modules/@giphy/js-brand/dist/loader.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"loader.js","sourceRoot":"","sources":["../src/loader.ts"],"names":[],"mappings":";;;;;;AAAA,mCAAwC;AACxC,mCAAoF;AAEpF,IAAM,OAAO,GAAG,mBAAS,sIAAA,mEAIxB,IAAA,CAAA;AACD,IAAM,YAAY,GAAG,EAAE,CAAA;AACvB,IAAM,MAAM,GAAG,aAAG,6sCAAA,8DAGJ,EAAY,2RAUR,EAAY,4HAGT,EAAO,6HAEF,EAAU,wGAIV,EAAS,4HAIT,EAAW,4HAIX,EAAQ,4HAIR,EAAW,4EAIpC,KAnCa,YAAY,EAUR,YAAY,EAGT,OAAO,EAEF,mBAAU,EAIV,kBAAS,EAIT,oBAAW,EAIX,iBAAQ,EAIR,oBAAW,CAIpC,CAAA;AACD,kBAAe,MAAM,CAAA"}
+\ No newline at end of file
++{"version":3,"file":"loader.js","sourceRoot":"","sources":["../src/loader.ts"],"names":[],"mappings":";;;;;;AAAA,mCAAwC;AACxC,mCAAoF;AAEpF,IAAM,OAAO,OAAG,mBAAS,uIAAA,mEAIxB,IAAA,CAAA;AACD,IAAM,YAAY,GAAG,EAAE,CAAA;AACvB,IAAM,MAAM,OAAG,aAAG,8sCAAA,8DAGJ,EAAY,2RAUR,EAAY,4HAGT,EAAO,6HAEF,EAAU,wGAIV,EAAS,4HAIT,EAAW,4HAIX,EAAQ,4HAIR,EAAW,4EAIpC,KAnCa,YAAY,EAUR,YAAY,EAGT,OAAO,EAEF,mBAAU,EAIV,kBAAS,EAIT,oBAAW,EAIX,iBAAQ,EAIR,oBAAW,CAIpC,CAAA;AACD,kBAAe,MAAM,CAAA"}
+\ No newline at end of file
+diff --git a/node_modules/@giphy/js-brand/dist/typography.d.ts b/node_modules/@giphy/js-brand/dist/typography.d.ts
+index ff67e4c..9937ea7 100644
+--- a/node_modules/@giphy/js-brand/dist/typography.d.ts
++++ b/node_modules/@giphy/js-brand/dist/typography.d.ts
+@@ -1,3 +1,4 @@
++export declare const addFonts: () => void;
+ export declare const fontFamily: {
+     title: string;
+     body: string;
+diff --git a/node_modules/@giphy/js-brand/dist/typography.js b/node_modules/@giphy/js-brand/dist/typography.js
+index af796bc..75ad96b 100644
+--- a/node_modules/@giphy/js-brand/dist/typography.js
++++ b/node_modules/@giphy/js-brand/dist/typography.js
+@@ -4,10 +4,22 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
+     return cooked;
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.css = exports.fontSize = exports.fontFamily = void 0;
++exports.css = exports.fontSize = exports.fontFamily = exports.addFonts = void 0;
+ var emotion_1 = require("emotion");
+-// eslint-disable-next-line
+-emotion_1.injectGlobal(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: normal;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Rg.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Rg.woff') format('woff');\n}\n\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: bold;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Bd.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Bd.woff') format('woff');\n}\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: 900;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_XBd.woff') format('woff');\n}\n@font-face {\n    font-family: 'nexablack'; \n    font-style: normal;\n    font-weight: normal;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/nexa_black-webfont.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/nexa_black-webfont.woff') format('woff');\n}\n@font-face {\n    font-family: 'SSStandard'; \n    font-style: normal;\n    font-weight: normal;\n    src:  url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/ss-standard.woff') format('woff');\n}\n@font-face {\n    font-family: 'SSSocial'; \n    font-style: normal;\n    font-weight: normal;\n    src:  url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/ss-social.woff') format('woff');\n}\n"], ["\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: normal;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Rg.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Rg.woff') format('woff');\n}\n\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: bold;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Bd.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Bd.woff') format('woff');\n}\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: 900;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_XBd.woff') format('woff');\n}\n@font-face {\n    font-family: 'nexablack'; \n    font-style: normal;\n    font-weight: normal;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/nexa_black-webfont.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/nexa_black-webfont.woff') format('woff');\n}\n@font-face {\n    font-family: 'SSStandard'; \n    font-style: normal;\n    font-weight: normal;\n    src:  url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/ss-standard.woff') format('woff');\n}\n@font-face {\n    font-family: 'SSSocial'; \n    font-style: normal;\n    font-weight: normal;\n    src:  url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/ss-social.woff') format('woff');\n}\n"])));
++var addFonts = function () { return (0, emotion_1.injectGlobal)(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: normal;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Rg.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Rg.woff') format('woff');\n}\n\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: bold;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Bd.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Bd.woff') format('woff');\n}\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: 900;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_XBd.woff') format('woff');\n}\n@font-face {\n    font-family: 'nexablack'; \n    font-style: normal;\n    font-weight: normal;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/nexa_black-webfont.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/nexa_black-webfont.woff') format('woff');\n}\n@font-face {\n    font-family: 'SSStandard'; \n    font-style: normal;\n    font-weight: normal;\n    src:  url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/ss-standard.woff') format('woff');\n}\n@font-face {\n    font-family: 'SSSocial'; \n    font-style: normal;\n    font-weight: normal;\n    src:  url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/ss-social.woff') format('woff');\n}\n"], ["\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: normal;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Rg.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Rg.woff') format('woff');\n}\n\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: bold;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Bd.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_Bd.woff') format('woff');\n}\n@font-face {\n    font-family: 'interface';\n    font-style: normal;\n    font-weight: 900;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/InterFace_W_XBd.woff') format('woff');\n}\n@font-face {\n    font-family: 'nexablack'; \n    font-style: normal;\n    font-weight: normal;\n    src: url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/nexa_black-webfont.woff2') format('woff2'),\n        url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/nexa_black-webfont.woff') format('woff');\n}\n@font-face {\n    font-family: 'SSStandard'; \n    font-style: normal;\n    font-weight: normal;\n    src:  url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/ss-standard.woff') format('woff');\n}\n@font-face {\n    font-family: 'SSSocial'; \n    font-style: normal;\n    font-weight: normal;\n    src:  url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/ss-social.woff') format('woff');\n}\n"]))); };
++exports.addFonts = addFonts;
++try {
++    // in an env where process.env exists,
++    // this will not error allowing the configuration
++    // to work
++    if (!process.env.GIPHY_SDK_NO_FONTS) {
++        (0, exports.addFonts)();
++    }
++}
++catch (error) {
++    // if there is no env then fallback to the default behavior
++    (0, exports.addFonts)();
++}
+ exports.fontFamily = {
+     title: "'nexablack', sans-serif",
+     body: 'interface, Helvetica Neue, helvetica, sans-serif;',
+@@ -19,14 +31,14 @@ exports.fontSize = {
+     subheader: '16px',
+     subheaderSmall: '12px',
+ };
+-var sharedTitle = emotion_1.css(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n    font-family: ", ";\n    -webkit-font-smoothing: antialiased;\n"], ["\n    font-family: ", ";\n    -webkit-font-smoothing: antialiased;\n"])), exports.fontFamily.title);
+-var title = emotion_1.cx(emotion_1.css(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.title), sharedTitle);
+-var titleLarge = emotion_1.cx(emotion_1.css(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.titleLarge), sharedTitle);
+-var titleSmall = emotion_1.cx(emotion_1.css(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.titleSmall), sharedTitle);
+-var sharedSubheader = emotion_1.css(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n    font-family: ", ";\n    font-weight: bold;\n    -webkit-font-smoothing: antialiased;\n"], ["\n    font-family: ", ";\n    font-weight: bold;\n    -webkit-font-smoothing: antialiased;\n"])), exports.fontFamily.body);
+-var subheader = emotion_1.cx(emotion_1.css(templateObject_7 || (templateObject_7 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.subheader), sharedSubheader);
+-var subheaderSmall = emotion_1.cx(emotion_1.css(templateObject_8 || (templateObject_8 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.subheaderSmall), sharedSubheader);
+-var sectionHeader = emotion_1.css(templateObject_9 || (templateObject_9 = __makeTemplateObject(["\n    font-family: ", ";\n    font-size: 14px;\n    font-weight: bold;\n    text-transform: uppercase;\n    -webkit-font-smoothing: antialiased;\n"], ["\n    font-family: ", ";\n    font-size: 14px;\n    font-weight: bold;\n    text-transform: uppercase;\n    -webkit-font-smoothing: antialiased;\n"])), exports.fontFamily.body);
++var sharedTitle = (0, emotion_1.css)(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n    font-family: ", ";\n    -webkit-font-smoothing: antialiased;\n"], ["\n    font-family: ", ";\n    -webkit-font-smoothing: antialiased;\n"])), exports.fontFamily.title);
++var title = (0, emotion_1.cx)((0, emotion_1.css)(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.title), sharedTitle);
++var titleLarge = (0, emotion_1.cx)((0, emotion_1.css)(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.titleLarge), sharedTitle);
++var titleSmall = (0, emotion_1.cx)((0, emotion_1.css)(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.titleSmall), sharedTitle);
++var sharedSubheader = (0, emotion_1.css)(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n    font-family: ", ";\n    font-weight: bold;\n    -webkit-font-smoothing: antialiased;\n"], ["\n    font-family: ", ";\n    font-weight: bold;\n    -webkit-font-smoothing: antialiased;\n"])), exports.fontFamily.body);
++var subheader = (0, emotion_1.cx)((0, emotion_1.css)(templateObject_7 || (templateObject_7 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.subheader), sharedSubheader);
++var subheaderSmall = (0, emotion_1.cx)((0, emotion_1.css)(templateObject_8 || (templateObject_8 = __makeTemplateObject(["\n        font-size: ", ";\n    "], ["\n        font-size: ", ";\n    "])), exports.fontSize.subheaderSmall), sharedSubheader);
++var sectionHeader = (0, emotion_1.css)(templateObject_9 || (templateObject_9 = __makeTemplateObject(["\n    font-family: ", ";\n    font-size: 14px;\n    font-weight: bold;\n    text-transform: uppercase;\n    -webkit-font-smoothing: antialiased;\n"], ["\n    font-family: ", ";\n    font-size: 14px;\n    font-weight: bold;\n    text-transform: uppercase;\n    -webkit-font-smoothing: antialiased;\n"])), exports.fontFamily.body);
+ var classNames = {
+     sectionHeader: sectionHeader,
+     subheaderSmall: subheaderSmall,
+diff --git a/node_modules/@giphy/js-brand/dist/typography.js.map b/node_modules/@giphy/js-brand/dist/typography.js.map
+index dec0150..2b6f698 100644
+--- a/node_modules/@giphy/js-brand/dist/typography.js.map
++++ b/node_modules/@giphy/js-brand/dist/typography.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"typography.js","sourceRoot":"","sources":["../src/typography.ts"],"names":[],"mappings":";;;;;;;AAAA,mCAA+C;AAE/C,2BAA2B;AAC3B,sBAAY,0qDAAA,umDAyCX,KAAA;AAEY,QAAA,UAAU,GAAG;IACtB,KAAK,EAAE,yBAAyB;IAChC,IAAI,EAAE,mDAAmD;CAC5D,CAAA;AAEY,QAAA,QAAQ,GAAG;IACpB,UAAU,EAAE,MAAM;IAClB,KAAK,EAAE,MAAM;IACb,UAAU,EAAE,MAAM;IAClB,SAAS,EAAE,MAAM;IACjB,cAAc,EAAE,MAAM;CACzB,CAAA;AAED,IAAM,WAAW,GAAG,aAAG,yIAAA,qBACJ,EAAgB,+CAElC,KAFkB,kBAAU,CAAC,KAAK,CAElC,CAAA;AAED,IAAM,KAAK,GAAG,YAAE,CACZ,aAAG,qGAAA,uBACc,EAAc,SAC9B,KADgB,gBAAQ,CAAC,KAAK,GAE/B,WAAW,CACd,CAAA;AACD,IAAM,UAAU,GAAG,YAAE,CACjB,aAAG,qGAAA,uBACc,EAAmB,SACnC,KADgB,gBAAQ,CAAC,UAAU,GAEpC,WAAW,CACd,CAAA;AACD,IAAM,UAAU,GAAG,YAAE,CACjB,aAAG,qGAAA,uBACc,EAAmB,SACnC,KADgB,gBAAQ,CAAC,UAAU,GAEpC,WAAW,CACd,CAAA;AAED,IAAM,eAAe,GAAG,aAAG,iKAAA,qBACR,EAAe,uEAGjC,KAHkB,kBAAU,CAAC,IAAI,CAGjC,CAAA;AACD,IAAM,SAAS,GAAG,YAAE,CAChB,aAAG,qGAAA,uBACc,EAAkB,SAClC,KADgB,gBAAQ,CAAC,SAAS,GAEnC,eAAe,CAClB,CAAA;AACD,IAAM,cAAc,GAAG,YAAE,CACrB,aAAG,qGAAA,uBACc,EAAuB,SACvC,KADgB,gBAAQ,CAAC,cAAc,GAExC,eAAe,CAClB,CAAA;AAED,IAAM,aAAa,GAAG,aAAG,uNAAA,qBACN,EAAe,6HAKjC,KALkB,kBAAU,CAAC,IAAI,CAKjC,CAAA;AAED,IAAM,UAAU,GAAG;IACf,aAAa,eAAA;IACb,cAAc,gBAAA;IACd,SAAS,WAAA;IACT,UAAU,YAAA;IACV,UAAU,YAAA;IACV,KAAK,OAAA;CACR,CAAA;AAEsB,yBAAG"}
+\ No newline at end of file
++{"version":3,"file":"typography.js","sourceRoot":"","sources":["../src/typography.ts"],"names":[],"mappings":";;;;;;;AAAA,mCAA+C;AAExC,IAAM,QAAQ,GAAG,cAAM,WAAA,sBAAY,2qDAAA,umDAyCzC,MAzC6B,CAyC7B,CAAA;AAzCY,QAAA,QAAQ,YAyCpB;AACD,IAAI;IACA,sCAAsC;IACtC,iDAAiD;IACjD,UAAU;IACV,IAAI,CAAC,OAAO,CAAC,GAAG,CAAC,kBAAkB,EAAE;QACjC,IAAA,gBAAQ,GAAE,CAAA;KACb;CACJ;AAAC,OAAO,KAAK,EAAE;IACZ,2DAA2D;IAC3D,IAAA,gBAAQ,GAAE,CAAA;CACb;AAEY,QAAA,UAAU,GAAG;IACtB,KAAK,EAAE,yBAAyB;IAChC,IAAI,EAAE,mDAAmD;CAC5D,CAAA;AAEY,QAAA,QAAQ,GAAG;IACpB,UAAU,EAAE,MAAM;IAClB,KAAK,EAAE,MAAM;IACb,UAAU,EAAE,MAAM;IAClB,SAAS,EAAE,MAAM;IACjB,cAAc,EAAE,MAAM;CACzB,CAAA;AAED,IAAM,WAAW,OAAG,aAAG,0IAAA,qBACJ,EAAgB,+CAElC,KAFkB,kBAAU,CAAC,KAAK,CAElC,CAAA;AAED,IAAM,KAAK,GAAG,IAAA,YAAE,MACZ,aAAG,sGAAA,uBACc,EAAc,SAC9B,KADgB,gBAAQ,CAAC,KAAK,GAE/B,WAAW,CACd,CAAA;AACD,IAAM,UAAU,GAAG,IAAA,YAAE,MACjB,aAAG,sGAAA,uBACc,EAAmB,SACnC,KADgB,gBAAQ,CAAC,UAAU,GAEpC,WAAW,CACd,CAAA;AACD,IAAM,UAAU,GAAG,IAAA,YAAE,MACjB,aAAG,sGAAA,uBACc,EAAmB,SACnC,KADgB,gBAAQ,CAAC,UAAU,GAEpC,WAAW,CACd,CAAA;AAED,IAAM,eAAe,OAAG,aAAG,kKAAA,qBACR,EAAe,uEAGjC,KAHkB,kBAAU,CAAC,IAAI,CAGjC,CAAA;AACD,IAAM,SAAS,GAAG,IAAA,YAAE,MAChB,aAAG,sGAAA,uBACc,EAAkB,SAClC,KADgB,gBAAQ,CAAC,SAAS,GAEnC,eAAe,CAClB,CAAA;AACD,IAAM,cAAc,GAAG,IAAA,YAAE,MACrB,aAAG,sGAAA,uBACc,EAAuB,SACvC,KADgB,gBAAQ,CAAC,cAAc,GAExC,eAAe,CAClB,CAAA;AAED,IAAM,aAAa,OAAG,aAAG,wNAAA,qBACN,EAAe,6HAKjC,KALkB,kBAAU,CAAC,IAAI,CAKjC,CAAA;AAED,IAAM,UAAU,GAAG;IACf,aAAa,eAAA;IACb,cAAc,gBAAA;IACd,SAAS,WAAA;IACT,UAAU,YAAA;IACV,UAAU,YAAA;IACV,KAAK,OAAA;CACR,CAAA;AAEsB,yBAAG"}
+\ No newline at end of file
+diff --git a/node_modules/@giphy/js-brand/src/typography.ts b/node_modules/@giphy/js-brand/src/typography.ts
+index 348c77b..f183113 100644
+--- a/node_modules/@giphy/js-brand/src/typography.ts
++++ b/node_modules/@giphy/js-brand/src/typography.ts
+@@ -1,7 +1,6 @@
+ import { css, cx, injectGlobal } from 'emotion'
+ 
+-// eslint-disable-next-line
+-injectGlobal`
++export const addFonts = () => injectGlobal`
+ @font-face {
+     font-family: 'interface';
+     font-style: normal;
+@@ -43,6 +42,17 @@ injectGlobal`
+     src:  url('https://s3.amazonaws.com/giphyscripts/react-giphy-brand/fonts/ss-social.woff') format('woff');
+ }
+ `
++try {
++    // in an env where process.env exists,
++    // this will not error allowing the configuration
++    // to work
++    if (!process.env.GIPHY_SDK_NO_FONTS) {
++        addFonts()
++    }
++} catch (error) {
++    // if there is no env then fallback to the default behavior
++    addFonts()
++}
+ 
+ export const fontFamily = {
+     title: "'nexablack', sans-serif",

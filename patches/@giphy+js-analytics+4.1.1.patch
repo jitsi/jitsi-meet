@@ -1,0 +1,172 @@
+diff --git a/node_modules/@giphy/js-analytics/dist/index.js b/node_modules/@giphy/js-analytics/dist/index.js
+index bff4700..700c13e 100644
+--- a/node_modules/@giphy/js-analytics/dist/index.js
++++ b/node_modules/@giphy/js-analytics/dist/index.js
+@@ -1,7 +1,11 @@
+ "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+     if (k2 === undefined) k2 = k;
+-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
+ }) : (function(o, m, k, k2) {
+     if (k2 === undefined) k2 = k;
+     o[k2] = m[k];
+diff --git a/node_modules/@giphy/js-analytics/dist/index.js.map b/node_modules/@giphy/js-analytics/dist/index.js.map
+index 114a766..daac7c1 100644
+--- a/node_modules/@giphy/js-analytics/dist/index.js.map
++++ b/node_modules/@giphy/js-analytics/dist/index.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;AAAA,uDAA+D;AAAtD,oIAAA,OAAO,OAAmB;AACnC,uCAAgD;AAAvC,qHAAA,OAAO,OAAY;AAC5B,0CAAuB"}
+\ No newline at end of file
++{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;AAAA,uDAA+D;AAAtD,oIAAA,OAAO,OAAmB;AACnC,uCAAgD;AAAvC,qHAAA,OAAO,OAAY;AAC5B,0CAAuB"}
+\ No newline at end of file
+diff --git a/node_modules/@giphy/js-analytics/dist/merge-attributes.js b/node_modules/@giphy/js-analytics/dist/merge-attributes.js
+index 6df6da6..d287c9b 100644
+--- a/node_modules/@giphy/js-analytics/dist/merge-attributes.js
++++ b/node_modules/@giphy/js-analytics/dist/merge-attributes.js
+@@ -14,8 +14,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ var js_util_1 = require("@giphy/js-util");
+ var mergeAttribute = function (attributes, newAttributes, key) {
+     var _a;
+-    var result1 = js_util_1.pick(attributes, [key]);
+-    var result2 = js_util_1.pick(newAttributes, [key]);
++    var result1 = (0, js_util_1.pick)(attributes, [key]);
++    var result2 = (0, js_util_1.pick)(newAttributes, [key]);
+     if (result1[key] && result2[key]) {
+         return __assign(__assign(__assign({}, attributes), newAttributes), (_a = {}, _a[key] = result1[key] + ', ' + result2[key], _a));
+     }
+diff --git a/node_modules/@giphy/js-analytics/dist/merge-attributes.js.map b/node_modules/@giphy/js-analytics/dist/merge-attributes.js.map
+index c2a0c20..599992c 100644
+--- a/node_modules/@giphy/js-analytics/dist/merge-attributes.js.map
++++ b/node_modules/@giphy/js-analytics/dist/merge-attributes.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"merge-attributes.js","sourceRoot":"","sources":["../src/merge-attributes.ts"],"names":[],"mappings":";;;;;;;;;;;;;AAAA,0CAAqC;AAGrC,IAAM,cAAc,GAAG,UAAC,UAA8B,EAAE,aAAiC,EAAE,GAAW;;IAClG,IAAM,OAAO,GAAG,cAAI,CAAC,UAAU,EAAE,CAAC,GAAG,CAAC,CAAC,CAAA;IACvC,IAAM,OAAO,GAAG,cAAI,CAAC,aAAa,EAAE,CAAC,GAAG,CAAC,CAAC,CAAA;IAC1C,IAAI,OAAO,CAAC,GAAG,CAAC,IAAI,OAAO,CAAC,GAAG,CAAC,EAAE;QAC9B,sCAAY,UAAU,GAAK,aAAa,aAAO,GAAC,GAAG,IAAG,OAAO,CAAC,GAAG,CAAC,GAAG,IAAI,GAAG,OAAO,CAAC,GAAG,CAAC,OAAI;KAC/F;IACD,6BAAY,UAAU,GAAK,aAAa,EAAE;AAC9C,CAAC,CAAA;AAED,kBAAe,cAAc,CAAA"}
+\ No newline at end of file
++{"version":3,"file":"merge-attributes.js","sourceRoot":"","sources":["../src/merge-attributes.ts"],"names":[],"mappings":";;;;;;;;;;;;;AAAA,0CAAqC;AAGrC,IAAM,cAAc,GAAG,UAAC,UAA8B,EAAE,aAAiC,EAAE,GAAW;;IAClG,IAAM,OAAO,GAAG,IAAA,cAAI,EAAC,UAAU,EAAE,CAAC,GAAG,CAAC,CAAC,CAAA;IACvC,IAAM,OAAO,GAAG,IAAA,cAAI,EAAC,aAAa,EAAE,CAAC,GAAG,CAAC,CAAC,CAAA;IAC1C,IAAI,OAAO,CAAC,GAAG,CAAC,IAAI,OAAO,CAAC,GAAG,CAAC,EAAE;QAC9B,sCAAY,UAAU,GAAK,aAAa,aAAO,GAAC,GAAG,IAAG,OAAO,CAAC,GAAG,CAAC,GAAG,IAAI,GAAG,OAAO,CAAC,GAAG,CAAC,OAAI;KAC/F;IACD,6BAAY,UAAU,GAAK,aAAa,EAAE;AAC9C,CAAC,CAAA;AAED,kBAAe,cAAc,CAAA"}
+\ No newline at end of file
+diff --git a/node_modules/@giphy/js-analytics/dist/pingback.js b/node_modules/@giphy/js-analytics/dist/pingback.js
+index 7a559fb..6c515e1 100644
+--- a/node_modules/@giphy/js-analytics/dist/pingback.js
++++ b/node_modules/@giphy/js-analytics/dist/pingback.js
+@@ -1,8 +1,12 @@
+ "use strict";
+-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+-        to[j] = from[i];
+-    return to;
++var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
++    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
++        if (ar || !(i in from)) {
++            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
++            ar[i] = from[i];
++        }
++    }
++    return to.concat(ar || Array.prototype.slice.call(from));
+ };
+ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+@@ -14,14 +18,14 @@ var throttle_debounce_1 = require("throttle-debounce");
+ var global_1 = __importDefault(require("./global"));
+ var send_pingback_1 = require("./send-pingback");
+ var queuedPingbackEvents = [];
+-global_1.default.giphyRandomId = js_util_1.getPingbackId();
++global_1.default.giphyRandomId = (0, js_util_1.getPingbackId)();
+ var loggedInUserId = '';
+ function sendPingbacks() {
+-    var sendEvents = __spreadArray([], queuedPingbackEvents);
++    var sendEvents = __spreadArray([], queuedPingbackEvents, true);
+     queuedPingbackEvents = [];
+-    send_pingback_1.sendPingback(sendEvents);
++    (0, send_pingback_1.sendPingback)(sendEvents);
+ }
+-var debouncedPingbackEvent = throttle_debounce_1.debounce(1000, sendPingbacks);
++var debouncedPingbackEvent = (0, throttle_debounce_1.debounce)(1000, sendPingbacks);
+ (_a = global_1.default.addEventListener) === null || _a === void 0 ? void 0 : _a.call(global_1.default, 'beforeunload', sendPingbacks);
+ var pingback = function (_a) {
+     var userId = _a.userId, eventType = _a.eventType, actionType = _a.actionType, attributes = _a.attributes, _b = _a.queueEvents, queueEvents = _b === void 0 ? true : _b, analyticsResponsePayload = _a.analyticsResponsePayload;
+@@ -31,7 +35,7 @@ var pingback = function (_a) {
+         ts: Date.now(),
+         attributes: attributes,
+         action_type: actionType,
+-        user_id: js_util_1.getPingbackId(),
++        user_id: (0, js_util_1.getPingbackId)(),
+         analytics_response_payload: analyticsResponsePayload,
+     };
+     if (loggedInUserId) {
+@@ -39,7 +43,7 @@ var pingback = function (_a) {
+     }
+     // add verification mode
+     if (newEvent.analytics_response_payload) {
+-        newEvent.analytics_response_payload = "" + newEvent.analytics_response_payload + (js_util_1.Logger.ENABLED ? '&mode=verification' : '');
++        newEvent.analytics_response_payload = "".concat(newEvent.analytics_response_payload).concat(js_util_1.Logger.ENABLED ? '&mode=verification' : '');
+     }
+     if (eventType) {
+         newEvent.event_type = eventType;
+diff --git a/node_modules/@giphy/js-analytics/dist/pingback.js.map b/node_modules/@giphy/js-analytics/dist/pingback.js.map
+index 8997c7c..2902cc4 100644
+--- a/node_modules/@giphy/js-analytics/dist/pingback.js.map
++++ b/node_modules/@giphy/js-analytics/dist/pingback.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"pingback.js","sourceRoot":"","sources":["../src/pingback.ts"],"names":[],"mappings":";;;;;;;;;;;AAAA,0CAAsD;AACtD,uDAA4C;AAC5C,oDAAyB;AACzB,iDAA8C;AAG9C,IAAI,oBAAoB,GAAoB,EAAE,CAAA;AAE9C,gBAAE,CAAC,aAAa,GAAG,uBAAa,EAAE,CAAA;AAElC,IAAI,cAAc,GAAG,EAAE,CAAA;AAEvB,SAAS,aAAa;IAClB,IAAM,UAAU,qBAAO,oBAAoB,CAAC,CAAA;IAC5C,oBAAoB,GAAG,EAAE,CAAA;IACzB,4BAAY,CAAC,UAAU,CAAC,CAAA;AAC5B,CAAC;AAED,IAAM,sBAAsB,GAAG,4BAAQ,CAAC,IAAI,EAAE,aAAa,CAAC,CAAA;AAE5D,MAAA,gBAAE,CAAC,gBAAgB,+CAAnB,gBAAE,EAAoB,cAAc,EAAE,aAAa,CAAC,CAAA;AAEpD,IAAM,QAAQ,GAAG,UAAC,EAOP;QANP,MAAM,YAAA,EACN,SAAS,eAAA,EACT,UAAU,gBAAA,EACV,UAAU,gBAAA,EACV,mBAAkB,EAAlB,WAAW,mBAAG,IAAI,KAAA,EAClB,wBAAwB,8BAAA;IAExB,0DAA0D;IAC1D,cAAc,GAAG,MAAM,CAAC,CAAC,CAAC,MAAM,CAAC,MAAM,CAAC,CAAC,CAAC,CAAC,cAAc,CAAA;IAEzD,IAAM,QAAQ,GAAkB;QAC5B,EAAE,EAAE,IAAI,CAAC,GAAG,EAAE;QACd,UAAU,YAAA;QACV,WAAW,EAAE,UAAU;QACvB,OAAO,EAAE,uBAAa,EAAE;QACxB,0BAA0B,EAAE,wBAAwB;KACvD,CAAA;IAED,IAAI,cAAc,EAAE;QAChB,QAAQ,CAAC,iBAAiB,GAAG,cAAc,CAAA;KAC9C;IAED,wBAAwB;IACxB,IAAI,QAAQ,CAAC,0BAA0B,EAAE;QACrC,QAAQ,CAAC,0BAA0B,GAAG,KAAG,QAAQ,CAAC,0BAA0B,IACxE,gBAAM,CAAC,OAAO,CAAC,CAAC,CAAC,oBAAoB,CAAC,CAAC,CAAC,EAAE,CAC5C,CAAA;KACL;IAED,IAAI,SAAS,EAAE;QACX,QAAQ,CAAC,UAAU,GAAG,SAAS,CAAA;KAClC;IAED,oBAAoB,CAAC,IAAI,CAAC,QAAQ,CAAC,CAAA;IAEnC,WAAW,CAAC,CAAC,CAAC,sBAAsB,EAAE,CAAC,CAAC,CAAC,aAAa,EAAE,CAAA;AAC5D,CAAC,CAAA;AAED,kBAAe,QAAQ,CAAA"}
+\ No newline at end of file
++{"version":3,"file":"pingback.js","sourceRoot":"","sources":["../src/pingback.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;AAAA,0CAAsD;AACtD,uDAA4C;AAC5C,oDAAyB;AACzB,iDAA8C;AAG9C,IAAI,oBAAoB,GAAoB,EAAE,CAAA;AAE9C,gBAAE,CAAC,aAAa,GAAG,IAAA,uBAAa,GAAE,CAAA;AAElC,IAAI,cAAc,GAAG,EAAE,CAAA;AAEvB,SAAS,aAAa;IAClB,IAAM,UAAU,qBAAO,oBAAoB,OAAC,CAAA;IAC5C,oBAAoB,GAAG,EAAE,CAAA;IACzB,IAAA,4BAAY,EAAC,UAAU,CAAC,CAAA;AAC5B,CAAC;AAED,IAAM,sBAAsB,GAAG,IAAA,4BAAQ,EAAC,IAAI,EAAE,aAAa,CAAC,CAAA;AAE5D,MAAA,gBAAE,CAAC,gBAAgB,iEAAG,cAAc,EAAE,aAAa,CAAC,CAAA;AAEpD,IAAM,QAAQ,GAAG,UAAC,EAOP;QANP,MAAM,YAAA,EACN,SAAS,eAAA,EACT,UAAU,gBAAA,EACV,UAAU,gBAAA,EACV,mBAAkB,EAAlB,WAAW,mBAAG,IAAI,KAAA,EAClB,wBAAwB,8BAAA;IAExB,0DAA0D;IAC1D,cAAc,GAAG,MAAM,CAAC,CAAC,CAAC,MAAM,CAAC,MAAM,CAAC,CAAC,CAAC,CAAC,cAAc,CAAA;IAEzD,IAAM,QAAQ,GAAkB;QAC5B,EAAE,EAAE,IAAI,CAAC,GAAG,EAAE;QACd,UAAU,YAAA;QACV,WAAW,EAAE,UAAU;QACvB,OAAO,EAAE,IAAA,uBAAa,GAAE;QACxB,0BAA0B,EAAE,wBAAwB;KACvD,CAAA;IAED,IAAI,cAAc,EAAE;QAChB,QAAQ,CAAC,iBAAiB,GAAG,cAAc,CAAA;KAC9C;IAED,wBAAwB;IACxB,IAAI,QAAQ,CAAC,0BAA0B,EAAE;QACrC,QAAQ,CAAC,0BAA0B,GAAG,UAAG,QAAQ,CAAC,0BAA0B,SACxE,gBAAM,CAAC,OAAO,CAAC,CAAC,CAAC,oBAAoB,CAAC,CAAC,CAAC,EAAE,CAC5C,CAAA;KACL;IAED,IAAI,SAAS,EAAE;QACX,QAAQ,CAAC,UAAU,GAAG,SAAS,CAAA;KAClC;IAED,oBAAoB,CAAC,IAAI,CAAC,QAAQ,CAAC,CAAA;IAEnC,WAAW,CAAC,CAAC,CAAC,sBAAsB,EAAE,CAAC,CAAC,CAAC,aAAa,EAAE,CAAA;AAC5D,CAAC,CAAA;AAED,kBAAe,QAAQ,CAAA"}
+\ No newline at end of file
+diff --git a/node_modules/@giphy/js-analytics/dist/send-pingback.js b/node_modules/@giphy/js-analytics/dist/send-pingback.js
+index 001345a..989f0ff 100644
+--- a/node_modules/@giphy/js-analytics/dist/send-pingback.js
++++ b/node_modules/@giphy/js-analytics/dist/send-pingback.js
+@@ -8,19 +8,22 @@ var js_util_1 = require("@giphy/js-util");
+ var global_1 = __importDefault(require("./global"));
+ // TODO remove api key
+ var environment = (global_1.default === null || global_1.default === void 0 ? void 0 : global_1.default.GIPHY_PINGBACK_URL) || 'https://pingback.giphy.com';
+-var pingBackUrl = environment + "/v2/pingback?apikey=l0HlIwPWyBBUDAUgM";
++var pingBackUrl = "".concat(environment, "/v2/pingback?apikey=l0HlIwPWyBBUDAUgM");
+ var sendPingback = function (events) {
+-    var headers = js_util_1.getGiphySDKRequestHeaders();
++    var headers = (0, js_util_1.getGiphySDKRequestHeaders)();
+     /* istanbul ignore next */
+     headers === null || headers === void 0 ? void 0 : headers.set('Content-Type', 'application/json');
+     js_util_1.Logger.debug("Pingback session", events);
++    if (!events.length) {
++        return new Promise(function (resolve) { return resolve(); });
++    }
+     return fetch(pingBackUrl, {
+         method: 'POST',
+         body: JSON.stringify({ events: events }),
+         headers: headers,
+     }).catch(function (error) {
+         // Call failed, probably due to adblock.
+-        js_util_1.Logger.warn("pingbacks failing to post " + error);
++        js_util_1.Logger.warn("pingbacks failing to post ".concat(error));
+     });
+ };
+ exports.sendPingback = sendPingback;
+diff --git a/node_modules/@giphy/js-analytics/dist/send-pingback.js.map b/node_modules/@giphy/js-analytics/dist/send-pingback.js.map
+index 7f19fa7..51cb987 100644
+--- a/node_modules/@giphy/js-analytics/dist/send-pingback.js.map
++++ b/node_modules/@giphy/js-analytics/dist/send-pingback.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"send-pingback.js","sourceRoot":"","sources":["../src/send-pingback.ts"],"names":[],"mappings":";;;;;;AAAA,0CAAkE;AAClE,oDAAyB;AAGzB,sBAAsB;AACtB,IAAM,WAAW,GAAG,CAAA,gBAAE,aAAF,gBAAE,uBAAF,gBAAE,CAAE,kBAAkB,KAAI,4BAA4B,CAAA;AAC1E,IAAM,WAAW,GAAM,WAAW,0CAAuC,CAAA;AAElE,IAAM,YAAY,GAAG,UAAC,MAAuB;IAChD,IAAM,OAAO,GAAG,mCAAyB,EAAE,CAAA;IAC3C,0BAA0B;IAC1B,OAAO,aAAP,OAAO,uBAAP,OAAO,CAAE,GAAG,CAAC,cAAc,EAAE,kBAAkB,CAAC,CAAA;IAChD,gBAAM,CAAC,KAAK,CAAC,kBAAkB,EAAE,MAAM,CAAC,CAAA;IACxC,OAAO,KAAK,CAAC,WAAW,EAAE;QACtB,MAAM,EAAE,MAAM;QACd,IAAI,EAAE,IAAI,CAAC,SAAS,CAAC,EAAE,MAAM,QAAA,EAAE,CAAC;QAChC,OAAO,SAAA;KACV,CAAC,CAAC,KAAK,CAAC,UAAC,KAAK;QACX,wCAAwC;QACxC,gBAAM,CAAC,IAAI,CAAC,+BAA6B,KAAO,CAAC,CAAA;IACrD,CAAC,CAAC,CAAA;AACN,CAAC,CAAA;AAbY,QAAA,YAAY,gBAaxB"}
+\ No newline at end of file
++{"version":3,"file":"send-pingback.js","sourceRoot":"","sources":["../src/send-pingback.ts"],"names":[],"mappings":";;;;;;AAAA,0CAAkE;AAClE,oDAAyB;AAGzB,sBAAsB;AACtB,IAAM,WAAW,GAAG,CAAA,gBAAE,aAAF,gBAAE,uBAAF,gBAAE,CAAE,kBAAkB,KAAI,4BAA4B,CAAA;AAC1E,IAAM,WAAW,GAAG,UAAG,WAAW,0CAAuC,CAAA;AAElE,IAAM,YAAY,GAAG,UAAC,MAAuB;IAChD,IAAM,OAAO,GAAG,IAAA,mCAAyB,GAAE,CAAA;IAC3C,0BAA0B;IAC1B,OAAO,aAAP,OAAO,uBAAP,OAAO,CAAE,GAAG,CAAC,cAAc,EAAE,kBAAkB,CAAC,CAAA;IAChD,gBAAM,CAAC,KAAK,CAAC,kBAAkB,EAAE,MAAM,CAAC,CAAA;IAExC,IAAI,CAAC,MAAM,CAAC,MAAM,EAAE;QAChB,OAAO,IAAI,OAAO,CAAO,UAAC,OAAO,IAAK,OAAA,OAAO,EAAE,EAAT,CAAS,CAAC,CAAA;KACnD;IAED,OAAO,KAAK,CAAC,WAAW,EAAE;QACtB,MAAM,EAAE,MAAM;QACd,IAAI,EAAE,IAAI,CAAC,SAAS,CAAC,EAAE,MAAM,QAAA,EAAE,CAAC;QAChC,OAAO,SAAA;KACV,CAAC,CAAC,KAAK,CAAC,UAAC,KAAK;QACX,wCAAwC;QACxC,gBAAM,CAAC,IAAI,CAAC,oCAA6B,KAAK,CAAE,CAAC,CAAA;IACrD,CAAC,CAAC,CAAA;AACN,CAAC,CAAA;AAlBY,QAAA,YAAY,gBAkBxB"}
+\ No newline at end of file
+diff --git a/node_modules/@giphy/js-analytics/src/send-pingback.ts b/node_modules/@giphy/js-analytics/src/send-pingback.ts
+index dc75d08..8f237a5 100644
+--- a/node_modules/@giphy/js-analytics/src/send-pingback.ts
++++ b/node_modules/@giphy/js-analytics/src/send-pingback.ts
+@@ -11,6 +11,11 @@ export const sendPingback = (events: PingbackEvent[]) => {
+     /* istanbul ignore next */
+     headers?.set('Content-Type', 'application/json')
+     Logger.debug(`Pingback session`, events)
++
++    if (!events.length) {
++        return new Promise<void>((resolve) => resolve())
++    }
++
+     return fetch(pingBackUrl, {
+         method: 'POST',
+         body: JSON.stringify({ events }),
