@@ -68,7 +68,7 @@ ReducerRegistry.register(STORE_NAME, (state: IRecentListState = DEFAULT_STATE, a
  *
  * @param {IRecentListState} state - The Redux state.
  * @param {Object} entryId - The ID object of the entry.
- * @returns {Array<Object>}
+ * @returns {IRecentListState}
  */
 function _deleteRecentListEntry(
         state: Array<IRecent>, entryId: { date: number; url: string; }): Array<IRecent> {
