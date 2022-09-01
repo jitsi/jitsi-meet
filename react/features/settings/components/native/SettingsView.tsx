@@ -230,7 +230,7 @@ class SettingsView extends Component<Props, State> {
         if (!_.isEqual(prevProps._settings, _settings)) {
             // @ts-ignore
             // eslint-disable-next-line react/no-did-update-set-state
-            this.setState(settings);
+            this.setState(_settings);
         }
     }
 
