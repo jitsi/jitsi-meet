@@ -1,16 +1,25 @@
-// @flow
-
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS, SET_DISABLE_BUTTON } from './actionTypes';
 
 const initialState = {};
 
+export interface ISharedVideoState {
+    disabled?: boolean;
+    muted?: boolean;
+    ownerId?: string;
+    status?: string;
+    time?: number;
+    videoUrl?: string;
+    volume?: number;
+}
+
 /**
  * Reduces the Redux actions of the feature features/shared-video.
  */
-ReducerRegistry.register('features/shared-video', (state = initialState, action) => {
-    const { videoUrl, status, time, ownerId, disabled, muted } = action;
+ReducerRegistry.register('features/shared-video',
+(state: ISharedVideoState = initialState, action): ISharedVideoState => {
+    const { videoUrl, status, time, ownerId, disabled, muted, volume } = action;
 
     switch (action.type) {
     case RESET_SHARED_VIDEO_STATUS:
@@ -22,7 +31,8 @@ ReducerRegistry.register('features/shared-video', (state = initialState, action)
             ownerId,
             status,
             time,
-            videoUrl
+            videoUrl,
+            volume
         };
 
     case SET_DISABLE_BUTTON:

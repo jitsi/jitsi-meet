@@ -54,6 +54,7 @@ import { IPollsState } from '../polls/reducer';
 import { IPowerMonitorState } from '../power-monitor/reducer';
 import { IPrejoinState } from '../prejoin/reducer';
 import { IReactionsState } from '../reactions/reducer';
+import { ISharedVideoState } from '../shared-video/reducer';
 
 export interface IStore {
     dispatch: Function,
@@ -119,5 +120,6 @@ export interface IState {
     'features/power-monitor': IPowerMonitorState,
     'features/prejoin': IPrejoinState,
     'features/reactions': IReactionsState,
+    'features/shared-video': ISharedVideoState,
     'features/testing': ITestingState
 }
