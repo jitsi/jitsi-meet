@@ -107,7 +107,7 @@ class RTCStats {
      * @param {Array<string|any>} logEntries - The log entries to send to the rtcstats server.
      * @returns {void}
      */
-    sendLogs(logEntries) {
+    sendLogs(logEntries: Array<string|any>) {
         this.trace && this.trace.statsEntry('logs', null, logEntries);
     }
 
