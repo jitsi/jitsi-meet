@@ -282,8 +282,8 @@ module.exports = (_env, argv) => {
     const mode = typeof argv.mode === 'undefined' ? 'production' : argv.mode;
     const isProduction = mode === 'production';
     const configOptions = {
-        detectCircularDeps: Boolean(process.env.DETECT_CIRCULAR_DEPS),
-        minimize: isProduction
+        detectCircularDeps: true, // Boolean(process.env.DETECT_CIRCULAR_DEPS),
+        minimize: true  // isProduction
     };
     const config = getConfig(configOptions);
     const perfHintOptions = {
@@ -292,107 +292,107 @@ module.exports = (_env, argv) => {
     };
 
     return [
-        Object.assign({}, config, {
-            entry: {
-                'app.bundle': './app.js'
-            },
-            devServer: isProduction ? {} : getDevServerConfig(),
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'app'),
-                new webpack.IgnorePlugin({
-                    resourceRegExp: /^canvas$/,
-                    contextRegExp: /resemblejs$/
-                }),
-                new webpack.IgnorePlugin({
-                    resourceRegExp: /^\.\/locale$/,
-                    contextRegExp: /moment$/
-                }),
-                new webpack.ProvidePlugin({
-                    process: 'process/browser'
-                })
-            ],
-            performance: getPerformanceHints(perfHintOptions, 4 * 1024 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
-                'alwaysontop': './react/features/always-on-top/index.js'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'alwaysontop')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 800 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
-                'dial_in_info_bundle': './react/features/invite/components/dial-in-info-page'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'dial_in_info'),
-                new webpack.IgnorePlugin({
-                    resourceRegExp: /^\.\/locale$/,
-                    contextRegExp: /moment$/
-                })
-            ],
-            performance: getPerformanceHints(perfHintOptions, 500 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
-                'do_external_connect': './connection_optimization/do_external_connect.js'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'do_external_connect')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
-                'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'analytics-ga')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
-                'close3': './static/close3.js'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'close3')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 128 * 1024)
-        }),
+        // Object.assign({}, config, {
+        //     entry: {
+        //         'app.bundle': './app.js'
+        //     },
+        //     devServer: isProduction ? {} : getDevServerConfig(),
+        //     plugins: [
+        //         ...config.plugins,
+        //         ...getBundleAnalyzerPlugin(analyzeBundle, 'app'),
+        //         new webpack.IgnorePlugin({
+        //             resourceRegExp: /^canvas$/,
+        //             contextRegExp: /resemblejs$/
+        //         }),
+        //         new webpack.IgnorePlugin({
+        //             resourceRegExp: /^\.\/locale$/,
+        //             contextRegExp: /moment$/
+        //         }),
+        //         new webpack.ProvidePlugin({
+        //             process: 'process/browser'
+        //         })
+        //     ],
+        //     performance: getPerformanceHints(perfHintOptions, 4 * 1024 * 1024)
+        // }),
+        // Object.assign({}, config, {
+        //     entry: {
+        //         'alwaysontop': './react/features/always-on-top/index.js'
+        //     },
+        //     plugins: [
+        //         ...config.plugins,
+        //         ...getBundleAnalyzerPlugin(analyzeBundle, 'alwaysontop')
+        //     ],
+        //     performance: getPerformanceHints(perfHintOptions, 800 * 1024)
+        // }),
+        // Object.assign({}, config, {
+        //     entry: {
+        //         'dial_in_info_bundle': './react/features/invite/components/dial-in-info-page'
+        //     },
+        //     plugins: [
+        //         ...config.plugins,
+        //         ...getBundleAnalyzerPlugin(analyzeBundle, 'dial_in_info'),
+        //         new webpack.IgnorePlugin({
+        //             resourceRegExp: /^\.\/locale$/,
+        //             contextRegExp: /moment$/
+        //         })
+        //     ],
+        //     performance: getPerformanceHints(perfHintOptions, 500 * 1024)
+        // }),
+        // Object.assign({}, config, {
+        //     entry: {
+        //         'do_external_connect': './connection_optimization/do_external_connect.js'
+        //     },
+        //     plugins: [
+        //         ...config.plugins,
+        //         ...getBundleAnalyzerPlugin(analyzeBundle, 'do_external_connect')
+        //     ],
+        //     performance: getPerformanceHints(perfHintOptions, 5 * 1024)
+        // }),
+        // Object.assign({}, config, {
+        //     entry: {
+        //         'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
+        //     },
+        //     plugins: [
+        //         ...config.plugins,
+        //         ...getBundleAnalyzerPlugin(analyzeBundle, 'analytics-ga')
+        //     ],
+        //     performance: getPerformanceHints(perfHintOptions, 5 * 1024)
+        // }),
+        // Object.assign({}, config, {
+        //     entry: {
+        //         'close3': './static/close3.js'
+        //     },
+        //     plugins: [
+        //         ...config.plugins,
+        //         ...getBundleAnalyzerPlugin(analyzeBundle, 'close3')
+        //     ],
+        //     performance: getPerformanceHints(perfHintOptions, 128 * 1024)
+        // }),
 
-        Object.assign({}, config, {
-            entry: {
-                'external_api': './modules/API/external/index.js'
-            },
-            output: Object.assign({}, config.output, {
-                library: 'JitsiMeetExternalAPI',
-                libraryTarget: 'umd'
-            }),
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 35 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
-                'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.ts'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2)
-        }),
+        // Object.assign({}, config, {
+        //     entry: {
+        //         'external_api': './modules/API/external/index.js'
+        //     },
+        //     output: Object.assign({}, config.output, {
+        //         library: 'JitsiMeetExternalAPI',
+        //         libraryTarget: 'umd'
+        //     }),
+        //     plugins: [
+        //         ...config.plugins,
+        //         ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
+        //     ],
+        //     performance: getPerformanceHints(perfHintOptions, 35 * 1024)
+        // }),
+        // Object.assign({}, config, {
+        //     entry: {
+        //         'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.ts'
+        //     },
+        //     plugins: [
+        //         ...config.plugins,
+        //         ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
+        //     ],
+        //     performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2)
+        // }),
         Object.assign({}, config, {
             /**
              * The NoiseSuppressorWorklet is loaded in an audio worklet which doesn't have the same
