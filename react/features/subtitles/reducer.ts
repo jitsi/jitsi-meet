@@ -15,6 +15,7 @@ const defaultState = {
 };
 
 export interface ISubtitlesState {
+    _language: string;
     _requestingSubtitles: boolean;
     _transcriptMessages: Map<string, Object>;
 }

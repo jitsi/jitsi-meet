@@ -22,7 +22,7 @@ export type IRecentListState = IRecent[];
 /**
  * The default/initial redux state of the feature {@code recent-list}.
  *
- * @type {Array<Object>}
+ * @type {IRecentListState}
  */
 const DEFAULT_STATE: IRecentListState = [];
 
@@ -66,7 +66,7 @@ ReducerRegistry.register(STORE_NAME, (state: IRecentListState = DEFAULT_STATE, a
 /**
  * Deletes a recent list entry based on the url and date of the item.
  *
- * @param {Array<Object>} state - The Redux state.
+ * @param {IRecentListState} state - The Redux state.
  * @param {Object} entryId - The ID object of the entry.
  * @returns {Array<Object>}
  */
@@ -79,7 +79,7 @@ function _deleteRecentListEntry(
 /**
  * Adds a new list entry to the redux store.
  *
- * @param {Object} state - The redux state of the feature {@code recent-list}.
+ * @param {IRecentListState} state - The redux state of the feature {@code recent-list}.
  * @param {Object} action - The redux action.
  * @returns {Object}
  */
@@ -107,7 +107,7 @@ function _storeCurrentConference(state: IRecentListState, { locationURL }: { loc
 /**
  * Updates the conference length when left.
  *
- * @param {Object} state - The redux state of the feature {@code recent-list}.
+ * @param {IRecentListState} state - The redux state of the feature {@code recent-list}.
  * @param {Object} action - The redux action.
  * @returns {Object} The next redux state of the feature {@code recent-list}.
  */
