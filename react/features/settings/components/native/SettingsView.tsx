@@ -105,6 +105,11 @@ interface State {
 interface Props extends WithTranslation {
 
     /**
+     * The ID of the local participant.
+     */
+    _localParticipantId: string,
+
+    /**
      * The default URL for when there is no custom URL set in the settings.
      *
      * @protected
@@ -119,6 +124,21 @@ interface Props extends WithTranslation {
     _serverURLChangeEnabled: boolean,
 
     /**
+     * The current settings object.
+     */
+    _settings: {
+        disableCallIntegration: boolean;
+        disableCrashReporting: boolean;
+        disableP2P: boolean;
+        disableSelfView: boolean;
+        displayName: string;
+        email: string;
+        serverURL: string;
+        startWithAudioMuted: boolean;
+        startWithVideoMuted: boolean;
+    },
+
+    /**
      * Whether {@link SettingsView} is visible.
      *
      * @protected
@@ -131,11 +151,6 @@ interface Props extends WithTranslation {
     dispatch: Function,
 
     /**
-     * The ID of the local participant.
-     */
-    localParticipantId: string,
-
-    /**
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object,
@@ -143,22 +158,7 @@ interface Props extends WithTranslation {
     /**
      * Callback to be invoked when settings screen is focused.
      */
-    onSettingsScreenFocused: Function,
-
-    /**
-     * The current settings object.
-     */
-    settings: {
-        disableCallIntegration: boolean;
-        disableCrashReporting: boolean;
-        disableP2P: boolean;
-        disableSelfView: boolean;
-        displayName: string;
-        email: string;
-        serverURL: string;
-        startWithAudioMuted: boolean;
-        startWithVideoMuted: boolean;
-    }
+    onSettingsScreenFocused: Function
 }
 
 /**
@@ -186,7 +186,7 @@ class SettingsView extends Component<Props, State> {
             serverURL,
             startWithAudioMuted,
             startWithVideoMuted
-        } = props.settings || {};
+        } = props._settings || {};
 
         this.state = {
             disableCallIntegration,
@@ -212,8 +212,6 @@ class SettingsView extends Component<Props, State> {
         this._onDisableSelfView = this._onDisableSelfView.bind(this);
         this._onStartAudioMutedChange
             = this._onStartAudioMutedChange.bind(this);
-        this._onStartReactionsMutedChange
-            = this._onStartReactionsMutedChange.bind(this);
         this._onStartVideoMutedChange
             = this._onStartVideoMutedChange.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
@@ -227,9 +225,9 @@ class SettingsView extends Component<Props, State> {
      * @returns {void}
      */
     componentDidUpdate(prevProps: Props) {
-        const { settings } = this.props;
+        const { _settings } = this.props;
 
-        if (!_.isEqual(prevProps.settings, settings)) {
+        if (!_.isEqual(prevProps._settings, _settings)) {
             // @ts-ignore
             // eslint-disable-next-line react/no-did-update-set-state
             this.setState(settings);
@@ -274,7 +272,7 @@ class SettingsView extends Component<Props, State> {
                 <ScrollView>
                     <View style = { styles.avatarContainer }>
                         <Avatar
-                            participantId = { this.props.localParticipantId }
+                            participantId = { this.props._localParticipantId }
                             size = { AVATAR_SIZE } />
                     </View>
                     <FormSectionAccordion
@@ -596,20 +594,6 @@ class SettingsView extends Component<Props, State> {
     }
 
     /**
-     * Handles the start reactions muted change event.
-     *
-     * @param {boolean} startWithReactionsMuted - The new value for the start reactions muted
-     * option.
-     * @protected
-     * @returns {void}
-     */
-    _onStartReactionsMutedChange(startWithReactionsMuted: boolean) {
-        this._updateSettings({
-            startWithReactionsMuted
-        });
-    }
-
-    /**
      * Processes the server URL. It normalizes it and an error alert is
      * displayed in case it's incorrect.
      *
@@ -620,7 +604,7 @@ class SettingsView extends Component<Props, State> {
      */
     _processServerURL(hideOnSuccess: boolean) {
         // @ts-ignore
-        const { serverURL } = this.props.settings;
+        const { serverURL } = this.props._settings;
         const normalizedURL = normalizeUserInputURL(serverURL);
 
         if (normalizedURL === null) {
@@ -730,11 +714,11 @@ function _mapStateToProps(state: any) {
     const localParticipant = getLocalParticipant(state);
 
     return {
+        _localParticipantId: localParticipant?.id,
         _serverURL: getDefaultURL(state),
         _serverURLChangeEnabled: isServerURLChangeEnabled(state),
-        _visible: state['features/settings'].visible,
-        localParticipantId: localParticipant?.id,
-        settings: state['features/base/settings']
+        _settings: state['features/base/settings'],
+        _visible: state['features/settings'].visible
     };
 }
 
