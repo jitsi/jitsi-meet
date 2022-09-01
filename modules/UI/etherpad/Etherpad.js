@@ -1,4 +1,6 @@
-/* global $, APP, interfaceConfig */
+/* global APP, interfaceConfig */
+
+import $ from 'jquery';
 
 import { getSharedDocumentUrl, setDocumentEditingState } from '../../../react/features/etherpad';
 import { getToolboxHeight } from '../../../react/features/toolbox/functions.web';

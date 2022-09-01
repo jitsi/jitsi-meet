@@ -1,19 +1,30 @@
-import { getURLWithoutParamsNormalized } from '../base/connection';
-import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
+/* eslint-disable lines-around-comment */
+import { getURLWithoutParamsNormalized } from '../base/connection/utils';
+import PersistenceRegistry from '../base/redux/PersistenceRegistry';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     _STORE_CURRENT_CONFERENCE,
     _UPDATE_CONFERENCE_DURATION,
     DELETE_RECENT_LIST_ENTRY
 } from './actionTypes';
+// @ts-ignore
 import { isRecentListEnabled } from './functions';
+
+interface IRecent {
+    conference: string;
+    date: number;
+    duration: number;
+}
+
+export type IRecentListState = IRecent[];
 
 /**
  * The default/initial redux state of the feature {@code recent-list}.
  *
- * @type {Array<Object>}
+ * @type {IRecentListState}
  */
-const DEFAULT_STATE = [];
+const DEFAULT_STATE: IRecentListState = [];
 
 /**
  * The max size of the list.
@@ -35,7 +46,7 @@ PersistenceRegistry.register(STORE_NAME);
 /**
  * Reduces redux actions for the purposes of the feature {@code recent-list}.
  */
-ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register(STORE_NAME, (state: IRecentListState = DEFAULT_STATE, action) => {
     if (isRecentListEnabled()) {
         switch (action.type) {
         case DELETE_RECENT_LIST_ENTRY:
@@ -55,12 +66,12 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
 /**
  * Deletes a recent list entry based on the url and date of the item.
  *
- * @param {Array<Object>} state - The Redux state.
+ * @param {IRecentListState} state - The Redux state.
  * @param {Object} entryId - The ID object of the entry.
- * @returns {Array<Object>}
+ * @returns {IRecentListState}
  */
 function _deleteRecentListEntry(
-        state: Array<Object>, entryId: Object): Array<Object> {
+        state: Array<IRecent>, entryId: { date: number; url: string; }): Array<IRecent> {
     return state.filter(entry =>
         entry.conference !== entryId.url || entry.date !== entryId.date);
 }
@@ -68,11 +79,11 @@ function _deleteRecentListEntry(
 /**
  * Adds a new list entry to the redux store.
  *
- * @param {Object} state - The redux state of the feature {@code recent-list}.
+ * @param {IRecentListState} state - The redux state of the feature {@code recent-list}.
  * @param {Object} action - The redux action.
  * @returns {Object}
  */
-function _storeCurrentConference(state, { locationURL }) {
+function _storeCurrentConference(state: IRecentListState, { locationURL }: { locationURL: { href: string } }) {
     const conference = locationURL.href;
 
     // If the current conference is already in the list, we remove it to re-add
@@ -96,11 +107,11 @@ function _storeCurrentConference(state, { locationURL }) {
 /**
  * Updates the conference length when left.
  *
- * @param {Object} state - The redux state of the feature {@code recent-list}.
+ * @param {IRecentListState} state - The redux state of the feature {@code recent-list}.
  * @param {Object} action - The redux action.
  * @returns {Object} The next redux state of the feature {@code recent-list}.
  */
-function _updateConferenceDuration(state, { locationURL }) {
+function _updateConferenceDuration(state: IRecentListState, { locationURL }: { locationURL: { href: string } }) {
     if (locationURL && locationURL.href && state.length) {
         const mostRecentIndex = state.length - 1;
         const mostRecent = state[mostRecentIndex];

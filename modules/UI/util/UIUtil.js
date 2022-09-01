@@ -1,4 +1,4 @@
-/* global $ */
+import $ from 'jquery';
 
 /**
  * Created by hristo on 12/22/14.

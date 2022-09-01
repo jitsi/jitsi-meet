@@ -1,6 +1,7 @@
-/* global $, APP, interfaceConfig */
+/* global APP, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -8,6 +9,7 @@ import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { isTestModeEnabled } from '../../../react/features/base/testing';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip';
 import { ORIENTATION, LargeVideoBackground, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
+import { setLargeVideoDimensions } from '../../../react/features/large-video/actions.any';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 import UIUtil from '../util/UIUtil';
@@ -444,6 +446,8 @@ export class VideoContainer extends LargeContainer {
 
         const { horizontalIndent, verticalIndent }
             = this.getVideoPosition(width, height, containerWidth, containerHeight, verticalFilmstripWidth);
+
+        APP.store.dispatch(setLargeVideoDimensions(height, width));
 
         this.$wrapper.animate({
             width,

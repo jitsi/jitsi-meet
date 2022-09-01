@@ -72,6 +72,15 @@ export function shouldRemoteVideosBeVisible(state: Object) {
 }
 
 /**
+ * Not implemented on mobile.
+ *
+ * @returns {Array<string>}
+ */
+export function getActiveParticipantsIds() {
+    return [];
+}
+
+/**
  * Returns the number of participants displayed in tile view.
  *
  * @param {Object | Function} stateful - The Object or Function that can be
@@ -170,6 +179,16 @@ export function isStageFilmstripEnabled() {
 }
 
 /**
+ * Whether or not the top panel is enabled.
+ *
+ * @returns {boolean}
+ */
+export function isTopPanelEnabled() {
+    return false;
+
+}
+
+/**
  * Calculates the width and height of the filmstrip based on the screen size and aspect ratio.
  *
  * @param {Object} options - The screen aspect ratio, width, height and safe are insets.
@@ -230,6 +249,15 @@ export function shouldDisplayLocalThumbnailSeparately() {
     // do not have much of a choice but to continue rendering LocalThumbnail
     // as any other remote Thumbnail on Android.
     return Platform.OS !== 'android';
+}
+
+/**
+ * Not implemented on mobile.
+ *
+ * @returns {undefined}
+ */
+export function getScreenshareFilmstripParticipantId() {
+    return undefined;
 }
 
 

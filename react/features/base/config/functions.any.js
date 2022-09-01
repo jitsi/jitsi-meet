@@ -68,7 +68,8 @@ export function getMultipleVideoSupportFeatureFlag(state: Object) {
  * @returns {boolean}
  */
 export function getMultipleVideoSendingSupportFeatureFlag(state: Object) {
-    return getMultipleVideoSupportFeatureFlag(state) && isUnifiedPlanEnabled(state);
+    return navigator.product !== 'ReactNative'
+        && getMultipleVideoSupportFeatureFlag(state) && isUnifiedPlanEnabled(state);
 }
 
 /**

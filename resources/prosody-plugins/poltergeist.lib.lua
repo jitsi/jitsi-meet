@@ -40,7 +40,7 @@ function get_presence(room, nick)
     return nil;
 end
 
--- Checks for existance of a poltergeist occupant in a room.
+-- Checks for existence of a poltergeist occupant in a room.
 -- @param room the room instance where to check for the occupant
 -- @param nick the nick of the occupant
 -- @return true if occupant is found, false otherwise

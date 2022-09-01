@@ -1,4 +1,6 @@
-/* global $, APP, interfaceConfig */
+/* global APP, interfaceConfig */
+
+import $ from 'jquery';
 
 import { getVerticalFilmstripVisibleAreaWidth, isFilmstripVisible } from '../../../react/features/filmstrip';
 

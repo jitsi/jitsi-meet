@@ -1,4 +1,5 @@
 /* eslint-disable lines-around-comment */
+import { useIsFocused } from '@react-navigation/native';
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -58,6 +59,7 @@ import styles from './styles';
 
 const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const dispatch = useDispatch();
+    const isFocused = useIsFocused();
     const { t } = useTranslation();
     const aspectRatio = useSelector(
         (state: any) => state['features/base/responsive-ui']?.aspectRatio
@@ -148,9 +150,12 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
             safeAreaInsets = { [ 'left' ] }
             style = { contentWrapperStyles }>
             <BrandingImageBackground />
-            <View style = { largeVideoContainerStyles }>
-                <LargeVideo />
-            </View>
+            {
+                isFocused
+                && <View style = { largeVideoContainerStyles }>
+                    <LargeVideo />
+                </View>
+            }
             <View style = { contentContainerStyles }>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <Text style = { styles.preJoinTitle as StyleProp<TextStyle> }>

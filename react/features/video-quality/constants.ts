@@ -20,6 +20,16 @@ export const VIDEO_QUALITY_LEVELS = {
 };
 
 /**
+ * Indicates unlimited video quality.
+ */
+export const VIDEO_QUALITY_UNLIMITED = -1;
+
+/**
+ * The maximum video quality from the VIDEO_QUALITY_LEVELS map.
+ */
+export const MAX_VIDEO_QUALITY = Math.max(...Object.values(VIDEO_QUALITY_LEVELS));
+
+/**
  * Maps quality level names used in the config.videoQuality.minHeightForQualityLvl to the quality level constants used
  * by the application.
  *
@@ -28,5 +38,6 @@ export const VIDEO_QUALITY_LEVELS = {
 export const CFG_LVL_TO_APP_QUALITY_LVL = {
     'low': VIDEO_QUALITY_LEVELS.LOW,
     'standard': VIDEO_QUALITY_LEVELS.STANDARD,
-    'high': VIDEO_QUALITY_LEVELS.HIGH
+    'high': VIDEO_QUALITY_LEVELS.HIGH,
+    'ultra': VIDEO_QUALITY_LEVELS.ULTRA
 };

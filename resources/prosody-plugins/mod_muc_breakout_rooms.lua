@@ -116,22 +116,19 @@ end
 function broadcast_breakout_rooms(room_jid)
     local main_room = get_main_room(room_jid);
 
-    if not main_room or main_room._data.is_broadcast_breakout_scheduled then
+    if not main_room or main_room.broadcast_timer then
         return;
     end
 
     -- Only send each BROADCAST_ROOMS_INTERVAL seconds to prevent flooding of messages.
-    main_room._data.is_broadcast_breakout_scheduled = true;
-    main_room:save(true);
-    module:add_timer(BROADCAST_ROOMS_INTERVAL, function()
+    main_room.broadcast_timer = module:add_timer(BROADCAST_ROOMS_INTERVAL, function()
         local main_room, main_room_jid = get_main_room(room_jid);
 
         if not main_room then
             return;
         end
 
-        main_room._data.is_broadcast_breakout_scheduled = false;
-        main_room:save(true);
+        main_room.broadcast_timer = nil;
 
         local real_jid = internal_room_jid_match_rewrite(main_room_jid);
         local real_node = jid_node(real_jid);

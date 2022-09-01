@@ -3,6 +3,7 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
+    SET_LARGE_VIDEO_DIMENSIONS,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION,
     UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT,
     SET_SEE_WHAT_IS_BEING_SHARED
@@ -36,6 +37,13 @@ ReducerRegistry.register('features/large-video', (state: ILargeVideoState = {}, 
         return {
             ...state,
             participantId: action.participantId
+        };
+
+    case SET_LARGE_VIDEO_DIMENSIONS:
+        return {
+            ...state,
+            height: action.height,
+            width: action.width
         };
 
     case UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION:

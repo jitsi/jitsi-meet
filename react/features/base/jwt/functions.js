@@ -59,7 +59,7 @@ export function isJwtFeatureEnabled(state: Object, feature: string, ifNoToken: b
 
 /**
  * Checks whether a given timestamp is a valid UNIX timestamp in seconds.
- * We convert to miliseconds during the check since `Date` works with miliseconds for UNIX timestamp values.
+ * We convert to milliseconds during the check since `Date` works with milliseconds for UNIX timestamp values.
  *
  * @param {any} timestamp - A UNIX timestamp in seconds as stored in the jwt.
  * @returns {boolean} - Whether the timestamp is indeed a valid UNIX timestamp or not.

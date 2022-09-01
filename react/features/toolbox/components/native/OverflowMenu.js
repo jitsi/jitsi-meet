@@ -26,7 +26,6 @@ import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
-import ToggleSelfViewButton from './ToggleSelfViewButton';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -42,11 +41,6 @@ type Props = {
      * Whether the recoding button should be enabled or not.
      */
     _recordingEnabled: boolean,
-
-    /**
-     * Whether or not the self view is hidden.
-     */
-    _selfViewHidden: boolean,
 
     /**
      * The width of the screen.
@@ -103,7 +97,6 @@ class OverflowMenu extends PureComponent<Props, State> {
     render() {
         const {
             _reactionsEnabled,
-            _selfViewHidden,
             _width
         } = this.props;
         const toolbarButtons = getMovableButtons(_width);
@@ -138,7 +131,6 @@ class OverflowMenu extends PureComponent<Props, State> {
                 {!toolbarButtons.has('participantspane') && <ParticipantsPaneButton { ...topButtonProps } />}
                 <OpenCarmodeButton { ...firstMenuButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
-                {_selfViewHidden && <ToggleSelfViewButton { ...buttonProps } />}
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <SecurityDialogButton { ...buttonProps } />
@@ -188,11 +180,8 @@ class OverflowMenu extends PureComponent<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { disableSelfView } = state['features/base/settings'];
-
     return {
         _reactionsEnabled: isReactionsEnabled(state),
-        _selfViewHidden: Boolean(disableSelfView),
         _width: state['features/base/responsive-ui'].clientWidth
     };
 }

@@ -160,6 +160,7 @@ import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/Au
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { endpointMessageReceived } from './react/features/subtitles';
+import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
 import UIEvents from './service/UI/UIEvents';
 
@@ -1152,9 +1153,13 @@ export default {
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
+     * @param {boolean} ensureTrack - True if we want to ensure that a new track is
+     * created if missing.
      */
-    toggleVideoMuted(showUI = true) {
-        this.muteVideo(!this.isLocalVideoMuted(), showUI);
+    toggleVideoMuted(showUI = true, ensureTrack = false) {
+        const mute = !this.isLocalVideoMuted();
+
+        APP.store.dispatch(handleToggleVideoMuted(mute, showUI, ensureTrack));
     },
 
     /**
@@ -2421,8 +2426,8 @@ export default {
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
             this.muteAudio(muted);
         });
-        APP.UI.addListener(UIEvents.VIDEO_MUTED, muted => {
-            this.muteVideo(muted);
+        APP.UI.addListener(UIEvents.VIDEO_MUTED, (muted, showUI = false) => {
+            this.muteVideo(muted, showUI);
         });
 
         room.addCommandListener(this.commands.defaults.ETHERPAD,

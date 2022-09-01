@@ -126,7 +126,7 @@ export function isToolboxEnabled(state: Object) {
  * Returns the toolbar timeout from config or the default value.
  *
  * @param {Object} state - The state from the Redux store.
- * @returns {number} - Toolbar timeout in miliseconds.
+ * @returns {number} - Toolbar timeout in milliseconds.
  */
 export function getToolbarTimeout(state: Object) {
     const { toolbarConfig: { timeout } } = state['features/base/config'];

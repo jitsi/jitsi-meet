@@ -40,7 +40,7 @@ export type Props = {
     toggled?: boolean,
 
     /**
-     * The color underlaying the button.
+     * The color underlying the button.
      */
     underlayColor?: any
 };

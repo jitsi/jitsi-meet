@@ -55,9 +55,10 @@ MiddlewareRegistry.register(store => next => action => {
         return _endpointMessageReceived(store, next, action);
 
     case TOGGLE_REQUESTING_SUBTITLES:
-        _requestingSubtitlesToggled(store);
+        _requestingSubtitlesChange(store);
         break;
     case SET_REQUESTING_SUBTITLES:
+        _requestingSubtitlesChange(store);
         _requestingSubtitlesSet(store, action.enabled);
         break;
     }
@@ -171,14 +172,22 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _requestingSubtitlesToggled({ getState }) {
+function _requestingSubtitlesChange({ getState }) {
     const state = getState();
-    const { _requestingSubtitles } = state['features/subtitles'];
+    const { _language } = state['features/subtitles'];
     const { conference } = state['features/base/conference'];
+
+    const requestingSubtitles = _language !== 'transcribing.subtitlesOff';
 
     conference.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
-        !_requestingSubtitles);
+        requestingSubtitles);
+
+    if (requestingSubtitles) {
+        conference.setLocalParticipantProperty(
+            P_NAME_TRANSLATION_LANGUAGE,
+            _language.replace('languages:', ''));
+    }
 }
 
 /**

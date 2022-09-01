@@ -1,5 +1,3 @@
-/* @flow */
-
 /**
  * Gets a {@link URL} without hash and query/search params from a specific
  * {@code URL}.

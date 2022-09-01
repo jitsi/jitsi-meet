@@ -1,7 +1,9 @@
-// @flow
+/* eslint-disable lines-around-comment  */
 
 import { Link } from '@react-navigation/native';
-import React from 'react';
+import _ from 'lodash';
+import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import {
     Alert,
     NativeModules,
@@ -12,30 +14,34 @@ import {
 } from 'react-native';
 import {
     Divider,
-    TextInput,
-    withTheme
+    TextInput
 } from 'react-native-paper';
 
+// @ts-ignore
+import { getDefaultURL } from '../../../app/functions';
+// @ts-ignore
 import { Avatar } from '../../../base/avatar';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
+// @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import {
-    getLocalParticipant,
-    getParticipantDisplayName
-} from '../../../base/participants';
-import { connect } from '../../../base/redux';
+import { getLocalParticipant } from '../../../base/participants/functions';
+import { connect } from '../../../base/redux/functions';
+// @ts-ignore
+import { updateSettings } from '../../../base/settings';
+import BaseThemeNative from '../../../base/ui/components/BaseTheme.native';
 import Switch from '../../../base/ui/components/native/Switch';
+// @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
+// @ts-ignore
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
+// @ts-ignore
 import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
-import {
-    AbstractSettingsView,
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
-} from '../AbstractSettingsView';
 
+// @ts-ignore
 import FormRow from './FormRow';
+// @ts-ignore
 import FormSectionAccordion from './FormSectionAccordion';
+// @ts-ignore
 import styles, { PLACEHOLDER_COLOR, PLACEHOLDER_TEXT_COLOR } from './styles';
 
 /**
@@ -44,7 +50,7 @@ import styles, { PLACEHOLDER_COLOR, PLACEHOLDER_TEXT_COLOR } from './styles';
 const { AppInfo } = NativeModules;
 
 
-type State = {
+interface State {
 
     /**
      * State variable for the disable call integration switch.
@@ -52,14 +58,19 @@ type State = {
     disableCallIntegration: boolean,
 
     /**
+     * State variable for the disable crash reporting switch.
+     */
+    disableCrashReporting: boolean,
+
+    /**
      * State variable for the disable p2p switch.
      */
     disableP2P: boolean,
 
     /**
-     * State variable for the disable crash reporting switch.
+     * Whether the self view is disabled or not.
      */
-    disableCrashReporting: boolean,
+    disableSelfView: boolean,
 
     /**
      * State variable for the display name field.
@@ -91,7 +102,19 @@ type State = {
  * The type of the React {@code Component} props of
  * {@link SettingsView}.
  */
-type Props = AbstractProps & {
+interface Props extends WithTranslation {
+
+    /**
+     * The ID of the local participant.
+     */
+    _localParticipantId: string,
+
+    /**
+     * The default URL for when there is no custom URL set in the settings.
+     *
+     * @protected
+     */
+    _serverURL: string,
 
     /**
      * Flag indicating if URL can be changed by user.
@@ -101,14 +124,31 @@ type Props = AbstractProps & {
     _serverURLChangeEnabled: boolean,
 
     /**
-     * Avatar label.
+     * The current settings object.
      */
-    avatarLabel: string,
+    _settings: {
+        disableCallIntegration: boolean;
+        disableCrashReporting: boolean;
+        disableP2P: boolean;
+        disableSelfView: boolean;
+        displayName: string;
+        email: string;
+        serverURL: string;
+        startWithAudioMuted: boolean;
+        startWithVideoMuted: boolean;
+    },
 
     /**
-     * The ID of the local participant.
+     * Whether {@link SettingsView} is visible.
+     *
+     * @protected
      */
-    localParticipantId: string,
+    _visible: boolean,
+
+    /**
+     * Redux store dispatch function.
+     */
+    dispatch: Function,
 
     /**
      * Default prop for navigating between screen components(React Navigation).
@@ -118,20 +158,13 @@ type Props = AbstractProps & {
     /**
      * Callback to be invoked when settings screen is focused.
      */
-    onSettingsScreenFocused: Function,
-
-    /**
-     * Theme used for styles.
-     */
-    theme: Object
+    onSettingsScreenFocused: Function
 }
 
 /**
  * The native container rendering the app settings page.
- *
- * @augments AbstractSettingsView
  */
-class SettingsView extends AbstractSettingsView<Props, State> {
+class SettingsView extends Component<Props, State> {
     _urlField: Object;
 
     /**
@@ -140,12 +173,14 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
+
         const {
             disableCallIntegration,
             disableCrashReporting,
             disableP2P,
+            disableSelfView,
             displayName,
             email,
             serverURL,
@@ -157,6 +192,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             disableCallIntegration,
             disableCrashReporting,
             disableP2P,
+            disableSelfView,
             displayName,
             email,
             serverURL,
@@ -166,12 +202,36 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onBlurServerURL = this._onBlurServerURL.bind(this);
+        this._onChangeDisplayName = this._onChangeDisplayName.bind(this);
+        this._onChangeEmail = this._onChangeEmail.bind(this);
+        this._onChangeServerURL = this._onChangeServerURL.bind(this);
         this._onClose = this._onClose.bind(this);
         this._onDisableCallIntegration = this._onDisableCallIntegration.bind(this);
         this._onDisableCrashReporting = this._onDisableCrashReporting.bind(this);
         this._onDisableP2P = this._onDisableP2P.bind(this);
+        this._onDisableSelfView = this._onDisableSelfView.bind(this);
+        this._onStartAudioMutedChange
+            = this._onStartAudioMutedChange.bind(this);
+        this._onStartVideoMutedChange
+            = this._onStartVideoMutedChange.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
+    }
+
+    /**
+     * Updates and syncs settings.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidUpdate(prevProps: Props) {
+        const { _settings } = this.props;
+
+        if (!_.isEqual(prevProps._settings, _settings)) {
+            // @ts-ignore
+            // eslint-disable-next-line react/no-did-update-set-state
+            this.setState(_settings);
+        }
     }
 
     /**
@@ -185,21 +245,23 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             disableCallIntegration,
             disableCrashReporting,
             disableP2P,
+            disableSelfView,
             displayName,
             email,
             serverURL,
             startWithAudioMuted,
             startWithVideoMuted
         } = this.state;
-        const { palette } = this.props.theme;
+
+        const { t } = this.props;
 
         const textInputTheme = {
             colors: {
-                background: palette.ui01,
-                placeholder: palette.text01,
+                background: BaseThemeNative.palette.ui01,
+                placeholder: BaseThemeNative.palette.text01,
                 primary: PLACEHOLDER_COLOR,
                 underlineColor: 'transparent',
-                text: palette.text01
+                text: BaseThemeNative.palette.text01
             }
         };
 
@@ -210,20 +272,17 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                 <ScrollView>
                     <View style = { styles.avatarContainer }>
                         <Avatar
-                            participantId = { this.props.localParticipantId }
+                            participantId = { this.props._localParticipantId }
                             size = { AVATAR_SIZE } />
-                        <Text style = { styles.avatarLabel }>
-                            { this.props.avatarLabel }
-                        </Text>
                     </View>
                     <FormSectionAccordion
                         label = 'settingsView.profileSection'>
                         <TextInput
                             autoCorrect = { false }
-                            label = { this.props.t('settingsView.displayName') }
+                            label = { t('settingsView.displayName') }
                             mode = 'outlined'
                             onChangeText = { this._onChangeDisplayName }
-                            placeholder = { this.props.t('settingsView.displayNamePlaceholderText') }
+                            placeholder = { t('settingsView.displayNamePlaceholderText') }
                             placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                             spellCheck = { false }
                             style = { styles.textInputContainer }
@@ -235,7 +294,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             autoCapitalize = 'none'
                             autoCorrect = { false }
                             keyboardType = { 'email-address' }
-                            label = { this.props.t('settingsView.email') }
+                            label = { t('settingsView.email') }
                             mode = 'outlined'
                             onChangeText = { this._onChangeEmail }
                             placeholder = 'email@example.com'
@@ -253,7 +312,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             autoCorrect = { false }
                             editable = { this.props._serverURLChangeEnabled }
                             keyboardType = { 'url' }
-                            label = { this.props.t('settingsView.serverURL') }
+                            label = { t('settingsView.serverURL') }
                             mode = 'outlined'
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
@@ -269,33 +328,45 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             label = 'settingsView.startWithAudioMuted'>
                             <Switch
                                 checked = { startWithAudioMuted }
+                                // @ts-ignore
                                 onChange = { this._onStartAudioMutedChange } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startWithVideoMuted'>
                             <Switch
                                 checked = { startWithVideoMuted }
+                                // @ts-ignore
                                 onChange = { this._onStartVideoMutedChange } />
+                        </FormRow>
+                        <Divider style = { styles.fieldSeparator } />
+                        <FormRow label = 'videothumbnail.hideSelfView'>
+                            <Switch
+                                checked = { disableSelfView }
+                                // @ts-ignore
+                                onChange = { this._onDisableSelfView } />
                         </FormRow>
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         label = 'settingsView.links'>
                         <Link
                             style = { styles.sectionLink }
+                            // @ts-ignore
                             to = {{ screen: screen.settings.links.help }}>
-                            { this.props.t('settingsView.help') }
+                            { t('settingsView.help') }
                         </Link>
                         <Divider style = { styles.fieldSeparator } />
                         <Link
                             style = { styles.sectionLink }
+                            // @ts-ignore
                             to = {{ screen: screen.settings.links.terms }}>
-                            { this.props.t('settingsView.terms') }
+                            { t('settingsView.terms') }
                         </Link>
                         <Divider style = { styles.fieldSeparator } />
                         <Link
                             style = { styles.sectionLink }
+                            // @ts-ignore
                             to = {{ screen: screen.settings.links.privacy }}>
-                            { this.props.t('settingsView.privacy') }
+                            { t('settingsView.privacy') }
                         </Link>
                     </FormSectionAccordion>
                     <FormSectionAccordion
@@ -315,6 +386,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                     label = 'settingsView.disableCallIntegration'>
                                     <Switch
                                         checked = { disableCallIntegration }
+                                        // @ts-ignore
                                         onChange = { this._onDisableCallIntegration } />
                                 </FormRow>
                                 <Divider style = { styles.fieldSeparator } />
@@ -324,6 +396,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             label = 'settingsView.disableP2P'>
                             <Switch
                                 checked = { disableP2P }
+                                // @ts-ignore
                                 onChange = { this._onDisableP2P } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -333,6 +406,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 label = 'settingsView.disableCrashReporting'>
                                 <Switch
                                     checked = { disableCrashReporting }
+                                    // @ts-ignore
                                     onChange = { this._onDisableCrashReporting } />
                             </FormRow>
                         )}
@@ -341,8 +415,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             </JitsiScreen>
         );
     }
-
-    _onBlurServerURL: () => void;
 
     /**
      * Handler the server URL lose focus event. Here we validate the server URL
@@ -356,45 +428,55 @@ class SettingsView extends AbstractSettingsView<Props, State> {
     }
 
     /**
-     * Callback to update the display name.
+     * Handles the display name field value change.
      *
-     * @param {string} displayName - The new value to set.
+     * @param {string} displayName - The value typed in the name field.
+     * @protected
      * @returns {void}
      */
-    _onChangeDisplayName(displayName) {
-        super._onChangeDisplayName(displayName);
+    _onChangeDisplayName(displayName: string) {
         this.setState({
+            displayName
+        });
+
+        this._updateSettings({
             displayName
         });
     }
 
     /**
-     * Callback to update the email.
+     * Handles the email field value change.
      *
-     * @param {string} email - The new value to set.
+     * @param {string} email - The value typed in the email field.
+     * @protected
      * @returns {void}
      */
-    _onChangeEmail(email) {
-        super._onChangeEmail(email);
+    _onChangeEmail(email: string) {
         this.setState({
+            email
+        });
+
+        this._updateSettings({
             email
         });
     }
 
     /**
-     * Callback to update the server URL.
+     * Handles the server name field value change.
      *
-     * @param {string} serverURL - The new value to set.
+     * @param {string} serverURL - The server URL typed in the server field.
+     * @protected
      * @returns {void}
      */
-    _onChangeServerURL(serverURL) {
-        super._onChangeServerURL(serverURL);
+    _onChangeServerURL(serverURL: string) {
         this.setState({
             serverURL
         });
-    }
 
-    _onDisableCallIntegration: (boolean) => void;
+        this._updateSettings({
+            serverURL
+        });
+    }
 
     /**
      * Handles the disable call integration change event.
@@ -404,16 +486,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @private
      * @returns {void}
      */
-    _onDisableCallIntegration(disableCallIntegration) {
-        this._updateSettings({
-            disableCallIntegration
-        });
+    _onDisableCallIntegration(disableCallIntegration: boolean) {
         this.setState({
             disableCallIntegration
         });
-    }
 
-    _onDisableP2P: (boolean) => void;
+        this._updateSettings({
+            disableCallIntegration
+        });
+    }
 
     /**
      * Handles the disable P2P change event.
@@ -423,16 +504,32 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @private
      * @returns {void}
      */
-    _onDisableP2P(disableP2P) {
-        this._updateSettings({
+    _onDisableP2P(disableP2P: boolean) {
+        this.setState({
             disableP2P
         });
-        this.setState({
+
+        this._updateSettings({
             disableP2P
         });
     }
 
-    _onDisableCrashReporting: (boolean) => void;
+    /** .
+     * Handles the disable self view change event.
+     *
+     * @param {boolean} disableSelfView - The new value.
+     * @private
+     * @returns {void}
+     */
+    _onDisableSelfView(disableSelfView: boolean) {
+        this.setState({
+            disableSelfView
+        });
+
+        this._updateSettings({
+            disableSelfView
+        });
+    }
 
     /**
      * Handles the disable crash reporting change event.
@@ -442,15 +539,13 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @private
      * @returns {void}
      */
-    _onDisableCrashReporting(disableCrashReporting) {
+    _onDisableCrashReporting(disableCrashReporting: boolean) {
         if (disableCrashReporting) {
             this._showCrashReportingDisableAlert();
         } else {
             this._disableCrashReporting(disableCrashReporting);
         }
     }
-
-    _onClose: () => void;
 
     /**
      * Callback to be invoked on closing the modal. Also invokes normalizeUserInputURL to validate
@@ -463,27 +558,37 @@ class SettingsView extends AbstractSettingsView<Props, State> {
     }
 
     /**
-     * Callback to update the start with audio muted value.
+     * Handles the start audio muted change event.
      *
-     * @param {boolean} startWithAudioMuted - The new value to set.
+     * @param {boolean} startWithAudioMuted - The new value for the start audio muted
+     * option.
+     * @protected
      * @returns {void}
      */
-    _onStartAudioMutedChange(startWithAudioMuted) {
-        super._onStartAudioMutedChange(startWithAudioMuted);
+    _onStartAudioMutedChange(startWithAudioMuted: boolean) {
         this.setState({
+            startWithAudioMuted
+        });
+
+        this._updateSettings({
             startWithAudioMuted
         });
     }
 
     /**
-     * Callback to update the start with video muted value.
+     * Handles the start video muted change event.
      *
-     * @param {boolean} startWithVideoMuted - The new value to set.
+     * @param {boolean} startWithVideoMuted - The new value for the start video muted
+     * option.
+     * @protected
      * @returns {void}
      */
-    _onStartVideoMutedChange(startWithVideoMuted) {
-        super._onStartVideoMutedChange(startWithVideoMuted);
+    _onStartVideoMutedChange(startWithVideoMuted: boolean) {
         this.setState({
+            startWithVideoMuted
+        });
+
+        this._updateSettings({
             startWithVideoMuted
         });
     }
@@ -498,6 +603,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {void}
      */
     _processServerURL(hideOnSuccess: boolean) {
+        // @ts-ignore
         const { serverURL } = this.props._settings;
         const normalizedURL = normalizeUserInputURL(serverURL);
 
@@ -512,8 +618,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         return hideOnSuccess;
     }
 
-    _setURLFieldReference: (React$ElementRef<*> | null) => void;
-
     /**
      *  Stores a reference to the URL field for later use.
      *
@@ -521,11 +625,9 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @protected
      * @returns {void}
      */
-    _setURLFieldReference(component) {
+    _setURLFieldReference(component: object) {
         this._urlField = component;
     }
-
-    _showURLAlert: () => void;
 
     /**
      * Shows an alert telling the user that the URL he/she entered was invalid.
@@ -540,6 +642,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             t('settingsView.alertURLText'),
             [
                 {
+                    // @ts-ignore
                     onPress: () => this._urlField.focus(),
                     text: t('settingsView.alertOk')
                 }
@@ -570,17 +673,34 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         );
     }
 
-    _updateSettings: (Object) => void;
-
     /**
      * Updates the settings and sets state for disableCrashReporting.
      *
      * @param {boolean} disableCrashReporting - Whether crash reporting is disabled or not.
      * @returns {void}
      */
-    _disableCrashReporting(disableCrashReporting) {
-        this._updateSettings({ disableCrashReporting });
-        this.setState({ disableCrashReporting });
+    _disableCrashReporting(disableCrashReporting: boolean) {
+        this.setState({
+            disableCrashReporting
+        });
+
+        this._updateSettings({
+            disableCrashReporting
+        });
+    }
+
+    /**
+     * Updates the persisted settings on any change.
+     *
+     * @param {Object} updateObject - The partial update object for the
+     * settings.
+     * @private
+     * @returns {void}
+     */
+    _updateSettings(updateObject: Object) {
+        const { dispatch } = this.props;
+
+        dispatch(updateSettings(updateObject));
     }
 }
 
@@ -590,17 +710,16 @@ class SettingsView extends AbstractSettingsView<Props, State> {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: any) {
     const localParticipant = getLocalParticipant(state);
-    const localParticipantId = localParticipant?.id;
-    const avatarLabel = localParticipant && getParticipantDisplayName(state, localParticipantId);
 
     return {
-        ..._abstractMapStateToProps(state),
+        _localParticipantId: localParticipant?.id,
+        _serverURL: getDefaultURL(state),
         _serverURLChangeEnabled: isServerURLChangeEnabled(state),
-        avatarLabel,
-        localParticipantId
+        _settings: state['features/base/settings'],
+        _visible: state['features/settings'].visible
     };
 }
 
-export default translate(connect(_mapStateToProps)(withTheme(SettingsView)));
+export default translate(connect(_mapStateToProps)(SettingsView));

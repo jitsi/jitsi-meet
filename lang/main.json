@@ -299,7 +299,7 @@
         "micNotSendingData": "Go to your computer's settings to unmute your mic and adjust its level",
         "micNotSendingDataTitle": "Your mic is muted by your system settings",
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
-        "micTimeoutError": "Could not start audio source. Timeout occured!",
+        "micTimeoutError": "Could not start audio source. Timeout occurred!",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
         "moderationAudioLabel": "Allow attendees to unmute themselves",
         "moderationVideoLabel": "Allow attendees to start their video",
@@ -1194,7 +1194,7 @@
         "silence": "Silence",
         "speakerStats": "Speaker stats",
         "startScreenSharing": "Start screen sharing",
-        "startSubtitles": "Start subtitles",
+        "startSubtitles": "Subtitles • {{language}}",
         "stopAudioSharing": "Stop audio sharing",
         "stopScreenSharing": "Stop screen sharing",
         "stopSharedVideo": "Stop video",
@@ -1217,6 +1217,8 @@
         "pending": "Preparing to transcribe the meeting...",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
+        "subtitles": "Subtitles",
+        "subtitlesOff": "Off",
         "tr": "TR"
     },
     "userMedia": {

@@ -1,6 +1,5 @@
 // @flow
 
-import Logger from '@jitsi/logger';
 import { batch } from 'react-redux';
 
 import { CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_LEFT } from '../base/conference/actionTypes';
@@ -22,8 +21,8 @@ import {
 } from './actions.any';
 import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME, PLAYBACK_STATUSES } from './constants';
 import { isSharingStatus } from './functions';
+import logger from './logger';
 
-const logger = Logger.getLogger(__filename);
 
 declare var APP: Object;
 
@@ -83,7 +82,10 @@ MiddlewareRegistry.register(store => next => action => {
         const operator = status === PLAYBACK_STATUSES.PLAYING ? 'is' : '';
 
         logger.debug(`User with id: ${ownerId} ${operator} ${status} video sharing.`);
-        APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.VIDEO, status, ownerId);
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.VIDEO, status, ownerId);
+        }
 
         if (localParticipantId === ownerId) {
             sendShareVideoCommand({
@@ -102,8 +104,16 @@ MiddlewareRegistry.register(store => next => action => {
         const localParticipantId = getLocalParticipant(state)?.id;
         const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
+        if (!stateOwnerId) {
+            break;
+        }
+
         logger.debug(`User with id: ${stateOwnerId} stop video sharing.`);
-        APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.VIDEO, 'stop', stateOwnerId);
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.VIDEO, 'stop', stateOwnerId);
+        }
+
         if (localParticipantId === stateOwnerId) {
             const conference = getCurrentConference(state);
 

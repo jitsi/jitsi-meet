@@ -206,7 +206,7 @@ public class JitsiMeetView extends FrameLayout {
         // by leaving the conference. However, React and, respectively,
         // appProperties/initialProperties are declarative expressions i.e. one
         // and the same URL will not trigger an automatic re-render in the
-        // JavaScript source code. The workaround implemented bellow introduces
+        // JavaScript source code. The workaround implemented below introduces
         // "imperativeness" in React Component props by defining a unique value
         // per setProps() invocation.
         props.putLong("timestamp", System.currentTimeMillis());

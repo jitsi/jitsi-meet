@@ -148,7 +148,7 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * @returns {?string}
      */
     get label(): ?string {
-        return this._maybeTranslateAttribute(this.props.label);
+        return this._maybeTranslateAttribute(this.props.label, this.props.labelProps);
     }
 
     /**
@@ -178,11 +178,17 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * function is available.
      *
      * @param {string} text - What needs translating.
+     * @param {string} textProps - Additional properties for translation text.
      * @private
      * @returns {string}
      */
-    _maybeTranslateAttribute(text) {
+    _maybeTranslateAttribute(text, textProps) {
         const { t } = this.props;
+
+        if (textProps) {
+
+            return typeof t === 'function' ? t(text, textProps) : `${text} ${textProps}`;
+        }
 
         return typeof t === 'function' ? t(text) : text;
     }
