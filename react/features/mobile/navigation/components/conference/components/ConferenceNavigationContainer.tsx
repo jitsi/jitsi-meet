@@ -163,7 +163,7 @@ const ConferenceNavigationContainer = () => {
                         title: t('documentSharing.title')
                     }} />
                 <ConferenceStack.Screen
-                    component = { CarMode }
+                    component = { SharedDocument }
                     name = { screen.conference.carmode }
                     options = {{
                         ...carmodeScreenOptions,
