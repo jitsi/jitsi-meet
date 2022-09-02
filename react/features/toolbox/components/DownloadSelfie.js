@@ -57,7 +57,7 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
             videoFormatSupport = 'mp4';
         }
 
-        this.tooltip = decodeJwt.selfie === 'audio' ? 'Audio Recorder' : decodeJwt.selfie === 'video' ? 'Video Recorder' : 'Selfie';
+        this.tooltip = decodeJwt.selfie === 'A' ? 'Audio Recorder' : decodeJwt.selfie === 'V' ? 'Video Recorder' : 'Selfie';
 
         this._selfie = () => {
             ///Audio recorder
