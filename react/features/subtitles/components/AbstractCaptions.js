@@ -57,9 +57,9 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
 
     async loadData(textStore) {
         const args = `${textStore}`;
-        console.log('before myTranscripts', args);
-        window.flutter_inappwebview.callHandler('myHandlerName', args);
-        console.log('after myTranscripts', args);
+        console.log('before transcriptionString', args);
+        window.flutter_inappwebview.callHandler('transcriptionString', args);
+        console.log('after transcriptionString', args);
     }
 
     /**
