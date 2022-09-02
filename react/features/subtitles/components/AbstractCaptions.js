@@ -1,6 +1,7 @@
 // @flow
 
 import {Component} from 'react';
+import {isMobileBrowser} from '../../base/environment/utils'
 
 /**
  * {@code AbstractCaptions} Properties.
@@ -57,9 +58,28 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
 
     async loadData(textStore) {
         const args = `${textStore}`;
-        console.log('before transcriptionString', args);
-        window.flutter_inappwebview.callHandler('transcriptionString', args);
-        console.log('after transcriptionString', args);
+        /*const args = `${textStore}`;
+        console.log('before myTranscripts', args);
+        // window.flutter_inappwebview.callHandler('myHandlerName', args);
+        window.addEventListener("flutterInAppWebViewPlatformReady",
+            function (event) {
+            window.flutter_inappwebview.callHandler('myHandlerName', ...args);
+        });
+        console.log('after myTranscripts', args);*/
+
+        if (isMobileBrowser()) {
+            if (window.flutter_inappwebview) {
+                console.log('beforeArgs');
+                console.log('afterArgs', args);
+                window.flutter_inappwebview.callHandler('myHandlerName', args);
+                console.log('addsUrl', args);
+            } else {
+                console.log('InAppWebViewNotLoaded');
+            }
+        } else {
+            console.log('args', args);
+            window.open(value.url);
+        }
     }
 
     /**
