@@ -25,6 +25,9 @@ export type AbstractCaptionsProps = {
  * Abstract React {@code Component} which can display speech-to-text results
  * from Jigasi as subtitles.
  */
+
+let textStore = '';
+
 export class AbstractCaptions<P: AbstractCaptionsProps>
     extends Component<P> {
 
@@ -34,6 +37,7 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
      * @inheritdoc
      * @returns {React$Element}
      */
+
     render() {
         const {_requestingSubtitles, _transcripts} = this.props;
 
@@ -42,37 +46,26 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
         }
 
         const paragraphs = [];
-        let textStore = '';
 
         for (const [id, text] of _transcripts) {
             paragraphs.push(this._renderParagraph(id, text));
 
             textStore = textStore + text;
             console.log('textStore', textStore);
-
-            setInterval(this.loadData(textStore), 30000);
         }
-
+        setInterval(this.loadData(), 30000);
         return this._renderSubtitlesContainer(paragraphs);
     }
 
-    async loadData(textStore) {
+    async loadData() {
         const args = `${textStore}`;
-        /*const args = `${textStore}`;
-        console.log('before myTranscripts', args);
-        // window.flutter_inappwebview.callHandler('myHandlerName', args);
-        window.addEventListener("flutterInAppWebViewPlatformReady",
-            function (event) {
-            window.flutter_inappwebview.callHandler('myHandlerName', ...args);
-        });
-        console.log('after myTranscripts', args);*/
 
         if (isMobileBrowser()) {
             if (window.flutter_inappwebview) {
-                console.log('beforeArgs');
-                console.log('afterArgs', args);
+                console.log('beforeArgs', args);
                 window.flutter_inappwebview.callHandler('myHandlerName', args);
-                console.log('addsUrl', args);
+                console.log('afterArgs', args);
+                textStore = '';
             } else {
                 console.log('InAppWebViewNotLoaded');
             }
