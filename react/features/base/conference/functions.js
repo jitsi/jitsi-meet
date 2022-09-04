@@ -132,7 +132,7 @@ export function commonUserLeftHandling(
     } else {
         const isReplaced = user.isReplaced && user.isReplaced();
 
-        dispatch(participantLeft(id, conference, isReplaced));
+        dispatch(participantLeft(id, conference, { isReplaced }));
     }
 }
 

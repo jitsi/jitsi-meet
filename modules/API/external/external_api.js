@@ -39,7 +39,6 @@ const commands = {
     e2eeKey: 'e2ee-key',
     email: 'email',
     grantModerator: 'grant-moderator',
-    roomsInfo: 'rooms-info',
     hangup: 'video-hangup',
     hideNotification: 'hide-notification',
     initiatePrivateChat: 'initiate-private-chat',

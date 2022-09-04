@@ -72,7 +72,7 @@ export const getRoomsInfo = (stateful: Function | Object) => {
                 isMainRoom: Boolean(breakoutRoomItem.isMainRoom),
                 id: breakoutRoomItem.id,
                 jid: breakoutRoomItem.jid,
-                participants: breakoutRoomItem.participants && Object.keys(breakoutRoomItem.participants).lengthh
+                participants: breakoutRoomItem.participants && Object.keys(breakoutRoomItem.participants).length
                     ? Object.keys(breakoutRoomItem.participants).map(participantLongId => {
                         const participantItem = breakoutRoomItem.participants[participantLongId];
                         const ids = participantLongId.split('/');
