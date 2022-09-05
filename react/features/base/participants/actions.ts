@@ -386,8 +386,7 @@ export function hiddenParticipantLeft(id: string) {
  * @param {boolean} participantLeftProps.isReplaced - Whether the participant is to be replaced in the meeting.
  * @param {boolean} participantLeftProps.isVirtualScreenshareParticipant - Whether the participant is a
  * virtual screen share participant.
- * @param {boolean} participantLeftProps.isFakeParticipant - Whether the participant is
-* a virtual screen share participant.
+ * @param {boolean} participantLeftProps.isFakeParticipant - Whether the participant is a fake participant.
  *
  * @returns {{
  *     type: PARTICIPANT_LEFT,
