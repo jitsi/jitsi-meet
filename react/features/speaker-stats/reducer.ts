@@ -31,7 +31,8 @@ export interface ISpeakerStatsState {
     stats: Object;
 }
 
-ReducerRegistry.register('features/speaker-stats', (state: ISpeakerStatsState = INITIAL_STATE, action) => {
+ReducerRegistry.register<ISpeakerStatsState>('features/speaker-stats',
+(state = INITIAL_STATE, action): ISpeakerStatsState => {
     switch (action.type) {
     case INIT_SEARCH:
         return _updateCriteria(state, action);

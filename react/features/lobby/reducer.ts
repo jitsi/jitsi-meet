@@ -42,7 +42,7 @@ export interface ILobbyState {
  * @returns {Object} The next redux state which is the result of reducing the
  * specified {@code action}.
  */
-ReducerRegistry.register('features/lobby', (state: ILobbyState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<ILobbyState>('features/lobby', (state = DEFAULT_STATE, action): ILobbyState => {
     switch (action.type) {
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:

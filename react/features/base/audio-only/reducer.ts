@@ -11,7 +11,8 @@ const DEFAULT_STATE = {
 };
 
 
-ReducerRegistry.register('features/base/audio-only', (state: IAudioOnlyState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IAudioOnlyState>('features/base/audio-only',
+(state = DEFAULT_STATE, action): IAudioOnlyState => {
     switch (action.type) {
     case SET_AUDIO_ONLY:
         return {

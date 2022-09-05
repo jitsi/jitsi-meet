@@ -1,10 +1,8 @@
-/* eslint-disable import/order */
 import _ from 'lodash';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
-
-import { equals } from '../redux/functions';
 import ReducerRegistry from '../redux/ReducerRegistry';
+import { equals } from '../redux/functions';
 
 import {
     UPDATE_CONFIG,
@@ -14,7 +12,7 @@ import {
     OVERWRITE_CONFIG
 } from './actionTypes';
 import { IConfig } from './configType';
-
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { _cleanupConfig } from './functions';
 
@@ -72,7 +70,11 @@ const CONFERENCE_HEADER_MAPPING: any = {
     hideRecordingLabel: [ 'recording' ]
 };
 
-ReducerRegistry.register('features/base/config', (state: IConfig = _getInitialState(), action: any) => {
+export interface IConfigState extends IConfig {
+    error?: Error;
+}
+
+ReducerRegistry.register<IConfigState>('features/base/config', (state = _getInitialState(), action): IConfigState => {
     switch (action.type) {
     case UPDATE_CONFIG:
         return _updateConfig(state, action);

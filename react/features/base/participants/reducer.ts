@@ -140,7 +140,8 @@ export interface IParticipantsState {
  * added/removed/modified.
  * @returns {Participant[]}
  */
-ReducerRegistry.register('features/base/participants', (state: IParticipantsState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IParticipantsState>('features/base/participants',
+(state = DEFAULT_STATE, action): IParticipantsState => {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED: {
         const { local } = state;

@@ -77,9 +77,9 @@ function _getInitialState(): IReactionsState {
     };
 }
 
-ReducerRegistry.register(
+ReducerRegistry.register<IReactionsState>(
     'features/reactions',
-    (state: IReactionsState = _getInitialState(), action: ReactionsAction) => {
+    (state = _getInitialState(), action: ReactionsAction): IReactionsState => {
         switch (action.type) {
 
         case TOGGLE_REACTIONS_VISIBLE:
@@ -91,8 +91,8 @@ ReducerRegistry.register(
         case ADD_REACTION_BUFFER:
             return {
                 ...state,
-                buffer: action.buffer,
-                timeoutID: action.timeoutID
+                buffer: action.buffer ?? [],
+                timeoutID: action.timeoutID ?? null
             };
 
         case FLUSH_REACTION_BUFFER:
@@ -105,7 +105,7 @@ ReducerRegistry.register(
         case SET_REACTION_QUEUE: {
             return {
                 ...state,
-                queue: action.queue
+                queue: action.queue ?? []
             };
         }
 

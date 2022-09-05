@@ -42,8 +42,8 @@ export interface INotificationsState {
  * @returns {Object} The next redux state which is the result of reducing the
  * specified {@code action}.
  */
-ReducerRegistry.register('features/notifications',
-    (state: INotificationsState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<INotificationsState>('features/notifications',
+    (state = DEFAULT_STATE, action): INotificationsState => {
         switch (action.type) {
         case CLEAR_NOTIFICATIONS:
             return {

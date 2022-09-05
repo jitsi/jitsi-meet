@@ -16,7 +16,7 @@ export interface IScreenShareState {
 /**
  * Reduces the Redux actions of the feature features/screen-share.
  */
-ReducerRegistry.register('features/screen-share', (state: IScreenShareState = {}, action) => {
+ReducerRegistry.register<IScreenShareState>('features/screen-share', (state = {}, action): IScreenShareState => {
     const { captureFrameRate, isSharingAudio, desktopAudioTrack } = action;
 
     switch (action.type) {

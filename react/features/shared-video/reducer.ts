@@ -17,8 +17,8 @@ export interface ISharedVideoState {
 /**
  * Reduces the Redux actions of the feature features/shared-video.
  */
-ReducerRegistry.register('features/shared-video',
-(state: ISharedVideoState = initialState, action): ISharedVideoState => {
+ReducerRegistry.register<ISharedVideoState>('features/shared-video',
+(state = initialState, action): ISharedVideoState => {
     const { videoUrl, status, time, ownerId, disabled, muted, volume } = action;
 
     switch (action.type) {

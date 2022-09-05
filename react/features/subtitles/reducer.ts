@@ -24,8 +24,8 @@ export interface ISubtitlesState {
  * Listen for actions for the transcription feature to be used by the actions
  * to update the rendered transcription subtitles.
  */
-ReducerRegistry.register('features/subtitles', (
-        state: ISubtitlesState = defaultState, action) => {
+ReducerRegistry.register<ISubtitlesState>('features/subtitles', (
+        state = defaultState, action): ISubtitlesState => {
     switch (action.type) {
     case REMOVE_TRANSCRIPT_MESSAGE:
         return _removeTranscriptMessage(state, action);

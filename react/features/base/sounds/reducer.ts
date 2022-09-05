@@ -51,9 +51,9 @@ export type ISoundsState = Map<string, Sound>;
 /**
  * The base/sounds feature's reducer.
  */
-ReducerRegistry.register(
+ReducerRegistry.register<ISoundsState>(
     'features/base/sounds',
-    (state: ISoundsState = DEFAULT_STATE, action) => {
+    (state = DEFAULT_STATE, action): ISoundsState => {
         switch (action.type) {
         case _ADD_AUDIO_ELEMENT:
         case _REMOVE_AUDIO_ELEMENT:

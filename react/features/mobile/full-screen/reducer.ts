@@ -6,7 +6,7 @@ export interface IFullScreenState {
     listener?: Function;
 }
 
-ReducerRegistry.register('features/full-screen', (state: IFullScreenState = {}, action) => {
+ReducerRegistry.register<IFullScreenState>('features/full-screen', (state = {}, action): IFullScreenState => {
     switch (action.type) {
     case _SET_IMMERSIVE_LISTENER:
         return {

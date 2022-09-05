@@ -1,15 +1,10 @@
-/* eslint-disable import/order */
-// @ts-ignore
-import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
-
-// @ts-ignore
-import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection';
-
+/* eslint-disable lines-around-comment */
+import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock/constants';
+import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection/actionTypes';
 // @ts-ignore
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
-
-import { assign, set } from '../redux/functions';
 import ReducerRegistry from '../redux/ReducerRegistry';
+import { assign, set } from '../redux/functions';
 
 import {
     AUTH_STATUS_CHANGED,
@@ -31,7 +26,6 @@ import {
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED
 } from './actionTypes';
-
 // @ts-ignore
 import { isRoomValid } from './functions';
 
@@ -59,11 +53,15 @@ export interface IConferenceState {
     localSubject?: string;
     locked: string|undefined;
     membersOnly: boolean|undefined;
+    obfuscatedRoom?: string;
+    obfuscatedRoomSource?: string;
     password: string|undefined;
     passwordRequired: boolean|undefined;
     pendingSubjectChange?: string;
     room?: Object;
+    startAudioMutedPolicy?: boolean;
     startReactionsMuted?: boolean;
+    startVideoMutedPolicy?: boolean;
     subject?: string;
 }
 
@@ -71,9 +69,8 @@ export interface IConferenceState {
  * Listen for actions that contain the conference object, so that it can be
  * stored for use by other action creators.
  */
-ReducerRegistry.register(
-    'features/base/conference',
-    (state: IConferenceState = DEFAULT_STATE, action: any) => {
+ReducerRegistry.register<IConferenceState>('features/base/conference',
+    (state = DEFAULT_STATE, action): IConferenceState => {
         switch (action.type) {
         case AUTH_STATUS_CHANGED:
             return _authStatusChanged(state, action);

@@ -34,7 +34,7 @@ export interface IBreakoutRoomsState {
 /**
  * Listen for actions for the breakout-rooms feature.
  */
-ReducerRegistry.register(FEATURE_KEY, (state: IBreakoutRoomsState = DEFAULT_STATE, action: any) => {
+ReducerRegistry.register<IBreakoutRoomsState>(FEATURE_KEY, (state = DEFAULT_STATE, action): IBreakoutRoomsState => {
     switch (action.type) {
     case _UPDATE_ROOM_COUNTER:
         return {

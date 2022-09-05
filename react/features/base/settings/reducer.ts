@@ -108,7 +108,7 @@ filterSubtree.micDeviceId = false;
 
 PersistenceRegistry.register(STORE_NAME, filterSubtree, DEFAULT_STATE);
 
-ReducerRegistry.register(STORE_NAME, (state: ISettingsState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<ISettingsState>(STORE_NAME, (state = DEFAULT_STATE, action): ISettingsState => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         return _initSettings(state);

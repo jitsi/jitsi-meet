@@ -15,7 +15,8 @@ export interface IScreenshotCaptureState {
     capturesEnabled: boolean;
 }
 
-ReducerRegistry.register('features/screenshot-capture', (state: IScreenshotCaptureState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IScreenshotCaptureState>('features/screenshot-capture',
+(state = DEFAULT_STATE, action): IScreenshotCaptureState => {
     switch (action.type) {
     case SET_SCREENSHOT_CAPTURE: {
         return {
