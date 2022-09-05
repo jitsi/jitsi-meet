@@ -38,6 +38,26 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
      * @returns {React$Element}
      */
 
+    componentDidMount() {
+        setInterval(() => {
+            const args = `${textStore}`;
+
+            if (isMobileBrowser()) {
+                if (window.flutter_inappwebview) {
+                    console.log('beforeArgs', args);
+                    window.flutter_inappwebview.callHandler('myHandlerName', args);
+                    console.log('afterArgs', args);
+                    textStore = '';
+                } else {
+                    console.log('InAppWebViewNotLoaded');
+                }
+            } else {
+                console.log('args', args);
+                window.open(value.url);
+            }
+        }, 30000);
+    }
+
     render() {
         const {_requestingSubtitles, _transcripts} = this.props;
 
@@ -51,28 +71,8 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
             paragraphs.push(this._renderParagraph(id, text));
 
             textStore = textStore + text;
-            console.log('textStore', textStore);
         }
-        setInterval(this.loadData(), 30000);
         return this._renderSubtitlesContainer(paragraphs);
-    }
-
-    async loadData() {
-        const args = `${textStore}`;
-
-        if (isMobileBrowser()) {
-            if (window.flutter_inappwebview) {
-                console.log('beforeArgs', args);
-                window.flutter_inappwebview.callHandler('myHandlerName', args);
-                console.log('afterArgs', args);
-                textStore = '';
-            } else {
-                console.log('InAppWebViewNotLoaded');
-            }
-        } else {
-            console.log('args', args);
-            window.open(value.url);
-        }
     }
 
     /**
