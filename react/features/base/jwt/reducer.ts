@@ -16,9 +16,9 @@ export interface IJwtState {
  * @returns {Object} The next redux state which is the result of reducing the
  * specified {@code action}.
  */
-ReducerRegistry.register(
+ReducerRegistry.register<IJwtState>(
     'features/base/jwt',
-    (state: IJwtState = {}, action) => {
+    (state = {}, action): IJwtState => {
         switch (action.type) {
         case SET_JWT: {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars

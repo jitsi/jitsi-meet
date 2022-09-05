@@ -26,9 +26,9 @@ export interface IEtherpadState {
 /**
  * Reduces the Redux actions of the feature features/etherpad.
  */
-ReducerRegistry.register(
+ReducerRegistry.register<IEtherpadState>(
     'features/etherpad',
-    (state: IEtherpadState = DEFAULT_STATE, action) => {
+    (state = DEFAULT_STATE, action): IEtherpadState => {
         switch (action.type) {
         case SET_DOCUMENT_EDITING_STATUS:
             return {

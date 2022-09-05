@@ -39,7 +39,7 @@ export interface IVideoLayoutState {
 
 const STORE_NAME = 'features/video-layout';
 
-ReducerRegistry.register(STORE_NAME, (state: IVideoLayoutState = DEFAULT_STATE, action): IVideoLayoutState => {
+ReducerRegistry.register<IVideoLayoutState>(STORE_NAME, (state = DEFAULT_STATE, action): IVideoLayoutState => {
     switch (action.type) {
     case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
     case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:

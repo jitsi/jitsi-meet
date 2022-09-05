@@ -256,7 +256,7 @@ export function getParticipantByIdOrUndefined(stateful: IStore | Function, parti
  * features/base/participants.
  * @returns {number}
  */
-export function getParticipantCount(stateful: IStore | Function) {
+export function getParticipantCount(stateful: IStore | Function | IState) {
     const state = toState(stateful);
     const {
         local,

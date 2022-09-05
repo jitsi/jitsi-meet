@@ -10,7 +10,8 @@ export interface INoiseDetectionState {
 /**
  * Reduces the redux actions of noise detection feature.
  */
-ReducerRegistry.register('features/noise-detection', (state: INoiseDetectionState = {}, action) => {
+ReducerRegistry.register<INoiseDetectionState>('features/noise-detection',
+(state = {}, action): INoiseDetectionState => {
     switch (action.type) {
     case SET_NOISY_AUDIO_INPUT_NOTIFICATION_UID:
         return set(state, 'noisyAudioInputNotificationUid', action.uid);

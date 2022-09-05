@@ -25,8 +25,8 @@ export interface IGoogleApiState {
 /**
  * Reduces the Redux actions of the feature features/google-api.
  */
-ReducerRegistry.register('features/google-api',
-    (state: IGoogleApiState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IGoogleApiState>('features/google-api',
+    (state = DEFAULT_STATE, action): IGoogleApiState => {
         switch (action.type) {
         case SET_GOOGLE_API_STATE:
             return {

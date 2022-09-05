@@ -18,9 +18,9 @@ export interface ILibJitsiMeetState {
     initialized?: boolean;
 }
 
-ReducerRegistry.register(
+ReducerRegistry.register<ILibJitsiMeetState>(
     'features/base/lib-jitsi-meet',
-    (state: ILibJitsiMeetState = DEFAULT_STATE, action) => {
+    (state = DEFAULT_STATE, action): ILibJitsiMeetState => {
         switch (action.type) {
         case LIB_DID_DISPOSE:
             return DEFAULT_STATE;

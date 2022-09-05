@@ -24,7 +24,7 @@ export interface IDialogState {
  * @returns {State} The next redux state that is the result of reducing the
  * specified action.
  */
-ReducerRegistry.register('features/base/dialog', (state: IDialogState = {}, action) => {
+ReducerRegistry.register<IDialogState>('features/base/dialog', (state = {}, action): IDialogState => {
     switch (action.type) {
     case HIDE_DIALOG: {
         const { component } = action;

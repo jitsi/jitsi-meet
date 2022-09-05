@@ -73,8 +73,8 @@ function _updatePendingParticipant(mediaType: MediaType, participant: any, state
     return false;
 }
 
-ReducerRegistry.register('features/av-moderation', (state: IAVModerationState = initialState, action: any) => {
-
+ReducerRegistry.register<IAVModerationState>('features/av-moderation',
+(state = initialState, action): IAVModerationState => {
     switch (action.type) {
     case DISABLE_MODERATION: {
         const newState = action.mediaType === MEDIA_TYPE.AUDIO

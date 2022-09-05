@@ -6,7 +6,7 @@ export interface IDeepLinkingState {
     launchInWeb?: boolean;
 }
 
-ReducerRegistry.register('features/deep-linking', (state = {}, action) => {
+ReducerRegistry.register<IDeepLinkingState>('features/deep-linking', (state = {}, action): IDeepLinkingState => {
     switch (action.type) {
     case OPEN_WEB_APP: {
         return {

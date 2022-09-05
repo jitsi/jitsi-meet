@@ -252,7 +252,7 @@ export interface IMediaState {
  * modified.
  * @returns {Object}
  */
-ReducerRegistry.register('features/base/media', combineReducers({
+ReducerRegistry.register<IMediaState>('features/base/media', combineReducers({
     audio: _audio,
     screenshare: _screenshare,
     video: _video

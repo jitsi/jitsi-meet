@@ -10,13 +10,15 @@ import {
 } from './actionTypes';
 
 export interface ILargeVideoState {
+    height?: number;
     lastMediaEvent?: string;
     participantId?: string;
     resolution?: number;
     seeWhatIsBeingShared?: boolean;
+    width?: number;
 }
 
-ReducerRegistry.register('features/large-video', (state: ILargeVideoState = {}, action) => {
+ReducerRegistry.register<ILargeVideoState>('features/large-video', (state = {}, action): ILargeVideoState => {
     switch (action.type) {
 
     // When conference is joined, we update ID of local participant from default

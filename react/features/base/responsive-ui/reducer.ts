@@ -40,7 +40,8 @@ export interface IResponsiveUIState {
     }
 }
 
-ReducerRegistry.register('features/base/responsive-ui', (state: IResponsiveUIState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IResponsiveUIState>('features/base/responsive-ui',
+(state = DEFAULT_STATE, action): IResponsiveUIState => {
     switch (action.type) {
     case CLIENT_RESIZED: {
         return {

@@ -16,7 +16,8 @@ const INITIAL_STATE = {
 /**
  * Reduces the Redux actions of the feature features/mobile/watchos.
  */
-ReducerRegistry.register('features/mobile/watchos', (state: IMobileWatchOSState = INITIAL_STATE, action) => {
+ReducerRegistry.register<IMobileWatchOSState>('features/mobile/watchos',
+(state = INITIAL_STATE, action): IMobileWatchOSState => {
     switch (action.type) {
     case SET_CONFERENCE_TIMESTAMP: {
         return assign(state, {

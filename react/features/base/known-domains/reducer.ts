@@ -24,7 +24,9 @@ const STORE_NAME = 'features/base/known-domains';
 
 PersistenceRegistry.register(STORE_NAME);
 
-ReducerRegistry.register(STORE_NAME, (state: Array<string> = DEFAULT_STATE, action) => {
+export type IKnownDomainsState = Array<string>;
+
+ReducerRegistry.register<IKnownDomainsState>(STORE_NAME, (state = DEFAULT_STATE, action): IKnownDomainsState => {
     switch (action.type) {
     case ADD_KNOWN_DOMAINS:
         return _addKnownDomains(state, action.knownDomains);
@@ -43,7 +45,7 @@ ReducerRegistry.register(STORE_NAME, (state: Array<string> = DEFAULT_STATE, acti
  * @private
  * @returns {Object} The next redux state.
  */
-function _addKnownDomains(state: Array<string>, knownDomains: Array<string>) {
+function _addKnownDomains(state: IKnownDomainsState, knownDomains: Array<string>) {
     // In case persistence has deserialized a weird redux state:
     let nextState = Array.isArray(state) ? state : [];
 

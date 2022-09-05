@@ -16,7 +16,7 @@ export interface IPowerMonitorState {
 /**
  * Reduces the redux actions of the feature power monitor.
  */
-ReducerRegistry.register('features/power-monitor', (state: IPowerMonitorState = { }, action) => {
+ReducerRegistry.register<IPowerMonitorState>('features/power-monitor', (state = {}, action): IPowerMonitorState => {
     switch (action.type) {
     case SET_TRANSPORT:
         return _setTransport(state, action.transport);

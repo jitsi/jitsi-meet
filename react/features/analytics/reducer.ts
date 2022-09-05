@@ -52,7 +52,8 @@ export interface IAnalyticsState {
  * @param {string} action.type - Type of action.
  * @returns {Object}
  */
-ReducerRegistry.register('features/analytics', (state: IAnalyticsState = DEFAULT_STATE, action: any) => {
+ReducerRegistry.register<IAnalyticsState>('features/analytics',
+(state = DEFAULT_STATE, action): IAnalyticsState => {
     switch (action.type) {
     case UPDATE_LOCAL_TRACKS_DURATION:
         return {

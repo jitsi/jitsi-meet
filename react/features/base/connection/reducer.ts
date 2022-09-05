@@ -1,11 +1,9 @@
-/* eslint-disable import/order */
-
+/* eslint-disable lines-around-comment */
 import { SET_ROOM } from '../conference/actionTypes';
-
 // @ts-ignore
 import { JitsiConnectionErrors } from '../lib-jitsi-meet';
-import { assign, set } from '../redux/functions';
 import ReducerRegistry from '../redux/ReducerRegistry';
+import { assign, set } from '../redux/functions';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -15,7 +13,6 @@ import {
     SET_LOCATION_URL,
     SHOW_CONNECTION_INFO
 } from './actionTypes';
-
 // @ts-ignore
 import { ConnectionFailedError } from './actions.native';
 
@@ -32,9 +29,9 @@ export interface IConnectionState {
 /**
  * Reduces the Redux actions of the feature base/connection.
  */
-ReducerRegistry.register(
+ReducerRegistry.register<IConnectionState>(
     'features/base/connection',
-    (state: IConnectionState = {}, action: any) => {
+    (state = {}, action): IConnectionState => {
         switch (action.type) {
         case CONNECTION_DISCONNECTED:
             return _connectionDisconnected(state, action);
