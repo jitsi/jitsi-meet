@@ -53,15 +53,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             // original non proxy versions of these functions.
             try {
                 // Default poll interval is 10000ms and standard stats will be used, if not provided in the config.
-                const pollInterval = analytics.rtcstatsPollInterval || 10000;
-                const useLegacy = analytics.rtcstatsUseLegacy || false;
-                const sendSdp = analytics.rtcstatsSendSdp || false;
-
+                const pollInterval = analytics?.rtcstatsPollInterval || 10000;
+                const useLegacy = analytics?.rtcstatsUseLegacy || false;
+                const sendSdp = analytics?.rtcstatsSendSdp || false;
 
                 // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
                 // media calls made even before the conference started.
                 RTCStats.init({
-                    endpoint: analytics.rtcstatsEndpoint,
+                    endpoint: analytics?.rtcstatsEndpoint,
                     meetingFqn: extractFqnFromPath(state),
                     useLegacy,
                     pollInterval,

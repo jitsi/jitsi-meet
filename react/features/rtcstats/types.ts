@@ -1,5 +1,5 @@
 export type InitOptions = {
-    endpoint: string;
+    endpoint?: string;
     meetingFqn: string;
     pollInterval: number;
     sendSdp: boolean;
