@@ -21,6 +21,7 @@ export default class AbstractSelfieButton<P : Props, S: *>
      */
     _handleClick() {
         this._downloadSelfie();
+        this._downloadAudioRecorder();
     }
 
     /**
@@ -30,6 +31,16 @@ export default class AbstractSelfieButton<P : Props, S: *>
      * @returns {void}
      */
     _downloadSelfie() {
+        // To be implemented by subclass.
+    }
+
+    /**
+     * Helper function to perform the actual download action.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _downloadAudioRecorder() {
         // To be implemented by subclass.
     }
 }
