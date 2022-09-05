@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect as reduxConnect } from 'react-redux';
 
-import { IStateful } from '../../app/types';
+import { IStateful } from '../app/types';
 
 /**
  * Sets specific properties of a specific state to specific values and prevents

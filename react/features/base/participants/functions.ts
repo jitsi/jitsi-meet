@@ -2,9 +2,10 @@
 // @ts-ignore
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
-import { IStateful, IStore } from '../../app/types';
+import { IStore } from '../../app/types';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
+import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
 // @ts-ignore

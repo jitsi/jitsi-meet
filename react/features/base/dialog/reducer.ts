@@ -11,7 +11,7 @@ import {
 } from './actionTypes';
 
 export interface IDialogState {
-    component?: Object;
+    component?: ComponentType;
     componentProps?: Object;
     sheet?: ComponentType;
     sheetProps?: Object;
