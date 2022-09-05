@@ -72,6 +72,8 @@ import { IVideoQualityPersistedState, IVideoQualityState } from '../video-qualit
 import { IVideoSipGW } from '../videosipgw/reducer';
 import { IVirtualBackground } from '../virtual-background/reducer';
 
+export type IStateful = Function | IStore | IState;
+
 export interface IStore {
     dispatch: Function,
     getState: () => IState;

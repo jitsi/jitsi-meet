@@ -1,3 +1,5 @@
+import { ComponentType } from 'react';
+
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { assign } from '../redux/functions';
 
@@ -11,7 +13,7 @@ import {
 export interface IDialogState {
     component?: Object;
     componentProps?: Object;
-    sheet?: Object;
+    sheet?: ComponentType;
     sheetProps?: Object;
 }
 

@@ -13,6 +13,7 @@ import {
     sendAnalytics
     // @ts-ignore
 } from '../../../analytics';
+import { IState } from '../../../app/types';
 // @ts-ignore
 import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
 // @ts-ignore
@@ -1481,7 +1482,7 @@ class Toolbox extends Component<Props> {
  * @private
  * @returns {{}}
  */
-function _mapStateToProps(state: any, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
     const {

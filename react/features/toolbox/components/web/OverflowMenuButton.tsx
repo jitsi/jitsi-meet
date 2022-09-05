@@ -6,6 +6,7 @@ import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { IState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
@@ -199,7 +200,7 @@ class OverflowMenuButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function mapStateToProps(state: any) {
+function mapStateToProps(state: IState) {
     const { overflowDrawer } = state['features/toolbox'];
 
     return {

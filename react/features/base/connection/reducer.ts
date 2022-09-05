@@ -18,7 +18,9 @@ import { ConnectionFailedError } from './actions.native';
 
 export interface IConnectionState {
     connecting?: Object;
-    connection?: Object;
+    connection?: {
+        getJid: () => string;
+    };
     error?: ConnectionFailedError;
     locationURL?: URL;
     passwordRequired?: Object;
@@ -97,7 +99,7 @@ function _connectionDisconnected(
 function _connectionEstablished(
         state: IConnectionState,
         { connection, timeEstablished }: {
-            connection: Object,
+            connection: any,
             timeEstablished: number
         }) {
     return assign(state, {

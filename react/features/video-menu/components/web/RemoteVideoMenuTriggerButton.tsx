@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
+import { IState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
@@ -18,8 +19,7 @@ import Button from '../../../base/ui/components/web/Button';
 import ConnectionIndicatorContent from
 // @ts-ignore
     '../../../connection-indicator/components/web/ConnectionIndicatorContent';
-// @ts-ignore
-import { THUMBNAIL_TYPE } from '../../../filmstrip';
+import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 // @ts-ignore
 import { renderConnectionStatus } from '../../actions.web';
 
@@ -27,10 +27,6 @@ import { renderConnectionStatus } from '../../actions.web';
 import ParticipantContextMenu from './ParticipantContextMenu';
 // @ts-ignore
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
-
-
-// eslint-disable-next-line no-var, @typescript-eslint/no-unused-vars
-declare var $: Object;
 
 /**
  * The type of the React {@code Component} props of
@@ -261,7 +257,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: any, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { participantID, thumbnailType } = ownProps;
     let _remoteControlState = null;
     const participant = getParticipantById(state, participantID ?? '');

@@ -1,12 +1,13 @@
 /* eslint-disable lines-around-comment */
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 
+import { IState } from '../../../../app/types';
 // @ts-ignore
 import { setPassword as setPass } from '../../../../base/conference';
 // @ts-ignore
 import { Dialog } from '../../../../base/dialog';
 import { isLocalParticipantModerator } from '../../../../base/participants/functions';
+import { connect } from '../../../../base/redux/functions';
 // @ts-ignore
 import { E2EESection } from '../../../../e2ee/components';
 // @ts-ignore
@@ -125,7 +126,7 @@ function SecurityDialog({
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state: any) {
+function mapStateToProps(state: IState) {
     const {
         conference,
         e2eeSupported,

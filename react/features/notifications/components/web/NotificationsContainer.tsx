@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
+import { IState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
@@ -238,7 +239,7 @@ class NotificationsContainer extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: any) {
+function _mapStateToProps(state: IState) {
     const { notifications } = state['features/notifications'];
     const { iAmSipGateway } = state['features/base/config'];
     const { isOpen: isChatOpen } = state['features/chat'];

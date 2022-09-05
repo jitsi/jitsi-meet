@@ -55,6 +55,7 @@ export interface IConferenceState {
     membersOnly: boolean|undefined;
     obfuscatedRoom?: string;
     obfuscatedRoomSource?: string;
+    p2p?: Object;
     password: string|undefined;
     passwordRequired: boolean|undefined;
     pendingSubjectChange?: string;
