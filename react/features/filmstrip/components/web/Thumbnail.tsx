@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 
 // @ts-ignore
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics';
+import { IState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 // @ts-ignore
@@ -13,7 +14,8 @@ import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag }
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 // @ts-ignore
-import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
+import { VideoTrack } from '../../../base/media';
+import { MEDIA_TYPE } from '../../../base/media/constants';
 import { pinParticipant } from '../../../base/participants/actions';
 import {
     getLocalParticipant,
@@ -1156,7 +1158,7 @@ class Thumbnail extends Component<Props, State> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: any, ownProps: any): Object {
+function _mapStateToProps(state: IState, ownProps: any): Object {
     const { participantID, filmstripType = FILMSTRIP_TYPE.MAIN } = ownProps;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
@@ -1208,6 +1210,7 @@ function _mapStateToProps(state: any, ownProps: any): Object {
         const { local, remote }
             = tileType === THUMBNAIL_TYPE.VERTICAL
                 ? verticalViewDimensions : horizontalViewDimensions;
+        // @ts-ignore
         const { width, height } = (isLocal ? local : remote) ?? {};
 
         size = {
@@ -1216,6 +1219,7 @@ function _mapStateToProps(state: any, ownProps: any): Object {
         };
 
         if (_verticalViewGrid) {
+            // @ts-ignore
             const { width: _width, height: _height } = verticalViewDimensions.gridView.thumbnailSize;
 
             size = {
@@ -1229,6 +1233,7 @@ function _mapStateToProps(state: any, ownProps: any): Object {
         break;
     }
     case THUMBNAIL_TYPE.TILE: {
+        // @ts-ignore
         const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
         const {
             stageFilmstripDimensions = {
@@ -1243,6 +1248,7 @@ function _mapStateToProps(state: any, ownProps: any): Object {
         };
 
         if (filmstripType === FILMSTRIP_TYPE.STAGE) {
+            // @ts-ignore
             const { width: _width, height: _height } = stageFilmstripDimensions.thumbnailSize;
 
             size = {
@@ -1250,6 +1256,7 @@ function _mapStateToProps(state: any, ownProps: any): Object {
                 _height
             };
         } else if (filmstripType === FILMSTRIP_TYPE.SCREENSHARE) {
+            // @ts-ignore
             const { width: _width, height: _height } = screenshareFilmstripDimensions.thumbnailSize;
 
             size = {

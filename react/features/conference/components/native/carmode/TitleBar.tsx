@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { useSelector } from 'react-redux';
 
+import { IState } from '../../../../app/types';
 // @ts-ignore
 import { getConferenceName } from '../../../../base/conference/functions';
 // @ts-ignore
@@ -86,7 +87,7 @@ const TitleBar = (props: Props) : JSX.Element => {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state: any) {
+function _mapStateToProps(state: IState) {
     const { hideConferenceSubject } = state['features/base/config'];
 
     return {

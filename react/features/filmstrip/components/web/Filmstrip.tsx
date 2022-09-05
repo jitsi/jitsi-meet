@@ -13,6 +13,7 @@ import {
     sendAnalytics
     // @ts-ignore
 } from '../../../analytics';
+import { IState } from '../../../app/types';
 // @ts-ignore
 import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -886,7 +887,7 @@ class Filmstrip extends PureComponent <Props, State> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: any, ownProps: any) {
+function _mapStateToProps(state: IState, ownProps: any) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];

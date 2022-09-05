@@ -12,8 +12,7 @@ import {
 
     // @ts-ignore
 } from '../../../analytics';
-import { IStore } from '../../../app/types';
-
+import { IState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import { raiseHand } from '../../../base/participants/actions';
@@ -250,7 +249,7 @@ class ReactionsMenu extends Component<Props> {
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state: any) {
+function mapStateToProps(state: IState) {
     const localParticipant = getLocalParticipant(state);
 
     return {

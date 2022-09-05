@@ -2,9 +2,10 @@
 // @ts-ignore
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
-import { IState, IStore } from '../../app/types';
+import { IStore } from '../../app/types';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
+import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
 // @ts-ignore
@@ -61,7 +62,7 @@ const AVATAR_CHECKER_FUNCTIONS = [
  * retrieve the state.
  * @returns {Array<string>}
  */
-export function getActiveSpeakersToBeDisplayed(stateful: IStore | Function) {
+export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
     const state = toState(stateful);
     const {
         dominantSpeaker,
@@ -159,7 +160,7 @@ export function getFirstLoadableAvatarUrl(participant: Participant, store: IStor
  * features/base/participants.
  * @returns {(Participant|undefined)}
  */
-export function getLocalParticipant(stateful: IStore | Function | IState) {
+export function getLocalParticipant(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
 
     return state.local;
@@ -172,7 +173,7 @@ export function getLocalParticipant(stateful: IStore | Function | IState) {
  * {@code getState} function to be used to retrieve the state features/base/participants.
  * @returns {(Participant|undefined)}
  */
-export function getLocalScreenShareParticipant(stateful: IStore | Function) {
+export function getLocalScreenShareParticipant(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
 
     return state.localScreenShare;
@@ -186,7 +187,7 @@ export function getLocalScreenShareParticipant(stateful: IStore | Function) {
  * @param {string} id - The owner ID of the screenshare participant to retrieve.
  * @returns {(Participant|undefined)}
  */
-export function getVirtualScreenshareParticipantByOwnerId(stateful: IStore | Function, id: string) {
+export function getVirtualScreenshareParticipantByOwnerId(stateful: IStateful, id: string) {
     const state = toState(stateful);
 
     if (getMultipleVideoSupportFeatureFlag(state)) {
@@ -223,8 +224,7 @@ export function getNormalizedDisplayName(name: string) {
  * @private
  * @returns {(Participant|undefined)}
  */
-export function getParticipantById(
-        stateful: IStore | Function | IState, id: string): Participant|undefined {
+export function getParticipantById(stateful: IStateful, id: string): Participant|undefined {
     const state = toState(stateful)['features/base/participants'];
     const { local, localScreenShare, remote } = state;
 
@@ -243,7 +243,7 @@ export function getParticipantById(
  * @param {string|undefined} [participantID] - An optional partipantID argument.
  * @returns {Participant|undefined}
  */
-export function getParticipantByIdOrUndefined(stateful: IStore | Function, participantID?: string) {
+export function getParticipantByIdOrUndefined(stateful: IStateful, participantID?: string) {
     return participantID ? getParticipantById(stateful, participantID) : getLocalParticipant(stateful);
 }
 
@@ -256,7 +256,7 @@ export function getParticipantByIdOrUndefined(stateful: IStore | Function, parti
  * features/base/participants.
  * @returns {number}
  */
-export function getParticipantCount(stateful: IStore | Function | IState) {
+export function getParticipantCount(stateful: IStateful) {
     const state = toState(stateful);
     const {
         local,
@@ -292,7 +292,7 @@ export function getVirtualScreenshareParticipantOwnerId(id: string) {
  * features/base/participants.
  * @returns {Map<string, Participant>} - The Map with fake participants.
  */
-export function getFakeParticipants(stateful: IStore | Function) {
+export function getFakeParticipants(stateful: IStateful) {
     return toState(stateful)['features/base/participants'].fakeParticipants;
 }
 
@@ -304,7 +304,7 @@ export function getFakeParticipants(stateful: IStore | Function) {
  * features/base/participants.
  * @returns {number}
  */
-export function getRemoteParticipantCount(stateful: IStore | Function) {
+export function getRemoteParticipantCount(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
 
     if (getMultipleVideoSupportFeatureFlag(state)) {
@@ -323,7 +323,7 @@ export function getRemoteParticipantCount(stateful: IStore | Function) {
  * features/base/participants.
  * @returns {number}
  */
-export function getParticipantCountWithFake(stateful: IStore | Function) {
+export function getParticipantCountWithFake(stateful: IStateful) {
     const state = toState(stateful);
     const { local, localScreenShare, remote } = state['features/base/participants'];
 
@@ -342,7 +342,7 @@ export function getParticipantCountWithFake(stateful: IStore | Function) {
  * @param {string} id - The ID of the participant's display name to retrieve.
  * @returns {string}
  */
-export function getParticipantDisplayName(stateful: IStore | Function | IState, id: string): string {
+export function getParticipantDisplayName(stateful: IStateful, id: string): string {
     const participant = getParticipantById(stateful, id);
     const {
         defaultLocalDisplayName,
@@ -374,7 +374,7 @@ export function getParticipantDisplayName(stateful: IStore | Function | IState, 
  * @param {string} id - The ID of the screenshare participant's display name to retrieve.
  * @returns {string}
  */
-export function getScreenshareParticipantDisplayName(stateful: IStore | Function| IState, id: string) {
+export function getScreenshareParticipantDisplayName(stateful: IStateful, id: string) {
     const ownerDisplayName = getParticipantDisplayName(stateful, getVirtualScreenshareParticipantOwnerId(id));
 
     return i18next.t('screenshareDisplayName', { name: ownerDisplayName });
@@ -388,8 +388,7 @@ export function getScreenshareParticipantDisplayName(stateful: IStore | Function
  * @param {string} id - The id of the participant.
  * @returns {string} - The presence status.
  */
-export function getParticipantPresenceStatus(
-        stateful: IStore | Function, id: string) {
+export function getParticipantPresenceStatus(stateful: IStateful, id: string) {
     if (!id) {
         return undefined;
     }
@@ -410,7 +409,7 @@ export function getParticipantPresenceStatus(
  * features/base/participants.
  * @returns {Map<string, Object>}
  */
-export function getRemoteParticipants(stateful: IStore | Function) {
+export function getRemoteParticipants(stateful: IStateful) {
     return toState(stateful)['features/base/participants'].remote;
 }
 
@@ -421,7 +420,7 @@ export function getRemoteParticipants(stateful: IStore | Function) {
  * retrieve the state features/filmstrip.
  * @returns {Array<string>}
  */
-export function getRemoteParticipantsSorted(stateful: IStore | Function) {
+export function getRemoteParticipantsSorted(stateful: IStateful) {
     return toState(stateful)['features/filmstrip'].remoteParticipants;
 }
 
@@ -433,7 +432,7 @@ export function getRemoteParticipantsSorted(stateful: IStore | Function) {
  * features/base/participants.
  * @returns {(Participant|undefined)}
  */
-export function getPinnedParticipant(stateful: IStore | Function) {
+export function getPinnedParticipant(stateful: IStateful) {
     const state = toState(stateful);
     const { pinnedParticipant } = state['features/base/participants'];
     const stageFilmstrip = isStageFilmstripAvailable(state);
@@ -469,7 +468,7 @@ export function isParticipantModerator(participant?: Participant) {
  * {@code getState} function to be used to retrieve the state features/base/participants.
  * @returns {Participant} - The participant from the redux store.
  */
-export function getDominantSpeakerParticipant(stateful: IStore | Function) {
+export function getDominantSpeakerParticipant(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
     const { dominantSpeaker } = state;
 
@@ -487,7 +486,7 @@ export function getDominantSpeakerParticipant(stateful: IStore | Function) {
  * to the Redux state.
  * @returns {boolean}
  */
-export function isEveryoneModerator(stateful: IStore | Function) {
+export function isEveryoneModerator(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
 
     return state.everyoneIsModerator === true;
@@ -511,7 +510,7 @@ export function isIconUrl(icon?: string | Object) {
  * to the Redux state.
  * @returns {boolean}
  */
-export function isLocalParticipantModerator(stateful: IStore | Function | IState) {
+export function isLocalParticipantModerator(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
 
     const { local } = state;
@@ -532,7 +531,7 @@ export function isLocalParticipantModerator(stateful: IStore | Function | IState
  * @param {string} id - The ID of the participant.
  * @returns {boolean}
  */
-export function shouldRenderParticipantVideo(stateful: IStore | Function, id: string) {
+export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
     const state = toState(stateful);
     const participant = getParticipantById(state, id);
 
@@ -636,7 +635,7 @@ async function _getFirstLoadableAvatarUrl(participant: Participant, store: IStor
  * features/base/participants.
  * @returns {Array<Object>}
  */
-export function getRaiseHandsQueue(stateful: IStore | Function): Array<Object> {
+export function getRaiseHandsQueue(stateful: IStateful): Array<Object> {
     const { raisedHandsQueue } = toState(stateful)['features/base/participants'];
 
     return raisedHandsQueue;

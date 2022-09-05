@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // @ts-ignore
 import { appNavigate } from '../../app/actions.native';
+import { IState } from '../../app/types';
 // @ts-ignore
 import { setAudioOnly } from '../../base/audio-only/actions';
 // @ts-ignore
@@ -28,11 +29,9 @@ import JitsiScreen from '../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../base/participants/functions';
 // @ts-ignore
 import { getFieldValue } from '../../base/react';
-// @ts-ignore
-import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
+import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui/constants';
 // @ts-ignore
 import { updateSettings } from '../../base/settings';
-// @ts-ignore
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import Button from '../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants';
@@ -62,9 +61,9 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const isFocused = useIsFocused();
     const { t } = useTranslation();
     const aspectRatio = useSelector(
-        (state: any) => state['features/base/responsive-ui']?.aspectRatio
+        (state: IState) => state['features/base/responsive-ui']?.aspectRatio
     );
-    const localParticipant = useSelector((state: any) => getLocalParticipant(state));
+    const localParticipant = useSelector((state: IState) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector(state => isDisplayNameRequired(state));
     const roomName = useSelector(state => getConferenceName(state));
     const participantName = localParticipant?.name;

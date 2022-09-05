@@ -1,3 +1,5 @@
+import { ComponentType } from 'react';
+
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { assign } from '../redux/functions';
 
@@ -9,9 +11,9 @@ import {
 } from './actionTypes';
 
 export interface IDialogState {
-    component?: Object;
+    component?: ComponentType;
     componentProps?: Object;
-    sheet?: Object;
+    sheet?: ComponentType;
     sheetProps?: Object;
 }
 

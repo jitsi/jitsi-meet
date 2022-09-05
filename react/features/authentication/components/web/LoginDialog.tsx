@@ -5,6 +5,8 @@ import type { Dispatch } from 'redux';
 
 // @ts-ignore
 import { connect } from '../../../../../connection';
+import { IState } from '../../../app/types';
+import { IConfig } from '../../../base/config/configType';
 // @ts-ignore
 import { toJid } from '../../../base/connection/functions';
 // @ts-ignore
@@ -34,7 +36,7 @@ interface Props extends WithTranslation {
     /**
      * The server hosts specified in the global config.
      */
-    _configHosts: Object,
+    _configHosts: IConfig['hosts'],
 
     /**
      * Indicates if the dialog should display "connecting" status message.
@@ -295,7 +297,7 @@ class LoginDialog extends Component<Props, State> {
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state: any) {
+function mapStateToProps(state: IState) {
     const {
         error: authenticateAndUpgradeRoleError,
         progress,

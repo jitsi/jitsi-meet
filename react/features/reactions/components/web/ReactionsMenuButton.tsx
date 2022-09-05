@@ -1,13 +1,13 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
-
 import { useSelector } from 'react-redux';
+
+import { IState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp } from '../../../base/icons/svg/index';
 import { connect } from '../../../base/redux/functions';
-
 // @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
@@ -134,7 +134,7 @@ function ReactionsMenuButton({
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state: any) {
+function mapStateToProps(state: IState) {
     return {
         _reactionsEnabled: isReactionsEnabled(state),
         isOpen: getReactionsMenuVisibility(state),
