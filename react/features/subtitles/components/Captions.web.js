@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { getLocalParticipant } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { getLargeVideoParticipant } from '../../large-video/functions';
-import { isLayoutTileView } from '../../video-layout';
+import {getLocalParticipant} from '../../base/participants';
+import {connect} from '../../base/redux';
+import {getLargeVideoParticipant} from '../../large-video/functions';
+import {isLayoutTileView} from '../../video-layout';
 
 import {
     _abstractMapStateToProps,

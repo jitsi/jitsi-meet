@@ -1,6 +1,7 @@
 // @flow
 
-import { Component } from 'react';
+import {Component} from 'react';
+import {isMobileBrowser} from '../../base/environment/utils'
 
 /**
  * {@code AbstractCaptions} Properties.
@@ -24,6 +25,9 @@ export type AbstractCaptionsProps = {
  * Abstract React {@code Component} which can display speech-to-text results
  * from Jigasi as subtitles.
  */
+
+let textStore = '';
+
 export class AbstractCaptions<P: AbstractCaptionsProps>
     extends Component<P> {
 
@@ -33,8 +37,29 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
      * @inheritdoc
      * @returns {React$Element}
      */
+
+    componentDidMount() {
+        setInterval(() => {
+            const args = `${textStore}`;
+
+            if (isMobileBrowser()) {
+                if (window.flutter_inappwebview) {
+                    console.log('beforeArgs', args);
+                    window.flutter_inappwebview.callHandler('myHandlerName', args);
+                    console.log('afterArgs', args);
+                    textStore = '';
+                } else {
+                    console.log('InAppWebViewNotLoaded');
+                }
+            } else {
+                console.log('args', args);
+                window.open(value.url);
+            }
+        }, 30000);
+    }
+
     render() {
-        const { _requestingSubtitles, _transcripts } = this.props;
+        const {_requestingSubtitles, _transcripts} = this.props;
 
         if (!_requestingSubtitles || !_transcripts || !_transcripts.size) {
             return null;
@@ -42,10 +67,11 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
 
         const paragraphs = [];
 
-        for (const [ id, text ] of _transcripts) {
+        for (const [id, text] of _transcripts) {
             paragraphs.push(this._renderParagraph(id, text));
-        }
 
+            textStore = textStore + text;
+        }
         return this._renderSubtitlesContainer(paragraphs);
     }
 
@@ -84,10 +110,10 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
  * transcript message IDs.
  */
 function _constructTranscripts(state: Object): Map<string, string> {
-    const { _transcriptMessages } = state['features/subtitles'];
+    const {_transcriptMessages} = state['features/subtitles'];
     const transcripts = new Map();
 
-    for (const [ id, transcriptMessage ] of _transcriptMessages) {
+    for (const [id, transcriptMessage] of _transcriptMessages) {
         if (transcriptMessage) {
             let text = `${transcriptMessage.participantName}: `;
 
@@ -119,7 +145,7 @@ function _constructTranscripts(state: Object): Map<string, string> {
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
-    const { _requestingSubtitles } = state['features/subtitles'];
+    const {_requestingSubtitles} = state['features/subtitles'];
     const transcripts = _constructTranscripts(state);
 
     return {

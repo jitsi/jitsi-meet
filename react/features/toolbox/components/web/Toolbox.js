@@ -1329,10 +1329,10 @@ class Toolbox extends Component<Props> {
                     })}>
                     <div className='toolbox-content-items'>
                         {mainMenuButtons.map(({
-                            Content,
-                            key,
-                            ...rest
-                        }) => Content !== Separator && (
+                                                  Content,
+                                                  key,
+                                                  ...rest
+                                              }) => Content !== Separator && (
                             <Content
                                 {...rest}
                                 buttonKey={key}
@@ -1372,10 +1372,10 @@ class Toolbox extends Component<Props> {
                                         <ContextMenuItemGroup
                                             key={`group-${buttonGroup[0].group}`}>
                                             {buttonGroup.map(({
-                                                key,
-                                                Content,
-                                                ...rest
-                                            }) => (
+                                                                  key,
+                                                                  Content,
+                                                                  ...rest
+                                                              }) => (
                                                     key !== 'raisehand' || !_reactionsEnabled)
                                                 && <Content
                                                     {...rest}
