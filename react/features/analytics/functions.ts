@@ -1,7 +1,10 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
+// @ts-ignore
 import { API_ID } from '../../../modules/API/constants';
+// @ts-ignore
 import { getName as getAppName } from '../app/functions';
+import { IStore } from '../app/types';
+// @ts-ignore
 import { getAnalyticsRoomName } from '../base/conference';
 import {
     checkChromeExtensionsInstalled,
@@ -11,11 +14,16 @@ import JitsiMeetJS, {
     analytics,
     browser
 } from '../base/lib-jitsi-meet';
+// @ts-ignore
 import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions';
-import { getJitsiMeetGlobalNS, loadScript, parseURIString } from '../base/util';
+// @ts-ignore
+import { loadScript } from '../base/util';
+import { getJitsiMeetGlobalNS } from '../base/util/helpers';
 import { inIframe } from '../base/util/iframeUtils';
+import { parseURIString } from '../base/util/uri';
 
-import { AmplitudeHandler, MatomoHandler } from './handlers';
+import AmplitudeHandler from './handlers/AmplitudeHandler';
+import MatomoHandler from './handlers/MatomoHandler';
 import logger from './logger';
 
 /**
@@ -155,7 +163,7 @@ export async function createHandlers({ getState }: { getState: Function }) {
  * @param {Array<Object>} handlers - The analytics handlers.
  * @returns {void}
  */
-export function initAnalytics(store: Store, handlers: Array<Object>) {
+export function initAnalytics(store: IStore, handlers: Array<Object>) {
     const { getState, dispatch } = store;
 
     if (!isAnalyticsEnabled(getState) || handlers.length === 0) {
@@ -168,9 +176,9 @@ export function initAnalytics(store: Store, handlers: Array<Object>) {
         deploymentInfo
     } = config;
     const { group, server } = state['features/base/jwt'];
-    const { locationURL = {} } = state['features/base/connection'];
+    const { locationURL = { href: '' } } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
-    const permanentProperties = {};
+    const permanentProperties: any = {};
 
     if (server) {
         permanentProperties.server = server;
@@ -199,7 +207,7 @@ export function initAnalytics(store: Store, handlers: Array<Object>) {
     if (deploymentInfo) {
         for (const key in deploymentInfo) {
             if (deploymentInfo.hasOwnProperty(key)) {
-                permanentProperties[key] = deploymentInfo[key];
+                permanentProperties[key] = deploymentInfo[key as keyof typeof deploymentInfo];
             }
         }
     }
@@ -232,7 +240,7 @@ export function initAnalytics(store: Store, handlers: Array<Object>) {
  * @returns {Promise} Resolves with the handlers that have been successfully loaded and rejects if there are no handlers
  * loaded or the analytics is disabled.
  */
-function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
+function _loadHandlers(scriptURLs: any[] = [], handlerConstructorOptions: Object) {
     const promises = [];
 
     for (const url of scriptURLs) {
@@ -241,7 +249,7 @@ function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
                 () => {
                     return { type: 'success' };
                 },
-                error => {
+                (error: Error) => {
                     return {
                         type: 'error',
                         error,

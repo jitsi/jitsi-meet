@@ -341,7 +341,7 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
+                'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.ts'
             },
             plugins: [
                 ...config.plugins,

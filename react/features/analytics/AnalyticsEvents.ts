@@ -72,13 +72,13 @@ export const VIDEO_MUTE = 'video.mute';
  * Creates an event which indicates that a certain action was requested through
  * the jitsi-meet API.
  *
- * @param {Object} action - The action which was requested through the
+ * @param {string} action - The action which was requested through the
  * jitsi-meet API.
  * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createApiEvent(action, attributes = {}) {
+export function createApiEvent(action: string, attributes = {}) {
     return {
         action,
         attributes,
@@ -93,7 +93,7 @@ export function createApiEvent(action, attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createAudioOnlyChangedEvent(enabled) {
+export function createAudioOnlyChangedEvent(enabled: boolean) {
     return {
         action: `audio.only.${enabled ? 'enabled' : 'disabled'}`
     };
@@ -107,7 +107,7 @@ export function createAudioOnlyChangedEvent(enabled) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createConnectionEvent(action, attributes = {}) {
+export function createConnectionEvent(action: string, attributes = {}) {
     return {
         action,
         actionSubject: 'connection',
@@ -124,7 +124,7 @@ export function createConnectionEvent(action, attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createCalendarClickedEvent(eventName, attributes = {}) {
+export function createCalendarClickedEvent(eventName: string, attributes = {}) {
     return {
         action: 'clicked',
         actionSubject: eventName,
@@ -175,7 +175,7 @@ export function createCalendarConnectedEvent(attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRecentClickedEvent(eventName, attributes = {}) {
+export function createRecentClickedEvent(eventName: string, attributes = {}) {
     return {
         action: 'clicked',
         actionSubject: eventName,
@@ -193,7 +193,7 @@ export function createRecentClickedEvent(eventName, attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createChromeExtensionBannerEvent(installPressed, attributes = {}) {
+export function createChromeExtensionBannerEvent(installPressed: boolean, attributes = {}) {
     return {
         action: installPressed ? 'install' : 'cancel',
         attributes,
@@ -229,7 +229,7 @@ export function createRecentSelectedEvent(attributes = {}) {
  * sendAnalytics.
  */
 export function createDeepLinkingPageEvent(
-        action, actionSubject, attributes = {}) {
+        action: string, actionSubject: string, attributes = {}) {
     return {
         action,
         actionSubject,
@@ -247,7 +247,7 @@ export function createDeepLinkingPageEvent(
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createDeviceChangedEvent(mediaType, deviceType) {
+export function createDeviceChangedEvent(mediaType: string, deviceType: string) {
     return {
         action: 'device.changed',
         attributes: {
@@ -264,7 +264,7 @@ export function createDeviceChangedEvent(mediaType, deviceType) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createE2EEEvent(action) {
+export function createE2EEEvent(action: string) {
     return {
         action,
         actionSubject: 'e2ee'
@@ -293,7 +293,7 @@ export function createFeedbackOpenEvent() {
  * sendAnalytics.
  */
 export function createInviteDialogEvent(
-        action, actionSubject, attributes = {}) {
+        action: string, actionSubject: string, attributes = {}) {
     return {
         action,
         actionSubject,
@@ -310,8 +310,13 @@ export function createInviteDialogEvent(
  * @param {Object} [details] - Extra info, see {@code NetworkInfo} type defined by the 'base/net-info' feature.
  * @returns {Object}
  */
-export function createNetworkInfoEvent({ isOnline, networkType, details }) {
-    const attributes = { isOnline };
+export function createNetworkInfoEvent({ isOnline, networkType, details }:
+    { details?: Object, isOnline: boolean, networkType?: string }) {
+    const attributes: {
+        details?: Object;
+        isOnline: boolean;
+        networkType?: string;
+    } = { isOnline };
 
     // Do no include optional stuff or Amplitude handler will log warnings.
     networkType && (attributes.networkType = networkType);
@@ -345,7 +350,7 @@ export function createOfferAnswerFailedEvent() {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createPageReloadScheduledEvent(reason, timeout, details) {
+export function createPageReloadScheduledEvent(reason: string, timeout: number, details: Object) {
     return {
         action: 'page.reload.scheduled',
         attributes: {
@@ -365,7 +370,7 @@ export function createPageReloadScheduledEvent(reason, timeout, details) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createPinnedEvent(action, participantId, attributes) {
+export function createPinnedEvent(action: string, participantId: string, attributes = {}) {
     return {
         type: TYPE_TRACK,
         action,
@@ -392,7 +397,7 @@ export function createPinnedEvent(action, participantId, attributes) {
  * @param {string} action - The action.
  * @returns {Object}
  */
-export function createPollEvent(action) {
+export function createPollEvent(action: string) {
     return {
         action: `poll.${action}`
     };
@@ -407,7 +412,7 @@ export function createPollEvent(action) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createProfilePanelButtonEvent(buttonName, attributes = {}) {
+export function createProfilePanelButtonEvent(buttonName: string, attributes = {}) {
     return {
         action: 'clicked',
         actionSubject: buttonName,
@@ -429,7 +434,7 @@ export function createProfilePanelButtonEvent(buttonName, attributes = {}) {
  * sendAnalytics.
  */
 export function createRecordingDialogEvent(
-        dialogName, buttonName, attributes = {}) {
+        dialogName: string, buttonName: string, attributes = {}) {
     return {
         action: 'clicked',
         actionSubject: buttonName,
@@ -449,7 +454,7 @@ export function createRecordingDialogEvent(
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createLiveStreamingDialogEvent(dialogName, buttonName) {
+export function createLiveStreamingDialogEvent(dialogName: string, buttonName: string) {
     return {
         action: 'clicked',
         actionSubject: buttonName,
@@ -465,7 +470,14 @@ export function createLiveStreamingDialogEvent(dialogName, buttonName) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createLocalTracksDurationEvent(duration) {
+export function createLocalTracksDurationEvent(duration: {
+    audio: { value: number };
+    conference: { value: number };
+    video: {
+        camera: { value: number };
+        desktop: { value: number };
+    };
+}) {
     const { audio, video, conference } = duration;
     const { camera, desktop } = video;
 
@@ -491,7 +503,7 @@ export function createLocalTracksDurationEvent(duration) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRecordingEvent(action, type, value) {
+export function createRecordingEvent(action: string, type: string, value: number) {
     return {
         action,
         actionSubject: `recording.${type}`,
@@ -509,7 +521,11 @@ export function createRecordingEvent(action, type, value) {
  * @param {number} timeSinceLeft - How many seconds since the last conference was left.
  * @returns {Object} The event in a format suitable for sending via sendAnalytics.
  */
-export function createRejoinedEvent({ url, lastConferenceDuration, timeSinceLeft }) {
+export function createRejoinedEvent({ url, lastConferenceDuration, timeSinceLeft }: {
+    lastConferenceDuration: number;
+    timeSinceLeft: number;
+    url: string;
+}) {
     return {
         action: 'rejoined',
         attributes: {
@@ -530,7 +546,7 @@ export function createRejoinedEvent({ url, lastConferenceDuration, timeSinceLeft
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRemoteMuteConfirmedEvent(participantId, mediaType) {
+export function createRemoteMuteConfirmedEvent(participantId: string, mediaType: string) {
     return {
         action: 'clicked',
         attributes: {
@@ -551,7 +567,7 @@ export function createRemoteMuteConfirmedEvent(participantId, mediaType) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRemoteVideoMenuButtonEvent(buttonName, attributes) {
+export function createRemoteVideoMenuButtonEvent(buttonName: string, attributes = {}) {
     return {
         action: 'clicked',
         actionSubject: buttonName,
@@ -569,8 +585,13 @@ export function createRemoteVideoMenuButtonEvent(buttonName, attributes) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRTCStatsTraceCloseEvent(closeEvent) {
-    const event = {
+export function createRTCStatsTraceCloseEvent(closeEvent: {code: string; reason: string;}) {
+    const event: {
+        action: string;
+        code?: string;
+        reason?: string;
+        source: string;
+    } = {
         action: 'trace.onclose',
         source: 'rtcstats'
     };
@@ -590,7 +611,7 @@ export function createRTCStatsTraceCloseEvent(closeEvent) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createScreenSharingEvent(action, value = null) {
+export function createScreenSharingEvent(action: string, value = null) {
     return {
         action,
         actionSubject: 'screen.sharing',
@@ -606,7 +627,7 @@ export function createScreenSharingEvent(action, value = null) {
  * @param {Object} attributes - Additional information that describes the issue.
  * @returns {Object} The event in a format suitable for sending via sendAnalytics.
  */
-export function createScreenSharingIssueEvent(attributes) {
+export function createScreenSharingIssueEvent(attributes = {}) {
     return {
         action: 'screen.sharing.issue',
         attributes
@@ -621,7 +642,7 @@ export function createScreenSharingIssueEvent(attributes) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createSharedVideoEvent(action, attributes = {}) {
+export function createSharedVideoEvent(action: string, attributes = {}) {
     return {
         action,
         attributes,
@@ -646,7 +667,7 @@ export function createSharedVideoEvent(action, attributes = {}) {
  * sendAnalytics.
  */
 export function createShortcutEvent(
-        shortcut,
+        shortcut: string,
         action = ACTION_SHORTCUT_TRIGGERED,
         attributes = {},
         source = 'keyboard.shortcut') {
@@ -666,7 +687,7 @@ export function createShortcutEvent(
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createStartAudioOnlyEvent(audioOnly) {
+export function createStartAudioOnlyEvent(audioOnly: boolean) {
     return {
         action: 'start.audio.only',
         attributes: {
@@ -693,7 +714,7 @@ export function createStartSilentEvent() {
  * @param {string} elementID - The ID of the HTMLAudioElement.
  * @returns {Object} The event in a format suitable for sending via sendAnalytics.
  */
-export function createAudioPlayErrorEvent(elementID) {
+export function createAudioPlayErrorEvent(elementID: string) {
     return {
         action: 'audio.play.error',
         attributes: {
@@ -708,7 +729,7 @@ export function createAudioPlayErrorEvent(elementID) {
  * @param {string} elementID - The ID of the HTMLAudioElement.
  * @returns {Object} The event in a format suitable for sending via sendAnalytics.
  */
-export function createAudioPlaySuccessEvent(elementID) {
+export function createAudioPlaySuccessEvent(elementID: string) {
     return {
         action: 'audio.play.success',
         attributes: {
@@ -731,9 +752,9 @@ export function createAudioPlaySuccessEvent(elementID) {
  * sendAnalytics.
  */
 export function createStartMutedConfigurationEvent(
-        source,
-        audioMute,
-        videoMute) {
+        source: string,
+        audioMute: boolean,
+        videoMute: boolean) {
     return {
         action: 'start.muted.configuration',
         attributes: {
@@ -754,7 +775,7 @@ export function createStartMutedConfigurationEvent(
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createSyncTrackStateEvent(mediaType, muted) {
+export function createSyncTrackStateEvent(mediaType: string, muted: boolean) {
     return {
         action: 'sync.track.state',
         attributes: {
@@ -776,7 +797,7 @@ export function createSyncTrackStateEvent(mediaType, muted) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createToolbarEvent(buttonName, attributes = {}) {
+export function createToolbarEvent(buttonName: string, attributes = {}) {
     return {
         action: 'clicked',
         actionSubject: buttonName,
@@ -794,7 +815,7 @@ export function createToolbarEvent(buttonName, attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createReactionMenuEvent(buttonName) {
+export function createReactionMenuEvent(buttonName: string) {
     return {
         action: 'clicked',
         actionSubject: 'button',
@@ -830,7 +851,7 @@ export function createReactionSoundsDisabledEvent() {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createTrackMutedEvent(mediaType, reason, muted = true) {
+export function createTrackMutedEvent(mediaType: string, reason: string, muted = true) {
     return {
         action: 'track.muted',
         attributes: {
@@ -848,7 +869,7 @@ export function createTrackMutedEvent(mediaType, reason, muted = true) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createVpaasConferenceJoinedEvent(tenant) {
+export function createVpaasConferenceJoinedEvent(tenant: string) {
     return {
         action: 'vpaas.conference.joined',
         attributes: {
@@ -866,7 +887,7 @@ export function createVpaasConferenceJoinedEvent(tenant) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createWelcomePageEvent(action, actionSubject, attributes = {}) {
+export function createWelcomePageEvent(action: string, actionSubject: string, attributes = {}) {
     return {
         action,
         actionSubject,
@@ -894,7 +915,7 @@ export function createScreensharingCaptureTakenEvent() {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createBreakoutRoomsEvent(actionSubject) {
+export function createBreakoutRoomsEvent(actionSubject: string) {
     return {
         action: 'clicked',
         actionSubject: `${actionSubject}.button`,
