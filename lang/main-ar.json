@@ -11,7 +11,6 @@
         "defaultEmail": "بريدك الافتراضي",
         "disabled": "لا يمكنك دعوة أحد.",
         "failedToAdd": "فشل إضافة مشاركين",
-        "footerText": "الاتصال لدعوة الغير مُعطَّل.",
         "googleEmail": "بريد غوغل",
         "inviteMoreHeader": "أنت بمفردك في هذا المُلتقى",
         "inviteMoreMailSubject": "ضم {{appName}} للمُلتقى",
@@ -97,6 +96,7 @@
         "messageAccessibleTitleMe": "أنا أقول:",
         "messageTo": "أرسل رسالة خاصة إلى {{recipient}}",
         "messagebox": "اكتب رسالة",
+        "newMessages": "رسائل جديدة",
         "nickname": {
             "popover": "اختر لقبًا",
             "title": "اكتب لقبًا لاعتماده في المحادثة",
@@ -285,7 +285,6 @@
         "linkMeetingTitle": "ربط المُلتقى بـ Salesforce",
         "liveStreaming": "البث المباشر الحي",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "غير ممكن أثناء التسجيل",
-        "liveStreamingDisabledTooltip": "بدء بثٍ حيٍّ مُعطَّل",
         "localUserControls": "ضوابط المستخدم المحلي",
         "lockMessage": "فشل جعل المؤتمر مغلقًا.",
         "lockRoom": "أضف المُلتقى $t(lockRoomPasswordUppercase)",
@@ -340,7 +339,6 @@
         "recentlyUsedObjects": "الأشياء المستخدمة مؤخرًا",
         "recording": "قيد التسجيل",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "ليس بالإمكان ما دمت قيد البث المباشر",
-        "recordingDisabledTooltip": "عملية التسجيل معطلة.",
         "rejoinNow": "انضم مجدَّدًا الآن",
         "remoteControlAllowedMessage": "قبل {{user}} طلب إمكانية التحكم البعيد!",
         "remoteControlDeniedMessage": "رفض {{user}} طلب إمكانية التحكم البعيد!",
@@ -516,6 +514,10 @@
         "toggleScreensharing": "بدِّل بين الكاميرا ومشاركة الشاشة",
         "toggleShortcuts": "أظهِر/اخفِ اختصارات لوحة المفاتيح",
         "videoMute": "ابدأ/أوقف كاميرتك"
+    },
+    "largeVideo": {
+        "screenIsShared": "أنت تشارك شاشتك",
+        "showMeWhatImSharing": "أرني ما أشاركه"
     },
     "liveStreaming": {
         "busy": "نعمل على تحرير موارد البث. حاول مرة أخرى رجاءً بعض بضعة دقائق.",
@@ -1061,6 +1063,7 @@
             "document": "اظهِر/اخفِ الملف المشارك",
             "download": "نزِّل التطبيق",
             "embedMeeting": "ضمِّن المُلتقى",
+            "endConference": "End meeting for all",
             "expand": "وسّع",
             "feedback": "أبدِ رأيك",
             "fullScreen": "استعمل/اخرج من وضع الشاشة الكاملة",
@@ -1134,6 +1137,7 @@
         "download": "نزِّل التطبيق",
         "e2ee": "تعمية طرف-لطرف",
         "embedMeeting": "ضمِّن المُلتقى",
+        "endConference": "إنهاء الاجتماع للجميع",
         "enterFullScreen": "تعمية طرف-لطرف",
         "enterTileView": "عرض بشاشة كاملة",
         "exitFullScreen": "أدخل عنوان العرض",
@@ -1213,6 +1217,8 @@
         "pending": "التحضير لإذاعة المُلتقى...",
         "start": "بدء إظهار الترجمة",
         "stop": "إيقاف عرض الترجمة",
+        "subtitles": "ترجمات",
+        "subtitlesOff": "إيقاف",
         "tr": "يذاع"
     },
     "userMedia": {
