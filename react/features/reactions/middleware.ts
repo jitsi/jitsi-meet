@@ -1,16 +1,14 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import { batch } from 'react-redux';
 
 // @ts-ignore
 import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
-
 import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import {
     CONFERENCE_JOIN_IN_PROGRESS,
     SET_START_REACTIONS_MUTED,
     setStartReactionsMuted
-
     // @ts-ignore
 } from '../base/conference';
 import {
@@ -18,19 +16,14 @@ import {
     getParticipantCount,
     isLocalParticipantModerator
 } from '../base/participants/functions';
-
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
-
 // @ts-ignore
 import { updateSettings } from '../base/settings/actions';
-
 // @ts-ignore
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-
 // @ts-ignore
 import { getDisabledSounds } from '../base/sounds/functions.any';
-
 // @ts-ignore
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 

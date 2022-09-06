@@ -7,7 +7,6 @@ import AbstractPollsPane from '../AbstractPollsPane';
 // @ts-ignore
 import type { AbstractProps } from '../AbstractPollsPane';
 
-// @ts-ignore
 import PollCreate from './PollCreate';
 // @ts-ignore
 import PollsList from './PollsList';

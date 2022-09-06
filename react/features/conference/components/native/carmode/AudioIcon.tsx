@@ -2,8 +2,7 @@
 import React from 'react';
 
 import Icon from '../../../../base/icons/components/Icon';
-import { IconVolumeEmpty } from '../../../../base/icons/svg/index';
-// @ts-ignore
+import { IconVolumeEmpty } from '../../../../base/icons/svg';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 
 /**

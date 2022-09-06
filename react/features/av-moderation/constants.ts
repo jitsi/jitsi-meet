@@ -11,7 +11,7 @@ export const MEDIA_TYPE_TO_WHITELIST_STORE_KEY: { [key: string]: string } = {
 /**
  * Mapping between a media type and the pending reducer key.
  */
-export const MEDIA_TYPE_TO_PENDING_STORE_KEY: {[key: string]: string} = {
+export const MEDIA_TYPE_TO_PENDING_STORE_KEY: { [key: string]: 'pendingAudio' | 'pendingVideo' } = {
     [MEDIA_TYPE.AUDIO]: 'pendingAudio',
     [MEDIA_TYPE.VIDEO]: 'pendingVideo'
 };

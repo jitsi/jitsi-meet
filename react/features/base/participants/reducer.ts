@@ -18,7 +18,6 @@ import {
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
-// @ts-ignore
 import { isParticipantModerator } from './functions';
 
 /**
@@ -121,7 +120,7 @@ export interface IParticipantsState {
     localScreenShare?: Participant;
     overwrittenNameList: Object;
     pinnedParticipant?: string;
-    raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number;}>;
+    raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, Participant>;
     sortedRemoteParticipants: Map<string, string>;
     sortedRemoteScreenshares: Map<string, string>;
@@ -505,9 +504,7 @@ function _isEveryoneModerator(state: IParticipantsState) {
  * @private
  * @returns {Participant}
  */
-function _participant(state: Participant|LocalParticipant = {
-    id: '',
-    name: '' }, action: any): Participant|LocalParticipant {
+function _participant(state: Participant|LocalParticipant = { id: '' }, action: any): Participant|LocalParticipant {
     switch (action.type) {
     case SET_LOADABLE_AVATAR_URL:
     case PARTICIPANT_UPDATED: {
@@ -543,7 +540,7 @@ function _participant(state: Participant|LocalParticipant = {
  * base/participants after the reduction of the specified
  * {@code action}.
  */
-function _participantJoined({ participant }: {participant: Participant}) {
+function _participantJoined({ participant }: { participant: Participant }) {
     const {
         avatarURL,
         botType,

@@ -1,7 +1,6 @@
 /* eslint-disable lines-around-comment */
 import { translate } from '../../../../base/i18n/functions';
-// @ts-ignore
-import { IconSettings } from '../../../../base/icons';
+import { IconSettings } from '../../../../base/icons/svg';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
 // @ts-ignore

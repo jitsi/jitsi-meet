@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-var
-declare var APP: any;
+declare let APP: any;
 
 import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
 import i18next from 'i18next';

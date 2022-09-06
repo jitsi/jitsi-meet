@@ -150,7 +150,7 @@ function _getInitialState() {
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _setConfig(state: IConfig, { config }: {config: IConfig}) {
+function _setConfig(state: IConfig, { config }: { config: IConfig }) {
     // eslint-disable-next-line no-param-reassign
     config = _translateLegacyConfig(config);
 
@@ -457,7 +457,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _updateConfig(state: IConfig, { config }: {config: IConfig}) {
+function _updateConfig(state: IConfig, { config }: { config: IConfig }) {
     const newState = _.merge({}, state, config);
 
     _cleanupConfig(newState);

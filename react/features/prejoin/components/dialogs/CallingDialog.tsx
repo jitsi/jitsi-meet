@@ -7,7 +7,7 @@ import { WithTranslation } from 'react-i18next';
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
-import { IconClose } from '../../../base/icons/svg/index';
+import { IconClose } from '../../../base/icons/svg';
 // @ts-ignore
 import Label from '../Label';
 

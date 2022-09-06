@@ -10,7 +10,7 @@ import ContextMenuItemGroup from '../../../base/components/context-menu/ContextM
 import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
-import { IconHorizontalPoints } from '../../../base/icons/svg/index';
+import { IconHorizontalPoints } from '../../../base/icons/svg';
 import { getLocalParticipant } from '../../../base/participants/functions';
 // @ts-ignore
 import { Popover } from '../../../base/popover';

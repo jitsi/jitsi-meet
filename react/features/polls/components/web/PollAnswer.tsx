@@ -8,10 +8,7 @@ import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { Theme } from '../../../base/ui/types';
 // @ts-ignore
 import { isSubmitAnswerDisabled } from '../../functions';
-// @ts-ignore
-import AbstractPollAnswer from '../AbstractPollAnswer';
-// @ts-ignore
-import type { AbstractProps } from '../AbstractPollAnswer';
+import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
 const useStyles = makeStyles((theme: Theme) => {
     return {

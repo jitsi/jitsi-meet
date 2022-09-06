@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 
 import Icon from '../../../base/icons/components/Icon';
-import { IconRaisedHandHollow } from '../../../base/icons/svg/index';
+import { IconRaisedHandHollow } from '../../../base/icons/svg';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 
 const useStyles = makeStyles((theme: any) => {

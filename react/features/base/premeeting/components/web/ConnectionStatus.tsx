@@ -6,11 +6,9 @@ import { WithTranslation } from 'react-i18next';
 import { IState } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
-import { IconArrowDownSmall, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg/index';
+import { IconArrowDownSmall, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
 import { connect } from '../../../redux/functions';
-// @ts-ignore
 import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
-// @ts-ignore
 import { CONNECTION_TYPE } from '../../constants';
 // @ts-ignore
 import { getConnectionData } from '../../functions';
@@ -121,7 +119,13 @@ const useStyles = makeStyles((theme: any) => {
     };
 });
 
-const CONNECTION_TYPE_MAP: any = {
+const CONNECTION_TYPE_MAP: {
+    [key: string]: {
+        connectionClass: string;
+        connectionText: string;
+        icon: Function;
+    }
+} = {
     [CONNECTION_TYPE.POOR]: {
         connectionClass: 'con-status--poor',
         icon: IconWifi1Bar,

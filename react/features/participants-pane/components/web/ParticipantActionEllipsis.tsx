@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IconHorizontalPoints } from '../../../base/icons/svg/index';
+import { IconHorizontalPoints } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 
 type Props = {

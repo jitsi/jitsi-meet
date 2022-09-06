@@ -14,7 +14,7 @@ type Props = AbstractProps & {
     /**
      * Own CSS class name.
      */
-    className: string,
+    className?: string,
 
     /**
      * An object containing the CSS classes.
@@ -24,7 +24,7 @@ type Props = AbstractProps & {
     /**
      * The color of the label.
      */
-    color: string,
+    color?: string,
 
 
     /**
@@ -35,7 +35,7 @@ type Props = AbstractProps & {
     /**
      * HTML ID attribute to add to the root of {@code Label}.
      */
-    id: string,
+    id?: string,
 
     /**
      * Click handler if any.

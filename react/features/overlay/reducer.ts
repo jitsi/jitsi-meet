@@ -55,7 +55,7 @@ ReducerRegistry.register<IOverlayState>('features/overlay', (state = {}, action)
  */
 function _mediaPermissionPromptVisibilityChanged(
         state: IOverlayState,
-        { browser, isVisible }: {browser?: string, isVisible?: boolean}) {
+        { browser, isVisible }: { browser?: string, isVisible?: boolean }) {
     return assign(state, {
         browser,
         isMediaPermissionPromptVisible: isVisible
@@ -74,7 +74,7 @@ function _mediaPermissionPromptVisibilityChanged(
  */
 function _toggleSlowGUMOverlay(
         state: IOverlayState,
-        { isVisible }: {isVisible?: boolean}) {
+        { isVisible }: { isVisible?: boolean }) {
     return assign(state, {
         isSlowGUMOverlayVisible: isVisible
     });
@@ -102,6 +102,6 @@ function _setShowLoadConfigOverlay(state: IOverlayState, show?: boolean) {
  * @returns {Object}
  * @private
  */
-function _setFatalError(state: IOverlayState, { fatalError }: {fatalError?: Error}) {
+function _setFatalError(state: IOverlayState, { fatalError }: { fatalError?: Error }) {
     return set(state, 'fatalError', fatalError);
 }

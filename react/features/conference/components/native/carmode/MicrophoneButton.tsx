@@ -14,7 +14,7 @@ import { IState } from '../../../../app/types';
 // @ts-ignore
 import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons/svg/index';
+import { IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../../base/media/constants';
 // @ts-ignore
 import { isLocalTrackMuted } from '../../../../base/tracks';

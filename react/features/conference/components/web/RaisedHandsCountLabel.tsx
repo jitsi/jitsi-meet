@@ -5,9 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IState } from '../../../app/types';
-import { IconRaisedHand } from '../../../base/icons/svg/index';
-// @ts-ignore
-import { Label } from '../../../base/label';
+import { IconRaisedHand } from '../../../base/icons/svg';
+import Label from '../../../base/label/components/web/Label';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';

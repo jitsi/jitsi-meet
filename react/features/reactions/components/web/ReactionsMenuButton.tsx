@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { IState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { IconArrowUp } from '../../../base/icons/svg/index';
+import { IconArrowUp } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';

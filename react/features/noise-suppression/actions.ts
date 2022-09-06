@@ -4,8 +4,8 @@ import { Dispatch } from 'redux';
 // @ts-ignore
 import { getLocalJitsiAudioTrack } from '../base/tracks';
 // @ts-ignore
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../notifications';
-// @ts-ignore
+import { showErrorNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
 import { SET_NOISE_SUPPRESSION_ENABLED } from './actionTypes';

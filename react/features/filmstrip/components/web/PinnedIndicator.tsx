@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { IState } from '../../../app/types';
-import { IconPinParticipant } from '../../../base/icons/svg/index';
+import { IconPinParticipant } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
 // eslint-disable-next-line lines-around-comment
@@ -57,7 +57,7 @@ const PinnedIndicator = ({
 }: Props) => {
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
     const pinned = useSelector((state: IState) => getParticipantById(state, participantId))?.pinned;
-    const activePinnedParticipants: Array<{participantId: string; pinned: boolean}>
+    const activePinnedParticipants: Array<{ participantId: string; pinned: boolean }>
         = useSelector(getPinnedActiveParticipants);
     const isPinned = activePinnedParticipants.find(p => p.participantId === participantId);
     const styles = useStyles();

@@ -1,4 +1,4 @@
-import { IconPhone } from '../icons/svg/index';
+import { IconPhone } from '../icons/svg';
 
 /**
  * The relative path to the default/stock avatar (image) file used on both

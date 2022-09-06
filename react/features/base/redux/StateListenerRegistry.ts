@@ -1,9 +1,6 @@
-/* eslint-disable import/order */
 import { Store } from 'redux';
 
 import { equals } from './functions';
-
-// @ts-ignore
 import logger from './logger';
 
 /**

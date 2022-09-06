@@ -5,7 +5,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
-import { IconCloseCircle } from '../../../icons/svg/index';
+import { IconCloseCircle } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { Theme } from '../../../ui/types';
 import { InputProps } from '../types';

@@ -6,8 +6,6 @@ import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconCheckMark } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import BaseTheme from '../BaseTheme.web';
 
 interface CheckboxProps {

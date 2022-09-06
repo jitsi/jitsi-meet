@@ -62,7 +62,11 @@ export interface ILoggingState {
             [key: string]: LogLevel;
         }
     };
-    logCollector?: Object;
+    logCollector?: {
+        flush: () => void;
+        start: () => void;
+        stop: () => void;
+    };
 }
 
 ReducerRegistry.register<ILoggingState>(
