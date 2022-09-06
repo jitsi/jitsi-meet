@@ -176,7 +176,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
         deploymentInfo
     } = config;
     const { group, server } = state['features/base/jwt'];
-    const { locationURL = {} } = state['features/base/connection'];
+    const { locationURL = { href: '' } } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
     const permanentProperties: any = {};
 
@@ -207,7 +207,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
     if (deploymentInfo) {
         for (const key in deploymentInfo) {
             if (deploymentInfo.hasOwnProperty(key)) {
-                permanentProperties[key] = deploymentInfo[key];
+                permanentProperties[key] = deploymentInfo[key as keyof typeof deploymentInfo];
             }
         }
     }
