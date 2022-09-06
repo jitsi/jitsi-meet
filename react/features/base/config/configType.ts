@@ -100,6 +100,8 @@ export interface IConfig {
         rtcstatsEnabled?: boolean;
         rtcstatsEndpoint?: string;
         rtcstatsPollInterval?: number;
+        rtcstatsSendSdp?: boolean;
+        rtcstatsUseLegacy?: boolean;
         scriptURLs?: Array<string>;
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
