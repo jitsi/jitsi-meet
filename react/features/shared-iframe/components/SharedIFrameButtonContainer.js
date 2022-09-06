@@ -7,6 +7,7 @@ import {
 } from '../../../base/toolbox/components';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import { getSharedIFrameInstances } from '../functions';
 
 import SharedIFrameButton from './SharedIFrameButton';
 
@@ -51,10 +52,8 @@ class SharedIFrameButtonContainer extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state): Object {
-    const { sharedIFrames } = state['features/base/config'];
-
     return {
-        _sharedIFrames: sharedIFrames.frames || {}
+        _sharedIFrames: getSharedIFrameInstances(state)
     };
 }
 

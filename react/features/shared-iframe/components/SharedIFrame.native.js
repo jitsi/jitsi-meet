@@ -12,7 +12,7 @@ import { ColorPalette } from '../../base/styles';
 import HeaderNavigationButton
     from '../../mobile/navigation/components/HeaderNavigationButton';
 import { goBack } from '../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { getGenericiFrameUrl } from '../functions';
+import { getGenericiFrameUrl, getSharedIFramesInfo } from '../functions';
 
 export const INDICATOR_COLOR = ColorPalette.lightGrey;
 
@@ -147,7 +147,7 @@ class SharedIFrame extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const sharedIFrames = state['features/shared-iframe'].iframes || {};
+    const sharedIFrames = getSharedIFramesInfo();
     const { room } = state['features/base/conference'];
     const lang = i18next.language || DEFAULT_LANGUAGE;
 

@@ -11,6 +11,7 @@ import {
 } from '../../base/toolbox/components';
 import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { toggleSharedIFrame } from '../actions';
+import { getSharedIFramesInfo } from '../functions';
 
 type Props = AbstractButtonProps & {
 
@@ -145,7 +146,7 @@ class SharedIFrameButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps): Object {
-    const sharedIFrames = state['features/shared-iframe'].iframes || {};
+    const sharedIFrames = getSharedIFramesInfo(state);
 
     return {
         _isDisabled: sharedIFrames[ownProps.shareKey]?.disabled || false,

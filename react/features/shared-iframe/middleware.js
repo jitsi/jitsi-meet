@@ -8,7 +8,6 @@ import {
     getLocalParticipant,
     participantJoined,
     participantLeft,
-    pinParticipant,
     getFakeParticipants
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
@@ -20,6 +19,7 @@ import {
     setSharedIFrameStatus
 } from './actions';
 import { SHARED_IFRAME } from './constants';
+import { getSharedIFramesInfo, getSharedIFramesConfig } from './functions';
 
 /**
  * Middleware that captures actions related to iframe sharing and updates
@@ -34,7 +34,7 @@ MiddlewareRegistry.register(store => next => action => {
     const conference = getCurrentConference(state);
     const localParticipantId = getLocalParticipant(state)?.id;
     const { shareKey, iFrameTemplateUrl, isSharing, ownerId } = action;
-    const sharedIFrames = state['features/shared-iframe']?.iframes || {};
+    const sharedIFrames = getSharedIFramesInfo(state);
 
     switch (action.type) {
     case CONFERENCE_LEFT:
@@ -105,7 +105,7 @@ StateListenerRegistry.register(
                     const { from, shareKey, sharedIFrames, isSharing } = attributes;
                     const state = getState();
                     const localParticipantId = getLocalParticipant(state).id;
-                    const oldIFrames = state['features/shared-iframe']?.iframes || {};
+                    const oldIFrames = getSharedIFramesInfo(state);
                     const newIFrames = JSON.parse(sharedIFrames);
 
                     if (isSharing === 'true') {
@@ -154,21 +154,16 @@ function handleSharingIFrame(store, iFrameTemplateUrl, { shareKey, isSharing, fr
     const state = getState();
     const localParticipantId = getLocalParticipant(state).id;
     const fakeParticipants = getFakeParticipants(state);
-    const { sharedIFrames: sharedIFramesConfig } = state['features/base/config'];
+    const sharedIFramesConfig = getSharedIFramesConfig(state);
 
     if (isSharing === 'true' && !fakeParticipants.get(iFrameTemplateUrl)) {
         dispatch(participantJoined({
             conference,
             id: iFrameTemplateUrl,
             isFakeParticipant: true,
-            avatarURL: sharedIFramesConfig.frames[shareKey].avatarUrl,
-            name: sharedIFramesConfig.frames[shareKey].title || shareKey
+            avatarURL: sharedIFramesConfig.frames?.[shareKey]?.avatarUrl,
+            name: sharedIFramesConfig.frames?.[shareKey]?.title || shareKey
         }));
-
-        // Only pin if already in conference, do not pin for newly joined users
-        if (state['features/shared-iframe'].userJoinedConference) {
-            dispatch(pinParticipant(iFrameTemplateUrl));
-        }
 
     } else if (isSharing !== 'true') {
         dispatch(setDisableButton(shareKey, false));

@@ -6,6 +6,11 @@ import {
     SET_DISABLE_SHARED_IFRAME_BUTTON,
     SET_SHARED_IFRAME_STATUS
 } from './actionTypes';
+import {
+    getSharedIFrameInstances,
+    getSharedIFramesInfo,
+    getSharedIFramesConfig
+} from './functions';
 
 /**
  * Resets the status of the shared iframe.
@@ -59,14 +64,14 @@ export function showSharedIFrame(shareKey) {
     return (dispatch, getState) => {
         const state = getState();
         const conference = getCurrentConference(state);
-        const { sharedIFrames } = state['features/base/config'];
+        const sharedIFrames = getSharedIFrameInstances(state);
 
         if (conference) {
             const localParticipant = getLocalParticipant(state);
 
             dispatch(setSharedIFrameStatus({
                 shareKey,
-                iFrameTemplateUrl: sharedIFrames.frames[shareKey].templateUrl,
+                iFrameTemplateUrl: sharedIFrames[shareKey]?.templateUrl,
                 isSharing: 'true',
                 ownerId: localParticipant.id
             }));
@@ -84,12 +89,12 @@ export function showSharedIFrame(shareKey) {
 export function stopSharedIFrame(shareKey) {
     return (dispatch, getState) => {
         const state = getState();
-        const { sharedIFrames: sharedIFramesConfig } = state['features/base/config'];
-
+        const { restrictControlToInitialSharer } = getSharedIFramesConfig(state);
         const localParticipant = getLocalParticipant(state);
+        const sharedIFrames = getSharedIFramesInfo(state);
 
-        if (state['features/shared-iframe']?.iframes?.[shareKey]?.ownerId === localParticipant.id
-            || !sharedIFramesConfig.restrictControlToInitialSharer) {
+        if (sharedIFrames[shareKey]?.ownerId === localParticipant.id
+            || !restrictControlToInitialSharer) {
             dispatch(resetSharedIFrameStatus(shareKey));
         }
     };
@@ -104,9 +109,9 @@ export function stopSharedIFrame(shareKey) {
  */
 export function toggleSharedIFrame(shareKey) {
     return (dispatch, getState) => {
-        const state = getState();
+        const sharedIFrames = getSharedIFramesInfo(getState());
 
-        if (state['features/shared-iframe']?.iframes?.[shareKey]?.isSharing === 'true') {
+        if (sharedIFrames[shareKey]?.isSharing === 'true') {
             dispatch(stopSharedIFrame(shareKey));
         } else {
             dispatch(showSharedIFrame(shareKey));

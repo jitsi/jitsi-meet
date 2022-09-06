@@ -11,6 +11,7 @@ import { StageParticipantNameLabel } from '../../display-name';
 import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../filmstrip';
 import { getVerticalViewMaxWidth } from '../../filmstrip/functions.web';
 import { SharedIFrame } from '../../shared-iframe/components';
+import { getSharedIFrameInstances } from '../../shared-iframe/functions';
 import { SharedVideo } from '../../shared-video/components/web';
 import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from '../../shared-video/constants';
 import { Captions } from '../../subtitles/';
@@ -345,7 +346,7 @@ function _mapStateToProps(state) {
     const { participantId } = state['features/large-video'];
     const participant = getParticipantById(state, participantId);
     const { hideDominantSpeakerBadge } = state['features/base/config'];
-    const { sharedIFrames } = state['features/base/config'];
+    const sharedIFrames = getSharedIFrameInstances(state);
 
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
@@ -359,7 +360,7 @@ function _mapStateToProps(state) {
         _visibleFilmstrip: visible,
         _participantId: participantId,
         _participantName: participant && participant.name,
-        _isIFrameParticipant: Object.keys(sharedIFrames.frames || {}).includes(participant && participant.name),
+        _isIFrameParticipant: Object.keys(sharedIFrames).includes(participant && participant.name),
         _isFakeParticipant: participant && participant.isFakeParticipant,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state)
     };

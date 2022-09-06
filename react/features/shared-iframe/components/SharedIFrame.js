@@ -7,7 +7,7 @@ import { i18next, DEFAULT_LANGUAGE } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { getToolboxHeight } from '../../toolbox/functions.web';
-import { getGenericiFrameUrl } from '../functions';
+import { getGenericiFrameUrl, getSharedIFramesInfo } from '../functions';
 
 import IFrameManager from './IFrameManager';
 
@@ -158,7 +158,7 @@ class SharedIFrame extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const sharedIFrames = state['features/shared-iframe'].iframes || {};
+    const sharedIFrames = getSharedIFramesInfo(state);
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { visible } = state['features/filmstrip'];
 

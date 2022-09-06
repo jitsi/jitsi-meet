@@ -8,6 +8,7 @@ import {
 } from '../../../base/participants';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import { getSharedIFrameInstances } from '../../../shared-iframe/functions';
 import { SharedVideo } from '../../../shared-video/components/native';
 import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from '../../../shared-video/constants';
 import { Avatar } from '../../avatar';
@@ -277,7 +278,8 @@ function _mapStateToProps(state, ownProps) {
     const participant = getParticipantByIdOrUndefined(state, participantId);
     const tracks = state['features/base/tracks'];
     const videoTrack = getVideoTrackByParticipant(tracks, participant);
-    const { sharedIFrames } = state['features/base/config'];
+    const sharedIFrames = getSharedIFrameInstances(state);
+
     let connectionStatus;
     const participantName = participant?.name;
 
@@ -285,7 +287,7 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
-        _isIFrameParticipant: Object.keys(sharedIFrames.frames || {}).includes(participantName),
+        _isIFrameParticipant: Object.keys(sharedIFrames).includes(participantName),
         _isFakeParticipant: participant && participant.isFakeParticipant,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
