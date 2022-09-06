@@ -6,8 +6,8 @@ export interface IVideoSipGW {
     status?: string;
 }
 
-ReducerRegistry.register(
-    'features/videosipgw', (state: IVideoSipGW = {}, action): IVideoSipGW => {
+ReducerRegistry.register<IVideoSipGW>(
+    'features/videosipgw', (state = {}, action): IVideoSipGW => {
         switch (action.type) {
         case SIP_GW_AVAILABILITY_CHANGED: {
             return {

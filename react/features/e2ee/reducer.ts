@@ -23,7 +23,7 @@ export interface IE2EEState {
 /**
  * Reduces the Redux actions of the feature features/e2ee.
  */
-ReducerRegistry.register('features/e2ee', (state: IE2EEState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IE2EEState>('features/e2ee', (state = DEFAULT_STATE, action): IE2EEState => {
     switch (action.type) {
     case TOGGLE_E2EE:
         return {

@@ -21,7 +21,7 @@ export interface INetInfoState {
 /**
  * The base/net-info feature's reducer.
  */
-ReducerRegistry.register(STORE_NAME, (state: INetInfoState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<INetInfoState>(STORE_NAME, (state = DEFAULT_STATE, action): INetInfoState => {
     switch (action.type) {
     case SET_NETWORK_INFO:
         return assign(state, {

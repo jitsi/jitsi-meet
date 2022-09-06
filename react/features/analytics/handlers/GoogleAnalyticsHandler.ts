@@ -1,13 +1,15 @@
 /* global ga */
 
-import { getJitsiMeetGlobalNS } from '../../base/util';
+import { getJitsiMeetGlobalNS } from '../../base/util/helpers';
 
-import AbstractHandler from './AbstractHandler';
+import AbstractHandler, { IEvent } from './AbstractHandler';
 
 /**
  * Analytics handler for Google Analytics.
  */
 class GoogleAnalyticsHandler extends AbstractHandler {
+    _userProperties: Object;
+    _userPropertiesString: string;
 
     /**
      * Creates new instance of the GA analytics handler.
@@ -16,7 +18,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
      * @param {string} options.googleAnalyticsTrackingId - The GA track id
      * required by the GA API.
      */
-    constructor(options) {
+    constructor(options: any) {
         super(options);
 
         this._userProperties = {};
@@ -37,16 +39,20 @@ class GoogleAnalyticsHandler extends AbstractHandler {
      * required by the GA API.
      * @returns {void}
      */
-    _initGoogleAnalytics(options) {
+    _initGoogleAnalytics(options: any) {
         /**
          * TODO: Keep this local, there's no need to add it to window.
          */
-        /* eslint-disable */
+        /* eslint-disable */ // @ts-ignore
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            // @ts-ignore
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
         /* eslint-enable */
+        // @ts-ignore
         ga('create', options.googleAnalyticsTrackingId, 'auto');
+
+        // @ts-ignore
         ga('send', 'pageview');
     }
 
@@ -60,11 +66,11 @@ class GoogleAnalyticsHandler extends AbstractHandler {
      * suitable value.
      * @private
      */
-    _extractValue(event) {
-        let value = event && event.attributes && event.attributes.value;
+    _extractValue(event: IEvent) {
+        let value: string|number|undefined = event && event.attributes && event.attributes.value;
 
         // Try to extract an integer from the "value" attribute.
-        value = Math.round(parseFloat(value));
+        value = Math.round(parseFloat(value ?? ''));
 
         return value;
     }
@@ -78,7 +84,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
      * analytics event.
      * @private
      */
-    _extractLabel(event) {
+    _extractLabel(event: IEvent) {
         const { attributes = {} } = event;
         const labelsArray
             = Object.keys(attributes).map(key => `${key}=${attributes[key]}`);
@@ -94,7 +100,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
      * @param {Object} userProps - The permanent portperties.
      * @returns {void}
      */
-    setUserProperties(userProps = {}) {
+    setUserProperties(userProps: any = {}) {
         if (!this._enabled) {
             return;
         }
@@ -120,12 +126,17 @@ class GoogleAnalyticsHandler extends AbstractHandler {
      * lib-jitsi-meet.
      * @returns {void}
      */
-    sendEvent(event) {
+    sendEvent(event: IEvent) {
         if (this._shouldIgnore(event)) {
             return;
         }
 
-        const gaEvent = {
+        const gaEvent: {
+            eventAction?: string;
+            eventCategory: string;
+            eventLabel: string;
+            eventValue?: number;
+        } = {
             'eventCategory': 'jitsi-meet',
             'eventAction': this._extractName(event),
             'eventLabel': this._extractLabel(event)
@@ -136,6 +147,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
             gaEvent.eventValue = value;
         }
 
+        // @ts-ignore
         ga('send', 'event', gaEvent);
     }
 

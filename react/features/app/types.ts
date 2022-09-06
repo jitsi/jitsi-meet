@@ -4,12 +4,13 @@ import { IAVModerationState } from '../av-moderation/reducer';
 import { IAppState } from '../base/app/reducer';
 import { IAudioOnlyState } from '../base/audio-only/reducer';
 import { IConferenceState } from '../base/conference/reducer';
-import { IConfig } from '../base/config/configType';
+import { IConfigState } from '../base/config/reducer';
 import { IConnectionState } from '../base/connection/reducer';
 import { IDevicesState } from '../base/devices/reducer';
 import { IDialogState } from '../base/dialog/reducer';
 import { IFlagsState } from '../base/flags/reducer';
 import { IJwtState } from '../base/jwt/reducer';
+import { IKnownDomainsState } from '../base/known-domains/reducer';
 import { ILastNState } from '../base/lastn/reducer';
 import { ILibJitsiMeetState } from '../base/lib-jitsi-meet/reducer';
 import { ILoggingState } from '../base/logging/reducer';
@@ -42,6 +43,7 @@ import { ILargeVideoState } from '../large-video/reducer';
 import { ILobbyState } from '../lobby/reducer';
 import { IMobileAudioModeState } from '../mobile/audio-mode/reducer';
 import { IBackgroundState } from '../mobile/background/reducer';
+import { ICallIntegrationState } from '../mobile/call-integration/reducer';
 import { IMobileExternalApiState } from '../mobile/external-api/reducer';
 import { IFullScreenState } from '../mobile/full-screen/reducer';
 import { IMobileWatchOSState } from '../mobile/watchos/reducer';
@@ -72,7 +74,7 @@ import { IVirtualBackground } from '../virtual-background/reducer';
 
 export interface IStore {
     dispatch: Function,
-    getState: Function
+    getState: () => IState;
 }
 
 export interface IState {
@@ -83,13 +85,13 @@ export interface IState {
     'features/base/app': IAppState,
     'features/base/audio-only': IAudioOnlyState,
     'features/base/conference': IConferenceState,
-    'features/base/config': IConfig,
+    'features/base/config': IConfigState,
     'features/base/connection': IConnectionState,
     'features/base/devices': IDevicesState,
     'features/base/dialog': IDialogState,
     'features/base/flags': IFlagsState,
     'features/base/jwt': IJwtState,
-    'features/base/known-domains': Array<string>,
+    'features/base/known-domains': IKnownDomainsState,
     'features/base/lastn': ILastNState,
     'features/base/lib-jitsi-meet': ILibJitsiMeetState,
     'features/base/logging': ILoggingState,
@@ -104,6 +106,7 @@ export interface IState {
     'features/base/user-interaction': IUserInteractionState,
     'features/breakout-rooms': IBreakoutRoomsState,
     'features/calendar-sync': ICalendarSyncState,
+    'features/call-integration': ICallIntegrationState,
     'features/chat': IChatState,
     'features/deep-linking': IDeepLinkingState,
     'features/dropbox': IDropboxState,

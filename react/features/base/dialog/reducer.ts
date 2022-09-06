@@ -1,3 +1,5 @@
+import { ComponentType } from 'react';
+
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { assign } from '../redux/functions';
 
@@ -9,9 +11,9 @@ import {
 } from './actionTypes';
 
 export interface IDialogState {
-    component?: Object;
+    component?: ComponentType;
     componentProps?: Object;
-    sheet?: Object;
+    sheet?: ComponentType;
     sheetProps?: Object;
 }
 
@@ -24,7 +26,7 @@ export interface IDialogState {
  * @returns {State} The next redux state that is the result of reducing the
  * specified action.
  */
-ReducerRegistry.register('features/base/dialog', (state: IDialogState = {}, action) => {
+ReducerRegistry.register<IDialogState>('features/base/dialog', (state = {}, action): IDialogState => {
     switch (action.type) {
     case HIDE_DIALOG: {
         const { component } = action;

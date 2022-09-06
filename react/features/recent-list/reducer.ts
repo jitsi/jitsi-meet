@@ -46,7 +46,7 @@ PersistenceRegistry.register(STORE_NAME);
 /**
  * Reduces redux actions for the purposes of the feature {@code recent-list}.
  */
-ReducerRegistry.register(STORE_NAME, (state: IRecentListState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IRecentListState>(STORE_NAME, (state = DEFAULT_STATE, action): IRecentListState => {
     if (isRecentListEnabled()) {
         switch (action.type) {
         case DELETE_RECENT_LIST_ENTRY:

@@ -17,7 +17,7 @@ export interface ILastNState {
     };
 }
 
-ReducerRegistry.register('features/base/lastn', (state: ILastNState = { }, action) => {
+ReducerRegistry.register<ILastNState>('features/base/lastn', (state = {}, action): ILastNState => {
     switch (action.type) {
     case SET_CONFIG:
         return _setConfig(state, action);

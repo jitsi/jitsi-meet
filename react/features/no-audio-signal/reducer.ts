@@ -10,7 +10,7 @@ export interface INoAudioSignalState {
 /**
  * Reduces the redux actions of the feature no audio signal.
  */
-ReducerRegistry.register('features/no-audio-signal', (state: INoAudioSignalState = {}, action) => {
+ReducerRegistry.register<INoAudioSignalState>('features/no-audio-signal', (state = {}, action): INoAudioSignalState => {
     switch (action.type) {
     case SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID:
         return set(state, 'noAudioSignalNotificationUid', action.uid);

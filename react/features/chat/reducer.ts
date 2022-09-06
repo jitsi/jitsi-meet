@@ -55,7 +55,7 @@ export interface IChatState {
     privateMessageRecipient?: Participant;
 }
 
-ReducerRegistry.register('features/chat', (state: IChatState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, action): IChatState => {
     switch (action.type) {
     case ADD_MESSAGE: {
         const newMessage: IMessage = {

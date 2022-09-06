@@ -13,7 +13,8 @@ const DEFAULT_STATE = {
     subscriptions: []
 };
 
-ReducerRegistry.register('features/mobile/audio-mode', (state: IMobileAudioModeState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IMobileAudioModeState>('features/mobile/audio-mode',
+(state = DEFAULT_STATE, action): IMobileAudioModeState => {
     switch (action.type) {
     case _SET_AUDIOMODE_DEVICES: {
         const { devices } = action;

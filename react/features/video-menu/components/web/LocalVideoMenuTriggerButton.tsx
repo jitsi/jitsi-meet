@@ -4,9 +4,8 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
-// @ts-ignore
+import { IState } from '../../../app/types';
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-// @ts-ignore
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
@@ -24,8 +23,7 @@ import { getLocalVideoTrack } from '../../../base/tracks';
 import Button from '../../../base/ui/components/web/Button';
 // @ts-ignore
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
-// @ts-ignore
-import { THUMBNAIL_TYPE } from '../../../filmstrip';
+import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 // @ts-ignore
@@ -274,7 +272,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: any, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { thumbnailType } = ownProps;
     const localParticipant = getLocalParticipant(state);
     const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];

@@ -163,7 +163,7 @@ export interface IDynamicBrandingState {
 /**
  * Reduces redux actions for the purposes of the feature {@code dynamic-branding}.
  */
-ReducerRegistry.register(STORE_NAME, (state: IDynamicBrandingState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STATE, action): IDynamicBrandingState => {
     switch (action.type) {
     case SET_DYNAMIC_BRANDING_DATA: {
         const {

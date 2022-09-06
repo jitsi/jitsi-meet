@@ -56,7 +56,10 @@ function _updateScreenshareParticipants({ getState, dispatch }) {
         }
 
         if (localScreenShare && !newLocalSceenshareSourceName) {
-            dispatch(participantLeft(localScreenShare.id, conference, undefined, true));
+            dispatch(participantLeft(localScreenShare.id, conference, {
+                isReplaced: undefined,
+                isVirtualScreenshareParticipant: true
+            }));
         }
     }
 
@@ -64,7 +67,10 @@ function _updateScreenshareParticipants({ getState, dispatch }) {
     const addedScreenshareSourceNames = _.difference(currentScreenshareSourceNames, previousScreenshareSourceNames);
 
     if (removedScreenshareSourceNames.length) {
-        removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference, undefined, true)));
+        removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference, {
+            isReplaced: undefined,
+            isVirtualScreenshareParticipant: true
+        })));
     }
 
     if (addedScreenshareSourceNames.length) {

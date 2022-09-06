@@ -6,8 +6,7 @@ import _ from 'lodash';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
 import PersistenceRegistry from '../redux/PersistenceRegistry';
 import ReducerRegistry from '../redux/ReducerRegistry';
-// @ts-ignore
-import { assignIfDefined } from '../util';
+import { assignIfDefined } from '../util/helpers';
 
 import { SETTINGS_UPDATED } from './actionTypes';
 
@@ -84,6 +83,7 @@ export interface ISettingsState {
         [key: string]: boolean;
     }|boolean,
     userSelectedSkipPrejoin?: boolean;
+    visible?: boolean;
 }
 
 const STORE_NAME = 'features/base/settings';
@@ -108,7 +108,7 @@ filterSubtree.micDeviceId = false;
 
 PersistenceRegistry.register(STORE_NAME, filterSubtree, DEFAULT_STATE);
 
-ReducerRegistry.register(STORE_NAME, (state: ISettingsState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<ISettingsState>(STORE_NAME, (state = DEFAULT_STATE, action): ISettingsState => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         return _initSettings(state);

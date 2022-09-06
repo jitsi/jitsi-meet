@@ -40,7 +40,10 @@ export function getAutoPinSetting() {
  * @returns {string}
  */
 export function getCurrentLayout(state: Object) {
-    if (shouldDisplayTileView(state)) {
+    if (navigator.product === 'ReactNative') {
+        // FIXME: what should this return?
+        return undefined;
+    } else if (shouldDisplayTileView(state)) {
         return LAYOUTS.TILE_VIEW;
     } else if (interfaceConfig.VERTICAL_FILMSTRIP) {
         if (isStageFilmstripAvailable(state, 2)) {

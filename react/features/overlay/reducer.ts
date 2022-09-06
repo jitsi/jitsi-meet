@@ -21,7 +21,7 @@ export interface IOverlayState {
  *
  * FIXME: these pieces of state should probably be in a different place.
  */
-ReducerRegistry.register('features/overlay', (state: IOverlayState = { }, action) => {
+ReducerRegistry.register<IOverlayState>('features/overlay', (state = {}, action): IOverlayState => {
     switch (action.type) {
     case CONFIG_WILL_LOAD:
         return _setShowLoadConfigOverlay(state, Boolean(action.room));

@@ -10,12 +10,12 @@ import {
     ACTION_SHORTCUT_RELEASED as RELEASED
     // @ts-ignore
 } from '../../../../analytics';
+import { IState } from '../../../../app/types';
 // @ts-ignore
 import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons/svg/index';
-// @ts-ignore
-import { MEDIA_TYPE } from '../../../../base/media';
+import { MEDIA_TYPE } from '../../../../base/media/constants';
 // @ts-ignore
 import { isLocalTrackMuted } from '../../../../base/tracks';
 // @ts-ignore
@@ -35,7 +35,8 @@ const LONG_PRESS = 'long.press';
  */
 const MicrophoneButton = () : JSX.Element|null => {
     const dispatch = useDispatch();
-    const audioMuted = useSelector((state: any) => isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO));
+    const audioMuted = useSelector((state: IState) => isLocalTrackMuted(state['features/base/tracks'],
+        MEDIA_TYPE.AUDIO));
     const disabled = useSelector(isAudioMuteButtonDisabled);
     const enabledFlag = useSelector(state => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
     const [ longPress, setLongPress ] = useState(false);

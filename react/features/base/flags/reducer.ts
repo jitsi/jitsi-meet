@@ -22,7 +22,7 @@ export interface IFlagsState {
  * @returns {State} The next redux state that is the result of reducing the
  * specified action.
  */
-ReducerRegistry.register('features/base/flags', (state: IFlagsState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IFlagsState>('features/base/flags', (state = DEFAULT_STATE, action): IFlagsState => {
     switch (action.type) {
     case UPDATE_FLAGS: {
         const newState = _.merge({}, state, action.flags);

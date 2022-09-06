@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, ImageStyle, StyleProp, ViewStyle } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 
+import { IState } from '../../../app/types';
 import { connect } from '../../../base/redux/functions';
 
 import styles from './styles';
@@ -64,7 +65,7 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: any) {
+function _mapStateToProps(state: IState) {
     const { backgroundImageUrl } = state['features/dynamic-branding'];
 
     return {

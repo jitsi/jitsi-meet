@@ -109,7 +109,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) 
         const { timeoutID, buffer } = getState()['features/reactions'];
         const { reaction } = action;
 
-        clearTimeout(timeoutID);
+        clearTimeout(timeoutID ?? 0);
         buffer.push(reaction);
         action.buffer = buffer;
         action.timeoutID = setTimeout(() => {

@@ -70,8 +70,8 @@ export interface ITranscribingState {
 /**
  * Reduces the Redux actions of the feature features/transcribing.
  */
-ReducerRegistry.register('features/transcribing',
-    (state: ITranscribingState = _getInitialState(), action): ITranscribingState => {
+ReducerRegistry.register<ITranscribingState>('features/transcribing',
+    (state = _getInitialState(), action): ITranscribingState => {
         switch (action.type) {
         case _TRANSCRIBER_JOINED:
             return {

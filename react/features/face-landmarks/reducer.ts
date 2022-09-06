@@ -46,7 +46,8 @@ export interface IFaceLandmarksState {
     recognitionActive: boolean;
 }
 
-ReducerRegistry.register('features/face-landmarks', (state: IFaceLandmarksState = defaultState, action) => {
+ReducerRegistry.register<IFaceLandmarksState>('features/face-landmarks',
+(state = defaultState, action): IFaceLandmarksState => {
     switch (action.type) {
     case ADD_FACE_EXPRESSION: {
         return {

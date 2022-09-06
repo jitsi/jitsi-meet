@@ -23,9 +23,9 @@ export interface IGifsState {
     menuOpen: boolean;
 }
 
-ReducerRegistry.register(
+ReducerRegistry.register<IGifsState>(
     'features/gifs',
-    (state = initialState, action) => {
+    (state = initialState, action): IGifsState => {
         switch (action.type) {
         case ADD_GIF_FOR_PARTICIPANT: {
             const newList = state.gifList;
@@ -55,7 +55,7 @@ ReducerRegistry.register(
             const gif = state.gifList.get(action.participantId);
 
             newList.set(action.participantId, {
-                gifUrl: gif.gifUrl,
+                gifUrl: gif?.gifUrl ?? '',
                 timeoutID: action.timeoutID
             });
 

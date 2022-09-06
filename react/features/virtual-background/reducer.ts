@@ -25,7 +25,7 @@ export interface IVirtualBackground {
  * @returns {State} The next redux state that is the result of reducing the
  * specified action.
  */
-ReducerRegistry.register(STORE_NAME, (state: IVirtualBackground = {}, action): IVirtualBackground => {
+ReducerRegistry.register<IVirtualBackground>(STORE_NAME, (state = {}, action): IVirtualBackground => {
     const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail } = action;
 
     /**

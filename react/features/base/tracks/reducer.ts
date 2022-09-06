@@ -136,7 +136,7 @@ export type ITracksState = ITrack[];
 /**
  * Listen for actions that mutate (e.g. Add, remove) local and remote tracks.
  */
-ReducerRegistry.register('features/base/tracks', (state: ITracksState = [], action) => {
+ReducerRegistry.register<ITracksState>('features/base/tracks', (state = [], action): ITracksState => {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
     case TRACK_NO_DATA_FROM_SOURCE:
@@ -179,7 +179,7 @@ export interface INoSrcDataState {
 /**
  * Listen for actions that mutate the no-src-data state, like the current notification id.
  */
-ReducerRegistry.register('features/base/no-src-data', (state: INoSrcDataState = {}, action) => {
+ReducerRegistry.register<INoSrcDataState>('features/base/no-src-data', (state = {}, action): INoSrcDataState => {
     switch (action.type) {
     case SET_NO_SRC_DATA_NOTIFICATION_UID:
         return set(state, 'noSrcDataNotificationUid', action.uid);

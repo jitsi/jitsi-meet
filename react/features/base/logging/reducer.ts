@@ -65,9 +65,9 @@ export interface ILoggingState {
     logCollector?: Object;
 }
 
-ReducerRegistry.register(
+ReducerRegistry.register<ILoggingState>(
     'features/base/logging',
-    (state: ILoggingState = DEFAULT_STATE, action) => {
+    (state = DEFAULT_STATE, action): ILoggingState => {
         switch (action.type) {
         case SET_LOGGING_CONFIG:
             return _setLoggingConfig(state, action);
