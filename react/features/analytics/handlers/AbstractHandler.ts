@@ -9,20 +9,36 @@ export interface IEvent {
     type?: string;
 }
 
+interface Options {
+    amplitudeAPPKey?: string;
+    blackListedEvents?: string[];
+    envType?: string;
+    googleAnalyticsTrackingId?: string;
+    group?: string;
+    host?: string;
+    matomoEndpoint?: string;
+    matomoSiteID?: string;
+    product?: string;
+    subproduct?: string;
+    user?: string;
+    version?: string;
+    whiteListedEvents?: string[];
+}
+
 /**
  * Abstract implementation of analytics handler.
  */
 export default class AbstractHandler {
     _enabled: boolean;
-    _whiteListedEvents: Array<string>;
-    _blackListedEvents: Array<string>;
+    _whiteListedEvents: Array<string>|undefined;
+    _blackListedEvents: Array<string>|undefined;
 
     /**
      * Creates new instance.
      *
      * @param {Object} options - Optional parameters.
      */
-    constructor(options: any = {}) {
+    constructor(options: Options = {}) {
         this._enabled = false;
         this._whiteListedEvents = options.whiteListedEvents;
 
