@@ -85,10 +85,9 @@ const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
 const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
 
 let eventEmitter;
+const { ExternalAPI } = NativeModules;
 
 if (isExternalAPIAvailable()) {
-    const { ExternalAPI } = NativeModules;
-
     eventEmitter = new NativeEventEmitter(ExternalAPI);
 }
 
