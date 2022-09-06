@@ -8,7 +8,8 @@ export interface IUserInteractionState {
 }
 
 
-ReducerRegistry.register('features/base/user-interaction', (state: IUserInteractionState = {}, action) => {
+ReducerRegistry.register<IUserInteractionState>('features/base/user-interaction',
+(state = {}, action): IUserInteractionState => {
     switch (action.type) {
     case APP_WILL_MOUNT:
     case APP_WILL_UNMOUNT:

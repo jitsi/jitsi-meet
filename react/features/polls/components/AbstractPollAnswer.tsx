@@ -48,7 +48,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     const conference: any = useSelector((state: IState) => state['features/base/conference'].conference);
 
-    const poll: Poll = useSelector((state: any) => state['features/polls'].polls[pollId]);
+    const poll: Poll = useSelector((state: IState) => state['features/polls'].polls[pollId]);
 
     const { id: localId } = useSelector(getLocalParticipant);
 

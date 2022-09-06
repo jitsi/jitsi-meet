@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { ReactNode } from 'react';
 
-// @ts-ignore
 import { ACTION_TRIGGER } from '../../../participants-pane/constants';
 import { isMobileBrowser } from '../../environment/utils';
 import participantsPaneTheme from '../themes/participantsPaneTheme.json';
@@ -17,7 +16,7 @@ type Props = {
     /**
      * List item container class name.
      */
-    className: string,
+    className?: string,
 
     /**
      * Whether or not the actions should be hidden.
@@ -32,7 +31,7 @@ type Props = {
     /**
      * Id of the container.
      */
-    id: string,
+    id?: string,
 
     /**
      * Indicators to be displayed on the list item.
@@ -47,17 +46,17 @@ type Props = {
     /**
      * Click handler.
      */
-    onClick: (e?: React.MouseEvent) => void,
+    onClick?: (e?: React.MouseEvent) => void,
 
     /**
      * Long press handler.
      */
-    onLongPress: (e?: EventTarget) => void,
+    onLongPress?: (e?: EventTarget) => void,
 
     /**
      * Mouse leave handler.
      */
-    onMouseLeave: (e?: React.MouseEvent) => void,
+    onMouseLeave?: (e?: React.MouseEvent) => void,
 
     /**
      * Data test id.
@@ -204,7 +203,7 @@ const ListItem = ({
     function _onTouchStart(e: React.TouchEvent) {
         const target = e.touches[0].target;
 
-        timeoutHandler = window.setTimeout(() => onLongPress(target), 600);
+        timeoutHandler = window.setTimeout(() => onLongPress?.(target), 600);
     }
 
     /**

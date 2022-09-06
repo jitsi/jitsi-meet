@@ -55,8 +55,8 @@ export interface IVideoQualityPersistedState {
 // In order to workaround this issue we need additional state for the persisted properties.
 PersistenceRegistry.register('features/video-quality-persistent-storage');
 
-ReducerRegistry.register('features/video-quality-persistent-storage',
-(state: IVideoQualityPersistedState = {}, action): IVideoQualityPersistedState => {
+ReducerRegistry.register<IVideoQualityPersistedState>('features/video-quality-persistent-storage',
+(state = {}, action): IVideoQualityPersistedState => {
     switch (action.type) {
     case SET_PREFERRED_VIDEO_QUALITY: {
         const { preferredVideoQuality } = action;
@@ -71,8 +71,8 @@ ReducerRegistry.register('features/video-quality-persistent-storage',
     return state;
 });
 
-ReducerRegistry.register('features/video-quality',
-(state: IVideoQualityState = DEFAULT_STATE, action): IVideoQualityState => {
+ReducerRegistry.register<IVideoQualityState>('features/video-quality',
+(state = DEFAULT_STATE, action): IVideoQualityState => {
     switch (action.type) {
     case SET_CONFIG:
         return _setConfig(state, action);

@@ -1,6 +1,5 @@
 
-// eslint-disable-next-line no-var
-declare var navigator: any;
+declare let navigator: any;
 
 /**
  * Custom language detection, just returns the config property if any.

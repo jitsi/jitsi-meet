@@ -52,7 +52,7 @@ class ReducerRegistry {
      * @param {Reducer} reducer - A Redux reducer.
      * @returns {void}
      */
-    register(name: string, reducer: Reducer<any, any>) {
+    register<S>(name: string, reducer: Reducer<S, any>) {
         this._elements[name] = reducer;
     }
 }

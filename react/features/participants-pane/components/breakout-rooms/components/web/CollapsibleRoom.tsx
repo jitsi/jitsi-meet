@@ -6,19 +6,16 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { IState } from '../../../../../app/types';
-// @ts-ignore
-import { ListItem } from '../../../../../base/components';
+import ListItem from '../../../../../base/components/participants-pane-list/ListItem';
 import Icon from '../../../../../base/icons/components/Icon';
-import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg/index';
+import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 // @ts-ignore
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
-// @ts-ignore
 import { ACTION_TRIGGER } from '../../../../constants';
 // @ts-ignore
 import { participantMatchesSearch } from '../../../../functions';
 import ParticipantActionEllipsis from '../../../web/ParticipantActionEllipsis';
-// @ts-ignore
 import ParticipantItem from '../../../web/ParticipantItem';
 
 type Props = {
@@ -41,7 +38,7 @@ type Props = {
     /**
      * Callback for when the mouse leaves this component.
      */
-    onLeave?: Function,
+    onLeave?: (e?: React.MouseEvent) => void,
 
     /**
      * Callback to raise menu. Used to raise menu on mobile long press.
@@ -135,7 +132,7 @@ export const CollapsibleRoom = ({
         onRaiseMenu(target);
     }, [ onRaiseMenu ]);
     const { defaultRemoteDisplayName } = useSelector((state: IState) => state['features/base/config']);
-    const overflowDrawer = useSelector(showOverflowDrawer);
+    const overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const moderator = useSelector(isLocalParticipantModerator);
 
     const arrow = (<div className = { styles.arrowContainer }>

@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 
 import Icon from '../icons/components/Icon';
-import { IconCheck, IconCopy } from '../icons/svg/index';
+import { IconCheck, IconCopy } from '../icons/svg';
 import { withPixelLineHeight } from '../styles/functions.web';
 import { Theme } from '../ui/types';
 import { copyText } from '../util/helpers';

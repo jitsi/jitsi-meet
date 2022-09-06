@@ -2,12 +2,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { IState } from '../../app/types';
 // @ts-ignore
 import { Dialog } from '../../base/dialog';
 // @ts-ignore
 import { LANGUAGES, TRANSLATION_LANGUAGES_HEAD, TRANSLATION_LANGUAGES_EXCLUDE } from '../../base/i18n';
-// @ts-ignore
-import { connect } from '../../base/redux';
+import { connect } from '../../base/redux/functions';
 // @ts-ignore
 import { updateTranslationLanguage, setRequestingSubtitles, toggleLangugeSelectorDialog } from '../actions';
 
@@ -80,7 +80,7 @@ const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => 
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state: any) {
+function mapStateToProps(state: IState) {
     const {
         conference
     } = state['features/base/conference'];
@@ -95,6 +95,4 @@ function mapStateToProps(state: any) {
     };
 }
 
-const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(LanguageSelectorDialog);
+export default connect(mapStateToProps)(LanguageSelectorDialog);

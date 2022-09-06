@@ -286,7 +286,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      */
     _scrollMessageContainerToBottom(withAnimation) {
         if (this._messageContainerRef.current) {
-            this._messageContainerRef.current.scrollToBottom(withAnimation);
+            this._messageContainerRef.current.scrollToElement(withAnimation);
         }
     }
 }

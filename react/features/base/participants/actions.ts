@@ -1,7 +1,8 @@
 import { Dispatch } from 'redux';
 
 // @ts-ignore
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../notifications';
+import { showNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { set } from '../redux/functions';
 
 import {
@@ -37,7 +38,7 @@ import {
     getParticipantById
 } from './functions';
 import logger from './logger';
-import { Participant } from './reducer';
+import { Participant } from './types';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -381,8 +382,13 @@ export function hiddenParticipantLeft(id: string) {
  * with the participant identified by the specified {@code id}. Only the local
  * participant is allowed to not specify an associated {@code JitsiConference}
  * instance.
- * @param {boolean} isReplaced - Whether the participant is to be replaced in the meeting.
- * @param {boolean} isVirtualScreenshareParticipant - Whether the participant is a virtual screen share participant.
+ * @param {Object} participantLeftProps - Other participant properties.
+ * @typedef {Object} participantLeftProps
+ * @param {boolean} participantLeftProps.isReplaced - Whether the participant is to be replaced in the meeting.
+ * @param {boolean} participantLeftProps.isVirtualScreenshareParticipant - Whether the participant is a
+ * virtual screen share participant.
+ * @param {boolean} participantLeftProps.isFakeParticipant - Whether the participant is a fake participant.
+ *
  * @returns {{
  *     type: PARTICIPANT_LEFT,
  *     participant: {
@@ -391,15 +397,15 @@ export function hiddenParticipantLeft(id: string) {
  *     }
  * }}
  */
-export function participantLeft(id: string, conference: any,
-        isReplaced?: boolean, isVirtualScreenshareParticipant?: boolean) {
+export function participantLeft(id: string, conference: any, participantLeftProps: any = {}) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
             conference,
             id,
-            isReplaced,
-            isVirtualScreenshareParticipant
+            isReplaced: participantLeftProps.isReplaced,
+            isVirtualScreenshareParticipant: participantLeftProps.isVirtualScreenshareParticipant,
+            isFakeParticipant: participantLeftProps.isFakeParticipant
         }
     };
 }

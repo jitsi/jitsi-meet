@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 // @ts-ignore
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
-import { IconInviteMore } from '../../../base/icons/svg/index';
+import { IconInviteMore } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 // @ts-ignore

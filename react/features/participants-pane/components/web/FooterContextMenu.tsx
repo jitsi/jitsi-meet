@@ -16,8 +16,8 @@ import {
     isSupported as isAvModerationSupported
     // @ts-ignore
 } from '../../../av-moderation/functions';
-// @ts-ignore
-import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
+import ContextMenu from '../../../base/components/context-menu/ContextMenu';
+import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 // @ts-ignore
 import { openDialog } from '../../../base/dialog';
 import {
@@ -80,12 +80,12 @@ type Props = {
     /**
      * Drawer close callback.
      */
-    onDrawerClose: Function,
+    onDrawerClose: (e?: React.MouseEvent) => void,
 
     /**
      * Callback for the mouse leaving this item.
      */
-    onMouseLeave?: Function
+    onMouseLeave?: (e?: React.MouseEvent) => void
 };
 
 export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {

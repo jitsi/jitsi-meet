@@ -10,7 +10,8 @@ const DEFAULT_STATE = {
     screenShares: []
 };
 
-ReducerRegistry.register('features/mobile/external-api', (state: IMobileExternalApiState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IMobileExternalApiState>('features/mobile/external-api',
+(state = DEFAULT_STATE, action): IMobileExternalApiState => {
     switch (action.type) {
     case SCREEN_SHARE_PARTICIPANTS_UPDATED: {
         return {

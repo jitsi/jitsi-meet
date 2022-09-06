@@ -25,7 +25,7 @@ export interface IPollsState {
     };
 }
 
-ReducerRegistry.register('features/polls', (state: IPollsState = INITIAL_STATE, action) => {
+ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, action): IPollsState => {
     switch (action.type) {
 
     case CHANGE_VOTE: {

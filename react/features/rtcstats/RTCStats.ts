@@ -1,12 +1,21 @@
+/* eslint-disable import/order */
+// @ts-ignore
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
+
+// @ts-ignore
 import traceInit from '@jitsi/rtcstats/trace-ws';
 
-import {
-    createRTCStatsTraceCloseEvent,
-    sendAnalytics
-} from '../analytics';
+// @ts-ignore
+import { createRTCStatsTraceCloseEvent, sendAnalytics } from '../analytics';
 
 import logger from './logger';
+import {
+    DominantSpeakerData,
+    E2ERTTData,
+    FaceLandmarksData,
+    InitOptions,
+    VideoTypeData
+} from './types';
 
 /**
  * Filter out RTCPeerConnection that are created by callstats.io.
@@ -14,10 +23,10 @@ import logger from './logger';
  * @param {*} config - Config object sent to the PC c'tor.
  * @returns {boolean}
  */
-function connectionFilter(config) {
+function connectionFilter(config: any) {
     if (config && config.iceServers[0] && config.iceServers[0].urls) {
         for (const iceUrl of config.iceServers[0].urls) {
-            if (iceUrl.indexOf('taas.callstats.io') >= 0) {
+            if (iceUrl.indexOf('callstats.io') >= 0) {
                 return true;
             }
         }
@@ -29,6 +38,9 @@ function connectionFilter(config) {
  * initialized once.
  */
 class RTCStats {
+    trace: any;
+    initialized = false;
+
     /**
      * Initialize the rtcstats components. First off we initialize the trace, which is a wrapped websocket
      * that does the actual communication with the server. Secondly, the rtcstats component is initialized,
@@ -38,18 +50,20 @@ class RTCStats {
      *
      * @param {Object} options -.
      * @param {string} options.endpoint - The Amplitude app key required.
-     * @param {string} options.useLegacy - Switch to legacy chrome webrtc statistics. Parameter will only have
+     * @param {string} options.meetingFqn - The meeting fqn.
+     * @param {boolean} options.useLegacy - Switch to legacy chrome webrtc statistics. Parameter will only have
      * an effect on chrome based applications.
      * @param {number} options.pollInterval - The getstats poll interval in ms.
      * @param {boolean} options.sendSdp - Determines if the client sends SDP to the rtcstats server.
      * @returns {void}
      */
-    init(options) {
+    init(options: InitOptions) {
 
-        const { endpoint, useLegacy, pollInterval, sendSdp } = options;
+        const { endpoint, meetingFqn, useLegacy, pollInterval, sendSdp } = options;
 
         const traceOptions = {
             endpoint,
+            meetingFqn,
             onCloseCallback: this.handleTraceWSClose.bind(this),
             useLegacy
         };
@@ -80,10 +94,10 @@ class RTCStats {
      * It can be generally used to send additional metadata that might be relevant such as amplitude user data
      * or deployment specific information.
      *
-     * @param {Object} identityData - Metadata object to send as identity.
+     * @param {any} identityData - Metadata object to send as identity.
      * @returns {void}
      */
-    sendIdentityData(identityData) {
+    sendIdentityData(identityData: any) {
         this.trace && this.trace.identity('identity', null, identityData);
     }
 
@@ -93,7 +107,7 @@ class RTCStats {
      * @param {Array<string|any>} logEntries - The log entries to send to the rtcstats server.
      * @returns {void}
      */
-    sendLogs(logEntries) {
+    sendLogs(logEntries: Array<string|any>) {
         this.trace && this.trace.statsEntry('logs', null, logEntries);
     }
 
@@ -103,7 +117,7 @@ class RTCStats {
      * @param {Object} dominantSpeakerData - Dominant speaker data to be saved in the rtcstats dump.
      * @returns {void}
      */
-    sendDominantSpeakerData(dominantSpeakerData) {
+    sendDominantSpeakerData(dominantSpeakerData: DominantSpeakerData) {
         this.trace && this.trace.statsEntry('dominantSpeaker', null, dominantSpeakerData);
     }
 
@@ -113,7 +127,7 @@ class RTCStats {
      * @param {Object} e2eRttData - The object that holds the e2e data.
      * @returns {void}
      */
-    sendE2eRttData(e2eRttData) {
+    sendE2eRttData(e2eRttData: E2ERTTData) {
         this.trace && this.trace.statsEntry('e2eRtt', null, e2eRttData);
     }
 
@@ -124,7 +138,7 @@ class RTCStats {
      * @param {Object} timestamp - The object which contains the timestamp.
      * @returns {void}
      */
-    sendConferenceTimestamp(timestamp) {
+    sendConferenceTimestamp(timestamp: number) {
         this.trace && this.trace.statsEntry('conferenceStartTimestamp', null, timestamp);
     }
 
@@ -134,18 +148,18 @@ class RTCStats {
      * @param {Object} videoTypeData - The object that holds the videoType data.
      * @returns {void}
      */
-    sendVideoTypeData(videoTypeData) {
+    sendVideoTypeData(videoTypeData: VideoTypeData) {
         this.trace && this.trace.statsEntry('setVideoType', null, videoTypeData);
     }
 
     /**
-     * Send face expression data, the data will be processed by rtcstats-server and saved in the dump file.
+     * Send face landmarks data, the data will be processed by rtcstats-server and saved in the dump file.
      *
-     * @param {Object} faceExpressionData - Face expression data to be saved in the rtcstats dump.
+     * @param {Object} faceLandmarksData - Face landmarks data to be saved in the rtcstats dump.
      * @returns {void}
      */
-    sendFaceExpressionData(faceExpressionData) {
-        this.trace && this.trace.statsEntry('faceLandmarks', null, faceExpressionData);
+    sendFaceLandmarksData(faceLandmarksData: FaceLandmarksData) {
+        this.trace && this.trace.statsEntry('faceLandmarks', null, faceLandmarksData);
     }
 
     /**
@@ -153,10 +167,11 @@ class RTCStats {
      * connect successfully initializes, however calls to GUM are recorded in an internal buffer even if not
      * connected and sent once it is established.
      *
+     * @param {boolean} isBreakoutRoom - Flag indicating if the user is in a breakout room.
      * @returns {void}
      */
-    connect() {
-        this.trace && this.trace.connect();
+    connect(isBreakoutRoom: boolean) {
+        this.trace && this.trace.connect(isBreakoutRoom);
     }
 
     /**
@@ -180,7 +195,7 @@ class RTCStats {
      * @param {Object} closeEvent - Event sent by ws onclose.
      * @returns {void}
      */
-    handleTraceWSClose(closeEvent) {
+    handleTraceWSClose(closeEvent: any) {
         logger.info('RTCStats trace ws closed', closeEvent);
 
         sendAnalytics(createRTCStatsTraceCloseEvent(closeEvent));

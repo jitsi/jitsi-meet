@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import Icon from '../../../base/icons/components/Icon';
-import { IconSearch } from '../../../base/icons/svg/index';
+import { IconSearch } from '../../../base/icons/svg';
 // @ts-ignore
 import { getFieldValue } from '../../../base/react';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';

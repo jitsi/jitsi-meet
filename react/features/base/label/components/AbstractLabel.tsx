@@ -5,12 +5,12 @@ export type Props = {
     /**
      * An SVG icon to be rendered as the content of the label.
      */
-    icon: Function,
+    icon?: Function,
 
     /**
      * String or component that will be rendered as the label itself.
      */
-    text: string
+    text?: string
 };
 
 /**

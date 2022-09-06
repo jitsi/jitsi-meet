@@ -21,7 +21,9 @@ module.exports = {
                 'no-shadow': 'off',
                 '@typescript-eslint/no-shadow': [ 'error' ],
                 'typescript-sort-keys/interface': 'error',
-                'typescript-sort-keys/string-enum': 'error'
+                'typescript-sort-keys/string-enum': 'error',
+                'object-curly-spacing': 'off',
+                '@typescript-eslint/object-curly-spacing': [ 'error', 'always' ]
             },
             'plugins': [ '@typescript-eslint', 'typescript-sort-keys' ],
             'extends': [

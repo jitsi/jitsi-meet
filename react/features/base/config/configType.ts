@@ -100,6 +100,8 @@ export interface IConfig {
         rtcstatsEnabled?: boolean;
         rtcstatsEndpoint?: string;
         rtcstatsPollInterval?: number;
+        rtcstatsSendSdp?: boolean;
+        rtcstatsUseLegacy?: boolean;
         scriptURLs?: Array<string>;
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
@@ -142,7 +144,7 @@ export interface IConfig {
     callStatsSecret?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
-        chromeExtensionsInfo?: Array<{id: string; path: string}>;
+        chromeExtensionsInfo?: Array<{ id: string; path: string }>;
         edgeUrl?: string;
         url?: string;
     };
@@ -311,6 +313,7 @@ export interface IConfig {
         disabled?: boolean;
     };
     gravatarBaseURL?: string;
+    helpCentreURL?: string;
     hiddenPremeetingButtons?: Array<'microphone' | 'camera' | 'select-background' | 'invite' | 'settings'>;
     hideAddRoomButton?: boolean;
     hideConferenceSubject?: boolean;
@@ -328,6 +331,8 @@ export interface IConfig {
         focus?: string;
         muc: string;
     };
+    iAmRecorder?: boolean;
+    iAmSipGateway?: boolean;
     inviteAppName?: string|null;
     lastNLimits?: {
         [key: number]: number;
@@ -342,6 +347,7 @@ export interface IConfig {
     liveStreamingEnabled?: boolean;
     localRecording?: {
         disable?: boolean;
+        disableSelfRecording?: boolean;
         notifyAllParticipants?: boolean;
     };
     localSubject?: string;
@@ -367,7 +373,7 @@ export interface IConfig {
         iceTransportPolicy?: string;
         preferH264?: boolean;
         preferredCodec?: string;
-        stunServers?: Array<{urls: string}>;
+        stunServers?: Array<{ urls: string }>;
     };
     participantsPane?: {
         hideModeratorSettingsTab?: boolean;
@@ -468,6 +474,7 @@ export interface IConfig {
         preferredCodec?: string;
         resizeDesktopForPresenter?: boolean;
     };
+    webhookProxyUrl?: string;
     webrtcIceTcpDisable?: boolean;
     webrtcIceUdpDisable?: boolean;
     websocket?: string;

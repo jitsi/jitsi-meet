@@ -1,15 +1,10 @@
-// @ts-ignore
 import { makeStyles } from '@material-ui/styles';
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-ignore
-// eslint-disable-next-line import/order
-import { translate } from '../../base/i18n';
-
-// @ts-ignore
-import { Icon } from '../../base/icons/components';
-import { IconCheck } from '../../base/icons/svg/index';
+import { translate } from '../../base/i18n/functions';
+import Icon from '../../base/icons/components/Icon';
+import { IconCheck } from '../../base/icons/svg';
 import { Theme } from '../../base/ui/types';
 
 interface ILanguageListItemProps extends WithTranslation {

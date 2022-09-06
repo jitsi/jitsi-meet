@@ -7,6 +7,7 @@ import type { Dispatch } from 'redux';
 
 // @ts-ignore
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
+import { IState } from '../../app/types';
 // @ts-ignore
 import { setAudioOnly } from '../../base/audio-only';
 import { translate } from '../../base/i18n/functions';
@@ -16,7 +17,6 @@ import { connect } from '../../base/redux/functions';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 // @ts-ignore
 import { setPreferredVideoQuality } from '../actions';
-// @ts-ignore
 import { DEFAULT_LAST_N, VIDEO_QUALITY_LEVELS } from '../constants';
 // @ts-ignore
 import logger from '../logger';
@@ -360,7 +360,7 @@ class VideoQualitySlider extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: any) {
+function _mapStateToProps(state: IState) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const { p2p } = state['features/base/conference'];
     const { preferredVideoQuality } = state['features/video-quality'];

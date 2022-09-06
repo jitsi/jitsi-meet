@@ -83,9 +83,9 @@ export interface IToolboxState {
     visible: boolean;
 }
 
-ReducerRegistry.register(
+ReducerRegistry.register<IToolboxState>(
     'features/toolbox',
-    (state: IToolboxState = INITIAL_STATE, action): IToolboxState => {
+    (state = INITIAL_STATE, action): IToolboxState => {
         switch (action.type) {
         case CLEAR_TOOLBOX_TIMEOUT:
             return {

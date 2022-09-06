@@ -1,20 +1,23 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
+import { IState } from '../app/types';
 import {
     CONFERENCE_JOINED,
     CONFERENCE_WILL_LEAVE,
     SET_ROOM
-} from '../base/conference';
-import { SET_CONFIG } from '../base/config';
-import { SET_NETWORK_INFO } from '../base/net-info';
-import { MiddlewareRegistry } from '../base/redux';
+} from '../base/conference/actionTypes';
+import { SET_CONFIG } from '../base/config/actionTypes';
+import { SET_NETWORK_INFO } from '../base/net-info/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import {
-    getLocalAudioTrack,
-    getLocalVideoTrack,
     TRACK_ADDED,
     TRACK_REMOVED,
     TRACK_UPDATED
-} from '../base/tracks';
+} from '../base/tracks/actionTypes';
+import {
+    getLocalAudioTrack,
+    getLocalVideoTrack
+    // @ts-ignore
+} from '../base/tracks/functions';
 
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
 import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
@@ -26,7 +29,7 @@ import { createHandlers, initAnalytics, resetAnalytics, sendAnalytics } from './
  * @param {Object} state - The redux state.
  * @returns {Object} - The local tracks duration.
  */
-function calculateLocalTrackDuration(state) {
+function calculateLocalTrackDuration(state: IState) {
     const now = Date.now();
     const { localTracksDuration } = state['features/analytics'];
     const { conference } = state['features/base/conference'];
@@ -60,8 +63,8 @@ function calculateLocalTrackDuration(state) {
     } else {
         const { videoType } = videoTrack;
 
-        if (video[videoType].startedTime === -1) {
-            newDuration.video[videoType].startedTime = now;
+        if (video[videoType as keyof typeof video].startedTime === -1) {
+            newDuration.video[videoType as keyof typeof video].startedTime = now;
         }
     }
 

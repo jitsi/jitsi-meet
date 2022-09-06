@@ -12,8 +12,6 @@ import {
 
 import Icon from '../../../icons/components/Icon';
 import { IconCloseCircle } from '../../../icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import BaseTheme from '../../../ui/components/BaseTheme.native';
 import { InputProps } from '../types';
 

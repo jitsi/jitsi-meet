@@ -24,9 +24,9 @@ export interface IFeedbackState {
 /**
  * Reduces the Redux actions of the feature features/feedback.
  */
-ReducerRegistry.register(
+ReducerRegistry.register<IFeedbackState>(
     'features/feedback',
-    (state: IFeedbackState = DEFAULT_STATE, action) => {
+    (state = DEFAULT_STATE, action): IFeedbackState => {
         switch (action.type) {
         case CANCEL_FEEDBACK: {
             return {

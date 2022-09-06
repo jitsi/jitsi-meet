@@ -4,21 +4,19 @@ import React, { useCallback, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-// @ts-ignore
-import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
-import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons/svg/index';
+import ContextMenu from '../../../base/components/context-menu/ContextMenu';
+import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
+import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons/svg';
 import { hasRaisedHand } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 // @ts-ignore
 import { showLobbyChatButton } from '../../../lobby/functions';
-// @ts-ignore
 import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
 // @ts-ignore
 import { useLobbyActions } from '../../hooks';
 
-// @ts-ignore
 import ParticipantItem from './ParticipantItem';
 
 type Props = {

@@ -17,7 +17,7 @@ import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config';
 import { Dialog, hideDialog, openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
-import { IconCloseSmall, IconShareDesktop } from '../../base/icons/svg/index';
+import { IconCloseSmall, IconShareDesktop } from '../../base/icons/svg';
 import { browser, JitsiTrackErrors } from '../../base/lib-jitsi-meet';
 // @ts-ignore
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
@@ -30,7 +30,8 @@ import { Tooltip } from '../../base/tooltip';
 // @ts-ignore
 import { getLocalVideoTrack } from '../../base/tracks';
 // @ts-ignore
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../notifications';
+import { showErrorNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 // @ts-ignore
 import { toggleBackgroundEffect, virtualBackgroundTrackChanged } from '../actions';
 import { IMAGES, BACKGROUNDS_LIMIT, VIRTUAL_BACKGROUND_TYPE, type Image } from '../constants';
@@ -107,7 +108,7 @@ const onError = (event: any) => {
  * @private
  * @returns {{Props}}
  */
-function _mapStateToProps(state: any): Object {
+function _mapStateToProps(state: IState): Object {
     const { localFlipX } = state['features/base/settings'];
     const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
     const hasBrandingImages = Boolean(dynamicBrandingImages.length);

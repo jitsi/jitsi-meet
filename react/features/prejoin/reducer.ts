@@ -65,8 +65,8 @@ PersistenceRegistry.register('features/prejoin', {
 /**
  * Listen for actions that mutate the prejoin state.
  */
-ReducerRegistry.register(
-    'features/prejoin', (state: IPrejoinState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IPrejoinState>(
+    'features/prejoin', (state = DEFAULT_STATE, action): IPrejoinState => {
         switch (action.type) {
         case PREJOIN_JOINING_IN_PROGRESS:
             return {
@@ -159,7 +159,7 @@ ReducerRegistry.register(
  * @returns {Object}
  */
 function getStatusFromErrors(errors: {
-    audioAndVideoError?: {message: string},
+    audioAndVideoError?: { message: string },
     audioOnlyError?: { message: string },
     videoOnlyError?: Object }
 ) {

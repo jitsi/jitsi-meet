@@ -19,6 +19,7 @@ import {
 
 // @ts-ignore
 import { getDefaultURL } from '../../../app/functions';
+import { IState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n/functions';
@@ -710,7 +711,7 @@ class SettingsView extends Component<Props, State> {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state: any) {
+function _mapStateToProps(state: IState) {
     const localParticipant = getLocalParticipant(state);
 
     return {

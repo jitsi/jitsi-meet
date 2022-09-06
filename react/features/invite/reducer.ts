@@ -37,7 +37,7 @@ export interface IInviteState {
     sipUri?: string;
 }
 
-ReducerRegistry.register('features/invite', (state: IInviteState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IInviteState>('features/invite', (state = DEFAULT_STATE, action): IInviteState => {
     switch (action.type) {
     case ADD_PENDING_INVITE_REQUEST:
         return {

@@ -13,8 +13,9 @@ import {
     sendAnalytics
     // @ts-ignore
 } from '../../../analytics';
-// @ts-ignore
-import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
+import { IState } from '../../../app/types';
+import ContextMenu from '../../../base/components/context-menu/ContextMenu';
+import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 // @ts-ignore
 import { getMultipleVideoSendingSupportFeatureFlag, getToolbarButtons } from '../../../base/config';
 // @ts-ignore
@@ -233,7 +234,7 @@ interface Props extends WithTranslation {
      */
     _hasSalesforce: boolean,
 
-     /**
+    /**
      * Whether or not the app is running in an ios mobile browser.
      */
     _isIosMobile: boolean,
@@ -570,9 +571,9 @@ class Toolbox extends Component<Props> {
      * @param {KeyboardEvent} e - Esc key click to close the popup.
      * @returns {void}
      */
-    _onEscKey(e: React.KeyboardEvent) {
-        if (e.key === 'Escape') {
-            e.stopPropagation();
+    _onEscKey(e?: React.KeyboardEvent) {
+        if (e?.key === 'Escape') {
+            e?.stopPropagation();
             this._closeHangupMenuIfOpen();
             this._closeOverflowMenuIfOpen();
         }
@@ -1481,7 +1482,7 @@ class Toolbox extends Component<Props> {
  * @private
  * @returns {{}}
  */
-function _mapStateToProps(state: any, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
     const {
