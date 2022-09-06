@@ -1,9 +1,9 @@
 // @flow
 
-import { IconSelfie} from '../../icons';
+import { IconSelfie } from '../../icons';
 
-import AbstractButton from './AbstractButton';
 import type { Props } from './AbstractButton';
+import AbstractButton from './AbstractButton';
 
 /**
  * An abstract implementation of a button for  downloading a selfie.
@@ -22,6 +22,7 @@ export default class AbstractSelfieButton<P : Props, S: *>
     _handleClick() {
         this._downloadSelfie();
         this._downloadAudioRecorder();
+        this._downloadVideoRecorder();
     }
 
     /**
@@ -41,6 +42,16 @@ export default class AbstractSelfieButton<P : Props, S: *>
      * @returns {void}
      */
     _downloadAudioRecorder() {
+        // To be implemented by subclass.
+    }
+
+    /**
+     * Helper function to perform the actual download action.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _downloadVideoRecorder() {
         // To be implemented by subclass.
     }
 }

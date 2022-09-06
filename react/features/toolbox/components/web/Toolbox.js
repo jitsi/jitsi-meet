@@ -114,6 +114,7 @@ import { ConnectButtons, SideButtons } from '../../../conference';
 import DownloadSelfie from './DownloadSelfie';
 import jwt_decode from 'jwt-decode';
 import DownloadAudioRecorder from './DownloadAudioRecorder';
+import DownloadVideoRecorder from './DownloadVideoRecorder';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -1436,12 +1437,19 @@ class Toolbox extends Component<Props> {
                                     key="selfie-button"
                                     notifyMode={this._getButtonNotifyMode('selfie')}
                                     visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/> :
-                                <DownloadSelfie
-                                    buttonKey="selfie"
-                                    customClass="selfie-button"
-                                    key="selfie-button"
-                                    notifyMode={this._getButtonNotifyMode('selfie')}
-                                    visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/>
+                                this.decodeJwt.selfie === 'V' ?
+                                    <DownloadVideoRecorder
+                                        buttonKey="selfie"
+                                        customClass="selfie-button"
+                                        key="selfie-button"
+                                        notifyMode={this._getButtonNotifyMode('selfie')}
+                                        visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/> :
+                                    <DownloadSelfie
+                                        buttonKey="selfie"
+                                        customClass="selfie-button"
+                                        key="selfie-button"
+                                        notifyMode={this._getButtonNotifyMode('selfie')}
+                                        visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/>
                         }
                         <HangupButton
                             buttonKey="hangup"

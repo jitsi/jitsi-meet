@@ -1,9 +1,16 @@
 // @flow
 
-import {translate} from '../../../base/i18n';
-import {connect} from '../../../base/redux';
-import type {AbstractButtonProps} from '../../../base/toolbox/components';
-import {AbstractSelfieButton} from "../../../base/toolbox/components";
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
+import type { AbstractButtonProps } from '../../../base/toolbox/components';
+import { AbstractSelfieButton } from '../../../base/toolbox/components';
+import { toggleRecordTimer } from '../../actions.any';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    NOTIFICATION_TYPE,
+    SALESFORCE_LINK_NOTIFICATION_ID,
+    showNotification
+} from '../../../notifications';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -19,6 +26,8 @@ type Props = AbstractButtonProps & {
 /**
  * Implements an {@link AbstractSelfieButton} to open the user documentation in a new window.
  */
+
+    ///This class is used download Audio Recorder
 class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
     _audioRecorder: Function;
     accessibilityLabel = 'toolbar.accessibilityLabel.selfie';
@@ -38,14 +47,24 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
 
 
         this._audioRecorder = () => {
-            if (!boolRecording) {
-                boolRecording = true;
-                // get Stream from Tracks
-                let audioStreams = getAudioStreamFromTracks();
-                startAudioRecording(audioStreams);
-            } else { // Stop Recording
-                boolRecording = false;
-                saveAudioRecording()
+            let audioStreams = getAudioStreamFromTracks();
+            if (audioStreams.length > 1) {
+                if (!boolRecording) {
+                    this.props.dispatch(toggleRecordTimer());
+                    boolRecording = true;
+                    // get Stream from Tracks
+                    startAudioRecording(audioStreams);
+                } else { // Stop Recording
+                    boolRecording = false;
+                    this.props.dispatch(toggleRecordTimer());
+                    saveAudioRecording();
+                }
+            } else {
+                props.dispatch(showNotification({
+                    titleKey: 'There is no other participants to record audio',
+                    uid: SALESFORCE_LINK_NOTIFICATION_ID,
+                    appearance: NOTIFICATION_TYPE.NORMAL
+                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
             }
         };
 
@@ -54,23 +73,24 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
             let audioDestinationNode = new MediaStreamAudioDestinationNode(audCtx);
 
             function createAudioNodes(stream) {
-                audCtx.createMediaStreamSource(stream).connect(audioDestinationNode)
+                audCtx.createMediaStreamSource(stream)
+                    .connect(audioDestinationNode);
             }
 
-            audioStreams.forEach(createAudioNodes)
+            audioStreams.forEach(createAudioNodes);
 
             let audioChunks = [];
 
             mediaRecorder = new MediaRecorder(audioDestinationNode.stream);
 
-            mediaRecorder.addEventListener("dataavailable", event => {
+            mediaRecorder.addEventListener('dataavailable', event => {
                 console.log('Data Available ', event);
                 audioChunks.push(event.data);
             });
 
-            mediaRecorder.addEventListener("stop", () => {
+            mediaRecorder.addEventListener('stop', () => {
                 console.log('Playing stooped ', audioChunks);
-                const audioBlob = new Blob(audioChunks, {'type': 'audio/webm; codecs=opus'});
+                const audioBlob = new Blob(audioChunks, { 'type': 'audio/webm; codecs=opus' });
                 const audioUrl = URL.createObjectURL(audioBlob);
                 console.log('AudioUrl, ', audioUrl);
 
@@ -83,7 +103,7 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
                 a.onclick = () => {
                     console.log(`${a.download} save option shown`);
                     setTimeout(() => {
-                        console.log("SetTimeOut Called");
+                        console.log('SetTimeOut Called');
                         document.body.removeChild(a);
                         window.URL.revokeObjectURL(audioUrl);
                     }, 2000);
@@ -98,10 +118,11 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
                 const now = new Date();
                 const timestamp = now.toISOString();
                 const room = new RegExp(/(^.+)\s\|/).exec(document.title);
-                if (room && room[1] !== "")
+                if (room && room[1] !== '') {
                     return `${room[1]}_${timestamp}`;
-                else
+                } else {
                     return `polytokRecording_${timestamp}`;
+                }
             }
 
             mediaRecorder.start();
@@ -112,12 +133,13 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
         }
 
         function filterAudioStreamsByMediaType(arr, value) {
-            return arr.filter(function (ele) {
-                console.log(`Filtering ${value} this element is ${ele.jitsiTrack.type} `)
+            return arr.filter(function(ele) {
+                console.log(`Filtering ${value} this element is ${ele.jitsiTrack.type} `);
                 return ele.jitsiTrack.type === value;
-            }).map(function (ele) {
-                return ele.jitsiTrack.stream;
-            });
+            })
+                .map(function(ele) {
+                    return ele.jitsiTrack.stream;
+                });
         }
 
         function getAudioStreamFromTracks() {
@@ -142,7 +164,7 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
      * @returns {void}
      */
     _downloadAudioRecorder() {
-        this._audioRecorder()
+        this._audioRecorder();
 
     }
 }
