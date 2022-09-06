@@ -55,8 +55,7 @@ MiddlewareRegistry.register(store => next => action => {
                     const videoParticipant = getParticipantById(state, value);
 
                     dispatch(participantLeft(value, conference, {
-                        isFakeParticipant: videoParticipant?.isFakeParticipant,
-                        isVirtualScreenshareParticipant: videoParticipant?.isFakeParticipant
+                        isFakeParticipant: videoParticipant?.isFakeParticipant
                     }));
 
                     if (localParticipantId !== from) {
