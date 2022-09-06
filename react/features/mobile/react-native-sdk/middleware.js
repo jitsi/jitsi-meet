@@ -12,7 +12,7 @@ if (!isExternalAPIAvailable()) {
     MiddlewareRegistry.register(store => next => action => {
         const result = next(action);
         const { type } = action;
-        const leave = getAppProp(store, 'onLeave');
+        const leave = getAppProp(store, 'onReadyToClose');
 
         switch (type) {
         case READY_TO_CLOSE:
