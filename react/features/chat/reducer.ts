@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { LocalParticipant, Participant } from '../base/participants/reducer';
+import { LocalParticipant, Participant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {

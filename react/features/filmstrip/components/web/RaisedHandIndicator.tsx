@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { IState } from '../../../app/types';
 import { IconRaisedHand } from '../../../base/icons/svg';
 import { getParticipantById, hasRaisedHand } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 

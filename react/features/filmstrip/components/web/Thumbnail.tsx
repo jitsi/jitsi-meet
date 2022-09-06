@@ -22,7 +22,7 @@ import {
     getParticipantByIdOrUndefined,
     hasRaisedHand
 } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 // @ts-ignore

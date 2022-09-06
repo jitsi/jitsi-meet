@@ -20,7 +20,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { shouldHideSelfView } from '../../../base/settings/functions.any';

@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 
 // @ts-ignore
-import { showNotification } from '../../notifications';
+import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { set } from '../redux/functions';
 
@@ -38,7 +38,7 @@ import {
     getParticipantById
 } from './functions';
 import logger from './logger';
-import { Participant } from './reducer';
+import { Participant } from './types';
 
 /**
  * Create an action for when dominant speaker changes.

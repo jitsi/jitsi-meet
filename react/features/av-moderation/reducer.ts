@@ -4,7 +4,7 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
 } from '../base/participants/actionTypes';
-import { Participant } from '../base/participants/reducer';
+import { Participant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {

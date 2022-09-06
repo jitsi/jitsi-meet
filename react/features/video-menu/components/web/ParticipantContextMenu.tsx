@@ -16,7 +16,7 @@ import { IconShareVideo } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 // @ts-ignore
 import { isParticipantAudioMuted } from '../../../base/tracks';
 // @ts-ignore

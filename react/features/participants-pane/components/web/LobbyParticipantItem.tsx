@@ -8,7 +8,7 @@ import ContextMenu from '../../../base/components/context-menu/ContextMenu';
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons/svg';
 import { hasRaisedHand } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 // @ts-ignore
