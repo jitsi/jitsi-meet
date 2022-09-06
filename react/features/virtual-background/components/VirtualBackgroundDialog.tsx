@@ -17,7 +17,7 @@ import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config';
 import { Dialog, hideDialog, openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
-import { IconCloseSmall, IconShareDesktop } from '../../base/icons/svg/index';
+import { IconCloseSmall, IconShareDesktop } from '../../base/icons/svg';
 import { browser, JitsiTrackErrors } from '../../base/lib-jitsi-meet';
 // @ts-ignore
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';

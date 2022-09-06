@@ -19,8 +19,8 @@ import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../b
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
-import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg/index';
-import { Participant } from '../../../base/participants/reducer';
+import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg';
+import { Participant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
@@ -611,7 +611,7 @@ class Filmstrip extends PureComponent <Props, State> {
      * @param {Object} data - An object with the indexes identifying the ThumbnailWrapper instance.
      * @returns {string} - The key.
      */
-    _gridItemKey({ columnIndex, rowIndex }: {columnIndex: number, rowIndex: number}) {
+    _gridItemKey({ columnIndex, rowIndex }: { columnIndex: number, rowIndex: number }) {
         const {
             _disableSelfView,
             _columns,
@@ -887,7 +887,7 @@ class Filmstrip extends PureComponent <Props, State> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: IState, ownProps: any) {
+function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];
@@ -935,7 +935,7 @@ function _mapStateToProps(state: IState, ownProps: any) {
         _mainFilmstripVisible: visible,
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
-        _remoteParticipantsLength: _remoteParticipants.length,
+        _remoteParticipantsLength: _remoteParticipants?.length,
         _thumbnailsReordered: enableThumbnailReordering,
         _topPanelHeight: topPanelHeight.current,
         _topPanelMaxHeight: topPanelHeight.current || TOP_FILMSTRIP_HEIGHT,

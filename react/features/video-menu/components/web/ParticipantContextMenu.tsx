@@ -12,11 +12,11 @@ import { Avatar } from '../../../base/avatar';
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
-import { IconShareVideo } from '../../../base/icons/svg/index';
+import { IconShareVideo } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 // @ts-ignore
 import { isParticipantAudioMuted } from '../../../base/tracks';
 // @ts-ignore
@@ -167,7 +167,7 @@ const ParticipantContextMenu = ({
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
 
     const _currentRoomId = useSelector(getCurrentRoomId);
-    const _rooms: Array<{id: string}> = Object.values(useSelector(getBreakoutRooms));
+    const _rooms: Array<{ id: string }> = Object.values(useSelector(getBreakoutRooms));
 
     const _onVolumeChange = useCallback(value => {
         dispatch(setVolume(participant.id, value));

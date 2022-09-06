@@ -18,7 +18,7 @@ export type ActionTrigger = 'Hover' | 'Permanent'
 /**
  * Enum of possible participant action triggers.
  */
-export const ACTION_TRIGGER: {HOVER: ActionTrigger, PERMANENT: ActionTrigger} = {
+export const ACTION_TRIGGER: { HOVER: ActionTrigger, PERMANENT: ActionTrigger } = {
     HOVER: 'Hover',
     PERMANENT: 'Permanent'
 };

@@ -221,7 +221,7 @@ function _objectToURLParamsArray(obj = {}) {
 export function parseStandardURIString(str: string) {
     /* eslint-disable no-param-reassign */
 
-    const obj: {[key: string]: any} = {
+    const obj: { [key: string]: any } = {
         toString: _standardURIToString
     };
 
@@ -452,7 +452,7 @@ export function toURLString(obj?: (Object | string)): string|undefined|null {
  * @returns {string} - A {@code String} representation of the specified
  * {@code Object}.
  */
-export function urlObjectToString(o: {[key: string]: any}): string|undefined {
+export function urlObjectToString(o: { [key: string]: any }): string|undefined {
     // First normalize the given url. It come as o.url or split into o.serverURL
     // and o.room.
     let tmp;

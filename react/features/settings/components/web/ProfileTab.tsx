@@ -19,8 +19,7 @@ import Input from '../../../base/ui/components/web/Input';
 // @ts-ignore
 import { openLogoutDialog } from '../../actions';
 
-// eslint-disable-next-line no-var
-declare var APP: any;
+declare let APP: any;
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.

@@ -159,7 +159,7 @@ ReducerRegistry.register<IPrejoinState>(
  * @returns {Object}
  */
 function getStatusFromErrors(errors: {
-    audioAndVideoError?: {message: string},
+    audioAndVideoError?: { message: string },
     audioOnlyError?: { message: string },
     videoOnlyError?: Object }
 ) {

@@ -228,7 +228,7 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
  * @private
  * @returns {{Props}}
  */
-function formatImages(images: Array<string> | Array<{src: string; tooltip?: string}>): Array<Image> {
+function formatImages(images: Array<string> | Array<{ src: string; tooltip?: string }>): Array<Image> {
     return images.map((img, i) => {
         let src;
         let tooltip;

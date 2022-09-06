@@ -18,8 +18,8 @@ import {
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
-// @ts-ignore
 import { isParticipantModerator } from './functions';
+import { LocalParticipant, Participant } from './types';
 
 /**
  * Participant object.
@@ -37,45 +37,6 @@ import { isParticipantModerator } from './functions';
  * {@code false}.
  * @property {string} email - Participant email.
  */
-
-export interface Participant {
-    avatarURL?: string;
-    botType?: string;
-    conference?: Object;
-    connectionStatus?: string;
-    dominantSpeaker?: boolean;
-    e2eeSupported?: boolean;
-    email?: string;
-    features?: {
-        'screen-sharing'?: boolean;
-    };
-    id: string;
-    isFakeParticipant?: boolean;
-    isJigasi?: boolean;
-    isLocalScreenShare?: boolean;
-    isReplacing?: number;
-    isVirtualScreenshareParticipant?: boolean;
-    loadableAvatarUrl?: string;
-    loadableAvatarUrlUseCORS?: boolean;
-    local?: boolean;
-    name?: string;
-    pinned?: boolean;
-    presence?: string;
-    raisedHandTimestamp?: number;
-    remoteControlSessionStatus?: boolean;
-    role?: string;
-    supportsRemoteControl?: boolean;
-}
-
-export interface LocalParticipant extends Participant {
-    audioOutputDeviceId?: string;
-    cameraDeviceId?: string;
-    micDeviceId?: string;
-    startWithAudioMuted?: boolean;
-    startWithVideoMuted?: boolean;
-    userSelectedMicDeviceId?: string;
-    userSelectedMicDeviceLabel?: string;
-}
 
 /**
  * The participant properties which cannot be updated through
@@ -121,7 +82,7 @@ export interface IParticipantsState {
     localScreenShare?: Participant;
     overwrittenNameList: Object;
     pinnedParticipant?: string;
-    raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number;}>;
+    raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, Participant>;
     sortedRemoteParticipants: Map<string, string>;
     sortedRemoteScreenshares: Map<string, string>;
@@ -505,9 +466,7 @@ function _isEveryoneModerator(state: IParticipantsState) {
  * @private
  * @returns {Participant}
  */
-function _participant(state: Participant|LocalParticipant = {
-    id: '',
-    name: '' }, action: any): Participant|LocalParticipant {
+function _participant(state: Participant|LocalParticipant = { id: '' }, action: any): Participant|LocalParticipant {
     switch (action.type) {
     case SET_LOADABLE_AVATAR_URL:
     case PARTICIPANT_UPDATED: {
@@ -543,7 +502,7 @@ function _participant(state: Participant|LocalParticipant = {
  * base/participants after the reduction of the specified
  * {@code action}.
  */
-function _participantJoined({ participant }: {participant: Participant}) {
+function _participantJoined({ participant }: { participant: Participant }) {
     const {
         avatarURL,
         botType,

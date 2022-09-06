@@ -3,7 +3,6 @@ import throttle from 'lodash/throttle';
 import React, { RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
-// @ts-ignore
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
 import AbstractMessageContainer, { Props } from '../AbstractMessageContainer';
 

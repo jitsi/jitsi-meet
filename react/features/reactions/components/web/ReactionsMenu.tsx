@@ -1,4 +1,4 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import { withStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
@@ -9,24 +9,20 @@ import {
     createReactionMenuEvent,
     createToolbarEvent,
     sendAnalytics
-
     // @ts-ignore
 } from '../../../analytics';
 import { IState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
-import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
-import { raiseHand } from '../../../base/participants/actions';
 import { translate } from '../../../base/i18n/functions';
-
+import { raiseHand } from '../../../base/participants/actions';
+import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import { Theme } from '../../../base/ui/types';
-
+import GifsMenu from '../../../gifs/components/web/GifsMenu';
 // @ts-ignore
-import { GifsMenu, GifsMenuButton } from '../../../gifs/components';
-
+import GifsMenuButton from '../../../gifs/components/web/GifsMenuButton';
 // @ts-ignore
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
-
 // @ts-ignore
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';

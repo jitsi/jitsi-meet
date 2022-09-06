@@ -3,8 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 
 import { translate } from '../../../base/i18n/functions';
-// @ts-ignore
-import { Label } from '../../../base/label';
+import Label from '../../../base/label/components/web/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux/functions';
 import AbstractRecordingLabel, {

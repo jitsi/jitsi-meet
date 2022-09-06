@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import { approveParticipant } from '../../../av-moderation/actions';
 import Button from '../../../base/ui/components/web/Button';
 import { Theme } from '../../../base/ui/types';
-// @ts-ignore
 import { QUICK_ACTION_BUTTON } from '../../constants';
 
 type Props = {

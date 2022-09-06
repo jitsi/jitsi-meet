@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: any) => {
 });
 
 type Props = {
-    currentRoom?: {name: string},
+    currentRoom?: { name: string },
     overflowDrawer?: boolean,
     participantsCount?: number,
     searchString: string,

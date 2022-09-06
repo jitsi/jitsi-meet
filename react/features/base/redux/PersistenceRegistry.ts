@@ -1,12 +1,10 @@
-/* eslint-disable import/order */
 // @ts-ignore
 import Bourne from '@hapi/bourne';
-
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import md5 from 'js-md5';
 
-// @ts-ignore
 import logger from './logger';
 
 declare let __DEV__: any;
@@ -29,7 +27,7 @@ declare type PersistencyConfigMap = { [name: string]: ElementConfig };
  */
 class PersistenceRegistry {
     _checksum = '';
-    _defaultStates: { [name: string ]: Object|undefined} = {};
+    _defaultStates: { [name: string ]: Object|undefined } = {};
     _elements: PersistencyConfigMap = {};
 
     /**

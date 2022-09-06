@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import Icon from '../../../base/icons/components/Icon';
-import { IconCheck, IconClose } from '../../../base/icons/svg/index';
+import { IconCheck, IconClose } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { admitMultiple } from '../../../lobby/actions.web';

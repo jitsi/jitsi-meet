@@ -1,4 +1,4 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import { makeStyles } from '@material-ui/core';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,22 +6,16 @@ import { useSelector } from 'react-redux';
 
 // @ts-ignore
 import { Avatar } from '../../../../../base/avatar';
-
 // @ts-ignore
 import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/components';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import { Theme } from '../../../../../base/ui/types';
-
 // @ts-ignore
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
-
 // @ts-ignore
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
-
 // @ts-ignore
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
-
-// @ts-ignore
 import { AVATAR_SIZE } from '../../../../constants';
 
 type Props = {

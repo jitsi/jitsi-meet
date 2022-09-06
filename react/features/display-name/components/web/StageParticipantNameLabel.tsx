@@ -8,7 +8,7 @@ import { IState } from '../../../app/types';
 // @ts-ignore
 import { isDisplayNameVisible } from '../../../base/config/functions.any';
 import { getLocalParticipant, getParticipantDisplayName } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { getLargeVideoParticipant } from '../../../large-video/functions';

@@ -45,7 +45,7 @@ type Props = {
  * @returns {JSX.Element}
  */
 const TitleBar = (props: Props) : JSX.Element => {
-    const localParticipant: any = useSelector(getLocalParticipant);
+    const localParticipant = useSelector(getLocalParticipant);
     const localParticipantId = localParticipant?.id;
 
     return (<>

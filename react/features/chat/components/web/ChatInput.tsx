@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 import { IState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { IconPlane, IconSmile } from '../../../base/icons/svg/index';
+import { IconPlane, IconSmile } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';

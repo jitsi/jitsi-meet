@@ -1,9 +1,8 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 
 // @ts-ignore
 import { Container } from '../../react/base';
-
 // @ts-ignore
 import { styleTypeToObject } from '../../styles';
 

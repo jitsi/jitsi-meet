@@ -1,7 +1,8 @@
 /* eslint-disable lines-around-comment */
 import { IState } from '../app/types';
 // @ts-ignore
-import { NOTIFICATION_TIMEOUT_TYPE, showWarningNotification } from '../notifications';
+import { showWarningNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 // @ts-ignore
 import { isScreenAudioShared } from '../screen-share';
 

@@ -144,7 +144,7 @@ export interface IConfig {
     callStatsSecret?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
-        chromeExtensionsInfo?: Array<{id: string; path: string}>;
+        chromeExtensionsInfo?: Array<{ id: string; path: string }>;
         edgeUrl?: string;
         url?: string;
     };
@@ -373,7 +373,7 @@ export interface IConfig {
         iceTransportPolicy?: string;
         preferH264?: boolean;
         preferredCodec?: string;
-        stunServers?: Array<{urls: string}>;
+        stunServers?: Array<{ urls: string }>;
     };
     participantsPane?: {
         hideModeratorSettingsTab?: boolean;

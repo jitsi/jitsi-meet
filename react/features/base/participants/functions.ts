@@ -22,7 +22,7 @@ import { createDeferred } from '../util/helpers';
 import { JIGASI_PARTICIPANT_ICON, MAX_DISPLAY_NAME_LENGTH, PARTICIPANT_ROLE } from './constants';
 // @ts-ignore
 import { preloadImage } from './preloadImage';
-import { Participant } from './reducer';
+import { Participant } from './types';
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.

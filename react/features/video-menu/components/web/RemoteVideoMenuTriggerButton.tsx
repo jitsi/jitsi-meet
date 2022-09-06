@@ -8,9 +8,9 @@ import { IState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
-import { IconHorizontalPoints } from '../../../base/icons/svg/index';
+import { IconHorizontalPoints } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
 // @ts-ignore
