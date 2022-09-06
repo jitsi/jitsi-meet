@@ -24,14 +24,14 @@ export default function JitsiMeetView(props) {
     /**
      * Executes the onLeave callback passed from props as well as setting the props to an empty object
      */
-    function onLeave() {
+    function onReadyToClose() {
         setAppProps({});
-        props.onLeave();
+        props.onReadyToClose();
     }
     useEffect(
         () => {
             setAppProps({ 'url': props.url,
-                'onLeave': onLeave,
+                'onLeave': onReadyToClose,
                 'flags': [] });
         }, []
     );

@@ -43,6 +43,7 @@ import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes';
 import { setRequestingSubtitles } from '../../subtitles';
 import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
+import { isExternalAPIAvailable } from '../react-native-sdk/functions';
 
 import { READY_TO_CLOSE } from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';
@@ -83,18 +84,13 @@ const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
  */
 const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
 
-const { ExternalAPI } = NativeModules;
 let eventEmitter;
 
-/**
- * Check if native modules are being used or not. If not then the init of middleware doesn't happen.
- */
-if (ExternalAPI === null) {
-    eventEmitter = null;
-} else {
+if (isExternalAPIAvailable()) {
+    const { ExternalAPI } = NativeModules;
+
     eventEmitter = new NativeEventEmitter(ExternalAPI);
 }
-
 
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
@@ -103,7 +99,8 @@ if (ExternalAPI === null) {
  * @param {Store} store - Redux store.
  * @returns {Function}
  */
-if (eventEmitter !== null) {
+if (isExternalAPIAvailable()) {
+
     MiddlewareRegistry.register(store => next => action => {
         const oldAudioMuted = store.getState()['features/base/media'].audio.muted;
         const result = next(action);
@@ -255,7 +252,7 @@ if (eventEmitter !== null) {
  * The listener is debounced to avoid state thrashing that might occur,
  * especially when switching in or out of p2p.
  */
-if (eventEmitter !== null) {
+if (isExternalAPIAvailable()) {
     StateListenerRegistry.register(
         /* selector */ state => state['features/base/tracks'],
         /* listener */ debounce((tracks, store) => {
