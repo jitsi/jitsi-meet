@@ -203,7 +203,7 @@ const ListItem = ({
     function _onTouchStart(e: React.TouchEvent) {
         const target = e.touches[0].target;
 
-        timeoutHandler = window.setTimeout(() => onLongPress && onLongPress(target), 600);
+        timeoutHandler = window.setTimeout(() => onLongPress?.(target), 600);
     }
 
     /**
