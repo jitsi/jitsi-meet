@@ -3,7 +3,7 @@
 import _ from 'lodash';
 
 import { getCurrentConference } from '../base/conference';
-import { getParticipantCount, isLocalParticipantModerator } from '../base/participants';
+import { getParticipantById, getParticipantCount, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
 
 import { FEATURE_KEY } from './constants';
@@ -28,6 +28,69 @@ export const getMainRoom = (stateful: Function | Object) => {
     const rooms = getBreakoutRooms(stateful);
 
     return _.find(rooms, (room: Object) => room.isMainRoom);
+};
+
+export const getRoomsInfo = (stateful: Function | Object) => {
+    const breakoutRooms = getBreakoutRooms(stateful);
+    const conference = getCurrentConference(stateful);
+
+    const initialRoomsInfo = {
+        rooms: []
+    };
+
+    // only main roomn
+    if (!breakoutRooms || Object.keys(breakoutRooms).length === 0) {
+        return {
+            ...initialRoomsInfo,
+            rooms: [ {
+                isMainRoom: true,
+                id: conference?.room?.roomjid,
+                jid: conference?.room?.myroomjid,
+                participants: conference && conference.participants && Object.keys(conference.participants).length
+                    ? Object.keys(conference.participants).map(participantId => {
+                        const participantItem = conference?.participants[participantId];
+                        const storeParticipant = getParticipantById(stateful, participantItem._id);
+
+                        return {
+                            jid: participantItem._jid,
+                            role: participantItem._role,
+                            displayName: participantItem._displayName,
+                            avatarUrl: storeParticipant?.loadableAvatarUrl,
+                            id: participantItem._id
+                        };
+                    }) : []
+            } ]
+        };
+    }
+
+    return {
+        ...initialRoomsInfo,
+        rooms: Object.keys(breakoutRooms).map(breakoutRoomKey => {
+            const breakoutRoomItem = breakoutRooms[breakoutRoomKey];
+
+            return {
+                isMainRoom: Boolean(breakoutRoomItem.isMainRoom),
+                id: breakoutRoomItem.id,
+                jid: breakoutRoomItem.jid,
+                participants: breakoutRoomItem.participants && Object.keys(breakoutRoomItem.participants).length
+                    ? Object.keys(breakoutRoomItem.participants).map(participantLongId => {
+                        const participantItem = breakoutRoomItem.participants[participantLongId];
+                        const ids = participantLongId.split('/');
+                        const storeParticipant = getParticipantById(stateful,
+                            ids.length > 1 ? ids[1] : participantItem.jid);
+
+                        return {
+                            jid: participantItem?.jid,
+                            role: participantItem?.role,
+                            displayName: participantItem?.displayName,
+                            avatarUrl: storeParticipant?.loadableAvatarUrl,
+                            id: storeParticipant ? storeParticipant.id
+                                : participantLongId
+                        };
+                    }) : []
+            };
+        })
+    };
 };
 
 /**

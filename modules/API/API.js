@@ -55,7 +55,7 @@ import {
     removeBreakoutRoom,
     sendParticipantToRoom
 } from '../../react/features/breakout-rooms/actions';
-import { getBreakoutRooms } from '../../react/features/breakout-rooms/functions';
+import { getBreakoutRooms, getRoomsInfo } from '../../react/features/breakout-rooms/functions';
 import {
     sendMessage,
     setPrivateMessageRecipient,
@@ -844,6 +844,10 @@ function initCommands() {
         }
         case 'list-breakout-rooms': {
             callback(getBreakoutRooms(APP.store.getState()));
+            break;
+        }
+        case 'rooms-info': {
+            callback(getRoomsInfo(APP.store.getState()));
             break;
         }
         default:
