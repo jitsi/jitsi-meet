@@ -11,6 +11,10 @@ import {
     SALESFORCE_LINK_NOTIFICATION_ID,
     showNotification
 } from '../../../notifications';
+import { isLocalTrackMuted } from '../../../base/tracks';
+import { MEDIA_TYPE } from '../../../base/media';
+import { isAudioMuteButtonDisabled } from '../../functions.any';
+import { AUDIO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -20,7 +24,12 @@ type Props = AbstractButtonProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Whether audio is currently muted or not.
+     */
+    _audioMuted: boolean,
 };
 
 /**
@@ -40,6 +49,7 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
      * @private
      * @returns {void}
      */
+
     constructor(props: Props) {
         super(props);
         let boolRecording = false;
@@ -47,13 +57,22 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
 
 
         this._audioRecorder = () => {
+            console.log('AudioStatus', this._isAudioMuted());
             let audioStreams = getAudioStreamFromTracks();
             if (audioStreams.length > 1) {
                 if (!boolRecording) {
-                    this.props.dispatch(toggleRecordTimer());
-                    boolRecording = true;
-                    // get Stream from Tracks
-                    startAudioRecording(audioStreams);
+                    if (this._isAudioMuted() === false) {
+                        this.props.dispatch(toggleRecordTimer());
+                        boolRecording = true;
+                        // get Stream from Tracks
+                        startAudioRecording(audioStreams);
+                    } else {
+                        props.dispatch(showNotification({
+                            titleKey: 'Turn on audio to start recording',
+                            uid: SALESFORCE_LINK_NOTIFICATION_ID,
+                            appearance: NOTIFICATION_TYPE.NORMAL
+                        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+                    }
                 } else { // Stop Recording
                     boolRecording = false;
                     this.props.dispatch(toggleRecordTimer());
@@ -157,6 +176,17 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
     }
 
     /**
+     * Indicates if audio is currently muted or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isAudioMuted() {
+        return this.props._audioMuted;
+    }
+
+    /**
      * Helper function to perform the download action.
      *
      * @override
@@ -169,4 +199,27 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
     }
 }
 
-export default translate(connect()(DownloadAudioRecorder));
+/**
+ * Maps (parts of) the redux state to the associated props for the
+ * {@code AudioMuteButton} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _audioMuted: boolean,
+ *     _disabled: boolean
+ * }}
+ */
+function _mapStateToProps(state): Object {
+    const _audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const _disabled = isAudioMuteButtonDisabled(state);
+    const enabledFlag = getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true);
+
+    return {
+        _audioMuted,
+        _disabled,
+        visible: enabledFlag
+    };
+}
+
+export default translate(connect(_mapStateToProps)(DownloadAudioRecorder));

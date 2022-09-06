@@ -6,6 +6,12 @@ import type { AbstractButtonProps } from '../../../base/toolbox/components';
 import { AbstractSelfieButton } from '../../../base/toolbox/components';
 import jwt_decode from 'jwt-decode';
 import React from 'react';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    NOTIFICATION_TYPE,
+    SALESFORCE_LINK_NOTIFICATION_ID,
+    showNotification
+} from '../../../notifications';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -109,7 +115,11 @@ class DownloadSelfie extends AbstractSelfieButton<Props, *> {
                 saveBase64AsFile(dataURL, `${getFilename()}.png`);
 
             } else {
-                //alert
+                props.dispatch(showNotification({
+                    titleKey: 'There is no other participants to take selfie',
+                    uid: SALESFORCE_LINK_NOTIFICATION_ID,
+                    appearance: NOTIFICATION_TYPE.NORMAL
+                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
             }
 
         }
