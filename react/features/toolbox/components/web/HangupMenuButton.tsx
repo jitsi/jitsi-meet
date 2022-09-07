@@ -3,8 +3,8 @@ import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-ignore
-import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { translate } from '../../../base/i18n/functions';
 
 import HangupToggleButton from './HangupToggleButton';

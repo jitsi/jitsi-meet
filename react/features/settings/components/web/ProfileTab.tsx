@@ -4,11 +4,8 @@ import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import UIEvents from '../../../../../service/UI/UIEvents';
-import {
-    sendAnalytics,
-    createProfilePanelButtonEvent
-    // @ts-ignore
-} from '../../../analytics';
+import { createProfilePanelButtonEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 // @ts-ignore
 import { AbstractDialogTab } from '../../../base/dialog';
 // @ts-ignore

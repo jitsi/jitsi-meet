@@ -2,11 +2,8 @@
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import {
-    createRecordingDialogEvent,
-    sendAnalytics
-    // @ts-ignore
-} from '../../../analytics';
+import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
 // @ts-ignore
 import { ColorSchemeRegistry } from '../../../base/color-scheme';

@@ -5,8 +5,8 @@ import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 // @ts-ignore
 import traceInit from '@jitsi/rtcstats/trace-ws';
 
-// @ts-ignore
-import { createRTCStatsTraceCloseEvent, sendAnalytics } from '../analytics';
+import { createRTCStatsTraceCloseEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
 
 import logger from './logger';
 import {

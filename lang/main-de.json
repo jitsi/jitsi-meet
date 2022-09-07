@@ -11,7 +11,6 @@
         "defaultEmail": "Ihre Standard-E-Mail",
         "disabled": "Sie können keine Personen einladen.",
         "failedToAdd": "Fehler beim Hinzufügen von Personen",
-        "footerText": "Abgehender Ruf ist deaktiviert.",
         "googleEmail": "Google-E-Mail",
         "inviteMoreHeader": "Sie sind alleine in der Sitzung",
         "inviteMoreMailSubject": "An {{appName}} Meeting teilnehmen",
@@ -97,6 +96,7 @@
         "messageAccessibleTitleMe": "Ich sage:",
         "messageTo": "Private Nachricht an {{recipient}}",
         "messagebox": "Nachricht eingeben",
+        "newMessages": "Neue Nachrichten",
         "nickname": {
             "popover": "Wähle einen Alias",
             "title": "Geben Sie einen Alias zum Chatten ein",
@@ -285,7 +285,6 @@
         "linkMeetingTitle": "Konferenz mit Salesforce verlinken",
         "liveStreaming": "Livestreaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Während einer Aufnahme nicht möglich",
-        "liveStreamingDisabledTooltip": "Starten des Livestreams deaktiviert.",
         "localUserControls": "Lokale Benutzersteuerung",
         "lockMessage": "Die Konferenz konnte nicht gesperrt werden.",
         "lockRoom": "Konferenz$t(lockRoomPassword) hinzufügen",
@@ -340,7 +339,6 @@
         "recentlyUsedObjects": "Ihre zuletzt verwendeten Objekte",
         "recording": "Aufnahme",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Während eines Livestreams nicht möglich",
-        "recordingDisabledTooltip": "Start der Aufzeichnung deaktiviert.",
         "rejoinNow": "Jetzt erneut beitreten",
         "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen!",
         "remoteControlDeniedMessage": "{{user}} hat die Anfrage zur Fernsteuerung verweigert!",
@@ -516,6 +514,10 @@
         "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln",
         "toggleShortcuts": "Tastenkombinationen ein- oder ausblenden",
         "videoMute": "Kamera starten oder stoppen"
+    },
+    "largeVideo": {
+        "screenIsShared": "Ihr Bildschirm wird freigegeben",
+        "showMeWhatImSharing": "Anzeigen, was freigegeben wird"
     },
     "liveStreaming": {
         "busy": "Es werden Ressourcen zum Streamen bereitgestellt. Bitte in ein paar Minuten erneut versuchen.",
@@ -993,12 +995,17 @@
         "displayName": "Anzeigename",
         "displayNamePlaceholderText": "z.B. Erika Musterfrau",
         "email": "E-Mail",
+        "goTo": "Gehe zu",
         "header": "Einstellungen",
+        "help": "Hilfe",
+        "links": "Links",
+        "privacy": "Datenschutz",
         "profileSection": "Profil",
         "serverURL": "Server-URL",
         "showAdvanced": "Erweiterte Einstellungen anzeigen",
         "startWithAudioMuted": "Stumm beitreten",
         "startWithVideoMuted": "Ohne Video beitreten",
+        "terms": "Nutzungsbedingungen",
         "version": "Version"
     },
     "share": {
@@ -1055,6 +1062,7 @@
             "document": "Geteiltes Dokument schließen",
             "download": "Unsere Apps herunterladen",
             "embedMeeting": "Konferenz einbetten",
+            "endConference": "Konferenz für alle beenden",
             "expand": "Ausklappen",
             "feedback": "Feedback hinterlassen",
             "fullScreen": "Vollbildmodus ein-/ausschalten",
@@ -1128,6 +1136,7 @@
         "download": "Unsere Apps herunterladen",
         "e2ee": "Ende-zu-Ende-Verschlüsselung",
         "embedMeeting": "Konferenz einbetten",
+        "endConference": "Konferenz für alle beenden",
         "enterFullScreen": "Vollbildmodus",
         "enterTileView": "Kachelansicht einschalten",
         "exitFullScreen": "Vollbildmodus verlassen",
@@ -1207,6 +1216,8 @@
         "pending": "Transkribieren des Meetings wird vorbereitet…",
         "start": "Anzeige der Untertitel starten",
         "stop": "Anzeige der Untertitel stoppen",
+        "subtitles": "Untertitel",
+        "subtitlesOff": "Ausschalten",
         "tr": "TR"
     },
     "userMedia": {
