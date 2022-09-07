@@ -2,8 +2,7 @@
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
-// @ts-ignore
-import { getAmplitudeIdentity } from '../analytics';
+import { getAmplitudeIdentity } from '../analytics/functions';
 import {
     getConferenceOptions,
     getAnalyticsRoomName

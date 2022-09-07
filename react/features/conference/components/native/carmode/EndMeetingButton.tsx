@@ -2,8 +2,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
-import { createToolbarEvent, sendAnalytics } from '../../../../analytics';
+import { createToolbarEvent } from '../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../analytics/functions';
 // @ts-ignore
 import { appNavigate } from '../../../../app/actions';
 import Button from '../../../../base/ui/components/native/Button';

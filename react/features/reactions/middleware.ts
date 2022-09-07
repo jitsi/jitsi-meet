@@ -1,8 +1,8 @@
 /* eslint-disable lines-around-comment */
 import { batch } from 'react-redux';
 
-// @ts-ignore
-import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
+import { createReactionSoundsDisabledEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import {
