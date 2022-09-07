@@ -2,7 +2,7 @@
 
 import Logger from '@jitsi/logger';
 
-import { getSourceNameSignalingFeatureFlag } from '../../../react/features/base/config';
+import { getMultipleVideoSupportFeatureFlag } from '../../../react/features/base/config';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getPinnedParticipant,
@@ -95,7 +95,7 @@ const VideoLayout = {
             return VIDEO_TYPE.CAMERA;
         }
 
-        if (getSourceNameSignalingFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+        if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
             return VIDEO_TYPE.DESKTOP;
         }
 
@@ -190,7 +190,7 @@ const VideoLayout = {
 
         let videoTrack;
 
-        if (getSourceNameSignalingFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+        if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
             videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
         } else {
             videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
@@ -217,7 +217,6 @@ const VideoLayout = {
 
         if (!isOnLarge || forceUpdate) {
             const videoType = this.getRemoteVideoType(id);
-
 
             largeVideo.updateLargeVideo(
                 id,
