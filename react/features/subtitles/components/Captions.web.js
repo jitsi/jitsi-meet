@@ -12,6 +12,7 @@ import {
     AbstractCaptions,
     type AbstractCaptionsProps
 } from './AbstractCaptions';
+import {isMobileBrowser} from "../../base/environment/utils";
 
 type Props = {
 
@@ -25,6 +26,9 @@ type Props = {
  * React {@code Component} which can display speech-to-text results from
  * Jigasi as subtitles.
  */
+
+let textStore = '';
+
 class Captions
     extends AbstractCaptions<Props> {
 
@@ -38,10 +42,36 @@ class Captions
      * @protected
      * @returns {React$Element} - The React element which displays the text.
      */
+
+    componentDidMount() {
+        setInterval(async () => {
+
+            const args = `${textStore}`;
+
+            if (isMobileBrowser()) {
+                if (window.flutter_inappwebview) {
+                    console.log('beforeArgs', args);
+                    window.flutter_inappwebview.callHandler('myHandlerName', args);
+                    console.log('afterArgs', args);
+                    textStore = '';
+                } else {
+                    console.log('InAppWebViewNotLoaded');
+                }
+            } else {
+                window.opener.postMessage(args, "https://custommeet4.centralus.cloudapp.azure.com/");
+                textStore = '';
+            }
+        }, 30000);
+    }
+
     _renderParagraph(id: string, text: string): React$Element<*> {
+
+        textStore = textStore + text;
+
+
         return (
-            <p key = { id }>
-                <span>{ text }</span>
+            <p key={id}>
+                <span>{text}</span>
             </p>
         );
     }
@@ -55,13 +85,13 @@ class Captions
      * @returns {React$Element} - The subtitles container.
      */
     _renderSubtitlesContainer(
-            paragraphs: Array<React$Element<*>>): React$Element<*> {
+        paragraphs: Array<React$Element<*>>): React$Element<*> {
 
         const className = this.props._isLifted ? 'transcription-subtitles lifted' : 'transcription-subtitles';
 
         return (
-            <div className = { className } >
-                { paragraphs }
+            <div className={className}>
+                {paragraphs}
             </div>
         );
     }

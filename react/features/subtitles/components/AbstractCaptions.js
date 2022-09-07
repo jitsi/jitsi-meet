@@ -1,7 +1,6 @@
 // @flow
 
 import {Component} from 'react';
-import {isMobileBrowser} from '../../base/environment/utils'
 
 /**
  * {@code AbstractCaptions} Properties.
@@ -26,7 +25,6 @@ export type AbstractCaptionsProps = {
  * from Jigasi as subtitles.
  */
 
-let textStore = '';
 
 export class AbstractCaptions<P: AbstractCaptionsProps>
     extends Component<P> {
@@ -37,26 +35,6 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
      * @inheritdoc
      * @returns {React$Element}
      */
-
-    componentDidMount() {
-        setInterval(() => {
-            const args = `${textStore}`;
-
-            if (isMobileBrowser()) {
-                if (window.flutter_inappwebview) {
-                    console.log('beforeArgs', args);
-                    window.flutter_inappwebview.callHandler('myHandlerName', args);
-                    console.log('afterArgs', args);
-                    textStore = '';
-                } else {
-                    console.log('InAppWebViewNotLoaded');
-                }
-            } else {
-                console.log('args', args);
-                window.open(value.url);
-            }
-        }, 30000);
-    }
 
     render() {
         const {_requestingSubtitles, _transcripts} = this.props;
@@ -69,8 +47,6 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
 
         for (const [id, text] of _transcripts) {
             paragraphs.push(this._renderParagraph(id, text));
-
-            textStore = textStore + text;
         }
         return this._renderSubtitlesContainer(paragraphs);
     }
