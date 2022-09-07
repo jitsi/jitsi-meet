@@ -1,8 +1,10 @@
-// @flow
-
 import { NativeModules } from 'react-native';
 
-import { getFeatureFlag, REPLACE_PARTICIPANT } from '../flags';
+import { IState } from '../../app/types';
+import { REPLACE_PARTICIPANT } from '../flags/constants';
+import { getFeatureFlag } from '../flags/functions';
+
+import { IConfig } from './configType';
 
 export * from './functions.any';
 
@@ -12,7 +14,8 @@ export * from './functions.any';
  * @param {*} config - The configuration which needs to be cleaned up.
  * @returns {void}
  */
-export function _cleanupConfig(config: Object) {
+export function _cleanupConfig(config: IConfig) {
+    config.analytics ??= {};
     config.analytics.scriptURLs = [];
     if (NativeModules.AppInfo.LIBRE_BUILD) {
         delete config.analytics?.amplitudeAPPKey;
@@ -29,6 +32,6 @@ export function _cleanupConfig(config: Object) {
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function getReplaceParticipant(state: Object): string {
+export function getReplaceParticipant(state: IState): string {
     return getFeatureFlag(state, REPLACE_PARTICIPANT, false);
 }

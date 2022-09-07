@@ -1,10 +1,10 @@
-// @flow
-
+// @ts-ignore
 import { getDefaultURL } from '../../app/functions';
-import { APP_WILL_MOUNT } from '../app';
-import { SET_ROOM } from '../conference';
-import { MiddlewareRegistry } from '../redux';
-import { parseURIString } from '../util';
+import { IStore } from '../../app/types';
+import { APP_WILL_MOUNT } from '../app/actionTypes';
+import { SET_ROOM } from '../conference/actionTypes';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { parseURIString } from '../util/uri';
 
 import { addKnownDomains } from './actions';
 
@@ -32,10 +32,10 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Promise}
  */
-function _appWillMount({ dispatch, getState }) {
+function _appWillMount({ dispatch, getState }: IStore) {
     const defaultURL = parseURIString(getDefaultURL(getState));
 
-    dispatch(addKnownDomains(defaultURL.host));
+    dispatch(addKnownDomains(defaultURL?.host));
 }
 
 /**
@@ -46,7 +46,7 @@ function _appWillMount({ dispatch, getState }) {
  * @private
  * @returns {Promise}
  */
-function _setRoom({ dispatch, getState }) {
+function _setRoom({ dispatch, getState }: IStore) {
     const { locationURL } = getState()['features/base/connection'];
     let host;
 

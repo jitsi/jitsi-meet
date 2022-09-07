@@ -1,19 +1,25 @@
-// @flow
+/* eslint-disable lines-around-comment */
 import _ from 'lodash';
 
+import { IStore } from '../../app/types';
 import { PREJOIN_INITIALIZED } from '../../prejoin/actionTypes';
+// @ts-ignore
 import { setPrejoinPageVisibility } from '../../prejoin/actions';
-import { APP_WILL_MOUNT } from '../app';
-import { setAudioOnly } from '../audio-only';
+import { APP_WILL_MOUNT } from '../app/actionTypes';
+import { setAudioOnly } from '../audio-only/actions';
 import { SET_LOCATION_URL } from '../connection/actionTypes'; // minimize imports to avoid circular imports
+// @ts-ignore
 import { getJwtName } from '../jwt/functions';
-import { getLocalParticipant, participantUpdated } from '../participants';
-import { MiddlewareRegistry } from '../redux';
-import { parseURLParams } from '../util';
+import { participantUpdated } from '../participants/actions';
+import { getLocalParticipant } from '../participants/functions';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { parseURLParams } from '../util/parseURLParams';
 
 import { SETTINGS_UPDATED } from './actionTypes';
 import { updateSettings } from './actions';
+// @ts-ignore
 import { handleCallIntegrationChange, handleCrashReportingChange } from './functions';
+import { ISettingsState } from './reducer';
 
 
 /**
@@ -57,7 +63,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _initializeShowPrejoin({ dispatch, getState }) {
+function _initializeShowPrejoin({ dispatch, getState }: IStore) {
     const { userSelectedSkipPrejoin } = getState()['features/base/settings'];
 
     if (userSelectedSkipPrejoin) {
@@ -72,7 +78,7 @@ function _initializeShowPrejoin({ dispatch, getState }) {
  * @private
  * @returns {void}
  */
-function _initializeCallIntegration({ getState }) {
+function _initializeCallIntegration({ getState }: IStore) {
     const { disableCallIntegration } = getState()['features/base/settings'];
 
     if (typeof disableCallIntegration === 'boolean') {
@@ -88,7 +94,7 @@ function _initializeCallIntegration({ getState }) {
  * @param {string} settingsField - The name of the settings field to map.
  * @returns {string}
  */
-function _mapSettingsFieldToParticipant(settingsField) {
+function _mapSettingsFieldToParticipant(settingsField: string) {
     switch (settingsField) {
     case 'displayName':
         return 'name';
@@ -104,7 +110,9 @@ function _mapSettingsFieldToParticipant(settingsField) {
  * @private
  * @returns {void}
  */
-function _maybeHandleCallIntegrationChange({ settings: { disableCallIntegration } }) {
+function _maybeHandleCallIntegrationChange({ settings: { disableCallIntegration } }: {
+    settings: Partial<ISettingsState>;
+}) {
     if (typeof disableCallIntegration === 'boolean') {
         handleCallIntegrationChange(disableCallIntegration);
     }
@@ -117,7 +125,9 @@ function _maybeHandleCallIntegrationChange({ settings: { disableCallIntegration 
  * @private
  * @returns {void}
  */
-function _maybeCrashReportingChange({ settings: { disableCrashReporting } }) {
+function _maybeCrashReportingChange({ settings: { disableCrashReporting } }: {
+    settings: Partial<ISettingsState>;
+}) {
     if (typeof disableCrashReporting === 'boolean') {
         handleCrashReportingChange(disableCrashReporting);
     }
@@ -132,8 +142,8 @@ function _maybeCrashReportingChange({ settings: { disableCrashReporting } }) {
  * @returns {void}
  */
 function _maybeSetAudioOnly(
-        { dispatch },
-        { settings: { startAudioOnly } }) {
+        { dispatch }: IStore,
+        { settings: { startAudioOnly } }: { settings: Partial<ISettingsState>; }) {
     if (typeof startAudioOnly === 'boolean') {
         dispatch(setAudioOnly(startAudioOnly));
     }
@@ -146,7 +156,7 @@ function _maybeSetAudioOnly(
  * @private
  * @returns {void}
  */
-function _maybeUpdateDisplayName({ dispatch, getState }) {
+function _maybeUpdateDisplayName({ dispatch, getState }: IStore) {
     const state = getState();
     const hasJwt = Boolean(state['features/base/jwt'].jwt);
 
@@ -169,7 +179,7 @@ function _maybeUpdateDisplayName({ dispatch, getState }) {
  * @private
  * @returns {void}
  */
-function _updateLocalParticipant({ dispatch, getState }, action) {
+function _updateLocalParticipant({ dispatch, getState }: IStore, action: any) {
     const { settings } = action;
     const localParticipant = getLocalParticipant(getState());
     const newLocalParticipant = {
@@ -178,12 +188,15 @@ function _updateLocalParticipant({ dispatch, getState }, action) {
 
     for (const key in settings) {
         if (settings.hasOwnProperty(key)) {
-            newLocalParticipant[_mapSettingsFieldToParticipant(key)]
+            newLocalParticipant[_mapSettingsFieldToParticipant(key) as keyof typeof newLocalParticipant]
                 = settings[key];
         }
     }
 
-    dispatch(participantUpdated(newLocalParticipant));
+    dispatch(participantUpdated({
+        ...newLocalParticipant,
+        id: newLocalParticipant.id ?? ''
+    }));
 }
 
 
@@ -194,9 +207,9 @@ function _updateLocalParticipant({ dispatch, getState }, action) {
  * @private
  * @returns {void}
  */
-function _updateLocalParticipantFromUrl({ dispatch, getState }) {
+function _updateLocalParticipantFromUrl({ dispatch, getState }: IStore) {
     const urlParams
-        = parseURLParams(getState()['features/base/connection'].locationURL);
+        = parseURLParams(getState()['features/base/connection'].locationURL ?? '');
     const urlEmail = urlParams['userInfo.email'];
     const urlDisplayName = urlParams['userInfo.displayName'];
 

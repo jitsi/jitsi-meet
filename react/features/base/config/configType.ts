@@ -105,6 +105,7 @@ export interface IConfig {
         scriptURLs?: Array<string>;
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
+    appId?: string;
     audioLevelsInterval?: number;
     audioQuality?: {
         opusMaxAverageBitrate?: number | null;
@@ -316,6 +317,8 @@ export interface IConfig {
         disabled?: boolean;
     };
     gravatarBaseURL?: string;
+    guestDialOutStatusUrl?: string;
+    guestDialOutUrl?: string;
     helpCentreURL?: string;
     hiddenPremeetingButtons?: Array<'microphone' | 'camera' | 'select-background' | 'invite' | 'settings'>;
     hideAddRoomButton?: boolean;
@@ -354,7 +357,7 @@ export interface IConfig {
         notifyAllParticipants?: boolean;
     };
     localSubject?: string;
-    locationURL?: string;
+    locationURL?: URL;
     maxFullResolutionParticipants?: number;
     moderatedRoomServiceUrl?: string;
     mouseMoveCallbackInterval?: number;
@@ -403,12 +406,14 @@ export interface IConfig {
         hideStorageWarning?: boolean;
         sharingEnabled?: boolean;
     };
+    recordingSharingUrl?: string;
     remoteVideoMenu?: {
         disableGrantModerator?: boolean;
         disableKick?: boolean;
         disablePrivateChat?: boolean;
         disabled?: boolean;
     };
+    replaceParticipant?: string;
     requireDisplayName?: boolean;
     resolution?: number;
     roomPasswordNumberOfDigits?: number;
@@ -417,6 +422,7 @@ export interface IConfig {
         enabled?: boolean;
         mode?: 'always' | 'recording';
     };
+    serviceUrl?: string;
     speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
     startAudioMuted?: boolean;
     startAudioOnly?: boolean;
@@ -481,4 +487,5 @@ export interface IConfig {
     webrtcIceTcpDisable?: boolean;
     webrtcIceUdpDisable?: boolean;
     websocket?: string;
+    websocketKeepAliveUrl?: string;
 }

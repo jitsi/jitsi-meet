@@ -1,8 +1,9 @@
-// @flow
+/* eslint-disable lines-around-comment */
+import { Dispatch } from 'redux';
 
-import type { Dispatch } from 'redux';
-
+// @ts-ignore
 import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
+// @ts-ignore
 import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 
@@ -36,34 +37,34 @@ export type ConnectionFailedError = {
         /**
          * The XMPP user's ID.
          */
-        jid: string,
+        jid: string;
 
         /**
          * The XMPP user's password.
          */
-        password: string
-    },
+        password: string;
+    };
 
     /**
      * The details about the connection failed event.
      */
-    details?: Object,
+    details?: Object;
 
     /**
      * Error message.
      */
-    message?: string,
+    message?: string;
 
     /**
      * One of {@link JitsiConnectionError} constants (defined in
      * lib-jitsi-meet).
      */
-    name: string,
+    name: string;
 
     /**
      * Indicates whether this event is recoverable or not.
      */
-    recoverable?: boolean
+    recoverable?: boolean;
 };
 
 /**
@@ -73,7 +74,7 @@ export type ConnectionFailedError = {
  * @param {string} [password] - The XMPP user's password.
  * @returns {Function}
  */
-export function connect(id: ?string, password: ?string) {
+export function connect(id?: string, password?: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const options = constructOptions(state);
@@ -141,7 +142,7 @@ export function connect(id: ?string, password: ?string) {
         function _onConnectionFailed( // eslint-disable-line max-params
                 err: string,
                 msg: string,
-                credentials: Object,
+                credentials: any,
                 details: Object) {
             unsubscribe();
             dispatch(
@@ -253,7 +254,7 @@ export function connectionFailed(
  *     connection: JitsiConnection
  * }}
  */
-function _connectionWillConnect(connection) {
+function _connectionWillConnect(connection: Object) {
     return {
         type: CONNECTION_WILL_CONNECT,
         connection
@@ -286,7 +287,7 @@ export function disconnect() {
 
             promise
                 = conference_.leave()
-                    .catch(error => {
+                    .catch((error: Error) => {
                         logger.warn(
                             'JitsiConference.leave() rejected with:',
                             error);
@@ -328,7 +329,7 @@ export function disconnect() {
  *     locationURL: URL
  * }}
  */
-export function setLocationURL(locationURL: ?URL) {
+export function setLocationURL(locationURL?: URL) {
     return {
         type: SET_LOCATION_URL,
         locationURL

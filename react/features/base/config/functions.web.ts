@@ -1,5 +1,6 @@
-// @flow
+import { IState } from '../../app/types';
 
+import { IConfig } from './configType';
 import { TOOLBAR_BUTTONS } from './constants';
 
 export * from './functions.any';
@@ -10,7 +11,7 @@ export * from './functions.any';
  * @param {*} config - The configuration which needs to be cleaned up.
  * @returns {void}
  */
-export function _cleanupConfig(config: Object) { // eslint-disable-line no-unused-vars
+export function _cleanupConfig(config: IConfig) { // eslint-disable-line @typescript-eslint/no-unused-vars
 }
 
 /**
@@ -19,7 +20,7 @@ export function _cleanupConfig(config: Object) { // eslint-disable-line no-unuse
  * @param {Object} state - The state of the app.
  * @returns {string}
  */
-export function getDialOutStatusUrl(state: Object): string {
+export function getDialOutStatusUrl(state: IState): string | undefined {
     return state['features/base/config'].guestDialOutStatusUrl;
 }
 
@@ -29,7 +30,7 @@ export function getDialOutStatusUrl(state: Object): string {
  * @param {Object} state - The state of the app.
  * @returns {string}
  */
-export function getDialOutUrl(state: Object): string {
+export function getDialOutUrl(state: IState): string | undefined {
     return state['features/base/config'].guestDialOutUrl;
 }
 
@@ -39,7 +40,7 @@ export function getDialOutUrl(state: Object): string {
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function getReplaceParticipant(state: Object): string {
+export function getReplaceParticipant(state: IState): string | undefined {
     return state['features/base/config'].replaceParticipant;
 }
 
@@ -49,7 +50,7 @@ export function getReplaceParticipant(state: Object): string {
  * @param {Object} state - The redux state.
  * @returns {Array<string>} - The list of enabled toolbar buttons.
  */
-export function getToolbarButtons(state: Object): Array<string> {
+export function getToolbarButtons(state: IState): Array<string> {
     const { toolbarButtons } = state['features/base/config'];
 
     return Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
@@ -63,7 +64,7 @@ export function getToolbarButtons(state: Object): Array<string> {
  * @param {Object|Array<string>} state - The redux state or the array with the enabled buttons.
  * @returns {boolean} - True if the button is enabled and false otherwise.
  */
-export function isToolbarButtonEnabled(buttonName: string, state: Object | Array<string>) {
+export function isToolbarButtonEnabled(buttonName: string, state: IState | Array<string>) {
     const buttons = Array.isArray(state) ? state : getToolbarButtons(state);
 
     return buttons.includes(buttonName);
@@ -75,7 +76,7 @@ export function isToolbarButtonEnabled(buttonName: string, state: Object | Array
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function areAudioLevelsEnabled(state: Object): boolean {
+export function areAudioLevelsEnabled(state: IState): boolean {
     // Default to false for React Native as audio levels are of no interest to the mobile app.
     return navigator.product !== 'ReactNative' && !state['features/base/config'].disableAudioLevels;
 }

@@ -241,7 +241,7 @@ function mapStateToProps(state: IState) {
     const localParticipant = getLocalParticipant(state);
 
     return {
-        _localParticipantID: localParticipant.id,
+        _localParticipantID: localParticipant?.id,
         _isMobile: isMobileBrowser(),
         _isGifEnabled: isGifEnabled(state),
         _isGifMenuVisible: isGifsMenuOpen(state),

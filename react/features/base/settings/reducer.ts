@@ -52,18 +52,18 @@ const DEFAULT_STATE: ISettingsState = {
 
 export interface ISettingsState {
     audioOutputDeviceId?: string | boolean;
-    avatarURL?: string | boolean;
+    avatarURL?: string;
     cameraDeviceId?: string | boolean;
     disableCallIntegration?: boolean;
     disableCrashReporting?: boolean;
     disableP2P?: boolean;
     disableSelfView?: boolean;
-    displayName?: string | boolean;
-    email?: string | boolean;
+    displayName?: string;
+    email?: string;
     hideShareAudioHelper?: boolean;
     localFlipX?: boolean;
     micDeviceId?: string | boolean;
-    serverURL?: string | boolean;
+    serverURL?: string;
     soundsIncomingMessage?: boolean;
     soundsParticipantJoined?: boolean;
     soundsParticipantKnocking?: boolean;
@@ -73,12 +73,12 @@ export interface ISettingsState {
     startAudioOnly?: boolean;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;
-    userSelectedAudioOutputDeviceId?: string | boolean;
-    userSelectedAudioOutputDeviceLabel?: string | boolean;
-    userSelectedCameraDeviceId?: string | boolean;
-    userSelectedCameraDeviceLabel?: string | boolean;
-    userSelectedMicDeviceId?: string | boolean;
-    userSelectedMicDeviceLabel?: string | boolean;
+    userSelectedAudioOutputDeviceId?: string;
+    userSelectedAudioOutputDeviceLabel?: string;
+    userSelectedCameraDeviceId?: string;
+    userSelectedCameraDeviceLabel?: string;
+    userSelectedMicDeviceId?: string;
+    userSelectedMicDeviceLabel?: string;
     userSelectedNotifications?: {
         [key: string]: boolean;
     } | boolean;
@@ -97,6 +97,7 @@ const filterSubtree: ISettingsState = {};
 Object.keys(DEFAULT_STATE).forEach(key => {
     const key1 = key as keyof typeof filterSubtree;
 
+    // @ts-ignore
     filterSubtree[key1] = true;
 });
 

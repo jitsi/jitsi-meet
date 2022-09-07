@@ -1,10 +1,14 @@
-// @flow
-import { CONFIG_WHITELIST } from '../config';
-import { getParticipantCount } from '../participants';
-import { toState } from '../redux';
-import { parseURLParams } from '../util';
+import { IState } from '../../app/types';
+import { IStateful } from '../app/types';
+import CONFIG_WHITELIST from '../config/configWhitelist';
+import { IConfigState } from '../config/reducer';
+import { IJwtState } from '../jwt/reducer';
+import { getParticipantCount } from '../participants/functions';
+import { toState } from '../redux/functions';
+import { parseURLParams } from '../util/parseURLParams';
 
 import { DEFAULT_SERVER_URL } from './constants';
+import { ISettingsState } from './reducer';
 
 /**
  * Returns the effective value of a configuration/preference/setting by applying
@@ -23,9 +27,9 @@ import { DEFAULT_SERVER_URL } from './constants';
  * @returns {any}
  */
 export function getPropertyValue(
-        stateful: Object | Function,
+        stateful: IStateful,
         propertyName: string,
-        sources?: Object
+        sources?: any
 ) {
     // Default values don't play nicely with partial objects and we want to make
     // the function easy to use without exhaustively defining all flags:
@@ -45,10 +49,10 @@ export function getPropertyValue(
 
     // jwt
     if (sources.jwt) {
-        const value = state['features/base/jwt'][propertyName];
+        const value = state['features/base/jwt'][propertyName as keyof IJwtState];
 
         if (typeof value !== 'undefined') {
-            return value[propertyName];
+            return value[propertyName as keyof typeof value];
         }
     }
 
@@ -56,7 +60,7 @@ export function getPropertyValue(
     if (sources.urlParams) {
         if (CONFIG_WHITELIST.indexOf(propertyName) !== -1) {
             const urlParams
-                = parseURLParams(state['features/base/connection'].locationURL);
+                = parseURLParams(state['features/base/connection'].locationURL ?? '');
             const value = urlParams[`config.${propertyName}`];
 
             if (typeof value !== 'undefined') {
@@ -67,7 +71,7 @@ export function getPropertyValue(
 
     // settings
     if (sources.settings) {
-        const value = state['features/base/settings'][propertyName];
+        const value = state['features/base/settings'][propertyName as keyof ISettingsState];
 
         if (typeof value !== 'undefined') {
             return value;
@@ -76,7 +80,7 @@ export function getPropertyValue(
 
     // config
     if (sources.config) {
-        const value = state['features/base/config'][propertyName];
+        const value = state['features/base/config'][propertyName as keyof IConfigState];
 
         if (typeof value !== 'undefined') {
             return value;
@@ -93,7 +97,7 @@ export function getPropertyValue(
  * {@code getState} function.
  * @returns {string} - The currently configured server URL.
  */
-export function getServerURL(stateful: Object | Function) {
+export function getServerURL(stateful: IStateful) {
     const state = toState(stateful);
 
     return state['features/base/settings'].serverURL || DEFAULT_SERVER_URL;
@@ -107,7 +111,7 @@ export function getServerURL(stateful: Object | Function) {
  * {@code getState} function.
  * @returns {string}
  */
-export function getUserSelectedCameraDeviceId(stateful: Object | Function) {
+export function getUserSelectedCameraDeviceId(stateful: IStateful) {
     const state = toState(stateful);
     const {
         userSelectedCameraDeviceId,
@@ -135,7 +139,7 @@ export function getUserSelectedCameraDeviceId(stateful: Object | Function) {
  * {@code getState} function.
  * @returns {string}
  */
-export function getUserSelectedMicDeviceId(stateful: Object | Function) {
+export function getUserSelectedMicDeviceId(stateful: IStateful) {
     const state = toState(stateful);
     const {
         userSelectedMicDeviceId,
@@ -163,7 +167,7 @@ export function getUserSelectedMicDeviceId(stateful: Object | Function) {
  * {@code getState} function.
  * @returns {string}
  */
-export function getUserSelectedOutputDeviceId(stateful: Object | Function) {
+export function getUserSelectedOutputDeviceId(stateful: IStateful) {
     const state = toState(stateful);
     const {
         userSelectedAudioOutputDeviceId,
@@ -202,13 +206,19 @@ export function getUserSelectedOutputDeviceId(stateful: Object | Function) {
  * @private
  * @returns {string} The preferred device ID to use for media.
  */
-function _getUserSelectedDeviceId(options) {
+function _getUserSelectedDeviceId(options: {
+    availableDevices: MediaDeviceInfo[] | undefined;
+    matchRegex?: RegExp;
+    replacement?: string;
+    userSelectedDeviceId?: string;
+    userSelectedDeviceLabel?: string;
+}) {
     const {
         availableDevices,
-        matchRegex,
+        matchRegex = '',
         userSelectedDeviceId,
         userSelectedDeviceLabel,
-        replacement
+        replacement = ''
     } = options;
 
     // If there is no label at all, there is no need to fall back to checking
@@ -217,7 +227,7 @@ function _getUserSelectedDeviceId(options) {
         return userSelectedDeviceId;
     }
 
-    const foundMatchingBasedonDeviceId = availableDevices.find(
+    const foundMatchingBasedonDeviceId = availableDevices?.find(
         candidate => candidate.deviceId === userSelectedDeviceId);
 
     // Prioritize matching the deviceId
@@ -228,7 +238,7 @@ function _getUserSelectedDeviceId(options) {
     const strippedDeviceLabel
         = matchRegex ? userSelectedDeviceLabel.replace(matchRegex, replacement)
             : userSelectedDeviceLabel;
-    const foundMatchBasedOnLabel = availableDevices.find(candidate => {
+    const foundMatchBasedOnLabel = availableDevices?.find(candidate => {
         const { label } = candidate;
 
         if (!label) {
@@ -253,7 +263,7 @@ function _getUserSelectedDeviceId(options) {
  * @param {Object} state - The state of the application.
  * @returns {boolean}
  */
-export function shouldHideShareAudioHelper(state: Object): boolean {
+export function shouldHideShareAudioHelper(state: IState): boolean | undefined {
 
     return state['features/base/settings'].hideShareAudioHelper;
 }
@@ -264,7 +274,7 @@ export function shouldHideShareAudioHelper(state: Object): boolean {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-export function shouldHideSelfView(state: Object) {
+export function shouldHideSelfView(state: IState) {
     return getParticipantCount(state) === 1 ? false : getHideSelfView(state);
 }
 
@@ -274,6 +284,6 @@ export function shouldHideSelfView(state: Object) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-export function getHideSelfView(state: Object) {
+export function getHideSelfView(state: IState) {
     return state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView;
 }

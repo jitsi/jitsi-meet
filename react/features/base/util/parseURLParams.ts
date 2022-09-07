@@ -24,7 +24,7 @@ const blacklist = [ '__proto__', 'constructor', 'prototype' ];
 export function parseURLParams(
         url: URL | string,
         dontParse = false,
-        source = 'hash'): Object {
+        source = 'hash') {
     if (typeof url === 'string') {
         // eslint-disable-next-line no-param-reassign
         url = new URL(url);

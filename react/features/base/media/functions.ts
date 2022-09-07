@@ -1,7 +1,6 @@
-/* @flow */
-
-import { toState } from '../redux';
-import { getPropertyValue } from '../settings';
+import { IStateful } from '../app/types';
+import { toState } from '../redux/functions';
+import { getPropertyValue } from '../settings/functions.any';
 
 import { VIDEO_MUTISM_AUTHORITY } from './constants';
 
@@ -32,7 +31,7 @@ const START_WITH_AUDIO_VIDEO_MUTED_SOURCES = {
  * {@code getState} function.
  * @returns {boolean}
  */
-export function isAudioMuted(stateful: Function | Object) {
+export function isAudioMuted(stateful: IStateful) {
     return Boolean(toState(stateful)['features/base/media'].audio.muted);
 }
 
@@ -43,7 +42,7 @@ export function isAudioMuted(stateful: Function | Object) {
  * {@code getState} function.
  * @returns {boolean}
  */
-export function isVideoMutedByAudioOnly(stateful: Function | Object) {
+export function isVideoMutedByAudioOnly(stateful: IStateful) {
     return (
         _isVideoMutedByAuthority(stateful, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
 }
@@ -60,7 +59,7 @@ export function isVideoMutedByAudioOnly(stateful: Function | Object) {
  * {@code videoMutismAuthority}, then {@code true}; otherwise, {@code false}.
  */
 function _isVideoMutedByAuthority(
-        stateful: Function | Object,
+        stateful: IStateful,
         videoMutismAuthority: number) {
     const { muted } = toState(stateful)['features/base/media'].video;
 
@@ -74,7 +73,7 @@ function _isVideoMutedByAuthority(
  * @param {Object|Function} stateful - The redux state object or {@code getState} function.
  * @returns {boolean} - The computed startWithAudioMuted value that will be used.
  */
-export function getStartWithAudioMuted(stateful: Object | Function) {
+export function getStartWithAudioMuted(stateful: IStateful) {
     return Boolean(getPropertyValue(stateful, 'startWithAudioMuted', START_WITH_AUDIO_VIDEO_MUTED_SOURCES));
 }
 
@@ -84,7 +83,7 @@ export function getStartWithAudioMuted(stateful: Object | Function) {
  * @param {Object|Function} stateful - The redux state object or {@code getState} function.
  * @returns {boolean} - The computed startWithVideoMuted value that will be used.
  */
-export function getStartWithVideoMuted(stateful: Object | Function) {
+export function getStartWithVideoMuted(stateful: IStateful) {
     return Boolean(getPropertyValue(stateful, 'startWithVideoMuted', START_WITH_AUDIO_VIDEO_MUTED_SOURCES));
 }
 
@@ -94,7 +93,7 @@ export function getStartWithVideoMuted(stateful: Object | Function) {
  * @param {Function|Object} stateful - The redux store, state, or {@code getState} function.
  * @returns {boolean}
  */
-export function isVideoMuted(stateful: Function | Object) {
+export function isVideoMuted(stateful: IStateful) {
     return Boolean(toState(stateful)['features/base/media'].video.muted);
 }
 
@@ -105,7 +104,7 @@ export function isVideoMuted(stateful: Function | Object) {
  * {@code getState} function.
  * @returns {boolean}
  */
-export function isVideoMutedByUser(stateful: Function | Object) {
+export function isVideoMutedByUser(stateful: IStateful) {
     return _isVideoMutedByAuthority(stateful, VIDEO_MUTISM_AUTHORITY.USER);
 }
 
@@ -120,7 +119,7 @@ export function isVideoMutedByUser(stateful: Function | Object) {
  * otherwise, false.
  */
 export function shouldRenderVideoTrack(
-        videoTrack: ?{ muted: boolean, videoStarted: boolean },
+        videoTrack: { muted: boolean; videoStarted: boolean; },
         waitForVideoStarted: boolean) {
     return (
         videoTrack

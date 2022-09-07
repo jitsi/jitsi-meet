@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The name of the {@code JitsiConnection} property which identifies the {@code JitsiConference} currently associated
  * with it.
