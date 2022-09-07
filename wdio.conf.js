@@ -1,4 +1,5 @@
-const { ONEPLUSA5000, iPhone13ProSimulator } = require('./modules/mobile-tests/capabilities');
+const { iPhoneXs } = require('./modules/mobile-tests/helpers/capabilities');
+const { MAX_INSTANCES } = require('./modules/mobile-tests/helpers/constants');
 
 
 exports.config = {
@@ -29,7 +30,7 @@ exports.config = {
     // will be called from there.
     //
     specs: [
-        './modules/mobile-tests/test.e2e.js'
+        './modules/mobile-tests/specs/**/*.js'
     ],
 
     // Patterns to exclude.
@@ -54,7 +55,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: MAX_INSTANCES,
 
     //
     // If you have trouble getting all important capabilities together, check out the
@@ -62,7 +63,7 @@ exports.config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [
-        iPhone13ProSimulator
+        iPhoneXs
     ],
 
     //

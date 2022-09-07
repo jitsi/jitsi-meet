@@ -4,7 +4,7 @@ const wdio = require('webdriverio');
 
 const {
     iPhoneXs
-} = require('./capabilities');
+} = require('../helpers/capabilities');
 
 const options = {
     path: '/wd/hub',
