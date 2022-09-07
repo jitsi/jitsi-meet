@@ -3,8 +3,8 @@ import React, { useCallback } from 'react';
 import { View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-// @ts-ignore
-import { createBreakoutRoomsEvent, createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { createBreakoutRoomsEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 // @ts-ignore
 import { appNavigate } from '../../../app/actions';
 // @ts-ignore

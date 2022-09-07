@@ -5,8 +5,8 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
-// @ts-ignore
-import { createToolbarEvent, sendAnalytics } from '../../analytics';
+import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { IState } from '../../app/types';
 // @ts-ignore
 import { setAudioOnly } from '../../base/audio-only';

@@ -3,8 +3,8 @@ import type { Dispatch } from 'redux';
 
 // @ts-ignore
 import UIEvents from '../../../../service/UI/UIEvents';
-// @ts-ignore
-import { createAudioOnlyChangedEvent, sendAnalytics } from '../../analytics';
+import { createAudioOnlyChangedEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 
 import { SET_AUDIO_ONLY } from './actionTypes';
 import logger from './logger';

@@ -5,11 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import {
     createShortcutEvent,
-    sendAnalytics,
     ACTION_SHORTCUT_PRESSED as PRESSED,
     ACTION_SHORTCUT_RELEASED as RELEASED
-    // @ts-ignore
-} from '../../../../analytics';
+} from '../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../analytics/functions';
 import { IState } from '../../../../app/types';
 // @ts-ignore
 import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags';

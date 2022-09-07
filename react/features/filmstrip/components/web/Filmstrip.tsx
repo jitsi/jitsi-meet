@@ -7,12 +7,8 @@ import { WithTranslation } from 'react-i18next';
 import { FixedSizeList, FixedSizeGrid } from 'react-window';
 import type { Dispatch } from 'redux';
 
-import {
-    createShortcutEvent,
-    createToolbarEvent,
-    sendAnalytics
-    // @ts-ignore
-} from '../../../analytics';
+import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
 // @ts-ignore
 import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config';
@@ -797,6 +793,7 @@ class Filmstrip extends PureComponent <Props, State> {
     _onShortcutToggleFilmstrip() {
         sendAnalytics(createShortcutEvent(
             'toggle.filmstrip',
+            ACTION_SHORTCUT_TRIGGERED,
             {
                 enable: this.props._mainFilmstripVisible
             }));

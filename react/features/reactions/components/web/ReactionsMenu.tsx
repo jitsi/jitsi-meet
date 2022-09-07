@@ -5,12 +5,8 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { bindActionCreators } from 'redux';
 
-import {
-    createReactionMenuEvent,
-    createToolbarEvent,
-    sendAnalytics
-    // @ts-ignore
-} from '../../../analytics';
+import { createReactionMenuEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';

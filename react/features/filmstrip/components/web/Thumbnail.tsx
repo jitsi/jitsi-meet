@@ -4,8 +4,8 @@ import clsx from 'clsx';
 import debounce from 'lodash/debounce';
 import React, { Component } from 'react';
 
-// @ts-ignore
-import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics';
+import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
