@@ -5,19 +5,17 @@ const wdio = require('webdriverio');
 const {
     iPhoneXs
 } = require('../helpers/capabilities');
+const { getSelector } = require('../helpers/getSelector');
 
 const options = {
     path: '/wd/hub',
     port: 4723,
     capabilities: iPhoneXs
 };
-const { capabilities } = options;
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const androidInput = '//android.widget.EditText[@content-desc="Enter room name"]';
 const iosInput = '//XCUIElementTypeTextField[@name="Enter room name"]';
-const input
-    = capabilities === iPhoneXs ? iosInput : androidInput;
 
 /**
  * Constructs a test session.
@@ -26,6 +24,7 @@ const input
  */
 async function main() {
     const client = wdio.remote(options);
+    const input = getSelector(androidInput, iosInput);
 
     const field = (await client).$(input);
 
