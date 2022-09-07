@@ -111,6 +111,9 @@ function _addConferenceListeners(conference, dispatch, state) {
         JitsiConferenceEvents.CONFERENCE_JOINED,
         (...args) => dispatch(conferenceJoined(conference, ...args)));
     conference.on(
+        JitsiConferenceEvents.CONFERENCE_UNIQUE_ID_SET,
+        (...args) => dispatch(conferenceUniqueIdSet(conference, ...args)));
+    conference.on(
         JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
         (...args) => dispatch(conferenceJoinInProgress(conference, ...args)));
     conference.on(

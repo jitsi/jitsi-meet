@@ -5,10 +5,8 @@ import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-// @ts-ignore
-import { ListItem } from '../../../base/components';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+import ListItem from '../../../base/components/participants-pane-list/ListItem';
+import { translate } from '../../../base/i18n/functions';
 import {
     ACTION_TRIGGER,
     AudioStateIcons,
@@ -16,10 +14,8 @@ import {
     type ActionTrigger,
     type MediaState,
     VideoStateIcons
-    // @ts-ignore
 } from '../../constants';
 
-// @ts-ignore
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 
 interface Props extends WithTranslation {
@@ -37,17 +33,17 @@ interface Props extends WithTranslation {
     /**
      * React children.
      */
-    children?: ReactElement,
+    children?: ReactElement|boolean,
 
     /**
      * Whether or not to disable the moderator indicator.
      */
-    disableModeratorIndicator: boolean,
+    disableModeratorIndicator?: boolean,
 
     /**
      * The name of the participant. Used for showing lobby names.
      */
-    displayName: string,
+    displayName?: string,
 
     /**
      * Is this item highlighted/raised.
@@ -57,17 +53,17 @@ interface Props extends WithTranslation {
     /**
      * Whether or not the participant is a moderator.
      */
-    isModerator: boolean,
+    isModerator?: boolean,
 
     /**
      * True if the participant is local.
      */
-    local: boolean,
+    local?: boolean,
 
     /**
      * Callback for when the mouse leaves this component.
      */
-    onLeave?: Function,
+    onLeave?: (e?: React.MouseEvent) => void,
 
     /**
      * Opens a drawer with participant actions.

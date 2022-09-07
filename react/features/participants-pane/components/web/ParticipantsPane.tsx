@@ -8,7 +8,7 @@ import participantsPaneTheme from '../../../base/components/themes/participantsP
 // @ts-ignore
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';
-import { IconClose, IconHorizontalPoints } from '../../../base/icons/svg/index';
+import { IconClose, IconHorizontalPoints } from '../../../base/icons/svg';
 // @ts-ignore
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
@@ -29,16 +29,12 @@ import {
     isMuteAllVisible
     // @ts-ignore
 } from '../../functions';
-// @ts-ignore
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
 // @ts-ignore
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
-// @ts-ignore
 import { FooterContextMenu } from './FooterContextMenu';
-// @ts-ignore
 import LobbyParticipants from './LobbyParticipants';
-// @ts-ignore
 import MeetingParticipants from './MeetingParticipants';
 
 /**

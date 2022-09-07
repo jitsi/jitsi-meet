@@ -16,8 +16,7 @@ import { translate } from '../../../base/i18n/functions';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 // @ts-ignore
 import TouchmoveHack from '../../../chat/components/web/TouchmoveHack';
-// @ts-ignore
-import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip';
+import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip/constants';
 // @ts-ignore
 import { SS_DEFAULT_FRAME_RATE } from '../../constants';
 
@@ -178,7 +177,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onFramerateDropdownOpenChange({ isOpen }: {isOpen: boolean}) {
+    _onFramerateDropdownOpenChange({ isOpen }: { isOpen: boolean }) {
         // @ts-ignore
         this.setState({ isFramerateSelectOpen: isOpen });
     }
@@ -203,7 +202,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onLanguageDropdownOpenChange({ isOpen }: {isOpen: boolean}) {
+    _onLanguageDropdownOpenChange({ isOpen }: { isOpen: boolean }) {
         // @ts-ignore
         this.setState({ isLanguageSelectOpen: isOpen });
     }
@@ -283,7 +282,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onMaxStageParticipantsOpenChange({ isOpen }: {isOpen: boolean}) {
+    _onMaxStageParticipantsOpenChange({ isOpen }: { isOpen: boolean }) {
         // @ts-ignore
         this.setState({ isMaxStageParticipantsOpen: isOpen });
     }

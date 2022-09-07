@@ -19,7 +19,7 @@ export interface IDropboxState {
  */
 PersistenceRegistry.register(STORE_NAME);
 
-ReducerRegistry.register(STORE_NAME, (state: IDropboxState = {}, action) => {
+ReducerRegistry.register<IDropboxState>(STORE_NAME, (state = {}, action): IDropboxState => {
     switch (action.type) {
     case UPDATE_DROPBOX_TOKEN:
         return {

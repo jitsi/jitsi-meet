@@ -6,15 +6,11 @@ import { batch } from 'react-redux';
 
 // @ts-ignore
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
-import {
-    ACTION_SHORTCUT_TRIGGERED,
-    createShortcutEvent,
-    createToolbarEvent,
-    sendAnalytics
-    // @ts-ignore
-} from '../../../analytics';
-// @ts-ignore
-import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
+import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IState } from '../../../app/types';
+import ContextMenu from '../../../base/components/context-menu/ContextMenu';
+import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 // @ts-ignore
 import { getMultipleVideoSendingSupportFeatureFlag, getToolbarButtons } from '../../../base/config';
 // @ts-ignore
@@ -233,7 +229,7 @@ interface Props extends WithTranslation {
      */
     _hasSalesforce: boolean,
 
-     /**
+    /**
      * Whether or not the app is running in an ios mobile browser.
      */
     _isIosMobile: boolean,
@@ -570,9 +566,9 @@ class Toolbox extends Component<Props> {
      * @param {KeyboardEvent} e - Esc key click to close the popup.
      * @returns {void}
      */
-    _onEscKey(e: React.KeyboardEvent) {
-        if (e.key === 'Escape') {
-            e.stopPropagation();
+    _onEscKey(e?: React.KeyboardEvent) {
+        if (e?.key === 'Escape') {
+            e?.stopPropagation();
             this._closeHangupMenuIfOpen();
             this._closeOverflowMenuIfOpen();
         }
@@ -1091,6 +1087,7 @@ class Toolbox extends Component<Props> {
     _onShortcutToggleChat() {
         sendAnalytics(createShortcutEvent(
             'toggle.chat',
+            ACTION_SHORTCUT_TRIGGERED,
             {
                 enable: !this.props._chatOpen
             }));
@@ -1115,6 +1112,7 @@ class Toolbox extends Component<Props> {
     _onShortcutToggleParticipantsPane() {
         sendAnalytics(createShortcutEvent(
             'toggle.participants-pane',
+            ACTION_SHORTCUT_TRIGGERED,
             {
                 enable: !this.props._participantsPaneOpen
             }));
@@ -1144,6 +1142,7 @@ class Toolbox extends Component<Props> {
     _onShortcutToggleTileView() {
         sendAnalytics(createShortcutEvent(
             'toggle.tileview',
+            ACTION_SHORTCUT_TRIGGERED,
             {
                 enable: !this.props._tileViewEnabled
             }));
@@ -1161,6 +1160,7 @@ class Toolbox extends Component<Props> {
     _onShortcutToggleFullScreen() {
         sendAnalytics(createShortcutEvent(
             'toggle.fullscreen',
+            ACTION_SHORTCUT_TRIGGERED,
             {
                 enable: !this.props._fullScreen
             }));
@@ -1306,7 +1306,6 @@ class Toolbox extends Component<Props> {
     _onToolbarToggleScreenshare() {
         sendAnalytics(createToolbarEvent(
             'toggle.screen.sharing',
-            ACTION_SHORTCUT_TRIGGERED,
             { enable: !this.props._screenSharing }));
 
         this._closeOverflowMenuIfOpen();
@@ -1481,7 +1480,7 @@ class Toolbox extends Component<Props> {
  * @private
  * @returns {{}}
  */
-function _mapStateToProps(state: any, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
     const {

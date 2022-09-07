@@ -6,7 +6,6 @@ import { translate } from '../../../../base/i18n/functions';
 import { copyText } from '../../../../base/util/helpers';
 import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 
-// @ts-ignore
 import PasswordForm from './PasswordForm';
 import { NotifyClick } from './SecurityDialog';
 

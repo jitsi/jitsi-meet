@@ -3,8 +3,8 @@ import React, { ComponentType, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-// @ts-ignore
-import { sendAnalytics, createPollEvent } from '../../analytics';
+import { createPollEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { IState } from '../../app/types';
 import { getLocalParticipant, getParticipantById } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
@@ -48,7 +48,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     const conference: any = useSelector((state: IState) => state['features/base/conference'].conference);
 
-    const poll: Poll = useSelector((state: any) => state['features/polls'].polls[pollId]);
+    const poll: Poll = useSelector((state: IState) => state['features/polls'].polls[pollId]);
 
     const { id: localId } = useSelector(getLocalParticipant);
 

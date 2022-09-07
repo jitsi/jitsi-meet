@@ -14,9 +14,8 @@ import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../i18n/functions';
-import { IconClose } from '../../../icons/svg/index';
-// @ts-ignore
-import { withPixelLineHeight } from '../../../styles/functions';
+import { IconClose } from '../../../icons/svg';
+import { withPixelLineHeight } from '../../../styles/functions.web';
 import Button from '../../../ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../ui/constants';
 

@@ -1,4 +1,3 @@
-import { BoxModel } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
@@ -19,17 +18,6 @@ export default {
         height: 180,
         justifyContent: 'center'
     },
-
-    /**
-     * The style of the display name label.
-     */
-    avatarLabel: {
-        color: BaseTheme.palette.text01,
-        fontSize: 16,
-        marginTop: BoxModel.margin,
-        textAlign: 'center'
-    },
-
 
     /**
      * Style for screen container.

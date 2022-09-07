@@ -3,13 +3,12 @@ import { makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import Icon from '../../../base/icons/components/Icon';
-import { IconMenu } from '../../../base/icons/svg/index';
+import { IconMenu } from '../../../base/icons/svg';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { Theme } from '../../../base/ui/types';
-// @ts-ignore
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 // @ts-ignore
 import AbstractPollCreate from '../AbstractPollCreate';

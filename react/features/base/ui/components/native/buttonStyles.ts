@@ -1,4 +1,3 @@
-// @ts-ignore
 import BaseTheme from '../../../ui/components/BaseTheme.native';
 
 const BUTTON_HEIGHT = BaseTheme.spacing[7];

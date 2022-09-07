@@ -2,13 +2,14 @@ import React from 'react';
 import { Image, ImageStyle, StyleProp, ViewStyle } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 
+import { IState } from '../../../app/types';
 import { connect } from '../../../base/redux/functions';
 
 import styles from './styles';
 
 
 interface Props {
-    uri?: any;
+    uri?: string;
 }
 
 /**
@@ -17,7 +18,7 @@ interface Props {
  * @param {Props} props - The props of the component.
  * @returns {ReactElement}
  */
-const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
+const BrandingImageBackground: React.FC<Props> = ({ uri }: Props) => {
     const imageType = uri?.substr(uri.lastIndexOf('/') + 1);
     const imgSrc = uri ? uri : undefined;
 
@@ -40,7 +41,7 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
                     // with the smallest Y value of the viewport.
                     preserveAspectRatio = 'xMinYMin'
                     style = { styles.brandingImageBackgroundSvg as StyleProp<ViewStyle> }
-                    uri = { imgSrc }
+                    uri = { imgSrc ?? null }
                     viewBox = '0 0 400 650'
                     width = '100%' />
             );
@@ -64,7 +65,7 @@ const BrandingImageBackground: React.FC<Props> = ({ uri }:Props) => {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: any) {
+function _mapStateToProps(state: IState) {
     const { backgroundImageUrl } = state['features/dynamic-branding'];
 
     return {

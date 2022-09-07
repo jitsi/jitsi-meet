@@ -4,7 +4,7 @@ import { translate } from '../../base/i18n/functions';
 import {
     IconNoiseSuppressionOn,
     IconNoiseSuppressionOff
-} from '../../base/icons/svg/index';
+} from '../../base/icons/svg';
 import { connect } from '../../base/redux/functions';
 import {
     AbstractButton,

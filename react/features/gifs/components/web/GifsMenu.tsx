@@ -7,8 +7,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch, useSelector } from 'react-redux';
 
-// @ts-ignore
-import { createGifSentEvent, sendAnalytics } from '../../../analytics';
+import { createGifSentEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
 // @ts-ignore
 import InputField from '../../../base/premeeting/components/web/InputField';

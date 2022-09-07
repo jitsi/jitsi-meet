@@ -8,8 +8,7 @@ import { StartRecordingDialog } from '../..';
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n/functions';
 import { IconHighlight } from '../../../../base/icons/svg';
-// @ts-ignore
-import { Label } from '../../../../base/label';
+import Label from '../../../../base/label/components/web/Label';
 import { connect } from '../../../../base/redux/functions';
 // @ts-ignore
 import { Tooltip } from '../../../../base/tooltip';
@@ -154,8 +153,8 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
     * @param {Event} e - The click event.
     * @returns {void}
     */
-    _onClick(e: React.MouseEvent) {
-        e.stopPropagation();
+    _onClick(e?: React.MouseEvent) {
+        e?.stopPropagation();
 
         // @ts-ignore
         const { _disabled } = this.props;

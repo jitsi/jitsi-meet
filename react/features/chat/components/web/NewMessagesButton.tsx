@@ -4,7 +4,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
-import { IconArrowDown } from '../../../base/icons/svg/index';
+import { IconArrowDown } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 
 export interface INewMessagesButtonProps extends WithTranslation {

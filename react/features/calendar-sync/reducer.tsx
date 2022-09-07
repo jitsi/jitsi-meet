@@ -58,7 +58,7 @@ PersistenceRegistry.register(STORE_NAME, {
     msAuthState: true
 });
 
-ReducerRegistry.register(STORE_NAME, (state: ICalendarSyncState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<ICalendarSyncState>(STORE_NAME, (state = DEFAULT_STATE, action): ICalendarSyncState => {
     switch (action.type) {
     case CLEAR_CALENDAR_INTEGRATION:
         return DEFAULT_STATE;

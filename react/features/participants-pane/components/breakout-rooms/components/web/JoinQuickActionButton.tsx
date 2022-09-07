@@ -4,8 +4,8 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
-import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
+import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../../analytics/functions';
 import Button from '../../../../../base/ui/components/web/Button';
 import { Theme } from '../../../../../base/ui/types';
 // @ts-ignore

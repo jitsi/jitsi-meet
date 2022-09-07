@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 // @ts-ignore
 import { Dialog, hideDialog } from '../../../base/dialog';
 import Icon from '../../../base/icons/components/Icon';
-import { IconSearch } from '../../../base/icons/svg/index';
+import { IconSearch } from '../../../base/icons/svg';
 // @ts-ignore
 import { getFieldValue } from '../../../base/react';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';

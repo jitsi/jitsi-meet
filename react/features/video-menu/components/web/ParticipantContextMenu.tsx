@@ -9,16 +9,14 @@ import { IState } from '../../../app/types';
 import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-// @ts-ignore
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-// @ts-ignore
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
-import { IconShareVideo } from '../../../base/icons/svg/index';
+import { IconShareVideo } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { Participant } from '../../../base/participants/types';
 // @ts-ignore
 import { isParticipantAudioMuted } from '../../../base/tracks';
 // @ts-ignore
@@ -161,7 +159,7 @@ const ParticipantContextMenu = ({
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent }
         = useSelector((state: IState) => state['features/base/config']);
     const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
-    const { participantsVolume } = useSelector((state: any) => state['features/filmstrip']);
+    const { participantsVolume } = useSelector((state: IState) => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
@@ -169,7 +167,7 @@ const ParticipantContextMenu = ({
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
 
     const _currentRoomId = useSelector(getCurrentRoomId);
-    const _rooms: Array<{id: string}> = Object.values(useSelector(getBreakoutRooms));
+    const _rooms: Array<{ id: string }> = Object.values(useSelector(getBreakoutRooms));
 
     const _onVolumeChange = useCallback(value => {
         dispatch(setVolume(participant.id, value));

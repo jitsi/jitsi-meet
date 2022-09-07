@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import React, { ReactNode, useCallback } from 'react';
 
 import Icon from '../../../icons/components/Icon';
-import { IconArrowDown } from '../../../icons/svg/index';
+import { IconArrowDown } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 type Props = {

@@ -1,13 +1,10 @@
 /* eslint-disable lines-around-comment  */
 import { Component } from 'react';
-// @ts-ignore
 import { WithTranslation } from 'react-i18next';
 
-import {
-    createRecordingDialogEvent,
-    sendAnalytics
-    // @ts-ignore
-} from '../../../analytics';
+import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IState } from '../../../app/types';
 // @ts-ignore
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 // @ts-ignore
@@ -340,7 +337,7 @@ class AbstractStartRecordingDialogContent<P extends Props> extends Component<P> 
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-export function mapStateToProps(state: any) {
+export function mapStateToProps(state: IState) {
     const { localRecording, recordingService } = state['features/base/config'];
     const _localRecordingAvailable
         = !localRecording?.disable && supportsLocalRecording();

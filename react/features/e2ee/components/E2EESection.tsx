@@ -3,14 +3,14 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
-// @ts-ignore
-import { createE2EEEvent, sendAnalytics } from '../../analytics';
+import { createE2EEEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { IState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import Switch from '../../base/ui/components/web/Switch';
 // @ts-ignore
 import { toggleE2EE } from '../actions';
-// @ts-ignore
 import { MAX_MODE } from '../constants';
 // @ts-ignore
 import { doesEveryoneSupportE2EE } from '../functions';
@@ -157,7 +157,7 @@ class E2EESection extends Component<Props, State> {
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state: any) {
+function mapStateToProps(state: IState) {
     const { enabled: e2eeEnabled, maxMode } = state['features/e2ee'];
     const { e2eeLabels } = state['features/base/config'];
 

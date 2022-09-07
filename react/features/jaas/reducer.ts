@@ -17,8 +17,8 @@ export interface IJaaSState {
 /**
  * Listen for actions that mutate the billing-counter state.
  */
-ReducerRegistry.register(
-    'features/jaas', (state: IJaaSState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IJaaSState>(
+    'features/jaas', (state = DEFAULT_STATE, action): IJaaSState => {
         switch (action.type) {
 
         case SET_DETAILS: {

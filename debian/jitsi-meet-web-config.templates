@@ -5,6 +5,7 @@ _Description: SSL certificate for the Jitsi Meet instance
  Jitsi Meet is best to be set up with an SSL certificate.
  Having no certificate, a self-signed one will be generated.
  By choosing self-signed you will later have a chance to install Let’s Encrypt certificates.
+ In the case of using a self-signed certificate, only the web app will be available with some warnings, the mobile app will not connect.
  Having a certificate signed by a recognised CA, it can be uploaded on the server
  and point its location. The default filenames will be /etc/ssl/--domain.name--.key
  for the key and /etc/ssl/--domain.name--.crt for the certificate.
@@ -30,3 +31,11 @@ Template: jitsi-videobridge/jvb-hostname
 Type: string
 _Description: Hostname:
  The Jitsi Meet web config package needs the DNS hostname of your instance.
+
+Template: jitsi-meet/jaas-choice
+Type: boolean
+_Description: Interested in adding telephony to your Jitsi meetings?
+ You can easily add dialing in support to your meetings using JaaS (Jitsi as a Service).
+ You need to:
+  - have a certificate signed by a recognised CA or Let’s Encrypt on your deployment
+  - sign in for JaaS at https://jaas.8x8.vc/components?host=${domain}

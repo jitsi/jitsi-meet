@@ -3,8 +3,8 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
-import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 // @ts-ignore
 import { leaveConference } from '../../../base/conference/actions';
 import Button from '../../../base/ui/components/web/Button';

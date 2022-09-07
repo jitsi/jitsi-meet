@@ -18,9 +18,8 @@ import { getCurrentCameraDeviceId } from '../../base/settings';
 // @ts-ignore
 import { createLocalTracksF } from '../../base/tracks/functions';
 // @ts-ignore
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
-// @ts-ignore
 import { showWarningNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 // @ts-ignore
 import { toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';

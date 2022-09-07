@@ -4,11 +4,8 @@ import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import UIEvents from '../../../../../service/UI/UIEvents';
-import {
-    sendAnalytics,
-    createProfilePanelButtonEvent
-    // @ts-ignore
-} from '../../../analytics';
+import { createProfilePanelButtonEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 // @ts-ignore
 import { AbstractDialogTab } from '../../../base/dialog';
 // @ts-ignore
@@ -19,8 +16,7 @@ import Input from '../../../base/ui/components/web/Input';
 // @ts-ignore
 import { openLogoutDialog } from '../../actions';
 
-// eslint-disable-next-line no-var
-declare var APP: any;
+declare let APP: any;
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.

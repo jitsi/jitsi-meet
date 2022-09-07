@@ -252,7 +252,7 @@ export interface IMediaState {
  * modified.
  * @returns {Object}
  */
-ReducerRegistry.register('features/base/media', combineReducers({
+ReducerRegistry.register<IMediaState>('features/base/media', combineReducers({
     audio: _audio,
     screenshare: _screenshare,
     video: _video
@@ -299,7 +299,7 @@ function _storeVideoTransform(state: IVideoState, { streamId, transform }: { str
  * @private
  * @returns {Object}
  */
-function _trackRemoved(state: IVideoState, { track: { jitsiTrack } } : {track: {jitsiTrack: any}}) {
+function _trackRemoved(state: IVideoState, { track: { jitsiTrack } } : { track: { jitsiTrack: any } }) {
     if (jitsiTrack) {
         const streamId = jitsiTrack.getStreamId();
 

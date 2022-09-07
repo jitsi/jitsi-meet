@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Text, View } from 'react-native';
 
+import { IState } from '../../../app/types';
 import {
     getParticipantById,
     getParticipantDisplayName
@@ -66,11 +67,11 @@ class DisplayNameLabel extends React.Component<Props> {
  * @param {Props} ownProps - The own props of the component.
  * @returns {Props}
  */
-function _mapStateToProps(state: any, ownProps: any) {
-    const participant = getParticipantById(state, ownProps.participantId);
+function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+    const participant = getParticipantById(state, ownProps.participantId ?? '');
 
     return {
-        _participantName: getParticipantDisplayName(state, ownProps.participantId),
+        _participantName: getParticipantDisplayName(state, ownProps.participantId ?? ''),
         _render: participant && (!participant?.local || ownProps.contained) && !participant?.isFakeParticipant
     };
 }

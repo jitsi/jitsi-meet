@@ -1,5 +1,7 @@
 // @flow
 
+import $ from 'jquery';
+
 import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functions.any';
 import { openDialog } from '../base/dialog';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
@@ -39,7 +41,6 @@ import logger from './logger';
 let permissionsReplyListener, receiverEndpointMessageListener, stopListener;
 
 declare var APP: Object;
-declare var $: Function;
 
 /**
  * Signals that the remote control authorization dialog should be displayed.

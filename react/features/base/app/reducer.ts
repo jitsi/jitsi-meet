@@ -6,7 +6,7 @@ export interface IAppState {
     app?: Object|undefined;
 }
 
-ReducerRegistry.register('features/base/app', (state: IAppState = {}, action) => {
+ReducerRegistry.register<IAppState>('features/base/app', (state = {}, action): IAppState => {
     switch (action.type) {
     case APP_WILL_MOUNT: {
         const { app } = action;

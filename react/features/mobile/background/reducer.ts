@@ -17,7 +17,7 @@ const DEFAULT_STATE = {
     appState: 'active'
 };
 
-ReducerRegistry.register('features/background', (state: IBackgroundState = DEFAULT_STATE, action) => {
+ReducerRegistry.register<IBackgroundState>('features/background', (state = DEFAULT_STATE, action): IBackgroundState => {
     switch (action.type) {
     case _SET_APP_STATE_LISTENER:
         return {

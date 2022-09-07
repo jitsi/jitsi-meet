@@ -1,5 +1,4 @@
-// @ts-ignore
-import { getBaseUrl } from '../../base/util';
+import { getBaseUrl } from '../../base/util/helpers';
 
 import logger from './logger';
 

@@ -1,6 +1,10 @@
 /* application specific logic */
 
-import 'jquery';
+// Re-export jQuery
+// FIXME: Remove this requirement from torture tests.
+import $ from 'jquery';
+
+window.$ = window.jQuery = $;
 
 import '@matrix-org/olm';
 

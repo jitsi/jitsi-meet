@@ -4,12 +4,13 @@ import { IAVModerationState } from '../av-moderation/reducer';
 import { IAppState } from '../base/app/reducer';
 import { IAudioOnlyState } from '../base/audio-only/reducer';
 import { IConferenceState } from '../base/conference/reducer';
-import { IConfig } from '../base/config/configType';
+import { IConfigState } from '../base/config/reducer';
 import { IConnectionState } from '../base/connection/reducer';
 import { IDevicesState } from '../base/devices/reducer';
 import { IDialogState } from '../base/dialog/reducer';
 import { IFlagsState } from '../base/flags/reducer';
 import { IJwtState } from '../base/jwt/reducer';
+import { IKnownDomainsState } from '../base/known-domains/reducer';
 import { ILastNState } from '../base/lastn/reducer';
 import { ILibJitsiMeetState } from '../base/lib-jitsi-meet/reducer';
 import { ILoggingState } from '../base/logging/reducer';
@@ -42,6 +43,7 @@ import { ILargeVideoState } from '../large-video/reducer';
 import { ILobbyState } from '../lobby/reducer';
 import { IMobileAudioModeState } from '../mobile/audio-mode/reducer';
 import { IBackgroundState } from '../mobile/background/reducer';
+import { ICallIntegrationState } from '../mobile/call-integration/reducer';
 import { IMobileExternalApiState } from '../mobile/external-api/reducer';
 import { IFullScreenState } from '../mobile/full-screen/reducer';
 import { IMobileWatchOSState } from '../mobile/watchos/reducer';
@@ -54,10 +56,25 @@ import { IPollsState } from '../polls/reducer';
 import { IPowerMonitorState } from '../power-monitor/reducer';
 import { IPrejoinState } from '../prejoin/reducer';
 import { IReactionsState } from '../reactions/reducer';
+import { IRecentListState } from '../recent-list/reducer';
+import { IRecordingState } from '../recording/reducer';
+import { IRemoteControlState } from '../remote-control/reducer';
+import { IScreenShareState } from '../screen-share/reducer';
+import { IScreenshotCaptureState } from '../screenshot-capture/reducer';
+import { ISharedVideoState } from '../shared-video/reducer';
+import { ISpeakerStatsState } from '../speaker-stats/reducer';
+import { ISubtitlesState } from '../subtitles/reducer';
+import { ITalkWhileMutedState } from '../talk-while-muted/reducer';
+import { IToolboxState } from '../toolbox/reducer';
+import { ITranscribingState } from '../transcribing/reducer';
+import { IVideoLayoutState } from '../video-layout/reducer';
+import { IVideoQualityPersistedState, IVideoQualityState } from '../video-quality/reducer';
+import { IVideoSipGW } from '../videosipgw/reducer';
+import { IVirtualBackground } from '../virtual-background/reducer';
 
 export interface IStore {
     dispatch: Function,
-    getState: Function
+    getState: () => IState;
 }
 
 export interface IState {
@@ -68,13 +85,13 @@ export interface IState {
     'features/base/app': IAppState,
     'features/base/audio-only': IAudioOnlyState,
     'features/base/conference': IConferenceState,
-    'features/base/config': IConfig,
+    'features/base/config': IConfigState,
     'features/base/connection': IConnectionState,
     'features/base/devices': IDevicesState,
     'features/base/dialog': IDialogState,
     'features/base/flags': IFlagsState,
     'features/base/jwt': IJwtState,
-    'features/base/known-domains': Array<string>,
+    'features/base/known-domains': IKnownDomainsState,
     'features/base/lastn': ILastNState,
     'features/base/lib-jitsi-meet': ILibJitsiMeetState,
     'features/base/logging': ILoggingState,
@@ -89,6 +106,7 @@ export interface IState {
     'features/base/user-interaction': IUserInteractionState,
     'features/breakout-rooms': IBreakoutRoomsState,
     'features/calendar-sync': ICalendarSyncState,
+    'features/call-integration': ICallIntegrationState,
     'features/chat': IChatState,
     'features/deep-linking': IDeepLinkingState,
     'features/dropbox': IDropboxState,
@@ -119,5 +137,22 @@ export interface IState {
     'features/power-monitor': IPowerMonitorState,
     'features/prejoin': IPrejoinState,
     'features/reactions': IReactionsState,
-    'features/testing': ITestingState
+    'features/recent-list': IRecentListState,
+    'features/recording': IRecordingState,
+    'features/remote-control': IRemoteControlState,
+    'features/screen-share': IScreenShareState,
+    'features/screenshot-capture': IScreenshotCaptureState,
+    'features/settings': ISettingsState,
+    'features/shared-video': ISharedVideoState,
+    'features/speaker-stats': ISpeakerStatsState,
+    'features/subtitles': ISubtitlesState,
+    'features/talk-while-muted': ITalkWhileMutedState,
+    'features/testing': ITestingState,
+    'features/toolbox': IToolboxState,
+    'features/transcribing': ITranscribingState,
+    'features/video-layout': IVideoLayoutState,
+    'features/video-quality': IVideoQualityState,
+    'features/video-quality-persistent-storage': IVideoQualityPersistedState,
+    'features/videosipgw': IVideoSipGW,
+    'features/virtual-background': IVirtualBackground
 }

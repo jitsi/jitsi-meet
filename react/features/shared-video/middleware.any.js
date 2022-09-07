@@ -10,7 +10,8 @@ import {
     getLocalParticipant,
     participantJoined,
     participantLeft,
-    pinParticipant
+    pinParticipant,
+    getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
@@ -51,7 +52,12 @@ MiddlewareRegistry.register(store => next => action => {
                 if (isSharingStatus(sharedVideoStatus)) {
                     handleSharingVideoStatus(store, value, attributes, conference);
                 } else if (sharedVideoStatus === 'stop') {
-                    dispatch(participantLeft(value, conference));
+                    const videoParticipant = getParticipantById(state, value);
+
+                    dispatch(participantLeft(value, conference, {
+                        isFakeParticipant: videoParticipant?.isFakeParticipant
+                    }));
+
                     if (localParticipantId !== from) {
                         dispatch(resetSharedVideoStatus());
                     }

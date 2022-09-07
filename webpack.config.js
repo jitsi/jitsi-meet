@@ -142,15 +142,6 @@ function getConfig(options = {}) {
                 },
                 test: /\.jsx?$/
             }, {
-                // TODO: get rid of this.
-                // Expose jquery as the globals $ and jQuery because it is expected
-                // to be available in such a form by lib-jitsi-meet.
-                loader: 'expose-loader',
-                options: {
-                    exposes: [ '$', 'jQuery' ]
-                },
-                test: require.resolve('jquery')
-            }, {
                 // Allow CSS to be imported into JavaScript.
 
                 test: /\.css$/,
@@ -350,7 +341,7 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
+                'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.ts'
             },
             plugins: [
                 ...config.plugins,

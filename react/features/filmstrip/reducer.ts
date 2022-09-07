@@ -258,9 +258,9 @@ export interface IFilmstripState {
     }
 }
 
-ReducerRegistry.register(
+ReducerRegistry.register<IFilmstripState>(
     'features/filmstrip',
-    (state: IFilmstripState = DEFAULT_STATE, action) => {
+    (state = DEFAULT_STATE, action): IFilmstripState => {
         switch (action.type) {
         case SET_FILMSTRIP_ENABLED:
             return {
