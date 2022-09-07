@@ -5,44 +5,61 @@ import 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import './react/features/mobile/polyfills';
 // eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { View } from 'react-native';
+
 
 // eslint-disable-next-line no-unused-vars
 import { App } from './react/features/app/components/App.native';
 // eslint-disable-next-line no-unused-vars
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider';
+import { closeJitsiMeeting } from './react/features/mobile/react-native-sdk/functions';
+import { convertPropsToURL } from './utils';
 
 
 /**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-export default function JitsiMeetView(props) {
+const JitsiMeetView = forwardRef((props, ref) => {
     const [ appProps, setAppProps ] = useState({});
+    const app = useRef(null);
+
+    // eslint-disable-next-line arrow-body-style
+    useImperativeHandle(ref, () => ({
+        close: () => {
+            const dispatch = app.current.state.store.dispatch;
+
+            closeJitsiMeeting(dispatch);
+        }
+    }));
 
     /**
      * Executes the onLeave callback passed from props as well as setting the props to an empty object
      */
     function onReadyToClose() {
         setAppProps({});
-        props.onReadyToClose();
+        props.meetingOptions.onReadyToClose();
     }
     useEffect(
         () => {
-            setAppProps({ 'url': props.url,
-                'onLeave': onReadyToClose,
+            const url = convertPropsToURL(props.meetingOptions.domain, props.meetingOptions.roomName);
+
+            setAppProps({ 'url': url,
+                'onReadyToClose': onReadyToClose,
                 'flags': [] });
         }, []
     );
 
     return (
-        <View style={{ width: '100%',
-            height: '100%' }}>
+        <View style={{ width: props.width,
+            height: props.height}}>
             <JitsiThemePaperProvider>
                 <App
-                    {...appProps} />
+                    {...appProps} ref={app} />
             </JitsiThemePaperProvider>
         </View>
     );
-}
+});
+
+export default JitsiMeetView;
