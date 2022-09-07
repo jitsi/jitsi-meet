@@ -15,6 +15,7 @@ import { isLocalTrackMuted } from '../../../base/tracks';
 import { MEDIA_TYPE } from '../../../base/media';
 import { isAudioMuteButtonDisabled } from '../../functions.any';
 import { AUDIO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { isMobileBrowser } from '../../../base/environment/utils';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -109,15 +110,20 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
 
             mediaRecorder.addEventListener('stop', () => {
                 console.log('Playing stooped ', audioChunks);
-                const audioBlob = new Blob(audioChunks, { 'type': 'audio/webm; codecs=opus' });
+                const audioBlob = new Blob(audioChunks, { 'type': 'audio/mp4 codecs=opus' });
                 const audioUrl = URL.createObjectURL(audioBlob);
                 console.log('AudioUrl, ', audioUrl);
 
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = audioUrl;
-                a.download = `${getFilename()}.webm`;
-                document.body.appendChild(a);
+                if (isMobileBrowser()) {
+                    a.download = `${getFilename()}`;
+                    document.body.appendChild(a);
+                } else {
+                    a.download = `${getFilename()}.webm`;
+                    document.body.appendChild(a);
+                }
 
                 a.onclick = () => {
                     console.log(`${a.download} save option shown`);

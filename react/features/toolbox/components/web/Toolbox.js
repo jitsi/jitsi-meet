@@ -1430,7 +1430,7 @@ class Toolbox extends Component<Props> {
                             </OverflowMenuButton>
                         )}
                         {
-                            this.decodeJwt.selfie === 'A' ?
+                            this.decodeJwt.selfie === 'N' ? '' : this.decodeJwt.selfie === 'A' ?
                                 <DownloadAudioRecorder
                                     buttonKey="selfie"
                                     customClass="selfie-button"

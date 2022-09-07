@@ -11,6 +11,12 @@ import {
     SALESFORCE_LINK_NOTIFICATION_ID,
     showNotification
 } from '../../../notifications';
+import { getFeatureFlag, VIDEO_MUTE_BUTTON_ENABLED } from '../../../base/flags';
+import { isVideoMuteButtonDisabled } from '../../functions';
+import {
+    getLocalVideoType,
+    isLocalCameraTrackMuted
+} from '../../../base/tracks';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -20,12 +26,18 @@ type Props = AbstractButtonProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Whether video is currently muted or not.
+     */
+    _videoMuted: boolean,
 };
 
 /**
  * Implements an {@link AbstractSelfieButton} to open the user documentation in a new window.
  */
+
 
     ///This class is used download Video Recorder
 class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
@@ -40,6 +52,8 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
      * @private
      * @returns {void}
      */
+
+
     constructor(props: Props) {
         super(props);
         let boolRecording = false;
@@ -57,20 +71,29 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
         }
 
         this._videoRecorder = () => {
+            console.log('videoStatus', this._isVideoMuted());
             let arrayAudioStreams = getVideoStreamFromTracks('audio');
             if (arrayAudioStreams.length > 1) {
                 if (!boolRecording) {
-                    canvas = document.createElement('canvas');
-                    canvas.style.width = 1080;
-                    canvas.style.height = 720;
-                    const videos = document.getElementsByTagName('video');
-                    if (videos.length > 0) {
-                        // get Stream from Tracks
-                        if (arrayAudioStreams.length > 0) {
-                            this.props.dispatch(toggleRecordTimer());
-                            boolRecording = true;
-                            videoRecorder(videos, canvas, arrayAudioStreams);
+                    if (this._isVideoMuted() === false) {
+                        canvas = document.createElement('canvas');
+                        canvas.style.width = 1080;
+                        canvas.style.height = 720;
+                        const videos = document.getElementsByTagName('video');
+                        if (videos.length > 0) {
+                            // get Stream from Tracks
+                            if (arrayAudioStreams.length > 0) {
+                                this.props.dispatch(toggleRecordTimer());
+                                boolRecording = true;
+                                videoRecorder(videos, canvas, arrayAudioStreams);
+                            }
                         }
+                    } else {
+                        props.dispatch(showNotification({
+                            titleKey: 'Turn on video to start recording',
+                            uid: SALESFORCE_LINK_NOTIFICATION_ID,
+                            appearance: NOTIFICATION_TYPE.NORMAL
+                        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
                     }
                 } else {
                     boolRecording = false;
@@ -190,10 +213,10 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
                     console.log('VideoUrl, ', videoObjectURL);
 
                     const a = document.createElement('a');
-                    document.body.appendChild(a);
                     a.style = 'display: none';
                     a.href = videoObjectURL;
                     a.download = `${getFilename()}.${videoFormatSupport}`;
+                    document.body.appendChild(a);
 
                     a.onclick = () => {
                         console.log(`${a.download} save option shown`);
@@ -244,6 +267,17 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
     }
 
     /**
+     * Indicates if video is currently muted or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isVideoMuted() {
+        return this.props._videoMuted;
+    }
+
+    /**
      * Helper function to perform the download action.
      *
      * @override
@@ -256,4 +290,29 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
     }
 }
 
-export default translate(connect()(DownloadVideoRecorder));
+/**
+ * Maps (parts of) the redux state to the associated props for the
+ * {@code VideoMuteButton} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _audioOnly: boolean,
+ *     _videoMuted: boolean
+ * }}
+ */
+function _mapStateToProps(state): Object {
+    const { enabled: audioOnly } = state['features/base/audio-only'];
+    const tracks = state['features/base/tracks'];
+    const enabledFlag = getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true);
+
+    return {
+        _audioOnly: Boolean(audioOnly),
+        _videoDisabled: isVideoMuteButtonDisabled(state),
+        _videoMediaType: getLocalVideoType(tracks),
+        _videoMuted: isLocalCameraTrackMuted(tracks),
+        visible: enabledFlag
+    };
+}
+
+export default translate(connect(_mapStateToProps)(DownloadVideoRecorder));
