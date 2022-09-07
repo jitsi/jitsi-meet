@@ -100,7 +100,6 @@ if (externalAPIEnabled) {
  * @param {Store} store - Redux store.
  * @returns {Function}
  */
-
 externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     const oldAudioMuted = store.getState()['features/base/media'].audio.muted;
     const result = next(action);

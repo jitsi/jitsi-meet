@@ -53,7 +53,7 @@ const JitsiMeetView = forwardRef((props, ref) => {
 
     return (
         <View style={{ width: props.width,
-            height: props.height}}>
+            height: props.height }}>
             <JitsiThemePaperProvider>
                 <App
                     {...appProps} ref={app} />
