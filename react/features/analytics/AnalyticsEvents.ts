@@ -585,7 +585,7 @@ export function createRemoteVideoMenuButtonEvent(buttonName: string, attributes 
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRTCStatsTraceCloseEvent(closeEvent: {code: string; reason: string;}) {
+export function createRTCStatsTraceCloseEvent(closeEvent: { code: string; reason: string; }) {
     const event: {
         action: string;
         code?: string;
