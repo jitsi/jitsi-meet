@@ -73,11 +73,6 @@ interface Props extends WithTranslation {
     disableShowMoreStats: boolean;
 
     /**
-     * The end-to-end round-trip-time.
-     */
-    e2eRtt: number;
-
-    /**
      * Whether or not should display the "Save Logs" link.
      */
     enableSaveLogs: boolean;
@@ -525,27 +520,6 @@ class ConnectionStatsTable extends Component<Props> {
     }
 
     /**
-     * Creates a table row as a ReactElement for displaying end-to-end RTT and
-     * the region.
-     *
-     * @returns {ReactElement}
-     * @private
-     */
-    _renderE2eRtt() {
-        const { e2eRtt, t } = this.props;
-        const str = e2eRtt ? `${e2eRtt.toFixed(0)}ms` : 'N/A';
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.e2e_rtt') }</span>
-                </td>
-                <td>{ str }</td>
-            </tr>
-        );
-    }
-
-    /**
      * Creates a table row as a ReactElement for displaying the "connected to"
      * information.
      *
@@ -772,7 +746,6 @@ class ConnectionStatsTable extends Component<Props> {
                     { this._renderConnectionSummary() }
                     { this._renderBitrate() }
                     { this._renderPacketLoss() }
-                    { isRemoteVideo ? this._renderE2eRtt() : null }
                     { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
