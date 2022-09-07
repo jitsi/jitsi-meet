@@ -6,11 +6,13 @@ import Filmstrip from '../../../../modules/UI/videolayout/Filmstrip';
 import { i18next, DEFAULT_LANGUAGE } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
+import { getVerticalViewMaxWidth } from '../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../toolbox/functions.web';
 import { getGenericiFrameUrl, getSharedIFramesInfo } from '../functions';
 
 import IFrameManager from './IFrameManager';
 
+const HEIGHT_OFFSET = 80;
 
 declare var interfaceConfig: Object;
 
@@ -30,6 +32,11 @@ type Props = {
      * Whether the (vertical) filmstrip is visible or not.
      */
     filmstripVisible: boolean,
+
+    /**
+     * The width of the filmstrip.
+     */
+    filmstripWidth: number,
 
     /**
      * The id of the local participant.
@@ -79,30 +86,30 @@ class SharedIFrame extends PureComponent<Props> {
      * }}
      */
     getDimensions() {
-        const { clientHeight, clientWidth, filmstripVisible } = this.props;
+        const { clientHeight, clientWidth, filmstripVisible, filmstripWidth } = this.props;
 
         let width;
         let height;
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
             if (filmstripVisible) {
-                width = `${clientWidth - Filmstrip.getVerticalFilmstripWidth()}px`;
+                width = clientWidth - filmstripWidth;
             } else {
-                width = `${clientWidth}px`;
+                width = clientWidth;
             }
-            height = `${clientHeight - getToolboxHeight()}px`;
+            height = clientHeight - getToolboxHeight();
         } else {
             if (filmstripVisible) {
-                height = `${clientHeight - Filmstrip.getFilmstripHeight()}px`;
+                height = clientHeight - Filmstrip.getFilmstripHeight();
             } else {
-                height = `${clientHeight}px`;
+                height = clientHeight;
             }
-            width = `${clientWidth}px`;
+            width = clientWidth;
         }
 
         return {
-            width,
-            height
+            width: `${width}px`,
+            height: `${height - HEIGHT_OFFSET}px`
         };
     }
 
@@ -122,7 +129,9 @@ class SharedIFrame extends PureComponent<Props> {
 
         return {
             display: visible ? 'block' : 'none',
-            ...this.getDimensions()
+            ...this.getDimensions(),
+            marginTop: `${HEIGHT_OFFSET}px`,
+            position: 'relative'
         };
     }
 
@@ -144,7 +153,8 @@ class SharedIFrame extends PureComponent<Props> {
                     <IFrameManager
                         iFrameUrl = { getGenericiFrameUrl(_sharedIFrames[key].iFrameTemplateUrl, _room, _lang) }
                         isOwner = { _sharedIFrames[key].ownerId === _localParticipantId } />
-                </div>))
+                </div>)
+            )
         );
     }
 }
@@ -160,7 +170,8 @@ class SharedIFrame extends PureComponent<Props> {
 function _mapStateToProps(state) {
     const sharedIFrames = getSharedIFramesInfo(state);
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-    const { visible } = state['features/filmstrip'];
+    const { visible: filmstripVisible } = state['features/filmstrip'];
+    const filmstripWidth = getVerticalViewMaxWidth(state);
 
     const localParticipant = getLocalParticipant(state);
 
@@ -170,7 +181,8 @@ function _mapStateToProps(state) {
     return {
         clientHeight,
         clientWidth,
-        filmstripVisible: visible,
+        filmstripVisible,
+        filmstripWidth,
         _localParticipantId: localParticipant?.id,
         _sharedIFrames: sharedIFrames,
         _room: room,
