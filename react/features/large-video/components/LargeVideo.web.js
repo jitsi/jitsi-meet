@@ -3,10 +3,12 @@
 import React, { Component } from 'react';
 
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
+import { getMultipleVideoSupportFeatureFlag } from '../../base/config';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
 import { getLocalParticipant } from '../../base/participants';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
-import { getVideoTrackByParticipant } from '../../base/tracks';
+import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrack } from '../../base/tracks';
 import { setColorAlpha } from '../../base/util';
 import { StageParticipantNameLabel } from '../../display-name';
 import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../filmstrip';
@@ -80,10 +82,10 @@ type Props = {
      */
      _largeVideoParticipantId: string,
 
-        /**
-     * Whether or not the screen sharing is on.
+    /**
+     * Whether or not the local screen share is on large-video.
      */
-        _isScreenSharing: boolean,
+    _isScreenSharing: boolean,
 
     /**
      * Whether or not the screen sharing is visible.
@@ -326,16 +328,22 @@ function _mapStateToProps(state) {
     const tracks = state['features/base/tracks'];
     const localParticipantId = getLocalParticipant(state)?.id;
     const largeVideoParticipant = getLargeVideoParticipant(state);
-    const videoTrack = getVideoTrackByParticipant(tracks, largeVideoParticipant);
-    const localParticipantisSharingTheScreen = largeVideoParticipant?.id?.includes(localParticipantId);
-    const isScreenSharing = localParticipantisSharingTheScreen && videoTrack?.videoType === 'desktop';
+    let videoTrack;
+
+    if (getMultipleVideoSupportFeatureFlag(state) && largeVideoParticipant?.isVirtualScreenshareParticipant) {
+        videoTrack = getVirtualScreenshareParticipantTrack(tracks, largeVideoParticipant?.id);
+    } else {
+        videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipant?.id);
+    }
+    const isLocalScreenshareOnLargeVideo = largeVideoParticipant?.id?.includes(localParticipantId)
+        && videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
 
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
         _isChatOpen: isChatOpen,
-        _isScreenSharing: isScreenSharing,
+        _isScreenSharing: isLocalScreenshareOnLargeVideo,
         _largeVideoParticipantId: largeVideoParticipant?.id,
         _noAutoPlayVideo: testingConfig?.noAutoPlayVideo,
         _resizableFilmstrip: isFilmstripResizable(state),
