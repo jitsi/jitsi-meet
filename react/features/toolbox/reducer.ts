@@ -79,7 +79,7 @@ export interface IToolboxState {
     hovered: boolean;
     overflowDrawer: boolean;
     overflowMenuVisible: boolean;
-    timeoutID?: number|null;
+    timeoutID?: number | null;
     visible: boolean;
 }
 

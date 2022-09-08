@@ -23,33 +23,33 @@ type Props = {
     /**
      * Class name for indicators container.
      */
-    className: string,
+    className: string;
 
     /**
      * Whether it is a virtual screenshare participant thumbnail.
      */
-    isVirtualScreenshareParticipant: boolean,
+    isVirtualScreenshareParticipant: boolean;
 
     /**
      * Whether or not the indicators are for the local participant.
      */
-    local: boolean,
+    local: boolean;
 
     /**
      * Id of the participant for which the component is displayed.
      */
-    participantId: string,
+    participantId: string;
 
     /**
      * Whether or not to show the status indicators.
      */
-    showStatusIndicators?: boolean,
+    showStatusIndicators?: boolean;
 
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string
-}
+    thumbnailType: string;
+};
 
 const useStyles = makeStyles(() => {
     return {

@@ -11,37 +11,37 @@ type Props = AbstractProps & {
     /**
      * External class name passed through props.
      */
-    className?: string,
+    className?: string;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The default avatar URL if we want to override the app bundled one (e.g. AlwaysOnTop).
      */
-    defaultAvatar?: string,
+    defaultAvatar?: string;
 
     /**
      * ID of the component to be rendered.
      */
-    id?: string,
+    id?: string;
 
     /**
      * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
      */
-    status?: string,
+    status?: string;
 
     /**
      * TestId of the element, if any.
      */
-    testId?: string,
+    testId?: string;
 
     /**
      * Indicates whether to load the avatar using CORS or not.
      */
-    useCORS?: boolean
+    useCORS?: boolean;
 };
 
 /**

@@ -9,33 +9,33 @@ type Props = {
     /**
      * The 'aria-label' text.
      */
-    ariaLabel: string,
+    ariaLabel: string;
 
     /**
      * The maximum value for slider value.
      */
-    max: number,
+    max: number;
 
     /**
      * The minimum value for slider value.
      */
-    min: number,
+    min: number;
 
     /**
      * Callback invoked on change.
      */
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
     /**
      * The granularity that the value must adhere to.
      */
-    step: number,
+    step: number;
 
     /**
      * The current value where the knob is positioned.
      */
-    value: number
-}
+    value: number;
+};
 
 const useStyles = makeStyles((theme: any) => {
     // keep the same height for all elements:

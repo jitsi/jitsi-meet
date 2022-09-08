@@ -29,12 +29,12 @@ type Props = {
     /**
      * The function to initiate the change in the speaker stats table.
      */
-    onChange: (checked?: boolean) => void,
+    onChange: (checked?: boolean) => void;
 
     /**
      * The state of the button.
      */
-    showFaceExpressions: boolean,
+    showFaceExpressions: boolean;
 
 };
 

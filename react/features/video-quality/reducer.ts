@@ -37,11 +37,11 @@ Object.values(VIDEO_QUALITY_LEVELS).sort()
     });
 
 export interface IVideoQualityState {
-    maxReceiverVideoQualityForLargeVideo: number,
-    maxReceiverVideoQualityForScreenSharingFilmstrip: number,
-    maxReceiverVideoQualityForStageFilmstrip: number,
-    maxReceiverVideoQualityForTileView: number,
-    maxReceiverVideoQualityForVerticalFilmstrip: number,
+    maxReceiverVideoQualityForLargeVideo: number;
+    maxReceiverVideoQualityForScreenSharingFilmstrip: number;
+    maxReceiverVideoQualityForStageFilmstrip: number;
+    maxReceiverVideoQualityForTileView: number;
+    maxReceiverVideoQualityForVerticalFilmstrip: number;
     minHeightForQualityLvl: Map<number, number>;
     preferredVideoQuality: number;
 }
@@ -120,7 +120,7 @@ ReducerRegistry.register<IVideoQualityState>('features/video-quality',
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _setConfig(state: IVideoQualityState, { config }: { config: IConfig }) {
+function _setConfig(state: IVideoQualityState, { config }: { config: IConfig; }) {
     const configuredMap = config?.videoQuality?.minHeightForQualityLvl;
     const convertedMap = validateMinHeightForQualityLvl(configuredMap);
 

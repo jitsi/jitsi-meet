@@ -5,7 +5,7 @@ import {
 } from './actionTypes';
 
 export interface INoiseSuppressionState {
-    enabled: boolean
+    enabled: boolean;
 }
 
 const DEFAULT_STATE = {

@@ -56,47 +56,47 @@ interface State {
     /**
      * State variable for the disable call integration switch.
      */
-    disableCallIntegration: boolean,
+    disableCallIntegration: boolean;
 
     /**
      * State variable for the disable crash reporting switch.
      */
-    disableCrashReporting: boolean,
+    disableCrashReporting: boolean;
 
     /**
      * State variable for the disable p2p switch.
      */
-    disableP2P: boolean,
+    disableP2P: boolean;
 
     /**
      * Whether the self view is disabled or not.
      */
-    disableSelfView: boolean,
+    disableSelfView: boolean;
 
     /**
      * State variable for the display name field.
      */
-    displayName: string,
+    displayName: string;
 
     /**
      * State variable for the email field.
      */
-    email: string,
+    email: string;
 
     /**
      * State variable for the server URL field.
      */
-    serverURL: string,
+    serverURL: string;
 
     /**
      * State variable for the start with audio muted switch.
      */
-    startWithAudioMuted: boolean,
+    startWithAudioMuted: boolean;
 
     /**
      * State variable for the start with video muted switch.
      */
-    startWithVideoMuted: boolean
+    startWithVideoMuted: boolean;
 }
 
 /**
@@ -108,21 +108,21 @@ interface Props extends WithTranslation {
     /**
      * The ID of the local participant.
      */
-    _localParticipantId: string,
+    _localParticipantId: string;
 
     /**
      * The default URL for when there is no custom URL set in the settings.
      *
      * @protected
      */
-    _serverURL: string,
+    _serverURL: string;
 
     /**
      * Flag indicating if URL can be changed by user.
      *
      * @protected
      */
-    _serverURLChangeEnabled: boolean,
+    _serverURLChangeEnabled: boolean;
 
     /**
      * The current settings object.
@@ -137,29 +137,29 @@ interface Props extends WithTranslation {
         serverURL: string;
         startWithAudioMuted: boolean;
         startWithVideoMuted: boolean;
-    },
+    };
 
     /**
      * Whether {@link SettingsView} is visible.
      *
      * @protected
      */
-    _visible: boolean,
+    _visible: boolean;
 
     /**
      * Redux store dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
-    navigation: Object,
+    navigation: Object;
 
     /**
      * Callback to be invoked when settings screen is focused.
      */
-    onSettingsScreenFocused: Function
+    onSettingsScreenFocused: Function;
 }
 
 /**

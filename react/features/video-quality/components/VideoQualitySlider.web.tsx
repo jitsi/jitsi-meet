@@ -54,33 +54,33 @@ interface Props extends WithTranslation {
     /**
      * Whether or not the conference is in audio only mode.
      */
-    _audioOnly: Boolean,
+    _audioOnly: Boolean;
 
     /**
      * The channelLastN value configured for the conference.
      */
-    _channelLastN: Number,
+    _channelLastN: Number;
 
     /**
      * Whether or not the conference is in peer to peer mode.
      */
-    _p2p: Boolean,
+    _p2p: Boolean;
 
     /**
      * The currently configured maximum quality resolution to be sent and
      * received from the remote participants.
      */
-    _sendrecvVideoQuality: Number,
+    _sendrecvVideoQuality: Number;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Invoked to request toggling of audio only mode.
      */
-    dispatch: Dispatch<any>
+    dispatch: Dispatch<any>;
 }
 
 /**

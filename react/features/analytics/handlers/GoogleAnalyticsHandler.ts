@@ -67,7 +67,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
      * @private
      */
     _extractValue(event: IEvent) {
-        let value: string|number|undefined = event && event.attributes && event.attributes.value;
+        let value: string | number | undefined = event?.attributes?.value;
 
         // Try to extract an integer from the "value" attribute.
         value = Math.round(parseFloat(value ?? ''));

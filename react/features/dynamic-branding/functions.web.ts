@@ -47,7 +47,7 @@ export function createMuiBrandingTheme(customTheme: any) {
 
     let newSpacing = [ ...spacing ];
 
-    if (customSpacing && customSpacing.length) {
+    if (customSpacing?.length) {
         newSpacing = customSpacing;
     }
 

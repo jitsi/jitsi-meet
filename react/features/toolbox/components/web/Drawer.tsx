@@ -9,22 +9,22 @@ type Props = {
     /**
      * The component(s) to be displayed within the drawer menu.
      */
-    children: ReactElement,
+    children: ReactElement;
 
     /**
      * Class name for custom styles.
      */
-    className?: string,
+    className?: string;
 
     /**
      * Whether the drawer should be shown or not.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Function that hides the drawer.
      */
-    onClose: Function
+    onClose: Function;
 };
 
 const useStyles = makeStyles((theme: any) => {

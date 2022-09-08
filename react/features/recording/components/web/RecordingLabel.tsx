@@ -55,7 +55,7 @@ class RecordingLabel extends AbstractRecordingLabel {
         return (
             <div>
                 <Label
-                    className = { classes && classes[mode] }
+                    className = { classes?.[mode] }
                     // @ts-ignore
                     text = { t(this._getLabelKey()) } />
             </div>

@@ -85,7 +85,7 @@ export function getBaseUrl(w: Window = window) {
     const doc = w.document;
     const base = doc.querySelector('base');
 
-    if (base && base.href) {
+    if (base?.href) {
         return base.href;
     }
 
@@ -127,7 +127,7 @@ export function getJitsiMeetGlobalNS() {
  */
 export function reportError(e: Error, msg = '') {
     console.error(msg, e);
-    window.onerror && window.onerror(msg, undefined, undefined, undefined, e);
+    window.onerror?.(msg, undefined, undefined, undefined, e);
 }
 
 /**

@@ -18,12 +18,12 @@ interface Props extends WithTranslation {
     /**
      * List of strings with details about the connection.
      */
-    connectionDetails: string[],
+    connectionDetails: string[];
 
     /**
      * The type of the connection. Can be: 'none', 'poor', 'nonOptimal' or 'good'.
      */
-    connectionType: string
+    connectionType: string;
 }
 
 const useStyles = makeStyles((theme: any) => {
@@ -124,7 +124,7 @@ const CONNECTION_TYPE_MAP: {
         connectionClass: string;
         connectionText: string;
         icon: Function;
-    }
+    };
 } = {
     [CONNECTION_TYPE.POOR]: {
         connectionClass: 'con-status--poor',

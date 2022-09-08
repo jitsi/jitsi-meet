@@ -3,7 +3,7 @@ import ReducerRegistry from '../redux/ReducerRegistry';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 
 export interface IAppState {
-    app?: Object|undefined;
+    app?: Object | undefined;
 }
 
 ReducerRegistry.register<IAppState>('features/base/app', (state = {}, action): IAppState => {

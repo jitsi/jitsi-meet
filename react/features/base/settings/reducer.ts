@@ -51,19 +51,19 @@ const DEFAULT_STATE: ISettingsState = {
 };
 
 export interface ISettingsState {
-    audioOutputDeviceId?: string|boolean;
-    avatarURL?: string|boolean;
-    cameraDeviceId?: string|boolean;
+    audioOutputDeviceId?: string | boolean;
+    avatarURL?: string | boolean;
+    cameraDeviceId?: string | boolean;
     disableCallIntegration?: boolean;
     disableCrashReporting?: boolean;
     disableP2P?: boolean;
     disableSelfView?: boolean;
-    displayName?: string|boolean;
-    email?: string|boolean;
+    displayName?: string | boolean;
+    email?: string | boolean;
     hideShareAudioHelper?: boolean;
     localFlipX?: boolean;
-    micDeviceId?: string|boolean;
-    serverURL?: string|boolean;
+    micDeviceId?: string | boolean;
+    serverURL?: string | boolean;
     soundsIncomingMessage?: boolean;
     soundsParticipantJoined?: boolean;
     soundsParticipantKnocking?: boolean;
@@ -73,15 +73,15 @@ export interface ISettingsState {
     startAudioOnly?: boolean;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;
-    userSelectedAudioOutputDeviceId?: string|boolean;
-    userSelectedAudioOutputDeviceLabel?: string|boolean;
-    userSelectedCameraDeviceId?: string|boolean;
-    userSelectedCameraDeviceLabel?: string|boolean;
-    userSelectedMicDeviceId?: string|boolean;
-    userSelectedMicDeviceLabel?: string|boolean;
+    userSelectedAudioOutputDeviceId?: string | boolean;
+    userSelectedAudioOutputDeviceLabel?: string | boolean;
+    userSelectedCameraDeviceId?: string | boolean;
+    userSelectedCameraDeviceLabel?: string | boolean;
+    userSelectedMicDeviceId?: string | boolean;
+    userSelectedMicDeviceLabel?: string | boolean;
     userSelectedNotifications?: {
         [key: string]: boolean;
-    }|boolean,
+    } | boolean;
     userSelectedSkipPrejoin?: boolean;
     visible?: boolean;
 }

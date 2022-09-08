@@ -7,7 +7,7 @@ export interface Props {
     /**
      * The messages array to render.
      */
-    messages: IMessage[]
+    messages: IMessage[];
 }
 
 /**

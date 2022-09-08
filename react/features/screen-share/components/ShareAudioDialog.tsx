@@ -24,12 +24,12 @@ export interface Props extends WithTranslation {
     /**
      * Boolean stored in local storage that determines whether or not the dialog will be displayed again.
      */
-    _shouldHideShareAudioHelper: boolean,
+    _shouldHideShareAudioHelper: boolean;
 
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>
+    dispatch: Dispatch<any>;
 }
 
 /**

@@ -19,8 +19,8 @@ type Props = {
     room: {
         id: string;
         jid: string;
-    }
-}
+    };
+};
 
 const useStyles = makeStyles((theme: Theme) => {
     return {

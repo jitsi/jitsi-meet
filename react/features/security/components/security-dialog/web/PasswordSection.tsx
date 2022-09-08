@@ -17,49 +17,49 @@ interface Props extends WithTranslation {
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    buttonsWithNotifyClick: Array<string | NotifyClick>,
+    buttonsWithNotifyClick: Array<string | NotifyClick>;
 
     /**
      * Whether or not the current user can modify the current password.
      */
-    canEditPassword: boolean,
+    canEditPassword: boolean;
 
     /**
      * The JitsiConference for which to display a lock state and change the
      * password.
      */
-    conference: any,
+    conference: any;
 
     /**
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    locked: string,
+    locked: string;
 
     /**
      * The current known password for the JitsiConference.
      */
-    password: string,
+    password: string;
 
     /**
      * Whether or not to show the password in editing mode.
      */
-    passwordEditEnabled: boolean,
+    passwordEditEnabled: boolean;
 
     /**
      * The number of digits to be used in the password.
      */
-    passwordNumberOfDigits?: number,
+    passwordNumberOfDigits?: number;
 
     /**
      * Action that sets the conference password.
      */
-    setPassword: Function,
+    setPassword: Function;
 
     /**
      * Method that sets whether the password editing is enabled or not.
      */
-    setPasswordEditEnabled: Function
+    setPasswordEditEnabled: Function;
 }
 
 declare let APP: any;

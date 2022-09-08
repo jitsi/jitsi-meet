@@ -55,7 +55,7 @@ ReducerRegistry.register<ISubtitlesState>('features/subtitles', (
  * @returns {Object} The new state of the feature transcription after the
  * reduction of the specified action.
  */
-function _removeTranscriptMessage(state: ISubtitlesState, { transcriptMessageID }: { transcriptMessageID: string }) {
+function _removeTranscriptMessage(state: ISubtitlesState, { transcriptMessageID }: { transcriptMessageID: string; }) {
     const newTranscriptMessages = new Map(state._transcriptMessages);
 
     // Deletes the key from Map once a final message arrives.
@@ -77,7 +77,7 @@ function _removeTranscriptMessage(state: ISubtitlesState, { transcriptMessageID 
  * reduction of the specified action.
  */
 function _updateTranscriptMessage(state: ISubtitlesState, { transcriptMessageID, newTranscriptMessage }:
-    { newTranscriptMessage: Object, transcriptMessageID: string }) {
+    { newTranscriptMessage: Object; transcriptMessageID: string; }) {
     const newTranscriptMessages = new Map(state._transcriptMessages);
 
     // Updates the new message for the given key in the Map.

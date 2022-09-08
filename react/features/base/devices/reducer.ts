@@ -37,7 +37,7 @@ export interface IDevicesState {
     permissions: {
         audio: boolean;
         video: boolean;
-    }
+    };
 }
 
 /**

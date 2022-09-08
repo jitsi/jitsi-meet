@@ -14,8 +14,8 @@ import { updateTranslationLanguage, setRequestingSubtitles, toggleLangugeSelecto
 import LanguageList from './LanguageList';
 
 interface ILanguageSelectorDialogProps {
-    _language: string,
-    t: Function,
+    _language: string;
+    t: Function;
 }
 
 /**

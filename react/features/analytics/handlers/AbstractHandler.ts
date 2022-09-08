@@ -2,8 +2,8 @@ export interface IEvent {
     action?: string;
     actionSubject?: string;
     attributes?: {
-        [key: string]: string|undefined;
-    },
+        [key: string]: string | undefined;
+    };
     name?: string;
     source?: string;
     type?: string;
@@ -30,8 +30,8 @@ interface Options {
  */
 export default class AbstractHandler {
     _enabled: boolean;
-    _whiteListedEvents: Array<string>|undefined;
-    _blackListedEvents: Array<string>|undefined;
+    _whiteListedEvents: Array<string> | undefined;
+    _blackListedEvents: Array<string> | undefined;
 
     /**
      * Creates new instance.

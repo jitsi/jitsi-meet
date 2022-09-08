@@ -17,40 +17,40 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
     /**
      * If set hides the reactions moderation setting.
      */
-    disableReactionsModeration: boolean,
+    disableReactionsModeration: boolean;
 
     /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
-    followMeActive: boolean,
+    followMeActive: boolean;
 
     /**
      * Whether or not the user has selected the Follow Me feature to be enabled.
      */
-    followMeEnabled: boolean,
+    followMeEnabled: boolean;
 
     /**
      * Whether or not the user has selected the Start Audio Muted feature to be
      * enabled.
      */
-    startAudioMuted: boolean,
+    startAudioMuted: boolean;
 
     /**
      * Whether or not the user has selected the Start Reactions Muted feature to be
      * enabled.
      */
-    startReactionsMuted: boolean,
+    startReactionsMuted: boolean;
 
     /**
      * Whether or not the user has selected the Start Video Muted feature to be
      * enabled.
      */
-    startVideoMuted: boolean,
+    startVideoMuted: boolean;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function;
 };
 
 /**

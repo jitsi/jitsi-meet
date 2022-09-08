@@ -24,17 +24,17 @@ type Props = {
     /**
      * Callback used to open a drawer with admit/reject actions.
      */
-    openDrawerForParticipant: Function,
+    openDrawerForParticipant: Function;
 
     /**
      * If an overflow drawer should be displayed.
      */
-    overflowDrawer: boolean,
+    overflowDrawer: boolean;
 
     /**
      * Participant reference.
      */
-    participant: Participant
+    participant: Participant;
 };
 
 const useStyles = makeStyles((theme: any) => {

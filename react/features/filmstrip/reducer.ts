@@ -198,7 +198,7 @@ interface FilmstripDimensions {
     gridDimensions?: {
         columns: number;
         rows: number;
-    }
+    };
     hasScroll?: boolean;
     thumbnailSize?: Dimensions;
 }
@@ -206,7 +206,7 @@ interface FilmstripDimensions {
 export interface IFilmstripState {
     activeParticipants: Array<{
         participantId: string;
-        pinned?: boolean
+        pinned?: boolean;
     }>;
     enabled: boolean;
     horizontalViewDimensions: {
@@ -226,12 +226,12 @@ export interface IFilmstripState {
         filmstripWidth?: number;
         thumbnailSize?: Dimensions;
     };
-    screenshareFilmstripParticipantId?: string|null;
+    screenshareFilmstripParticipantId?: string | null;
     stageFilmstripDimensions: FilmstripDimensions;
     tileViewDimensions?: FilmstripDimensions;
     topPanelHeight: {
-        current: number|null;
-        userSet: number|null;
+        current: number | null;
+        userSet: number | null;
     };
     topPanelVisible: boolean;
     verticalViewDimensions: {
@@ -253,9 +253,9 @@ export interface IFilmstripState {
     visibleParticipantsStartIndex: number;
     visibleRemoteParticipants: Set<string>;
     width: {
-        current: number|null;
-        userSet: number|null;
-    }
+        current: number | null;
+        userSet: number | null;
+    };
 }
 
 ReducerRegistry.register<IFilmstripState>(

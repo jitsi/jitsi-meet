@@ -18,7 +18,7 @@ import styles from './styles';
  *
  * @returns {JSX.Element} - The sound device button.
  */
-const SelectSoundDevice = () : JSX.Element => {
+const SelectSoundDevice = (): JSX.Element => {
     const dispatch = useDispatch();
 
     const onSelect = useCallback(() =>

@@ -29,48 +29,48 @@ type Props = {
     /**
      * Hide popover callback.
      */
-    hidePopover: Function,
+    hidePopover: Function;
 
     /**
      * Class name for the status indicators container.
      */
-    indicatorsClassName: string,
+    indicatorsClassName: string;
 
     /**
      * Whether or not the thumbnail is hovered.
      */
-    isHovered: boolean,
+    isHovered: boolean;
 
     /**
      * Whether or not the thumbnail is a virtual screen share participant.
      */
-    isVirtualScreenshareParticipant?: boolean,
+    isVirtualScreenshareParticipant?: boolean;
 
     /**
      * Whether or not the indicators are for the local participant.
      */
-    local: boolean,
+    local: boolean;
 
     /**
      * Id of the participant for which the component is displayed.
      */
-    participantId: string,
+    participantId: string;
 
     /**
      * Whether popover is visible or not.
      */
-    popoverVisible: boolean,
+    popoverVisible: boolean;
 
     /**
      * Show popover callback.
      */
-    showPopover: Function,
+    showPopover: Function;
 
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string
-}
+    thumbnailType: string;
+};
 
 const useStyles = makeStyles(() => {
     return {

@@ -18,32 +18,32 @@ interface Props extends WithTranslation {
     /**
      * The number to call in order to join the conference.
      */
-    number: string,
+    number: string;
 
     /**
      * Handler used when clicking the back button.
      */
-    onBack: Function,
+    onBack: Function;
 
     /**
      * Click handler for primary button.
      */
-    onPrimaryButtonClick: Function,
+    onPrimaryButtonClick: Function;
 
     /**
      * Click handler for the small additional text.
      */
-    onSmallTextClick: (e?: React.MouseEvent) => void,
+    onSmallTextClick: (e?: React.MouseEvent) => void;
 
     /**
      * Click handler for the text button.
      */
-    onTextButtonClick: (e?: React.MouseEvent) => void,
+    onTextButtonClick: (e?: React.MouseEvent) => void;
 
     /**
      * The passCode of the conference.
      */
-    passCode: string
+    passCode: string;
 }
 
 const useStyles = makeStyles((theme: any) => {

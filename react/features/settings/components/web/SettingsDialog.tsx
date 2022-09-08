@@ -55,29 +55,29 @@ type Props = {
         name: string;
         onMount: () => void;
         submit: () => void;
-    }>,
+    }>;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: Object,
+    classes: Object;
 
     /**
      * Which settings tab should be initially displayed. If not defined then
      * the first tab will be displayed.
      */
-    defaultTab: string,
+    defaultTab: string;
 
     /**
      * Invoked to save changed settings.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Indicates whether the device selection dialog is displayed on the
      * welcome page or not.
      */
-    isDisplayedOnWelcomePage: boolean
+    isDisplayedOnWelcomePage: boolean;
 };
 
 /**

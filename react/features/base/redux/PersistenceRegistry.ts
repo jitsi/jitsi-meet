@@ -19,7 +19,7 @@ declare type ElementConfig = boolean | Object;
 /**
  * The type of the name-config pairs stored in {@code PersistenceRegistry}.
  */
-declare type PersistencyConfigMap = { [name: string]: ElementConfig };
+declare type PersistencyConfigMap = { [name: string]: ElementConfig; };
 
 /**
  * A registry to allow features to register their redux store subtree to be
@@ -27,7 +27,7 @@ declare type PersistencyConfigMap = { [name: string]: ElementConfig };
  */
 class PersistenceRegistry {
     _checksum = '';
-    _defaultStates: { [name: string ]: Object|undefined } = {};
+    _defaultStates: { [name: string ]: Object | undefined; } = {};
     _elements: PersistencyConfigMap = {};
 
     /**

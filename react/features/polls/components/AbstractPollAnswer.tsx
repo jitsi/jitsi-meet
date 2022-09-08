@@ -17,7 +17,7 @@ import { Poll } from '../types';
  * The type of the React {@code Component} props of inheriting component.
  */
 type InputProps = {
-    pollId: string,
+    pollId: string;
 };
 
 /*
@@ -25,14 +25,14 @@ type InputProps = {
  * concrete implementations (web/native).
  **/
 export type AbstractProps = {
-    checkBoxStates: boolean[],
-    creatorName: string,
-    poll: Poll,
-    setCheckbox: Function,
-    skipAnswer: () => void,
-    skipChangeVote: () => void,
-    submitAnswer: () => void,
-    t: Function,
+    checkBoxStates: boolean[];
+    creatorName: string;
+    poll: Poll;
+    setCheckbox: Function;
+    skipAnswer: () => void;
+    skipChangeVote: () => void;
+    submitAnswer: () => void;
+    t: Function;
 };
 
 /**

@@ -45,47 +45,47 @@ interface Props extends WithTranslation {
     /**
      * Whether there is backend support for Breakout Rooms.
      */
-    _isBreakoutRoomsSupported: Boolean,
+    _isBreakoutRoomsSupported: Boolean;
 
     /**
      * Whether to display the context menu  as a drawer.
      */
-    _overflowDrawer: boolean,
+    _overflowDrawer: boolean;
 
     /**
      * Is the participants pane open.
      */
-    _paneOpen: boolean,
+    _paneOpen: boolean;
 
     /**
      * Should the add breakout room button be displayed?
      */
-    _showAddRoomButton: boolean,
+    _showAddRoomButton: boolean;
 
     /**
      * Whether to show the footer menu.
      */
-    _showFooter: boolean,
+    _showFooter: boolean;
 
     /**
      * Whether to show the more actions button.
      */
-    _showMoreActionsButton: boolean,
+    _showMoreActionsButton: boolean;
 
     /**
      * Whether to show the mute all button.
      */
-    _showMuteAllButton: boolean,
+    _showMuteAllButton: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function
+    dispatch: Function;
 }
 
 /**
@@ -96,12 +96,12 @@ type State = {
     /**
      * Indicates if the footer context menu is open.
      */
-    contextOpen: boolean,
+    contextOpen: boolean;
 
     /**
      * Participants search string.
      */
-    searchString: string
+    searchString: string;
 };
 
 const styles = (theme: Theme) => {

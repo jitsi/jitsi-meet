@@ -14,33 +14,33 @@ type Props = AbstractProps & {
     /**
      * Own CSS class name.
      */
-    className?: string,
+    className?: string;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The color of the label.
      */
-    color?: string,
+    color?: string;
 
 
     /**
      * Color for the icon.
      */
-    iconColor?: string,
+    iconColor?: string;
 
     /**
      * HTML ID attribute to add to the root of {@code Label}.
      */
-    id?: string,
+    id?: string;
 
     /**
      * Click handler if any.
      */
-    onClick?: (e?: React.MouseEvent) => void,
+    onClick?: (e?: React.MouseEvent) => void;
 
 };
 

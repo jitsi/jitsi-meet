@@ -47,74 +47,74 @@ interface Props extends WithTranslation {
     /**
      * The id of the local participant.
      */
-    _localParticipantId: string,
+    _localParticipantId: string;
 
     /**
      * The position relative to the trigger the local video menu should display
      * from. Valid values are those supported by AtlasKit
      * {@code InlineDialog}.
      */
-    _menuPosition: string,
+    _menuPosition: string;
 
     /**
      * Whether to display the Popover as a drawer.
      */
-    _overflowDrawer: boolean,
+    _overflowDrawer: boolean;
 
     /**
      * Whether to render the connection info pane.
      */
-    _showConnectionInfo: boolean,
+    _showConnectionInfo: boolean;
 
     /**
      * Whether to render the hide self view button.
      */
-    _showHideSelfViewButton: boolean,
+    _showHideSelfViewButton: boolean;
 
     /**
      * Shows/hides the local video flip button.
      */
-    _showLocalVideoFlipButton: boolean,
+    _showLocalVideoFlipButton: boolean;
 
     /**
      * Whether to render the pin to stage button.
      */
-    _showPinToStage: boolean,
+    _showPinToStage: boolean;
 
     /**
      * Whether or not the button should be visible.
      */
-    buttonVisible: boolean,
+    buttonVisible: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Hides popover.
      */
-    hidePopover: Function,
+    hidePopover: Function;
 
     /**
      * Whether the popover is visible or not.
      */
-    popoverVisible: boolean,
+    popoverVisible: boolean;
 
     /**
      * Shows popover.
      */
-    showPopover: Function
+    showPopover: Function;
 
     /**
      * The type of the thumbnail.
      */
-    thumbnailType: string
+    thumbnailType: string;
 }
 
 const styles = () => {

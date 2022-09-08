@@ -84,22 +84,22 @@ export type State = {
     /**
      * Indicates that the canplay event has been received.
      */
-    canPlayEventReceived: boolean,
+    canPlayEventReceived: boolean;
 
     /**
      * The current display mode of the thumbnail.
      */
-    displayMode: number,
+    displayMode: number;
 
     /**
      * Indicates whether the thumbnail is hovered or not.
      */
-    isHovered: boolean,
+    isHovered: boolean;
 
     /**
      * Whether popover is visible or not.
      */
-    popoverVisible: boolean
+    popoverVisible: boolean;
 };
 
 /**
@@ -110,172 +110,172 @@ export type Props = {
     /**
      * The audio track related to the participant.
      */
-    _audioTrack?: Object,
+    _audioTrack?: Object;
 
     /**
      * Indicates whether the local video flip feature is disabled or not.
      */
-    _disableLocalVideoFlip: boolean,
+    _disableLocalVideoFlip: boolean;
 
     /**
      * Indicates whether enlargement of tiles to fill the available space is disabled.
      */
-    _disableTileEnlargement: boolean,
+    _disableTileEnlargement: boolean;
 
     /**
      * URL of GIF sent by this participant, null if there's none.
      */
-    _gifSrc?: string,
+    _gifSrc?: string;
 
     /**
      * The height of the Thumbnail.
      */
-    _height: number,
+    _height: number;
 
     /**
      * Whether or not the participant is displayed on the stage filmstrip.
      * Used to hide the video from the vertical filmstrip.
      */
-    _isActiveParticipant: boolean,
+    _isActiveParticipant: boolean;
 
     /**
      * Indicates whether audio only mode is enabled.
      */
-    _isAudioOnly: boolean,
+    _isAudioOnly: boolean;
 
     /**
      * Indicates whether the participant associated with the thumbnail is displayed on the large video.
      */
-    _isCurrentlyOnLargeVideo: boolean,
+    _isCurrentlyOnLargeVideo: boolean;
 
     /**
      * Disable/enable the dominant speaker indicator.
      */
-    _isDominantSpeakerDisabled: boolean,
+    _isDominantSpeakerDisabled: boolean;
 
     /**
      * Indicates whether the thumbnail should be hidden or not.
      */
-    _isHidden: boolean,
+    _isHidden: boolean;
 
     /**
      * Whether we are currently running in a mobile browser.
      */
-    _isMobile: boolean,
+    _isMobile: boolean;
 
     /**
      * Whether we are currently running in a mobile browser in portrait orientation.
      */
-    _isMobilePortrait: boolean,
+    _isMobilePortrait: boolean;
 
     /**
      * Indicates whether the participant is screen sharing.
      */
-    _isScreenSharing: boolean,
+    _isScreenSharing: boolean;
 
     /**
      * Indicates whether testing mode is enabled.
      */
-    _isTestModeEnabled: boolean,
+    _isTestModeEnabled: boolean;
 
     /**
      * Indicates whether the video associated with the thumbnail is playable.
      */
-    _isVideoPlayable: boolean,
+    _isVideoPlayable: boolean;
 
     /**
      * Indicates whether the participant is a virtual screen share participant. This prop is behind the
      * sourceNameSignaling feature flag.
      */
-    _isVirtualScreenshareParticipant: boolean,
+    _isVirtualScreenshareParticipant: boolean;
 
     /**
      * The current local video flip setting.
      */
-    _localFlipX: boolean,
+    _localFlipX: boolean;
 
     /**
      * An object with information about the participant related to the thumbnail.
      */
-    _participant: Participant,
+    _participant: Participant;
 
     /**
      * Whether or not the participant has the hand raised.
      */
-    _raisedHand: boolean,
+    _raisedHand: boolean;
 
     /**
      * Whether source name signaling is enabled.
      */
-    _sourceNameSignalingEnabled: boolean,
+    _sourceNameSignalingEnabled: boolean;
 
     /**
      * Whether or not the current layout is stage filmstrip layout.
      */
-    _stageFilmstripLayout: boolean,
+    _stageFilmstripLayout: boolean;
 
     /**
      * Whether or not the participants are displayed on stage.
      * (and not screensharing or shared video; used to determine
      * whether or not the display the participant video in the vertical filmstrip).
      */
-    _stageParticipantsVisible: boolean,
+    _stageParticipantsVisible: boolean;
 
     /**
      * The type of thumbnail to display.
      */
-    _thumbnailType: string,
+    _thumbnailType: string;
 
     /**
      * The video object position for the participant.
      */
-    _videoObjectPosition: string,
+    _videoObjectPosition: string;
 
     /**
      * The video track that will be displayed in the thumbnail.
      */
-    _videoTrack?: any,
+    _videoTrack?: any;
 
     /**
      * The width of the thumbnail.
      */
-    _width: number,
+    _width: number;
 
     /**
      * An object containing CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * The type of filmstrip the tile is displayed in.
      */
-    filmstripType: string,
+    filmstripType: string;
 
     /**
      * The horizontal offset in px for the thumbnail. Used to center the thumbnails from the last row in tile view.
      */
-    horizontalOffset: number,
+    horizontalOffset: number;
 
     /**
      * The ID of the participant related to the thumbnail.
      */
-    participantID?: string,
+    participantID?: string;
 
     /**
      * Styles that will be set to the Thumbnail's main span element.
      */
-    style?: any,
+    style?: any;
 
     /**
      * The width of the thumbnail. Used for expanding the width of the thumbnails on last row in case
      * there is empty space.
      */
-    width?: number
+    width?: number;
 };
 
 const defaultStyles = (theme: any) => {
@@ -658,12 +658,12 @@ class Thumbnail extends Component<Props, State> {
         const isTileType = _thumbnailType === THUMBNAIL_TYPE.TILE;
         const jitsiVideoTrack = _videoTrack?.jitsiTrack;
         const track = jitsiVideoTrack?.track;
-        const isPortraitVideo = ((track && track.getSettings()?.aspectRatio) || 1) < 1;
+        const isPortraitVideo = (track?.getSettings()?.aspectRatio || 1) < 1;
 
         let styles: {
-            avatar: Object,
-            thumbnail: any,
-            video: Object
+            avatar: Object;
+            thumbnail: any;
+            video: Object;
         } = {
             thumbnail: {},
             avatar: {},
@@ -993,7 +993,7 @@ class Thumbnail extends Component<Props, State> {
         const videoTrackClassName
             = !_disableLocalVideoFlip && _videoTrack && !_isScreenSharing && _localFlipX ? 'flipVideoX' : '';
         const jitsiVideoTrack = _videoTrack?.jitsiTrack;
-        const videoTrackId = jitsiVideoTrack && jitsiVideoTrack.getId();
+        const videoTrackId = jitsiVideoTrack?.getId();
         const videoEventListeners: any = {};
 
         if (local) {

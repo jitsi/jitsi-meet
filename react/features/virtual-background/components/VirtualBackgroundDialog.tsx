@@ -49,42 +49,42 @@ interface Props extends WithTranslation {
     /**
      * The list of Images to choose from.
      */
-    _images: Array<Image>,
+    _images: Array<Image>;
 
     /**
      * Returns the jitsi track that will have backgraund effect applied.
      */
-    _jitsiTrack: Object,
+    _jitsiTrack: Object;
 
     /**
      * The current local flip x status.
      */
-    _localFlipX: boolean,
+    _localFlipX: boolean;
 
     /**
     * Whether or not multi-stream send support is enabled.
     */
-    _multiStreamModeEnabled: boolean,
+    _multiStreamModeEnabled: boolean;
 
     /**
      * Returns the selected thumbnail identifier.
      */
-    _selectedThumbnail: string,
+    _selectedThumbnail: string;
 
     /**
      * If the upload button should be displayed or not.
      */
-    _showUploadButton: boolean,
+    _showUploadButton: boolean;
 
     /**
      * Returns the selected virtual background object.
      */
-    _virtualBackground: any,
+    _virtualBackground: any;
 
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * The initial options copied in the state for the {@code VirtualBackground} component.
@@ -92,7 +92,7 @@ interface Props extends WithTranslation {
      * NOTE: currently used only for electron in order to open the dialog in the correct state after desktop sharing
      * selection.
      */
-    initialOptions: Object
+    initialOptions: Object;
 }
 
 const onError = (event: any) => {
