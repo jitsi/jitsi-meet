@@ -23,17 +23,17 @@ import AbstractHighlightButton, {
 } from '../AbstractHighlightButton';
 
 type Props = AbstractProps & {
-    _disabled: boolean,
+    _disabled: boolean;
 
     /**
      * The message to show within the label's tooltip.
      */
-    _tooltipKey: string,
+    _tooltipKey: string;
 
     /**
      * Flag controlling visibility of the component.
      */
-    _visible: boolean,
+    _visible: boolean;
 };
 
 /**
@@ -44,7 +44,7 @@ type State = {
     /**
      * Whether the notification which prompts for starting recording is open is not.
      */
-    isNotificationOpen: boolean
+    isNotificationOpen: boolean;
 };
 
 /**

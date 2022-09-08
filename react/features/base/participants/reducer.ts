@@ -196,7 +196,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             id = LOCAL_PARTICIPANT_DEFAULT_ID;
         }
 
-        let newParticipant: Participant|null = null;
+        let newParticipant: Participant | null = null;
 
         if (state.remote.has(id)) {
             newParticipant = _participant(state.remote.get(id), action);
@@ -466,7 +466,7 @@ function _isEveryoneModerator(state: IParticipantsState) {
  * @private
  * @returns {Participant}
  */
-function _participant(state: Participant|LocalParticipant = { id: '' }, action: any): Participant|LocalParticipant {
+function _participant(state: Participant | LocalParticipant = { id: '' }, action: any): Participant | LocalParticipant {
     switch (action.type) {
     case SET_LOADABLE_AVATAR_URL:
     case PARTICIPANT_UPDATED: {
@@ -502,7 +502,7 @@ function _participant(state: Participant|LocalParticipant = { id: '' }, action: 
  * base/participants after the reduction of the specified
  * {@code action}.
  */
-function _participantJoined({ participant }: { participant: Participant }) {
+function _participantJoined({ participant }: { participant: Participant; }) {
     const {
         avatarURL,
         botType,

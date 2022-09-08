@@ -35,7 +35,7 @@ export function assign<T extends Object>(target: T, source: Partial<T>): T {
  * @returns {Connector}
  */
 export function connect(
-        mapStateToProps?: any, mapDispatchToProps?: Function|Object) {
+        mapStateToProps?: any, mapDispatchToProps?: Function | Object) {
     return reduxConnect(mapStateToProps, mapDispatchToProps);
 }
 

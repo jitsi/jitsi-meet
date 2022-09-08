@@ -67,7 +67,7 @@ export function resetAnalytics() {
  * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
  * @returns {Promise} Resolves with the handlers that have been successfully loaded.
  */
-export async function createHandlers({ getState }: { getState: Function }) {
+export async function createHandlers({ getState }: { getState: Function; }) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
 
     if (!isAnalyticsEnabled(getState)) {
@@ -98,15 +98,15 @@ export async function createHandlers({ getState }: { getState: Function }) {
     const handlerConstructorOptions = {
         amplitudeAPPKey,
         blackListedEvents,
-        envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
+        envType: deploymentInfo?.envType || 'dev',
         googleAnalyticsTrackingId,
         matomoEndpoint,
         matomoSiteID,
         group,
         host,
-        product: deploymentInfo && deploymentInfo.product,
-        subproduct: deploymentInfo && deploymentInfo.environment,
-        user: user && user.id,
+        product: deploymentInfo?.product,
+        subproduct: deploymentInfo?.environment,
+        user: user?.id,
         version: JitsiMeetJS.version,
         whiteListedEvents
     };

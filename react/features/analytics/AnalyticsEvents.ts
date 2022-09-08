@@ -311,7 +311,7 @@ export function createInviteDialogEvent(
  * @returns {Object}
  */
 export function createNetworkInfoEvent({ isOnline, networkType, details }:
-    { details?: Object, isOnline: boolean, networkType?: string }) {
+    { details?: Object; isOnline: boolean; networkType?: string; }) {
     const attributes: {
         details?: Object;
         isOnline: boolean;
@@ -471,11 +471,11 @@ export function createLiveStreamingDialogEvent(dialogName: string, buttonName: s
  * sendAnalytics.
  */
 export function createLocalTracksDurationEvent(duration: {
-    audio: { value: number };
-    conference: { value: number };
+    audio: { value: number; };
+    conference: { value: number; };
     video: {
-        camera: { value: number };
-        desktop: { value: number };
+        camera: { value: number; };
+        desktop: { value: number; };
     };
 }) {
     const { audio, video, conference } = duration;

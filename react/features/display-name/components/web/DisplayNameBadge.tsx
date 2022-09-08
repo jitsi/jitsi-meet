@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => {
  * @param {Props} props - The props of the component.
  * @returns {ReactElement}
  */
-const DisplayNameBadge: React.FC<{ name: string }> = ({ name }) => {
+const DisplayNameBadge: React.FC<{ name: string; }> = ({ name }) => {
     const classes = useStyles();
 
     return (

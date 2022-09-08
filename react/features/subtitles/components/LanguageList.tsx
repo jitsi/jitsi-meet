@@ -5,9 +5,9 @@ import React from 'react';
 import LanguageListItem from './LanguageListItem';
 
 interface ILanguageListProps {
-    items: Array<LanguageItem>,
+    items: Array<LanguageItem>;
     onLanguageSelected: (lang: string) => void;
-    selectedLanguage: string
+    selectedLanguage: string;
 }
 
 const useStyles = makeStyles(() => {
@@ -21,9 +21,9 @@ const useStyles = makeStyles(() => {
 
 
 interface LanguageItem {
-    id: string,
-    lang: string,
-    selected: boolean,
+    id: string;
+    lang: string;
+    selected: boolean;
 }
 
 /**

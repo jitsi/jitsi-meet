@@ -28,7 +28,7 @@ type Props = {
     /**
      * True if the face expressions detection is not disabled.
      */
-    showFaceExpressions: boolean,
+    showFaceExpressions: boolean;
 };
 
 const SpeakerStatsLabels = (props: Props) => {

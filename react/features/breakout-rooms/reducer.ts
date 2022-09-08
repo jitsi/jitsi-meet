@@ -25,9 +25,9 @@ export interface IBreakoutRoomsState {
                     displayName: string;
                     jid: string;
                     role: string;
-                }
-            }
-        }
+                };
+            };
+        };
     };
 }
 

@@ -75,17 +75,17 @@ type Props = {
     /**
      * Whether the menu is open.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Drawer close callback.
      */
-    onDrawerClose: (e?: React.MouseEvent) => void,
+    onDrawerClose: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for the mouse leaving this item.
      */
-    onMouseLeave?: (e?: React.MouseEvent) => void
+    onMouseLeave?: (e?: React.MouseEvent) => void;
 };
 
 export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {

@@ -24,13 +24,13 @@ type Props = {
     /**
      * The URL to display in the Help Centre.
      */
-    _url: string,
+    _url: string;
 
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
-    navigation: Object
-}
+    navigation: Object;
+};
 
 /**
  * Implements a page that renders the help content for the app.

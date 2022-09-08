@@ -18,27 +18,27 @@ interface Props extends WithTranslation {
     /**
      * Callback used to set the 'loading' state of the parent component.
      */
-    setLoading: Function,
+    setLoading: Function;
 
     /**
      * Callback used to set the options.
      */
-    setOptions: Function,
+    setOptions: Function;
 
     /**
      * Callback used to set the storedImages array.
      */
-    setStoredImages: Function,
+    setStoredImages: Function;
 
     /**
      * If a label should be displayed alongside the button.
      */
-    showLabel: boolean,
+    showLabel: boolean;
 
     /**
      * A list of images locally stored.
      */
-    storedImages: Array<Image>
+    storedImages: Array<Image>;
 }
 
 // @ts-ignore

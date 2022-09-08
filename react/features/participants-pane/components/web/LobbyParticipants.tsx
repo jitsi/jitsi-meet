@@ -114,9 +114,9 @@ export default function LobbyParticipants() {
                         <li className = { classes.drawerItem }>
                             <Avatar
                                 className = { classes.icon }
-                                participantId = { drawerParticipant && drawerParticipant.participantID }
+                                participantId = { drawerParticipant?.participantID }
                                 size = { 20 } />
-                            <span>{ drawerParticipant && drawerParticipant.displayName }</span>
+                            <span>{ drawerParticipant?.displayName }</span>
                         </li>
                         <li
                             className = { classes.drawerItem }

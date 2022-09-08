@@ -31,43 +31,43 @@ interface Props extends WithTranslation {
      * {@link JitsiConference} That needs authentication - will hold a valid
      * value in XMPP login + guest access mode.
      */
-    _conference: Object,
+    _conference: Object;
 
     /**
      * The server hosts specified in the global config.
      */
-    _configHosts: IConfig['hosts'],
+    _configHosts: IConfig['hosts'];
 
     /**
      * Indicates if the dialog should display "connecting" status message.
      */
-    _connecting: boolean,
+    _connecting: boolean;
 
     /**
      * The error which occurred during login/authentication.
      */
-    _error: any,
+    _error: any;
 
     /**
      * The progress in the floating range between 0 and 1 of the authenticating
      * and upgrading the role of the local participant/user.
      */
-    _progress: number,
+    _progress: number;
 
     /**
      * Redux store dispatch method.
      */
-    dispatch: Dispatch<any>,
+    dispatch: Dispatch<any>;
 
     /**
      * Invoked when username and password are submitted.
      */
-    onSuccess: Function,
+    onSuccess: Function;
 
     /**
      * Conference room name.
      */
-    roomName: string
+    roomName: string;
 }
 
 /**
@@ -78,18 +78,18 @@ type State = {
     /**
      * Authentication process starts before joining the conference room.
      */
-    loginStarted: boolean,
+    loginStarted: boolean;
 
     /**
      * The user entered password for the conference.
      */
-    password: string,
+    password: string;
 
     /**
      * The user entered local participant name.
      */
-    username: string
-}
+    username: string;
+};
 
 /**
  * Component that renders the login in conference dialog.
@@ -156,7 +156,7 @@ class LoginDialog extends Component<Props, State> {
 
             connect(jid, password, roomName)
                 .then((connection: any) => {
-                    onSuccess && onSuccess(connection);
+                    onSuccess?.(connection);
                 })
                 .catch(() => {
                     this.setState({

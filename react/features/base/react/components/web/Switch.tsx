@@ -7,27 +7,27 @@ type Props = {
     /**
      * CSS class name.
      */
-    className: string,
+    className: string;
 
     /**
      * Indicates whether the switch is disabled or not.
      */
-    disabled: boolean,
+    disabled: boolean;
 
     /**
      * ID of the toggle.
      */
-    id: string,
+    id: string;
 
     /**
      * Handler called when the user presses the switch.
      */
-    onValueChange: (checked?: boolean) => void,
+    onValueChange: (checked?: boolean) => void;
 
     /**
      * The current value.
      */
-    value: boolean
+    value: boolean;
 };
 
 /**

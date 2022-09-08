@@ -64,7 +64,7 @@ export interface ITranscribingState {
     isTranscribing: boolean;
     pendingNotificationUid?: number;
     potentialTranscriberJIDs: string[];
-    transcriberJID?: string|null;
+    transcriberJID?: string | null;
 }
 
 /**

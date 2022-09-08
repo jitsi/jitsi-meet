@@ -12,64 +12,64 @@ export type Props = {
     /**
      * Label used for accessibility.
      */
-    accessibilityLabel: string,
+    accessibilityLabel: string;
 
     /**
      * CSS class name used for custom styles.
      */
-    className?: string,
+    className?: string;
 
     /**
      * Custom icon. If used, the icon prop is ignored.
      * Used to allow custom children instead of just the default icons.
      */
-    customIcon?: ReactNode,
+    customIcon?: ReactNode;
 
     /**
      * Whether or not the action is disabled.
      */
-    disabled?: boolean,
+    disabled?: boolean;
 
     /**
      * Default icon for action.
      */
-    icon?: Function,
+    icon?: Function;
 
     /**
      * Id of the action container.
      */
-    id?: string,
+    id?: string;
 
     /**
      * Click handler.
      */
-    onClick?: (e?: React.MouseEvent) => void,
+    onClick?: (e?: React.MouseEvent) => void;
 
     /**
      * Keydown handler.
      */
-    onKeyDown?: (e?: React.KeyboardEvent) => void,
+    onKeyDown?: (e?: React.KeyboardEvent) => void;
 
     /**
      * Keypress handler.
      */
-    onKeyPress?: (e?: React.KeyboardEvent) => void,
+    onKeyPress?: (e?: React.KeyboardEvent) => void;
 
     /**
      * TestId of the element, if any.
      */
-    testId?: string,
+    testId?: string;
 
     /**
      * Action text.
      */
-    text: string,
+    text: string;
 
     /**
      * Class name for the text.
      */
-    textClassName?: string
-}
+    textClassName?: string;
+};
 
 const useStyles = makeStyles((theme: any) => {
     return {

@@ -19,7 +19,7 @@ import { withPixelLineHeight } from '../../../styles/functions.web';
 import Button from '../../../ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../ui/constants';
 
-const TitleIcon = ({ appearance }: { appearance?: 'danger' | 'warning' }) => {
+const TitleIcon = ({ appearance }: { appearance?: 'danger' | 'warning'; }) => {
     if (!appearance) {
         return null;
     }
@@ -34,15 +34,15 @@ const TitleIcon = ({ appearance }: { appearance?: 'danger' | 'warning' }) => {
 };
 
 interface Props extends WithTranslation {
-    appearance?: 'danger' | 'warning',
-    classes: any,
-    heading: string,
-    hideCloseIconButton: boolean,
-    id?: string,
-    isHeadingMultiline: boolean,
-    onClose: (e?: any) => void,
-    showKeyline: boolean,
-    testId?: string
+    appearance?: 'danger' | 'warning';
+    classes: any;
+    heading: string;
+    hideCloseIconButton: boolean;
+    id?: string;
+    isHeadingMultiline: boolean;
+    onClose: (e?: any) => void;
+    showKeyline: boolean;
+    testId?: string;
 }
 
 /**

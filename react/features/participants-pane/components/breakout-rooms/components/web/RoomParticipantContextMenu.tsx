@@ -24,30 +24,30 @@ type Props = {
      * Room and participant jid reference.
      */
     entity: {
-        jid: string,
-        participantName: string,
-        room: any
-    },
+        jid: string;
+        participantName: string;
+        room: any;
+    };
 
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget: HTMLElement|undefined,
+    offsetTarget: HTMLElement | undefined;
 
     /**
      * Callback for the mouse entering the component.
      */
-    onEnter: Function,
+    onEnter: Function;
 
     /**
      * Callback for the mouse leaving the component.
      */
-    onLeave: Function,
+    onLeave: Function;
 
     /**
      * Callback for making a selection in the menu.
      */
-    onSelect: Function
+    onSelect: Function;
 };
 
 const useStyles = makeStyles((theme: Theme) => {

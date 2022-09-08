@@ -3,9 +3,9 @@ export interface IconButtonProps {
     color?: string;
     disabled?: boolean;
     onPress?: Function;
-    size?: number|string;
+    size?: number | string;
     src: Function;
-    style?: Object|undefined;
+    style?: Object | undefined;
     tapColor?: string;
     type?: string;
 }

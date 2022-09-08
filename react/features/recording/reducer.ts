@@ -30,7 +30,7 @@ interface SessionData {
 export interface IRecordingState {
     disableHighlightMeetingMoment: boolean;
     pendingNotificationUids: {
-        [key: string]: number|undefined;
+        [key: string]: number | undefined;
     };
     selectedRecordingService: string;
     sessionDatas: Array<SessionData>;

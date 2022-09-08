@@ -10,9 +10,9 @@ import {
 } from './actionTypes';
 
 export interface IAuthenticationState {
-    error?: Object|undefined;
-    progress?: number|undefined;
-    thenableWithCancel?: Object|undefined;
+    error?: Object | undefined;
+    progress?: number | undefined;
+    thenableWithCancel?: Object | undefined;
     waitForOwnerTimeoutID?: number;
 }
 

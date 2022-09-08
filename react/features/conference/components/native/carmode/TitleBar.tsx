@@ -28,12 +28,12 @@ type Props = {
     /**
      * Name of the meeting we're currently in.
      */
-    _meetingName: string,
+    _meetingName: string;
 
     /**
      * Whether displaying the current meeting name is enabled or not.
      */
-    _meetingNameEnabled: boolean,
+    _meetingNameEnabled: boolean;
 
 };
 
@@ -44,7 +44,7 @@ type Props = {
  * @param {Props} props - The React props passed to this component.
  * @returns {JSX.Element}
  */
-const TitleBar = (props: Props) : JSX.Element => {
+const TitleBar = (props: Props): JSX.Element => {
     const localParticipant = useSelector(getLocalParticipant);
     const localParticipantId = localParticipant?.id;
 

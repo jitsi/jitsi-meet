@@ -9,12 +9,12 @@ type Props = {
     /**
      * List of actions in this group.
      */
-    actions?: Array<ItemProps>,
+    actions?: Array<ItemProps>;
 
     /**
      * The children of the component.
      */
-    children?: ReactNode,
+    children?: ReactNode;
 };
 
 const useStyles = makeStyles((theme: any) => {
@@ -40,7 +40,7 @@ const ContextMenuItemGroup = ({
     return (
         <div className = { styles.contextMenuItemGroup }>
             {children}
-            {actions && actions.map(actionProps => (
+            {actions?.map(actionProps => (
                 <ContextMenuItem
                     key = { actionProps.text }
                     { ...actionProps } />

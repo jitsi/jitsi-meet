@@ -8,32 +8,32 @@ type Props = {
     /**
      * The css classes generated from theme.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Attribute used in automated testing.
      */
-    dataTestId: string,
+    dataTestId: string;
 
     /**
      * The button's icon.
      */
-    icon: Function,
+    icon: Function;
 
     /**
      * The button's label.
      */
-    label: string,
+    label: string;
 
     /**
      * Function to be called when button is clicked.
      */
-    onButtonClick: (e?: React.MouseEvent) => void,
+    onButtonClick: (e?: React.MouseEvent) => void;
 
     /**
      * Function to be called on key pressed.
      */
-    onKeyPressed: (e?: React.KeyboardEvent) => void
+    onKeyPressed: (e?: React.KeyboardEvent) => void;
 };
 
 /**

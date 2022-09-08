@@ -9,17 +9,17 @@ type Props = {
     /**
      * The component(s) that need to be scrollable on mobile.
      */
-    children: ReactElement,
+    children: ReactElement;
 
     /**
      * Whether the component should be flex container or not.
      */
-    flex?: boolean,
+    flex?: boolean;
 
     /**
      * Whether the component is rendered within a modal.
      */
-    isModal: boolean,
+    isModal: boolean;
 
 };
 
@@ -62,12 +62,12 @@ function TouchmoveHack({ children, isModal, flex }: Props) {
     }
 
     useEffect(() => {
-        if (touchMoveElementRef && touchMoveElementRef.current) {
+        if (touchMoveElementRef?.current) {
             touchMoveElementRef.current.addEventListener('touchmove', handleTouchMove, true);
         }
 
         return () => {
-            if (touchMoveElementRef && touchMoveElementRef.current) {
+            if (touchMoveElementRef?.current) {
                 touchMoveElementRef.current.removeEventListener('touchmove', handleTouchMove, true);
             }
         };

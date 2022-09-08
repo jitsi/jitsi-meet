@@ -10,7 +10,7 @@ import { translate } from '../../base/i18n/functions';
 type DownloadUpload = {
     download: number;
     upload: number;
-}
+};
 
 /**
  * The type of the React {@code Component} props of
@@ -21,7 +21,7 @@ interface Props extends WithTranslation {
     /**
      * The audio SSRC of this client.
      */
-    audioSsrc: number,
+    audioSsrc: number;
 
     /**
      * Statistics related to bandwidth.
@@ -30,7 +30,7 @@ interface Props extends WithTranslation {
      *     upload: Number
      * }}.
      */
-    bandwidth: DownloadUpload,
+    bandwidth: DownloadUpload;
 
     /**
      * Statistics related to bitrate.
@@ -39,18 +39,18 @@ interface Props extends WithTranslation {
      *     upload: Number
      * }}.
      */
-    bitrate: DownloadUpload,
+    bitrate: DownloadUpload;
 
     /**
      * The number of bridges (aka media servers) currently used in the
      * conference.
      */
-    bridgeCount: number,
+    bridgeCount: number;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Audio/video codecs in use for the connection.
@@ -59,28 +59,28 @@ interface Props extends WithTranslation {
         [key: string]: {
             audio: string;
             video: string;
-        }
-    },
+        };
+    };
 
     /**
      * A message describing the connection quality.
      */
-    connectionSummary: string,
+    connectionSummary: string;
 
     /**
      * Whether or not should display the "Show More" link.
      */
-    disableShowMoreStats: boolean,
+    disableShowMoreStats: boolean;
 
     /**
      * The end-to-end round-trip-time.
      */
-    e2eRtt: number,
+    e2eRtt: number;
 
     /**
      * Whether or not should display the "Save Logs" link.
      */
-    enableSaveLogs: boolean,
+    enableSaveLogs: boolean;
 
     /**
      * Statistics related to frame rates for each ssrc.
@@ -88,33 +88,33 @@ interface Props extends WithTranslation {
      *     [ ssrc ]: Number
      * }}.
      */
-    framerate: Object,
+    framerate: Object;
 
     /**
      * Whether or not the statistics are for local video.
      */
-    isLocalVideo: boolean,
+    isLocalVideo: boolean;
 
     /**
      * Whether or not the statistics are for screen share.
      */
-    isVirtualScreenshareParticipant: boolean,
+    isVirtualScreenshareParticipant: boolean;
 
     /**
      * The send-side max enabled resolution (aka the highest layer that is not
      * suspended on the send-side).
      */
-    maxEnabledResolution: number,
+    maxEnabledResolution: number;
 
     /**
      * Callback to invoke when the user clicks on the download logs link.
      */
-    onSaveLogs: () => void,
+    onSaveLogs: () => void;
 
     /**
      * Callback to invoke when the show additional stats link is clicked.
      */
-    onShowMore: (e?: React.MouseEvent) => void,
+    onShowMore: (e?: React.MouseEvent) => void;
 
     /**
      * Statistics related to packet loss.
@@ -123,17 +123,17 @@ interface Props extends WithTranslation {
      *     upload: Number
      * }}.
      */
-    packetLoss: DownloadUpload,
+    packetLoss: DownloadUpload;
 
     /**
      * The endpoint id of this client.
      */
-    participantId: string,
+    participantId: string;
 
     /**
      * The region that we think the client is in.
      */
-    region: string,
+    region: string;
 
     /**
      * Statistics related to display resolutions for each ssrc.
@@ -148,24 +148,24 @@ interface Props extends WithTranslation {
         [ssrc: string]: {
             height: number;
             width: number;
-        }
-    },
+        };
+    };
 
     /**
      * The region of the media server that we are connected to.
      */
-    serverRegion: string,
+    serverRegion: string;
 
     /**
      * Whether or not additional stats about bandwidth and transport should be
      * displayed. Will not display even if true for remote participants.
      */
-    shouldShowMore: boolean,
+    shouldShowMore: boolean;
 
     /**
      * Whether source name signaling is enabled.
      */
-    sourceNameSignalingEnabled: boolean,
+    sourceNameSignalingEnabled: boolean;
 
     /**
      * Statistics related to transports.
@@ -178,12 +178,12 @@ interface Props extends WithTranslation {
         remoteCandidateType: string;
         transportType: string;
         type: string;
-    }>,
+    }>;
 
     /**
      * The video SSRC of this client.
      */
-    videoSsrc: number
+    videoSsrc: number;
 }
 
 /**
@@ -809,11 +809,11 @@ class ConnectionStatsTable extends Component<Props> {
         }
 
         const data: {
-            localIP: string[],
-            localPort: string[],
-            remoteIP: string[],
-            remotePort: string[],
-            transportType: string[]
+            localIP: string[];
+            localPort: string[];
+            remoteIP: string[];
+            remotePort: string[];
+            transportType: string[];
         } = {
             localIP: [],
             localPort: [],

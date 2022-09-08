@@ -15,29 +15,29 @@ interface Props extends WithTranslation {
     /**
      * Whether or not to show the password editing field.
      */
-    editEnabled: boolean,
+    editEnabled: boolean;
 
     /**
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    locked: string,
+    locked: string;
 
     /**
      * Callback to invoke when the local participant is submitting a password
      * set request.
      */
-    onSubmit: Function,
+    onSubmit: Function;
 
     /**
      * The current known password for the JitsiConference.
      */
-    password: string,
+    password: string;
 
     /**
      * The number of digits to be used in the password.
      */
-    passwordNumberOfDigits?: number
+    passwordNumberOfDigits?: number;
 }
 
 /**
@@ -48,7 +48,7 @@ type State = {
     /**
      * The value of the password being entered by the local participant.
      */
-    enteredPassword: string
+    enteredPassword: string;
 };
 
 /**

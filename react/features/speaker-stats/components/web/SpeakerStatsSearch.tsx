@@ -65,7 +65,7 @@ type Props = {
     /**
      * The function to initiate the change in the speaker stats table.
      */
-    onSearch: Function,
+    onSearch: Function;
 
 };
 
@@ -90,7 +90,7 @@ function SpeakerStatsSearch({ onSearch }: Props) {
         const value = getFieldValue(evt);
 
         setSearchValue(value);
-        onSearch && onSearch(value);
+        onSearch?.(value);
     }, []);
     const preventDismiss = useCallback((evt: React.KeyboardEvent) => {
         if (evt.key === 'Enter') {

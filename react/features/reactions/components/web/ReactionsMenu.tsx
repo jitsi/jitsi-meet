@@ -29,7 +29,7 @@ import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 import ReactionButton from './ReactionButton';
 
 interface Classes {
-    overflow: string
+    overflow: string;
 }
 
 interface Props extends WithTranslation {
@@ -37,47 +37,47 @@ interface Props extends WithTranslation {
     /**
      * Docks the toolbox.
      */
-    _dockToolbox: Function,
+    _dockToolbox: Function;
 
     /**
      * Whether or not the GIF feature is enabled.
      */
-    _isGifEnabled: boolean,
+    _isGifEnabled: boolean;
 
     /**
      * Whether or not the GIF menu is visible.
      */
-    _isGifMenuVisible: boolean,
+    _isGifMenuVisible: boolean;
 
     /**
      * Whether or not it's a mobile browser.
      */
-    _isMobile: boolean,
+    _isMobile: boolean;
 
     /**
      * The ID of the local participant.
      */
-    _localParticipantID: String,
+    _localParticipantID: String;
 
     /**
      * Whether or not the local participant's hand is raised.
      */
-    _raisedHand: boolean,
+    _raisedHand: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: Classes,
+    classes: Classes;
 
     /**
      * The Redux Dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Whether or not it's displayed in the overflow menu.
      */
-    overflowMenu: boolean
+    overflowMenu: boolean;
 }
 
 const styles = (theme: Theme) => {

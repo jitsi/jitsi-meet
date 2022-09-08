@@ -30,42 +30,42 @@ interface Props extends WithTranslation {
     /**
      * ID of the menu that is controlled by this button.
      */
-    ariaControls: String,
+    ariaControls: String;
 
     /**
      * A child React Element to display within {@code InlineDialog}.
      */
-    children: ReactElement,
+    children: ReactElement;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Whether or not the OverflowMenu popover should display.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Callback to change the visibility of the overflow menu.
      */
-    onVisibilityChange: Function,
+    onVisibilityChange: Function;
 
     /**
      * Whether to display the OverflowMenu as a drawer.
      */
-    overflowDrawer: boolean,
+    overflowDrawer: boolean;
 
     /**
      * The array of reactions to be displayed.
      */
-    reactionsQueue: Array<ReactionEmojiProps>,
+    reactionsQueue: Array<ReactionEmojiProps>;
 
     /**
      * Whether or not to display the reactions in the mobile menu.
      */
-    showMobileReactions: boolean
+    showMobileReactions: boolean;
 }
 
 const styles = () => {

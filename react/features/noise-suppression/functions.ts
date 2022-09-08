@@ -24,7 +24,7 @@ export function isNoiseSuppressionEnabled(state: IState): boolean {
  * @param {*} localAudio - Current local audio track.
  * @returns {boolean}
  */
-export function canEnableNoiseSuppression(state: IState, dispatch: Function, localAudio: any) : boolean {
+export function canEnableNoiseSuppression(state: IState, dispatch: Function, localAudio: any): boolean {
     if (!localAudio) {
         dispatch(showWarningNotification({
             titleKey: 'notify.noiseSuppressionFailedTitle',

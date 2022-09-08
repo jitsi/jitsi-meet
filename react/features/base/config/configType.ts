@@ -107,7 +107,7 @@ export interface IConfig {
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
     audioLevelsInterval?: number;
     audioQuality?: {
-        opusMaxAverageBitrate?: number|null;
+        opusMaxAverageBitrate?: number | null;
         stereo?: boolean;
     };
     autoCaptionOnRecord?: boolean;
@@ -120,7 +120,10 @@ export interface IConfig {
         hideAutoAssignButton?: boolean;
         hideJoinRoomButton?: boolean;
     };
-    buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | { key: ButtonsWithNotifyClick; preventExecution: boolean }>;
+    buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | {
+        key: ButtonsWithNotifyClick;
+        preventExecution: boolean;
+    }>;
     callStatsConfigParams?: {
         additionalIDs?: {
             customerID?: string;
@@ -144,7 +147,7 @@ export interface IConfig {
     callStatsSecret?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
-        chromeExtensionsInfo?: Array<{ id: string; path: string }>;
+        chromeExtensionsInfo?: Array<{ id: string; path: string; }>;
         edgeUrl?: string;
         url?: string;
     };
@@ -165,8 +168,8 @@ export interface IConfig {
                 ideal?: number;
                 max?: number;
                 min?: number;
-            }
-        }
+            };
+        };
     };
     corsAvatarURLs?: Array<string>;
     defaultLanguage?: string;
@@ -188,7 +191,7 @@ export interface IConfig {
     };
     dialInConfCodeUrl?: string;
     dialInNumbersUrl?: string;
-    disable1On1Mode?: boolean|null;
+    disable1On1Mode?: boolean | null;
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
@@ -333,7 +336,7 @@ export interface IConfig {
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
-    inviteAppName?: string|null;
+    inviteAppName?: string | null;
     lastNLimits?: {
         [key: number]: number;
     };
@@ -373,7 +376,7 @@ export interface IConfig {
         iceTransportPolicy?: string;
         preferH264?: boolean;
         preferredCodec?: string;
-        stunServers?: Array<{ urls: string }>;
+        stunServers?: Array<{ urls: string; }>;
     };
     participantsPane?: {
         hideModeratorSettingsTab?: boolean;
@@ -414,7 +417,7 @@ export interface IConfig {
         enabled?: boolean;
         mode?: 'always' | 'recording';
     };
-    speakerStatsOrder?: Array<'role'|'name'|'hasLeft'>;
+    speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
     startAudioMuted?: boolean;
     startAudioOnly?: boolean;
     startLastN?: number;
@@ -466,7 +469,7 @@ export interface IConfig {
                 high?: number;
                 low?: number;
                 standard?: number;
-            }
+            };
         };
         minHeightForQualityLvl: {
             [key: number]: string;

@@ -8,38 +8,38 @@ type Props = {
     /**
      * Hide popover callback.
      */
-    hidePopover: Function,
+    hidePopover: Function;
 
     /**
      * Whether or not the button is for the local participant.
      */
-    local: boolean,
+    local: boolean;
 
     /**
      * The id of the participant for which the button is.
      */
-    participantId?: string,
+    participantId?: string;
 
     /**
      * Whether popover is visible or not.
      */
-    popoverVisible: boolean,
+    popoverVisible: boolean;
 
     /**
      * Show popover callback.
      */
-    showPopover: Function,
+    showPopover: Function;
 
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string,
+    thumbnailType: string;
 
     /**
      * Whether or not the component is visible.
      */
-    visible: boolean
-}
+    visible: boolean;
+};
 
 // eslint-disable-next-line no-confusing-arrow
 const VideoMenuTriggerButton = ({

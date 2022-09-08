@@ -10,7 +10,7 @@ type Props = {
      * Click handler function.
      */
     onClick: () => void;
-}
+};
 
 const RoomActionEllipsis = ({ onClick }: Props) => {
     const { t } = useTranslation();

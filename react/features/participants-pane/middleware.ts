@@ -10,7 +10,7 @@ declare let APP: any;
  * @param {IStore} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(() => (next:Function) => (action:any) => {
+MiddlewareRegistry.register(() => (next: Function) => (action: any) => {
     switch (action.type) {
     case PARTICIPANTS_PANE_OPEN:
         if (typeof APP !== 'undefined') {

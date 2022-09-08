@@ -14,7 +14,7 @@ export enum BUTTON_TYPES {
  * The modes of the buttons.
  */
 export const BUTTON_MODES: {
-    CONTAINED: 'contained'
+    CONTAINED: 'contained';
 } = {
     CONTAINED: 'contained'
 };

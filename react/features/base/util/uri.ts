@@ -107,7 +107,7 @@ function _fixURIStringScheme(uri: string) {
  * @param {string?} path - The path to convert.
  * @returns {string?}
  */
-export function getBackendSafePath(path?: string): string|undefined {
+export function getBackendSafePath(path?: string): string | undefined {
     if (!path) {
         return path;
     }
@@ -124,7 +124,7 @@ export function getBackendSafePath(path?: string): string|undefined {
  * @param {string?} room - The room name to convert.
  * @returns {string?}
  */
-export function getBackendSafeRoomName(room?: string): string|undefined {
+export function getBackendSafeRoomName(room?: string): string | undefined {
     if (!room) {
         return room;
     }
@@ -168,7 +168,7 @@ export function getBackendSafeRoomName(room?: string): string|undefined {
  * @returns {string} - The (Web application) context root defined by the
  * specified {@code location} (URI).
  */
-export function getLocationContextRoot({ pathname }: { pathname: string }) {
+export function getLocationContextRoot({ pathname }: { pathname: string; }) {
     const contextRootEndIndex = pathname.lastIndexOf('/');
 
     return (
@@ -221,7 +221,7 @@ function _objectToURLParamsArray(obj = {}) {
 export function parseStandardURIString(str: string) {
     /* eslint-disable no-param-reassign */
 
-    const obj: { [key: string]: any } = {
+    const obj: { [key: string]: any; } = {
         toString: _standardURIToString
     };
 
@@ -277,7 +277,7 @@ export function parseStandardURIString(str: string) {
     regex = new RegExp(`^${_URI_PATH_PATTERN}`, 'gi');
     match = regex.exec(str);
 
-    let pathname: string|undefined;
+    let pathname: string | undefined;
 
     if (match) {
         pathname = match[1];
@@ -375,7 +375,7 @@ export function parseURIString(uri?: string) {
  */
 function _standardURIToString(thiz?: Object) {
     // @ts-ignore
-    // eslint-disable-next-line no-invalid-this
+    // eslint-disable-next-line @typescript-eslint/no-invalid-this
     const { hash, host, pathname, protocol, search } = thiz || this;
     let str = '';
 
@@ -421,7 +421,7 @@ export function safeDecodeURIComponent(text: string) {
  * @returns {string} - A {@code String} representation of the specified
  * {@code obj} which is supposed to represent a URL.
  */
-export function toURLString(obj?: (Object | string)): string|undefined|null {
+export function toURLString(obj?: (Object | string)): string | undefined | null {
     let str;
 
     switch (typeof obj) {
@@ -452,7 +452,7 @@ export function toURLString(obj?: (Object | string)): string|undefined|null {
  * @returns {string} - A {@code String} representation of the specified
  * {@code Object}.
  */
-export function urlObjectToString(o: { [key: string]: any }): string|undefined {
+export function urlObjectToString(o: { [key: string]: any; }): string | undefined {
     // First normalize the given url. It come as o.url or split into o.serverURL
     // and o.room.
     let tmp;
@@ -469,7 +469,7 @@ export function urlObjectToString(o: { [key: string]: any }): string|undefined {
 
     // protocol
     if (!url.protocol) {
-        let protocol: string|undefined = o.protocol || o.scheme;
+        let protocol: string | undefined = o.protocol || o.scheme;
 
         if (protocol) {
             // Protocol is supposed to be the scheme and the final ':'. Anyway,
@@ -487,7 +487,7 @@ export function urlObjectToString(o: { [key: string]: any }): string|undefined {
         //
         // It may be host/hostname and pathname with the latter denoting the
         // tenant.
-        const domain: string|undefined = o.domain || o.host || o.hostname;
+        const domain: string | undefined = o.domain || o.host || o.hostname;
 
         if (domain) {
             const { host, hostname, pathname: contextRoot, port }

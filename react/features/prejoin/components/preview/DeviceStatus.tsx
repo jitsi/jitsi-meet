@@ -20,13 +20,13 @@ export interface Props extends WithTranslation {
     /**
      * The text to be displayed in relation to the status of the audio/video devices.
      */
-    deviceStatusText: string,
+    deviceStatusText: string;
 
     /**
      * The type of status for current devices, controlling the background color of the text.
      * Can be `ok` or `warning`.
      */
-    deviceStatusType: string
+    deviceStatusType: string;
 }
 
 const useStyles = makeStyles((theme: any) => {

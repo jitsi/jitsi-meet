@@ -23,20 +23,20 @@ export type Sound = {
      * Becomes available once the sound resource gets loaded and the sound can
      * not be played until that happens.
      */
-    audioElement?: AudioElement,
+    audioElement?: AudioElement;
 
     /**
      * This field is container for all optional parameters related to the sound.
      */
-    options?: Object,
+    options?: Object;
 
     /**
      * This field describes the source of the audio resource to be played. It
      * can be either a path to the file or an object depending on the platform
      * (native vs web).
      */
-    src?: Object | string
-}
+    src?: Object | string;
+};
 
 /**
  * Initial/default state of the feature {@code base/sounds}. It is a {@code Map}
