@@ -143,13 +143,13 @@ export async function sendFaceExpressionsWebhook(state: Object) {
  * @param {Worker} worker - Face recognition worker.
  * @param {Object} imageCapture - Image capture that contains the current track.
  * @param {number} threshold - Movement threshold as percentage for sharing face coordinates.
- * @returns {Promise<void>}
+ * @returns {Promise<boolean>} - True if sent, false otherwise.
  */
 export async function sendDataToWorker(
         worker: Worker,
         imageCapture: Object,
         threshold: number = 10
-): Promise<void> {
+): Promise<boolean> {
     if (imageCapture === null || imageCapture === undefined) {
         return;
     }
@@ -162,7 +162,7 @@ export async function sendDataToWorker(
     } catch (err) {
         logger.warn(err);
 
-        return;
+        return false;
     }
 
     if (typeof OffscreenCanvas === 'undefined') {
@@ -182,6 +182,8 @@ export async function sendDataToWorker(
     });
 
     imageBitmap.close();
+
+    return true;
 }
 
 /**

@@ -191,7 +191,11 @@ export function startFaceLandmarksDetection(track) {
                 worker,
                 imageCapture,
                 faceLandmarks?.faceCenteringThreshold
-            );
+            ).then(status => {
+                if (!status) {
+                    dispatch(stopFaceLandmarksDetection());
+                }
+            });
         }, getDetectionInterval(state));
 
         if (faceLandmarks?.enableFaceExpressionsDetection) {
@@ -215,7 +219,11 @@ export function stopFaceLandmarksDetection() {
     return function(dispatch: Function, getState: Function) {
         const { recognitionActive } = getState()['features/face-landmarks'];
 
-        if (lastFaceExpression && lastFaceExpressionTimestamp && recognitionActive) {
+        if (!recognitionActive) {
+            return;
+        }
+
+        if (lastFaceExpression && lastFaceExpressionTimestamp) {
             dispatch(
                 addFaceExpression(
                     lastFaceExpression,
@@ -223,14 +231,14 @@ export function stopFaceLandmarksDetection() {
                     lastFaceExpressionTimestamp
                 )
             );
+            duplicateConsecutiveExpressions = 0;
+            lastFaceExpression = null;
+            lastFaceExpressionTimestamp = null;
         }
+
 
         clearInterval(webhookSendInterval);
         clearInterval(detectionInterval);
-
-        duplicateConsecutiveExpressions = 0;
-        lastFaceExpression = null;
-        lastFaceExpressionTimestamp = null;
         webhookSendInterval = null;
         detectionInterval = null;
         imageCapture = null;
