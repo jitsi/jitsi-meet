@@ -236,8 +236,9 @@ MiddlewareRegistry.register(store => next => action => {
         const stageFilmstrip = isStageFilmstripAvailable(state);
         const local = getLocalParticipant(state);
         const currentLayout = getCurrentLayout(state);
+        const dominantSpeaker = getDominantSpeakerParticipant(state);
 
-        if (id === local.id || currentLayout === LAYOUTS.TILE_VIEW) {
+        if (dominantSpeaker?.id === id || id === local.id || currentLayout === LAYOUTS.TILE_VIEW) {
             break;
         }
 
