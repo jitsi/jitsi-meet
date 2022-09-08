@@ -7,6 +7,7 @@ const {
 } = require('../helpers/capabilities');
 const { getSelector } = require('../helpers/getSelector');
 
+
 const options = {
     path: '/wd/hub',
     port: 4723,
@@ -24,7 +25,9 @@ const iosInput = '//XCUIElementTypeTextField[@name="Enter room name"]';
  */
 async function main() {
     const client = wdio.remote(options);
-    const input = getSelector(androidInput, iosInput);
+    const isAndroid = (await client).isAndroid;
+
+    const input = getSelector(isAndroid, androidInput, iosInput);
 
     const field = (await client).$(input);
 

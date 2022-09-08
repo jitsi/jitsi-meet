@@ -6,11 +6,9 @@ module.exports = {
     APP_PATH_SIMULATOR: 'Users/cchitu/Library/Developer/Xcode/DerivedData/jitsi-meet-gpsplsfarleyxebhmcufemivqqbl/Build/Products/Debug-iphonesimulator/jitsi-meet.app',
     AUTOMATION_NAME: process.env.AUTOMATION_NAME,
 
-    ANDROID_DEVICE: driver.isAndroid,
     DEVICE_ID: process.env.DEVICE_ID,
     DEVICE_NAME: process.env.DEVICE_NAME,
 
-    IOS_DEVICE: driver.isIOS,
     MAX_INSTANCES: process.env.MAX_INSTANCES || 1,
     ORG_ID: process.env.ORG_ID || 'AJT772J42H',
     PLATFORM_NAME: process.env.PLATFORM_NAME,
