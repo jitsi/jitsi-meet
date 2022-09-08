@@ -17,18 +17,18 @@ type Props = {
     /**
      * The font-size for the icon.
      */
-    iconSize: number,
+    iconSize: number;
 
     /**
      * The participant id who we want to render the raised hand indicator
      * for.
      */
-    participantId: string,
+    participantId: string;
 
     /**
      * From which side of the indicator the tooltip should appear from.
      */
-    tooltipPosition: string
+    tooltipPosition: string;
 };
 
 const useStyles = makeStyles((theme: any) => {
@@ -54,7 +54,7 @@ const RaisedHandIndicator = ({
     participantId,
     tooltipPosition
 }: Props) => {
-    const participant: Participant|undefined = useSelector((state: IState) =>
+    const participant: Participant | undefined = useSelector((state: IState) =>
         getParticipantById(state, participantId));
     const _raisedHand = hasRaisedHand(participant);
     const styles = useStyles();

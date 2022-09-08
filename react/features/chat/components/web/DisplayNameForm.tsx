@@ -21,12 +21,12 @@ interface Props extends WithTranslation {
     /**
      * Invoked to set the local participant display name.
      */
-    dispatch: Dispatch<any>,
+    dispatch: Dispatch<any>;
 
     /**
      * Whether the polls feature is enabled or not.
      */
-    isPollsEnabled: boolean
+    isPollsEnabled: boolean;
 }
 
 /**
@@ -37,7 +37,7 @@ type State = {
     /**
      * User provided display name when the input text is provided in the view.
      */
-    displayName: string
+    displayName: string;
 };
 
 /**

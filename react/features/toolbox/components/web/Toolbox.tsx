@@ -154,7 +154,7 @@ interface Props extends WithTranslation {
     /**
      * String showing if the virtual background type is desktop-share.
      */
-    _backgroundType: String,
+    _backgroundType: String;
 
     /**
      * Toolbar buttons which have their click exposed through the API.
@@ -162,178 +162,178 @@ interface Props extends WithTranslation {
     _buttonsWithNotifyClick: Array<string | {
         key: string;
         preventExecution: boolean;
-    }>,
+    }>;
 
     /**
      * Whether or not the chat feature is currently displayed.
      */
-    _chatOpen: boolean,
+    _chatOpen: boolean;
 
     /**
      * The width of the client.
      */
-    _clientWidth: number,
+    _clientWidth: number;
 
     /**
      * The {@code JitsiConference} for the current conference.
      */
-    _conference: Object,
+    _conference: Object;
 
     /**
      * Whether or not screensharing button is disabled.
      */
-    _desktopSharingButtonDisabled: boolean,
+    _desktopSharingButtonDisabled: boolean;
 
     /**
      * Whether or not screensharing is initialized.
      */
-    _desktopSharingEnabled: boolean,
+    _desktopSharingEnabled: boolean;
 
     /**
      * Whether or not a dialog is displayed.
      */
-    _dialog: boolean,
+    _dialog: boolean;
 
     /**
      * Whether or not the toolbox is disabled. It is for recorders.
      */
-    _disabled: boolean,
+    _disabled: boolean;
 
     /**
      * Whether the end conference feature is supported.
      */
-    _endConferenceSupported: boolean,
+    _endConferenceSupported: boolean;
 
     /**
      * Whether or not call feedback can be sent.
      */
-    _feedbackConfigured: boolean,
+    _feedbackConfigured: boolean;
 
     /**
      * Whether or not the app is currently in full screen.
      */
-    _fullScreen: boolean,
+    _fullScreen: boolean;
 
     /**
      * Whether or not the GIFs feature is enabled.
      */
-    _gifsEnabled: boolean,
+    _gifsEnabled: boolean;
 
     /**
      * Whether the hangup menu is visible.
      */
-    _hangupMenuVisible: boolean,
+    _hangupMenuVisible: boolean;
 
     /**
      * Whether the app has Salesforce integration.
      */
-    _hasSalesforce: boolean,
+    _hasSalesforce: boolean;
 
     /**
      * Whether or not the app is running in an ios mobile browser.
      */
-    _isIosMobile: boolean,
+    _isIosMobile: boolean;
 
     /**
      * Whether or not the app is running in mobile browser.
      */
-    _isMobile: boolean,
+    _isMobile: boolean;
 
     /**
      * Whether or not the profile is disabled.
      */
-    _isProfileDisabled: boolean,
+    _isProfileDisabled: boolean;
 
 
     /**
      * Whether or not the current meeting belongs to a JaaS user.
      */
-    _isVpaasMeeting: boolean,
+    _isVpaasMeeting: boolean;
 
     /**
      * The ID of the local participant.
      */
-    _localParticipantID: String,
+    _localParticipantID: String;
 
     /**
      * The JitsiLocalTrack to display.
      */
-    _localVideo: Object,
+    _localVideo: Object;
 
     /**
      * Whether or not multi-stream send support is enabled.
      */
-    _multiStreamModeEnabled: boolean,
+    _multiStreamModeEnabled: boolean;
 
     /**
      * Whether or not the overflow menu is displayed in a drawer drawer.
      */
-    _overflowDrawer: boolean,
+    _overflowDrawer: boolean;
 
     /**
      * Whether or not the overflow menu is visible.
      */
-    _overflowMenuVisible: boolean,
+    _overflowMenuVisible: boolean;
 
     /**
      * Whether or not the participants pane is open.
      */
-    _participantsPaneOpen: boolean,
+    _participantsPaneOpen: boolean;
 
     /**
      * Whether or not the local participant's hand is raised.
      */
-    _raisedHand: boolean,
+    _raisedHand: boolean;
 
     /**
      * Whether or not reactions feature is enabled.
      */
-    _reactionsEnabled: boolean,
+    _reactionsEnabled: boolean;
 
     /**
      * Whether or not the local participant is screenSharing.
      */
-    _screenSharing: boolean,
+    _screenSharing: boolean;
 
     /**
      * Whether or not the local participant is sharing a YouTube video.
      */
-    _sharingVideo: boolean,
+    _sharingVideo: boolean;
 
     /**
      * Whether or not the tile view is enabled.
      */
-    _tileViewEnabled: boolean,
+    _tileViewEnabled: boolean;
 
     /**
      * The enabled buttons.
      */
-    _toolbarButtons: Array<string>,
+    _toolbarButtons: Array<string>;
 
     /**
      * Returns the selected virtual source object.
      */
-    _virtualSource: any,
+    _virtualSource: any;
 
     /**
      * Flag showing whether toolbar is visible.
      */
-    _visible: boolean,
+    _visible: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Invoked to active other features of the app.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Explicitly passed array with the buttons which this Toolbox should display.
      */
-    toolbarButtons: Array<string>,
+    toolbarButtons: Array<string>;
 }
 
 declare let APP: any;

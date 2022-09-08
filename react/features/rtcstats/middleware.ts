@@ -96,7 +96,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             // Unique identifier for a conference session, not to be confused with meeting name
             // i.e. If all participants leave a meeting it will have a different value on the next join.
             const { conference } = action;
-            const meetingUniqueId = conference && conference.getMeetingUniqueId();
+            const meetingUniqueId = conference?.getMeetingUniqueId();
 
             connectAndSendIdentity(
                 dispatch,

@@ -72,7 +72,7 @@ ReducerRegistry.register<IConnectionState>(
  */
 function _connectionDisconnected(
         state: IConnectionState,
-        { connection }: { connection: Object }) {
+        { connection }: { connection: Object; }) {
     const connection_ = _getCurrentConnection(state);
 
     if (connection_ !== connection) {
@@ -99,8 +99,8 @@ function _connectionDisconnected(
 function _connectionEstablished(
         state: IConnectionState,
         { connection, timeEstablished }: {
-            connection: any,
-            timeEstablished: number
+            connection: any;
+            timeEstablished: number;
         }) {
     return assign(state, {
         connecting: undefined,
@@ -124,8 +124,8 @@ function _connectionEstablished(
 function _connectionFailed(
         state: IConnectionState,
         { connection, error }: {
-            connection: Object,
-            error: ConnectionFailedError
+            connection: Object;
+            error: ConnectionFailedError;
         }) {
     const connection_ = _getCurrentConnection(state);
 
@@ -155,7 +155,7 @@ function _connectionFailed(
  */
 function _connectionWillConnect(
         state: IConnectionState,
-        { connection }: { connection: Object }) {
+        { connection }: { connection: Object; }) {
     return assign(state, {
         connecting: connection,
 
@@ -178,7 +178,7 @@ function _connectionWillConnect(
  * @returns {JitsiConnection} - The current {@code JitsiConnection} if any.
  * @private
  */
-function _getCurrentConnection(baseConnectionState: IConnectionState): IConnectionState|undefined {
+function _getCurrentConnection(baseConnectionState: IConnectionState): IConnectionState | undefined {
     return baseConnectionState.connection || baseConnectionState.connecting;
 }
 
@@ -194,7 +194,7 @@ function _getCurrentConnection(baseConnectionState: IConnectionState): IConnecti
  */
 function _setLocationURL(
         state: IConnectionState,
-        { locationURL }: { locationURL?: URL }) {
+        { locationURL }: { locationURL?: URL; }) {
     return set(state, 'locationURL', locationURL);
 }
 
@@ -226,6 +226,6 @@ function _setRoom(state: IConnectionState) {
  */
 function _setShowConnectionInfo(
         state: IConnectionState,
-        { showConnectionInfo }: { showConnectionInfo: boolean }) {
+        { showConnectionInfo }: { showConnectionInfo: boolean; }) {
     return set(state, 'showConnectionInfo', showConnectionInfo);
 }

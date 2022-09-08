@@ -60,7 +60,7 @@ export interface ILoggingState {
         disableLogCollector?: boolean;
         loggers: {
             [key: string]: LogLevel;
-        }
+        };
     };
     logCollector?: {
         flush: () => void;

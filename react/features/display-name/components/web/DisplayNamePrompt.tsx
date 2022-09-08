@@ -15,7 +15,7 @@ type State = {
     /**
      * The name to show in the display name text field.
      */
-    displayName: string
+    displayName: string;
 };
 
 /**

@@ -16,7 +16,7 @@ import HangupMenu from './HangupMenu';
  *
  * @returns {JSX.Element} - The hangup menu button.
  */
-const HangupMenuButton = () : JSX.Element => {
+const HangupMenuButton = (): JSX.Element => {
     const dispatch = useDispatch();
 
     const onSelect = useCallback(() => {

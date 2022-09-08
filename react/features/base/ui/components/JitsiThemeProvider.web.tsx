@@ -11,13 +11,13 @@ type Props = {
     /**
      * The default theme or theme set through advanced branding.
      */
-    _theme: Object,
+    _theme: Object;
 
     /**
     * The children of the component.
     */
-    children: React.ReactNode
-}
+    children: React.ReactNode;
+};
 
 /**
  * The theme provider for the web app.

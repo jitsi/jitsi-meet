@@ -88,7 +88,7 @@ export default class MatomoHandler extends AbstractHandler {
      * @private
      */
     _extractValue(event: IEvent) {
-        const value = event && event.attributes && event.attributes.value;
+        const value = event?.attributes?.value;
 
         // Try to extract an integer from the 'value' attribute.
         return Math.round(parseFloat(value ?? ''));
@@ -152,7 +152,8 @@ export default class MatomoHandler extends AbstractHandler {
         }
 
         const value = this._extractValue(event);
-        const matomoEvent: Array<string|number|undefined> = [ 'trackEvent', 'jitsi-meet', this._extractName(event) ];
+        const matomoEvent: Array<string | number | undefined> = [
+            'trackEvent', 'jitsi-meet', this._extractName(event) ];
 
         if (!isNaN(value)) {
             matomoEvent.push(value);

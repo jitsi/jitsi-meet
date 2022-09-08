@@ -37,79 +37,79 @@ interface Props extends WithTranslation {
     /**
      * Whether the remote video context menu is disabled.
      */
-    _disabled: Boolean,
+    _disabled: Boolean;
 
     /**
      * The position relative to the trigger the remote menu should display
      * from. Valid values are those supported by AtlasKit
      * {@code InlineDialog}.
      */
-    _menuPosition: string,
+    _menuPosition: string;
 
     /**
      * Whether to display the Popover as a drawer.
      */
-    _overflowDrawer: boolean,
+    _overflowDrawer: boolean;
 
     /**
      * Participant reference.
      */
-    _participant: Participant,
+    _participant: Participant;
 
     /**
      * The ID for the participant on which the remote video menu will act.
      */
-    _participantDisplayName: string,
+    _participantDisplayName: string;
 
     /**
      * The current state of the participant's remote control session.
      */
-    _remoteControlState: number,
+    _remoteControlState: number;
 
     /**
      * Whether the popover should render the Connection Info stats.
      */
-    _showConnectionInfo: Boolean,
+    _showConnectionInfo: Boolean;
 
     /**
      * Whether or not the button should be visible.
      */
-    buttonVisible: boolean,
+    buttonVisible: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Hides popover.
      */
-    hidePopover: Function,
+    hidePopover: Function;
 
     /**
      * The ID for the participant on which the remote video menu will act.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * Whether the popover is visible or not.
      */
-    popoverVisible: boolean,
+    popoverVisible: boolean;
 
     /**
      * Shows popover.
      */
-    showPopover: Function,
+    showPopover: Function;
 
     /**
      * The type of the thumbnail.
      */
-    thumbnailType: string
+    thumbnailType: string;
 }
 
 const styles = () => {

@@ -6,8 +6,8 @@ type Props = {
     /**
      * URL of the GIF.
      */
-    url: string
-}
+    url: string;
+};
 
 const useStyles = makeStyles(() => {
     return {

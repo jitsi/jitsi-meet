@@ -58,7 +58,7 @@ const PollCreate = ({
      * This state allows us to requestFocus asynchronously, without having to worry
      * about whether a newly created input field has been rendered yet or not.
      */
-    const [ lastFocus, requestFocus ] = useState<number|null>(null);
+    const [ lastFocus, requestFocus ] = useState<number | null>(null);
 
     useEffect(() => {
         if (lastFocus === null) {

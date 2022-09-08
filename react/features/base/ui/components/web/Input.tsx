@@ -154,7 +154,7 @@ const Input = React.forwardRef<any, IInputProps>(({
     const styles = useStyles();
     const isMobile = isMobileBrowser();
 
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>) =>
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         onChange(e.target.value), []);
 
     const clearInput = useCallback(() => onChange(''), []);

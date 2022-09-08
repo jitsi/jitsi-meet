@@ -14,12 +14,12 @@ interface IButtonProps extends ButtonProps {
     /**
      * Class name used for additional styles.
      */
-    className?: string,
+    className?: string;
 
     /**
      * Whether or not the button should be full width.
      */
-    fullWidth?: boolean,
+    fullWidth?: boolean;
 
     /**
      * The id of the button.

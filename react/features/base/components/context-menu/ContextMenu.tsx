@@ -17,67 +17,67 @@ type Props = {
     /**
      * Accessibility label for menu container.
      */
-    accessibilityLabel?: string,
+    accessibilityLabel?: string;
 
     /**
      * Children of the context menu.
      */
-    children: ReactNode,
+    children: ReactNode;
 
     /**
      * Class name for context menu. Used to overwrite default styles.
      */
-    className?: string,
+    className?: string;
 
     /**
      * The entity for which the context menu is displayed.
      */
-    entity?: Object,
+    entity?: Object;
 
     /**
      * Whether or not the menu is hidden. Used to overwrite the internal isHidden.
      */
-    hidden?: boolean,
+    hidden?: boolean;
 
     /**
      * Whether or not the menu is already in a drawer.
      */
-    inDrawer?: boolean,
+    inDrawer?: boolean;
 
     /**
      * Whether or not drawer should be open.
      */
-    isDrawerOpen?: boolean,
+    isDrawerOpen?: boolean;
 
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget?: HTMLElement,
+    offsetTarget?: HTMLElement;
 
     /**
      * Callback for click on an item in the menu.
      */
-    onClick?: (e?: React.MouseEvent) => void,
+    onClick?: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for drawer close.
      */
-    onDrawerClose?: (e?: React.MouseEvent) => void,
+    onDrawerClose?: (e?: React.MouseEvent) => void;
 
     /**
      * Keydown handler.
      */
-    onKeyDown?: (e?: React.KeyboardEvent) => void,
+    onKeyDown?: (e?: React.KeyboardEvent) => void;
 
     /**
      * Callback for the mouse entering the component.
      */
-    onMouseEnter?: (e?: React.MouseEvent) => void,
+    onMouseEnter?: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for the mouse leaving the component.
      */
-    onMouseLeave?: (e?: React.MouseEvent) => void
+    onMouseLeave?: (e?: React.MouseEvent) => void;
 };
 
 const MAX_HEIGHT = 400;

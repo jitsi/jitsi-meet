@@ -16,12 +16,12 @@ interface Props extends WithTranslation {
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * A Map with keyboard keys as keys and translation keys as values.
      */
-    shortcutDescriptions: Map<string, string>
+    shortcutDescriptions: Map<string, string>;
 }
 
 /**

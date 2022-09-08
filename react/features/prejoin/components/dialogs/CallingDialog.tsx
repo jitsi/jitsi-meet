@@ -16,22 +16,22 @@ interface Props extends WithTranslation {
     /**
      * The phone number that is being called.
      */
-    number: string,
+    number: string;
 
     /**
      * Closes the dialog.
      */
-    onClose: Function,
+    onClose: Function;
 
     /**
      * Handler used on hangup click.
      */
-    onHangup: Function,
+    onHangup: Function;
 
     /**
      * The status of the call.
      */
-    status: string
+    status: string;
 }
 
 const useStyles = makeStyles((theme: any) => {

@@ -24,17 +24,17 @@ interface Props extends WithTranslation {
     /**
      * Whether chat emoticons are disabled.
      */
-    _areSmileysDisabled: boolean,
+    _areSmileysDisabled: boolean;
 
     /**
      * Invoked to send chat messages.
      */
-    dispatch: Dispatch<any>,
+    dispatch: Dispatch<any>;
 
     /**
      * Callback to invoke on message send.
      */
-    onSend: Function
+    onSend: Function;
 }
 
 /**
@@ -45,12 +45,12 @@ type State = {
     /**
      * User provided nickname when the input text is provided in the view.
      */
-    message: string,
+    message: string;
 
     /**
      * Whether or not the smiley selector is visible.
      */
-    showSmileysPanel: boolean
+    showSmileysPanel: boolean;
 };
 
 /**

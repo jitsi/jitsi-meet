@@ -23,12 +23,12 @@ interface Props extends WithTranslation {
     /**
      * Whether we are a SIP gateway or not.
      */
-    _iAmSipGateway: boolean,
+    _iAmSipGateway: boolean;
 
     /**
      * Whether or not the chat is open.
      */
-    _isChatOpen: boolean,
+    _isChatOpen: boolean;
 
     /**
      * The notifications to be displayed, with the first index being the
@@ -37,22 +37,22 @@ interface Props extends WithTranslation {
     _notifications: Array<{
         props: Object;
         uid: number;
-    }>,
+    }>;
 
     /**
      * JSS classes object.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Invoked to update the redux store in order to remove notifications.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Whether or not the notifications are displayed in a portal.
      */
-    portal?: boolean
+    portal?: boolean;
 }
 
 const useStyles = (theme: any) => {

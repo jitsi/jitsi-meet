@@ -14,12 +14,12 @@ export interface Props extends WithTranslation {
     /**
      * Invoked to update the shared video link.
      */
-    dispatch: Dispatch<any>,
+    dispatch: Dispatch<any>;
 
     /**
      * Function to be invoked after typing a valid video.
      */
-    onPostSubmit: Function
+    onPostSubmit: Function;
 }
 
 /**

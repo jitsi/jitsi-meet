@@ -58,13 +58,13 @@ const useStyles = makeStyles((theme: any) => {
 });
 
 type Props = {
-    currentRoom?: { name: string },
-    overflowDrawer?: boolean,
-    participantsCount?: number,
-    searchString: string,
-    setSearchString: (newValue: string) => void,
-    showInviteButton?: boolean,
-    sortedParticipantIds?: Array<string>
+    currentRoom?: { name: string; };
+    overflowDrawer?: boolean;
+    participantsCount?: number;
+    searchString: string;
+    setSearchString: (newValue: string) => void;
+    showInviteButton?: boolean;
+    sortedParticipantIds?: Array<string>;
 };
 
 /**

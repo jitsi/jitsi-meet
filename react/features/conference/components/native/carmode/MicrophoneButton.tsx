@@ -32,7 +32,7 @@ const LONG_PRESS = 'long.press';
  *
  * @returns {JSX.Element} - The audio mute round button.
  */
-const MicrophoneButton = () : JSX.Element|null => {
+const MicrophoneButton = (): JSX.Element | null => {
     const dispatch = useDispatch();
     const audioMuted = useSelector((state: IState) => isLocalTrackMuted(state['features/base/tracks'],
         MEDIA_TYPE.AUDIO));

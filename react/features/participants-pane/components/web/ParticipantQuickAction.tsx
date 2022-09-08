@@ -15,38 +15,38 @@ type Props = {
     /**
      * The translated ask unmute aria label.
      */
-    ariaLabel?: boolean,
+    ariaLabel?: boolean;
 
     /**
      * The translated "ask unmute" text.
      */
-    askUnmuteText: string,
+    askUnmuteText: string;
 
     /**
      * The type of button to be displayed.
      */
-    buttonType: string,
+    buttonType: string;
 
     /**
      * Callback used to open a confirmation dialog for audio muting.
      */
-    muteAudio: Function,
+    muteAudio: Function;
 
     /**
      * Label for mute participant button.
      */
-    muteParticipantButtonText: string,
+    muteParticipantButtonText: string;
 
     /**
      * The ID of the participant.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * The name of the participant.
      */
-    participantName: string
-}
+    participantName: string;
+};
 
 const useStyles = makeStyles((theme: Theme) => {
     return {

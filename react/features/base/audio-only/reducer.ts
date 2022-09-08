@@ -3,7 +3,7 @@ import ReducerRegistry from '../redux/ReducerRegistry';
 import { SET_AUDIO_ONLY } from './actionTypes';
 
 export interface IAudioOnlyState {
-    enabled: boolean
+    enabled: boolean;
 }
 
 const DEFAULT_STATE = {

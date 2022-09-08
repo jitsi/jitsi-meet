@@ -32,16 +32,16 @@ const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant: Participant) => {
-        return participant && participant.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
+        return participant?.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
     },
     (participant: Participant) => {
-        return participant && participant.avatarURL ? participant.avatarURL : null;
+        return participant?.avatarURL ? participant.avatarURL : null;
     },
     (participant: Participant, store: IStore) => {
         const config = store.getState()['features/base/config'];
         const isGravatarDisabled = config.gravatar?.disabled;
 
-        if (participant && participant.email && !isGravatarDisabled) {
+        if (participant?.email && !isGravatarDisabled) {
             const gravatarBaseURL = config.gravatar?.baseUrl
                 || config.gravatarBaseURL
                 || GRAVATAR_BASE_URL;
@@ -224,7 +224,7 @@ export function getNormalizedDisplayName(name: string) {
  * @private
  * @returns {(Participant|undefined)}
  */
-export function getParticipantById(stateful: IStateful, id: string): Participant|undefined {
+export function getParticipantById(stateful: IStateful, id: string): Participant | undefined {
     const state = toState(stateful)['features/base/participants'];
     const { local, localScreenShare, remote } = state;
 

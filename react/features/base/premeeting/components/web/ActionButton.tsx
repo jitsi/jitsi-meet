@@ -11,78 +11,78 @@ type Props = {
     /**
      * Icon to display in the options section.
      */
-    OptionsIcon?: Function,
+    OptionsIcon?: Function;
 
     /**
      * The Label of the child element.
      */
-    ariaDropDownLabel?: string,
+    ariaDropDownLabel?: string;
 
     /**
      * The Label of the current element.
      */
-    ariaLabel?: string,
+    ariaLabel?: string;
 
     /**
      * To give a aria-pressed to the icon.
      */
-    ariaPressed?: boolean,
+    ariaPressed?: boolean;
 
     /**
      * Text of the button.
      */
-    children: ReactNode,
+    children: ReactNode;
 
     /**
      * Text css class of the button.
      */
-    className?: string,
+    className?: string;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * If the button is disabled or not.
      */
-    disabled?: boolean,
+    disabled?: boolean;
 
     /**
      * If the button has options.
      */
-    hasOptions?: boolean,
+    hasOptions?: boolean;
 
 
     /**
      * OnClick button handler.
      */
-    onClick?: (e?: React.MouseEvent) => void,
+    onClick?: (e?: React.MouseEvent) => void;
 
     /**
      * Click handler for options.
      */
-    onOptionsClick?: (e?: React.KeyboardEvent | React.MouseEvent) => void,
+    onOptionsClick?: (e?: React.KeyboardEvent | React.MouseEvent) => void;
 
     /**
      * To give a role to the icon.
      */
-    role?: string,
+    role?: string;
 
     /**
      * To navigate with the keyboard.
      */
-    tabIndex?: number,
+    tabIndex?: number;
 
     /**
      * TestId of the button. Can be used to locate element when testing UI.
      */
-    testId?: string,
+    testId?: string;
 
     /**
      * The type of th button: primary, secondary, text.
      */
-    type: string
+    type: string;
 };
 
 /**

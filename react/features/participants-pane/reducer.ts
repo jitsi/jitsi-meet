@@ -11,7 +11,7 @@ export interface IParticipantsPane {
     isOpen: boolean;
     participantsVolume: {
         [participantId: string]: number;
-    }
+    };
 }
 
 const DEFAULT_STATE = {

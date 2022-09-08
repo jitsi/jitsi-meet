@@ -38,27 +38,27 @@ export type Props = WithTranslation & {
     /**
      * The deviceId of the camera device currently being used.
      */
-    _currentCameraDeviceId: string,
+    _currentCameraDeviceId: string;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Dialog callback that indicates if the background preview was loaded.
      */
-    loadedPreview: Function,
+    loadedPreview: Function;
 
     /**
      * Represents the virtual background set options.
      */
-    options: any
+    options: any;
 };
 
 /**
@@ -69,17 +69,17 @@ type State = {
     /**
      * Activate the selected device camera only.
      */
-    jitsiTrack: Object|null,
+    jitsiTrack: Object | null;
 
     /**
      * Loader activated on setting virtual background.
      */
-    loading: boolean,
+    loading: boolean;
 
     /**
      * Flag that indicates if the local track was loaded.
      */
-    localTrackLoaded: boolean
+    localTrackLoaded: boolean;
 };
 
 /**

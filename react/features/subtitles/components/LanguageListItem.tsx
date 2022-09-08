@@ -12,7 +12,7 @@ interface ILanguageListItemProps extends WithTranslation {
     /**
      * Whether or not the button should be full width.
      */
-    lang: string,
+    lang: string;
 
     /**
      * Click callback.

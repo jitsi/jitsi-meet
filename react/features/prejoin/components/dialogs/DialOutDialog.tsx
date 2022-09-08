@@ -18,17 +18,17 @@ interface Props extends WithTranslation {
     /**
      * Closes a dialog.
      */
-    onClose: Function,
+    onClose: Function;
 
     /**
      * Submit handler.
      */
-    onSubmit: Function,
+    onSubmit: Function;
 
     /**
      * Handler for text button.
      */
-    onTextButtonClick: Function
+    onTextButtonClick: Function;
 }
 
 const useStyles = makeStyles((theme: any) => {

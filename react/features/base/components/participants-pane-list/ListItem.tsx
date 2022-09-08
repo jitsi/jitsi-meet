@@ -11,69 +11,69 @@ type Props = {
     /**
      * List item actions.
      */
-    actions: ReactNode,
+    actions: ReactNode;
 
     /**
      * List item container class name.
      */
-    className?: string,
+    className?: string;
 
     /**
      * Whether or not the actions should be hidden.
      */
-    hideActions?: boolean,
+    hideActions?: boolean;
 
     /**
      * Icon to be displayed on the list item. (Avatar for participants).
      */
-    icon: ReactNode,
+    icon: ReactNode;
 
     /**
      * Id of the container.
      */
-    id?: string,
+    id?: string;
 
     /**
      * Indicators to be displayed on the list item.
      */
-    indicators?: ReactNode,
+    indicators?: ReactNode;
 
     /**
      * Whether or not the item is highlighted.
      */
-    isHighlighted?: boolean,
+    isHighlighted?: boolean;
 
     /**
      * Click handler.
      */
-    onClick?: (e?: React.MouseEvent) => void,
+    onClick?: (e?: React.MouseEvent) => void;
 
     /**
      * Long press handler.
      */
-    onLongPress?: (e?: EventTarget) => void,
+    onLongPress?: (e?: EventTarget) => void;
 
     /**
      * Mouse leave handler.
      */
-    onMouseLeave?: (e?: React.MouseEvent) => void,
+    onMouseLeave?: (e?: React.MouseEvent) => void;
 
     /**
      * Data test id.
      */
-    testId?: string,
+    testId?: string;
 
     /**
      * Text children to be displayed on the list item.
      */
-    textChildren: ReactNode | string,
+    textChildren: ReactNode | string;
 
     /**
      * The actions trigger. Can be Hover or Permanent.
      */
-    trigger: string
+    trigger: string;
 
-}
+};
 
 const useStyles = makeStyles((theme: any) => {
     return {

@@ -5,22 +5,22 @@ export type Props = {
     /**
      * Color of the (initials based) avatar, if needed.
      */
-    color?: string,
+    color?: string;
 
     /**
      * Initials to be used to render the initials based avatars.
      */
-    initials?: string,
+    initials?: string;
 
     /**
      * Callback to signal the failure of the loading of the URL.
      */
-    onAvatarLoadError?: Function,
+    onAvatarLoadError?: Function;
 
     /**
      * Additional parameters to be passed to onAvatarLoadError function.
      */
-    onAvatarLoadErrorParams?: Object,
+    onAvatarLoadErrorParams?: Object;
 
     /**
      * Expected size of the avatar.
@@ -30,7 +30,7 @@ export type Props = {
     /**
      * The URL of the avatar to render.
      */
-    url?: string|Function
+    url?: string | Function;
 };
 
 /**
