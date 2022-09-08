@@ -58,7 +58,9 @@ class Captions
                     console.log('InAppWebViewNotLoaded');
                 }
             } else {
-                window.opener.postMessage(args, "https://custommeet4.centralus.cloudapp.azure.com/");
+                window.opener.postMessage(JSON.stringify({
+                    'polytok': args,
+                }), "https://custommeet4.centralus.cloudapp.azure.com/");
                 textStore = '';
             }
         }, 30000);
