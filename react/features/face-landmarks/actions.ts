@@ -1,11 +1,11 @@
-// @flow
-import 'image-capture';
+/* eslint-disable lines-around-comment */
 import './createImageBitmap';
-
-import { getCurrentConference } from '../base/conference';
-import { getLocalParticipant, getParticipantCount } from '../base/participants';
-import { getLocalVideoTrack } from '../base/tracks';
-import { getBaseUrl } from '../base/util';
+// @ts-ignore
+import { getCurrentConference } from '../base/conference/functions';
+import { getLocalParticipant, getParticipantCount } from '../base/participants/functions';
+// @ts-ignore
+import { getLocalVideoTrack } from '../base/tracks/functions';
+import { getBaseUrl } from '../base/util/helpers';
 
 import {
     ADD_FACE_EXPRESSION,
@@ -28,27 +28,27 @@ import {
 } from './functions';
 import logger from './logger';
 
-declare var APP: Object;
+declare const APP: any;
 
 /**
  * Object containing  a image capture of the local track.
  */
-let imageCapture;
+let imageCapture: ImageCapture | null = null;
 
 /**
  * Object where the face landmarks worker is stored.
  */
-let worker;
+let worker: Worker | null = null;
 
 /**
  * The last face expression received from the worker.
  */
-let lastFaceExpression;
+let lastFaceExpression: string | null = null;
 
 /**
  * The last face expression timestamp.
  */
-let lastFaceExpressionTimestamp;
+let lastFaceExpressionTimestamp: number | null = null;
 
 /**
  * How many duplicate consecutive expression occurred.
@@ -59,12 +59,12 @@ let duplicateConsecutiveExpressions = 0;
 /**
  * Variable that keeps the interval for sending expressions to webhook.
  */
-let webhookSendInterval;
+let webhookSendInterval: number | null = null;
 
 /**
  * Variable that keeps the interval for detecting faces in a frame.
  */
-let detectionInterval;
+let detectionInterval: number | null = null;
 
 /**
  * Loads the worker that detects the face landmarks.
@@ -92,8 +92,8 @@ export function loadWorker() {
 
         workerUrl = window.URL.createObjectURL(workerBlob);
         worker = new Worker(workerUrl, { name: 'Face Recognition Worker' });
-        worker.onmessage = function(e: Object) {
-            const { faceExpression, faceBox } = e.data;
+        worker.onmessage = function({ data }: MessageEvent<any>) {
+            const { faceExpression, faceBox } = data;
 
             if (faceExpression) {
                 if (faceExpression === lastFaceExpression) {
@@ -153,7 +153,7 @@ export function loadWorker() {
  * @param {Track | undefined} track - Track for which to start detecting faces.
  * @returns {Function}
  */
-export function startFaceLandmarksDetection(track) {
+export function startFaceLandmarksDetection(track?: any) {
     return async function(dispatch: Function, getState: Function) {
         if (!worker) {
             return;
@@ -186,20 +186,23 @@ export function startFaceLandmarksDetection(track) {
 
         imageCapture = new ImageCapture(firstVideoTrack);
 
-        detectionInterval = setInterval(() => {
-            sendDataToWorker(
-                worker,
-                imageCapture,
-                faceLandmarks?.faceCenteringThreshold
-            ).then(status => {
-                if (!status) {
-                    dispatch(stopFaceLandmarksDetection());
-                }
-            });
+        detectionInterval = window.setInterval(() => {
+
+            if (worker && imageCapture) {
+                sendDataToWorker(
+                    worker,
+                    imageCapture,
+                    faceLandmarks?.faceCenteringThreshold
+                ).then(status => {
+                    if (!status) {
+                        dispatch(stopFaceLandmarksDetection());
+                    }
+                });
+            }
         }, getDetectionInterval(state));
 
         if (faceLandmarks?.enableFaceExpressionsDetection) {
-            webhookSendInterval = setInterval(async () => {
+            webhookSendInterval = window.setInterval(async () => {
                 const result = await sendFaceExpressionsWebhook(getState());
 
                 if (result) {
@@ -237,8 +240,8 @@ export function stopFaceLandmarksDetection() {
         }
 
 
-        clearInterval(webhookSendInterval);
-        clearInterval(detectionInterval);
+        webhookSendInterval && window.clearInterval(webhookSendInterval);
+        detectionInterval && window.clearInterval(detectionInterval);
         webhookSendInterval = null;
         detectionInterval = null;
         imageCapture = null;

@@ -4,6 +4,7 @@
 *
 * Support source image types: Canvas.
 */
+// @ts-nocheck
 if (!('createImageBitmap' in window)) {
     window.createImageBitmap = async function(data) {
         return new Promise((resolve, reject) => {
@@ -16,12 +17,14 @@ if (!('createImageBitmap' in window)) {
             }
             const img = document.createElement('img');
 
-            // eslint-disable-next-line no-empty-function
-            img.close = () => {};
+            img.close = () => {
+                // empty
+            };
 
             img.addEventListener('load', () => {
                 resolve(img);
             });
+
             img.src = dataURL;
         });
     };

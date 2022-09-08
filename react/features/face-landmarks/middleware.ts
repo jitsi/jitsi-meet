@@ -1,12 +1,15 @@
+/* eslint-disable lines-around-comment */
+import { IStore } from '../app/types';
 import {
     CONFERENCE_JOINED,
-    CONFERENCE_WILL_LEAVE,
-    getCurrentConference
-} from '../base/conference';
+    CONFERENCE_WILL_LEAVE
+} from '../base/conference/actionTypes';
+// @ts-ignore
+import { getCurrentConference } from '../base/conference/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { getParticipantCount } from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
-import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
+import { getParticipantCount } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks/actionTypes';
 
 import { ADD_FACE_EXPRESSION, UPDATE_FACE_COORDINATES } from './actionTypes';
 import {
@@ -19,7 +22,7 @@ import { FACE_BOX_EVENT_TYPE } from './constants';
 import { sendFaceExpressionToParticipants, sendFaceExpressionToServer } from './functions';
 
 
-MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
+MiddlewareRegistry.register(({ dispatch, getState }: IStore) => (next: Function) => (action: any) => {
     const { faceLandmarks } = getState()['features/base/config'];
     const isEnabled = faceLandmarks?.enableFaceCentering || faceLandmarks?.enableFaceExpressionsDetection;
 
@@ -31,7 +34,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         // allow using remote face centering data when local face centering is not enabled
         action.conference.on(
             JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (participant, eventData) => {
+            (participant: any, eventData: any) => {
                 if (!participant || !eventData) {
                     return;
                 }

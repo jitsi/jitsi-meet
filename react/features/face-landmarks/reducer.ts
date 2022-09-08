@@ -8,6 +8,7 @@ import {
     STOP_FACE_LANDMARKS_DETECTION,
     UPDATE_FACE_COORDINATES
 } from './actionTypes';
+import { FaceBox } from './types';
 
 const defaultState = {
     faceBoxes: {},
@@ -25,11 +26,7 @@ const defaultState = {
 };
 
 export interface IFaceLandmarksState {
-    faceBoxes: {
-        left?: number;
-        right?: number;
-        width?: number;
-    };
+    faceBoxes: { [key: string]: FaceBox; };
     faceExpressions: {
         angry: number;
         disgusted: number;
