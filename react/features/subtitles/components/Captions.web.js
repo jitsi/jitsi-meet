@@ -48,21 +48,26 @@ class Captions
 
             const args = `${textStore}`;
 
-            if (isMobileBrowser()) {
-                if (window.flutter_inappwebview) {
-                    console.log('beforeArgs', args);
-                    window.flutter_inappwebview.callHandler('myHandlerName', args);
-                    console.log('afterArgs', args);
-                    textStore = '';
+            try {
+                if (isMobileBrowser()) {
+                    if (window.flutter_inappwebview) {
+                        console.log('beforeArgs', args);
+                        window.flutter_inappwebview.callHandler('myHandlerName', args);
+                        console.log('afterArgs', args);
+                        textStore = '';
+                    } else {
+                        console.log('InAppWebViewNotLoaded');
+                    }
                 } else {
-                    console.log('InAppWebViewNotLoaded');
+                    window.opener.postMessage(JSON.stringify({
+                        'polytok': args,
+                    }), "https://custommeet4.centralus.cloudapp.azure.com/");
+                    textStore = '';
                 }
-            } else {
-                window.opener.postMessage(JSON.stringify({
-                    'polytok': args,
-                }), "https://custommeet4.centralus.cloudapp.azure.com/");
-                textStore = '';
+            } catch (e) {
+                console.log('got an exception : ', e);
             }
+
         }, 30000);
     }
 
