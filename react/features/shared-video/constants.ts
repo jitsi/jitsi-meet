@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Fixed name of the video player fake participant.
  *

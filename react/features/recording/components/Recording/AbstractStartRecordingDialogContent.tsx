@@ -18,7 +18,6 @@ import { StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 // @ts-ignore
 import { isVpaasMeeting } from '../../../jaas/functions';
-// @ts-ignore
 import { RECORDING_TYPES } from '../../constants';
 // @ts-ignore
 import { supportsLocalRecording } from '../../functions';

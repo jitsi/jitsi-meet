@@ -1,5 +1,3 @@
-// @flow
-
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 
 
