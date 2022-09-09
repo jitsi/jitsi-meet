@@ -45,7 +45,8 @@ import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions
 // @ts-ignore
 import { PresenceLabel } from '../../../presence-status';
 // @ts-ignore
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { getCurrentLayout } from '../../../video-layout';
+import { LAYOUTS } from '../../../video-layout/constants';
 // @ts-ignore
 import { togglePinStageParticipant } from '../../actions';
 import {

@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Used to modify initialValue, which is expected to be a decimal value between
  * 0 and 1, and converts it to a number representable by an input slider, which

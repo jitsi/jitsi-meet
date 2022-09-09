@@ -3,7 +3,7 @@ import {
     IconRecordContact,
     IconRecordLead,
     IconRecordOpportunity
-} from '../base/icons';
+} from '../base/icons/svg';
 
 export const NOTES_MAX_LENGTH = 255;
 
@@ -13,7 +13,12 @@ export const CONTENT_HEIGHT_OFFSET = 200;
 
 export const LIST_HEIGHT_OFFSET = 250;
 
-export const RECORD_TYPE = {
+export const RECORD_TYPE: {
+    [key: string]: {
+        icon?: Function;
+        label: string;
+    };
+} = {
     ACCOUNT: {
         label: 'record.type.account',
         icon: IconRecordAccount

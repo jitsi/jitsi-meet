@@ -33,11 +33,11 @@ import {
 // @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import {
-    SETTINGS_TABS,
     openSettingsDialog,
     shouldShowModeratorSettings
     // @ts-ignore
 } from '../../../settings';
+import { SETTINGS_TABS } from '../../../settings/constants';
 // @ts-ignore
 import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
 

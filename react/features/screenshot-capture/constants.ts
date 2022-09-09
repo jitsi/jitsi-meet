@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Percent of pixels that signal if two images should be considered different.
  */

@@ -7,7 +7,6 @@ import { WithTranslation } from 'react-i18next';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconVolume } from '../../../base/icons/svg';
-// @ts-ignore
 import { VOLUME_SLIDER_SCALE } from '../../constants';
 
 /**
