@@ -17,6 +17,7 @@ import {
     getLocalVideoType,
     isLocalCameraTrackMuted
 } from '../../../base/tracks';
+import { isMobileBrowser } from '../../../base/environment/utils';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -207,27 +208,42 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
 
                 function download() {
                     console.log('Playing stopped ', recordedChunks);
-
                     const blob = new Blob(recordedChunks, { type: `video/${videoFormatSupport}` });
                     const videoObjectURL = URL.createObjectURL(blob);
                     console.log('VideoUrl, ', videoObjectURL);
+                    if (isMobileBrowser()) {
+                        let videoFileReader = new FileReader();
+                        videoFileReader.readAsDataURL(recordedChunks[0]);
+                        let base64data;
+                        videoFileReader.onloadend = function() {
+                            base64data = videoFileReader.result;
+                            console.log('base64data', base64data);
 
-                    const a = document.createElement('a');
-                    a.style = 'display: none';
-                    a.href = videoObjectURL;
-                    a.download = `${getFilename()}.${videoFormatSupport}`;
-                    document.body.appendChild(a);
+                            if (window.flutter_inappwebview) {
+                                let args = base64data;
+                                console.log('beforeVideoArgs', args);
+                                window.flutter_inappwebview.callHandler('handleVideoArgs', args);
+                                console.log('afterVideoArgs', args);
+                            }
+                        };
+                    } else {
+                        const a = document.createElement('a');
+                        a.style = 'display: none';
+                        a.href = videoObjectURL;
+                        a.download = `${getFilename()}.${videoFormatSupport}`;
+                        document.body.appendChild(a);
 
-                    a.onclick = () => {
-                        console.log(`${a.download} save option shown`);
-                        setTimeout(() => {
-                            console.log('SetTimeOut Called');
-                            document.body.removeChild(a);
-                            clearInterval(intervalRecord);
-                            window.URL.revokeObjectURL(videoObjectURL);
-                        }, 7000);
-                    };
-                    a.click();
+                        a.onclick = () => {
+                            console.log(`${a.download} save option shown`);
+                            setTimeout(() => {
+                                console.log('SetTimeOut Called');
+                                document.body.removeChild(a);
+                                clearInterval(intervalRecord);
+                                window.URL.revokeObjectURL(videoObjectURL);
+                            }, 7000);
+                        };
+                        a.click();
+                    }
                 }
 
 
