@@ -80,7 +80,7 @@ export interface IParticipantsState {
     fakeParticipants: Map<string, Participant>;
     local?: LocalParticipant;
     localScreenShare?: Participant;
-    overwrittenNameList: Object;
+    overwrittenNameList: { [id: string]: string; };
     pinnedParticipant?: string;
     raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, Participant>;

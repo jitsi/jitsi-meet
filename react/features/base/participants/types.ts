@@ -3,6 +3,7 @@ export interface Participant {
     botType?: string;
     conference?: Object;
     connectionStatus?: string;
+    displayName?: string;
     dominantSpeaker?: boolean;
     e2eeSupported?: boolean;
     email?: string;

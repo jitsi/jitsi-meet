@@ -1,36 +1,38 @@
-// @flow
-
 import _ from 'lodash';
 
+import { IStateful } from '../base/app/types';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { getCurrentConference } from '../base/conference';
-import { getParticipantById, getParticipantCount, isLocalParticipantModerator } from '../base/participants';
-import { toState } from '../base/redux';
+import { getParticipantById, getParticipantCount, isLocalParticipantModerator } from '../base/participants/functions';
+import { toState } from '../base/redux/functions';
 
 import { FEATURE_KEY } from './constants';
+import { IRoom, IRooms } from './types';
 
 /**
  * Returns the rooms object for breakout rooms.
  *
- * @param {Function|Object} stateful - The redux store, the redux
+ * @param {IStateful} stateful - The redux store, the redux
  * {@code getState} function, or the redux state itself.
  * @returns {Object} Object of rooms.
  */
-export const getBreakoutRooms = (stateful: Function | Object) => toState(stateful)[FEATURE_KEY].rooms;
+export const getBreakoutRooms = (stateful: IStateful): IRooms => toState(stateful)[FEATURE_KEY].rooms;
 
 /**
  * Returns the main room.
  *
- * @param {Function|Object} stateful - The redux store, the redux
+ * @param {IStateful} stateful - The redux store, the redux
  * {@code getState} function, or the redux state itself.
- * @returns {Object|undefined} The main room object, or undefined.
+ * @returns {IRoom|undefined} The main room object, or undefined.
  */
-export const getMainRoom = (stateful: Function | Object) => {
+export const getMainRoom = (stateful: IStateful) => {
     const rooms = getBreakoutRooms(stateful);
 
-    return _.find(rooms, (room: Object) => room.isMainRoom);
+    return _.find(rooms, room => Boolean(room.isMainRoom));
 };
 
-export const getRoomsInfo = (stateful: Function | Object) => {
+export const getRoomsInfo = (stateful: IStateful) => {
     const breakoutRooms = getBreakoutRooms(stateful);
     const conference = getCurrentConference(stateful);
 
@@ -46,7 +48,7 @@ export const getRoomsInfo = (stateful: Function | Object) => {
                 isMainRoom: true,
                 id: conference?.room?.roomjid,
                 jid: conference?.room?.myroomjid,
-                participants: conference && conference.participants && Object.keys(conference.participants).length
+                participants: conference?.participants && Object.keys(conference.participants).length
                     ? Object.keys(conference.participants).map(participantId => {
                         const participantItem = conference?.participants[participantId];
                         const storeParticipant = getParticipantById(stateful, participantItem._id);
@@ -96,42 +98,40 @@ export const getRoomsInfo = (stateful: Function | Object) => {
 /**
  * Returns the room by Jid.
  *
- * @param {Function|Object} stateful - The redux store, the redux
+ * @param {IStateful} stateful - The redux store, the redux
  * {@code getState} function, or the redux state itself.
  * @param {string} roomJid - The jid of the room.
- * @returns {Object|undefined} The main room object, or undefined.
+ * @returns {IRoom|undefined} The main room object, or undefined.
  */
-export const getRoomByJid = (stateful: Function | Object, roomJid: string): Object => {
+export const getRoomByJid = (stateful: IStateful, roomJid: string) => {
     const rooms = getBreakoutRooms(stateful);
 
-    return _.find(rooms, (room: Object) => room.jid === roomJid);
+    return _.find(rooms, (room: IRoom) => room.jid === roomJid);
 };
 
 /**
  * Returns the id of the current room.
  *
- * @param {Function|Object} stateful - The redux store, the redux
+ * @param {IStateful} stateful - The redux store, the redux
  * {@code getState} function, or the redux state itself.
  * @returns {string} Room id or undefined.
  */
-export const getCurrentRoomId = (stateful: Function | Object) => {
+export const getCurrentRoomId = (stateful: IStateful) => {
     const conference = getCurrentConference(stateful);
 
-    // $FlowExpectedError
     return conference?.getName();
 };
 
 /**
  * Determines whether the local participant is in a breakout room.
  *
- * @param {Function|Object} stateful - The redux store, the redux
+ * @param {IStateful} stateful - The redux store, the redux
  * {@code getState} function, or the redux state itself.
  * @returns {boolean}
  */
-export const isInBreakoutRoom = (stateful: Function | Object) => {
+export const isInBreakoutRoom = (stateful: IStateful) => {
     const conference = getCurrentConference(stateful);
 
-    // $FlowExpectedError
     return conference?.getBreakoutRooms()
         ?.isBreakoutRoom();
 };
@@ -139,11 +139,11 @@ export const isInBreakoutRoom = (stateful: Function | Object) => {
 /**
  * Returns the breakout rooms config.
  *
- * @param {Function|Object} stateful - The redux store, the redux
+ * @param {IStateful} stateful - The redux store, the redux
  * {@code getState} function, or the redux state itself.
  * @returns {Object}
  */
-export const getBreakoutRoomsConfig = (stateful: Function | Object) => {
+export const getBreakoutRoomsConfig = (stateful: IStateful) => {
     const state = toState(stateful);
     const { breakoutRooms = {} } = state['features/base/config'];
 
@@ -153,10 +153,10 @@ export const getBreakoutRoomsConfig = (stateful: Function | Object) => {
 /**
  * Returns whether the add breakout room button is visible.
  *
- * @param {Function | Object} stateful - Global state.
+ * @param {IStateful} stateful - Global state.
  * @returns {boolean}
  */
-export const isAddBreakoutRoomButtonVisible = (stateful: Function | Object) => {
+export const isAddBreakoutRoomButtonVisible = (stateful: IStateful) => {
     const state = toState(stateful);
     const isLocalModerator = isLocalParticipantModerator(state);
     const { conference } = state['features/base/conference'];
@@ -169,10 +169,10 @@ export const isAddBreakoutRoomButtonVisible = (stateful: Function | Object) => {
 /**
  * Returns whether the auto assign participants to breakout rooms button is visible.
  *
- * @param {Function | Object} stateful - Global state.
+ * @param {IStateful} stateful - Global state.
  * @returns {boolean}
  */
-export const isAutoAssignParticipantsVisible = (stateful: Function | Object) => {
+export const isAutoAssignParticipantsVisible = (stateful: IStateful) => {
     const state = toState(stateful);
     const rooms = getBreakoutRooms(state);
     const inBreakoutRoom = isInBreakoutRoom(state);

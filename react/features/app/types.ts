@@ -55,6 +55,7 @@ import { INoiseDetectionState } from '../noise-detection/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
 import { INotificationsState } from '../notifications/reducer';
 import { IOverlayState } from '../overlay/reducer';
+import { IParticipantsPaneState } from '../participants-pane/reducer';
 import { IPollsState } from '../polls/reducer';
 import { IPowerMonitorState } from '../power-monitor/reducer';
 import { IPrejoinState } from '../prejoin/reducer';
@@ -135,7 +136,7 @@ export interface IState {
     'features/noise-suppression': INoiseSuppressionState;
     'features/notifications': INotificationsState;
     'features/overlay': IOverlayState;
-    'features/participants-pane': IParticipantsState;
+    'features/participants-pane': IParticipantsPaneState;
     'features/polls': IPollsState;
     'features/power-monitor': IPowerMonitorState;
     'features/prejoin': IPrejoinState;

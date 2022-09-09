@@ -1,8 +1,10 @@
-// @flow
-
+import { IStore } from '../app/types';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { getConferenceState } from '../base/conference';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
-import { getParticipantById, isParticipantModerator } from '../base/participants';
+import { getParticipantById, isParticipantModerator } from '../base/participants/functions';
+import { Participant } from '../base/participants/types';
 import { isForceMuted } from '../participants-pane/functions';
 
 import {
@@ -28,7 +30,7 @@ import { isEnabledFromState } from './functions';
  * @param {staring} id - The id of the participant to be approved.
  * @returns {void}
  */
-export const approveParticipantAudio = (id: string) => (dispatch: Function, getState: Function) => {
+export const approveParticipantAudio = (id: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const state = getState();
     const { conference } = getConferenceState(state);
     const participant = getParticipantById(state, id);
@@ -48,7 +50,7 @@ export const approveParticipantAudio = (id: string) => (dispatch: Function, getS
  * @param {staring} id - The id of the participant to be approved.
  * @returns {void}
  */
-export const approveParticipantVideo = (id: string) => (dispatch: Function, getState: Function) => {
+export const approveParticipantVideo = (id: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const state = getState();
     const { conference } = getConferenceState(state);
     const participant = getParticipantById(state, id);
@@ -67,7 +69,7 @@ export const approveParticipantVideo = (id: string) => (dispatch: Function, getS
  * @param {staring} id - The id of the participant to be approved.
  * @returns {void}
  */
-export const approveParticipant = (id: string) => (dispatch: Function) => {
+export const approveParticipant = (id: string) => (dispatch: IStore['dispatch']) => {
     dispatch(approveParticipantAudio(id));
     dispatch(approveParticipantVideo(id));
 };
@@ -78,7 +80,7 @@ export const approveParticipant = (id: string) => (dispatch: Function) => {
  * @param {staring} id - The id of the participant to be rejected.
  * @returns {void}
  */
-export const rejectParticipantAudio = (id: string) => (dispatch: Function, getState: Function) => {
+export const rejectParticipantAudio = (id: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const state = getState();
     const { conference } = getConferenceState(state);
     const audioModeration = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
@@ -98,7 +100,7 @@ export const rejectParticipantAudio = (id: string) => (dispatch: Function, getSt
  * @param {staring} id - The id of the participant to be rejected.
  * @returns {void}
  */
-export const rejectParticipantVideo = (id: string) => (dispatch: Function, getState: Function) => {
+export const rejectParticipantVideo = (id: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const state = getState();
     const { conference } = getConferenceState(state);
     const videoModeration = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
@@ -133,10 +135,10 @@ export const disableModeration = (mediaType: MediaType, actor: Object) => {
 /**
  * Hides the notification with the participant that asked to unmute audio.
  *
- * @param {Object} participant - The participant for which the notification to be hidden.
+ * @param {Participant} participant - The participant for which the notification to be hidden.
  * @returns {Object}
  */
-export function dismissPendingAudioParticipant(participant: Object) {
+export function dismissPendingAudioParticipant(participant: Participant) {
     return dismissPendingParticipant(participant.id, MEDIA_TYPE.AUDIO);
 }
 
@@ -270,10 +272,10 @@ export function showModeratedNotification(mediaType: MediaType) {
 /**
  * Shows a notification with the participant that asked to audio unmute.
  *
- * @param {Object} participant - The participant for which is the notification.
+ * @param {Participant} participant - The participant for which is the notification.
  * @returns {Object}
  */
-export function participantPendingAudio(participant: Object) {
+export function participantPendingAudio(participant: Participant) {
     return {
         type: PARTICIPANT_PENDING_AUDIO,
         participant
