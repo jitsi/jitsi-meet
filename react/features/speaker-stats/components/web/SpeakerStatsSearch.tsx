@@ -9,7 +9,6 @@ import { IconSearch } from '../../../base/icons/svg';
 // @ts-ignore
 import { getFieldValue } from '../../../base/react';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
-// @ts-ignore
 import { MOBILE_BREAKPOINT } from '../../constants';
 // @ts-ignore
 import { isSpeakerStatsSearchDisabled } from '../../functions';

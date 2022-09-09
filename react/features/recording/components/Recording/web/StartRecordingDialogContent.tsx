@@ -13,7 +13,6 @@ import {
 import { connect } from '../../../../base/redux/functions';
 import Button from '../../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
-// @ts-ignore
 import { RECORDING_TYPES } from '../../../constants';
 // @ts-ignore
 import { getRecordingDurationEstimation } from '../../../functions';

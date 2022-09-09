@@ -13,7 +13,6 @@ import {
     DISPLAY_SWITCH_BREAKPOINT,
     MOBILE_BREAKPOINT,
     RESIZE_SEARCH_SWITCH_CONTAINER_BREAKPOINT
-    // @ts-ignore
 } from '../../constants';
 
 import FaceExpressionsSwitch from './FaceExpressionsSwitch';

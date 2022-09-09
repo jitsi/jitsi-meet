@@ -2,7 +2,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 
-// @ts-ignore
 import { MOBILE_BREAKPOINT } from '../../constants';
 // @ts-ignore
 import abstractSpeakerStatsList from '../AbstractSpeakerStatsList';

@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * An enumeration of support calendar integration types.
  *

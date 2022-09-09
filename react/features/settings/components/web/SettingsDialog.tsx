@@ -23,7 +23,6 @@ import {
     submitSoundsTab
     // @ts-ignore
 } from '../../actions';
-// @ts-ignore
 import { SETTINGS_TABS } from '../../constants';
 import {
     getModeratorTabProps,

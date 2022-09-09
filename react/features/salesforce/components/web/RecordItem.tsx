@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-// @ts-ignore
 import { RECORD_TYPE } from '../../constants';
 
 /**
@@ -82,7 +81,7 @@ export const RecordItem = ({
 }: Props) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    const Icon = RECORD_TYPE[type].icon;
+    const Icon = RECORD_TYPE[type as keyof typeof RECORD_TYPE].icon;
 
     return (
         <li

@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The pathName for the dialInInfo page.
  *

@@ -25,7 +25,8 @@ import { showToolbox } from '../../../toolbox/actions.web';
 // @ts-ignore
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 // @ts-ignore
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { getCurrentLayout } from '../../../video-layout';
+import { LAYOUTS } from '../../../video-layout/constants';
 import {
     setFilmstripVisible,
     setUserFilmstripHeight,
