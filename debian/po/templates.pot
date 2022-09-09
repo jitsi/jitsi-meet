@@ -20,7 +20,7 @@ msgstr ""
 #. Type: select
 #. Choices
 #: ../jitsi-meet-web-config.templates:1001
-msgid "Generate a new self-signed certificate (You will later get a chance to obtain a Let's encrypt certificate)"
+msgid "Generate a new self-signed certificate"
 msgstr ""
 
 #. Type: select
