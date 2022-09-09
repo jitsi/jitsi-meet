@@ -192,7 +192,7 @@ export function getConferenceName(stateful: Function | Object): string {
         || subject
         || callDisplayName
         || (callee && callee.name)
-        || safeStartCase(safeDecodeURIComponent(room));
+        || (room && safeStartCase(safeDecodeURIComponent(room)));
 }
 
 /**
