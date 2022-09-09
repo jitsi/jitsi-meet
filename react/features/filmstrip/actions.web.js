@@ -14,6 +14,7 @@ import { getMaxColumnCount } from '../video-layout';
 import {
     ADD_STAGE_PARTICIPANT,
     REMOVE_STAGE_PARTICIPANT,
+    RESIZE_FILMSTRIP,
     SET_STAGE_PARTICIPANTS,
     SET_FILMSTRIP_WIDTH,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
@@ -61,6 +62,23 @@ import {
 import { isStageFilmstripAvailable } from './functions.web';
 
 export * from './actions.any';
+
+/**
+ * Resize the filmstrip.
+ *
+ * @param {number} width - Width value for filmstrip.
+ *
+ * @returns {{
+ *  type: RESIZE_FILMSTRIP,
+ *  width: number,
+ * }}
+ */
+export function resizeFilmStrip(width) {
+    return {
+        type: RESIZE_FILMSTRIP,
+        width
+    };
+}
 
 /**
  * Sets the dimensions of the tile view grid.

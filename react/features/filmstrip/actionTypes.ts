@@ -1,4 +1,13 @@
 /**
+ * The type of (redux) action which enlarges the filmstrip.
+ *
+ * {
+ *     type: RESIZE_FILMSTRIP,
+ * }
+ */
+export const RESIZE_FILMSTRIP = 'RESIZE_FILMSTRIP';
+
+ /**
  * The type of (redux) action which sets whether the filmstrip is enabled.
  *
  * {
