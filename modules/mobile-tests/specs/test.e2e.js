@@ -1,9 +1,9 @@
 
-const assert = require('assert');
+// const assert = require('assert');
 const wdio = require('webdriverio');
 
 const {
-    iPhoneXs
+    ONEPLUSA5000
 } = require('../helpers/capabilities');
 const { getSelector } = require('../helpers/getSelector');
 
@@ -11,12 +11,30 @@ const { getSelector } = require('../helpers/getSelector');
 const options = {
     path: '/wd/hub',
     port: 4723,
-    capabilities: iPhoneXs
+    capabilities: ONEPLUSA5000
 };
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
-const androidInput = '//android.widget.EditText[@content-desc="Enter room name"]';
-const iosInput = '//XCUIElementTypeTextField[@name="Enter room name"]';
+
+const enterRoomNameInput = {
+    android: '//android.widget.EditText[contains(@resource-id, "room-name-input-id")]',
+    ios: '//XCUIElementTypeTextField[@name="room-name-input-id"]'
+};
+
+const joinBtn = {
+    android: '//android.view.ViewGroup[@content-desc="Tap to join"]',
+    ios: undefined
+};
+
+const allowPermissionsBtn = {
+    android: 'com.android.permissioncontroller:id/permission_allow_button',
+    ios: undefined
+};
+
+const closeScreenBtn = {
+    android: '//android.view.ViewGroup[contains(@resource-id, "close-screen-btn-id")]',
+    ios: undefined
+};
 
 /**
  * Constructs a test session.
@@ -25,17 +43,26 @@ const iosInput = '//XCUIElementTypeTextField[@name="Enter room name"]';
  */
 async function main() {
     const client = wdio.remote(options);
-    const isAndroid = (await client).isAndroid;
+    const driver = await client;
 
-    const input = getSelector(isAndroid, androidInput, iosInput);
+    const inputSelector = getSelector(driver, enterRoomNameInput);
+    const joinRoomBtnSelector = getSelector(driver, joinBtn);
+    const allowPermissionBtnSelector = getSelector(driver, allowPermissionsBtn);
+    const screenCloseBtnSelector = getSelector(driver, closeScreenBtn);
 
-    const field = (await client).$(input);
+
+    const field = (await client).$(inputSelector);
+    const joinRoomBtn = (await client).$(joinRoomBtnSelector);
+    const allowPermissionBtn = (await client).$(`id:${allowPermissionBtnSelector}`);
+    const screenCloseBtn = (await client).$(screenCloseBtnSelector);
 
     await delay(5000);
-    await field.setValue('testestest123');
-    const value = await field.getText();
-
-    assert.strictEqual(value, 'testestest123');
+    await field.setValue('FlatMissilesSliceSecondly');
+    await field.click();
+    await joinRoomBtn.click();
+    await allowPermissionBtn.click();
+    await allowPermissionBtn.click();
+    await screenCloseBtn.click();
 }
 
 main();

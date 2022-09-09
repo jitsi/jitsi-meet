@@ -58,7 +58,8 @@ const HeaderNavigationButton
                             rippleColor = { 'transparent' }
                             style = { [
                                 buttonStyle,
-                                styles.headerNavigationButton ] } >
+                                styles.headerNavigationButton ] }
+                            testID = 'close-screen-btn-id' >
                             <Icon
                                 size = { 24 }
                                 src = { src }

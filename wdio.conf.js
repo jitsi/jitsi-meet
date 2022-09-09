@@ -1,4 +1,4 @@
-const { iPhoneXs } = require('./modules/mobile-tests/helpers/capabilities');
+const { ONEPLUSA5000 } = require('./modules/mobile-tests/helpers/capabilities');
 const { MAX_INSTANCES } = require('./modules/mobile-tests/helpers/constants');
 
 
@@ -63,7 +63,7 @@ exports.config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [
-        iPhoneXs
+        ONEPLUSA5000
     ],
 
     //
