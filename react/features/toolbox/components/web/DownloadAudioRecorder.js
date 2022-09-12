@@ -112,13 +112,6 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
 
             mediaRecorder.addEventListener('stop', () => {
                 console.log('Playing stooped ', audioChunks);
-                const audioBlob = new Blob([ audioChunks ], { 'type': 'audio/mp3 codecs=opus' });
-
-                const audioUrl = URL.createObjectURL(audioBlob);
-                console.log('audioUrl ', audioUrl);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = audioUrl;
 
                 if (isMobileBrowser()) {
                     let audioFileReader = new FileReader();
@@ -136,6 +129,12 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
                         }
                     };
                 } else {
+                    const audioBlob = new Blob([ audioChunks ], { 'type': 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    console.log('audioUrl ', audioUrl);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = audioUrl;
                     a.download = `${getFilename()}.webm`;
                     document.body.appendChild(a);
                     a.onclick = () => {

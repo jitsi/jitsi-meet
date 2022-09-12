@@ -208,9 +208,6 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
 
                 function download() {
                     console.log('Playing stopped ', recordedChunks);
-                    const blob = new Blob(recordedChunks, { type: `video/${videoFormatSupport}` });
-                    const videoObjectURL = URL.createObjectURL(blob);
-                    console.log('VideoUrl, ', videoObjectURL);
                     if (isMobileBrowser()) {
                         let videoFileReader = new FileReader();
                         videoFileReader.readAsDataURL(recordedChunks[0]);
@@ -227,10 +224,13 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
                             }
                         };
                     } else {
+                        const blob = new Blob(recordedChunks, { 'type': 'video/webm codecs=opus' });
+                        const videoObjectURL = URL.createObjectURL(blob);
+                        console.log('VideoUrl, ', videoObjectURL);
                         const a = document.createElement('a');
                         a.style = 'display: none';
                         a.href = videoObjectURL;
-                        a.download = `${getFilename()}.${videoFormatSupport}`;
+                        a.download = `${getFilename()}.webm`;
                         document.body.appendChild(a);
 
                         a.onclick = () => {
