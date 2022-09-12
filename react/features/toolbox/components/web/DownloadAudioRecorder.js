@@ -105,35 +105,48 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
 
             mediaRecorder.addEventListener('dataavailable', event => {
                 console.log('Data Available ', event);
+                console.log('Blob Type ', event.data.type);
+                console.log('Data Size ', event.data.size);
                 audioChunks.push(event.data);
             });
 
             mediaRecorder.addEventListener('stop', () => {
                 console.log('Playing stooped ', audioChunks);
-                const audioBlob = new Blob(audioChunks, { 'type': 'audio/mp4 codecs=opus' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                console.log('AudioUrl, ', audioUrl);
 
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = audioUrl;
                 if (isMobileBrowser()) {
-                    a.download = `${getFilename()}`;
-                    document.body.appendChild(a);
+                    let audioFileReader = new FileReader();
+                    audioFileReader.readAsDataURL(audioChunks[0]);
+                    let base64data;
+                    audioFileReader.onloadend = function() {
+                        base64data = audioFileReader.result;
+                        console.log('base64data', base64data);
+
+                        if (window.flutter_inappwebview) {
+                            let args = base64data;
+                            console.log('beforeAudioArgs', args);
+                            window.flutter_inappwebview.callHandler('handleAudioArgs', args);
+                            console.log('afterAudioArgs', args);
+                        }
+                    };
                 } else {
+                    const audioBlob = new Blob([ audioChunks ], { 'type': 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    console.log('audioUrl ', audioUrl);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = audioUrl;
                     a.download = `${getFilename()}.webm`;
                     document.body.appendChild(a);
+                    a.onclick = () => {
+                        console.log(`${a.download} save option shown`);
+                        setTimeout(() => {
+                            console.log('SetTimeOut Called');
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(audioUrl);
+                        }, 2000);
+                    };
+                    a.click();
                 }
-
-                a.onclick = () => {
-                    console.log(`${a.download} save option shown`);
-                    setTimeout(() => {
-                        console.log('SetTimeOut Called');
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(audioUrl);
-                    }, 2000);
-                };
-                a.click();
             });
 
             /**
