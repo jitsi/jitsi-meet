@@ -253,10 +253,17 @@ case "$1" in
         echo "    .xMMMMNxkNc"
         echo "     dMMMMMkxXc"
         echo "     cNMMMNl.."
-        echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
-        echo "      ;XMMMO'"
-        echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
-        echo "        lNMMM0,                        and follow the guide in the dev console."
+        if [ "${JAAS_INPUT}" != "true" ]; then
+            echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
+            echo "      ;XMMMO'"
+            echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
+            echo "        lNMMM0,                        and follow the guide in the dev console."
+        else
+            echo "     .kMMMX;"
+            echo "      ;XMMMO'            Don't forget to sign up on"
+            echo "       lNMMWO'             https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
+            echo "        lNMMM0,              in order to add telephony to your Jitsi meetings!"
+        fi
         echo "         lXMMMK:."
         echo "          ;KMMMNKd.  'oo,"
         echo "           'xNMMMMXkkkkOKOl'"
