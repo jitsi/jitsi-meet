@@ -221,28 +221,7 @@ case "$1" in
         fi
 
         if [ "$ISSUE_LE_CERT" = "true" ] ; then
-            export HOME=/opt/acmesh
-            curl https://get.acme.sh | sh -s email=$EMAIL
-
-            if [ "$FORCE_NGINX" = "true" ]; then
-                RELOAD_CMD="invoke-rc.d nginx force-reload && /usr/share/jitsi-meet/scripts/coturn-le-update.sh ${JVB_HOSTNAME}"
-            elif [ "$FORCE_APACHE" = "true" ]; then
-                RELOAD_CMD="invoke-rc.d apache2 force-reload && /usr/share/jitsi-meet/scripts/coturn-le-update.sh ${JVB_HOSTNAME}"
-            fi
-
-            ISSUE_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh --issue -d $JVB_HOSTNAME -w /usr/share/jitsi-meet --server letsencrypt"
-            eval $ISSUE_CERT_CMD || ISSUE_FAILED="true"
-
-            INSTALL_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh --install-cert -d $JVB_HOSTNAME --key-file /etc/jitsi/meet/$JVB_HOSTNAME.key --fullchain-file /etc/jitsi/meet/$JVB_HOSTNAME.crt --reloadcmd \"$RELOAD_CMD\""
-            if [ "$ISSUE_FAILED" = "true" ] ; then
-                echo "Issuing the certificate from Let's Encrypt failed, continuing ..."
-                echo "You can retry later by executing:"
-                echo "$ISSUE_CERT_CMD"
-                echo "$INSTALL_CERT_CMD"
-                echo ""
-            else
-                eval $INSTALL_CERT_CMD
-            fi
+            /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $JVB_HOSTNAME
         fi
 
         echo ""
