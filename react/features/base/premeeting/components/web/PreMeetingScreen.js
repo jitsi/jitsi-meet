@@ -190,7 +190,7 @@ class PreMeetingScreen extends PureComponent<Props> {
  * @returns {Object}
  */
 function mapStateToProps(state, ownProps): Object {
-    const { hiddenPremeetingButtons } = state['features/base/config'];
+    const { hiddenPremeetingButtons, hideConferenceSubject } = state['features/base/config'];
     const toolbarButtons = getToolbarButtons(state);
     const premeetingButtons = (ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS
@@ -208,7 +208,7 @@ function mapStateToProps(state, ownProps): Object {
             ? premeetingButtons
             : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
-        _roomName: getConferenceName(state)
+        _roomName: hideConferenceSubject ? undefined : getConferenceName(state)
     };
 }
 
