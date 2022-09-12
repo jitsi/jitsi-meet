@@ -46,7 +46,7 @@ Type: string
 _Description: Enter your email:
  To successfully issue Let's Encrypt certificates:
  .
- You need a working DNS record pointing to this machine(for domain ${domain})"
+ You need a working DNS record pointing to this machine(for hostname ${domain})"
  .
  You need to agree to the ACME server's Subscriber Agreement (https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf)
  by providing an email address for important account notifications
