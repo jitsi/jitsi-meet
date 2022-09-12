@@ -960,6 +960,7 @@
         "noAudioSignalDialInDesc": "U kunt ook inbellen met:",
         "noAudioSignalDialInLinkDesc": "Inbelnummers",
         "noAudioSignalTitle": "Er komt geen invoer van uw microfoon!",
+        "noiseSuppression": "Ruisonderdrukking",
         "noisyAudioInputDesc": "Het klinkt alsof uw microfoon ruis veroorzaakt. Overweeg te dempen of van apparaat te wisselen.",
         "noisyAudioInputTitle": "Uw microfoon lijkt ruis te veroorzaken!",
         "openChat": "Chat openen",
