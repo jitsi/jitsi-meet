@@ -9,6 +9,7 @@ export interface Participant {
     features?: {
         'screen-sharing'?: boolean;
     };
+    getId?: Function;
     id: string;
     isFakeParticipant?: boolean;
     isJigasi?: boolean;

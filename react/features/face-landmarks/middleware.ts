@@ -8,6 +8,7 @@ import {
 import { getCurrentConference } from '../base/conference/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getParticipantCount } from '../base/participants/functions';
+import { Participant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks/actionTypes';
 
@@ -34,8 +35,8 @@ MiddlewareRegistry.register(({ dispatch, getState }: IStore) => (next: Function)
         // allow using remote face centering data when local face centering is not enabled
         action.conference.on(
             JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (participant: any, eventData: any) => {
-                if (!participant || !eventData) {
+            (participant: Participant | undefined, eventData: any) => {
+                if (!participant || !eventData || !participant.getId) {
                     return;
                 }
 

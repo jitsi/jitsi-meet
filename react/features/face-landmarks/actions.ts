@@ -1,4 +1,5 @@
 /* eslint-disable lines-around-comment */
+import 'image-capture';
 import './createImageBitmap';
 // @ts-ignore
 import { getCurrentConference } from '../base/conference/functions';
