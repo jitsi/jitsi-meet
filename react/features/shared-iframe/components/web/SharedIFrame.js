@@ -2,13 +2,13 @@
 
 import React, { PureComponent } from 'react';
 
-import Filmstrip from '../../../../modules/UI/videolayout/Filmstrip';
-import { i18next, DEFAULT_LANGUAGE } from '../../base/i18n';
-import { getLocalParticipant } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { getVerticalViewMaxWidth } from '../../filmstrip/functions.web';
-import { getToolboxHeight } from '../../toolbox/functions.web';
-import { getGenericiFrameUrl, getSharedIFramesInfo } from '../functions';
+import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
+import { i18next, DEFAULT_LANGUAGE } from '../../../base/i18n';
+import { getLocalParticipant } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
+import { getToolboxHeight } from '../../../toolbox/functions.web';
+import { getGenericiFrameUrl, getSharedIFramesInfo } from '../../functions';
 
 import IFrameManager from './IFrameManager';
 
@@ -41,14 +41,14 @@ type Props = {
     /**
      * The id of the local participant.
      */
-     _localParticipantId: string,
+    _localParticipantId: string,
 
     /**
      * The current shared iframe state.
      *
      * @private
      */
-     _sharedIFrames: Object,
+    _sharedIFrames: Object,
 
     /**
      * The current users room.
@@ -62,12 +62,12 @@ type Props = {
      *
      * @private
      */
-     _lang: string,
+    _lang: string,
 
     /**
      * The templateUrl of the IFrame which should be displayed.
      */
-     shareUrl: string,
+    shareUrl: string,
 }
 
 /** .
@@ -131,7 +131,9 @@ class SharedIFrame extends PureComponent<Props> {
             display: visible ? 'block' : 'none',
             ...this.getDimensions(),
             marginTop: `${HEIGHT_OFFSET}px`,
-            position: 'relative'
+            position: 'relative',
+            userSelect: 'auto',
+            zIndex: 1
         };
     }
 
@@ -172,9 +174,7 @@ function _mapStateToProps(state) {
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { visible: filmstripVisible } = state['features/filmstrip'];
     const filmstripWidth = getVerticalViewMaxWidth(state);
-
     const localParticipant = getLocalParticipant(state);
-
     const { room } = state['features/base/conference'];
     const lang = i18next.language || DEFAULT_LANGUAGE;
 

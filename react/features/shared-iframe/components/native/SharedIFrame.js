@@ -1,33 +1,29 @@
-// @flow
 import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { i18next, DEFAULT_LANGUAGE } from '../../base/i18n';
-import { IconArrowBack } from '../../base/icons';
-import JitsiScreen from '../../base/modal/components/JitsiScreen';
-import { LoadingIndicator } from '../../base/react';
-import { connect } from '../../base/redux';
-import { ColorPalette } from '../../base/styles';
+import { IconArrowBack } from '../../../base/icons';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { LoadingIndicator } from '../../../base/react';
+import { connect } from '../../../base/redux';
+import { ColorPalette } from '../../../base/styles';
 import HeaderNavigationButton
-    from '../../mobile/navigation/components/HeaderNavigationButton';
-import { goBack } from '../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { getGenericiFrameUrl, getSharedIFramesInfo } from '../functions';
+    from '../../../mobile/navigation/components/HeaderNavigationButton';
+import { goBack } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 
 export const INDICATOR_COLOR = ColorPalette.lightGrey;
 
 const styles = {
-    webView: {
-        flex: 1
+    screen: {
+        flexDirection: 'column',
+        flex: 1,
+        height: 'auto'
     },
-    view: {
-        alignItems: 'center',
-        backgroundColor: ColorPalette.white,
-        height: '100%',
-        justifyContent: 'center'
+    iframe: {
+        zIndex: 1,
+        userSelect: 'auto'
     }
 };
-
 
 type Props = {
 
@@ -36,21 +32,7 @@ type Props = {
      *
      * @private
      */
-     _sharedIFrames: Object,
-
-    /**
-     * The current users room.
-     *
-     * @private
-     */
-    _room: string,
-
-     /**
-     * The current users language setting.
-     *
-     * @private
-     */
-     _lang: string,
+    _sharedIFrames: Object,
 
     /**
      * Default prop for navigation between screen components(React Navigation).
@@ -107,7 +89,7 @@ class SharedIFrame extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _sharedIFrames, _room, _lang, route } = this.props;
+        const { route } = this.props;
 
         return (
             <JitsiScreen
@@ -116,8 +98,10 @@ class SharedIFrame extends PureComponent<Props> {
                 <WebView
                     renderLoading = { this._renderLoading }
                     source = {{
-                        uri: getGenericiFrameUrl(_sharedIFrames[route.params.key].iFrameTemplateUrl, _room, _lang) }}
-                    startInLoadingState = { true } />
+                        uri: route.params?.templateUrl
+                    }}
+                    startInLoadingState = { true }
+                    style = { styles.iframe } />
             </JitsiScreen>
         );
     }
@@ -125,7 +109,7 @@ class SharedIFrame extends PureComponent<Props> {
     /**
      * Renders the loading indicator.
      *
-     * @returns {React$Component<any>}
+     * @returns {React$Component<any>}.
      */
     _renderLoading() {
         return (
@@ -138,24 +122,4 @@ class SharedIFrame extends PureComponent<Props> {
     }
 }
 
-
-/**
- * Maps (parts of) the Redux state to the associated LargeVideo props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {Props}
- */
-function _mapStateToProps(state) {
-    const sharedIFrames = getSharedIFramesInfo();
-    const { room } = state['features/base/conference'];
-    const lang = i18next.language || DEFAULT_LANGUAGE;
-
-    return {
-        _sharedIFrames: sharedIFrames,
-        _room: room,
-        _lang: lang
-    };
-}
-
-export default connect(_mapStateToProps)(SharedIFrame);
+export default connect()(SharedIFrame);

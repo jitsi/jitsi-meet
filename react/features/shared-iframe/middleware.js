@@ -2,13 +2,17 @@
 
 import { batch } from 'react-redux';
 
-import { CONFERENCE_LEFT, getCurrentConference } from '../base/conference';
 import {
-    PARTICIPANT_LEFT,
+    CONFERENCE_JOIN_IN_PROGRESS,
+    CONFERENCE_LEFT,
+    getCurrentConference
+} from '../base/conference';
+import {
     getLocalParticipant,
     participantJoined,
     participantLeft,
-    getFakeParticipants
+    getFakeParticipants,
+    pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
@@ -37,23 +41,17 @@ MiddlewareRegistry.register(store => next => action => {
     const sharedIFrames = getSharedIFramesInfo(state);
 
     switch (action.type) {
+    case CONFERENCE_JOIN_IN_PROGRESS: {
+        conference.addCommandListener(SHARED_IFRAME, ({ value, attributes }) => {
+            handleSharingIFrame(store, value.id, value, attributes);
+        });
+        break;
+    }
     case CONFERENCE_LEFT:
         // Reset all sharedIFrames
         for (const { shareKey: thisShareKey }
             of Object.keys(sharedIFrames).map(key => sharedIFrames[key])) {
             dispatch(resetSharedIFrameStatus(thisShareKey));
-        }
-        break;
-    case PARTICIPANT_LEFT:
-        // Check each sharedIFrame if the participant left is his owner
-        for (const { shareKey: thisShareKey, iFrameTemplateUrl: thisIFrameTemplateUrl, ownerId: thisOwnerId }
-            of Object.keys(sharedIFrames).map(key => sharedIFrames[key])) {
-            if (action.participant.id === thisOwnerId) {
-                batch(() => {
-                    dispatch(resetSharedIFrameStatus(thisShareKey));
-                    dispatch(participantLeft(thisIFrameTemplateUrl, conference));
-                });
-            }
         }
         break;
     case SET_SHARED_IFRAME_STATUS:
@@ -157,13 +155,16 @@ function handleSharingIFrame(store, iFrameTemplateUrl, { shareKey, isSharing, fr
     const sharedIFramesConfig = getSharedIFramesConfig(state);
 
     if (isSharing === 'true' && !fakeParticipants.get(iFrameTemplateUrl)) {
-        dispatch(participantJoined({
-            conference,
-            id: iFrameTemplateUrl,
-            isFakeParticipant: true,
-            avatarURL: sharedIFramesConfig.frames?.[shareKey]?.avatarUrl,
-            name: sharedIFramesConfig.frames?.[shareKey]?.title || shareKey
-        }));
+        batch(() => {
+            dispatch(participantJoined({
+                conference,
+                id: iFrameTemplateUrl,
+                isFakeParticipant: true,
+                avatarURL: sharedIFramesConfig.frames?.[shareKey]?.avatarUrl,
+                name: sharedIFramesConfig.frames?.[shareKey]?.title || shareKey
+            }));
+            dispatch(pinParticipant(iFrameTemplateUrl));
+        });
 
     } else if (isSharing !== 'true') {
         dispatch(setDisableButton(shareKey, false));

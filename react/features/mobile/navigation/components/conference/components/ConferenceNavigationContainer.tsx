@@ -21,7 +21,6 @@ import SalesforceLinkDialog
     from '../../../../../salesforce/components/native/SalesforceLinkDialog';
 import SecurityDialog
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
-import { SharedIFrame } from '../../../../../shared-iframe';
 import SpeakerStats
     from '../../../../../speaker-stats/components/native/SpeakerStats';
 import { screen } from '../../../routes';
@@ -47,6 +46,7 @@ import LobbyNavigationContainer
 import {
     conferenceNavigationRef
 } from '../ConferenceNavigationContainerRef';
+import SharedIFrame from '../../../../../shared-iframe/components/native/SharedIFrame';
 
 const ConferenceStack = createStackNavigator();
 
@@ -148,7 +148,7 @@ const ConferenceNavigationContainer = () => {
                         ...sharedDocumentScreenOptions,
                         title: t('documentSharing.title')
                     }} />
-                <ConferenceStack.Screen
+                 <ConferenceStack.Screen
                     component = { SharedIFrame }
                     name = { screen.conference.sharedIFrame }
                     options = {{

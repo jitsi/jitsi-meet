@@ -1,24 +1,21 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import { translate } from '../../base/i18n';
-import { IconShareIFrame } from '../../base/icons';
-import { connect } from '../../base/redux';
+import { translate } from '../../../base/i18n';
+import { IconShareIFrame } from '../../../base/icons';
+import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
-} from '../../base/toolbox/components';
-import { setOverflowMenuVisible } from '../../toolbox/actions';
-import { toggleSharedIFrame } from '../actions';
-import { getSharedIFramesInfo } from '../functions';
+} from '../../../base/toolbox/components';
+import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
+import { toggleSharedIFrame } from '../../actions';
+import { getSharedIFrameInstances, getSharedIFramesInfo } from '../../functions';
 
 type Props = AbstractButtonProps & {
 
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>,
+    // dispatch: Dispatch<any>,
 
     /**
      * Whether or not the button is disabled.
@@ -28,7 +25,7 @@ type Props = AbstractButtonProps & {
     /**
      * Whether or not the local participant is sharing an iframe.
      */
-    _sharingIFrame: boolean,
+    _isSharingIFrame: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -97,11 +94,12 @@ class SharedIFrameButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch } = this.props;
+        const { _isSharingIFrame, _templateUrl, dispatch, shareKey } = this.props;
 
-        this._doToggleSharedIFrame();
-
-        dispatch(setOverflowMenuVisible(false));
+        if (!_isSharingIFrame) {
+            navigate(screen.conference.sharedIFrame, { templateUrl: _templateUrl });
+        }
+        dispatch(toggleSharedIFrame(shareKey));
     }
 
     /**
@@ -112,7 +110,7 @@ class SharedIFrameButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _isToggled() {
-        return this.props._sharingIFrame;
+        return this.props._isSharingIFrame;
     }
 
     /**
@@ -124,16 +122,6 @@ class SharedIFrameButton extends AbstractButton<Props, *> {
      */
     _isDisabled() {
         return this.props._isDisabled;
-    }
-
-    /**
-     * Dispatches an action to toggle iframe sharing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleSharedIFrame() {
-        this.props.dispatch(toggleSharedIFrame(this.props.shareKey));
     }
 }
 
@@ -150,7 +138,8 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _isDisabled: sharedIFrames[ownProps.shareKey]?.disabled || false,
-        _sharingIFrame: sharedIFrames[ownProps.shareKey]?.isSharing || false
+        _isSharingIFrame: sharedIFrames[ownProps.shareKey]?.isSharing || false,
+        _templateUrl: getSharedIFrameInstances(state)[ownProps.shareKey]?.templateUrl
     };
 }
 

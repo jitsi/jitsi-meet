@@ -1,13 +1,11 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 import {
     type AbstractButtonProps
 } from '../../../base/toolbox/components';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
-import { getSharedIFrameInstances } from '../functions';
+import { getSharedIFrameInstances } from '../../functions';
 
 import SharedIFrameButton from './SharedIFrameButton';
 

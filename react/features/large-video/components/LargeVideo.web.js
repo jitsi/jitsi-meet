@@ -10,7 +10,7 @@ import { setColorAlpha } from '../../base/util';
 import { StageParticipantNameLabel } from '../../display-name';
 import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../filmstrip';
 import { getVerticalViewMaxWidth } from '../../filmstrip/functions.web';
-import { SharedIFrame } from '../../shared-iframe/components';
+import SharedIFrame from '../../shared-iframe/components/web/SharedIFrame';
 import { getSharedIFrameInstances } from '../../shared-iframe/functions';
 import { SharedVideo } from '../../shared-video/components/web';
 import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from '../../shared-video/constants';

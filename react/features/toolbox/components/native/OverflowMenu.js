@@ -13,7 +13,7 @@ import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { LiveStreamButton, RecordButton } from '../../../recording';
 import SecurityDialogButton
     from '../../../security/components/security-dialog/native/SecurityDialogButton';
-import { SharedIFrameButtonContainer } from '../../../shared-iframe/components';
+import SharedIFrameButtonContainer from '../../../shared-iframe/components/native/SharedIFrameButtonContainer';
 import { SharedVideoButton } from '../../../shared-video/components';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
 import { ClosedCaptionButton } from '../../../subtitles';

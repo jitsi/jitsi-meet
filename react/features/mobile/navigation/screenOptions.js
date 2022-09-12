@@ -273,8 +273,8 @@ export const sharedDocumentScreenOptions = presentationScreenOptions;
  * Screen options for shared iframe.
  */
 export const sharedIFrameScreenOptions = {
+    ...presentationScreenOptions,
     animation: 'slide_from_right',
-    headerBackTitleVisible: false,
     headerShown: true,
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen02Header

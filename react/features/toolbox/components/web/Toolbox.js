@@ -60,7 +60,7 @@ import {
 } from '../../../screen-share/';
 import SecurityDialogButton from '../../../security/components/security-dialog/web/SecurityDialogButton';
 import { SettingsButton } from '../../../settings';
-import { SharedIFrameButtonContainer } from '../../../shared-iframe/components';
+import SharedIFrameButtonContainer from '../../../shared-iframe/components/web/SharedIFrameButtonContainer';
 import { SharedVideoButton } from '../../../shared-video/components';
 import { SpeakerStatsButton } from '../../../speaker-stats/components/web';
 import {

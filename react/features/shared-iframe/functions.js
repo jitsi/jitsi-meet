@@ -77,7 +77,7 @@ export function getGenericiFrameUrl(templateUrl, room, lang) {
  */
 export const getSharedIFramesInfo = (stateful: Function | Object) => {
     const state = toState(stateful);
-    const sharedIframesInfo = state['features/shared-iframe'].iframes || {};
+    const sharedIframesInfo = state['features/shared-iframe']?.iframes || {};
 
     return sharedIframesInfo;
 };

@@ -137,6 +137,25 @@ type Props = {
 class ParticipantView extends Component<Props> {
 
     /**
+     * Whether the view should display the shared video.
+     *
+     * @returns {boolean}
+     */
+    _shouldRenderSharedVideo() {
+        const {
+            _isFakeParticipant,
+            _participantName,
+            disableVideo
+        } = this.props;
+
+        return _isFakeParticipant
+            && (
+                _participantName === VIDEO_PLAYER_PARTICIPANT_NAME
+                || _participantName === YOUTUBE_PLAYER_PARTICIPANT_NAME)
+            && !disableVideo;
+    }
+
+    /**
      * Renders the connection status label, if appropriate.
      *
      * @param {string} connectionStatus - The status of the participant's
@@ -188,13 +207,12 @@ class ParticipantView extends Component<Props> {
     render() {
         const {
             _connectionStatus: connectionStatus,
-            _isFakeParticipant,
             _isIFrameParticipant,
-            _participantName,
+            _isFakeParticipant,
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
-            disableVideo,
-            onPress
+            onPress,
+            participantId
         } = this.props;
 
         // If the connection has problems, we will "tint" the video / avatar.
@@ -204,25 +222,17 @@ class ParticipantView extends Component<Props> {
         const testHintId
             = this.props.testHintId
                 ? this.props.testHintId
-                : `org.jitsi.meet.Participant#${this.props.participantId}`;
+                : `org.jitsi.meet.Participant#${participantId}`;
 
-        const renderSharedVideo = _isFakeParticipant
-            && (
-                _participantName === VIDEO_PLAYER_PARTICIPANT_NAME
-                || _participantName === YOUTUBE_PLAYER_PARTICIPANT_NAME)
-            && !disableVideo;
-
-        const navigateToSharedIframe = () => navigate(screen.conference.sharedIFrame, {
-            key: _participantName }
-        );
+        const shouldRenderSharedVideo = this._shouldRenderSharedVideo();
+        const shouldHandleContainerClick = !this.props._renderVideo && !shouldRenderSharedVideo;
+        const navigateToIFrame = () => navigate(screen.conference.sharedIFrame, { templateUrl: participantId });
+        const handleContainerClick = _isIFrameParticipant ? navigateToIFrame : onPress;
+        const _onClick = shouldHandleContainerClick ? handleContainerClick : undefined;
 
         return (
             <Container
-                onClick = {
-                    renderVideo || renderSharedVideo
-                        ? undefined : _isIFrameParticipant
-                            ? navigateToSharedIframe
-                            : onPress }
+                onClick = { _onClick }
                 style = {{
                     ...styles.participantView,
                     ...this.props.style
@@ -231,10 +241,10 @@ class ParticipantView extends Component<Props> {
 
                 <TestHint
                     id = { testHintId }
-                    onPress = { renderSharedVideo ? undefined : onPress }
+                    onPress = { shouldRenderSharedVideo ? undefined : onPress }
                     value = '' />
 
-                { renderSharedVideo && <SharedVideo /> }
+                { shouldRenderSharedVideo && <SharedVideo /> }
 
                 { !_isFakeParticipant && renderVideo
                     && <VideoTrack
@@ -244,7 +254,7 @@ class ParticipantView extends Component<Props> {
                         zOrder = { this.props.zOrder }
                         zoomEnabled = { this.props.zoomEnabled } /> }
 
-                { !renderSharedVideo && !renderVideo
+                { !shouldRenderSharedVideo && !renderVideo
                     && <View style = { styles.avatarContainer }>
                         <Avatar
                             participantId = { this.props.participantId }
@@ -287,7 +297,8 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
-        _isIFrameParticipant: Object.keys(sharedIFrames).includes(participantName),
+        _isIFrameParticipant: Boolean(Object.keys(sharedIFrames).includes(participantName)
+            || Object.keys(sharedIFrames).find(key => sharedIFrames[key].title === participantName)),
         _isFakeParticipant: participant && participant.isFakeParticipant,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,

@@ -1,10 +1,8 @@
-/* @flow */
 import React, { PureComponent } from 'react';
 
-import { sendAnalytics, createSharedIFrameEvent as createEvent } from '../../analytics';
-import { connect } from '../../base/redux';
-import { dockToolbox } from '../../toolbox/actions.web';
-
+import { sendAnalytics, createSharedIFrameEvent as createEvent } from '../../../analytics';
+import { connect } from '../../../base/redux';
+import { dockToolbox } from '../../../toolbox/actions.web';
 
 /**
  * The type of the React {@link PureComponent} props of {@link IFrameManager}.
@@ -127,7 +125,7 @@ class IFrameManager extends PureComponent<Props> {
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {Props}
  */
-function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
+function _mapDispatchToProps(dispatch: Function) {
     return {
         _dockToolbox: value => {
             dispatch(dockToolbox(value));
