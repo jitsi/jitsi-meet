@@ -7,6 +7,7 @@ _Description: SSL certificate for the Jitsi Meet instance
  .
  Having no certificate, a self-signed one will be generated.
  In the case of using a self-signed certificate, only the web app will be available with some warnings, the mobile app will not connect.
+ Self-signed certificates are not supported by JaaS (Jitsi as a Service).
  .
  Having a certificate signed by a recognised CA, it can be uploaded on the server and point its location.
  The default filenames will be /etc/ssl/--domain.name--.key for the key and /etc/ssl/--domain.name--.crt for the certificate.
