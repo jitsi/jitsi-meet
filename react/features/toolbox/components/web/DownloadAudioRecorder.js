@@ -64,8 +64,8 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
         this._audioRecorder = () => {
             console.log('AudioStatus', this._isAudioMuted());
             let audioStreams = getAudioStreamFromTracks();
-            if (audioStreams.length > 1) {
-                if (!boolRecording) {
+            if (!boolRecording) {
+                if (audioStreams.length > 1) {
                     if (this._isAudioMuted() === false) {
                         this.props.dispatch(toggleRecordTimer());
                         boolRecording = true;
@@ -78,17 +78,17 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
                             appearance: NOTIFICATION_TYPE.NORMAL
                         }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
                     }
-                } else { // Stop Recording
-                    boolRecording = false;
-                    this.props.dispatch(toggleRecordTimer());
-                    saveAudioRecording();
+                } else {
+                    props.dispatch(showNotification({
+                        titleKey: 'There is no other participants to record audio',
+                        uid: SALESFORCE_LINK_NOTIFICATION_ID,
+                        appearance: NOTIFICATION_TYPE.NORMAL
+                    }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
                 }
             } else {
-                props.dispatch(showNotification({
-                    titleKey: 'There is no other participants to record audio',
-                    uid: SALESFORCE_LINK_NOTIFICATION_ID,
-                    appearance: NOTIFICATION_TYPE.NORMAL
-                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+                boolRecording = false;
+                this.props.dispatch(toggleRecordTimer());
+                saveAudioRecording();
             }
         };
 

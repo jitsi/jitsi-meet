@@ -74,8 +74,8 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
         this._videoRecorder = () => {
             console.log('videoStatus', this._isVideoMuted());
             let arrayAudioStreams = getVideoStreamFromTracks('audio');
-            if (arrayAudioStreams.length > 1) {
-                if (!boolRecording) {
+            if (!boolRecording) {
+                if (arrayAudioStreams.length > 1) {
                     if (this._isVideoMuted() === false) {
                         canvas = document.createElement('canvas');
                         canvas.style.width = 1080;
@@ -97,16 +97,16 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
                         }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
                     }
                 } else {
-                    boolRecording = false;
-                    this.props.dispatch(toggleRecordTimer());
-                    saveVideoRecording();
+                    props.dispatch(showNotification({
+                        titleKey: 'There is no other participants to record video',
+                        uid: SALESFORCE_LINK_NOTIFICATION_ID,
+                        appearance: NOTIFICATION_TYPE.NORMAL
+                    }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
                 }
             } else {
-                props.dispatch(showNotification({
-                    titleKey: 'There is no other participants to record video',
-                    uid: SALESFORCE_LINK_NOTIFICATION_ID,
-                    appearance: NOTIFICATION_TYPE.NORMAL
-                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+                boolRecording = false;
+                this.props.dispatch(toggleRecordTimer());
+                saveVideoRecording();
             }
         };
 
