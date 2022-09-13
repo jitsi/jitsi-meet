@@ -17,7 +17,11 @@ import {
     getLocalVideoType,
     isLocalCameraTrackMuted
 } from '../../../base/tracks';
-import { isMobileBrowser } from '../../../base/environment/utils';
+import {
+    isIosMobileBrowser,
+    isMobileBrowser
+} from '../../../base/environment/utils';
+import { isMacOS } from '../../../base/environment';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -61,14 +65,10 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
         let canvas;
         let mediaRecorder;
         let recordedChunks = [];
-        let videoFormatSupport;
-        let userAgent = navigator.userAgent;
-        if (userAgent.match(/chrome/i)) {
-            videoFormatSupport = 'webm';
-        } else if (userAgent.match(/safari/i)) {
-            videoFormatSupport = 'mp4';
-        } else {
-            videoFormatSupport = 'webm';
+
+        function getMimeType() {
+            console.log('isMac os ', isMacOS(), ' is Ios ', isIosMobileBrowser());
+            return isMacOS() || isIosMobileBrowser() ? 'mp4' : 'webm';
         }
 
         this._videoRecorder = () => {
@@ -178,7 +178,7 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
                 console.log(clubbedStream.getVideoTracks());
 
 
-                const options = { mimeType: `video/${videoFormatSupport}` };
+                const options = { mimeType: `video/${getMimeType()}` };
                 recordedChunks = [];
 
                 mediaRecorder = new MediaRecorder(clubbedStream, options);
@@ -210,7 +210,6 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
                     console.log('Playing stopped ', recordedChunks);
                     if (isMobileBrowser()) {
                         let videoFileReader = new FileReader();
-                        videoFileReader.readAsDataURL(recordedChunks[0]);
                         let base64data;
                         videoFileReader.onloadend = function() {
                             base64data = videoFileReader.result;
@@ -223,14 +222,14 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
                                 console.log('afterVideoArgs', args);
                             }
                         };
+                        videoFileReader.readAsDataURL(recordedChunks[0]);
                     } else {
-                        const blob = new Blob(recordedChunks, { 'type': 'video/webm codecs=opus' });
-                        const videoObjectURL = URL.createObjectURL(blob);
+                        const videoObjectURL = URL.createObjectURL(recordedChunks[0]);
                         console.log('VideoUrl, ', videoObjectURL);
                         const a = document.createElement('a');
                         a.style = 'display: none';
                         a.href = videoObjectURL;
-                        a.download = `${getFilename()}.webm`;
+                        a.download = `${getFilename()}.${getMimeType()}`;
                         document.body.appendChild(a);
 
                         a.onclick = () => {

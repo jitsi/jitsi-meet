@@ -15,7 +15,11 @@ import { isLocalTrackMuted } from '../../../base/tracks';
 import { MEDIA_TYPE } from '../../../base/media';
 import { isAudioMuteButtonDisabled } from '../../functions.any';
 import { AUDIO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { isMobileBrowser } from '../../../base/environment/utils';
+import {
+    isIosMobileBrowser,
+    isMobileBrowser
+} from '../../../base/environment/utils';
+import { isMacOS } from '../../../base/environment';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -115,7 +119,6 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
 
                 if (isMobileBrowser()) {
                     let audioFileReader = new FileReader();
-                    audioFileReader.readAsDataURL(audioChunks[0]);
                     let base64data;
                     audioFileReader.onloadend = function() {
                         base64data = audioFileReader.result;
@@ -128,14 +131,14 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
                             console.log('afterAudioArgs', args);
                         }
                     };
+                    audioFileReader.readAsDataURL(audioChunks[0]);
                 } else {
-                    const audioBlob = new Blob([ audioChunks ], { 'type': 'audio/webm' });
-                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audioUrl = URL.createObjectURL(audioChunks[0]);
                     console.log('audioUrl ', audioUrl);
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = audioUrl;
-                    a.download = `${getFilename()}.webm`;
+                    a.download = isMacOS() || isIosMobileBrowser() ? `${getFilename()}.mp4` : `${getFilename()}.webm`;
                     document.body.appendChild(a);
                     a.onclick = () => {
                         console.log(`${a.download} save option shown`);
