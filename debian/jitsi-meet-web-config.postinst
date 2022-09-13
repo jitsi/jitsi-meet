@@ -75,6 +75,7 @@ case "$1" in
         JAAS_INPUT="$RET"
 
         UPLOADED_CERT_CHOICE="I want to use my own certificate"
+        LE_CERT_CHOICE="Let's Encrypt certificates"
         # if first time config ask for certs, or if we are reconfiguring
         if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
             RET=""
@@ -83,7 +84,7 @@ case "$1" in
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
 
-            if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+            if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
                 RET=""
                 db_get jitsi-meet/cert-path-key
                 if [ -z "$RET" ] ; then
@@ -103,7 +104,7 @@ case "$1" in
                 fi
                 CERT_CRT="$RET"
             else
-                # create self-signed certs
+                # create self-signed certs (we also need them for the case of LE so we can start nginx)
                 CERT_KEY="/etc/jitsi/meet/$JVB_HOSTNAME.key"
                 CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
                 HOST="$( (hostname -s; echo localhost) | head -n 1)"
@@ -116,6 +117,17 @@ case "$1" in
                     -extensions SAN \
                     -config <(cat /etc/ssl/openssl.cnf \
                         <(printf "[SAN]\nsubjectAltName=DNS:localhost,DNS:$JVB_HOSTNAME"))
+
+                if [ "$CERT_CHOICE" = "$LE_CERT_CHOICE" ]; then
+                    db_subst jitsi-meet/email domain "${JVB_HOSTNAME}"
+                    db_input critical jitsi-meet/email || true
+                    db_go
+                    db_get jitsi-meet/email
+                    EMAIL="$RET"
+                    if [ ! -z "$EMAIL" ] ; then
+                        ISSUE_LE_CERT="true"
+                    fi
+                fi
             fi
         fi
 
@@ -208,36 +220,38 @@ case "$1" in
             invoke-rc.d apache2 reload || true
         fi
 
-        echo "----------------"
-        echo ""
-        echo "You can now switch to a Let’s Encrypt certificate. To do so, execute:"
-        echo "/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh"
-        echo ""
-        echo "----------------"
+        if [ "$ISSUE_LE_CERT" = "true" ] ; then
+            /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $JVB_HOSTNAME
+        fi
 
+        echo ""
+        echo ""
+        echo "       ;dOocd;"
+        echo "     .dNMM0dKO."
+        echo "     lNMMMKd0K,"
+        echo "    .xMMMMNxkNc"
+        echo "     dMMMMMkxXc"
+        echo "     cNMMMNl.."
         if [ "${JAAS_INPUT}" != "true" ]; then
-            echo ""
-            echo ""
-            echo "       ;dOocd;"
-            echo "     .dNMM0dKO."
-            echo "     lNMMMKd0K,"
-            echo "    .xMMMMNxkNc"
-            echo "     dMMMMMkxXc"
-            echo "     cNMMMNl.."
             echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
             echo "      ;XMMMO'"
             echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
             echo "        lNMMM0,                        and follow the guide in the dev console."
-            echo "         lXMMMK:."
-            echo "          ;KMMMNKd.  'oo,"
-            echo "           'xNMMMMXkkkkOKOl'"
-            echo "             :0WMMMMMMNOkk0Kk,"
-            echo "              .cdOWMMMMMWXOkOl"
-            echo "                 .;dKWMMMMMXc."
-            echo "                    .,:cll:'"
-            echo ""
-            echo ""
+        else
+            echo "     .kMMMX;"
+            echo "      ;XMMMO'            Don't forget to sign up on"
+            echo "       lNMMWO'             https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
+            echo "        lNMMM0,              in order to add telephony to your Jitsi meetings!"
         fi
+        echo "         lXMMMK:."
+        echo "          ;KMMMNKd.  'oo,"
+        echo "           'xNMMMMXkkkkOKOl'"
+        echo "             :0WMMMMMMNOkk0Kk,"
+        echo "              .cdOWMMMMMWXOkOl"
+        echo "                 .;dKWMMMMMXc."
+        echo "                    .,:cll:'"
+        echo ""
+        echo ""
 
         # and we're done with debconf
         db_stop
