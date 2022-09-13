@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2020-present 8x8, Inc.
+ * Copyright @ 2022-present 8x8, Inc.
+ * Copyright @ 2018-present Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +15,21 @@
  * limitations under the License.
  */
 
-#import <JitsiMeetSDK/JitsiMeet.h>
-#import <JitsiMeetSDK/JitsiMeetView.h>
-#import <JitsiMeetSDK/JitsiMeetViewDelegate.h>
-#import <JitsiMeetSDK/JitsiMeetConferenceOptions.h>
-#import <JitsiMeetSDK/JitsiMeetLogger.h>
-#import <JitsiMeetSDK/JitsiMeetBaseLogHandler.h>
-#import <JitsiMeetSDK/JitsiAudioSession.h>
-#import <JitsiMeetSDK/InfoPlistUtil.h>
-#import <JitsiMeetSDK/JMCallKitListener.h>
-#import <JitsiMeetSDK/JMCallKitProxy.h>
+#import <CallKit/CallKit.h>
+#import <Foundation/Foundation.h>
+#import "JMCallKitListener.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface JMCallKitEmitter : NSObject <CXProviderDelegate>
+
+#pragma mark Add/Remove listeners
+- (void)addListener:(id<JMCallKitListener>)listener;
+- (void)removeListener:(id<JMCallKitListener>)listener;
+
+#pragma mark Add mute action
+- (void)addMuteAction:(NSUUID *)actionUUID;
+
+@end
+
+NS_ASSUME_NONNULL_END
