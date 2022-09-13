@@ -1,6 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
+const packageJSON = require('../package.json');
+
+const SDKPackageJSON = require('./package.json');
+
 
 /**
  * Copies a specified file in a way that recursive copy is possible.
@@ -45,6 +49,21 @@ function copyFolderRecursiveSync(source, target) {
     }
 }
 
+/**
+ * Merges the dependency versions from the root package.json with the dependencies of the SDK package.json.
+ */
+function mergeDependencyVersions() {
+    for (const key in SDKPackageJSON.dependencies) {
+        if (SDKPackageJSON.dependencies.hasOwnProperty(key)) {
+            SDKPackageJSON.dependencies[key] = packageJSON.dependencies[key] || packageJSON.devDependencies[key];
+        }
+    }
+    const data = JSON.stringify(SDKPackageJSON, null, 4);
+
+    fs.writeFileSync('package.json', data);
+}
+
+mergeDependencyVersions();
 
 copyFolderRecursiveSync('../images', '.');
 copyFolderRecursiveSync('../sounds', '.');
