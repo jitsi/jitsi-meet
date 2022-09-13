@@ -19,6 +19,7 @@ import { convertPropsToURL } from './utils';
 
 
 type AppProps = {
+    flags: [];
     meetingOptions: {
         domain: string;
         roomName: string;
@@ -61,7 +62,7 @@ const JitsiMeetView = forwardRef((props: AppProps, ref) => {
 
             setAppProps({ 'url': url,
                 'onReadyToClose': onReadyToClose,
-                'flags': [],
+                'flags': props.flags,
                 'settings': props.meetingOptions.settings
             });
         }, []
