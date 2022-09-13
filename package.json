@@ -126,7 +126,7 @@
     "react-window": "1.8.6",
     "react-youtube": "7.13.1",
     "redux": "4.0.4",
-    "redux-thunk": "2.2.0",
+    "redux-thunk": "2.4.1",
     "resemblejs": "4.0.0",
     "seamless-scroll-polyfill": "2.1.8",
     "styled-components": "3.4.9",
