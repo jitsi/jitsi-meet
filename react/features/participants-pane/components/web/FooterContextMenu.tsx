@@ -1,8 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import {
     requestDisableAudioModeration,
@@ -41,7 +42,7 @@ import { SETTINGS_TABS } from '../../../settings/constants';
 // @ts-ignore
 import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         contextMenu: {
             bottom: 'auto',
@@ -108,7 +109,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
 
     const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
 
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const muteAllVideo = useCallback(
         () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);

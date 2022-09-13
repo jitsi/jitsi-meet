@@ -1,14 +1,14 @@
 /* eslint-disable lines-around-comment */
 import InlineDialog from '@atlaskit/inline-dialog';
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import React, { Component, ReactElement } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
 import { type ReactionEmojiProps, REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
@@ -71,7 +71,7 @@ interface Props extends WithTranslation {
 const styles = () => {
     return {
         overflowMenuDrawer: {
-            overflowY: 'auto',
+            overflowY: 'auto' as const,
             height: `calc(${DRAWER_MAX_HEIGHT} - ${REACTIONS_MENU_HEIGHT}px - 16px)`
         }
     };
@@ -209,5 +209,4 @@ function mapStateToProps(state: IState) {
     };
 }
 
-// @ts-ignore
 export default withStyles(styles)(translate(connect(mapStateToProps)(OverflowMenuButton)));

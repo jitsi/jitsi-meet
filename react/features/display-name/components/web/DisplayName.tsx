@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -13,6 +14,7 @@ import {
 } from '../../../base/participants/functions';
 // @ts-ignore
 import { updateSettings } from '../../../base/settings';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
 // @ts-ignore
@@ -88,11 +90,10 @@ type State = {
     isEditing: boolean;
 };
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         displayName: {
-            ...theme.typography.labelBold,
-            lineHeight: `${theme.typography.labelBold.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.text01,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -105,8 +106,7 @@ const styles = (theme: any) => {
             background: 'none',
             boxShadow: 'none',
             padding: 0,
-            ...theme.typography.labelBold,
-            lineHeight: `${theme.typography.labelBold.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.text01
         }
     };

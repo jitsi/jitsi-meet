@@ -1,4 +1,5 @@
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { ReactNode, useCallback } from 'react';
 
@@ -92,7 +93,7 @@ type Props = {
  *
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         actionButton: {
             ...withPixelLineHeight(theme.typography.bodyLongBold),
@@ -103,7 +104,7 @@ const styles = (theme: any) => {
             display: 'inline-block',
             marginBottom: '16px',
             padding: '7px 16px',
-            position: 'relative',
+            position: 'relative' as const,
             textAlign: 'center',
             width: '100%',
             border: 0,
@@ -147,19 +148,19 @@ const styles = (theme: any) => {
             },
 
 
-            [theme.breakpoints.down('400')]: {
+            [theme.breakpoints.down(400)]: {
                 fontSize: 16,
                 marginBottom: 8,
                 padding: '11px 16px'
             }
         },
         options: {
-            borderRadius: theme.shape.borderRadius / 2,
+            borderRadius: Number(theme.shape.borderRadius) / 2,
             alignItems: 'center',
             display: 'flex',
             height: '100%',
             justifyContent: 'center',
-            position: 'absolute',
+            position: 'absolute' as const,
             right: 0,
             top: 0,
             width: 36,
@@ -253,5 +254,4 @@ function ActionButton({
     );
 }
 
-// @ts-ignore
 export default withStyles(styles)(ActionButton);

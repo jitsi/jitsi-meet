@@ -4,11 +4,11 @@ import Spinner from '@atlaskit/spinner';
 import Bourne from '@hapi/bourne';
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React, { useState, useEffect, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../app/types';
 // @ts-ignore
@@ -126,7 +126,7 @@ function _mapStateToProps(state: IState): Object {
 
 const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackground));
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         container: {
             display: 'flex',
@@ -152,7 +152,7 @@ const useStyles = makeStyles((theme: any) => {
                 border: '2px solid #99bbf3'
             },
             '& .background-option': {
-                marginTop: `${theme.spacing(2)}px`,
+                marginTop: theme.spacing(2),
                 borderRadius: `${theme.shape.borderRadius}px`,
                 height: '60px',
                 width: '107px',
@@ -295,7 +295,7 @@ function VirtualBackground({
     initialOptions,
     t
 }: Props) {
-    const classes = useStyles();
+    const { classes, cx } = useStyles();
     const [ previewIsLoaded, setPreviewIsLoaded ] = useState(false);
     const [ options, setOptions ] = useState<any>({ ...initialOptions });
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
@@ -575,7 +575,7 @@ function VirtualBackground({
                         showLabel = { previewIsLoaded }
                         storedImages = { storedImages } />}
                     <div
-                        className = { clsx(classes.dialog, { [classes.dialogMarginTop]: previewIsLoaded }) }
+                        className = { cx(classes.dialog, { [classes.dialogMarginTop]: previewIsLoaded }) }
                         role = 'radiogroup'
                         tabIndex = { -1 }>
                         <Tooltip
@@ -584,7 +584,7 @@ function VirtualBackground({
                             <div
                                 aria-checked = { _selectedThumbnail === 'none' }
                                 aria-label = { t('virtualBackground.removeBackground') }
-                                className = { clsx('background-option', 'virtual-background-none', {
+                                className = { cx('background-option', 'virtual-background-none', {
                                     'none-selected': _selectedThumbnail === 'none'
                                 }) }
                                 onClick = { removeBackground }
@@ -600,7 +600,7 @@ function VirtualBackground({
                             <div
                                 aria-checked = { _selectedThumbnail === 'slight-blur' }
                                 aria-label = { t('virtualBackground.slightBlur') }
-                                className = { clsx('background-option', 'slight-blur', {
+                                className = { cx('background-option', 'slight-blur', {
                                     'slight-blur-selected': _selectedThumbnail === 'slight-blur'
                                 }) }
                                 onClick = { enableSlideBlur }
@@ -616,7 +616,7 @@ function VirtualBackground({
                             <div
                                 aria-checked = { _selectedThumbnail === 'blur' }
                                 aria-label = { t('virtualBackground.blur') }
-                                className = { clsx('background-option', 'blur', {
+                                className = { cx('background-option', 'blur', {
                                     'blur-selected': _selectedThumbnail === 'blur'
                                 }) }
                                 onClick = { enableBlur }
@@ -633,7 +633,7 @@ function VirtualBackground({
                                 <div
                                     aria-checked = { _selectedThumbnail === 'desktop-share' }
                                     aria-label = { t('virtualBackground.desktopShare') }
-                                    className = { clsx('background-option', 'desktop-share', {
+                                    className = { cx('background-option', 'desktop-share', {
                                         'desktop-share-selected': _selectedThumbnail === 'desktop-share'
                                     }) }
                                     onClick = { shareDesktop }
@@ -675,7 +675,7 @@ function VirtualBackground({
                                 <img
                                     alt = { t('virtualBackground.uploadedImage', { index: index + 1 }) }
                                     aria-checked = { _selectedThumbnail === image.id }
-                                    className = { clsx('background-option', {
+                                    className = { cx('background-option', {
                                         'thumbnail-selected': _selectedThumbnail === image.id,
                                         'thumbnail': _selectedThumbnail !== image.id
                                     }) }

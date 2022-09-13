@@ -1,8 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
+
+import { Theme } from '@mui/material';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
 // @ts-ignore
@@ -19,7 +20,7 @@ import { isLayoutTileView } from '../../../video-layout';
 
 import DisplayNameBadge from './DisplayNameBadge';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         badgeContainer: {
             ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme: any) => {
  * @returns {ReactElement|null}
  */
 const StageParticipantNameLabel = () => {
-    const classes = useStyles();
+    const { classes, cx } = useStyles();
     const largeVideoParticipant: Participant = useSelector(getLargeVideoParticipant);
     const selectedId = largeVideoParticipant?.id;
     const nameToDisplay = useSelector((state: IState) => getParticipantDisplayName(state, selectedId));
@@ -62,7 +63,7 @@ const StageParticipantNameLabel = () => {
     if (showDisplayName && nameToDisplay && selectedId !== localId && !isTileView) {
         return (
             <div
-                className = { clsx(
+                className = { cx(
                     'stage-participant-label',
                     classes.badgeContainer,
                     toolboxVisible && classes.containerElevated

@@ -1,7 +1,7 @@
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
@@ -29,7 +29,7 @@ export interface Props extends WithTranslation {
     deviceStatusType: string;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         deviceStatus: {
             alignItems: 'center',
@@ -84,10 +84,10 @@ const iconMap = {
  * @returns {ReactElement}
  */
 function DeviceStatus({ deviceStatusType, deviceStatusText, t }: Props) {
-    const classes = useStyles();
+    const { classes, cx } = useStyles();
     const { src, className } = iconMap[deviceStatusType as keyof typeof iconMap];
     const hasError = deviceStatusType === 'warning';
-    const containerClassName = clsx(classes.deviceStatus, { 'device-status-error': hasError });
+    const containerClassName = cx(classes.deviceStatus, { 'device-status-error': hasError });
 
     return (
         <div

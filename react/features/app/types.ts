@@ -1,3 +1,5 @@
+import { AnyAction, Dispatch } from 'redux';
+
 import { IAnalyticsState } from '../analytics/reducer';
 import { IAuthenticationState } from '../authentication/reducer';
 import { IAVModerationState } from '../av-moderation/reducer';
@@ -73,7 +75,7 @@ import { IVideoSipGW } from '../videosipgw/reducer';
 import { IVirtualBackground } from '../virtual-background/reducer';
 
 export interface IStore {
-    dispatch: Function;
+    dispatch: Dispatch<AnyAction>;
     getState: () => IState;
 }
 

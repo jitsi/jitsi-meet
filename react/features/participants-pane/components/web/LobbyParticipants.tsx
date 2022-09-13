@@ -1,8 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
@@ -23,7 +24,7 @@ import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 // @ts-ignore
 import LobbyParticipantItems from './LobbyParticipantItems';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         drawerActions: {
             listStyleType: 'none',
@@ -39,7 +40,6 @@ const useStyles = makeStyles((theme: any) => {
 
             '&:first-child': {
                 marginTop: '15px'
-
             },
 
             '&:hover': {
@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme: any) => {
             justifyContent: 'space-between'
         },
         heading: {
+            // @ts-ignore
             ...withPixelLineHeight(theme.typography.heading7),
             color: theme.palette.text02
         },
@@ -76,7 +77,7 @@ export default function LobbyParticipants() {
     const lobbyEnabled = useSelector(getLobbyEnabled);
     const participants: Array<Object> = useSelector(getKnockingParticipants);
     const { t } = useTranslation();
-    const classes = useStyles();
+    const { classes } = useStyles();
     const dispatch = useDispatch();
     const admitAll = useCallback(() => {
         dispatch(admitMultiple(participants));

@@ -1,4 +1,4 @@
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 
@@ -56,8 +56,8 @@ const styles = () => {
             borderRadius: '50%',
             color: 'rgba(255, 255, 255, 1)',
             fontWeight: '100',
-            objectFit: 'cover',
-            textAlign: 'center',
+            objectFit: 'cover' as const,
+            textAlign: 'center' as const,
 
             '&.avatar-small': {
                 height: '28px !important',
@@ -80,7 +80,7 @@ const styles = () => {
         },
 
         badge: {
-            position: 'relative',
+            position: 'relative' as const,
 
             '&.avatar-badge:after': {
                 borderRadius: '50%',
@@ -262,5 +262,4 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     }
 }
 
-// @ts-ignore
 export default withStyles(styles)(StatelessAvatar);

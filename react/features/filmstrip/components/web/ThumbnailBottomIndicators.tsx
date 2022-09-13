@@ -1,7 +1,8 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import {
     getMultipleVideoSupportFeatureFlag,
@@ -51,7 +52,7 @@ type Props = {
     thumbnailType: string;
 };
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         nameContainer: {
             display: 'flex',
@@ -78,7 +79,7 @@ const ThumbnailBottomIndicators = ({
     showStatusIndicators = true,
     thumbnailType
 }: Props) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
     const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);

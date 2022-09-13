@@ -1,8 +1,8 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { batch, connect } from 'react-redux';
+import { batch } from 'react-redux';
 
 import { IState } from '../../../app/types';
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
@@ -14,6 +14,7 @@ import { IconHorizontalPoints } from '../../../base/icons/svg';
 import { getLocalParticipant } from '../../../base/participants/functions';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
+import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 // @ts-ignore
@@ -125,7 +126,7 @@ const styles = () => {
         },
 
         contextMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             marginTop: 0,
             right: 'auto',
             padding: '0',
@@ -308,5 +309,4 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(withStyles(styles)(LocalVideoMenuTriggerButton)));

@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React from 'react';
 
 import { translate } from '../../../base/i18n/functions';
@@ -18,7 +19,7 @@ import AbstractRecordingLabel, {
  *
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         [JitsiRecordingConstants.mode.STREAM]: {
             background: theme.palette.ui03

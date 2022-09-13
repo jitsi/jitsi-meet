@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-no-bind */
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 
 import Icon from '../icons/components/Icon';
 import { IconCheck, IconCopy } from '../icons/svg';
 import { withPixelLineHeight } from '../styles/functions.web';
-import { Theme } from '../ui/types';
 import { copyText } from '../util/helpers';
 
 const styles = (theme: Theme) => {
@@ -41,7 +41,7 @@ const styles = (theme: Theme) => {
         content: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            whiteSpace: 'nowrap' as const,
             maxWidth: 292,
             marginRight: theme.spacing(3),
 
@@ -214,5 +214,4 @@ CopyButton.defaultProps = {
     className: ''
 };
 
-// @ts-ignore
 export default withStyles(styles)(CopyButton);

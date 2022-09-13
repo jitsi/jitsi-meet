@@ -1,4 +1,5 @@
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -193,11 +194,11 @@ function onClick(event: React.MouseEvent) {
     event.stopPropagation();
 }
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         actions: {
             margin: '10px auto',
-            textAlign: 'center'
+            textAlign: 'center' as const
         },
         connectionStatsTable: {
             '&, & > table': {
@@ -221,17 +222,17 @@ const styles = (theme: any) => {
             }
         },
         contextMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             marginTop: 0,
             right: 'auto',
-            padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
-            marginLeft: `${theme.spacing(1)}px`,
-            marginRight: `${theme.spacing(1)}px`,
-            marginBottom: `${theme.spacing(1)}px`
+            padding: `${theme.spacing(2)} ${theme.spacing(1)}`,
+            marginLeft: theme.spacing(1),
+            marginRight: theme.spacing(1),
+            marginBottom: theme.spacing(1)
         },
         download: {},
         mobile: {
-            margin: `${theme.spacing(3)}px`
+            margin: theme.spacing(3)
         },
         status: {
             fontWeight: 'bold'
@@ -961,5 +962,4 @@ function getStringFromArray(array: string[]) {
     return res;
 }
 
-// @ts-ignore
 export default translate(withStyles(styles)(ConnectionStatsTable));
