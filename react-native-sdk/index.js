@@ -47,9 +47,12 @@ const JitsiMeetView = forwardRef((props, ref) => {
 
             setAppProps({ 'url': url,
                 'onReadyToClose': onReadyToClose,
-                'flags': [] });
+                'flags': [],
+                'settings': props.meetingOptions.settings
+            });
         }, []
     );
+
 
     return (
         <View style={{ width: props.width,
