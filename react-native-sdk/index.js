@@ -18,10 +18,24 @@ import { closeJitsiMeeting } from './react/features/mobile/react-native-sdk/func
 import { convertPropsToURL } from './utils';
 
 
+type AppProps = {
+    meetingOptions: {
+        domain: string;
+        roomName: string;
+        onReadyToClose?: Function;
+        settings?: {
+            startWithAudioMuted?: boolean;
+            startAudioOnly?: boolean;
+            startWithVideoMuted?: boolean;
+            startWithReactionsMuted?: boolean;
+        }
+    }
+};
+
 /**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-const JitsiMeetView = forwardRef((props, ref) => {
+const JitsiMeetView = forwardRef((props: AppProps, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
 
