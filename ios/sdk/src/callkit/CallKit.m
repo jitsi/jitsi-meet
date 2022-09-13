@@ -30,7 +30,7 @@
 #import <WebRTC/WebRTC.h>
 
 #import "../JitsiAudioSession.h"
-#import "../JitsiMeetSDK-Swift.h"
+#import "JMCallKitProxy.h"
 
 
 // The events emitted/supported by RNCallKit:
