@@ -26,26 +26,40 @@ declare const APP: any;
  * Class for face language detection.
  */
 class FaceLandmarksDetector {
-    initialized = false;
-    imageCapture: ImageCapture | null = null;
-    worker: Worker | null = null;
-    lastFaceExpression: string | null = null;
-    lastFaceExpressionTimestamp: number | null = null;
-    duplicateConsecutiveExpressions = 0;
-    webhookSendInterval: number | null = null;
-    detectionInterval: number | null = null;
-    recognitionActive = false;
-    canvas?: HTMLCanvasElement;
-    context?: CanvasRenderingContext2D | null;
+    private static instance: FaceLandmarksDetector;
+    private initialized = false;
+    private imageCapture: ImageCapture | null = null;
+    private worker: Worker | null = null;
+    private lastFaceExpression: string | null = null;
+    private lastFaceExpressionTimestamp: number | null = null;
+    private duplicateConsecutiveExpressions = 0;
+    private webhookSendInterval: number | null = null;
+    private detectionInterval: number | null = null;
+    private recognitionActive = false;
+    private canvas?: HTMLCanvasElement;
+    private context?: CanvasRenderingContext2D | null;
 
     /**
      * Constructor for class, checks if the environment supports OffscreenCanvas.
     */
-    constructor() {
+    private constructor() {
         if (typeof OffscreenCanvas === 'undefined') {
             this.canvas = document.createElement('canvas');
             this.context = this.canvas.getContext('2d');
         }
+    }
+
+    /**
+     * Function for retrieving the FaceLandmarksDetector instance.
+     *
+     * @returns {FaceLandmarksDetector} - FaceLandmarksDetector instance.
+     */
+    public static getInstance(): FaceLandmarksDetector {
+        if (!FaceLandmarksDetector.instance) {
+            FaceLandmarksDetector.instance = new FaceLandmarksDetector();
+        }
+
+        return FaceLandmarksDetector.instance;
     }
 
     /**
@@ -237,7 +251,7 @@ class FaceLandmarksDetector {
      * @param {number} faceCenteringThreshold  - Movement threshold as percentage for sharing face coordinates.
      * @returns {Promise<boolean>} - True if sent, false otherwise.
      */
-    async sendDataToWorker(imageCapture: ImageCapture, faceCenteringThreshold = 10): Promise<boolean> {
+    private async sendDataToWorker(imageCapture: ImageCapture, faceCenteringThreshold = 10): Promise<boolean> {
         if (!imageCapture || !this.worker) {
             logger.log('Could not send data to worker');
 
@@ -277,5 +291,5 @@ class FaceLandmarksDetector {
     }
 }
 
-export default new FaceLandmarksDetector();
+export default FaceLandmarksDetector.getInstance();
 
