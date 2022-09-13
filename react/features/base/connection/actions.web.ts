@@ -2,7 +2,7 @@ import { IStore } from '../../app/types';
 import { configureInitialDevices } from '../devices/actions';
 import { getBackendSafeRoomName } from '../util/uri';
 
-declare let APP: any;
+declare const APP: any;
 
 export {
     connectionDisconnected,

@@ -8,7 +8,7 @@ import logger from './logger';
 import { IDevicesState } from './reducer';
 
 
-declare let APP: any;
+declare const APP: any;
 
 const webrtcKindToJitsiKindTranslator = {
     audioinput: 'audioInput',
