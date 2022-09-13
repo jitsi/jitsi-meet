@@ -232,3 +232,14 @@ export function getDetectionInterval(state: IState) {
 
     return Math.max(faceLandmarks?.captureInterval || SEND_IMAGE_INTERVAL_MS);
 }
+
+/**
+ * Returns the duration in seconds of a face expression.
+ *
+ * @param {IState} state - The redux state.
+ * @param {number} faceExpressionCount - The number of consecutive face expressions.
+ * @returns {number} - Duration of face expression in seconds.
+ */
+export function getFaceExpressionDuration(state: IState, faceExpressionCount: number) {
+    return faceExpressionCount * (getDetectionInterval(state) / 1000);
+}
