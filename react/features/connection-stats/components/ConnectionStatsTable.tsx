@@ -1,4 +1,5 @@
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -71,11 +72,6 @@ interface Props extends WithTranslation {
      * Whether or not should display the "Show More" link.
      */
     disableShowMoreStats: boolean;
-
-    /**
-     * The end-to-end round-trip-time.
-     */
-    e2eRtt: number;
 
     /**
      * Whether or not should display the "Save Logs" link.
@@ -198,11 +194,11 @@ function onClick(event: React.MouseEvent) {
     event.stopPropagation();
 }
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         actions: {
             margin: '10px auto',
-            textAlign: 'center'
+            textAlign: 'center' as const
         },
         connectionStatsTable: {
             '&, & > table': {
@@ -226,17 +222,17 @@ const styles = (theme: any) => {
             }
         },
         contextMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             marginTop: 0,
             right: 'auto',
-            padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
-            marginLeft: `${theme.spacing(1)}px`,
-            marginRight: `${theme.spacing(1)}px`,
-            marginBottom: `${theme.spacing(1)}px`
+            padding: `${theme.spacing(2)} ${theme.spacing(1)}`,
+            marginLeft: theme.spacing(1),
+            marginRight: theme.spacing(1),
+            marginBottom: theme.spacing(1)
         },
         download: {},
         mobile: {
-            margin: `${theme.spacing(3)}px`
+            margin: theme.spacing(3)
         },
         status: {
             fontWeight: 'bold'
@@ -525,27 +521,6 @@ class ConnectionStatsTable extends Component<Props> {
     }
 
     /**
-     * Creates a table row as a ReactElement for displaying end-to-end RTT and
-     * the region.
-     *
-     * @returns {ReactElement}
-     * @private
-     */
-    _renderE2eRtt() {
-        const { e2eRtt, t } = this.props;
-        const str = e2eRtt ? `${e2eRtt.toFixed(0)}ms` : 'N/A';
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.e2e_rtt') }</span>
-                </td>
-                <td>{ str }</td>
-            </tr>
-        );
-    }
-
-    /**
      * Creates a table row as a ReactElement for displaying the "connected to"
      * information.
      *
@@ -772,7 +747,6 @@ class ConnectionStatsTable extends Component<Props> {
                     { this._renderConnectionSummary() }
                     { this._renderBitrate() }
                     { this._renderPacketLoss() }
-                    { isRemoteVideo ? this._renderE2eRtt() : null }
                     { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
@@ -988,5 +962,4 @@ function getStringFromArray(array: string[]) {
     return res;
 }
 
-// @ts-ignore
 export default translate(withStyles(styles)(ConnectionStatsTable));

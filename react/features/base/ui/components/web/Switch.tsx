@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../environment/utils';
 import { SwitchProps } from '../types';
@@ -13,7 +13,7 @@ interface Props extends SwitchProps {
     id?: string;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         container: {
             position: 'relative',
@@ -79,25 +79,27 @@ const useStyles = makeStyles((theme: any) => {
 });
 
 const Switch = ({ id, checked, disabled, onChange }: Props) => {
-    const styles = useStyles();
+    const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
 
     const change = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         onChange(e.target.checked);
     }, []);
 
-    return (<label
-        className = { clsx('toggle-container', styles.container, checked && styles.containerOn,
-            isMobile && 'is-mobile', disabled && 'disabled') }>
-        <input
-            type = 'checkbox'
-            { ...(id ? { id } : {}) }
-            checked = { checked }
-            className = { styles.checkbox }
-            disabled = { disabled }
-            onChange = { change } />
-        <div className = { clsx('toggle', styles.toggle, checked && styles.toggleOn, isMobile && 'is-mobile') } />
-    </label>);
+    return (
+        <label
+            className = { cx('toggle-container', styles.container, checked && styles.containerOn,
+                isMobile && 'is-mobile', disabled && 'disabled') }>
+            <input
+                type = 'checkbox'
+                { ...(id ? { id } : {}) }
+                checked = { checked }
+                className = { styles.checkbox }
+                disabled = { disabled }
+                onChange = { change } />
+            <div className = { cx('toggle', styles.toggle, checked && styles.toggleOn, isMobile && 'is-mobile') } />
+        </label>
+    );
 };
 
 export default Switch;

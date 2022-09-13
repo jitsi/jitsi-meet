@@ -1,7 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
@@ -31,18 +33,18 @@ interface Props extends WithTranslation {
     onTextButtonClick: Function;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         dialOutDialog: {
-            padding: `${theme.spacing(3)}px`
+            padding: theme.spacing(3)
         },
         header: {
             display: 'flex',
             justifyContent: 'space-between',
-            marginBottom: `${theme.spacing(4)}px`
+            marginBottom: theme.spacing(4)
         },
         picker: {
-            margin: `${theme.spacing(2)}px 0 ${theme.spacing(3)}px 0`
+            margin: `${theme.spacing(2)} 0 ${theme.spacing(3)} 0`
         }
     };
 });
@@ -56,7 +58,7 @@ const useStyles = makeStyles((theme: any) => {
  */
 function DialOutDialog(props: Props) {
     const { onClose, onTextButtonClick, onSubmit, t } = props;
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     return (
         <div className = { classes.dialOutDialog }>

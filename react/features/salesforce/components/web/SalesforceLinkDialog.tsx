@@ -1,9 +1,10 @@
 /* eslint-disable lines-around-comment */
 import Spinner from '@atlaskit/spinner';
-import { makeStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
 import { Dialog, hideDialog } from '../../../base/dialog';
@@ -11,7 +12,7 @@ import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
 // @ts-ignore
 import { getFieldValue } from '../../../base/react';
-import BaseTheme from '../../../base/ui/components/BaseTheme.web';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { NOTES_MAX_LENGTH } from '../../constants';
 // @ts-ignore
 import { useSalesforceLinkDialog } from '../../useSalesforceLinkDialog';
@@ -19,7 +20,7 @@ import { useSalesforceLinkDialog } from '../../useSalesforceLinkDialog';
 import { RecordItem } from './RecordItem';
 
 // @ts-ignore
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         container: {
             minHeight: '450px',
@@ -54,8 +55,7 @@ const useStyles = makeStyles((theme: any) => {
             height: 40,
             '&::placeholder': {
                 color: theme.palette.text03,
-                ...theme.typography.bodyShortRegular,
-                lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`
+                ...withPixelLineHeight(theme.typography.bodyShortRegular)
             }
         },
         spinner: {
@@ -106,6 +106,7 @@ const useStyles = makeStyles((theme: any) => {
             border: '1px solid',
             borderColor: theme.palette.ui05,
             backgroundColor: theme.palette.field01,
+            // @ts-ignore
             color: theme.palette.field02,
             borderRadius: theme.shape.borderRadius,
             padding: '10px 16px'
@@ -121,7 +122,7 @@ const useStyles = makeStyles((theme: any) => {
  */
 function SalesforceLinkDialog() {
     const { t } = useTranslation();
-    const classes = useStyles();
+    const { classes, theme } = useStyles();
     const dispatch = useDispatch();
     const {
         hasDetailsErrors,
@@ -190,7 +191,7 @@ function SalesforceLinkDialog() {
         <div className = { classes.recordsSearchContainer }>
             <Icon
                 className = { classes.searchIcon }
-                color = { BaseTheme.palette.icon03 }
+                color = { theme.palette.icon03 }
                 src = { IconSearch } />
             <input
                 autoComplete = 'off'

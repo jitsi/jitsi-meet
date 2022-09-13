@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch } from 'react-redux';
@@ -244,7 +244,6 @@ interface Props extends WithTranslation {
      */
     _isProfileDisabled: boolean;
 
-
     /**
      * Whether or not the current meeting belongs to a JaaS user.
      */
@@ -341,16 +340,17 @@ declare let APP: any;
 const styles = () => {
     return {
         contextMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             right: 'auto',
             maxHeight: 'inherit',
             margin: 0
         },
+
         hangupMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             right: 'auto',
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'column' as const,
             rowGap: '8px',
             margin: 0,
             padding: '16px'
@@ -1537,5 +1537,4 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(withStyles(styles)(Toolbox)));

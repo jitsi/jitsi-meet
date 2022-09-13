@@ -24,6 +24,7 @@ import {
     ADD_STAGE_PARTICIPANT,
     CLEAR_STAGE_PARTICIPANTS,
     REMOVE_STAGE_PARTICIPANT,
+    RESIZE_FILMSTRIP,
     SET_MAX_STAGE_PARTICIPANTS,
     SET_USER_FILMSTRIP_WIDTH,
     TOGGLE_PIN_STAGE_PARTICIPANT
@@ -140,6 +141,13 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case SET_USER_FILMSTRIP_WIDTH: {
         VideoLayout.refreshLayout();
+        break;
+    }
+    case RESIZE_FILMSTRIP: {
+        const { width = 0 } = action;
+
+        store.dispatch(setFilmstripWidth(width));
+
         break;
     }
     case ADD_STAGE_PARTICIPANT: {

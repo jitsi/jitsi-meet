@@ -146,7 +146,6 @@
         "bridgeCount": "伺服器數量：",
         "codecs": "編解碼器：",
         "connectedTo": "已連接至：",
-        "e2e_rtt": "端到端延時：",
         "framerate": "影格率：",
         "less": "顯示較少",
         "localaddress": "本機位址：",

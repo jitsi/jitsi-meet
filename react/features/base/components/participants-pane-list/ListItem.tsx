@@ -1,9 +1,10 @@
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React, { ReactNode } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { ACTION_TRIGGER } from '../../../participants-pane/constants';
 import { isMobileBrowser } from '../../environment/utils';
+import { withPixelLineHeight } from '../../styles/functions.web';
 import participantsPaneTheme from '../themes/participantsPaneTheme.json';
 
 type Props = {
@@ -75,14 +76,13 @@ type Props = {
 
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         container: {
             alignItems: 'center',
             color: theme.palette.text01,
             display: 'flex',
-            ...theme.typography.bodyShortRegular,
-            lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
             margin: `0 -${participantsPaneTheme.panePadding}px`,
             padding: `0 ${participantsPaneTheme.panePadding}px`,
             position: 'relative',
@@ -104,9 +104,8 @@ const useStyles = makeStyles((theme: any) => {
             },
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
-                ...theme.typography.bodyShortRegularLarge,
-                lineHeight: `${theme.typography.bodyShortRegularLarge.lineHeight}px`,
-                padding: `${theme.spacing(2)}px ${participantsPaneTheme.panePadding}px`
+                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+                padding: `${theme.spacing(2)} ${participantsPaneTheme.panePadding}px`
             }
         },
 
@@ -126,7 +125,7 @@ const useStyles = makeStyles((theme: any) => {
         name: {
             display: 'flex',
             flex: 1,
-            marginRight: `${theme.spacing(2)}px`,
+            marginRight: theme.spacing(2),
             overflow: 'hidden',
             flexDirection: 'column',
             justifyContent: 'flex-start'
@@ -143,7 +142,7 @@ const useStyles = makeStyles((theme: any) => {
             },
 
             '& > *:not(:last-child)': {
-                marginRight: `${theme.spacing(2)}px`
+                marginRight: theme.spacing(2)
             },
 
             '& .jitsi-icon': {
@@ -190,7 +189,7 @@ const ListItem = ({
     textChildren,
     trigger
 }: Props) => {
-    const styles = useStyles();
+    const { classes: styles, cx } = useStyles();
     const _isMobile = isMobileBrowser();
     let timeoutHandler: number;
 
@@ -228,7 +227,7 @@ const ListItem = ({
 
     return (
         <div
-            className = { clsx('list-item-container',
+            className = { cx('list-item-container',
                 styles.container,
                 isHighlighted && styles.highlighted,
                 className
@@ -253,7 +252,7 @@ const ListItem = ({
                 </div>
                 {indicators && (
                     <div
-                        className = { clsx('indicators',
+                        className = { cx('indicators',
                             styles.indicators,
                             (isHighlighted || trigger === ACTION_TRIGGER.PERMANENT) && styles.indicatorsHidden
                         ) }>
@@ -262,7 +261,7 @@ const ListItem = ({
                 )}
                 {!hideActions && (
                     <div
-                        className = { clsx('actions',
+                        className = { cx('actions',
                             styles.actionsContainer,
                             trigger === ACTION_TRIGGER.PERMANENT && styles.actionsPermanent,
                             isHighlighted && styles.actionsVisible

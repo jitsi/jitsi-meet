@@ -1,12 +1,12 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Switch from '../../../base/ui/components/web/Switch';
-import { Theme } from '../../../base/ui/types';
 
-// @ts-ignore
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         switchContainer: {
             display: 'flex',
@@ -15,8 +15,7 @@ const useStyles = makeStyles((theme: Theme) => {
 
         switchLabel: {
             marginRight: 10,
-            ...theme.typography.bodyShortRegular,
-            lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`
+            ...withPixelLineHeight(theme.typography.bodyShortRegular)
         }
     };
 });
@@ -44,7 +43,7 @@ type Props = {
  * @returns {React$Element<any>}
  */
 export default function FaceExpressionsSwitch({ onChange, showFaceExpressions }: Props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const { t } = useTranslation();
 
     return (

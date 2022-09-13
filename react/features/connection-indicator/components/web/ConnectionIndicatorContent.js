@@ -194,7 +194,6 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
             bitrate,
             bridgeCount,
             codec,
-            e2eRtt,
             framerate,
             maxEnabledResolution,
             packetLoss,
@@ -212,7 +211,6 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 codec = { codec }
                 connectionSummary = { this._getConnectionStatusTip() }
                 disableShowMoreStats = { this.props._disableShowMoreStats }
-                e2eRtt = { e2eRtt }
                 enableSaveLogs = { this.props._enableSaveLogs }
                 framerate = { framerate }
                 isLocalVideo = { this.props._isLocalVideo }

@@ -29,7 +29,7 @@ export function setReactionQueue(queue: Array<ReactionEmojiProps>): ReactionsAct
  * @param {string} uid - Id of the reaction to be removed.
  * @returns {Function}
  */
-export function removeReaction(uid: string): Function {
+export function removeReaction(uid: string): any {
     return (dispatch: Function, getState: Function) => {
         const queue = getState()['features/reactions'].queue;
 

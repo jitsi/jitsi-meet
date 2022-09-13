@@ -1,19 +1,22 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { ReactElement, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import ListItem from '../../../base/components/participants-pane-list/ListItem';
 import { translate } from '../../../base/i18n/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import {
     ACTION_TRIGGER,
     AudioStateIcons,
     MEDIA_STATE,
     type ActionTrigger,
-    type MediaState,
-    VideoStateIcons
+    VideoStateIcons,
+    MediaState
 } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
@@ -96,7 +99,7 @@ interface Props extends WithTranslation {
     youText?: string;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         nameContainer: {
             display: 'flex',
@@ -111,8 +114,7 @@ const useStyles = makeStyles((theme: any) => {
         },
 
         moderatorLabel: {
-            ...theme.typography.labelRegular,
-            lineHeight: `${theme.typography.labelRegular.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.labelRegular),
             color: theme.palette.text03
         }
     };
@@ -148,7 +150,7 @@ function ParticipantItem({
             displayName
         }), []);
 
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     const icon = (
         <Avatar

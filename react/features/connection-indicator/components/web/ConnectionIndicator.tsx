@@ -1,5 +1,7 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -116,11 +118,10 @@ type Props = AbstractProps & WithTranslation & {
      */
     audioSsrc: number;
 
-
     /**
      * An object containing the CSS classes.
      */
-    classes: Object;
+    classes: any;
 
     /**
      * The Redux dispatch function.
@@ -153,7 +154,7 @@ type State = AbstractState & {
     popoverVisible: boolean;
 };
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         container: {
             display: 'inline-block'

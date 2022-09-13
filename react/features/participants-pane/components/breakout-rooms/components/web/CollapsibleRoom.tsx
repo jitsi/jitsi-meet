@@ -1,15 +1,17 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
+
+import { Theme } from '@mui/material';
 import React, { ReactElement, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../../../app/types';
 import ListItem from '../../../../../base/components/participants-pane-list/ListItem';
 import Icon from '../../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
+import { withPixelLineHeight } from '../../../../../base/styles/functions.web';
 // @ts-ignore
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { ACTION_TRIGGER } from '../../../../constants';
@@ -82,7 +84,7 @@ type Props = {
     toggleParticipantMenu: Function;
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         container: {
             boxShadow: 'none'
@@ -91,9 +93,8 @@ const useStyles = makeStyles((theme: any) => {
         roomName: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            ...theme.typography.labelButton,
-            lineHeight: `${theme.typography.labelButton.lineHeight}px`,
+            whiteSpace: 'nowrap', // @ts-ignore
+            ...withPixelLineHeight(theme.typography.labelButton),
             padding: '12px 0'
         },
 
@@ -123,7 +124,7 @@ export const CollapsibleRoom = ({
     toggleParticipantMenu
 }: Props) => {
     const { t } = useTranslation();
-    const styles = useStyles();
+    const { classes: styles, cx } = useStyles();
     const [ collapsed, setCollapsed ] = useState(false);
     const toggleCollapsed = useCallback(() => {
         setCollapsed(!collapsed);
@@ -153,41 +154,39 @@ export const CollapsibleRoom = ({
         participantName: displayName
     }), [ room, moderator ]);
 
-    return (
-        <>
-            <ListItem
-                actions = { children }
-                className = { clsx(styles.container, 'breakout-room-container') }
-                icon = { arrow }
-                isHighlighted = { isHighlighted }
-                onClick = { toggleCollapsed }
-                onLongPress = { raiseMenu }
-                onMouseLeave = { onLeave }
-                testId = { room.id }
-                textChildren = { roomName }
-                trigger = { actionsTrigger } />
-            {!collapsed && room?.participants
-                && Object.values(room?.participants || {}).map(p =>
-                    participantMatchesSearch(p, searchString) && (
-                        <ParticipantItem
-                            actionsTrigger = { ACTION_TRIGGER.HOVER }
-                            displayName = { p.displayName || defaultRemoteDisplayName }
-                            isHighlighted = { participantContextEntity?.jid === p.jid }
-                            key = { p.jid }
-                            local = { false }
-                            openDrawerForParticipant = { raiseParticipantMenu }
-                            overflowDrawer = { overflowDrawer }
-                            participantID = { p.jid }>
-                            {!overflowDrawer && moderator && (
-                                <ParticipantActionEllipsis
-                                    accessibilityLabel = { t('breakoutRoom.more') }
-                                    onClick = { toggleParticipantMenu({ room,
-                                        jid: p.jid,
-                                        participantName: p.displayName }) } />
-                            )}
-                        </ParticipantItem>
-                    ))
-            }
-        </>
-    );
+    return (<>
+        <ListItem
+            actions = { children }
+            className = { cx(styles.container, 'breakout-room-container') }
+            icon = { arrow }
+            isHighlighted = { isHighlighted }
+            onClick = { toggleCollapsed }
+            onLongPress = { raiseMenu }
+            onMouseLeave = { onLeave }
+            testId = { room.id }
+            textChildren = { roomName }
+            trigger = { actionsTrigger } />
+        {!collapsed && room?.participants
+            && Object.values(room?.participants || {}).map(p =>
+                participantMatchesSearch(p, searchString) && (
+                    <ParticipantItem
+                        actionsTrigger = { ACTION_TRIGGER.HOVER }
+                        displayName = { p.displayName || defaultRemoteDisplayName }
+                        isHighlighted = { participantContextEntity?.jid === p.jid }
+                        key = { p.jid }
+                        local = { false }
+                        openDrawerForParticipant = { raiseParticipantMenu }
+                        overflowDrawer = { overflowDrawer }
+                        participantID = { p.jid }>
+                        {!overflowDrawer && moderator && (
+                            <ParticipantActionEllipsis
+                                accessibilityLabel = { t('breakoutRoom.more') }
+                                onClick = { toggleParticipantMenu({ room,
+                                    jid: p.jid,
+                                    participantName: p.displayName }) } />
+                        )}
+                    </ParticipantItem>
+                ))
+        }
+    </>);
 };

@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React from 'react';
 
 // @ts-ignore
@@ -54,7 +55,7 @@ type State = {
  *
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         container: {
             position: 'relative'
@@ -63,11 +64,11 @@ const styles = (theme: any) => {
             background: theme.palette.text02,
             margin: '0 4px 4px 4px'
         },
-        regular: {
+        regular: { // @ts-ignore
             background: theme.palette.field02,
             margin: '0 4px 4px 4px'
         },
-        highlightNotification: {
+        highlightNotification: { // @ts-ignore
             backgroundColor: theme.palette.field02,
             borderRadius: '6px',
             boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.25)',
@@ -81,7 +82,7 @@ const styles = (theme: any) => {
             top: '32px',
             width: 320
         },
-        highlightNotificationButton: {
+        highlightNotificationButton: { // @ts-ignore
             color: theme.palette.field01Focus,
             cursor: 'pointer',
             fontWeight: '600',

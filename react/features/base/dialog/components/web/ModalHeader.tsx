@@ -9,7 +9,8 @@ import {
     TitleText
     // @ts-ignore
 } from '@atlaskit/modal-dialog/dist/es2019/styled/Content';
-import { withStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -52,14 +53,14 @@ interface Props extends WithTranslation {
  *
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         closeButton: {
             borderRadius: theme.shape.borderRadius,
             cursor: 'pointer',
             padding: 13,
 
-            [theme.breakpoints.down('480')]: {
+            [theme.breakpoints.down(480)]: {
                 background: theme.palette.action02
             },
 

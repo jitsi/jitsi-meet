@@ -1,12 +1,11 @@
-import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconCheckMark } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
-import BaseTheme from '../BaseTheme.web';
 
 interface CheckboxProps {
 
@@ -41,7 +40,7 @@ interface CheckboxProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         formControl: {
             ...withPixelLineHeight(theme.typography.bodyLongRegular),
@@ -151,25 +150,27 @@ const Checkbox = ({
     name,
     onChange
 }: CheckboxProps) => {
-    const styles = useStyles();
+    const { classes: styles, cx, theme } = useStyles();
     const isMobile = isMobileBrowser();
 
-    return (<div className = { clsx(styles.formControl, isMobile && 'is-mobile', className) }>
-        <label className = { clsx(styles.activeArea, isMobile && 'is-mobile') }>
-            <input
-                checked = { checked }
-                disabled = { disabled }
-                name = { name }
-                onChange = { onChange }
-                type = 'checkbox' />
-            <Icon
-                className = 'checkmark'
-                color = { disabled ? BaseTheme.palette.icon03 : BaseTheme.palette.icon01 }
-                size = { 18 }
-                src = { IconCheckMark } />
-        </label>
-        <label>{label}</label>
-    </div>);
+    return (
+        <div className = { cx(styles.formControl, isMobile && 'is-mobile', className) }>
+            <label className = { cx(styles.activeArea, isMobile && 'is-mobile') }>
+                <input
+                    checked = { checked }
+                    disabled = { disabled }
+                    name = { name }
+                    onChange = { onChange }
+                    type = 'checkbox' />
+                <Icon
+                    className = 'checkmark'
+                    color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
+                    size = { 18 }
+                    src = { IconCheckMark } />
+            </label>
+            <label>{label}</label>
+        </div>
+    );
 };
 
 export default Checkbox;

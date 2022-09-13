@@ -1,8 +1,6 @@
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React from 'react';
-
-import { commonClassName } from '../../base/ui/constants';
+import { makeStyles } from 'tss-react/mui';
 
 type Props = {
 
@@ -37,7 +35,7 @@ type Props = {
     value: number;
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     // keep the same height for all elements:
     // input, input track & fake track(div)
     const height = 6;
@@ -54,7 +52,7 @@ const useStyles = makeStyles((theme: any) => {
         width: 24
     };
 
-    const focused = {
+    const focused = { // @ts-ignore
         outline: `1px solid ${theme.palette.action03Focus}`
     };
 
@@ -83,7 +81,7 @@ const useStyles = makeStyles((theme: any) => {
         },
         track: {
             background: theme.palette.ui02,
-            borderRadius: theme.shape.borderRadius / 2,
+            borderRadius: Number(theme.shape.borderRadius) / 2,
             height
         },
         slider: {
@@ -141,12 +139,12 @@ const useStyles = makeStyles((theme: any) => {
  *  @returns {ReactElement}
  */
 function Slider({ ariaLabel, max, min, onChange, step, value }: Props) {
-    const classes = useStyles();
+    const { classes, cx } = useStyles();
     const knobs = [ ...Array(Math.floor((max - min) / step) + 1) ];
 
     return (
         <div className = { classes.sliderContainer }>
-            <ul className = { clsx(commonClassName.emptyList, classes.knobContainer) }>
+            <ul className = { cx('empty-list', classes.knobContainer) }>
                 {knobs.map((_, i) => (
                     <li
                         className = { classes.knob }
@@ -155,7 +153,7 @@ function Slider({ ariaLabel, max, min, onChange, step, value }: Props) {
             <div className = { classes.track } />
             <input
                 aria-label = { ariaLabel }
-                className = { clsx(classes.slider, 'custom-slider') }
+                className = { cx(classes.slider, 'custom-slider') }
                 max = { max }
                 min = { min }
                 onChange = { onChange }

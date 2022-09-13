@@ -1,8 +1,10 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { ClassNameMap, withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { createReactionMenuEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
@@ -12,8 +14,6 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { raiseHand } from '../../../base/participants/actions';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
-import { Theme } from '../../../base/ui/types';
 import GifsMenu from '../../../gifs/components/web/GifsMenu';
 // @ts-ignore
 import GifsMenuButton from '../../../gifs/components/web/GifsMenuButton';
@@ -27,10 +27,6 @@ import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 
 // @ts-ignore
 import ReactionButton from './ReactionButton';
-
-interface Classes {
-    overflow: string;
-}
 
 interface Props extends WithTranslation {
 
@@ -67,7 +63,7 @@ interface Props extends WithTranslation {
     /**
      * An object containing the CSS classes.
      */
-    classes: Classes;
+    classes: ClassNameMap<string>;
 
     /**
      * The Redux Dispatch function.
@@ -77,7 +73,7 @@ interface Props extends WithTranslation {
     /**
      * Whether or not it's displayed in the overflow menu.
      */
-    overflowMenu: boolean;
+    overflowMenu?: boolean;
 }
 
 const styles = (theme: Theme) => {
@@ -88,8 +84,8 @@ const styles = (theme: Theme) => {
             backgroundColor: theme.palette.ui01,
             boxShadow: 'none',
             borderRadius: 0,
-            position: 'relative',
-            boxSizing: 'border-box',
+            position: 'relative' as const,
+            boxSizing: 'border-box' as const,
             height: `${REACTIONS_MENU_HEIGHT}px`
         }
     };
@@ -265,8 +261,6 @@ function mapDispatchToProps(dispatch: IStore['dispatch']) {
         ...bindActionCreators(
         {
             _dockToolbox: dockToolbox
-
-        // @ts-ignore
         }, dispatch)
     };
 }
@@ -274,6 +268,4 @@ function mapDispatchToProps(dispatch: IStore['dispatch']) {
 export default translate(connect(
     mapStateToProps,
     mapDispatchToProps
-
-    // @ts-ignore
 )(withStyles(styles)(ReactionsMenu)));

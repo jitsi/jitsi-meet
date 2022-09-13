@@ -1,6 +1,7 @@
-import { makeStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { RECORD_TYPE } from '../../constants';
 
@@ -30,7 +31,7 @@ type Props = {
     type: string;
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         recordItem: {
             display: 'flex',
@@ -80,8 +81,8 @@ export const RecordItem = ({
     type
 }: Props) => {
     const { t } = useTranslation();
-    const classes = useStyles();
     const Icon = RECORD_TYPE[type as keyof typeof RECORD_TYPE].icon;
+    const { classes } = useStyles();
 
     return (
         <li

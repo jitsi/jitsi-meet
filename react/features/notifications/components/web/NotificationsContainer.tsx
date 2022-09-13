@@ -1,7 +1,8 @@
 /* eslint-disable lines-around-comment */
 import { FlagGroupContext } from '@atlaskit/flag/flag-group';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -55,10 +56,10 @@ interface Props extends WithTranslation {
     portal?: boolean;
 }
 
-const useStyles = (theme: any) => {
+const useStyles = (theme: Theme) => {
     return {
         container: {
-            position: 'absolute',
+            position: 'absolute' as const,
             left: '16px',
             bottom: '90px',
             width: '400px',
@@ -252,5 +253,4 @@ function _mapStateToProps(state: IState) {
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(withStyles(useStyles)(NotificationsContainer)));

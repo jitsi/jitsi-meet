@@ -1,19 +1,20 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
 // @ts-ignore
 import { getFieldValue } from '../../../base/react';
-import BaseTheme from '../../../base/ui/components/BaseTheme.web';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { MOBILE_BREAKPOINT } from '../../constants';
 // @ts-ignore
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         speakerStatsSearchContainer: {
             position: 'relative'
@@ -41,15 +42,13 @@ const useStyles = makeStyles((theme: any) => {
             height: 40,
             '&::placeholder': {
                 color: theme.palette.text03,
-                ...theme.typography.bodyShortRegular,
-                lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`
+                ...withPixelLineHeight(theme.typography.bodyShortRegular)
             },
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
                 height: 48,
                 padding: '13px 16px 13px 44px',
                 '&::placeholder': {
-                    ...theme.typography.bodyShortRegularLarge,
-                    lineHeight: `${theme.typography.bodyShortRegular.lineHeightLarge}px`
+                    ...withPixelLineHeight(theme.typography.bodyShortRegular)
                 }
             }
         }
@@ -74,7 +73,7 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function SpeakerStatsSearch({ onSearch }: Props) {
-    const classes = useStyles();
+    const { classes, theme } = useStyles();
     const { t } = useTranslation();
     const disableSpeakerStatsSearch = useSelector(isSpeakerStatsSearchDisabled);
     const [ searchValue, setSearchValue ] = useState<string>('');
@@ -105,7 +104,7 @@ function SpeakerStatsSearch({ onSearch }: Props) {
         <div className = { classes.speakerStatsSearchContainer }>
             <Icon
                 className = { classes.searchIcon }
-                color = { BaseTheme.palette.icon03 }
+                color = { theme.palette.icon03 }
                 src = { IconSearch } />
             <input
                 autoComplete = 'off'

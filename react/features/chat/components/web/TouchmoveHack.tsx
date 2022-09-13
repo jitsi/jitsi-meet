@@ -1,6 +1,5 @@
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import React, { ReactElement, useEffect, useRef } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 
@@ -23,7 +22,7 @@ type Props = {
 
 };
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         flex: {
             display: 'flex',
@@ -72,11 +71,11 @@ function TouchmoveHack({ children, isModal, flex }: Props) {
             }
         };
     }, []);
-    const classes = useStyles();
+    const { classes, cx } = useStyles();
 
     return (
         <div
-            className = { clsx(classes.base, flex && classes.flex) }
+            className = { cx(classes.base, flex && classes.flex) }
             ref = { touchMoveElementRef }>
             {children}
         </div>
