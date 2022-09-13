@@ -63,7 +63,7 @@ import {
 } from './functions';
 import { ASKED_TO_UNMUTE_FILE } from './sounds';
 
-declare let APP: any;
+declare const APP: any;
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { type } = action;

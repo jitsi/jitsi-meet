@@ -12,7 +12,7 @@ import { moveToRoom } from './actions';
 import logger from './logger';
 import { IRooms } from './types';
 
-declare let APP: any;
+declare const APP: any;
 
 /**
  * Registers a change handler for state['features/base/conference'].conference to
