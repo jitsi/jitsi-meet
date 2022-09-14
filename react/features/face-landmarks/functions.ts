@@ -1,12 +1,15 @@
-// @flow
-import { getLocalParticipant } from '../base/participants';
+/* eslint-disable lines-around-comment */
+import { IState } from '../app/types';
+import { getLocalParticipant } from '../base/participants/functions';
+// @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import { DETECT_FACE, FACE_BOX_EVENT_TYPE, SEND_IMAGE_INTERVAL_MS } from './constants';
 import logger from './logger';
+import { FaceBox } from './types';
 
-let canvas;
-let context;
+let canvas: HTMLCanvasElement;
+let context: CanvasRenderingContext2D | null;
 
 if (typeof OffscreenCanvas === 'undefined') {
     canvas = document.createElement('canvas');
@@ -16,13 +19,13 @@ if (typeof OffscreenCanvas === 'undefined') {
 /**
  * Sends the face expression with its duration to all the other participants.
  *
- * @param {Object} conference - The current conference.
+ * @param {any} conference - The current conference.
  * @param  {string} faceExpression - Face expression to be sent.
  * @param {number} duration - The duration of the face expression in seconds.
  * @returns {void}
  */
 export function sendFaceExpressionToParticipants(
-        conference: Object,
+        conference: any,
         faceExpression: string,
         duration: number
 ): void {
@@ -41,13 +44,13 @@ export function sendFaceExpressionToParticipants(
 /**
  * Sends the face box to all the other participants.
  *
- * @param {Object} conference - The current conference.
- * @param  {Object} faceBox - Face box to be sent.
+ * @param {any} conference - The current conference.
+ * @param  {FaceBox} faceBox - Face box to be sent.
  * @returns {void}
  */
 export function sendFaceBoxToParticipants(
-        conference: Object,
-        faceBox: Object
+        conference: any,
+        faceBox: FaceBox
 ): void {
     try {
         conference.sendEndpointMessage('', {
@@ -62,13 +65,13 @@ export function sendFaceBoxToParticipants(
 /**
  * Sends the face expression with its duration to xmpp server.
  *
- * @param {Object} conference - The current conference.
+ * @param {any} conference - The current conference.
  * @param  {string} faceExpression - Face expression to be sent.
  * @param {number} duration - The duration of the face expression in seconds.
  * @returns {void}
  */
 export function sendFaceExpressionToServer(
-        conference: Object,
+        conference: any,
         faceExpression: string,
         duration: number
 ): void {
@@ -88,12 +91,12 @@ export function sendFaceExpressionToServer(
  * @param  {Object} state - Redux state.
  * @returns {boolean} - True if sent, false otherwise.
  */
-export async function sendFaceExpressionsWebhook(state: Object) {
+export async function sendFaceExpressionsWebhook(state: IState) {
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
     const { connection } = state['features/base/connection'];
-    const jid = connection.getJid();
+    const jid = connection?.getJid();
     const localParticipant = getLocalParticipant(state);
     const { faceExpressionsBuffer } = state['features/face-landmarks'];
 
@@ -111,8 +114,8 @@ export async function sendFaceExpressionsWebhook(state: Object) {
         sessionId: conference.sessionId,
         submitted: Date.now(),
         emotions: faceExpressionsBuffer,
-        participantId: localParticipant.jwtId,
-        participantName: localParticipant.name,
+        participantId: localParticipant?.jwtId,
+        participantName: localParticipant?.name,
         participantJid: jid
     };
 
@@ -143,15 +146,15 @@ export async function sendFaceExpressionsWebhook(state: Object) {
  * @param {Worker} worker - Face recognition worker.
  * @param {Object} imageCapture - Image capture that contains the current track.
  * @param {number} threshold - Movement threshold as percentage for sharing face coordinates.
- * @returns {Promise<void>}
+ * @returns {Promise<boolean>} - True if sent, false otherwise.
  */
 export async function sendDataToWorker(
         worker: Worker,
-        imageCapture: Object,
-        threshold: number = 10
-): Promise<void> {
+        imageCapture: ImageCapture,
+        threshold = 10
+): Promise<boolean> {
     if (imageCapture === null || imageCapture === undefined) {
-        return;
+        return false;
     }
 
     let imageBitmap;
@@ -162,15 +165,15 @@ export async function sendDataToWorker(
     } catch (err) {
         logger.warn(err);
 
-        return;
+        return false;
     }
 
     if (typeof OffscreenCanvas === 'undefined') {
         canvas.width = imageBitmap.width;
         canvas.height = imageBitmap.height;
-        context.drawImage(imageBitmap, 0, 0);
+        context?.drawImage(imageBitmap, 0, 0);
 
-        image = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+        image = context?.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
     } else {
         image = imageBitmap;
     }
@@ -182,33 +185,37 @@ export async function sendDataToWorker(
     });
 
     imageBitmap.close();
+
+    return true;
 }
 
 /**
  * Gets face box for a participant id.
  *
  * @param {string} id - The participant id.
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @returns {Object}
  */
-function getFaceBoxForId(id: string, state: Object) {
+function getFaceBoxForId(id: string, state: IState) {
     return state['features/face-landmarks'].faceBoxes[id];
 }
 
 /**
  * Gets the video object position for a participant id.
  *
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @param {string} id - The participant id.
  * @returns {string} - CSS object-position in the shape of '{horizontalPercentage}% {verticalPercentage}%'.
  */
-export function getVideoObjectPosition(state: Object, id: string) {
-    const faceBox = getFaceBoxForId(id, state);
+export function getVideoObjectPosition(state: IState, id?: string) {
+    const faceBox = id && getFaceBoxForId(id, state);
 
     if (faceBox) {
         const { right, width } = faceBox;
 
-        return `${right - (width / 2)}% 50%`;
+        if (right && width) {
+            return `${right - (width / 2)}% 50%`;
+        }
     }
 
     return '50% 50%';
@@ -217,11 +224,22 @@ export function getVideoObjectPosition(state: Object, id: string) {
 /**
  * Gets the video object position for a participant id.
  *
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @returns {number} - Number of milliseconds for doing face detection.
  */
-export function getDetectionInterval(state: Object) {
+export function getDetectionInterval(state: IState) {
     const { faceLandmarks } = state['features/base/config'];
 
     return Math.max(faceLandmarks?.captureInterval || SEND_IMAGE_INTERVAL_MS);
+}
+
+/**
+ * Returns the duration in seconds of a face expression.
+ *
+ * @param {IState} state - The redux state.
+ * @param {number} faceExpressionCount - The number of consecutive face expressions.
+ * @returns {number} - Duration of face expression in seconds.
+ */
+export function getFaceExpressionDuration(state: IState, faceExpressionCount: number) {
+    return faceExpressionCount * (getDetectionInterval(state) / 1000);
 }

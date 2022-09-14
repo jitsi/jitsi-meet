@@ -37,7 +37,6 @@ import {
     trackStreamingStatusChanged
     // @ts-ignore
 } from '../../../base/tracks';
-// @ts-ignore
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 // @ts-ignore
 import { hideGif, showGif } from '../../../gifs/actions';
