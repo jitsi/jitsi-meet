@@ -1112,7 +1112,7 @@ class Thumbnail extends Component<Props, State> {
             return null;
         }
 
-        const { isFakeParticipant, local } = _participant;
+        const { isFakeParticipant, isLocalScreenShare, local } = _participant;
 
         if (local) {
             return this._renderParticipant(true);
@@ -1131,7 +1131,7 @@ class Thumbnail extends Component<Props, State> {
                     classes = { classes }
                     containerClassName = { this._getContainerClassName() }
                     isHovered = { isHovered }
-                    isLocal = { local }
+                    isLocal = { isLocalScreenShare }
                     isMobile = { _isMobile }
                     onClick = { this._onClick }
                     onMouseEnter = { this._onMouseEnter }
