@@ -24,6 +24,9 @@ type AppProps = {
         domain: string;
         roomName: string;
         onReadyToClose?: Function;
+        onConferenceJoined?: Function;
+        onConferenceWillJoin?: Function;
+        onConferenceLeft?: Function;
         settings?: {
             startWithAudioMuted?: boolean;
             startAudioOnly?: boolean;
@@ -62,6 +65,9 @@ const JitsiMeetView = forwardRef((props: AppProps, ref) => {
 
             setAppProps({ 'url': url,
                 'onReadyToClose': onReadyToClose,
+                'onConferenceJoined': props.meetingOptions.onConferenceJoined,
+                'onConferenceWillJoin': props.meetingOptions.onConferenceWillJoin,
+                'onConferenceLeft': props.meetingOptions.onConferenceLeft,
                 'flags': props.flags,
                 'settings': props.meetingOptions.settings
             });
