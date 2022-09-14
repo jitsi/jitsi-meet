@@ -26,7 +26,7 @@ type Listener
  * The type selector supported for registration with
  * {@link StateListenerRegistry} in association with a {@link Listener}.
  *
- * @param {Object} state - The redux state from which the {@code Selector} is to
+ * @param {IState} state - The redux state from which the {@code Selector} is to
  * derive data.
  * @param {any} prevSelection - The value previously derived from the redux
  * store/state by the {@code Selector}. Provided in case the {@code Selector}
