@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment */
 import _ from 'lodash';
+import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { PREJOIN_INITIALIZED } from '../../prejoin/actionTypes';
@@ -179,7 +180,7 @@ function _maybeUpdateDisplayName({ dispatch, getState }: IStore) {
  * @private
  * @returns {void}
  */
-function _updateLocalParticipant({ dispatch, getState }: IStore, action: any) {
+function _updateLocalParticipant({ dispatch, getState }: IStore, action: AnyAction) {
     const { settings } = action;
     const localParticipant = getLocalParticipant(getState());
     const newLocalParticipant = {

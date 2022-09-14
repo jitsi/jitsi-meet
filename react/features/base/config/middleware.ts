@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 import { IStore } from '../../app/types';
 import { getFeatureFlag } from '../flags/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
@@ -39,7 +41,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {*} The return value of {@code next(action)}.
  */
-function _setConfig({ dispatch, getState }: IStore, next: Function, action: any) {
+function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     // The reducer is doing some alterations to the config passed in the action,
     // so make sure it's the final state by waiting for the action to be
     // reduced.
@@ -100,7 +102,7 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: any)
  * @private
  * @returns {*} The return value of {@code next(action)}.
  */
-function _updateSettings({ dispatch }: IStore, next: Function, action: any) {
+function _updateSettings({ dispatch }: IStore, next: Function, action: AnyAction) {
     const { config: { doNotFlipLocalVideo } } = action;
 
     if (doNotFlipLocalVideo === true) {
