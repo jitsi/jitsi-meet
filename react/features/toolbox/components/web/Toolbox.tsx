@@ -1489,6 +1489,7 @@ class Toolbox extends Component<IProps> {
                                     ariaControls = 'hangup-menu'
                                     isOpen = { _hangupMenuVisible }
                                     key = 'hangup-menu'
+                                    notifyMode = { this._getButtonNotifyMode('hangup-menu') }
                                     onVisibilityChange = { this._onSetHangupVisible }>
                                     <ContextMenu
                                         accessibilityLabel = { t(toolbarAccLabel) }
@@ -1496,8 +1497,12 @@ class Toolbox extends Component<IProps> {
                                         hidden = { false }
                                         inDrawer = { _overflowDrawer }
                                         onKeyDown = { this._onEscKey }>
-                                        <EndConferenceButton />
-                                        <LeaveConferenceButton />
+                                        <EndConferenceButton
+                                            buttonKey = 'end-meeting'
+                                            notifyMode = { this._getButtonNotifyMode('end-meeting') } />
+                                        <LeaveConferenceButton
+                                            buttonKey = 'hangup'
+                                            notifyMode = { this._getButtonNotifyMode('hangup') } />
                                     </ContextMenu>
                                 </HangupMenuButton>
                                 : <HangupButton

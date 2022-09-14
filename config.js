@@ -766,11 +766,13 @@ var config = {
     //     'desktop',
     //     'download',
     //     'embedmeeting',
+    //     'end-meeting',
     //     'etherpad',
     //     'feedback',
     //     'filmstrip',
     //     'fullscreen',
     //     'hangup',
+    //     'hangup-menu',
     //     'help',
     //     {
     //         key: 'invite',
