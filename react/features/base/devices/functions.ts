@@ -1,12 +1,14 @@
-// @flow
-
+import { IState } from '../../app/types';
 import JitsiMeetJS from '../lib-jitsi-meet';
-import { updateSettings } from '../settings';
-import { parseURLParams } from '../util';
+import { updateSettings } from '../settings/actions';
+import { ISettingsState } from '../settings/reducer';
+import { parseURLParams } from '../util/parseURLParams';
 
 import logger from './logger';
+import { IDevicesState } from './reducer';
 
-declare var APP: Object;
+
+declare const APP: any;
 
 const webrtcKindToJitsiKindTranslator = {
     audioinput: 'audioInput',
@@ -22,14 +24,16 @@ const webrtcKindToJitsiKindTranslator = {
  * @returns {boolean} - True if the labels are already initialized and false
  * otherwise.
  */
-export function areDeviceLabelsInitialized(state: Object) {
+export function areDeviceLabelsInitialized(state: IState) {
     // TODO: Replace with something that doesn't use APP when the conference.js logic is reactified.
     if (APP.conference._localTracksInitialized) {
         return true;
     }
 
     for (const type of [ 'audioInput', 'audioOutput', 'videoInput' ]) {
-        if ((state['features/base/devices'].availableDevices[type] || []).find(d => Boolean(d.label))) {
+        const availableDevices = state['features/base/devices'].availableDevices;
+
+        if ((availableDevices[type as keyof typeof availableDevices] || []).find(d => Boolean(d.label))) {
             return true;
         }
     }
@@ -56,14 +60,15 @@ export function getAudioOutputDeviceId() {
  * of the preceding types.
  * @returns {string|undefined}
  */
-export function getDefaultDeviceId(state: Object, kind: string) {
-    const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
-    const defaultDevice = (state['features/base/devices'].availableDevices[kindToSearch] || [])
+export function getDefaultDeviceId(state: IState, kind: string) {
+    const kindToSearch = webrtcKindToJitsiKindTranslator[kind as keyof typeof webrtcKindToJitsiKindTranslator] || kind;
+    const availableDevices = state['features/base/devices'].availableDevices;
+    const defaultDevice = (availableDevices[kindToSearch as keyof typeof availableDevices] || [])
         .find(d => d.deviceId === 'default');
 
     // Find the device with a matching group id.
-    const matchingDevice = (state['features/base/devices'].availableDevices[kindToSearch] || [])
-        .find(d => d.deviceId !== 'default' && d.groupId === defaultDevice.groupId);
+    const matchingDevice = (availableDevices[kindToSearch as keyof typeof availableDevices] || [])
+        .find(d => d.deviceId !== 'default' && d.groupId === defaultDevice?.groupId);
 
     if (matchingDevice) {
         return matchingDevice.deviceId;
@@ -80,11 +85,12 @@ export function getDefaultDeviceId(state: Object, kind: string) {
  * of the preceding types.
  * @returns {string|undefined}
  */
-export function getDeviceIdByLabel(state: Object, label: string, kind: string) {
-    const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
+export function getDeviceIdByLabel(state: IState, label: string, kind: string) {
+    const kindToSearch = webrtcKindToJitsiKindTranslator[kind as keyof typeof webrtcKindToJitsiKindTranslator] || kind;
 
+    const availableDevices = state['features/base/devices'].availableDevices;
     const device
-        = (state['features/base/devices'].availableDevices[kindToSearch] || [])
+        = (availableDevices[kindToSearch as keyof typeof availableDevices] || [])
             .find(d => d.label === label);
 
     if (device) {
@@ -102,11 +108,12 @@ export function getDeviceIdByLabel(state: Object, label: string, kind: string) {
  * of the preceding types.
  * @returns {string|undefined}
  */
-export function getDeviceLabelById(state: Object, id: string, kind: string) {
-    const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
+export function getDeviceLabelById(state: IState, id: string, kind: string) {
+    const kindToSearch = webrtcKindToJitsiKindTranslator[kind as keyof typeof webrtcKindToJitsiKindTranslator] || kind;
 
+    const availableDevices = state['features/base/devices'].availableDevices;
     const device
-        = (state['features/base/devices'].availableDevices[kindToSearch] || [])
+        = (availableDevices[kindToSearch as keyof typeof availableDevices] || [])
         .find(d => d.deviceId === id);
 
     if (device) {
@@ -120,9 +127,9 @@ export function getDeviceLabelById(state: Object, id: string, kind: string) {
  * @param {Object} state - The redux state.
  * @returns {Object|undefined}
  */
-export function getDevicesFromURL(state: Object) {
+export function getDevicesFromURL(state: IState) {
     const urlParams
-        = parseURLParams(state['features/base/connection'].locationURL);
+        = parseURLParams(state['features/base/connection'].locationURL ?? '');
 
     const audioOutput = urlParams['devices.audioOutput'];
     const videoInput = urlParams['devices.videoInput'];
@@ -132,7 +139,7 @@ export function getDevicesFromURL(state: Object) {
         return undefined;
     }
 
-    const devices = {};
+    const devices: IDevicesState['availableDevices'] = {};
 
     audioOutput && (devices.audioOutput = audioOutput);
     videoInput && (devices.videoInput = videoInput);
@@ -150,7 +157,7 @@ export function getDevicesFromURL(state: Object) {
  * are device type and the values are arrays with devices matching the device
  * type.
  */
-export function groupDevicesByKind(devices: Object[]): Object {
+export function groupDevicesByKind(devices: MediaDeviceInfo[]): IDevicesState['availableDevices'] {
     return {
         audioInput: devices.filter(device => device.kind === 'audioinput'),
         audioOutput: devices.filter(device => device.kind === 'audiooutput'),
@@ -165,7 +172,7 @@ export function groupDevicesByKind(devices: Object[]): Object {
  * @private
  * @returns {Array<MediaDeviceInfo>} Filtered audio devices.
  */
-export function filterAudioDevices(devices: Object[]): Object {
+export function filterAudioDevices(devices: MediaDeviceInfo[]) {
     return devices.filter(device => device.kind === 'audioinput');
 }
 
@@ -197,8 +204,8 @@ export function formatDeviceLabel(label: string) {
  * @param {Object} state - The state of the application.
  * @returns {Object[]}
  */
-export function getAudioInputDeviceData(state: Object) {
-    return state['features/base/devices'].availableDevices.audioInput.map(
+export function getAudioInputDeviceData(state: IState) {
+    return state['features/base/devices'].availableDevices.audioInput?.map(
         ({ deviceId, label }) => {
             return {
                 deviceId,
@@ -213,8 +220,8 @@ export function getAudioInputDeviceData(state: Object) {
  * @param {Object} state - The state of the application.
  * @returns {Object[]}
  */
-export function getAudioOutputDeviceData(state: Object) {
-    return state['features/base/devices'].availableDevices.audioOutput.map(
+export function getAudioOutputDeviceData(state: IState) {
+    return state['features/base/devices'].availableDevices.audioOutput?.map(
         ({ deviceId, label }) => {
             return {
                 deviceId,
@@ -229,8 +236,8 @@ export function getAudioOutputDeviceData(state: Object) {
  * @param {Object} state - The state of the application.
  * @returns {string[]}
  */
-export function getVideoDeviceIds(state: Object) {
-    return state['features/base/devices'].availableDevices.videoInput.map(({ deviceId }) => deviceId);
+export function getVideoDeviceIds(state: IState) {
+    return state['features/base/devices'].availableDevices.videoInput?.map(({ deviceId }) => deviceId);
 }
 
 /**
@@ -241,12 +248,14 @@ export function getVideoDeviceIds(state: Object) {
  *
  * @returns {boolean}
  */
-export function hasAvailableDevices(state: Object, type: string) {
+export function hasAvailableDevices(state: IState, type: string) {
     if (state['features/base/devices'] === undefined) {
         return true;
     }
 
-    return state['features/base/devices'].availableDevices[type].length > 0;
+    const availableDevices = state['features/base/devices'].availableDevices;
+
+    return Number(availableDevices[type as keyof typeof availableDevices]?.length) > 0;
 }
 
 /**
@@ -260,10 +269,10 @@ export function hasAvailableDevices(state: Object, type: string) {
  * @returns {Promise}
  */
 export function setAudioOutputDeviceId(
-        newId: string = 'default',
+        newId = 'default',
         dispatch: Function,
-        userSelection: boolean = false,
-        newLabel: ?string): Promise<*> {
+        userSelection = false,
+        newLabel?: string): Promise<any> {
 
     logger.debug(`setAudioOutputDevice: ${String(newLabel)}[${newId}]`);
 
@@ -275,7 +284,7 @@ export function setAudioOutputDeviceId(
 
     return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
         .then(() => {
-            const newSettings = {
+            const newSettings: Partial<ISettingsState> = {
                 audioOutputDeviceId: newId,
                 userSelectedAudioOutputDeviceId: undefined,
                 userSelectedAudioOutputDeviceLabel: undefined

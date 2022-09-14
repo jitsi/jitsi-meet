@@ -1,7 +1,6 @@
-/* @flow */
-
-import { toState } from '../redux';
-import { toURLString } from '../util';
+import { IStateful } from '../app/types';
+import { toState } from '../redux/functions';
+import { toURLString } from '../util/uri';
 
 import { getURLWithoutParams } from './utils';
 
@@ -13,7 +12,7 @@ import { getURLWithoutParams } from './utils';
  * @returns {string|undefined}
  * @private
  */
-export function getCurrentConferenceUrl(stateful: Function | Object) {
+export function getCurrentConferenceUrl(stateful: IStateful) {
     const state = toState(stateful);
     let currentUrl;
 
@@ -40,7 +39,7 @@ export function getCurrentConferenceUrl(stateful: Function | Object) {
  * to be stripped.
  * @returns {string}
  */
-export function getInviteURL(stateOrGetState: Function | Object): string {
+export function getInviteURL(stateOrGetState: IStateful): string {
     const state = toState(stateOrGetState);
     let locationURL
         = state instanceof URL
@@ -75,7 +74,7 @@ export function getInviteURL(stateOrGetState: Function | Object): string {
  * @param {Function|Object} stateOrGetState - The redux state or redux's {@code getState} function.
  * @returns {boolean}
  */
-export function isInviteURLReady(stateOrGetState: Function | Object): boolean {
+export function isInviteURLReady(stateOrGetState: IStateful): boolean {
     const state = toState(stateOrGetState);
 
     return Boolean(state['features/base/connection'].locationURL || state['features/base/config'].locationURL);
@@ -90,6 +89,6 @@ export function isInviteURLReady(stateOrGetState: Function | Object): boolean {
  * @returns {string} A string in the form of a JID (i.e.
  * {@code user@server.com}).
  */
-export function toJid(id: string, { authdomain, domain }: Object): string {
+export function toJid(id: string, { authdomain, domain }: { authdomain?: string; domain?: string; }): string {
     return id.indexOf('@') >= 0 ? id : `${id}@${authdomain || domain}`;
 }

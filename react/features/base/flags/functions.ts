@@ -1,7 +1,7 @@
-// @flow
-
+// @ts-ignore
 import { getAppProp } from '../app';
-import { toState } from '../redux';
+import { IStateful } from '../app/types';
+import { toState } from '../redux/functions';
 
 /**
  * Gets the value of a specific feature flag.
@@ -14,11 +14,11 @@ import { toState } from '../redux';
  * @returns {*} The value of the specified React {@code Component} prop of the
  * currently mounted {@code App}.
  */
-export function getFeatureFlag(stateful: Function | Object, flag: string, defaultValue: any) {
+export function getFeatureFlag(stateful: IStateful, flag: string, defaultValue?: any) {
     const state = toState(stateful)['features/base/flags'];
 
     if (state) {
-        const value = state[flag];
+        const value = state[flag as keyof typeof state];
 
         if (typeof value !== 'undefined') {
             return value;

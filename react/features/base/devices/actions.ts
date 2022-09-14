@@ -1,8 +1,7 @@
+import { IStore } from '../../app/types';
 import JitsiMeetJS from '../lib-jitsi-meet';
-import {
-    getUserSelectedOutputDeviceId,
-    updateSettings
-} from '../settings';
+import { updateSettings } from '../settings/actions';
+import { getUserSelectedOutputDeviceId } from '../settings/functions.any';
 
 import {
     ADD_PENDING_DEVICE_REQUEST,
@@ -55,7 +54,7 @@ const DEVICE_TYPE_TO_SETTINGS_KEYS = {
  *      request: Object
  * }}
  */
-export function addPendingDeviceRequest(request) {
+export function addPendingDeviceRequest(request: Object) {
     return {
         type: ADD_PENDING_DEVICE_REQUEST,
         request
@@ -68,7 +67,7 @@ export function addPendingDeviceRequest(request) {
  * @returns {Function}
  */
 export function configureInitialDevices() {
-    return (dispatch, getState) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const deviceLabels = getDevicesFromURL(getState());
         let updateSettingsPromise;
 
@@ -86,9 +85,9 @@ export function configureInitialDevices() {
                             name: 'setDevice',
                             device: {
                                 kind: key.toLowerCase(),
-                                label: deviceLabels[key]
+                                label: deviceLabels[key as keyof typeof deviceLabels]
                             },
-                            // eslint-disable-next-line no-empty-function
+                            // eslint-disable-next-line @typescript-eslint/no-empty-function
                             responseCallback() {}
                         }));
                     });
@@ -96,14 +95,17 @@ export function configureInitialDevices() {
                     return;
                 }
 
-                const newSettings = {};
+                const newSettings: any = {};
 
                 Object.keys(deviceLabels).forEach(key => {
-                    const label = deviceLabels[key];
+                    const label = deviceLabels[key as keyof typeof deviceLabels];
+
+                    // @ts-ignore
                     const deviceId = getDeviceIdByLabel(state, label, key);
 
                     if (deviceId) {
-                        const settingsTranslationMap = DEVICE_TYPE_TO_SETTINGS_KEYS[key];
+                        const settingsTranslationMap = DEVICE_TYPE_TO_SETTINGS_KEYS[
+                            key as keyof typeof DEVICE_TYPE_TO_SETTINGS_KEYS];
 
                         newSettings[settingsTranslationMap.currentDeviceId] = deviceId;
                         newSettings[settingsTranslationMap.userSelectedDeviceId] = deviceId;
@@ -135,12 +137,12 @@ export function configureInitialDevices() {
  * @returns {Function}
  */
 export function getAvailableDevices() {
-    return dispatch => new Promise(resolve => {
+    return (dispatch: IStore['dispatch']) => new Promise(resolve => {
         const { mediaDevices } = JitsiMeetJS;
 
         if (mediaDevices.isDeviceListAvailable()
                 && mediaDevices.isDeviceChangeAvailable()) {
-            mediaDevices.enumerateDevices(devices => {
+            mediaDevices.enumerateDevices((devices: any) => {
                 dispatch(updateDeviceList(devices));
 
                 resolve(devices);
@@ -163,7 +165,7 @@ export function getAvailableDevices() {
  *     error: Object
  * }}
  */
-export function notifyCameraError(error) {
+export function notifyCameraError(error: Error) {
     return {
         type: NOTIFY_CAMERA_ERROR,
         error
@@ -182,7 +184,7 @@ export function notifyCameraError(error) {
  *     error: Object
  * }}
  */
-export function notifyMicError(error) {
+export function notifyMicError(error: Error) {
     return {
         type: NOTIFY_MIC_ERROR,
         error
@@ -211,7 +213,7 @@ export function removePendingDeviceRequests() {
  *      deviceId: string
  * }}
  */
-export function setAudioInputDevice(deviceId) {
+export function setAudioInputDevice(deviceId: string) {
     return {
         type: SET_AUDIO_INPUT_DEVICE,
         deviceId
@@ -225,8 +227,8 @@ export function setAudioInputDevice(deviceId) {
  * @param {string} deviceId - The id of the new audio input device.
  * @returns {Function}
  */
-export function setAudioInputDeviceAndUpdateSettings(deviceId) {
-    return function(dispatch, getState) {
+export function setAudioInputDeviceAndUpdateSettings(deviceId: string) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const deviceLabel = getDeviceLabelById(getState(), deviceId, 'audioInput');
 
         dispatch(setAudioInputDevice(deviceId));
@@ -243,8 +245,8 @@ export function setAudioInputDeviceAndUpdateSettings(deviceId) {
  * @param {string} deviceId - The id of the new output device.
  * @returns {Function}
  */
-export function setAudioOutputDevice(deviceId) {
-    return function(dispatch, getState) {
+export function setAudioOutputDevice(deviceId: string) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const deviceLabel = getDeviceLabelById(getState(), deviceId, 'audioOutput');
 
         return setAudioOutputDeviceId(deviceId, dispatch, true, deviceLabel);
@@ -260,7 +262,7 @@ export function setAudioOutputDevice(deviceId) {
  *      deviceId: string
  * }}
  */
-export function setVideoInputDevice(deviceId) {
+export function setVideoInputDevice(deviceId: string) {
     return {
         type: SET_VIDEO_INPUT_DEVICE,
         deviceId
@@ -274,8 +276,8 @@ export function setVideoInputDevice(deviceId) {
  * @param {string} deviceId - The id of the new video input device.
  * @returns {Function}
  */
-export function setVideoInputDeviceAndUpdateSettings(deviceId) {
-    return function(dispatch, getState) {
+export function setVideoInputDeviceAndUpdateSettings(deviceId: string) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const deviceLabel = getDeviceLabelById(getState(), deviceId, 'videoInput');
 
         dispatch(setVideoInputDevice(deviceId));
@@ -296,7 +298,7 @@ export function setVideoInputDeviceAndUpdateSettings(deviceId) {
  *      devices: Array<MediaDeviceInfo>
  * }}
  */
-export function updateDeviceList(devices) {
+export function updateDeviceList(devices: MediaDeviceInfo[]) {
     return {
         type: UPDATE_DEVICE_LIST,
         devices
@@ -314,7 +316,7 @@ export function updateDeviceList(devices) {
  *      oldDevices: Array<MediaDeviceInfo>
  * }}
  */
-export function checkAndNotifyForNewDevice(newDevices, oldDevices) {
+export function checkAndNotifyForNewDevice(newDevices: MediaDeviceInfo[], oldDevices: MediaDeviceInfo[]) {
     return {
         type: CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
         newDevices,
@@ -331,7 +333,7 @@ export function checkAndNotifyForNewDevice(newDevices, oldDevices) {
  *      permissions: Object
  * }}
  */
-export function devicePermissionsChanged(permissions) {
+export function devicePermissionsChanged(permissions: Object) {
     return {
         type: DEVICE_PERMISSIONS_CHANGED,
         permissions

@@ -145,7 +145,10 @@ class LoginDialog extends Component<Props, State> {
             dispatch
         } = this.props;
         const { password, username } = this.state;
-        const jid = toJid(username, configHosts);
+        const jid = toJid(username, configHosts ?? {
+            authdomain: '',
+            domain: ''
+        });
 
         if (conference) {
             dispatch(authenticateAndUpgradeRole(jid, password, conference));
@@ -217,7 +220,8 @@ class LoginDialog extends Component<Props, State> {
                 const { credentials } = error;
 
                 if (credentials
-                    && credentials.jid === toJid(username, configHosts)
+                    && credentials.jid === toJid(username, configHosts ?? { authdomain: '',
+                        domain: '' })
                     && credentials.password === password) {
                     messageKey = t('dialog.incorrectPassword');
                 }

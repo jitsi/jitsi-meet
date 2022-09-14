@@ -1,12 +1,15 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
+// @ts-ignore
 import Bourne from '@hapi/bourne';
+// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
+import { IState } from '../../app/types';
 import { browser } from '../lib-jitsi-meet';
-import { parseURLParams } from '../util';
+import { parseURLParams } from '../util/parseURLParams';
 
+import { IConfig } from './configType';
 import CONFIG_WHITELIST from './configWhitelist';
 import { _CONFIG_STORE_PREFIX, FEATURE_FLAGS } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
@@ -46,7 +49,7 @@ export function createFakeConfig(baseURL: string) {
  * @param {Object} state - The global state.
  * @returns {string}
  */
-export function getMeetingRegion(state: Object) {
+export function getMeetingRegion(state: IState) {
     return state['features/base/config']?.deploymentInfo?.region || '';
 }
 
@@ -56,7 +59,7 @@ export function getMeetingRegion(state: Object) {
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export function getMultipleVideoSupportFeatureFlag(state: Object) {
+export function getMultipleVideoSupportFeatureFlag(state: IState) {
     return getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
         && getSourceNameSignalingFeatureFlag(state);
 }
@@ -67,7 +70,7 @@ export function getMultipleVideoSupportFeatureFlag(state: Object) {
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export function getMultipleVideoSendingSupportFeatureFlag(state: Object) {
+export function getMultipleVideoSendingSupportFeatureFlag(state: IState) {
     return navigator.product !== 'ReactNative'
         && getMultipleVideoSupportFeatureFlag(state) && isUnifiedPlanEnabled(state);
 }
@@ -78,7 +81,7 @@ export function getMultipleVideoSendingSupportFeatureFlag(state: Object) {
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export function getSourceNameSignalingFeatureFlag(state: Object) {
+export function getSourceNameSignalingFeatureFlag(state: IState) {
     return getFeatureFlag(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING);
 }
 
@@ -89,10 +92,10 @@ export function getSourceNameSignalingFeatureFlag(state: Object) {
  * @param {string} featureFlag - The name of the feature flag.
  * @returns {boolean}
  */
-export function getFeatureFlag(state: Object, featureFlag: string) {
+export function getFeatureFlag(state: IState, featureFlag: string) {
     const featureFlags = state['features/base/config']?.flags || {};
 
-    return Boolean(featureFlags[featureFlag]);
+    return Boolean(featureFlags[featureFlag as keyof typeof featureFlags]);
 }
 
 /**
@@ -101,7 +104,7 @@ export function getFeatureFlag(state: Object, featureFlag: string) {
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export function getDisableRemoveRaisedHandOnFocus(state: Object) {
+export function getDisableRemoveRaisedHandOnFocus(state: IState) {
     return state['features/base/config']?.disableRemoveRaisedHandOnFocus || false;
 }
 
@@ -111,7 +114,7 @@ export function getDisableRemoveRaisedHandOnFocus(state: Object) {
  * @param {Object} state - The global state.
  * @returns {string}
  */
-export function getRecordingSharingUrl(state: Object) {
+export function getRecordingSharingUrl(state: IState) {
     return state['features/base/config'].recordingSharingUrl;
 }
 
@@ -136,7 +139,7 @@ export function getRecordingSharingUrl(state: Object) {
  * }.
  * @returns {void}
  */
-export function overrideConfigJSON(config: ?Object, interfaceConfig: ?Object, json: Object) {
+export function overrideConfigJSON(config: IConfig, interfaceConfig: any, json: any) {
     for (const configName of Object.keys(json)) {
         let configObj;
 
@@ -147,7 +150,7 @@ export function overrideConfigJSON(config: ?Object, interfaceConfig: ?Object, js
         }
         if (configObj) {
             const configJSON
-                = getWhitelistedJSON(configName, json[configName]);
+                = getWhitelistedJSON(configName as 'interfaceConfig' | 'config', json[configName]);
 
             if (!_.isEmpty(configJSON)) {
                 logger.info(
@@ -177,7 +180,7 @@ export function overrideConfigJSON(config: ?Object, interfaceConfig: ?Object, js
  * @returns {Object} - The result object only with the keys
  * that are whitelisted.
  */
-export function getWhitelistedJSON(configName: string, configJSON: Object): Object {
+export function getWhitelistedJSON(configName: 'interfaceConfig' | 'config', configJSON: any): Object {
     if (configName === 'interfaceConfig') {
         return _.pick(configJSON, INTERFACE_CONFIG_WHITELIST);
     } else if (configName === 'config') {
@@ -193,9 +196,9 @@ export function getWhitelistedJSON(configName: string, configJSON: Object): Obje
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function isNameReadOnly(state: Object): boolean {
-    return state['features/base/config'].disableProfile
-        || state['features/base/config'].readOnlyName;
+export function isNameReadOnly(state: IState): boolean {
+    return Boolean(state['features/base/config'].disableProfile
+        || state['features/base/config'].readOnlyName);
 }
 
 /**
@@ -204,7 +207,7 @@ export function isNameReadOnly(state: Object): boolean {
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function isDisplayNameVisible(state: Object): boolean {
+export function isDisplayNameVisible(state: IState): boolean {
     return !state['features/base/config'].hideDisplayName;
 }
 
@@ -214,7 +217,7 @@ export function isDisplayNameVisible(state: Object): boolean {
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function isUnifiedPlanEnabled(state: Object): boolean {
+export function isUnifiedPlanEnabled(state: IState): boolean {
     const { enableUnifiedOnChrome = true } = state['features/base/config'];
 
     return browser.supportsUnifiedPlan()
@@ -232,7 +235,7 @@ export function isUnifiedPlanEnabled(state: Object): boolean {
  * from {@code baseURL} and stored with {@code storeConfig} if it was restored;
  * otherwise, {@code undefined}.
  */
-export function restoreConfig(baseURL: string): ?Object {
+export function restoreConfig(baseURL: string) {
     const key = `${_CONFIG_STORE_PREFIX}/${baseURL}`;
     const config = jitsiLocalStorage.getItem(key);
 
@@ -266,9 +269,9 @@ export function restoreConfig(baseURL: string): ?Object {
  * @returns {void}
  */
 export function setConfigFromURLParams(
-        config: ?Object, interfaceConfig: ?Object, location: Object) {
+        config: IConfig, interfaceConfig: any, location: string | URL) {
     const params = parseURLParams(location);
-    const json = {};
+    const json: any = {};
 
     // At this point we have:
     // params = {
@@ -292,7 +295,7 @@ export function setConfigFromURLParams(
     for (const param of Object.keys(params)) {
         let base = json;
         const names = param.split('.');
-        const last = names.pop();
+        const last = names.pop() ?? '';
 
         for (const name of names) {
             base = base[name] = base[name] || {};

@@ -1,9 +1,13 @@
+import { AnyAction } from 'redux';
+
+import { IStore } from '../../app/types';
 import { getFeatureFlag } from '../flags/functions';
-import { MiddlewareRegistry } from '../redux';
-import { updateSettings } from '../settings';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { updateSettings } from '../settings/actions';
 
 import { SET_CONFIG, OVERWRITE_CONFIG } from './actionTypes';
 import { updateConfig } from './actions';
+import { IConfig } from './configType';
 
 /**
  * The middleware of the feature {@code base/config}.
@@ -37,7 +41,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {*} The return value of {@code next(action)}.
  */
-function _setConfig({ dispatch, getState }, next, action) {
+function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     // The reducer is doing some alterations to the config passed in the action,
     // so make sure it's the final state by waiting for the action to be
     // reduced.
@@ -46,7 +50,7 @@ function _setConfig({ dispatch, getState }, next, action) {
 
     // Update the config with user defined settings.
     const settings = state['features/base/settings'];
-    const config = {};
+    const config: IConfig = {};
 
     if (typeof settings.disableP2P !== 'undefined') {
         config.p2p = { enabled: !settings.disableP2P };
@@ -77,7 +81,9 @@ function _setConfig({ dispatch, getState }, next, action) {
     // not be the global variable which is being modified anymore due to
     // different merge methods being used along the way. The global variable
     // must be synchronized with the final state resolved by the reducer.
+    // @ts-ignore
     if (typeof window.config !== 'undefined') {
+        // @ts-ignore
         window.config = state['features/base/config'];
     }
 
@@ -96,7 +102,7 @@ function _setConfig({ dispatch, getState }, next, action) {
  * @private
  * @returns {*} The return value of {@code next(action)}.
  */
-function _updateSettings({ dispatch }, next, action) {
+function _updateSettings({ dispatch }: IStore, next: Function, action: AnyAction) {
     const { config: { doNotFlipLocalVideo } } = action;
 
     if (doNotFlipLocalVideo === true) {

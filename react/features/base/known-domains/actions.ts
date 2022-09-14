@@ -1,5 +1,3 @@
-// @flow
-
 import { ADD_KNOWN_DOMAINS } from './actionTypes';
 
 /**

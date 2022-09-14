@@ -16,7 +16,7 @@ import {
 
 interface ITrack {
     isReceivingData: boolean;
-    jitsiTrack: Object;
+    jitsiTrack: any;
     lastMediaEvent?: string;
     local: boolean;
     mediaType: string;

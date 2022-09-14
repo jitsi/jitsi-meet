@@ -60,7 +60,7 @@ export interface IConferenceState {
     password?: string;
     passwordRequired?: Object;
     pendingSubjectChange?: string;
-    room?: Object;
+    room?: string;
     startAudioMutedPolicy?: boolean;
     startReactionsMuted?: boolean;
     startVideoMutedPolicy?: boolean;

@@ -1,5 +1,3 @@
-// @flow
-
 import _ from 'lodash';
 
 import MiddlewareRegistry from './MiddlewareRegistry';

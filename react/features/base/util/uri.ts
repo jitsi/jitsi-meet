@@ -330,7 +330,7 @@ export function parseStandardURIString(str: string) {
  *     search: string
  * }}
  */
-export function parseURIString(uri?: string) {
+export function parseURIString(uri?: string): any {
     if (typeof uri !== 'string') {
         return undefined;
     }

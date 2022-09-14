@@ -1,5 +1,3 @@
-// @flow
-
 import { NativeModules } from 'react-native';
 import DefaultPreference from 'react-native-default-preference';
 
@@ -31,6 +29,6 @@ export function handleCallIntegrationChange(disabled: boolean) {
  * @returns {void}
  */
 export function handleCrashReportingChange(disabled: boolean) {
-    DefaultPreference.setName('jitsi-default-preferences').then(
+    DefaultPreference.setName('jitsi-default-preferences').then( // @ts-ignore
         DefaultPreference.set('isCrashReportingDisabled', disabled.toString()));
 }

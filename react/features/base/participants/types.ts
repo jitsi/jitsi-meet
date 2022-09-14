@@ -30,6 +30,7 @@ export interface Participant {
 export interface LocalParticipant extends Participant {
     audioOutputDeviceId?: string;
     cameraDeviceId?: string;
+    jwtId?: string;
     micDeviceId?: string;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;

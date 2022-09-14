@@ -72,8 +72,8 @@ export async function sendReactionsWebhook(state: IState, reactions: Array<strin
         sessionId: conference.sessionId,
         submitted: Date.now(),
         reactions,
-        participantId: localParticipant.jwtId,
-        participantName: localParticipant.name,
+        participantId: localParticipant?.jwtId,
+        participantName: localParticipant?.name,
         participantJid: jid
     };
 

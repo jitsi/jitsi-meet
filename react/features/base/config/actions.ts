@@ -1,10 +1,9 @@
-// @flow
-
+// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import type { Dispatch } from 'redux';
+import { Dispatch } from 'redux';
 
-import { addKnownDomains } from '../known-domains';
-import { parseURIString } from '../util';
+import { addKnownDomains } from '../known-domains/actions';
+import { parseURIString } from '../util/uri';
 
 import {
     CONFIG_WILL_LOAD,
@@ -13,8 +12,9 @@ import {
     UPDATE_CONFIG,
     OVERWRITE_CONFIG
 } from './actionTypes';
+import { IConfig } from './configType';
 import { _CONFIG_STORE_PREFIX } from './constants';
-import { setConfigFromURLParams } from './functions';
+import { setConfigFromURLParams } from './functions.any';
 
 
 /**
@@ -23,7 +23,7 @@ import { setConfigFromURLParams } from './functions';
  * @param {Object} config - The new options (to add).
  * @returns {Function}
  */
-export function updateConfig(config: Object) {
+export function updateConfig(config: IConfig) {
     return {
         type: UPDATE_CONFIG,
         config
@@ -116,6 +116,8 @@ export function setConfig(config: Object = {}) {
                 // On Web the config also comes from the window.config global,
                 // but it is resolved in the loadConfig procedure.
                 config,
+
+                // @ts-ignore
                 window.interfaceConfig,
                 locationURL);
 
@@ -142,6 +144,7 @@ export function storeConfig(baseURL: string, config: Object) {
         let b = false;
 
         try {
+            // @ts-ignore
             if (typeof window.config === 'undefined' || window.config !== config) {
                 jitsiLocalStorage.setItem(`${_CONFIG_STORE_PREFIX}/${baseURL}`, JSON.stringify(config));
                 b = true;
@@ -153,7 +156,7 @@ export function storeConfig(baseURL: string, config: Object) {
         // If base/config knows a domain, then the app knows it.
         if (b) {
             try {
-                dispatch(addKnownDomains(parseURIString(baseURL).host));
+                dispatch(addKnownDomains(parseURIString(baseURL)?.host));
             } catch (e) {
                 // Ignore the error because the fiddling with "known domains" is
                 // a side effect here.

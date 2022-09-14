@@ -1,5 +1,3 @@
-// @flow
-
 import { UPDATE_FLAGS } from './actionTypes';
 
 /**

@@ -1,10 +1,11 @@
 import _ from 'lodash';
 
+import { IState } from '../../app/types';
 import {
     appendURLParam,
     getBackendSafeRoomName,
     parseURIString
-} from '../util';
+} from '../util/uri';
 
 import logger from './logger';
 
@@ -16,7 +17,7 @@ import logger from './logger';
  * @returns {Object} The options to be passed to the constructor of
  * {@code JitsiConnection}.
  */
-export function constructOptions(state) {
+export function constructOptions(state: IState) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
     const options = _.cloneDeep(state['features/base/config']);
@@ -36,14 +37,14 @@ export function constructOptions(state) {
 
         if (bosh.startsWith('//')) {
             // By default our config.js doesn't include the protocol.
-            bosh = `${locationURL.protocol}${bosh}`;
+            bosh = `${locationURL?.protocol}${bosh}`;
         } else if (bosh.startsWith('/')) {
             // Handle relative URLs, which won't work on mobile.
             const {
                 protocol,
                 host,
                 contextRoot
-            } = parseURIString(locationURL.href);
+            } = parseURIString(locationURL?.href);
 
             bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
         }
@@ -60,10 +61,10 @@ export function constructOptions(state) {
     if (serviceUrl && room) {
         const roomName = getBackendSafeRoomName(room);
 
-        options.serviceUrl = appendURLParam(serviceUrl, 'room', roomName);
+        options.serviceUrl = appendURLParam(serviceUrl, 'room', roomName ?? '');
 
         if (options.websocketKeepAliveUrl) {
-            options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, 'room', roomName);
+            options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, 'room', roomName ?? '');
         }
     }
 

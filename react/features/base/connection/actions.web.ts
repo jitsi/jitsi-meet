@@ -1,12 +1,8 @@
-// @flow
+import { IStore } from '../../app/types';
+import { configureInitialDevices } from '../devices/actions';
+import { getBackendSafeRoomName } from '../util/uri';
 
-import type { Dispatch } from 'redux';
-
-declare var APP: Object;
-declare var config: Object;
-
-import { configureInitialDevices } from '../devices';
-import { getBackendSafeRoomName } from '../util';
+declare const APP: any;
 
 export {
     connectionDisconnected,
@@ -24,7 +20,7 @@ export * from './actions.any';
  * @returns {Promise<JitsiConnection>}
  */
 export function connect() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const room = getBackendSafeRoomName(getState()['features/base/conference'].room);
 
         // XXX For web based version we use conference initialization logic
@@ -32,7 +28,7 @@ export function connect() {
         return dispatch(configureInitialDevices()).then(
             () => APP.conference.init({
                 roomName: room
-            }).catch(error => {
+            }).catch((error: Error) => {
                 APP.API.notifyConferenceLeft(APP.conference.roomName);
                 logger.error(error);
             }));
@@ -46,7 +42,7 @@ export function connect() {
  * request for call feedback.
  * @returns {Function}
  */
-export function disconnect(requestFeedback: boolean = false) {
+export function disconnect(requestFeedback = false) {
     // XXX For web based version we use conference hanging up logic from the old
     // app.
     return () => APP.conference.hangup(requestFeedback);

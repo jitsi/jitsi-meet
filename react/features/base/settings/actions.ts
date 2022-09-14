@@ -1,4 +1,5 @@
 import { SETTINGS_UPDATED } from './actionTypes';
+import { ISettingsState } from './reducer';
 
 /**
  * Create an action for when the settings are updated.
@@ -23,7 +24,7 @@ import { SETTINGS_UPDATED } from './actionTypes';
  *     }
  * }}
  */
-export function updateSettings(settings) {
+export function updateSettings(settings: Partial<ISettingsState>) {
     return {
         type: SETTINGS_UPDATED,
         settings

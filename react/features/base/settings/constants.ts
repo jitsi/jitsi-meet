@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The default server URL to open if no other was specified.
  */

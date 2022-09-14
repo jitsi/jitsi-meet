@@ -1,4 +1,5 @@
-// @flow
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { IState } from '../../app/types';
 
 export * from './functions.any';
 
@@ -8,7 +9,7 @@ export * from './functions.any';
  * @param {Object} state - The state of the application.
  * @returns {void}
  */
-export function getCurrentCameraDeviceId(state: Object) {
+export function getCurrentCameraDeviceId(state: IState) {
     return getDeviceIdByType(state, 'isVideoTrack');
 }
 
@@ -18,7 +19,7 @@ export function getCurrentCameraDeviceId(state: Object) {
  * @param {Object} state - The state of the application.
  * @returns {void}
  */
-export function getCurrentMicDeviceId(state: Object) {
+export function getCurrentMicDeviceId(state: IState) {
     return getDeviceIdByType(state, 'isAudioTrack');
 }
 
@@ -28,7 +29,7 @@ export function getCurrentMicDeviceId(state: Object) {
  * @param {Object} state - The state of the application.
  * @returns {void}
  */
-export function getCurrentOutputDeviceId(state: Object) {
+export function getCurrentOutputDeviceId(state: IState) {
     return state['features/base/settings'].audioOutputDeviceId;
 }
 
@@ -39,11 +40,11 @@ export function getCurrentOutputDeviceId(state: Object) {
  * @param {string} isType - Can be 'isVideoTrack' | 'isAudioTrack'.
  * @returns {string}
  */
-function getDeviceIdByType(state: Object, isType: string) {
+function getDeviceIdByType(state: IState, isType: string) {
     const [ deviceId ] = state['features/base/tracks']
-          .map(t => t.jitsiTrack)
-          .filter(t => t && t.isLocal() && t[isType]())
-          .map(t => t.getDeviceId());
+        .map(t => t.jitsiTrack)
+        .filter(t => t?.isLocal() && t[isType as keyof typeof t]())
+        .map(t => t.getDeviceId());
 
     return deviceId || '';
 }
@@ -54,7 +55,7 @@ function getDeviceIdByType(state: Object, isType: string) {
  * @param {Object} state - The state of the application.
  * @returns {string}
  */
-export function getDisplayName(state: Object): string {
+export function getDisplayName(state: IState): string {
     return state['features/base/settings'].displayName || '';
 }
 
@@ -66,8 +67,8 @@ export function getDisplayName(state: Object): string {
  * @param {boolean} disabled - Whether call integration is disabled or not.
  * @returns {void}
  */
-export function handleCallIntegrationChange(disabled: boolean) { // eslint-disable-line no-unused-vars
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-function, require-jsdoc
+export function handleCallIntegrationChange(disabled: boolean) { }
 
 /**
  * Handles changes to the `disableCrashReporting` setting.
@@ -76,5 +77,5 @@ export function handleCallIntegrationChange(disabled: boolean) { // eslint-disab
  * @param {boolean} disabled - Whether crash reporting is disabled or not.
  * @returns {void}
  */
-export function handleCrashReportingChange(disabled: boolean) { // eslint-disable-line no-unused-vars
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-function, require-jsdoc
+export function handleCrashReportingChange(disabled: boolean) { }

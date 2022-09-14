@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { createReactionMenuEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -53,7 +52,7 @@ interface Props extends WithTranslation {
     /**
      * The ID of the local participant.
      */
-    _localParticipantID: String;
+    _localParticipantID?: string;
 
     /**
      * Whether or not the local participant's hand is raised.
@@ -241,7 +240,7 @@ function mapStateToProps(state: IState) {
     const localParticipant = getLocalParticipant(state);
 
     return {
-        _localParticipantID: localParticipant.id,
+        _localParticipantID: localParticipant?.id,
         _isMobile: isMobileBrowser(),
         _isGifEnabled: isGifEnabled(state),
         _isGifMenuVisible: isGifsMenuOpen(state),
@@ -258,10 +257,7 @@ function mapStateToProps(state: IState) {
 function mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
         dispatch,
-        ...bindActionCreators(
-        {
-            _dockToolbox: dockToolbox
-        }, dispatch)
+        _dockToolbox: (dock: boolean) => dispatch(dockToolbox(dock))
     };
 }
 

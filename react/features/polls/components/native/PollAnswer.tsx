@@ -33,7 +33,7 @@ const PollAnswer = (props: AbstractProps) => {
         <>
             <Text style = { dialogStyles.questionText } >{ poll.question }</Text>
             <Text style = { dialogStyles.questionOwnerText } >{
-                t('polls.by', { name: localParticipant.name })
+                t('polls.by', { name: localParticipant?.name })
             }
             </Text>
             <View style = { chatStyles.answerContent }>
