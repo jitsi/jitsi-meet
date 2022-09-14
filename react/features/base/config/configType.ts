@@ -39,11 +39,13 @@ type ButtonsWithNotifyClick = 'camera' |
     'desktop' |
     'download' |
     'embedmeeting' |
+    'end-meeting' |
     'etherpad' |
     'feedback' |
     'filmstrip' |
     'fullscreen' |
     'hangup' |
+    'hangup-menu' |
     'help' |
     'invite' |
     'livestreaming' |
