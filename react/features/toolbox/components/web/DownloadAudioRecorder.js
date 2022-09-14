@@ -19,7 +19,6 @@ import {
     isIosMobileBrowser,
     isMobileBrowser
 } from '../../../base/environment/utils';
-import { isMacOS } from '../../../base/environment';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -59,6 +58,33 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
         super(props);
         let boolRecording = false;
         let mediaRecorder;
+
+        function getMimeType() {
+            console.log('isiOSMobile ', isIosMobileBrowser(), ' android&webm ', getMimeTypeForWeb());
+            return isIosMobileBrowser() ? 'mp4' : getMimeTypeForWeb();
+        }
+
+        function getMimeTypeForWeb() {
+            let isChromium = window.chrome;
+            let winNav = window.navigator;
+            let vendorName = winNav.vendor;
+            let isIOSChrome = winNav.userAgent.match('CriOS');
+
+            if (isIOSChrome) {
+                // is Google Chrome on IOS
+                return 'webm';
+            } else if (
+                isChromium !== null &&
+                typeof isChromium !== 'undefined' &&
+                vendorName === 'Google Inc.'
+            ) {
+                return 'webm';
+                // is Google Chrome
+            } else {
+                return 'mp4';
+                // not Google Chrome
+            }
+        }
 
 
         this._audioRecorder = () => {
@@ -138,7 +164,7 @@ class DownloadAudioRecorder extends AbstractSelfieButton<Props, *> {
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = audioUrl;
-                    a.download = isMacOS() || isIosMobileBrowser() ? `${getFilename()}.mp4` : `${getFilename()}.webm`;
+                    a.download = `${getFilename()}.${getMimeType()}`;
                     document.body.appendChild(a);
                     a.onclick = () => {
                         console.log(`${a.download} save option shown`);

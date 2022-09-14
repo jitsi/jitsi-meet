@@ -21,7 +21,6 @@ import {
     isIosMobileBrowser,
     isMobileBrowser
 } from '../../../base/environment/utils';
-import { isMacOS } from '../../../base/environment';
 
 /**
  * The type of the React {@code Component} props of {@link DownloadButton}.
@@ -67,8 +66,30 @@ class DownloadVideoRecorder extends AbstractSelfieButton<Props, *> {
         let recordedChunks = [];
 
         function getMimeType() {
-            console.log('isMac os ', isMacOS(), ' is Ios ', isIosMobileBrowser());
-            return isMacOS() || isIosMobileBrowser() ? 'mp4' : 'webm';
+            console.log('isiOSMobile ', isIosMobileBrowser(), ' android&webm ', getMimeTypeForWeb());
+            return isIosMobileBrowser() ? 'mp4' : getMimeTypeForWeb();
+        }
+
+        function getMimeTypeForWeb() {
+            let isChromium = window.chrome;
+            let winNav = window.navigator;
+            let vendorName = winNav.vendor;
+            let isIOSChrome = winNav.userAgent.match('CriOS');
+
+            if (isIOSChrome) {
+                // is Google Chrome on IOS
+                return 'webm';
+            } else if (
+                isChromium !== null &&
+                typeof isChromium !== 'undefined' &&
+                vendorName === 'Google Inc.'
+            ) {
+                return 'webm';
+                // Google Chrome
+            } else {
+                return 'mp4';
+                // not Google Chrome
+            }
         }
 
         this._videoRecorder = () => {
