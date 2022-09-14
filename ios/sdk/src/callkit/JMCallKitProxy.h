@@ -59,16 +59,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)configureProviderWithLocalizedName:(nonnull NSString *)localizedName
                              ringtoneSound:(nullable NSString *)ringtoneSound
-                    iconTemplateImageData:(nullable NSData*)imageData;
+                    iconTemplateImageData:(nullable NSData*)imageData
+NS_SWIFT_NAME(configureProvider(localizedName:ringtoneSound:iconTemplateImageData:));
 + (BOOL)isProviderConfigured;
-+ (void)addListener:(nonnull id<JMCallKitListener>)listener;
-+ (void)removeListener:(nonnull id<JMCallKitListener>)listener;
-+ (BOOL)hasActiveCallForUUID:(nonnull NSString *)callUUID;
++ (void)addListener:(nonnull id<JMCallKitListener>)listener NS_SWIFT_NAME(addListener(_:));
++ (void)removeListener:(nonnull id<JMCallKitListener>)listener NS_SWIFT_NAME(removeListener(_:));
++ (BOOL)hasActiveCallForUUID:(nonnull NSString *)callUUID NS_SWIFT_NAME(hasActiveCallForUUID(_:));
 + (void)reportNewIncomingCallWithUUID:(nonnull NSUUID *)uuid
                                handle:(nullable NSString*)handle
                           displayName:(nullable NSString*)displayName
                              hasVideo:(BOOL)hasVideo
-                           completion:(nonnull void (^)(NSError *_Nullable))completion;
+                           completion:(nonnull void (^)(NSError *_Nullable))completion
+NS_SWIFT_NAME(reportNewIncomingCall(UUID:handle:displayName:hasVideo:completion:));
 + (void)reportCallUpdateWith:(nonnull NSUUID *)uuid
                       handle:(nullable NSString *)handle
                  displayName:(nullable NSString *)displayName
