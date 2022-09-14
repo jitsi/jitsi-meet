@@ -154,7 +154,8 @@ MiddlewareRegistry.register(store => next => action => {
         const { dispatch, getState } = store;
         const { participantId, pinned } = action;
         const state = getState();
-        const { activeParticipants, maxStageParticipants } = state['features/filmstrip'];
+        const { activeParticipants } = state['features/filmstrip'];
+        const { maxStageParticipants } = state['features/base/settings'];
         let queue;
 
         if (activeParticipants.find(p => p.participantId === participantId)) {

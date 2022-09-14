@@ -74,7 +74,7 @@ StateListenerRegistry.register(
  * Subscribes to changes to the max number of stage participants setting.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/filmstrip'].maxStageParticipants,
+    /* selector */ state => state['features/base/settings'].maxStageParticipants,
     /* listener */ _sendFollowMeCommand);
 
 /**
@@ -90,7 +90,7 @@ function _getFollowMeState(state) {
 
     return {
         filmstripVisible: state['features/filmstrip'].visible,
-        maxStageParticipants: stageFilmstrip ? state['features/filmstrip'].maxStageParticipants : undefined,
+        maxStageParticipants: stageFilmstrip ? state['features/base/settings'].maxStageParticipants : undefined,
         nextOnStage: stageFilmstrip ? undefined : pinnedParticipant && pinnedParticipant.id,
         pinnedStageParticipants: stageFilmstrip ? JSON.stringify(getPinnedActiveParticipants(state)) : undefined,
         sharedDocumentVisible: state['features/etherpad'].editing,
