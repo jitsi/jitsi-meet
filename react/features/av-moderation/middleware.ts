@@ -151,7 +151,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     isParticipantPending(participant, MEDIA_TYPE.AUDIO)(state)
                     && dispatch(dismissPendingAudioParticipant(participant));
                 }
-            } else if (participant.id === getLocalParticipant(state).id
+            } else if (participant.id === getLocalParticipant(state)?.id
                 && /* the new role */ isParticipantModerator(participant)) {
 
                 // this is the granted moderator case
@@ -180,7 +180,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (typeof APP !== 'undefined') {
             const local = getLocalParticipant(getState());
 
-            APP.API.notifyParticipantApproved(local.id, action.mediaType);
+            APP.API.notifyParticipantApproved(local?.id, action.mediaType);
         }
         break;
     }
@@ -194,7 +194,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (typeof APP !== 'undefined') {
             const local = getLocalParticipant(getState());
 
-            APP.API.notifyParticipantRejected(local.id, action.mediaType);
+            APP.API.notifyParticipantRejected(local?.id, action.mediaType);
         }
         break;
     }

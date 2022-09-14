@@ -219,8 +219,8 @@ export const shouldRenderInviteButton = (state: IState) => {
  * {@code getState} function to be used to retrieve the state features/base/participants.
  * @returns {Array<string>}
  */
-export function getSortedParticipantIds(stateful: IStateful): Array<string> {
-    const { id } = getLocalParticipant(stateful);
+export function getSortedParticipantIds(stateful: IStateful) {
+    const id = getLocalParticipant(stateful)?.id;
     const remoteParticipants = getRemoteParticipantsSorted(stateful);
     const reorderedParticipants = new Set(remoteParticipants);
     const raisedHandParticipants = getRaiseHandsQueue(stateful).map(({ id: particId }) => particId);
@@ -236,7 +236,7 @@ export function getSortedParticipantIds(stateful: IStateful): Array<string> {
 
     const dominant = [];
     const dominantId = dominantSpeaker?.id;
-    const local = remoteRaisedHandParticipants.has(id) ? [] : [ id ];
+    const local = remoteRaisedHandParticipants.has(id ?? '') ? [] : [ id ];
 
     // In case dominat speaker has raised hand, keep the order in the raised hand queue.
     // In case they don't have raised hand, goes first in the participants list.
