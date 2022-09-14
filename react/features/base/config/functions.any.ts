@@ -69,7 +69,7 @@ export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export function getSsrcRewritingFeatureFlag(state: Object) {
+export function getSsrcRewritingFeatureFlag(state: IState) {
     return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING);
 }
 
