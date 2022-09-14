@@ -114,8 +114,8 @@ export async function sendFaceExpressionsWebhook(state: IState) {
         sessionId: conference.sessionId,
         submitted: Date.now(),
         emotions: faceExpressionsBuffer,
-        participantId: localParticipant.jwtId,
-        participantName: localParticipant.name,
+        participantId: localParticipant?.jwtId,
+        participantName: localParticipant?.name,
         participantJid: jid
     };
 
@@ -207,8 +207,8 @@ function getFaceBoxForId(id: string, state: IState) {
  * @param {string} id - The participant id.
  * @returns {string} - CSS object-position in the shape of '{horizontalPercentage}% {verticalPercentage}%'.
  */
-export function getVideoObjectPosition(state: IState, id: string) {
-    const faceBox = getFaceBoxForId(id, state);
+export function getVideoObjectPosition(state: IState, id?: string) {
+    const faceBox = id && getFaceBoxForId(id, state);
 
     if (faceBox) {
         const { right, width } = faceBox;

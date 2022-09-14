@@ -130,7 +130,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         dispatch({
             type: UPDATE_FACE_COORDINATES,
             faceBox,
-            id: localParticipant.id
+            id: localParticipant?.id
         });
     }
     }
