@@ -1,21 +1,31 @@
-import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
+import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
-import { IconCloseCircle } from '../../../icons/svg/index';
+import { IconCloseCircle } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
-import { Theme } from '../../../ui/types';
 import { InputProps } from '../types';
 
 interface IInputProps extends InputProps {
+    accessibilityLabel?: string;
+    autoFocus?: boolean;
     bottomLabel?: string;
     className?: string;
+    iconClick?: () => void;
+    id?: string;
+    maxLength?: number;
+    maxRows?: number;
+    minRows?: number;
+    name?: string;
+    onKeyPress?: (e: React.KeyboardEvent) => void;
+    textarea?: boolean;
     type?: 'text' | 'email' | 'number' | 'password';
 }
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         inputContainer: {
             display: 'flex',
@@ -25,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => {
         label: {
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            marginBottom: `${theme.spacing(2)}px`,
+            marginBottom: theme.spacing(2),
 
             '&.is-mobile': {
                 ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
@@ -67,6 +77,10 @@ const useStyles = makeStyles((theme: Theme) => {
                 ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
             },
 
+            '&.icon-input': {
+                paddingLeft: '46px'
+            },
+
             '&.error': {
                 boxShadow: `0px 0px 0px 2px ${theme.palette.textError}`
             }
@@ -74,12 +88,13 @@ const useStyles = makeStyles((theme: Theme) => {
 
         icon: {
             position: 'absolute',
-            top: '10px',
+            top: '50%',
+            transform: 'translateY(-50%)',
             left: '16px'
         },
 
-        iconInput: {
-            paddingLeft: '46px'
+        iconClickable: {
+            cursor: 'pointer'
         },
 
         clearableInput: {
@@ -97,7 +112,7 @@ const useStyles = makeStyles((theme: Theme) => {
         },
 
         bottomLabel: {
-            marginTop: `${theme.spacing(2)}px`,
+            marginTop: theme.spacing(2),
             ...withPixelLineHeight(theme.typography.labelRegular),
             color: theme.palette.text02,
 
@@ -112,55 +127,94 @@ const useStyles = makeStyles((theme: Theme) => {
     };
 });
 
-const Input = ({
+const Input = React.forwardRef<any, IInputProps>(({
+    accessibilityLabel,
+    autoFocus,
     bottomLabel,
     className,
     clearable = false,
     disabled,
     error,
     icon,
+    iconClick,
+    id,
     label,
+    maxLength,
+    maxRows,
+    minRows,
+    name,
     onChange,
+    onKeyPress,
     placeholder,
+    textarea = false,
     type = 'text',
     value
-}: IInputProps) => {
-    const styles = useStyles();
+}: IInputProps, ref) => {
+    const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
 
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         onChange(e.target.value), []);
 
     const clearInput = useCallback(() => onChange(''), []);
 
-    return (<div className = { clsx(styles.inputContainer, className) }>
-        {label && <span className = { clsx(styles.label, isMobile && 'is-mobile') }>{label}</span>}
-        <div className = { styles.fieldContainer }>
-            {icon && <Icon
-                className = { styles.icon }
-                size = { 20 }
-                src = { icon } />}
-            <input
-                className = { clsx(styles.input, isMobile && 'is-mobile',
-                    error && 'error', clearable && styles.clearableInput, icon && styles.iconInput) }
-                disabled = { disabled }
-                onChange = { handleChange }
-                placeholder = { placeholder }
-                type = { type }
-                value = { value } />
-            {clearable && !disabled && value !== '' && <button className = { styles.clearButton }>
-                <Icon
-                    onClick = { clearInput }
+    return (
+        <div className = { cx(styles.inputContainer, className) }>
+            {label && <span className = { cx(styles.label, isMobile && 'is-mobile') }>{label}</span>}
+            <div className = { styles.fieldContainer }>
+                {icon && <Icon
+                    { ...(iconClick ? { tabIndex: 0 } : {}) }
+                    className = { cx(styles.icon, iconClick && styles.iconClickable) }
+                    onClick = { iconClick }
                     size = { 20 }
-                    src = { IconCloseCircle } />
-            </button>}
+                    src = { icon } />}
+                {textarea ? (
+                    <TextareaAutosize
+                        aria-label = { accessibilityLabel }
+                        autoFocus = { autoFocus }
+                        className = { cx(styles.input, isMobile && 'is-mobile',
+                            error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
+                        disabled = { disabled }
+                        { ...(id ? { id } : {}) }
+                        maxRows = { maxRows }
+                        minRows = { minRows }
+                        name = { name }
+                        onChange = { handleChange }
+                        onKeyPress = { onKeyPress }
+                        placeholder = { placeholder }
+                        ref = { ref }
+                        value = { value } />
+                ) : (
+                    <input
+                        aria-label = { accessibilityLabel }
+                        autoFocus = { autoFocus }
+                        className = { cx(styles.input, isMobile && 'is-mobile',
+                            error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
+                        disabled = { disabled }
+                        { ...(id ? { id } : {}) }
+                        maxLength = { maxLength }
+                        name = { name }
+                        onChange = { handleChange }
+                        onKeyPress = { onKeyPress }
+                        placeholder = { placeholder }
+                        ref = { ref }
+                        type = { type }
+                        value = { value } />
+                )}
+                {clearable && !disabled && value !== '' && <button className = { styles.clearButton }>
+                    <Icon
+                        onClick = { clearInput }
+                        size = { 20 }
+                        src = { IconCloseCircle } />
+                </button>}
+            </div>
+            {bottomLabel && (
+                <span className = { cx(styles.bottomLabel, isMobile && 'is-mobile', error && 'error') }>
+                    {bottomLabel}
+                </span>
+            )}
         </div>
-        {bottomLabel && (
-            <span className = { clsx(styles.bottomLabel, isMobile && 'is-mobile', error && 'error') }>
-                {bottomLabel}
-            </span>
-        )}
-    </div>);
-};
+    );
+});
 
 export default Input;

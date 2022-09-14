@@ -10,22 +10,22 @@ type Props = {
     /**
      * Index of the reaction in the queue.
      */
-    index: number,
+    index: number;
 
     /**
      * Reaction to be displayed.
      */
-    reaction: string,
+    reaction: string;
 
     /**
      * Removes reaction from redux state.
      */
-    reactionRemove: Function,
+    reactionRemove: Function;
 
     /**
      * Id of the reaction.
      */
-    uid: string
+    uid: string;
 };
 
 type State = {
@@ -33,8 +33,8 @@ type State = {
     /**
      * Index of CSS animation. Number between 0-20.
      */
-    index: number
-}
+    index: number;
+};
 
 
 /**

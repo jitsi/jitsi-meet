@@ -1,11 +1,8 @@
-import { BoxModel } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
 export const PLACEHOLDER_COLOR = BaseTheme.palette.focus01;
-export const ENABLED_TRACK_COLOR = BaseTheme.palette.switch01Enabled;
-export const DISABLED_TRACK_COLOR = BaseTheme.palette.switch01Disabled;
-export const THUMB_COLOR = BaseTheme.palette.field02;
+export const PLACEHOLDER_TEXT_COLOR = BaseTheme.palette.text03;
 
 const TEXT_SIZE = 14;
 
@@ -21,17 +18,6 @@ export default {
         height: 180,
         justifyContent: 'center'
     },
-
-    /**
-     * The style of the display name label.
-     */
-    avatarLabel: {
-        color: BaseTheme.palette.text01,
-        fontSize: 16,
-        marginTop: BoxModel.margin,
-        textAlign: 'center'
-    },
-
 
     /**
      * Style for screen container.

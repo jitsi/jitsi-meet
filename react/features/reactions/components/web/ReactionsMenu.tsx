@@ -1,35 +1,23 @@
-/* eslint-disable import/order */
-import { withStyles } from '@material-ui/styles';
+/* eslint-disable lines-around-comment */
+import { Theme } from '@mui/material';
+import { ClassNameMap, withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
+import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
-import {
-    createReactionMenuEvent,
-    createToolbarEvent,
-    sendAnalytics
-
-    // @ts-ignore
-} from '../../../analytics';
-import { IStore } from '../../../app/types';
-
+import { createReactionMenuEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
-
+import { translate } from '../../../base/i18n/functions';
+import { raiseHand } from '../../../base/participants/actions';
+import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
+import GifsMenu from '../../../gifs/components/web/GifsMenu';
 // @ts-ignore
-import { translate } from '../../../base/i18n';
-
-// @ts-ignore
-import { getLocalParticipant, hasRaisedHand, raiseHand } from '../../../base/participants';
-
-import { connect } from '../../../base/redux/functions';
-import { Theme } from '../../../base/ui/types';
-
-// @ts-ignore
-import { GifsMenu, GifsMenuButton } from '../../../gifs/components';
-
+import GifsMenuButton from '../../../gifs/components/web/GifsMenuButton';
 // @ts-ignore
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
-
 // @ts-ignore
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
@@ -39,62 +27,53 @@ import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 // @ts-ignore
 import ReactionButton from './ReactionButton';
 
-interface Classes {
-    overflow: string
-}
-
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * Docks the toolbox.
      */
-    _dockToolbox: Function,
+    _dockToolbox: Function;
 
     /**
      * Whether or not the GIF feature is enabled.
      */
-    _isGifEnabled: boolean,
+    _isGifEnabled: boolean;
 
     /**
      * Whether or not the GIF menu is visible.
      */
-    _isGifMenuVisible: boolean,
+    _isGifMenuVisible: boolean;
 
     /**
      * Whether or not it's a mobile browser.
      */
-    _isMobile: boolean,
+    _isMobile: boolean;
 
     /**
      * The ID of the local participant.
      */
-    _localParticipantID: String,
+    _localParticipantID?: string;
 
     /**
      * Whether or not the local participant's hand is raised.
      */
-    _raisedHand: boolean,
+    _raisedHand: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: Classes,
+    classes: ClassNameMap<string>;
 
     /**
      * The Redux Dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Whether or not it's displayed in the overflow menu.
      */
-    overflowMenu: boolean,
-
-    /**
-     * Used for translation.
-     */
-    t: Function
-};
+    overflowMenu?: boolean;
+}
 
 const styles = (theme: Theme) => {
     return {
@@ -104,8 +83,8 @@ const styles = (theme: Theme) => {
             backgroundColor: theme.palette.ui01,
             boxShadow: 'none',
             borderRadius: 0,
-            position: 'relative',
-            boxSizing: 'border-box',
+            position: 'relative' as const,
+            boxSizing: 'border-box' as const,
             height: `${REACTIONS_MENU_HEIGHT}px`
         }
     };
@@ -257,11 +236,11 @@ class ReactionsMenu extends Component<Props> {
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state: any) {
+function mapStateToProps(state: IState) {
     const localParticipant = getLocalParticipant(state);
 
     return {
-        _localParticipantID: localParticipant.id,
+        _localParticipantID: localParticipant?.id,
         _isMobile: isMobileBrowser(),
         _isGifEnabled: isGifEnabled(state),
         _isGifMenuVisible: isGifsMenuOpen(state),
@@ -278,18 +257,11 @@ function mapStateToProps(state: any) {
 function mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
         dispatch,
-        ...bindActionCreators(
-        {
-            _dockToolbox: dockToolbox
-
-        // @ts-ignore
-        }, dispatch)
+        _dockToolbox: (dock: boolean) => dispatch(dockToolbox(dock))
     };
 }
 
 export default translate(connect(
     mapStateToProps,
     mapDispatchToProps
-
-    // @ts-ignore
 )(withStyles(styles)(ReactionsMenu)));

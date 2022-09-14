@@ -1,20 +1,14 @@
-/* eslint-disable import/order */
-
+/* eslint-disable lines-around-comment */
 import { v4 as uuidV4 } from 'uuid';
 import fixWebmDuration from 'webm-duration-fix';
 
 import { IStore } from '../../../app/types';
-
 // @ts-ignore
 import { getRoomName } from '../../../base/conference';
-
-// @ts-ignore
-import { MEDIA_TYPE } from '../../../base/media';
-
+import { MEDIA_TYPE } from '../../../base/media/constants';
 // @ts-ignore
 import { getTrackState, getLocalTrack } from '../../../base/tracks';
 import { inIframe } from '../../../base/util/iframeUtils';
-
 // @ts-ignore
 import { stopLocalVideoRecording } from '../../actions.any';
 
@@ -27,21 +21,21 @@ interface SelfRecording {
 
 interface ILocalRecordingManager {
     addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
-    audioContext: AudioContext|undefined;
-    audioDestination: MediaStreamAudioDestinationNode|undefined;
+    audioContext: AudioContext | undefined;
+    audioDestination: MediaStreamAudioDestinationNode | undefined;
     getFilename: () => string;
     initializeAudioMixer: () => void;
     isRecordingLocally: () => boolean;
     mediaType: string;
     mixAudioStream: (stream: MediaStream) => void;
-    recorder: MediaRecorder|undefined;
+    recorder: MediaRecorder | undefined;
     recordingData: Blob[];
     roomName: string;
     saveRecording: (recordingData: Blob[], filename: string) => void;
     selfRecording: SelfRecording;
     startLocalRecording: (store: IStore, onlySelf: boolean) => void;
     stopLocalRecording: () => void;
-    stream: MediaStream|undefined;
+    stream: MediaStream | undefined;
     totalSize: number;
 }
 

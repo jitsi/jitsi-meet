@@ -7,7 +7,6 @@ import AbstractPollsPane from '../AbstractPollsPane';
 // @ts-ignore
 import type { AbstractProps } from '../AbstractPollsPane';
 
-// @ts-ignore
 import PollCreate from './PollCreate';
 // @ts-ignore
 import PollsList from './PollsList';
@@ -26,8 +25,7 @@ const PollsPane = (props: AbstractProps) => {
                 <Button
                     accessibilityLabel = { t('polls.create.create') }
                     fullWidth = { true }
-                    label = { t('polls.create.create') }
-                    // eslint-disable-next-line react/jsx-no-bind
+                    labelKey = { 'polls.create.create' }
                     onClick = { onCreate } />
             </div>
         </div>;

@@ -1,9 +1,8 @@
 /* eslint-disable lines-around-comment */
 // @ts-ignore
 import { CAR_MODE_ENABLED, getFeatureFlag } from '../../../base/flags';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
-import { IconCar } from '../../../base/icons/svg/index';
+import { translate } from '../../../base/i18n/functions';
+import { IconCar } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';

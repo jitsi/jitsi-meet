@@ -132,7 +132,7 @@ export function commonUserLeftHandling(
     } else {
         const isReplaced = user.isReplaced && user.isReplaced();
 
-        dispatch(participantLeft(id, conference, isReplaced));
+        dispatch(participantLeft(id, conference, { isReplaced }));
     }
 }
 
@@ -192,7 +192,7 @@ export function getConferenceName(stateful: Function | Object): string {
         || subject
         || callDisplayName
         || (callee && callee.name)
-        || safeStartCase(safeDecodeURIComponent(room));
+        || (room && safeStartCase(safeDecodeURIComponent(room)));
 }
 
 /**

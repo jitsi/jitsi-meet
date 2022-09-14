@@ -104,7 +104,7 @@ export function showErrorNotification(props: Object, type: ?string) {
  * Queues a notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.
- * @param {string} type - Notification type.
+ * @param {string} type - Timeout type.
  * @returns {Function}
  */
 export function showNotification(props: Object = {}, type: ?string) {

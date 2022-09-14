@@ -21,5 +21,5 @@ jobs:
     - run: npm run lint
     - run: for file in lang/*.json; do npx --yes jsonlint -q $file || exit 1; done
     - env:
-        NODE_OPTIONS: '--max-old-space-size=4096'  
+        NODE_OPTIONS: '--max-old-space-size=8192'
       run: make

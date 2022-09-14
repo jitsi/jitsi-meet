@@ -23,20 +23,20 @@ export type Sound = {
      * Becomes available once the sound resource gets loaded and the sound can
      * not be played until that happens.
      */
-    audioElement?: AudioElement,
+    audioElement?: AudioElement;
 
     /**
      * This field is container for all optional parameters related to the sound.
      */
-    options?: Object,
+    options?: Object;
 
     /**
      * This field describes the source of the audio resource to be played. It
      * can be either a path to the file or an object depending on the platform
      * (native vs web).
      */
-    src?: Object | string
-}
+    src?: Object | string;
+};
 
 /**
  * Initial/default state of the feature {@code base/sounds}. It is a {@code Map}
@@ -51,9 +51,9 @@ export type ISoundsState = Map<string, Sound>;
 /**
  * The base/sounds feature's reducer.
  */
-ReducerRegistry.register(
+ReducerRegistry.register<ISoundsState>(
     'features/base/sounds',
-    (state: ISoundsState = DEFAULT_STATE, action) => {
+    (state = DEFAULT_STATE, action): ISoundsState => {
         switch (action.type) {
         case _ADD_AUDIO_ELEMENT:
         case _REMOVE_AUDIO_ELEMENT:

@@ -5,7 +5,6 @@ import { isLocalParticipantModerator } from '../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
 import { FEATURES } from '../../jaas/constants';
-import { toggleRequestingSubtitles } from '../actions';
 
 export type AbstractProps = AbstractButtonProps & {
 
@@ -22,7 +21,12 @@ export type AbstractProps = AbstractButtonProps & {
     /**
      * Whether the local participant is currently requesting subtitles.
      */
-    _requestingSubtitles: Boolean
+    _requestingSubtitles: Boolean,
+
+    /**
+     * Selected language for subtitle.
+     */
+    _subtitles: String
 };
 
 /**
@@ -30,6 +34,18 @@ export type AbstractProps = AbstractButtonProps & {
  */
 export class AbstractClosedCaptionButton
     extends AbstractButton<AbstractProps, *> {
+
+    /**
+     * Helper function to be implemented by subclasses, which should be used
+     * to handle the closed caption button being clicked / pressed.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _handleClickOpenLanguageSelector() {
+        // To be implemented by subclass.
+    }
+
     /**
      * Handles clicking / pressing the button.
      *
@@ -45,11 +61,10 @@ export class AbstractClosedCaptionButton
                 'requesting_subtitles': Boolean(_requestingSubtitles)
             }));
 
-
         const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
 
         if (!dialogShown) {
-            dispatch(toggleRequestingSubtitles());
+            this._handleClickOpenLanguageSelector();
         }
     }
 
@@ -86,11 +101,12 @@ export class AbstractClosedCaptionButton
  * @private
  * @returns {{
  *     _requestingSubtitles: boolean,
+ *     _language: string,
  *     visible: boolean
  * }}
  */
 export function _abstractMapStateToProps(state: Object, ownProps: Object) {
-    const { _requestingSubtitles } = state['features/subtitles'];
+    const { _requestingSubtitles, _language } = state['features/subtitles'];
     const { transcription } = state['features/base/config'];
     const { isTranscribing } = state['features/transcribing'];
 
@@ -101,6 +117,7 @@ export function _abstractMapStateToProps(state: Object, ownProps: Object) {
 
     return {
         _requestingSubtitles,
+        _language,
         visible
     };
 }

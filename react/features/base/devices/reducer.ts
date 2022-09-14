@@ -1,4 +1,3 @@
-/* eslint-disable import/order */
 import ReducerRegistry from '../redux/ReducerRegistry';
 
 import {
@@ -9,11 +8,9 @@ import {
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
-
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { groupDevicesByKind } from './functions';
-
-// @ts-ignore
 import logger from './logger';
 
 
@@ -32,15 +29,15 @@ const DEFAULT_STATE: IDevicesState = {
 
 export interface IDevicesState {
     availableDevices: {
-        audioInput: MediaDeviceInfo[];
-        audioOutput: MediaDeviceInfo[];
-        videoInput: MediaDeviceInfo[];
+        audioInput?: MediaDeviceInfo[];
+        audioOutput?: MediaDeviceInfo[];
+        videoInput?: MediaDeviceInfo[];
     };
     pendingRequests: Object[];
     permissions: {
         audio: boolean;
         video: boolean;
-    }
+    };
 }
 
 /**
@@ -53,9 +50,9 @@ export interface IDevicesState {
  * video devices.
  * @returns {Object}
  */
-ReducerRegistry.register(
+ReducerRegistry.register<IDevicesState>(
     'features/base/devices',
-    (state: IDevicesState = DEFAULT_STATE, action) => {
+    (state = DEFAULT_STATE, action): IDevicesState => {
         switch (action.type) {
         case UPDATE_DEVICE_LIST: {
             const deviceList = groupDevicesByKind(action.devices);

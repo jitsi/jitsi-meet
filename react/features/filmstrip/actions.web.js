@@ -14,6 +14,7 @@ import { getMaxColumnCount } from '../video-layout';
 import {
     ADD_STAGE_PARTICIPANT,
     REMOVE_STAGE_PARTICIPANT,
+    RESIZE_FILMSTRIP,
     SET_STAGE_PARTICIPANTS,
     SET_FILMSTRIP_WIDTH,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
@@ -29,7 +30,8 @@ import {
     SET_SCREENSHARING_TILE_DIMENSIONS,
     SET_USER_FILMSTRIP_HEIGHT,
     SET_FILMSTRIP_HEIGHT,
-    SET_TOP_PANEL_VISIBILITY
+    SET_TOP_PANEL_VISIBILITY,
+    SET_SCREENSHARE_FILMSTRIP_PARTICIPANT
 } from './actionTypes';
 import {
     HORIZONTAL_FILMSTRIP_MARGIN,
@@ -60,6 +62,23 @@ import {
 import { isStageFilmstripAvailable } from './functions.web';
 
 export * from './actions.any';
+
+/**
+ * Resize the filmstrip.
+ *
+ * @param {number} width - Width value for filmstrip.
+ *
+ * @returns {{
+ *  type: RESIZE_FILMSTRIP,
+ *  width: number,
+ * }}
+ */
+export function resizeFilmStrip(width) {
+    return {
+        type: RESIZE_FILMSTRIP,
+        width
+    };
+}
 
 /**
  * Sets the dimensions of the tile view grid.
@@ -571,5 +590,18 @@ export function setTopPanelVisible(visible) {
     return {
         type: SET_TOP_PANEL_VISIBILITY,
         visible
+    };
+}
+
+/**
+ * Sets the participant whose screenshare to be displayed on the filmstrip.
+ *
+ * @param {string|undefined} participantId - The id of the participant to be set.
+ * @returns {Object}
+ */
+export function setScreenshareFilmstripParticipant(participantId) {
+    return {
+        type: SET_SCREENSHARE_FILMSTRIP_PARTICIPANT,
+        participantId
     };
 }

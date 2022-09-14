@@ -2,37 +2,16 @@ import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
 import { Human, Config, FaceResult } from '@vladmandic/human';
 
 import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
-
-type DetectInput = {
-    image: ImageBitmap | ImageData,
-    threshold: number
-};
-
-type FaceBox = {
-    left: number,
-    right: number,
-    width?: number
-};
-
-type InitInput = {
-    baseUrl: string,
-    detectionTypes: string[]
-}
-
-type DetectOutput = {
-    faceBox?: FaceBox,
-    faceCount: number,
-    faceExpression?: string
-};
+import { DetectInput, DetectOutput, FaceBox, InitInput } from './types';
 
 export interface FaceLandmarksHelper {
-    detect({ image, threshold } : DetectInput): Promise<DetectOutput>;
-    getDetectionInProgress(): boolean;
-    getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>>;
-    getFaceBox(detections: Array<FaceResult>, threshold: number): FaceBox | undefined;
-    getFaceCount(detections : Array<FaceResult>): number;
-    getFaceExpression(detections: Array<FaceResult>): string | undefined;
-    init(): Promise<void>;
+    detect: ({ image, threshold }: DetectInput) => Promise<DetectOutput>;
+    getDetectionInProgress: () => boolean;
+    getDetections: (image: ImageBitmap | ImageData) => Promise<Array<FaceResult>>;
+    getFaceBox: (detections: Array<FaceResult>, threshold: number) => FaceBox | undefined;
+    getFaceCount: (detections: Array<FaceResult>) => number;
+    getFaceExpression: (detections: Array<FaceResult>) => string | undefined;
+    init: () => Promise<void>;
 }
 
 /**
@@ -217,7 +196,7 @@ export class HumanHelper implements FaceLandmarksHelper {
      * @param {DetectInput} input - The input for the detections.
      * @returns {Promise<DetectOutput>}
      */
-    public async detect({ image, threshold } : DetectInput): Promise<DetectOutput> {
+    public async detect({ image, threshold }: DetectInput): Promise<DetectOutput> {
         let faceExpression;
         let faceBox;
 

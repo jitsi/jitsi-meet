@@ -4,12 +4,14 @@ import { batch } from 'react-redux';
 
 import { CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_LEFT } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
+import { MEDIA_TYPE } from '../base/media';
 import {
     PARTICIPANT_LEFT,
     getLocalParticipant,
     participantJoined,
     participantLeft,
-    pinParticipant
+    pinParticipant,
+    getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
@@ -18,8 +20,12 @@ import {
     resetSharedVideoStatus,
     setSharedVideoStatus
 } from './actions.any';
-import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
+import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME, PLAYBACK_STATUSES } from './constants';
 import { isSharingStatus } from './functions';
+import logger from './logger';
+
+
+declare var APP: Object;
 
 /**
  * Middleware that captures actions related to video sharing and updates
@@ -46,7 +52,12 @@ MiddlewareRegistry.register(store => next => action => {
                 if (isSharingStatus(sharedVideoStatus)) {
                     handleSharingVideoStatus(store, value, attributes, conference);
                 } else if (sharedVideoStatus === 'stop') {
-                    dispatch(participantLeft(value, conference));
+                    const videoParticipant = getParticipantById(state, value);
+
+                    dispatch(participantLeft(value, conference, {
+                        isFakeParticipant: videoParticipant?.isFakeParticipant
+                    }));
+
                     if (localParticipantId !== from) {
                         dispatch(resetSharedVideoStatus());
                     }
@@ -74,6 +85,13 @@ MiddlewareRegistry.register(store => next => action => {
         const conference = getCurrentConference(state);
         const localParticipantId = getLocalParticipant(state)?.id;
         const { videoUrl, status, ownerId, time, muted, volume } = action;
+        const operator = status === PLAYBACK_STATUSES.PLAYING ? 'is' : '';
+
+        logger.debug(`User with id: ${ownerId} ${operator} ${status} video sharing.`);
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.VIDEO, status, ownerId);
+        }
 
         if (localParticipantId === ownerId) {
             sendShareVideoCommand({
@@ -91,6 +109,16 @@ MiddlewareRegistry.register(store => next => action => {
     case RESET_SHARED_VIDEO_STATUS: {
         const localParticipantId = getLocalParticipant(state)?.id;
         const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
+
+        if (!stateOwnerId) {
+            break;
+        }
+
+        logger.debug(`User with id: ${stateOwnerId} stop video sharing.`);
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.VIDEO, 'stop', stateOwnerId);
+        }
 
         if (localParticipantId === stateOwnerId) {
             const conference = getCurrentConference(state);

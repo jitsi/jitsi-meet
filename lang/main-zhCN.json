@@ -106,7 +106,6 @@
         "bridgeCount": "服务器数量:",
         "codecs": "编解码器（A / V）：",
         "connectedTo": "连接到:",
-        "e2e_rtt": "端到端时延 RTT:",
         "framerate": "帧率：",
         "less": "显示更少",
         "localaddress": "本地地址：",

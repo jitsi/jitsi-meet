@@ -18,9 +18,9 @@ export interface ITestingState {
     connectionState: string;
 }
 
-ReducerRegistry.register(
+ReducerRegistry.register<ITestingState>(
     'features/testing',
-    (state: ITestingState = INITIAL_STATE, action) => {
+    (state = INITIAL_STATE, action): ITestingState => {
         switch (action.type) {
         case SET_CONNECTION_STATE:
             return _setConnectionState(state, action);

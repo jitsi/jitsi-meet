@@ -25,6 +25,7 @@ import {
     forEachConference,
     getCurrentConference
 } from '../conference';
+import { SET_CONFIG } from '../config';
 import { getDisableRemoveRaisedHandOnFocus } from '../config/functions.any';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
@@ -175,6 +176,26 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         break;
+    }
+
+    case SET_CONFIG: {
+        const result = next(action);
+
+        const state = store.getState();
+        const { deploymentInfo } = state['features/base/config'];
+
+        // if there userRegion set let's use it for the local participant
+        if (deploymentInfo && deploymentInfo.userRegion) {
+            const localId = getLocalParticipant(state)?.id;
+
+            store.dispatch(participantUpdated({
+                id: localId,
+                local: true,
+                region: deploymentInfo.userRegion
+            }));
+        }
+
+        return result;
     }
 
     case SET_LOCAL_PARTICIPANT_RECORDING_STATUS: {
@@ -348,7 +369,9 @@ StateListenerRegistry.register(
         batch(() => {
             for (const [ id, p ] of getRemoteParticipants(getState())) {
                 (!conference || p.conference !== conference)
-                    && dispatch(participantLeft(id, p.conference, p.isReplaced));
+                    && dispatch(participantLeft(id, p.conference, {
+                        isReplaced: p.isReplaced
+                    }));
             }
         });
     });

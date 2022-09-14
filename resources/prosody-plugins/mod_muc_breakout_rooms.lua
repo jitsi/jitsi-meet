@@ -116,22 +116,19 @@ end
 function broadcast_breakout_rooms(room_jid)
     local main_room = get_main_room(room_jid);
 
-    if not main_room or main_room._data.is_broadcast_breakout_scheduled then
+    if not main_room or main_room.broadcast_timer then
         return;
     end
 
     -- Only send each BROADCAST_ROOMS_INTERVAL seconds to prevent flooding of messages.
-    main_room._data.is_broadcast_breakout_scheduled = true;
-    main_room:save(true);
-    module:add_timer(BROADCAST_ROOMS_INTERVAL, function()
+    main_room.broadcast_timer = module:add_timer(BROADCAST_ROOMS_INTERVAL, function()
         local main_room, main_room_jid = get_main_room(room_jid);
 
         if not main_room then
             return;
         end
 
-        main_room._data.is_broadcast_breakout_scheduled = false;
-        main_room:save(true);
+        main_room.broadcast_timer = nil;
 
         local real_jid = internal_room_jid_match_rewrite(main_room_jid);
         local real_node = jid_node(real_jid);
@@ -213,7 +210,7 @@ end
 function destroy_breakout_room(room_jid, message)
     local main_room, main_room_jid = get_main_room(room_jid);
 
-    if room_jid == main_room_jid or not main_room then
+    if room_jid == main_room_jid then
         return;
     end
 
@@ -221,7 +218,7 @@ function destroy_breakout_room(room_jid, message)
 
     if breakout_room then
         message = message or 'Breakout room removed.';
-        breakout_room:destroy(main_room_jid, message);
+        breakout_room:destroy(main_room and main_room_jid or nil, message);
     end
     if main_room then
         if main_room._data.breakout_rooms then
@@ -418,10 +415,8 @@ function on_main_room_destroyed(event)
         return;
     end
 
-    local message = 'Conference ended.';
-
     for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
-        destroy_breakout_room(breakout_room_jid, message)
+        destroy_breakout_room(breakout_room_jid, event.reason)
     end
 end
 

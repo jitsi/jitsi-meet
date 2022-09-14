@@ -1,6 +1,7 @@
 // @flow
 
 import { isMobileBrowser } from '../base/environment/utils';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getRemoteParticipants, isLocalParticipantModerator } from '../base/participants';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
@@ -153,7 +154,7 @@ export function getRecordButtonProps(state: Object): ?string {
 
     // a button can be disabled/enabled if enableFeaturesBasedOnToken
     // is on or if the livestreaming is running.
-    let disabled;
+    let disabled = false;
     let tooltip = '';
 
     // If the containing component provides the visible prop, that is one
@@ -161,29 +162,18 @@ export function getRecordButtonProps(state: Object): ?string {
     // its own to be visible or not.
     const isModerator = isLocalParticipantModerator(state);
     const {
-        enableFeaturesBasedOnToken,
         recordingService,
         localRecording
     } = state['features/base/config'];
-    const { features = {} } = getLocalParticipant(state);
     const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
 
     const dropboxEnabled = isDropboxEnabled(state);
 
     visible = isModerator && (recordingService?.enabled || localRecordingEnabled || dropboxEnabled);
-
-    if (enableFeaturesBasedOnToken) {
-        visible = visible && String(features.recording) === 'true';
-        disabled = String(features.recording) === 'disabled';
-        if (!visible && !disabled) {
-            disabled = true;
-            visible = true;
-            tooltip = 'dialog.recordingDisabledTooltip';
-        }
-    }
+    visible = isJwtFeatureEnabled(state, 'recording', visible);
 
     // disable the button if the livestreaming is running.
-    if (getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
+    if (visible && getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
         disabled = true;
         tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
     }

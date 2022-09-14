@@ -1,38 +1,29 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import { batch } from 'react-redux';
 
-// @ts-ignore
-import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
-
+import { createReactionSoundsDisabledEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import {
     CONFERENCE_JOIN_IN_PROGRESS,
     SET_START_REACTIONS_MUTED,
     setStartReactionsMuted
-
     // @ts-ignore
 } from '../base/conference';
 import {
     getParticipantById,
     getParticipantCount,
     isLocalParticipantModerator
-
-    // @ts-ignore
-} from '../base/participants';
-
+} from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
-
 // @ts-ignore
 import { updateSettings } from '../base/settings/actions';
-
 // @ts-ignore
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-
 // @ts-ignore
 import { getDisabledSounds } from '../base/sounds/functions.any';
-
 // @ts-ignore
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 
@@ -76,7 +67,7 @@ import { RAISE_HAND_SOUND_FILE } from './sounds';
  * @param {IStore} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
     const { dispatch, getState } = store;
 
     switch (action.type) {
@@ -111,7 +102,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) 
         const { timeoutID, buffer } = getState()['features/reactions'];
         const { reaction } = action;
 
-        clearTimeout(timeoutID);
+        clearTimeout(timeoutID ?? 0);
         buffer.push(reaction);
         action.buffer = buffer;
         action.timeoutID = setTimeout(() => {
@@ -124,7 +115,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) 
         const { conference } = action;
 
         conference.addCommandListener(
-            MUTE_REACTIONS_COMMAND, ({ attributes }: { attributes: MuteCommandAttributes }, id: any) => {
+            MUTE_REACTIONS_COMMAND, ({ attributes }: { attributes: MuteCommandAttributes; }, id: any) => {
                 _onMuteReactionsCommand(attributes, id, store);
             });
         break;
@@ -213,7 +204,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) 
         const { disableReactionsModeration } = state['features/base/config'];
 
         const customActions = [ 'notify.reactionSounds' ];
-        const customFunctions = [ () => dispatch(updateSettings({
+        const customFunctions: Function[] = [ () => dispatch(updateSettings({
             soundsReactions: false
         })) ];
 
@@ -264,11 +255,11 @@ function _onMuteReactionsCommand(attributes: MuteCommandAttributes = {}, id: str
 
     // The Command(s) API will send us our own commands and we don't want
     // to act upon them.
-    if (participantSendingCommand.local) {
+    if (participantSendingCommand?.local) {
         return;
     }
 
-    if (participantSendingCommand.role !== 'moderator') {
+    if (participantSendingCommand?.role !== 'moderator') {
         logger.warn('Received mute-reactions command not from moderator');
 
         return;

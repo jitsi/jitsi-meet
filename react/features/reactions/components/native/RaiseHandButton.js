@@ -151,8 +151,8 @@ class RaiseHandButton extends Component<Props, *> {
             <Button
                 accessibilityLabel = { this.accessibilityLabel }
                 icon = { this._renderRaiseHandEmoji }
-                label = { this._getLabel() }
-                onPress = { this._onClick }
+                labelKey = { this._getLabel() }
+                onClick = { this._onClick }
                 style = { styles.raiseHandButton }
                 type = { BUTTON_TYPES.SECONDARY } />
         );

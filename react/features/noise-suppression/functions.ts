@@ -1,7 +1,8 @@
 /* eslint-disable lines-around-comment */
 import { IState } from '../app/types';
 // @ts-ignore
-import { NOTIFICATION_TIMEOUT_TYPE, showWarningNotification } from '../notifications';
+import { showWarningNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 // @ts-ignore
 import { isScreenAudioShared } from '../screen-share';
 
@@ -23,7 +24,16 @@ export function isNoiseSuppressionEnabled(state: IState): boolean {
  * @param {*} localAudio - Current local audio track.
  * @returns {boolean}
  */
-export function canEnableNoiseSuppression(state: IState, dispatch: Function, localAudio: any) : boolean {
+export function canEnableNoiseSuppression(state: IState, dispatch: Function, localAudio: any): boolean {
+    if (!localAudio) {
+        dispatch(showWarningNotification({
+            titleKey: 'notify.noiseSuppressionFailedTitle',
+            descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+        return false;
+    }
+
     const { channelCount } = localAudio.track.getSettings();
 
     // Sharing screen audio implies an effect being applied to the local track, because currently we don't support

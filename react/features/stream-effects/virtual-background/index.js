@@ -1,5 +1,3 @@
-// @flow
-
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
 import { showWarningNotification } from '../../notifications/actions';
 import { timeout } from '../../virtual-background/functions';
@@ -12,6 +10,7 @@ const models = {
     modelLandscape: 'libs/selfie_segmentation_landscape.tflite'
 };
 
+let modelBuffer;
 let tflite;
 let wasmCheck;
 let isWasmDisabled = false;
@@ -37,11 +36,19 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
         throw new Error('JitsiStreamBackgroundEffect not supported!');
     }
 
+    if (isWasmDisabled) {
+        dispatch(showWarningNotification({
+            titleKey: 'virtualBackground.backgroundEffectError'
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+        return;
+    }
+
     // Checks if WebAssembly feature is supported or enabled by/in the browser.
     // Conditional import of wasm-check package is done to prevent
     // the browser from crashing when the user opens the app.
 
-    if (!tflite && !isWasmDisabled) {
+    if (!tflite) {
         try {
             wasmCheck = require('wasm-check');
             const tfliteTimeout = 10000;
@@ -68,26 +75,21 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
 
             return;
         }
-    } else if (isWasmDisabled) {
-        dispatch(showWarningNotification({
-            titleKey: 'virtualBackground.backgroundEffectError'
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
-
-        return;
     }
 
-    const modelBufferOffset = tflite._getModelBufferMemoryOffset();
-    const modelResponse = await fetch(models.modelLandscape);
+    if (!modelBuffer) {
+        const modelResponse = await fetch(models.modelLandscape);
 
-    if (!modelResponse.ok) {
-        throw new Error('Failed to download tflite model!');
+        if (!modelResponse.ok) {
+            throw new Error('Failed to download tflite model!');
+        }
+
+        modelBuffer = await modelResponse.arrayBuffer();
+
+        tflite.HEAPU8.set(new Uint8Array(modelBuffer), tflite._getModelBufferMemoryOffset());
+
+        tflite._loadModel(modelBuffer.byteLength);
     }
-
-    const model = await modelResponse.arrayBuffer();
-
-    tflite.HEAPU8.set(new Uint8Array(model), modelBufferOffset);
-
-    tflite._loadModel(model.byteLength);
 
     const options = {
         ...segmentationDimensions.modelLandscape,

@@ -15,10 +15,8 @@
  */
 
 #import <Intents/Intents.h>
-#import <RNGoogleSignin/RNGoogleSignin.h>
 #import <WebRTC/RTCLogging.h>
 
-#import "Dropbox.h"
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
@@ -26,6 +24,11 @@
 #import "ReactUtils.h"
 #import "RNSplashScreen.h"
 #import "ScheenshareEventEmiter.h"
+
+#if !defined(JITSI_MEET_SDK_LITE)
+#import <RNGoogleSignin/RNGoogleSignin.h>
+#import "Dropbox.h"
+#endif
 
 @implementation JitsiMeet {
     RCTBridgeWrapper *_bridgeWrapper;
@@ -76,7 +79,9 @@
 
     _launchOptions = [launchOptions copy];
 
+#if !defined(JITSI_MEET_SDK_LITE)
     [Dropbox setAppKey];
+#endif
 
     return YES;
 }
@@ -98,6 +103,7 @@
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
 
+#if !defined(JITSI_MEET_SDK_LITE)
     if ([Dropbox application:app openURL:url options:options]) {
         return YES;
     }
@@ -107,6 +113,7 @@
                             options:options]) {
         return YES;
     }
+#endif
 
     if (_customUrlScheme == nil || ![_customUrlScheme isEqualToString:url.scheme]) {
         return NO;

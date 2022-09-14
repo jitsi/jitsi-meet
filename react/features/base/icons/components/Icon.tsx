@@ -1,9 +1,8 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 
 // @ts-ignore
 import { Container } from '../../react/base';
-
 // @ts-ignore
 import { styleTypeToObject } from '../../styles';
 
@@ -12,98 +11,98 @@ type Props = {
     /**
      * The id of the element this button icon controls.
      */
-    ariaControls?: string,
+    ariaControls?: string;
 
     /**
      * Id of description label.
      */
-    ariaDescribedBy?: string,
+    ariaDescribedBy?: string;
 
     /**
      * Aria disabled flag for the Icon.
      */
-    ariaDisabled?: boolean,
+    ariaDisabled?: boolean;
 
     /**
      * Whether the element popup is expanded.
      */
-    ariaExpanded?: boolean,
+    ariaExpanded?: boolean;
 
     /**
      * Whether the element has a popup.
      */
-    ariaHasPopup?: boolean,
+    ariaHasPopup?: boolean;
 
     /**
      * Aria label for the Icon.
      */
-    ariaLabel?: string,
+    ariaLabel?: string;
 
     /**
      * Whether the element has a pressed.
      */
-    ariaPressed?: boolean,
+    ariaPressed?: boolean;
 
     /**
      * Class name for the web platform, if any.
      */
-    className?: string,
+    className?: string;
 
     /**
      * Color of the icon (if not provided by the style object).
      */
-    color?: string,
+    color?: string;
 
     /**
      * Id of the icon container.
      */
-    containerId?: string,
+    containerId?: string;
 
     /**
      * Id prop (mainly for autotests).
      */
-    id?: string,
+    id?: string;
 
     /**
      * Function to invoke on click.
      */
-    onClick?: Function,
+    onClick?: Function;
 
     /**
      * Keydown handler.
      */
-    onKeyDown?: Function,
+    onKeyDown?: Function;
 
     /**
      * Keypress handler.
      */
-    onKeyPress?: Function,
+    onKeyPress?: Function;
 
     /**
      * Role for the Icon.
      */
-    role?: string,
+    role?: string;
 
     /**
      * The size of the icon (if not provided by the style object).
      */
-    size?: number | string,
+    size?: number | string;
 
     /**
      * The preloaded icon component to render.
      */
-    src: Function,
+    src: Function;
 
     /**
      * Style object to be applied.
      */
-    style?: Object,
+    style?: Object;
 
     /**
      * TabIndex  for the Icon.
      */
-    tabIndex?: number
-}
+    tabIndex?: number;
+};
 
 export const DEFAULT_COLOR = navigator.product === 'ReactNative' ? 'white' : undefined;
 export const DEFAULT_SIZE = navigator.product === 'ReactNative' ? 36 : 22;

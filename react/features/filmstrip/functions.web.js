@@ -779,6 +779,24 @@ export function getThumbnailTypeFromLayout(currentLayout, filmstripType) {
 }
 
 /**
+ * Returns the id of the participant displayed on the screen share filmstrip.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {string} - The participant id.
+ */
+export function getScreenshareFilmstripParticipantId(state) {
+    const { screenshareFilmstripParticipantId } = state['features/filmstrip'];
+    const screenshares = state['features/video-layout'].remoteScreenShares;
+    let id = screenshares.find(sId => sId === screenshareFilmstripParticipantId);
+
+    if (!id && screenshares.length) {
+        id = screenshares[0];
+    }
+
+    return id;
+}
+
+/**
  * Whether or not the top panel is enabled.
  *
  * @param {Object} state - Redux state.

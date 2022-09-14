@@ -8,7 +8,7 @@ local st = require 'util.stanza';
 
 local muc_component_host = module:get_option_string('muc_component');
 if muc_component_host == nil then
-    log('error', 'No muc_component specified. No muc to operate on!');
+    module:log('error', 'No muc_component specified. No muc to operate on!');
     return;
 end
 

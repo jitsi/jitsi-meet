@@ -1,24 +1,18 @@
 // @flow
 
-import UIEvents from '../../../../service/UI/UIEvents';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
     createShortcutEvent,
-    createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
-import { setAudioOnly } from '../../base/audio-only';
 import { getFeatureFlag, VIDEO_MUTE_BUTTON_ENABLED } from '../../base/flags';
 import { translate } from '../../base/i18n';
-import {
-    VIDEO_MUTISM_AUTHORITY,
-    setVideoMuted
-} from '../../base/media';
 import { connect } from '../../base/redux';
 import { AbstractButton, AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { getLocalVideoType, isLocalCameraTrackMuted } from '../../base/tracks';
+import { isLocalCameraTrackMuted } from '../../base/tracks';
+import { handleToggleVideoMuted } from '../actions.any';
 import { isVideoMuteButtonDisabled } from '../functions';
 
 declare var APP: Object;
@@ -28,15 +22,6 @@ declare var APP: Object;
  */
 type Props = AbstractButtonProps & {
 
-    /**
-     * Whether the current conference is in audio only mode or not.
-     */
-    _audioOnly: boolean,
-
-    /**
-     * MEDIA_TYPE of the local video.
-     */
-    _videoMediaType: string,
 
     /**
      * Whether video is currently muted or not.
@@ -158,24 +143,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
      * @returns {void}
      */
     _setVideoMuted(videoMuted: boolean) {
-        sendAnalytics(createToolbarEvent(VIDEO_MUTE, { enable: videoMuted }));
-        if (this.props._audioOnly) {
-            this.props.dispatch(
-                setAudioOnly(false, /* ensureTrack */ true));
-        }
-        const mediaType = this.props._videoMediaType;
-
-        this.props.dispatch(
-            setVideoMuted(
-                videoMuted,
-                mediaType,
-                VIDEO_MUTISM_AUTHORITY.USER,
-                /* ensureTrack */ true));
-
-        // FIXME: The old conference logic still relies on this event being
-        // emitted.
-        typeof APP === 'undefined'
-            || APP.UI.emitEvent(UIEvents.VIDEO_MUTED, videoMuted, true);
+        this.props.dispatch(handleToggleVideoMuted(videoMuted, true, true));
     }
 }
 
@@ -186,19 +154,15 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioOnly: boolean,
  *     _videoMuted: boolean
  * }}
  */
 function _mapStateToProps(state): Object {
-    const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
     const enabledFlag = getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true);
 
     return {
-        _audioOnly: Boolean(audioOnly),
         _videoDisabled: isVideoMuteButtonDisabled(state),
-        _videoMediaType: getLocalVideoType(tracks),
         _videoMuted: isLocalCameraTrackMuted(tracks),
         visible: enabledFlag
     };

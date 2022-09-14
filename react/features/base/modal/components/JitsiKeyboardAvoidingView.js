@@ -25,6 +25,11 @@ type Props = {
     contentContainerStyle?: StyleType,
 
     /**
+     * Disable forced keyboard dismiss?
+     */
+    disableForcedKeyboardDismiss?: boolean,
+
+    /**
      * Is a text input rendered at the bottom of the screen?
      */
     hasBottomTextInput: boolean,
@@ -33,11 +38,6 @@ type Props = {
      * Is the screen rendering a tab navigator?
      */
     hasTabNavigator: boolean,
-
-    /**
-     * Is the keyboard already dismissible?
-     */
-    keyboardAlreadyDismissible?: boolean,
 
     /**
      * Additional style to be appended to the KeyboardAvoidingView.
@@ -51,7 +51,7 @@ const JitsiKeyboardAvoidingView = (
             contentContainerStyle,
             hasTabNavigator,
             hasBottomTextInput,
-            keyboardAlreadyDismissible,
+            disableForcedKeyboardDismiss,
             style
         }: Props) => {
     const headerHeight = useHeaderHeight();
@@ -74,7 +74,7 @@ const JitsiKeyboardAvoidingView = (
         ? headerHeight + StatusBar.currentHeight : headerHeight;
 
     // Tells the view what to do with taps
-    const shouldSetResponse = useCallback(() => !keyboardAlreadyDismissible);
+    const shouldSetResponse = useCallback(() => !disableForcedKeyboardDismiss);
     const onRelease = useCallback(() => Keyboard.dismiss());
 
     return (

@@ -13,11 +13,11 @@ end
 
 local muc_component_host = module:get_option_string("muc_component");
 if muc_component_host == nil then
-    log("error", "No muc_component specified. No muc to operate on!");
+    module:log("error", "No muc_component specified. No muc to operate on!");
     return;
 end
 
-log("info", "Starting conference duration timer for %s", muc_component_host);
+module:log("info", "Starting conference duration timer for %s", muc_component_host);
 
 function occupant_joined(event)
     local room = event.room;

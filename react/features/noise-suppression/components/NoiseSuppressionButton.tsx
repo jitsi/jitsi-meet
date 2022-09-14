@@ -1,11 +1,10 @@
 /* eslint-disable lines-around-comment */
 import { IState } from '../../app/types';
-// @ts-ignore
-import { translate } from '../../base/i18n';
+import { translate } from '../../base/i18n/functions';
 import {
-    IconShareAudio,
-    IconStopAudioShare
-} from '../../base/icons/svg/index';
+    IconNoiseSuppressionOn,
+    IconNoiseSuppressionOff
+} from '../../base/icons/svg';
 import { connect } from '../../base/redux/functions';
 import {
     AbstractButton,
@@ -24,17 +23,17 @@ type Props = AbstractButtonProps & {
      */
     dispatch: Function;
 
-}
+};
 
 /**
  * Component that renders a toolbar button for toggling noise suppression.
  */
 class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
     accessibilityLabel = 'toolbar.accessibilityLabel.noiseSuppression';
-    icon = IconShareAudio;
+    icon = IconNoiseSuppressionOn;
     label = 'toolbar.noiseSuppression';
     tooltip = 'toolbar.noiseSuppression';
-    toggledIcon = IconStopAudioShare;
+    toggledIcon = IconNoiseSuppressionOff;
     toggledLabel = 'toolbar.disableNoiseSuppression';
 
     private props: Props;

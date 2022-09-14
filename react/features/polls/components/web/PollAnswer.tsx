@@ -1,22 +1,20 @@
 /* eslint-disable lines-around-comment */
-import { Checkbox } from '@atlaskit/checkbox';
-import { makeStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
+
 
 import Button from '../../../base/ui/components/web/Button';
+import Checkbox from '../../../base/ui/components/web/Checkbox';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
-import { Theme } from '../../../base/ui/types';
 // @ts-ignore
 import { isSubmitAnswerDisabled } from '../../functions';
-// @ts-ignore
-import AbstractPollAnswer from '../AbstractPollAnswer';
-// @ts-ignore
-import type { AbstractProps } from '../AbstractPollAnswer';
+import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         buttonMargin: {
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         }
     };
 });
@@ -32,7 +30,7 @@ const PollAnswer = ({
     t
 }: AbstractProps) => {
     const { changingVote } = poll;
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     return (
         <div className = 'poll-answer'>
@@ -51,12 +49,11 @@ const PollAnswer = ({
                             className = 'poll-answer-container'
                             key = { index }>
                             <Checkbox
-                                isChecked = { checkBoxStates[index] }
+                                checked = { checkBoxStates[index] }
                                 key = { index }
-                                label = { <span className = 'poll-answer-option'>{ answer.name }</span> }
+                                label = { answer.name }
                                 // eslint-disable-next-line react/jsx-no-bind
-                                onChange = { ev => setCheckbox(index, ev.target.checked) }
-                                size = 'large' />
+                                onChange = { ev => setCheckbox(index, ev.target.checked) } />
                         </li>
                     ))
                 }
@@ -66,14 +63,14 @@ const PollAnswer = ({
                     accessibilityLabel = { t('polls.answer.skip') }
                     className = { styles.buttonMargin }
                     fullWidth = { true }
-                    label = { t('polls.answer.skip') }
+                    labelKey = { 'polls.answer.skip' }
                     onClick = { changingVote ? skipChangeVote : skipAnswer }
                     type = { BUTTON_TYPES.SECONDARY } />
                 <Button
                     accessibilityLabel = { t('polls.answer.submit') }
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                     fullWidth = { true }
-                    label = { t('polls.answer.submit') }
+                    labelKey = { 'polls.answer.submit' }
                     onClick = { submitAnswer } />
             </div>
         </div>

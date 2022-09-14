@@ -11,10 +11,7 @@ import {
 import { reloadNow } from '../../app/actions';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    showErrorNotification
-} from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showWarningNotification } from '../../notifications';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { validateJwt } from '../jwt';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
@@ -46,7 +43,7 @@ import {
     setLocalSubject,
     setSubject
 } from './actions';
-import { TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
+import { CONFERENCE_LEAVE_REASONS, TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
 import {
     _addLocalTracksToConference,
     _removeLocalTracksFromConference,
@@ -132,7 +129,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
         const [ reason ] = error.params;
 
-        dispatch(showErrorNotification({
+        dispatch(showWarningNotification({
             description: reason,
             titleKey: 'dialog.sessTerminated'
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
@@ -177,7 +174,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     if (typeof APP === 'undefined') {
         !error.recoverable
         && conference
-        && conference.leave().catch(reason => {
+        && conference.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).catch(reason => {
             // Even though we don't care too much about the failure, it may be
             // good to know that it happen, so log it (on the info level).
             logger.info('JitsiConference.leave() rejected with:', reason);

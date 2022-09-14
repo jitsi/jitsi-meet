@@ -1,4 +1,13 @@
 /**
+ * The type of (redux) action which enlarges the filmstrip.
+ *
+ * {
+ *     type: RESIZE_FILMSTRIP,
+ * }
+ */
+export const RESIZE_FILMSTRIP = 'RESIZE_FILMSTRIP';
+
+ /**
  * The type of (redux) action which sets whether the filmstrip is enabled.
  *
  * {
@@ -205,6 +214,16 @@ export const TOGGLE_PIN_STAGE_PARTICIPANT = 'TOGGLE_PIN_STAGE_PARTICIPANT';
  * }
  */
 export const CLEAR_STAGE_PARTICIPANTS = 'CLEAR_STAGE_PARTICIPANTS';
+
+/**
+ * The type of Redux action which sets the participant to be displayed
+ * on the screenshare filmstrip.
+ * {
+ *     type: SET_SCREENSHARE_FILMSTRIP_PARTICIPANT,
+ *     participantId: string|undefined
+ * }
+ */
+export const SET_SCREENSHARE_FILMSTRIP_PARTICIPANT = 'SET_SCREENSHARE_FILMSTRIP_PARTICIPANT';
 
 /**
  * The type of Redux action which sets the dimensions of the screenshare tile.

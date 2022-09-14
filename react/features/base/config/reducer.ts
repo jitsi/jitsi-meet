@@ -1,10 +1,8 @@
-/* eslint-disable import/order */
 import _ from 'lodash';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
-
-import { equals } from '../redux/functions';
 import ReducerRegistry from '../redux/ReducerRegistry';
+import { equals } from '../redux/functions';
 
 import {
     UPDATE_CONFIG,
@@ -14,7 +12,7 @@ import {
     OVERWRITE_CONFIG
 } from './actionTypes';
 import { IConfig } from './configType';
-
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { _cleanupConfig } from './functions';
 
@@ -72,7 +70,11 @@ const CONFERENCE_HEADER_MAPPING: any = {
     hideRecordingLabel: [ 'recording' ]
 };
 
-ReducerRegistry.register('features/base/config', (state: IConfig = _getInitialState(), action: any) => {
+export interface IConfigState extends IConfig {
+    error?: Error;
+}
+
+ReducerRegistry.register<IConfigState>('features/base/config', (state = _getInitialState(), action): IConfigState => {
     switch (action.type) {
     case UPDATE_CONFIG:
         return _updateConfig(state, action);
@@ -148,14 +150,7 @@ function _getInitialState() {
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _setConfig(state: IConfig, { config }: {config: IConfig}) {
-    // The mobile app bundles jitsi-meet and lib-jitsi-meet at build time and
-    // does not download them at runtime from the deployment on which it will
-    // join a conference. The downloading is planned for implementation in the
-    // future (later rather than sooner) but is not implemented yet at the time
-    // of this writing and, consequently, we must provide legacy support in the
-    // meantime.
-
+function _setConfig(state: IConfig, { config }: { config: IConfig; }) {
     // eslint-disable-next-line no-param-reassign
     config = _translateLegacyConfig(config);
 
@@ -278,6 +273,15 @@ function _translateInterfaceConfig(oldValue: IConfig) {
         && typeof interfaceConfig === 'object'
         && interfaceConfig.hasOwnProperty('DEFAULT_REMOTE_DISPLAY_NAME')) {
         newValue.defaultRemoteDisplayName = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+    }
+
+    if (oldValue.defaultLogoUrl === undefined) {
+        if (typeof interfaceConfig === 'object'
+            && interfaceConfig.hasOwnProperty('DEFAULT_LOGO_URL')) {
+            newValue.defaultLogoUrl = interfaceConfig.DEFAULT_LOGO_URL;
+        } else {
+            newValue.defaultLogoUrl = 'images/watermark.svg';
+        }
     }
 
     return newValue;
@@ -407,16 +411,38 @@ function _translateLegacyConfig(oldValue: IConfig) {
     }
 
     newValue.recordingService = newValue.recordingService || {};
-    if (oldValue.fileRecordingsServiceEnabled !== undefined) {
+    if (oldValue.fileRecordingsServiceEnabled !== undefined
+        && newValue.recordingService.enabled === undefined) {
         newValue.recordingService = {
             ...newValue.recordingService,
             enabled: oldValue.fileRecordingsServiceEnabled
         };
     }
-    if (oldValue.fileRecordingsServiceSharingEnabled !== undefined) {
+    if (oldValue.fileRecordingsServiceSharingEnabled !== undefined
+        && newValue.recordingService.sharingEnabled === undefined) {
         newValue.recordingService = {
             ...newValue.recordingService,
             sharingEnabled: oldValue.fileRecordingsServiceSharingEnabled
+        };
+    }
+
+    newValue.liveStreaming = newValue.liveStreaming || {};
+
+    // Migrate config.liveStreamingEnabled
+    if (oldValue.liveStreamingEnabled !== undefined) {
+        newValue.liveStreaming = {
+            ...newValue.liveStreaming,
+            enabled: oldValue.liveStreamingEnabled
+        };
+    }
+
+    // Migrate interfaceConfig.LIVE_STREAMING_HELP_LINK
+    if (oldValue.liveStreaming === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('LIVE_STREAMING_HELP_LINK')) {
+        newValue.liveStreaming = {
+            ...newValue.liveStreaming,
+            helpLink: interfaceConfig.LIVE_STREAMING_HELP_LINK
         };
     }
 
@@ -431,7 +457,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _updateConfig(state: IConfig, { config }: {config: IConfig}) {
+function _updateConfig(state: IConfig, { config }: { config: IConfig; }) {
     const newState = _.merge({}, state, config);
 
     _cleanupConfig(newState);

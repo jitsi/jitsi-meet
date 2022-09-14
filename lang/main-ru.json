@@ -41,11 +41,11 @@
     },
     "breakoutRooms": {
         "actions": {
-            "add": "Добавить комнату отдыха",
-            "autoAssign": "Auto assign to breakout roomsAuto assign to breakout rooms",
+            "add": "Добавить переговорную",
+            "autoAssign": "Привязать к переговорной автоматически",
             "close": "Закрыть",
             "join": "Присоединиться",
-            "leaveBreakoutRoom": "Покинуть комнату отдыха",
+            "leaveBreakoutRoom": "Покинуть переговорную",
             "more": "Больше",
             "remove": "Удалить",
             "sendToBreakoutRoom": "Отправить участника к:"
@@ -75,6 +75,16 @@
         "permissionMessage": "Для показа ваших встреч в приложении нужен доступ к календарю.",
         "refresh": "Обновить календарь",
         "today": "Сегодня"
+    },
+    "carmode": {
+        "actions": {
+            "selectSoundDevice": "Выбор аудиоустройства"
+        },
+        "labels": {
+            "buttonLabel": "Упрощенный режим",
+            "title": "Упрощенный режим",
+            "videoStopped": "Видео остановлено"
+        }
     },
     "chat": {
         "enter": "Войди в комнату",
@@ -134,7 +144,6 @@
         "bridgeCount": "Количество серверов: ",
         "codecs": "Кодеки (A/V): ",
         "connectedTo": "Подключен к:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Частота кадров:",
         "less": "Краткая информация",
         "localaddress": "Локальный адрес:",
@@ -640,11 +649,11 @@
         "leftThreePlusMembers": "{{name}} и многие другие покинули встречу",
         "leftTwoMembers": "{{first}} и {{second}} покинули встречу",
         "linkToSalesforce": "Ссылка на Salesforce",
-        "linkToSalesforceDescription": "Вы можете отправить ссылку на сводку митинга Salesforce объекту.",
-        "linkToSalesforceError": "Ошибка отправки ссылки на митинг для Salesforce",
-        "linkToSalesforceKey": "Отправить сслку а эот митинг",
-        "linkToSalesforceProgress": "Отправка ссылки на митинг для Salesforce...",
-        "linkToSalesforceSuccess": "Ссылка на этот митинг была отправлена Salesforce",
+        "linkToSalesforceDescription": "Вы можете отправить ссылку на сводку встречи Salesforce объекту.",
+        "linkToSalesforceError": "Ошибка отправки ссылки на встречу для Salesforce",
+        "linkToSalesforceKey": "Отправить ссылку на встречу для Salesforce",
+        "linkToSalesforceProgress": "Отправка ссылки на встречу для Salesforce...",
+        "linkToSalesforceSuccess": "Ссылка на эту встречу для Salesforce была отправлена",
         "me": "Я",
         "moderationInEffectCSDescription": "Пожалуйста, поднимите руку, если вы хотите поделиться своим экраном.",
         "moderationInEffectCSTitle": "Демонстрация экрана заблокирована модератором",
@@ -668,8 +677,8 @@
         "oldElectronClientDescription1": "Похоже, вы используете старую версию клиента {{app}}, которая имеет известные уязвимости в системе безопасности. Убедитесь, что вы обновили до нашей ",
         "oldElectronClientDescription2": "последней версии",
         "oldElectronClientDescription3": " сейчас!",
-        "participantWantsToJoin": "Хочет присоединиться к митингу",
-        "participantsWantToJoin": "Хотят присоединиться к митингу",
+        "participantWantsToJoin": "Хочет присоединиться к встрече",
+        "participantsWantToJoin": "Хотят присоединиться к встрече",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) удален другим участником.",
         "passwordSetRemotely": "Другой участник установил $t(lockRoomPasswordUppercase)",
         "raiseHandAction": "Поднять руку",
@@ -799,7 +808,8 @@
         "iWantToDialIn": "Я хочу дозвониться",
         "initiated": "Вызов инициирован",
         "joinAudioByPhone": "Подключиться с телефонной связью",
-        "joinMeeting": "Присоединиться ко встрече",
+        "joinMeeting": "Присоединиться к встрече",
+        "joinMeetingInLowBandwidthMode": "Присоединиться без видео",
         "joinWithoutAudio": "Присоединиться без звука",
         "keyboardShortcuts": "Включить сочетания клавиш",
         "linkCopied": "Ссылка скопирована в буфер обмена",
@@ -841,7 +851,7 @@
     "raisedHandsLabel": "Количество поднятых рук",
     "record": {
         "already": {
-            "linked": "Ссылка на митинг уже оправлена Salesforce объекту."
+            "linked": "Ссылка на встречу уже оправлена Salesforce объекту."
         },
         "type": {
             "account": "Аккаунт",
@@ -869,7 +879,7 @@
         "highlightMoment": "Основной момент",
         "highlightMomentDisabled": "Вы можее обозначить важные моменты когда начнётся запись",
         "highlightMomentSuccess": "Моменты выделены",
-        "highlightMomentSucessDescription": "Ваши выделенные моменты будут добавлены в итоги митинга.",
+        "highlightMomentSucessDescription": "Ваши выделенные моменты будут добавлены в итоги встречи.",
         "inProgress": "Идет запись или прямая трансляция",
         "limitNotificationDescriptionNative": "Из-за высокой нагрузки ваша запись будет ограничена {{limit}} мин. Для неограниченного количества записей попробуйте <3> {{app}} </3>.",
         "limitNotificationDescriptionWeb": "Из-за высокой нагрузки ваша запись будет ограничена {{limit}} мин. Для неограниченного количества записей попробуйте <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -899,7 +909,7 @@
     "security": {
         "about": "Вы можете добавить к собранию $t(lockRoomPassword). Участникам необходимо будет предоставить $t(lockRoomPassword), прежде чем им будет разрешено присоединиться к собранию.",
         "aboutReadOnly": "Участники-модераторы могут добавить к собранию $t(lockRoomPassword). Участникам необходимо будет предоставить $t(lockRoomPassword), прежде чем им будет разрешено присоединиться к собранию.",
-        "header": "",
+        "header": "Настройки безопасности",
         "insecureRoomNameWarning": "Имя комнаты небезопасно. Нежелательные участники могут присоединиться к вашей конференции. Подумайте о том, чтобы защитить вашу встречу используя настройки безопасности."
     },
     "settings": {
@@ -1005,8 +1015,9 @@
             "audioOnly": "Вкл/Выкл только звук",
             "audioRoute": "Выбрать аудиоустройство",
             "boo": "Бу",
-            "breakoutRoom": "Присоединиться/выйти из комнаты обсуждения",
+            "breakoutRoom": "Присоединиться/выйти из переговорной",
             "callQuality": "Качество связи",
+            "carmode": "Упрощенный режим",
             "cc": "Вкл/Выкл субтитры",
             "chat": "Показать/скрыть окно чата",
             "clap": "Хлопок",
@@ -1024,7 +1035,8 @@
             "invite": "Пригласить",
             "kick": "Отключить участника",
             "laugh": "Смех",
-            "like": "Пальцы вверх",
+            "leaveConference": "Покинуть встречу",
+            "like": "Палец вверх",
             "linkToSalesforce": "Ссылка на Salesforce",
             "lobbyButton": "Вкл/Выкл режим лобби",
             "localRecording": "Вкл/Выкл кнопки записи",
@@ -1065,8 +1077,8 @@
             "videomute": "Вкл/Выкл видео"
         },
         "addPeople": "Добавить людей к вашему сеансу связи",
-        "audioOnlyOff": "Отключить режим экономии пропускной способности",
-        "audioOnlyOn": "Включить режим экономии пропускной способности",
+        "audioOnlyOff": "Включить видео (стандартный режим)",
+        "audioOnlyOn": "Выключить видео (экономичный режим)",
         "audioRoute": "Выбрать аудиоустройство",
         "audioSettings": "Настройка звука",
         "authenticate": "Аутентифицировать",
@@ -1091,9 +1103,10 @@
         "hangup": "Выход",
         "help": "Справка",
         "invite": "Пригласить",
-        "joinBreakoutRoom": "Присоединяйтесь к комнате обсуждения",
+        "joinBreakoutRoom": "Войти в переговорную",
         "laugh": "Смеяться",
-        "leaveBreakoutRoom": "Выйти из комнаты отдыха",
+        "leaveBreakoutRoom": "Покинуть переговорную",
+        "leaveConference": "Покинуть встречу",
         "like": "Мне нравится",
         "linkToSalesforce": "Ссылка на Salesforce",
         "lobbyButtonDisable": "Отключить режим лобби",

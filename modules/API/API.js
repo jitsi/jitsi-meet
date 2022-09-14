@@ -41,9 +41,11 @@ import {
     isLocalParticipantModerator,
     hasRaisedHand,
     grantModerator,
-    overwriteParticipantsNames
+    overwriteParticipantsNames,
+    LOCAL_PARTICIPANT_DEFAULT_ID
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
+import { getDisplayName } from '../../react/features/base/settings/functions.web';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
 import {
     autoAssignToBreakoutRooms,
@@ -53,7 +55,7 @@ import {
     removeBreakoutRoom,
     sendParticipantToRoom
 } from '../../react/features/breakout-rooms/actions';
-import { getBreakoutRooms } from '../../react/features/breakout-rooms/functions';
+import { getBreakoutRooms, getRoomsInfo } from '../../react/features/breakout-rooms/functions';
 import {
     sendMessage,
     setPrivateMessageRecipient,
@@ -63,9 +65,10 @@ import { openChat } from '../../react/features/chat/actions.web';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
+import { appendSuffix } from '../../react/features/display-name';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
-import { setVolume } from '../../react/features/filmstrip';
+import { resizeFilmStrip, setVolume } from '../../react/features/filmstrip/actions.web';
 import { invite } from '../../react/features/invite';
 import {
     selectParticipantInLargeVideo
@@ -75,6 +78,13 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode, answerKnockingParticipant } from '../../react/features/lobby/actions';
+import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
+import {
+    hideNotification,
+    NOTIFICATION_TIMEOUT_TYPE,
+    NOTIFICATION_TYPE,
+    showNotification
+} from '../../react/features/notifications';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -292,11 +302,21 @@ function initCommands() {
         'toggle-video': () => {
             sendAnalytics(createApiEvent('toggle-video'));
             logger.log('Video toggle: API command received');
-            APP.conference.toggleVideoMuted(false /* no UI */);
+            APP.conference.toggleVideoMuted(false /* no UI */, true /* ensure track */);
         },
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
             APP.UI.toggleFilmstrip();
+        },
+
+        /*
+         * @param {Object} options - Additional details of how to perform
+         * the action.
+         * @param {number} options.width - width value for film strip.
+         */
+        'resize-film-strip': (options = {}) => {
+            sendAnalytics(createApiEvent('film.strip.resize'));
+            APP.store.dispatch(resizeFilmStrip(options.width));
         },
         'toggle-camera': () => {
             if (!isToggleCameraEnabled(APP.store.getState())) {
@@ -373,6 +393,9 @@ function initCommands() {
         'toggle-share-screen': (options = {}) => {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing(options.enable);
+        },
+        'set-noise-suppression-enabled': (options = {}) => {
+            APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
         },
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
@@ -461,6 +484,58 @@ function initCommands() {
             logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stop'));
             APP.store.dispatch(stopSharedVideo());
+        },
+
+        /**
+         * Shows a custom in-meeting notification.
+         *
+         * @param { string } arg.title - Notification title.
+         * @param { string } arg.description - Notification description.
+         * @param { string } arg.uid - Optional unique identifier for the notification.
+         * @param { string } arg.type - Notification type, either `error`, `info`, `normal`, `success` or `warning`.
+         * Defaults to "normal" if not provided.
+         * @param { string } arg.timeout - Timeout type, either `short`, `medium`, `long` or `sticky`.
+         * Defaults to "short" if not provided.
+         * @returns {void}
+         */
+        'show-notification': ({
+            title,
+            description,
+            uid,
+            type = NOTIFICATION_TYPE.NORMAL,
+            timeout = NOTIFICATION_TIMEOUT_TYPE.SHORT
+        }) => {
+            const validTypes = Object.values(NOTIFICATION_TYPE);
+            const validTimeouts = Object.values(NOTIFICATION_TIMEOUT_TYPE);
+
+            if (!validTypes.includes(type)) {
+                logger.error(`Invalid notification type "${type}". Expecting one of ${validTypes}`);
+
+                return;
+            }
+
+            if (!validTimeouts.includes(timeout)) {
+                logger.error(`Invalid notification timeout "${timeout}". Expecting one of ${validTimeouts}`);
+
+                return;
+            }
+
+            APP.store.dispatch(showNotification({
+                uid,
+                title,
+                description,
+                appearance: type
+            }, timeout));
+        },
+
+        /**
+         * Removes a notification given a unique identifier.
+         *
+         * @param { string } uid - Unique identifier for the notification to be removed.
+         * @returns {void}
+         */
+        'hide-notification': uid => {
+            APP.store.dispatch(hideNotification(uid));
         },
 
         /**
@@ -779,6 +854,10 @@ function initCommands() {
         }
         case 'list-breakout-rooms': {
             callback(getBreakoutRooms(APP.store.getState()));
+            break;
+        }
+        case 'rooms-info': {
+            callback(getRoomsInfo(APP.store.getState()));
             break;
         }
         default:
@@ -1390,6 +1469,39 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the prejoin video
+     * visibility had changed.
+     *
+     * @param {boolean} isVisible - Whether the prejoin video is visible.
+     * @returns {void}
+     */
+    notifyPrejoinVideoVisibilityChanged(isVisible: boolean) {
+        this._sendEvent({
+            name: 'on-prejoin-video-changed',
+            isVisible
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the prejoin
+     * screen was loaded.
+     *
+     * @returns {void}
+     */
+    notifyPrejoinLoaded() {
+        const state = APP.store.getState();
+        const { defaultLocalDisplayName } = state['features/base/config'];
+        const displayName = getDisplayName(state);
+
+        this._sendEvent({
+            name: 'prejoin-screen-loaded',
+            id: LOCAL_PARTICIPANT_DEFAULT_ID,
+            displayName,
+            formattedDisplayName: appendSuffix(displayName, defaultLocalDisplayName)
+        });
+    }
+
+    /**
      * Notify external application of an unexpected camera-related error having
      * occurred.
      *
@@ -1685,7 +1797,7 @@ class API {
     /**
      * Notify external application that the breakout rooms changed.
      *
-     * @param {Array} rooms - Array of breakout rooms.
+     * @param {Array} rooms - Array containing the breakout rooms and main room.
      * @returns {void}
      */
     notifyBreakoutRoomsUpdated(rooms) {
@@ -1705,6 +1817,24 @@ class API {
         this._sendEvent({
             name: 'participants-pane-toggled',
             open
+        });
+    }
+
+    /**
+     * Notify the external application that the audio or video is being shared by a participant.
+     *
+     * @param {string} mediaType - Whether the content which is being shared is audio or video.
+     * @param {string} value - Whether the sharing is playing, pause or stop (on audio there is only playing and stop).
+     * @param {string} participantId - Participant id of the participant which started or ended
+     *  the video or audio sharing.
+     * @returns {void}
+     */
+    notifyAudioOrVideoSharingToggled(mediaType, value, participantId) {
+        this._sendEvent({
+            name: 'audio-or-video-sharing-toggled',
+            mediaType,
+            value,
+            participantId
         });
     }
 

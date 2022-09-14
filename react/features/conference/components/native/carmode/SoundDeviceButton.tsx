@@ -18,7 +18,7 @@ import styles from './styles';
  *
  * @returns {JSX.Element} - The sound device button.
  */
-const SelectSoundDevice = () : JSX.Element => {
+const SelectSoundDevice = (): JSX.Element => {
     const dispatch = useDispatch();
 
     const onSelect = useCallback(() =>
@@ -28,10 +28,9 @@ const SelectSoundDevice = () : JSX.Element => {
     return (
         <Button
             accessibilityLabel = 'carmode.actions.selectSoundDevice'
-            // @ts-ignore
             icon = { AudioIcon }
-            label = 'carmode.actions.selectSoundDevice'
-            onPress = { onSelect }
+            labelKey = 'carmode.actions.selectSoundDevice'
+            onClick = { onSelect }
             style = { styles.soundDeviceButton }
             type = { BUTTON_TYPES.SECONDARY } />
     );

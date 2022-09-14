@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IconHorizontalPoints } from '../../../base/icons/svg/index';
+import { IconHorizontalPoints } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 
 type Props = {
@@ -8,13 +8,13 @@ type Props = {
     /**
      * Label used for accessibility.
      */
-    accessibilityLabel: string,
+    accessibilityLabel: string;
 
     /**
      * Click handler function.
      */
     onClick: () => void;
-}
+};
 
 const ParticipantActionEllipsis = ({ accessibilityLabel, onClick }: Props) => (
     <Button

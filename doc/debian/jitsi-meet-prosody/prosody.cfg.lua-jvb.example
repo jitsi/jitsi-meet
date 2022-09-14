@@ -52,6 +52,7 @@ VirtualHost "jitmeet.example.com"
     av_moderation_component = "avmoderation.jitmeet.example.com"
     speakerstats_component = "speakerstats.jitmeet.example.com"
     conference_duration_component = "conferenceduration.jitmeet.example.com"
+    end_conference_component = "endconference.jitmeet.example.com"
     -- we need bosh
     modules_enabled = {
         "bosh";
@@ -60,6 +61,7 @@ VirtualHost "jitmeet.example.com"
         "speakerstats";
         "external_services";
         "conference_duration";
+        "end_conference";
         "muc_lobby_rooms";
         "muc_breakout_rooms";
         "av_moderation";
@@ -90,7 +92,6 @@ Component "breakout.jitmeet.example.com" "muc"
     modules_enabled = {
         "muc_meeting_id";
         "muc_domain_mapper";
-        --"token_verification";
         "muc_rate_limit";
         "polls";
     }
@@ -124,6 +125,9 @@ Component "speakerstats.jitmeet.example.com" "speakerstats_component"
 Component "conferenceduration.jitmeet.example.com" "conference_duration_component"
     muc_component = "conference.jitmeet.example.com"
 
+Component "endconference.jitmeet.example.com" "end_conference"
+    muc_component = "conference.jitmeet.example.com"
+
 Component "avmoderation.jitmeet.example.com" "av_moderation_component"
     muc_component = "conference.jitmeet.example.com"
 
@@ -136,19 +140,3 @@ Component "lobby.jitmeet.example.com" "muc"
         "muc_rate_limit";
         "polls";
     }
-
--- Enables dial-in for Jitsi meet components customers
--- Note: make sure you have the following packages installed: lua-basexx, liblua5.3-dev, libssl-dev, luarocks
--- and execute $ sudo luarocks install luajwtjitsi 3.0-0
-VirtualHost "jigasi.meet.jitsi"
-    enabled = false -- Jitsi meet components customers remove this line
-    modules_enabled = {
-      "ping";
-      "bosh";
-      "muc_password_check";
-    }
-    authentication = "token"
-    app_id = "jitsi";
-    asap_key_server = "https://jaas-public-keys.jitsi.net/jitsi-components/prod-8x8"
-    asap_accepted_issuers = { "jaas-components" }
-    asap_accepted_audiences = { "jigasi.jitmeet.example.com" }

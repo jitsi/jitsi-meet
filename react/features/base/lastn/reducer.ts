@@ -17,7 +17,7 @@ export interface ILastNState {
     };
 }
 
-ReducerRegistry.register('features/base/lastn', (state: ILastNState = { }, action) => {
+ReducerRegistry.register<ILastNState>('features/base/lastn', (state = {}, action): ILastNState => {
     switch (action.type) {
     case SET_CONFIG:
         return _setConfig(state, action);
@@ -42,6 +42,6 @@ ReducerRegistry.register('features/base/lastn', (state: ILastNState = { }, actio
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _setConfig(state: ILastNState, { config }: {config: IConfig}) {
+function _setConfig(state: ILastNState, { config }: { config: IConfig; }) {
     return set(state, 'lastNLimits', validateLastNLimits(config.lastNLimits));
 }

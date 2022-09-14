@@ -1,8 +1,6 @@
 /* eslint-disable lines-around-comment */
-// @ts-ignore
-import { translate } from '../../../../base/i18n';
-// @ts-ignore
-import { IconSettings } from '../../../../base/icons';
+import { translate } from '../../../../base/i18n/functions';
+import { IconSettings } from '../../../../base/icons/svg';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
 // @ts-ignore
@@ -31,4 +29,5 @@ class SettingsButton extends AbstractButton<AbstractButtonProps, any, any> {
     }
 }
 
+// @ts-ignore
 export default translate(SettingsButton);

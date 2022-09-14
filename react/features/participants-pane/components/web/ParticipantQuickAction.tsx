@@ -1,13 +1,14 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
 import { approveParticipant } from '../../../av-moderation/actions';
 import Button from '../../../base/ui/components/web/Button';
-import { Theme } from '../../../base/ui/types';
 // @ts-ignore
 import { QUICK_ACTION_BUTTON } from '../../constants';
 
@@ -16,43 +17,43 @@ type Props = {
     /**
      * The translated ask unmute aria label.
      */
-    ariaLabel?: boolean,
+    ariaLabel?: boolean;
 
     /**
      * The translated "ask unmute" text.
      */
-    askUnmuteText: string,
+    askUnmuteText: string;
 
     /**
      * The type of button to be displayed.
      */
-    buttonType: string,
+    buttonType: string;
 
     /**
      * Callback used to open a confirmation dialog for audio muting.
      */
-    muteAudio: Function,
+    muteAudio: Function;
 
     /**
      * Label for mute participant button.
      */
-    muteParticipantButtonText: string,
+    muteParticipantButtonText: string;
 
     /**
      * The ID of the participant.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * The name of the participant.
      */
-    participantName: string
-}
+    participantName: string;
+};
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         button: {
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         }
     };
 });
@@ -65,7 +66,7 @@ const ParticipantQuickAction = ({
     participantID,
     participantName
 }: Props) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
     const dispatch = useDispatch();
     const { t } = useTranslation();
 

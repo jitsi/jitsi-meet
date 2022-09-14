@@ -3,9 +3,8 @@ import type { MediaType } from '../base/media/constants';
 import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
-
-    // @ts-ignore
-} from '../base/participants';
+} from '../base/participants/actionTypes';
+import { Participant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -31,13 +30,13 @@ const initialState = {
 
 export interface IAVModerationState {
     audioModerationEnabled: boolean;
-    audioUnmuteApproved?: boolean|undefined;
-    audioWhitelist: { [id: string]: boolean };
-    pendingAudio: Array<{ id: string }>;
-    pendingVideo: Array<{ id: string }>;
+    audioUnmuteApproved?: boolean | undefined;
+    audioWhitelist: { [id: string]: boolean; };
+    pendingAudio: Array<{ id: string; }>;
+    pendingVideo: Array<{ id: string; }>;
     videoModerationEnabled: boolean;
-    videoUnmuteApproved?: boolean|undefined;
-    videoWhitelist: { [id: string]: boolean };
+    videoUnmuteApproved?: boolean | undefined;
+    videoWhitelist: { [id: string]: boolean; };
 }
 
 /**
@@ -49,11 +48,11 @@ export interface IAVModerationState {
  * @private
  * @returns {boolean} - Whether state instance was modified.
  */
-function _updatePendingParticipant(mediaType: MediaType, participant: any, state: any = {}) {
+function _updatePendingParticipant(mediaType: MediaType, participant: Participant, state: IAVModerationState) {
     let arrayItemChanged = false;
     const storeKey = MEDIA_TYPE_TO_PENDING_STORE_KEY[mediaType];
     const arr = state[storeKey];
-    const newArr = arr.map((pending: { id: string}) => {
+    const newArr = arr.map((pending: { id: string; }) => {
         if (pending.id === participant.id) {
             arrayItemChanged = true;
 
@@ -75,8 +74,8 @@ function _updatePendingParticipant(mediaType: MediaType, participant: any, state
     return false;
 }
 
-ReducerRegistry.register('features/av-moderation', (state: IAVModerationState = initialState, action: any) => {
-
+ReducerRegistry.register<IAVModerationState>('features/av-moderation',
+(state = initialState, action): IAVModerationState => {
     switch (action.type) {
     case DISABLE_MODERATION: {
         const newState = action.mediaType === MEDIA_TYPE.AUDIO

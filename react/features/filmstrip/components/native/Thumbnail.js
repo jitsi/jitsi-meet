@@ -62,11 +62,6 @@ type Props = {
     _isFakeParticipant: boolean,
 
     /**
-     * Indicates whether multi-stream support is enabled.
-     */
-    _isMultiStreamSupportEnabled: boolean,
-
-    /**
      * Indicates whether the participant is screen sharing.
      */
     _isScreenShare: boolean,
@@ -213,7 +208,6 @@ class Thumbnail extends PureComponent<Props> {
     _renderIndicators() {
         const {
             _audioMuted: audioMuted,
-            _isMultiStreamSupportEnabled,
             _isScreenShare: isScreenShare,
             _isVirtualScreenshare,
             _isFakeParticipant,
@@ -247,10 +241,7 @@ class Thumbnail extends PureComponent<Props> {
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
-                    { !tileView && ((isScreenShare && !_isMultiStreamSupportEnabled) || _isVirtualScreenshare)
-                        && <ScreenShareIndicator /> /* Do not show screensharing indicator on the local camera
-                        thumbnail when a virtual SS participant tile is created for local screenshare */
-                    }
+                    { !tileView && (isScreenShare || _isVirtualScreenshare) && <ScreenShareIndicator /> }
                 </Container>
                 {
                     renderDisplayName && <DisplayNameLabel
@@ -387,7 +378,7 @@ class Thumbnail extends PureComponent<Props> {
                     : <>
                         <ParticipantView
                             avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
-                            disableVideo = { (isScreenShare && !_isVirtualScreenshare) || _isFakeParticipant }
+                            disableVideo = { isScreenShare || _isFakeParticipant }
                             participantId = { participantId }
                             zOrder = { 1 } />
                         {
@@ -430,7 +421,6 @@ function _mapStateToProps(state, ownProps) {
         _audioMuted: audioTrack?.muted ?? true,
         _gifSrc: mode === 'chat' ? null : gifSrc,
         _isFakeParticipant: participant?.isFakeParticipant,
-        _isMultiStreamSupportEnabled: isMultiStreamSupportEnabled,
         _isScreenShare: isScreenShare,
         _isVirtualScreenshare: isMultiStreamSupportEnabled && participant?.isVirtualScreenshareParticipant,
         _local: participant?.local,

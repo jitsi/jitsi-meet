@@ -2,12 +2,12 @@
 
 import React, { PureComponent } from 'react';
 
+import { IState } from '../../../app/types';
 // @ts-ignore
 import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';
 // @ts-ignore
 import JitsiStatusBar from '../../../base/modal/components/JitsiStatusBar';
-// @ts-ignore
-import { connect } from '../../../base/redux';
+import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { renderArrowBackButton }
 // @ts-ignore
@@ -24,13 +24,13 @@ type Props = {
     /**
      * The URL to display in the Help Centre.
      */
-    _url: string,
+    _url: string;
 
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
-    navigation: Object
-}
+    navigation: Object;
+};
 
 /**
  * Implements a page that renders the help content for the app.
@@ -81,7 +81,7 @@ class HelpView extends PureComponent<Props> {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state: any) {
+function _mapStateToProps(state: IState) {
     return {
         _url: state['features/base/config'].helpCentreURL || DEFAULT_HELP_CENTRE_URL
     };

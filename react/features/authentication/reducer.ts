@@ -10,9 +10,9 @@ import {
 } from './actionTypes';
 
 export interface IAuthenticationState {
-    error?: Object|undefined;
-    progress?: number|undefined;
-    thenableWithCancel?: Object|undefined;
+    error?: Object | undefined;
+    progress?: number | undefined;
+    thenableWithCancel?: Object | undefined;
     waitForOwnerTimeoutID?: number;
 }
 
@@ -24,7 +24,8 @@ export interface IAuthenticationState {
  * @param {string} action.type - Type of action.
  * @returns {Object}
  */
-ReducerRegistry.register('features/authentication', (state: IAuthenticationState = {}, action: any) => {
+ReducerRegistry.register<IAuthenticationState>('features/authentication',
+(state = {}, action): IAuthenticationState => {
     switch (action.type) {
     case CANCEL_LOGIN:
         return assign(state, {

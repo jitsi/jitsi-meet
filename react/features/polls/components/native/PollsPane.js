@@ -36,6 +36,7 @@ const PollsPane = (props: AbstractProps) => {
     return (
         <JitsiScreen
             contentContainerStyle = { chatStyles.pollPane }
+            disableForcedKeyboardDismiss = { !createMode }
             hasTabNavigator = { true }
             style = { chatStyles.pollPaneContainer }>
             {
@@ -47,8 +48,8 @@ const PollsPane = (props: AbstractProps) => {
             {
                 !createMode && <Button
                     accessibilityLabel = 'polls.create.create'
-                    label = 'polls.create.create'
-                    onPress = { onCreate }
+                    labelKey = 'polls.create.create'
+                    onClick = { onCreate }
                     style = { chatStyles.createPollButton }
                     type = { BUTTON_TYPES.PRIMARY } />
             }

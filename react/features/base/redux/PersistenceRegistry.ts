@@ -1,20 +1,13 @@
-/* eslint-disable import/order */
 // @ts-ignore
 import Bourne from '@hapi/bourne';
-
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import md5 from 'js-md5';
 
-// @ts-ignore
 import logger from './logger';
 
 declare let __DEV__: any;
-
-/**
- * The name of the {@code localStorage} store where the app persists its values.
- */
-const PERSISTED_STATE_NAME = 'jitsi-state';
 
 /**
  * Mixed type of the element (subtree) config. If it's a {@code boolean} (and is
@@ -26,7 +19,7 @@ declare type ElementConfig = boolean | Object;
 /**
  * The type of the name-config pairs stored in {@code PersistenceRegistry}.
  */
-declare type PersistencyConfigMap = { [name: string]: ElementConfig };
+declare type PersistencyConfigMap = { [name: string]: ElementConfig; };
 
 /**
  * A registry to allow features to register their redux store subtree to be
@@ -34,7 +27,7 @@ declare type PersistencyConfigMap = { [name: string]: ElementConfig };
  */
 class PersistenceRegistry {
     _checksum = '';
-    _defaultStates: { [name: string ]: Object|undefined} = {};
+    _defaultStates: { [name: string ]: Object | undefined; } = {};
     _elements: PersistencyConfigMap = {};
 
     /**
@@ -46,15 +39,12 @@ class PersistenceRegistry {
      * @returns {Object}
      */
     getPersistedState() {
-        let filteredPersistedState: any = {};
+        const filteredPersistedState: any = {};
 
         // localStorage key per feature
         for (const subtreeName of Object.keys(this._elements)) {
             // Assumes that the persisted value is stored under the same key as
             // the feature's redux state name.
-            // TODO We'll need to introduce functions later that can control the
-            // persist key's name. Similar to control serialization and
-            // deserialization. But that should be a straightforward change.
             const persistedSubtree
                 = this._getPersistedSubtree(
                     subtreeName,
@@ -63,30 +53,6 @@ class PersistenceRegistry {
 
             if (persistedSubtree !== undefined) {
                 filteredPersistedState[subtreeName] = persistedSubtree;
-            }
-        }
-
-        // legacy
-        if (Object.keys(filteredPersistedState).length === 0) {
-            let persistedState = jitsiLocalStorage.getItem(PERSISTED_STATE_NAME);
-
-            if (persistedState) {
-                try {
-                    persistedState = Bourne.parse(persistedState);
-                } catch (error) {
-                    logger.error(
-                        'Error parsing persisted state',
-                        persistedState,
-                        error);
-                    persistedState = {};
-                }
-
-                filteredPersistedState = this._getFilteredState(persistedState);
-
-                // Store into the new format and delete the old format so that
-                // it's not used again.
-                this.persistState(filteredPersistedState);
-                jitsiLocalStorage.removeItem(PERSISTED_STATE_NAME);
             }
         }
 

@@ -7,6 +7,7 @@ import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import {
     FILMSTRIP_TYPE
 } from '../../constants';
+import { getScreenshareFilmstripParticipantId } from '../../functions';
 
 import Filmstrip from './Filmstrip';
 
@@ -101,18 +102,20 @@ const ScreenshareFilmstrip = (props: Props) => props._currentLayout === LAYOUTS.
  */
 function _mapStateToProps(state) {
     const {
-        filmstripHeight,
-        filmstripWidth,
-        thumbnailSize
-    } = state['features/filmstrip'].screenshareFilmstripDimensions;
-    const screenshares = state['features/video-layout'].remoteScreenShares;
+        screenshareFilmstripDimensions: {
+            filmstripHeight,
+            filmstripWidth,
+            thumbnailSize
+        }
+    } = state['features/filmstrip'];
+    const id = getScreenshareFilmstripParticipantId(state);
 
     return {
         _columns: 1,
         _currentLayout: getCurrentLayout(state),
         _filmstripHeight: filmstripHeight,
         _filmstripWidth: filmstripWidth,
-        _remoteParticipants: screenshares.length ? [ screenshares[0] ] : [],
+        _remoteParticipants: id ? [ id ] : [],
         _resizableFilmstrip: false,
         _rows: 1,
         _thumbnailWidth: thumbnailSize?.width,

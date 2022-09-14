@@ -30,6 +30,16 @@ export const FULL_SCREEN_CHANGED = 'FULL_SCREEN_CHANGED';
 export const SET_FULL_SCREEN = 'SET_FULL_SCREEN';
 
 /**
+ * The type of the (redux) action which shows/hides the hangup menu.
+ *
+ * {
+ *     type: SET_HANGUP_MENU_VISIBLE,
+ *     visible: boolean
+ * }
+ */
+export const SET_HANGUP_MENU_VISIBLE = 'SET_HANGUP_MENU_VISIBLE';
+
+/**
  * The type of the redux action that toggles whether the overflow menu(s) should be shown as drawers.
  */
 export const SET_OVERFLOW_DRAWER = 'SET_OVERFLOW_DRAWER';

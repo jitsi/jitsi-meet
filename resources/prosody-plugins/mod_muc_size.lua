@@ -1,5 +1,5 @@
 -- Prosody IM
--- Copyright (C) 2017 Atlassian
+-- Copyright (C) 2021-present 8x8, Inc.
 --
 
 local jid = require "util.jid";
