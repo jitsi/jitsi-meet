@@ -7,7 +7,7 @@ import {
 } from './actionTypes';
 import { REDUCER_KEY } from './constants';
 
-export interface IParticipantsPane {
+export interface IParticipantsPaneState {
     isOpen: boolean;
     participantsVolume: {
         [participantId: string]: number;
@@ -23,7 +23,7 @@ const DEFAULT_STATE = {
  * Listen for actions that mutate the participants pane state.
  */
 ReducerRegistry.register(
-    REDUCER_KEY, (state: IParticipantsPane = DEFAULT_STATE, action) => {
+    REDUCER_KEY, (state: IParticipantsPaneState = DEFAULT_STATE, action) => {
         switch (action.type) {
         case PARTICIPANTS_PANE_CLOSE:
             return {

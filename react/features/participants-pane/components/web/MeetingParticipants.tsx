@@ -118,8 +118,6 @@ function MeetingParticipants({
         <>
             <div className = { styles.heading }>
                 {currentRoom?.name
-
-                    // $FlowExpectedError
                     ? `${currentRoom.name} (${participantsCount})`
                     : t('participantsPane.headings.participantsList', { count: participantsCount })}
             </div>

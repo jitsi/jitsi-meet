@@ -1,26 +1,28 @@
-// @flow
+/* eslint-disable lines-around-comment */
 import { batch } from 'react-redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+// @ts-ignore
 import { getConferenceState } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../base/media';
+import { MediaType, MEDIA_TYPE } from '../base/media/constants';
+import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
+import { raiseHand } from '../base/participants/actions';
 import {
     getLocalParticipant,
     getRemoteParticipants,
     hasRaisedHand,
     isLocalParticipantModerator,
-    isParticipantModerator,
-    PARTICIPANT_UPDATED,
-    raiseHand
-} from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+    isParticipantModerator
+} from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+// @ts-ignore
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    hideNotification,
-    showNotification
-} from '../notifications';
+// @ts-ignore
+import { hideNotification, showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+// @ts-ignore
 import { muteLocal } from '../video-menu/actions.any';
 
 import {
@@ -61,7 +63,7 @@ import {
 } from './functions';
 import { ASKED_TO_UNMUTE_FILE } from './sounds';
 
-declare var APP: Object;
+declare const APP: any;
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { type } = action;
@@ -79,7 +81,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
         let descriptionKey;
         let titleKey;
-        let uid;
+        let uid: string | undefined;
         const localParticipant = getLocalParticipant(getState);
         const raisedHand = hasRaisedHand(localParticipant);
 
@@ -149,7 +151,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     isParticipantPending(participant, MEDIA_TYPE.AUDIO)(state)
                     && dispatch(dismissPendingAudioParticipant(participant));
                 }
-            } else if (participant.id === getLocalParticipant(state).id
+            } else if (participant.id === getLocalParticipant(state)?.id
                 && /* the new role */ isParticipantModerator(participant)) {
 
                 // this is the granted moderator case
@@ -178,7 +180,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (typeof APP !== 'undefined') {
             const local = getLocalParticipant(getState());
 
-            APP.API.notifyParticipantApproved(local.id, action.mediaType);
+            APP.API.notifyParticipantApproved(local?.id, action.mediaType);
         }
         break;
     }
@@ -192,7 +194,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (typeof APP !== 'undefined') {
             const local = getLocalParticipant(getState());
 
-            APP.API.notifyParticipantRejected(local.id, action.mediaType);
+            APP.API.notifyParticipantRejected(local?.id, action.mediaType);
         }
         break;
     }
@@ -216,7 +218,7 @@ StateListenerRegistry.register(
     (conference, { dispatch }, previousConference) => {
         if (conference && !previousConference) {
             // local participant is allowed to unmute
-            conference.on(JitsiConferenceEvents.AV_MODERATION_APPROVED, ({ mediaType }) => {
+            conference.on(JitsiConferenceEvents.AV_MODERATION_APPROVED, ({ mediaType }: { mediaType: MediaType; }) => {
                 dispatch(localParticipantApproved(mediaType));
 
                 // Audio & video moderation are both enabled at the same time.
@@ -233,18 +235,20 @@ StateListenerRegistry.register(
                 }
             });
 
-            conference.on(JitsiConferenceEvents.AV_MODERATION_REJECTED, ({ mediaType }) => {
+            conference.on(JitsiConferenceEvents.AV_MODERATION_REJECTED, ({ mediaType }: { mediaType: MediaType; }) => {
                 dispatch(localParticipantRejected(mediaType));
             });
 
-            conference.on(JitsiConferenceEvents.AV_MODERATION_CHANGED, ({ enabled, mediaType, actor }) => {
+            conference.on(JitsiConferenceEvents.AV_MODERATION_CHANGED, ({ enabled, mediaType, actor }: {
+                actor: Object; enabled: boolean; mediaType: MediaType;
+            }) => {
                 enabled ? dispatch(enableModeration(mediaType, actor)) : dispatch(disableModeration(mediaType, actor));
             });
 
             // this is received by moderators
             conference.on(
                 JitsiConferenceEvents.AV_MODERATION_PARTICIPANT_APPROVED,
-                ({ participant, mediaType }) => {
+                ({ participant, mediaType }: { mediaType: MediaType; participant: { _id: string; }; }) => {
                     const { _id: id } = participant;
 
                     batch(() => {
@@ -259,7 +263,7 @@ StateListenerRegistry.register(
             // this is received by moderators
             conference.on(
                 JitsiConferenceEvents.AV_MODERATION_PARTICIPANT_REJECTED,
-                ({ participant, mediaType }) => {
+                ({ participant, mediaType }: { mediaType: MediaType; participant: { _id: string; }; }) => {
                     const { _id: id } = participant;
 
                     dispatch(participantRejected(id, mediaType));

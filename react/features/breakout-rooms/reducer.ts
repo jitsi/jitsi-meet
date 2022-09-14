@@ -6,6 +6,7 @@ import {
     UPDATE_BREAKOUT_ROOMS
 } from './actionTypes';
 import { FEATURE_KEY } from './constants';
+import { IRooms } from './types';
 
 const DEFAULT_STATE = {
     rooms: {},
@@ -14,21 +15,7 @@ const DEFAULT_STATE = {
 
 export interface IBreakoutRoomsState {
     roomCounter: number;
-    rooms: {
-        [id: string]: {
-            id: string;
-            isMainRoom?: boolean;
-            jid: string;
-            name: string;
-            participants: {
-                [jid: string]: {
-                    displayName: string;
-                    jid: string;
-                    role: string;
-                };
-            };
-        };
-    };
+    rooms: IRooms;
 }
 
 /**

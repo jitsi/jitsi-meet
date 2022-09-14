@@ -409,7 +409,7 @@ export function getParticipantPresenceStatus(stateful: IStateful, id: string) {
  * features/base/participants.
  * @returns {Map<string, Object>}
  */
-export function getRemoteParticipants(stateful: IStateful) {
+export function getRemoteParticipants(stateful: IStateful): Map<string, Participant> {
     return toState(stateful)['features/base/participants'].remote;
 }
 
@@ -635,7 +635,7 @@ async function _getFirstLoadableAvatarUrl(participant: Participant, store: IStor
  * features/base/participants.
  * @returns {Array<Object>}
  */
-export function getRaiseHandsQueue(stateful: IStateful): Array<Object> {
+export function getRaiseHandsQueue(stateful: IStateful): Array<{ id: string; raisedHandTimestamp: number; }> {
     const { raisedHandsQueue } = toState(stateful)['features/base/participants'];
 
     return raisedHandsQueue;

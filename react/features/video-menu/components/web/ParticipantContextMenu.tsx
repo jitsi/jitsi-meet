@@ -27,7 +27,6 @@ import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../b
 import { setVolume } from '../../../filmstrip/actions.web';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
-// @ts-ignore
 import { isForceMuted } from '../../../participants-pane/functions';
 // @ts-ignore
 import { requestRemoteControl, stopController } from '../../../remote-control';
@@ -152,9 +151,9 @@ const ParticipantContextMenu = ({
 
     const localParticipant = useSelector(getLocalParticipant);
     const _isModerator = Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR);
-    const _isAudioForceMuted = useSelector(state =>
+    const _isAudioForceMuted = useSelector<IState>(state =>
         isForceMuted(participant, MEDIA_TYPE.AUDIO, state));
-    const _isVideoForceMuted = useSelector(state =>
+    const _isVideoForceMuted = useSelector<IState>(state =>
         isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
     const _isAudioMuted = useSelector(state => isParticipantAudioMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);

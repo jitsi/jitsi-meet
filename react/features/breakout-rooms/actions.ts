@@ -1,34 +1,36 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import i18next from 'i18next';
 import _ from 'lodash';
-import type { Dispatch } from 'redux';
 
-import { createBreakoutRoomsEvent, sendAnalytics } from '../analytics';
+import { createBreakoutRoomsEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
+import { IStore } from '../app/types';
 import {
-    CONFERENCE_LEAVE_REASONS,
     conferenceLeft,
     conferenceWillLeave,
     createConference,
     getCurrentConference
+    // @ts-ignore
 } from '../base/conference';
+import { CONFERENCE_LEAVE_REASONS } from '../base/conference/constants';
 import {
-    MEDIA_TYPE,
     setAudioMuted,
     setVideoMuted
+    // @ts-ignore
 } from '../base/media';
-import { getRemoteParticipants } from '../base/participants';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { getRemoteParticipants } from '../base/participants/functions';
 import {
     getLocalTracks,
     isLocalCameraTrackMuted,
     isLocalTrackMuted
+    // @ts-ignore
 } from '../base/tracks';
+// @ts-ignore
 import { createDesiredLocalTracks } from '../base/tracks/actions';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    clearNotifications,
-    showNotification
-} from '../notifications';
+// @ts-ignore
+import { clearNotifications, showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { _RESET_BREAKOUT_ROOMS, _UPDATE_ROOM_COUNTER } from './actionTypes';
 import { FEATURE_KEY } from './constants';
@@ -39,7 +41,7 @@ import {
 } from './functions';
 import logger from './logger';
 
-declare var APP: Object;
+declare let APP: any;
 
 /**
  * Action to create a breakout room.
@@ -48,7 +50,7 @@ declare var APP: Object;
  * @returns {Function}
  */
 export function createBreakoutRoom(name?: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         let { roomCounter } = state[FEATURE_KEY];
         const subject = name || i18next.t('breakoutRooms.defaultName', { index: ++roomCounter });
@@ -60,7 +62,6 @@ export function createBreakoutRoom(name?: string) {
             roomCounter
         });
 
-        // $FlowExpectedError
         getCurrentConference(state)?.getBreakoutRooms()
             ?.createBreakoutRoom(subject);
     };
@@ -73,7 +74,7 @@ export function createBreakoutRoom(name?: string) {
  * @returns {Function}
  */
 export function closeBreakoutRoom(roomId: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const rooms = getBreakoutRooms(getState);
         const room = rooms[roomId];
         const mainRoom = getMainRoom(getState);
@@ -82,8 +83,6 @@ export function closeBreakoutRoom(roomId: string) {
 
         if (room && mainRoom) {
             Object.values(room.participants).forEach(p => {
-
-                // $FlowExpectedError
                 dispatch(sendParticipantToRoom(p.jid, mainRoom.id));
             });
         }
@@ -97,7 +96,7 @@ export function closeBreakoutRoom(roomId: string) {
  * @returns {Function}
  */
 export function removeBreakoutRoom(breakoutRoomJid: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         sendAnalytics(createBreakoutRoomsEvent('remove'));
         const room = getRoomByJid(getState, breakoutRoomJid);
 
@@ -110,8 +109,6 @@ export function removeBreakoutRoom(breakoutRoomJid: string) {
         if (Object.keys(room.participants).length > 0) {
             dispatch(closeBreakoutRoom(room.id));
         }
-
-        // $FlowExpectedError
         getCurrentConference(getState)?.getBreakoutRooms()
             ?.removeBreakoutRoom(breakoutRoomJid);
     };
@@ -123,9 +120,9 @@ export function removeBreakoutRoom(breakoutRoomJid: string) {
  * @returns {Function}
  */
 export function autoAssignToBreakoutRooms() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const rooms = getBreakoutRooms(getState);
-        const breakoutRooms = _.filter(rooms, (room: Object) => !room.isMainRoom);
+        const breakoutRooms = _.filter(rooms, room => !room.isMainRoom);
 
         if (breakoutRooms) {
             sendAnalytics(createBreakoutRoomsEvent('auto.assign'));
@@ -149,7 +146,7 @@ export function autoAssignToBreakoutRooms() {
  * @returns {Function}
  */
 export function sendParticipantToRoom(participantId: string, roomId: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const rooms = getBreakoutRooms(getState);
         const room = rooms[roomId];
 
@@ -169,7 +166,6 @@ export function sendParticipantToRoom(participantId: string, roomId: string) {
             return;
         }
 
-        // $FlowExpectedError
         getCurrentConference(getState)?.getBreakoutRooms()
             ?.sendParticipantToRoom(participantJid, room.jid);
     };
@@ -182,14 +178,12 @@ export function sendParticipantToRoom(participantId: string, roomId: string) {
  * @returns {Function}
  */
 export function moveToRoom(roomId?: string) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const mainRoomId = getMainRoom(getState)?.id;
-        let _roomId = roomId || mainRoomId;
+        let _roomId: string | undefined | String = roomId || mainRoomId;
 
         // Check if we got a full JID.
-        // $FlowExpectedError
-        if (_roomId?.indexOf('@') !== -1) {
-            // $FlowExpectedError
+        if (_roomId && _roomId?.indexOf('@') !== -1) {
             const [ id, ...domainParts ] = _roomId.split('@');
 
             // On mobile we first store the room and the connection is created
@@ -198,16 +192,14 @@ export function moveToRoom(roomId?: string) {
 
             // eslint-disable-next-line no-new-wrappers
             _roomId = new String(id);
-
-            // $FlowExpectedError
+            // @ts-ignore
             _roomId.domain = domainParts.join('@');
         }
 
-        // $FlowExpectedError
         const roomIdStr = _roomId?.toString();
         const goToMainRoom = roomIdStr === mainRoomId;
         const rooms = getBreakoutRooms(getState);
-        const targetRoom = rooms[roomIdStr];
+        const targetRoom = rooms[roomIdStr ?? ''];
 
         if (!targetRoom) {
             logger.warn(`Unknown room: ${targetRoom}`);
@@ -302,7 +294,6 @@ function _findParticipantJid(getState: Function, participantId: string) {
     if (!participantId.includes('@')) {
         const p = conference.getParticipantById(participantId);
 
-        // $FlowExpectedError
         _participantId = p?.getJid(); // This will be the room JID.
     }
 
@@ -310,11 +301,8 @@ function _findParticipantJid(getState: Function, participantId: string) {
         const rooms = getBreakoutRooms(getState);
 
         for (const room of Object.values(rooms)) {
-            // $FlowExpectedError
             const participants = room.participants || {};
             const p = participants[_participantId]
-
-                // $FlowExpectedError
                 || Object.values(participants).find(item => item.jid === _participantId);
 
             if (p) {

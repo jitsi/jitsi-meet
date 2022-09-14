@@ -1,15 +1,18 @@
-// @flow
-
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { getParticipantById } from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { editMessage, MESSAGE_TYPE_REMOTE } from '../chat';
+import { getParticipantById } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { editMessage } from '../chat';
+import { MESSAGE_TYPE_REMOTE } from '../chat/constants';
 
 import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
 import { moveToRoom } from './actions';
 import logger from './logger';
+import { IRooms } from './types';
 
-declare var APP: Object;
+declare const APP: any;
 
 /**
  * Registers a change handler for state['features/base/conference'].conference to
@@ -19,12 +22,14 @@ StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
     (conference, { dispatch }, previousConference) => {
         if (conference && !previousConference) {
-            conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_MOVE_TO_ROOM, roomId => {
+            conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_MOVE_TO_ROOM, (roomId: string) => {
                 logger.debug(`Moving to room: ${roomId}`);
                 dispatch(moveToRoom(roomId));
             });
 
-            conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_UPDATED, ({ rooms, roomCounter }) => {
+            conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_UPDATED, ({ rooms, roomCounter }: {
+                roomCounter: number; rooms: IRooms;
+            }) => {
                 logger.debug('Room list updated');
                 if (typeof APP !== 'undefined') {
                     APP.API.notifyBreakoutRoomsUpdated(rooms);
@@ -48,9 +53,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             const { overwrittenNameList } = getState()['features/base/participants'];
 
             if (Object.keys(overwrittenNameList).length > 0) {
-                const newRooms = {};
+                const newRooms: IRooms = {};
 
-                Object.entries(action.rooms).forEach(([ key, r ]) => {
+                Object.entries(action.rooms as IRooms).forEach(([ key, r ]) => {
                     let participants = r?.participants || {};
                     let jid;
 
@@ -62,7 +67,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                                 ...participants,
                                 [jid]: {
                                     ...participants[jid],
-                                    displayName: overwrittenNameList[id]
+                                    displayName: overwrittenNameList[id as keyof typeof overwrittenNameList]
                                 }
                             };
                         }
@@ -81,12 +86,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         // edit the chat history to match names for participants in breakout rooms
         const { messages } = getState()['features/chat'];
 
-        messages && messages.forEach(m => {
+        messages?.forEach(m => {
             if (m.messageType === MESSAGE_TYPE_REMOTE && !getParticipantById(getState(), m.id)) {
-                const rooms = action.rooms;
+                const rooms: IRooms = action.rooms;
 
                 for (const room of Object.values(rooms)) {
-                    // $FlowExpectedError
                     const participants = room.participants || {};
                     const matchedJid = Object.keys(participants).find(jid => jid.endsWith(m.id));
 
