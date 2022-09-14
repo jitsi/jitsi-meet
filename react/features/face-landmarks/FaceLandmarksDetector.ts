@@ -92,8 +92,10 @@ class FaceLandmarksDetector {
 
         const baseUrl = `${getBaseUrl()}libs/`;
         let workerUrl = `${baseUrl}face-landmarks-worker.min.js`;
+        // @ts-ignore
         const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
 
+        // @ts-ignore
         workerUrl = window.URL.createObjectURL(workerBlob);
         this.worker = new Worker(workerUrl, { name: 'Face Recognition Worker' });
         this.worker.onmessage = ({ data }: MessageEvent<any>) => {

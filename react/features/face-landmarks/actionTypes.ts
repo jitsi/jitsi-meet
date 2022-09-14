@@ -40,7 +40,7 @@ export const CLEAR_FACE_EXPRESSIONS_BUFFER = 'CLEAR_FACE_EXPRESSIONS_BUFFER';
 export const UPDATE_FACE_COORDINATES = 'UPDATE_FACE_COORDINATES';
 
 /**
- * Redux action type dispatched in order to signal new ace coordinates were obtained for the local participant.
+ * Redux action type dispatched in order to signal new face coordinates were obtained for the local participant.
  *
  * {
  *      type: NEW_FACE_COORDINATES,
