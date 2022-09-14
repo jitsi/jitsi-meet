@@ -49,7 +49,7 @@ export interface IChatState {
     lobbyMessageRecipient?: {
         id: string;
         name: string;
-    } | LocalParticipant,
+    } | LocalParticipant;
     messages: IMessage[];
     nbUnreadMessages: number;
     privateMessageRecipient?: Participant;

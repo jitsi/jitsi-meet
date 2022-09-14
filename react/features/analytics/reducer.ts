@@ -29,19 +29,19 @@ const DEFAULT_STATE = {
 };
 
 interface Value {
-    startedTime: number,
-    value: number
+    startedTime: number;
+    value: number;
 }
 
 export interface IAnalyticsState {
     localTracksDuration: {
-        audio: Value,
-        conference: Value,
+        audio: Value;
+        conference: Value;
         video: {
-            camera: Value,
-            desktop: Value
-        }
-    }
+            camera: Value;
+            desktop: Value;
+        };
+    };
 }
 
 /**

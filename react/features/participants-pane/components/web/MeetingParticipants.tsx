@@ -1,8 +1,10 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
 // @ts-ignore
@@ -15,6 +17,7 @@ import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantById } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
 import { normalizeAccents } from '../../../base/util/strings.web';
 // @ts-ignore
@@ -34,17 +37,17 @@ import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
 // @ts-ignore
 import MeetingParticipantItems from './MeetingParticipantItems';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         heading: {
             color: theme.palette.text02,
-            ...theme.typography.labelButton,
-            lineHeight: `${theme.typography.labelButton.lineHeight}px`,
+            // @ts-ignore
+            ...withPixelLineHeight(theme.typography.labelButton),
             margin: `8px 0 ${participantsPaneTheme.panePadding}px`,
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
-                ...theme.typography.labelButtonLarge,
-                lineHeight: `${theme.typography.labelButtonLarge.lineHeight}px`
+                // @ts-ignore
+                ...withPixelLineHeight(theme.typography.labelButtonLarge)
             }
         },
 
@@ -58,13 +61,13 @@ const useStyles = makeStyles((theme: any) => {
 });
 
 type Props = {
-    currentRoom?: { name: string },
-    overflowDrawer?: boolean,
-    participantsCount?: number,
-    searchString: string,
-    setSearchString: (newValue: string) => void,
-    showInviteButton?: boolean,
-    sortedParticipantIds?: Array<string>
+    currentRoom?: { name: string; };
+    overflowDrawer?: boolean;
+    participantsCount?: number;
+    searchString: string;
+    setSearchString: (newValue: string) => void;
+    showInviteButton?: boolean;
+    sortedParticipantIds?: Array<string>;
 };
 
 /**
@@ -109,14 +112,12 @@ function MeetingParticipants({
     const muteParticipantButtonText = t('dialog.muteParticipantButton');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
 
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     return (
         <>
             <div className = { styles.heading }>
                 {currentRoom?.name
-
-                    // $FlowExpectedError
                     ? `${currentRoom.name} (${participantsCount})`
                     : t('participantsPane.headings.participantsList', { count: participantsCount })}
             </div>

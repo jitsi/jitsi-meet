@@ -1,14 +1,14 @@
 /* eslint-disable lines-around-comment */
 import InlineDialog from '@atlaskit/inline-dialog';
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import React, { Component, ReactElement } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
 import { type ReactionEmojiProps, REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
@@ -30,48 +30,48 @@ interface Props extends WithTranslation {
     /**
      * ID of the menu that is controlled by this button.
      */
-    ariaControls: String,
+    ariaControls: String;
 
     /**
      * A child React Element to display within {@code InlineDialog}.
      */
-    children: ReactElement,
+    children: ReactElement;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Whether or not the OverflowMenu popover should display.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Callback to change the visibility of the overflow menu.
      */
-    onVisibilityChange: Function,
+    onVisibilityChange: Function;
 
     /**
      * Whether to display the OverflowMenu as a drawer.
      */
-    overflowDrawer: boolean,
+    overflowDrawer: boolean;
 
     /**
      * The array of reactions to be displayed.
      */
-    reactionsQueue: Array<ReactionEmojiProps>,
+    reactionsQueue: Array<ReactionEmojiProps>;
 
     /**
      * Whether or not to display the reactions in the mobile menu.
      */
-    showMobileReactions: boolean
+    showMobileReactions: boolean;
 }
 
 const styles = () => {
     return {
         overflowMenuDrawer: {
-            overflowY: 'auto',
+            overflowY: 'auto' as const,
             height: `calc(${DRAWER_MAX_HEIGHT} - ${REACTIONS_MENU_HEIGHT}px - 16px)`
         }
     };
@@ -209,5 +209,4 @@ function mapStateToProps(state: IState) {
     };
 }
 
-// @ts-ignore
 export default withStyles(styles)(translate(connect(mapStateToProps)(OverflowMenuButton)));

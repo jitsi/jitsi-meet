@@ -1,8 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import {
     requestDisableAudioModeration,
@@ -33,15 +34,15 @@ import {
 // @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import {
-    SETTINGS_TABS,
     openSettingsDialog,
     shouldShowModeratorSettings
     // @ts-ignore
 } from '../../../settings';
+import { SETTINGS_TABS } from '../../../settings/constants';
 // @ts-ignore
 import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         contextMenu: {
             bottom: 'auto',
@@ -75,17 +76,17 @@ type Props = {
     /**
      * Whether the menu is open.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Drawer close callback.
      */
-    onDrawerClose: (e?: React.MouseEvent) => void,
+    onDrawerClose: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for the mouse leaving this item.
      */
-    onMouseLeave?: (e?: React.MouseEvent) => void
+    onMouseLeave?: (e?: React.MouseEvent) => void;
 };
 
 export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {
@@ -108,7 +109,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
 
     const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
 
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const muteAllVideo = useCallback(
         () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);

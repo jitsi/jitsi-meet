@@ -1,8 +1,8 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { batch, connect } from 'react-redux';
+import { batch } from 'react-redux';
 
 import { IState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -13,6 +13,7 @@ import { getParticipantById } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
+import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import Button from '../../../base/ui/components/web/Button';
@@ -37,79 +38,79 @@ interface Props extends WithTranslation {
     /**
      * Whether the remote video context menu is disabled.
      */
-    _disabled: Boolean,
+    _disabled: Boolean;
 
     /**
      * The position relative to the trigger the remote menu should display
      * from. Valid values are those supported by AtlasKit
      * {@code InlineDialog}.
      */
-    _menuPosition: string,
+    _menuPosition: string;
 
     /**
      * Whether to display the Popover as a drawer.
      */
-    _overflowDrawer: boolean,
+    _overflowDrawer: boolean;
 
     /**
      * Participant reference.
      */
-    _participant: Participant,
+    _participant: Participant;
 
     /**
      * The ID for the participant on which the remote video menu will act.
      */
-    _participantDisplayName: string,
+    _participantDisplayName: string;
 
     /**
      * The current state of the participant's remote control session.
      */
-    _remoteControlState: number,
+    _remoteControlState: number;
 
     /**
      * Whether the popover should render the Connection Info stats.
      */
-    _showConnectionInfo: Boolean,
+    _showConnectionInfo: Boolean;
 
     /**
      * Whether or not the button should be visible.
      */
-    buttonVisible: boolean,
+    buttonVisible: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Hides popover.
      */
-    hidePopover: Function,
+    hidePopover: Function;
 
     /**
      * The ID for the participant on which the remote video menu will act.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * Whether the popover is visible or not.
      */
-    popoverVisible: boolean,
+    popoverVisible: boolean;
 
     /**
      * Shows popover.
      */
-    showPopover: Function,
+    showPopover: Function;
 
     /**
      * The type of the thumbnail.
      */
-    thumbnailType: string
+    thumbnailType: string;
 }
 
 const styles = () => {
@@ -120,7 +121,7 @@ const styles = () => {
         },
 
         contextMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             marginTop: 0,
             right: 'auto',
             padding: '0',
@@ -302,13 +303,12 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _disabled: remoteVideoMenu?.disabled,
         _menuPosition,
         _overflowDrawer: overflowDrawer,
-        _participant: participant,
-        _participantDisplayName,
+        _participant: participant ?? { id: '' },
+        _participantDisplayName: _participantDisplayName ?? '',
         _remoteControlState,
         _showConnectionInfo: showConnectionInfo
     };
 }
 
 export default translate(connect(_mapStateToProps)(
-    // @ts-ignore
     withStyles(styles)(RemoteVideoMenuTriggerButton)));

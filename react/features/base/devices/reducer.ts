@@ -29,15 +29,15 @@ const DEFAULT_STATE: IDevicesState = {
 
 export interface IDevicesState {
     availableDevices: {
-        audioInput: MediaDeviceInfo[];
-        audioOutput: MediaDeviceInfo[];
-        videoInput: MediaDeviceInfo[];
+        audioInput?: MediaDeviceInfo[];
+        audioOutput?: MediaDeviceInfo[];
+        videoInput?: MediaDeviceInfo[];
     };
     pendingRequests: Object[];
     permissions: {
         audio: boolean;
         video: boolean;
-    }
+    };
 }
 
 /**

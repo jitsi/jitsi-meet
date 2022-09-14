@@ -14,12 +14,12 @@ type Props = AbstractButtonProps & {
     /**
      * Whether the more options menu is open.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * External handler for key down action.
      */
-    onKeyDown: Function,
+    onKeyDown: Function;
 };
 
 /**

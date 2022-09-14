@@ -1,8 +1,8 @@
-import { makeStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
 import { RECORD_TYPE } from '../../constants';
 
 /**
@@ -13,25 +13,25 @@ type Props = {
     /**
      * The id of the record.
      */
-    id: string,
+    id: string;
 
     /**
      * The name of the record.
      */
-    name: string,
+    name: string;
 
     /**
      * The handler for the click event.
      */
-    onClick: (e?: React.MouseEvent) => void,
+    onClick: (e?: React.MouseEvent) => void;
 
     /**
      * The type of the record.
      */
-    type: string
-}
+    type: string;
+};
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         recordItem: {
             display: 'flex',
@@ -76,13 +76,13 @@ const useStyles = makeStyles((theme: any) => {
 export const RecordItem = ({
     id,
     name,
-    /* eslint-disable-next-line no-empty-function */
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onClick = () => {},
     type
 }: Props) => {
     const { t } = useTranslation();
-    const classes = useStyles();
-    const Icon = RECORD_TYPE[type].icon;
+    const Icon = RECORD_TYPE[type as keyof typeof RECORD_TYPE].icon;
+    const { classes } = useStyles();
 
     return (
         <li

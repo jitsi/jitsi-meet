@@ -107,7 +107,9 @@ denied-peer-ip=240.0.0.0-255.255.255.255" >> $TURN_CONFIG
         db_get jitsi-meet/cert-choice
         CERT_CHOICE="$RET"
 
-        if [ "$CERT_CHOICE" = "I want to use my own certificate" ] ; then
+        UPLOADED_CERT_CHOICE="I want to use my own certificate"
+        LE_CERT_CHOICE="Let's Encrypt certificates"
+        if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
             db_get jitsi-meet/cert-path-key
             CERT_KEY="$RET"
             db_get jitsi-meet/cert-path-crt
@@ -120,21 +122,12 @@ denied-peer-ip=240.0.0.0-255.255.255.255" >> $TURN_CONFIG
             CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
             CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
             sed -i "s/cert=\/etc\/jitsi\/meet\/.*crt/cert=$CERT_CRT_ESC/g" $TURN_CONFIG
+        elif [ "$CERT_CHOICE" = "$LE_CERT_CHOICE" ]; then
+            /usr/share/jitsi-meet/scripts/coturn-le-update.sh ${JVB_HOSTNAME}
         fi
 
         sed -i "s/#TURNSERVER_ENABLED/TURNSERVER_ENABLED/g" /etc/default/coturn
         invoke-rc.d coturn restart || true
-
-        NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/60-jitsi-meet.conf"
-        if [ -f $NGINX_STREAM_CONFIG ] ; then
-            echo "------------------------------------------------"
-            echo ""
-            echo "You have multiplexing enabled, it is recommended to disable it and migrate to using websockets for the bridge channel."
-            echo "The support for sctp data channels is deprecated and will be dropped at some point."
-            echo "How to do it at: https://jitsi.org/multiplexing-to-bridge-ws-howto"
-            echo ""
-            echo "------------------------------------------------"
-        fi
 
         # and we're done with debconf
         db_stop

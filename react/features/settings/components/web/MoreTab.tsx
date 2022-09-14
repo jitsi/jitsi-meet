@@ -28,73 +28,73 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
     /**
      * The currently selected desktop share frame rate in the frame rate select dropdown.
      */
-    currentFramerate: string,
+    currentFramerate: string;
 
     /**
      * The currently selected language to display in the language select
      * dropdown.
      */
-    currentLanguage: string,
+    currentLanguage: string;
 
     /**
      * All available desktop capture frame rates.
      */
-    desktopShareFramerates: Array<number>,
+    desktopShareFramerates: Array<number>;
 
     /**
      * Whether to show hide self view setting.
      */
-    disableHideSelfView: boolean,
+    disableHideSelfView: boolean;
 
     /**
      * The types of enabled notifications that can be configured and their specific visibility.
      */
-    enabledNotifications: Object,
+    enabledNotifications: Object;
 
     /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
-    followMeActive: boolean,
+    followMeActive: boolean;
 
     /**
      * Whether or not to hide self-view screen.
      */
-    hideSelfView: boolean,
+    hideSelfView: boolean;
 
     /**
      * All available languages to display in the language select dropdown.
      */
-    languages: Array<string>,
+    languages: Array<string>;
 
     /**
      * Whether or not to display the language select dropdown.
      */
-    showLanguageSettings: boolean,
+    showLanguageSettings: boolean;
 
     /**
      * Whether or not to display moderator-only settings.
      */
-    showModeratorSettings: boolean,
+    showModeratorSettings: boolean;
 
     /**
      * Whether or not to display notifications settings.
      */
-    showNotificationsSettings: boolean,
+    showNotificationsSettings: boolean;
 
     /**
      * Whether or not to show prejoin screen.
      */
-    showPrejoinPage: boolean,
+    showPrejoinPage: boolean;
 
     /**
      * Whether or not to display the prejoin settings section.
      */
-    showPrejoinSettings: boolean,
+    showPrejoinSettings: boolean;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function;
 };
 
 /**
@@ -105,12 +105,12 @@ type State = {
     /**
      * Whether or not the desktop share frame rate select dropdown is open.
      */
-    isFramerateSelectOpen: boolean,
+    isFramerateSelectOpen: boolean;
 
     /**
      * Whether or not the language select dropdown is open.
      */
-    isLanguageSelectOpen: boolean
+    isLanguageSelectOpen: boolean;
 };
 
 /**
@@ -177,7 +177,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onFramerateDropdownOpenChange({ isOpen }: { isOpen: boolean }) {
+    _onFramerateDropdownOpenChange({ isOpen }: { isOpen: boolean; }) {
         // @ts-ignore
         this.setState({ isFramerateSelectOpen: isOpen });
     }
@@ -202,7 +202,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onLanguageDropdownOpenChange({ isOpen }: { isOpen: boolean }) {
+    _onLanguageDropdownOpenChange({ isOpen }: { isOpen: boolean; }) {
         // @ts-ignore
         this.setState({ isLanguageSelectOpen: isOpen });
     }
@@ -282,7 +282,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @private
      * @returns {void}
      */
-    _onMaxStageParticipantsOpenChange({ isOpen }: { isOpen: boolean }) {
+    _onMaxStageParticipantsOpenChange({ isOpen }: { isOpen: boolean; }) {
         // @ts-ignore
         this.setState({ isMaxStageParticipantsOpen: isOpen });
     }

@@ -23,7 +23,7 @@ type Props = AbstractButtonProps & {
      */
     dispatch: Function;
 
-}
+};
 
 /**
  * Component that renders a toolbar button for toggling noise suppression.

@@ -17,7 +17,7 @@ import { Poll } from '../types';
  * The type of the React {@code Component} props of inheriting component.
  */
 type InputProps = {
-    pollId: string,
+    pollId: string;
 };
 
 /*
@@ -25,14 +25,14 @@ type InputProps = {
  * concrete implementations (web/native).
  **/
 export type AbstractProps = {
-    checkBoxStates: boolean[],
-    creatorName: string,
-    poll: Poll,
-    setCheckbox: Function,
-    skipAnswer: () => void,
-    skipChangeVote: () => void,
-    submitAnswer: () => void,
-    t: Function,
+    checkBoxStates: boolean[];
+    creatorName: string;
+    poll: Poll;
+    setCheckbox: Function;
+    skipAnswer: () => void;
+    skipChangeVote: () => void;
+    submitAnswer: () => void;
+    t: Function;
 };
 
 /**
@@ -50,7 +50,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     const poll: Poll = useSelector((state: IState) => state['features/polls'].polls[pollId]);
 
-    const { id: localId } = useSelector(getLocalParticipant);
+    const { id: localId } = useSelector(getLocalParticipant) ?? { id: '' };
 
     const [ checkBoxStates, setCheckBoxState ] = useState(() => {
         if (poll.lastVote !== null) {

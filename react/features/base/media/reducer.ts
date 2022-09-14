@@ -280,7 +280,7 @@ function _clearAllVideoTransforms(state: IVideoState) {
  * @private
  * @returns {Object}
  */
-function _storeVideoTransform(state: IVideoState, { streamId, transform }: { streamId: string, transform: string }) {
+function _storeVideoTransform(state: IVideoState, { streamId, transform }: { streamId: string; transform: string; }) {
     return {
         ...state,
         transforms: {
@@ -299,7 +299,7 @@ function _storeVideoTransform(state: IVideoState, { streamId, transform }: { str
  * @private
  * @returns {Object}
  */
-function _trackRemoved(state: IVideoState, { track: { jitsiTrack } } : { track: { jitsiTrack: any } }) {
+function _trackRemoved(state: IVideoState, { track: { jitsiTrack } }: { track: { jitsiTrack: any; }; }) {
     if (jitsiTrack) {
         const streamId = jitsiTrack.getStreamId();
 

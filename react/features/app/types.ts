@@ -1,3 +1,6 @@
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+
 import { IAnalyticsState } from '../analytics/reducer';
 import { IAuthenticationState } from '../authentication/reducer';
 import { IAVModerationState } from '../av-moderation/reducer';
@@ -52,6 +55,7 @@ import { INoiseDetectionState } from '../noise-detection/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
 import { INotificationsState } from '../notifications/reducer';
 import { IOverlayState } from '../overlay/reducer';
+import { IParticipantsPaneState } from '../participants-pane/reducer';
 import { IPollsState } from '../polls/reducer';
 import { IPowerMonitorState } from '../power-monitor/reducer';
 import { IPrejoinState } from '../prejoin/reducer';
@@ -73,86 +77,86 @@ import { IVideoSipGW } from '../videosipgw/reducer';
 import { IVirtualBackground } from '../virtual-background/reducer';
 
 export interface IStore {
-    dispatch: Function,
+    dispatch: ThunkDispatch<IState, void, AnyAction>;
     getState: () => IState;
 }
 
 export interface IState {
-    'features/analytics': IAnalyticsState,
-    'features/authentication': IAuthenticationState,
-    'features/av-moderation': IAVModerationState,
-    'features/background': IBackgroundState,
-    'features/base/app': IAppState,
-    'features/base/audio-only': IAudioOnlyState,
-    'features/base/conference': IConferenceState,
-    'features/base/config': IConfigState,
-    'features/base/connection': IConnectionState,
-    'features/base/devices': IDevicesState,
-    'features/base/dialog': IDialogState,
-    'features/base/flags': IFlagsState,
-    'features/base/jwt': IJwtState,
-    'features/base/known-domains': IKnownDomainsState,
-    'features/base/lastn': ILastNState,
-    'features/base/lib-jitsi-meet': ILibJitsiMeetState,
-    'features/base/logging': ILoggingState,
-    'features/base/media': IMediaState,
-    'features/base/net-info': INetInfoState,
-    'features/base/no-src-data': INoSrcDataState,
-    'features/base/participants': IParticipantsState,
-    'features/base/responsive-ui': IResponsiveUIState,
-    'features/base/settings': ISettingsState,
-    'features/base/sounds': ISoundsState,
-    'features/base/tracks': ITracksState,
-    'features/base/user-interaction': IUserInteractionState,
-    'features/breakout-rooms': IBreakoutRoomsState,
-    'features/calendar-sync': ICalendarSyncState,
-    'features/call-integration': ICallIntegrationState,
-    'features/chat': IChatState,
-    'features/deep-linking': IDeepLinkingState,
-    'features/dropbox': IDropboxState,
-    'features/dynamic-branding': IDynamicBrandingState,
-    'features/e2ee': IE2EEState,
-    'features/etherpad': IEtherpadState,
-    'features/face-landmarks': IFaceLandmarksState,
-    'features/feedback': IFeedbackState,
-    'features/filmstrip': IFilmstripState,
-    'features/follow-me': IFollowMeState,
-    'features/full-screen': IFullScreenState,
-    'features/gifs': IGifsState,
-    'features/google-api': IGoogleApiState,
-    'features/invite': IInviteState,
-    'features/jaas': IJaaSState,
-    'features/large-video': ILargeVideoState,
-    'features/lobby': ILobbyState,
-    'features/mobile/audio-mode': IMobileAudioModeState,
-    'features/mobile/external-api': IMobileExternalApiState,
-    'features/mobile/watchos': IMobileWatchOSState,
-    'features/no-audio-signal': INoAudioSignalState,
-    'features/noise-detection': INoiseDetectionState,
-    'features/noise-suppression': INoiseSuppressionState,
-    'features/notifications': INotificationsState,
-    'features/overlay': IOverlayState,
-    'features/participants-pane': IParticipantsState,
-    'features/polls': IPollsState,
-    'features/power-monitor': IPowerMonitorState,
-    'features/prejoin': IPrejoinState,
-    'features/reactions': IReactionsState,
-    'features/recent-list': IRecentListState,
-    'features/recording': IRecordingState,
-    'features/remote-control': IRemoteControlState,
-    'features/screen-share': IScreenShareState,
-    'features/screenshot-capture': IScreenshotCaptureState,
-    'features/settings': ISettingsState,
-    'features/shared-video': ISharedVideoState,
-    'features/speaker-stats': ISpeakerStatsState,
-    'features/subtitles': ISubtitlesState,
-    'features/talk-while-muted': ITalkWhileMutedState,
-    'features/testing': ITestingState,
-    'features/toolbox': IToolboxState,
-    'features/transcribing': ITranscribingState,
-    'features/video-layout': IVideoLayoutState,
-    'features/video-quality': IVideoQualityState,
-    'features/video-quality-persistent-storage': IVideoQualityPersistedState,
-    'features/videosipgw': IVideoSipGW,
-    'features/virtual-background': IVirtualBackground
+    'features/analytics': IAnalyticsState;
+    'features/authentication': IAuthenticationState;
+    'features/av-moderation': IAVModerationState;
+    'features/background': IBackgroundState;
+    'features/base/app': IAppState;
+    'features/base/audio-only': IAudioOnlyState;
+    'features/base/conference': IConferenceState;
+    'features/base/config': IConfigState;
+    'features/base/connection': IConnectionState;
+    'features/base/devices': IDevicesState;
+    'features/base/dialog': IDialogState;
+    'features/base/flags': IFlagsState;
+    'features/base/jwt': IJwtState;
+    'features/base/known-domains': IKnownDomainsState;
+    'features/base/lastn': ILastNState;
+    'features/base/lib-jitsi-meet': ILibJitsiMeetState;
+    'features/base/logging': ILoggingState;
+    'features/base/media': IMediaState;
+    'features/base/net-info': INetInfoState;
+    'features/base/no-src-data': INoSrcDataState;
+    'features/base/participants': IParticipantsState;
+    'features/base/responsive-ui': IResponsiveUIState;
+    'features/base/settings': ISettingsState;
+    'features/base/sounds': ISoundsState;
+    'features/base/tracks': ITracksState;
+    'features/base/user-interaction': IUserInteractionState;
+    'features/breakout-rooms': IBreakoutRoomsState;
+    'features/calendar-sync': ICalendarSyncState;
+    'features/call-integration': ICallIntegrationState;
+    'features/chat': IChatState;
+    'features/deep-linking': IDeepLinkingState;
+    'features/dropbox': IDropboxState;
+    'features/dynamic-branding': IDynamicBrandingState;
+    'features/e2ee': IE2EEState;
+    'features/etherpad': IEtherpadState;
+    'features/face-landmarks': IFaceLandmarksState;
+    'features/feedback': IFeedbackState;
+    'features/filmstrip': IFilmstripState;
+    'features/follow-me': IFollowMeState;
+    'features/full-screen': IFullScreenState;
+    'features/gifs': IGifsState;
+    'features/google-api': IGoogleApiState;
+    'features/invite': IInviteState;
+    'features/jaas': IJaaSState;
+    'features/large-video': ILargeVideoState;
+    'features/lobby': ILobbyState;
+    'features/mobile/audio-mode': IMobileAudioModeState;
+    'features/mobile/external-api': IMobileExternalApiState;
+    'features/mobile/watchos': IMobileWatchOSState;
+    'features/no-audio-signal': INoAudioSignalState;
+    'features/noise-detection': INoiseDetectionState;
+    'features/noise-suppression': INoiseSuppressionState;
+    'features/notifications': INotificationsState;
+    'features/overlay': IOverlayState;
+    'features/participants-pane': IParticipantsPaneState;
+    'features/polls': IPollsState;
+    'features/power-monitor': IPowerMonitorState;
+    'features/prejoin': IPrejoinState;
+    'features/reactions': IReactionsState;
+    'features/recent-list': IRecentListState;
+    'features/recording': IRecordingState;
+    'features/remote-control': IRemoteControlState;
+    'features/screen-share': IScreenShareState;
+    'features/screenshot-capture': IScreenshotCaptureState;
+    'features/settings': ISettingsState;
+    'features/shared-video': ISharedVideoState;
+    'features/speaker-stats': ISpeakerStatsState;
+    'features/subtitles': ISubtitlesState;
+    'features/talk-while-muted': ITalkWhileMutedState;
+    'features/testing': ITestingState;
+    'features/toolbox': IToolboxState;
+    'features/transcribing': ITranscribingState;
+    'features/video-layout': IVideoLayoutState;
+    'features/video-quality': IVideoQualityState;
+    'features/video-quality-persistent-storage': IVideoQualityPersistedState;
+    'features/videosipgw': IVideoSipGW;
+    'features/virtual-background': IVirtualBackground;
 }

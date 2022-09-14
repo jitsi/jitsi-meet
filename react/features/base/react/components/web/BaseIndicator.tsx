@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
@@ -16,52 +16,52 @@ interface Props extends WithTranslation {
     /**
      * Additional CSS class name.
      */
-    className?: string,
+    className?: string;
 
     /**
      * The icon component to use.
      */
-    icon: Function,
+    icon: Function;
 
     /**
      * The CSS classnames to set on the icon element of the component.
     */
-    iconClassName?: string,
+    iconClassName?: string;
 
     /**
      * The color of the icon.
      */
-    iconColor?: string,
+    iconColor?: string;
 
     /**
      * Id of the icon to be rendered.
      */
-    iconId?: string,
+    iconId?: string;
 
     /**
      * The font size for the icon.
      */
-    iconSize: string,
+    iconSize: string;
 
     /**
      * The ID attribute to set on the root element of the component.
      */
-    id?: string,
+    id?: string;
 
     /**
      * The translation key to use for displaying a tooltip when hovering over
      * the component.
      */
-    tooltipKey: string,
+    tooltipKey: string;
 
     /**
      * From which side of the indicator the tooltip should appear from,
      * defaulting to "top".
      */
-    tooltipPosition: string
+    tooltipPosition: string;
 }
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         indicator: {
             width: '20px',
@@ -90,7 +90,7 @@ const BaseIndicator = ({
     tooltipKey,
     tooltipPosition = 'top'
 }: Props) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
     const style: any = {};
 
     if (iconSize) {

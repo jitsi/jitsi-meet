@@ -1,5 +1,7 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -82,67 +84,66 @@ type Props = AbstractProps & WithTranslation & {
     /**
      * Disable/enable inactive indicator.
      */
-    _connectionIndicatorInactiveDisabled: boolean,
+    _connectionIndicatorInactiveDisabled: boolean;
 
     /**
      * The current condition of the user's connection, matching one of the
      * enumerated values in the library.
      */
-    _connectionStatus: string,
+    _connectionStatus: string;
 
     /**
      * Whether the indicator popover is disabled.
      */
-    _popoverDisabled: boolean,
+    _popoverDisabled: boolean;
 
     /**
      * The source name of the track.
      */
-    _sourceName: string,
+    _sourceName: string;
 
     /**
      * Whether source name signaling is enabled.
      */
-    _sourceNameSignalingEnabled: boolean,
+    _sourceNameSignalingEnabled: boolean;
 
     /**
      * Whether or not the component should ignore setting a visibility class for
      * hiding the component when the connection quality is not strong.
      */
-    alwaysVisible: boolean,
+    alwaysVisible: boolean;
 
     /**
      * The audio SSRC of this client.
      */
-    audioSsrc: number,
-
+    audioSsrc: number;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: Object,
+    classes: any;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Dispatch<any>,
+    dispatch: Dispatch<any>;
 
     /**
      * Whether or not clicking the indicator should display a popover for more
      * details.
      */
-    enableStatsDisplay: boolean,
+    enableStatsDisplay: boolean;
 
     /**
      * The font-size for the icon.
      */
-    iconSize: number,
+    iconSize: number;
 
     /**
      * Relative to the icon from where the popover for more connection details
      * should display.
      */
-    statsPopoverPosition: string
+    statsPopoverPosition: string;
 };
 
 type State = AbstractState & {
@@ -150,10 +151,10 @@ type State = AbstractState & {
     /**
      * Whether popover is ivisible or not.
      */
-    popoverVisible: boolean
-}
+    popoverVisible: boolean;
+};
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         container: {
             display: 'inline-block'

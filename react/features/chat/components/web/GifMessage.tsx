@@ -1,15 +1,15 @@
-import { makeStyles } from '@material-ui/styles';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 type Props = {
 
     /**
      * URL of the GIF.
      */
-    url: string
-}
+    url: string;
+};
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         container: {
             display: 'flex',
@@ -21,14 +21,14 @@ const useStyles = makeStyles(() => {
                 maxWidth: '100%',
                 maxHeight: '100%',
                 objectFit: 'contain',
-                flexGrow: '1'
+                flexGrow: 1
             }
         }
     };
 });
 
 const GifMessage = ({ url }: Props) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     return (<div className = { styles.container }>
         <img

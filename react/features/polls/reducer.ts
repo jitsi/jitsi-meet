@@ -21,7 +21,7 @@ const INITIAL_STATE = {
 export interface IPollsState {
     nbUnreadPolls: number;
     polls: {
-        [pollId: string]: Poll
+        [pollId: string]: Poll;
     };
 }
 
@@ -71,7 +71,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
     // The answer is added  to an existing poll
     case RECEIVE_ANSWER: {
 
-        const { pollId, answer }: { answer: Answer, pollId: string; } = action;
+        const { pollId, answer }: { answer: Answer; pollId: string; } = action;
 
         // if the poll doesn't exist
         if (!(pollId in state.polls)) {
@@ -115,7 +115,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
     }
 
     case REGISTER_VOTE: {
-        const { answers, pollId }: { answers: Array<boolean> | null; pollId: string } = action;
+        const { answers, pollId }: { answers: Array<boolean> | null; pollId: string; } = action;
 
         return {
             ...state,
@@ -132,7 +132,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
     }
 
     case RETRACT_VOTE: {
-        const { pollId }: { pollId: string } = action;
+        const { pollId }: { pollId: string; } = action;
 
         return {
             ...state,

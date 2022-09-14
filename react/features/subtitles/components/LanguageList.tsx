@@ -1,16 +1,16 @@
-import { makeStyles } from '@material-ui/styles';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 
 import LanguageListItem from './LanguageListItem';
 
 interface ILanguageListProps {
-    items: Array<LanguageItem>,
+    items: Array<LanguageItem>;
     onLanguageSelected: (lang: string) => void;
-    selectedLanguage: string
+    selectedLanguage: string;
 }
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         itemsContainer: {
             display: 'flex',
@@ -21,9 +21,9 @@ const useStyles = makeStyles(() => {
 
 
 interface LanguageItem {
-    id: string,
-    lang: string,
-    selected: boolean,
+    id: string;
+    lang: string;
+    selected: boolean;
 }
 
 /**
@@ -35,7 +35,7 @@ const LanguageList = ({
     items,
     onLanguageSelected
 }: ILanguageListProps) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
     const listItems = items.map(item => (<LanguageListItem
         key = { item.id }
         lang = { item.lang }

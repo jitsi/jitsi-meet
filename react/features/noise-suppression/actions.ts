@@ -21,7 +21,7 @@ import logger from './logger';
  *      enabled: boolean
  * }}
  */
-export function setNoiseSuppressionEnabledState(enabled: boolean) : any {
+export function setNoiseSuppressionEnabledState(enabled: boolean): any {
     return {
         type: SET_NOISE_SUPPRESSION_ENABLED,
         enabled
@@ -33,7 +33,7 @@ export function setNoiseSuppressionEnabledState(enabled: boolean) : any {
  *
  * @returns {Function}
  */
-export function toggleNoiseSuppression() : any {
+export function toggleNoiseSuppression(): any {
     return (dispatch: Dispatch, getState: Function) => {
         if (isNoiseSuppressionEnabled(getState())) {
             dispatch(setNoiseSuppressionEnabled(false));
@@ -50,7 +50,7 @@ export function toggleNoiseSuppression() : any {
  *
  * @returns {Function}
  */
-export function setNoiseSuppressionEnabled(enabled: boolean) : any {
+export function setNoiseSuppressionEnabled(enabled: boolean): any {
     return async (dispatch: Dispatch, getState: Function) => {
         const state = getState();
 

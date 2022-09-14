@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -13,6 +14,7 @@ import {
 } from '../../../base/participants/functions';
 // @ts-ignore
 import { updateSettings } from '../../../base/settings';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
 // @ts-ignore
@@ -28,48 +30,48 @@ interface Props extends WithTranslation {
      * The participant's current display name which should be shown when in
      * edit mode. Can be different from what is shown when not editing.
      */
-    _configuredDisplayName: string,
+    _configuredDisplayName: string;
 
     /**
      * The participant's current display name which should be shown.
      */
-    _nameToDisplay: string,
+    _nameToDisplay: string;
 
     /**
      * Whether or not the display name should be editable on click.
      */
-    allowEditing: boolean,
+    allowEditing: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Invoked to update the participant's display name.
      */
-    dispatch: Dispatch<any>,
+    dispatch: Dispatch<any>;
 
     /**
      * A string to append to the displayName, if provided.
      */
-    displayNameSuffix: string,
+    displayNameSuffix: string;
 
     /**
      * The ID attribute to add to the component. Useful for global querying for
      * the component by legacy components and torture tests.
      */
-    elementID: string,
+    elementID: string;
 
     /**
      * The ID of the participant whose name is being displayed.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string
+    thumbnailType: string;
 }
 
 /**
@@ -80,19 +82,18 @@ type State = {
     /**
      * The current value of the display name in the edit field.
      */
-    editDisplayNameValue: string,
+    editDisplayNameValue: string;
 
     /**
      * Whether or not the component should be displaying an editable input.
      */
-    isEditing: boolean
+    isEditing: boolean;
 };
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         displayName: {
-            ...theme.typography.labelBold,
-            lineHeight: `${theme.typography.labelBold.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.text01,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -105,8 +106,7 @@ const styles = (theme: any) => {
             background: 'none',
             boxShadow: 'none',
             padding: 0,
-            ...theme.typography.labelBold,
-            lineHeight: `${theme.typography.labelBold.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.text01
         }
     };
@@ -333,7 +333,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const participant = getParticipantById(state, participantID ?? '');
 
     return {
-        _configuredDisplayName: participant && participant.name,
+        _configuredDisplayName: participant?.name,
         _nameToDisplay: getParticipantDisplayName(state, participantID ?? '')
     };
 }

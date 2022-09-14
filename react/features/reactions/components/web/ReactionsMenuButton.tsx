@@ -25,43 +25,43 @@ interface Props extends WithTranslation {
     /**
      * Whether or not reactions are enabled.
      */
-    _reactionsEnabled: Boolean,
+    _reactionsEnabled: Boolean;
 
     /**
      * The button's key.
      */
-    buttonKey?: string,
+    buttonKey?: string;
 
     /**
      * Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Click handler for raise hand functionality.
      */
-    handleClick: Function,
+    handleClick: Function;
 
     /**
      * Whether or not it's a mobile browser.
      */
-    isMobile: boolean,
+    isMobile: boolean;
 
     /**
      * Whether or not the reactions menu is open.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Notify mode for `toolbarButtonClicked` event -
      * whether to only notify or to also prevent button click routine.
      */
-    notifyMode?: string,
+    notifyMode?: string;
 
     /**
      * The array of reactions to be displayed.
      */
-    reactionsQueue: Array<ReactionEmojiProps>
+    reactionsQueue: Array<ReactionEmojiProps>;
 }
 
 /**

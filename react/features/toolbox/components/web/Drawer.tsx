@@ -1,5 +1,6 @@
-import { makeStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
 import React, { ReactElement, useCallback } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { DRAWER_MAX_HEIGHT } from '../../constants';
 
@@ -9,25 +10,25 @@ type Props = {
     /**
      * The component(s) to be displayed within the drawer menu.
      */
-    children: ReactElement,
+    children: ReactElement;
 
     /**
      * Class name for custom styles.
      */
-    className?: string,
+    className?: string;
 
     /**
      * Whether the drawer should be shown or not.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Function that hides the drawer.
      */
-    onClose: Function
+    onClose: Function;
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         drawer: {
             backgroundColor: theme.palette.ui02,
@@ -47,7 +48,7 @@ function Drawer({
     isOpen,
     onClose
 }: Props) {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     /**
      * Handles clicks within the menu, preventing the propagation of the click event.

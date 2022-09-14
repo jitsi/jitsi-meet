@@ -1,6 +1,6 @@
 // @flow
 
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import React, { PureComponent } from 'react';
 
 import { connect } from '../../../../base/redux';
@@ -161,9 +161,11 @@ class PreMeetingScreen extends PureComponent<Props> {
                             <h1 className = 'title'>
                                 { title }
                             </h1>
-                            <span className = { classes.subtitle }>
-                                {_roomName}
-                            </span>
+                            { _roomName && (
+                                <span className = { classes.subtitle }>
+                                    {_roomName}
+                                </span>
+                            )}
                             { children }
                             { _buttons.length && <Toolbox toolbarButtons = { _buttons } /> }
                             { skipPrejoinButton }
@@ -188,7 +190,7 @@ class PreMeetingScreen extends PureComponent<Props> {
  * @returns {Object}
  */
 function mapStateToProps(state, ownProps): Object {
-    const { hiddenPremeetingButtons } = state['features/base/config'];
+    const { hiddenPremeetingButtons, hideConferenceSubject } = state['features/base/config'];
     const toolbarButtons = getToolbarButtons(state);
     const premeetingButtons = (ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS
@@ -206,7 +208,7 @@ function mapStateToProps(state, ownProps): Object {
             ? premeetingButtons
             : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
-        _roomName: getConferenceName(state)
+        _roomName: hideConferenceSubject ? undefined : getConferenceName(state)
     };
 }
 

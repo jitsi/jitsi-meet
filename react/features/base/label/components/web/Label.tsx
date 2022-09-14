@@ -1,4 +1,5 @@
-import { withStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 
@@ -14,33 +15,33 @@ type Props = AbstractProps & {
     /**
      * Own CSS class name.
      */
-    className?: string,
+    className?: string;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The color of the label.
      */
-    color?: string,
+    color?: string;
 
 
     /**
      * Color for the icon.
      */
-    iconColor?: string,
+    iconColor?: string;
 
     /**
      * HTML ID attribute to add to the root of {@code Label}.
      */
-    id?: string,
+    id?: string;
 
     /**
      * Click handler if any.
      */
-    onClick?: (e?: React.MouseEvent) => void,
+    onClick?: (e?: React.MouseEvent) => void;
 
 };
 
@@ -51,14 +52,13 @@ type Props = AbstractProps & {
  *
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         label: {
             ...withPixelLineHeight(theme.typography.labelRegular),
-
             alignItems: 'center',
             background: theme.palette.ui04,
-            borderRadius: theme.shape.borderRadius / 2,
+            borderRadius: Number(theme.shape.borderRadius) / 2,
             color: theme.palette.text01,
             display: 'flex',
             height: 28,

@@ -1,7 +1,8 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
 // @ts-ignore
@@ -13,7 +14,6 @@ import {
     DISPLAY_SWITCH_BREAKPOINT,
     MOBILE_BREAKPOINT,
     RESIZE_SEARCH_SWITCH_CONTAINER_BREAKPOINT
-    // @ts-ignore
 } from '../../constants';
 
 import FaceExpressionsSwitch from './FaceExpressionsSwitch';
@@ -21,7 +21,7 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         speakerStats: {
             '& .row': {
@@ -97,7 +97,7 @@ const SpeakerStats = () => {
     const displaySwitch = faceLandmarks?.enableDisplayFaceExpressions && clientWidth > DISPLAY_SWITCH_BREAKPOINT;
     const displayLabels = clientWidth > MOBILE_BREAKPOINT;
     const dispatch = useDispatch();
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const onToggleFaceExpressions = useCallback(() =>
         dispatch(toggleFaceExpressions())

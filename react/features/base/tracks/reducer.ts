@@ -16,7 +16,7 @@ import {
 
 interface ITrack {
     isReceivingData: boolean;
-    jitsiTrack: Object;
+    jitsiTrack: any;
     lastMediaEvent?: string;
     local: boolean;
     mediaType: string;
@@ -25,7 +25,7 @@ interface ITrack {
     participantId: string;
     streamingStatus?: string;
     videoStarted: boolean;
-    videoType?: string|null;
+    videoType?: string | null;
 }
 
 /**
@@ -173,7 +173,7 @@ ReducerRegistry.register<ITracksState>('features/base/tracks', (state = [], acti
 });
 
 export interface INoSrcDataState {
-    noSrcDataNotificationUid?: string|number;
+    noSrcDataNotificationUid?: string | number;
 }
 
 /**

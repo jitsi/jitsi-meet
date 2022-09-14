@@ -17,17 +17,17 @@ interface Props extends WithTranslation {
     /**
      * True if lobby is currently enabled in the conference.
      */
-    _lobbyEnabled: boolean,
+    _lobbyEnabled: boolean;
 
     /**
      * True if the section should be visible.
      */
-    _visible: boolean,
+    _visible: boolean;
 
     /**
      * The Redux Dispatch function.
      */
-    dispatch: Function
+    dispatch: Function;
 }
 
 type State = {
@@ -35,8 +35,8 @@ type State = {
     /**
      * True if the lobby switch is toggled on.
      */
-    lobbyEnabled: boolean
-}
+    lobbyEnabled: boolean;
+};
 
 /**
  * Implements a security feature section to control lobby mode.

@@ -59,4 +59,4 @@ export const DETECTION_TYPES = {
 /**
  * Threshold for detection score of face.
  */
-export const FACE_DETECTION_SCORE_THRESHOLD = 0.6;
+export const FACE_DETECTION_SCORE_THRESHOLD = 0.75;

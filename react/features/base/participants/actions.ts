@@ -45,6 +45,7 @@ import { Participant } from './types';
  *
  * @param {string} dominantSpeaker - Participant ID of the dominant speaker.
  * @param {Array<string>} previousSpeakers - Participant IDs of the previous speakers.
+ * @param {boolean} silence - Whether the dominant speaker is silent or not.
  * @param {JitsiConference} conference - The {@code JitsiConference} associated
  * with the participant identified by the specified {@code id}. Only the local
  * participant is allowed to not specify an associated {@code JitsiConference}
@@ -54,17 +55,20 @@ import { Participant } from './types';
  *     participant: {
  *         conference: JitsiConference,
  *         id: string,
- *         previousSpeakers: Array<string>
+ *         previousSpeakers: Array<string>,
+ *         silence: boolean
  *     }
  * }}
  */
-export function dominantSpeakerChanged(dominantSpeaker: string, previousSpeakers: string[], conference: any) {
+export function dominantSpeakerChanged(
+        dominantSpeaker: string, previousSpeakers: string[], silence: boolean, conference: any) {
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
             conference,
             id: dominantSpeaker,
-            previousSpeakers
+            previousSpeakers,
+            silence
         }
     };
 }
@@ -559,7 +563,7 @@ export function participantKicked(kicker: any, kicked: any) {
             kicker: kicker?.getId()
         });
 
-        if (kicked.isReplaced && kicked.isReplaced()) {
+        if (kicked.isReplaced?.()) {
             return;
         }
 
@@ -587,7 +591,7 @@ export function participantKicked(kicker: any, kicked: any) {
  *     }
  * }}
  */
-export function pinParticipant(id: string|null) {
+export function pinParticipant(id: string | null) {
     return {
         type: PIN_PARTICIPANT,
         participant: {

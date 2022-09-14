@@ -20,8 +20,8 @@ type Props = {
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
-    navigation: Object
-}
+    navigation: Object;
+};
 
 /**
  * The URL at which the terms (of service/use) are available to the user.

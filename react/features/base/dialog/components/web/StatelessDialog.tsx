@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment */
 import Modal, { ModalFooter } from '@atlaskit/modal-dialog';
-import { withStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React, { Component, ReactElement } from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -35,61 +36,61 @@ interface Props extends DialogProps, WithTranslation {
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Custom dialog header that replaces the standard heading.
      */
-    customHeader?: ReactElement<any> | Function,
+    customHeader?: ReactElement<any> | Function;
 
     /**
      * Disables dismissing the dialog when the blanket is clicked. Enabled
      * by default.
      */
-    disableBlanketClickDismiss: boolean,
+    disableBlanketClickDismiss: boolean;
 
     /*
      * True if listening for the Enter key should be disabled.
      */
-    disableEnter: boolean,
+    disableEnter: boolean;
 
     /**
      * If true, no footer will be displayed.
      */
-    disableFooter?: boolean,
+    disableFooter?: boolean;
 
     /**
      * If true, the cancel button will not display but cancel actions, like
      * clicking the blanket, will cancel.
      */
-    hideCancelButton: boolean,
+    hideCancelButton: boolean;
 
     /**
      * If true, the close icon button will not be displayed.
      */
-    hideCloseIconButton: boolean,
+    hideCloseIconButton: boolean;
 
     /**
      * Whether the dialog is modal. This means clicking on the blanket will
      * leave the dialog open. No cancel button.
      */
-    isModal: boolean,
+    isModal: boolean;
 
     /**
      * The handler for the event when clicking the 'confirmNo' button.
      * Defaults to onCancel if absent.
      */
-    onDecline?: () => void,
+    onDecline?: () => void;
 
     /**
      * Callback invoked when setting the ref of the Dialog.
      */
-    onDialogRef?: Function,
+    onDialogRef?: Function;
 
     /**
      * Disables rendering of the submit button.
      */
-    submitDisabled: boolean,
+    submitDisabled: boolean;
 
     /**
      * Width of the dialog, can be:
@@ -98,7 +99,7 @@ interface Props extends DialogProps, WithTranslation {
      * - integer value for pixel width
      * - string value for percentage.
      */
-    width: string
+    width: string;
 }
 
 /**
@@ -107,7 +108,7 @@ interface Props extends DialogProps, WithTranslation {
  * @param {Object} theme - The theme.
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         footer: {
             boxShadow: 'none'
@@ -117,7 +118,7 @@ const styles = (theme: any) => {
             display: 'flex',
 
             '& > button:first-child': {
-                marginRight: `${theme.spacing(2)}px`
+                marginRight: theme.spacing(2)
             }
         }
     };
@@ -246,7 +247,7 @@ class StatelessDialog extends Component<Props> {
         if (!this.props.isModal) {
             const { onCancel } = this.props;
 
-            onCancel && onCancel();
+            onCancel?.();
         }
     }
 
@@ -271,7 +272,7 @@ class StatelessDialog extends Component<Props> {
     _onSubmit(value?: any) {
         const { onSubmit } = this.props;
 
-        onSubmit && onSubmit(value);
+        onSubmit?.(value);
     }
 
     /**
@@ -342,7 +343,7 @@ class StatelessDialog extends Component<Props> {
      * @returns {void}
      */
     _onDialogRef(element?: any) {
-        this.props.onDialogRef && this.props.onDialogRef(element && element.parentNode);
+        this.props.onDialogRef?.(element?.parentNode);
     }
 
     /**

@@ -14,12 +14,12 @@ export interface Props extends WithTranslation {
     /**
      * Invoked to update the local participant's display name.
      */
-    dispatch: Dispatch<any>,
+    dispatch: Dispatch<any>;
 
     /**
      * Function to be invoked after a successful display name change.
      */
-    onPostSubmit?: Function
+    onPostSubmit?: Function;
 }
 
 /**
@@ -61,7 +61,7 @@ export default class AbstractDisplayNamePrompt<S>
             displayName
         }));
 
-        onPostSubmit && onPostSubmit();
+        onPostSubmit?.();
 
         return true;
     }

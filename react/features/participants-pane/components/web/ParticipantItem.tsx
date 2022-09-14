@@ -1,19 +1,22 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { ReactElement, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import ListItem from '../../../base/components/participants-pane-list/ListItem';
 import { translate } from '../../../base/i18n/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import {
     ACTION_TRIGGER,
     AudioStateIcons,
     MEDIA_STATE,
     type ActionTrigger,
-    type MediaState,
-    VideoStateIcons
+    VideoStateIcons,
+    MediaState
 } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
@@ -23,80 +26,80 @@ interface Props extends WithTranslation {
     /**
      * Type of trigger for the participant actions.
      */
-    actionsTrigger?: ActionTrigger,
+    actionsTrigger?: ActionTrigger;
 
     /**
      * Media state for audio.
      */
-    audioMediaState?: MediaState,
+    audioMediaState?: MediaState;
 
     /**
      * React children.
      */
-    children?: ReactElement|boolean,
+    children?: ReactElement | boolean;
 
     /**
      * Whether or not to disable the moderator indicator.
      */
-    disableModeratorIndicator?: boolean,
+    disableModeratorIndicator?: boolean;
 
     /**
      * The name of the participant. Used for showing lobby names.
      */
-    displayName?: string,
+    displayName?: string;
 
     /**
      * Is this item highlighted/raised.
      */
-    isHighlighted?: boolean,
+    isHighlighted?: boolean;
 
     /**
      * Whether or not the participant is a moderator.
      */
-    isModerator?: boolean,
+    isModerator?: boolean;
 
     /**
      * True if the participant is local.
      */
-    local?: boolean,
+    local?: boolean;
 
     /**
      * Callback for when the mouse leaves this component.
      */
-    onLeave?: (e?: React.MouseEvent) => void,
+    onLeave?: (e?: React.MouseEvent) => void;
 
     /**
      * Opens a drawer with participant actions.
      */
-    openDrawerForParticipant?: Function,
+    openDrawerForParticipant?: Function;
 
     /**
      * If an overflow drawer can be opened.
      */
-    overflowDrawer?: boolean,
+    overflowDrawer?: boolean;
 
     /**
      * The ID of the participant.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * True if the participant have raised hand.
      */
-    raisedHand?: boolean,
+    raisedHand?: boolean;
 
     /**
      * Media state for video.
      */
-    videoMediaState?: MediaState,
+    videoMediaState?: MediaState;
 
     /**
      * The translated "you" text.
      */
-    youText?: string
+    youText?: string;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         nameContainer: {
             display: 'flex',
@@ -111,8 +114,7 @@ const useStyles = makeStyles((theme: any) => {
         },
 
         moderatorLabel: {
-            ...theme.typography.labelRegular,
-            lineHeight: `${theme.typography.labelRegular.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.labelRegular),
             color: theme.palette.text03
         }
     };
@@ -143,12 +145,12 @@ function ParticipantItem({
     youText
 }: Props) {
     const onClick = useCallback(
-        () => openDrawerForParticipant && openDrawerForParticipant({
+        () => openDrawerForParticipant?.({
             participantID,
             displayName
         }), []);
 
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     const icon = (
         <Avatar

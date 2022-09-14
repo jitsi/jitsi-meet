@@ -105,9 +105,10 @@ export interface IConfig {
         scriptURLs?: Array<string>;
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
+    appId?: string;
     audioLevelsInterval?: number;
     audioQuality?: {
-        opusMaxAverageBitrate?: number|null;
+        opusMaxAverageBitrate?: number | null;
         stereo?: boolean;
     };
     autoCaptionOnRecord?: boolean;
@@ -120,7 +121,10 @@ export interface IConfig {
         hideAutoAssignButton?: boolean;
         hideJoinRoomButton?: boolean;
     };
-    buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | { key: ButtonsWithNotifyClick; preventExecution: boolean }>;
+    buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | {
+        key: ButtonsWithNotifyClick;
+        preventExecution: boolean;
+    }>;
     callStatsConfigParams?: {
         additionalIDs?: {
             customerID?: string;
@@ -144,7 +148,7 @@ export interface IConfig {
     callStatsSecret?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
-        chromeExtensionsInfo?: Array<{ id: string; path: string }>;
+        chromeExtensionsInfo?: Array<{ id: string; path: string; }>;
         edgeUrl?: string;
         url?: string;
     };
@@ -165,8 +169,8 @@ export interface IConfig {
                 ideal?: number;
                 max?: number;
                 min?: number;
-            }
-        }
+            };
+        };
     };
     corsAvatarURLs?: Array<string>;
     defaultLanguage?: string;
@@ -188,7 +192,7 @@ export interface IConfig {
     };
     dialInConfCodeUrl?: string;
     dialInNumbersUrl?: string;
-    disable1On1Mode?: boolean|null;
+    disable1On1Mode?: boolean | null;
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
@@ -313,6 +317,8 @@ export interface IConfig {
         disabled?: boolean;
     };
     gravatarBaseURL?: string;
+    guestDialOutStatusUrl?: string;
+    guestDialOutUrl?: string;
     helpCentreURL?: string;
     hiddenPremeetingButtons?: Array<'microphone' | 'camera' | 'select-background' | 'invite' | 'settings'>;
     hideAddRoomButton?: boolean;
@@ -333,7 +339,7 @@ export interface IConfig {
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
-    inviteAppName?: string|null;
+    inviteAppName?: string | null;
     lastNLimits?: {
         [key: number]: number;
     };
@@ -351,7 +357,7 @@ export interface IConfig {
         notifyAllParticipants?: boolean;
     };
     localSubject?: string;
-    locationURL?: string;
+    locationURL?: URL;
     maxFullResolutionParticipants?: number;
     moderatedRoomServiceUrl?: string;
     mouseMoveCallbackInterval?: number;
@@ -373,7 +379,7 @@ export interface IConfig {
         iceTransportPolicy?: string;
         preferH264?: boolean;
         preferredCodec?: string;
-        stunServers?: Array<{ urls: string }>;
+        stunServers?: Array<{ urls: string; }>;
     };
     participantsPane?: {
         hideModeratorSettingsTab?: boolean;
@@ -400,12 +406,14 @@ export interface IConfig {
         hideStorageWarning?: boolean;
         sharingEnabled?: boolean;
     };
+    recordingSharingUrl?: string;
     remoteVideoMenu?: {
         disableGrantModerator?: boolean;
         disableKick?: boolean;
         disablePrivateChat?: boolean;
         disabled?: boolean;
     };
+    replaceParticipant?: string;
     requireDisplayName?: boolean;
     resolution?: number;
     roomPasswordNumberOfDigits?: number;
@@ -414,7 +422,8 @@ export interface IConfig {
         enabled?: boolean;
         mode?: 'always' | 'recording';
     };
-    speakerStatsOrder?: Array<'role'|'name'|'hasLeft'>;
+    serviceUrl?: string;
+    speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
     startAudioMuted?: boolean;
     startAudioOnly?: boolean;
     startLastN?: number;
@@ -466,7 +475,7 @@ export interface IConfig {
                 high?: number;
                 low?: number;
                 standard?: number;
-            }
+            };
         };
         minHeightForQualityLvl: {
             [key: number]: string;
@@ -478,4 +487,5 @@ export interface IConfig {
     webrtcIceTcpDisable?: boolean;
     webrtcIceUdpDisable?: boolean;
     websocket?: string;
+    websocketKeepAliveUrl?: string;
 }

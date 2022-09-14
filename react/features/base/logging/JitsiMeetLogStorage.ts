@@ -90,7 +90,7 @@ export default class JitsiMeetLogStorage {
      * representing log lines or aggregated lines objects.
      * @returns {void}
      */
-    storeLogs(logEntries: Array<string|any>) {
+    storeLogs(logEntries: Array<string | any>) {
 
         if (this.canStoreLogsCallstats()) {
             this.storeLogsCallstats(logEntries);
@@ -107,7 +107,7 @@ export default class JitsiMeetLogStorage {
      * @param {Array<string|any>} logEntries - The log entries to send to the rtcstats server.
      * @returns {void}
      */
-    storeLogsCallstats(logEntries: Array<string|any>) {
+    storeLogsCallstats(logEntries: Array<string | any>) {
         const conference = getCurrentConference(this.getState());
 
         if (!conference || !conference.isCallstatsEnabled()) {

@@ -1,6 +1,7 @@
-import { makeStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
@@ -15,7 +16,7 @@ export interface INewMessagesButtonProps extends WithTranslation {
     onGoToFirstUnreadMessage: () => void;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         container: {
             position: 'absolute',
@@ -70,7 +71,7 @@ const useStyles = makeStyles((theme: any) => {
  * @returns {JSX.Element}
  */
 function NewMessagesButton({ onGoToFirstUnreadMessage, t }: INewMessagesButtonProps): JSX.Element {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     return (
         <div

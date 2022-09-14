@@ -1,6 +1,5 @@
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import React, { ReactElement, useEffect, useRef } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 
@@ -9,21 +8,21 @@ type Props = {
     /**
      * The component(s) that need to be scrollable on mobile.
      */
-    children: ReactElement,
+    children: ReactElement;
 
     /**
      * Whether the component should be flex container or not.
      */
-    flex?: boolean,
+    flex?: boolean;
 
     /**
      * Whether the component is rendered within a modal.
      */
-    isModal: boolean,
+    isModal: boolean;
 
 };
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         flex: {
             display: 'flex',
@@ -62,21 +61,21 @@ function TouchmoveHack({ children, isModal, flex }: Props) {
     }
 
     useEffect(() => {
-        if (touchMoveElementRef && touchMoveElementRef.current) {
+        if (touchMoveElementRef?.current) {
             touchMoveElementRef.current.addEventListener('touchmove', handleTouchMove, true);
         }
 
         return () => {
-            if (touchMoveElementRef && touchMoveElementRef.current) {
+            if (touchMoveElementRef?.current) {
                 touchMoveElementRef.current.removeEventListener('touchmove', handleTouchMove, true);
             }
         };
     }, []);
-    const classes = useStyles();
+    const { classes, cx } = useStyles();
 
     return (
         <div
-            className = { clsx(classes.base, flex && classes.flex) }
+            className = { cx(classes.base, flex && classes.flex) }
             ref = { touchMoveElementRef }>
             {children}
         </div>

@@ -8,13 +8,13 @@ type Props = {
     /**
      * Label used for accessibility.
      */
-    accessibilityLabel: string,
+    accessibilityLabel: string;
 
     /**
      * Click handler function.
      */
     onClick: () => void;
-}
+};
 
 const ParticipantActionEllipsis = ({ accessibilityLabel, onClick }: Props) => (
     <Button

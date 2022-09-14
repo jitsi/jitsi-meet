@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-no-bind */
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 
 import Icon from '../icons/components/Icon';
 import { IconCheck, IconCopy } from '../icons/svg';
 import { withPixelLineHeight } from '../styles/functions.web';
-import { Theme } from '../ui/types';
 import { copyText } from '../util/helpers';
 
 const styles = (theme: Theme) => {
@@ -41,7 +41,7 @@ const styles = (theme: Theme) => {
         content: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            whiteSpace: 'nowrap' as const,
             maxWidth: 292,
             marginRight: theme.spacing(3),
 
@@ -59,37 +59,37 @@ type Props = {
     /**
      * Css class to apply on container.
      */
-    className: string,
+    className: string;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The displayed text.
      */
-    displayedText: string,
+    displayedText: string;
 
     /**
      * The id of the button.
      */
-    id?: string,
+    id?: string;
 
     /**
      * The text displayed on copy success.
      */
-    textOnCopySuccess: string,
+    textOnCopySuccess: string;
 
     /**
      * The text displayed on mouse hover.
      */
-    textOnHover: string,
+    textOnHover: string;
 
     /**
      * The text that needs to be copied (might differ from the displayedText).
      */
-    textToCopy: string
+    textToCopy: string;
 };
 
 /**
@@ -214,5 +214,4 @@ CopyButton.defaultProps = {
     className: ''
 };
 
-// @ts-ignore
 export default withStyles(styles)(CopyButton);

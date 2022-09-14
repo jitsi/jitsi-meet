@@ -1,4 +1,4 @@
-import { Theme } from './types';
+import { Theme } from '@mui/material';
 
 /**
  * The types of the buttons.
@@ -14,27 +14,9 @@ export enum BUTTON_TYPES {
  * The modes of the buttons.
  */
 export const BUTTON_MODES: {
-    CONTAINED: 'contained'
+    CONTAINED: 'contained';
 } = {
     CONTAINED: 'contained'
-};
-
-/**
- * An object containing all the class names for common CSS.
- * Add a new name here and the styles to {@code commonStyles} object.
- *
- */
-export const commonClassName = {
-    emptyList: 'empty-list',
-    muteDialog: 'mute-dialog',
-    overflowMenuItem: 'overflow-menu-item',
-    overflowMenuItemIcon: 'overflow-menu-item-icon',
-    participantAvatar: 'participant-avatar',
-    prejoinDialog: 'prejoin-dialog',
-    prejoinDialogButton: 'prejoin-dialog-btn',
-    toolboxIcon: 'toolbox-icon',
-    toolboxButton: 'toolbox-button',
-    toolboxContentItems: 'toolbox-content-items'
 };
 
 /**
@@ -46,15 +28,15 @@ export const commonClassName = {
  */
 export const commonStyles = (theme: Theme) => {
     return {
-        // '.empty-list'
-        [commonClassName.emptyList]: {
+        '.empty-list': {
             listStyleType: 'none',
             margin: 0,
             padding: 0
         },
-        [commonClassName.muteDialog]: {
+
+        '.mute-dialog': {
             '& .separator-line': {
-                margin: `${theme.spacing(4)}px 0 ${theme.spacing(4)}px -20px`,
+                margin: `${theme.spacing(4)} 0 ${theme.spacing(4)} -20px`,
                 padding: '0 20px',
                 width: '100%',
                 height: '1px',
@@ -64,14 +46,15 @@ export const commonStyles = (theme: Theme) => {
             '& .control-row': {
                 display: 'flex',
                 justifyContent: 'space-between',
-                marginTop: `${theme.spacing(3)}px`,
+                marginTop: theme.spacing(3),
 
                 '& label': {
                     fontSize: '14px'
                 }
             }
         },
-        [commonClassName.overflowMenuItem]: {
+
+        '.overflow-menu-item': {
             alignItems: 'center',
             color: theme.palette.text01,
             cursor: 'pointer',
@@ -81,7 +64,7 @@ export const commonStyles = (theme: Theme) => {
             height: 40,
             lineHeight: '24px',
             padding: '8px 16px',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box' as const,
             '& > div': {
                 display: 'flex',
                 alignItems: 'center'
@@ -113,7 +96,8 @@ export const commonStyles = (theme: Theme) => {
                 }
             }
         },
-        [commonClassName.overflowMenuItemIcon]: {
+
+        '.overflow-menu-item-icon': {
             marginRight: '16px',
 
             '& i': {
@@ -138,10 +122,12 @@ export const commonStyles = (theme: Theme) => {
                 width: 20
             }
         },
-        [commonClassName.participantAvatar]: {
-            margin: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(2)}px 0`
+
+        '.participant-avatar': {
+            margin: `${theme.spacing(2)} ${theme.spacing(3)} ${theme.spacing(2)} 0`
         },
-        [commonClassName.prejoinDialog]: {
+
+        '.prejoin-dialog': {
             background: '#1C2025',
             boxShadow: '0px 2px 20px rgba(0, 0, 0, 0.5)',
             borderRadius: '5px',
@@ -149,53 +135,53 @@ export const commonStyles = (theme: Theme) => {
             height: '400px',
             width: '375px',
 
-            [`${commonClassName.prejoinDialog}--small`]: {
+            '.prejoin-dialog--small': {
                 height: 300,
                 width: 400
             },
 
-            [`${commonClassName.prejoinDialog}-label`]: {
+            '.prejoin-dialog-label': {
                 fontSize: '15px',
                 lineHeight: '24px'
             },
 
-            [`${commonClassName.prejoinDialog}-label-num`]: {
+            '.prejoin-dialog-label-num': {
                 background: '#2b3b4b',
                 border: '1px solid #A4B8D1',
                 borderRadius: '50%',
                 color: '#fff',
                 display: 'inline-block',
                 height: '24px',
-                marginRight: `${theme.spacing(2)}px`,
+                marginRight: theme.spacing(2),
                 width: '24px'
             },
 
-            [`${commonClassName.prejoinDialog}-container`]: {
+            '.prejoin-dialog-container': {
                 alignItems: 'center',
                 background: 'rgba(0,0,0,0.6)',
                 display: 'flex',
                 height: '100vh',
                 justifyContent: 'center',
                 left: 0,
-                position: 'absolute',
+                position: 'absolute' as const,
                 top: 0,
                 width: '100vw',
                 zIndex: 3
             },
 
-            [`${commonClassName.prejoinDialog}-flag`]: {
+            '.prejoin-dialog-flag': {
                 display: 'inline-block',
-                marginRight: `${theme.spacing(2)}px}`,
+                marginRight: theme.spacing(2),
                 transform: 'scale(1.2)'
             },
 
-            [`${commonClassName.prejoinDialog}-title`]: {
+            '.prejoin-dialog-title': {
                 display: 'inline-block',
                 fontSize: '24px',
                 lineHeight: '32px'
             },
 
-            [`${commonClassName.prejoinDialog}-icon`]: {
+            '.prejoin-dialog-icon': {
                 cursor: 'pointer',
 
                 '& > svg': {
@@ -203,15 +189,15 @@ export const commonStyles = (theme: Theme) => {
                 }
             },
 
-            [commonClassName.prejoinDialogButton]: {
+            '.prejoin-dialog-btn': {
                 width: '309px'
             },
 
-            [`${commonClassName.prejoinDialog}-dialin-container`]: {
-                textAlign: 'center'
+            '.prejoin-dialog-dialin-container': {
+                textAlign: 'center' as const
             },
 
-            [`${commonClassName.prejoinDialog}-delimiter`]: {
+            '.prejoin-dialog-delimiter': {
                 background: '#5f6266',
                 border: '0',
                 height: '1px',
@@ -220,37 +206,37 @@ export const commonStyles = (theme: Theme) => {
                 width: '100%'
             },
 
-            [`${commonClassName.prejoinDialog}-delimiter-container`]: {
-                margin: `${theme.spacing(3)}px 0 ${theme.spacing(4)}px 0`,
-                position: 'relative'
+            '.prejoin-dialog-delimiter-container': {
+                margin: `${theme.spacing(3)} 0 ${theme.spacing(4)} 0`,
+                position: 'relative' as const
             },
 
-            [`${commonClassName.prejoinDialog}-delimiter-txt-container`]: {
-                position: 'absolute',
-                textAlign: 'center',
+            '.prejoin-dialog-delimiter-txt-container': {
+                position: 'absolute' as const,
+                textAlign: 'center' as const,
                 top: '-8px',
                 width: '100%'
             },
 
-            [`${commonClassName.prejoinDialog}-delimiter-txt`]: {
+            '.prejoin-dialog-delimiter-txt': {
                 background: '#1C2025',
                 color: '#5f6266',
                 fontSize: '11px',
-                textTransform: 'uppercase',
-                padding: `0 ${theme.spacing(2)}px`
+                textTransform: 'uppercase' as const,
+                padding: `0 ${theme.spacing(2)}`
             }
         },
 
-        [commonClassName.prejoinDialogButton]: {
-            [`&.primary, &${commonClassName.prejoinDialogButton}.text`]: {
+        '.prejoin-dialog-btn': {
+            '&.primary, &.prejoin-dialog-btn.text': {
                 width: '310px'
             }
         },
 
-        [commonClassName.toolboxIcon]: {
+        '.toolbox-icon': {
             display: 'flex',
             borderRadius: 3,
-            flexDirection: 'column',
+            flexDirection: 'column' as const,
             fontSize: 24,
             height: 48,
             justifyContent: 'center',
@@ -261,7 +247,7 @@ export const commonStyles = (theme: Theme) => {
                     background: theme.palette.ui04
                 }
             },
-            [theme.breakpoints.down('320')]: {
+            [theme.breakpoints.down(320)]: {
                 height: 36,
                 width: 36
             },
@@ -279,20 +265,22 @@ export const commonStyles = (theme: Theme) => {
                 }
             }
         },
-        [commonClassName.toolboxButton]: {
+
+        '.toolbox-button': {
             color: theme.palette.text01,
             cursor: 'pointer',
             display: 'inline-block',
             lineHeight: '48px',
-            textAlign: 'center'
+            textAlign: 'center' as const
         },
-        [commonClassName.toolboxContentItems]: {
+
+        '.toolbox-content-items': {
             background: theme.palette.ui01,
             borderRadius: 6,
             margin: '0 auto',
             padding: 6,
-            textAlign: 'center',
-            pointerEvents: 'all',
+            textAlign: 'center' as const,
+            pointerEvents: 'all' as const,
             boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)',
 
             '& > div': {

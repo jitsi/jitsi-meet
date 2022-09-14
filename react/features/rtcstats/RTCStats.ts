@@ -24,7 +24,7 @@ import {
  * @returns {boolean}
  */
 function connectionFilter(config: any) {
-    if (config && config.iceServers[0] && config.iceServers[0].urls) {
+    if (config?.iceServers[0] && config.iceServers[0].urls) {
         for (const iceUrl of config.iceServers[0].urls) {
             if (iceUrl.indexOf('callstats.io') >= 0) {
                 return true;
@@ -98,7 +98,7 @@ class RTCStats {
      * @returns {void}
      */
     sendIdentityData(identityData: any) {
-        this.trace && this.trace.identity('identity', null, identityData);
+        this.trace?.identity('identity', null, identityData);
     }
 
     /**
@@ -107,8 +107,8 @@ class RTCStats {
      * @param {Array<string|any>} logEntries - The log entries to send to the rtcstats server.
      * @returns {void}
      */
-    sendLogs(logEntries: Array<string|any>) {
-        this.trace && this.trace.statsEntry('logs', null, logEntries);
+    sendLogs(logEntries: Array<string | any>) {
+        this.trace?.statsEntry('logs', null, logEntries);
     }
 
     /**
@@ -118,7 +118,7 @@ class RTCStats {
      * @returns {void}
      */
     sendDominantSpeakerData(dominantSpeakerData: DominantSpeakerData) {
-        this.trace && this.trace.statsEntry('dominantSpeaker', null, dominantSpeakerData);
+        this.trace?.statsEntry('dominantSpeaker', null, dominantSpeakerData);
     }
 
     /**
@@ -128,7 +128,7 @@ class RTCStats {
      * @returns {void}
      */
     sendE2eRttData(e2eRttData: E2ERTTData) {
-        this.trace && this.trace.statsEntry('e2eRtt', null, e2eRttData);
+        this.trace?.statsEntry('e2eRtt', null, e2eRttData);
     }
 
     /**
@@ -139,7 +139,7 @@ class RTCStats {
      * @returns {void}
      */
     sendConferenceTimestamp(timestamp: number) {
-        this.trace && this.trace.statsEntry('conferenceStartTimestamp', null, timestamp);
+        this.trace?.statsEntry('conferenceStartTimestamp', null, timestamp);
     }
 
     /**
@@ -149,7 +149,7 @@ class RTCStats {
      * @returns {void}
      */
     sendVideoTypeData(videoTypeData: VideoTypeData) {
-        this.trace && this.trace.statsEntry('setVideoType', null, videoTypeData);
+        this.trace?.statsEntry('setVideoType', null, videoTypeData);
     }
 
     /**
@@ -159,7 +159,7 @@ class RTCStats {
      * @returns {void}
      */
     sendFaceLandmarksData(faceLandmarksData: FaceLandmarksData) {
-        this.trace && this.trace.statsEntry('faceLandmarks', null, faceLandmarksData);
+        this.trace?.statsEntry('faceLandmarks', null, faceLandmarksData);
     }
 
     /**
@@ -171,7 +171,7 @@ class RTCStats {
      * @returns {void}
      */
     connect(isBreakoutRoom: boolean) {
-        this.trace && this.trace.connect(isBreakoutRoom);
+        this.trace?.connect(isBreakoutRoom);
     }
 
     /**
@@ -183,7 +183,7 @@ class RTCStats {
      * @returns {void}
      */
     close() {
-        this.trace && this.trace.close();
+        this.trace?.close();
     }
 
     /**

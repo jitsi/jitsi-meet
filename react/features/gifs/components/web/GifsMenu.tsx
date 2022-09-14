@@ -1,18 +1,18 @@
 /* eslint-disable lines-around-comment */
 import { GiphyFetch, TrendingOptions } from '@giphy/js-fetch-api';
 import { Grid } from '@giphy/react-components';
-import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { createGifSentEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
 // @ts-ignore
 import InputField from '../../../base/premeeting/components/web/InputField';
-import BaseTheme from '../../../base/ui/components/BaseTheme.web';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { sendMessage } from '../../../chat/actions.any';
 import { SCROLL_SIZE } from '../../../filmstrip/constants';
@@ -28,13 +28,13 @@ import { setGifDrawerVisibility } from '../../actions';
 // @ts-ignore
 import { formatGifUrlMessage, getGifAPIKey, getGifUrl } from '../../functions';
 
-const OVERFLOW_DRAWER_PADDING = BaseTheme.spacing(3);
+const OVERFLOW_DRAWER_PADDING = 16;
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         gifsMenu: {
             width: '100%',
-            marginBottom: `${theme.spacing(2)}px`,
+            marginBottom: theme.spacing(2),
             display: 'flex',
             flexDirection: 'column',
 
@@ -49,12 +49,11 @@ const useStyles = makeStyles((theme: any) => {
             borderRadius: `${theme.shape.borderRadius}px`,
             border: 'none',
             outline: 0,
-            ...theme.typography.bodyShortRegular,
-            lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
             color: theme.palette.text01,
-            padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
+            padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
             width: '100%',
-            marginBottom: `${theme.spacing(3)}px`
+            marginBottom: theme.spacing(3)
         },
 
         gifContainer: {
@@ -69,11 +68,11 @@ const useStyles = makeStyles((theme: any) => {
             alignItems: 'center',
             justifyContent: 'center',
             color: '#fff',
-            marginTop: `${theme.spacing(1)}px`
+            marginTop: theme.spacing(1)
         },
 
         overflowMenu: {
-            padding: `${theme.spacing(3)}px`,
+            padding: theme.spacing(3),
             width: '100%',
             boxSizing: 'border-box'
         },
@@ -98,7 +97,7 @@ function GifsMenu() {
     const API_KEY: string = useSelector(getGifAPIKey);
     const giphyFetch = new GiphyFetch(API_KEY);
     const [ searchKey, setSearchKey ] = useState<string>();
-    const styles = useStyles();
+    const { classes: styles, cx } = useStyles();
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const overflowDrawer: boolean = useSelector(showOverflowDrawer);
@@ -190,18 +189,18 @@ function GifsMenu() {
 
     const gifMenu = (
         <div
-            className = { clsx(styles.gifsMenu,
+            className = { cx(styles.gifsMenu,
                 overflowDrawer && styles.overflowMenu
             ) }>
             <InputField
                 autoFocus = { true }
-                className = { clsx(styles.searchField, 'gif-input') }
+                className = { cx(styles.searchField, 'gif-input') }
                 onChange = { handleSearchKeyChange }
                 placeHolder = { t('giphy.search') }
                 testId = 'gifSearch.key'
                 type = 'text' />
             <div
-                className = { clsx(styles.gifContainer,
+                className = { cx(styles.gifContainer,
                 overflowDrawer && styles.gifContainerOverflow) }>
                 <Grid
                     columns = { 2 }

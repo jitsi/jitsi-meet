@@ -146,7 +146,6 @@
         "bridgeCount": "Server count: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Connected to:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Frame rate:",
         "less": "Show less",
         "localaddress": "Local address:",

@@ -32,7 +32,7 @@ type Props = {
      * The ID of the participant to render the label for.
      */
     participantId: string;
-}
+};
 
 /**
  * Renders a label with the display name of the on-stage participant.

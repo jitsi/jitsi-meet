@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { IState } from '../../../../app/types';
 
 
-const BottomSheetContainer: () => JSX.Element|null = (): JSX.Element|null => {
+const BottomSheetContainer: () => JSX.Element | null = (): JSX.Element | null => {
     const { sheet, sheetProps } = useSelector((state: IState) => state['features/base/dialog']);
     const { reducedUI } = useSelector((state: IState) => state['features/base/responsive-ui']);
 

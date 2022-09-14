@@ -1,19 +1,20 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
+
 
 import Button from '../../../base/ui/components/web/Button';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
-import { Theme } from '../../../base/ui/types';
 // @ts-ignore
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         buttonMargin: {
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         }
     };
 });
@@ -29,7 +30,7 @@ const PollAnswer = ({
     t
 }: AbstractProps) => {
     const { changingVote } = poll;
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     return (
         <div className = 'poll-answer'>

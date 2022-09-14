@@ -1,7 +1,8 @@
 /* eslint-disable lines-around-comment */
 import { FlagGroupContext } from '@atlaskit/flag/flag-group';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -23,12 +24,12 @@ interface Props extends WithTranslation {
     /**
      * Whether we are a SIP gateway or not.
      */
-    _iAmSipGateway: boolean,
+    _iAmSipGateway: boolean;
 
     /**
      * Whether or not the chat is open.
      */
-    _isChatOpen: boolean,
+    _isChatOpen: boolean;
 
     /**
      * The notifications to be displayed, with the first index being the
@@ -37,28 +38,28 @@ interface Props extends WithTranslation {
     _notifications: Array<{
         props: Object;
         uid: number;
-    }>,
+    }>;
 
     /**
      * JSS classes object.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Invoked to update the redux store in order to remove notifications.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Whether or not the notifications are displayed in a portal.
      */
-    portal?: boolean
+    portal?: boolean;
 }
 
-const useStyles = (theme: any) => {
+const useStyles = (theme: Theme) => {
     return {
         container: {
-            position: 'absolute',
+            position: 'absolute' as const,
             left: '16px',
             bottom: '90px',
             width: '400px',
@@ -252,5 +253,4 @@ function _mapStateToProps(state: IState) {
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(withStyles(useStyles)(NotificationsContainer)));

@@ -49,7 +49,7 @@ type Identity = {
     // i.e. If all participants leave a meeting it will have a different value on the next join.
     meetingUniqueId?: string;
     roomId?: string;
-}
+};
 
 /**
  * Connects to the rtcstats service and sends the identity data.

@@ -25,44 +25,44 @@ type Props = {
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    _buttonsWithNotifyClick: Array<string | NotifyClick>,
+    _buttonsWithNotifyClick: Array<string | NotifyClick>;
 
     /**
      * Whether or not the current user can modify the current password.
      */
-    _canEditPassword: boolean,
+    _canEditPassword: boolean;
 
     /**
      * The JitsiConference for which to display a lock state and change the
      * password.
      */
-    _conference: Object,
+    _conference: Object;
 
     /**
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    _locked: string,
+    _locked: string;
 
     /**
      * The current known password for the JitsiConference.
      */
-    _password: string,
+    _password: string;
 
     /**
      * The number of digits to be used in the password.
      */
-    _passwordNumberOfDigits?: number,
+    _passwordNumberOfDigits?: number;
 
     /**
      * Indicates whether e2ee will be displayed or not.
      */
-    _showE2ee: boolean,
+    _showE2ee: boolean;
 
     /**
      * Action that sets the conference password.
      */
-    setPassword: Function
+    setPassword: Function;
 };
 
 /**

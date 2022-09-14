@@ -1,8 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+
+import { Theme } from '@mui/material';
 import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
 import { getComputedOuterHeight } from '../../../participants-pane/functions';
@@ -10,6 +11,7 @@ import { getComputedOuterHeight } from '../../../participants-pane/functions';
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
 // @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
+import { withPixelLineHeight } from '../../styles/functions.web';
 import participantsPaneTheme from '../themes/participantsPaneTheme.json';
 
 type Props = {
@@ -17,80 +19,79 @@ type Props = {
     /**
      * Accessibility label for menu container.
      */
-    accessibilityLabel?: string,
+    accessibilityLabel?: string;
 
     /**
      * Children of the context menu.
      */
-    children: ReactNode,
+    children: ReactNode;
 
     /**
      * Class name for context menu. Used to overwrite default styles.
      */
-    className?: string,
+    className?: string;
 
     /**
      * The entity for which the context menu is displayed.
      */
-    entity?: Object,
+    entity?: Object;
 
     /**
      * Whether or not the menu is hidden. Used to overwrite the internal isHidden.
      */
-    hidden?: boolean,
+    hidden?: boolean;
 
     /**
      * Whether or not the menu is already in a drawer.
      */
-    inDrawer?: boolean,
+    inDrawer?: boolean;
 
     /**
      * Whether or not drawer should be open.
      */
-    isDrawerOpen?: boolean,
+    isDrawerOpen?: boolean;
 
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget?: HTMLElement,
+    offsetTarget?: HTMLElement;
 
     /**
      * Callback for click on an item in the menu.
      */
-    onClick?: (e?: React.MouseEvent) => void,
+    onClick?: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for drawer close.
      */
-    onDrawerClose?: (e?: React.MouseEvent) => void,
+    onDrawerClose?: (e?: React.MouseEvent) => void;
 
     /**
      * Keydown handler.
      */
-    onKeyDown?: (e?: React.KeyboardEvent) => void,
+    onKeyDown?: (e?: React.KeyboardEvent) => void;
 
     /**
      * Callback for the mouse entering the component.
      */
-    onMouseEnter?: (e?: React.MouseEvent) => void,
+    onMouseEnter?: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for the mouse leaving the component.
      */
-    onMouseLeave?: (e?: React.MouseEvent) => void
+    onMouseLeave?: (e?: React.MouseEvent) => void;
 };
 
 const MAX_HEIGHT = 400;
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         contextMenu: {
             backgroundColor: theme.palette.ui02,
-            borderRadius: `${theme.shape.borderRadius / 2}px`,
+            borderRadius: `${Number(theme.shape.borderRadius) / 2}px`,
             boxShadow: '0px 3px 16px rgba(0, 0, 0, 0.6), 0px 0px 4px 1px rgba(0, 0, 0, 0.25)',
             color: theme.palette.text01,
-            ...theme.typography.bodyShortRegular,
-            lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
             marginTop: `${(participantsPaneTheme.panePadding * 2) + theme.typography.bodyShortRegular.fontSize}px`,
             position: 'absolute',
             right: `${participantsPaneTheme.panePadding}px`,
@@ -108,8 +109,7 @@ const useStyles = makeStyles((theme: any) => {
         drawer: {
 
             '& > div': {
-                ...theme.typography.bodyShortRegularLarge,
-                lineHeight: `${theme.typography.bodyShortRegularLarge.lineHeight}px`,
+                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
 
                 '& svg': {
                     fill: theme.palette.icon01
@@ -140,7 +140,7 @@ const ContextMenu = ({
 }: Props) => {
     const [ isHidden, setIsHidden ] = useState(true);
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const styles = useStyles();
+    const { classes: styles, cx } = useStyles();
     const _overflowDrawer = useSelector(showOverflowDrawer);
 
     useLayoutEffect(() => {
@@ -195,7 +195,7 @@ const ContextMenu = ({
         </JitsiPortal>
         : <div
             aria-label = { accessibilityLabel }
-            className = { clsx(participantsPaneTheme.ignoredChildClassName,
+            className = { cx(participantsPaneTheme.ignoredChildClassName,
                 styles.contextMenu,
                 isHidden && styles.contextMenuHidden,
                 className
@@ -206,8 +206,7 @@ const ContextMenu = ({
             onMouseLeave = { onMouseLeave }
             ref = { containerRef }>
             {children}
-        </div>
-    ;
+        </div>;
 };
 
 export default ContextMenu;

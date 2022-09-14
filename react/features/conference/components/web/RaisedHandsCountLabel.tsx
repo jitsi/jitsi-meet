@@ -1,19 +1,20 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
 import { IconRaisedHand } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
-import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 // @ts-ignore
 import { open as openParticipantsPane } from '../../../participants-pane/actions';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         label: {
             backgroundColor: theme.palette.warning02,
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme: any) => {
 });
 
 const RaisedHandsCountLabel = () => {
-    const styles = useStyles();
+    const { classes: styles, theme } = useStyles();
     const dispatch = useDispatch();
     const raisedHandsCount = useSelector((state: IState) =>
         (state['features/base/participants'].raisedHandsQueue || []).length);
@@ -39,7 +40,7 @@ const RaisedHandsCountLabel = () => {
         <Label
             className = { styles.label }
             icon = { IconRaisedHand }
-            iconColor = { BaseTheme.palette.uiBackground }
+            iconColor = { theme.palette.uiBackground }
             id = 'raisedHandsCountLabel'
             onClick = { onClick }
             text = { `${raisedHandsCount}` } />

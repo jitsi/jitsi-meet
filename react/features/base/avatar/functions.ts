@@ -22,8 +22,8 @@ const splitter = new GraphemeSplitter();
  * @param {Array<string>} customAvatarBackgrounds - Custom avatar background values.
  * @returns {string}
  */
-export function getAvatarColor(initials: string|undefined, customAvatarBackgrounds: Array<string>) {
-    const hasCustomAvatarBackgronds = customAvatarBackgrounds && customAvatarBackgrounds.length;
+export function getAvatarColor(initials: string | undefined, customAvatarBackgrounds: Array<string>) {
+    const hasCustomAvatarBackgronds = customAvatarBackgrounds?.length;
     const colorsBase = hasCustomAvatarBackgronds ? customAvatarBackgrounds : AVATAR_COLORS;
 
     let colorIndex = 0;

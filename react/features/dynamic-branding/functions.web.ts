@@ -1,4 +1,5 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { createTheme, adaptV4Theme } from '@mui/material/styles';
 
 import { font, colors, colorMap, spacing, shape, typography, breakpoints } from '../base/ui/Tokens';
 import { createColorTokens } from '../base/ui/utils';
@@ -9,7 +10,7 @@ import { createColorTokens } from '../base/ui/utils';
  * @param {Object} customTheme - The branded custom theme.
  * @returns {Object} - The MUI theme.
  */
-export function createMuiBrandingTheme(customTheme: any) {
+export function createMuiBrandingTheme(customTheme: Theme) {
     const {
         palette: customPalette,
         shape: customShape,
@@ -45,28 +46,23 @@ export function createMuiBrandingTheme(customTheme: any) {
         overwriteRecurrsive(newBreakpoints, customBreakpoints);
     }
 
-    let newSpacing = [ ...spacing ];
+    let newSpacing: any = [ ...spacing ];
 
-    if (customSpacing && customSpacing.length) {
+    if (customSpacing?.length) {
         newSpacing = customSpacing;
     }
 
-    return createMuiTheme({
-        props: {
-            // disable ripple effect on buttons globally
-            MuiButtonBase: {
-                disableRipple: true
-            }
-        },
-
-        // use token spacing array
-        spacing: newSpacing
-    }, {
+    return createTheme(adaptV4Theme({
+        spacing: newSpacing,
         palette: newPalette,
         shape: newShape,
+
+        // @ts-ignore
         typography: newTypography,
+
+        // @ts-ignore
         breakpoints: newBreakpoints
-    });
+    }));
 }
 
 /**

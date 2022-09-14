@@ -5,7 +5,7 @@ import type { Reducer } from 'redux';
  * The type of the dictionary/map which associates a reducer (function) with the
  * name of he Redux state property managed by the reducer.
  */
-type NameReducerMap<S> = { [name: string]: Reducer<S, Action<any>> };
+type NameReducerMap<S> = { [name: string]: Reducer<S, Action<any>>; };
 
 /**
  * A registry for Redux reducers, allowing features to register themselves

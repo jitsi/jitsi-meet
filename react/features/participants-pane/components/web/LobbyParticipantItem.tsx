@@ -1,8 +1,10 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { useCallback, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
@@ -24,28 +26,28 @@ type Props = {
     /**
      * Callback used to open a drawer with admit/reject actions.
      */
-    openDrawerForParticipant: Function,
+    openDrawerForParticipant: Function;
 
     /**
      * If an overflow drawer should be displayed.
      */
-    overflowDrawer: boolean,
+    overflowDrawer: boolean;
 
     /**
      * Participant reference.
      */
-    participant: Participant
+    participant: Participant;
 };
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         button: {
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         },
         moreButton: {
             paddingRight: '6px',
             paddingLeft: '6px',
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         },
         contextMenu: {
             position: 'fixed',
@@ -64,7 +66,7 @@ export const LobbyParticipantItem = ({
     const [ admit, reject, chat ] = useLobbyActions({ participantID: id });
     const { t } = useTranslation();
     const [ isOpen, setIsOpen ] = useState(false);
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     const showChat = useSelector(showLobbyChatButton(p));
 

@@ -32,16 +32,16 @@ const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant: Participant) => {
-        return participant && participant.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
+        return participant?.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
     },
     (participant: Participant) => {
-        return participant && participant.avatarURL ? participant.avatarURL : null;
+        return participant?.avatarURL ? participant.avatarURL : null;
     },
     (participant: Participant, store: IStore) => {
         const config = store.getState()['features/base/config'];
         const isGravatarDisabled = config.gravatar?.disabled;
 
-        if (participant && participant.email && !isGravatarDisabled) {
+        if (participant?.email && !isGravatarDisabled) {
             const gravatarBaseURL = config.gravatar?.baseUrl
                 || config.gravatarBaseURL
                 || GRAVATAR_BASE_URL;
@@ -80,16 +80,16 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
     }
     let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
 
-    if (activeSpeakers.has(dominantSpeaker)) {
-        activeSpeakers.delete(dominantSpeaker);
+    if (activeSpeakers.has(dominantSpeaker ?? '')) {
+        activeSpeakers.delete(dominantSpeaker ?? '');
     }
 
     // Add dominant speaker to the beginning of the list (not including self) since the active speaker list is always
     // alphabetically sorted.
-    if (dominantSpeaker && dominantSpeaker !== getLocalParticipant(state).id) {
+    if (dominantSpeaker && dominantSpeaker !== getLocalParticipant(state)?.id) {
         const updatedSpeakers = Array.from(activeSpeakers);
 
-        updatedSpeakers.splice(0, 0, [ dominantSpeaker, getParticipantById(state, dominantSpeaker)?.name ]);
+        updatedSpeakers.splice(0, 0, [ dominantSpeaker, getParticipantById(state, dominantSpeaker)?.name ?? '' ]);
         activeSpeakers = new Map(updatedSpeakers);
     }
 
@@ -224,7 +224,7 @@ export function getNormalizedDisplayName(name: string) {
  * @private
  * @returns {(Participant|undefined)}
  */
-export function getParticipantById(stateful: IStateful, id: string): Participant|undefined {
+export function getParticipantById(stateful: IStateful, id: string): Participant | undefined {
     const state = toState(stateful)['features/base/participants'];
     const { local, localScreenShare, remote } = state;
 
@@ -359,11 +359,11 @@ export function getParticipantDisplayName(stateful: IStateful, id: string): stri
         }
 
         if (participant.local) {
-            return defaultLocalDisplayName;
+            return defaultLocalDisplayName ?? '';
         }
     }
 
-    return defaultRemoteDisplayName;
+    return defaultRemoteDisplayName ?? '';
 }
 
 /**
@@ -409,7 +409,7 @@ export function getParticipantPresenceStatus(stateful: IStateful, id: string) {
  * features/base/participants.
  * @returns {Map<string, Object>}
  */
-export function getRemoteParticipants(stateful: IStateful) {
+export function getRemoteParticipants(stateful: IStateful): Map<string, Participant> {
     return toState(stateful)['features/base/participants'].remote;
 }
 
@@ -439,7 +439,7 @@ export function getPinnedParticipant(stateful: IStateful) {
 
     if (stageFilmstrip) {
         const { activeParticipants } = state['features/filmstrip'];
-        const id = activeParticipants.find((p: Participant) => p.pinned)?.participantId;
+        const id = activeParticipants.find(p => p.pinned)?.participantId;
 
         return id ? getParticipantById(stateful, id) : undefined;
     }
@@ -635,7 +635,7 @@ async function _getFirstLoadableAvatarUrl(participant: Participant, store: IStor
  * features/base/participants.
  * @returns {Array<Object>}
  */
-export function getRaiseHandsQueue(stateful: IStateful): Array<Object> {
+export function getRaiseHandsQueue(stateful: IStateful): Array<{ id: string; raisedHandTimestamp: number; }> {
     const { raisedHandsQueue } = toState(stateful)['features/base/participants'];
 
     return raisedHandsQueue;

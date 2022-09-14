@@ -26,38 +26,38 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
     /**
      * Whether or not server-side authentication is available.
      */
-    authEnabled: boolean,
+    authEnabled: boolean;
 
     /**
      * The name of the currently (server-side) authenticated user.
      */
-    authLogin: string,
+    authLogin: string;
 
     /**
      * The display name to display for the local participant.
      */
-    displayName: string,
+    displayName: string;
 
     /**
      * The email to display for the local participant.
      */
-    email: string,
+    email: string;
 
     /**
      * Whether to hide the email input in the profile settings.
      */
-    hideEmailInSettings?: boolean,
+    hideEmailInSettings?: boolean;
 
     /**
      * If the display name is read only.
      */
-    readOnlyName: boolean,
+    readOnlyName: boolean;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
-}
+    t: Function;
+};
 
 /**
  * React {@code Component} for modifying the local user's profile.

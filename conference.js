@@ -2291,7 +2291,9 @@ export default {
 
         room.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-            (dominant, previous) => APP.store.dispatch(dominantSpeakerChanged(dominant, previous, room)));
+            (dominant, previous, silence) => {
+                APP.store.dispatch(dominantSpeakerChanged(dominant, previous, Boolean(silence), room));
+            });
 
         room.on(
             JitsiConferenceEvents.CONFERENCE_CREATED_TIMESTAMP,
@@ -2983,7 +2985,6 @@ export default {
         const available = audioDeviceCount > 0 || Boolean(localAudio);
 
         APP.store.dispatch(setAudioAvailable(available));
-        APP.API.notifyAudioAvailabilityChanged(available);
     },
 
     /**
@@ -3247,7 +3248,6 @@ export default {
      */
     setAudioMuteStatus(muted) {
         APP.UI.setAudioMuted(this.getMyUserId(), muted);
-        APP.API.notifyAudioMutedStatusChanged(muted);
     },
 
     /**

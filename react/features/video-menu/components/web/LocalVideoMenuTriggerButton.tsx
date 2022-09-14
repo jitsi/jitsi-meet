@@ -1,8 +1,8 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { batch, connect } from 'react-redux';
+import { batch } from 'react-redux';
 
 import { IState } from '../../../app/types';
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
@@ -14,6 +14,7 @@ import { IconHorizontalPoints } from '../../../base/icons/svg';
 import { getLocalParticipant } from '../../../base/participants/functions';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
+import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 // @ts-ignore
@@ -47,74 +48,74 @@ interface Props extends WithTranslation {
     /**
      * The id of the local participant.
      */
-    _localParticipantId: string,
+    _localParticipantId: string;
 
     /**
      * The position relative to the trigger the local video menu should display
      * from. Valid values are those supported by AtlasKit
      * {@code InlineDialog}.
      */
-    _menuPosition: string,
+    _menuPosition: string;
 
     /**
      * Whether to display the Popover as a drawer.
      */
-    _overflowDrawer: boolean,
+    _overflowDrawer: boolean;
 
     /**
      * Whether to render the connection info pane.
      */
-    _showConnectionInfo: boolean,
+    _showConnectionInfo: boolean;
 
     /**
      * Whether to render the hide self view button.
      */
-    _showHideSelfViewButton: boolean,
+    _showHideSelfViewButton: boolean;
 
     /**
      * Shows/hides the local video flip button.
      */
-    _showLocalVideoFlipButton: boolean,
+    _showLocalVideoFlipButton: boolean;
 
     /**
      * Whether to render the pin to stage button.
      */
-    _showPinToStage: boolean,
+    _showPinToStage: boolean;
 
     /**
      * Whether or not the button should be visible.
      */
-    buttonVisible: boolean,
+    buttonVisible: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Hides popover.
      */
-    hidePopover: Function,
+    hidePopover: Function;
 
     /**
      * Whether the popover is visible or not.
      */
-    popoverVisible: boolean,
+    popoverVisible: boolean;
 
     /**
      * Shows popover.
      */
-    showPopover: Function
+    showPopover: Function;
 
     /**
      * The type of the thumbnail.
      */
-    thumbnailType: string
+    thumbnailType: string;
 }
 
 const styles = () => {
@@ -125,7 +126,7 @@ const styles = () => {
         },
 
         contextMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             marginTop: 0,
             right: 'auto',
             padding: '0',
@@ -302,11 +303,10 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
         _showHideSelfViewButton: showHideSelfViewButton,
         _overflowDrawer: overflowDrawer,
-        _localParticipantId: localParticipant.id,
+        _localParticipantId: localParticipant?.id,
         _showConnectionInfo: showConnectionInfo,
         _showPinToStage: isStageFilmstripAvailable(state)
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(withStyles(styles)(LocalVideoMenuTriggerButton)));

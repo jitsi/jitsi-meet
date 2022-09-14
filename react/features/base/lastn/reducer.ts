@@ -42,6 +42,6 @@ ReducerRegistry.register<ILastNState>('features/base/lastn', (state = {}, action
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _setConfig(state: ILastNState, { config }: { config: IConfig }) {
+function _setConfig(state: ILastNState, { config }: { config: IConfig; }) {
     return set(state, 'lastNLimits', validateLastNLimits(config.lastNLimits));
 }

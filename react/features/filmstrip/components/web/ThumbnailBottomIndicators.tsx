@@ -1,7 +1,8 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import {
     getMultipleVideoSupportFeatureFlag,
@@ -23,35 +24,35 @@ type Props = {
     /**
      * Class name for indicators container.
      */
-    className: string,
+    className: string;
 
     /**
      * Whether it is a virtual screenshare participant thumbnail.
      */
-    isVirtualScreenshareParticipant: boolean,
+    isVirtualScreenshareParticipant: boolean;
 
     /**
      * Whether or not the indicators are for the local participant.
      */
-    local: boolean,
+    local: boolean;
 
     /**
      * Id of the participant for which the component is displayed.
      */
-    participantId: string,
+    participantId: string;
 
     /**
      * Whether or not to show the status indicators.
      */
-    showStatusIndicators?: boolean,
+    showStatusIndicators?: boolean;
 
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string
-}
+    thumbnailType: string;
+};
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         nameContainer: {
             display: 'flex',
@@ -78,7 +79,7 @@ const ThumbnailBottomIndicators = ({
     showStatusIndicators = true,
     thumbnailType
 }: Props) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
     const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);

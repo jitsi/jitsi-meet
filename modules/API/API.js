@@ -68,7 +68,7 @@ import {
 import { appendSuffix } from '../../react/features/display-name';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
-import { setVolume } from '../../react/features/filmstrip';
+import { resizeFilmStrip, setVolume } from '../../react/features/filmstrip/actions.web';
 import { invite } from '../../react/features/invite';
 import {
     selectParticipantInLargeVideo
@@ -307,6 +307,16 @@ function initCommands() {
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
             APP.UI.toggleFilmstrip();
+        },
+
+        /*
+         * @param {Object} options - Additional details of how to perform
+         * the action.
+         * @param {number} options.width - width value for film strip.
+         */
+        'resize-film-strip': (options = {}) => {
+            sendAnalytics(createApiEvent('film.strip.resize'));
+            APP.store.dispatch(resizeFilmStrip(options.width));
         },
         'toggle-camera': () => {
             if (!isToggleCameraEnabled(APP.store.getState())) {
@@ -1787,7 +1797,7 @@ class API {
     /**
      * Notify external application that the breakout rooms changed.
      *
-     * @param {Array} rooms - Array of breakout rooms.
+     * @param {Array} rooms - Array containing the breakout rooms and main room.
      * @returns {void}
      */
     notifyBreakoutRoomsUpdated(rooms) {

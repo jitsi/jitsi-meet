@@ -17,22 +17,22 @@ interface Props extends WithTranslation {
     /**
      * ID of the menu that is controlled by this button.
      */
-    ariaControls: String,
+    ariaControls: String;
 
     /**
      * A child React Element to display within {@code InlineDialog}.
      */
-    children: React.ReactNode,
+    children: React.ReactNode;
 
     /**
      * Whether or not the HangupMenu popover should display.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Callback to change the visibility of the hangup menu.
      */
-    onVisibilityChange: Function
+    onVisibilityChange: Function;
 }
 
 /**

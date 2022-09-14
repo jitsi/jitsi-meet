@@ -18,7 +18,7 @@ import styles from './styles';
  *
  * @returns {JSX.Element} - The end meeting button.
  */
-const EndMeetingButton = () : JSX.Element => {
+const EndMeetingButton = (): JSX.Element => {
     const dispatch = useDispatch();
 
     const onSelect = useCallback(() => {

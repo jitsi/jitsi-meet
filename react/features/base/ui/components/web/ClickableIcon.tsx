@@ -1,10 +1,9 @@
-import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
-import { Theme } from '../../types';
 
 interface IProps {
     accessibilityLabel: string;
@@ -12,7 +11,7 @@ interface IProps {
     onClick: () => void;
 }
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         button: {
             padding: '2px',
@@ -37,17 +36,19 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 const ClickableIcon = ({ accessibilityLabel, icon, onClick }: IProps) => {
-    const styles = useStyles();
+    const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
 
-    return (<button
-        aria-label = { accessibilityLabel }
-        className = { clsx(styles.button, isMobile && 'is-mobile') }
-        onClick = { onClick }>
-        <Icon
-            size = { 24 }
-            src = { icon } />
-    </button>);
+    return (
+        <button
+            aria-label = { accessibilityLabel }
+            className = { cx(styles.button, isMobile && 'is-mobile') }
+            onClick = { onClick }>
+            <Icon
+                size = { 24 }
+                src = { icon } />
+        </button>
+    );
 };
 
 export default ClickableIcon;

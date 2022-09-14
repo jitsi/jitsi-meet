@@ -52,6 +52,7 @@ const commands = {
     pinParticipant: 'pin-participant',
     rejectParticipant: 'reject-participant',
     removeBreakoutRoom: 'remove-breakout-room',
+    resizeFilmStrip: 'resize-film-strip',
     resizeLargeVideo: 'resize-large-video',
     sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
@@ -552,6 +553,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
                 this._myUserID = userID;
                 this._participants[userID] = {
+                    email: data.email,
                     avatarURL: data.avatarURL
                 };
             }
