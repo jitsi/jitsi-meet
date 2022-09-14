@@ -2983,7 +2983,6 @@ export default {
         const available = audioDeviceCount > 0 || Boolean(localAudio);
 
         APP.store.dispatch(setAudioAvailable(available));
-        APP.API.notifyAudioAvailabilityChanged(available);
     },
 
     /**
@@ -3247,7 +3246,6 @@ export default {
      */
     setAudioMuteStatus(muted) {
         APP.UI.setAudioMuted(this.getMyUserId(), muted);
-        APP.API.notifyAudioMutedStatusChanged(muted);
     },
 
     /**
