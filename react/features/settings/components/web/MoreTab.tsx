@@ -235,7 +235,7 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      * @returns {void}
      */
     _onMaxStageParticipantsSelect(e: React.ChangeEvent<HTMLSelectElement>) {
-        const maxParticipants = e.currentTarget.getAttribute('data-maxparticipants');
+        const maxParticipants = Number(e.target.value);
 
         super._onChange({ maxStageParticipants: maxParticipants });
     }
