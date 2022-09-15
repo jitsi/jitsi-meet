@@ -1,5 +1,6 @@
 /* eslint-disable import/order */
 import { Store } from 'redux';
+import { IState } from '../../app/types';
 
 import { equals } from './functions';
 
@@ -37,7 +38,7 @@ type Listener
  * {@code prevSelection}. The associated {@code Listener} will only be invoked
  * if the returned value is other than {@code prevSelection}.
  */
-type Selector = (state: Object, prevSelection: any) => any;
+type Selector = (state: IState, prevSelection: any) => any;
 
 /**
  * Options that can be passed to the register method.
