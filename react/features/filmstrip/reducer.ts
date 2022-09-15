@@ -16,7 +16,6 @@ import {
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
     SET_VOLUME,
-    SET_MAX_STAGE_PARTICIPANTS,
     CLEAR_STAGE_PARTICIPANTS,
     SET_SCREENSHARING_TILE_DIMENSIONS,
     SET_USER_FILMSTRIP_HEIGHT,
@@ -55,14 +54,6 @@ const DEFAULT_STATE = {
      * @type {boolean}
      */
     isResizing: false,
-
-    /**
-     * The current max number of participants to be displayed on the stage filmstrip.
-     *
-     * @public
-     * @type {Number}
-     */
-    maxStageParticipants: 1,
 
     /**
      * The custom audio volume levels per participant.
@@ -216,7 +207,6 @@ export interface IFilmstripState {
         remoteVideosContainer?: Dimensions;
     };
     isResizing: boolean;
-    maxStageParticipants: number;
     participantsVolume: {
         [participantId: string]: number;
     };
@@ -395,12 +385,6 @@ ReducerRegistry.register<IFilmstripState>(
             return {
                 ...state,
                 activeParticipants: state.activeParticipants.filter(p => p.participantId !== action.participantId)
-            };
-        }
-        case SET_MAX_STAGE_PARTICIPANTS: {
-            return {
-                ...state,
-                maxStageParticipants: action.maxParticipants
             };
         }
         case CLEAR_STAGE_PARTICIPANTS: {

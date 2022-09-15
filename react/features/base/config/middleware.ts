@@ -74,6 +74,12 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
         }));
     }
 
+    if (action.config.filmstrip.stageFilmstripParticipants !== undefined) {
+        dispatch(updateSettings({
+            maxStageParticipants: action.config.filmstrip.stageFilmstripParticipants
+        }));
+    }
+
     dispatch(updateConfig(config));
 
     // FIXME On Web we rely on the global 'config' variable which gets altered
