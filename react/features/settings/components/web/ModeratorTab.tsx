@@ -10,7 +10,7 @@ import { translate } from '../../../base/i18n/functions';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
- * The type of the React {@code Component} props of {@link MoreTab}.
+ * The type of the React {@code Component} props of {@link ModeratorTab}.
  */
 export type Props = AbstractDialogTabProps & WithTranslation & {
 
@@ -60,7 +60,7 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
  */
 class ModeratorTab extends AbstractDialogTab<Props> {
     /**
-     * Initializes a new {@code MoreTab} instance.
+     * Initializes a new {@code ModeratorTab} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
