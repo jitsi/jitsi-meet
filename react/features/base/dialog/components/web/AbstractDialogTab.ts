@@ -1,5 +1,3 @@
-// @flow
-
 import { Component } from 'react';
 
 /**
@@ -10,17 +8,17 @@ export type Props = {
     /**
      * Function that closes the dialog.
      */
-    closeDialog: Function,
+    closeDialog: Function;
 
     /**
      * Callback to invoke on change.
      */
-    onTabStateChange: Function,
+    onTabStateChange: Function;
 
     /**
      * The id of the tab.
      */
-    tabId: number
+    tabId: number;
 };
 
 
@@ -29,7 +27,7 @@ export type Props = {
  *
  * @augments Component
  */
-class AbstractDialogTab<P: Props, S: *> extends Component<P, S> {
+class AbstractDialogTab<P extends Props, S> extends Component<P, S> {
     /**
      * Initializes a new {@code AbstractDialogTab} instance.
      *
@@ -43,8 +41,6 @@ class AbstractDialogTab<P: Props, S: *> extends Component<P, S> {
         this._onChange = this._onChange.bind(this);
     }
 
-    _onChange: (Object) => void;
-
     /**
      * Uses the onTabStateChange function to pass the changed state of the
      * controlled tab component to the controlling DialogWithTabs component.
@@ -53,7 +49,7 @@ class AbstractDialogTab<P: Props, S: *> extends Component<P, S> {
      * value.
      * @returns {void}
      */
-    _onChange(change) {
+    _onChange(change: Object) {
         const { onTabStateChange, tabId } = this.props;
 
         onTabStateChange(tabId, {
