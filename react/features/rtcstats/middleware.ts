@@ -25,7 +25,7 @@ import { isInBreakoutRoom, getCurrentRoomId } from '../breakout-rooms/functions'
 
 // @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
-import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
+import { ADD_FACE_EXPRESSION, CAMERA_OFF_TIMESTAMP } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, connectAndSendIdentity, isRtcstatsEnabled } from './functions';
@@ -171,6 +171,18 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             RTCStats.sendFaceLandmarksData({
                 duration,
                 faceLandmarks: faceExpression,
+                timestamp
+            });
+        }
+        break;
+    }
+    case CAMERA_OFF_TIMESTAMP: {
+        if (canSendRtcstatsData(state) && faceLandmarks && faceLandmarks.enableRTCStats) {
+            const { timestamp } = action;
+
+            RTCStats.sendFaceLandmarksData({
+                duration: 0,
+                faceLandmarks: 'camera-off',
                 timestamp
             });
         }

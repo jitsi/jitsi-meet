@@ -49,3 +49,12 @@ export const UPDATE_FACE_COORDINATES = 'UPDATE_FACE_COORDINATES';
  * }
  */
  export const NEW_FACE_COORDINATES = 'NEW_FACE_COORDINATES';
+
+ /**
+  * Redux action type dispatched in order to send the camera off timestamp to services.
+  * {
+  *      type: CAMERA_OFF_TIMESTAMP,
+  *      timestamp: number,
+  * }
+*/
+export const CAMERA_OFF_TIMESTAMP = 'CAMERA_OFF_TIMESTAMP';

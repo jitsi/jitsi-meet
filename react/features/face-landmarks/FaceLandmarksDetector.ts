@@ -6,8 +6,12 @@ import { IStore } from '../app/types';
 import { getLocalVideoTrack } from '../base/tracks/functions';
 import { getBaseUrl } from '../base/util/helpers';
 
-import { NEW_FACE_COORDINATES } from './actionTypes';
-import { addFaceExpression, clearFaceExpressionBuffer } from './actions';
+import {
+    addFaceExpression,
+    cameraOffTimestamp,
+    clearFaceExpressionBuffer,
+    newFaceBox
+} from './actions';
 import {
     DETECTION_TYPES,
     INIT_WORKER,
@@ -38,6 +42,7 @@ class FaceLandmarksDetector {
     private recognitionActive = false;
     private canvas?: HTMLCanvasElement;
     private context?: CanvasRenderingContext2D | null;
+    private cameraTimestamp: number | null = null;
 
     /**
      * Constructor for class, checks if the environment supports OffscreenCanvas.
@@ -119,10 +124,7 @@ class FaceLandmarksDetector {
             }
 
             if (faceBox) {
-                dispatch({
-                    type: NEW_FACE_COORDINATES,
-                    faceBox
-                });
+                dispatch(newFaceBox(faceBox));
             }
 
             APP.API.notifyFaceLandmarkDetected(faceBox, faceExpression);
@@ -243,6 +245,7 @@ class FaceLandmarksDetector {
         this.detectionInterval = null;
         this.imageCapture = null;
         this.recognitionActive = false;
+        dispatch(cameraOffTimestamp(Date.now()));
         logger.log('Stop face detection');
     }
 
