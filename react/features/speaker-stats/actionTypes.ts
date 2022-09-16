@@ -30,6 +30,14 @@ export const INIT_UPDATE_STATS = 'INIT_UPDATE_STATS';
 export const UPDATE_STATS = 'UPDATE_STATS';
 
 /**
+ * Action type to update the speaker stats order.
+ * {
+ *     type: UPDATE_SORTED_SPEAKER_STATS_IDS  
+ * }
+ */
+export const UPDATE_SORTED_SPEAKER_STATS_IDS = 'UPDATE_SORTED_SPEAKER_STATS_IDS'
+
+/**
  * Action type to initiate reordering of the stats.
  *
  * {

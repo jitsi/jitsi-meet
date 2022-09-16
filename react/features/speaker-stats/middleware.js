@@ -13,8 +13,8 @@ import {
     INIT_UPDATE_STATS,
     RESET_SEARCH_CRITERIA
 } from './actionTypes';
-import { initReorderStats, updateStats } from './actions';
-import { filterBySearchCriteria, getPendingReorder, getSortedSpeakerStats, resetHiddenStats } from './functions';
+import { initReorderStats, updateSortedSpeakerStatsIds, updateStats } from './actions';
+import { filterBySearchCriteria, getPendingReorder, getSortedSpeakerStatsIds, resetHiddenStats } from './functions';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
@@ -35,8 +35,13 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             const stats = filterBySearchCriteria(state, speakerStats);
             const pendingReorder = getPendingReorder(state);
 
-            dispatch(updateStats(pendingReorder ? getSortedSpeakerStats(state, stats) : stats));
+            if (pendingReorder) {
+                dispatch(updateSortedSpeakerStatsIds(getSortedSpeakerStatsIds(state, stats)));
+            }
+
+            dispatch(updateStats(stats));
         }
+
         break;
 
     case RESET_SEARCH_CRITERIA: {
