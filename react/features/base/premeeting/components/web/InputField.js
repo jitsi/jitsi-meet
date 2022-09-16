@@ -133,13 +133,6 @@ export default class InputField extends PureComponent<Props, State> {
                 onKeyPress = { this._onKeyPress }
                 placeholder = { this.props.placeHolder }
                 readOnly = { this.props.readOnly }
-                // eslint-disable-next-line react/jsx-no-bind
-                ref = { inputElement => {
-                    if (this.props.autoFocus) {
-                        inputElement && inputElement.focus();
-                        setTimeout(() => inputElement && inputElement.focus(), 200);
-                    }
-                } }
                 type = { this.props.type }
                 value = { this.state.value } />
         );
