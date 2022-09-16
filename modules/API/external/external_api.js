@@ -37,6 +37,7 @@ const commands = {
     closeBreakoutRoom: 'close-breakout-room',
     displayName: 'display-name',
     e2eeKey: 'e2ee-key',
+    endConference: 'end-conference',
     email: 'email',
     grantModerator: 'grant-moderator',
     hangup: 'video-hangup',
