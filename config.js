@@ -824,7 +824,7 @@ var config = {
     // Application ID and Secret.
     // callStatsID: '',
     // callStatsSecret: '',
-    // callstatsStoreLogs: true,
+    // callStatsApplicationLogsDisabled: false,
 
     // The callstats initialize config params as described in the API:
     // https://docs.callstats.io/docs/javascript#callstatsinitialize-with-app-secret
