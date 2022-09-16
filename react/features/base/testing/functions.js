@@ -1,7 +1,9 @@
 // @flow
 
-import { MEDIA_TYPE } from '../media';
-import { getTrackByMediaTypeAndParticipant } from '../tracks';
+import { getMultipleVideoSupportFeatureFlag } from '../config';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../media';
+import { getParticipantById } from '../participants';
+import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrack } from '../tracks';
 
 /**
  * Indicates whether the test mode is enabled. When it's enabled
@@ -22,10 +24,17 @@ export function isTestModeEnabled(state: Object): boolean {
  *
  * @param {Store} store - The redux store.
  * @param {string} id - The participant ID for the remote video.
- * @returns {MEDIA_TYPE}
+ * @returns {VIDEO_TYPE}
  */
-export function getRemoteVideoType({ getState }: Object, id: String): boolean {
-    return getTrackByMediaTypeAndParticipant(getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, id)?.videoType;
+export function getRemoteVideoType({ getState }: Object, id: String): VIDEO_TYPE {
+    const state = getState();
+    const participant = getParticipantById(state, id);
+
+    if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+        return VIDEO_TYPE.DESKTOP;
+    }
+
+    return getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id)?.videoType;
 }
 
 /**
@@ -35,10 +44,19 @@ export function getRemoteVideoType({ getState }: Object, id: String): boolean {
  * @returns {boolean}
  */
 export function isLargeVideoReceived({ getState }: Object): boolean {
-    const largeVideoParticipantId = getState()['features/large-video'].participantId;
-    const videoTrack = getTrackByMediaTypeAndParticipant(
-        getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, largeVideoParticipantId);
-    const lastMediaEvent = getState()['features/large-video']?.lastMediaEvent;
+    const state = getState();
+    const largeVideoParticipantId = state['features/large-video'].participantId;
+    const largeVideoParticipant = getParticipantById(state, largeVideoParticipantId);
+    const tracks = state['features/base/tracks'];
+    let videoTrack;
+
+    if (getMultipleVideoSupportFeatureFlag(state) && largeVideoParticipant?.isVirtualScreenshareParticipant) {
+        videoTrack = getVirtualScreenshareParticipantTrack(tracks, largeVideoParticipantId);
+    } else {
+        videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId);
+    }
+
+    const lastMediaEvent = state['features/large-video']?.lastMediaEvent;
 
     return videoTrack && !videoTrack.muted && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough');
 }
@@ -51,7 +69,16 @@ export function isLargeVideoReceived({ getState }: Object): boolean {
  * @returns {boolean}
  */
 export function isRemoteVideoReceived({ getState }: Object, id: String): boolean {
-    const videoTrack = getTrackByMediaTypeAndParticipant(getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+    const state = getState();
+    const tracks = state['features/base/tracks'];
+    const participant = getParticipantById(state, id);
+    let videoTrack;
+
+    if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+        videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
+    } else {
+        videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    }
     const lastMediaEvent = videoTrack?.lastMediaEvent;
 
     return videoTrack && !videoTrack.muted && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough');
