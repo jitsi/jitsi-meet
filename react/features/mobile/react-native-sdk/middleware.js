@@ -30,7 +30,7 @@ const externalAPIEnabled = isExternalAPIAvailable();
         rnSdkHandlers.onConferenceWillJoin && rnSdkHandlers.onConferenceWillJoin();
         break;
     case CONFERENCE_LEFT:
-        //Props are torn down at this point, perhaps need to leave this one out
+        //  Props are torn down at this point, perhaps need to leave this one out
         break;
     }
 
