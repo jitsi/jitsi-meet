@@ -125,6 +125,7 @@ export interface IConfig {
         key: ButtonsWithNotifyClick;
         preventExecution: boolean;
     }>;
+    callDisplayName?: string;
     callStatsConfigParams?: {
         additionalIDs?: {
             customerID?: string;

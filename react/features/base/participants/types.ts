@@ -8,7 +8,7 @@ export interface Participant {
     e2eeSupported?: boolean;
     email?: string;
     features?: {
-        'screen-sharing'?: boolean;
+        'screen-sharing'?: boolean | string;
     };
     getId?: Function;
     id: string;

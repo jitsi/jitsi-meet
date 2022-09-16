@@ -71,7 +71,11 @@ const CONFERENCE_HEADER_MAPPING: any = {
 };
 
 export interface IConfigState extends IConfig {
+    analysis?: {
+        obfuscateRoomName?: boolean;
+    };
     error?: Error;
+    firefox_fake_device?: string;
 }
 
 ReducerRegistry.register<IConfigState>('features/base/config', (state = _getInitialState(), action): IConfigState => {

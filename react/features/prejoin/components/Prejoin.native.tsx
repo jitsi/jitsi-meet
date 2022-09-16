@@ -65,7 +65,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     );
     const localParticipant = useSelector((state: IState) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector(state => isDisplayNameRequired(state));
-    const roomName = useSelector(state => getConferenceName(state));
+    const roomName = useSelector((state: IState) => getConferenceName(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
