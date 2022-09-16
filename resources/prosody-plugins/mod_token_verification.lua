@@ -1,5 +1,5 @@
 -- Token authentication
--- Copyright (C) 2015 Atlassian
+-- Copyright (C) 2021-present 8x8, Inc.
 
 local log = module._log;
 local host = module.host;

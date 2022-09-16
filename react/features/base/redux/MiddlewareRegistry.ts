@@ -1,5 +1,7 @@
 import { applyMiddleware, Middleware } from 'redux';
 
+import { IState } from '../../app/types';
+
 /**
  * A registry for Redux middleware, allowing features to register their
  * middleware without needing to create additional inter-feature dependencies.
@@ -40,7 +42,7 @@ class MiddlewareRegistry {
      * @param {Middleware} middleware - A Redux middleware.
      * @returns {void}
      */
-    register(middleware: Middleware<any, any>) {
+    register(middleware: Middleware<any, IState>) {
         this._elements.push(middleware);
     }
 }

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { connect as reduxConnect } from 'react-redux';
 
+import { IState } from '../../app/types';
 import { IStateful } from '../app/types';
 
 /**
@@ -135,7 +136,7 @@ function _set<T extends Object>(
  * returned.
  * @returns {Object} The redux state.
  */
-export function toState(stateful: IStateful) {
+export function toState(stateful: IStateful): IState {
     if (stateful) {
         if (typeof stateful === 'function') {
             return stateful();
@@ -149,5 +150,6 @@ export function toState(stateful: IStateful) {
         }
     }
 
+    // @ts-ignore
     return stateful;
 }

@@ -9,6 +9,7 @@ import { getAvailableDevices } from '../../../base/devices';
 // @ts-ignore
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
 import { connect } from '../../../base/redux/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { isCalendarEnabled } from '../../../calendar-sync';
 import {
@@ -113,6 +114,14 @@ const styles = (theme: Theme) => {
                 padding: `20px 0px ${theme.spacing(1)} 0px`
             },
 
+            '& .checkbox-label': {
+                color: theme.palette.text01,
+                ...withPixelLineHeight(theme.typography.bodyShortRegular),
+                marginBottom: theme.spacing(2),
+                display: 'block',
+                marginTop: '20px'
+            },
+
             '& input[type="checkbox"]:checked + svg': {
                 '--checkbox-background-color': '#6492e7',
                 '--checkbox-border-color': '#6492e7'
@@ -156,6 +165,10 @@ const styles = (theme: Theme) => {
             '& .settings-sub-pane-element': {
                 textAlign: 'left',
                 flex: 1
+            },
+
+            '& .dropdown-menu': {
+                marginTop: '20px'
             },
 
             '& .settings-checkbox': {

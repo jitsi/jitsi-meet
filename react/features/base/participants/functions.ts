@@ -80,16 +80,16 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
     }
     let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
 
-    if (activeSpeakers.has(dominantSpeaker)) {
-        activeSpeakers.delete(dominantSpeaker);
+    if (activeSpeakers.has(dominantSpeaker ?? '')) {
+        activeSpeakers.delete(dominantSpeaker ?? '');
     }
 
     // Add dominant speaker to the beginning of the list (not including self) since the active speaker list is always
     // alphabetically sorted.
-    if (dominantSpeaker && dominantSpeaker !== getLocalParticipant(state).id) {
+    if (dominantSpeaker && dominantSpeaker !== getLocalParticipant(state)?.id) {
         const updatedSpeakers = Array.from(activeSpeakers);
 
-        updatedSpeakers.splice(0, 0, [ dominantSpeaker, getParticipantById(state, dominantSpeaker)?.name ]);
+        updatedSpeakers.splice(0, 0, [ dominantSpeaker, getParticipantById(state, dominantSpeaker)?.name ?? '' ]);
         activeSpeakers = new Map(updatedSpeakers);
     }
 
@@ -359,11 +359,11 @@ export function getParticipantDisplayName(stateful: IStateful, id: string): stri
         }
 
         if (participant.local) {
-            return defaultLocalDisplayName;
+            return defaultLocalDisplayName ?? '';
         }
     }
 
-    return defaultRemoteDisplayName;
+    return defaultRemoteDisplayName ?? '';
 }
 
 /**
@@ -409,7 +409,7 @@ export function getParticipantPresenceStatus(stateful: IStateful, id: string) {
  * features/base/participants.
  * @returns {Map<string, Object>}
  */
-export function getRemoteParticipants(stateful: IStateful) {
+export function getRemoteParticipants(stateful: IStateful): Map<string, Participant> {
     return toState(stateful)['features/base/participants'].remote;
 }
 
@@ -439,7 +439,7 @@ export function getPinnedParticipant(stateful: IStateful) {
 
     if (stageFilmstrip) {
         const { activeParticipants } = state['features/filmstrip'];
-        const id = activeParticipants.find((p: Participant) => p.pinned)?.participantId;
+        const id = activeParticipants.find(p => p.pinned)?.participantId;
 
         return id ? getParticipantById(stateful, id) : undefined;
     }
@@ -635,7 +635,7 @@ async function _getFirstLoadableAvatarUrl(participant: Participant, store: IStor
  * features/base/participants.
  * @returns {Array<Object>}
  */
-export function getRaiseHandsQueue(stateful: IStateful): Array<Object> {
+export function getRaiseHandsQueue(stateful: IStateful): Array<{ id: string; raisedHandTimestamp: number; }> {
     const { raisedHandsQueue } = toState(stateful)['features/base/participants'];
 
     return raisedHandsQueue;

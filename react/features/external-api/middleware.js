@@ -18,7 +18,8 @@ import {
     PARTICIPANT_ROLE_CHANGED,
     SET_LOADABLE_AVATAR_URL,
     getLocalParticipant,
-    getParticipantById
+    getParticipantById,
+    getDominantSpeakerParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { getBaseUrl } from '../base/util';
@@ -38,6 +39,19 @@ declare var APP: Object;
 MiddlewareRegistry.register(store => next => action => {
     // We need to do these before executing the rest of the middelware chain
     switch (action.type) {
+    case DOMINANT_SPEAKER_CHANGED: {
+        const dominantSpeaker = getDominantSpeakerParticipant(store.getState());
+
+        if (dominantSpeaker?.id !== action.participant.id) {
+            const result = next(action);
+
+            APP.API.notifyDominantSpeakerChanged(action.participant.id);
+
+            return result;
+        }
+
+        break;
+    }
     case SET_LOADABLE_AVATAR_URL: {
         const { id, loadableAvatarUrl } = action.participant;
         const participant = getParticipantById(
@@ -89,7 +103,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const { defaultLocalDisplayName } = state['features/base/config'];
         const { room } = state['features/base/conference'];
-        const { loadableAvatarUrl, name, id } = getLocalParticipant(state);
+        const { loadableAvatarUrl, name, id, email } = getLocalParticipant(state);
         const breakoutRoom = APP.conference.roomName.toString() !== room.toLowerCase();
 
         // we use APP.conference.roomName as we do not update state['features/base/conference'].room when
@@ -104,7 +118,8 @@ MiddlewareRegistry.register(store => next => action => {
                     defaultLocalDisplayName
                 ),
                 avatarURL: loadableAvatarUrl,
-                breakoutRoom
+                breakoutRoom,
+                email
             }
         );
         break;
@@ -112,10 +127,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case DATA_CHANNEL_OPENED:
         APP.API.notifyDataChannelOpened();
-        break;
-
-    case DOMINANT_SPEAKER_CHANGED:
-        APP.API.notifyDominantSpeakerChanged(action.participant.id);
         break;
 
     case KICKED_OUT:

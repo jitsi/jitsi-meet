@@ -15,7 +15,6 @@ import { withPixelLineHeight } from '../../../../../base/styles/functions.web';
 // @ts-ignore
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { ACTION_TRIGGER } from '../../../../constants';
-// @ts-ignore
 import { participantMatchesSearch } from '../../../../functions';
 import ParticipantActionEllipsis from '../../../web/ParticipantActionEllipsis';
 import ParticipantItem from '../../../web/ParticipantItem';

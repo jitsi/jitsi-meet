@@ -37,7 +37,6 @@ import {
     trackStreamingStatusChanged
     // @ts-ignore
 } from '../../../base/tracks';
-// @ts-ignore
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 // @ts-ignore
 import { hideGif, showGif } from '../../../gifs/actions';
@@ -1276,7 +1275,7 @@ function _mapStateToProps(state: IState, ownProps: any): Object {
 
     const { gifUrl: gifSrc } = getGifForParticipant(state, id);
     const mode = getGifDisplayMode(state);
-    const participantId = isLocal ? getLocalParticipant(state).id : participantID;
+    const participantId = isLocal ? getLocalParticipant(state)?.id : participantID;
 
     return {
         _audioTrack,

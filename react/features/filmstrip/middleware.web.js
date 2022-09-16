@@ -154,7 +154,8 @@ MiddlewareRegistry.register(store => next => action => {
         const { dispatch, getState } = store;
         const { participantId, pinned } = action;
         const state = getState();
-        const { activeParticipants, maxStageParticipants } = state['features/filmstrip'];
+        const { activeParticipants } = state['features/filmstrip'];
+        const { maxStageParticipants } = state['features/base/settings'];
         let queue;
 
         if (activeParticipants.find(p => p.participantId === participantId)) {
@@ -236,8 +237,9 @@ MiddlewareRegistry.register(store => next => action => {
         const stageFilmstrip = isStageFilmstripAvailable(state);
         const local = getLocalParticipant(state);
         const currentLayout = getCurrentLayout(state);
+        const dominantSpeaker = getDominantSpeakerParticipant(state);
 
-        if (id === local.id || currentLayout === LAYOUTS.TILE_VIEW) {
+        if (dominantSpeaker?.id === id || id === local.id || currentLayout === LAYOUTS.TILE_VIEW) {
             break;
         }
 

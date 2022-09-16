@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Key for this feature.
  */

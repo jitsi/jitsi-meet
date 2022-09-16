@@ -5,7 +5,8 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PIN_PARTICIPANT,
-    getLocalParticipant
+    getLocalParticipant,
+    getDominantSpeakerParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { isTestModeEnabled } from '../base/testing';
@@ -28,12 +29,18 @@ import './subscriber';
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    const result = next(action);
-
     switch (action.type) {
     case DOMINANT_SPEAKER_CHANGED: {
         const state = store.getState();
         const localParticipant = getLocalParticipant(state);
+        const dominantSpeaker = getDominantSpeakerParticipant(state);
+
+
+        if (dominantSpeaker?.id === action.participant.id) {
+            return next(action);
+        }
+
+        const result = next(action);
 
         if (isTestModeEnabled(state)) {
             logger.info(`Dominant speaker changed event for: ${action.participant.id}`);
@@ -43,17 +50,22 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(selectParticipantInLargeVideo());
         }
 
-        break;
+        return result;
     }
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PIN_PARTICIPANT:
     case TOGGLE_DOCUMENT_EDITING:
     case TRACK_ADDED:
-    case TRACK_REMOVED:
+    case TRACK_REMOVED: {
+        const result = next(action);
+
         store.dispatch(selectParticipantInLargeVideo());
-        break;
+
+        return result;
     }
+    }
+    const result = next(action);
 
     return result;
 });

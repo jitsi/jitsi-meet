@@ -143,10 +143,12 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
     }
     case DOMINANT_SPEAKER_CHANGED: {
         if (canSendRtcstatsData(state)) {
-            const { id, previousSpeakers } = action.participant;
+            const { id, previousSpeakers, silence } = action.participant;
 
-            RTCStats.sendDominantSpeakerData({ dominantSpeakerEndpoint: id,
-                previousSpeakers });
+            RTCStats.sendDominantSpeakerData({
+                dominantSpeakerEndpoint: silence ? null : id,
+                previousSpeakers
+            });
         }
         break;
     }

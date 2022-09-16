@@ -303,7 +303,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
         _showHideSelfViewButton: showHideSelfViewButton,
         _overflowDrawer: overflowDrawer,
-        _localParticipantId: localParticipant.id,
+        _localParticipantId: localParticipant?.id,
         _showConnectionInfo: showConnectionInfo,
         _showPinToStage: isStageFilmstripAvailable(state)
     };

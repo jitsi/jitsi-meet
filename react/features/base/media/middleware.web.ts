@@ -14,6 +14,8 @@ import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { SET_VIDEO_MUTED } from './actionTypes';
 
+import './subscriber';
+
 /**
  * Implements the entry point of the middleware of the feature base/media.
  *
