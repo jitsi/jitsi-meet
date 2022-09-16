@@ -18,6 +18,7 @@ import {
 } from '../../react/features/av-moderation/actions';
 import { isEnabledFromState } from '../../react/features/av-moderation/functions';
 import {
+    endConference,
     getCurrentConference,
     sendTones,
     setFollowMe,
@@ -777,6 +778,19 @@ function initCommands() {
         },
         'toggle-virtual-background': () => {
             APP.store.dispatch(toggleDialog(VirtualBackgroundDialog));
+        },
+        'end-conference': () => {
+            APP.store.dispatch(endConference());
+            const state = APP.store.getState();
+            const conference = getCurrentConference(state);
+
+            if (!conference) {
+                logger.error('Conference not yet available');
+            } else if (conference.isEndConferenceSupported()) {
+                APP.store.dispatch(endConference());
+            } else {
+                logger.error(' End Conference not supported');
+            }
         }
     };
     transport.on('event', ({ data, name }) => {
