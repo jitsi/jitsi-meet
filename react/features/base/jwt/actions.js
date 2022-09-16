@@ -23,5 +23,7 @@ export function setJWT(jwt: ?string) {
         // jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6InBvbHl0b2siLCJzdWIiOiJwb2x5dG9rIiwicm9vbSI6IioiLCJzZWxmaWUiOiJQIiwibmJmIjoxNjYyMDk1MTQ2LCJleHAiOjE2NjIwOTg4NjZ9.RBPk5Oi0t3MK1kzQtI03WPX8YnmoQjYjgDI9kfiqxFw'
         //N
         // jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6InBvbHl0b2siLCJzdWIiOiJwb2x5dG9rIiwicm9vbSI6IioiLCJzZWxmaWUiOiJOIiwibmJmIjoxNjYyNDYwMzUzLCJleHAiOjE2NjI0NjQwNzN9.31wUQGLpKlkF_ThBM7jmGMlYewQ9zaouBH1oe_s9N8s'
+        //celebrity
+        // jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6InBvbHl0b2siLCJzdWIiOiJwb2x5dG9rIiwicm9vbSI6IioiLCJzZWxmaWUiOiJBIiwiY2VsZWJyaXR5IjoiTiIsIm5iZiI6MTY2MzIzNDg0OCwiZXhwIjoxNjYzMjM4NTY4fQ.hU1fUIqLwz8ZsIi9_NqMsQ_-l1Wqww6Q7AwT4QCGp-g'
     };
 }

@@ -50,8 +50,8 @@
 }
 
 .leftwatermark {
-    left: 20px;
-    top: 20px;
+    left: 14px;
+    top: 0px;
     background-position: center left;
     background-repeat: no-repeat;
     background-size: contain;

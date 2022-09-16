@@ -24,9 +24,10 @@ type Props = {
 
 export default ({ visible, children, id }: Props) => (
     <div
-        className = { `subject${isAlwaysOnTitleBarEmpty() ? '' : ' with-always-on'}${visible ? ' visible' : ''}` }
-        id = { id }>
-        <div className = { 'subject-info-container' }>
+        style={{ marginTop: '26px' }}
+        className={`subject${isAlwaysOnTitleBarEmpty() ? '' : ' with-always-on'}${visible ? ' visible' : ''}`}
+        id={id}>
+        <div className={'subject-info-container'}>
             {children}
         </div>
     </div>

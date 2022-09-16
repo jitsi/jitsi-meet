@@ -389,51 +389,39 @@ class Toolbox extends Component<Props> {
             _reactionsEnabled,
             _gifsEnabled
         } = this.props;
-        const KEYBOARD_SHORTCUTS = [
-            isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
-                character: 'A',
-                exec: this._onShortcutToggleVideoQuality,
-                helpDescription: 'toolbar.callQuality'
-            },
-            isToolbarButtonEnabled('chat', _toolbarButtons) && {
-                character: 'C',
-                exec: this._onShortcutToggleChat,
-                helpDescription: 'keyboardShortcuts.toggleChat'
-            },
-            isToolbarButtonEnabled('desktop', _toolbarButtons) && {
-                character: 'D',
-                exec: this._onShortcutToggleScreenshare,
-                helpDescription: 'keyboardShortcuts.toggleScreensharing'
-            },
-            isToolbarButtonEnabled('participants-pane', _toolbarButtons) && {
-                character: 'P',
-                exec: this._onShortcutToggleParticipantsPane,
-                helpDescription: 'keyboardShortcuts.toggleParticipantsPane'
-            },
-            isToolbarButtonEnabled('raisehand', _toolbarButtons) && {
-                character: 'R',
-                exec: this._onShortcutToggleRaiseHand,
-                helpDescription: 'keyboardShortcuts.raiseHand'
-            },
-            isToolbarButtonEnabled('fullscreen', _toolbarButtons) && {
-                character: 'S',
-                exec: this._onShortcutToggleFullScreen,
-                helpDescription: 'keyboardShortcuts.fullScreen'
-            },
-            isToolbarButtonEnabled('tileview', _toolbarButtons) && {
-                character: 'W',
-                exec: this._onShortcutToggleTileView,
-                helpDescription: 'toolbar.tileViewToggle'
-            }
-        ];
+        const KEYBOARD_SHORTCUTS = [ isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
+            character: 'A',
+            exec: this._onShortcutToggleVideoQuality,
+            helpDescription: 'toolbar.callQuality'
+        }, isToolbarButtonEnabled('chat', _toolbarButtons) && {
+            character: 'C',
+            exec: this._onShortcutToggleChat,
+            helpDescription: 'keyboardShortcuts.toggleChat'
+        }, isToolbarButtonEnabled('desktop', _toolbarButtons) && {
+            character: 'D',
+            exec: this._onShortcutToggleScreenshare,
+            helpDescription: 'keyboardShortcuts.toggleScreensharing'
+        }, isToolbarButtonEnabled('participants-pane', _toolbarButtons) && {
+            character: 'P',
+            exec: this._onShortcutToggleParticipantsPane,
+            helpDescription: 'keyboardShortcuts.toggleParticipantsPane'
+        }, isToolbarButtonEnabled('raisehand', _toolbarButtons) && {
+            character: 'R',
+            exec: this._onShortcutToggleRaiseHand,
+            helpDescription: 'keyboardShortcuts.raiseHand'
+        }, isToolbarButtonEnabled('fullscreen', _toolbarButtons) && {
+            character: 'S',
+            exec: this._onShortcutToggleFullScreen,
+            helpDescription: 'keyboardShortcuts.fullScreen'
+        }, isToolbarButtonEnabled('tileview', _toolbarButtons) && {
+            character: 'W',
+            exec: this._onShortcutToggleTileView,
+            helpDescription: 'toolbar.tileViewToggle'
+        } ];
 
         KEYBOARD_SHORTCUTS.forEach(shortcut => {
             if (typeof shortcut === 'object') {
-                APP.keyboardshortcut.registerShortcut(
-                    shortcut.character,
-                    null,
-                    shortcut.exec,
-                    shortcut.helpDescription);
+                APP.keyboardshortcut.registerShortcut(shortcut.character, null, shortcut.exec, shortcut.helpDescription);
             }
         });
 
@@ -442,9 +430,7 @@ class Toolbox extends Component<Props> {
                 .map(key => {
                     const onShortcutSendReaction = () => {
                         dispatch(addReactionToBuffer(key));
-                        sendAnalytics(createShortcutEvent(
-                            `reaction.${key}`
-                        ));
+                        sendAnalytics(createShortcutEvent(`reaction.${key}`));
                     };
 
                     return {
@@ -457,12 +443,7 @@ class Toolbox extends Component<Props> {
                 });
 
             REACTION_SHORTCUTS.forEach(shortcut => {
-                APP.keyboardshortcut.registerShortcut(
-                    shortcut.character,
-                    null,
-                    shortcut.exec,
-                    shortcut.helpDescription,
-                    shortcut.altKey);
+                APP.keyboardshortcut.registerShortcut(shortcut.character, null, shortcut.exec, shortcut.helpDescription, shortcut.altKey);
             });
 
             if (_gifsEnabled) {
@@ -473,12 +454,7 @@ class Toolbox extends Component<Props> {
                     });
                 };
 
-                APP.keyboardshortcut.registerShortcut(
-                    'G',
-                    null,
-                    onGifShortcut,
-                    t('keyboardShortcuts.giphyMenu')
-                );
+                APP.keyboardshortcut.registerShortcut('G', null, onGifShortcut, t('keyboardShortcuts.giphyMenu'));
             }
         }
     }
@@ -495,9 +471,7 @@ class Toolbox extends Component<Props> {
         } = this.props;
 
 
-        if (prevProps._overflowMenuVisible
-            && !prevProps._dialog
-            && _dialog) {
+        if (prevProps._overflowMenuVisible && !prevProps._dialog && _dialog) {
             this._onSetOverflowVisible(false);
             dispatch(setToolbarHovered(false));
         }
@@ -510,14 +484,12 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentWillUnmount() {
-        [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
-            APP.keyboardshortcut.unregisterShortcut(letter));
+        [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter => APP.keyboardshortcut.unregisterShortcut(letter));
 
         if (this.props._reactionsEnabled) {
             Object.keys(REACTIONS)
                 .map(key => REACTIONS[key].shortcutChar)
-                .forEach(letter =>
-                    APP.keyboardshortcut.unregisterShortcut(letter, true));
+                .forEach(letter => APP.keyboardshortcut.unregisterShortcut(letter, true));
         }
     }
 
@@ -539,13 +511,11 @@ class Toolbox extends Component<Props> {
         } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${_toolbarButtons.length ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
 
-        return (
-            <div
-                className={rootClassNames}
-                id="new-toolbox">
-                {this._renderToolboxContent()}
-            </div>
-        );
+        return (<div
+            className={rootClassNames}
+            id="new-toolbox">
+            {this._renderToolboxContent()}
+        </div>);
     }
 
     /**
@@ -922,16 +892,10 @@ class Toolbox extends Component<Props> {
      * @returns {string|undefined} - The button's notify mode.
      */
     _getButtonNotifyMode(btnName) {
-        const notify = this.props._buttonsWithNotifyClick?.find(
-            (btn: string | Object) =>
-                (typeof btn === 'string' && btn === btnName)
-                || (typeof btn === 'object' && btn.key === btnName)
-        );
+        const notify = this.props._buttonsWithNotifyClick?.find((btn: string | Object) => (typeof btn === 'string' && btn === btnName) || (typeof btn === 'object' && btn.key === btnName));
 
         if (notify) {
-            return typeof notify === 'string' || notify.preventExecution
-                ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
-                : NOTIFY_CLICK_MODE.ONLY_NOTIFY;
+            return typeof notify === 'string' || notify.preventExecution ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY : NOTIFY_CLICK_MODE.ONLY_NOTIFY;
         }
     }
 
@@ -972,22 +936,17 @@ class Toolbox extends Component<Props> {
         this._setButtonsNotifyClickMode(buttons);
         const isHangupVisible = isToolbarButtonEnabled('hangup', _toolbarButtons);
         const isSelfieVisible = isToolbarButtonEnabled('selfie', _toolbarButtons);
-        const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
-        || THRESHOLDS[THRESHOLDS.length - 1];
+        const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width) || THRESHOLDS[THRESHOLDS.length - 1];
         let sliceIndex = order.length + 2;
 
         const keys = Object.keys(buttons);
 
-        const filtered = [
-            ...order.map(key => buttons[key]),
-            ...Object.values(buttons)
-                .filter((button, index) => !order.includes(keys[index]))
-        ].filter(Boolean)
+        const filtered = [ ...order.map(key => buttons[key]), ...Object.values(buttons)
+            .filter((button, index) => !order.includes(keys[index])) ].filter(Boolean)
             .filter(({
                 key,
                 alias = NOT_APPLICABLE
-            }) =>
-                isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons));
+            }) => isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons));
 
         if (isHangupVisible) {
             sliceIndex -= 1;
@@ -1051,11 +1010,9 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onShortcutToggleChat() {
-        sendAnalytics(createShortcutEvent(
-            'toggle.chat',
-            {
-                enable: !this.props._chatOpen
-            }));
+        sendAnalytics(createShortcutEvent('toggle.chat', {
+            enable: !this.props._chatOpen
+        }));
 
         // Checks if there was any text selected by the user.
         // Used for when we press simultaneously keys for copying
@@ -1076,11 +1033,9 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onShortcutToggleParticipantsPane() {
-        sendAnalytics(createShortcutEvent(
-            'toggle.participants-pane',
-            {
-                enable: !this.props._participantsPaneOpen
-            }));
+        sendAnalytics(createShortcutEvent('toggle.participants-pane', {
+            enable: !this.props._participantsPaneOpen
+        }));
 
         this._onToolbarToggleParticipantsPane();
     }
@@ -1105,11 +1060,9 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onShortcutToggleTileView() {
-        sendAnalytics(createShortcutEvent(
-            'toggle.tileview',
-            {
-                enable: !this.props._tileViewEnabled
-            }));
+        sendAnalytics(createShortcutEvent('toggle.tileview', {
+            enable: !this.props._tileViewEnabled
+        }));
 
         this._doToggleTileView();
     }
@@ -1122,11 +1075,9 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onShortcutToggleFullScreen() {
-        sendAnalytics(createShortcutEvent(
-            'toggle.fullscreen',
-            {
-                enable: !this.props._fullScreen
-            }));
+        sendAnalytics(createShortcutEvent('toggle.fullscreen', {
+            enable: !this.props._fullScreen
+        }));
 
         this._doToggleFullScreen();
     }
@@ -1139,10 +1090,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onShortcutToggleRaiseHand() {
-        sendAnalytics(createShortcutEvent(
-            'toggle.raise.hand',
-            ACTION_SHORTCUT_TRIGGERED,
-            { enable: !this.props._raisedHand }));
+        sendAnalytics(createShortcutEvent('toggle.raise.hand', ACTION_SHORTCUT_TRIGGERED, { enable: !this.props._raisedHand }));
 
         this._doToggleRaiseHand();
     }
@@ -1159,12 +1107,9 @@ class Toolbox extends Component<Props> {
         if (this.props._desktopSharingButtonDisabled) {
             return;
         }
-        sendAnalytics(createShortcutEvent(
-            'toggle.screen.sharing',
-            ACTION_SHORTCUT_TRIGGERED,
-            {
-                enable: !this.props._screenSharing
-            }));
+        sendAnalytics(createShortcutEvent('toggle.screen.sharing', ACTION_SHORTCUT_TRIGGERED, {
+            enable: !this.props._screenSharing
+        }));
 
         this._doToggleScreenshare();
     }
@@ -1220,11 +1165,9 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleChat() {
-        sendAnalytics(createToolbarEvent(
-            'toggle.chat',
-            {
-                enable: !this.props._chatOpen
-            }));
+        sendAnalytics(createToolbarEvent('toggle.chat', {
+            enable: !this.props._chatOpen
+        }));
         this._closeOverflowMenuIfOpen();
         this._doToggleChat();
     }
@@ -1237,11 +1180,9 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleFullScreen() {
-        sendAnalytics(createToolbarEvent(
-            'toggle.fullscreen',
-            {
-                enable: !this.props._fullScreen
-            }));
+        sendAnalytics(createToolbarEvent('toggle.fullscreen', {
+            enable: !this.props._fullScreen
+        }));
         this._closeOverflowMenuIfOpen();
         this._doToggleFullScreen();
     }
@@ -1254,9 +1195,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleRaiseHand() {
-        sendAnalytics(createToolbarEvent(
-            'raise.hand',
-            { enable: !this.props._raisedHand }));
+        sendAnalytics(createToolbarEvent('raise.hand', { enable: !this.props._raisedHand }));
 
         this._doToggleRaiseHand();
     }
@@ -1269,10 +1208,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleScreenshare() {
-        sendAnalytics(createToolbarEvent(
-            'toggle.screen.sharing',
-            ACTION_SHORTCUT_TRIGGERED,
-            { enable: !this.props._screenSharing }));
+        sendAnalytics(createToolbarEvent('toggle.screen.sharing', ACTION_SHORTCUT_TRIGGERED, { enable: !this.props._screenSharing }));
 
         this._closeOverflowMenuIfOpen();
         this._doToggleScreenshare();
@@ -1313,8 +1249,7 @@ class Toolbox extends Component<Props> {
      * @returns {boolean}
      */
     _isEmbedMeetingVisible() {
-        return !this.props._isVpaasMeeting
-            && !this.props._isMobile;
+        return !this.props._isVpaasMeeting && !this.props._isMobile;
     }
 
     /**
@@ -1350,34 +1285,32 @@ class Toolbox extends Component<Props> {
             overflowMenuButtons
         } = this._getVisibleButtons();
 
-        return (
-            <div className={containerClassName}>
-                <div className="toolbox-content-wrapper"
-                     onFocus={this._onTabIn}
-                     {...(_isMobile ? {} : {
-                         onMouseOut: this._onMouseOut,
-                         onMouseOver: this._onMouseOver
-                     })}>
-                    <SideButtons/>
-                    <ConnectButtons/>
-                </div>
-                <div
-                    className="toolbox-content-wrapper1"
-                    onFocus={this._onTabIn}
-                    {...(_isMobile ? {} : {
-                        onMouseOut: this._onMouseOut,
-                        onMouseOver: this._onMouseOver
-                    })}>
-                    <div className="toolbox-content-items">
-                        {mainMenuButtons.map(({
-                            Content,
-                            key,
-                            ...rest
-                        }) => Content !== Separator && (
-                            <Content
-                                {...rest}
-                                buttonKey={key}
-                                key={key}/>))}
+        return (<div className={containerClassName}>
+            <div className="toolbox-content-wrapper"
+                 onFocus={this._onTabIn}
+                 {...(_isMobile ? {} : {
+                     onMouseOut: this._onMouseOut,
+                     onMouseOver: this._onMouseOver
+                 })}>
+                <SideButtons/>
+                <ConnectButtons/>
+            </div>
+            <div
+                className="toolbox-content-wrapper1"
+                onFocus={this._onTabIn}
+                {...(_isMobile ? {} : {
+                    onMouseOut: this._onMouseOut,
+                    onMouseOver: this._onMouseOver
+                })}>
+                <div className="toolbox-content-items">
+                    {mainMenuButtons.map(({
+                        Content,
+                        key,
+                        ...rest
+                    }) => Content !== Separator && (<Content
+                        {...rest}
+                        buttonKey={key}
+                        key={key}/>))}
 
                         {Boolean(overflowMenuButtons.length) && (
                             <OverflowMenuButton
@@ -1385,9 +1318,7 @@ class Toolbox extends Component<Props> {
                                 isOpen={_overflowMenuVisible}
                                 key="overflow-menu"
                                 onVisibilityChange={this._onSetOverflowVisible}
-                                showMobileReactions={
-                                    _reactionsEnabled && overflowMenuButtons.find(({ key }) => key === 'raisehand')
-                                }>
+                                showMobileReactions={_reactionsEnabled && overflowMenuButtons.find(({ key }) => key === 'raisehand')}>
                                 <ContextMenu
                                     accessibilityLabel={t(toolbarAccLabel)}
                                     className={classes.contextMenu}
@@ -1417,9 +1348,8 @@ class Toolbox extends Component<Props> {
                                                     key,
                                                     Content,
                                                     ...rest
-                                                }) => (
-                                                        key !== 'raisehand' || !_reactionsEnabled)
-                                                    && <Content
+                                                }) => (key !== 'raisehand' || !_reactionsEnabled) &&
+                                                    <Content
                                                         {...rest}
                                                         buttonKey={key}
                                                         contextMenu={true}
@@ -1427,40 +1357,35 @@ class Toolbox extends Component<Props> {
                                                         showLabel={true}/>)}
                                             </ContextMenuItemGroup>))}
                                 </ContextMenu>
-                            </OverflowMenuButton>
-                        )}
-                        {
-                            this.decodeJwt.selfie === 'N' ? '' : this.decodeJwt.selfie === 'A' ?
-                                <DownloadAudioRecorder
-                                    buttonKey="selfie"
-                                    customClass="selfie-button"
-                                    key="selfie-button"
-                                    notifyMode={this._getButtonNotifyMode('selfie')}
-                                    visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/> :
-                                this.decodeJwt.selfie === 'V' ?
-                                    <DownloadVideoRecorder
-                                        buttonKey="selfie"
-                                        customClass="selfie-button"
-                                        key="selfie-button"
-                                        notifyMode={this._getButtonNotifyMode('selfie')}
-                                        visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/> :
-                                    <DownloadSelfie
-                                        buttonKey="selfie"
-                                        customClass="selfie-button"
-                                        key="selfie-button"
-                                        notifyMode={this._getButtonNotifyMode('selfie')}
-                                        visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/>
-                        }
-                        <HangupButton
-                            buttonKey="hangup"
-                            customClass="hangup-button"
-                            key="hangup-button"
-                            notifyMode={this._getButtonNotifyMode('hangup')}
-                            visible={isToolbarButtonEnabled('hangup', _toolbarButtons)}/>
-                    </div>
+                            </OverflowMenuButton>)}
+                    {this.decodeJwt.selfie === 'N' ? '' : this.decodeJwt.celebrity === 'Y' ? '' : this.decodeJwt.selfie === 'A' ?
+                        <DownloadAudioRecorder
+                            buttonKey="selfie"
+                            customClass="selfie-button"
+                            key="selfie-button"
+                            notifyMode={this._getButtonNotifyMode('selfie')}
+                            visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/> : this.decodeJwt.selfie === 'V' ?
+                            <DownloadVideoRecorder
+                                buttonKey="selfie"
+                                customClass="selfie-button"
+                                key="selfie-button"
+                                notifyMode={this._getButtonNotifyMode('selfie')}
+                                visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/> :
+                            <DownloadSelfie
+                                buttonKey="selfie"
+                                customClass="selfie-button"
+                                key="selfie-button"
+                                notifyMode={this._getButtonNotifyMode('selfie')}
+                                visible={isToolbarButtonEnabled('selfie', _toolbarButtons)}/>}
+                    <HangupButton
+                        buttonKey="hangup"
+                        customClass="hangup-button"
+                        key="hangup-button"
+                        notifyMode={this._getButtonNotifyMode('hangup')}
+                        visible={isToolbarButtonEnabled('hangup', _toolbarButtons)}/>
                 </div>
             </div>
-        );
+        </div>);
     }
 }
 
