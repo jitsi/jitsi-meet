@@ -163,10 +163,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_LEFT: {
         const { participant } = action;
-        const { isFakeParticipant, isVirtualScreenshareParticipant } = participant;
+        const { isFakeParticipant, isVirtualScreenshareParticipant, isWhiteboard } = participant;
 
         // Skip sending participant left event for fake or virtual screenshare participants.
-        if (isFakeParticipant || isVirtualScreenshareParticipant) {
+        if (isFakeParticipant || isVirtualScreenshareParticipant || isWhiteboard) {
             break;
         }
 

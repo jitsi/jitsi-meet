@@ -267,19 +267,19 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PARTICIPANT_JOINED: {
-        const { isVirtualScreenshareParticipant } = action.participant;
+        const { isVirtualScreenshareParticipant, isWhiteboard } = action.participant;
 
         // Do not play sounds when a virtual participant tile is created for screenshare.
-        !isVirtualScreenshareParticipant && _maybePlaySounds(store, action);
+        (!isVirtualScreenshareParticipant && !isWhiteboard) && _maybePlaySounds(store, action);
 
         return _participantJoinedOrUpdated(store, next, action);
     }
 
     case PARTICIPANT_LEFT: {
-        const { isVirtualScreenshareParticipant } = action.participant;
+        const { isVirtualScreenshareParticipant, isWhiteboard } = action.participant;
 
         // Do not play sounds when a tile for screenshare is removed.
-        !isVirtualScreenshareParticipant && _maybePlaySounds(store, action);
+        (!isVirtualScreenshareParticipant && !isWhiteboard) && _maybePlaySounds(store, action);
 
         break;
     }

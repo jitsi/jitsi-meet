@@ -1115,7 +1115,8 @@
             "toggleFilmstrip": "Toggle filmstrip",
             "undock": "Undock into separate window",
             "videoblur": "Toggle video blur",
-            "videomute": "Start / Stop camera"
+            "videomute": "Start / Stop camera",
+            "whiteboard": "Show / Hide whiteboard"
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable low bandwidth mode",
@@ -1146,6 +1147,7 @@
         "giphy": "Toggle GIPHY menu",
         "hangup": "Leave the meeting",
         "help": "Help",
+        "hideWhiteboard": "Hide whiteboard",
         "invite": "Invite people",
         "joinBreakoutRoom": "Join breakout room",
         "laugh": "Laugh",
@@ -1191,6 +1193,7 @@
         "shareaudio": "Share audio",
         "sharedvideo": "Share video",
         "shortcuts": "View shortcuts",
+        "showWhiteboard": "Show whiteboard",
         "silence": "Silence",
         "speakerStats": "Speaker stats",
         "startScreenSharing": "Start screen sharing",

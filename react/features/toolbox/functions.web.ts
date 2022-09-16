@@ -2,6 +2,7 @@ import { IState } from '../app/types';
 import { getToolbarButtons } from '../base/config/functions.web';
 import { hasAvailableDevices } from '../base/devices/functions';
 import { isScreenMediaShared } from '../screen-share/functions';
+import { isWhiteboardVisible } from '../whiteboard/functions';
 
 import { TOOLBAR_TIMEOUT } from './constants';
 
@@ -48,9 +49,17 @@ export function isToolboxVisible(state: IState) {
         visible
     } = state['features/toolbox'];
     const { audioSettingsVisible, videoSettingsVisible } = state['features/settings'];
+    const whiteboardVisible = isWhiteboardVisible(state);
 
     return Boolean(!iAmRecorder && !iAmSipGateway
-            && (timeoutID || visible || alwaysVisible || audioSettingsVisible || videoSettingsVisible));
+            && (
+                timeoutID
+                || visible
+                || alwaysVisible
+                || audioSettingsVisible
+                || videoSettingsVisible
+                || whiteboardVisible
+            ));
 }
 
 /**

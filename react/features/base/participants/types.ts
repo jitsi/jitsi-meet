@@ -19,6 +19,7 @@ export interface Participant {
     isReplaced?: boolean;
     isReplacing?: number;
     isVirtualScreenshareParticipant?: boolean;
+    isWhiteboard?: boolean;
     jwtId?: string;
     loadableAvatarUrl?: string;
     loadableAvatarUrlUseCORS?: boolean;

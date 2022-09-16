@@ -1050,6 +1050,7 @@ class Thumbnail extends Component<Props, State> {
                         _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
                     ) }>
                     <ThumbnailTopIndicators
+                        disableConnectionIndicator = { _participant?.isWhiteboard }
                         hidePopover = { this._hidePopover }
                         indicatorsClassName = { classes.indicatorsBackground }
                         isHovered = { isHovered }
@@ -1069,6 +1070,7 @@ class Thumbnail extends Component<Props, State> {
                         isVirtualScreenshareParticipant = { false }
                         local = { local }
                         participantId = { id }
+                        showStatusIndicators = { !_participant?.isWhiteboard }
                         thumbnailType = { _thumbnailType } />
                 </div>
                 {!_gifSrc && this._renderAvatar(styles.avatar) }
@@ -1113,13 +1115,13 @@ class Thumbnail extends Component<Props, State> {
             return null;
         }
 
-        const { isFakeParticipant, isLocalScreenShare, local } = _participant;
+        const { isFakeParticipant, isLocalScreenShare, isWhiteboard, local } = _participant;
 
         if (local) {
             return this._renderParticipant(true);
         }
 
-        if (isFakeParticipant) {
+        if (isFakeParticipant && !isWhiteboard) {
             return this._renderFakeParticipant();
         }
 

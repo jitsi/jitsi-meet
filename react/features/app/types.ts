@@ -75,6 +75,7 @@ import { IVideoLayoutState } from '../video-layout/reducer';
 import { IVideoQualityPersistedState, IVideoQualityState } from '../video-quality/reducer';
 import { IVideoSipGW } from '../videosipgw/reducer';
 import { IVirtualBackground } from '../virtual-background/reducer';
+import { IWhiteboardState } from '../whiteboard/reducer';
 
 export interface IStore {
     dispatch: ThunkDispatch<IState, void, AnyAction>;
@@ -159,4 +160,5 @@ export interface IState {
     'features/video-quality-persistent-storage': IVideoQualityPersistedState;
     'features/videosipgw': IVideoSipGW;
     'features/virtual-background': IVirtualBackground;
+    'features/whiteboard': IWhiteboardState;
 }

@@ -251,7 +251,12 @@ function MeetingParticipantItem({
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
-            audioMediaState = { audioMediaState }
+            {
+                ...(_participant?.isFakeParticipant ? {} : {
+                    audioMediaState,
+                    videoMediaState: _videoMediaState
+                })
+            }
             disableModeratorIndicator = { _disableModeratorIndicator }
             displayName = { _displayName }
             isHighlighted = { isHighlighted }
@@ -262,7 +267,6 @@ function MeetingParticipantItem({
             overflowDrawer = { overflowDrawer }
             participantID = { _participantID }
             raisedHand = { _raisedHand }
-            videoMediaState = { _videoMediaState }
             youText = { youText }>
 
             {!overflowDrawer && !_participant?.isFakeParticipant
@@ -282,7 +286,7 @@ function MeetingParticipantItem({
                 </>
             }
 
-            {!overflowDrawer && _localVideoOwner && _participant?.isFakeParticipant && (
+            {!overflowDrawer && (_localVideoOwner || _participant?.isWhiteboard) && _participant?.isFakeParticipant && (
                 <ParticipantActionEllipsis
                     accessibilityLabel = { participantActionEllipsisLabel }
                     onClick = { onContextMenu } />

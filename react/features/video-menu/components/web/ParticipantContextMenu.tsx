@@ -14,7 +14,6 @@ import { Avatar } from '../../../base/avatar';
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
-import { IconShareVideo } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -30,8 +29,6 @@ import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { isForceMuted } from '../../../participants-pane/functions';
 // @ts-ignore
 import { requestRemoteControl, stopController } from '../../../remote-control';
-// @ts-ignore
-import { stopSharedVideo } from '../../../shared-video/actions.any';
 // @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 
@@ -76,11 +73,6 @@ type Props = {
         displayName: string;
         participantID: string;
     };
-
-    /**
-     * Shared video local participant owner.
-     */
-    localVideoOwner?: boolean;
 
     /**
      * Target elements against which positioning calculations are made.
@@ -136,7 +128,6 @@ const ParticipantContextMenu = ({
     className,
     closeDrawer,
     drawerParticipant,
-    localVideoOwner,
     offsetTarget,
     onEnter,
     onLeave,
@@ -176,11 +167,6 @@ const ParticipantContextMenu = ({
 
     const clickHandler = useCallback(() => onSelect(true), [ onSelect ]);
 
-    const _onStopSharedVideo = useCallback(() => {
-        clickHandler();
-        dispatch(stopSharedVideo());
-    }, [ stopSharedVideo ]);
-
     const _getCurrentParticipantId = useCallback(() => {
         const drawer = _overflowDrawer && !thumbnailMenu;
 
@@ -196,13 +182,6 @@ const ParticipantContextMenu = ({
         && (_overflowDrawer || thumbnailMenu)
         && typeof _volume === 'number'
         && !isNaN(_volume);
-
-    const fakeParticipantActions = [ {
-        accessibilityLabel: t('toolbar.stopSharedVideo'),
-        icon: IconShareVideo,
-        onClick: _onStopSharedVideo,
-        text: t('toolbar.stopSharedVideo')
-    } ];
 
     if (_isModerator) {
         if ((thumbnailMenu || _overflowDrawer) && isModerationSupported && _isAudioMuted) {
@@ -328,36 +307,29 @@ const ParticipantContextMenu = ({
                         size = { 20 } />,
                     text: drawerParticipant.displayName
                 } ] } />}
-            {participant?.isFakeParticipant ? localVideoOwner && (
-                <ContextMenuItemGroup
-                    actions = { fakeParticipantActions } />
-            ) : (
-                <>
-                    {buttons.length > 0 && (
-                        <ContextMenuItemGroup>
-                            {buttons}
-                        </ContextMenuItemGroup>
-                    )}
-                    <ContextMenuItemGroup>
-                        {buttons2}
-                    </ContextMenuItemGroup>
-                    {showVolumeSlider && (
-                        <ContextMenuItemGroup>
-                            <VolumeSlider
-                                initialValue = { _volume }
-                                key = 'volume-slider'
-                                onChange = { _onVolumeChange } />
-                        </ContextMenuItemGroup>
-                    )}
-                    {breakoutRoomsButtons.length > 0 && (
-                        <ContextMenuItemGroup>
-                            <div className = { styles.text }>
-                                {t('breakoutRooms.actions.sendToBreakoutRoom')}
-                            </div>
-                            {breakoutRoomsButtons}
-                        </ContextMenuItemGroup>
-                    )}
-                </>
+            {buttons.length > 0 && (
+                <ContextMenuItemGroup>
+                    {buttons}
+                </ContextMenuItemGroup>
+            )}
+            <ContextMenuItemGroup>
+                {buttons2}
+            </ContextMenuItemGroup>
+            {showVolumeSlider && (
+                <ContextMenuItemGroup>
+                    <VolumeSlider
+                        initialValue = { _volume }
+                        key = 'volume-slider'
+                        onChange = { _onVolumeChange } />
+                </ContextMenuItemGroup>
+            )}
+            {breakoutRoomsButtons.length > 0 && (
+                <ContextMenuItemGroup>
+                    <div className = { styles.text }>
+                        {t('breakoutRooms.actions.sendToBreakoutRoom')}
+                    </div>
+                    {breakoutRoomsButtons}
+                </ContextMenuItemGroup>
             )}
         </ContextMenu>
     );

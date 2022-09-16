@@ -1502,6 +1502,15 @@ var config = {
 
     // Application logo url
     // defaultLogoUrl: 'images/watermark.svg',
+
+    // Settings for the Excalidraw whiteboard integration.
+    // whiteboard: {
+    //     // Whether the feature is enabled or not.
+    //     enabled: true,
+    //     // The server used to support whiteboard collaboration.
+    //     // https://github.com/jitsi/excalidraw-backend
+    //     collabServerBaseUrl: 'https://excalidraw-backend.example.com',
+    // },
 };
 
 // Set the default values for JaaS customers
