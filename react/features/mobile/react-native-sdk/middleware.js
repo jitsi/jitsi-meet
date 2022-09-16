@@ -17,23 +17,20 @@ const externalAPIEnabled = isExternalAPIAvailable();
 !externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
     const { type } = action;
-    const leave = getAppProp(store, 'onReadyToClose');
-    const onConferenceJoined = getAppProp(store, 'onConferenceJoined');
-    const onConferenceWillJoin = getAppProp(store, 'onConferenceWillJoin');
-    const onConferenceLeft = getAppProp(store, 'onConferencLeft');
+    const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
 
     switch (type) {
     case READY_TO_CLOSE:
-        leave();
+        rnSdkHandlers.onReadyToClose && rnSdkHandlers.onReadyToClose();
         break;
     case CONFERENCE_JOINED:
-        onConferenceJoined && onConferenceJoined();
+        rnSdkHandlers.onConferenceJoined && rnSdkHandlers.onConferenceJoined();
         break;
     case CONFERENCE_WILL_JOIN:
-        onConferenceWillJoin && onConferenceWillJoin();
+        rnSdkHandlers.onConferenceWillJoin && rnSdkHandlers.onConferenceWillJoin();
         break;
     case CONFERENCE_LEFT:
-        onConferenceLeft && onConferenceLeft();
+        //Props are torn down at this point, perhaps need to leave this one out
         break;
     }
 

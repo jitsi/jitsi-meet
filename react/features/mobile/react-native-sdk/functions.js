@@ -1,7 +1,6 @@
 import { NativeModules } from 'react-native';
 
-import { _sendReadyToClose } from '../external-api/functions';
-
+import { appNavigate } from '../../app/actions.native';
 
 /**
  * Determimes if the ExternalAPI native module is available.
@@ -26,5 +25,5 @@ export function isExternalAPIAvailable() {
  * @returns {void}
  */
 export function closeJitsiMeeting(dispatch) {
-    _sendReadyToClose(dispatch);
+    dispatch(appNavigate(undefined));
 }

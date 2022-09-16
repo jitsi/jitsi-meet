@@ -31,7 +31,6 @@ type AppProps = {
             startWithAudioMuted?: boolean;
             startAudioOnly?: boolean;
             startWithVideoMuted?: boolean;
-            startWithReactionsMuted?: boolean;
         }
     }
 };
@@ -39,7 +38,7 @@ type AppProps = {
 /**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-const JitsiMeetView = forwardRef((props: AppProps, ref) => {
+const JitsiMeeting = forwardRef((props: AppProps, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
 
@@ -63,21 +62,25 @@ const JitsiMeetView = forwardRef((props: AppProps, ref) => {
         () => {
             const url = convertPropsToURL(props.meetingOptions.domain, props.meetingOptions.roomName);
 
-            setAppProps({ 'url': url,
-                'onReadyToClose': onReadyToClose,
-                'onConferenceJoined': props.meetingOptions.onConferenceJoined,
-                'onConferenceWillJoin': props.meetingOptions.onConferenceWillJoin,
-                'onConferenceLeft': props.meetingOptions.onConferenceLeft,
-                'flags': props.flags,
-                'settings': props.meetingOptions.settings
+            setAppProps({
+                'url': {
+                    url,
+                    config: props.meetingOptions.settings
+                },
+                'rnSdkHandlers': {
+                    onReadyToClose,
+                    onConferenceJoined: props.meetingOptions.onConferenceJoined,
+                    onConferenceWillJoin: props.meetingOptions.onConferenceWillJoin,
+                    onConferenceLeft: props.meetingOptions.onConferenceLeft
+                },
+                'flags': props.flags
             });
         }, []
     );
 
 
     return (
-        <View style={{ width: props.width,
-            height: props.height }}>
+        <View style={props.style}>
             <JitsiThemePaperProvider>
                 <App
                     {...appProps} ref={app} />
@@ -86,4 +89,4 @@ const JitsiMeetView = forwardRef((props: AppProps, ref) => {
     );
 });
 
-export default JitsiMeetView;
+export default JitsiMeeting;
