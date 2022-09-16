@@ -117,7 +117,7 @@
     "react-native-url-polyfill": "1.3.0",
     "react-native-video": "https://git@github.com/react-native-video/react-native-video#7c48ae7c8544b2b537fb60194e9620b9fcceae52",
     "react-native-watch-connectivity": "1.0.11",
-    "react-native-webrtc": "1.100.1",
+    "react-native-webrtc": "https://git@github.com/react-native-webrtc/react-native-webrtc#ed07969a85c159953d3004cfd04d44792b95e8db",
     "react-native-webview": "11.15.1",
     "react-native-youtube-iframe": "2.2.1",
     "react-redux": "7.1.0",
