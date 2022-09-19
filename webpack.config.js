@@ -176,7 +176,10 @@ function getConfig(options = {}) {
             }, {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
-                loader: 'ts-loader'
+                loader: 'ts-loader',
+                options: {
+                    transpileOnly: !isProduction // Skip type checking for dev builds.
+                }
             } ]
         },
         node: {
