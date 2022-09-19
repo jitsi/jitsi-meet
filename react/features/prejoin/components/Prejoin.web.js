@@ -372,6 +372,7 @@ class Prejoin extends Component<Props, State> {
                     data-testid = 'prejoin.screen'>
                     {this.showDisplayNameField ? (<InputField
                         autoComplete = { 'name' }
+                        autoFocus = { true }
                         className = { showError ? 'error' : '' }
                         hasError = { showError }
                         onChange = { _setName }
