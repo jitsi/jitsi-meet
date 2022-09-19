@@ -20,15 +20,15 @@ const devServerProxyTarget
  *
  * @param {Object} options - options for the bundles configuration.
  * @param {boolean} options.analyzeBundle - whether the bundle needs to be analyzed for size.
- * @param {boolean} options.minimize - whether the code should be minimized or not.
+ * @param {boolean} options.isProduction - whether this is a production build or not.
  * @param {number} size - the size limit to apply.
  * @returns {Object} a performance hints object.
  */
 function getPerformanceHints(options, size) {
-    const { analyzeBundle, minimize } = options;
+    const { analyzeBundle, isProduction } = options;
 
     return {
-        hints: minimize && !analyzeBundle ? 'error' : false,
+        hints: isProduction && !analyzeBundle ? 'error' : false,
         maxAssetSize: size,
         maxEntrypointSize: size
     };
@@ -90,15 +90,15 @@ function devServerProxyBypass({ path }) {
  *
  * @param {Object} options - options for the bundles configuration.
  * @param {boolean} options.detectCircularDeps - whether to detect circular dependencies or not.
- * @param {boolean} options.minimize - whether the code should be minimized or not.
+ * @param {boolean} options.isProduction - whether this is a production build or not.
  * @returns {Object} the base config object.
  */
 function getConfig(options = {}) {
-    const { detectCircularDeps, minimize } = options;
+    const { detectCircularDeps, isProduction } = options;
 
     return {
-        devtool: minimize ? 'source-map' : 'eval-source-map',
-        mode: minimize ? 'production' : 'development',
+        devtool: isProduction ? 'source-map' : 'eval-source-map',
+        mode: isProduction ? 'production' : 'development',
         module: {
             rules: [ {
                 // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
@@ -186,11 +186,11 @@ function getConfig(options = {}) {
             __filename: true
         },
         optimization: {
-            concatenateModules: minimize,
-            minimize
+            concatenateModules: isProduction,
+            minimize: isProduction
         },
         output: {
-            filename: `[name]${minimize ? '.min' : ''}.js`,
+            filename: `[name]${isProduction ? '.min' : ''}.js`,
             path: `${__dirname}/build`,
             publicPath: '/libs/',
             sourceMapFilename: '[file].map'
@@ -274,12 +274,12 @@ module.exports = (_env, argv) => {
     const isProduction = mode === 'production';
     const configOptions = {
         detectCircularDeps: Boolean(process.env.DETECT_CIRCULAR_DEPS),
-        minimize: isProduction
+        isProduction
     };
     const config = getConfig(configOptions);
     const perfHintOptions = {
         analyzeBundle,
-        minimize: isProduction
+        isProduction
     };
 
     return [
