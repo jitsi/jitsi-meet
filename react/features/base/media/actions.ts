@@ -1,10 +1,8 @@
-/* @flow */
-
-import type { Dispatch } from 'redux';
+import { Dispatch } from 'redux';
 
 import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
-import { isModerationNotificationDisplayed } from '../../notifications';
+import { isModerationNotificationDisplayed } from '../../notifications/functions';
 
 import {
     SET_AUDIO_MUTED,
@@ -55,7 +53,7 @@ export function setAudioAvailable(available: boolean) {
  *     muted: boolean
  * }}
  */
-export function setAudioMuted(muted: boolean, ensureTrack: boolean = false) {
+export function setAudioMuted(muted: boolean, ensureTrack = false) {
     return {
         type: SET_AUDIO_MUTED,
         ensureTrack,
@@ -70,7 +68,7 @@ export function setAudioMuted(muted: boolean, ensureTrack: boolean = false) {
  * @param {boolean|undefined} skipNotification - True if we want to skip showing the notification.
  * @returns {Function}
  */
-export function setAudioUnmutePermissions(blocked: boolean, skipNotification: boolean = false) {
+export function setAudioUnmutePermissions(blocked: boolean, skipNotification = false) {
     return {
         type: SET_AUDIO_UNMUTE_PERMISSIONS,
         blocked,
@@ -107,7 +105,7 @@ export function setScreenshareMuted(
         muted: boolean,
         mediaType: MediaType = MEDIA_TYPE.SCREENSHARE,
         authority: number = SCREENSHARE_MUTISM_AUTHORITY.USER,
-        ensureTrack: boolean = false) {
+        ensureTrack = false) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
 
@@ -168,7 +166,7 @@ export function setVideoMuted(
         muted: boolean,
         mediaType: string = MEDIA_TYPE.VIDEO,
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
-        ensureTrack: boolean = false) {
+        ensureTrack = false) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
 
@@ -203,7 +201,7 @@ export function setVideoMuted(
  * @param {boolean|undefined} skipNotification - True if we want to skip showing the notification.
  * @returns {Function}
  */
-export function setVideoUnmutePermissions(blocked: boolean, skipNotification: boolean = false) {
+export function setVideoUnmutePermissions(blocked: boolean, skipNotification = false) {
     return {
         type: SET_VIDEO_UNMUTE_PERMISSIONS,
         blocked,

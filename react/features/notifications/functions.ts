@@ -1,19 +1,16 @@
-// @flow
-
 import { MODERATION_NOTIFICATIONS } from '../av-moderation/constants';
-import { MEDIA_TYPE } from '../base/media';
-import { toState } from '../base/redux';
-
-declare var interfaceConfig: Object;
+import { IStateful } from '../base/app/types';
+import { MediaType } from '../base/media/constants';
+import { toState } from '../base/redux/functions';
 
 /**
  * Tells whether or not the notifications are enabled and if there are any
  * notifications to be displayed based on the current Redux state.
  *
- * @param {Object|Function} stateful - The redux store state.
+ * @param {IStateful} stateful - The redux store state.
  * @returns {boolean}
  */
-export function areThereNotifications(stateful: Object | Function) {
+export function areThereNotifications(stateful: IStateful) {
     const state = toState(stateful);
     const { enabled, notifications } = state['features/notifications'];
 
@@ -33,10 +30,10 @@ export function joinLeaveNotificationsDisabled() {
  * Returns whether or not the moderation notification for the given type is displayed.
  *
  * @param {MEDIA_TYPE} mediaType - The media type to check.
- * @param {Object | Function} stateful - The redux store state.
+ * @param {IStateful} stateful - The redux store state.
  * @returns {boolean}
  */
-export function isModerationNotificationDisplayed(mediaType: MEDIA_TYPE, stateful: Object | Function) {
+export function isModerationNotificationDisplayed(mediaType: MediaType, stateful: IStateful) {
     const state = toState(stateful);
 
     const { notifications } = state['features/notifications'];

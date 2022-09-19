@@ -1,25 +1,24 @@
-// @flow
-
 import { sha512_256 as sha512 } from 'js-sha512';
 import _ from 'lodash';
 
+// @ts-ignore
 import { getName } from '../../app/functions';
+import { IState, IStore } from '../../app/types';
 import { determineTranscriptionLanguage } from '../../transcribing/functions';
+import { IStateful } from '../app/types';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
 import {
-    getLocalParticipant,
     hiddenParticipantJoined,
     hiddenParticipantLeft,
     participantJoined,
     participantLeft
-} from '../participants';
-import { toState } from '../redux';
-import {
-    getBackendSafePath,
-    getJitsiMeetGlobalNS,
-    safeDecodeURIComponent
-} from '../util';
+} from '../participants/actions';
+import { getLocalParticipant } from '../participants/functions';
+import { toState } from '../redux/functions';
+import { getJitsiMeetGlobalNS } from '../util/helpers';
+import { getBackendSafePath, safeDecodeURIComponent } from '../util/uri';
 
+// @ts-ignore
 import { setObfuscatedRoom } from './actions';
 import {
     AVATAR_URL_COMMAND,
@@ -27,22 +26,23 @@ import {
     JITSI_CONFERENCE_URL_KEY
 } from './constants';
 import logger from './logger';
+import { IJitsiConference } from './reducer';
 
 /**
  * Returns root conference state.
  *
- * @param {Object} state - Global state.
+ * @param {IState} state - Global state.
  * @returns {Object} Conference state.
  */
-export const getConferenceState = (state: Object) => state['features/base/conference'];
+export const getConferenceState = (state: IState) => state['features/base/conference'];
 
 /**
  * Is the conference joined or not.
  *
- * @param {Object} state - Global state.
+ * @param {IState} state - Global state.
  * @returns {boolean}
  */
-export const getIsConferenceJoined = (state: Object) => Boolean(getConferenceState(state).conference);
+export const getIsConferenceJoined = (state: IState) => Boolean(getConferenceState(state).conference);
 
 /**
  * Attach a set of local tracks to a conference.
@@ -53,7 +53,7 @@ export const getIsConferenceJoined = (state: Object) => Boolean(getConferenceSta
  * @returns {Promise}
  */
 export function _addLocalTracksToConference(
-        conference: { addTrack: Function, getLocalTracks: Function },
+        conference: IJitsiConference,
         localTracks: Array<Object>) {
     const conferenceLocalTracks = conference.getLocalTracks();
     const promises = [];
@@ -63,7 +63,7 @@ export function _addLocalTracksToConference(
         // adding one and the same video track multiple times.
         if (conferenceLocalTracks.indexOf(track) === -1) {
             promises.push(
-                conference.addTrack(track).catch(err => {
+                conference.addTrack(track).catch((err: Error) => {
                     _reportError(
                         'Failed to add local track to conference',
                         err);
@@ -86,16 +86,16 @@ export function _addLocalTracksToConference(
  * @returns {void}
  */
 export function commonUserJoinedHandling(
-        { dispatch }: Object,
-        conference: Object,
-        user: Object) {
+        { dispatch }: IStore,
+        conference: IJitsiConference,
+        user: any) {
     const id = user.getId();
     const displayName = user.getDisplayName();
 
     if (user.isHidden()) {
         dispatch(hiddenParticipantJoined(id, displayName));
     } else {
-        const isReplacing = user.isReplacing && user.isReplacing();
+        const isReplacing = user?.isReplacing();
 
         dispatch(participantJoined({
             botType: user.getBotType(),
@@ -122,15 +122,15 @@ export function commonUserJoinedHandling(
  * @returns {void}
  */
 export function commonUserLeftHandling(
-        { dispatch }: Object,
-        conference: Object,
-        user: Object) {
+        { dispatch }: IStore,
+        conference: IJitsiConference,
+        user: any) {
     const id = user.getId();
 
     if (user.isHidden()) {
         dispatch(hiddenParticipantLeft(id));
     } else {
-        const isReplaced = user.isReplaced && user.isReplaced();
+        const isReplaced = user.isReplaced?.();
 
         dispatch(participantLeft(id, conference, { isReplaced }));
     }
@@ -140,7 +140,7 @@ export function commonUserLeftHandling(
  * Evaluates a specific predicate for each {@link JitsiConference} known to the
  * redux state features/base/conference while it returns {@code true}.
  *
- * @param {Function | Object} stateful - The redux store, state, or
+ * @param {IStateful} stateful - The redux store, state, or
  * {@code getState} function.
  * @param {Function} predicate - The predicate to evaluate for each
  * {@code JitsiConference} know to the redux state features/base/conference
@@ -150,8 +150,8 @@ export function commonUserLeftHandling(
  * features/base/conference.
  */
 export function forEachConference(
-        stateful: Function | Object,
-        predicate: (Object, URL) => boolean) {
+        stateful: IStateful,
+        predicate: (a: any, b: URL) => boolean) {
     const state = getConferenceState(toState(stateful));
 
     for (const v of Object.values(state)) {
@@ -178,48 +178,48 @@ export function forEachConference(
 /**
  * Returns the display name of the conference.
  *
- * @param {Function | Object} stateful - Reference that can be resolved to Redux
+ * @param {IStateful} stateful - Reference that can be resolved to Redux
  * state with the {@code toState} function.
  * @returns {string}
  */
-export function getConferenceName(stateful: Function | Object): string {
+export function getConferenceName(stateful: IStateful): string {
     const state = toState(stateful);
     const { callee } = state['features/base/jwt'];
     const { callDisplayName } = state['features/base/config'];
     const { localSubject, room, subject } = getConferenceState(state);
 
-    return localSubject
+    return (localSubject
         || subject
         || callDisplayName
-        || (callee && callee.name)
-        || (room && safeStartCase(safeDecodeURIComponent(room)));
+        || callee?.name
+        || (room && safeStartCase(safeDecodeURIComponent(room)))) ?? '';
 }
 
 /**
  * Returns the name of the conference formatted for the title.
  *
- * @param {Function | Object} stateful - Reference that can be resolved to Redux state with the {@code toState}
+ * @param {IStateful} stateful - Reference that can be resolved to Redux state with the {@code toState}
  * function.
  * @returns {string} - The name of the conference formatted for the title.
  */
-export function getConferenceNameForTitle(stateful: Function | Object) {
-    return safeStartCase(safeDecodeURIComponent(getConferenceState(toState(stateful)).room));
+export function getConferenceNameForTitle(stateful: IStateful) {
+    return safeStartCase(safeDecodeURIComponent(getConferenceState(toState(stateful)).room ?? ''));
 }
 
 /**
  * Returns an object aggregating the conference options.
  *
- * @param {Object|Function} stateful - The redux store state.
+ * @param {IStateful} stateful - The redux store state.
  * @returns {Object} - Options object.
  */
-export function getConferenceOptions(stateful: Function | Object) {
+export function getConferenceOptions(stateful: IStateful) {
     const state = toState(stateful);
 
     const config = state['features/base/config'];
     const { locationURL } = state['features/base/connection'];
     const { tenant } = state['features/base/jwt'];
-    const { email, name: nick } = getLocalParticipant(state);
-    const options = { ...config };
+    const { email, name: nick } = getLocalParticipant(state) ?? {};
+    const options: any = { ...config };
 
     if (tenant) {
         options.siteID = tenant;
@@ -257,11 +257,11 @@ export function getConferenceOptions(stateful: Function | Object) {
 /**
 * Returns the UTC timestamp when the first participant joined the conference.
 *
-* @param {Function | Object} stateful - Reference that can be resolved to Redux
+* @param {IStateful} stateful - Reference that can be resolved to Redux
 * state with the {@code toState} function.
 * @returns {number}
 */
-export function getConferenceTimestamp(stateful: Function | Object): number {
+export function getConferenceTimestamp(stateful: IStateful) {
     const state = toState(stateful);
     const { conferenceTimestamp } = getConferenceState(state);
 
@@ -274,11 +274,11 @@ export function getConferenceTimestamp(stateful: Function | Object): number {
  * {@code conference} state of the feature base/conference which is not joining
  * but may be leaving already.
  *
- * @param {Function|Object} stateful - The redux store, state, or
+ * @param {IStateful} stateful - The redux store, state, or
  * {@code getState} function.
  * @returns {JitsiConference|undefined}
  */
-export function getCurrentConference(stateful: Function | Object) {
+export function getCurrentConference(stateful: IStateful): any {
     const { conference, joining, leaving, membersOnly, passwordRequired }
         = getConferenceState(toState(stateful));
 
@@ -293,24 +293,28 @@ export function getCurrentConference(stateful: Function | Object) {
 /**
  * Returns the stored room name.
  *
- * @param {Object} state - The current state of the app.
+ * @param {IState} state - The current state of the app.
  * @returns {string}
  */
-export function getRoomName(state: Object): string {
+export function getRoomName(state: IState) {
     return getConferenceState(state).room;
 }
 
 /**
  * Get an obfuscated room name or create and persist it if it doesn't exists.
  *
- * @param {Object} state - The current state of the app.
+ * @param {IState} state - The current state of the app.
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {string} - Obfuscated room name.
  */
-export function getOrCreateObfuscatedRoomName(state: Object, dispatch: Function) {
+export function getOrCreateObfuscatedRoomName(state: IState, dispatch: IStore['dispatch']) {
     let { obfuscatedRoom } = getConferenceState(state);
     const { obfuscatedRoomSource } = getConferenceState(state);
     const room = getRoomName(state);
+
+    if (!room) {
+        return;
+    }
 
     // On native mobile the store doesn't clear when joining a new conference so we might have the obfuscatedRoom
     // stored even though a different room was joined.
@@ -327,11 +331,11 @@ export function getOrCreateObfuscatedRoomName(state: Object, dispatch: Function)
  * Analytics may require an obfuscated room name, this functions decides based on a config if the normal or
  * obfuscated room name should be returned.
  *
- * @param {Object} state - The current state of the app.
+ * @param {IState} state - The current state of the app.
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {string} - Analytics room name.
  */
-export function getAnalyticsRoomName(state: Object, dispatch: Function) {
+export function getAnalyticsRoomName(state: IState, dispatch: IStore['dispatch']) {
     const { analysis: { obfuscateRoomName = false } = {} } = state['features/base/config'];
 
     if (obfuscateRoomName) {
@@ -365,7 +369,7 @@ function getWiFiStatsMethod() {
  * @protected
  * @returns {void}
  */
-export function _handleParticipantError(err: { message: ?string }) {
+export function _handleParticipantError(err: Error) {
     // XXX DataChannels are initialized at some later point when the conference
     // has multiple participants, but code that pins or selects a participant
     // might be executed before. So here we're swallowing a particular error.
@@ -384,7 +388,7 @@ export function _handleParticipantError(err: { message: ?string }) {
  * @returns {boolean} If the specified room name is valid, then true; otherwise,
  * false.
  */
-export function isRoomValid(room: ?string) {
+export function isRoomValid(room?: string) {
     return typeof room === 'string' && room !== '';
 }
 
@@ -397,11 +401,11 @@ export function isRoomValid(room: ?string) {
  * @returns {Promise}
  */
 export function _removeLocalTracksFromConference(
-        conference: { removeTrack: Function },
+        conference: IJitsiConference,
         localTracks: Array<Object>) {
     return Promise.all(localTracks.map(track =>
         conference.removeTrack(track)
-            .catch(err => {
+            .catch((err: Error) => {
                 // Local track might be already disposed by direct
                 // JitsiTrack#dispose() call. So we should ignore this error
                 // here.
@@ -425,7 +429,7 @@ export function _removeLocalTracksFromConference(
  * @private
  * @returns {void}
  */
-function _reportError(msg, err) {
+function _reportError(msg: string, err: Error) {
     // TODO This is a good point to call some global error handler when we have
     // one.
     logger.error(msg, err);
@@ -443,17 +447,14 @@ function _reportError(msg, err) {
  * @returns {void}
  */
 export function sendLocalParticipant(
-        stateful: Function | Object,
-        conference: {
-            sendCommand: Function,
-            setDisplayName: Function,
-            setLocalParticipantProperty: Function }) {
+        stateful: IStateful,
+        conference: IJitsiConference) {
     const {
         avatarURL,
         email,
         features,
         name
-    } = getLocalParticipant(stateful);
+    } = getLocalParticipant(stateful) ?? {};
 
     avatarURL && conference.sendCommand(AVATAR_URL_COMMAND, {
         value: avatarURL

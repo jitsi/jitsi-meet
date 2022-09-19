@@ -40,11 +40,26 @@ const DEFAULT_STATE = {
     passwordRequired: undefined
 };
 
+export interface IJitsiConference {
+    addTrack: Function;
+    getBreakoutRooms: Function;
+    getLocalTracks: Function;
+    isAVModerationSupported: Function;
+    isEndConferenceSupported: Function;
+    isLobbySupported: Function;
+    removeTrack: Function;
+    sendCommand: Function;
+    sendEndpointMessage: Function;
+    sessionId: string;
+    setDisplayName: Function;
+    setLocalParticipantProperty: Function;
+}
+
 export interface IConferenceState {
     authEnabled?: boolean;
     authLogin?: string;
     authRequired?: Object;
-    conference?: any;
+    conference?: IJitsiConference;
     conferenceTimestamp?: number;
     e2eeSupported?: boolean;
     error?: Error;
