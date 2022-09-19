@@ -26,6 +26,7 @@ import {
     JITSI_CONFERENCE_URL_KEY
 } from './constants';
 import logger from './logger';
+import { IJitsiConference } from './reducer';
 
 /**
  * Returns root conference state.
@@ -52,7 +53,7 @@ export const getIsConferenceJoined = (state: IState) => Boolean(getConferenceSta
  * @returns {Promise}
  */
 export function _addLocalTracksToConference(
-        conference: { addTrack: Function; getLocalTracks: Function; },
+        conference: IJitsiConference,
         localTracks: Array<Object>) {
     const conferenceLocalTracks = conference.getLocalTracks();
     const promises = [];
@@ -86,7 +87,7 @@ export function _addLocalTracksToConference(
  */
 export function commonUserJoinedHandling(
         { dispatch }: IStore,
-        conference: any,
+        conference: IJitsiConference,
         user: any) {
     const id = user.getId();
     const displayName = user.getDisplayName();
@@ -122,14 +123,14 @@ export function commonUserJoinedHandling(
  */
 export function commonUserLeftHandling(
         { dispatch }: IStore,
-        conference: any,
+        conference: IJitsiConference,
         user: any) {
     const id = user.getId();
 
     if (user.isHidden()) {
         dispatch(hiddenParticipantLeft(id));
     } else {
-        const isReplaced = user?.isReplaced();
+        const isReplaced = user.isReplaced?.();
 
         dispatch(participantLeft(id, conference, { isReplaced }));
     }
@@ -150,7 +151,7 @@ export function commonUserLeftHandling(
  */
 export function forEachConference(
         stateful: IStateful,
-        predicate: (a: Object, b: URL) => boolean) {
+        predicate: (a: any, b: URL) => boolean) {
     const state = getConferenceState(toState(stateful));
 
     for (const v of Object.values(state)) {
@@ -277,7 +278,7 @@ export function getConferenceTimestamp(stateful: IStateful) {
  * {@code getState} function.
  * @returns {JitsiConference|undefined}
  */
-export function getCurrentConference(stateful: IStateful) {
+export function getCurrentConference(stateful: IStateful): any {
     const { conference, joining, leaving, membersOnly, passwordRequired }
         = getConferenceState(toState(stateful));
 
@@ -311,11 +312,15 @@ export function getOrCreateObfuscatedRoomName(state: IState, dispatch: IStore['d
     const { obfuscatedRoomSource } = getConferenceState(state);
     const room = getRoomName(state);
 
+    if (!room) {
+        return;
+    }
+
     // On native mobile the store doesn't clear when joining a new conference so we might have the obfuscatedRoom
     // stored even though a different room was joined.
     // Check if the obfuscatedRoom was already computed for the current room.
     if (!obfuscatedRoom || (obfuscatedRoomSource !== room)) {
-        obfuscatedRoom = sha512(room ?? '');
+        obfuscatedRoom = sha512(room);
         dispatch(setObfuscatedRoom(obfuscatedRoom, room));
     }
 
@@ -396,7 +401,7 @@ export function isRoomValid(room?: string) {
  * @returns {Promise}
  */
 export function _removeLocalTracksFromConference(
-        conference: { removeTrack: Function; },
+        conference: IJitsiConference,
         localTracks: Array<Object>) {
     return Promise.all(localTracks.map(track =>
         conference.removeTrack(track)
@@ -443,10 +448,7 @@ function _reportError(msg: string, err: Error) {
  */
 export function sendLocalParticipant(
         stateful: IStateful,
-        conference: {
-            sendCommand: Function;
-            setDisplayName: Function;
-            setLocalParticipantProperty: Function; }) {
+        conference: IJitsiConference) {
     const {
         avatarURL,
         email,

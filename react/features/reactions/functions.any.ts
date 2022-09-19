@@ -69,7 +69,7 @@ export async function sendReactionsWebhook(state: IState, reactions: Array<strin
 
     const reqBody = {
         meetingFqn: extractFqnFromPath(),
-        sessionId: conference.sessionId,
+        sessionId: conference?.sessionId,
         submitted: Date.now(),
         reactions,
         participantId: localParticipant?.jwtId,

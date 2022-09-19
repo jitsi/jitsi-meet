@@ -3,8 +3,6 @@ import { IStateful } from '../base/app/types';
 import { MediaType } from '../base/media/constants';
 import { toState } from '../base/redux/functions';
 
-declare const interfaceConfig: any;
-
 /**
  * Tells whether or not the notifications are enabled and if there are any
  * notifications to be displayed based on the current Redux state.
