@@ -114,7 +114,7 @@ var config = {
 
         // Signal that this client supports receiving multiple video streams. Without this flag jicofo will enable
         // multi-stream backward compatibility.
-        receiveMultipleVideoStreams: true,
+        // receiveMultipleVideoStreams: true,
     },
 
     // Disables moderator indicators.
