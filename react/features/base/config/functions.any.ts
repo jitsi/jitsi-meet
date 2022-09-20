@@ -60,8 +60,8 @@ export function getMeetingRegion(state: IState) {
  * @returns {boolean}
  */
 export function getMultipleVideoSupportFeatureFlag(state: IState) {
-    return getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
-        && getSourceNameSignalingFeatureFlag(state);
+    return (getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
+        && getSourceNameSignalingFeatureFlag(state)) ?? true;
 }
 
 /**
@@ -72,7 +72,7 @@ export function getMultipleVideoSupportFeatureFlag(state: IState) {
  */
 export function getMultipleVideoSendingSupportFeatureFlag(state: IState) {
     return navigator.product !== 'ReactNative'
-        && getMultipleVideoSupportFeatureFlag(state) && isUnifiedPlanEnabled(state);
+        && ((getMultipleVideoSupportFeatureFlag(state) ?? true) && isUnifiedPlanEnabled(state));
 }
 
 /**
@@ -82,7 +82,7 @@ export function getMultipleVideoSendingSupportFeatureFlag(state: IState) {
  * @returns {boolean}
  */
 export function getSourceNameSignalingFeatureFlag(state: IState) {
-    return getFeatureFlag(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING);
+    return getFeatureFlag(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING) ?? true;
 }
 
 /**
@@ -95,7 +95,7 @@ export function getSourceNameSignalingFeatureFlag(state: IState) {
 export function getFeatureFlag(state: IState, featureFlag: string) {
     const featureFlags = state['features/base/config']?.flags || {};
 
-    return Boolean(featureFlags[featureFlag as keyof typeof featureFlags]);
+    return featureFlags[featureFlag as keyof typeof featureFlags];
 }
 
 /**
