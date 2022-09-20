@@ -1,14 +1,13 @@
-// @flow
-
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
-import { MiddlewareRegistry } from '../../base/redux';
+import { IStore } from '../../app/types';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { clientResized } from './actions';
 
 /**
  * Dimensions change handler.
  */
-let handler;
+let handler: undefined | ((this: Window, ev: UIEvent) => any);
 
 /**
  * Middleware that handles window dimension changes.
@@ -42,7 +41,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _appWillMount(store) {
+function _appWillMount(store: IStore) {
     handler = () => {
         const {
             innerHeight,
@@ -63,7 +62,7 @@ function _appWillMount(store) {
  * @returns {void}
  */
 function _appWillUnmount() {
-    window.removeEventListener('resize', handler);
+    handler && window.removeEventListener('resize', handler);
 
     handler = undefined;
 }

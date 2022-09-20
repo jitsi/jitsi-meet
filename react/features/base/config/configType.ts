@@ -67,7 +67,7 @@ type ButtonsWithNotifyClick = 'camera' |
     'add-passcode' |
     '__end';
 
-type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
+export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'E2EE_OFF_SOUND' |
     'E2EE_ON_SOUND' |
     'INCOMING_MSG_SOUND' |

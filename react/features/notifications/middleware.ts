@@ -1,16 +1,18 @@
-/* @flow */
-
-import { getCurrentConference } from '../base/conference';
+import { IState, IStore } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
 import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    PARTICIPANT_ROLE,
-    PARTICIPANT_UPDATED,
+    PARTICIPANT_UPDATED
+} from '../base/participants/actionTypes';
+import { PARTICIPANT_ROLE } from '../base/participants/constants';
+import {
     getParticipantById,
     getParticipantDisplayName,
     getLocalParticipant
-} from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+} from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
 
 import {
@@ -45,7 +47,7 @@ const timers = new Map();
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {void}
  */
-const createTimeoutId = (notification, dispatch) => {
+const createTimeoutId = (notification: { timeout: number; uid: string; }, dispatch: IStore['dispatch']) => {
     const {
         timeout,
         uid
@@ -66,7 +68,7 @@ const createTimeoutId = (notification, dispatch) => {
  * @param {Object} state - Global state.
  * @returns {Array<Object>} - Notifications state.
  */
-const getNotifications = state => {
+const getNotifications = (state: IState) => {
     const _visible = areThereNotifications(state);
     const { notifications } = state['features/notifications'];
 
@@ -80,7 +82,6 @@ const getNotifications = state => {
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-
     const { dispatch, getState } = store;
     const state = getState();
 

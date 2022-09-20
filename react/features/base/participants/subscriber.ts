@@ -1,13 +1,12 @@
-// @flow
-
 import _ from 'lodash';
 
-import { getCurrentConference } from '../conference';
+import { IStore } from '../../app/types';
+import { getCurrentConference } from '../conference/functions';
 import {
     getMultipleVideoSendingSupportFeatureFlag,
     getMultipleVideoSupportFeatureFlag
 } from '../config/functions.any';
-import { StateListenerRegistry } from '../redux';
+import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 import { createVirtualScreenshareParticipant, participantLeft } from './actions';
 
@@ -22,7 +21,7 @@ StateListenerRegistry.register(
  * @param {*} store - The redux store.
  * @returns {void}
  */
-function _updateScreenshareParticipants({ getState, dispatch }) {
+function _updateScreenshareParticipants({ getState, dispatch }: IStore) {
     const state = getState();
 
     if (!getMultipleVideoSupportFeatureFlag(state)) {
@@ -36,9 +35,9 @@ function _updateScreenshareParticipants({ getState, dispatch }) {
 
     let newLocalSceenshareSourceName;
 
-    const currentScreenshareSourceNames = tracks.reduce((acc, track) => {
+    const currentScreenshareSourceNames = tracks.reduce((acc: string[], track) => {
         if (track.videoType === 'desktop' && !track.jitsiTrack.isMuted()) {
-            const sourceName = track.jitsiTrack.getSourceName();
+            const sourceName: string = track.jitsiTrack.getSourceName();
 
             if (track.local) {
                 newLocalSceenshareSourceName = sourceName;

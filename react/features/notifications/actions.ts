@@ -1,9 +1,8 @@
-// @flow
-
 import throttle from 'lodash/throttle';
-import type { Dispatch } from 'redux';
 
-import { NOTIFICATIONS_ENABLED, getFeatureFlag } from '../base/flags';
+import { IStore } from '../app/types';
+import { NOTIFICATIONS_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import { getParticipantCount } from '../base/participants/functions';
 
 import {
@@ -28,7 +27,11 @@ import {
  * @param {Object} notificationTimeouts - Config notification timeouts.
  * @returns {number}
  */
-function getNotificationTimeout(type: ?string, notificationTimeouts: ?Object) {
+function getNotificationTimeout(type?: string, notificationTimeouts?: {
+    long?: number;
+    medium?: number;
+    short?: number;
+}) {
     if (type === NOTIFICATION_TIMEOUT_TYPE.SHORT) {
         return notificationTimeouts?.short ?? NOTIFICATION_TIMEOUT.SHORT;
     } else if (type === NOTIFICATION_TIMEOUT_TYPE.MEDIUM) {
@@ -86,6 +89,19 @@ export function setNotificationsEnabled(enabled: boolean) {
     };
 }
 
+interface INotificationProps {
+    appearance?: string;
+    concatText?: boolean;
+    description?: string;
+    descriptionKey?: string;
+    icon?: string;
+    titleArguments?: {
+        [key: string]: string;
+    };
+    titleKey?: string;
+    uid?: string;
+}
+
 /**
  * Queues an error notification for display.
  *
@@ -93,7 +109,7 @@ export function setNotificationsEnabled(enabled: boolean) {
  * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showErrorNotification(props: Object, type: ?string) {
+export function showErrorNotification(props: INotificationProps, type?: string) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.ERROR
@@ -107,17 +123,17 @@ export function showErrorNotification(props: Object, type: ?string) {
  * @param {string} type - Timeout type.
  * @returns {Function}
  */
-export function showNotification(props: Object = {}, type: ?string) {
-    return function(dispatch: Function, getState: Function) {
+export function showNotification(props: INotificationProps = {}, type?: string) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const { disabledNotifications = [], notifications, notificationTimeouts } = getState()['features/base/config'];
         const enabledFlag = getFeatureFlag(getState(), NOTIFICATIONS_ENABLED, true);
 
         const shouldDisplay = enabledFlag
-            && !(disabledNotifications.includes(props.descriptionKey)
-                || disabledNotifications.includes(props.titleKey))
+            && !(disabledNotifications.includes(props.descriptionKey ?? '')
+                || disabledNotifications.includes(props.titleKey ?? ''))
             && (!notifications
-                || notifications.includes(props.descriptionKey)
-                || notifications.includes(props.titleKey));
+                || notifications.includes(props.descriptionKey ?? '')
+                || notifications.includes(props.titleKey ?? ''));
 
         if (shouldDisplay) {
             return dispatch({
@@ -137,7 +153,7 @@ export function showNotification(props: Object = {}, type: ?string) {
  * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showWarningNotification(props: Object, type: ?string) {
+export function showWarningNotification(props: INotificationProps, type?: string) {
 
     return showNotification({
         ...props,
@@ -152,7 +168,7 @@ export function showWarningNotification(props: Object, type: ?string) {
  * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showMessageNotification(props: Object, type: ?string) {
+export function showMessageNotification(props: INotificationProps, type?: string) {
     return showNotification({
         ...props,
         concatText: true,
@@ -169,7 +185,7 @@ export function showMessageNotification(props: Object, type: ?string) {
  * @private
  * @type {string[]}
  */
-let joinedParticipantsNames = [];
+let joinedParticipantsNames: string[] = [];
 
 /**
  * A throttled internal function that takes the internal list of participant
@@ -179,7 +195,7 @@ let joinedParticipantsNames = [];
  * @private
  * @type {Function}
  */
-const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>, getState: Function) => {
+const _throttledNotifyParticipantConnected = throttle((dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const participantCount = getParticipantCount(getState());
 
     // Skip join notifications altogether for large meetings.
@@ -233,7 +249,7 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>, 
  * @private
  * @type {string[]}
  */
-let leftParticipantsNames = [];
+let leftParticipantsNames: string[] = [];
 
 /**
  * A throttled internal function that takes the internal list of participant
@@ -243,7 +259,7 @@ let leftParticipantsNames = [];
  * @private
  * @type {Function}
  */
-const _throttledNotifyParticipantLeft = throttle((dispatch: Dispatch<any>, getState: Function) => {
+const _throttledNotifyParticipantLeft = throttle((dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const participantCount = getParticipantCount(getState());
 
     // Skip left notifications altogether for large meetings.
@@ -301,7 +317,8 @@ const _throttledNotifyParticipantLeft = throttle((dispatch: Dispatch<any>, getSt
 export function showParticipantJoinedNotification(displayName: string) {
     joinedParticipantsNames.push(displayName);
 
-    return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantConnected(dispatch, getState);
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
+        _throttledNotifyParticipantConnected(dispatch, getState);
 }
 
 /**
@@ -315,5 +332,6 @@ export function showParticipantJoinedNotification(displayName: string) {
 export function showParticipantLeftNotification(displayName: string) {
     leftParticipantsNames.push(displayName);
 
-    return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantLeft(dispatch, getState);
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
+        _throttledNotifyParticipantLeft(dispatch, getState);
 }

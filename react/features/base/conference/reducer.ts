@@ -44,9 +44,13 @@ export interface IJitsiConference {
     addTrack: Function;
     getBreakoutRooms: Function;
     getLocalTracks: Function;
+    grantOwner: Function;
     isAVModerationSupported: Function;
     isEndConferenceSupported: Function;
     isLobbySupported: Function;
+    kickParticipant: Function;
+    muteParticipant: Function;
+    on: Function;
     removeTrack: Function;
     sendCommand: Function;
     sendEndpointMessage: Function;

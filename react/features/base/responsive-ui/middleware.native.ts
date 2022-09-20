@@ -1,6 +1,4 @@
-// @flow
-
-import { MiddlewareRegistry } from '../../base/redux';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { CLIENT_RESIZED } from './actionTypes';
 import { setAspectRatio, setReducedUI } from './actions';
