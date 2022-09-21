@@ -25,7 +25,6 @@ import {
     CLEAR_STAGE_PARTICIPANTS,
     REMOVE_STAGE_PARTICIPANT,
     RESIZE_FILMSTRIP,
-    SET_MAX_STAGE_PARTICIPANTS,
     SET_USER_FILMSTRIP_WIDTH,
     TOGGLE_PIN_STAGE_PARTICIPANT
 } from './actionTypes';
@@ -135,6 +134,19 @@ MiddlewareRegistry.register(store => next => action => {
                 if (activeParticipantsIds.find(id => id === localScreenShare.id)) {
                     store.dispatch(removeStageParticipant(localScreenShare.id));
                 }
+            }
+        }
+        if (action.settings?.maxStageParticipants !== undefined) {
+            const maxParticipants = action.settings.maxStageParticipants;
+            const { activeParticipants } = store.getState()['features/filmstrip'];
+            const newMax = Math.min(MAX_ACTIVE_PARTICIPANTS, maxParticipants);
+
+            if (newMax < activeParticipants.length) {
+                const toRemove = activeParticipants.slice(0, activeParticipants.length - newMax);
+
+                batch(() => {
+                    toRemove.forEach(p => store.dispatch(removeStageParticipant(p.participantId)));
+                });
             }
         }
         break;
@@ -262,22 +274,6 @@ MiddlewareRegistry.register(store => next => action => {
             clearTimeout(tid);
             timers.delete(id);
             store.dispatch(setStageParticipants(activeParticipants.filter(p => p.participantId !== id)));
-        }
-        break;
-    }
-    case SET_MAX_STAGE_PARTICIPANTS: {
-        const { maxParticipants } = action;
-        const { activeParticipants } = store.getState()['features/filmstrip'];
-        const newMax = Math.min(MAX_ACTIVE_PARTICIPANTS, maxParticipants);
-
-        action.maxParticipants = newMax;
-
-        if (newMax < activeParticipants.length) {
-            const toRemove = activeParticipants.slice(0, activeParticipants.length - newMax);
-
-            batch(() => {
-                toRemove.forEach(p => store.dispatch(removeStageParticipant(p.participantId)));
-            });
         }
         break;
     }
