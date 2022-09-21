@@ -5,5 +5,9 @@ module.exports = {
             plugins: [ 'react-native-paper/babel' ]
         }
     },
+    loaders: [
+        { test: /\.js$/, loader: 'babel', query: {compact: false} },
+        { test: /\.css$/, loader: 'babel', query: {compact: false} }
+    ],
     plugins: [ 'optional-require' ]
 };

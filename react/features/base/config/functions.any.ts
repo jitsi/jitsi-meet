@@ -291,6 +291,7 @@ export function setConfigFromURLParams(
     // }
     config && (json.config = {});
     interfaceConfig && (json.interfaceConfig = {});
+    interfaceConfig.APP_NAME = "Syno"
 
     for (const param of Object.keys(params)) {
         let base = json;

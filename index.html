@@ -11,7 +11,254 @@
     <link rel="stylesheet" href="css/all.css">
     <!--#include virtual="fonts.html"-->
     <link rel="manifest" id="manifest-placeholder">
+    <script>
+        var link = window.location.href.split("#")[0];
+        var event = link.split("/");
+        var urlDominio = "https://web.syno.live/room";
+        const queryString = link.split("?")[1];
+        const urlParams = new URLSearchParams(queryString);
+        const tipo = urlParams.get('tipo');
+        const dominio = urlParams.get('dominio');
+        const pathSub = urlParams.get('sub');
+        if(dominio!==null){
+            urlDominio="https://"+dominio
+            if(pathSub!==null){
+                urlDominio="https://"+dominio+"/"+pathSub
+            }
+        }
+        var topchat= `
+        height: calc(100vh - 100px) !important;
+        top: 80px;`;
+        if(tipo === "sistema"){
+            topchat=`
+            height: calc(100vh - 20px) !important;
+            top: 10px;
+            `;
+        }
+        if(event[event.length-1].startsWith("EV", 2)){
+            const style = document.createElement('style');
+            style.textContent = `
+.premeeting-screen {
+    background: #161a1f !important;    
+}
+.send-button svg path {
+    fill: #59b179 !important;
+}
+body, #react > div:nth-child(1) {
+    background: #161a1f!important;
+}
+div[role="dialog"] {
+    background-color: #1c2126!important;
+    overflow: hidden !important;
+    border-radius: 1.2rem !important;
+    min-width: 70vw!important;
+    margin-left: auto!important;
+    margin-right: auto!important;
+    box-shadow: 0px 8px 14px rgba(25, 39 ,52, 0.08), 0px 2px 6px rgba(25 ,39 ,52,0.04) !important;
+}
+div#smileysContainer {
+    padding: 10px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    background-color: #242a30!important;
+    border: none!important;
+    margin-bottom: 10px !important;
+    box-shadow: 0px 8px 14px rgba(25, 39 ,52, 0.08), 0px 2px 6px rgba(25 ,39 ,52,0.04) !important;
+}
 
+
+.poll-create-container.poll-container textarea,
+div#chat-input {background-color: #242a30;border: 0;border-radius: 7px;}
+#sideToolbarContainer {
+    border-radius: 1.2rem;
+    background: #1c2126!important;
+}
+.toolbox-button {border-radius: 50% !important;overflow: hidden !important;}
+.stage-participant-label {bottom: 15px !important;}
+
+
+div#chat-input:focus-within {border: 3px solid #2f3338 !important;}
+
+#usermsg:active, #usermsg:focus {border: none!important;}
+
+.smileys-panel {border: none;background: none!important;}
+
+.poll-footer {background-color: #1c2126!important;}
+
+.poll-create-container.poll-container {}
+
+.toolbox-icon.toggled.disabled {background-color: #161a1f!important;}
+
+.reactions-menu{
+    background: #1c2126!important;
+    border-radius:7px!important;
+    margin-bottom:15px!important;
+}
+.filmstrip:hover .resizable-filmstrip {
+    background-color: #1c2126!important;
+    border-radius: 15px !important;
+}
+.toggleFilmstripContainer {
+    background-color: #434a52!important;
+    height: 40px!important;
+    width: 40px!important;
+    border-radius: 20px!important;
+    left: calc(-40px - 3px - 4px)!important;
+}
+.toolbox-content-items {
+    padding: 15px !important;
+    border-radius: 50px !important;
+    background: #1c2126!important;
+}
+.toolbox-icon.toggled {
+    background: #242a30!important;
+}
+.toolbox-icon:hover {
+    background: #434a52!important;
+}
+.audio-preview-content,
+.toolbox-button-wth-dialog.context-menu > div:nth-child(2) > div{
+    box-shadow: 0px 8px 14px rgb(25 39 52 / 8%), 0px 2px 6px rgb(25 39 52 / 4%) !important;
+    border-radius: 7px !important;
+    background-color: #1c2126 !important;
+    overflow:auto;
+    margin-bottom:15px !important;
+}
+.audio-preview>div:nth-child(2), .video-preview>div:nth-child(2) {
+    outline: 0 !important;
+    padding: 0 !important;
+    background: none!important;
+    margin-bottom: 15px !important;
+    box-shadow: 0px 8px 14px rgb(25 39 52 / 8%), 0px 2px 6px rgb(25 39 52 / 4%) !important;
+}
+.toolbox-button-wth-dialog.context-menu > div:nth-child(2) > div > div:not(:empty) {
+    padding: 16px 5px;
+}
+.audio-preview-speaker:hover, .toolbox-button-wth-dialog.context-menu > div:nth-child(2) > div > div > div:hover,
+.toolbox-button-wth-dialog.context-menu > div:nth-child(2) > div > div > div:hover {
+    background-color: #242a30!important;
+    border-radius: 5px!important;
+}
+
+
+.stage-participant-label > div {
+    color: #FFF !important;
+    padding: 10px 26px !important;
+    overflow: hidden !important;
+    max-width: 50% !important;
+    opacity:0.7 !important;
+    background: #1c2126 !important;
+    white-space: nowrap !important;
+    border-radius: 7px !important;
+    text-overflow: ellipsis !important;
+}
+.stage-participant-label {
+    bottom: 15px !important;
+}
+div.atlaskit-portal > div > div > div > div:nth-child(2){
+    width: unset!important;
+    max-width: unset!important;
+}
+div[role="dialog"] > div{
+    background-color: #1c2126!important;
+}
+
+div[role="presentation"] {
+    background-color: rgba(22 ,26, 31,0.4) !important;
+    backdrop-filter: blur(10px) !important;
+}
+.video-input-preview.video-preview-has-error {
+    border-radius: 0.7rem !important;
+}  
+@media only screen and (min-width: 960px) {
+    #sideToolbarContainer {
+        bottom: -10px !important;
+        left: 10px !important;
+        ${topchat}
+    }
+    .stage-filmstrip span:not(.tile-view) .filmstrip, .vertical-filmstrip span:not(.tile-view) .filmstrip {
+        height: calc(100vh - 30px) ;
+        bottom: 10px ;
+        right: 10px ;
+        top: 10px ;
+    }
+    div#preview {
+        border-radius: 1rem!important;
+        background: #323232!important;
+        height: calc(60vh - 20px)!important;
+        width: 50vw!important;
+        margin-left: calc(105vw - 10px)!important;
+        display: flex!important;
+        flex-direction: column!important;
+        align-self: center!important;
+        margin-right: 20px!important;
+        overflow: hidden;
+    }
+    .premeeting-screen .content {
+        margin-top: 90px !important;
+        margin-left: 15vw;
+    }
+}
+.overlay__container, .overlay__container-light {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 1016;
+    background: #161A1F!important;
+}
+
+.inlay {
+    margin-top: 14%;
+    -webkit-border-radius: 4px;
+    border-radius: 1rem!important;
+    background-clip: padding-box;
+    padding: 40px 38px 44px;
+    color: #fff;
+    background: #1c2126!important;
+    text-align: center;
+}
+
+.jitsi-icon-default svg {
+    fill: #f9fafa !important;
+}
+.premeeting-screen.lobby-screen .content-controls h1.title{
+    display:none !important;
+}
+.premeeting-screen.lobby-screen input.field[data-testid="lobby.nameField"] {
+    user-select: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    max-height: 0px !important;
+    padding: 0px !important;
+    margin: 0px !important;
+}`;
+
+/*.jss65 {
+    border-radius: 40px;
+}
+
+.jss65.secondary {
+    background: #293039;
+}
+.jss3 {
+    color: #040404;
+    margin-right: 4px;
+    background-color: #fad489;
+}
+.jss306 {
+    background: transparent;
+}
+*/
+            document.head.appendChild(style);
+        }
+
+    </script>
+
+    <style>
+        
+    </style>
     <script>
         // Dynamically generate the manifest location URL. It must be served from the document origin, and we may have
         // the base pointing to the CDN. This way we can generate a full URL which will bypass the base.
@@ -67,6 +314,7 @@
             "utils.js",
             "do_external_connect.js",
             "interface_config.js",
+            "logging_config.js",
             "lib-jitsi-meet.min.js",
             "app.bundle.min.js",
             "all.css"
@@ -183,7 +431,8 @@
     <script><!--#include virtual="/config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <!--#include virtual="connection_optimization/connection_optimization.html" -->
     <script src="libs/do_external_connect.min.js?v=1"></script>
-    <script><!--#include virtual="/interface_config.js" --></script>
+    <script src="interface_config.js?v=1"></script>
+    <script><!--#include virtual="/logging_config.js" --></script>
     <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
     <!--#include virtual="title.html" -->
@@ -198,5 +447,12 @@
     </noscript>
     <!--#include virtual="body.html" -->
     <div id="react" role="main"></div>
+    <script src="noSleep.js"></script>
+    <script>
+        document.addEventListener('click', function enableNoSleep() {
+            document.removeEventListener('click', enableNoSleep, false);
+            noSleep.enable();
+            }, false);
+    </script>
   </body>
 </html>
