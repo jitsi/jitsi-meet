@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -30,6 +31,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.modules.core.PermissionListener;
 
+import org.wonday.orientation.OrientationActivityLifecycle;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
@@ -87,6 +89,14 @@ public class JitsiMeetActivity extends AppCompatActivity
     //
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Intent intent = new Intent("onConfigurationChanged");
+        intent.putExtra("newConfig", newConfig);
+        this.sendBroadcast(intent);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -94,6 +104,7 @@ public class JitsiMeetActivity extends AppCompatActivity
         this.jitsiView = findViewById(R.id.jitsiView);
 
         registerForBroadcastMessages();
+        registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
 
         if (!extraInitialize()) {
             initialize();

@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment */
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
+import Orientation from 'react-native-orientation-locker';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -38,8 +39,10 @@ const CarMode = (): JSX.Element => {
     useEffect(() => {
         dispatch(setIsCarmode(true));
         setPictureInPictureEnabled(false);
+        Orientation.lockToPortrait();
 
         return () => {
+            Orientation.unlockAllOrientations();
             dispatch(setIsCarmode(false));
             if (!isSharing) {
                 setPictureInPictureEnabled(true);
