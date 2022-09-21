@@ -18,7 +18,7 @@ create_error=0
 create_data=$(curl -s -f -X 'POST' "${JAAS_ENDPOINT}" -H 'Content-Type: application/json' -H 'accept: */*' \
   -d "{ \"domain\": \"${DOMAIN}\", \"email\": \"${EMAIL}\" }") || create_error=$?
 if [ ${create_error} -ne 0 ]; then
-    echo "Account creation failed. Status: ${create_error}"
+    echo "Account creation failed. Status: ${create_error}, response: ${create_data}"
     exit 2
 fi
 
