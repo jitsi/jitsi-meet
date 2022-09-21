@@ -133,9 +133,9 @@ class PersistenceRegistry {
      * @returns {void}
      */
     register(
-            name: string,
-            config?: ElementConfig,
-            defaultState?: Object) {
+        name: string,
+        config: ElementConfig = true,
+        defaultState?: Object) {
         this._elements[name] = config;
         this._defaultStates[name] = defaultState;
     }
