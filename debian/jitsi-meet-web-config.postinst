@@ -221,8 +221,14 @@ case "$1" in
             invoke-rc.d apache2 reload || true
         fi
 
-        if [ "$ISSUE_LE_CERT" = "true" ] ; then
-            /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $JVB_HOSTNAME
+        # If scripts fail they will print suggestions for next steps, do not fail install
+        # those can be re-run later
+        # run the scripts only on new install or when re-configuring
+        if [ "$ISSUE_LE_CERT" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ] ; then
+            /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $JVB_HOSTNAME || true
+        fi
+        if [ "${JAAS_INPUT}" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ] ; then
+            /usr/share/jitsi-meet/scripts/register-jaas-account.sh $EMAIL $JVB_HOSTNAME || true
         fi
 
         echo ""
