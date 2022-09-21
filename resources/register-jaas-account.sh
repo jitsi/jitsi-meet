@@ -11,7 +11,7 @@ if [ -z "${DOMAIN}" ] || [ -z "${EMAIL}" ]; then
 fi
 
 JAAS_ENDPOINT="https://account-provisioning.cloudflare.jitsi.net/operations"
-CHALLENGE_FILE="/usr/share/jitsi-meet/jitsi-challenge.txt"
+CHALLENGE_FILE="/usr/share/jitsi-meet/.well-known/jitsi-challenge.txt"
 SUPPORT_MSG="Reach out to JaaS support or retry with /usr/share/jitsi-meet/scripts/register-jaas-account.sh"
 
 create_error=0
