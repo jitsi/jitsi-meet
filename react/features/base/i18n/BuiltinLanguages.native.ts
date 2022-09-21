@@ -122,7 +122,7 @@ const _LANGUAGES = {
     // Mongolian
     'mn': {
         languages: require('../../../../lang/languages'),
-        main: require('../../../../lang/main-mn'))
+        main: require('../../../../lang/main-mn')
     },
 
     // Dutch
@@ -161,7 +161,7 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-ru')
     },
 
-    // Sardinian (Sardinia)
+    // Sardinian
     'sc': {
         languages: require('../../../../lang/languages'),
         main: require('../../../../lang/main-sc')
