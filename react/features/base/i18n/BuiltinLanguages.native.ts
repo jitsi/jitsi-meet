@@ -122,8 +122,9 @@ const _LANGUAGES = {
     // Mongolian
     'mn': {
         languages: require('../../../../lang/languages'),
-        main: require('../../../../lang/main-mn') },
-    
+        main: require('../../../../lang/main-mn'))
+    },
+
     // Dutch
     'nl': {
         languages: require('../../../../lang/languages'),
@@ -159,7 +160,7 @@ const _LANGUAGES = {
         languages: require('../../../../lang/languages'),
         main: require('../../../../lang/main-ru')
     },
-    
+
     // Sardinian (Sardinia)
     'sc': {
         languages: require('../../../../lang/languages'),
@@ -177,7 +178,7 @@ const _LANGUAGES = {
         languages: require('../../../../lang/languages'),
         main: require('../../../../lang/main-sl')
     },
-    
+
     // Swedish
     'sv': {
         languages: require('../../../../lang/languages'),
