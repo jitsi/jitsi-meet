@@ -25,7 +25,7 @@ import { isInBreakoutRoom, getCurrentRoomId } from '../breakout-rooms/functions'
 
 // @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
-import { ADD_FACE_EXPRESSION, CAMERA_OFF_TIMESTAMP } from '../face-landmarks/actionTypes';
+import { ADD_FACE_EXPRESSION, FACE_LANDMARK_DETECTION_STOPPED } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, connectAndSendIdentity, isRtcstatsEnabled } from './functions';
@@ -42,7 +42,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
     const { dispatch, getState } = store;
     const state = getState();
     const config = state['features/base/config'];
-    const { analytics, faceLandmarks } = config;
+    const { analytics = {}, faceLandmarks } = config;
+
+    analytics.rtcstatsEnabled = true;
+    analytics.rtcstatsEndpoint = 'wss://localhost:3000';
 
     switch (action.type) {
     case LIB_WILL_INIT: {
@@ -176,13 +179,13 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         }
         break;
     }
-    case CAMERA_OFF_TIMESTAMP: {
+    case FACE_LANDMARK_DETECTION_STOPPED: {
         if (canSendRtcstatsData(state) && faceLandmarks && faceLandmarks.enableRTCStats) {
             const { timestamp } = action;
 
             RTCStats.sendFaceLandmarksData({
                 duration: 0,
-                faceLandmarks: 'camera-off',
+                faceLandmarks: 'detection-off',
                 timestamp
             });
         }

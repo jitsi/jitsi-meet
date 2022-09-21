@@ -5,7 +5,7 @@ import { AnyAction } from 'redux';
 import {
     ADD_FACE_EXPRESSION,
     ADD_TO_FACE_EXPRESSIONS_BUFFER,
-    CAMERA_OFF_TIMESTAMP,
+    FACE_LANDMARK_DETECTION_STOPPED,
     CLEAR_FACE_EXPRESSIONS_BUFFER,
     NEW_FACE_COORDINATES
 } from './actionTypes';
@@ -71,14 +71,14 @@ export function newFaceBox(faceBox: FaceBox): AnyAction {
 }
 
 /**
- * Dispatches the camera off timestamp in order to be sent to services.
+ * Dispatches the face landmarks detection stopped event in order to be sent to services.
  *
  * @param {number} timestamp - The timestamp when the camera was off.
  * @returns {AnyAction}
  */
-export function cameraOffTimestamp(timestamp: number): AnyAction {
+export function faceLandmarkDetectionStopped(timestamp: number): AnyAction {
     return {
-        type: CAMERA_OFF_TIMESTAMP,
+        type: FACE_LANDMARK_DETECTION_STOPPED,
         timestamp
     };
 }

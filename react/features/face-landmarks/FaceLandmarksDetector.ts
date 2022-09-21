@@ -8,7 +8,7 @@ import { getBaseUrl } from '../base/util/helpers';
 
 import {
     addFaceExpression,
-    cameraOffTimestamp,
+    faceLandmarkDetectionStopped,
     clearFaceExpressionBuffer,
     newFaceBox
 } from './actions';
@@ -42,7 +42,7 @@ class FaceLandmarksDetector {
     private recognitionActive = false;
     private canvas?: HTMLCanvasElement;
     private context?: CanvasRenderingContext2D | null;
-    private cameraTimestamp: number | null = null;
+    private errorCount = 0;
 
     /**
      * Constructor for class, checks if the environment supports OffscreenCanvas.
@@ -189,7 +189,6 @@ class FaceLandmarksDetector {
 
             if (this.worker && this.imageCapture) {
                 this.sendDataToWorker(
-                    this.imageCapture,
                     faceLandmarks?.faceCenteringThreshold
                 ).then(status => {
                     if (!status) {
@@ -245,19 +244,18 @@ class FaceLandmarksDetector {
         this.detectionInterval = null;
         this.imageCapture = null;
         this.recognitionActive = false;
-        dispatch(cameraOffTimestamp(Date.now()));
+        dispatch(faceLandmarkDetectionStopped(Date.now()));
         logger.log('Stop face detection');
     }
 
     /**
      * Sends the image data a canvas from the track in the image capture to the face detection worker.
      *
-     * @param {Object} imageCapture - Image capture that contains the current track.
      * @param {number} faceCenteringThreshold  - Movement threshold as percentage for sharing face coordinates.
      * @returns {Promise<boolean>} - True if sent, false otherwise.
      */
-    private async sendDataToWorker(imageCapture: ImageCapture, faceCenteringThreshold = 10): Promise<boolean> {
-        if (!imageCapture || !this.worker) {
+    private async sendDataToWorker(faceCenteringThreshold = 10): Promise<boolean> {
+        if (!this.imageCapture || !this.worker) {
             logger.log('Could not send data to worker');
 
             return false;
@@ -267,10 +265,9 @@ class FaceLandmarksDetector {
         let image;
 
         try {
-            imageBitmap = await imageCapture.grabFrame();
+            imageBitmap = await this.imageCapture.grabFrame();
         } catch (err) {
             logger.log('Could not send data to worker');
-            logger.warn(err);
 
             return false;
         }
