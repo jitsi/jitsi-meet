@@ -16,7 +16,8 @@ import {
     DETECTION_TYPES,
     INIT_WORKER,
     DETECT_FACE,
-    WEBHOOK_SEND_TIME_INTERVAL
+    WEBHOOK_SEND_TIME_INTERVAL,
+    FACE_LANDMARK_DETECTION_ERROR_THRESHOLD
 } from './constants';
 import {
     getDetectionInterval,
@@ -191,7 +192,13 @@ class FaceLandmarksDetector {
                 this.sendDataToWorker(
                     faceLandmarks?.faceCenteringThreshold
                 ).then(status => {
-                    if (!status) {
+                    if (status) {
+                        this.errorCount = 0;
+                    } else if (++this.errorCount > FACE_LANDMARK_DETECTION_ERROR_THRESHOLD) {
+                        /* this prevents the detection from stopping immediately after occurring an error
+                         * sometimes due to the small detection interval when starting the detection some errors
+                         * might occur due to the track not being ready
+                        */
                         this.stopDetection({
                             dispatch,
                             getState
@@ -255,8 +262,11 @@ class FaceLandmarksDetector {
      * @returns {Promise<boolean>} - True if sent, false otherwise.
      */
     private async sendDataToWorker(faceCenteringThreshold = 10): Promise<boolean> {
-        if (!this.imageCapture || !this.worker) {
-            logger.log('Could not send data to worker');
+        if (!this.imageCapture
+            || !this.worker
+            || !this.imageCapture?.track
+            || this.imageCapture?.track.readyState !== 'live') {
+            logger.log('Environment not ready! Could not send data to worker');
 
             return false;
         }
