@@ -22,7 +22,7 @@
     display: flex;
     flex-direction: column;
     // extract header + tabs height
-    height: calc(100% - 102px);
+    height: calc(100% - 119px);
 }
 
 .chat-panel-no-tabs {
@@ -530,42 +530,4 @@
     width: 48px;
     background: #36383C;
     border-radius: 3px;
-}
-
-.chat-tabs-container {
-    width: 100%;
-    border-bottom: thin solid #292929;
-    display: flex;
-    justify-content: space-around;
-}
-
-.chat-tab {
-    font-size: 1.2em;
-    padding-bottom: 0.5em;
-    width: 50%;
-    text-align: center;
-    color: #8B8B8B;
-    cursor: pointer;
-}
-
-.chat-tab-focus {
-    border-bottom-style: solid;
-    color: #FFF;
-}
-
-.chat-tab-title {
-    margin-right: 8px;
-}
-
-.chat-tab-badge {
-    background-color: #165ecc;
-    border-radius: 50%;
-    box-sizing: border-box;
-    font-weight: 700;
-    overflow: hidden;
-    text-align: center;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    padding: 0 4px;
-    color: #FFF;
 }
