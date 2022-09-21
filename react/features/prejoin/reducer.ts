@@ -48,7 +48,11 @@ export interface IPrejoinState {
     isDisplayNameRequired: boolean;
     joiningInProgress?: boolean;
     name: string;
-    precallTestResults?: Object;
+    precallTestResults?: {
+        fractionalLoss: number;
+        mediaConnectivity: boolean;
+        throughput: number;
+    };
     rawError: string;
     showJoinByPhoneDialog: boolean;
     showPrejoin: boolean;

@@ -35,7 +35,6 @@ xcodebuild archive \
     -sdk iphonesimulator \
     -destination='generic/platform=iOS Simulator' \
     -archivePath ios/sdk/out/ios-simulator \
-    ENABLE_BITCODE=NO \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild archive \
@@ -45,7 +44,6 @@ xcodebuild archive \
     -sdk iphoneos \
     -destination='generic/platform=iOS' \
     -archivePath ios/sdk/out/ios-device \
-    ENABLE_BITCODE=NO \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild -create-xcframework \

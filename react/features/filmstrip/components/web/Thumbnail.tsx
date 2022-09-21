@@ -1106,13 +1106,14 @@ class Thumbnail extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _participant, _isVirtualScreenshareParticipant } = this.props;
+        const { _participant, _isTestModeEnabled, _isVirtualScreenshareParticipant } = this.props;
+        const videoEventListeners: any = {};
 
         if (!_participant) {
             return null;
         }
 
-        const { isFakeParticipant, local } = _participant;
+        const { isFakeParticipant, isLocalScreenShare, local } = _participant;
 
         if (local) {
             return this._renderParticipant(true);
@@ -1126,12 +1127,19 @@ class Thumbnail extends Component<Props, State> {
             const { isHovered } = this.state;
             const { _videoTrack, _isMobile, classes, _thumbnailType } = this.props;
 
+            if (_isTestModeEnabled) {
+                VIDEO_TEST_EVENTS.forEach(attribute => {
+                    videoEventListeners[attribute] = this._onTestingEvent;
+                });
+                videoEventListeners.onCanPlay = this._onCanPlay;
+            }
+
             return (
                 <VirtualScreenshareParticipant
                     classes = { classes }
                     containerClassName = { this._getContainerClassName() }
                     isHovered = { isHovered }
-                    isLocal = { local }
+                    isLocal = { isLocalScreenShare }
                     isMobile = { _isMobile }
                     onClick = { this._onClick }
                     onMouseEnter = { this._onMouseEnter }
@@ -1165,12 +1173,13 @@ function _mapStateToProps(state: IState, ownProps: any): Object {
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const id = participant?.id;
     const isLocal = participant?.local ?? true;
-    const tracks = state['features/base/tracks'];
+    const multipleVideoSupportEnabled = getMultipleVideoSupportFeatureFlag(state);
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
+    const tracks = state['features/base/tracks'];
 
     let _videoTrack;
 
-    if (sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant) {
+    if (multipleVideoSupportEnabled && participant?.isVirtualScreenshareParticipant) {
         _videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
     } else {
         _videoTrack = isLocal
@@ -1293,19 +1302,19 @@ function _mapStateToProps(state: IState, ownProps: any): Object {
         _isScreenSharing: _videoTrack?.videoType === 'desktop',
         _isTestModeEnabled: isTestModeEnabled(state),
         _isVideoPlayable: id && isVideoPlayable(state, id),
-        _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant,
+        _isVirtualScreenshareParticipant: multipleVideoSupportEnabled && participant?.isVirtualScreenshareParticipant,
         _localFlipX: Boolean(localFlipX),
-        _multipleVideoSupport: getMultipleVideoSupportFeatureFlag(state),
+        _multipleVideoSupport: multipleVideoSupportEnabled,
         _participant: participant,
         _raisedHand: hasRaisedHand(participant),
+        _sourceNameSignalingEnabled: sourceNameSignalingEnabled,
         _stageFilmstripLayout: isStageFilmstripAvailable(state),
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
         _thumbnailType: tileType,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
         ...size,
-        _gifSrc: mode === 'chat' ? null : gifSrc,
-        _sourceNameSignalingEnabled: sourceNameSignalingEnabled
+        _gifSrc: mode === 'chat' ? null : gifSrc
     };
 }
 

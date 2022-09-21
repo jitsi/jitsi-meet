@@ -69,6 +69,7 @@ case "$1" in
         fi
 
         db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
+        db_set jitsi-meet/jaas-choice false
         db_input critical jitsi-meet/jaas-choice || true
         db_go
         db_get jitsi-meet/jaas-choice

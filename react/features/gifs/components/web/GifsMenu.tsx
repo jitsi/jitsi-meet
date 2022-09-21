@@ -10,9 +10,7 @@ import { makeStyles } from 'tss-react/mui';
 import { createGifSentEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
-// @ts-ignore
-import InputField from '../../../base/premeeting/components/web/InputField';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import Input from '../../../base/ui/components/web/Input';
 // @ts-ignore
 import { sendMessage } from '../../../chat/actions.any';
 import { SCROLL_SIZE } from '../../../filmstrip/constants';
@@ -45,14 +43,6 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         searchField: {
-            backgroundColor: theme.palette.field01,
-            borderRadius: `${theme.shape.borderRadius}px`,
-            border: 'none',
-            outline: 0,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            color: theme.palette.text01,
-            padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
-            width: '100%',
             marginBottom: theme.spacing(3)
         },
 
@@ -192,13 +182,18 @@ function GifsMenu() {
             className = { cx(styles.gifsMenu,
                 overflowDrawer && styles.overflowMenu
             ) }>
-            <InputField
+            <Input
                 autoFocus = { true }
                 className = { cx(styles.searchField, 'gif-input') }
                 onChange = { handleSearchKeyChange }
-                placeHolder = { t('giphy.search') }
-                testId = 'gifSearch.key'
-                type = 'text' />
+                placeholder = { t('giphy.search') }
+                // eslint-disable-next-line react/jsx-no-bind
+                ref = { inputElement => {
+                    inputElement?.focus();
+                    setTimeout(() => inputElement?.focus(), 200);
+                } }
+                type = 'text'
+                value = { searchKey ?? '' } />
             <div
                 className = { cx(styles.gifContainer,
                 overflowDrawer && styles.gifContainerOverflow) }>

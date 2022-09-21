@@ -1,12 +1,8 @@
 /* @flow */
-
-import DropdownMenu, {
-    DropdownItem,
-    DropdownItemGroup
-} from '@atlaskit/dropdown-menu';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n/functions';
+import Select from '../../base/ui/components/web/Select';
 
 /**
  * The type of the React {@code Component} props of {@link DeviceSelector}.
@@ -76,7 +72,6 @@ class DeviceSelector extends Component<Props> {
         super(props);
 
         this._onSelect = this._onSelect.bind(this);
-        this._createDropdownItem = this._createDropdownItem.bind(this);
     }
 
     /**
@@ -98,7 +93,12 @@ class DeviceSelector extends Component<Props> {
             return this._renderNoDevices();
         }
 
-        const items = this.props.devices.map(this._createDropdownItem);
+        const items = this.props.devices.map(device => {
+            return {
+                value: device.deviceId,
+                label: device.label || device.deviceId
+            };
+        });
         const defaultSelected = this.props.devices.find(item =>
             item.deviceId === this.props.selectedDeviceId
         );
@@ -127,28 +127,6 @@ class DeviceSelector extends Component<Props> {
                     { triggerText }
                 </span>
             </div>
-        );
-    }
-
-    _createDropdownItem: (Object) => void;
-
-    /**
-     * Creates an object in the format expected by AKDropdownMenu for an option.
-     *
-     * @param {MediaDeviceInfo} device - An object with a label and a deviceId.
-     * @private
-     * @returns {Object} The passed in media device description converted to a
-     * format recognized as a valid AKDropdownMenu item.
-     */
-    _createDropdownItem(device) {
-        return (
-            <DropdownItem
-                data-deviceid = { device.deviceId }
-                isSelected = { device.deviceId === this.props.selectedDeviceId }
-                key = { device.deviceId }
-                onClick = { this._onSelect }>
-                { device.label || device.deviceId }
-            </DropdownItem>
         );
     }
 
@@ -184,18 +162,10 @@ class DeviceSelector extends Component<Props> {
 
         return (
             <div className = 'dropdown-menu'>
-                <DropdownMenu
-                    shouldFitContainer = { true }
-                    trigger = { triggerText }
-                    triggerButtonProps = {{
-                        shouldFitContainer: true,
-                        id: this.props.id
-                    }}
-                    triggerType = 'button'>
-                    <DropdownItemGroup>
-                        { options.items }
-                    </DropdownItemGroup>
-                </DropdownMenu>
+                <Select
+                    onChange = { this._onSelect }
+                    options = { options.items }
+                    value = { this.props.selectedDeviceId } />
             </div>
         );
     }
@@ -211,7 +181,7 @@ class DeviceSelector extends Component<Props> {
      * @returns {void}
      */
     _onSelect(e) {
-        const deviceId = e.currentTarget.getAttribute('data-deviceid');
+        const deviceId = e.target.value;
 
         if (this.props.selectedDeviceId !== deviceId) {
             this.props.onSelect(deviceId);

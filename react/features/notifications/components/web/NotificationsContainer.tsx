@@ -184,11 +184,11 @@ class NotificationsContainer extends Component<Props> {
      * Emits an action to remove the notification from the redux store so it
      * stops displaying.
      *
-     * @param {number} uid - The id of the notification to be removed.
+     * @param {string} uid - The id of the notification to be removed.
      * @private
      * @returns {void}
      */
-    _onDismissed(uid: number) {
+    _onDismissed(uid: string) {
         const timeout = this._timeouts.get(`${uid}`);
 
         if (timeout) {

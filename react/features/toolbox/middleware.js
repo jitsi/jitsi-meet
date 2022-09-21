@@ -8,6 +8,7 @@ import {
     SET_FULL_SCREEN
 } from './actionTypes';
 
+import './subscriber';
 
 declare var APP: Object;
 

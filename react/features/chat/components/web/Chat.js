@@ -5,8 +5,10 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import Tabs from '../../../base/ui/components/web/Tabs';
 import { PollsPane } from '../../../polls/components';
 import { toggleChat } from '../../actions.web';
+import { CHAT_TABS } from '../../constants';
 import AbstractChat, {
     _mapStateToProps,
     type Props
@@ -47,6 +49,7 @@ class Chat extends AbstractChat<Props> {
         this._onEscClick = this._onEscClick.bind(this);
         this._onPollsTabKeyDown = this._onPollsTabKeyDown.bind(this);
         this._onToggleChat = this._onToggleChat.bind(this);
+        this._onChangeTab = this._onChangeTab.bind(this);
     }
 
     /**
@@ -138,7 +141,7 @@ class Chat extends AbstractChat<Props> {
                 <>
                     { _isPollsEnabled && this._renderTabs() }
                     <div
-                        aria-labelledby = 'polls-tab'
+                        aria-labelledby = { CHAT_TABS.POLLS }
                         id = 'polls-panel'
                         role = 'tabpanel'>
                         <PollsPane />
@@ -152,7 +155,7 @@ class Chat extends AbstractChat<Props> {
             <>
                 { _isPollsEnabled && this._renderTabs() }
                 <div
-                    aria-labelledby = 'chat-tab'
+                    aria-labelledby = { CHAT_TABS.CHAT }
                     className = { clsx('chat-panel', !_isPollsEnabled && 'chat-panel-no-tabs') }
                     id = 'chat-panel'
                     role = 'tabpanel'>
@@ -178,54 +181,22 @@ class Chat extends AbstractChat<Props> {
         const { _isPollsEnabled, _isPollsTabFocused, _nbUnreadMessages, _nbUnreadPolls, t } = this.props;
 
         return (
-            <div
-                aria-label = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
-                className = { 'chat-tabs-container' }
-                role = 'tablist'>
-                <div
-                    aria-controls = 'chat-panel'
-                    aria-label = { t('chat.tabs.chat') }
-                    aria-selected = { !_isPollsTabFocused }
-                    className = { `chat-tab ${_isPollsTabFocused ? '' : 'chat-tab-focus'
-                    }` }
-                    id = 'chat-tab'
-                    onClick = { this._onToggleChatTab }
-                    onKeyDown = { this._onChatTabKeyDown }
-                    role = 'tab'
-                    tabIndex = '0'>
-                    <span
-                        className = { 'chat-tab-title' }>
-                        { t('chat.tabs.chat') }
-                    </span>
-                    { this.props._isPollsTabFocused
-                        && _nbUnreadMessages > 0 && (
-                        <span className = { 'chat-tab-badge' }>
-                            { _nbUnreadMessages }
-                        </span>
-                    ) }
-                </div>
-                <div
-                    aria-controls = 'polls-panel'
-                    aria-label = { t('chat.tabs.polls') }
-                    aria-selected = { _isPollsTabFocused }
-                    className = { `chat-tab ${_isPollsTabFocused ? 'chat-tab-focus' : ''
-                    }` }
-                    id = 'polls-tab'
-                    onClick = { this._onTogglePollsTab }
-                    onKeyDown = { this._onPollsTabKeyDown }
-                    role = 'tab'
-                    tabIndex = '0'>
-                    <span className = { 'chat-tab-title' }>
-                        { t('chat.tabs.polls') }
-                    </span>
-                    { !_isPollsTabFocused
-                        && this.props._nbUnreadPolls > 0 && (
-                        <span className = { 'chat-tab-badge' }>
-                            { _nbUnreadPolls }
-                        </span>
-                    ) }
-                </div>
-            </div>
+            <Tabs
+                accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
+                onChange = { this._onChangeTab }
+                selected = { _isPollsTabFocused ? CHAT_TABS.POLLS : CHAT_TABS.CHAT }
+                tabs = { [ {
+                    accessibilityLabel: t('chat.tabs.chat'),
+                    countBadge: _isPollsTabFocused && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
+                    id: CHAT_TABS.CHAT,
+                    label: t('chat.tabs.chat')
+                }, {
+                    accessibilityLabel: t('chat.tabs.polls'),
+                    countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
+                    id: CHAT_TABS.POLLS,
+                    label: t('chat.tabs.polls')
+                }
+                ] } />
         );
     }
 
@@ -243,6 +214,17 @@ class Chat extends AbstractChat<Props> {
     }
     _onTogglePollsTab: () => void;
     _onToggleChatTab: () => void;
+    _onChangeTab: (string) => void;
+
+    /**
+     * Change selected tab.
+     *
+     * @param {string} id - Id of the clicked tab.
+     * @returns {void}
+     */
+    _onChangeTab(id) {
+        id === CHAT_TABS.CHAT ? this._onToggleChatTab() : this._onTogglePollsTab();
+    }
 }
 
 export default translate(connect(_mapStateToProps)(Chat));

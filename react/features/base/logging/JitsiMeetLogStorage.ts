@@ -51,22 +51,6 @@ export default class JitsiMeetLogStorage {
     }
 
     /**
-     * Checks whether callstats logs storage is enabled.
-     *
-     * @returns {boolean} <tt>true</tt> when this storage can store logs to
-     * callstats, <tt>false</tt> otherwise.
-     */
-    canStoreLogsCallstats() {
-        const { callstatsStoreLogs } = this.getState()['features/base/config'];
-
-        // The behavior prior to adding this configuration parameter, is to send logs to callstats (if callstats is
-        // enabled). So, in order to maintain backwards compatibility I set the default of this option to be true, i.e.
-        // if the config.callstatsStoreLogs is not set, the JS console logs will be sent to callstats (if callstats is
-        // enabled)
-        return callstatsStoreLogs || callstatsStoreLogs === undefined;
-    }
-
-    /**
      * Checks whether rtcstats logs storage is enabled.
      *
      * @returns {boolean} <tt>true</tt> when this storage can store logs to
@@ -92,9 +76,9 @@ export default class JitsiMeetLogStorage {
      */
     storeLogs(logEntries: Array<string | any>) {
 
-        if (this.canStoreLogsCallstats()) {
-            this.storeLogsCallstats(logEntries);
-        }
+        // XXX the config.callStatsApplicationLogsDisabled controls whether or not the logs will be sent to callstats.
+        // this is done in LJM
+        this.storeLogsCallstats(logEntries);
 
         if (this.canStoreLogsRtcstats()) {
             RTCStats.sendLogs(logEntries);

@@ -1,6 +1,4 @@
-import { Dispatch } from 'redux';
-
-// @ts-ignore
+import { IStore } from '../../app/types';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { set } from '../redux/functions';
@@ -45,6 +43,7 @@ import { Participant } from './types';
  *
  * @param {string} dominantSpeaker - Participant ID of the dominant speaker.
  * @param {Array<string>} previousSpeakers - Participant IDs of the previous speakers.
+ * @param {boolean} silence - Whether the dominant speaker is silent or not.
  * @param {JitsiConference} conference - The {@code JitsiConference} associated
  * with the participant identified by the specified {@code id}. Only the local
  * participant is allowed to not specify an associated {@code JitsiConference}
@@ -54,17 +53,20 @@ import { Participant } from './types';
  *     participant: {
  *         conference: JitsiConference,
  *         id: string,
- *         previousSpeakers: Array<string>
+ *         previousSpeakers: Array<string>,
+ *         silence: boolean
  *     }
  * }}
  */
-export function dominantSpeakerChanged(dominantSpeaker: string, previousSpeakers: string[], conference: any) {
+export function dominantSpeakerChanged(
+        dominantSpeaker: string, previousSpeakers: string[], silence: boolean, conference: any) {
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
             conference,
             id: dominantSpeaker,
-            previousSpeakers
+            previousSpeakers,
+            silence
         }
     };
 }
@@ -111,7 +113,7 @@ export function kickParticipant(id: string) {
  * @returns {Function}
  */
 export function localParticipantConnectionStatusChanged(connectionStatus: string) {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -131,7 +133,7 @@ export function localParticipantConnectionStatusChanged(connectionStatus: string
  * @returns {Function}
  */
 export function localParticipantIdChanged(id: string) {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -167,7 +169,7 @@ export function localParticipantJoined(participant: Participant = { id: '' }) {
  * @returns {Function}
  */
 export function localParticipantLeft() {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -197,7 +199,7 @@ export function localParticipantLeft() {
  * @returns {Function}
  */
 export function localParticipantRoleChanged(role: string) {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -276,7 +278,7 @@ export function participantJoined(participant: Participant) {
             'A remote participant must be associated with a JitsiConference!');
     }
 
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // A remote participant is only expected to join in a joined or joining
         // conference. The following check is really necessary because a
         // JitsiConference may have moved into leaving but may still manage to
@@ -306,7 +308,7 @@ export function participantJoined(participant: Participant) {
 * }}
 */
 export function updateRemoteParticipantFeatures(jitsiParticipant: any) {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!jitsiParticipant) {
             return;
         }
@@ -504,7 +506,7 @@ export function participantUpdated(participant: Participant = { id: '' }) {
  * @returns {Promise}
  */
 export function participantMutedUs(participant: any, track: any) {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!participant) {
             return;
         }
@@ -528,7 +530,7 @@ export function participantMutedUs(participant: any, track: any) {
  * @returns {Function}
  */
 export function createVirtualScreenshareParticipant(sourceName: string, local: boolean) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const ownerId = getVirtualScreenshareParticipantOwnerId(sourceName);
         const ownerName = getParticipantDisplayName(state, ownerId);
@@ -551,7 +553,7 @@ export function createVirtualScreenshareParticipant(sourceName: string, local: b
  * @returns {Promise}
  */
 export function participantKicked(kicker: any, kicked: any) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
 
         dispatch({
             type: PARTICIPANT_KICKED,
