@@ -1,10 +1,10 @@
-// @flow
-
+import { IStore } from '../../app/types';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../conference/actionTypes';
-import { SET_CONFIG } from '../config';
+import { IJitsiConference } from '../conference/reducer';
+import { SET_CONFIG } from '../config/actionTypes';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
-import { MiddlewareRegistry } from '../redux';
-import { getJitsiMeetGlobalNS } from '../util';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { getJitsiMeetGlobalNS } from '../util/helpers';
 
 import { setConnectionState } from './actions';
 import {
@@ -51,7 +51,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _bindConferenceConnectionListener(conference, { dispatch }) {
+function _bindConferenceConnectionListener(conference: IJitsiConference, { dispatch }: IStore) {
 
     conference.on(
         JitsiConferenceEvents.CONNECTION_ESTABLISHED,
@@ -70,11 +70,11 @@ function _bindConferenceConnectionListener(conference, { dispatch }) {
 /**
  * Binds all the helper functions needed by torture.
  *
- * @param {Store} store - The redux store.
+ * @param {IStore} store - The redux store.
  * @private
  * @returns {void}
  */
-function _bindTortureHelpers(store) {
+function _bindTortureHelpers(store: IStore) {
     const { getState } = store;
 
     // We bind helpers only if testing mode is enabled
@@ -100,7 +100,7 @@ function _bindTortureHelpers(store) {
  * @returns {void}
  * @private
  */
-function _onConnectionEvent(event, dispatch) {
+function _onConnectionEvent(event: string, dispatch: IStore['dispatch']) {
     switch (event) {
     case JitsiConferenceEvents.CONNECTION_ESTABLISHED:
     case JitsiConferenceEvents.CONNECTION_INTERRUPTED:

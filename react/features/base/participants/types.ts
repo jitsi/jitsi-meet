@@ -15,15 +15,18 @@ export interface Participant {
     isFakeParticipant?: boolean;
     isJigasi?: boolean;
     isLocalScreenShare?: boolean;
+    isReplaced?: boolean;
     isReplacing?: number;
     isVirtualScreenshareParticipant?: boolean;
     loadableAvatarUrl?: string;
     loadableAvatarUrlUseCORS?: boolean;
     local?: boolean;
+    localRecording?: string;
     name?: string;
     pinned?: boolean;
     presence?: string;
     raisedHandTimestamp?: number;
+    region?: string;
     remoteControlSessionStatus?: boolean;
     role?: string;
     supportsRemoteControl?: boolean;

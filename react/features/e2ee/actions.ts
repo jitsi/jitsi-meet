@@ -1,5 +1,3 @@
-// @flow
-
 import {
     SET_EVERYONE_ENABLED_E2EE,
     SET_EVERYONE_SUPPORT_E2EE,

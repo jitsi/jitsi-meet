@@ -1,67 +1,65 @@
-// @flow
-
 const LEFT_RIGHT_OFFSET = 25;
 const TOP_BOTTOM_OFFSET = 20;
 
-const getLeftAlignedStyle = bounds => {
+const getLeftAlignedStyle = (bounds: DOMRect) => {
     return {
         position: 'fixed',
         right: `${window.innerWidth - bounds.x + LEFT_RIGHT_OFFSET}px`
     };
 };
 
-const getRightAlignedStyle = bounds => {
+const getRightAlignedStyle = (bounds: DOMRect) => {
     return {
         position: 'fixed',
         left: `${bounds.x + bounds.width + LEFT_RIGHT_OFFSET}px`
     };
 };
 
-const getTopAlignedStyle = bounds => {
+const getTopAlignedStyle = (bounds: DOMRect) => {
     return {
         position: 'fixed',
         bottom: `${window.innerHeight - bounds.y + TOP_BOTTOM_OFFSET}px`
     };
 };
 
-const getBottomAlignedStyle = bounds => {
+const getBottomAlignedStyle = (bounds: DOMRect) => {
     return {
         position: 'fixed',
         top: `${bounds.y + bounds.height + TOP_BOTTOM_OFFSET}px`
     };
 };
 
-const getLeftRightStartAlign = (bounds, size) => {
+const getLeftRightStartAlign = (bounds: DOMRect, size: DOMRectReadOnly) => {
     return {
         top: `${Math.min(bounds.y + 15, window.innerHeight - size.height - 20)}px`
     };
 };
 
-const getLeftRightMidAlign = (bounds, size) => {
+const getLeftRightMidAlign = (bounds: DOMRect, size: DOMRectReadOnly) => {
     return {
         bottom: `${window.innerHeight - bounds.y - bounds.height - (size.height / 2)}px`
     };
 };
 
-const getLeftRightEndAlign = (bounds, size) => {
+const getLeftRightEndAlign = (bounds: DOMRect, size: DOMRectReadOnly) => {
     return {
         bottom: `${Math.min(window.innerHeight - bounds.y - bounds.height, window.innerHeight - size.height)}px`
     };
 };
 
-const getTopBotStartAlign = bounds => {
+const getTopBotStartAlign = (bounds: DOMRect) => {
     return {
         right: `${window.innerWidth - bounds.x + 10}px`
     };
 };
 
-const getTopBotMidAlign = (bounds, size) => {
+const getTopBotMidAlign = (bounds: DOMRect, size: DOMRectReadOnly) => {
     return {
         right: `${window.innerWidth - bounds.x - (size.width / 2)}px`
     };
 };
 
-const getTopBotEndAlign = bounds => {
+const getTopBotEndAlign = (bounds: DOMRect) => {
     return {
         left: `${bounds.x + bounds.width + 10}px`
     };

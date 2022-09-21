@@ -1,8 +1,6 @@
-// @flow
-
 import { batch } from 'react-redux';
-import type { Dispatch } from 'redux';
 
+import { IStore } from '../../app/types';
 import { CHAT_SIZE } from '../../chat/constants';
 import { getParticipantsPaneOpen } from '../../participants-pane/functions';
 import theme from '../components/themes/participantsPaneTheme.json';
@@ -35,7 +33,7 @@ const REDUCED_UI_THRESHOLD = 300;
  * @returns {Object}
  */
 export function clientResized(clientWidth: number, clientHeight: number) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let availableWidth = clientWidth;
 
         if (navigator.product !== 'ReactNative') {
@@ -74,8 +72,8 @@ export function clientResized(clientWidth: number, clientHeight: number) {
  *     aspectRatio: Symbol
  * }}
  */
-export function setAspectRatio(width: number, height: number): Function {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function setAspectRatio(width: number, height: number) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // Don't change the aspect ratio if width and height are the same, that
         // is, if we transition to a 1:1 aspect ratio.
         if (width !== height) {
@@ -104,8 +102,8 @@ export function setAspectRatio(width: number, height: number): Function {
  *     reducedUI: boolean
  * }}
  */
-export function setReducedUI(width: number, height: number): Function {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function setReducedUI(width: number, height: number) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const reducedUI = Math.min(width, height) < REDUCED_UI_THRESHOLD;
 
         if (reducedUI !== getState()['features/base/responsive-ui'].reducedUI) {
@@ -139,7 +137,7 @@ export function setParticipantContextMenuOpen(isOpen: boolean) {
  *    insets: Object
  * }}
  */
-export function setSafeAreaInsets(insets) {
+export function setSafeAreaInsets(insets: Object) {
     return {
         type: SAFE_AREA_INSETS_CHANGED,
         insets

@@ -1,10 +1,8 @@
-// @flow
-
 import { findIndex } from 'lodash';
 
-import { CONNECTION_TYPE } from './constants';
+import { IState } from '../../app/types';
 
-declare var interfaceConfig: Object;
+import { CONNECTION_TYPE } from './constants';
 
 const LOSS_AUDIO_THRESHOLDS = [ 0.33, 0.05 ];
 const LOSS_VIDEO_THRESHOLDS = [ 0.33, 0.1, 0.05 ];
@@ -90,15 +88,15 @@ export function calculateAvatarDimensions(height: number) {
  *
  * @returns {number}
  */
-function _getLevel(thresholds, value, descending = true) {
+function _getLevel(thresholds: number[], value: number, descending = true) {
     let predicate;
 
     if (descending) {
-        predicate = function(threshold) {
+        predicate = function(threshold: number) {
             return value > threshold;
         };
     } else {
-        predicate = function(threshold) {
+        predicate = function(threshold: number) {
             return value < threshold;
         };
     }
@@ -123,7 +121,8 @@ function _getLevel(thresholds, value, descending = true) {
  *   connectionDetails: string[]
  * }}
  */
-function _getConnectionDataFromTestResults({ fractionalLoss: l, throughput: t }) {
+function _getConnectionDataFromTestResults({ fractionalLoss: l, throughput: t }:
+    { fractionalLoss: number; throughput: number; }) {
     const loss = {
         audioQuality: _getLevel(LOSS_AUDIO_THRESHOLDS, l),
         videoQuality: _getLevel(LOSS_VIDEO_THRESHOLDS, l)
@@ -192,7 +191,7 @@ function _getConnectionDataFromTestResults({ fractionalLoss: l, throughput: t })
  *   connectionDetails: string[]
  * }}
  */
-export function getConnectionData(state: Object) {
+export function getConnectionData(state: IState) {
     const { precallTestResults } = state['features/prejoin'];
 
     if (precallTestResults) {

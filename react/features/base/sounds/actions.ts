@@ -1,5 +1,6 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
+import { Sounds } from '../config/configType';
+// @ts-ignore
 import type { AudioElement } from '../media';
 
 import {
@@ -10,6 +11,7 @@ import {
     STOP_SOUND,
     UNREGISTER_SOUND
 } from './actionTypes';
+// @ts-ignore
 import { getSoundsPath } from './functions';
 import { getDisabledSounds } from './functions.any';
 
@@ -70,7 +72,7 @@ export function playSound(soundId: string): Object {
     return (dispatch: Function, getState: Function) => {
         const disabledSounds = getDisabledSounds(getState());
 
-        if (!disabledSounds.includes(soundId) && !disabledSounds.find(id => soundId.startsWith(id))) {
+        if (!disabledSounds.includes(soundId as Sounds) && !disabledSounds.find(id => soundId.startsWith(id))) {
             dispatch({
                 type: PLAY_SOUND,
                 soundId

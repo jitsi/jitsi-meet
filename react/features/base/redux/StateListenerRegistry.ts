@@ -1,6 +1,6 @@
 import { Store } from 'redux';
 
-import { IState } from '../../app/types';
+import { IState, IStore } from '../../app/types';
 
 import { equals } from './functions';
 import logger from './logger';
@@ -20,7 +20,7 @@ import logger from './logger';
  * Immutable!
  */
 type Listener
-    = (selection: any, store: Store<any, any>, prevSelection: any) => void;
+    = (selection: any, store: IStore, prevSelection: any) => void;
 
 /**
  * The type selector supported for registration with
