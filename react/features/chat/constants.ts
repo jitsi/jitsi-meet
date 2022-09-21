@@ -35,3 +35,8 @@ export const SMALL_WIDTH_THRESHOLD = 580;
  * Lobby message type.
  */
 export const LOBBY_CHAT_MESSAGE = 'LOBBY_CHAT_MESSAGE';
+
+export const CHAT_TABS = {
+    POLLS: 'polls-tab',
+    CHAT: 'chat-tab'
+};

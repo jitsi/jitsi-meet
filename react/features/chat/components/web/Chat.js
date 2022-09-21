@@ -8,6 +8,7 @@ import { connect } from '../../../base/redux';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { PollsPane } from '../../../polls/components';
 import { toggleChat } from '../../actions.web';
+import { CHAT_TABS } from '../../constants';
 import AbstractChat, {
     _mapStateToProps,
     type Props
@@ -140,7 +141,7 @@ class Chat extends AbstractChat<Props> {
                 <>
                     { _isPollsEnabled && this._renderTabs() }
                     <div
-                        aria-labelledby = 'polls-tab'
+                        aria-labelledby = { CHAT_TABS.POLLS }
                         id = 'polls-panel'
                         role = 'tabpanel'>
                         <PollsPane />
@@ -154,7 +155,7 @@ class Chat extends AbstractChat<Props> {
             <>
                 { _isPollsEnabled && this._renderTabs() }
                 <div
-                    aria-labelledby = 'chat-tab'
+                    aria-labelledby = { CHAT_TABS.CHAT }
                     className = { clsx('chat-panel', !_isPollsEnabled && 'chat-panel-no-tabs') }
                     id = 'chat-panel'
                     role = 'tabpanel'>
@@ -183,16 +184,16 @@ class Chat extends AbstractChat<Props> {
             <Tabs
                 accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
                 onChange = { this._onChangeTab }
-                selected = { _isPollsTabFocused ? 'polls-tab' : 'chat-tab' }
+                selected = { _isPollsTabFocused ? CHAT_TABS.POLLS : CHAT_TABS.CHAT }
                 tabs = { [ {
                     accessibilityLabel: t('chat.tabs.chat'),
                     countBadge: _isPollsTabFocused && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
-                    id: 'chat-tab',
+                    id: CHAT_TABS.CHAT,
                     label: t('chat.tabs.chat')
                 }, {
                     accessibilityLabel: t('chat.tabs.polls'),
                     countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
-                    id: 'polls-tab',
+                    id: CHAT_TABS.POLLS,
                     label: t('chat.tabs.polls')
                 }
                 ] } />
@@ -222,7 +223,7 @@ class Chat extends AbstractChat<Props> {
      * @returns {void}
      */
     _onChangeTab(id) {
-        id === 'chat-tab' ? this._onToggleChatTab() : this._onTogglePollsTab();
+        id === CHAT_TABS.CHAT ? this._onToggleChatTab() : this._onTogglePollsTab();
     }
 }
 
