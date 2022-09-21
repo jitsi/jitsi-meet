@@ -16,6 +16,7 @@
 
 #import <Intents/Intents.h>
 #import <WebRTC/RTCLogging.h>
+#import "Orientation.h"
 
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
@@ -125,6 +126,10 @@
     [JitsiMeetView updateProps:[conferenceOptions asProps]];
 
     return true;
+}
+
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    return [Orientation getOrientation];
 }
 
 #pragma mark - Utility methods

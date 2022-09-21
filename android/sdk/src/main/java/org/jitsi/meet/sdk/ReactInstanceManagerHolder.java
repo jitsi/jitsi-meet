@@ -129,6 +129,7 @@ class ReactInstanceManagerHolder {
             new com.zmxv.RNSound.RNSoundPackage(),
             new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
             new com.horcrux.svg.SvgPackage(),
+            new org.wonday.orientation.OrientationPackage(),
             new ReactPackageAdapter() {
                 @Override
                 public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
