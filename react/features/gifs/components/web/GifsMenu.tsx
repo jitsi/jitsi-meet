@@ -177,6 +177,10 @@ function GifsMenu() {
     // This fixes that.
     useEffect(() => setSearchKey(''), []);
 
+    const onInputKeyPress = useCallback((e: React.KeyboardEvent) => {
+        e.stopPropagation();
+    }, []);
+
     const gifMenu = (
         <div
             className = { cx(styles.gifsMenu,
@@ -186,6 +190,7 @@ function GifsMenu() {
                 autoFocus = { true }
                 className = { cx(styles.searchField, 'gif-input') }
                 onChange = { handleSearchKeyChange }
+                onKeyPress = { onInputKeyPress }
                 placeholder = { t('giphy.search') }
                 // eslint-disable-next-line react/jsx-no-bind
                 ref = { inputElement => {
