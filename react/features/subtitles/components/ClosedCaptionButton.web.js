@@ -3,7 +3,7 @@
 import { translate } from '../../base/i18n';
 import { IconClosedCaption } from '../../base/icons';
 import { connect } from '../../base/redux';
-import { toggleLangugeSelectorDialog } from '../actions';
+import { toggleLanguageSelectorDialog } from '../actions';
 
 import {
     AbstractClosedCaptionButton,
@@ -31,7 +31,7 @@ class ClosedCaptionButton
     _handleClickOpenLanguageSelector() {
         const { dispatch } = this.props;
 
-        dispatch(toggleLangugeSelectorDialog());
+        dispatch(toggleLanguageSelectorDialog());
     }
 }
 

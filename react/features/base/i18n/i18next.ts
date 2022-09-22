@@ -7,6 +7,8 @@ import _ from 'lodash';
 
 import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
 import MAIN_RESOURCES from '../../../../lang/main.json';
+import TRANSLATION_LANGUAGES_RESOURCES from '../../../../lang/translation-languages.json';
+import { IConfig } from '../config/configType';
 
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
 // eslint-disable-next-line lines-around-comment
@@ -35,22 +37,18 @@ const COUNTRIES = _.merge({}, COUNTRIES_RESOURCES, COUNTRIES_RESOURCES_OVERRIDES
  */
 export const LANGUAGES: Array<string> = Object.keys(LANGUAGES_RESOURCES);
 
-/**
- * The languages for the top section of the translation language list.
- *
- * @public
- * @type {Array<string>}
- */
-export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [ 'en' ];
+export const i18n = {
+    get translationLanguages() {
+        const config: IConfig = APP.store.getState()['features/base/config'];
 
-/**
- * The languages to explude from the translation language list.
- *
- * @public
- * @type {Array<string>}
- */
-export const TRANSLATION_LANGUAGES_EXCLUDE: Array<string>
-= [ 'enGB', 'esUS', 'frCA', 'hsb', 'kab', 'ptBR', 'zhCN', 'zhTW' ];
+        return config.i18n?.translationLanguages || Object.keys(TRANSLATION_LANGUAGES_RESOURCES);
+    },
+    get translationLanguagesHead() {
+        const config: IConfig = APP.store.getState()['features/base/config'];
+
+        return config.i18n?.translationLanguagesHead || [ 'en' ];
+    }
+};
 
 /**
  * The default language.
@@ -77,7 +75,7 @@ const options = {
         escapeValue: false // not needed for react as it escapes by default
     },
     load: 'languageOnly',
-    ns: [ 'main', 'languages', 'countries' ],
+    ns: [ 'main', 'languages', 'countries', 'translation-languages' ],
     react: {
         // re-render when a new resource bundle is added
         bindI18nStore: 'added',
@@ -107,6 +105,12 @@ i18next.addResourceBundle(
     DEFAULT_LANGUAGE,
     'languages',
     LANGUAGES_RESOURCES,
+    /* deep */ true,
+    /* overwrite */ true);
+i18next.addResourceBundle(
+    DEFAULT_LANGUAGE,
+    'translation-languages',
+    TRANSLATION_LANGUAGES_RESOURCES,
     /* deep */ true,
     /* overwrite */ true);
 i18next.addResourceBundle(

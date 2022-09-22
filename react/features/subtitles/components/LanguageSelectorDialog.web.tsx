@@ -6,7 +6,7 @@ import { IState } from '../../app/types';
 // @ts-ignore
 import { Dialog } from '../../base/dialog';
 // @ts-ignore
-import { LANGUAGES, TRANSLATION_LANGUAGES_EXCLUDE, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
+import { i18n } from '../../base/i18n';
 import { connect } from '../../base/redux/functions';
 // @ts-ignore
 import { setRequestingSubtitles, toggleLangugeSelectorDialog, updateTranslationLanguage } from '../actions';
@@ -28,13 +28,11 @@ const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => 
     const off = 'transcribing.subtitlesOff';
     const [ language, setLanguage ] = useState(off);
 
-    const importantLanguages = TRANSLATION_LANGUAGES_HEAD.map((lang: string) => `languages:${lang}`);
-    const fixedItems = [ off, ...importantLanguages ];
-
-    const languages = LANGUAGES
-        .filter((lang: string) => !TRANSLATION_LANGUAGES_EXCLUDE.includes(lang))
-        .map((lang: string) => `languages:${lang}`)
-        .filter((lang: string) => !(lang === language || importantLanguages.includes(lang)));
+    const languagesHead = i18n.translationLanguagesHead.map((lang: string) => `translation-languages:${lang}`);
+    const fixedItems = [ off, ...languagesHead ];
+    const languages = i18n.translationLanguages
+        .map((lang: string) => `translation-languages:${lang}`)
+        .filter((lang: string) => !(lang === language || languagesHead.includes(lang)));
 
     const listItems = (fixedItems.includes(language)
         ? [ ...fixedItems, ...languages ]

@@ -1,4 +1,5 @@
 // @flow
+import i18next from 'i18next';
 
 import { MiddlewareRegistry } from '../base/redux';
 
@@ -115,7 +116,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 newTranscriptMessage));
 
         } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
-                && !translationLanguage) {
+        && i18next.language === translationLanguage) {
             // Displays interim and final results without any translation if
             // translations are disabled.
 
@@ -186,7 +187,7 @@ function _requestingSubtitlesChange({ getState }) {
     if (requestingSubtitles) {
         conference.setLocalParticipantProperty(
             P_NAME_TRANSLATION_LANGUAGE,
-            _language.replace('languages:', ''));
+            _language.replace('translation-languages:', ''));
     }
 }
 

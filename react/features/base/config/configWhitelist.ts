@@ -178,6 +178,7 @@ export default [
     'hideEmailInSettings',
     'hideLobbyButton',
     'hosts',
+    'i18n',
     'iAmRecorder',
     'iAmSipGateway',
     'iceTransportPolicy',
