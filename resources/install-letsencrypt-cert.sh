@@ -52,13 +52,13 @@ fi
 
 RELOAD_CMD+=" && /usr/share/jitsi-meet/scripts/coturn-le-update.sh ${DOMAIN}"
 
-ISSUE_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh --issue -d ${DOMAIN} -w /usr/share/jitsi-meet --server letsencrypt"
+ISSUE_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh -f --issue -d ${DOMAIN} -w /usr/share/jitsi-meet --server letsencrypt"
 eval "${ISSUE_CERT_CMD}" || ISSUE_FAILED="true"
 
-INSTALL_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh --install-cert -d ${DOMAIN} --key-file /etc/jitsi/meet/${DOMAIN}.key --fullchain-file /etc/jitsi/meet/${DOMAIN}.crt --reloadcmd \"${RELOAD_CMD}\""
+INSTALL_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh -f --install-cert -d ${DOMAIN} --key-file /etc/jitsi/meet/${DOMAIN}.key --fullchain-file /etc/jitsi/meet/${DOMAIN}.crt --reloadcmd \"${RELOAD_CMD}\""
 if [ "$ISSUE_FAILED" = "true" ] ; then
     # it maybe this certificate already exists
-    if /opt/acmesh/.acme.sh/acme.sh --list | grep -q "${DOMAIN}"; then
+    if /opt/acmesh/.acme.sh/acme.sh -f --list | grep -q "${DOMAIN}"; then
         eval "$INSTALL_CERT_CMD"
     else
         echo "Issuing the certificate from Let's Encrypt failed, continuing ..."
