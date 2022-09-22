@@ -1,4 +1,6 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
+import { AnyAction } from 'redux';
+
 import { IStore } from '../app/types';
 import {
     E2E_RTT_CHANGED,
@@ -10,25 +12,21 @@ import {
     // @ts-ignore
 } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
-
-// @ts-ignore
-import { DOMINANT_SPEAKER_CHANGED } from '../base/participants';
-
-// @ts-ignore
-import { MiddlewareRegistry } from '../base/redux';
-
-// @ts-ignore
-import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks';
-
-// @ts-ignore
+import { DOMINANT_SPEAKER_CHANGED } from '../base/participants/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks/actionTypes';
 import { isInBreakoutRoom, getCurrentRoomId } from '../breakout-rooms/functions';
-
 // @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
-import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
+import { ADD_FACE_EXPRESSION, FACE_LANDMARK_DETECTION_STOPPED } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
-import { canSendRtcstatsData, connectAndSendIdentity, isRtcstatsEnabled } from './functions';
+import {
+    canSendFaceLandmarksRtcstatsData,
+    canSendRtcstatsData,
+    connectAndSendIdentity,
+    isRtcstatsEnabled
+} from './functions';
 import logger from './logger';
 
 /**
@@ -38,11 +36,11 @@ import logger from './logger';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
-    const { dispatch, getState } = store;
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
+    const { getState } = store;
     const state = getState();
     const config = state['features/base/config'];
-    const { analytics, faceLandmarks } = config;
+    const { analytics } = config;
 
     switch (action.type) {
     case LIB_WILL_INIT: {
@@ -78,8 +76,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
     case CONFERENCE_JOINED: {
         if (isInBreakoutRoom(getState())) {
             connectAndSendIdentity(
-                dispatch,
-                state,
+                store,
                 {
                     isBreakoutRoom: true,
                     roomId: getCurrentRoomId(getState())
@@ -99,8 +96,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             const meetingUniqueId = conference?.getMeetingUniqueId();
 
             connectAndSendIdentity(
-                dispatch,
-                state,
+                store,
                 {
                     isBreakoutRoom: false,
                     meetingUniqueId
@@ -164,13 +160,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         }
         break;
     }
-    case ADD_FACE_EXPRESSION: {
-        if (canSendRtcstatsData(state) && faceLandmarks && faceLandmarks.enableRTCStats) {
+    case ADD_FACE_EXPRESSION:
+    case FACE_LANDMARK_DETECTION_STOPPED: {
+        if (canSendFaceLandmarksRtcstatsData(state)) {
             const { duration, faceExpression, timestamp } = action;
 
             RTCStats.sendFaceLandmarksData({
-                duration,
-                faceLandmarks: faceExpression,
+                duration: duration ?? 0,
+                faceLandmarks: faceExpression ?? 'detection-off',
                 timestamp
             });
         }

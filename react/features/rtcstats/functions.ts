@@ -13,32 +13,33 @@ import {
 // @ts-ignore
 import { getLocalParticipant } from '../base/participants';
 
-// @ts-ignore
-import { toState } from '../base/redux';
+import { toState } from '../base/redux/functions';
 
 import RTCStats from './RTCStats';
 import logger from './logger';
+import { IStateful } from '../base/app/types';
+import { IStore } from '../app/types';
 
 /**
  * Checks whether rtcstats is enabled or not.
  *
- * @param {Function|Object} stateful - The redux store or {@code getState} function.
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
  * @returns {boolean}
  */
-export function isRtcstatsEnabled(stateful: Function | Object) {
+export function isRtcstatsEnabled(stateful: IStateful) {
     const state = toState(stateful);
-    const config = state['features/base/config'];
+    const { analytics } = state['features/base/config'];
 
-    return config?.analytics?.rtcstatsEnabled ?? false;
+    return analytics?.rtcstatsEnabled ?? false;
 }
 
 /**
  * Can the rtcstats service send data.
  *
- * @param {Function|Object} stateful - The redux store or {@code getState} function.
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
  * @returns {boolean}
  */
-export function canSendRtcstatsData(stateful: Function | Object) {
+export function canSendRtcstatsData(stateful: IStateful) {
     return isRtcstatsEnabled(stateful) && RTCStats.isInitialized();
 }
 
@@ -54,13 +55,12 @@ type Identity = {
 /**
  * Connects to the rtcstats service and sends the identity data.
  *
- * @param {Function} dispatch - The redux dispatch function.
- * @param  {Function|Object} stateful - The redux store or {@code getState} function.
+ * @param {IStore} store - Redux Store.
  * @param {Identity} identity - Identity data for the client.
  * @returns {void}
  */
-export function connectAndSendIdentity(dispatch: Function, stateful: Function | Object, identity: Identity) {
-    const state = toState(stateful);
+export function connectAndSendIdentity({ getState, dispatch }: IStore, identity: Identity) {
+    const state = getState();
 
     if (canSendRtcstatsData(state)) {
 
@@ -97,4 +97,21 @@ export function connectAndSendIdentity(dispatch: Function, stateful: Function | 
         }
     }
 
+}
+
+/**
+ * Checks if the faceLandmarks data can be sent to the rtcstats server.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function canSendFaceLandmarksRtcstatsData(stateful: IStateful): boolean {
+    const state = toState(stateful);
+    const { faceLandmarks } = state['features/base/config'];
+
+    if (faceLandmarks?.enableRTCStats && canSendRtcstatsData(state)) {
+        return true;
+    }
+
+    return false;
 }
