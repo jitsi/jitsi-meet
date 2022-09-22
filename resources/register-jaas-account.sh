@@ -22,6 +22,8 @@ if [ ${create_error} -ne 0 ]; then
     exit 2
 fi
 
+# make sure .well-known exists
+mkdir -p "$(dirname "$CHALLENGE_FILE")"
 # Creating the challenge file
 echo "${create_data}" | jq -r .challenge > ${CHALLENGE_FILE}
 
