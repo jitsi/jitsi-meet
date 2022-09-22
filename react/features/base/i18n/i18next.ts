@@ -39,14 +39,14 @@ export const LANGUAGES: Array<string> = Object.keys(LANGUAGES_RESOURCES);
 
 export const i18n = {
     get translationLanguages() {
-        const config: IConfig = APP.store.getState()['features/base/config'];
+        const config: IConfig = APP?.store.getState()['features/base/config'];
 
-        return config.i18n?.translationLanguages || Object.keys(TRANSLATION_LANGUAGES_RESOURCES);
+        return config?.i18n?.translationLanguages || Object.keys(TRANSLATION_LANGUAGES_RESOURCES);
     },
     get translationLanguagesHead() {
-        const config: IConfig = APP.store.getState()['features/base/config'];
+        const config: IConfig = APP?.store.getState()['features/base/config'];
 
-        return config.i18n?.translationLanguagesHead || [ 'en' ];
+        return config?.i18n?.translationLanguagesHead || [ 'en' ];
     }
 };
 
