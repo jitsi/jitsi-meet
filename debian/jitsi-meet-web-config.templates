@@ -37,10 +37,8 @@ _Description: Hostname:
 Template: jitsi-meet/jaas-choice
 Type: boolean
 _Description: Interested in adding telephony to your Jitsi meetings?
- You can easily add dialing in support to your meetings using JaaS (Jitsi as a Service).
- You need to:
-  - have a certificate signed by a recognised CA or Let’s Encrypt on your deployment
-  - sign in for JaaS at https://jaas.8x8.vc/components?host=${domain}
+ You can easily add dialing in support to your meetings. You need to give us the permission to create a free JaaS (Jitsi as a Service) account for you.
+ Also, you need to have a certificate signed by a recognised CA or Let's Encrypt on your deployment.
 
 Template: jitsi-meet/email
 Type: string

@@ -57,9 +57,14 @@ eval "${ISSUE_CERT_CMD}" || ISSUE_FAILED="true"
 
 INSTALL_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh --install-cert -d ${DOMAIN} --key-file /etc/jitsi/meet/${DOMAIN}.key --fullchain-file /etc/jitsi/meet/${DOMAIN}.crt --reloadcmd \"${RELOAD_CMD}\""
 if [ "$ISSUE_FAILED" = "true" ] ; then
-    echo "Issuing the certificate from Let's Encrypt failed, continuing ..."
-    echo "You can retry later by executing:"
-    echo "/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL"
+    # it maybe this certificate already exists
+    if /opt/acmesh/.acme.sh/acme.sh --list | grep -q "${DOMAIN}"; then
+        eval "$INSTALL_CERT_CMD"
+    else
+        echo "Issuing the certificate from Let's Encrypt failed, continuing ..."
+        echo "You can retry later by executing:"
+        echo "/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL"
+    fi
 else
     eval "$INSTALL_CERT_CMD"
 fi
