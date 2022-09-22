@@ -227,8 +227,9 @@ case "$1" in
         if [[ "$ISSUE_LE_CERT" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
             /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $JVB_HOSTNAME || true
         fi
+        JAAS_REG_ERROR=0
         if [[ "${JAAS_INPUT}" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
-            /usr/share/jitsi-meet/scripts/register-jaas-account.sh $EMAIL $JVB_HOSTNAME || true
+            /usr/share/jitsi-meet/scripts/register-jaas-account.sh $EMAIL $JVB_HOSTNAME || JAAS_REG_ERROR=$?
         fi
 
         echo ""
@@ -239,16 +240,16 @@ case "$1" in
         echo "    .xMMMMNxkNc"
         echo "     dMMMMMkxXc"
         echo "     cNMMMNl.."
-        if [ "${JAAS_INPUT}" != "true" ]; then
+        if [ "${JAAS_INPUT}" != "true" ] || [ ${JAAS_REG_ERROR} -ne 0 ]; then
             echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
             echo "      ;XMMMO'"
             echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
             echo "        lNMMM0,                        and follow the guide in the dev console."
         else
             echo "     .kMMMX;"
-            echo "      ;XMMMO'            Don't forget to sign up on"
-            echo "       lNMMWO'             https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
-            echo "        lNMMM0,              in order to add telephony to your Jitsi meetings!"
+            echo "      ;XMMMO'            Congratulations! Now you can use telephony in your Jitsi meetings!"
+            echo "       lNMMWO'             We have created a free JaaS (Jitsi as a Service) account for you. "
+            echo "        lNMMM0,              You can login to https://jaas.8x8.vc/components to check our developer console and your account details."
         fi
         echo "         lXMMMK:."
         echo "          ;KMMMNKd.  'oo,"
