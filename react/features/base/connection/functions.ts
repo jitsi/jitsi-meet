@@ -64,7 +64,13 @@ export function getInviteURL(stateOrGetState: IStateful): string {
 
         return `${inviteDomain}/${meetingId}`;
     }
+    if(localStorage.getItem("urlDominio")){
+        const meetingId
+            = state['features/base/config'].brandingRoomAlias || urlWithoutParams.pathname.replace(/\//, '');
 
+        return `${ localStorage.getItem("urlDominio") }/${meetingId}`;
+
+    }
     return urlWithoutParams.href;
 }
 
