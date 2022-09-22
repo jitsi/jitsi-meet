@@ -152,7 +152,6 @@ export function createLocalTracksF(options: TrackOptions = {}, store?: IStore) {
     if (typeof APP !== 'undefined') {
         // TODO The app's settings should go in the redux store and then the
         // reliance on the global variable APP will go away.
-        // store || (store = APP.store); // eslint-disable-line no-param-reassign
         if (!store) {
             store = APP.store; // eslint-disable-line no-param-reassign
         }
@@ -167,9 +166,7 @@ export function createLocalTracksF(options: TrackOptions = {}, store?: IStore) {
         }
     }
 
-    if (!store) {
-        return;
-    }
+    // @ts-ignore
     const state = store.getState();
     const {
         desktopSharingFrameRate,
