@@ -9,7 +9,7 @@ import { Dialog } from '../../base/dialog';
 import { i18n } from '../../base/i18n';
 import { connect } from '../../base/redux/functions';
 // @ts-ignore
-import { setRequestingSubtitles, toggleLangugeSelectorDialog, updateTranslationLanguage } from '../actions';
+import { updateTranslationLanguage, setRequestingSubtitles, toggleLanguageSelectorDialog } from '../actions';
 
 import LanguageList from './LanguageList';
 
@@ -53,7 +53,7 @@ const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => 
         setLanguage(e);
         dispatch(updateTranslationLanguage(e));
         dispatch(setRequestingSubtitles(e !== off));
-        dispatch(toggleLangugeSelectorDialog());
+        dispatch(toggleLanguageSelectorDialog());
     }, [ _language ]);
 
     return (
