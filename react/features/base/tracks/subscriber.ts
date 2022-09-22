@@ -1,12 +1,8 @@
-// @flow
-
 import _ from 'lodash';
 
-import { StateListenerRegistry } from '../../base/redux';
+import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 import { isLocalCameraTrackMuted } from './functions';
-
-declare var APP: Object;
 
 /**
  * Notifies when the list of currently sharing participants changes.

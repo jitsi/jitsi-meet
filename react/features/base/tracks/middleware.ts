@@ -1,28 +1,30 @@
-// @flow
-
 import { batch } from 'react-redux';
 
+import { IStore } from '../../app/types';
 import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
-import { hideNotification } from '../../notifications';
+import { hideNotification } from '../../notifications/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { getAvailableDevices } from '../devices/actions';
 import {
-    CAMERA_FACING_MODE,
-    MEDIA_TYPE,
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_MUTED,
-    VIDEO_MUTISM_AUTHORITY,
     TOGGLE_CAMERA_FACING_MODE,
-    toggleCameraFacingMode,
-    SET_SCREENSHARE_MUTED,
+    SET_SCREENSHARE_MUTED
+} from '../media/actionTypes';
+import { toggleCameraFacingMode, setScreenshareMuted } from '../media/actions';
+import {
+    CAMERA_FACING_MODE,
+    MEDIA_TYPE,
+    VIDEO_MUTISM_AUTHORITY,
     VIDEO_TYPE,
-    setScreenshareMuted,
-    SCREENSHARE_MUTISM_AUTHORITY
-} from '../media';
-import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
+    SCREENSHARE_MUTISM_AUTHORITY,
+    MediaType
+} from '../media/constants';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 import {
     TRACK_ADDED,
@@ -47,10 +49,9 @@ import {
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
+import { ITrack } from './reducer';
 
 import './subscriber';
-
-declare var APP: Object;
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -267,7 +268,7 @@ StateListenerRegistry.register(
  * @private
  * @returns {void}
  */
-function _handleNoDataFromSourceErrors(store, action) {
+function _handleNoDataFromSourceErrors(store: IStore, action: any) {
     const { getState, dispatch } = store;
 
     const track = getTrackByJitsiTrack(getState()['features/base/tracks'], action.track.jitsiTrack);
@@ -323,9 +324,9 @@ function _handleNoDataFromSourceErrors(store, action) {
  * {@code mediaType} in the specified {@code store}.
  */
 function _getLocalTrack(
-        { getState }: { getState: Function },
-        mediaType: MEDIA_TYPE,
-        includePending: boolean = false) {
+        { getState }: { getState: Function; },
+        mediaType: MediaType,
+        includePending = false) {
     return (
         getLocalTrack(
             getState()['features/base/tracks'],
@@ -340,11 +341,11 @@ function _getLocalTrack(
  * @param {Track} track - The redux action dispatched in the specified store.
  * @returns {void}
  */
-function _removeNoDataFromSourceNotification({ getState, dispatch }, track) {
+function _removeNoDataFromSourceNotification({ getState, dispatch }: IStore, track: ITrack) {
     const t = getTrackByJitsiTrack(getState()['features/base/tracks'], track.jitsiTrack);
     const { jitsiTrack, noDataFromSourceNotificationInfo = {} } = t || {};
 
-    if (noDataFromSourceNotificationInfo && noDataFromSourceNotificationInfo.uid) {
+    if (noDataFromSourceNotificationInfo?.uid) {
         dispatch(hideNotification(noDataFromSourceNotificationInfo.uid));
         dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
     }
@@ -361,7 +362,8 @@ function _removeNoDataFromSourceNotification({ getState, dispatch }, track) {
  * @private
  * @returns {void}
  */
-async function _setMuted(store, { ensureTrack, authority, muted }, mediaType: MEDIA_TYPE) {
+async function _setMuted(store: IStore, { ensureTrack, authority, muted }: {
+    authority: number; ensureTrack: boolean; muted: boolean; }, mediaType: MediaType) {
     const { dispatch, getState } = store;
     const localTrack = _getLocalTrack(store, mediaType, /* includePending */ true);
     const state = getState();
