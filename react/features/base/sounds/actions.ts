@@ -68,7 +68,7 @@ export function _removeAudioElement(soundId: string) {
  * which was used in {@link registerSound} to register the sound).
  * @returns {Function}
  */
-export function playSound(soundId: string): Object {
+export function playSound(soundId: string) {
     return (dispatch: Function, getState: Function) => {
         const disabledSounds = getDisabledSounds(getState());
 
@@ -103,7 +103,7 @@ export function playSound(soundId: string): Object {
  * }}
  */
 export function registerSound(
-        soundId: string, soundName: string, options: Object = {}): Object {
+        soundId: string, soundName: string, options: Object = {}) {
     return {
         type: REGISTER_SOUND,
         soundId,
@@ -122,7 +122,7 @@ export function registerSound(
  *     soundId: string
  * }}
  */
-export function stopSound(soundId: string): Object {
+export function stopSound(soundId: string) {
     return {
         type: STOP_SOUND,
         soundId
@@ -141,7 +141,7 @@ export function stopSound(soundId: string): Object {
  *     soundId: string
  * }}
  */
-export function unregisterSound(soundId: string): Object {
+export function unregisterSound(soundId: string) {
     return {
         type: UNREGISTER_SOUND,
         soundId

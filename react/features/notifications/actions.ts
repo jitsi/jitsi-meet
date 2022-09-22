@@ -92,9 +92,12 @@ export function setNotificationsEnabled(enabled: boolean) {
 interface INotificationProps {
     appearance?: string;
     concatText?: boolean;
+    customActionHandler?: Function[];
+    customActionNameKey?: string[];
     description?: string;
     descriptionKey?: string;
     icon?: string;
+    title?: string;
     titleArguments?: {
         [key: string]: string;
     };

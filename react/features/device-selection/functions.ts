@@ -1,37 +1,37 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
+import { IStore } from '../app/types';
+import { IStateful } from '../base/app/types';
 import {
     addPendingDeviceRequest,
-    areDeviceLabelsInitialized,
-    getAudioOutputDeviceId,
     getAvailableDevices,
-    getDeviceIdByLabel,
-    groupDevicesByKind,
     setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDevice,
     setVideoInputDeviceAndUpdateSettings
-} from '../base/devices';
+} from '../base/devices/actions';
+import {
+    areDeviceLabelsInitialized,
+    getAudioOutputDeviceId,
+    getDeviceIdByLabel,
+    groupDevicesByKind
+} from '../base/devices/functions';
 import { isIosMobileBrowser } from '../base/environment/utils';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
-import { toState } from '../base/redux';
+import { toState } from '../base/redux/functions';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId,
     getUserSelectedOutputDeviceId
-} from '../base/settings';
+} from '../base/settings/functions.any';
 
 /**
  * Returns the properties for the device selection dialog from Redux state.
  *
- * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * @param {IStateful} stateful -The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
  * @param {boolean} isDisplayedOnWelcomePage - Indicates whether the device selection dialog is displayed on the
  * welcome page or not.
  * @returns {Object} - The properties for the device selection dialog.
  */
-export function getDeviceSelectionDialogProps(stateful: Object | Function, isDisplayedOnWelcomePage) {
+export function getDeviceSelectionDialogProps(stateful: IStateful, isDisplayedOnWelcomePage: boolean) {
     // On mobile Safari because of https://bugs.webkit.org/show_bug.cgi?id=179363#c30, the old track is stopped
     // by the browser when a new track is created for preview. That's why we are disabling all previews.
     const disablePreviews = isIosMobileBrowser();
@@ -96,9 +96,9 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function, isDis
  * @returns {boolean} - True if the request has been processed and false otherwise.
  */
 export function processExternalDeviceRequest( // eslint-disable-line max-params
-        dispatch: Dispatch<any>,
-        getState: Function,
-        request: Object,
+        dispatch: IStore['dispatch'],
+        getState: IStore['getState'],
+        request: any,
         responseCallback: Function) {
     if (request.type !== 'devices') {
         return false;
@@ -119,10 +119,10 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
     case 'isMultipleAudioInputSupported':
         responseCallback(JitsiMeetJS.isMultipleAudioInputSupported());
         break;
-    case 'getCurrentDevices':
-        dispatch(getAvailableDevices()).then(devices => {
+    case 'getCurrentDevices': // @ts-ignore
+        dispatch(getAvailableDevices()).then((devices: MediaDeviceInfo[]) => {
             if (areDeviceLabelsInitialized(state)) {
-                const deviceDescriptions = {
+                const deviceDescriptions: any = {
                     audioInput: undefined,
                     audioOutput: undefined,
                     videoInput: undefined
@@ -164,8 +164,8 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
         });
 
         break;
-    case 'getAvailableDevices':
-        dispatch(getAvailableDevices()).then(devices => {
+    case 'getAvailableDevices': // @ts-ignore
+        dispatch(getAvailableDevices()).then((devices: MediaDeviceInfo[]) => {
             if (areDeviceLabelsInitialized(state)) {
                 responseCallback(groupDevicesByKind(devices));
             } else {

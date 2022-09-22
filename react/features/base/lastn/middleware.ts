@@ -1,7 +1,6 @@
-// @flow
-
 import debounce from 'lodash/debounce';
 
+import { IStore } from '../../app/types';
 import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
@@ -22,7 +21,9 @@ import {
     getParticipantById,
     getParticipantCount
 } from '../participants/functions';
-import { MiddlewareRegistry } from '../redux';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { setLastN } from './actions';
@@ -36,7 +37,7 @@ import logger from './logger';
  * @private
  * @returns {void}
  */
-const _updateLastN = debounce(({ dispatch, getState }) => {
+const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
@@ -61,6 +62,7 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
     let lastNSelected = config.startLastN ?? (config.channelLastN ?? -1);
 
     // Apply last N limit based on the # of participants and config settings.
+    // @ts-ignore
     const limitedLastN = limitLastN(participantCount, lastNLimits);
 
     if (limitedLastN !== undefined) {
@@ -81,7 +83,7 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
         // view since we make an exception only for screenshare when in audio-only mode. If the user unpins
         // the screenshare, lastN will be set to 0 here. It will be set to 1 if screenshare has been auto pinned.
         if (!tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
-            lastNSelected = (remoteScreenShares || []).includes(largeVideoParticipantId) ? 1 : 0;
+            lastNSelected = (remoteScreenShares || []).includes(largeVideoParticipantId ?? '') ? 1 : 0;
         } else {
             lastNSelected = 0;
         }

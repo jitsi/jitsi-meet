@@ -1,5 +1,3 @@
-// @flow
-
 import { SET_LAST_N } from './actionTypes';
 
 /**
