@@ -1,21 +1,19 @@
-// @flow
-
+// @ts-ignore
 import jwtDecode from 'jwt-decode';
+import { AnyAction } from 'redux';
 
-import { SET_CONFIG } from '../config';
-import { SET_LOCATION_URL } from '../connection';
-import {
-    getLocalParticipant,
-    participantUpdated
-} from '../participants';
-import { MiddlewareRegistry } from '../redux';
+import { IStore } from '../../app/types';
+import { SET_CONFIG } from '../config/actionTypes';
+import { SET_LOCATION_URL } from '../connection/actionTypes';
+import { participantUpdated } from '../participants/actions';
+import { getLocalParticipant } from '../participants/functions';
+import { Participant } from '../participants/types';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { SET_JWT } from './actionTypes';
 import { setJWT } from './actions';
 import { parseJWTFromURLParams } from './functions';
 import logger from './logger';
-
-declare var APP: Object;
 
 /**
  * Middleware to parse token data upon setting a new room URL.
@@ -51,13 +49,14 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _overwriteLocalParticipant(
-        { dispatch, getState },
-        { avatarURL, email, id: jwtId, name, features }) {
+        { dispatch, getState }: IStore,
+        { avatarURL, email, id: jwtId, name, features }:
+        { avatarURL?: string; email?: string; features?: any; id?: string; name?: string; }) {
     let localParticipant;
 
     if ((avatarURL || email || name)
             && (localParticipant = getLocalParticipant(getState))) {
-        const newProperties: Object = {
+        const newProperties: Participant = {
             id: localParticipant.id,
             local: true
         };
@@ -97,7 +96,7 @@ function _overwriteLocalParticipant(
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _setConfigOrLocationURL({ dispatch, getState }, next, action) {
+function _setConfigOrLocationURL({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     const { locationURL } = getState()['features/base/connection'];
@@ -122,8 +121,8 @@ function _setConfigOrLocationURL({ dispatch, getState }, next, action) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _setJWT(store, next, action) {
-    // eslint-disable-next-line no-unused-vars
+function _setJWT(store: IStore, next: Function, action: AnyAction) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { jwt, type, ...actionPayload } = action;
 
     if (!Object.keys(actionPayload).length) {
@@ -186,13 +185,13 @@ function _setJWT(store, next, action) {
  * @returns {void}
  */
 function _undoOverwriteLocalParticipant(
-        { dispatch, getState },
-        { avatarURL, name, email }) {
+        { dispatch, getState }: IStore,
+        { avatarURL, name, email }: { avatarURL?: string; email?: string; name?: string; }) {
     let localParticipant;
 
     if ((avatarURL || name || email)
             && (localParticipant = getLocalParticipant(getState))) {
-        const newProperties: Object = {
+        const newProperties: Participant = {
             id: localParticipant.id,
             local: true
         };
@@ -226,8 +225,10 @@ function _undoOverwriteLocalParticipant(
  *     hidden-from-recorder: ?boolean
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name, 'hidden-from-recorder': hiddenFromRecorder }) {
-    const participant = {};
+function _user2participant({ avatar, avatarUrl, email, id, name, 'hidden-from-recorder': hiddenFromRecorder }:
+    { avatar: any; avatarUrl: string; email: string; 'hidden-from-recorder': string | boolean;
+    id: string; name: string; }) {
+    const participant: any = {};
 
     if (typeof avatarUrl === 'string') {
         participant.avatarURL = avatarUrl.trim();

@@ -1,6 +1,5 @@
-// @flow
-
-import { MiddlewareRegistry } from '../redux';
+import { IStore } from '../../app/types';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { PLAY_SOUND, STOP_SOUND } from './actionTypes';
 import logger from './logger';
@@ -32,7 +31,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _playSound({ getState }, soundId) {
+function _playSound({ getState }: IStore, soundId: string) {
     const sounds = getState()['features/base/sounds'];
     const sound = sounds.get(soundId);
 
@@ -55,7 +54,7 @@ function _playSound({ getState }, soundId) {
  * @private
  * @returns {void}
  */
-function _stopSound({ getState }, soundId) {
+function _stopSound({ getState }: IStore, soundId: string) {
     const sounds = getState()['features/base/sounds'];
     const sound = sounds.get(soundId);
 

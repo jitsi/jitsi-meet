@@ -1,7 +1,5 @@
-// @flow
-
 import { SET_NETWORK_INFO, _STORE_NETWORK_INFO_CLEANUP } from './actionTypes';
-import type { NetworkInfo } from './types';
+import { NetworkInfo } from './types';
 
 /**
  * Up[dates the network info state.
@@ -14,7 +12,7 @@ import type { NetworkInfo } from './types';
  *     details: Object
  * }}
  */
-export function setNetworkInfo({ isOnline, networkType, details }: NetworkInfo): Object {
+export function setNetworkInfo({ isOnline, networkType, details }: NetworkInfo) {
     return {
         type: SET_NETWORK_INFO,
         isOnline,
@@ -33,7 +31,7 @@ export function setNetworkInfo({ isOnline, networkType, details }: NetworkInfo):
  * }}
  * @private
  */
-export function _storeNetworkInfoCleanup(cleanup: Function): Object {
+export function _storeNetworkInfoCleanup(cleanup?: Function) {
     return {
         type: _STORE_NETWORK_INFO_CLEANUP,
         cleanup

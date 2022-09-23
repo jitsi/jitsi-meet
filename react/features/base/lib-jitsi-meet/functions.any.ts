@@ -1,7 +1,7 @@
-// @flow
+import { IStateful } from '../app/types';
+import { toState } from '../redux/functions';
 
-import { toState } from '../redux';
-
+// @ts-ignore
 import JitsiMeetJS from './_';
 
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
@@ -18,7 +18,7 @@ const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
  *
  * @returns {Promise<JitsiLocalTrack>}
  */
-export function createLocalTrack(type: string, deviceId: string, timeout: ?number, additionalOptions: ?Object) {
+export function createLocalTrack(type: string, deviceId: string, timeout?: number, additionalOptions?: Object) {
     return (
         JitsiMeetJS.createLocalTracks({
             cameraDeviceId: deviceId,
@@ -26,23 +26,23 @@ export function createLocalTrack(type: string, deviceId: string, timeout: ?numbe
 
             // eslint-disable-next-line camelcase
             firefox_fake_device:
-                window.config && window.config.firefox_fake_device,
+                window.config?.firefox_fake_device,
             micDeviceId: deviceId,
             timeout,
             ...additionalOptions
         })
-            .then(([ jitsiLocalTrack ]) => jitsiLocalTrack));
+            .then(([ jitsiLocalTrack ]: any[]) => jitsiLocalTrack));
 }
 
 /**
  * Determines whether analytics is enabled in a specific redux {@code store}.
  *
- * @param {Function|Object} stateful - The redux store, state, or
+ * @param {IStateful} stateful - The redux store, state, or
  * {@code getState} function.
  * @returns {boolean} If analytics is enabled, {@code true}; {@code false},
  * otherwise.
  */
-export function isAnalyticsEnabled(stateful: Function | Object) {
+export function isAnalyticsEnabled(stateful: IStateful) {
     const { disableThirdPartyRequests, analytics = {} } = toState(stateful)['features/base/config'];
 
     return !(disableThirdPartyRequests || analytics.disabled);
@@ -56,13 +56,13 @@ export function isAnalyticsEnabled(stateful: Function | Object) {
  * that category. I've currently named the category fatal because it appears to
  * be used in the cases of unrecoverable errors that necessitate a reload.
  *
- * @param {Object|string} error - The {@code JitsiConferenceErrors} instance to
+ * @param {Error|string} error - The {@code JitsiConferenceErrors} instance to
  * categorize/classify or an {@link Error}-like object.
  * @returns {boolean} If the specified {@code JitsiConferenceErrors} instance
  * indicates a fatal {@code JitsiConference} error, {@code true}; otherwise,
  * {@code false}.
  */
-export function isFatalJitsiConferenceError(error: Object | string) {
+export function isFatalJitsiConferenceError(error: Error | string) {
     if (typeof error !== 'string') {
         error = error.name; // eslint-disable-line no-param-reassign
     }
@@ -83,13 +83,13 @@ export function isFatalJitsiConferenceError(error: Object | string) {
  * that category. I've currently named the category fatal because it appears to
  * be used in the cases of unrecoverable errors that necessitate a reload.
  *
- * @param {Object|string} error - The {@code JitsiConnectionErrors} instance to
+ * @param {Error|string} error - The {@code JitsiConnectionErrors} instance to
  * categorize/classify or an {@link Error}-like object.
  * @returns {boolean} If the specified {@code JitsiConnectionErrors} instance
  * indicates a fatal {@code JitsiConnection} error, {@code true}; otherwise,
  * {@code false}.
  */
-export function isFatalJitsiConnectionError(error: Object | string) {
+export function isFatalJitsiConnectionError(error: Error | string) {
     if (typeof error !== 'string') {
         error = error.name; // eslint-disable-line no-param-reassign
     }

@@ -1,13 +1,15 @@
-import { SET_CONFIG } from '../config';
-import { SET_NETWORK_INFO } from '../net-info';
-import { PARTICIPANT_LEFT } from '../participants';
-import { MiddlewareRegistry } from '../redux';
+import { AnyAction } from 'redux';
 
+import { IStore } from '../../app/types';
+import { SET_CONFIG } from '../config/actionTypes';
+import { SET_NETWORK_INFO } from '../net-info/actionTypes';
+import { PARTICIPANT_LEFT } from '../participants/actionTypes';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+
+// @ts-ignore
 import JitsiMeetJS from './_';
 import { LIB_WILL_INIT } from './actionTypes';
 import { disposeLib, initLib } from './actions';
-
-declare var APP: Object;
 
 /**
  * Middleware that captures PARTICIPANT_LEFT action for a local participant
@@ -60,7 +62,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _setConfig({ dispatch, getState }, next, action) {
+function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { initialized } = getState()['features/base/lib-jitsi-meet'];
 
     // XXX Since the config is changing, the library lib-jitsi-meet must be
@@ -93,8 +95,8 @@ function _setErrorHandlers() {
 
         // eslint-disable-next-line max-params
         window.onerror = (message, source, lineno, colno, error) => {
-            const errMsg = message || (error && error.message);
-            const stack = error && error.stack;
+            const errMsg = message || error?.message;
+            const stack = error?.stack;
 
             JitsiMeetJS.getGlobalOnErrorHandler(errMsg, source, lineno, colno, stack);
 
@@ -107,7 +109,7 @@ function _setErrorHandlers() {
 
         window.onunhandledrejection = function(event) {
             let message = event.reason;
-            let stack = 'n/a';
+            let stack: string | undefined = 'n/a';
 
             if (event.reason instanceof Error) {
                 ({ message, stack } = event.reason);
@@ -116,6 +118,7 @@ function _setErrorHandlers() {
             JitsiMeetJS.getGlobalOnErrorHandler(message, null, null, null, stack);
 
             if (oldOnUnhandledRejection) {
+                // @ts-ignore
                 oldOnUnhandledRejection(event);
             }
         };

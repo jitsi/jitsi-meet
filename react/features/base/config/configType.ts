@@ -301,6 +301,7 @@ export interface IConfig {
         disableTopPanel?: boolean;
         minParticipantCountForTopPanel?: number;
     };
+    firefox_fake_device?: string;
     flags?: {
         sendMultipleVideoStreams?: boolean;
         sourceNameSignaling?: boolean;

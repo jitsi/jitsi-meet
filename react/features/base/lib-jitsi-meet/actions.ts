@@ -1,10 +1,11 @@
-/* @flow */
-
+/* eslint-disable lines-around-comment */
+// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import type { Dispatch } from 'redux';
 
+import { IStore } from '../../app/types';
 import { isOnline } from '../net-info/selectors';
 
+// @ts-ignore
 import JitsiMeetJS from './_';
 import {
     LIB_DID_DISPOSE,
@@ -13,9 +14,8 @@ import {
     LIB_WILL_DISPOSE,
     LIB_WILL_INIT
 } from './actionTypes';
+// @ts-ignore
 import { isAnalyticsEnabled } from './functions';
-
-declare var APP: Object;
 
 /**
  * Disposes (of) lib-jitsi-meet.
@@ -23,7 +23,7 @@ declare var APP: Object;
  * @returns {Function}
  */
 export function disposeLib() {
-    return (dispatch: Dispatch<any>) => {
+    return (dispatch: IStore['dispatch']) => {
         dispatch({ type: LIB_WILL_DISPOSE });
 
         // TODO Currently, lib-jitsi-meet doesn't have the functionality to
@@ -39,7 +39,7 @@ export function disposeLib() {
  * @returns {Function}
  */
 export function initLib() {
-    return (dispatch: Dispatch<any>, getState: Function): void => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const config = state['features/base/config'];
 
@@ -59,7 +59,7 @@ export function initLib() {
                 isOnline: isOnline(state)
             });
             dispatch({ type: LIB_DID_INIT });
-        } catch (error) {
+        } catch (error: any) {
             dispatch(libInitError(error));
         }
     };
