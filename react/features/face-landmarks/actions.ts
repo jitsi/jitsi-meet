@@ -5,6 +5,7 @@ import { AnyAction } from 'redux';
 import {
     ADD_FACE_EXPRESSION,
     ADD_TO_FACE_EXPRESSIONS_BUFFER,
+    FACE_LANDMARK_DETECTION_STOPPED,
     CLEAR_FACE_EXPRESSIONS_BUFFER,
     NEW_FACE_COORDINATES
 } from './actionTypes';
@@ -66,5 +67,18 @@ export function newFaceBox(faceBox: FaceBox): AnyAction {
     return {
         type: NEW_FACE_COORDINATES,
         faceBox
+    };
+}
+
+/**
+ * Dispatches the face landmarks detection stopped event in order to be sent to services.
+ *
+ * @param {number} timestamp - The timestamp when the camera was off.
+ * @returns {AnyAction}
+ */
+export function faceLandmarkDetectionStopped(timestamp: number): AnyAction {
+    return {
+        type: FACE_LANDMARK_DETECTION_STOPPED,
+        timestamp
     };
 }

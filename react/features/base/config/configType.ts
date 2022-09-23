@@ -301,6 +301,7 @@ export interface IConfig {
         disableTopPanel?: boolean;
         minParticipantCountForTopPanel?: number;
     };
+    firefox_fake_device?: string;
     flags?: {
         sendMultipleVideoStreams?: boolean;
         sourceNameSignaling?: boolean;
@@ -425,7 +426,7 @@ export interface IConfig {
     };
     serviceUrl?: string;
     speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
-    startAudioMuted?: boolean;
+    startAudioMuted?: number;
     startAudioOnly?: boolean;
     startLastN?: number;
     startScreenSharing?: boolean;

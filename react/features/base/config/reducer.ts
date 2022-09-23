@@ -75,7 +75,6 @@ export interface IConfigState extends IConfig {
         obfuscateRoomName?: boolean;
     };
     error?: Error;
-    firefox_fake_device?: string;
 }
 
 ReducerRegistry.register<IConfigState>('features/base/config', (state = _getInitialState(), action): IConfigState => {

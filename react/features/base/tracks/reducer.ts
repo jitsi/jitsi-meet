@@ -1,3 +1,4 @@
+import { MediaType } from '../media/constants';
 import { VIDEO_TYPE } from '../media/constants';
 import {
     PARTICIPANT_ID_CHANGED,
@@ -19,14 +20,18 @@ import {
     TRACK_OWNER_CHANGED
 } from './actionTypes';
 
-interface ITrack {
+export interface ITrack {
     isReceivingData: boolean;
     jitsiTrack: any;
     lastMediaEvent?: string;
     local: boolean;
-    mediaType: string;
+    mediaType: MediaType;
     mirror: boolean;
     muted: boolean;
+    noDataFromSourceNotificationInfo?: {
+        timeout?: number;
+        uid?: string;
+    };
     orphaned: boolean;
     participantId: string;
     streamingStatus?: string;

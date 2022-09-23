@@ -11,6 +11,9 @@ export interface IJwtState {
     jwt?: string;
     server?: string;
     tenant?: string;
+    user?: {
+        name: string;
+    };
 }
 
 /**
