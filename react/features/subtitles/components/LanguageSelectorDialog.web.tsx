@@ -6,7 +6,7 @@ import { IState } from '../../app/types';
 // @ts-ignore
 import { Dialog } from '../../base/dialog';
 // @ts-ignore
-import { i18n } from '../../base/i18n';
+import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { connect } from '../../base/redux/functions';
 // @ts-ignore
 import { updateTranslationLanguage, setRequestingSubtitles, toggleLanguageSelectorDialog } from '../actions';
@@ -16,6 +16,8 @@ import LanguageList from './LanguageList';
 interface ILanguageSelectorDialogProps {
     _language: string;
     t: Function;
+    translationLanguages: Array<string>;
+    translationLanguagesHead: Array<string>;
 }
 
 /**
@@ -23,14 +25,16 @@ interface ILanguageSelectorDialogProps {
  *
  * @returns {React$Element<any>}
  */
-const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => {
+const LanguageSelectorDialog = ({ _language, translationLanguages, translationLanguagesHead }:
+                                    ILanguageSelectorDialogProps) => {
+
     const dispatch = useDispatch();
     const off = 'transcribing.subtitlesOff';
     const [ language, setLanguage ] = useState(off);
 
-    const languagesHead = i18n.translationLanguagesHead.map((lang: string) => `translation-languages:${lang}`);
+    const languagesHead = translationLanguagesHead.map((lang: string) => `translation-languages:${lang}`);
     const fixedItems = [ off, ...languagesHead ];
-    const languages = i18n.translationLanguages
+    const languages = translationLanguages
         .map((lang: string) => `translation-languages:${lang}`)
         .filter((lang: string) => !(lang === language || languagesHead.includes(lang)));
 
@@ -79,17 +83,18 @@ const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => 
  * @returns {Props}
  */
 function mapStateToProps(state: IState) {
-    const {
-        conference
-    } = state['features/base/conference'];
+    const { conference } = state['features/base/conference'];
+    const { _language } = state['features/subtitles'];
+    const { i18n } = state['features/base/config'];
 
-    const {
-        _language
-    } = state['features/subtitles'];
+    const languages = i18n?.translationLanguages || TRANSLATION_LANGUAGES;
+    const languagesHead = i18n?.translationLanguagesHead || TRANSLATION_LANGUAGES_HEAD;
 
     return {
         _conference: conference,
-        _language
+        _language,
+        translationLanguages: languages,
+        translationLanguagesHead: languagesHead
     };
 }
 
