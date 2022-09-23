@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 /* eslint-disable lines-around-comment */
 // @ts-ignore
 import UIEvents from '../../../../service/UI/UIEvents';
@@ -217,7 +219,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _processPendingRequests({ dispatch, getState }: IStore, next: Function, action: any) {
+function _processPendingRequests({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
     const state = getState();
     const { pendingRequests } = state['features/base/devices'];

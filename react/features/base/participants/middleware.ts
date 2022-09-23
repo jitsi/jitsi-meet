@@ -189,11 +189,13 @@ MiddlewareRegistry.register(store => next => action => {
         if (deploymentInfo?.userRegion) {
             const localId = getLocalParticipant(state)?.id;
 
-            store.dispatch(participantUpdated({
-                id: localId ?? '',
-                local: true,
-                region: deploymentInfo.userRegion
-            }));
+            if (localId) {
+                store.dispatch(participantUpdated({
+                    id: localId,
+                    local: true,
+                    region: deploymentInfo.userRegion
+                }));
+            }
         }
 
         return result;
@@ -205,7 +207,7 @@ MiddlewareRegistry.register(store => next => action => {
         const localId = getLocalParticipant(state)?.id;
         const { localRecording } = state['features/base/config'];
 
-        if (localRecording?.notifyAllParticipants && !onlySelf) {
+        if (localRecording?.notifyAllParticipants && !onlySelf && localId) {
             store.dispatch(participantUpdated({
                 // XXX Only the local participant is allowed to update without
                 // stating the JitsiConference instance (i.e. participant property
@@ -213,7 +215,7 @@ MiddlewareRegistry.register(store => next => action => {
                 // participant is uniquely identified by the very fact that there is
                 // only one local participant.
 
-                id: localId ?? '',
+                id: localId,
                 local: true,
                 localRecording: recording
             }));
