@@ -1,9 +1,9 @@
-/* @flow */
-
+// @ts-ignore
 import jwtDecode from 'jwt-decode';
 
+import { IState } from '../../app/types';
 import { getLocalParticipant } from '../participants/functions';
-import { parseURLParams } from '../util';
+import { parseURLParams } from '../util/parseURLParams';
 
 import { MEET_FEATURES } from './constants';
 
@@ -16,17 +16,18 @@ import { MEET_FEATURES } from './constants';
  * @returns {string} The JSON Web Token (JWT), if any, defined by the specified
  * {@code url}; otherwise, {@code undefined}.
  */
-export function parseJWTFromURLParams(url: URL = window.location) {
+export function parseJWTFromURLParams(url: URL | Location = window.location) {
+    // @ts-ignore
     return parseURLParams(url, true, 'search').jwt;
 }
 
 /**
  * Returns the user name after decoding the jwt.
  *
- * @param {Object} state - The app state.
+ * @param {IState} state - The app state.
  * @returns {string}
  */
-export function getJwtName(state: Object) {
+export function getJwtName(state: IState) {
     const { user } = state['features/base/jwt'];
 
     return user?.name;
@@ -35,12 +36,12 @@ export function getJwtName(state: Object) {
 /**
  * Check if the given JWT feature is enabled.
  *
- * @param {Object} state - The app state.
+ * @param {IState} state - The app state.
  * @param {string} feature - The feature we want to check.
  * @param {boolean} ifNoToken - Default value if there is no token.
  * @returns {string}
  */
-export function isJwtFeatureEnabled(state: Object, feature: string, ifNoToken: boolean = false) {
+export function isJwtFeatureEnabled(state: IState, feature: string, ifNoToken = false) {
     const { jwt } = state['features/base/jwt'];
 
     if (!jwt) {
@@ -54,7 +55,7 @@ export function isJwtFeatureEnabled(state: Object, feature: string, ifNoToken: b
         return true;
     }
 
-    return String(features[feature]) === 'true';
+    return String(features[feature as keyof typeof features]) === 'true';
 }
 
 /**
@@ -64,7 +65,7 @@ export function isJwtFeatureEnabled(state: Object, feature: string, ifNoToken: b
  * @param {any} timestamp - A UNIX timestamp in seconds as stored in the jwt.
  * @returns {boolean} - Whether the timestamp is indeed a valid UNIX timestamp or not.
  */
-function isValidUnixTimestamp(timestamp: any) {
+function isValidUnixTimestamp(timestamp: number | string) {
     return typeof timestamp === 'number' && timestamp * 1000 === new Date(timestamp * 1000).getTime();
 }
 
@@ -75,7 +76,7 @@ function isValidUnixTimestamp(timestamp: any) {
  * @returns {Array<string>} - An array containing all jwt validation errors.
  */
 export function validateJwt(jwt: string) {
-    const errors = [];
+    const errors: string[] = [];
 
     if (!jwt) {
         return errors;
@@ -103,7 +104,7 @@ export function validateJwt(jwt: string) {
         } = payload;
 
         // JaaS only
-        if (sub && sub.startsWith('vpaas-magic-cookie')) {
+        if (sub?.startsWith('vpaas-magic-cookie')) {
             const { kid } = header;
 
             // if Key ID is missing, we return the error immediately without further validations.
@@ -165,7 +166,7 @@ export function validateJwt(jwt: string) {
                 }
             });
         }
-    } catch (e) {
+    } catch (e: any) {
         errors.push(e ? e.message : '- unspecified jwt error');
     }
 

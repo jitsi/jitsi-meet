@@ -1,8 +1,7 @@
-// @flow
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
-import { MiddlewareRegistry } from '../redux';
-
+// @ts-ignore
 import NetworkInfoService from './NetworkInfoService';
 import { _storeNetworkInfoCleanup, setNetworkInfo } from './actions';
 import { STORE_NAME } from './constants';
