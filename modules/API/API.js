@@ -90,6 +90,7 @@ import {
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
+import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
 import { isScreenAudioSupported } from '../../react/features/screen-share';
@@ -544,10 +545,12 @@ function initCommands() {
          * For youtube streams, `youtubeStreamKey` must be passed on. `youtubeBroadcastID` is optional.
          * For dropbox recording, recording `mode` should be `file` and a dropbox oauth2 token must be provided.
          * For file recording, recording `mode` should be `file` and optionally `shouldShare` could be passed on.
+         * For local recording, recording `mode` should be `local` and optionally `onlySelf` could be passed on.
          * No other params should be passed.
          *
-         * @param { string } arg.mode - Recording mode, either `file` or `stream`.
+         * @param { string } arg.mode - Recording mode, either `local`, `file` or `stream`.
          * @param { string } arg.dropboxToken - Dropbox oauth2 token.
+         * @param { boolean } arg.onlySelf - Whether to only record the local streams.
          * @param { string } arg.rtmpStreamKey - The RTMP stream key.
          * @param { string } arg.rtmpBroadcastID - The RTMP broadcast ID.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
@@ -559,6 +562,7 @@ function initCommands() {
         'start-recording': ({
             mode,
             dropboxToken,
+            onlySelf,
             shouldShare,
             rtmpStreamKey,
             rtmpBroadcastID,
@@ -582,6 +586,12 @@ function initCommands() {
 
             if (mode === JitsiRecordingConstants.mode.STREAM && !(youtubeStreamKey || rtmpStreamKey)) {
                 logger.error('Failed starting recording: missing youtube or RTMP stream key');
+
+                return;
+            }
+
+            if (mode === 'local') {
+                APP.store.dispatch(startLocalVideoRecording(onlySelf));
 
                 return;
             }
@@ -632,7 +642,7 @@ function initCommands() {
         /**
          * Stops a recording or streaming in progress.
          *
-         * @param {string} mode - `file` or `stream`.
+         * @param {string} mode - `local`, `file` or `stream`.
          * @returns {void}
          */
         'stop-recording': mode => {
@@ -641,6 +651,12 @@ function initCommands() {
 
             if (!conference) {
                 logger.error('Conference is not defined');
+
+                return;
+            }
+
+            if (mode === 'local') {
+                APP.store.dispatch(stopLocalVideoRecording());
 
                 return;
             }
