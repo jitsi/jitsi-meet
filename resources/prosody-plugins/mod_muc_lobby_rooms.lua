@@ -15,6 +15,10 @@
 --     muc_room_locking = false
 --     muc_room_default_public_jids = true
 --
+-- NOTE: We do not yet support use case where backend triggers 'create-lobby-room' while occupants already in room.
+--       Requirements for that (make sure all occupants are members, notify existing moderators) currently handled
+--       by room.setMembersOnly in lib-jitsi-meet.
+--
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, 'util.async');
 
