@@ -92,7 +92,7 @@ import {
 import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
-import { getActiveSession } from '../../react/features/recording/functions';
+import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { isScreenAudioSupported } from '../../react/features/screen-share';
 import { startScreenShareFlow, startAudioScreenShareFlow } from '../../react/features/screen-share/actions';
 import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
@@ -591,12 +591,25 @@ function initCommands() {
             }
 
             if (mode === 'local') {
-                APP.store.dispatch(startLocalVideoRecording(onlySelf));
+                const { localRecording } = state['features/base/config'];
+
+                if (!localRecording?.disable && supportsLocalRecording()) {
+                    APP.store.dispatch(startLocalVideoRecording(onlySelf));
+                } else {
+                    logger.error('Failed starting recording: local recording is either disabled or not supported');
+                }
 
                 return;
             }
 
             let recordingConfig;
+            const { recordingService } = state['features/base/config'];
+
+            if (!recordingService.enabled && !dropboxToken) {
+                logger.error('Failed starting recording: the recording service is not enabled');
+
+                return;
+            }
 
             if (mode === JitsiRecordingConstants.mode.FILE) {
                 if (dropboxToken) {
