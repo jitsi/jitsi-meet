@@ -60,9 +60,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         return next(action);
     }
     case TRACK_ADDED: {
-        const { jitsiTrack: { isLocal, videoType } } = action.track;
+        const { jitsiTrack: { isLocal, muted, videoType } } = action.track;
 
-        if (videoType === 'camera' && isLocal()) {
+        if (videoType === 'camera' && isLocal() && !muted) {
             // need to pass this since the track is not yet added in the store
             dispatch(startFaceLandmarksDetection(action.track));
         }
