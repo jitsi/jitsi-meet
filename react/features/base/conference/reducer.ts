@@ -52,6 +52,7 @@ export interface IJitsiConference {
     muteParticipant: Function;
     on: Function;
     removeTrack: Function;
+    replaceTrack: Function;
     sendCommand: Function;
     sendEndpointMessage: Function;
     sessionId: string;
