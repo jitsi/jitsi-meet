@@ -36,7 +36,7 @@ function _updateScreenshareParticipants({ getState, dispatch }: IStore) {
     let newLocalSceenshareSourceName;
 
     const currentScreenshareSourceNames = tracks.reduce((acc: string[], track) => {
-        if (track.videoType === 'desktop' && !track.jitsiTrack.isMuted()) {
+        if (track.videoType === 'desktop' && !track.jitsiTrack.isMuted() && !track.orphaned) {
             const sourceName: string = track.jitsiTrack.getSourceName();
 
             if (track.local) {

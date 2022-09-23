@@ -1,4 +1,7 @@
-import { PARTICIPANT_ID_CHANGED } from '../participants/actionTypes';
+import {
+    PARTICIPANT_ID_CHANGED,
+    PARTICIPANT_LEFT
+ } from '../participants/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
 
@@ -14,6 +17,7 @@ import {
     TRACK_WILL_CREATE,
     TRACK_OWNER_CHANGED
 } from './actionTypes';
+import { VIDEO_TYPE } from '../media/constants';
 
 interface ITrack {
     isReceivingData: boolean;
@@ -23,6 +27,7 @@ interface ITrack {
     mediaType: string;
     mirror: boolean;
     muted: boolean;
+    orphaned: boolean;
     participantId: string;
     streamingStatus?: string;
     videoStarted: boolean;
@@ -79,13 +84,23 @@ function track(state: ITrack, action: any) {
         }
         break;
 
+    case PARTICIPANT_LEFT:
+        if (state.participantId === action.participant.id && state.videoType === VIDEO_TYPE.DESKTOP) {
+            return {
+                ...state,
+                orphaned: true
+            };
+        }
+        break;
+
     case TRACK_OWNER_CHANGED: {
         const t = action.track;
 
         if (state.jitsiTrack === t.jitsiTrack.jitsiTrack) {
             return {
                 ...state,
-                participantId: t.participantId
+                participantId: t.participantId,
+                orphaned: false
             };
         }
         break;
@@ -152,6 +167,7 @@ export type ITracksState = ITrack[];
 ReducerRegistry.register<ITracksState>('features/base/tracks', (state = [], action): ITracksState => {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
+    case PARTICIPANT_LEFT:
     case TRACK_NO_DATA_FROM_SOURCE:
     case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT:
     case TRACK_UPDATED:
