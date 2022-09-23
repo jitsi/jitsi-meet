@@ -583,11 +583,14 @@ export function trackVideoStarted(track: any): {
  * }}
  */
 export function trackVideoTypeChanged(track: any, videoType: VideoType) {
+    const m = videoType === VIDEO_TYPE.CAMERA ? MEDIA_TYPE.VIDEO : MEDIA_TYPE.SCREENSHARE;
+
     return {
         type: TRACK_UPDATED,
         track: {
             jitsiTrack: track,
-            videoType
+            videoType,
+            mediaType: m
         }
     };
 }
