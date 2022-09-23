@@ -1,5 +1,7 @@
-import { MediaType } from '../media/constants';
-import { VIDEO_TYPE } from '../media/constants';
+import {
+    MediaType,
+    VIDEO_TYPE
+} from '../media/constants';
 import {
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_LEFT
