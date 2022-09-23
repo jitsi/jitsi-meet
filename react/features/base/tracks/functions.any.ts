@@ -221,21 +221,6 @@ export function getTrackByMediaTypeAndParticipant(
 }
 
 /**
- * Returns track with specified SSRC.
- *
- * @param {int} ssrc - SSRC.
- * @returns {(Track|undefined)}
- */
-export function getTrackBySsrc(ssrc) {
-    const state = APP.store.getState();
-    const tracks = state['features/base/tracks'];
-
-    return tracks.find(
-        t => Boolean(t.jitsiTrack) && t.jitsiTrack.ssrc === ssrc
-    );
-}
-
-/**
  * Returns screenshare track of given virtualScreenshareParticipantId.
  *
  * @param {ITrack[]} tracks - List of all tracks.

@@ -378,7 +378,9 @@ export function trackAdded(track: any) {
         track.on(
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
-
+        track.on(
+            JitsiTrackEvents.TRACK_OWNER_CHANGED,
+            owner => dispatch(trackOwnerChanged(track, owner)));
         const local = track.isLocal();
         const isVirtualScreenshareParticipantCreated = !local || getMultipleVideoSendingSupportFeatureFlag(getState());
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP && isVirtualScreenshareParticipantCreated

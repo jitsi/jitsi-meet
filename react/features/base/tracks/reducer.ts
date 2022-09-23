@@ -2,7 +2,7 @@ import { VIDEO_TYPE } from '../media/constants';
 import {
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_LEFT
- } from '../participants/actionTypes';
+} from '../participants/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
 
@@ -58,7 +58,7 @@ function track(state: ITrack, action: any) {
     case TRACK_OWNER_CHANGED: {
         const t = action.track;
 
-        if (state.jitsiTrack === t.jitsiTrack.jitsiTrack) {
+        if (state.jitsiTrack === t.jitsiTrack) {
             return {
                 ...state,
                 participantId: t.participantId,
