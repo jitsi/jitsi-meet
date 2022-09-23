@@ -1,36 +1,35 @@
-// @flow
-
 import i18n from 'i18next';
 import { batch } from 'react-redux';
 
+// @ts-ignore
 import UIEvents from '../../../../service/UI/UIEvents';
+import { IStore } from '../../app/types';
 import { approveParticipant } from '../../av-moderation/actions';
 import { UPDATE_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
 import { getBreakoutRooms } from '../../breakout-rooms/functions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { MAX_MODE } from '../../e2ee/constants';
+import { showNotification } from '../../notifications/actions';
 import {
     LOCAL_RECORDING_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE,
-    RAISE_HAND_NOTIFICATION_ID,
-    showNotification
-} from '../../notifications';
+    RAISE_HAND_NOTIFICATION_ID
+} from '../../notifications/constants';
 import { isForceMuted } from '../../participants-pane/functions';
-import { CALLING, INVITED } from '../../presence-status';
+import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
-import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../../recording';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
-import {
-    CONFERENCE_WILL_JOIN,
-    forEachConference,
-    getCurrentConference
-} from '../conference';
-import { SET_CONFIG } from '../config';
+import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../../recording/constants';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
+import { CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
+import { forEachConference, getCurrentConference } from '../conference/functions';
+import { IJitsiConference } from '../conference/reducer';
+import { SET_CONFIG } from '../config/actionTypes';
 import { getDisableRemoveRaisedHandOnFocus } from '../config/functions.any';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
-import { MEDIA_TYPE } from '../media';
-import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
-import { playSound, registerSound, unregisterSound } from '../sounds';
+import { MEDIA_TYPE } from '../media/constants';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import StateListenerRegistry from '../redux/StateListenerRegistry';
+import { playSound, registerSound, unregisterSound } from '../sounds/actions';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -79,9 +78,9 @@ import {
 } from './functions';
 import logger from './logger';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
-import './subscriber';
+import { IJitsiParticipant } from './types';
 
-declare var APP: Object;
+import './subscriber';
 
 /**
  * Middleware that captures CONFERENCE_JOINED and CONFERENCE_LEFT actions and
@@ -128,8 +127,7 @@ MiddlewareRegistry.register(store => next => action => {
         const participant = getDominantSpeakerParticipant(state);
 
         if (
-            participant
-            && participant.local
+            participant?.local
             && hasRaisedHand(participant)
             && action.level > LOWER_HAND_AUDIO_LEVEL
             && !getDisableRemoveRaisedHandOnFocus(state)
@@ -142,14 +140,14 @@ MiddlewareRegistry.register(store => next => action => {
     case GRANT_MODERATOR: {
         const { conference } = store.getState()['features/base/conference'];
 
-        conference.grantOwner(action.id);
+        conference?.grantOwner(action.id);
         break;
     }
 
     case KICK_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
 
-        conference.kickParticipant(action.id);
+        conference?.kickParticipant(action.id);
         break;
     }
 
@@ -164,13 +162,13 @@ MiddlewareRegistry.register(store => next => action => {
             // participant is uniquely identified by the very fact that there is
             // only one local participant.
 
-            id: localId,
+            id: localId ?? '',
             local: true,
             raisedHandTimestamp
         }));
 
         store.dispatch(raiseHandUpdateQueue({
-            id: localId,
+            id: localId ?? '',
             raisedHandTimestamp
         }));
 
@@ -188,14 +186,16 @@ MiddlewareRegistry.register(store => next => action => {
         const { deploymentInfo } = state['features/base/config'];
 
         // if there userRegion set let's use it for the local participant
-        if (deploymentInfo && deploymentInfo.userRegion) {
+        if (deploymentInfo?.userRegion) {
             const localId = getLocalParticipant(state)?.id;
 
-            store.dispatch(participantUpdated({
-                id: localId,
-                local: true,
-                region: deploymentInfo.userRegion
-            }));
+            if (localId) {
+                store.dispatch(participantUpdated({
+                    id: localId,
+                    local: true,
+                    region: deploymentInfo.userRegion
+                }));
+            }
         }
 
         return result;
@@ -207,7 +207,7 @@ MiddlewareRegistry.register(store => next => action => {
         const localId = getLocalParticipant(state)?.id;
         const { localRecording } = state['features/base/config'];
 
-        if (localRecording?.notifyAllParticipants && !onlySelf) {
+        if (localRecording?.notifyAllParticipants && !onlySelf && localId) {
             store.dispatch(participantUpdated({
                 // XXX Only the local participant is allowed to update without
                 // stating the JitsiConference instance (i.e. participant property
@@ -227,7 +227,7 @@ MiddlewareRegistry.register(store => next => action => {
     case MUTE_REMOTE_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
 
-        conference.muteParticipant(action.id, action.mediaType);
+        conference?.muteParticipant(action.id, action.mediaType);
         break;
     }
 
@@ -319,7 +319,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (breakoutRoom) {
             const rooms = getBreakoutRooms(state);
             const roomCounter = state['features/breakout-rooms'].roomCounter;
-            const newRooms = {};
+            const newRooms: any = {};
 
             Object.entries(rooms).forEach(([ key, r ]) => {
                 const participants = r?.participants || {};
@@ -393,7 +393,7 @@ StateListenerRegistry.register(
     /* listener */ ({ leaving }, { dispatch, getState }) => {
         const state = getState();
         const localParticipant = getLocalParticipant(state);
-        let id;
+        let id: string;
 
         if (!localParticipant
                 || (id = localParticipant.id)
@@ -421,37 +421,41 @@ StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
     (conference, store) => {
         if (conference) {
-            const propertyHandlers = {
-                'e2ee.enabled': (participant, value) => _e2eeUpdated(store, conference, participant.getId(), value),
-                'features_e2ee': (participant, value) =>
+            const propertyHandlers: {
+                [key: string]: Function;
+            } = {
+                'e2ee.enabled': (participant: IJitsiParticipant, value: string) =>
+                    _e2eeUpdated(store, conference, participant.getId(), value),
+                'features_e2ee': (participant: IJitsiParticipant, value: boolean) =>
                     store.dispatch(participantUpdated({
                         conference,
                         id: participant.getId(),
                         e2eeSupported: value
                     })),
-                'features_jigasi': (participant, value) =>
+                'features_jigasi': (participant: IJitsiParticipant, value: boolean) =>
                     store.dispatch(participantUpdated({
                         conference,
                         id: participant.getId(),
                         isJigasi: value
                     })),
-                'features_screen-sharing': (participant, value) => // eslint-disable-line no-unused-vars
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                'features_screen-sharing': (participant: IJitsiParticipant, value: string) =>
                     store.dispatch(participantUpdated({
                         conference,
                         id: participant.getId(),
                         features: { 'screen-sharing': true }
                     })),
-                'localRecording': (participant, value) =>
+                'localRecording': (participant: IJitsiParticipant, value: string) =>
                     _localRecordingUpdated(store, conference, participant.getId(), value),
-                'raisedHand': (participant, value) =>
+                'raisedHand': (participant: IJitsiParticipant, value: string) =>
                     _raiseHandUpdated(store, conference, participant.getId(), value),
-                'region': (participant, value) =>
+                'region': (participant: IJitsiParticipant, value: string) =>
                     store.dispatch(participantUpdated({
                         conference,
                         id: participant.getId(),
                         region: value
                     })),
-                'remoteControlSessionStatus': (participant, value) =>
+                'remoteControlSessionStatus': (participant: IJitsiParticipant, value: boolean) =>
                     store.dispatch(participantUpdated({
                         conference,
                         id: participant.getId(),
@@ -460,12 +464,12 @@ StateListenerRegistry.register(
             };
 
             // update properties for the participants that are already in the conference
-            conference.getParticipants().forEach(participant => {
+            conference.getParticipants().forEach((participant: any) => {
                 Object.keys(propertyHandlers).forEach(propertyName => {
                     const value = participant.getProperty(propertyName);
 
                     if (value !== undefined) {
-                        propertyHandlers[propertyName](participant, value);
+                        propertyHandlers[propertyName as keyof typeof propertyHandlers](participant, value);
                     }
                 });
             });
@@ -473,17 +477,17 @@ StateListenerRegistry.register(
             // We joined a conference
             conference.on(
                 JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
-                (participant, propertyName, oldValue, newValue) => {
+                (participant: IJitsiParticipant, propertyName: string, oldValue: string, newValue: string) => {
                     if (propertyHandlers.hasOwnProperty(propertyName)) {
                         propertyHandlers[propertyName](participant, newValue);
                     }
                 });
         } else {
-            const localParticipantId = getLocalParticipant(store.getState).id;
+            const localParticipantId = getLocalParticipant(store.getState)?.id;
 
             // We left the conference, the local participant must be updated.
-            _e2eeUpdated(store, conference, localParticipantId, false);
-            _raiseHandUpdated(store, conference, localParticipantId, 0);
+            _e2eeUpdated(store, conference, localParticipantId ?? '', false);
+            _raiseHandUpdated(store, conference, localParticipantId ?? '', 0);
         }
     }
 );
@@ -497,7 +501,8 @@ StateListenerRegistry.register(
  * @param {boolean} newValue - The new value of the E2EE enabled status.
  * @returns {void}
  */
-function _e2eeUpdated({ getState, dispatch }, conference, participantId, newValue) {
+function _e2eeUpdated({ getState, dispatch }: IStore, conference: IJitsiConference,
+        participantId: string, newValue: string | boolean) {
     const e2eeEnabled = newValue === 'true';
     const { e2ee = {} } = getState()['features/base/config'];
 
@@ -530,11 +535,12 @@ function _e2eeUpdated({ getState, dispatch }, conference, participantId, newValu
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _localParticipantJoined({ getState, dispatch }, next, action) {
+function _localParticipantJoined({ getState, dispatch }: IStore, next: Function, action: any) {
     const result = next(action);
 
     const settings = getState()['features/base/settings'];
 
+    // @ts-ignore
     dispatch(localParticipantJoined({
         avatarURL: settings.avatarURL,
         email: settings.email,
@@ -555,7 +561,7 @@ function _localParticipantJoined({ getState, dispatch }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _localParticipantLeft({ dispatch }, next, action) {
+function _localParticipantLeft({ dispatch }: IStore, next: Function, action: any) {
     const result = next(action);
 
     dispatch(localParticipantLeft());
@@ -572,7 +578,7 @@ function _localParticipantLeft({ dispatch }, next, action) {
  * @private
  * @returns {void}
  */
-function _maybePlaySounds({ getState, dispatch }, action) {
+function _maybePlaySounds({ getState, dispatch }: IStore, action: any) {
     const state = getState();
     const { startAudioMuted } = state['features/base/config'];
     const { soundsParticipantJoined: joinSound, soundsParticipantLeft: leftSound } = state['features/base/settings'];
@@ -617,7 +623,7 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _participantJoinedOrUpdated(store, next, action) {
+function _participantJoinedOrUpdated(store: IStore, next: Function, action: any) {
     const { dispatch, getState } = store;
     const { overwrittenNameList } = store.getState()['features/base/participants'];
     const { participant: {
@@ -639,7 +645,7 @@ function _participantJoinedOrUpdated(store, next, action) {
             const rHand = parseInt(raisedHandTimestamp, 10);
 
             // Send raisedHand signalling only if there is a change
-            if (conference && rHand !== getLocalParticipant(getState()).raisedHandTimestamp) {
+            if (conference && rHand !== getLocalParticipant(getState())?.raisedHandTimestamp) {
                 conference.setLocalParticipantProperty('raisedHand', rHand);
             }
         }
@@ -657,7 +663,7 @@ function _participantJoinedOrUpdated(store, next, action) {
 
             // Send localRecording signalling only if there is a change
             if (conference
-                && localRecording !== getLocalParticipant(getState()).localRecording) {
+                && localRecording !== getLocalParticipant(getState())?.localRecording) {
                 conference.setLocalParticipantProperty('localRecording', localRecording);
             }
         }
@@ -673,12 +679,12 @@ function _participantJoinedOrUpdated(store, next, action) {
         const { disableThirdPartyRequests } = getState()['features/base/config'];
 
         if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
-            const participantId = !id && local ? getLocalParticipant(getState()).id : id;
+            const participantId = !id && local ? getLocalParticipant(getState())?.id : id;
             const updatedParticipant = getParticipantById(getState(), participantId);
 
-            getFirstLoadableAvatarUrl(updatedParticipant, store)
-                .then(urlData => {
-                    dispatch(setLoadableAvatarUrl(participantId, urlData?.src, urlData?.isUsingCORS));
+            getFirstLoadableAvatarUrl(updatedParticipant ?? { id: '' }, store)
+                .then((urlData?: { isUsingCORS: boolean; src: string; }) => {
+                    dispatch(setLoadableAvatarUrl(participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
                 });
         }
     }
@@ -703,7 +709,8 @@ function _participantJoinedOrUpdated(store, next, action) {
  * @param {boolean} newValue - The new value of the local recording status.
  * @returns {void}
  */
-function _localRecordingUpdated({ dispatch, getState }, conference, participantId, newValue) {
+function _localRecordingUpdated({ dispatch, getState }: IStore, conference: IJitsiConference,
+        participantId: string, newValue: string) {
     const state = getState();
 
     dispatch(participantUpdated({
@@ -732,7 +739,8 @@ function _localRecordingUpdated({ dispatch, getState }, conference, participantI
  * @param {boolean} newValue - The new value of the raise hand status.
  * @returns {void}
  */
-function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
+function _raiseHandUpdated({ dispatch, getState }: IStore, conference: IJitsiConference,
+        participantId: string, newValue: string | number) {
     let raisedHandTimestamp;
 
     switch (newValue) {
@@ -744,7 +752,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
         raisedHandTimestamp = Date.now();
         break;
     default:
-        raisedHandTimestamp = parseInt(newValue, 10);
+        raisedHandTimestamp = parseInt(`${newValue}`, 10);
     }
     const state = getState();
 
@@ -811,7 +819,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
  * @private
  * @returns {void}
  */
-function _registerSounds({ dispatch }) {
+function _registerSounds({ dispatch }: IStore) {
     dispatch(
         registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
     dispatch(registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
@@ -824,7 +832,7 @@ function _registerSounds({ dispatch }) {
  * @private
  * @returns {void}
  */
-function _unregisterSounds({ dispatch }) {
+function _unregisterSounds({ dispatch }: IStore) {
     dispatch(unregisterSound(PARTICIPANT_JOINED_SOUND_ID));
     dispatch(unregisterSound(PARTICIPANT_LEFT_SOUND_ID));
 }

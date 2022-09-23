@@ -5,6 +5,7 @@ export interface Participant {
     connectionStatus?: string;
     displayName?: string;
     dominantSpeaker?: boolean;
+    e2eeEnabled?: boolean;
     e2eeSupported?: boolean;
     email?: string;
     features?: {
@@ -41,4 +42,8 @@ export interface LocalParticipant extends Participant {
     startWithVideoMuted?: boolean;
     userSelectedMicDeviceId?: string;
     userSelectedMicDeviceLabel?: string;
+}
+
+export interface IJitsiParticipant {
+    getId: () => string;
 }

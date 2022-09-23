@@ -7,7 +7,7 @@ import { VIDEO_QUALITY_LEVELS } from '../../video-quality/constants';
  * @param {number} channelLastN - LastN value set for the whole conference.
  * @returns {number} LastN value applicable to the quality level specified.
  */
-export function getLastNForQualityLevel(qualityLevel, channelLastN) {
+export function getLastNForQualityLevel(qualityLevel: number, channelLastN: number) {
     let lastN = channelLastN;
 
     const videoQualityLevels = Object.values(VIDEO_QUALITY_LEVELS);
@@ -15,8 +15,8 @@ export function getLastNForQualityLevel(qualityLevel, channelLastN) {
     for (const lvl in videoQualityLevels) {
         if (videoQualityLevels.hasOwnProperty(lvl)
             && qualityLevel === videoQualityLevels[lvl]
-            && lvl > 1) {
-            lastN = Math.floor(channelLastN / Math.pow(2, lvl - 1));
+            && Number(lvl) > 1) {
+            lastN = Math.floor(channelLastN / Math.pow(2, Number(lvl) - 1));
         }
     }
 
@@ -30,7 +30,7 @@ export function getLastNForQualityLevel(qualityLevel, channelLastN) {
  * @param {Object} lastNLimits - The Object to be verified.
  * @returns {undefined|Map<number, number>}
  */
-export function validateLastNLimits(lastNLimits) {
+export function validateLastNLimits(lastNLimits: any) {
     // Checks if only numbers are used
     if (typeof lastNLimits !== 'object'
         || !Object.keys(lastNLimits).length
@@ -64,7 +64,7 @@ export function validateLastNLimits(lastNLimits) {
  * @returns {number|undefined} - A "last N" number if there was a corresponding "last N" value matched with the number
  * of participants or {@code undefined} otherwise.
  */
-export function limitLastN(participantsCount, lastNLimits) {
+export function limitLastN(participantsCount: number, lastNLimits: Map<number, number>) {
     if (!lastNLimits || !lastNLimits.keys) {
         return undefined;
     }

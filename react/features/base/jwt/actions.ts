@@ -1,5 +1,3 @@
-// @flow
-
 import { SET_JWT } from './actionTypes';
 
 /**
@@ -11,7 +9,7 @@ import { SET_JWT } from './actionTypes';
  *     jwt: (string|undefined)
  * }}
  */
-export function setJWT(jwt: ?string) {
+export function setJWT(jwt?: string) {
     return {
         type: SET_JWT,
         jwt

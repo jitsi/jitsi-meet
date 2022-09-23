@@ -425,7 +425,7 @@ export interface IConfig {
     };
     serviceUrl?: string;
     speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
-    startAudioMuted?: boolean;
+    startAudioMuted?: number;
     startAudioOnly?: boolean;
     startLastN?: number;
     startScreenSharing?: boolean;

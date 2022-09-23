@@ -1,18 +1,21 @@
-/* global APP */
+import { AnyAction } from 'redux';
 
+/* eslint-disable lines-around-comment */
+// @ts-ignore
 import UIEvents from '../../../../service/UI/UIEvents';
-import { processExternalDeviceRequest } from '../../device-selection';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    showNotification,
-    showWarningNotification
-} from '../../notifications';
+import { IStore } from '../../app/types';
+import { processExternalDeviceRequest } from '../../device-selection/functions';
+import { showNotification, showWarningNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+// @ts-ignore
 import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
+// @ts-ignore
 import { isPrejoinPageVisible } from '../../prejoin/functions';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import JitsiMeetJS, { JitsiMediaDevicesEvents, JitsiTrackErrors } from '../lib-jitsi-meet';
-import { MiddlewareRegistry } from '../redux';
-import { updateSettings } from '../settings';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { updateSettings } from '../settings/actions';
+
 
 import {
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
@@ -35,6 +38,7 @@ import {
     setAudioOutputDeviceId
 } from './functions';
 import logger from './logger';
+import { IDevicesState } from './reducer';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {
@@ -57,7 +61,7 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
 /**
  * A listener for device permissions changed reported from lib-jitsi-meet.
  */
-let permissionsListener;
+let permissionsListener: Function | undefined;
 
 /**
  * Logs the current device list.
@@ -65,8 +69,9 @@ let permissionsListener;
  * @param {Object} deviceList - Whatever is returned by {@link groupDevicesByKind}.
  * @returns {string}
  */
-function logDeviceList(deviceList) {
-    const devicesToStr = list => list.map(device => `\t\t${device.label}[${device.deviceId}]`).join('\n');
+function logDeviceList(deviceList: IDevicesState['availableDevices']) {
+    const devicesToStr = (list?: MediaDeviceInfo[]) =>
+        list?.map(device => `\t\t${device.label}[${device.deviceId}]`).join('\n');
     const audioInputs = devicesToStr(deviceList.audioInput);
     const audioOutputs = devicesToStr(deviceList.audioOutput);
     const videoInputs = devicesToStr(deviceList.videoInput);
@@ -87,7 +92,7 @@ function logDeviceList(deviceList) {
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT: {
-        const _permissionsListener = permissions => {
+        const _permissionsListener = (permissions: Object) => {
             store.dispatch(devicePermissionsChanged(permissions));
         };
         const { mediaDevices } = JitsiMeetJS;
@@ -214,7 +219,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _processPendingRequests({ dispatch, getState }, next, action) {
+function _processPendingRequests({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
     const state = getState();
     const { pendingRequests } = state['features/base/devices'];
@@ -223,7 +228,7 @@ function _processPendingRequests({ dispatch, getState }, next, action) {
         return result;
     }
 
-    pendingRequests.forEach(request => {
+    pendingRequests.forEach((request: any) => {
         processExternalDeviceRequest(
             dispatch,
             getState,
@@ -248,7 +253,7 @@ function _processPendingRequests({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _checkAndNotifyForNewDevice(store, newDevices, oldDevices) {
+function _checkAndNotifyForNewDevice(store: IStore, newDevices: MediaDeviceInfo[], oldDevices: MediaDeviceInfo[]) {
     const { dispatch } = store;
 
     // let's intersect both newDevices and oldDevices and handle thew newly
@@ -260,7 +265,9 @@ function _checkAndNotifyForNewDevice(store, newDevices, oldDevices) {
     // we group devices by groupID which normally is the grouping by physical device
     // plugging in headset we provide normally two device, one input and one output
     // and we want to show only one notification for this physical audio device
-    const devicesGroupBy = onlyNewDevices.reduce((accumulated, value) => {
+    const devicesGroupBy: {
+        [key: string]: MediaDeviceInfo[];
+    } = onlyNewDevices.reduce((accumulated: any, value) => {
         accumulated[value.groupId] = accumulated[value.groupId] || [];
         accumulated[value.groupId].push(value);
 
@@ -314,7 +321,7 @@ function _checkAndNotifyForNewDevice(store, newDevices, oldDevices) {
  * @returns {boolean} - Returns true in order notifications to be dismissed.
  * @private
  */
-function _useDevice({ dispatch }, devices) {
+function _useDevice({ dispatch }: IStore, devices: MediaDeviceInfo[]) {
     devices.forEach(device => {
         switch (device.kind) {
         case 'videoinput': {
