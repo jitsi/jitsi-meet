@@ -404,6 +404,9 @@ export function trackAdded(track) {
         track.on(
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             type => dispatch(trackVideoTypeChanged(track, type)));
+        track.on(
+            JitsiTrackEvents.TRACK_OWNER_CHANGED,
+            owner => dispatch(trackOwnerChanged(track, owner)));
 
         // participantId
         const local = track.isLocal();
@@ -590,6 +593,7 @@ export function trackVideoStarted(track) {
  */
 export function trackVideoTypeChanged(track, videoType) {
     const m = videoType === VIDEO_TYPE.CAMERA ? MEDIA_TYPE.VIDEO : MEDIA_TYPE.SCREENSHARE;
+
     return {
         type: TRACK_UPDATED,
         track: {

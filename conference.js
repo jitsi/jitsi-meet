@@ -123,14 +123,12 @@ import {
     getLocalJitsiVideoTrack,
     getLocalTracks,
     getLocalVideoTrack,
-    getTrackBySsrc,
     isLocalCameraTrackMuted,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
     trackAdded,
-    trackRemoved,
-    trackOwnerChanged
+    trackRemoved
 } from './react/features/base/tracks';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker';
@@ -307,15 +305,6 @@ class ConferenceConnector {
             this._handleConferenceJoined.bind(this));
         room.on(JitsiConferenceEvents.CONFERENCE_FAILED,
             this._onConferenceFailed.bind(this));
-        room.on(JitsiConferenceEvents.TRACK_OWNER_CHANGED, (ssrc, owner) => {
-            const track = getTrackBySsrc(ssrc);
-
-            if (track) {
-                APP.store.dispatch(trackOwnerChanged(track, owner));
-            } else {
-                logger.error(`Track not found. SSRC:${ssrc} owner:${owner}.`);
-            }
-        });
     }
 
     /**

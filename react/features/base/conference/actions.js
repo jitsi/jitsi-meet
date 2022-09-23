@@ -34,8 +34,7 @@ import {
     getLocalTracks,
     replaceLocalTrack,
     trackAdded,
-    trackRemoved,
-    trackOwnerChanged
+    trackRemoved
 } from '../tracks';
 import { getBackendSafeRoomName } from '../util';
 
@@ -195,10 +194,6 @@ function _addConferenceListeners(conference, dispatch, state) {
     conference.on(
         JitsiConferenceEvents.TRACK_REMOVED,
         t => t && !t.isLocal() && dispatch(trackRemoved(t)));
-
-    conference.on(
-        JitsiConferenceEvents.TRACK_OWNER_CHANGED,
-        (t, owner) => t && !t.isLocal() && dispatch(trackOwnerChanged(t, owner)));
 
     conference.on(
         JitsiConferenceEvents.TRACK_MUTE_CHANGED,
