@@ -68,13 +68,6 @@ case "$1" in
             FORCE_NGINX="false"
         fi
 
-        db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
-        db_set jitsi-meet/jaas-choice false
-        db_input critical jitsi-meet/jaas-choice || true
-        db_go
-        db_get jitsi-meet/jaas-choice
-        JAAS_INPUT="$RET"
-
         UPLOADED_CERT_CHOICE="I want to use my own certificate"
         LE_CERT_CHOICE="Let's Encrypt certificates"
         # if first time config ask for certs, or if we are reconfiguring
@@ -141,6 +134,15 @@ case "$1" in
                 sed -i "s/conference.jitsi-meet.example.com/conference.<\!--# echo var=\"subdomain\" default=\"\" -->jitsi-meet.example.com/g" $JITSI_MEET_CONFIG
             fi
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
+        fi
+
+        if [ "$CERT_CHOICE" = "$LE_CERT_CHOICE" ] || [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
+            db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
+            db_set jitsi-meet/jaas-choice false
+            db_input critical jitsi-meet/jaas-choice || true
+            db_go
+            db_get jitsi-meet/jaas-choice
+            JAAS_INPUT="$RET"
         fi
 
         if [ "${JAAS_INPUT}" = "true" ] && ! grep -q "^var enableJaaS = true;$" $JITSI_MEET_CONFIG;  then
