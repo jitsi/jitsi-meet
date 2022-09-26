@@ -1,9 +1,11 @@
-// @flow
-
+// @ts-ignore
 import aliases from 'react-emoji-render/data/aliases';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 
-import { escapeRegexp } from '../base/util';
+import { IState } from '../app/types';
+import { escapeRegexp } from '../base/util/helpers';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -15,7 +17,7 @@ import { escapeRegexp } from '../base/util';
  * on web too once we drop support for browsers that don't support
  * unicode emoji rendering.
  */
-const ASCII_EMOTICON_REGEXP_ARRAY: Array<Array<Object>> = [];
+const ASCII_EMOTICON_REGEXP_ARRAY: Array<[RegExp, string]> = [];
 
 /**
  * An emoji regexp array to find and replace alias emoticons
@@ -27,7 +29,7 @@ const ASCII_EMOTICON_REGEXP_ARRAY: Array<Array<Object>> = [];
  * on web too once we drop support for browsers that don't support
  * unicode emoji rendering.
  */
-const SLACK_EMOJI_REGEXP_ARRAY: Array<Array<Object>> = [];
+const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
 
 (function() {
     for (const [ key, value ] of Object.entries(aliases)) {
@@ -36,7 +38,7 @@ const SLACK_EMOJI_REGEXP_ARRAY: Array<Array<Object>> = [];
         const asciiEmoticons = emojiAsciiAliases[key];
 
         if (asciiEmoticons) {
-            const asciiEscapedValues = asciiEmoticons.map(v => escapeRegexp(v));
+            const asciiEscapedValues = asciiEmoticons.map((v: string) => escapeRegexp(v));
 
             const asciiRegexp = `(${asciiEscapedValues.join('|')})`;
 
@@ -45,13 +47,13 @@ const SLACK_EMOJI_REGEXP_ARRAY: Array<Array<Object>> = [];
                 ? `(?=(${asciiRegexp}))(:(?!//).)`
                 : asciiRegexp;
 
-            ASCII_EMOTICON_REGEXP_ARRAY.push([ new RegExp(formattedAsciiRegexp, 'g'), value ]);
+            ASCII_EMOTICON_REGEXP_ARRAY.push([ new RegExp(formattedAsciiRegexp, 'g'), value as string ]);
         }
 
         // Add slack-type emojis
         const emojiRegexp = `\\B(${escapeRegexp(`:${key}:`)})\\B`;
 
-        SLACK_EMOJI_REGEXP_ARRAY.push([ new RegExp(emojiRegexp, 'g'), value ]);
+        SLACK_EMOJI_REGEXP_ARRAY.push([ new RegExp(emojiRegexp, 'g'), value as string ]);
     }
 })();
 
@@ -79,10 +81,10 @@ export function replaceNonUnicodeEmojis(message: string) {
 /**
  * Selector for calculating the number of unread chat messages.
  *
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @returns {number} The number of unread messages.
  */
-export function getUnreadCount(state: Object) {
+export function getUnreadCount(state: IState) {
     const { lastReadMessage, messages } = state['features/chat'];
     const messagesCount = messages.length;
 
@@ -91,6 +93,10 @@ export function getUnreadCount(state: Object) {
     }
 
     let reactionMessages = 0;
+
+    if (!lastReadMessage) {
+        return 0;
+    }
 
     if (navigator.product === 'ReactNative') {
         // React native stores the messages in a reversed order.
@@ -119,10 +125,10 @@ export function getUnreadCount(state: Object) {
 /**
  * Selector for calculating the number of unread chat messages.
  *
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @returns {number} The number of unread messages.
  */
-export function getUnreadMessagesCount(state: Object) {
+export function getUnreadMessagesCount(state: IState) {
     const { nbUnreadMessages } = state['features/chat'];
 
     return nbUnreadMessages;
@@ -131,10 +137,10 @@ export function getUnreadMessagesCount(state: Object) {
 /**
  * Get whether the chat smileys are disabled or not.
  *
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @returns {boolean} The disabled flag.
  */
-export function areSmileysDisabled(state: Object) {
+export function areSmileysDisabled(state: IState) {
     const disableChatSmileys = state['features/base/config']?.disableChatSmileys === true;
 
     return disableChatSmileys;
