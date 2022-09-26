@@ -1,5 +1,3 @@
-import clipboardCopy from 'clipboard-copy';
-
 /**
  * A helper function that behaves similar to Object.assign, but only reassigns a
  * property in target if it's defined in source.
@@ -24,22 +22,6 @@ export function assignIfDefined(target: Object, source: Object) {
     return to;
 }
 
-/**
- * Tries to copy a given text to the clipboard.
- * Returns true if the action succeeds.
- *
- * @param {string} textToCopy - Text to be copied.
- * @returns {Promise<boolean>}
- */
-export async function copyText(textToCopy: string) {
-    try {
-        await clipboardCopy(textToCopy);
-
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
 
 /**
  * Creates a deferred object.
