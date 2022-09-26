@@ -50,11 +50,13 @@ export interface IJitsiConference {
     isLobbySupported: Function;
     kickParticipant: Function;
     muteParticipant: Function;
+    myLobbyUserId: Function;
     on: Function;
     removeTrack: Function;
     replaceTrack: Function;
     sendCommand: Function;
     sendEndpointMessage: Function;
+    sendLobbyMessage: Function;
     sessionId: string;
     setDisplayName: Function;
     setLocalParticipantProperty: Function;

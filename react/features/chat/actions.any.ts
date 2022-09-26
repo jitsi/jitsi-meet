@@ -1,8 +1,7 @@
-// @flow
-import { type Dispatch } from 'redux';
-
-import { getCurrentConference } from '../base/conference';
-import { getLocalParticipant } from '../base/participants';
+import { IStore } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
+import { getLocalParticipant } from '../base/participants/functions';
+import { Participant } from '../base/participants/types';
 import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 
 import {
@@ -104,7 +103,7 @@ export function closeChat() {
  *     message: string
  * }}
  */
-export function sendMessage(message: string, ignorePrivacy: boolean = false) {
+export function sendMessage(message: string, ignorePrivacy = false) {
     return {
         type: SEND_MESSAGE,
         ignorePrivacy,
@@ -149,8 +148,8 @@ export function setIsPollsTabFocused(isPollsTabFocused: boolean) {
  *
  * @returns {Function}
  */
-export function onLobbyChatInitialized(lobbyChatInitializedInfo: Object) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+export function onLobbyChatInitialized(lobbyChatInitializedInfo: { attendee: Participant; moderator: Participant; }) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const conference = getCurrentConference(state);
 
@@ -200,7 +199,7 @@ export function setLobbyChatActiveState(value: boolean) {
  *
  * @returns {Object}
  */
-export function removeLobbyChatParticipant(removeLobbyChatMessages: ?boolean) {
+export function removeLobbyChatParticipant(removeLobbyChatMessages?: boolean) {
     return {
         type: REMOVE_LOBBY_CHAT_PARTICIPANT,
         removeLobbyChatMessages
@@ -216,7 +215,7 @@ export function removeLobbyChatParticipant(removeLobbyChatMessages: ?boolean) {
  * @returns {Object}
  */
 export function handleLobbyChatInitialized(participantId: string) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!participantId) {
             return;
         }
@@ -225,7 +224,7 @@ export function handleLobbyChatInitialized(participantId: string) {
         const { knockingParticipants } = state['features/lobby'];
         const { lobbyMessageRecipient } = state['features/chat'];
         const me = getLocalParticipant(state);
-        const lobbyLocalId = conference.myLobbyUserId();
+        const lobbyLocalId = conference?.myLobbyUserId();
 
 
         if (lobbyMessageRecipient && lobbyMessageRecipient.id === participantId) {
@@ -255,9 +254,9 @@ export function handleLobbyChatInitialized(participantId: string) {
             attendee };
 
         // notify attendee privately.
-        conference.sendLobbyMessage(payload, attendee.id);
+        conference?.sendLobbyMessage(payload, attendee.id);
 
         // notify other moderators.
-        return conference.sendLobbyMessage(payload);
+        return conference?.sendLobbyMessage(payload);
     };
 }

@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../../base/i18n/functions';
-import { copyText } from '../../../../base/util/helpers';
+import { copyText } from '../../../../base/util/copyText';
 import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 
 import PasswordForm from './PasswordForm';

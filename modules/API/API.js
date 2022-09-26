@@ -68,7 +68,8 @@ import {
 import { appendSuffix } from '../../react/features/display-name';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
-import { resizeFilmStrip, setVolume } from '../../react/features/filmstrip/actions.web';
+import { addStageParticipant, resizeFilmStrip, setVolume } from '../../react/features/filmstrip/actions.web';
+import { isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
 import { invite } from '../../react/features/invite';
 import {
     selectParticipantInLargeVideo
@@ -236,7 +237,11 @@ function initCommands() {
         'pin-participant': id => {
             logger.debug('Pin participant command received');
             sendAnalytics(createApiEvent('participant.pinned'));
-            APP.store.dispatch(pinParticipant(id));
+            if (isStageFilmstripAvailable(APP.store.getState())) {
+                APP.store.dispatch(addStageParticipant(id, true));
+            } else {
+                APP.store.dispatch(pinParticipant(id));
+            }
         },
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);

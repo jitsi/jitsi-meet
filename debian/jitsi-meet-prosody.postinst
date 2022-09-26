@@ -83,17 +83,28 @@ case "$1" in
             TURN_SECRET="$RET"
         fi
 
-        db_get jitsi-meet/jaas-choice
-        JAAS_INPUT="$RET"
         # In the case of updating from an older version the configure of -prosody package may happen before the -config
         # one, so if JAAS_INPUT is empty (the question is not asked), let's ask it now.
-        if [ -z "$JAAS_INPUT" ] ; then
-            db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
-            db_set jitsi-meet/jaas-choice false
-            db_input critical jitsi-meet/jaas-choice || true
+        db_get jitsi-meet/cert-choice
+        CERT_CHOICE="$RET"
+        if [ -z "$CERT_CHOICE" ] ; then
+            db_input critical jitsi-meet/cert-choice || true
             db_go
+            db_get jitsi-meet/cert-choice
+            CERT_CHOICE="$RET"
+        fi
+        SELF_SIGNED_CHOICE="Generate a new self-signed certificate"
+        if [ "$CERT_CHOICE" != "$SELF_SIGNED_CHOICE" ]; then
             db_get jitsi-meet/jaas-choice
             JAAS_INPUT="$RET"
+            if [ -z "$JAAS_INPUT" ] ; then
+                db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
+                db_set jitsi-meet/jaas-choice false
+                db_input critical jitsi-meet/jaas-choice || true
+                db_go
+                db_get jitsi-meet/jaas-choice
+                JAAS_INPUT="$RET"
+            fi
         fi
 
         # and we're done with debconf

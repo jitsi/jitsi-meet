@@ -1,8 +1,6 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
+// @ts-ignore
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+import { IStore } from '../app/types';
 import { getParticipantById } from '../base/participants/functions';
 
 import { OPEN_CHAT } from './actionTypes';
@@ -19,8 +17,8 @@ export * from './actions.any';
  *     type: OPEN_CHAT
  * }}
  */
-export function openChat(participant: Object) {
-    return function(dispatch: (Object) => Object) {
+export function openChat(participant?: Object) {
+    return function(dispatch: IStore['dispatch']) {
         dispatch({
             participant,
             type: OPEN_CHAT
@@ -38,7 +36,7 @@ export function openChat(participant: Object) {
  * }}
  */
 export function openChatById(id: string) {
-    return function(dispatch: (Object) => Object, getState: Function) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const participant = getParticipantById(getState(), id);
 
         return dispatch({
@@ -55,7 +53,7 @@ export function openChatById(id: string) {
  * @returns {Function}
  */
 export function toggleChat() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const isOpen = getState()['features/chat'].isOpen;
 
         if (isOpen) {
