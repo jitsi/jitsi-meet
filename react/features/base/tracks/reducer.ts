@@ -15,11 +15,11 @@ import {
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
     TRACK_NO_DATA_FROM_SOURCE,
+    TRACK_OWNER_CHANGED,
     TRACK_REMOVED,
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_UPDATED,
-    TRACK_WILL_CREATE,
-    TRACK_OWNER_CHANGED
+    TRACK_WILL_CREATE
 } from './actionTypes';
 
 export interface ITrack {
@@ -176,9 +176,9 @@ ReducerRegistry.register<ITracksState>('features/base/tracks', (state = [], acti
     case PARTICIPANT_ID_CHANGED:
     case PARTICIPANT_LEFT:
     case TRACK_NO_DATA_FROM_SOURCE:
+    case TRACK_OWNER_CHANGED:
     case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT:
     case TRACK_UPDATED:
-    case TRACK_OWNER_CHANGED:
         return state.map((t: ITrack) => track(t, action));
 
     case TRACK_ADDED: {

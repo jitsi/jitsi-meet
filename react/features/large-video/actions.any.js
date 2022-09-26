@@ -2,9 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import {
-    getSsrcRewritingFeatureFlag
-} from '../base/config';
+import { getSsrcRewritingFeatureFlag } from '../base/config';
 import { MEDIA_TYPE } from '../base/media';
 import {
     getDominantSpeakerParticipant,
