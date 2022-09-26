@@ -22,4 +22,14 @@ Pod::Spec.new do |s|
   s.dependency 'React-Core'
   s.dependency 'ObjectiveDropboxOfficial', '6.2.3'
 
+  s.pod_target_xcconfig = { 
+    "FRAMEWORK_SEARCH_PATHS" =>  '"${PODS_ROOT}/../../node_modules/react-native-webrtc/apple"',
+    "HEADER_SEARCH_PATHS" => '"${PODS_ROOT}/Headers/Private/react-native-webrtc" "${PODS_ROOT}/Headers/Public/react-native-webrtc"',
+    "OTHER_LDFLAGS" => '-framework WebRTC'
+  }
+
+  s.preserve_paths = '{PODS_ROOT}/../../node_modules/react-native-webrtc/apple/*.xcframework'
+  s.project_header_files = '{PODS_ROOT}/../../node_modules/react-native-webrtc/apple/**/*.h'
+
+
 end

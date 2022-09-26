@@ -51,13 +51,6 @@ const JitsiMeeting = forwardRef((props: AppProps, ref) => {
         }
     }));
 
-    /**
-     * Executes the onLeave callback passed from props as well as setting the props to an empty object
-     */
-    function onReadyToClose() {
-        setAppProps({});
-        props.meetingOptions.onReadyToClose();
-    }
     useEffect(
         () => {
             const url = convertPropsToURL(props.meetingOptions.domain, props.meetingOptions.roomName);
@@ -68,12 +61,12 @@ const JitsiMeeting = forwardRef((props: AppProps, ref) => {
                     config: props.meetingOptions.settings
                 },
                 'rnSdkHandlers': {
-                    onReadyToClose,
+                    onReadyToClose: props.meetingOptions.onReadyToClose,
                     onConferenceJoined: props.meetingOptions.onConferenceJoined,
                     onConferenceWillJoin: props.meetingOptions.onConferenceWillJoin,
                     onConferenceLeft: props.meetingOptions.onConferenceLeft
                 },
-                'flags': props.flags
+                'flags': { ...props.flags }
             });
         }, []
     );
