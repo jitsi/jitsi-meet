@@ -1,5 +1,3 @@
-// @flow
-
 import { OPEN_CHAT } from './actionTypes';
 
 export * from './actions.any';
