@@ -52,14 +52,20 @@ fi
 
 RELOAD_CMD+=" && /usr/share/jitsi-meet/scripts/coturn-le-update.sh ${DOMAIN}"
 
-ISSUE_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh --issue -d ${DOMAIN} -w /usr/share/jitsi-meet --server letsencrypt"
-eval "${ISSUE_CERT_CMD}" || ISSUE_FAILED="true"
+ISSUE_FAILED_CODE=0
+ISSUE_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh -f --issue -d ${DOMAIN} -w /usr/share/jitsi-meet --server letsencrypt"
+eval "${ISSUE_CERT_CMD}" || ISSUE_FAILED_CODE=$?
 
-INSTALL_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh --install-cert -d ${DOMAIN} --key-file /etc/jitsi/meet/${DOMAIN}.key --fullchain-file /etc/jitsi/meet/${DOMAIN}.crt --reloadcmd \"${RELOAD_CMD}\""
-if [ "$ISSUE_FAILED" = "true" ] ; then
-    echo "Issuing the certificate from Let's Encrypt failed, continuing ..."
-    echo "You can retry later by executing:"
-    echo "/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL"
+INSTALL_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh -f --install-cert -d ${DOMAIN} --key-file /etc/jitsi/meet/${DOMAIN}.key --fullchain-file /etc/jitsi/meet/${DOMAIN}.crt --reloadcmd \"${RELOAD_CMD}\""
+if [ ${ISSUE_FAILED_CODE} -ne 0 ] ; then
+    # it maybe this certificate already exists (code 2 - skip, no need to renew)
+    if [ ${ISSUE_FAILED_CODE} -eq 2 ]; then
+        eval "$INSTALL_CERT_CMD"
+    else
+        echo "Issuing the certificate from Let's Encrypt failed, continuing ..."
+        echo "You can retry later by executing:"
+        echo "/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL"
+    fi
 else
     eval "$INSTALL_CERT_CMD"
 fi

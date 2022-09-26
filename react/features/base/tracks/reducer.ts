@@ -1,3 +1,4 @@
+import { MediaType } from '../media/constants';
 import { PARTICIPANT_ID_CHANGED } from '../participants/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
@@ -14,14 +15,18 @@ import {
     TRACK_WILL_CREATE
 } from './actionTypes';
 
-interface ITrack {
+export interface ITrack {
     isReceivingData: boolean;
     jitsiTrack: any;
     lastMediaEvent?: string;
     local: boolean;
-    mediaType: string;
+    mediaType: MediaType;
     mirror: boolean;
     muted: boolean;
+    noDataFromSourceNotificationInfo?: {
+        timeout?: number;
+        uid?: string;
+    };
     participantId: string;
     streamingStatus?: string;
     videoStarted: boolean;

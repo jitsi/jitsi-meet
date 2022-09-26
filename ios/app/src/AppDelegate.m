@@ -124,4 +124,10 @@
                                            options:options];
 }
 
+- (UIInterfaceOrientationMask)application:(UIApplication *)application
+  supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    return [[JitsiMeet sharedInstance] application:application 
+           supportedInterfaceOrientationsForWindow:window];
+}
+
 @end

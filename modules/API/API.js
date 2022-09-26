@@ -68,7 +68,8 @@ import {
 import { appendSuffix } from '../../react/features/display-name';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
-import { resizeFilmStrip, setVolume } from '../../react/features/filmstrip/actions.web';
+import { addStageParticipant, resizeFilmStrip, setVolume } from '../../react/features/filmstrip/actions.web';
+import { isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
 import { invite } from '../../react/features/invite';
 import {
     selectParticipantInLargeVideo
@@ -90,8 +91,9 @@ import {
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
+import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
-import { getActiveSession } from '../../react/features/recording/functions';
+import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { isScreenAudioSupported } from '../../react/features/screen-share';
 import { startScreenShareFlow, startAudioScreenShareFlow } from '../../react/features/screen-share/actions';
 import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
@@ -235,7 +237,11 @@ function initCommands() {
         'pin-participant': id => {
             logger.debug('Pin participant command received');
             sendAnalytics(createApiEvent('participant.pinned'));
-            APP.store.dispatch(pinParticipant(id));
+            if (isStageFilmstripAvailable(APP.store.getState())) {
+                APP.store.dispatch(addStageParticipant(id, true));
+            } else {
+                APP.store.dispatch(pinParticipant(id));
+            }
         },
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
@@ -544,10 +550,12 @@ function initCommands() {
          * For youtube streams, `youtubeStreamKey` must be passed on. `youtubeBroadcastID` is optional.
          * For dropbox recording, recording `mode` should be `file` and a dropbox oauth2 token must be provided.
          * For file recording, recording `mode` should be `file` and optionally `shouldShare` could be passed on.
+         * For local recording, recording `mode` should be `local` and optionally `onlySelf` could be passed on.
          * No other params should be passed.
          *
-         * @param { string } arg.mode - Recording mode, either `file` or `stream`.
+         * @param { string } arg.mode - Recording mode, either `local`, `file` or `stream`.
          * @param { string } arg.dropboxToken - Dropbox oauth2 token.
+         * @param { boolean } arg.onlySelf - Whether to only record the local streams.
          * @param { string } arg.rtmpStreamKey - The RTMP stream key.
          * @param { string } arg.rtmpBroadcastID - The RTMP broadcast ID.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
@@ -559,6 +567,7 @@ function initCommands() {
         'start-recording': ({
             mode,
             dropboxToken,
+            onlySelf,
             shouldShare,
             rtmpStreamKey,
             rtmpBroadcastID,
@@ -586,7 +595,26 @@ function initCommands() {
                 return;
             }
 
+            if (mode === 'local') {
+                const { localRecording } = state['features/base/config'];
+
+                if (!localRecording?.disable && supportsLocalRecording()) {
+                    APP.store.dispatch(startLocalVideoRecording(onlySelf));
+                } else {
+                    logger.error('Failed starting recording: local recording is either disabled or not supported');
+                }
+
+                return;
+            }
+
             let recordingConfig;
+            const { recordingService } = state['features/base/config'];
+
+            if (!recordingService.enabled && !dropboxToken) {
+                logger.error('Failed starting recording: the recording service is not enabled');
+
+                return;
+            }
 
             if (mode === JitsiRecordingConstants.mode.FILE) {
                 if (dropboxToken) {
@@ -632,7 +660,7 @@ function initCommands() {
         /**
          * Stops a recording or streaming in progress.
          *
-         * @param {string} mode - `file` or `stream`.
+         * @param {string} mode - `local`, `file` or `stream`.
          * @returns {void}
          */
         'stop-recording': mode => {
@@ -641,6 +669,12 @@ function initCommands() {
 
             if (!conference) {
                 logger.error('Conference is not defined');
+
+                return;
+            }
+
+            if (mode === 'local') {
+                APP.store.dispatch(stopLocalVideoRecording());
 
                 return;
             }

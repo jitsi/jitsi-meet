@@ -57,6 +57,9 @@
             openURL:(NSURL *_Nonnull)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *_Nonnull)options;
 
+- (UIInterfaceOrientationMask)application:(UIApplication *)application
+  supportedInterfaceOrientationsForWindow:(UIWindow *)window;
+
 #pragma mark - Utility methods
 
 /**

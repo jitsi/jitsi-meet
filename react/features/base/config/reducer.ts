@@ -71,6 +71,9 @@ const CONFERENCE_HEADER_MAPPING: any = {
 };
 
 export interface IConfigState extends IConfig {
+    analysis?: {
+        obfuscateRoomName?: boolean;
+    };
     error?: Error;
 }
 

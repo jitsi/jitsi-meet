@@ -67,7 +67,7 @@ type ButtonsWithNotifyClick = 'camera' |
     'add-passcode' |
     '__end';
 
-type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
+export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'E2EE_OFF_SOUND' |
     'E2EE_ON_SOUND' |
     'INCOMING_MSG_SOUND' |
@@ -125,6 +125,7 @@ export interface IConfig {
         key: ButtonsWithNotifyClick;
         preventExecution: boolean;
     }>;
+    callDisplayName?: string;
     callStatsConfigParams?: {
         additionalIDs?: {
             customerID?: string;
@@ -300,6 +301,7 @@ export interface IConfig {
         disableTopPanel?: boolean;
         minParticipantCountForTopPanel?: number;
     };
+    firefox_fake_device?: string;
     flags?: {
         sendMultipleVideoStreams?: boolean;
         sourceNameSignaling?: boolean;
@@ -424,7 +426,7 @@ export interface IConfig {
     };
     serviceUrl?: string;
     speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
-    startAudioMuted?: boolean;
+    startAudioMuted?: number;
     startAudioOnly?: boolean;
     startLastN?: number;
     startScreenSharing?: boolean;

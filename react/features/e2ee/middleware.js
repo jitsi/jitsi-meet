@@ -189,7 +189,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case TOGGLE_E2EE: {
-        if (conference && conference.isE2EEEnabled() !== action.enabled) {
+        if (conference && conference.isE2EESupported() && conference.isE2EEEnabled() !== action.enabled) {
             logger.debug(`E2EE will be ${action.enabled ? 'enabled' : 'disabled'}`);
             conference.toggleE2EE(action.enabled);
 

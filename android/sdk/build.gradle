@@ -77,6 +77,7 @@ dependencies {
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-masked-view_masked-view')
+    implementation project(':react-native-orientation-locker')
     implementation project(':react-native-pager-view')
     implementation project(':react-native-performance')
     implementation project(':react-native-safe-area-context')

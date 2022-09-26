@@ -6,13 +6,18 @@ import { IStore } from '../app/types';
 import { getLocalVideoTrack } from '../base/tracks/functions';
 import { getBaseUrl } from '../base/util/helpers';
 
-import { NEW_FACE_COORDINATES } from './actionTypes';
-import { addFaceExpression, clearFaceExpressionBuffer } from './actions';
+import {
+    addFaceExpression,
+    faceLandmarkDetectionStopped,
+    clearFaceExpressionBuffer,
+    newFaceBox
+} from './actions';
 import {
     DETECTION_TYPES,
     INIT_WORKER,
     DETECT_FACE,
-    WEBHOOK_SEND_TIME_INTERVAL
+    WEBHOOK_SEND_TIME_INTERVAL,
+    FACE_LANDMARK_DETECTION_ERROR_THRESHOLD
 } from './constants';
 import {
     getDetectionInterval,
@@ -38,6 +43,7 @@ class FaceLandmarksDetector {
     private recognitionActive = false;
     private canvas?: HTMLCanvasElement;
     private context?: CanvasRenderingContext2D | null;
+    private errorCount = 0;
 
     /**
      * Constructor for class, checks if the environment supports OffscreenCanvas.
@@ -119,10 +125,7 @@ class FaceLandmarksDetector {
             }
 
             if (faceBox) {
-                dispatch({
-                    type: NEW_FACE_COORDINATES,
-                    faceBox
-                });
+                dispatch(newFaceBox(faceBox));
             }
 
             APP.API.notifyFaceLandmarkDetected(faceBox, faceExpression);
@@ -187,10 +190,15 @@ class FaceLandmarksDetector {
 
             if (this.worker && this.imageCapture) {
                 this.sendDataToWorker(
-                    this.imageCapture,
                     faceLandmarks?.faceCenteringThreshold
                 ).then(status => {
-                    if (!status) {
+                    if (status) {
+                        this.errorCount = 0;
+                    } else if (++this.errorCount > FACE_LANDMARK_DETECTION_ERROR_THRESHOLD) {
+                        /* this prevents the detection from stopping immediately after occurring an error
+                         * sometimes due to the small detection interval when starting the detection some errors
+                         * might occur due to the track not being ready
+                        */
                         this.stopDetection({
                             dispatch,
                             getState
@@ -243,19 +251,22 @@ class FaceLandmarksDetector {
         this.detectionInterval = null;
         this.imageCapture = null;
         this.recognitionActive = false;
+        dispatch(faceLandmarkDetectionStopped(Date.now()));
         logger.log('Stop face detection');
     }
 
     /**
      * Sends the image data a canvas from the track in the image capture to the face detection worker.
      *
-     * @param {Object} imageCapture - Image capture that contains the current track.
      * @param {number} faceCenteringThreshold  - Movement threshold as percentage for sharing face coordinates.
      * @returns {Promise<boolean>} - True if sent, false otherwise.
      */
-    private async sendDataToWorker(imageCapture: ImageCapture, faceCenteringThreshold = 10): Promise<boolean> {
-        if (!imageCapture || !this.worker) {
-            logger.log('Could not send data to worker');
+    private async sendDataToWorker(faceCenteringThreshold = 10): Promise<boolean> {
+        if (!this.imageCapture
+            || !this.worker
+            || !this.imageCapture?.track
+            || this.imageCapture?.track.readyState !== 'live') {
+            logger.log('Environment not ready! Could not send data to worker');
 
             return false;
         }
@@ -264,10 +275,9 @@ class FaceLandmarksDetector {
         let image;
 
         try {
-            imageBitmap = await imageCapture.grabFrame();
+            imageBitmap = await this.imageCapture.grabFrame();
         } catch (err) {
             logger.log('Could not send data to worker');
-            logger.warn(err);
 
             return false;
         }

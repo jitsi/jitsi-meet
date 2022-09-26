@@ -67,7 +67,9 @@ const PinnedIndicator = ({
     }
 
     return (
-        <div className = { styles.pinnedIndicator }>
+        <div
+            className = { styles.pinnedIndicator }
+            id = { `pin-indicator-${participantId}` }>
             <BaseIndicator
                 icon = { IconPinParticipant }
                 iconSize = { `${iconSize}px` }

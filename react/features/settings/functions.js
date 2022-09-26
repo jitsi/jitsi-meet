@@ -134,7 +134,7 @@ export function getMoreTabProps(stateful: Object | Function) {
         showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
-        maxStageParticipants: state['features/filmstrip'].maxStageParticipants,
+        maxStageParticipants: state['features/base/settings'].maxStageParticipants,
         stageFilmstripEnabled
     };
 }

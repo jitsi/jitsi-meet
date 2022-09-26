@@ -751,7 +751,7 @@ export function isStageFilmstripTopPanel(state, minParticipantCount = 0) {
 export function isStageFilmstripEnabled(state) {
     const { filmstrip } = state['features/base/config'];
 
-    return !(filmstrip?.disableStageFilmstrip ?? true) && interfaceConfig.VERTICAL_FILMSTRIP;
+    return !filmstrip?.disableStageFilmstrip && interfaceConfig.VERTICAL_FILMSTRIP;
 }
 
 /**

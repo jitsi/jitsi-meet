@@ -26,6 +26,7 @@ const DEFAULT_STATE: ISettingsState = {
     displayName: undefined,
     email: undefined,
     localFlipX: true,
+    maxStageParticipants: 1,
     micDeviceId: undefined,
     serverURL: undefined,
     hideShareAudioHelper: false,
@@ -62,6 +63,7 @@ export interface ISettingsState {
     email?: string;
     hideShareAudioHelper?: boolean;
     localFlipX?: boolean;
+    maxStageParticipants?: number;
     micDeviceId?: string | boolean;
     serverURL?: string;
     soundsIncomingMessage?: boolean;

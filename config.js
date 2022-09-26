@@ -114,7 +114,7 @@ var config = {
 
         // Signal that this client supports receiving multiple video streams. Without this flag jicofo will enable
         // multi-stream backward compatibility.
-        receiveMultipleVideoStreams: true,
+        // receiveMultipleVideoStreams: true,
     },
 
     // Disables moderator indicators.
@@ -824,7 +824,7 @@ var config = {
     // Application ID and Secret.
     // callStatsID: '',
     // callStatsSecret: '',
-    // callstatsStoreLogs: true,
+    // callStatsApplicationLogsDisabled: false,
 
     // The callstats initialize config params as described in the API:
     // https://docs.callstats.io/docs/javascript#callstatsinitialize-with-app-secret
@@ -1440,6 +1440,10 @@ var config = {
     //     // Disables the stage filmstrip
     //     // (displaying multiple participants on stage besides the vertical filmstrip)
     //     disableStageFilmstrip: false,
+
+    //     // Default number of participants that can be displayed on stage.
+    //     // The user can change this in settings. Number must be between 1 and 6.
+    //     stageFilmstripParticipants: 1,
 
     //     // Disables the top panel (only shown when a user is sharing their screen).
     //     disableTopPanel: false,

@@ -366,6 +366,8 @@ PODS:
     - React
   - react-native-netinfo (7.1.7):
     - React-Core
+  - react-native-orientation-locker (1.5.0):
+    - React-Core
   - react-native-pager-view (5.4.9):
     - React-Core
   - react-native-performance (2.1.0):
@@ -382,7 +384,7 @@ PODS:
   - react-native-video/Video (6.0.0-alpha.1):
     - PromisesSwift
     - React-Core
-  - react-native-webrtc (1.100.1):
+  - react-native-webrtc (1.106.0):
     - React-Core
   - react-native-webview (11.15.1):
     - React-Core
@@ -514,6 +516,7 @@ DEPENDENCIES:
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-performance (from `../node_modules/react-native-performance/ios`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -623,6 +626,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keep-awake"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-orientation-locker:
+    :path: "../node_modules/react-native-orientation-locker"
   react-native-pager-view:
     :path: "../node_modules/react-native-pager-view"
   react-native-performance:
@@ -738,13 +743,14 @@ SPEC CHECKSUMS:
   react-native-get-random-values: 30b3f74ca34e30e2e480de48e4add2706a40ac8f
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-netinfo: 27f287f2d191693f3b9d01a4273137fcf91c3b5d
+  react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
   react-native-pager-view: 3ee7d4c7697fb3ef788346e834a60cca97ed8540
   react-native-performance: f4b6604a9d5a8a7407e34a82fab6c641d9a3ec12
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
-  react-native-webrtc: 206a0ac12a5633d2ec4605174d7c9f12f0d674b2
+  react-native-webrtc: ae0a19dd7de9889f7596989f33db67c58632323c
   react-native-webview: ea4899a1056c782afa96dd082179a66cbebf5504
   React-perflogger: 30ab8d6db10e175626069e742eead3ebe8f24fd5
   React-RCTActionSheet: 4b45da334a175b24dabe75f856b98fed3dfd6201
@@ -772,6 +778,6 @@ SPEC CHECKSUMS:
   RNWatch: dae6c858a2051dbdcfb00b9a86cf4d90400263b4
   Yoga: 17cd9a50243093b547c1e539c749928dd68152da
 
-PODFILE CHECKSUM: a437875b597d999a137c671b1da54153fe31d23f
+PODFILE CHECKSUM: 55f1a79792dd5f74b7510fc84068abcb79ddd518
 
 COCOAPODS: 1.11.3

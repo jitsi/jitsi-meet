@@ -64,8 +64,8 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
         (state: IState) => state['features/base/responsive-ui']?.aspectRatio
     );
     const localParticipant = useSelector((state: IState) => getLocalParticipant(state));
-    const isDisplayNameMandatory = useSelector(state => isDisplayNameRequired(state));
-    const roomName = useSelector(state => getConferenceName(state));
+    const isDisplayNameMandatory = useSelector((state: IState) => isDisplayNameRequired(state));
+    const roomName = useSelector((state: IState) => getConferenceName(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
