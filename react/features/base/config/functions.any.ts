@@ -60,7 +60,7 @@ export function getMeetingRegion(state: IReduxState) {
  * @returns {boolean}
  */
 export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
-    return navigator.product !== 'ReactNative' && isUnifiedPlanEnabled(state);
+    return isUnifiedPlanEnabled(state);
 }
 
 /**
