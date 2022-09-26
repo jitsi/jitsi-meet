@@ -20,6 +20,7 @@ export interface IConnectionState {
     connecting?: Object;
     connection?: {
         getJid: () => string;
+        getLogs: () => Object;
     };
     error?: ConnectionFailedError;
     locationURL?: URL;

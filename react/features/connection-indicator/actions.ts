@@ -1,3 +1,4 @@
+import { IStore } from '../app/types';
 import getRoomName from '../base/config/getRoomName';
 import { downloadJSON } from '../base/util/downloadJSON';
 
@@ -8,11 +9,11 @@ import { downloadJSON } from '../base/util/downloadJSON';
  * @returns {Function}
  */
 export function saveLogs() {
-    return (dispatch, getState) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
 
-        const logs = getState()['features/base/connection'].connection.getLogs();
+        const logs = getState()['features/base/connection'].connection?.getLogs();
         const roomName = getRoomName() || '';
 
-        downloadJSON(logs, `meetlog-${roomName}.json`);
+        downloadJSON(logs ?? {}, `meetlog-${roomName}.json`);
     };
 }
