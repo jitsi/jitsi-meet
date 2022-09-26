@@ -66,6 +66,23 @@ class ScreenSharingIosButton extends AbstractButton<Props, *> {
     }
 
     /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {React$Node}
+     */
+    render() {
+        return (
+            <>
+                { super.render() }
+                <ScreenCapturePickerView
+                    ref = { this._setNativeComponent }
+                    style = { styles.screenCapturePickerView } />
+            </>
+        );
+    }
+
+    /**
     * Sets the internal reference to the React Component wrapping the
     * {@code RPSystemBroadcastPickerView} component.
     *
@@ -108,21 +125,6 @@ class ScreenSharingIosButton extends AbstractButton<Props, *> {
    */
     _isToggled() {
         return this.props._screensharing;
-    }
-
-    /**
-   * Helper function to be implemented by subclasses, which may return a
-   * new React Element to be appended at the end of the button.
-   *
-   * @protected
-   * @returns {ReactElement|null}
-   */
-    _getElementAfter() {
-        return (
-            <ScreenCapturePickerView
-                ref = { this._setNativeComponent }
-                style = { styles.screenCapturePickerView } />
-        );
     }
 }
 
