@@ -62,7 +62,8 @@ function mergeDependencyVersions() {
 
     fs.writeFileSync('package.json', data);
 }
-//TODO: put this in a seperate step
+
+// TODO: put this in a seperate step
 mergeDependencyVersions();
 
 copyFolderRecursiveSync('../images', '.');
