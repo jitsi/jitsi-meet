@@ -15,6 +15,7 @@ import SecurityDialogButton
     from '../../../security/components/security-dialog/native/SecurityDialogButton';
 import { SharedVideoButton } from '../../../shared-video/components';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
+import { isSpeakerStatsDisable } from '../../../speaker-stats/functions';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import styles from '../../../video-menu/components/native/styles';
@@ -54,7 +55,12 @@ type Props = {
     /**
      * Used for hiding the dialog when the selection was completed.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Whether or not speaker stats is disable.
+     */
+    _isSpeakerStatsDisable: boolean
 };
 
 type State = {
@@ -96,7 +102,8 @@ class OverflowMenu extends PureComponent<Props, State> {
     render() {
         const {
             _reactionsEnabled,
-            _width
+            _width,
+            _isSpeakerStatsDisable
         } = this.props;
         const toolbarButtons = getMovableButtons(_width);
 
@@ -135,7 +142,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <Divider style = { styles.divider } />
                 <SharedVideoButton { ...buttonProps } />
                 {!toolbarButtons.has('screensharing') && <ScreenSharingButton { ...buttonProps } />}
-                <SpeakerStatsButton { ...buttonProps } />
+                {!_isSpeakerStatsDisable && <SpeakerStatsButton { ...buttonProps } />}
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <ClosedCaptionButton { ...buttonProps } />
@@ -177,7 +184,8 @@ class OverflowMenu extends PureComponent<Props, State> {
 function _mapStateToProps(state) {
     return {
         _reactionsEnabled: isReactionsEnabled(state),
-        _width: state['features/base/responsive-ui'].clientWidth
+        _width: state['features/base/responsive-ui'].clientWidth,
+        _isSpeakerStatsDisable: isSpeakerStatsDisable(state)
     };
 }
 
