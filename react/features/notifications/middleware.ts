@@ -7,9 +7,9 @@ import {
 } from '../base/participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../base/participants/constants';
 import {
+    getLocalParticipant,
     getParticipantById,
-    getParticipantDisplayName,
-    getLocalParticipant
+    getParticipantDisplayName
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';

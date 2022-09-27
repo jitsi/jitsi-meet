@@ -13,7 +13,7 @@ import { ParticipantsPaneButton } from '../../../participants-pane/components/na
 import { ReactionsMenuButton } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { TileViewButton } from '../../../video-layout';
-import { isToolboxVisible, getMovableButtons } from '../../functions.native';
+import { getMovableButtons, isToolboxVisible } from '../../functions.native';
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
 import VideoMuteButton from '../VideoMuteButton';

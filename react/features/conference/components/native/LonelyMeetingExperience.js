@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 
-import { getFeatureFlag, INVITE_ENABLED } from '../../../base/flags';
+import { INVITE_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { Icon, IconAddPeople } from '../../../base/icons';
 import { getParticipantCountWithFake } from '../../../base/participants';

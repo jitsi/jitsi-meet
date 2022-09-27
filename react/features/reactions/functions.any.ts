@@ -3,12 +3,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { IState } from '../app/types';
 // @ts-ignore
-import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
+import { REACTIONS_ENABLED, getFeatureFlag } from '../base/flags';
 import { getLocalParticipant } from '../base/participants/functions';
 // @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
-import { ReactionEmojiProps, REACTIONS, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';
+import { REACTIONS, ReactionEmojiProps, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';
 import logger from './logger';
 
 /**

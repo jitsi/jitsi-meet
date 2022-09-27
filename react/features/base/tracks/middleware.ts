@@ -10,18 +10,18 @@ import { getAvailableDevices } from '../devices/actions';
 import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
+    SET_SCREENSHARE_MUTED,
     SET_VIDEO_MUTED,
-    TOGGLE_CAMERA_FACING_MODE,
-    SET_SCREENSHARE_MUTED
+    TOGGLE_CAMERA_FACING_MODE
 } from '../media/actionTypes';
-import { toggleCameraFacingMode, setScreenshareMuted } from '../media/actions';
+import { setScreenshareMuted, toggleCameraFacingMode } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
-    VIDEO_MUTISM_AUTHORITY,
-    VIDEO_TYPE,
+    MediaType,
     SCREENSHARE_MUTISM_AUTHORITY,
-    MediaType
+    VIDEO_MUTISM_AUTHORITY,
+    VIDEO_TYPE
 } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
@@ -40,8 +40,8 @@ import {
     showNoDataFromSourceVideoError,
     toggleScreensharing,
     trackMuteUnmuteFailed,
-    trackRemoved,
-    trackNoDataFromSourceNotificationInfoChanged
+    trackNoDataFromSourceNotificationInfoChanged,
+    trackRemoved
 } from './actions';
 import {
     getLocalTrack,

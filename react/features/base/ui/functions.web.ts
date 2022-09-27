@@ -1,4 +1,4 @@
-import { createTheme, adaptV4Theme } from '@mui/material/styles';
+import { adaptV4Theme, createTheme } from '@mui/material/styles';
 
 import { Palette as Palette1, Typography } from '../ui/types';
 

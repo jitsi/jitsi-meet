@@ -5,7 +5,7 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 // @ts-ignore
 import { getConferenceState } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { MediaType, MEDIA_TYPE } from '../base/media/constants';
+import { MEDIA_TYPE, MediaType } from '../base/media/constants';
 import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { raiseHand } from '../base/participants/actions';
 import {
@@ -40,13 +40,13 @@ import {
 } from './actionTypes';
 import {
     disableModeration,
-    dismissPendingParticipant,
     dismissPendingAudioParticipant,
+    dismissPendingParticipant,
     enableModeration,
     localParticipantApproved,
+    localParticipantRejected,
     participantApproved,
     participantPendingAudio,
-    localParticipantRejected,
     participantRejected
 } from './actions';
 import {

@@ -3,12 +3,12 @@
 import {
     Dialog,
     FillScreen,
-    dialogWidth,
-    dialogHeight,
     PositionerAbsolute,
-    PositionerRelative
+    PositionerRelative,
+    dialogHeight,
+    dialogWidth
 } from '@atlaskit/modal-dialog/dist/es2019/styled/Modal.js';
-import { N0, DN50 } from '@atlaskit/theme/colors';
+import { DN50, N0 } from '@atlaskit/theme/colors';
 import { themed } from '@atlaskit/theme/components';
 import React from 'react';
 

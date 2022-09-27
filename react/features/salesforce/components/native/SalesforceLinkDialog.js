@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, SafeAreaView, ScrollView, Text, TextInput, Platform } from 'react-native';
+import { Platform, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
 import { Button, withTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 

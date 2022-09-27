@@ -6,7 +6,7 @@ import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appNavigate } from '../../../app/actions';
-import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { FULLSCREEN_ENABLED, PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -18,8 +18,8 @@ import { BrandingImageBackground } from '../../../dynamic-branding';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
-    isFilmstripVisible,
-    TileView
+    TileView,
+    isFilmstripVisible
 } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';

@@ -14,7 +14,7 @@ import {
     RESET_SEARCH_CRITERIA
 } from './actionTypes';
 import { initReorderStats, updateStats } from './actions';
-import { filterBySearchCriteria, getSortedSpeakerStats, getPendingReorder, resetHiddenStats } from './functions';
+import { filterBySearchCriteria, getPendingReorder, getSortedSpeakerStats, resetHiddenStats } from './functions';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);

@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 import {
-    SafeAreaView,
-    SectionList as ReactNativeSectionList
+    SectionList as ReactNativeSectionList,
+    SafeAreaView
 } from 'react-native';
 
 import type { Section } from '../../Types';

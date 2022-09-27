@@ -5,8 +5,8 @@ import WarningIcon from '@atlaskit/icon/glyph/warning';
 import {
     Header,
     Title,
-    titleIconWrapperStyles,
-    TitleText
+    TitleText,
+    titleIconWrapperStyles
     // @ts-ignore
 } from '@atlaskit/modal-dialog/dist/es2019/styled/Content';
 import { Theme } from '@mui/material';

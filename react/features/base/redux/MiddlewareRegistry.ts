@@ -1,4 +1,4 @@
-import { applyMiddleware, Middleware } from 'redux';
+import { Middleware, applyMiddleware } from 'redux';
 
 import { IState, IStore } from '../../app/types';
 

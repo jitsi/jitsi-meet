@@ -1,8 +1,8 @@
 import {
     MediaStream,
     MediaStreamTrack,
-    RTCSessionDescription,
     RTCIceCandidate,
+    RTCSessionDescription,
     mediaDevices,
     permissions
 } from 'react-native-webrtc';

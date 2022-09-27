@@ -8,9 +8,9 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { FEATURES } from '../../../jaas/constants';
 import {
-    hideNotification,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
+    hideNotification,
     showNotification
 } from '../../../notifications';
 import { highlightMeetingMoment } from '../../actions.any';

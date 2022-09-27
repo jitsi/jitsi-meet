@@ -6,7 +6,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 import Switch from '../../../base/ui/components/web/Switch';
-import AbstractMuteEveryoneDialog, { abstractMapStateToProps, type Props }
+import AbstractMuteEveryoneDialog, { type Props, abstractMapStateToProps }
 // @ts-ignore
     from '../AbstractMuteEveryoneDialog';
 

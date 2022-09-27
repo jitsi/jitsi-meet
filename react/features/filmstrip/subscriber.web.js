@@ -9,14 +9,14 @@ import { setFilmstripVisible } from '../filmstrip/actions';
 import { selectParticipantInLargeVideo } from '../large-video/actions.any';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
-import { getCurrentLayout, shouldDisplayTileView, LAYOUTS } from '../video-layout';
+import { LAYOUTS, getCurrentLayout, shouldDisplayTileView } from '../video-layout';
 
 import {
     clearStageParticipants,
     setHorizontalViewDimensions,
+    setScreenshareFilmstripParticipant,
     setScreensharingTileDimensions,
     setStageFilmstripViewDimensions,
-    setScreenshareFilmstripParticipant,
     setTileViewDimensions,
     setVerticalViewDimensions
 } from './actions.web';

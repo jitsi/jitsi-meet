@@ -4,9 +4,9 @@ import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import { CONFERENCE_WILL_LEAVE } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
 import {
-    getLocalParticipant,
     PARTICIPANT_JOINED,
-    PARTICIPANT_UPDATED
+    PARTICIPANT_UPDATED,
+    getLocalParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_STOPPED } from '../base/tracks';

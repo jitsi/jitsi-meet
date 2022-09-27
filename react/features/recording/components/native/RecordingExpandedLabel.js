@@ -2,8 +2,8 @@
 
 import { translate } from '../../../base/i18n';
 import {
-    ExpandedLabel,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    ExpandedLabel
 } from '../../../base/label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';

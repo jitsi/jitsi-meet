@@ -22,8 +22,8 @@ import {
 } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 import {
-    clearNotifications,
     NOTIFICATION_TIMEOUT_TYPE,
+    clearNotifications,
     showNotification
 } from '../notifications';
 import { setFatalError } from '../overlay';

@@ -1,7 +1,7 @@
 // @flow
 
 import { translate } from '../../../base/i18n';
-import { ExpandedLabel, type Props as AbstractProps } from '../../../base/label';
+import { type Props as AbstractProps, ExpandedLabel } from '../../../base/label';
 
 import { INSECURE_ROOM_NAME_LABEL_COLOR } from './styles';
 

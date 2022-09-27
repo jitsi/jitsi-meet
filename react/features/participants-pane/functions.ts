@@ -1,22 +1,22 @@
 /* eslint-disable lines-around-comment */
 import { IState } from '../app/types';
 import {
-    isParticipantApproved,
     isEnabledFromState,
     isLocalParticipantApprovedFromState,
+    isParticipantApproved,
     isSupported
 } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
 // @ts-ignore
-import { getFeatureFlag, INVITE_ENABLED } from '../base/flags';
+import { INVITE_ENABLED, getFeatureFlag } from '../base/flags';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
-    isLocalParticipantModerator,
-    isParticipantModerator,
     getLocalParticipant,
+    getRaiseHandsQueue,
     getRemoteParticipantsSorted,
-    getRaiseHandsQueue
+    isLocalParticipantModerator,
+    isParticipantModerator
 } from '../base/participants/functions';
 import { Participant } from '../base/participants/types';
 import { toState } from '../base/redux/functions';
@@ -24,7 +24,7 @@ import { toState } from '../base/redux/functions';
 import { normalizeAccents } from '../base/util/strings';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
-import { QUICK_ACTION_BUTTON, REDUCER_KEY, MEDIA_STATE } from './constants';
+import { MEDIA_STATE, QUICK_ACTION_BUTTON, REDUCER_KEY } from './constants';
 
 /**
  * Find the first styled ancestor component of an element.

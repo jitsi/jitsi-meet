@@ -9,8 +9,8 @@ import type { Dispatch } from 'redux';
 import { IState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import {
-    getParticipantDisplayName,
-    getParticipantById
+    getParticipantById,
+    getParticipantDisplayName
 } from '../../../base/participants/functions';
 // @ts-ignore
 import { updateSettings } from '../../../base/settings';

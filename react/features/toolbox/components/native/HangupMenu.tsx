@@ -16,7 +16,7 @@ import { hideSheet } from '../../../base/dialog';
 // @ts-ignore
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 // @ts-ignore
-import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
+import { PARTICIPANT_ROLE, getLocalParticipant } from '../../../base/participants';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 // @ts-ignore

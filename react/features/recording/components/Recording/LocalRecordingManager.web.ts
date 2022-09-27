@@ -7,7 +7,7 @@ import { IStore } from '../../../app/types';
 import { getRoomName } from '../../../base/conference';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 // @ts-ignore
-import { getTrackState, getLocalTrack } from '../../../base/tracks';
+import { getLocalTrack, getTrackState } from '../../../base/tracks';
 import { inIframe } from '../../../base/util/iframeUtils';
 // @ts-ignore
 import { stopLocalVideoRecording } from '../../actions.any';

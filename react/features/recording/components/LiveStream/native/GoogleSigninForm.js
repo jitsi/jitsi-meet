@@ -10,8 +10,8 @@ import { StyleType } from '../../../../base/styles';
 import {
     GOOGLE_API_STATES,
     GOOGLE_SCOPE_YOUTUBE,
-    googleApi,
     GoogleSignInButton,
+    googleApi,
     setGoogleAPIState
 } from '../../../../google-api';
 import logger from '../../../logger';

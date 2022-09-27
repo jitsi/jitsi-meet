@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { IState } from '../../../../app/types';
 // @ts-ignore

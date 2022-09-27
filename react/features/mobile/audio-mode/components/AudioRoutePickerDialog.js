@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
 
-import { hideSheet, BottomSheet } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import {

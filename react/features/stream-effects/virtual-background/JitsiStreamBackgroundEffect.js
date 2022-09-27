@@ -4,8 +4,8 @@ import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
 
 import {
     CLEAR_TIMEOUT,
-    TIMEOUT_TICK,
     SET_TIMEOUT,
+    TIMEOUT_TICK,
     timerWorkerScript
 } from './TimerWorker';
 

@@ -11,10 +11,10 @@ import HighlightButton from '../../../recording/components/Recording/native/High
 
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
 import {
-    LabelHitSlop,
     LABEL_ID_RAISED_HANDS_COUNT,
     LABEL_ID_RECORDING,
-    LABEL_ID_STREAMING
+    LABEL_ID_STREAMING,
+    LabelHitSlop
 } from './constants';
 
 type Props = {

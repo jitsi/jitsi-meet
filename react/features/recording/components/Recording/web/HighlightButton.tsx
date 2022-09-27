@@ -18,8 +18,8 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
 import { FEATURES } from '../../../../jaas/constants';
 import AbstractHighlightButton, {
-    _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _abstractMapStateToProps
     // @ts-ignore
 } from '../AbstractHighlightButton';
 

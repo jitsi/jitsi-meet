@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
 import { Icon, IconCloseSolid } from '../../../base/icons';

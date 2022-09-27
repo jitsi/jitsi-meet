@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Avatar, StatelessAvatar } from '../../../base/avatar';
 import { getInitials } from '../../../base/avatar/functions';

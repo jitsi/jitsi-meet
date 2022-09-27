@@ -7,7 +7,7 @@ import { IState } from '../../../../app/types';
 // @ts-ignore
 import { getConferenceName } from '../../../../base/conference/functions';
 // @ts-ignore
-import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../../base/flags';
+import { MEETING_NAME_ENABLED, getFeatureFlag } from '../../../../base/flags';
 // @ts-ignore
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../../base/participants/functions';

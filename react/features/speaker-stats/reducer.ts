@@ -3,11 +3,11 @@ import _ from 'lodash';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    INIT_SEARCH,
-    UPDATE_STATS,
     INIT_REORDER_STATS,
+    INIT_SEARCH,
     RESET_SEARCH_CRITERIA,
-    TOGGLE_FACE_EXPRESSIONS
+    TOGGLE_FACE_EXPRESSIONS,
+    UPDATE_STATS
 } from './actionTypes';
 
 /**

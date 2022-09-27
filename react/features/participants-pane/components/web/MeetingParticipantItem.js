@@ -19,7 +19,7 @@ import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks';
-import { ACTION_TRIGGER, type MediaState, MEDIA_STATE } from '../../constants';
+import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
 import {
     getParticipantAudioMediaState,
     getParticipantVideoMediaState,

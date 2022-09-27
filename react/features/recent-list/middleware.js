@@ -3,8 +3,8 @@
 import { APP_WILL_MOUNT } from '../base/app';
 import {
     CONFERENCE_WILL_LEAVE,
-    SET_ROOM,
-    JITSI_CONFERENCE_URL_KEY
+    JITSI_CONFERENCE_URL_KEY,
+    SET_ROOM
 } from '../base/conference';
 import { addKnownDomains } from '../base/known-domains';
 import { MiddlewareRegistry } from '../base/redux';

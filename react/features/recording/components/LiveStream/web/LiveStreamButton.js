@@ -5,8 +5,8 @@ import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import AbstractLiveStreamButton, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props
+    type Props,
+    _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractLiveStreamButton';
 
 import {

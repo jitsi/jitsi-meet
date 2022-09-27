@@ -73,9 +73,9 @@ import {
 // @ts-ignore
 import { isSalesforceEnabled } from '../../../salesforce/functions';
 import {
+    ShareAudioButton,
     isScreenAudioSupported,
     isScreenVideoShared,
-    ShareAudioButton,
     startScreenShareFlow
     // @ts-ignore
 } from '../../../screen-share';
@@ -98,7 +98,7 @@ import {
     // @ts-ignore
 } from '../../../video-layout';
 // @ts-ignore
-import { VideoQualityDialog, VideoQualityButton } from '../../../video-quality/components';
+import { VideoQualityButton, VideoQualityDialog } from '../../../video-quality/components';
 // @ts-ignore
 import { VideoBackgroundButton, toggleBackgroundEffect } from '../../../virtual-background';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
@@ -110,7 +110,7 @@ import {
     showToolbox
     // @ts-ignore
 } from '../../actions';
-import { THRESHOLDS, NOT_APPLICABLE, NOTIFY_CLICK_MODE } from '../../constants';
+import { NOTIFY_CLICK_MODE, NOT_APPLICABLE, THRESHOLDS } from '../../constants';
 // @ts-ignore
 import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions';
 // @ts-ignore

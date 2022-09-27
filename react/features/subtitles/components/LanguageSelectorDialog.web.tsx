@@ -1,15 +1,15 @@
 /* eslint-disable lines-around-comment */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { IState } from '../../app/types';
 // @ts-ignore
 import { Dialog } from '../../base/dialog';
 // @ts-ignore
-import { LANGUAGES, TRANSLATION_LANGUAGES_HEAD, TRANSLATION_LANGUAGES_EXCLUDE } from '../../base/i18n';
+import { LANGUAGES, TRANSLATION_LANGUAGES_EXCLUDE, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { connect } from '../../base/redux/functions';
 // @ts-ignore
-import { updateTranslationLanguage, setRequestingSubtitles, toggleLangugeSelectorDialog } from '../actions';
+import { setRequestingSubtitles, toggleLangugeSelectorDialog, updateTranslationLanguage } from '../actions';
 
 import LanguageList from './LanguageList';
 

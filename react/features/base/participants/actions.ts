@@ -5,15 +5,15 @@ import { set } from '../redux/functions';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    GRANT_MODERATOR,
     HIDDEN_PARTICIPANT_JOINED,
     HIDDEN_PARTICIPANT_LEFT,
-    GRANT_MODERATOR,
     KICK_PARTICIPANT,
     LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
-    OVERWRITE_PARTICIPANT_NAME,
     OVERWRITE_PARTICIPANTS_NAMES,
+    OVERWRITE_PARTICIPANT_NAME,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
@@ -30,10 +30,10 @@ import {
 } from './constants';
 import {
     getLocalParticipant,
-    getVirtualScreenshareParticipantOwnerId,
     getNormalizedDisplayName,
+    getParticipantById,
     getParticipantDisplayName,
-    getParticipantById
+    getVirtualScreenshareParticipantOwnerId
 } from './functions';
 import logger from './logger';
 import { Participant } from './types';

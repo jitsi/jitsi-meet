@@ -5,8 +5,8 @@ import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { isModerationNotificationDisplayed } from '../../notifications/functions';
 
 import {
-    SET_AUDIO_MUTED,
     SET_AUDIO_AVAILABLE,
+    SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
     SET_CAMERA_FACING_MODE,
     SET_SCREENSHARE_MUTED,

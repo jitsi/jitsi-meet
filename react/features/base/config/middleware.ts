@@ -5,7 +5,7 @@ import { getFeatureFlag } from '../flags/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { updateSettings } from '../settings/actions';
 
-import { SET_CONFIG, OVERWRITE_CONFIG } from './actionTypes';
+import { OVERWRITE_CONFIG, SET_CONFIG } from './actionTypes';
 import { updateConfig } from './actions';
 import { IConfig } from './configType';
 

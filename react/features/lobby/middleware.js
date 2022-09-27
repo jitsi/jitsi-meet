@@ -34,10 +34,10 @@ import {
     knockingParticipantLeft,
     openLobbyScreen,
     participantIsKnockingOrUpdated,
+    setLobbyMessageListener,
     setLobbyModeEnabled,
-    startKnocking,
     setPasswordJoinFailed,
-    setLobbyMessageListener
+    startKnocking
 } from './actions';
 import { updateLobbyParticipantOnLeave } from './actions.any';
 import { KNOCKING_PARTICIPANT_SOUND_ID } from './constants';

@@ -4,9 +4,9 @@ import { connect } from '../../../base/redux';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {
+    Props,
     _mapDispatchToProps,
-    _mapStateToProps,
-    Props
+    _mapStateToProps
 } from './AbstractVideoManager';
 
 

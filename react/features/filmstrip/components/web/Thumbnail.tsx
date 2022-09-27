@@ -33,8 +33,8 @@ import {
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
     getVirtualScreenshareParticipantTrack,
-    updateLastTrackVideoMediaEvent,
-    trackStreamingStatusChanged
+    trackStreamingStatusChanged,
+    updateLastTrackVideoMediaEvent
     // @ts-ignore
 } from '../../../base/tracks';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
@@ -62,8 +62,8 @@ import {
     getActiveParticipantsIds,
     getDisplayModeInput,
     getThumbnailTypeFromLayout,
-    isVideoPlayable,
     isStageFilmstripAvailable,
+    isVideoPlayable,
     showGridInVerticalView
     // @ts-ignore
 } from '../../functions';

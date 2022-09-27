@@ -5,7 +5,7 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { sendAnalytics, createPollEvent } from '../../analytics';
+import { createPollEvent, sendAnalytics } from '../../analytics';
 import { getParticipantById } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';

@@ -5,8 +5,8 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PIN_PARTICIPANT,
-    getLocalParticipant,
-    getDominantSpeakerParticipant
+    getDominantSpeakerParticipant,
+    getLocalParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { isTestModeEnabled } from '../base/testing';

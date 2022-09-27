@@ -17,9 +17,11 @@ import { getLocalParticipant, getParticipantById } from '../../../base/participa
 // @ts-ignore
 import { Popover } from '../../../base/popover';
 import {
-    getVirtualScreenshareParticipantTrack,
-    getSourceNameByParticipantId, // @ts-ignore
-    getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
+    getSourceNameByParticipantId,
+    getTrackByMediaTypeAndParticipant,
+    getVirtualScreenshareParticipantTrack
+    // @ts-ignore
+} from '../../../base/tracks';
 import {
     isParticipantConnectionStatusInactive,
     isParticipantConnectionStatusInterrupted,
@@ -27,9 +29,9 @@ import {
     isTrackStreamingStatusInterrupted
 } from '../../functions';
 import AbstractConnectionIndicator, {
-    INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
-    type State as AbstractState
+    type State as AbstractState,
+    INDICATOR_DISPLAY_THRESHOLD
     // @ts-ignore
 } from '../AbstractConnectionIndicator';
 

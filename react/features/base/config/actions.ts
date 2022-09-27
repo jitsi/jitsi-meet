@@ -8,9 +8,9 @@ import { parseURIString } from '../util/uri';
 import {
     CONFIG_WILL_LOAD,
     LOAD_CONFIG_ERROR,
+    OVERWRITE_CONFIG,
     SET_CONFIG,
-    UPDATE_CONFIG,
-    OVERWRITE_CONFIG
+    UPDATE_CONFIG
 } from './actionTypes';
 import { IConfig } from './configType';
 import { _CONFIG_STORE_PREFIX } from './constants';

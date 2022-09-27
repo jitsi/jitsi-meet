@@ -7,7 +7,7 @@ import {
 } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
 
-import { resume, pause } from './actions';
+import { pause, resume } from './actions';
 
 /**
  * Listens for large video participant ID changes.

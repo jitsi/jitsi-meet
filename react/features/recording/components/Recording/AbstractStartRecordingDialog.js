@@ -9,8 +9,8 @@ import {
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getDropboxData,
-    isEnabled as isDropboxEnabled,
     getNewAccessToken,
+    isEnabled as isDropboxEnabled,
     updateDropboxToken
 } from '../../../dropbox';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notifications';

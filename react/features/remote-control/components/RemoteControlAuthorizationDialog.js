@@ -7,7 +7,7 @@ import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { getLocalVideoTrack } from '../../base/tracks';
-import { grant, deny } from '../actions';
+import { deny, grant } from '../actions';
 
 declare var APP: Object;
 

@@ -21,9 +21,9 @@ import WelcomePageTabs
     from '../../mobile/navigation/components/welcome/components/WelcomePageTabs';
 
 import {
+    type Props as AbstractProps,
     AbstractWelcomePage,
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
