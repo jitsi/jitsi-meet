@@ -1,9 +1,7 @@
-// @flow
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
-import { CONFERENCE_JOINED } from '../base/conference';
-import { MiddlewareRegistry } from '../base/redux';
-
-import { statsEmitter } from './index';
+import statsEmitter from './statsEmitter';
 
 /**
  * Implements the middleware of the feature connection-indicator.
@@ -11,7 +9,7 @@ import { statsEmitter } from './index';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED: {

@@ -1,7 +1,6 @@
-// @flow
-
 import _ from 'lodash';
 
+import { IJitsiConference } from '../base/conference/reducer';
 import {
     JitsiConnectionQualityEvents
 } from '../base/lib-jitsi-meet';
@@ -13,7 +12,13 @@ import {
  *     userId: Function[]
  * }.
  */
-const subscribers = {};
+const subscribers: any = {};
+
+interface Stats {
+    codec?: Object;
+    framerate?: Object;
+    resolution?: Object;
+}
 
 /**
  * A singleton that acts as a pub/sub service for connection stat updates.
@@ -27,12 +32,12 @@ const statsEmitter = {
      * {@code statsEmitter} should subscribe for stat updates.
      * @returns {void}
      */
-    startListeningForStats(conference: Object) {
+    startListeningForStats(conference: IJitsiConference) {
         conference.on(JitsiConnectionQualityEvents.LOCAL_STATS_UPDATED,
-            stats => this._onStatsUpdated(conference.myUserId(), stats));
+            (stats: Stats) => this._onStatsUpdated(conference.myUserId(), stats));
 
         conference.on(JitsiConnectionQualityEvents.REMOTE_STATS_UPDATED,
-            (id, stats) => this._emitStatsUpdate(id, stats));
+            (id: string, stats: Stats) => this._emitStatsUpdate(id, stats));
     },
 
     /**
@@ -44,7 +49,7 @@ const statsEmitter = {
      * user have been updated.
      * @returns {void}
      */
-    subscribeToClientStats(id: ?string, callback: Function) {
+    subscribeToClientStats(id: string | undefined, callback: Function) {
         if (!id) {
             return;
         }
@@ -72,7 +77,7 @@ const statsEmitter = {
         }
 
         const filteredSubscribers = subscribers[id].filter(
-            subscriber => subscriber !== callback);
+            (subscriber: Function) => subscriber !== callback);
 
         if (filteredSubscribers.length) {
             subscribers[id] = filteredSubscribers;
@@ -89,10 +94,10 @@ const statsEmitter = {
      * @param {Object} stats - New connection stats for the user.
      * @returns {void}
      */
-    _emitStatsUpdate(id: string, stats: Object = {}) {
+    _emitStatsUpdate(id: string, stats: Stats = {}) {
         const callbacks = subscribers[id] || [];
 
-        callbacks.forEach(callback => {
+        callbacks.forEach((callback: Function) => {
             callback(stats);
         });
     },
@@ -107,7 +112,7 @@ const statsEmitter = {
      * by the library.
      * @returns {void}
      */
-    _onStatsUpdated(localUserId: string, stats: Object) {
+    _onStatsUpdated(localUserId: string, stats: Stats) {
         const allUserFramerates = stats.framerate || {};
         const allUserResolutions = stats.resolution || {};
         const allUserCodecs = stats.codec || {};
@@ -117,9 +122,9 @@ const statsEmitter = {
         // be primitives, not maps, so here we override the 'lib-jitsi-meet'
         // stats objects.
         const modifiedLocalStats = Object.assign({}, stats, {
-            framerate: allUserFramerates[localUserId],
-            resolution: allUserResolutions[localUserId],
-            codec: allUserCodecs[localUserId]
+            framerate: allUserFramerates[localUserId as keyof typeof allUserFramerates],
+            resolution: allUserResolutions[localUserId as keyof typeof allUserResolutions],
+            codec: allUserCodecs[localUserId as keyof typeof allUserCodecs]
         });
 
         this._emitStatsUpdate(localUserId, modifiedLocalStats);
@@ -133,21 +138,21 @@ const statsEmitter = {
         _.union(framerateUserIds, resolutionUserIds, codecUserIds)
             .filter(id => id !== localUserId)
             .forEach(id => {
-                const remoteUserStats = {};
+                const remoteUserStats: Stats = {};
 
-                const framerate = allUserFramerates[id];
+                const framerate = allUserFramerates[id as keyof typeof allUserFramerates];
 
                 if (framerate) {
                     remoteUserStats.framerate = framerate;
                 }
 
-                const resolution = allUserResolutions[id];
+                const resolution = allUserResolutions[id as keyof typeof allUserResolutions];
 
                 if (resolution) {
                     remoteUserStats.resolution = resolution;
                 }
 
-                const codec = allUserCodecs[id];
+                const codec = allUserCodecs[id as keyof typeof allUserCodecs];
 
                 if (codec) {
                     remoteUserStats.codec = codec;
