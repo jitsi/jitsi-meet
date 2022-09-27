@@ -1163,7 +1163,7 @@ var config = {
         // For a list of all possible theme tokens and their current defaults, please check:
         // https://github.com/jitsi/jitsi-meet/tree/master/resources/custom-theme/custom-theme.json
         // For a short explanations on each of the tokens, please check:
-        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.js
+        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.ts
         // IMPORTANT!: This is work in progress so many of the various tokens are not yet applied in code
         // or they are partially applied.
         customTheme: {
