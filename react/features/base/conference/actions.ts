@@ -23,7 +23,7 @@ import {
     destroyLocalTracks,
     replaceLocalTrack,
     trackAdded,
-    trackRemoved,
+    trackRemoved
 } from '../tracks/actions.any';
 import { getLocalTracks } from '../tracks/functions';
 import { getBackendSafeRoomName } from '../util/uri';

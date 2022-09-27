@@ -70,7 +70,8 @@ export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
  * @returns {boolean}
  */
 export function getSsrcRewritingFeatureFlag(state: IState) {
-    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING);
+    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING)
+        && getSourceNameSignalingFeatureFlag(state);
 }
 
 /**
