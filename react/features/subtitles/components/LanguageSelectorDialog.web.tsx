@@ -9,7 +9,7 @@ import { Dialog } from '../../base/dialog';
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { connect } from '../../base/redux/functions';
 // @ts-ignore
-import { setRequestingSubtitles, updateTranslationLanguage, toggleLanguageSelectorDialog } from '../actions';
+import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage } from '../actions';
 
 import LanguageList from './LanguageList';
 
