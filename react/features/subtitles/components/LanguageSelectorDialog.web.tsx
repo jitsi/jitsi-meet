@@ -33,9 +33,9 @@ const LanguageSelectorDialog = ({ _language, _translationLanguages, _translation
     const [ language, setLanguage ] = useState(off);
 
     const languagesHead = _translationLanguagesHead.map((lang: string) => `translation-languages:${lang}`);
-    //The off and the head languages are always on the top of the list. But once you are selecting
-    //a language from the translationLanguages, that language is moved under the fixedItems list,
-    //until a new languages is selected. FixedItems keep their positions.
+    // The off and the head languages are always on the top of the list. But once you are selecting
+    // a language from the translationLanguages, that language is moved under the fixedItems list,
+    // until a new languages is selected. FixedItems keep their positions.
     const fixedItems = [ off, ...languagesHead ];
     const languages = _translationLanguages
         .map((lang: string) => `translation-languages:${lang}`)
