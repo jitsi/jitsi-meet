@@ -11,8 +11,8 @@ import { Tooltip } from '../../base/tooltip';
 import { shouldDisplayTileView } from '../../video-layout';
 
 import AbstractVideoQualityLabel, {
-    _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _abstractMapStateToProps
 } from './AbstractVideoQualityLabel';
 import VideoQualityDialog from './VideoQualityDialog.web';
 

@@ -12,14 +12,14 @@ import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     DOMINANT_SPEAKER_CHANGED,
+    PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
-    PARTICIPANT_JOINED,
     PARTICIPANT_ROLE_CHANGED,
     SET_LOADABLE_AVATAR_URL,
+    getDominantSpeakerParticipant,
     getLocalParticipant,
-    getParticipantById,
-    getDominantSpeakerParticipant
+    getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { getBaseUrl } from '../base/util';

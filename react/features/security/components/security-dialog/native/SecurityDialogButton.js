@@ -5,8 +5,8 @@ import { connect } from '../../../../base/redux';
 import { navigate } from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../../mobile/navigation/routes';
 import AbstractSecurityDialogButton, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractSecurityDialogButtonProps
+    type Props as AbstractSecurityDialogButtonProps,
+    _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractSecurityDialogButton';
 
 type Props = AbstractSecurityDialogButtonProps;

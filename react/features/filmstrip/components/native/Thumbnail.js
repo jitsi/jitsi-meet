@@ -10,12 +10,12 @@ import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media';
 import {
     PARTICIPANT_ROLE,
     ParticipantView,
-    getParticipantCount,
-    isEveryoneModerator,
-    pinParticipant,
-    getParticipantByIdOrUndefined,
     getLocalParticipant,
-    hasRaisedHand
+    getParticipantByIdOrUndefined,
+    getParticipantCount,
+    hasRaisedHand,
+    isEveryoneModerator,
+    pinParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';

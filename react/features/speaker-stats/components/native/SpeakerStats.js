@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { escapeRegexp } from '../../../base/util';
-import { resetSearchCriteria, initSearch } from '../../actions';
+import { initSearch, resetSearchCriteria } from '../../actions';
 
 
 import SpeakerStatsList from './SpeakerStatsList';

@@ -7,8 +7,8 @@ import { translate } from '../../../base/i18n';
 import { IconVideoOff } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMuteVideoButton, {
-    _mapStateToProps,
-    type Props
+    type Props,
+    _mapStateToProps
 } from '../AbstractMuteVideoButton';
 
 /**

@@ -11,8 +11,8 @@ import {
     WaitForOwnerDialog
 } from '../../../react/features/authentication/components';
 import {
-    isTokenAuthEnabled,
-    getTokenAuthUrl
+    getTokenAuthUrl,
+    isTokenAuthEnabled
 } from '../../../react/features/authentication/functions';
 import { getReplaceParticipant } from '../../../react/features/base/config/functions';
 import { isDialogOpen } from '../../../react/features/base/dialog';

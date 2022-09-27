@@ -8,7 +8,7 @@ import { IconArrowUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks';
-import { toggleVideoSettings, VideoSettingsPopup } from '../../../settings';
+import { VideoSettingsPopup, toggleVideoSettings } from '../../../settings';
 import { getVideoSettingsVisibility } from '../../../settings/functions';
 import { isVideoSettingsButtonDisabled } from '../../functions';
 import VideoMuteButton from '../VideoMuteButton';

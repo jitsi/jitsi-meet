@@ -6,8 +6,8 @@ import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import AbstractMuteEveryoneDialog, {
-    abstractMapStateToProps as _mapStateToProps,
-    type Props } from '../AbstractMuteEveryoneDialog';
+    type Props,
+    abstractMapStateToProps as _mapStateToProps } from '../AbstractMuteEveryoneDialog';
 
 import styles from './styles';
 

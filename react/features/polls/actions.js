@@ -3,10 +3,10 @@
 import {
     CHANGE_VOTE,
     CLEAR_POLLS,
-    RESET_NB_UNREAD_POLLS,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
     REGISTER_VOTE,
+    RESET_NB_UNREAD_POLLS,
     RETRACT_VOTE
 } from './actionTypes';
 import type { Answer, Poll } from './types';

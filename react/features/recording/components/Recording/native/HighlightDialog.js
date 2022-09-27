@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
-import { useDispatch, batch } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 
 import { BottomSheet, hideSheet } from '../../../../base/dialog';
 import Button from '../../../../base/ui/components/native/Button';

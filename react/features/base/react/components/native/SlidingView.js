@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, type Node } from 'react';
+import React, { type Node, PureComponent } from 'react';
 import {
     Animated,
     BackHandler,

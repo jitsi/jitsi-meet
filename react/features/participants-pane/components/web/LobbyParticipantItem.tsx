@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 
 import { Theme } from '@mui/material';
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';

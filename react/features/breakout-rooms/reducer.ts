@@ -1,9 +1,9 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
+    UPDATE_BREAKOUT_ROOMS,
     _RESET_BREAKOUT_ROOMS,
-    _UPDATE_ROOM_COUNTER,
-    UPDATE_BREAKOUT_ROOMS
+    _UPDATE_ROOM_COUNTER
 } from './actionTypes';
 import { FEATURE_KEY } from './constants';
 import { IRooms } from './types';

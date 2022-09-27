@@ -8,8 +8,8 @@ import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { setFatalError, setPageReloadOverlayCanceled } from '../../actions';
 import AbstractPageReloadOverlay, {
-    abstractMapStateToProps,
-    type Props
+    type Props,
+    abstractMapStateToProps
 } from '../AbstractPageReloadOverlay';
 
 import OverlayFrame from './OverlayFrame';

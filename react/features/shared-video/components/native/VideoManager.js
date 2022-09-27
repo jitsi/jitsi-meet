@@ -6,8 +6,8 @@ import { connect } from '../../../base/redux';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {
-    _mapStateToProps,
-    Props
+    Props,
+    _mapStateToProps
 } from './AbstractVideoManager';
 
 const logger = Logger.getLogger(__filename);

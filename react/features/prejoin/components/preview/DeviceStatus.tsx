@@ -9,8 +9,8 @@ import Icon from '../../../base/icons/components/Icon';
 import { IconCheckSolid, IconExclamationTriangle } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 import {
-    getDeviceStatusType,
-    getDeviceStatusText
+    getDeviceStatusText,
+    getDeviceStatusType
 
     // @ts-ignore
 } from '../../functions';

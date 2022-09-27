@@ -18,12 +18,12 @@ import {
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../base/tracks/functions';
-import { isTrackStreamingStatusActive, isParticipantConnectionStatusActive } from '../connection-indicator/functions';
+import { isParticipantConnectionStatusActive, isTrackStreamingStatusActive } from '../connection-indicator/functions';
 import { isSharingStatus } from '../shared-video/functions';
 import {
+    LAYOUTS,
     getCurrentLayout,
-    getNotResponsiveTileViewGridDimensions,
-    LAYOUTS
+    getNotResponsiveTileViewGridDimensions
 } from '../video-layout';
 
 import {

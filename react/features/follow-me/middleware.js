@@ -4,9 +4,9 @@ import _ from 'lodash';
 
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import {
+    PARTICIPANT_LEFT,
     getParticipantById,
     getPinnedParticipant,
-    PARTICIPANT_LEFT,
     pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';

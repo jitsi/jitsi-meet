@@ -3,11 +3,11 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import {
     CHANGE_VOTE,
     CLEAR_POLLS,
-    RECEIVE_POLL,
     RECEIVE_ANSWER,
+    RECEIVE_POLL,
     REGISTER_VOTE,
-    RETRACT_VOTE,
-    RESET_NB_UNREAD_POLLS
+    RESET_NB_UNREAD_POLLS,
+    RETRACT_VOTE
 } from './actionTypes';
 import { Answer, Poll } from './types';
 

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { withTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { IconSearch, Icon } from '../../../base/icons';
+import { Icon, IconSearch } from '../../../base/icons';
 import ClearableInput from '../../../participants-pane/components/native/ClearableInput';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 

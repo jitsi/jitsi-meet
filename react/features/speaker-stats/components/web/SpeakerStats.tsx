@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
@@ -9,7 +9,7 @@ import { IState } from '../../../app/types';
 import { Dialog } from '../../../base/dialog';
 import { escapeRegexp } from '../../../base/util/helpers';
 // @ts-ignore
-import { resetSearchCriteria, toggleFaceExpressions, initSearch } from '../../actions';
+import { initSearch, resetSearchCriteria, toggleFaceExpressions } from '../../actions';
 import {
     DISPLAY_SWITCH_BREAKPOINT,
     MOBILE_BREAKPOINT,

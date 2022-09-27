@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import { getConferenceName, getConferenceTimestamp } from '../../../base/conference/functions';
-import { getFeatureFlag, CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED } from '../../../base/flags';
+import { CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import InviteButton from '../../../invite/components/add-people-dialog/native/InviteButton';
 import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';

@@ -7,7 +7,7 @@ import {
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { setAudioMuted } from '../media/actions';
-import { MediaType, MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
+import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { getParticipantByIdOrUndefined, getVirtualScreenshareParticipantOwnerId } from '../participants/functions';
 import { Participant } from '../participants/types';
 import { toState } from '../redux/functions';

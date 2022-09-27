@@ -12,10 +12,10 @@ import { setColorAlpha } from '../../react/features/base/util';
 import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     joinLeaveNotificationsDisabled,
     setNotificationsEnabled,
-    showNotification,
-    NOTIFICATION_TIMEOUT_TYPE
+    showNotification
 } from '../../react/features/notifications';
 import {
     dockToolbox,

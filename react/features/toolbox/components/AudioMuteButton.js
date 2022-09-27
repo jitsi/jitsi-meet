@@ -6,7 +6,7 @@ import {
     createShortcutEvent,
     sendAnalytics
 } from '../../analytics';
-import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../base/flags';
+import { AUDIO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { MEDIA_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';

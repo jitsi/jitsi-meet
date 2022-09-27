@@ -43,8 +43,8 @@ import {
     RECORDING_ON_SOUND_ID
 } from './constants';
 import {
-    getSessionById,
-    getResourceId
+    getResourceId,
+    getSessionById
 } from './functions';
 import logger from './logger';
 import {

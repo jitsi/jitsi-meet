@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material';
-import { createTheme, adaptV4Theme } from '@mui/material/styles';
+import { adaptV4Theme, createTheme } from '@mui/material/styles';
 
-import { font, colors, colorMap, spacing, shape, typography, breakpoints } from '../base/ui/Tokens';
+import { breakpoints, colorMap, colors, font, shape, spacing, typography } from '../base/ui/Tokens';
 import { createColorTokens } from '../base/ui/utils';
 
 /**

@@ -13,11 +13,11 @@ import { createLocalTrack } from '../lib-jitsi-meet/functions';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
-    MediaType,
     MEDIA_TYPE,
-    VideoType,
+    MediaType,
     VIDEO_MUTISM_AUTHORITY,
-    VIDEO_TYPE
+    VIDEO_TYPE,
+    VideoType
 } from '../media/constants';
 import { getLocalParticipant } from '../participants/functions';
 import { updateSettings } from '../settings/actions';

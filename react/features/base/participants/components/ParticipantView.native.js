@@ -12,7 +12,7 @@ import { Container, TintedView } from '../../react';
 import { connect } from '../../redux';
 import { TestHint } from '../../testing/components';
 import { getVideoTrackByParticipant } from '../../tracks';
-import { shouldRenderParticipantVideo, getParticipantById } from '../functions';
+import { getParticipantById, shouldRenderParticipantVideo } from '../functions';
 
 import styles from './styles';
 

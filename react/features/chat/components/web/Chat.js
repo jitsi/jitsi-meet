@@ -10,8 +10,8 @@ import { PollsPane } from '../../../polls/components';
 import { toggleChat } from '../../actions.web';
 import { CHAT_TABS } from '../../constants';
 import AbstractChat, {
-    _mapStateToProps,
-    type Props
+    type Props,
+    _mapStateToProps
 } from '../AbstractChat';
 
 import ChatHeader from './ChatHeader';

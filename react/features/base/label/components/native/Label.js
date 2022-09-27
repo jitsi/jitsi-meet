@@ -3,7 +3,7 @@ import React from 'react';
 import { Animated, Text } from 'react-native';
 
 import Icon from '../../../icons/components/Icon';
-import { combineStyles, type StyleType } from '../../../styles';
+import { type StyleType, combineStyles } from '../../../styles';
 import AbstractLabel, {
     type Props as AbstractProps
 } from '../AbstractLabel';

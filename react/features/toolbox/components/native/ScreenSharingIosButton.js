@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { findNodeHandle, NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform, findNodeHandle } from 'react-native';
 import { ScreenCapturePickerView } from 'react-native-webrtc';
 
-import { getFeatureFlag, IOS_SCREENSHARING_ENABLED } from '../../../base/flags';
+import { IOS_SCREENSHARING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconShareDesktop } from '../../../base/icons';
 import { connect } from '../../../base/redux';

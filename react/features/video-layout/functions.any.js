@@ -1,10 +1,10 @@
 // @flow
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, TILE_VIEW_ENABLED } from '../base/flags';
+import { TILE_VIEW_ENABLED, getFeatureFlag } from '../base/flags';
 import {
-    getPinnedParticipant,
     getParticipantCount,
+    getPinnedParticipant,
     pinParticipant
 } from '../base/participants';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';

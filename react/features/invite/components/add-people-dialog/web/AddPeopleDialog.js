@@ -19,8 +19,8 @@ import {
     getInviteTextiOS,
     isAddPeopleEnabled,
     isDialOutEnabled,
-    sharingFeatures,
-    isSharingEnabled
+    isSharingEnabled,
+    sharingFeatures
 } from '../../../functions';
 
 import CopyMeetingLinkSection from './CopyMeetingLinkSection';

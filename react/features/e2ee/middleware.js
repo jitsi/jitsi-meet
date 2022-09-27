@@ -5,14 +5,14 @@ import { batch } from 'react-redux';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED, getCurrentConference } from '../base/conference';
 import {
-    getLocalParticipant,
-    getParticipantById,
-    getParticipantCount,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    participantUpdated,
-    getRemoteParticipants
+    getLocalParticipant,
+    getParticipantById,
+    getParticipantCount,
+    getRemoteParticipants,
+    participantUpdated
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';

@@ -8,8 +8,8 @@ import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import {
-    updateSettings,
-    shouldHideShareAudioHelper
+    shouldHideShareAudioHelper,
+    updateSettings
     // @ts-ignore
 } from '../../base/settings';
 // @ts-ignore

@@ -9,8 +9,8 @@ import { Button } from '../../../base/ui/components/web';
 import {
     CALENDAR_TYPE,
     MicrosoftSignInButton,
-    clearCalendarIntegration,
     bootstrapCalendarIntegration,
+    clearCalendarIntegration,
     isCalendarEnabled,
     signIn
 } from '../../../calendar-sync';

@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags';
+import { MEETING_PASSWORD_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../../base/participants';

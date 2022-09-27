@@ -12,7 +12,7 @@ import { goBack }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { setLiveStreamKey } from '../../../actions';
 import AbstractStartLiveStreamDialog,
-{ _mapStateToProps, type Props } from '../AbstractStartLiveStreamDialog';
+{ type Props, _mapStateToProps } from '../AbstractStartLiveStreamDialog';
 
 import GoogleSigninForm from './GoogleSigninForm';
 import StreamKeyForm from './StreamKeyForm';

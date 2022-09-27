@@ -34,7 +34,7 @@ import {
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
 } from '../../../react/features/connection-indicator/functions';
-import { FILMSTRIP_BREAKPOINT, isFilmstripResizable, getVerticalViewMaxWidth } from '../../../react/features/filmstrip';
+import { FILMSTRIP_BREAKPOINT, getVerticalViewMaxWidth, isFilmstripResizable } from '../../../react/features/filmstrip';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
@@ -45,7 +45,7 @@ import { shouldDisplayTileView } from '../../../react/features/video-layout';
 import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';
 
-import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
+import { VIDEO_CONTAINER_TYPE, VideoContainer } from './VideoContainer';
 
 const logger = Logger.getLogger(__filename);
 

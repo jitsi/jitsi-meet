@@ -5,18 +5,18 @@ import type { Dispatch } from 'redux';
 import UIEvents from '../../../service/UI/UIEvents';
 import {
     AUDIO_MUTE,
+    VIDEO_MUTE,
     createRemoteMuteConfirmedEvent,
     createToolbarEvent,
-    sendAnalytics,
-    VIDEO_MUTE
+    sendAnalytics
 } from '../analytics';
 import { rejectParticipantAudio, rejectParticipantVideo, showModeratedNotification } from '../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../av-moderation/functions';
 import {
     MEDIA_TYPE,
+    VIDEO_MUTISM_AUTHORITY,
     setAudioMuted,
-    setVideoMuted,
-    VIDEO_MUTISM_AUTHORITY
+    setVideoMuted
 } from '../base/media';
 import {
     getLocalParticipant,

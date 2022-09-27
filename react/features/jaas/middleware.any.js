@@ -1,8 +1,8 @@
-import { sendAnalytics, createVpaasConferenceJoinedEvent } from '../analytics';
+import { createVpaasConferenceJoinedEvent, sendAnalytics } from '../analytics';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { isVpaasMeeting, getVpaasTenant } from './functions';
+import { getVpaasTenant, isVpaasMeeting } from './functions';
 
 /**
  * The redux middleware for billing counter.

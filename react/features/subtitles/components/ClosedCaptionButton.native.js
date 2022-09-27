@@ -1,6 +1,6 @@
 // @flow
 
-import { getFeatureFlag, CLOSE_CAPTIONS_ENABLED } from '../../base/flags';
+import { CLOSE_CAPTIONS_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconClosedCaption } from '../../base/icons';
 import { connect } from '../../base/redux';

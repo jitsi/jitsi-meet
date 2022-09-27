@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, INVITE_ENABLED } from '../../../../base/flags';
+import { INVITE_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import { IconInviteMore } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';

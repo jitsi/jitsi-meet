@@ -1,4 +1,4 @@
-import React, { PureComponent, type Node } from 'react';
+import React, { type Node, PureComponent } from 'react';
 import { SafeAreaView, ScrollView, View } from 'react-native';
 
 import { SlidingView } from '../../../react';

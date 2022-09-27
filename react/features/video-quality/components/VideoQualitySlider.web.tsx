@@ -13,7 +13,7 @@ import { IState } from '../../app/types';
 import { setAudioOnly } from '../../base/audio-only';
 import { translate } from '../../base/i18n/functions';
 // @ts-ignore
-import { setLastN, getLastNForQualityLevel } from '../../base/lastn';
+import { getLastNForQualityLevel, setLastN } from '../../base/lastn';
 import { connect } from '../../base/redux/functions';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 // @ts-ignore

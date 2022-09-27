@@ -9,7 +9,7 @@ import { COLORS } from '../../base/label/constants';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 
-import { _mapStateToProps, type Props } from './AbstractE2EELabel';
+import { type Props, _mapStateToProps } from './AbstractE2EELabel';
 
 
 /**

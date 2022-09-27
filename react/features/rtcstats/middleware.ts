@@ -3,19 +3,18 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import {
-    E2E_RTT_CHANGED,
     CONFERENCE_JOINED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_UNIQUE_ID_SET,
-    CONFERENCE_WILL_LEAVE
-
+    CONFERENCE_WILL_LEAVE,
+    E2E_RTT_CHANGED
     // @ts-ignore
 } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
 import { DOMINANT_SPEAKER_CHANGED } from '../base/participants/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks/actionTypes';
-import { isInBreakoutRoom, getCurrentRoomId } from '../breakout-rooms/functions';
+import { getCurrentRoomId, isInBreakoutRoom } from '../breakout-rooms/functions';
 // @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { ADD_FACE_EXPRESSION, FACE_LANDMARK_DETECTION_STOPPED } from '../face-landmarks/actionTypes';

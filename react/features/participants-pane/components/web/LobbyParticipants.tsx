@@ -2,7 +2,7 @@
 import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
@@ -13,7 +13,7 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { admitMultiple } from '../../../lobby/actions.web';
 // @ts-ignore
-import { getLobbyEnabled, getKnockingParticipants } from '../../../lobby/functions';
+import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
 // @ts-ignore

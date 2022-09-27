@@ -10,7 +10,7 @@ import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getParticipantCount } from '../base/participants/functions';
 import { Participant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks/actionTypes';
+import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from '../base/tracks/actionTypes';
 
 import FaceLandmarksDetector from './FaceLandmarksDetector';
 import { ADD_FACE_EXPRESSION, NEW_FACE_COORDINATES, UPDATE_FACE_COORDINATES } from './actionTypes';

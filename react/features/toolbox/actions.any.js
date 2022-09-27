@@ -3,9 +3,9 @@
 import type { Dispatch } from 'redux';
 
 import UIEvents from '../../../service/UI/UIEvents';
-import { createToolbarEvent, sendAnalytics, VIDEO_MUTE } from '../analytics';
+import { VIDEO_MUTE, createToolbarEvent, sendAnalytics } from '../analytics';
 import { setAudioOnly } from '../base/audio-only';
-import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../base/media';
+import { VIDEO_MUTISM_AUTHORITY, setVideoMuted } from '../base/media';
 import { getLocalVideoType } from '../base/tracks';
 
 import {

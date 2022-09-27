@@ -2,8 +2,8 @@
 import { IState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import {
-    IconNoiseSuppressionOn,
-    IconNoiseSuppressionOff
+    IconNoiseSuppressionOff,
+    IconNoiseSuppressionOn
 } from '../../base/icons/svg';
 import { connect } from '../../base/redux/functions';
 import {
