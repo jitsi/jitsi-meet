@@ -1,10 +1,12 @@
 // @flow
 
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
+
 import { Icon, IconChatUnread } from '../../../base/icons';
+import { browser } from '../../../base/lib-jitsi-meet';
 
 import PollItem from './PollItem';
 
@@ -14,11 +16,19 @@ const PollsList = () => {
     const polls = useSelector(state => state['features/polls'].polls);
     const pollListEndRef = useRef(null);
 
-    const scrollToBottom = () => {
+    const scrollToBottom = useCallback(() => {
         if (pollListEndRef.current) {
-            pollListEndRef.current.scrollIntoView({ behavior: 'smooth' });
+            // Safari does not support options
+            const param = browser.isSafari()
+                ? false : {
+                    behavior: 'smooth',
+                    block: 'end',
+                    inline: 'nearest'
+                };
+
+            pollListEndRef.current.scrollIntoView(param);
         }
-    };
+    }, [ pollListEndRef.current ]);
 
     useEffect(() => {
         scrollToBottom();
