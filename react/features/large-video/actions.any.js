@@ -2,14 +2,17 @@
 
 import type { Dispatch } from 'redux';
 
+import { getMultipleVideoSupportFeatureFlag } from '../base/config';
 import { MEDIA_TYPE } from '../base/media';
 import {
     getDominantSpeakerParticipant,
     getLocalParticipant,
     getPinnedParticipant,
-    getRemoteParticipants
+    getRemoteParticipants,
+    getVirtualScreenshareParticipantByOwnerId
 } from '../base/participants';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
+import { getAutoPinSetting } from '../video-layout';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -135,16 +138,26 @@ function _electParticipantInLargeVideo(state) {
         return participant.id;
     }
 
-    // Pick the most recent remote screenshare that was added to the conference.
-    const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+    if (getAutoPinSetting()) {
+        // Pick the most recent remote screenshare that was added to the conference.
+        const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
 
-    if (remoteScreenShares?.length) {
-        return remoteScreenShares[remoteScreenShares.length - 1];
+        if (remoteScreenShares?.length) {
+            return remoteScreenShares[remoteScreenShares.length - 1];
+        }
     }
 
     // Next, pick the dominant speaker (other than self).
     participant = getDominantSpeakerParticipant(state);
     if (participant && !participant.local) {
+        // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
+        // auto pin latest screenshare is disabled.
+        if (getMultipleVideoSupportFeatureFlag(state)) {
+            const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
+
+            return screenshareParticipant?.id ?? participant.id;
+        }
+
         return participant.id;
     }
 
