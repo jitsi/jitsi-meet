@@ -791,7 +791,6 @@ export default {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: getStartWithAudioMuted(APP.store.getState())
-                || config.startSilent
                 || isUserInteractionRequiredForUnmute(APP.store.getState()),
             startWithVideoMuted: getStartWithVideoMuted(APP.store.getState())
                 || isUserInteractionRequiredForUnmute(APP.store.getState())
