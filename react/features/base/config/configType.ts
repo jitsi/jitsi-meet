@@ -339,10 +339,6 @@ export interface IConfig {
         focus?: string;
         muc: string;
     };
-    i18n?: {
-        translationLanguages?: Array<string>;
-        translationLanguagesHead?: Array<string>;
-    };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
     inviteAppName?: string | null;
@@ -468,6 +464,8 @@ export interface IConfig {
         disableStartForAll?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
+        translationLanguages?: Array<string>;
+        translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
     };
     useHostPageLocalStorage?: boolean;

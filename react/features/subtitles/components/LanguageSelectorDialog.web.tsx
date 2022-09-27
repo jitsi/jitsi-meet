@@ -85,10 +85,10 @@ const LanguageSelectorDialog = ({ _language, translationLanguages, translationLa
 function mapStateToProps(state: IState) {
     const { conference } = state['features/base/conference'];
     const { _language } = state['features/subtitles'];
-    const { i18n } = state['features/base/config'];
+    const { transcription } = state['features/base/config'];
 
-    const languages = i18n?.translationLanguages || TRANSLATION_LANGUAGES;
-    const languagesHead = i18n?.translationLanguagesHead || TRANSLATION_LANGUAGES_HEAD;
+    const languages = transcription?.translationLanguages || TRANSLATION_LANGUAGES;
+    const languagesHead = transcription?.translationLanguagesHead || TRANSLATION_LANGUAGES_HEAD;
 
     return {
         _conference: conference,

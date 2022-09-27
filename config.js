@@ -374,6 +374,12 @@ var config = {
     // transcription: {
     //     // Whether the feature should be enabled or not.
     //     enabled: false,
+    
+    //     //Available languages for the language selector dialog.
+    //     translationLanguages: ["en", "es", "fr", "ro" ...]
+
+    //     //Important languages to show on the top of the language list.
+    //     translationLanguagesHead: ["en", ...]
 
     //     // If true transcriber will use the application language.
     //     // The application language is either explicitly set by participants in their settings or automatically
