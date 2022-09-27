@@ -15,9 +15,9 @@ import LanguageList from './LanguageList';
 
 interface ILanguageSelectorDialogProps {
     _language: string;
+    _translationLanguages: Array<string>;
+    _translationLanguagesHead: Array<string>;
     t: Function;
-    translationLanguages: Array<string>;
-    translationLanguagesHead: Array<string>;
 }
 
 /**
@@ -25,16 +25,19 @@ interface ILanguageSelectorDialogProps {
  *
  * @returns {React$Element<any>}
  */
-const LanguageSelectorDialog = ({ _language, translationLanguages, translationLanguagesHead }:
+const LanguageSelectorDialog = ({ _language, _translationLanguages, _translationLanguagesHead }:
                                     ILanguageSelectorDialogProps) => {
 
     const dispatch = useDispatch();
     const off = 'transcribing.subtitlesOff';
     const [ language, setLanguage ] = useState(off);
 
-    const languagesHead = translationLanguagesHead.map((lang: string) => `translation-languages:${lang}`);
+    const languagesHead = _translationLanguagesHead.map((lang: string) => `translation-languages:${lang}`);
+    //The off and the head languages are always on the top of the list. But once you are selecting
+    //a language from the translationLanguages, that language is moved under the fixedItems list,
+    //until a new languages is selected. FixedItems keep their positions.
     const fixedItems = [ off, ...languagesHead ];
-    const languages = translationLanguages
+    const languages = _translationLanguages
         .map((lang: string) => `translation-languages:${lang}`)
         .filter((lang: string) => !(lang === language || languagesHead.includes(lang)));
 
@@ -87,14 +90,14 @@ function mapStateToProps(state: IState) {
     const { _language } = state['features/subtitles'];
     const { transcription } = state['features/base/config'];
 
-    const languages = transcription?.translationLanguages || TRANSLATION_LANGUAGES;
-    const languagesHead = transcription?.translationLanguagesHead || TRANSLATION_LANGUAGES_HEAD;
+    const languages = transcription?.translationLanguages ?? TRANSLATION_LANGUAGES;
+    const languagesHead = transcription?.translationLanguagesHead ?? TRANSLATION_LANGUAGES_HEAD;
 
     return {
         _conference: conference,
         _language,
-        translationLanguages: languages,
-        translationLanguagesHead: languagesHead
+        _translationLanguages: languages,
+        _translationLanguagesHead: languagesHead
     };
 }
 

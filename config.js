@@ -374,12 +374,14 @@ var config = {
     // transcription: {
     //     // Whether the feature should be enabled or not.
     //     enabled: false,
-    
-    //     //Available languages for the language selector dialog.
-    //     translationLanguages: ["en", "es", "fr", "ro" ...]
 
-    //     //Important languages to show on the top of the language list.
-    //     translationLanguagesHead: ["en", ...]
+    //     // Translation languages.
+    //     // Available languages can be found in
+    //     // ./src/react/features/transcribing/translation-languages.json.
+    //     translationLanguages: ['en', 'es', 'fr', 'ro'],
+
+    //     // Important languages to show on the top of the language list.
+    //     translationLanguagesHead: ['en'],
 
     //     // If true transcriber will use the application language.
     //     // The application language is either explicitly set by participants in their settings or automatically
@@ -1354,6 +1356,8 @@ var config = {
      * Default interval (milliseconds) for triggering mouseMoved iframe API event
      */
     mouseMoveCallbackInterval: 1000,
+
+    hiddenDomain: 'tdomokos.jitsi.net',
 
     /**
         Use this array to configure which notifications will be shown to the user
