@@ -78,7 +78,7 @@ export default createStyleSheet({
      */
     streamKeyInput: {
         alignSelf: 'stretch',
-        borderColor: BaseTheme.palette.border02,
+        borderColor: BaseTheme.palette.ui05,
         borderBottomWidth: 1,
         color: BaseTheme.palette.text01,
         fontSize: 14,

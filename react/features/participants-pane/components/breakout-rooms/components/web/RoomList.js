@@ -8,10 +8,10 @@ import { isLocalParticipantModerator } from '../../../../../base/participants';
 import { equals } from '../../../../../base/redux';
 import {
     getBreakoutRooms,
-    isInBreakoutRoom,
-    getCurrentRoomId,
     getBreakoutRoomsConfig,
-    isAutoAssignParticipantsVisible
+    getCurrentRoomId,
+    isAutoAssignParticipantsVisible,
+    isInBreakoutRoom
 } from '../../../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../../../toolbox/functions';
 

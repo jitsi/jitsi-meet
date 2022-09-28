@@ -1,6 +1,4 @@
 // @flow
-
-import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -8,6 +6,7 @@ import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import Input from '../../base/ui/components/web/Input';
 import { _cancelPasswordRequiredPrompt } from '../actions';
 
 /**
@@ -97,13 +96,11 @@ class PasswordRequiredPrompt extends Component<Props, State> {
     _renderBody() {
         return (
             <div>
-                <TextField
+                <Input
                     autoFocus = { true }
-                    compact = { true }
                     label = { this.props.t('dialog.passwordLabel') }
                     name = 'lockKey'
                     onChange = { this._onPasswordChanged }
-                    shouldFitContainer = { true }
                     type = 'password'
                     value = { this.state.password } />
             </div>
@@ -115,11 +112,11 @@ class PasswordRequiredPrompt extends Component<Props, State> {
     /**
      * Notifies this dialog that password has changed.
      *
-     * @param {Object} event - The details of the notification/event.
+     * @param {string} value - The details of the notification/event.
      * @private
      * @returns {void}
      */
-    _onPasswordChanged({ target: { value } }) {
+    _onPasswordChanged(value: string) {
         this.setState({
             password: value
         });

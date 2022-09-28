@@ -1,8 +1,9 @@
 server_names_hash_bucket_size 64;
 
 types {
-# nginx's default mime.types doesn't include a mapping for wasm
+# nginx's default mime.types doesn't include a mapping for wasm or wav.
     application/wasm     wasm;
+    audio/wav            wav;
 }
 upstream prosody {
     zone upstreams 64K;
@@ -71,6 +72,13 @@ server {
 
     location = /external_api.js {
         alias /usr/share/jitsi-meet/libs/external_api.min.js;
+    }
+
+    location = /_api/room-info {
+        proxy_pass http://prosody/room-info?prefix=$prefix&$args;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $http_host;
     }
 
     # ensure all static content can always be found first
@@ -154,6 +162,14 @@ server {
         set $prefix "$1";
 
         rewrite ^/(.*)$ /xmpp-websocket;
+    }
+
+    location ~ ^/([^/?&:'"]+)/_api/room-info {
+        set $subdomain "$1.";
+        set $subdir "$1/";
+        set $prefix "$1";
+
+        rewrite ^/(.*)$ /_api/room-info;
     }
 
     # Anything that didn't match above, and isn't a real file, assume it's a room name and redirect to /

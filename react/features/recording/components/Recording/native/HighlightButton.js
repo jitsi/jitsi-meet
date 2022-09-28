@@ -9,8 +9,8 @@ import { Label } from '../../../../base/label';
 import { connect } from '../../../../base/redux';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import AbstractHighlightButton, {
-    _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _abstractMapStateToProps
 } from '../AbstractHighlightButton';
 import styles from '../styles.native';
 

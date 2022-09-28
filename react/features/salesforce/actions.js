@@ -2,10 +2,10 @@
 
 import { openDialog } from '../base/dialog';
 import {
-    hideNotification,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
     SALESFORCE_LINK_NOTIFICATION_ID,
+    hideNotification,
     showNotification
 } from '../notifications';
 

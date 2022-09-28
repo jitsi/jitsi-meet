@@ -1,6 +1,8 @@
 // @flow
 
-import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
+import { isMobileBrowser } from '../base/environment/utils';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getRemoteParticipants, isLocalParticipantModerator } from '../base/participants';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox';
@@ -127,6 +129,16 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
 }
 
 /**
+ * Check if local recording is supported.
+ *
+ * @returns {boolean} - Whether local recording is supported or not.
+ */
+export function supportsLocalRecording() {
+    return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()
+        && navigator.product !== 'ReactNative';
+}
+
+/**
  * Returns the recording button props.
  *
  * @param {Object} state - The redux state to search in.
@@ -142,7 +154,7 @@ export function getRecordButtonProps(state: Object): ?string {
 
     // a button can be disabled/enabled if enableFeaturesBasedOnToken
     // is on or if the livestreaming is running.
-    let disabled;
+    let disabled = false;
     let tooltip = '';
 
     // If the containing component provides the visible prop, that is one
@@ -150,33 +162,18 @@ export function getRecordButtonProps(state: Object): ?string {
     // its own to be visible or not.
     const isModerator = isLocalParticipantModerator(state);
     const {
-        enableFeaturesBasedOnToken,
         recordingService,
         localRecording
     } = state['features/base/config'];
-    const { features = {} } = getLocalParticipant(state);
-    let localRecordingEnabled = !localRecording?.disable;
-
-    if (navigator.product === 'ReactNative') {
-        localRecordingEnabled = false;
-    }
+    const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
 
     const dropboxEnabled = isDropboxEnabled(state);
 
     visible = isModerator && (recordingService?.enabled || localRecordingEnabled || dropboxEnabled);
-
-    if (enableFeaturesBasedOnToken) {
-        visible = visible && String(features.recording) === 'true';
-        disabled = String(features.recording) === 'disabled';
-        if (!visible && !disabled) {
-            disabled = true;
-            visible = true;
-            tooltip = 'dialog.recordingDisabledTooltip';
-        }
-    }
+    visible = isJwtFeatureEnabled(state, 'recording', visible);
 
     // disable the button if the livestreaming is running.
-    if (getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
+    if (visible && getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
         disabled = true;
         tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
     }

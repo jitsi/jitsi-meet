@@ -1,35 +1,31 @@
-/* eslint-disable import/order */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-// @ts-ignore
 import { IStore } from '../../../app/types';
-
-// @ts-ignore
-import { connect } from '../../../base/redux';
 import { removeReaction } from '../../actions.any';
 import { REACTIONS } from '../../constants';
 
 type Props = {
 
     /**
-     * Reaction to be displayed.
+     * Index of the reaction in the queue.
      */
-    reaction: string,
+    index: number;
 
     /**
-     * Id of the reaction.
+     * Reaction to be displayed.
      */
-    uid: string,
+    reaction: string;
 
     /**
      * Removes reaction from redux state.
      */
-    reactionRemove: Function,
+    reactionRemove: Function;
 
     /**
-     * Index of the reaction in the queue.
+     * Id of the reaction.
      */
-    index: number
+    uid: string;
 };
 
 type State = {
@@ -37,8 +33,8 @@ type State = {
     /**
      * Index of CSS animation. Number between 0-20.
      */
-    index: number
-}
+    index: number;
+};
 
 
 /**

@@ -4,10 +4,11 @@ import { MiddlewareRegistry } from '../base/redux';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
-    SET_TOOLBOX_TIMEOUT,
-    SET_FULL_SCREEN
+    SET_FULL_SCREEN,
+    SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
 
+import './subscriber';
 
 declare var APP: Object;
 

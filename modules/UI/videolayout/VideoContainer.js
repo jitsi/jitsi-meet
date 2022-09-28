@@ -1,13 +1,15 @@
-/* global $, APP, interfaceConfig */
+/* global APP, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { isTestModeEnabled } from '../../../react/features/base/testing';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip';
-import { ORIENTATION, LargeVideoBackground, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
+import { LargeVideoBackground, ORIENTATION, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
+import { setLargeVideoDimensions } from '../../../react/features/large-video/actions.any';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 import UIUtil from '../util/UIUtil';
@@ -445,6 +447,8 @@ export class VideoContainer extends LargeContainer {
         const { horizontalIndent, verticalIndent }
             = this.getVideoPosition(width, height, containerWidth, containerHeight, verticalFilmstripWidth);
 
+        APP.store.dispatch(setLargeVideoDimensions(height, width));
+
         this.$wrapper.animate({
             width,
             height,
@@ -480,7 +484,7 @@ export class VideoContainer extends LargeContainer {
      */
     setStream(userID, stream, videoType) {
         this.userId = userID;
-        if (this.stream === stream) {
+        if (this.stream === stream && !stream?.forceStreamToReattach) {
             // Handles the use case for the remote participants when the
             // videoType is received with delay after turning on/off the
             // desktop sharing.
@@ -492,8 +496,12 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
+        if (stream?.forceStreamToReattach) {
+            delete stream.forceStreamToReattach;
+        }
+
         // detach old stream
-        if (this.stream) {
+        if (this.stream && this.$video[0]) {
             this.stream.detach(this.$video[0]);
         }
 
@@ -504,19 +512,20 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        stream.attach(this.$video[0]);
+        if (this.$video[0]) {
+            stream.attach(this.$video[0]);
 
-        // Ensure large video gets play() called on it when a new stream is attached to it. This is necessary in the
-        // case of Safari as autoplay doesn't kick-in automatically on Safari 15 and newer versions.
-        browser.isWebKitBased() && this.$video[0].play();
+            // Ensure large video gets play() called on it when a new stream is attached to it. This is necessary in the
+            // case of Safari as autoplay doesn't kick-in automatically on Safari 15 and newer versions.
+            browser.isWebKitBased() && this.$video[0].play();
 
-        const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
+            const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
 
-        this.$video.css({
-            transform: flipX ? 'scaleX(-1)' : 'none'
-        });
-
-        this._updateBackground();
+            this.$video.css({
+                transform: flipX ? 'scaleX(-1)' : 'none'
+            });
+            this._updateBackground();
+        }
     }
 
     /**

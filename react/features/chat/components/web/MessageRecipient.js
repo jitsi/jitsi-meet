@@ -6,9 +6,9 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconCancelSelection } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMessageRecipient, {
+    type Props,
     _mapDispatchToProps,
-    _mapStateToProps,
-    type Props
+    _mapStateToProps
 } from '../AbstractMessageRecipient';
 
 /**

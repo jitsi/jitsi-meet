@@ -22,7 +22,7 @@ type Props = AbstractButtonProps & {
 };
 
 /**
- * Implementation of a button for toggleing the overflow menu.
+ * Implementation of a button for toggling the overflow menu.
  */
 class OverflowToggleButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';

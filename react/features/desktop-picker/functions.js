@@ -25,7 +25,7 @@ export function obtainDesktopSources(types, options = {}) {
 
         if (JitsiMeetElectron && JitsiMeetElectron.obtainDesktopStreams) {
             JitsiMeetElectron.obtainDesktopStreams(
-                sources => resolve(_seperateSourcesByType(sources)),
+                sources => resolve(_separateSourcesByType(sources)),
                 error => {
                     logger.error(
                         `Error while obtaining desktop sources: ${error}`);
@@ -54,7 +54,7 @@ export function obtainDesktopSources(types, options = {}) {
  * @returns {Object} An object with the sources split into separate arrays based
  * on source type.
  */
-function _seperateSourcesByType(sources = []) {
+function _separateSourcesByType(sources = []) {
     const sourcesByType = {
         screen: [],
         window: []

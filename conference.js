@@ -15,8 +15,8 @@ import Recorder from './modules/recorder/Recorder';
 import { createTaskQueue } from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
-    createStartSilentEvent,
     createScreenSharingEvent,
+    createStartSilentEvent,
     createTrackMutedEvent,
     sendAnalytics
 } from './react/features/analytics';
@@ -30,14 +30,15 @@ import { shouldShowModeratedNotification } from './react/features/av-moderation/
 import { setAudioOnly } from './react/features/base/audio-only';
 import {
     AVATAR_URL_COMMAND,
+    CONFERENCE_LEAVE_REASONS,
     EMAIL_COMMAND,
     _conferenceWillJoin,
     authStatusChanged,
     commonUserJoinedHandling,
     commonUserLeftHandling,
     conferenceFailed,
-    conferenceJoined,
     conferenceJoinInProgress,
+    conferenceJoined,
     conferenceLeft,
     conferenceSubjectChanged,
     conferenceTimestampChanged,
@@ -49,14 +50,14 @@ import {
     getConferenceOptions,
     kickedOut,
     lockStateChanged,
+    nonParticipantMessageReceived,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant,
-    nonParticipantMessageReceived
+    sendLocalParticipant
 } from './react/features/base/conference';
 import {
-    getReplaceParticipant,
-    getMultipleVideoSendingSupportFeatureFlag
+    getMultipleVideoSendingSupportFeatureFlag,
+    getReplaceParticipant
 } from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
@@ -68,7 +69,6 @@ import {
     updateDeviceList
 } from './react/features/base/devices';
 import {
-    browser,
     JitsiConferenceErrors,
     JitsiConferenceEvents,
     JitsiConnectionErrors,
@@ -77,14 +77,15 @@ import {
     JitsiMediaDevicesEvents,
     JitsiParticipantConnectionStatus,
     JitsiTrackErrors,
-    JitsiTrackEvents
+    JitsiTrackEvents,
+    browser
 } from './react/features/base/lib-jitsi-meet';
 import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
 import {
+    MEDIA_TYPE,
     getStartWithAudioMuted,
     getStartWithVideoMuted,
     isVideoMutedByUser,
-    MEDIA_TYPE,
     setAudioAvailable,
     setAudioMuted,
     setAudioUnmutePermissions,
@@ -137,10 +138,11 @@ import {
     submitFeedback
 } from './react/features/feedback';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
+import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     isModerationNotificationDisplayed,
-    showNotification,
-    NOTIFICATION_TIMEOUT_TYPE
+    showNotification
 } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged, toggleSlowGUMOverlay } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
@@ -151,13 +153,14 @@ import {
     setJoiningInProgress
 } from './react/features/prejoin';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
-import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
+import { isScreenAudioShared, setScreenAudioShareState } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from './react/features/screenshot-capture/functions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { endpointMessageReceived } from './react/features/subtitles';
+import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
 import UIEvents from './service/UI/UIEvents';
 
@@ -380,7 +383,7 @@ class ConferenceConnector {
             // FIXME the conference should be stopped by the library and not by
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
-            room.leave().then(() => connection.disconnect());
+            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).then(() => connection.disconnect());
             break;
 
         case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
@@ -463,7 +466,7 @@ function _connectionFailedHandler(error) {
             _connectionFailedHandler);
         if (room) {
             APP.store.dispatch(conferenceWillLeave(room));
-            room.leave();
+            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR);
         }
     }
 }
@@ -788,7 +791,6 @@ export default {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: getStartWithAudioMuted(APP.store.getState())
-                || config.startSilent
                 || isUserInteractionRequiredForUnmute(APP.store.getState()),
             startWithVideoMuted: getStartWithVideoMuted(APP.store.getState())
                 || isUserInteractionRequiredForUnmute(APP.store.getState())
@@ -1150,9 +1152,13 @@ export default {
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
+     * @param {boolean} ensureTrack - True if we want to ensure that a new track is
+     * created if missing.
      */
-    toggleVideoMuted(showUI = true) {
-        this.muteVideo(!this.isLocalVideoMuted(), showUI);
+    toggleVideoMuted(showUI = true, ensureTrack = false) {
+        const mute = !this.isLocalVideoMuted();
+
+        APP.store.dispatch(handleToggleVideoMuted(mute, showUI, ensureTrack));
     },
 
     /**
@@ -2017,6 +2023,11 @@ export default {
                 }
 
                 if (this._desktopAudioStream) {
+                    // Noise suppression doesn't work with desktop audio because we can't chain
+                    // track effects yet, disable it first.
+                    // We need to to wait for the effect to clear first or it might interfere with the audio mixer.
+                    await APP.store.dispatch(setNoiseSuppressionEnabled(false));
+
                     const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
 
                     // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
@@ -2279,7 +2290,9 @@ export default {
 
         room.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-            (dominant, previous) => APP.store.dispatch(dominantSpeakerChanged(dominant, previous, room)));
+            (dominant, previous, silence) => {
+                APP.store.dispatch(dominantSpeakerChanged(dominant, previous, Boolean(silence), room));
+            });
 
         room.on(
             JitsiConferenceEvents.CONFERENCE_CREATED_TIMESTAMP,
@@ -2414,8 +2427,8 @@ export default {
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
             this.muteAudio(muted);
         });
-        APP.UI.addListener(UIEvents.VIDEO_MUTED, muted => {
-            this.muteVideo(muted);
+        APP.UI.addListener(UIEvents.VIDEO_MUTED, (muted, showUI = false) => {
+            this.muteVideo(muted, showUI);
         });
 
         room.addCommandListener(this.commands.defaults.ETHERPAD,
@@ -2571,16 +2584,16 @@ export default {
                         return stream;
                     })
                     .then(stream => {
-                        logger.log('Switching the local video device.');
+                        logger.info(`Switching the local video device to ${cameraDeviceId}.`);
 
                         return this.useVideoStream(stream);
                     })
                     .then(() => {
-                        logger.log('Switched local video device.');
+                        logger.info(`Switched local video device to ${cameraDeviceId}.`);
                         this._updateVideoDeviceId();
                     })
                     .catch(error => {
-                        logger.error(`Switching the local video device failed: ${error}`);
+                        logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
 
                         return APP.store.dispatch(notifyCameraError(error));
                     });
@@ -2590,23 +2603,26 @@ export default {
 
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
-            micDeviceId => {
+            async micDeviceId => {
                 const audioWasMuted = this.isLocalAudioMuted();
 
-                // When the 'default' mic needs to be selected, we need to
-                // pass the real device id to gUM instead of 'default' in order
-                // to get the correct MediaStreamTrack from chrome because of the
-                // following bug.
-                // https://bugs.chromium.org/p/chromium/issues/detail?id=997689
-                const hasDefaultMicChanged = micDeviceId === 'default';
+                // Disable noise suppression if it was enabled on the previous track.
+                await APP.store.dispatch(setNoiseSuppressionEnabled(false));
 
+                // When the 'default' mic needs to be selected, we need to pass the real device id to gUM instead of
+                // 'default' in order to get the correct MediaStreamTrack from chrome because of the following bug.
+                // https://bugs.chromium.org/p/chromium/issues/detail?id=997689.
+                const isDefaultMicSelected = micDeviceId === 'default';
+                const selectedDeviceId = isDefaultMicSelected
+                    ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
+                    : micDeviceId;
+
+                logger.info(`Switching audio input device to ${selectedDeviceId}`);
                 sendAnalytics(createDeviceChangedEvent('audio', 'input'));
                 createLocalTracksF({
                     devices: [ 'audio' ],
                     cameraDeviceId: null,
-                    micDeviceId: hasDefaultMicChanged
-                        ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
-                        : micDeviceId
+                    micDeviceId: selectedDeviceId
                 })
                 .then(([ stream ]) => {
                     // if audio was muted before changing the device, mute
@@ -2626,45 +2642,24 @@ export default {
                 .then(() => {
                     const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
 
-                    if (localAudio && hasDefaultMicChanged) {
+                    if (localAudio && isDefaultMicSelected) {
                         // workaround for the default device to be shown as selected in the
                         // settings even when the real device id was passed to gUM because of the
                         // above mentioned chrome bug.
                         localAudio._realDeviceId = localAudio.deviceId = 'default';
                     }
-                    logger.log(`switched local audio device: ${localAudio?.getDeviceId()}`);
-
+                    logger.info(`switched local audio input device to: ${selectedDeviceId}`);
                     this._updateAudioDeviceId();
                 })
                 .catch(err => {
+                    logger.error(`Failed to switch to selected audio input device ${selectedDeviceId}, error=${err}`);
                     APP.store.dispatch(notifyMicError(err));
                 });
             }
         );
 
-        APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly => {
-
-            // FIXME On web video track is stored both in redux and in
-            // 'localVideo' field, video is attempted to be unmuted twice when
-            // turning off the audio only mode. This will crash the app with
-            // 'unmute operation is already in progress'.
-            // Because there's no logic in redux about creating new track in
-            // case unmute when not track exists the things have to go through
-            // muteVideo logic in such case.
-            const tracks = APP.store.getState()['features/base/tracks'];
-            const isTrackInRedux
-                = Boolean(tracks.find(track => track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.VIDEO));
-
-            if (isTrackInRedux && !this.isSharingScreen) {
-                this.muteVideo(audioOnly);
-            }
-
-            // Immediately update the UI by having remote videos and the large
-            // video update themselves instead of waiting for some other event
-            // to cause the update, usually PARTICIPANT_CONN_STATUS_CHANGED.
-            // There is no guarantee another event will trigger the update
-            // immediately and in all situations, for example because a remote
-            // participant is having connection trouble so no status changes.
+        APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, () => {
+            // Immediately update the UI by having remote videos and the large video update themselves.
             const displayedUserId = APP.UI.getLargeVideoID();
 
             if (displayedUserId) {
@@ -2989,7 +2984,6 @@ export default {
         const available = audioDeviceCount > 0 || Boolean(localAudio);
 
         APP.store.dispatch(setAudioAvailable(available));
-        APP.API.notifyAudioAvailabilityChanged(available);
     },
 
     /**
@@ -3070,14 +3064,15 @@ export default {
     /**
      * Leaves the room.
      *
-     * @param {boolean} doDisconnect - Wether leaving the room should also terminate the connection.
+     * @param {boolean} doDisconnect - Whether leaving the room should also terminate the connection.
+     * @param {string} reason - reason for leaving the room.
      * @returns {Promise}
      */
-    async leaveRoom(doDisconnect = true) {
+    async leaveRoom(doDisconnect = true, reason = '') {
         APP.store.dispatch(conferenceWillLeave(room));
 
         if (room && room.isJoined()) {
-            return room.leave().finally(() => {
+            return room.leave(reason).finally(() => {
                 if (doDisconnect) {
                     return disconnect();
                 }
@@ -3252,7 +3247,6 @@ export default {
      */
     setAudioMuteStatus(muted) {
         APP.UI.setAudioMuted(this.getMyUserId(), muted);
-        APP.API.notifyAudioMutedStatusChanged(muted);
     },
 
     /**

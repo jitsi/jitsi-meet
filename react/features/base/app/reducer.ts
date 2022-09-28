@@ -3,10 +3,10 @@ import ReducerRegistry from '../redux/ReducerRegistry';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 
 export interface IAppState {
-    app?: Object|undefined;
+    app?: any;
 }
 
-ReducerRegistry.register('features/base/app', (state: IAppState = {}, action) => {
+ReducerRegistry.register<IAppState>('features/base/app', (state = {}, action): IAppState => {
     switch (action.type) {
     case APP_WILL_MOUNT: {
         const { app } = action;

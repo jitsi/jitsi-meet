@@ -4,14 +4,15 @@ import _ from 'lodash';
 
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import {
+    PARTICIPANT_LEFT,
     getParticipantById,
     getPinnedParticipant,
-    PARTICIPANT_LEFT,
     pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { updateSettings } from '../base/settings';
 import { setFilmstripVisible } from '../filmstrip';
-import { addStageParticipant, setMaxStageParticipants } from '../filmstrip/actions.web';
+import { addStageParticipant } from '../filmstrip/actions.web';
 import { setTileView } from '../video-layout';
 
 import {
@@ -192,7 +193,9 @@ function _onFollowMeCommand(attributes = {}, id, store) {
 
     if (attributes.maxStageParticipants !== undefined
         && oldState.maxStageParticipants !== attributes.maxStageParticipants) {
-        store.dispatch(setMaxStageParticipants(Number(attributes.maxStageParticipants)));
+        store.dispatch(updateSettings({
+            maxStageParticipants: Number(attributes.maxStageParticipants)
+        }));
     }
 }
 

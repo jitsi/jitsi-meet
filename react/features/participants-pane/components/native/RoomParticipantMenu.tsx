@@ -1,17 +1,22 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { IState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-
 // @ts-ignore
 import { BottomSheet, hideSheet } from '../../../base/dialog';
+// @ts-ignore
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+// @ts-ignore
 import { getBreakoutRooms } from '../../../breakout-rooms/functions';
+// @ts-ignore
 import SendToBreakoutRoom from '../../../video-menu/components/native/SendToBreakoutRoom';
+// @ts-ignore
 import styles from '../../../video-menu/components/native/styles';
 
 /**
@@ -19,37 +24,32 @@ import styles from '../../../video-menu/components/native/styles';
  */
 const AVATAR_SIZE = 24;
 
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * The list of all breakout rooms.
      */
-    _rooms: Array<any>,
-
-    /**
-     * The room the participant is in.
-     */
-    room: any,
-
-    /**
-     * The jid of the selected participant.
-     */
-    participantJid: string,
-
-    /**
-     * The display name of the selected participant.
-     */
-    participantName: string,
+    _rooms: Array<any>;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
-     * Translation function.
+     * The jid of the selected participant.
      */
-    t: Function
+    participantJid: string;
+
+    /**
+     * The display name of the selected participant.
+     */
+    participantName: string;
+
+    /**
+     * The room the participant is in.
+     */
+    room: any;
 }
 
 /**
@@ -140,7 +140,7 @@ class RoomParticipantMenu extends PureComponent<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IState) {
     return {
         _rooms: Object.values(getBreakoutRooms(state))
     };

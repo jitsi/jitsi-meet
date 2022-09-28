@@ -83,6 +83,30 @@ case "$1" in
             TURN_SECRET="$RET"
         fi
 
+        # In the case of updating from an older version the configure of -prosody package may happen before the -config
+        # one, so if JAAS_INPUT is empty (the question is not asked), let's ask it now.
+        db_get jitsi-meet/cert-choice
+        CERT_CHOICE="$RET"
+        if [ -z "$CERT_CHOICE" ] ; then
+            db_input critical jitsi-meet/cert-choice || true
+            db_go
+            db_get jitsi-meet/cert-choice
+            CERT_CHOICE="$RET"
+        fi
+        SELF_SIGNED_CHOICE="Generate a new self-signed certificate"
+        if [ "$CERT_CHOICE" != "$SELF_SIGNED_CHOICE" ]; then
+            db_get jitsi-meet/jaas-choice
+            JAAS_INPUT="$RET"
+            if [ -z "$JAAS_INPUT" ] ; then
+                db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
+                db_set jitsi-meet/jaas-choice false
+                db_input critical jitsi-meet/jaas-choice || true
+                db_go
+                db_get jitsi-meet/jaas-choice
+                JAAS_INPUT="$RET"
+            fi
+        fi
+
         # and we're done with debconf
         db_stop
 
@@ -141,7 +165,7 @@ case "$1" in
         # New:
         # Component "focus.jitmeet.example.com" "client_proxy"
         #    target_address = "focus@auth.jitmeet.example.com"
-        if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
+        if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep -q "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
             sed -i "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\"/g" $PROSODY_HOST_CONFIG
             PROSODY_CONFIG_PRESENT="false"
         fi
@@ -166,6 +190,29 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
+        JAAS_HOST_CONFIG="/etc/prosody/conf.avail/jaas.cfg.lua"
+        if [ "${JAAS_INPUT}" = "true" ] && [ ! -f $JAAS_HOST_CONFIG ]; then
+            sed -i "s/enabled = false -- Jitsi meet components/enabled = true -- Jitsi meet components/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # For those deployments that don't have the config in the jitsi-meet prosody config add the new jaas file
+        if [ ! -f $JAAS_HOST_CONFIG ] && ! grep -q "VirtualHost \"jigasi.meet.jitsi\"" $PROSODY_HOST_CONFIG; then
+            PROSODY_CONFIG_PRESENT="false"
+            cp /usr/share/jitsi-meet-prosody/jaas.cfg.lua $JAAS_HOST_CONFIG
+            sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $JAAS_HOST_CONFIG
+        fi
+
+        if [ "${JAAS_INPUT}" = "true" ]; then
+            JAAS_HOST_CONFIG_ENABLED="/etc/prosody/conf.d/jaas.cfg.lua "
+            if [ ! -f $JAAS_HOST_CONFIG_ENABLED ] && ! grep -q "VirtualHost \"jigasi.meet.jitsi\"" $PROSODY_HOST_CONFIG; then
+                if [ -f $JAAS_HOST_CONFIG ]; then
+                    ln -s $JAAS_HOST_CONFIG $JAAS_HOST_CONFIG_ENABLED
+                    PROSODY_CONFIG_PRESENT="false"
+                fi
+            fi
+        fi
+
         # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
         prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN
 
@@ -176,32 +223,6 @@ case "$1" in
 
             ln -sf /var/lib/prosody/$JVB_HOSTNAME.key /etc/prosody/certs/$JVB_HOSTNAME.key
             ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
-        fi
-
-        PRTRUNK_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-trunk' 2>/dev/null | awk '{print $3}' || true)"
-        PR10_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.10' 2>/dev/null | awk '{print $3}' || true)"
-        PR_VER_INSTALLED=$(dpkg-query -f='${Version}\n' --show prosody  2>/dev/null || true)
-        if [ "$PRTRUNK_INSTALL_CHECK" = "installed" ] \
-            || [ "$PRTRUNK_INSTALL_CHECK" = "unpacked" ] ; then
-            if [ -f $PROSODY_HOST_CONFIG ]; then
-                sed -i 's/storage = \"memory\"/storage = \"null\"/g' $PROSODY_HOST_CONFIG
-
-                # trigger a restart
-                PROSODY_CONFIG_PRESENT="false"
-            fi
-        fi
-        if [ "$PR10_INSTALL_CHECK" = "installed" ] \
-            || [ "$PR10_INSTALL_CHECK" = "unpacked" ] \
-            || dpkg --compare-versions "$PR_VER_INSTALLED" gt "0.10" ; then
-
-            # if the version is 0.10.X (>0.10 and <0.11)
-            if [ -f $PROSODY_HOST_CONFIG ] \
-                && dpkg --compare-versions "$PR_VER_INSTALLED" lt "0.11" ; then
-                sed -i 's/storage = \"memory\"/storage = \"none\"/g' $PROSODY_HOST_CONFIG
-
-                # trigger a restart
-                PROSODY_CONFIG_PRESENT="false"
-            fi
         fi
 
         CERT_ADDED_TO_TRUST="false"

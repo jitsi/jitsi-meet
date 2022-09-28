@@ -3,8 +3,8 @@
 import _ from 'lodash';
 
 import {
-    getParticipantById,
-    PARTICIPANT_ROLE
+    PARTICIPANT_ROLE,
+    getParticipantById
 } from '../base/participants';
 import { objectSort } from '../base/util';
 

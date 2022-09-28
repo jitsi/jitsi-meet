@@ -6,9 +6,10 @@ import {
     createStartMutedConfigurationEvent,
     sendAnalytics
 } from '../../analytics';
+import { appNavigate } from '../../app/actions';
 import { endpointMessageReceived } from '../../subtitles';
 import { getReplaceParticipant } from '../config/functions';
-import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
+import { JITSI_CONNECTION_CONFERENCE_KEY, disconnect } from '../connection';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
@@ -27,6 +28,7 @@ import {
     participantRoleChanged,
     participantUpdated
 } from '../participants';
+import { toState } from '../redux';
 import {
     destroyLocalTracks,
     getLocalTracks,
@@ -39,8 +41,8 @@ import { getBackendSafeRoomName } from '../util';
 import {
     AUTH_STATUS_CHANGED,
     CONFERENCE_FAILED,
-    CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_JOINED,
+    CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_LEFT,
     CONFERENCE_LOCAL_SUBJECT_CHANGED,
     CONFERENCE_SUBJECT_CHANGED,
@@ -59,8 +61,8 @@ import {
     SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
-    SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
+    SET_ROOM,
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED
 } from './actionTypes';
@@ -74,6 +76,7 @@ import {
     commonUserJoinedHandling,
     commonUserLeftHandling,
     getConferenceOptions,
+    getConferenceState,
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
@@ -107,6 +110,9 @@ function _addConferenceListeners(conference, dispatch, state) {
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOINED,
         (...args) => dispatch(conferenceJoined(conference, ...args)));
+    conference.on(
+        JitsiConferenceEvents.CONFERENCE_UNIQUE_ID_SET,
+        (...args) => dispatch(conferenceUniqueIdSet(conference, ...args)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
         (...args) => dispatch(conferenceJoinInProgress(conference, ...args)));
@@ -210,7 +216,9 @@ function _addConferenceListeners(conference, dispatch, state) {
 
     conference.on(
         JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-        (dominant, previous) => dispatch(dominantSpeakerChanged(dominant, previous, conference)));
+        (dominant, previous, silence) => {
+            dispatch(dominantSpeakerChanged(dominant, previous, Boolean(silence), conference));
+        });
 
     conference.on(
         JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
@@ -585,6 +593,19 @@ export function dataChannelOpened() {
 }
 
 /**
+ * Action to end a conference for all participants.
+ *
+ * @returns {Function}
+ */
+export function endConference() {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const { conference } = getConferenceState(toState(getState));
+
+        conference?.end();
+    };
+}
+
+/**
  * Signals that we've been kicked out of the conference.
  *
  * @param {JitsiConference} conference - The {@link JitsiConference} instance
@@ -604,6 +625,25 @@ export function kickedOut(conference: Object, participant: Object) {
         participant
     };
 }
+
+
+/**
+ * Action to leave a conference.
+ *
+ * @returns {Function}
+ */
+export function leaveConference() {
+    return async (dispatch: Dispatch<any>) => {
+
+        // FIXME: these should be unified.
+        if (navigator.product === 'ReactNative') {
+            dispatch(appNavigate(undefined));
+        } else {
+            dispatch(disconnect(true));
+        }
+    };
+}
+
 
 /**
  * Signals that the lock state of a specific JitsiConference changed.

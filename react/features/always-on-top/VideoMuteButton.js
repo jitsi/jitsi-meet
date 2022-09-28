@@ -124,7 +124,7 @@ export default class VideoMuteButton extends Component<Props, State> {
      * @returns {void}
      */
     _setVideoMuted(videoMuted: boolean) { // eslint-disable-line no-unused-vars
-        this.state.videoAvailable && api.executeCommand('toggleVideo');
+        this.state.videoAvailable && api.executeCommand('toggleVideo', false, true);
     }
 
     _videoAvailabilityListener: ({ available: boolean }) => void;

@@ -9,22 +9,7 @@ module.exports = {
     'overrides': [
         {
             'files': [ '*.ts', '*.tsx' ],
-            parser: '@typescript-eslint/parser',
-            rules: {
-                'no-undef': 'off',
-                'no-use-before-define': 'off',
-                '@typescript-eslint/ban-ts-comment': 'off',
-                '@typescript-eslint/no-empty-function': 'off',
-                '@typescript-eslint/ban-types': 'off',
-                '@typescript-eslint/no-explicit-any': 'off',
-                'no-prototype-builtins': 'off'
-            },
-            'plugins': [ '@typescript-eslint' ],
-            'extends': [
-                'eslint:recommended',
-                'plugin:@typescript-eslint/eslint-recommended',
-                'plugin:@typescript-eslint/recommended'
-            ]
+            extends: [ '@jitsi/eslint-config/typescript' ]
         }
     ],
     'rules': {

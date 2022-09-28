@@ -15,10 +15,10 @@ import {
     hasRaisedHand,
     raiseHand
 } from '../../../base/participants';
-import Button from '../../../base/react/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/react/constants';
 import { connect } from '../../../base/redux';
 import { type AbstractButtonProps } from '../../../base/toolbox/components';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
 
 import styles from './styles';
 
@@ -151,8 +151,8 @@ class RaiseHandButton extends Component<Props, *> {
             <Button
                 accessibilityLabel = { this.accessibilityLabel }
                 icon = { this._renderRaiseHandEmoji }
-                label = { this._getLabel() }
-                onPress = { this._onClick }
+                labelKey = { this._getLabel() }
+                onClick = { this._onClick }
                 style = { styles.raiseHandButton }
                 type = { BUTTON_TYPES.SECONDARY } />
         );

@@ -9,16 +9,17 @@ import { setFilmstripVisible } from '../filmstrip/actions';
 import { selectParticipantInLargeVideo } from '../large-video/actions.any';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
-import { getCurrentLayout, shouldDisplayTileView, LAYOUTS } from '../video-layout';
+import { LAYOUTS, getCurrentLayout, shouldDisplayTileView } from '../video-layout';
 
 import {
     clearStageParticipants,
     setHorizontalViewDimensions,
+    setScreenshareFilmstripParticipant,
     setScreensharingTileDimensions,
     setStageFilmstripViewDimensions,
     setTileViewDimensions,
     setVerticalViewDimensions
-} from './actions';
+} from './actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD
@@ -26,7 +27,7 @@ import {
 import {
     isFilmstripResizable,
     isTopPanelEnabled
-} from './functions';
+} from './functions.web';
 
 import './subscriber.any';
 
@@ -71,9 +72,16 @@ StateListenerRegistry.register(
     },
     /* listener */ ({ layout }, store) => {
         switch (layout) {
-        case LAYOUTS.TILE_VIEW:
+        case LAYOUTS.TILE_VIEW: {
+            const { pinnedParticipant } = store.getState()['features/base/participants'];
+
+            if (pinnedParticipant) {
+                store.dispatch(pinParticipant(null));
+            }
+            store.dispatch(clearStageParticipants());
             store.dispatch(setTileViewDimensions());
             break;
+        }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
             store.dispatch(setHorizontalViewDimensions());
             break;
@@ -195,9 +203,9 @@ StateListenerRegistry.register(
  * there's just one).
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/filmstrip'].activeParticipants.length,
-    /* listener */(length, store) => {
-        if (length <= 1) {
+    /* selector */ state => state['features/filmstrip'].activeParticipants,
+    /* listener */(activeParticipants, store) => {
+        if (activeParticipants.length <= 1) {
             store.dispatch(selectParticipantInLargeVideo());
         }
     });
@@ -220,6 +228,19 @@ StateListenerRegistry.register(
     /* listener */({ length }, store) => {
         if (length >= 1 && isTopPanelEnabled(store.getState())) {
             store.dispatch(setScreensharingTileDimensions());
+        }
+    }, {
+        deepEquals: true
+    });
+
+/**
+ * Listens for changes to clear invalid data.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/video-layout'].remoteScreenShares.length,
+    /* listener */(length, store) => {
+        if (length === 0) {
+            store.dispatch(setScreenshareFilmstripParticipant());
         }
     }, {
         deepEquals: true

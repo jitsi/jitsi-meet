@@ -6,7 +6,7 @@ import { hideDialog, openDialog } from '../base/dialog/actions';
 import {
     CANCEL_LOGIN
 } from './actionTypes';
-import { WaitForOwnerDialog, LoginDialog } from './components';
+import { LoginDialog, WaitForOwnerDialog } from './components';
 
 export * from './actions.any';
 

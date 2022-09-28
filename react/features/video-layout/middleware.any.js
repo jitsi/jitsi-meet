@@ -5,9 +5,9 @@ import { VIDEO_TYPE } from '../base/media';
 import {
     PARTICIPANT_LEFT,
     PIN_PARTICIPANT,
-    pinParticipant,
     getParticipantById,
-    getPinnedParticipant
+    getPinnedParticipant,
+    pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { TRACK_REMOVED } from '../base/tracks';
@@ -81,7 +81,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     // Update the remoteScreenShares.
     // Because of the debounce in the subscriber which updates the remoteScreenShares we need to handle
-    // removal of screen shares separatelly here. Otherwise it is possible to have screen sharing
+    // removal of screen shares separately here. Otherwise it is possible to have screen sharing
     // participant that has already left in the remoteScreenShares array. This can lead to rendering
     // a thumbnails for already left participants since the remoteScreenShares array is used for
     // building the ordered list of remote participants.

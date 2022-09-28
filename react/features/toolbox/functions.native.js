@@ -1,7 +1,7 @@
 // @flow
 
 import { hasAvailableDevices } from '../base/devices';
-import { TOOLBOX_ALWAYS_VISIBLE, getFeatureFlag, TOOLBOX_ENABLED } from '../base/flags';
+import { TOOLBOX_ALWAYS_VISIBLE, TOOLBOX_ENABLED, getFeatureFlag } from '../base/flags';
 import { getParticipantCountWithFake } from '../base/participants';
 import { toState } from '../base/redux';
 import { isLocalVideoTrackDesktop } from '../base/tracks';
@@ -27,7 +27,7 @@ export function getMovableButtons(width: number): Set<string> {
 
     switch (true) {
     case width >= WIDTH.FIT_9_ICONS: {
-        buttons = [ 'togglecamera', 'chat', 'participantspane', 'raisehand', 'tileview' ];
+        buttons = [ 'chat', 'togglecamera', 'screensharing', 'raisehand', 'tileview' ];
         break;
     }
     case width >= WIDTH.FIT_8_ICONS: {

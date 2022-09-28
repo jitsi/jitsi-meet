@@ -22,7 +22,7 @@ local escaped_muc_domain_prefix = muc_domain_prefix:gsub("%p", "%%%1");
 -- (e.g. extract 'foo' from 'conference.foo.example.com')
 local target_subdomain_pattern = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..escaped_muc_domain_base;
 
--- table to store all incoming iqs without roomname in it, like discoinfo to the muc compoent
+-- table to store all incoming iqs without roomname in it, like discoinfo to the muc component
 local roomless_iqs = {};
 
 -- Utility function to split room JID to include room name and subdomain
@@ -254,6 +254,10 @@ function starts_with(str, start)
     return str:sub(1, #start) == start
 end
 
+function ends_with(str, ending)
+    return ending == "" or str:sub(-#ending) == ending
+end
+
 -- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
 function is_healthcheck_room(room_jid)
     if starts_with(room_jid, "__jicofo-health-check") then
@@ -366,4 +370,6 @@ return {
     internal_room_jid_match_rewrite = internal_room_jid_match_rewrite;
     update_presence_identity = update_presence_identity;
     http_get_with_retry = http_get_with_retry;
+    ends_with = ends_with;
+    starts_with = starts_with;
 };

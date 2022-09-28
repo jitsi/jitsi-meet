@@ -7,7 +7,7 @@ import { Label } from '../../base/label';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 
-import { _mapStateToProps, type Props } from './AbstractTranscribingLabel';
+import { type Props, _mapStateToProps } from './AbstractTranscribingLabel';
 
 /**
  * React {@code Component} for displaying a label when a transcriber is in the

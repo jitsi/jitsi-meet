@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Icon, IconHangup } from '../../../../base/icons';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconHangup } from '../../../../base/icons/svg';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 
 /**
@@ -8,7 +9,7 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
  *
  * @returns {JSX.Element} - The end meeting icon.
  */
-const EndMeetingIcon = () : JSX.Element => (<Icon
+const EndMeetingIcon = (): JSX.Element => (<Icon
     color = { BaseTheme.palette.icon01 }
     size = { 20 }
     src = { IconHangup } />);

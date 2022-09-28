@@ -79,7 +79,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": "konferencu wopušćić",
             "selectSoundDevice": "nastroj za zwuk wuzwolić"
         },
         "labels": {
@@ -146,7 +145,6 @@
         "bridgeCount": "ličba serwera: ",
         "codecs": "kody (A/V): ",
         "connectedTo": "zwjazane z:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": " wobrazowospjetna frekwenca:",
         "less": "mjenje pokazać",
         "localaddress": "lokalna adresa:",
@@ -1045,6 +1043,7 @@
             "invite": "wobdźělnika přeprosyć",
             "kick": " wobdźělnika wuzamknyć",
             "laugh": "so smjeć",
+            "leaveConference": "konferencu wopušćić",
             "like": "palc horje",
             "linkToSalesforce": "ze Salesforce zwjazać",
             "lobbyButton": "lobby-modus zapnyć/hasnyć",
@@ -1117,6 +1116,7 @@
         "joinBreakoutRoom": "do breakout rumnosće měnić",
         "laugh": "so smjeć",
         "leaveBreakoutRoom": "breakout rumnosć wopusćić",
+        "leaveConference": "konferencu wopušćić",
         "like": "palc horje",
         "linkToSalesforce": "ze Salesforce zwjazać",
         "lobbyButtonDisable": "lobby-modus deaktiwěrować",

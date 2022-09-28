@@ -1,16 +1,14 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import { v4 as uuidv4 } from 'uuid';
 
+import { IState } from '../app/types';
 // @ts-ignore
-import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
-
-// @ts-ignore
-import { getLocalParticipant } from '../base/participants';
-
+import { REACTIONS_ENABLED, getFeatureFlag } from '../base/flags';
+import { getLocalParticipant } from '../base/participants/functions';
 // @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
-import { ReactionEmojiProps, REACTIONS, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';
+import { REACTIONS, ReactionEmojiProps, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';
 import logger from './logger';
 
 /**
@@ -19,7 +17,7 @@ import logger from './logger';
  * @param {Object} state - The state of the application.
  * @returns {Array}
  */
-export function getReactionsQueue(state: any): Array<ReactionEmojiProps> {
+export function getReactionsQueue(state: IState): Array<ReactionEmojiProps> {
     return state['features/reactions'].queue;
 }
 
@@ -55,12 +53,12 @@ export function getReactionsWithId(buffer: Array<string>): Array<ReactionEmojiPr
  * @param {Array} reactions - Reactions array to be sent.
  * @returns {void}
  */
-export async function sendReactionsWebhook(state: any, reactions: Array<string>) {
+export async function sendReactionsWebhook(state: IState, reactions: Array<string>) {
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
     const { connection } = state['features/base/connection'];
-    const jid = connection.getJid();
+    const jid = connection?.getJid();
     const localParticipant = getLocalParticipant(state);
 
     const headers = {
@@ -71,11 +69,11 @@ export async function sendReactionsWebhook(state: any, reactions: Array<string>)
 
     const reqBody = {
         meetingFqn: extractFqnFromPath(),
-        sessionId: conference.sessionId,
+        sessionId: conference?.sessionId,
         submitted: Date.now(),
         reactions,
-        participantId: localParticipant.jwtId,
-        participantName: localParticipant.name,
+        participantId: localParticipant?.jwtId,
+        participantName: localParticipant?.name,
         participantJid: jid
     };
 
@@ -156,7 +154,7 @@ export function getReactionsSoundsThresholds(reactions: Array<string>): Array<Re
  * @param {Object} state - The Redux state object.
  * @returns {boolean}
  */
-export function isReactionsEnabled(state: any): boolean {
+export function isReactionsEnabled(state: IState): boolean {
     const { disableReactions } = state['features/base/config'];
 
     if (navigator.product === 'ReactNative') {

@@ -12,11 +12,12 @@ import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     DOMINANT_SPEAKER_CHANGED,
+    PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
-    PARTICIPANT_JOINED,
     PARTICIPANT_ROLE_CHANGED,
     SET_LOADABLE_AVATAR_URL,
+    getDominantSpeakerParticipant,
     getLocalParticipant,
     getParticipantById
 } from '../base/participants';
@@ -38,6 +39,19 @@ declare var APP: Object;
 MiddlewareRegistry.register(store => next => action => {
     // We need to do these before executing the rest of the middelware chain
     switch (action.type) {
+    case DOMINANT_SPEAKER_CHANGED: {
+        const dominantSpeaker = getDominantSpeakerParticipant(store.getState());
+
+        if (dominantSpeaker?.id !== action.participant.id) {
+            const result = next(action);
+
+            APP.API.notifyDominantSpeakerChanged(action.participant.id);
+
+            return result;
+        }
+
+        break;
+    }
     case SET_LOADABLE_AVATAR_URL: {
         const { id, loadableAvatarUrl } = action.participant;
         const participant = getParticipantById(
@@ -89,7 +103,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const { defaultLocalDisplayName } = state['features/base/config'];
         const { room } = state['features/base/conference'];
-        const { loadableAvatarUrl, name, id } = getLocalParticipant(state);
+        const { loadableAvatarUrl, name, id, email } = getLocalParticipant(state);
         const breakoutRoom = APP.conference.roomName.toString() !== room.toLowerCase();
 
         // we use APP.conference.roomName as we do not update state['features/base/conference'].room when
@@ -104,7 +118,8 @@ MiddlewareRegistry.register(store => next => action => {
                     defaultLocalDisplayName
                 ),
                 avatarURL: loadableAvatarUrl,
-                breakoutRoom
+                breakoutRoom,
+                email
             }
         );
         break;
@@ -112,10 +127,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case DATA_CHANNEL_OPENED:
         APP.API.notifyDataChannelOpened();
-        break;
-
-    case DOMINANT_SPEAKER_CHANGED:
-        APP.API.notifyDominantSpeakerChanged(action.participant.id);
         break;
 
     case KICKED_OUT:
@@ -150,19 +161,32 @@ MiddlewareRegistry.register(store => next => action => {
             { id: action.kicker });
         break;
 
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_LEFT: {
+        const { participant } = action;
+        const { isFakeParticipant, isVirtualScreenshareParticipant } = participant;
+
+        // Skip sending participant left event for fake or virtual screenshare participants.
+        if (isFakeParticipant || isVirtualScreenshareParticipant) {
+            break;
+        }
+
         APP.API.notifyUserLeft(action.participant.id);
         break;
-
+    }
     case PARTICIPANT_JOINED: {
         const state = store.getState();
         const { defaultRemoteDisplayName } = state['features/base/config'];
         const { participant } = action;
-        const { id, local, name } = participant;
+        const { id, isFakeParticipant, isVirtualScreenshareParticipant, local, name } = participant;
 
         // The version of external api outside of middleware did not emit
         // the local participant being created.
         if (!local) {
+            // Skip sending participant joined event for fake or virtual screenshare participants.
+            if (isFakeParticipant || isVirtualScreenshareParticipant) {
+                break;
+            }
+
             APP.API.notifyUserJoined(id, {
                 displayName: name,
                 formattedDisplayName: appendSuffix(

@@ -5,7 +5,7 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { sendAnalytics, createPollEvent } from '../../analytics';
+import { createPollEvent, sendAnalytics } from '../../analytics';
 import { getParticipantDisplayName } from '../../base/participants';
 import { COMMAND_NEW_POLL } from '../constants';
 

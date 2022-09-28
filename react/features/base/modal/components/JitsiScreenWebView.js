@@ -20,6 +20,7 @@ type Props = {
 
 const JitsiScreenWebView = ({ source, style }: Props) => (
     <JitsiScreen
+        disableForcedKeyboardDismiss = { true }
         style = { style }>
         <WebView source = {{ uri: source }} />
     </JitsiScreen>

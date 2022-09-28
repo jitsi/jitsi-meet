@@ -19,7 +19,7 @@ declare var config: Object;
  * @returns {void}
  */
 function onFakeLocalStorageChanged() {
-    APP.API.notifyLocalStorageChanged(jitsiLocalStorage.serialize());
+    APP.API.notifyLocalStorageChanged(jitsiLocalStorage.serialize([ 'jitsiLocalStorage' ]));
 }
 
 /**

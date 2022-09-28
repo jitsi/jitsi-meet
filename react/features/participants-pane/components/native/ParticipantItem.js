@@ -7,7 +7,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { MEDIA_STATE, type MediaState, AudioStateIcons, VideoStateIcons } from '../../constants';
+import { AudioStateIcons, MEDIA_STATE, type MediaState, VideoStateIcons } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import styles from './styles';

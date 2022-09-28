@@ -1,12 +1,8 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
-interface Theme {
-    palette: any;
-    text01: string;
-}
-
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     const { text01 } = theme.palette;
 
     return {
@@ -29,8 +25,8 @@ const useStyles = makeStyles((theme: Theme) => {
  * @param {Props} props - The props of the component.
  * @returns {ReactElement}
  */
-const DisplayNameBadge: React.FC<{ name: string }> = ({ name }) => {
-    const classes = useStyles();
+const DisplayNameBadge: React.FC<{ name: string; }> = ({ name }) => {
+    const { classes } = useStyles();
 
     return (
         <div className = { classes.badge }>

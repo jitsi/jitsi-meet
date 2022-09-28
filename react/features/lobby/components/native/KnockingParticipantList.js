@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
@@ -12,7 +12,7 @@ import { navigate } from '../../../mobile/navigation/components/conference/Confe
 import { screen } from '../../../mobile/navigation/routes';
 import { setKnockingParticipantApproval } from '../../actions';
 import { HIDDEN_EMAILS } from '../../constants';
-import { showLobbyChatButton, getKnockingParticipants, getLobbyEnabled } from '../../functions';
+import { getKnockingParticipants, getLobbyEnabled, showLobbyChatButton } from '../../functions';
 
 import styles from './styles';
 

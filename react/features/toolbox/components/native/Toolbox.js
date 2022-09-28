@@ -9,23 +9,29 @@ import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
-import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionsMenuButton } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { TileViewButton } from '../../../video-layout';
-import { isToolboxVisible, getMovableButtons } from '../../functions.native';
+import { getMovableButtons, isToolboxVisible } from '../../functions.native';
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
 import VideoMuteButton from '../VideoMuteButton';
 
+import HangupMenuButton from './HangupMenuButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import RaiseHandButton from './RaiseHandButton';
+import ScreenSharingButton from './ScreenSharingButton';
 import styles from './styles';
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
  */
 type Props = {
+
+    /**
+     * Whether the end conference feature is supported.
+     */
+    _endConferenceSupported: boolean,
 
     /**
      * Whether or not the reactions feature is enabled.
@@ -55,14 +61,14 @@ type Props = {
  * @returns {React$Element}.
  */
 function Toolbox(props: Props) {
-    const { _reactionsEnabled, _styles, _visible, _width } = props;
+    const { _endConferenceSupported, _reactionsEnabled, _styles, _visible, _width } = props;
 
     if (!_visible) {
         return null;
     }
 
     const bottomEdge = Platform.OS === 'ios' && _visible;
-    const { buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
+    const { buttonStylesBorderless, hangupButtonStyles, hangupMenuButtonStyles, toggledButtonStyles } = _styles;
     const additionalButtons = getMovableButtons(_width);
     const backgroundToggledStyle = {
         ...toggledButtonStyles,
@@ -93,7 +99,7 @@ function Toolbox(props: Props) {
                           styles = { buttonStylesBorderless }
                           toggledStyles = { backgroundToggledStyle } />
                 }
-
+                {additionalButtons.has('screensharing') && <ScreenSharingButton styles = { buttonStylesBorderless } />}
                 { additionalButtons.has('raisehand') && (_reactionsEnabled
                     ? <ReactionsMenuButton
                         styles = { buttonStylesBorderless }
@@ -102,16 +108,16 @@ function Toolbox(props: Props) {
                         styles = { buttonStylesBorderless }
                         toggledStyles = { backgroundToggledStyle } />)}
                 {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
-                {
-                    additionalButtons.has('participantspane')
-                    && <ParticipantsPaneButton
-                        styles = { buttonStylesBorderless } />
-                }
                 <OverflowMenuButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />
-                <HangupButton
-                    styles = { hangupButtonStyles } />
+                { _endConferenceSupported
+                    ? <HangupMenuButton
+                        styles = { hangupMenuButtonStyles }
+                        toggledStyles = { toggledButtonStyles } />
+                    : <HangupButton
+                        styles = { hangupButtonStyles } />
+                }
             </SafeAreaView>
         </View>
     );
@@ -127,7 +133,11 @@ function Toolbox(props: Props) {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object): Object {
+    const { conference } = state['features/base/conference'];
+    const endConferenceSupported = conference?.isEndConferenceSupported();
+
     return {
+        _endConferenceSupported: Boolean(endConferenceSupported),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
         _width: state['features/base/responsive-ui'].clientWidth,

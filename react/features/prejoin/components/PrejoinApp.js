@@ -10,7 +10,7 @@ import { setConfig } from '../../base/config';
 import { DialogContainer } from '../../base/dialog';
 import { createPrejoinTracks } from '../../base/tracks';
 import GlobalStyles from '../../base/ui/components/GlobalStyles';
-import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider';
+import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web';
 import { initPrejoin, makePrecallTest } from '../actions';
 
 import PrejoinThirdParty from './PrejoinThirdParty';

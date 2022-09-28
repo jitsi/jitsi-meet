@@ -131,7 +131,7 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
     },
 
     loggedIn: {
-        paddingBottom: _PADDING
+        paddingHorizontal: _PADDING
     },
 
     recordingIcon: {
@@ -144,14 +144,6 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
 
     recordingText: {
         color: BaseTheme.palette.text01
-    },
-
-    signButton: {
-        backgroundColor: BaseTheme.palette.screen01Header,
-        color: BaseTheme.palette.ui12,
-        fontSize: 16,
-        borderRadius: BaseTheme.shape.borderRadius,
-        padding: BoxModel.padding * 0.5
     },
 
     switch: {

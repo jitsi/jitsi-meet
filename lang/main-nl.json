@@ -134,7 +134,6 @@
         "bridgeCount": "Aantal servers: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Verbonden met:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Framesnelheid:",
         "less": "Minder weergeven",
         "localaddress": "Lokaal adres:",
@@ -445,6 +444,10 @@
         "toggleScreensharing": "Wisselen tussen camera en schermdeling",
         "toggleShortcuts": "Sneltoetsen weergeven of verbergen",
         "videoMute": "Uw camera aanzetten of uitzetten"
+    },
+    "largeVideo": {
+        "screenIsShared": "U deelt uw scherm",
+        "showMeWhatImSharing": "Laat me zien wat ik deel"
     },
     "liveStreaming": {
         "busy": "Er wordt gewerkt aan het vrijmaken van streamingmiddelen. Probeer het over enkele minuten opnieuw.",
@@ -774,6 +777,7 @@
         "unavailable": "Oeps! {{serviceName}} is momenteel niet beschikbaar. Er wordt aan een oplossing gewerkt. Probeer het later opnieuw.",
         "unavailableTitle": "Opname niet beschikbaar"
     },
+    "screenshareDisplayName": "Scherm van {{name}}",
     "sectionList": {
         "pullToRefresh": "Naar beneden slepen om te vernieuwen"
     },
@@ -890,6 +894,7 @@
             "mute": "Audio dempen in- of uitschakelen",
             "muteEveryone": "Iedereen dempen",
             "muteEveryoneElse": "Alle anderen dempen",
+            "noiseSuppression": "Ruisonderdrukking",
             "participants": "Deelnemers",
             "pip": "Picture-in-Picture-modus in- of uitschakelen",
             "privateMessage": "Verstuur privébericht",
@@ -922,6 +927,7 @@
         "chat": "Chat openen / sluiten",
         "closeChat": "Chat sluiten",
         "closeReactionsMenu": "Reactiemenu sluiten",
+        "disableNoiseSuppression": "Ruisonderdrukking uitschakelen",
         "disableReactionSounds": "U kunt reactiegeluiden uitschakelen voor deze vergadering",
         "documentClose": "Gedeeld document sluiten",
         "documentOpen": "Gedeeld document openen",
@@ -953,6 +959,7 @@
         "noAudioSignalDialInDesc": "U kunt ook inbellen met:",
         "noAudioSignalDialInLinkDesc": "Inbelnummers",
         "noAudioSignalTitle": "Er komt geen invoer van uw microfoon!",
+        "noiseSuppression": "Ruisonderdrukking",
         "noisyAudioInputDesc": "Het klinkt alsof uw microfoon ruis veroorzaakt. Overweeg te dempen of van apparaat te wisselen.",
         "noisyAudioInputTitle": "Uw microfoon lijkt ruis te veroorzaken!",
         "openChat": "Chat openen",

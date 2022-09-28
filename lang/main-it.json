@@ -79,7 +79,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": " Lascia riunione",
             "selectSoundDevice": "Scegli audio"
         },
         "labels": {
@@ -146,7 +145,6 @@
         "bridgeCount": "Conteggio server:",
         "codecs": "Codec (A/V): ",
         "connectedTo": "Connesso a:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Fotogrammi al secondo:",
         "less": "Mostra meno",
         "localaddress": "Indirizzo locale:",
@@ -1045,6 +1043,7 @@
             "invite": "Invita partecipanti",
             "kick": "Espelli partecipante",
             "laugh": "Ridi",
+            "leaveConference": " Lascia riunione",
             "like": "Mi piace",
             "linkToSalesforce": "Collega a Salesforce",
             "lobbyButton": "Attiva/Disattiva sala d'attesa",
@@ -1117,6 +1116,7 @@
         "joinBreakoutRoom": "Entra in sottogruppo",
         "laugh": "Ridi",
         "leaveBreakoutRoom": "Lascia breakout room",
+        "leaveConference": " Lascia riunione",
         "like": "Mi piace",
         "linkToSalesforce": "Collega a Salesforce",
         "lobbyButtonDisable": "Disabilita sala d'attesa",

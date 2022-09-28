@@ -5,7 +5,7 @@ import { getToolbarButtons } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { connect } from '../../../base/redux';
 import { LAYOUT_CLASSNAMES } from '../../../conference/components/web/Conference';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import {
     ASPECT_RATIO_BREAKPOINT,
     FILMSTRIP_TYPE,

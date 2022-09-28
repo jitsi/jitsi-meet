@@ -4,7 +4,7 @@ import Logger from '@jitsi/logger';
 import throttle from 'lodash/throttle';
 import { PureComponent } from 'react';
 
-import { sendAnalytics, createSharedVideoEvent as createEvent } from '../../../analytics';
+import { createSharedVideoEvent as createEvent, sendAnalytics } from '../../../analytics';
 import { getCurrentConference } from '../../../base/conference';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant } from '../../../base/participants';
@@ -41,7 +41,7 @@ export type Props = {
     _conference: Object,
 
     /**
-     * Warning that indicates an incorect video url.
+     * Warning that indicates an incorrect video url.
      */
     _displayWarning: Function,
 

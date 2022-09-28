@@ -1,13 +1,17 @@
+/* eslint-disable lines-around-comment */
 import React from 'react';
 import { Platform } from 'react-native';
 
-import { connect } from '../../../base/redux';
+import { connect } from '../../../base/redux/functions';
+// @ts-ignore
 import { isDesktopShareButtonDisabled } from '../../functions.native';
 
+// @ts-ignore
 import ScreenSharingAndroidButton from './ScreenSharingAndroidButton.js';
+// @ts-ignore
 import ScreenSharingIosButton from './ScreenSharingIosButton.js';
 
-const ScreenSharingButton = props => (
+const ScreenSharingButton = (props: any) => (
     <>
         {Platform.OS === 'android'
             && <ScreenSharingAndroidButton { ...props } />

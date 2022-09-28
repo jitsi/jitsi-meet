@@ -1,16 +1,25 @@
+/* eslint-disable lines-around-comment */
 import React from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { useSelector } from 'react-redux';
 
+import { IState } from '../../../../app/types';
+// @ts-ignore
 import { getConferenceName } from '../../../../base/conference/functions';
-import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../../base/flags';
+// @ts-ignore
+import { MEETING_NAME_ENABLED, getFeatureFlag } from '../../../../base/flags';
+// @ts-ignore
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
-import { getLocalParticipant } from '../../../../base/participants';
-import { connect } from '../../../../base/redux';
+import { getLocalParticipant } from '../../../../base/participants/functions';
+import { connect } from '../../../../base/redux/functions';
+// @ts-ignore
 import ConnectionIndicator from '../../../../connection-indicator/components/native/ConnectionIndicator';
+// @ts-ignore
 import RecordingLabel from '../../../../recording/components/native/RecordingLabel';
+// @ts-ignore
 import { VideoQualityLabel } from '../../../../video-quality';
 
+// @ts-ignore
 import styles from './styles';
 
 
@@ -19,12 +28,12 @@ type Props = {
     /**
      * Name of the meeting we're currently in.
      */
-    _meetingName: string,
+    _meetingName: string;
 
     /**
      * Whether displaying the current meeting name is enabled or not.
      */
-    _meetingNameEnabled: boolean,
+    _meetingNameEnabled: boolean;
 
 };
 
@@ -35,7 +44,7 @@ type Props = {
  * @param {Props} props - The React props passed to this component.
  * @returns {JSX.Element}
  */
-const TitleBar = (props: Props) : JSX.Element => {
+const TitleBar = (props: Props): JSX.Element => {
     const localParticipant = useSelector(getLocalParticipant);
     const localParticipantId = localParticipant?.id;
 
@@ -78,7 +87,7 @@ const TitleBar = (props: Props) : JSX.Element => {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: IState) {
     const { hideConferenceSubject } = state['features/base/config'];
 
     return {

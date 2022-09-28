@@ -7,8 +7,8 @@ import { translate } from '../../../base/i18n';
 import { IconMicrophoneEmptySlash } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMuteButton, {
-    _mapStateToProps,
-    type Props
+    type Props,
+    _mapStateToProps
 } from '../AbstractMuteButton';
 
 

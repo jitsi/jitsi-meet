@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants';

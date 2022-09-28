@@ -1,16 +1,16 @@
 // @flow
 
-import Button from '@atlaskit/button/standard-button';
 import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import { Button } from '../../../base/ui/components/web';
 import {
     CALENDAR_TYPE,
     MicrosoftSignInButton,
-    clearCalendarIntegration,
     bootstrapCalendarIntegration,
+    clearCalendarIntegration,
     isCalendarEnabled,
     signIn
 } from '../../../calendar-sync';
@@ -252,13 +252,12 @@ class CalendarTab extends Component<Props, State> {
                     { t('settings.calendar.signedIn',
                         { email: _profileEmail }) }
                 </div>
-                <Button
-                    appearance = 'primary'
-                    id = 'calendar_logout'
-                    onClick = { this._onClickDisconnect }
-                    type = 'button'>
-                    { t('settings.calendar.disconnect') }
-                </Button>
+                <div className = 'sign-out-cta-button'>
+                    <Button
+                        id = 'calendar_logout'
+                        label = { t('settings.calendar.disconnect') }
+                        onClick = { this._onClickDisconnect } />
+                </div>
             </div>
         );
     }

@@ -1,6 +1,6 @@
 // @flow
 
-import { getFeatureFlag, FILMSTRIP_ENABLED } from '../base/flags';
+import { FILMSTRIP_ENABLED, getFeatureFlag } from '../base/flags';
 import {
     getLocalParticipant,
     getParticipantCountWithFake,
@@ -52,7 +52,7 @@ export function shouldRemoteVideosBeVisible(state: Object) {
         return false;
     }
 
-    // Include fake participants to derive how many thumbnails are dispalyed,
+    // Include fake participants to derive how many thumbnails are displayed,
     // as it is assumed all participants, including fake, will be displayed
     // in the filmstrip.
     const participantCount = getParticipantCountWithFake(state);
@@ -69,6 +69,15 @@ export function shouldRemoteVideosBeVisible(state: Object) {
             || (participantCount > 1 && pinnedParticipant?.local)
 
             || disable1On1Mode);
+}
+
+/**
+ * Not implemented on mobile.
+ *
+ * @returns {Array<string>}
+ */
+export function getActiveParticipantsIds() {
+    return [];
 }
 
 /**
@@ -170,6 +179,16 @@ export function isStageFilmstripEnabled() {
 }
 
 /**
+ * Whether or not the top panel is enabled.
+ *
+ * @returns {boolean}
+ */
+export function isTopPanelEnabled() {
+    return false;
+
+}
+
+/**
  * Calculates the width and height of the filmstrip based on the screen size and aspect ratio.
  *
  * @param {Object} options - The screen aspect ratio, width, height and safe are insets.
@@ -230,6 +249,15 @@ export function shouldDisplayLocalThumbnailSeparately() {
     // do not have much of a choice but to continue rendering LocalThumbnail
     // as any other remote Thumbnail on Android.
     return Platform.OS !== 'android';
+}
+
+/**
+ * Not implemented on mobile.
+ *
+ * @returns {undefined}
+ */
+export function getScreenshareFilmstripParticipantId() {
+    return undefined;
 }
 
 

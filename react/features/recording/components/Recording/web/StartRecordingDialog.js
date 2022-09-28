@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 
 import { Dialog } from '../../../../base/dialog';
@@ -11,7 +9,9 @@ import { RECORDING_TYPES } from '../../../constants';
 import AbstractStartRecordingDialog, {
     mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
-import StartRecordingDialogContent from '../StartRecordingDialogContent';
+
+import StartRecordingDialogContent from './StartRecordingDialogContent';
+
 
 /**
  * React Component for getting confirmation to start a file recording session in

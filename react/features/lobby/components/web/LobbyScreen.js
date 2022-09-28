@@ -10,8 +10,8 @@ import { connect } from '../../../base/redux';
 import ChatInput from '../../../chat/components/web/ChatInput';
 import MessageContainer from '../../../chat/components/web/MessageContainer';
 import AbstractLobbyScreen, {
-    _mapStateToProps,
-    type Props
+    type Props,
+    _mapStateToProps
 } from '../AbstractLobbyScreen';
 
 /**
@@ -286,7 +286,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      */
     _scrollMessageContainerToBottom(withAnimation) {
         if (this._messageContainerRef.current) {
-            this._messageContainerRef.current.scrollToBottom(withAnimation);
+            this._messageContainerRef.current.scrollToElement(withAnimation);
         }
     }
 }

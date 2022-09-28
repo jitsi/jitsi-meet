@@ -35,6 +35,8 @@ case "$1" in
         if [ -n "$RET" ]; then
             rm -f /etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua
             rm -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
+            rm -f /etc/prosody/conf.avail/jaas.cfg.lua
+            rm -f /etc/prosody/conf.d/jaas.cfg.lua
 
             JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
             # clean up generated certificates

@@ -2,11 +2,11 @@
 
 import Logger from '@jitsi/logger';
 
-import { getSourceNameSignalingFeatureFlag } from '../../../react/features/base/config';
+import { getMultipleVideoSupportFeatureFlag } from '../../../react/features/base/config';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
-    getPinnedParticipant,
-    getParticipantById
+    getParticipantById,
+    getPinnedParticipant
 } from '../../../react/features/base/participants';
 import {
     getTrackByMediaTypeAndParticipant,
@@ -95,7 +95,7 @@ const VideoLayout = {
             return VIDEO_TYPE.CAMERA;
         }
 
-        if (getSourceNameSignalingFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+        if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
             return VIDEO_TYPE.DESKTOP;
         }
 
@@ -177,7 +177,7 @@ const VideoLayout = {
         return largeVideo && largeVideo.id === id;
     },
 
-    updateLargeVideo(id, forceUpdate) {
+    updateLargeVideo(id, forceUpdate, forceStreamToReattach = false) {
         if (!largeVideo) {
             return;
         }
@@ -190,13 +190,17 @@ const VideoLayout = {
 
         let videoTrack;
 
-        if (getSourceNameSignalingFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+        if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
             videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
         } else {
             videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
         }
 
         const videoStream = videoTrack?.jitsiTrack;
+
+        if (videoStream && forceStreamToReattach) {
+            videoStream.forceStreamToReattach = forceStreamToReattach;
+        }
 
         if (isOnLarge && !forceUpdate
                 && LargeVideoManager.isVideoContainer(currentContainerType)
@@ -213,7 +217,6 @@ const VideoLayout = {
 
         if (!isOnLarge || forceUpdate) {
             const videoType = this.getRemoteVideoType(id);
-
 
             largeVideo.updateLargeVideo(
                 id,
@@ -330,7 +333,7 @@ const VideoLayout = {
      */
     _updateLargeVideoIfDisplayed(participantId, force = false) {
         if (this.isCurrentlyOnLarge(participantId)) {
-            this.updateLargeVideo(participantId, force);
+            this.updateLargeVideo(participantId, force, false);
         }
     },
 

@@ -269,7 +269,7 @@ export default {
         height: MD_ITEM_HEIGHT,
         borderWidth: 1,
         borderStyle: 'solid',
-        borderColor: BaseTheme.palette.border02,
+        borderColor: BaseTheme.palette.ui05,
         backgroundColor: BaseTheme.palette.uiBackground,
         borderRadius: BaseTheme.shape.borderRadius,
         marginLeft: BaseTheme.spacing[3],
@@ -310,5 +310,16 @@ export default {
         paddingLeft: BaseTheme.spacing[3],
         paddingRight: BaseTheme.spacing[3],
         fontSize: 16
+    },
+
+    inputContainer: {
+        marginLeft: BaseTheme.spacing[3],
+        marginRight: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[4]
+    },
+
+    centerInput: {
+        paddingRight: BaseTheme.spacing[3],
+        textAlign: 'center'
     }
 };

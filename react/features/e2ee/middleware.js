@@ -5,14 +5,14 @@ import { batch } from 'react-redux';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED, getCurrentConference } from '../base/conference';
 import {
-    getLocalParticipant,
-    getParticipantById,
-    getParticipantCount,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    participantUpdated,
-    getRemoteParticipants
+    getLocalParticipant,
+    getParticipantById,
+    getParticipantCount,
+    getRemoteParticipants,
+    participantUpdated
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
@@ -189,7 +189,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case TOGGLE_E2EE: {
-        if (conference && conference.isE2EEEnabled() !== action.enabled) {
+        if (conference && conference.isE2EESupported() && conference.isE2EEEnabled() !== action.enabled) {
             logger.debug(`E2EE will be ${action.enabled ? 'enabled' : 'disabled'}`);
             conference.toggleE2EE(action.enabled);
 

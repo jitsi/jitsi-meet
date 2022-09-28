@@ -1,22 +1,20 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import './middleware.any.js';
 
 import { IStore } from '../../app/types';
-
 // @ts-ignore
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../notifications';
+import { showNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager.web';
-
 // @ts-ignore
 import StopRecordingDialog from '../../recording/components/Recording/web/StopRecordingDialog';
-
 // @ts-ignore
 import { openDialog } from '../dialog';
-
-// @ts-ignore
-import { MiddlewareRegistry } from '../redux';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { SET_VIDEO_MUTED } from './actionTypes';
+
+import './subscriber';
 
 /**
  * Implements the entry point of the middleware of the feature base/media.

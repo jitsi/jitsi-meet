@@ -67,7 +67,7 @@ type ButtonsWithNotifyClick = 'camera' |
     'add-passcode' |
     '__end';
 
-type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
+export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'E2EE_OFF_SOUND' |
     'E2EE_ON_SOUND' |
     'INCOMING_MSG_SOUND' |
@@ -89,183 +89,308 @@ type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'TALK_WHILE_MUTED_SOUND';
 
 export interface IConfig {
-    hosts?: {
-        domain: string;
-        anonymousdomain?: string;
-        authdomain?: string;
-        focus?: string;
-        muc: string;
+    _desktopSharingSourceDevice?: string;
+    analytics?: {
+        amplitudeAPPKey?: string;
+        disabled?: boolean;
+        googleAnalyticsTrackingId?: string;
+        matomoEndpoint?: string;
+        matomoSiteID?: string;
+        obfuscateRoomName?: boolean;
+        rtcstatsEnabled?: boolean;
+        rtcstatsEndpoint?: string;
+        rtcstatsPollInterval?: number;
+        rtcstatsSendSdp?: boolean;
+        rtcstatsUseLegacy?: boolean;
+        scriptURLs?: Array<string>;
     };
-    bosh?: string;
-    websocket?: string;
-    focusUserJid?: string;
-    testing?: {
-        disableE2EE?: boolean;
-        enableThumbnailReordering?: boolean;
-        mobileXmppWsThreshold?: number;
-        p2pTestMode?: boolean;
-        testMode?: boolean;
-        noAutoPlayVideo?: boolean;
-        capScreenshareBitrate?: number;
-        setScreenSharingResolutionConstraints?: boolean;
-        callStatsThreshold?: number;
-    };
-    flags?: {
-        sourceNameSignaling?: boolean;
-        sendMultipleVideoStreams?: boolean;
-    };
-    disableModeratorIndicator?: boolean;
-    disableReactions?: boolean;
-    disableReactionsModeration?: boolean;
-    disablePolls?: boolean;
-    disableSelfView?: boolean;
-    disableSelfViewSettings?: boolean;
-    screenshotCapture?: {
-        enabled?: boolean;
-        mode?: 'always' | 'recording';
-    };
-    webrtcIceUdpDisable?: boolean;
-    webrtcIceTcpDisable?: boolean;
-    enableUnifiedOnChrome?: boolean;
-    disableAudioLevels?: boolean;
+    apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
+    appId?: string;
     audioLevelsInterval?: number;
-    enableNoAudioDetection?: boolean;
-    enableSaveLogs?: boolean;
-    disableShowMoreStats?: boolean;
-    enableNoisyMicDetection?: boolean;
-    startAudioOnly?: boolean;
-    startAudioMuted?: boolean;
-    startWithAudioMuted?: boolean;
-    startSilent?: boolean;
-    enableOpusRed?: boolean;
     audioQuality?: {
+        opusMaxAverageBitrate?: number | null;
         stereo?: boolean;
-        opusMaxAverageBitrate?: number|null;
     };
-    stereo?: boolean;
-    opusMaxAverageBitrate?: number;
-    resolution?: number;
-    disableRemoveRaisedHandOnFocus?: boolean;
-    disableSpeakerStatsSearch?: boolean;
-    speakerStatsOrder?: Array<'role'|'name'|'hasLeft'>;
-    maxFullResolutionParticipants?: number;
+    autoCaptionOnRecord?: boolean;
+    autoKnockLobby?: boolean;
+    backgroundAlpha?: number;
+    bosh?: string;
+    brandingRoomAlias?: string;
+    breakoutRooms?: {
+        hideAddRoomButton?: boolean;
+        hideAutoAssignButton?: boolean;
+        hideJoinRoomButton?: boolean;
+    };
+    buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | {
+        key: ButtonsWithNotifyClick;
+        preventExecution: boolean;
+    }>;
+    callDisplayName?: string;
+    callStatsConfigParams?: {
+        additionalIDs?: {
+            customerID?: string;
+            fqExtensionID?: string;
+            meetingsName?: string;
+            pbxExtensionID?: string;
+            pbxID?: string;
+            productName?: string;
+            serverName?: string;
+            sessionID?: string;
+            tenantID?: string;
+        };
+        applicationVersion?: string;
+        collectIP?: boolean;
+        collectLegacyStats?: boolean;
+        disableBeforeUnloadHandler?: boolean;
+        disablePrecalltest?: boolean;
+        siteID?: string;
+    };
+    callStatsID?: string;
+    callStatsSecret?: string;
+    channelLastN?: number;
+    chromeExtensionBanner?: {
+        chromeExtensionsInfo?: Array<{ id: string; path: string; }>;
+        edgeUrl?: string;
+        url?: string;
+    };
+    conferenceInfo?: {
+        alwaysVisible?: Array<string>;
+        autoHide?: Array<string>;
+    };
+    connectionIndicators?: {
+        autoHide?: boolean;
+        autoHideTimeout?: number;
+        disableDetails?: boolean;
+        disabled?: boolean;
+        inactiveDisabled?: boolean;
+    };
     constraints?: {
         video?: {
             height?: {
                 ideal?: number;
                 max?: number;
                 min?: number;
-            }
-        }
+            };
+        };
     };
-    disableSimulcast?: boolean;
-    enableLayerSuspension?: boolean;
-    startVideoMuted?: number;
-    startWithVideoMuted?: boolean;
-    preferH264?: boolean;
-    disableH264?: boolean;
+    corsAvatarURLs?: Array<string>;
+    defaultLanguage?: string;
+    defaultLocalDisplayName?: string;
+    defaultLogoUrl?: string;
+    defaultRemoteDisplayName?: string;
+    deploymentInfo?: {
+        region?: string;
+        shard?: string;
+        userRegion?: string;
+    };
+    deploymentUrls?: {
+        downloadAppsUrl?: string;
+        userDocumentationURL?: string;
+    };
     desktopSharingFrameRate?: {
-        min?: number;
         max?: number;
+        min?: number;
     };
-    startScreenSharing?: boolean;
-    fileRecordingsEnabled?: boolean;
+    dialInConfCodeUrl?: string;
+    dialInNumbersUrl?: string;
+    disable1On1Mode?: boolean | null;
+    disableAddingBackgroundImages?: boolean;
+    disableAudioLevels?: boolean;
+    disableBeforeUnloadHandlers?: boolean;
+    disableChatSmileys?: boolean;
+    disableDeepLinking?: boolean;
+    disableFilmstripAutohiding?: boolean;
+    disableH264?: boolean;
+    disableIncomingMessageSound?: boolean;
+    disableInitialGUM?: boolean;
+    disableInviteFunctions?: boolean;
+    disableJoinLeaveSounds?: boolean;
+    disableLocalVideoFlip?: boolean;
+    disableModeratorIndicator?: boolean;
+    disablePolls?: boolean;
+    disableProfile?: boolean;
+    disableReactions?: boolean;
+    disableReactionsModeration?: boolean;
+    disableRecordAudioNotification?: boolean;
+    disableRemoteMute?: boolean;
+    disableRemoveRaisedHandOnFocus?: boolean;
+    disableResponsiveTiles?: boolean;
+    disableRtx?: boolean;
+    disableScreensharingVirtualBackground?: boolean;
+    disableSelfView?: boolean;
+    disableSelfViewSettings?: boolean;
+    disableShortcuts?: boolean;
+    disableShowMoreStats?: boolean;
+    disableSimulcast?: boolean;
+    disableSpeakerStatsSearch?: boolean;
+    disableThirdPartyRequests?: boolean;
+    disableTileEnlargement?: boolean;
+    disableTileView?: boolean;
+    disabledNotifications?: Array<string>;
+    disabledSounds?: Array<Sounds>;
+    doNotFlipLocalVideo?: boolean;
+    doNotStoreRoom?: boolean;
     dropbox?: {
         appKey: string;
         redirectURI?: string;
     };
-    recordingService?: {
-        enabled?: boolean;
-        sharingEnabled?: boolean;
-        hideStorageWarning?: boolean;
+    dynamicBrandingUrl?: string;
+    e2ee?: {
+        e2eeLabels?: {
+            description?: string;
+            label?: string;
+            tooltip?: string;
+            warning?: string;
+        };
+        externallyManagedKey?: boolean;
+        labels?: {
+            description?: string;
+            label?: string;
+            tooltip?: string;
+            warning?: string;
+        };
     };
+    e2eeLabels?: {
+        description?: string;
+        label?: string;
+        tooltip?: string;
+        warning?: string;
+    };
+    e2eping?: {
+        enabled?: boolean;
+        maxConferenceSize?: number;
+        maxMessagesPerSecond?: number;
+        numRequests?: number;
+    };
+    enableAutomaticUrlCopy?: boolean;
+    enableCalendarIntegration?: boolean;
+    enableClosePage?: boolean;
+    enableDisplayNameInStats?: boolean;
+    enableEmailInStats?: boolean;
+    enableEncodedTransformSupport?: boolean;
+    enableForcedReload?: boolean;
+    enableIceRestart?: boolean;
+    enableInsecureRoomNameWarning?: boolean;
+    enableLayerSuspension?: boolean;
+    enableLipSync?: boolean;
+    enableLobbyChat?: boolean;
+    enableNoAudioDetection?: boolean;
+    enableNoisyMicDetection?: boolean;
+    enableOpusRed?: boolean;
+    enableRemb?: boolean;
+    enableSaveLogs?: boolean;
+    enableTcc?: boolean;
+    enableUnifiedOnChrome?: boolean;
+    enableWelcomePage?: boolean;
+    etherpad_base?: string;
+    faceLandmarks?: {
+        captureInterval?: number;
+        enableDisplayFaceExpressions?: boolean;
+        enableFaceCentering?: boolean;
+        enableFaceExpressionsDetection?: boolean;
+        enableRTCStats?: boolean;
+        faceCenteringThreshold?: number;
+    };
+    feedbackPercentage?: number;
+    fileRecordingsEnabled?: boolean;
     fileRecordingsServiceEnabled?: boolean;
     fileRecordingsServiceSharingEnabled?: boolean;
-    liveStreamingEnabled?: boolean;
-    localRecording?: {
-        disable?: boolean;
-        notifyAllParticipants?: boolean;
+    filmstrip?: {
+        disableResizable?: boolean;
+        disableStageFilmstrip?: boolean;
+        disableTopPanel?: boolean;
+        minParticipantCountForTopPanel?: number;
     };
-    transcribingEnabled?: boolean;
-    transcribeWithAppLanguage?: boolean;
-    preferredTranscribeLanguage?: string;
-    autoCaptionOnRecord?: boolean;
-    transcription?: {
+    firefox_fake_device?: string;
+    flags?: {
+        sendMultipleVideoStreams?: boolean;
+        sourceNameSignaling?: boolean;
+    };
+    focusUserJid?: string;
+    gatherStats?: boolean;
+    giphy?: {
+        displayMode?: 'all' | 'tile' | 'chat';
         enabled?: boolean;
-        useAppLanguage?: boolean;
-        preferredLanguage?: string;
-        disableStartForAll?: boolean;
-        autoCaptionOnRecord?: boolean;
+        sdkKey?: '';
+        tileTime?: number;
     };
-    channelLastN?: number;
-    connectionIndicators?: {
-        autoHide?: boolean;
-        autoHideTimeout?: number;
+    gravatar?: {
+        baseUrl?: string;
         disabled?: boolean;
-        disableDetails?: boolean;
-        inactiveDisabled?: boolean;
     };
-    startLastN?: number;
+    gravatarBaseURL?: string;
+    guestDialOutStatusUrl?: string;
+    guestDialOutUrl?: string;
+    helpCentreURL?: string;
+    hiddenPremeetingButtons?: Array<'microphone' | 'camera' | 'select-background' | 'invite' | 'settings'>;
+    hideAddRoomButton?: boolean;
+    hideConferenceSubject?: boolean;
+    hideConferenceTimer?: boolean;
+    hideDisplayName?: boolean;
+    hideDominantSpeakerBadge?: boolean;
+    hideEmailInSettings?: boolean;
+    hideLobbyButton?: boolean;
+    hideParticipantsStats?: boolean;
+    hideRecordingLabel?: boolean;
+    hosts?: {
+        anonymousdomain?: string;
+        authdomain?: string;
+        domain: string;
+        focus?: string;
+        muc: string;
+    };
+    iAmRecorder?: boolean;
+    iAmSipGateway?: boolean;
+    inviteAppName?: string | null;
     lastNLimits?: {
         [key: number]: number;
     };
-    useNewBandwidthAllocationStrategy?: boolean;
-    videoQuality?: {
-        disabledCodec?: string;
-        preferredCodec?: string;
-        enforcePreferredCodec?: boolean;
-        maxBitratesVideo?: {
-            [key: string]: {
-                low?: number;
-                standard?: number;
-                high?: number;
-            }
-        };
-        minHeightForQualityLvl: {
-            [key: number]: string;
-        };
-        resizeDesktopForPresenter?: boolean;
+    liveStreaming?: {
+        dataPrivacyLink?: string;
+        enabled?: boolean;
+        helpLink?: string;
+        termsLink?: string;
+        validatorRegExpString?: string;
     };
-    notificationTimeouts?: {
-        short?: number;
-        medium?: number;
-        long?: number;
+    liveStreamingEnabled?: boolean;
+    localRecording?: {
+        disable?: boolean;
+        disableSelfRecording?: boolean;
+        notifyAllParticipants?: boolean;
     };
-    recordingLimit?: {
-        limit?: number;
-        appName?: string;
-        appURL?: string;
-    };
-    disableRtx?: boolean;
-    disableBeforeUnloadHandlers?: boolean;
-    enableTcc?: boolean;
-    enableRemb?: boolean;
-    enableIceRestart?: boolean;
-    enableForcedReload?: boolean;
-    useTurnUdp?: boolean;
-    enableEncodedTransformSupport?: boolean;
-    disableResponsiveTiles?: boolean;
-    hideLobbyButton?: boolean;
-    autoKnockLobby?: boolean;
-    enableLobbyChat?: boolean;
-    hideAddRoomButton?: boolean;
-    requireDisplayName?: boolean;
-    enableWelcomePage?: boolean;
-    disableShortcuts?: boolean;
-    disableInitialGUM?: boolean;
-    enableClosePage?: boolean;
-    disable1On1Mode?: boolean|null;
-    defaultLocalDisplayName?: string;
-    defaultRemoteDisplayName?: string;
-    hideDisplayName?: boolean;
-    hideDominantSpeakerBadge?: boolean;
-    defaultLanguage?: string;
-    disableProfile?: boolean;
-    hideEmailInSettings?: boolean;
-    enableFeaturesBasedOnToken?: boolean;
-    roomPasswordNumberOfDigits?: number;
+    localSubject?: string;
+    locationURL?: URL;
+    maxFullResolutionParticipants?: number;
+    moderatedRoomServiceUrl?: string;
+    mouseMoveCallbackInterval?: number;
     noticeMessage?: string;
-    enableCalendarIntegration?: boolean;
+    notificationTimeouts?: {
+        long?: number;
+        medium?: number;
+        short?: number;
+    };
+    notifications?: Array<string>;
+    openSharedDocumentOnJoin?: boolean;
+    opusMaxAverageBitrate?: number;
+    p2p?: {
+        backToP2PDelay?: number;
+        disableH264?: boolean;
+        disabledCodec?: string;
+        enableUnifiedOnChrome?: boolean;
+        enabled?: boolean;
+        iceTransportPolicy?: string;
+        preferH264?: boolean;
+        preferredCodec?: string;
+        stunServers?: Array<{ urls: string; }>;
+    };
+    participantsPane?: {
+        hideModeratorSettingsTab?: boolean;
+        hideMoreActionsButton?: boolean;
+        hideMuteAllButton?: boolean;
+    };
+    pcStatsInterval?: number;
+    preferH264?: boolean;
+    preferredTranscribeLanguage?: string;
     prejoinConfig?: {
         enabled?: boolean;
         hideDisplayName?: boolean;
@@ -273,195 +398,96 @@ export interface IConfig {
     };
     prejoinPageEnabled?: boolean;
     readOnlyName?: boolean;
-    openSharedDocumentOnJoin?: boolean;
-    enableInsecureRoomNameWarning?: boolean;
-    enableAutomaticUrlCopy?: boolean;
-    corsAvatarURLs?: Array<string>;
-    gravatarBaseURL?: string;
-    gravatar?: {
-        baseUrl?: string;
-        disabled?: boolean;
+    recordingLimit?: {
+        appName?: string;
+        appURL?: string;
+        limit?: number;
     };
-    inviteAppName?: string|null;
-    toolbarButtons?: Array<ToolbarButtons>;
-    toolbarConfig?: {
-        initialTimeout?: number;
-        timeout?: number;
-        alwaysVisible?: boolean;
-        autoHideWhileChatIsOpen?: boolean;
-    };
-    buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | { key: ButtonsWithNotifyClick; preventExecution: boolean }>;
-    hiddenPremeetingButtons?: Array<'microphone' | 'camera' | 'select-background' | 'invite' | 'settings'>;
-    gatherStats?: boolean;
-    pcStatsInterval?: number;
-    callStatsID?: string;
-    callStatsSecret?: string;
-    callStatsConfigParams?: {
-        disableBeforeUnloadHandler?: boolean;
-        applicationVersion?: string;
-        disablePrecalltest?: boolean;
-        siteID?: string;
-        additionalIDs?: {
-            customerID?: string;
-            tenantID?: string;
-            productName?: string;
-            meetingsName?: string;
-            serverName?: string;
-            pbxID?: string;
-            pbxExtensionID?: string;
-            fqExtensionID?: string;
-            sessionID?: string;
-        };
-        collectLegacyStats?: boolean;
-        collectIP?: boolean;
-    };
-    enableDisplayNameInStats?: boolean;
-    enableEmailInStats?: boolean;
-    faceLandmarks?: {
-        enableFaceCentering?: boolean;
-        enableFaceExpressionsDetection?: boolean;
-        enableDisplayFaceExpressions?: boolean;
-        enableRTCStats?: boolean;
-        faceCenteringThreshold?: number;
-        captureInterval?: number;
-    };
-    feedbackPercentage?: number;
-    disableThirdPartyRequests?: boolean;
-    p2p?: {
+    recordingService?: {
         enabled?: boolean;
-        enableUnifiedOnChrome?: boolean;
-        iceTransportPolicy?: string;
-        preferH264?: boolean;
-        preferredCodec?: string;
-        disableH264?: boolean;
-        disabledCodec?: string;
-        backToP2PDelay?: number;
-        stunServers?: Array<{urls: string}>;
+        hideStorageWarning?: boolean;
+        sharingEnabled?: boolean;
     };
-    analytics?: {
-        disabled?: boolean;
-        googleAnalyticsTrackingId?: string;
-        matomoEndpoint?: string;
-        matomoSiteID?: string;
-        amplitudeAPPKey?: string;
-        obfuscateRoomName?: boolean;
-        rtcstatsEnabled?: boolean;
-        rtcstatsEndpoint?: string;
-        rtcstatsPolIInterval?: number;
-        scriptURLs?: Array<string>;
-    };
-    apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
-    deploymentInfo?: {
-        shard?: string;
-        region?: string;
-        userRegion?: string;
-    };
-    disabledSounds?: Array<Sounds>;
-    disableRecordAudioNotification?: boolean;
-    disableJoinLeaveSounds?: boolean;
-    disableIncomingMessageSound?: boolean;
-    chromeExtensionBanner?: {
-        url?: string;
-        edgeUrl?: string;
-        chromeExtensionsInfo?: Array<{id: string; path: string}>;
-    };
-    e2ee?: {
-        labels?: {
-            tooltip?: string;
-            description?: string;
-            label?: string;
-            warning?: string;
-        };
-        externallyManagedKey?: boolean;
-        e2eeLabels?: {
-            tooltip?: string;
-            description?: string;
-            label?: string;
-            warning?: string;
-        };
-    };
-    e2eeLabels?: {
-        tooltip?: string;
-        description?: string;
-        label?: string;
-        warning?: string;
-    };
-    e2eping?: {
-        enabled?: boolean;
-        numRequests?: number;
-        maxConferenceSize?: number;
-        maxMessagesPerSecond?: number;
-    };
-    _desktopSharingSourceDevice?: string;
-    disableDeepLinking?: boolean;
-    disableLocalVideoFlip?: boolean;
-    doNotFlipLocalVideo?: boolean;
-    disableInviteFunctions?: boolean;
-    doNotStoreRoom?: boolean;
-    deploymentUrls?: {
-        userDocumentationURL?: string;
-        downloadAppsUrl?: string;
-    };
+    recordingSharingUrl?: string;
     remoteVideoMenu?: {
-        disabled?: boolean;
-        disableKick?: boolean;
         disableGrantModerator?: boolean;
+        disableKick?: boolean;
         disablePrivateChat?: boolean;
+        disabled?: boolean;
     };
+    replaceParticipant?: string;
+    requireDisplayName?: boolean;
+    resolution?: number;
+    roomPasswordNumberOfDigits?: number;
     salesforceUrl?: string;
-    disableRemoteMute?: boolean;
-    enableLipSync?: boolean;
-    dynamicBrandingUrl?: string;
-    participantsPane?: {
-        hideModeratorSettingsTab?: boolean;
-        hideMoreActionsButton?: boolean;
-        hideMuteAllButton?: boolean;
+    screenshotCapture?: {
+        enabled?: boolean;
+        mode?: 'always' | 'recording';
     };
-    breakoutRooms?: {
-        hideAddRoomButton?: boolean;
-        hideAutoAssignButton?: boolean;
-        hideJoinRoomButton?: boolean;
-    };
-    disableAddingBackgroundImages?: boolean;
-    disableScreensharingVirtualBackground?: boolean;
-    backgroundAlpha?: number;
-    moderatedRoomServiceUrl?: string;
-    disableTileView?: boolean;
-    disableTileEnlargement?: boolean;
-    conferenceInfo?: {
-        alwaysVisible?: Array<string>;
-        autoHide?: Array<string>;
-    };
-    hideConferenceSubject?: boolean;
-    hideConferenceTimer?: boolean;
-    hideRecordingLabel?: boolean;
-    hideParticipantsStats?: boolean;
+    serviceUrl?: string;
+    speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
+    startAudioMuted?: number;
+    startAudioOnly?: boolean;
+    startLastN?: number;
+    startScreenSharing?: boolean;
+    startSilent?: boolean;
+    startVideoMuted?: number;
+    startWithAudioMuted?: boolean;
+    startWithVideoMuted?: boolean;
+    stereo?: boolean;
     subject?: string;
-    localSubject?: string;
-    useHostPageLocalStorage?: boolean;
-    etherpad_base?: string;
-    dialInNumbersUrl?: string;
-    dialInConfCodeUrl?: string;
-    brandingRoomAlias?: string;
-    mouseMoveCallbackInterval?: number;
-    notifications?: Array<string>;
-    disabledNotifications?: Array<string>;
-    disableFilmstripAutohiding?: boolean;
-    filmstrip?: {
-        disableResizable?: boolean;
-        disableStageFilmstrip?: boolean;
-        disableTopPanel?: boolean;
-        minParticipantCountForTopPanel?: number;
+    testing?: {
+        callStatsThreshold?: number;
+        capScreenshareBitrate?: number;
+        disableE2EE?: boolean;
+        enableThumbnailReordering?: boolean;
+        mobileXmppWsThreshold?: number;
+        noAutoPlayVideo?: boolean;
+        p2pTestMode?: boolean;
+        setScreenSharingResolutionConstraints?: boolean;
+        testMode?: boolean;
     };
     tileView?: {
         numberOfVisibleTiles?: number;
     };
-    disableChatSmileys?: boolean;
-    giphy?: {
-        enabled?: boolean;
-        sdkKey?: '';
-        displayMode?: 'all' | 'tile' | 'chat';
-        tileTime?: number;
+    toolbarButtons?: Array<ToolbarButtons>;
+    toolbarConfig?: {
+        alwaysVisible?: boolean;
+        autoHideWhileChatIsOpen?: boolean;
+        initialTimeout?: number;
+        timeout?: number;
     };
-    locationURL?: string;
+    transcribeWithAppLanguage?: boolean;
+    transcribingEnabled?: boolean;
+    transcription?: {
+        autoCaptionOnRecord?: boolean;
+        disableStartForAll?: boolean;
+        enabled?: boolean;
+        preferredLanguage?: string;
+        useAppLanguage?: boolean;
+    };
+    useHostPageLocalStorage?: boolean;
+    useNewBandwidthAllocationStrategy?: boolean;
+    useTurnUdp?: boolean;
+    videoQuality?: {
+        disabledCodec?: string;
+        enforcePreferredCodec?: boolean;
+        maxBitratesVideo?: {
+            [key: string]: {
+                high?: number;
+                low?: number;
+                standard?: number;
+            };
+        };
+        minHeightForQualityLvl: {
+            [key: number]: string;
+        };
+        preferredCodec?: string;
+        resizeDesktopForPresenter?: boolean;
+    };
+    webhookProxyUrl?: string;
+    webrtcIceTcpDisable?: boolean;
+    webrtcIceUdpDisable?: boolean;
+    websocket?: string;
+    websocketKeepAliveUrl?: string;
 }

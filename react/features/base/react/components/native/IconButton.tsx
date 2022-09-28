@@ -1,11 +1,13 @@
+/* eslint-disable lines-around-comment */
 import React from 'react';
 import { TouchableRipple } from 'react-native-paper';
 
-import { Icon } from '../../../icons';
+import Icon from '../../../icons/components/Icon';
 import BaseTheme from '../../../ui/components/BaseTheme.native';
-import { BUTTON_TYPES } from '../../constants';
+import { BUTTON_TYPES } from '../../../ui/constants';
 import { IconButtonProps } from '../../types';
 
+// @ts-ignore
 import styles from './styles';
 
 
@@ -31,7 +33,7 @@ const IconButton: React.FC<IconButtonProps> = ({
         iconButtonContainerStyles = styles.iconButtonContainerPrimary;
         rippleColor = BaseTheme.palette.action01;
     } else if (type === SECONDARY) {
-        color = BaseTheme.palette.icon02;
+        color = BaseTheme.palette.icon04;
         iconButtonContainerStyles = styles.iconButtonContainerSecondary;
         rippleColor = BaseTheme.palette.action02;
     } else if (type === TERTIARY) {
@@ -48,6 +50,7 @@ const IconButton: React.FC<IconButtonProps> = ({
         <TouchableRipple
             accessibilityLabel = { accessibilityLabel }
             disabled = { disabled }
+            // @ts-ignore
             onPress = { onPress }
             rippleColor = { rippleColor }
             style = { [

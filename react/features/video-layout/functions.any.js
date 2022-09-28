@@ -1,15 +1,17 @@
 // @flow
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, TILE_VIEW_ENABLED } from '../base/flags';
+import { TILE_VIEW_ENABLED, getFeatureFlag } from '../base/flags';
 import {
-    getPinnedParticipant,
     getParticipantCount,
+    getPinnedParticipant,
     pinParticipant
 } from '../base/participants';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
+import { getReceiverVideoQualityLevel } from '../video-quality/functions';
+import { getMinHeightForQualityLvlMap } from '../video-quality/selector';
 
 import { LAYOUTS } from './constants';
 
@@ -38,7 +40,10 @@ export function getAutoPinSetting() {
  * @returns {string}
  */
 export function getCurrentLayout(state: Object) {
-    if (shouldDisplayTileView(state)) {
+    if (navigator.product === 'ReactNative') {
+        // FIXME: what should this return?
+        return undefined;
+    } else if (shouldDisplayTileView(state)) {
         return LAYOUTS.TILE_VIEW;
     } else if (interfaceConfig.VERTICAL_FILMSTRIP) {
         if (isStageFilmstripAvailable(state, 2)) {
@@ -154,7 +159,7 @@ export function isLayoutTileView(state: Object) {
 }
 
 /**
- * Gets the video quality for the given height.
+ * Returns the video quality for the given height.
  *
  * @param {number|undefined} height - Height of the video container.
  * @returns {number}
@@ -177,36 +182,56 @@ function getVideoQualityForHeight(height: number) {
 }
 
 /**
- * Gets the video quality level for the resizable filmstrip thumbnail height.
+ * Returns the video quality level for the resizable filmstrip thumbnail height.
  *
+ * @param {number} height - The height of the thumbnail.
  * @param {Object} state - Redux state.
  * @returns {number}
  */
-export function getVideoQualityForResizableFilmstripThumbnails(state) {
-    const height = state['features/filmstrip'].verticalViewDimensions?.gridView?.thumbnailSize?.height;
+export function getVideoQualityForResizableFilmstripThumbnails(height, state) {
+    if (!height) {
+        return VIDEO_QUALITY_LEVELS.LOW;
+    }
 
-    return getVideoQualityForHeight(height);
+    return getReceiverVideoQualityLevel(height, getMinHeightForQualityLvlMap(state));
 }
 
 /**
- * Gets the video quality for the large video.
+ * Returns the video quality level for the screen sharing filmstrip thumbnail height.
  *
- * @returns {number}
- */
-export function getVideoQualityForLargeVideo() {
-    const wrapper = document.querySelector('#largeVideoWrapper');
-
-    return getVideoQualityForHeight(wrapper.clientHeight);
-}
-
-/**
- * Gets the video quality level for the thumbnails in the stage filmstrip.
- *
+ * @param {number} height - The height of the thumbnail.
  * @param {Object} state - Redux state.
  * @returns {number}
  */
-export function getVideoQualityForStageThumbnails(state) {
-    const height = state['features/filmstrip'].stageFilmstripDimensions?.thumbnailSize?.height;
+export function getVideoQualityForScreenSharingFilmstrip(height, state) {
+    if (!height) {
+        return VIDEO_QUALITY_LEVELS.LOW;
+    }
 
-    return getVideoQualityForHeight(height);
+    return getReceiverVideoQualityLevel(height, getMinHeightForQualityLvlMap(state));
+}
+
+/**
+ * Returns the video quality for the large video.
+ *
+ * @param {number} largeVideoHeight - The height of the large video.
+ * @returns {number} - The video quality for the large video.
+ */
+export function getVideoQualityForLargeVideo(largeVideoHeight) {
+    return getVideoQualityForHeight(largeVideoHeight);
+}
+
+/**
+ * Returns the video quality level for the thumbnails in the stage filmstrip.
+ *
+ * @param {number} height - The height of the thumbnails.
+ * @param {Object} state - Redux state.
+ * @returns {number}
+ */
+export function getVideoQualityForStageThumbnails(height, state) {
+    if (!height) {
+        return VIDEO_QUALITY_LEVELS.LOW;
+    }
+
+    return getReceiverVideoQualityLevel(height, getMinHeightForQualityLvlMap(state));
 }

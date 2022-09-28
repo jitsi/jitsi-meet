@@ -6,9 +6,9 @@ import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
-import { TILE_ASPECT_RATIO, TILE_HORIZONTAL_MARGIN, FILMSTRIP_TYPE } from '../../constants';
-import { showGridInVerticalView, getActiveParticipantsIds } from '../../functions';
+import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
+import { FILMSTRIP_TYPE, TILE_ASPECT_RATIO, TILE_HORIZONTAL_MARGIN } from '../../constants';
+import { getActiveParticipantsIds, showGridInVerticalView } from '../../functions';
 
 import Thumbnail from './Thumbnail';
 
@@ -64,7 +64,7 @@ type Props = {
     rowIndex?: number,
 
     /**
-     * The styles comming from react-window.
+     * The styles coming from react-window.
      */
     style: Object
 };
@@ -288,11 +288,17 @@ function _mapStateToProps(state, ownProps) {
     }
 
     if (_currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW && filmstripType === FILMSTRIP_TYPE.SCREENSHARE) {
-        const { remoteScreenShares } = state['features/video-layout'];
+        const { screenshareFilmstripParticipantId } = state['features/filmstrip'];
+        const screenshares = state['features/video-layout'].remoteScreenShares;
+        let id = screenshares.find(sId => sId === screenshareFilmstripParticipantId);
+
+        if (!id && screenshares.length) {
+            id = screenshares[screenshares.length - 1];
+        }
 
         return {
             _filmstripType: filmstripType,
-            _participantID: remoteScreenShares[remoteScreenShares.length - 1]
+            _participantID: id
         };
     }
 

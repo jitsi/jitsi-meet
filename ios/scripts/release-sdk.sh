@@ -12,8 +12,6 @@ DO_GIT_TAG=${GIT_TAG:-0}
 
 echo "Releasing Jitsi Meet SDK ${SDK_VERSION}"
 
-${THIS_DIR}/../../node_modules/react-native-webrtc/tools/downloadBitcode.sh
-
 pushd ${RELEASE_REPO}
 
 # Generate podspec file
@@ -37,7 +35,6 @@ xcodebuild archive \
     -sdk iphonesimulator \
     -destination='generic/platform=iOS Simulator' \
     -archivePath ios/sdk/out/ios-simulator \
-    ENABLE_BITCODE=YES \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild archive \
@@ -47,7 +44,6 @@ xcodebuild archive \
     -sdk iphoneos \
     -destination='generic/platform=iOS' \
     -archivePath ios/sdk/out/ios-device \
-    ENABLE_BITCODE=YES \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild -create-xcframework \

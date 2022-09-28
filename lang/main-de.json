@@ -11,7 +11,6 @@
         "defaultEmail": "Ihre Standard-E-Mail",
         "disabled": "Sie können keine Personen einladen.",
         "failedToAdd": "Fehler beim Hinzufügen von Personen",
-        "footerText": "Abgehender Ruf ist deaktiviert.",
         "googleEmail": "Google-E-Mail",
         "inviteMoreHeader": "Sie sind alleine in der Sitzung",
         "inviteMoreMailSubject": "An {{appName}} Meeting teilnehmen",
@@ -79,7 +78,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": "Konferenz verlassen",
             "selectSoundDevice": "Audiogerät auswählen"
         },
         "labels": {
@@ -98,6 +96,7 @@
         "messageAccessibleTitleMe": "Ich sage:",
         "messageTo": "Private Nachricht an {{recipient}}",
         "messagebox": "Nachricht eingeben",
+        "newMessages": "Neue Nachrichten",
         "nickname": {
             "popover": "Wähle einen Alias",
             "title": "Geben Sie einen Alias zum Chatten ein",
@@ -147,7 +146,6 @@
         "bridgeCount": "Serverzahl: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Verbunden mit:",
-        "e2e_rtt": "Ende-zu-Ende-Paketumlaufzeit:",
         "framerate": "Bildwiederholrate:",
         "less": "Weniger anzeigen",
         "localaddress": "Lokale Adresse:",
@@ -286,7 +284,6 @@
         "linkMeetingTitle": "Konferenz mit Salesforce verlinken",
         "liveStreaming": "Livestreaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Während einer Aufnahme nicht möglich",
-        "liveStreamingDisabledTooltip": "Starten des Livestreams deaktiviert.",
         "localUserControls": "Lokale Benutzersteuerung",
         "lockMessage": "Die Konferenz konnte nicht gesperrt werden.",
         "lockRoom": "Konferenz$t(lockRoomPassword) hinzufügen",
@@ -341,7 +338,6 @@
         "recentlyUsedObjects": "Ihre zuletzt verwendeten Objekte",
         "recording": "Aufnahme",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Während eines Livestreams nicht möglich",
-        "recordingDisabledTooltip": "Start der Aufzeichnung deaktiviert.",
         "rejoinNow": "Jetzt erneut beitreten",
         "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen!",
         "remoteControlDeniedMessage": "{{user}} hat die Anfrage zur Fernsteuerung verweigert!",
@@ -518,6 +514,10 @@
         "toggleShortcuts": "Tastenkombinationen ein- oder ausblenden",
         "videoMute": "Kamera starten oder stoppen"
     },
+    "largeVideo": {
+        "screenIsShared": "Ihr Bildschirm wird freigegeben",
+        "showMeWhatImSharing": "Anzeigen, was freigegeben wird"
+    },
     "liveStreaming": {
         "busy": "Es werden Ressourcen zum Streamen bereitgestellt. Bitte in ein paar Minuten erneut versuchen.",
         "busyTitle": "Alle Streaming-Instanzen sind in Gebrauch",
@@ -683,6 +683,10 @@
         "newDeviceAction": "Verwenden",
         "newDeviceAudioTitle": "Neues Audiogerät erkannt",
         "newDeviceCameraTitle": "Neue Kamera erkannt",
+        "noiseSuppressionDesktopAudioDescription": "Die Rauschunterdrückung kann nicht genutzt werden, wenn der Computersound geteilt wird, bitte zuerst deaktivieren und dann nochmals versuchen.",
+        "noiseSuppressionFailedTitle": "Rauschunterdrückung konnte nicht gestartet werden",
+        "noiseSuppressionNoTrackDescription": "Bitte eigenes Mikrofon zuerst aktivieren.",
+        "noiseSuppressionStereoDescription": "Rauschunterdrückung unterstützt aktuell keinen Stereoton.",
         "oldElectronClientDescription1": "Sie scheinen eine alte Version des Jitsi-Meet-Clients zu nutzen. Diese hat bekannte Schwachstellen. Bitte aktualisieren Sie auf unsere ",
         "oldElectronClientDescription2": "aktuelle Version",
         "oldElectronClientDescription3": "!",
@@ -990,12 +994,17 @@
         "displayName": "Anzeigename",
         "displayNamePlaceholderText": "z.B. Erika Musterfrau",
         "email": "E-Mail",
+        "goTo": "Gehe zu",
         "header": "Einstellungen",
+        "help": "Hilfe",
+        "links": "Links",
+        "privacy": "Datenschutz",
         "profileSection": "Profil",
         "serverURL": "Server-URL",
         "showAdvanced": "Erweiterte Einstellungen anzeigen",
         "startWithAudioMuted": "Stumm beitreten",
         "startWithVideoMuted": "Ohne Video beitreten",
+        "terms": "Nutzungsbedingungen",
         "version": "Version"
     },
     "share": {
@@ -1052,6 +1061,7 @@
             "document": "Geteiltes Dokument schließen",
             "download": "Unsere Apps herunterladen",
             "embedMeeting": "Konferenz einbetten",
+            "endConference": "Konferenz für alle beenden",
             "expand": "Ausklappen",
             "feedback": "Feedback hinterlassen",
             "fullScreen": "Vollbildmodus ein-/ausschalten",
@@ -1062,6 +1072,7 @@
             "invite": "Person einladen",
             "kick": "Person entfernen",
             "laugh": "Lachen",
+            "leaveConference": "Konferenz verlassen",
             "like": "Daumen nach oben",
             "linkToSalesforce": "Mit Salesforce verlinken",
             "lobbyButton": "Lobbymodus ein-/ausschalten",
@@ -1075,6 +1086,7 @@
             "muteEveryoneElse": "Alle anderen stummschalten",
             "muteEveryoneElsesVideoStream": "Alle anderen Kameras ausschalten",
             "muteEveryonesVideoStream": "Alle Kameras ausschalten",
+            "noiseSuppression": "Rauschunterdrückung",
             "participants": "Anwesende",
             "pip": "Bild-in-Bild-Modus ein-/ausschalten",
             "privateMessage": "Private Nachricht senden",
@@ -1115,6 +1127,7 @@
         "clap": "Klatschen",
         "closeChat": "Chat schließen",
         "closeReactionsMenu": "Interaktionsmenü schließen",
+        "disableNoiseSuppression": "Rauschunterdrückung deaktivieren",
         "disableReactionSounds": "Sie können die Interaktionstöne für diese Konferenz deaktivieren",
         "dock": "In Hauptfenster einbinden",
         "documentClose": "Geteiltes Dokument schließen",
@@ -1122,6 +1135,7 @@
         "download": "Unsere Apps herunterladen",
         "e2ee": "Ende-zu-Ende-Verschlüsselung",
         "embedMeeting": "Konferenz einbetten",
+        "endConference": "Konferenz für alle beenden",
         "enterFullScreen": "Vollbildmodus",
         "enterTileView": "Kachelansicht einschalten",
         "exitFullScreen": "Vollbildmodus verlassen",
@@ -1134,6 +1148,7 @@
         "joinBreakoutRoom": "In Breakout-Raum wechseln",
         "laugh": "Lachen",
         "leaveBreakoutRoom": "Breakout-Raum verlassen",
+        "leaveConference": "Konferenz verlassen",
         "like": "Daumen hoch",
         "linkToSalesforce": "Mit Salesforce verknüpfen",
         "lobbyButtonDisable": "Lobbymodus deaktivieren",
@@ -1151,6 +1166,7 @@
         "noAudioSignalDialInDesc": "Sie können sich auch über die Einwahlnummer einwählen:",
         "noAudioSignalDialInLinkDesc": "Einwahlnummern",
         "noAudioSignalTitle": "Es kommt kein Input von Ihrem Mikrofon!",
+        "noiseSuppression": "Rauschunterdrückung",
         "noisyAudioInputDesc": "Es klingt, als ob Ihr Mikrofon Störgeräusche verursacht. Bitte überlegen Sie, ob Sie das Gerät stummschalten oder austauschen wollen.",
         "noisyAudioInputTitle": "Ihr Mikrofon scheint lärmintensiv zu sein!",
         "openChat": "Chat öffnen",
@@ -1199,6 +1215,8 @@
         "pending": "Transkribieren des Meetings wird vorbereitet…",
         "start": "Anzeige der Untertitel starten",
         "stop": "Anzeige der Untertitel stoppen",
+        "subtitles": "Untertitel",
+        "subtitlesOff": "Ausschalten",
         "tr": "TR"
     },
     "userMedia": {

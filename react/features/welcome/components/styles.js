@@ -7,13 +7,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 export const PLACEHOLDER_TEXT_COLOR = BaseTheme.palette.text01;
 
-export const DRAWER_AVATAR_SIZE = 104;
-
-const DRAWER_HEADER_HEIGHT = 220;
-
-export const SWITCH_THUMB_COLOR = BaseTheme.palette.action04;
-
-export const SWITCH_UNDER_COLOR = BaseTheme.palette.video01Disabled;
+export const AVATAR_SIZE = 104;
 
 /**
  * The default color of text on the WelcomePage.
@@ -63,16 +57,6 @@ export default {
         alignSelf: 'center',
         color: BaseTheme.palette.text01,
         fontSize: 14
-    },
-
-    /**
-     * The style of the display name label in the side bar.
-     */
-    displayName: {
-        color: BaseTheme.palette.text01,
-        fontSize: 16,
-        marginTop: BoxModel.margin,
-        textAlign: 'center'
     },
 
     enterRoomText: {
@@ -136,6 +120,10 @@ export default {
         paddingVertical: 2 * BoxModel.padding
     },
 
+    roomNameInputContainer: {
+        height: '0%'
+    },
+
     /**
      * Top-level screen style.
      */
@@ -166,23 +154,6 @@ export default {
         alignSelf: 'stretch',
         flexDirection: 'column',
         marginHorizontal: BaseTheme.spacing[2]
-    },
-
-    /**
-     * The style of the side bar header.
-     */
-    drawerHeader: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.screen01Header,
-        flexDirection: 'column',
-        height: DRAWER_HEADER_HEIGHT,
-        justifyContent: 'center'
-    },
-
-    drawerNavigationIcon: {
-        height: BaseTheme.spacing[6],
-        marginLeft: BaseTheme.spacing[3],
-        width: BaseTheme.spacing[6]
     },
 
     /**
@@ -254,12 +225,5 @@ export default {
         flex: 1,
         opacity: 0.8,
         overflow: 'hidden'
-    },
-
-    /**
-     * Style for screen container.
-     */
-    screenContainer: {
-        flex: 1
     }
 };

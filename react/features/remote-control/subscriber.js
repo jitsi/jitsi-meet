@@ -1,8 +1,13 @@
 // @flow
 
+import {
+    getParticipantById,
+    getVirtualScreenshareParticipantByOwnerId,
+    getVirtualScreenshareParticipantOwnerId
+} from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
 
-import { resume, pause } from './actions';
+import { pause, resume } from './actions';
 
 /**
  * Listens for large video participant ID changes.
@@ -15,6 +20,22 @@ StateListenerRegistry.register(
 
         if (!controlled) {
             return undefined;
+        }
+
+        const participant = getParticipantById(state, participantId);
+
+        if (participant?.isVirtualScreenshareParticipant) {
+            // multistream support is enabled and the user has selected the desktop sharing thumbnail.
+            const id = getVirtualScreenshareParticipantOwnerId(participantId);
+
+            return id === controlled;
+        }
+
+        const virtualParticipant = getVirtualScreenshareParticipantByOwnerId(state, participantId);
+
+        if (virtualParticipant) { // multistream is enabled and the user has selected the camera thumbnail.
+            return false;
+
         }
 
         return controlled === participantId;

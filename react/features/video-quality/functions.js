@@ -1,27 +1,4 @@
-// @flow
-
 import { CFG_LVL_TO_APP_QUALITY_LVL, VIDEO_QUALITY_LEVELS } from './constants';
-
-const { LOW, STANDARD, HIGH, ULTRA } = VIDEO_QUALITY_LEVELS;
-const videoQualityLevels = [ LOW, STANDARD, HIGH, ULTRA ];
-
-/**
- * Finds the nearest video quality level to the passed video quality.
- *
- * @param {number} videoQuality - The video quality.
- * @returns {number|undefined} - The found quality level.
- */
-export function findNearestQualityLevel(videoQuality: number) {
-    for (let i = 0; i < videoQualityLevels.length; i++) {
-        const level = videoQualityLevels[i];
-
-        if (level >= videoQuality) {
-            return level;
-        }
-    }
-
-    return undefined;
-}
 
 /**
  * Selects {@code VIDEO_QUALITY_LEVELS} for the given {@link availableHeight} and threshold to quality mapping.
@@ -52,7 +29,7 @@ export function getReceiverVideoQualityLevel(availableHeight: number, heightToLe
  * @returns {Map<number, number>|undefined} - A mapping of minimal thumbnail height required for given quality level or
  * {@code undefined} if the map contains invalid values.
  */
-export function validateMinHeightForQualityLvl(minHeightForQualityLvl: Object): ?Map<number, number> {
+export function validateMinHeightForQualityLvl(minHeightForQualityLvl) {
     if (typeof minHeightForQualityLvl !== 'object'
         || Object.keys(minHeightForQualityLvl).map(lvl => Number(lvl))
             .find(lvl => lvl === null || isNaN(lvl) || lvl < 0)) {
@@ -65,6 +42,13 @@ export function validateMinHeightForQualityLvl(minHeightForQualityLvl: Object): 
             .sort((a, b) => a - b);
     const map = new Map();
 
+    Object.values(VIDEO_QUALITY_LEVELS).sort()
+        .forEach(value => {
+            if (value > VIDEO_QUALITY_LEVELS.NONE) {
+                map.set(value, value);
+            }
+        });
+
     for (const level of levelsSorted) {
         const configQuality = minHeightForQualityLvl[level];
         const appQuality = CFG_LVL_TO_APP_QUALITY_LVL[configQuality];
@@ -73,6 +57,7 @@ export function validateMinHeightForQualityLvl(minHeightForQualityLvl: Object): 
             return undefined;
         }
 
+        map.delete(appQuality);
         map.set(level, appQuality);
     }
 

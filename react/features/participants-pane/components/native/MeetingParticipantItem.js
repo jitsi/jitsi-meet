@@ -181,7 +181,7 @@ function mapStateToProps(state, ownProps): Object {
     const { disableModeratorIndicator } = state['features/base/config'];
     const raisedHand = hasRaisedHand(participant?.local
         ? participant
-        : getParticipantById(state, participant.id)
+        : getParticipantById(state, participant?.id)
     );
 
     return {

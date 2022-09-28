@@ -38,7 +38,7 @@ export const INIT_WORKER = 'INIT_WORKER';
 export const FACE_BOX_EVENT_TYPE = 'face-box';
 
 /**
- * Miliseconds interval value for sending new image data to the worker.
+ * Milliseconds interval value for sending new image data to the worker.
  */
 export const SEND_IMAGE_INTERVAL_MS = 1000;
 
@@ -59,4 +59,9 @@ export const DETECTION_TYPES = {
 /**
  * Threshold for detection score of face.
  */
-export const FACE_DETECTION_SCORE_THRESHOLD = 0.6;
+export const FACE_DETECTION_SCORE_THRESHOLD = 0.75;
+
+/**
+ * Threshold for stopping detection after a certain number of consecutive errors have occurred.
+ */
+export const FACE_LANDMARK_DETECTION_ERROR_THRESHOLD = 4;

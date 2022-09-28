@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from 'react';
 
-import { Drawer, JitsiPortal, DialogPortal } from '../../../toolbox/components/web';
+import { DialogPortal, Drawer, JitsiPortal } from '../../../toolbox/components/web';
 import { isMobileBrowser } from '../../environment/utils';
 import { connect } from '../../redux';
 import { getContextMenuStyle } from '../functions.web';

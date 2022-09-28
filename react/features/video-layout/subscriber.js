@@ -12,7 +12,7 @@ import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].sortedRemoteVirtualScreenshareParticipants,
     /* listener */ (sortedRemoteVirtualScreenshareParticipants, store) => {
-        if (!getAutoPinSetting() || isFollowMeActive(store) || !getMultipleVideoSupportFeatureFlag(store.getState())) {
+        if (!getMultipleVideoSupportFeatureFlag(store.getState())) {
             return;
         }
 
@@ -36,7 +36,9 @@ StateListenerRegistry.register(
         if (!equals(oldScreenSharesOrder, newScreenSharesOrder)) {
             store.dispatch(virtualScreenshareParticipantsUpdated(newScreenSharesOrder));
 
-            updateAutoPinnedParticipant(oldScreenSharesOrder, store);
+            if (getAutoPinSetting() && !isFollowMeActive(store)) {
+                updateAutoPinnedParticipant(oldScreenSharesOrder, store);
+            }
         }
     });
 
@@ -53,7 +55,7 @@ StateListenerRegistry.register(
         // possible to have screen sharing participant that has already left in the remoteScreenShares array.
         // This can lead to rendering a thumbnails for already left participants since the remoteScreenShares
         // array is used for building the ordered list of remote participants.
-        if (!getAutoPinSetting() || isFollowMeActive(store) || getMultipleVideoSupportFeatureFlag(store.getState())) {
+        if (getMultipleVideoSupportFeatureFlag(store.getState())) {
             return;
         }
 
@@ -88,6 +90,8 @@ StateListenerRegistry.register(
             store.dispatch(
                 setRemoteParticipantsWithScreenShare(newScreenSharesOrder));
 
-            updateAutoPinnedParticipant(oldScreenSharesOrder, store);
+            if (getAutoPinSetting() && !isFollowMeActive(store)) {
+                updateAutoPinnedParticipant(oldScreenSharesOrder, store);
+            }
         }
     }, 100));

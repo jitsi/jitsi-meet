@@ -19,7 +19,7 @@ import {
 } from './react/features/base/lib-jitsi-meet';
 import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
 import { getCustomerDetails } from './react/features/jaas/actions.any';
-import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
+import { getJaasJWT, isVpaasMeeting } from './react/features/jaas/functions';
 import {
     setPrejoinDisplayNameRequired
 } from './react/features/prejoin/actions';

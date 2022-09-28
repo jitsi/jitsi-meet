@@ -23,6 +23,11 @@ type Props = {
     children: React$Node,
 
     /**
+     * Disabled forced keyboard dismiss?
+     */
+    disableForcedKeyboardDismiss?: boolean,
+
+    /**
      * Optional function that renders a footer component, if needed.
      */
     footerComponent?: Function,
@@ -54,6 +59,7 @@ const JitsiScreen = ({
     footerComponent,
     hasTabNavigator = false,
     hasBottomTextInput = false,
+    disableForcedKeyboardDismiss = false,
     safeAreaInsets = [ 'left', 'right' ],
     style
 }: Props) => (
@@ -61,6 +67,7 @@ const JitsiScreen = ({
         style = { styles.jitsiScreenContainer }>
         <JitsiKeyboardAvoidingView
             contentContainerStyle = { contentContainerStyle }
+            disableForcedKeyboardDismiss = { disableForcedKeyboardDismiss }
             hasBottomTextInput = { hasBottomTextInput }
             hasTabNavigator = { hasTabNavigator }
             style = { style }>
@@ -69,7 +76,7 @@ const JitsiScreen = ({
                 style = { styles.safeArea }>
                 {children}
             </SafeAreaView>
-            {footerComponent && footerComponent()}
+            { footerComponent && footerComponent() }
         </JitsiKeyboardAvoidingView>
     </View>
 );

@@ -1,15 +1,14 @@
 // @flow
 
-import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functions.any';
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { shouldHideShareAudioHelper } from '../base/settings';
 import { toggleScreensharing } from '../base/tracks';
 
 import {
-    SET_SCREEN_AUDIO_SHARE_STATE,
     SET_SCREENSHARE_CAPTURE_FRAME_RATE,
-    SET_SCREENSHARE_TRACKS
+    SET_SCREENSHARE_TRACKS,
+    SET_SCREEN_AUDIO_SHARE_STATE
 } from './actionTypes';
 import { ShareAudioDialog } from './components';
 import ShareMediaWarningDialog from './components/ShareScreenWarningDialog';
@@ -86,13 +85,7 @@ export function startAudioScreenShareFlow() {
         // available for audio screen sharing, namely full window audio.
         // If we're already sharing audio, toggle off.
         if (shouldHideShareAudioHelper(state) || browser.isElectron() || audioOnlySharing) {
-            if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-                dispatch(toggleScreensharing(!audioOnlySharing, true));
-
-                return;
-            }
-
-            // We don't want to explicity set the screens share state, by passing undefined we let the
+            // We don't want to explicitly set the screens share state, by passing undefined we let the
             // underlying logic decide if it's on or off.
             dispatch(toggleScreensharing(undefined, true));
 
@@ -105,7 +98,7 @@ export function startAudioScreenShareFlow() {
 
 /**
  * Start normal screen sharing flow.Function will switch between off and on states depending on the context, and if
- * not explicity told otherwise.
+ * not explicitly told otherwise.
  *
  * @param {boolean} enabled - Explicitly set the screen sharing state.
  * @returns {void}

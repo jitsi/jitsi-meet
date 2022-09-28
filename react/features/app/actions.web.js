@@ -22,8 +22,8 @@ import {
 } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 import {
-    clearNotifications,
     NOTIFICATION_TIMEOUT_TYPE,
+    clearNotifications,
     showNotification
 } from '../notifications';
 import { setFatalError } from '../overlay';
@@ -164,7 +164,7 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
             if (isVpaasMeeting(getState())) {
-                redirectToStaticPage('/');
+                dispatch(redirectToStaticPage('/'));
 
                 return;
             }

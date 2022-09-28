@@ -1,6 +1,7 @@
-/* global $, APP */
+/* global APP */
 /* eslint-disable no-unused-vars */
 import Logger from '@jitsi/logger';
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -33,7 +34,7 @@ import {
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
 } from '../../../react/features/connection-indicator/functions';
-import { FILMSTRIP_BREAKPOINT, isFilmstripResizable, getVerticalViewMaxWidth } from '../../../react/features/filmstrip';
+import { FILMSTRIP_BREAKPOINT, getVerticalViewMaxWidth, isFilmstripResizable } from '../../../react/features/filmstrip';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
@@ -44,7 +45,7 @@ import { shouldDisplayTileView } from '../../../react/features/video-layout';
 import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';
 
-import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
+import { VIDEO_CONTAINER_TYPE, VideoContainer } from './VideoContainer';
 
 const logger = Logger.getLogger(__filename);
 
@@ -246,7 +247,7 @@ export default class LargeVideoManager {
 
             this.newStreamData = null;
 
-            logger.info(`hover in ${id}`);
+            logger.debug(`Scheduled large video update for ${id}`);
             this.state = videoType;
             // eslint-disable-next-line no-shadow
             const container = this.getCurrentContainer();
@@ -288,12 +289,13 @@ export default class LargeVideoManager {
                             this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
                     }
                 }
+                const streamingStatusActive = isTrackStreamingStatusActive(videoTrack);
 
-                isVideoRenderable = !isVideoMuted && (
-                    APP.conference.isLocalId(id)
-                    || participant?.isLocalScreenShare
-                    || isTrackStreamingStatusActive(videoTrack)
-                );
+                isVideoRenderable = !isVideoMuted
+                    && (APP.conference.isLocalId(id) || participant?.isLocalScreenShare || streamingStatusActive);
+                this.videoTrack?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP
+                    && logger.debug(`Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${isVideoMuted},`
+                    + ` streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${isVideoRenderable}`);
             } else {
                 isVideoRenderable = !isVideoMuted
                     && (APP.conference.isLocalId(id) || isParticipantConnectionStatusActive(participant));

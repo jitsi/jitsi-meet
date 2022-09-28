@@ -5,7 +5,6 @@ import React from 'react';
 import { IconArrowBack } from '../../../../base/icons';
 import HeaderNavigationButton
     from '../HeaderNavigationButton';
-import { navigationStyles } from '../styles';
 
 
 /**
@@ -18,7 +17,6 @@ import { navigationStyles } from '../styles';
 export function renderArrowBackButton(onPress: Function) {
     return (
         <HeaderNavigationButton
-            buttonStyle = { navigationStyles.arrowBackStyle }
             onPress = { onPress }
             src = { IconArrowBack } />
     );

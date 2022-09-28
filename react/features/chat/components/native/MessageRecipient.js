@@ -11,7 +11,7 @@ import { type StyleType } from '../../../base/styles';
 import {
     setParams
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { setPrivateMessageRecipient, setLobbyChatActiveState } from '../../actions.any';
+import { setLobbyChatActiveState, setPrivateMessageRecipient } from '../../actions.any';
 import AbstractMessageRecipient, {
     type Props as AbstractProps
 } from '../AbstractMessageRecipient';

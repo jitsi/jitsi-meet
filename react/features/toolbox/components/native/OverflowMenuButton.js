@@ -1,5 +1,5 @@
 import { openSheet } from '../../../base/dialog';
-import { getFeatureFlag, OVERFLOW_MENU_ENABLED } from '../../../base/flags';
+import { OVERFLOW_MENU_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons';
 import { connect } from '../../../base/redux';

@@ -1,26 +1,29 @@
 // @flow
 
+import $ from 'jquery';
+
+import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functions.any';
 import { openDialog } from '../base/dialog';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getParticipantDisplayName, getPinnedParticipant, pinParticipant } from '../base/participants';
-import { getLocalVideoTrack } from '../base/tracks';
+import { getLocalDesktopTrack, getLocalVideoTrack, toggleScreensharing } from '../base/tracks';
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 
 import {
     CAPTURE_EVENTS,
     REMOTE_CONTROL_ACTIVE,
-    SET_REQUESTED_PARTICIPANT,
+    SET_CONTROLLED_PARTICIPANT,
     SET_CONTROLLER,
     SET_RECEIVER_ENABLED,
     SET_RECEIVER_TRANSPORT,
-    SET_CONTROLLED_PARTICIPANT
+    SET_REQUESTED_PARTICIPANT
 } from './actionTypes';
 import { RemoteControlAuthorizationDialog } from './components';
 import {
     DISCO_REMOTE_CONTROL_FEATURE,
     EVENTS,
-    REMOTE_CONTROL_MESSAGE_NAME,
     PERMISSIONS_ACTIONS,
+    REMOTE_CONTROL_MESSAGE_NAME,
     REQUESTS
 } from './constants';
 import {
@@ -38,7 +41,6 @@ import logger from './logger';
 let permissionsReplyListener, receiverEndpointMessageListener, stopListener;
 
 declare var APP: Object;
-declare var $: Function;
 
 /**
  * Signals that the remote control authorization dialog should be displayed.
@@ -500,7 +502,9 @@ export function sendStartRequest() {
     return (dispatch: Function, getState: Function) => {
         const state = getState();
         const tracks = state['features/base/tracks'];
-        const track = getLocalVideoTrack(tracks);
+        const track = getMultipleVideoSendingSupportFeatureFlag(state)
+            ? getLocalDesktopTrack(tracks)
+            : getLocalVideoTrack(tracks);
         const { sourceId } = track?.jitsiTrack || {};
         const { transport } = state['features/remote-control'].receiver;
 
@@ -530,12 +534,21 @@ export function grant(participantId: string) {
         let promise;
         const state = getState();
         const tracks = state['features/base/tracks'];
-        const track = getLocalVideoTrack(tracks);
+        const isMultiStreamSupportEnabled = getMultipleVideoSendingSupportFeatureFlag(state);
+        const track = isMultiStreamSupportEnabled ? getLocalDesktopTrack(tracks) : getLocalVideoTrack(tracks);
         const isScreenSharing = track?.videoType === 'desktop';
         const { sourceType } = track?.jitsiTrack || {};
 
         if (isScreenSharing && sourceType === 'screen') {
             promise = dispatch(sendStartRequest());
+        } else if (isMultiStreamSupportEnabled) {
+            promise = dispatch(toggleScreensharing(
+                true,
+                false,
+                true,
+                { desktopSharingSources: [ 'screen' ] }
+            ))
+            .then(() => dispatch(sendStartRequest()));
         } else {
             // FIXME: Use action here once toggleScreenSharing is moved to redux.
             promise = APP.conference.toggleScreenSharing(

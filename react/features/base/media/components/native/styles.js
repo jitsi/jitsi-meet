@@ -21,6 +21,11 @@ export default StyleSheet.create({
         overflow: 'hidden'
     },
 
+    videoTransformedViewContainerWide: {
+        overflow: 'hidden',
+        paddingRight: '14%'
+    },
+
     /**
      * Make {@code Video} fill its container.
      */

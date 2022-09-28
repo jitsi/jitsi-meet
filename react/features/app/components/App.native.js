@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { NativeModules, Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 
@@ -21,6 +21,8 @@ import '../middlewares';
 import '../reducers';
 
 declare var __DEV__;
+
+const { AppInfo } = NativeModules;
 
 const DialogContainerWrapper = Platform.select({
     default: View
@@ -84,6 +86,10 @@ export class App extends AbstractApp {
         await super.componentDidMount();
 
         SplashScreen.hide();
+
+        const liteTxt = AppInfo.isLiteSDK ? ' (lite)' : '';
+
+        logger.info(`Loaded SDK ${AppInfo.sdkVersion}${liteTxt}`);
     }
 
     /**

@@ -18,9 +18,9 @@ import {
     isTrackStreamingStatusInterrupted
 } from '../../functions';
 import AbstractConnectionIndicator, {
-    INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
-    type State as AbstractState
+    type State as AbstractState,
+    INDICATOR_DISPLAY_THRESHOLD
 } from '../AbstractConnectionIndicator';
 
 /**
@@ -194,7 +194,6 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
             bitrate,
             bridgeCount,
             codec,
-            e2eRtt,
             framerate,
             maxEnabledResolution,
             packetLoss,
@@ -212,7 +211,6 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 codec = { codec }
                 connectionSummary = { this._getConnectionStatusTip() }
                 disableShowMoreStats = { this.props._disableShowMoreStats }
-                e2eRtt = { e2eRtt }
                 enableSaveLogs = { this.props._enableSaveLogs }
                 framerate = { framerate }
                 isLocalVideo = { this.props._isLocalVideo }

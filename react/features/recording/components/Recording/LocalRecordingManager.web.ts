@@ -1,20 +1,14 @@
-/* eslint-disable import/order */
-
+/* eslint-disable lines-around-comment */
 import { v4 as uuidV4 } from 'uuid';
 import fixWebmDuration from 'webm-duration-fix';
 
 import { IStore } from '../../../app/types';
-
 // @ts-ignore
 import { getRoomName } from '../../../base/conference';
-
+import { MEDIA_TYPE } from '../../../base/media/constants';
 // @ts-ignore
-import { MEDIA_TYPE } from '../../../base/media';
-
-// @ts-ignore
-import { getTrackState, getLocalTrack } from '../../../base/tracks';
+import { getLocalTrack, getTrackState } from '../../../base/tracks';
 import { inIframe } from '../../../base/util/iframeUtils';
-
 // @ts-ignore
 import { stopLocalVideoRecording } from '../../actions.any';
 
@@ -26,23 +20,23 @@ interface SelfRecording {
 }
 
 interface ILocalRecordingManager {
-    recordingData: Blob[];
-    recorder: MediaRecorder|undefined;
-    stream: MediaStream|undefined;
-    audioContext: AudioContext|undefined;
-    audioDestination: MediaStreamAudioDestinationNode|undefined;
-    roomName: string;
-    mediaType: string;
-    initializeAudioMixer: () => void;
-    mixAudioStream: (stream: MediaStream) => void;
     addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
+    audioContext: AudioContext | undefined;
+    audioDestination: MediaStreamAudioDestinationNode | undefined;
     getFilename: () => string;
-    saveRecording: (recordingData: Blob[], filename: string) => void;
-    stopLocalRecording: () => void;
-    startLocalRecording: (store: IStore, onlySelf: boolean) => void;
+    initializeAudioMixer: () => void;
     isRecordingLocally: () => boolean;
-    totalSize: number;
+    mediaType: string;
+    mixAudioStream: (stream: MediaStream) => void;
+    recorder: MediaRecorder | undefined;
+    recordingData: Blob[];
+    roomName: string;
+    saveRecording: (recordingData: Blob[], filename: string) => void;
     selfRecording: SelfRecording;
+    startLocalRecording: (store: IStore, onlySelf: boolean) => void;
+    stopLocalRecording: () => void;
+    stream: MediaStream | undefined;
+    totalSize: number;
 }
 
 const getMimeType = (): string => {

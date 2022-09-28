@@ -15,17 +15,17 @@ import {
 import { isForceMuted } from '../../participants-pane/functions';
 import { isScreenMediaShared } from '../../screen-share/functions';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
-import { isRoomValid, SET_ROOM } from '../conference';
+import { SET_ROOM, isRoomValid } from '../conference';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config';
 import { getLocalParticipant } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
 import {
+    TRACK_ADDED,
     destroyLocalTracks,
     isLocalTrackMuted,
     isLocalVideoTrackDesktop,
-    setTrackMuted,
-    TRACK_ADDED
+    setTrackMuted
 } from '../tracks';
 
 import {
@@ -185,17 +185,17 @@ function _appStateChanged({ dispatch, getState }, next, action) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setAudioOnly({ dispatch, getState }, next, action) {
-    const { audioOnly, ensureVideoTrack } = action;
+    const { audioOnly } = action;
     const state = getState();
 
     sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
 
     // Make sure we mute both the desktop and video tracks.
-    dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
+    dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
     if (getMultipleVideoSendingSupportFeatureFlag(state)) {
         dispatch(setScreenshareMuted(audioOnly, MEDIA_TYPE.SCREENSHARE, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
     } else if (navigator.product !== 'ReactNative') {
-        dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.PRESENTER, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
+        dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.PRESENTER, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
     }
 
     return next(action);
@@ -281,7 +281,7 @@ function _setRoom({ dispatch, getState }, next, action) {
     sendAnalytics(createStartAudioOnlyEvent(audioOnly));
     logger.log(`Start audio only set to ${audioOnly.toString()}`);
 
-    dispatch(setAudioOnly(audioOnly, false));
+    dispatch(setAudioOnly(audioOnly));
 
     if (!roomIsValid) {
         dispatch(destroyLocalTracks());

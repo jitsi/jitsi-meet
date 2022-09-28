@@ -1,10 +1,15 @@
+/* eslint-disable lines-around-comment */
+// @ts-ignore
 import { CAR_MODE_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { translate } from '../../../base/i18n';
-import { IconCar } from '../../../base/icons';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import { IconCar } from '../../../base/icons/svg';
+import { connect } from '../../../base/redux/functions';
+// @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { navigate }
+// @ts-ignore
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+// @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
 
 /**
@@ -42,5 +47,5 @@ function _mapStateToProps(state: Object, ownProps: AbstractButtonProps): Object 
         visible
     };
 }
-
+// @ts-ignore
 export default translate(connect(_mapStateToProps)(OpenCarmodeButton));

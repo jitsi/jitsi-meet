@@ -43,14 +43,6 @@ case "$1" in
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
         fi
 
-        JVB_SERVE="false"
-        # this detect only old installations
-        RET=""
-        db_get jitsi-meet/jvb-serve || true
-        if [ "$RET" = "true" ] ; then
-            JVB_SERVE="true"
-        fi
-
         # stores the hostname so we will reuse it later, like in purge
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
 
@@ -77,13 +69,16 @@ case "$1" in
         fi
 
         UPLOADED_CERT_CHOICE="I want to use my own certificate"
+        LE_CERT_CHOICE="Let's Encrypt certificates"
         # if first time config ask for certs, or if we are reconfiguring
         if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
             RET=""
+            db_input critical jitsi-meet/cert-choice || true
+            db_go
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
 
-            if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+            if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
                 RET=""
                 db_get jitsi-meet/cert-path-key
                 if [ -z "$RET" ] ; then
@@ -103,7 +98,7 @@ case "$1" in
                 fi
                 CERT_CRT="$RET"
             else
-                # create self-signed certs
+                # create self-signed certs (we also need them for the case of LE so we can start nginx)
                 CERT_KEY="/etc/jitsi/meet/$JVB_HOSTNAME.key"
                 CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
                 HOST="$( (hostname -s; echo localhost) | head -n 1)"
@@ -116,6 +111,17 @@ case "$1" in
                     -extensions SAN \
                     -config <(cat /etc/ssl/openssl.cnf \
                         <(printf "[SAN]\nsubjectAltName=DNS:localhost,DNS:$JVB_HOSTNAME"))
+
+                if [ "$CERT_CHOICE" = "$LE_CERT_CHOICE" ]; then
+                    db_subst jitsi-meet/email domain "${JVB_HOSTNAME}"
+                    db_input critical jitsi-meet/email || true
+                    db_go
+                    db_get jitsi-meet/email
+                    EMAIL="$RET"
+                    if [ ! -z "$EMAIL" ] ; then
+                        ISSUE_LE_CERT="true"
+                    fi
+                fi
             fi
         fi
 
@@ -130,51 +136,34 @@ case "$1" in
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
 
-        # getting rid of jetty serving web
-        if [[ "$JVB_SERVE" = "true" ]] ; then
-            JVB_CONFIG="/etc/jitsi/videobridge/sip-communicator.properties"
+        if [ "$CERT_CHOICE" = "$LE_CERT_CHOICE" ] || [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
+            # Make sure jaas-choice is not answered already
+            db_get jitsi-meet/jaas-choice
+            JAAS_INPUT="$RET"
+            if [ -z "$JAAS_INPUT" ] ; then
+                db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
+                db_set jitsi-meet/jaas-choice false
+                db_input critical jitsi-meet/jaas-choice || true
+                db_go
+                db_get jitsi-meet/jaas-choice
+                JAAS_INPUT="$RET"
+            fi
+        fi
 
-            # we will write to the file if missing create it
-            if [ -f $JVB_CONFIG ] ; then
-                echo ""
-                echo "------------------------------------------------"
-                echo ""
-                echo "You are using jetty to serve jitsi-meet, we are now upgrading you to use nginx!"
-                echo ""
-                echo "If you are using Let’s Encrypt certificates please re-run the script."
-                echo ""
-                echo "------------------------------------------------"
-                echo ""
+        if [ "${JAAS_INPUT}" = "true" ] && ! grep -q "^var enableJaaS = true;$" $JITSI_MEET_CONFIG;  then
+            if grep -q "^var enableJaaS = false;$" $JITSI_MEET_CONFIG; then
+                sed -i "s/^var enableJaaS = false;$/var enableJaaS = true;/g" $JITSI_MEET_CONFIG
+            else
+                # old config, let's add the lines at the end. Adding var enableJaaS to avoid adding it on update again
+                echo "var enableJaaS = true;" >> $JITSI_MEET_CONFIG
+                echo "config.dialInNumbersUrl = 'https://conference-mapper.jitsi.net/v1/access/dids';" >> $JITSI_MEET_CONFIG
+                echo "config.dialInConfCodeUrl = 'https://conference-mapper.jitsi.net/v1/access';" >> $JITSI_MEET_CONFIG
 
-                sed -i "s/org.jitsi.videobridge.rest.jetty/#org.jitsi.videobridge.rest.jetty/g" $JVB_CONFIG
-                sed -i "s/org.jitsi.videobridge.TCP_HARVESTER_PORT/#org.jitsi.videobridge.TCP_HARVESTER_PORT/g" $JVB_CONFIG
-
-                if [ -d /run/systemd/system ]; then
-                    systemctl restart jitsi-videobridge2.service >/dev/null || true
-                fi
-
-                # Removing this value will force nginx or apache to be locally configured
-                JVB_HOSTNAME_OLD=""
-
-                RET=""
-                db_get jitsi-meet/cert-choice
-                CERT_CHOICE="$RET"
-                # Fix certs on upgrade from jetty
-                if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
-                    RET=""
-                    db_get jitsi-meet/cert-path-key
-                    CERT_KEY="$RET"
-                    RET=""
-                    db_get jitsi-meet/cert-path-crt
-                    CERT_CRT="$RET"
-                else
-                    # create self-signed certs
-                    CERT_KEY="/etc/jitsi/meet/$JVB_HOSTNAME.key"
-                    CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
+                # Sets roomPasswordNumberOfDigits only if there was not already set
+                if ! cat $JITSI_MEET_CONFIG | grep roomPasswordNumberOfDigits | grep -qv //; then
+                    echo "config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)" >> $JITSI_MEET_CONFIG
                 fi
             fi
-
-            db_set jitsi-meet/jvb-serve "false"
         fi
 
         if [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
@@ -239,12 +228,45 @@ case "$1" in
             invoke-rc.d apache2 reload || true
         fi
 
-        echo "----------------"
+        # If scripts fail they will print suggestions for next steps, do not fail install
+        # those can be re-run later
+        # run the scripts only on new install or when re-configuring
+        if [[ "$ISSUE_LE_CERT" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+            /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $JVB_HOSTNAME || true
+        fi
+        JAAS_REG_ERROR=0
+        if [[ "${JAAS_INPUT}" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+            /usr/share/jitsi-meet/scripts/register-jaas-account.sh $EMAIL $JVB_HOSTNAME || JAAS_REG_ERROR=$?
+        fi
+
         echo ""
-        echo "You can now switch to a Let’s Encrypt certificate. To do so, execute:"
-        echo "/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh"
         echo ""
-        echo "----------------"
+        echo "       ;dOocd;"
+        echo "     .dNMM0dKO."
+        echo "     lNMMMKd0K,"
+        echo "    .xMMMMNxkNc"
+        echo "     dMMMMMkxXc"
+        echo "     cNMMMNl.."
+        if [ "${JAAS_INPUT}" != "true" ] || [ ${JAAS_REG_ERROR} -ne 0 ]; then
+            echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
+            echo "      ;XMMMO'"
+            echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
+            echo "        lNMMM0,                        and follow the guide in the dev console."
+        else
+            echo "     .kMMMX;"
+            echo "      ;XMMMO'            Congratulations! Now you can use telephony in your Jitsi meetings!"
+            echo "       lNMMWO'             We have created a free JaaS (Jitsi as a Service) account for you. "
+            echo "        lNMMM0,              You can login to https://jaas.8x8.vc/components to check our developer console and your account details."
+        fi
+        echo "         lXMMMK:."
+        echo "          ;KMMMNKd.  'oo,"
+        echo "           'xNMMMMXkkkkOKOl'"
+        echo "             :0WMMMMMMNOkk0Kk,"
+        echo "              .cdOWMMMMMWXOkOl"
+        echo "                 .;dKWMMMMMXc."
+        echo "                    .,:cll:'"
+        echo ""
+        echo ""
 
         # and we're done with debconf
         db_stop
