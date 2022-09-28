@@ -6,7 +6,6 @@ import {
     PARTICIPANT_ROLE,
     getParticipantById
 } from '../base/participants';
-import { objectSort } from '../base/util';
 
 /**
  * Checks if the speaker stats search is disabled.
@@ -63,56 +62,67 @@ export function getPendingReorder(state: Object) {
 }
 
 /**
- * Get sorted speaker stats based on a configuration setting.
+ * Get sorted speaker stats ids based on a configuration setting.
  *
  * @param {Object} state - The redux state.
  * @param {Object} stats - The current speaker stats.
- * @returns {Object} - Ordered speaker stats.
+ * @returns {Object} - Ordered speaker stats ids.
  * @public
  */
-export function getSortedSpeakerStats(state: Object, stats: Object) {
+export function getSortedSpeakerStatsIds(state: Object, stats: Object) {
     const orderConfig = getSpeakerStatsOrder(state);
 
     if (orderConfig) {
         const enhancedStats = getEnhancedStatsForOrdering(state, stats, orderConfig);
-        const sortedStats = objectSort(enhancedStats, (currentParticipant, nextParticipant) => {
-            if (orderConfig.includes('hasLeft')) {
-                if (nextParticipant.hasLeft() && !currentParticipant.hasLeft()) {
-                    return -1;
-                } else if (currentParticipant.hasLeft() && !nextParticipant.hasLeft()) {
-                    return 1;
+
+        return Object.entries(enhancedStats)
+            .sort(([ , a ], [ , b ]) => compareFn(a, b))
+            .map(el => el[0]);
+    }
+
+    /**
+     *
+     * Compares the order of two participants in the speaker stats list.
+     *
+     * @param {Object} currentParticipant - The first participant for comparison.
+     * @param {Object} nextParticipant - The second participant for comparison.
+     * @returns {number} - The sort order of the two participants.
+     */
+    function compareFn(currentParticipant, nextParticipant) {
+        if (orderConfig.includes('hasLeft')) {
+            if (nextParticipant.hasLeft() && !currentParticipant.hasLeft()) {
+                return -1;
+            } else if (currentParticipant.hasLeft() && !nextParticipant.hasLeft()) {
+                return 1;
+            }
+        }
+
+        let result;
+
+        for (const sortCriteria of orderConfig) {
+            switch (sortCriteria) {
+            case 'role':
+                if (!nextParticipant.isModerator && currentParticipant.isModerator) {
+                    result = -1;
+                } else if (!currentParticipant.isModerator && nextParticipant.isModerator) {
+                    result = 1;
+                } else {
+                    result = 0;
                 }
+                break;
+            case 'name':
+                result = (currentParticipant.displayName || '').localeCompare(
+                    nextParticipant.displayName || ''
+                );
+                break;
             }
 
-            let result;
-
-            for (const sortCriteria of orderConfig) {
-                switch (sortCriteria) {
-                case 'role':
-                    if (!nextParticipant.isModerator && currentParticipant.isModerator) {
-                        result = -1;
-                    } else if (!currentParticipant.isModerator && nextParticipant.isModerator) {
-                        result = 1;
-                    } else {
-                        result = 0;
-                    }
-                    break;
-                case 'name':
-                    result = (currentParticipant.displayName || '').localeCompare(
-                        nextParticipant.displayName || ''
-                    );
-                    break;
-                }
-
-                if (result !== 0) {
-                    break;
-                }
+            if (result !== 0) {
+                break;
             }
+        }
 
-            return result;
-        });
-
-        return sortedStats;
+        return result;
     }
 }
 
