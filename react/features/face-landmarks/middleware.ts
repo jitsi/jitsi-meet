@@ -63,7 +63,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         return next(action);
     }
     case TRACK_ADDED: {
-        const { jitsiTrack: { isLocal, muted, videoType } } = action.track;
+        const { jitsiTrack: { isLocal, videoType }, muted } = action.track;
 
         if (videoType === 'camera' && isLocal() && !muted) {
             // need to pass this since the track is not yet added in the store
