@@ -9,6 +9,7 @@ import { StartRecordingDialog } from '../..';
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n/functions';
 import { IconHighlight } from '../../../../base/icons/svg';
+import { MEET_FEATURES } from '../../../../base/jwt/constants';
 import Label from '../../../../base/label/components/web/Label';
 import { connect } from '../../../../base/redux/functions';
 // @ts-ignore
@@ -16,7 +17,6 @@ import { Tooltip } from '../../../../base/tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
 // @ts-ignore
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
-import { FEATURES } from '../../../../jaas/constants';
 import AbstractHighlightButton, {
     type Props as AbstractProps,
     _abstractMapStateToProps
@@ -140,7 +140,7 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
     async _onOpenDialog() {
         // @ts-ignore
         const { dispatch } = this.props;
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             dispatch(openDialog(StartRecordingDialog));
