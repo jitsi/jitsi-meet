@@ -4,10 +4,11 @@
 
 local json = require("util.json");
 local st = require("util.stanza");
-
+local jid = require "util.jid";
 local util = module:require("util");
 local muc = module:depends("muc");
 
+local NS_NICK = 'http://jabber.org/protocol/nick';
 local is_healthcheck_room = util.is_healthcheck_room;
 
 -- Checks if the given stanza contains a JSON message,
@@ -82,7 +83,7 @@ module:hook("message/bare", function(event)
 
         local pollData = {
             event = event,
-            room = room, 
+            room = room,
             poll = {
                 pollId = data.pollId,
                 senderId = data.senderId,
@@ -97,30 +98,39 @@ module:hook("message/bare", function(event)
     elseif data.type == "answer-poll" then
         if check_polls(room) then return end
 
+        local occupant = room:get_occupant_by_real_jid(event.stanza.attr.from);
+        if not occupant then
+            module:log("error", "Occupant %s does not exists for room %s", event.stanza.attr.from, room.jid)
+            return
+        end
         local poll = room.polls.by_id[data.pollId];
         if poll == nil then
             module:log("warn", "answering inexistent poll");
             return;
         end
 
+        -- Retrieve voter name from the presence and participant id from the nick
+        local presence = occupant:get_presence();
+        local participantName = presence:get_child("nick", NS_NICK) and presence:get_child("nick", NS_NICK):get_text() or 'Fellow Jitster';
+        local _, _, voterId = jid.split(occupant.nick)
+
         local answers = {};
-        for i, value in ipairs(data.answers) do
+        for vote_option_idx, vote_flag in ipairs(data.answers) do
             table.insert(answers, {
-                key = i,
-                value = value,
-                name = poll.answers[i].name,
+                key = vote_option_idx,
+                value = vote_flag,
+                name = poll.answers[vote_option_idx].name,
             });
-            poll.answers[i].voters[data.voterId] = value and data.voterName or nil;
+            poll.answers[vote_option_idx].voters[voterId] = vote_flag and participantName or nil;
         end
         local answerData = {
             event = event,
             room = room,
             pollId = poll.id,
-            voterName = data.voterName,
-            voterId = data.voterId,
+            voterName = participantName,
+            voterId = voterId,
             answers = answers
         }
-
         module:fire_event("answer-poll",  answerData);
     end
 end);
