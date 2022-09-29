@@ -308,7 +308,7 @@ class FeedbackDialog extends Component<Props, State> {
     /**
      * Updates the known entered feedback message.
      *
-     * @param {string} newValue - The DOM event from updating the textfield for the
+     * @param {string} newValue - The new value from updating the textfield for the
      * feedback message.
      * @private
      * @returns {void}
