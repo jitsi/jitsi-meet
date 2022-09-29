@@ -459,6 +459,11 @@ export default {
      */
     _localTracksInitialized: false,
 
+    /**
+     * Flag used to prevent the creation of another local video track in this.muteVideo if one is already in progress.
+     */
+    isCreatingLocalTrack: false,
+
     isSharingScreen: false,
 
     /**
@@ -1028,10 +1033,12 @@ export default {
 
         const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
 
-        if (!localVideo && !mute) {
+        if (!localVideo && !mute && !this.isCreatingLocalTrack) {
             const maybeShowErrorDialog = error => {
                 showUI && APP.store.dispatch(notifyCameraError(error));
             };
+
+            this.isCreatingLocalTrack = true;
 
             // Try to create local video if there wasn't any.
             // This handles the case when user joined with no video
@@ -1054,6 +1061,9 @@ export default {
                     logger.debug(`muteVideo: calling useVideoStream for track: ${videoTrack}`);
 
                     return this.useVideoStream(videoTrack);
+                })
+                .finally(() => {
+                    this.isCreatingLocalTrack = false;
                 });
         } else {
             // FIXME show error dialog if it fails (should be handled by react)
