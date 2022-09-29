@@ -1,29 +1,28 @@
-// @flow
-
-import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config';
-import { isWindows } from '../base/environment';
+import { IState } from '../app/types';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functions.any';
+import { isWindows } from '../base/environment/environment';
 import { isMobileBrowser } from '../base/environment/utils';
 import { browser } from '../base/lib-jitsi-meet';
-import { VIDEO_TYPE } from '../base/media';
-import { getLocalDesktopTrack, getLocalVideoTrack } from '../base/tracks';
+import { VIDEO_TYPE } from '../base/media/constants';
+import { getLocalDesktopTrack, getLocalVideoTrack } from '../base/tracks/functions';
 
 /**
  * Is the current screen sharing session audio only.
  *
- * @param {Object} state - The state of the application.
+ * @param {IState} state - The state of the application.
  * @returns {boolean}
  */
-export function isAudioOnlySharing(state: Object) {
+export function isAudioOnlySharing(state: IState) {
     return isScreenAudioShared(state) && !isScreenVideoShared(state);
 }
 
 /**
  * State of audio sharing.
  *
- * @param {Object} state - The state of the application.
+ * @param {IState} state - The state of the application.
  * @returns {boolean}
  */
-export function isScreenAudioShared(state: Object) {
+export function isScreenAudioShared(state: IState) {
     return state['features/screen-share'].isSharingAudio;
 }
 
@@ -40,25 +39,25 @@ export function isScreenAudioSupported() {
 /**
  * Is any screen media currently being shared, audio or video.
  *
- * @param {Object} state - The state of the application.
+ * @param {IState} state - The state of the application.
  * @returns {boolean}
  */
-export function isScreenMediaShared(state: Object) {
+export function isScreenMediaShared(state: IState) {
     return isScreenAudioShared(state) || isScreenVideoShared(state);
 }
 
 /**
  * Is screen sharing currently active.
  *
- * @param {Object} state - The state of the application.
+ * @param {IState} state - The state of the application.
  * @returns {boolean}
  */
-export function isScreenVideoShared(state: Object) {
+export function isScreenVideoShared(state: IState) {
     const tracks = state['features/base/tracks'];
     const localScreenshare = getLocalDesktopTrack(tracks);
 
     if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-        return localScreenshare && localScreenshare.jitsiTrack && !localScreenshare.jitsiTrack.isMuted();
+        return localScreenshare?.jitsiTrack && !localScreenshare.jitsiTrack.isMuted();
     }
     const localVideo = getLocalVideoTrack(tracks);
 

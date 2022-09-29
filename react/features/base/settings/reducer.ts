@@ -53,6 +53,7 @@ const DEFAULT_STATE: ISettingsState = {
 
 export interface ISettingsState {
     audioOutputDeviceId?: string | boolean;
+    audioSettingsVisible?: boolean;
     avatarURL?: string;
     cameraDeviceId?: string | boolean;
     disableCallIntegration?: boolean;
@@ -85,6 +86,7 @@ export interface ISettingsState {
         [key: string]: boolean;
     } | boolean;
     userSelectedSkipPrejoin?: boolean;
+    videoSettingsVisible?: boolean;
     visible?: boolean;
 }
 

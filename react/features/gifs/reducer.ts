@@ -14,12 +14,14 @@ const initialState = {
     menuOpen: false
 };
 
+export interface IGif {
+    gifUrl?: string;
+    timeoutID?: number;
+}
+
 export interface IGifsState {
     drawerVisible: boolean;
-    gifList: Map<string, {
-        gifUrl: string;
-        timeoutID: number;
-    }>;
+    gifList: Map<string, IGif>;
     menuOpen: boolean;
 }
 

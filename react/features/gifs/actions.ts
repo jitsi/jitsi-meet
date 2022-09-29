@@ -14,7 +14,7 @@ import {
  * @param {string} gifUrl - The URL of the GIF.
  * @returns {Object}
  */
-export function addGif(participantId, gifUrl) {
+export function addGif(participantId: string, gifUrl: string) {
     return {
         type: ADD_GIF_FOR_PARTICIPANT,
         participantId,
@@ -28,7 +28,7 @@ export function addGif(participantId, gifUrl) {
  * @param {string} participantId - The Id of the participant for whom to remove the GIF.
  * @returns {Object}
  */
-export function removeGif(participantId) {
+export function removeGif(participantId: string) {
     return {
         type: REMOVE_GIF_FOR_PARTICIPANT,
         participantId
@@ -41,7 +41,7 @@ export function removeGif(participantId) {
  * @param {string} participantId - The Id of the participant for whom to show the GIF.
  * @returns {Object}
  */
-export function showGif(participantId) {
+export function showGif(participantId: string) {
     return {
         type: SHOW_GIF_FOR_PARTICIPANT,
         participantId
@@ -54,7 +54,7 @@ export function showGif(participantId) {
  * @param {string} participantId - The Id of the participant for whom to show the GIF.
  * @returns {Object}
  */
-export function hideGif(participantId) {
+export function hideGif(participantId: string) {
     return {
         type: HIDE_GIF_FOR_PARTICIPANT,
         participantId
@@ -67,7 +67,7 @@ export function hideGif(participantId) {
  * @param {boolean} visible - Whether or not it should be visible.
  * @returns {Object}
  */
-export function setGifDrawerVisibility(visible) {
+export function setGifDrawerVisibility(visible: boolean) {
     return {
         type: SET_GIF_DRAWER_VISIBILITY,
         visible
@@ -80,7 +80,7 @@ export function setGifDrawerVisibility(visible) {
  * @param {boolean} visible - Whether or not it should be visible.
  * @returns {Object}
  */
-export function setGifMenuVisibility(visible) {
+export function setGifMenuVisibility(visible: boolean) {
     return {
         type: SET_GIF_MENU_VISIBILITY,
         visible

@@ -14,5 +14,6 @@ declare global {
 
     interface Window {
         config?: IConfig;
+        JITSI_MEET_LITE_SDK?: boolean;
     }
 }
