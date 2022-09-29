@@ -39,6 +39,28 @@ local function check_polls(room)
     return false;
 end
 
+--- Returns a table having occupant id and occupant name.
+--- If the id cannot be extracted from nick a nil value is returned
+--- if the occupant name cannot be extracted from presence the Fellow Jitster
+--- name is used
+local function get_occupant_details(occupant)
+    if not occupant then
+        return nil
+    end
+    local presence = occupant:get_presence();
+    local occupant_name;
+    if presence then
+        occupant_name = presence:get_child("nick", NS_NICK) and presence:get_child("nick", NS_NICK):get_text() or 'Fellow Jitster';
+    else
+        occupant_name = 'Fellow Jitster'
+    end
+    local _, _, occupant_id = jid.split(occupant.nick)
+    if not occupant_id then
+        return nil
+    end
+    return { ["occupant_id"] = occupant_id, ["occupant_name"] = occupant_name }
+end
+
 -- Sets up poll data in new rooms.
 module:hook("muc-room-created", function(event)
     local room = event.room;
@@ -63,17 +85,29 @@ module:hook("message/bare", function(event)
     if data.type == "new-poll" then
         if check_polls(room) then return end
 
+        local occupant_jid = event.stanza.attr.from;
+        local occupant = room:get_occupant_by_real_jid(occupant_jid);
+        if not occupant then
+            module:log("error", "Occupant %s was not found in room %s", occupant_jid, room.jid)
+            return
+        end
+        local poll_creator = get_occupant_details(occupant)
+        if not poll_creator then
+            module:log("error", "Cannot retrieve poll creator id and name for %s from %s", occupant.jid, room.jid)
+            return
+        end
+
         local answers = {}
-        local compactAnswers = {}
+        local compact_answers = {}
         for i, name in ipairs(data.answers) do
             table.insert(answers, { name = name, voters = {} });
-            table.insert(compactAnswers, { key = i, name = name});
+            table.insert(compact_answers, { key = i, name = name});
         end
 
         local poll = {
             id = data.pollId,
-            sender_id = data.senderId,
-            sender_name = data.senderName,
+            sender_id = poll_creator.occupant_id,
+            sender_name = poll_creator.occupant_name,
             question = data.question,
             answers = answers
         };
@@ -86,21 +120,21 @@ module:hook("message/bare", function(event)
             room = room,
             poll = {
                 pollId = data.pollId,
-                senderId = data.senderId,
-                senderName = data.senderName,
+                senderId = poll_creator.occupant_id,
+                senderName = poll_creator.occupant_name,
                 question = data.question,
-                answers = compactAnswers
+                answers = compact_answers
             }
         }
-
         module:fire_event("poll-created", pollData);
 
     elseif data.type == "answer-poll" then
         if check_polls(room) then return end
 
-        local occupant = room:get_occupant_by_real_jid(event.stanza.attr.from);
+        local occupant_jid = event.stanza.attr.from;
+        local occupant = room:get_occupant_by_real_jid(occupant_jid);
         if not occupant then
-            module:log("error", "Occupant %s does not exists for room %s", event.stanza.attr.from, room.jid)
+            module:log("error", "Occupant %s does not exists for room %s", occupant_jid, room.jid)
             return
         end
         local poll = room.polls.by_id[data.pollId];
@@ -109,10 +143,11 @@ module:hook("message/bare", function(event)
             return;
         end
 
-        -- Retrieve voter name from the presence and participant id from the nick
-        local presence = occupant:get_presence();
-        local participantName = presence:get_child("nick", NS_NICK) and presence:get_child("nick", NS_NICK):get_text() or 'Fellow Jitster';
-        local _, _, voterId = jid.split(occupant.nick)
+        local voter = get_occupant_details(occupant)
+        if not voter then
+            module:log("error", "Cannot retrieve voter id and name for %s from %s", occupant.jid, room.jid)
+            return
+        end
 
         local answers = {};
         for vote_option_idx, vote_flag in ipairs(data.answers) do
@@ -121,14 +156,14 @@ module:hook("message/bare", function(event)
                 value = vote_flag,
                 name = poll.answers[vote_option_idx].name,
             });
-            poll.answers[vote_option_idx].voters[voterId] = vote_flag and participantName or nil;
+            poll.answers[vote_option_idx].voters[voter.occupant_id] = vote_flag and voter.occupant_name or nil;
         end
         local answerData = {
             event = event,
             room = room,
             pollId = poll.id,
-            voterName = participantName,
-            voterId = voterId,
+            voterName = voter.occupant_name,
+            voterId = voter.occupant_id,
             answers = answers
         }
         module:fire_event("answer-poll",  answerData);
@@ -164,6 +199,5 @@ module:hook("muc-occupant-joined", function(event)
     :tag("json-message", { xmlns = "http://jitsi.org/jitmeet" })
     :text(json.encode(data))
     :up();
-
     room:route_stanza(stanza);
 end);
