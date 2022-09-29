@@ -477,9 +477,11 @@
         "noRoom": "Keine Konferenz für die Einwahlinformationen angegeben.",
         "numbers": "Einwahlnummern",
         "password": "$t(lockRoomPasswordUppercase):",
+        "reachedLimit": "Sie haben die Grenzen Ihres Tarifs erreicht.",
         "sip": "SIP-Adresse",
         "title": "Teilen",
-        "tooltip": "Freigabe-Link und Einwahlinformationen für dieses Meeting"
+        "tooltip": "Freigabe-Link und Einwahlinformationen für dieses Meeting",
+        "upgradeOptions": "Bitte prüfen Sie Ihre Upgrade-Optionen auf"
     },
     "inlineDialogFailure": {
         "msg": "Es ist ein Fehler aufgetreten.",
@@ -938,6 +940,7 @@
         "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten"
     },
     "settings": {
+        "buttonLabel": "Einstellungen",
         "calendar": {
             "about": "Die Kalenderintegration von {{appName}} wird verwendet, um ein sicheres Zugreifen auf Ihren Kalender und Auslesen der bevorstehenden Termine zu ermöglichen.",
             "disconnect": "Getrennt",
