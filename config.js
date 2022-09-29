@@ -1357,8 +1357,6 @@ var config = {
      */
     mouseMoveCallbackInterval: 1000,
 
-    hiddenDomain: 'tdomokos.jitsi.net',
-
     /**
         Use this array to configure which notifications will be shown to the user
         The items correspond to the title or description key of that notification
