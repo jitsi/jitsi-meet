@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { CalendarList, isCalendarEnabled } from '../../../../../calendar-sync';
@@ -13,7 +14,6 @@ import {
 import { screen } from '../../../routes';
 import SettingsNavigationContainer
     from '../../settings/components/SettingsNavigationContainer';
-import { useTranslation } from 'react-i18next';
 
 const WelcomePage = createBottomTabNavigator();
 
