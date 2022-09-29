@@ -16,7 +16,6 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "@amplitude/react-native": "2.7.0",
-    "@atlaskit/field-text-area": "8.0.4",
     "@atlaskit/flag": "14.1.0",
     "@atlaskit/icon": "21.2.0",
     "@atlaskit/inline-dialog": "13.0.9",
