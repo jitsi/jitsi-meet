@@ -1,34 +1,33 @@
-/* @flow */
+import React, { Component, ComponentType } from 'react';
 
-import React, { Component } from 'react';
-
-import { type ReactionEmojiProps } from '../../../reactions/constants';
+import { IState } from '../../../app/types';
+import { ReactionEmojiProps } from '../../../reactions/constants';
 
 /**
  * The type of the React {@code Component} props of {@link DialogContainer}.
  */
-type Props = {
+interface Props {
 
     /**
      * The component to render.
      */
-    _component: Function,
+    _component: ComponentType;
 
     /**
      * The props to pass to the component that will be rendered.
      */
-    _componentProps: Object,
-
-    /**
-     * True if the UI is in a compact state where we don't show dialogs.
-     */
-    _reducedUI: boolean,
+    _componentProps: Object;
 
     /**
      * Array of reactions to be displayed.
      */
-    _reactionsQueue: Array<ReactionEmojiProps>
-};
+    _reactionsQueue: Array<ReactionEmojiProps>;
+
+    /**
+     * True if the UI is in a compact state where we don't show dialogs.
+     */
+    _reducedUI: boolean;
+}
 
 /**
  * Implements a DialogContainer responsible for showing all dialogs.
@@ -61,7 +60,7 @@ export default class AbstractDialogContainer extends Component<Props> {
  * @private
  * @returns {Props}
  */
-export function abstractMapStateToProps(state: Object): $Shape<Props> {
+export function abstractMapStateToProps(state: IState) {
     const stateFeaturesBaseDialog = state['features/base/dialog'];
     const { reducedUI } = state['features/base/responsive-ui'];
 

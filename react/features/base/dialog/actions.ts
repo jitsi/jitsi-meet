@@ -1,6 +1,6 @@
-// @flow
+import { ComponentType } from 'react';
 
-import type { Dispatch } from 'redux';
+import { IStore } from '../../app/types';
 
 import {
     HIDE_DIALOG,
@@ -22,7 +22,7 @@ import { isDialogOpen } from './functions';
  *     component: (React.Component | undefined)
  * }}
  */
-export function hideDialog(component: ?Object) {
+export function hideDialog(component?: ComponentType) {
     return {
         type: HIDE_DIALOG,
         component
@@ -54,7 +54,7 @@ export function hideSheet() {
  *     componentProps: (Object | undefined)
  * }}
  */
-export function openDialog(component: Object, componentProps: ?Object) {
+export function openDialog(component: ComponentType, componentProps?: Object) {
     return {
         type: OPEN_DIALOG,
         component,
@@ -74,7 +74,7 @@ export function openDialog(component: Object, componentProps: ?Object) {
  *     componentProps: (Object | undefined)
  * }}
  */
-export function openSheet(component: Object, componentProps: ?Object) {
+export function openSheet(component: ComponentType, componentProps?: Object) {
     return {
         type: OPEN_SHEET,
         component,
@@ -92,8 +92,8 @@ export function openSheet(component: Object, componentProps: ?Object) {
  * specified {@code component}.
  * @returns {Function}
  */
-export function toggleDialog(component: Object, componentProps: ?Object) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function toggleDialog(component: ComponentType, componentProps?: Object) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (isDialogOpen(getState, component)) {
             dispatch(hideDialog(component));
         } else {
