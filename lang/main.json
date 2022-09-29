@@ -477,9 +477,11 @@
         "noRoom": "No room was specified to dial-in into.",
         "numbers": "Dial-in Numbers",
         "password": "$t(lockRoomPasswordUppercase): ",
+        "reachedLimit": "you have reached the limit for you plan.",
         "sip": "SIP address",
         "title": "Share",
-        "tooltip": "Share link and dial-in info for this meeting"
+        "tooltip": "Share link and dial-in info for this meeting",
+        "upgradeOptions": "Please check the upgrade options on"
     },
     "inlineDialogFailure": {
         "msg": "We stumbled a bit.",
