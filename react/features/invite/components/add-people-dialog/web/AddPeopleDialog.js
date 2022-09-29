@@ -24,6 +24,7 @@ import {
 } from '../../../functions';
 
 import CopyMeetingLinkSection from './CopyMeetingLinkSection';
+import DialInLimit from './DialInLimit';
 import DialInSection from './DialInSection';
 import InviteByEmailSection from './InviteByEmailSection';
 import InviteContactsSection from './InviteContactsSection';
@@ -85,6 +86,11 @@ type Props = {
     _inviteUrl: string,
 
     /**
+     * Whether or not the current meeting belongs to a JaaS user.
+     */
+     _isVpaasMeeting: boolean,
+
+    /**
      * The current known URL for a live stream in progress.
      */
     _liveStreamViewURL: string,
@@ -121,6 +127,7 @@ function AddPeopleDialog({
     _inviteAppName,
     _inviteContactsVisible,
     _inviteUrl,
+    _isVpaasMeeting,
     _liveStreamViewURL,
     _phoneNumber,
     t,
@@ -183,6 +190,9 @@ function AddPeopleDialog({
                         && _dialInVisible
                         && <DialInSection phoneNumber = { _phoneNumber } />
                 }
+                {
+                    !_dialInVisible && _isVpaasMeeting && <DialInLimit />
+                }
             </div>
         </Dialog>
     );
@@ -222,6 +232,7 @@ function mapStateToProps(state, ownProps) {
         _inviteAppName: inviteAppName,
         _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
+        _isVpaasMeeting: isVpaasMeeting(state),
         _liveStreamViewURL:
             currentLiveStreamingSession
                 && currentLiveStreamingSession.liveStreamViewURL,

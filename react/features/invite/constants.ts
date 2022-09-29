@@ -54,3 +54,6 @@ export const INVITE_TYPES = {
     USER: 'user',
     VIDEO_ROOM: 'videosipgw'
 };
+
+export const UPGRADE_OPTIONS_TEXT = 'jaas.8x8.vc';
+export const UPGRADE_OPTIONS_LINK = 'https://jaas.8x8.vc/#/plan/upgrade';
