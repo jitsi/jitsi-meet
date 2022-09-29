@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
-import { DialogTransitionContext } from '../../../dialog/components/web/DialogTransition';
 import { IconClose } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import Button from '../../../ui/components/web/Button';
+import ClickableIcon from '../../../ui/components/web/ClickableIcon';
 
-import Button from './Button';
-import ClickableIcon from './ClickableIcon';
+import { DialogTransitionContext } from './DialogTransition';
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
