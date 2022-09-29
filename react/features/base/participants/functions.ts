@@ -302,13 +302,14 @@ export function getFakeParticipants(stateful: IStateful) {
  * @returns {number}
  */
 export function getRemoteParticipantCount(stateful: IStateful) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful);
+    const participantsState = state['features/base/participants'];
 
-    if (getMultipleVideoSupportFeatureFlag(toState(stateful))) {
-        return state.remote.size - state.sortedRemoteVirtualScreenshareParticipants.size;
+    if (getMultipleVideoSupportFeatureFlag(state)) {
+        return participantsState.remote.size - participantsState.sortedRemoteVirtualScreenshareParticipants.size;
     }
 
-    return state.remote.size;
+    return participantsState.remote.size;
 }
 
 /**
