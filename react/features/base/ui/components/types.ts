@@ -10,6 +10,11 @@ export interface ButtonProps {
     accessibilityLabel?: string;
 
     /**
+     * Whether or not the button should automatically focus.
+     */
+    autoFocus?: boolean;
+
+    /**
      * Whether or not the button is disabled.
      */
     disabled?: boolean;
