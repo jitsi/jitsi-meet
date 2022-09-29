@@ -31,7 +31,11 @@ const useStyles = makeStyles()((theme: Theme) => {
             display: 'flex',
             color: theme.palette.text01,
             alignItems: 'center',
-            fontSize: '14px'
+            fontSize: '14px',
+            cursor: 'pointer',
+            '&:hover': {
+                backgroundColor: theme.palette.ui04
+            }
         },
         iconWrapper: {
             margin: '4px 10px',

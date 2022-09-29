@@ -3,7 +3,7 @@
 import { translate } from '../../base/i18n';
 import { IconClosedCaption } from '../../base/icons';
 import { connect } from '../../base/redux';
-import { toggleLangugeSelectorDialog } from '../actions';
+import { toggleLanguageSelectorDialog } from '../actions';
 
 import {
     AbstractClosedCaptionButton,
@@ -20,7 +20,9 @@ class ClosedCaptionButton
     tooltip = 'transcribing.ccButtonTooltip';
     label = 'toolbar.startSubtitles';
     labelProps = {
-        language: this.props.t(this.props._language)
+        language: this.props.t(this.props._language),
+        languages: this.props.t(this.props.languages),
+        languagesHead: this.props.t(this.props.languagesHead)
     };
 
     /**
@@ -31,7 +33,7 @@ class ClosedCaptionButton
     _handleClickOpenLanguageSelector() {
         const { dispatch } = this.props;
 
-        dispatch(toggleLangugeSelectorDialog());
+        dispatch(toggleLanguageSelectorDialog());
     }
 }
 

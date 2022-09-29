@@ -464,6 +464,8 @@ export interface IConfig {
         disableStartForAll?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
+        translationLanguages?: Array<string>;
+        translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
     };
     useHostPageLocalStorage?: boolean;

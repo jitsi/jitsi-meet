@@ -6,15 +6,17 @@ import { IState } from '../../app/types';
 // @ts-ignore
 import { Dialog } from '../../base/dialog';
 // @ts-ignore
-import { LANGUAGES, TRANSLATION_LANGUAGES_EXCLUDE, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
+import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { connect } from '../../base/redux/functions';
 // @ts-ignore
-import { setRequestingSubtitles, toggleLangugeSelectorDialog, updateTranslationLanguage } from '../actions';
+import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage } from '../actions';
 
 import LanguageList from './LanguageList';
 
 interface ILanguageSelectorDialogProps {
     _language: string;
+    _translationLanguages: Array<string>;
+    _translationLanguagesHead: Array<string>;
     t: Function;
 }
 
@@ -23,18 +25,21 @@ interface ILanguageSelectorDialogProps {
  *
  * @returns {React$Element<any>}
  */
-const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => {
+const LanguageSelectorDialog = ({ _language, _translationLanguages, _translationLanguagesHead }:
+                                    ILanguageSelectorDialogProps) => {
+
     const dispatch = useDispatch();
     const off = 'transcribing.subtitlesOff';
     const [ language, setLanguage ] = useState(off);
 
-    const importantLanguages = TRANSLATION_LANGUAGES_HEAD.map((lang: string) => `languages:${lang}`);
-    const fixedItems = [ off, ...importantLanguages ];
-
-    const languages = LANGUAGES
-        .filter((lang: string) => !TRANSLATION_LANGUAGES_EXCLUDE.includes(lang))
-        .map((lang: string) => `languages:${lang}`)
-        .filter((lang: string) => !(lang === language || importantLanguages.includes(lang)));
+    const languagesHead = _translationLanguagesHead.map((lang: string) => `translation-languages:${lang}`);
+    // The off and the head languages are always on the top of the list. But once you are selecting
+    // a language from the translationLanguages, that language is moved under the fixedItems list,
+    // until a new languages is selected. FixedItems keep their positions.
+    const fixedItems = [ off, ...languagesHead ];
+    const languages = _translationLanguages
+        .map((lang: string) => `translation-languages:${lang}`)
+        .filter((lang: string) => !(lang === language || languagesHead.includes(lang)));
 
     const listItems = (fixedItems.includes(language)
         ? [ ...fixedItems, ...languages ]
@@ -55,7 +60,7 @@ const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => 
         setLanguage(e);
         dispatch(updateTranslationLanguage(e));
         dispatch(setRequestingSubtitles(e !== off));
-        dispatch(toggleLangugeSelectorDialog());
+        dispatch(toggleLanguageSelectorDialog());
     }, [ _language ]);
 
     return (
@@ -81,17 +86,18 @@ const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => 
  * @returns {Props}
  */
 function mapStateToProps(state: IState) {
-    const {
-        conference
-    } = state['features/base/conference'];
+    const { conference } = state['features/base/conference'];
+    const { _language } = state['features/subtitles'];
+    const { transcription } = state['features/base/config'];
 
-    const {
-        _language
-    } = state['features/subtitles'];
+    const languages = transcription?.translationLanguages ?? TRANSLATION_LANGUAGES;
+    const languagesHead = transcription?.translationLanguagesHead ?? TRANSLATION_LANGUAGES_HEAD;
 
     return {
         _conference: conference,
-        _language
+        _language,
+        _translationLanguages: languages,
+        _translationLanguagesHead: languagesHead
     };
 }
 

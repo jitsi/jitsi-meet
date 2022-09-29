@@ -11,7 +11,7 @@ export * from './actions.any';
  *      type: UPDATE_TRANSLATION_LANGUAGE
  * }}
  */
-export function toggleLangugeSelectorDialog() {
+export function toggleLanguageSelectorDialog() {
     return function(dispatch: (Object) => Object) {
         dispatch(toggleDialog(LanguageSelectorDialogWeb));
     };
