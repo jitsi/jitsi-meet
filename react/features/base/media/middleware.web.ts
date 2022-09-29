@@ -2,7 +2,6 @@
 import './middleware.any.js';
 
 import { IStore } from '../../app/types';
-// @ts-ignore
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager.web';

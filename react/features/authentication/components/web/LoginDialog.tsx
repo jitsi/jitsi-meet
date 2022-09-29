@@ -7,12 +7,10 @@ import type { Dispatch } from 'redux';
 import { connect } from '../../../../../connection';
 import { IState } from '../../../app/types';
 import { IConfig } from '../../../base/config/configType';
-// @ts-ignore
 import { toJid } from '../../../base/connection/functions';
 // @ts-ignore
 import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n/functions';
-// @ts-ignore
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux/functions';
 import Input from '../../../base/ui/components/web/Input';

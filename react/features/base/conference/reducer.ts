@@ -1,7 +1,6 @@
 /* eslint-disable lines-around-comment */
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock/constants';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection/actionTypes';
-// @ts-ignore
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { assign, set } from '../redux/functions';
@@ -26,7 +25,6 @@ import {
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED
 } from './actionTypes';
-// @ts-ignore
 import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {
@@ -42,6 +40,10 @@ const DEFAULT_STATE = {
 
 export interface IJitsiConference {
     addTrack: Function;
+    avModerationApprove: Function;
+    avModerationReject: Function;
+    disableAVModeration: Function;
+    enableAVModeration: Function;
     getBreakoutRooms: Function;
     getLocalTracks: Function;
     grantOwner: Function;

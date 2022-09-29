@@ -4,16 +4,15 @@ import Logger from '@jitsi/logger';
 
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
-// @ts-ignore
-import { CONFERENCE_JOINED, getCurrentConference } from '../conference';
+import { CONFERENCE_JOINED } from '../conference/actionTypes';
+import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import JitsiMeetJS, {
     JitsiConferenceEvents
 } from '../lib-jitsi-meet';
 import { LIB_WILL_INIT } from '../lib-jitsi-meet/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
-// @ts-ignore
-import { isTestModeEnabled } from '../testing';
+import { isTestModeEnabled } from '../testing/functions';
 
 import buildExternalApiLogTransport from './ExternalApiLogTransport';
 import JitsiMeetInMemoryLogStorage from './JitsiMeetInMemoryLogStorage';

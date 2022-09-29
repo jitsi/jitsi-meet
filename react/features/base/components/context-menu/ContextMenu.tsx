@@ -5,7 +5,6 @@ import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from '
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
 import { getComputedOuterHeight } from '../../../participants-pane/functions';
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';

@@ -4,8 +4,7 @@ import { API_ID } from '../../../modules/API/constants';
 // @ts-ignore
 import { getName as getAppName } from '../app/functions';
 import { IStore } from '../app/types';
-// @ts-ignore
-import { getAnalyticsRoomName } from '../base/conference';
+import { getAnalyticsRoomName } from '../base/conference/functions';
 import {
     checkChromeExtensionsInstalled,
     isMobileBrowser
@@ -14,8 +13,7 @@ import JitsiMeetJS, {
     analytics,
     browser
 } from '../base/lib-jitsi-meet';
-// @ts-ignore
-import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions';
+import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions.any';
 // @ts-ignore
 import { loadScript } from '../base/util';
 import { getJitsiMeetGlobalNS } from '../base/util/helpers';

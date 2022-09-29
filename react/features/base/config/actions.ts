@@ -116,8 +116,6 @@ export function setConfig(config: Object = {}) {
                 // On Web the config also comes from the window.config global,
                 // but it is resolved in the loadConfig procedure.
                 config,
-
-                // @ts-ignore
                 window.interfaceConfig,
                 locationURL);
 
@@ -144,7 +142,6 @@ export function storeConfig(baseURL: string, config: Object) {
         let b = false;
 
         try {
-            // @ts-ignore
             if (typeof window.config === 'undefined' || window.config !== config) {
                 jitsiLocalStorage.setItem(`${_CONFIG_STORE_PREFIX}/${baseURL}`, JSON.stringify(config));
                 b = true;

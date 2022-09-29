@@ -12,7 +12,6 @@ import { IconArrowDownSmall, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '
 import { connect } from '../../../redux/functions';
 import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
 import { CONNECTION_TYPE } from '../../constants';
-// @ts-ignore
 import { getConnectionData } from '../../functions';
 
 interface Props extends WithTranslation {

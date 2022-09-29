@@ -87,9 +87,7 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
     // not be the global variable which is being modified anymore due to
     // different merge methods being used along the way. The global variable
     // must be synchronized with the final state resolved by the reducer.
-    // @ts-ignore
     if (typeof window.config !== 'undefined') {
-        // @ts-ignore
         window.config = state['features/base/config'];
     }
 

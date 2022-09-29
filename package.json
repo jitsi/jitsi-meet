@@ -54,6 +54,7 @@
     "@svgr/webpack": "4.3.2",
     "@tensorflow/tfjs-backend-wasm": "3.13.0",
     "@tensorflow/tfjs-core": "3.13.0",
+    "@types/amplitude-js": "8.16.2",
     "@types/audioworklet": "0.0.29",
     "@types/w3c-image-capture": "1.0.6",
     "@vladmandic/human": "2.6.5",

@@ -93,7 +93,6 @@ function _setErrorHandlers() {
     if (JitsiMeetJS.getGlobalOnErrorHandler) {
         const oldOnErrorHandler = window.onerror;
 
-        // @ts-ignore
         window.onerror = (message, source, lineno, colno, error) => { // eslint-disable-line max-params
             const errMsg = message || error?.message;
             const stack = error?.stack;

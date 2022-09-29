@@ -1,4 +1,3 @@
-// @ts-ignore
 import JitsiMeetJS from '../lib-jitsi-meet';
 import Platform from '../react/Platform.web';
 

@@ -1,10 +1,6 @@
-/* eslint-disable lines-around-comment */
-// @ts-ignore
 import RTCStats from '../../rtcstats/RTCStats';
-// @ts-ignore
 import { canSendRtcstatsData } from '../../rtcstats/functions';
-// @ts-ignore
-import { getCurrentConference } from '../conference';
+import { getCurrentConference } from '../conference/functions';
 
 /**
  * Implements log storage interface from the @jitsi/logger lib. Captured

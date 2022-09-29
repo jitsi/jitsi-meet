@@ -10,7 +10,6 @@ import {
     _ADD_AUDIO_ELEMENT,
     _REMOVE_AUDIO_ELEMENT
 } from './actionTypes';
-// @ts-ignore
 import logger from './logger';
 
 /**

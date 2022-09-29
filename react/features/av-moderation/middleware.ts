@@ -2,8 +2,7 @@
 import { batch } from 'react-redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
-// @ts-ignore
-import { getConferenceState } from '../base/conference';
+import { getConferenceState } from '../base/conference/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE, MediaType } from '../base/media/constants';
 import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
@@ -17,10 +16,8 @@ import {
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-// @ts-ignore
-import { playSound, registerSound, unregisterSound } from '../base/sounds';
-// @ts-ignore
-import { hideNotification, showNotification } from '../notifications';
+import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 // @ts-ignore
 import { muteLocal } from '../video-menu/actions.any';
@@ -81,7 +78,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
         let descriptionKey;
         let titleKey;
-        let uid: string | undefined;
+        let uid = '';
         const localParticipant = getLocalParticipant(getState);
         const raisedHand = hasRaisedHand(localParticipant);
 
@@ -118,19 +115,19 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case REQUEST_DISABLE_AUDIO_MODERATION: {
-        conference.disableAVModeration(MEDIA_TYPE.AUDIO);
+        conference?.disableAVModeration(MEDIA_TYPE.AUDIO);
         break;
     }
     case REQUEST_DISABLE_VIDEO_MODERATION: {
-        conference.disableAVModeration(MEDIA_TYPE.VIDEO);
+        conference?.disableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }
     case REQUEST_ENABLE_AUDIO_MODERATION: {
-        conference.enableAVModeration(MEDIA_TYPE.AUDIO);
+        conference?.enableAVModeration(MEDIA_TYPE.AUDIO);
         break;
     }
     case REQUEST_ENABLE_VIDEO_MODERATION: {
-        conference.enableAVModeration(MEDIA_TYPE.VIDEO);
+        conference?.enableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }
     case PARTICIPANT_UPDATED: {
