@@ -3,8 +3,7 @@
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SET_FATAL_ERROR,
-    SET_PAGE_RELOAD_OVERLAY_CANCELED,
-    TOGGLE_SLOW_GUM_OVERLAY
+    SET_PAGE_RELOAD_OVERLAY_CANCELED
 } from './actionTypes';
 
 /**
@@ -24,24 +23,6 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
     return {
         type: MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
         browser,
-        isVisible
-    };
-}
-
-/**
- * Signals that the prompt for media permission is visible or not.
- *
- * @param {boolean} isVisible - If the value is true - the prompt for media
- * permission is visible otherwise the value is false/undefined.
- * @public
- * @returns {{
-*     type: SLOW_GET_USER_MEDIA_OVERLAY,
-*     isVisible: {boolean}
-* }}
-*/
-export function toggleSlowGUMOverlay(isVisible: boolean) {
-    return {
-        type: TOGGLE_SLOW_GUM_OVERLAY,
         isVisible
     };
 }
