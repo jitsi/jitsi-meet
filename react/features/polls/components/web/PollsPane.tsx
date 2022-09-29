@@ -24,6 +24,7 @@ const PollsPane = (props: AbstractProps) => {
             <div className = 'poll-footer poll-create-footer'>
                 <Button
                     accessibilityLabel = { t('polls.create.create') }
+                    autoFocus = { true }
                     fullWidth = { true }
                     labelKey = { 'polls.create.create' }
                     onClick = { onCreate } />

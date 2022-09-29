@@ -162,9 +162,7 @@ class Chat extends AbstractChat<Props> {
                     <MessageContainer
                         messages = { this.props._messages } />
                     <MessageRecipient />
-
                     <ChatInput
-                        onResize = { this._onChatInputResize }
                         onSend = { this._onSendMessage } />
                 </div>
             </>

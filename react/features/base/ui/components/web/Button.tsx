@@ -178,6 +178,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 
 const Button = React.forwardRef<any, any>(({
     accessibilityLabel,
+    autoFocus = false,
     className,
     disabled,
     fullWidth,
@@ -197,6 +198,7 @@ const Button = React.forwardRef<any, any>(({
     return (
         <button
             aria-label = { accessibilityLabel }
+            autoFocus = { autoFocus }
             className = { cx(styles.button, styles[type],
                 disabled && styles.disabled,
                 icon && !(labelKey || label) && `${styles.iconButton} iconButton`,
