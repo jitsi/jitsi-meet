@@ -311,7 +311,7 @@ export interface IConfig {
     giphy?: {
         displayMode?: 'all' | 'tile' | 'chat';
         enabled?: boolean;
-        sdkKey?: '';
+        sdkKey?: string;
         tileTime?: number;
     };
     gravatar?: {
