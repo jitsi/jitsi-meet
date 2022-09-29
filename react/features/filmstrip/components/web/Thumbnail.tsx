@@ -1282,7 +1282,7 @@ function _mapStateToProps(state: IState, ownProps: any): Object {
         size._width = ownProps.width;
     }
 
-    const { gifUrl: gifSrc } = getGifForParticipant(state, id);
+    const { gifUrl: gifSrc } = getGifForParticipant(state, id ?? '');
     const mode = getGifDisplayMode(state);
     const participantId = isLocal ? getLocalParticipant(state)?.id : participantID;
 

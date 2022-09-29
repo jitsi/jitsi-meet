@@ -84,7 +84,7 @@ const useStyles = makeStyles()((theme: Theme) => {
  * @returns {ReactElement}
  */
 function GifsMenu() {
-    const API_KEY: string = useSelector(getGifAPIKey);
+    const API_KEY = useSelector(getGifAPIKey);
     const giphyFetch = new GiphyFetch(API_KEY);
     const [ searchKey, setSearchKey ] = useState<string>();
     const { classes: styles, cx } = useStyles();

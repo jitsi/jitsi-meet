@@ -1,4 +1,5 @@
-import { MiddlewareRegistry } from '../base/redux';
+import { IState } from '../app/types';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { ADD_GIF_FOR_PARTICIPANT, HIDE_GIF_FOR_PARTICIPANT, SHOW_GIF_FOR_PARTICIPANT } from './actionTypes';
 import { removeGif } from './actions';
@@ -49,11 +50,11 @@ MiddlewareRegistry.register(store => next => action => {
 /**
  * Clears GIF timeout.
  *
- * @param {Object} state - Redux state.
+ * @param {IState} state - Redux state.
  * @param {string} id - Id of the participant for whom to clear the timeout.
  * @returns {void}
  */
-function _clearGifTimeout(state, id) {
+function _clearGifTimeout(state: IState, id: string) {
     const gif = getGifForParticipant(state, id);
 
     clearTimeout(gif?.timeoutID);

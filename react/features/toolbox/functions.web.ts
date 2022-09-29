@@ -1,6 +1,6 @@
-// @flow
-import { getToolbarButtons } from '../base/config';
-import { hasAvailableDevices } from '../base/devices';
+import { IState } from '../app/types';
+import { getToolbarButtons } from '../base/config/functions.web';
+import { hasAvailableDevices } from '../base/devices/functions';
 import { isScreenMediaShared } from '../screen-share/functions';
 
 import { TOOLBAR_TIMEOUT } from './constants';
@@ -15,7 +15,7 @@ export * from './functions.any';
 export function getToolboxHeight() {
     const toolbox = document.getElementById('new-toolbox');
 
-    return (toolbox && toolbox.clientHeight) || 0;
+    return toolbox?.clientHeight || 0;
 }
 
 /**
@@ -23,11 +23,11 @@ export function getToolboxHeight() {
  *
  * @param {string} name - The name of the setting section as defined in
  * interface_config.js.
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @returns {boolean|undefined} - True to indicate that the given toolbar button
  * is enabled, false - otherwise.
  */
-export function isButtonEnabled(name: string, state: Object) {
+export function isButtonEnabled(name: string, state: IState) {
     const toolbarButtons = getToolbarButtons(state);
 
     return toolbarButtons.indexOf(name) !== -1;
@@ -36,11 +36,11 @@ export function isButtonEnabled(name: string, state: Object) {
 /**
  * Indicates if the toolbox is visible or not.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean} - True to indicate that the toolbox is visible, false -
  * otherwise.
  */
-export function isToolboxVisible(state: Object) {
+export function isToolboxVisible(state: IState) {
     const { iAmRecorder, iAmSipGateway, toolbarConfig } = state['features/base/config'];
     const { alwaysVisible } = toolbarConfig || {};
     const {
@@ -56,23 +56,23 @@ export function isToolboxVisible(state: Object) {
 /**
  * Indicates if the audio settings button is disabled or not.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isAudioSettingsButtonDisabled(state: Object) {
+export function isAudioSettingsButtonDisabled(state: IState) {
 
     return !(hasAvailableDevices(state, 'audioInput')
-          || hasAvailableDevices(state, 'audioOutput'))
-          || state['features/base/config'].startSilent;
+        || hasAvailableDevices(state, 'audioOutput'))
+        || state['features/base/config'].startSilent;
 }
 
 /**
  * Indicates if the desktop share button is disabled or not.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isDesktopShareButtonDisabled(state: Object) {
+export function isDesktopShareButtonDisabled(state: IState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
     const videoOrShareInProgress = !muted || isScreenMediaShared(state);
 
@@ -82,20 +82,20 @@ export function isDesktopShareButtonDisabled(state: Object) {
 /**
  * Indicates if the video settings button is disabled or not.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isVideoSettingsButtonDisabled(state: Object) {
+export function isVideoSettingsButtonDisabled(state: IState) {
     return !hasAvailableDevices(state, 'videoInput');
 }
 
 /**
  * Indicates if the video mute button is disabled or not.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isVideoMuteButtonDisabled(state: Object) {
+export function isVideoMuteButtonDisabled(state: IState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
 
     return !hasAvailableDevices(state, 'videoInput') || (unmuteBlocked && Boolean(muted));
@@ -105,31 +105,31 @@ export function isVideoMuteButtonDisabled(state: Object) {
  * If an overflow drawer should be displayed or not.
  * This is usually done for mobile devices or on narrow screens.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function showOverflowDrawer(state: Object) {
+export function showOverflowDrawer(state: IState) {
     return state['features/toolbox'].overflowDrawer;
 }
 
 /**
  * Indicates whether the toolbox is enabled or not.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isToolboxEnabled(state: Object) {
+export function isToolboxEnabled(state: IState) {
     return state['features/toolbox'].enabled;
 }
 
 /**
  * Returns the toolbar timeout from config or the default value.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {number} - Toolbar timeout in milliseconds.
  */
-export function getToolbarTimeout(state: Object) {
-    const { toolbarConfig: { timeout } } = state['features/base/config'];
+export function getToolbarTimeout(state: IState) {
+    const { toolbarConfig } = state['features/base/config'];
 
-    return timeout || TOOLBAR_TIMEOUT;
+    return toolbarConfig?.timeout || TOOLBAR_TIMEOUT;
 }
