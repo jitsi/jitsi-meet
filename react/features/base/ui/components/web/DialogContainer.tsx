@@ -1,13 +1,35 @@
 import { ModalTransition } from '@atlaskit/modal-dialog';
-import React from 'react';
+import React, { Component, ComponentType } from 'react';
 
+import { IState } from '../../../../app/types';
 import KeyboardShortcutsDialog from '../../../../keyboard-shortcuts/components/web/KeyboardShortcutsDialog';
+import { ReactionEmojiProps } from '../../../../reactions/constants';
 import { connect } from '../../../redux/functions';
-import AbstractDialogContainer, {
-    Props, abstractMapStateToProps
-} from '../AbstractDialogContainer';
 
 import DialogTransition from './DialogTransition';
+
+interface Props {
+
+    /**
+     * The component to render.
+     */
+    _component: ComponentType;
+
+    /**
+     * The props to pass to the component that will be rendered.
+     */
+    _componentProps: Object;
+
+    /**
+     * Array of reactions to be displayed.
+     */
+    _reactionsQueue: Array<ReactionEmojiProps>;
+
+    /**
+     * True if the UI is in a compact state where we don't show dialogs.
+     */
+    _reducedUI: boolean;
+}
 
 // This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
 const isNewDialog = (component: any) => {
@@ -25,9 +47,8 @@ type State = {
  * Implements a DialogContainer responsible for showing all dialogs. Necessary
  * for supporting @atlaskit's modal animations.
  *
- * @augments AbstractDialogContainer
  */
-class DialogContainer extends AbstractDialogContainer<State> {
+class DialogContainer extends Component<Props, State> {
 
     /**
      * Initializes a new {@code DialogContainer} instance.
@@ -59,6 +80,24 @@ class DialogContainer extends AbstractDialogContainer<State> {
     }
 
     /**
+     * Returns the dialog to be displayed.
+     *
+     * @private
+     * @returns {ReactElement|null}
+     */
+    _renderDialogContent() {
+        const {
+            _component: component,
+            _reducedUI: reducedUI
+        } = this.props;
+
+        return (
+            component && !reducedUI
+                ? React.createElement(component, this.props._componentProps)
+                : null);
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -77,4 +116,23 @@ class DialogContainer extends AbstractDialogContainer<State> {
     }
 }
 
-export default connect(abstractMapStateToProps)(DialogContainer);
+/**
+ * Maps (parts of) the redux state to the associated
+ * {@code AbstractDialogContainer}'s props.
+ *
+ * @param {Object} state - The redux state.
+ * @private
+ * @returns {Props}
+ */
+function mapStateToProps(state: IState) {
+    const stateFeaturesBaseDialog = state['features/base/dialog'];
+    const { reducedUI } = state['features/base/responsive-ui'];
+
+    return {
+        _component: stateFeaturesBaseDialog.component,
+        _componentProps: stateFeaturesBaseDialog.componentProps,
+        _reducedUI: reducedUI
+    };
+}
+
+export default connect(mapStateToProps)(DialogContainer);

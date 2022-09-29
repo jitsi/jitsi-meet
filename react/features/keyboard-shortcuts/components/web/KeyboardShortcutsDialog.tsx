@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 
 import { IStore } from '../../../app/types';
 import { hideDialog } from '../../../base/dialog/actions';
-import Dialog from '../../../base/dialog/components/web/Dialog';
 import { translate } from '../../../base/i18n/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
 
 /**
  * The type of the React {@code Component} props of

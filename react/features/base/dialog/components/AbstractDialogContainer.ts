@@ -6,7 +6,7 @@ import { ReactionEmojiProps } from '../../../reactions/constants';
 /**
  * The type of the React {@code Component} props of {@link DialogContainer}.
  */
-export interface Props {
+interface Props {
 
     /**
      * The component to render.
@@ -32,7 +32,7 @@ export interface Props {
 /**
  * Implements a DialogContainer responsible for showing all dialogs.
  */
-export default class AbstractDialogContainer<S = any> extends Component<Props, S> {
+export default class AbstractDialogContainer extends Component<Props> {
     /**
      * Returns the dialog to be displayed.
      *
