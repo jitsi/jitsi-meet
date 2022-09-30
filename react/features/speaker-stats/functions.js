@@ -23,7 +23,7 @@ export function isSpeakerStatsSearchDisabled(state: Object) {
  * @param {*} state - The redux state.
  * @returns {boolean} - True if the speaker stats search is disabled and false otherwise.
  */
-export function isSpeakerStatsDisable(state: Object) {
+export function isSpeakerStatsDisabled(state: Object) {
     return state['features/base/config']?.speakerStats?.disabled;
 }
 

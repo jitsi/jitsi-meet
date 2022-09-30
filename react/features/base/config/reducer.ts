@@ -457,7 +457,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
     ) {
         newValue.speakerStats = {
             ...newValue.speakerStats,
-            disableSearch: newValue.disableSpeakerStatsSearch
+            disableSearch: oldValue.disableSpeakerStatsSearch
         };
     }
 
@@ -465,7 +465,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
          && newValue.speakerStats.order === undefined) {
         newValue.speakerStats = {
             ...newValue.speakerStats,
-            order: newValue.speakerStatsOrder
+            order: oldValue.speakerStatsOrder
         };
     }
 

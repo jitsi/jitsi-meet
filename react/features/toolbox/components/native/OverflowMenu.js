@@ -15,7 +15,7 @@ import SecurityDialogButton
     from '../../../security/components/security-dialog/native/SecurityDialogButton';
 import { SharedVideoButton } from '../../../shared-video/components';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
-import { isSpeakerStatsDisable } from '../../../speaker-stats/functions';
+import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import styles from '../../../video-menu/components/native/styles';
@@ -60,7 +60,7 @@ type Props = {
     /**
      * Whether or not speaker stats is disable.
      */
-    _isSpeakerStatsDisable: boolean
+    _isSpeakerStatsDisabled: boolean
 };
 
 type State = {
@@ -101,9 +101,9 @@ class OverflowMenu extends PureComponent<Props, State> {
      */
     render() {
         const {
+            _isSpeakerStatsDisabled,
             _reactionsEnabled,
-            _width,
-            _isSpeakerStatsDisable
+            _width
         } = this.props;
         const toolbarButtons = getMovableButtons(_width);
 
@@ -142,7 +142,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <Divider style = { styles.divider } />
                 <SharedVideoButton { ...buttonProps } />
                 {!toolbarButtons.has('screensharing') && <ScreenSharingButton { ...buttonProps } />}
-                {!_isSpeakerStatsDisable && <SpeakerStatsButton { ...buttonProps } />}
+                {!_isSpeakerStatsDisabled && <SpeakerStatsButton { ...buttonProps } />}
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <ClosedCaptionButton { ...buttonProps } />
@@ -183,9 +183,9 @@ class OverflowMenu extends PureComponent<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
+        _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
         _reactionsEnabled: isReactionsEnabled(state),
-        _width: state['features/base/responsive-ui'].clientWidth,
-        _isSpeakerStatsDisable: isSpeakerStatsDisable(state)
+        _width: state['features/base/responsive-ui'].clientWidth
     };
 }
 

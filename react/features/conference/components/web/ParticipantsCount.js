@@ -10,7 +10,7 @@ import { COLORS } from '../../../base/label/constants';
 import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { SpeakerStats } from '../../../speaker-stats';
-import { isSpeakerStatsDisable } from '../../../speaker-stats/functions';
+import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 
 
 /**
@@ -36,7 +36,7 @@ type Props = {
     /**
      * Weather or not the speaker stats is disabled.
      */
-     isSpeakerStatsDisabled: Boolean,
+     _isSpeakerStatsDisabled: Boolean,
 };
 
 /**
@@ -89,7 +89,7 @@ class ParticipantsCount extends PureComponent<Props> {
             <Label
                 color = { COLORS.white }
                 icon = { IconUserGroups }
-                onClick = { !this.props.isSpeakerStatsDisabled && this._onClick }
+                onClick = { !this.props._isSpeakerStatsDisabled && this._onClick }
                 text = { count } />
         );
     }
@@ -108,7 +108,7 @@ function mapStateToProps(state) {
     return {
         conference: state['features/base/conference'].conference,
         count: getParticipantCount(state),
-        isSpeakerStatsDisabled: isSpeakerStatsDisable(state)
+        _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state)
     };
 }
 
