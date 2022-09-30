@@ -63,8 +63,8 @@
         "confirmAddLink": "您要為此活動加入 Jitsi 連結嗎？",
         "error": {
             "appConfiguration": "行事曆整合尚未正確設定。",
-            "generic": "發生錯誤。請檢查行事曆設定，或是重新整理行事曆。",
-            "notSignedIn": "查看行事曆事件進行認證時發生錯誤。請檢查您的行事曆設定，並再次登入。"
+            "generic": "發生錯誤，請檢查行事曆設定，或是重新整理行事曆。",
+            "notSignedIn": "查看行事曆事件進行認證時發生錯誤，請檢查您的行事曆設定，並再次登入。"
         },
         "join": "參加",
         "joinTooltip": "參加會議",
@@ -332,7 +332,7 @@
         "permissionCameraRequiredError": "參與視訊會議需要存取網路攝影機，請在設定中啟用權限",
         "permissionErrorTitle": "需要權限",
         "permissionMicRequiredError": "參與音訊會議需要存取麥克風，請在設定中啟用權限",
-        "popupError": "您的瀏覽器在此網站上阻擋彈出視窗。請在瀏覽器的安全設定中啟用並再試一次。",
+        "popupError": "您的瀏覽器在此網站上阻擋彈出視窗，請在瀏覽器的安全設定中啟用並再試一次。",
         "popupErrorTitle": "彈出視窗遭到阻擋",
         "readMore": "更多",
         "recentlyUsedObjects": "您近期使用過的物件",
@@ -477,9 +477,11 @@
         "noRoom": "沒有會議室指定要撥入。",
         "numbers": "撥入號碼",
         "password": "$t(lockRoomPasswordUppercase)：",
+        "reachedLimit": "您已達到您的方案上限",
         "sip": "SIP位址",
         "title": "分享",
-        "tooltip": "顯示此會議的連結及電話撥入號碼"
+        "tooltip": "顯示此會議的連結及電話撥入號碼",
+        "upgradeOptions": "請查看升級選項於"
     },
     "inlineDialogFailure": {
         "msg": "好像有點卡卡不順。",
@@ -876,7 +878,7 @@
     },
     "recording": {
         "authDropboxText": "上傳至 Dropbox",
-        "availableSpace": "可用空間：{{spaceLeft}}MB（錄製時間大約{{duration}}分鐘)",
+        "availableSpace": "可用空間：{{spaceLeft}}MB（錄製時間大約{{duration}}分鐘）",
         "beta": "BETA",
         "busy": "我們正在釋放錄製資源，請過幾分鐘後再試。",
         "busyTitle": "全部錄製目前忙碌",
@@ -1245,7 +1247,7 @@
     "videoStatus": {
         "adjustFor": "調整：",
         "audioOnly": "僅聲音",
-        "audioOnlyExpanded": "您目前處於低頻寬模式。在此模式下您僅會收到語音及畫面分享。",
+        "audioOnlyExpanded": "您目前處於低頻寬模式，在此模式下您僅會收到語音及畫面分享。",
         "bestPerformance": "最佳效能",
         "callQuality": "影像品質",
         "hd": "HD",
@@ -1293,9 +1295,9 @@
         "desktopShare": "桌面畫面分享",
         "desktopShareError": "無法建立桌面畫面分享",
         "image1": "海灘",
-        "image2": "牆壁（白)",
-        "image3": "空房間（白)",
-        "image4": "落地燈（黑)",
+        "image2": "牆壁（白）",
+        "image3": "空房間（白）",
+        "image4": "落地燈（黑）",
         "image5": "山岳",
         "image6": "森林",
         "image7": "日出",
@@ -1347,7 +1349,7 @@
         "privacy": "隱私權",
         "recentList": "最近使用",
         "recentListDelete": "刪除",
-        "recentListEmpty": "目前最近使用是空白的。與您的團隊成員聊天，即會在此處找到最近使用過的會議。",
+        "recentListEmpty": "目前最近使用是空白的，與您的團隊成員聊天，即會在此處找到最近使用過的會議。",
         "reducedUIText": "歡迎使用{{app}}！",
         "roomNameAllowedChars": "會議室名稱不應包含以下字元：? & : '「 % #",
         "roomname": "輸入會議室名稱",
