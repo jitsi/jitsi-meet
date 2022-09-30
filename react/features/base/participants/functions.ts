@@ -609,7 +609,8 @@ async function _getFirstLoadableAvatarUrl(participant: Participant, store: IStor
             } else {
                 try {
                     const { corsAvatarURLs } = store.getState()['features/base/config'];
-                    const { isUsingCORS, src } = await preloadImage(url, isCORSAvatarURL(url, corsAvatarURLs));
+                    const useCORS = isIconUrl(url) ? false : isCORSAvatarURL(url, corsAvatarURLs);
+                    const { isUsingCORS, src } = await preloadImage(url, useCORS);
 
                     AVATAR_CHECKED_URLS.set(src, {
                         isLoadable: true,
