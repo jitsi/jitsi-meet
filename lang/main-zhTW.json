@@ -969,7 +969,6 @@
         "playSounds": "播放音效",
         "reactions": "會議反應",
         "sameAsSystem": "系統預設（{{label}}）",
-        "screenTitle": "設定",
         "selectAudioOutput": "音訊輸出",
         "selectCamera": "網路攝影機",
         "selectMic": "麥克風",
@@ -1358,6 +1357,7 @@
         "roomname": "輸入會議室名稱",
         "roomnameHint": "請輸入您想加入的會議室名稱或網址，您可以用個名稱來建立會議室，只要其他人輸入相同的名稱就能加入會議室喔。",
         "sendFeedback": "傳送回饋",
+        "settings": "設定",
         "startMeeting": "開始會議",
         "terms": "條款",
         "title": "安全、功能齊全、完全免費的視訊會議"

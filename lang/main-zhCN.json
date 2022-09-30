@@ -969,7 +969,6 @@
         "playSounds": "播放提示音",
         "reactions": "会议反应",
         "sameAsSystem": "系统默认（{{label}}）",
-        "screenTitle": "设置",
         "selectAudioOutput": "音频输出",
         "selectCamera": "摄像头",
         "selectMic": "麦克风",
@@ -1358,6 +1357,7 @@
         "roomname": "请输入会议室名称",
         "roomnameHint": "输入你想加入的会议室的名称或网址，你也可以使用不同的名称创建会议室，其他人只需输入相同的名称即可加入。",
         "sendFeedback": "发送反馈",
+        "settings": "设置",
         "startMeeting": "开始会议",
         "terms": "条款",
         "title": "安全、功能完善、完全免费的视频会议"
