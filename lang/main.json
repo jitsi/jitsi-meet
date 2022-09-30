@@ -969,7 +969,6 @@
         "playSounds": "Play sound on",
         "reactions": "Meeting reactions",
         "sameAsSystem": "Same as system ({{label}})",
-        "screenTitle": "Settings",
         "selectAudioOutput": "Audio output",
         "selectCamera": "Camera",
         "selectMic": "Microphone",
@@ -1355,6 +1354,7 @@
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
+        "settings": "Settings",
         "startMeeting": "Start meeting",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing"
