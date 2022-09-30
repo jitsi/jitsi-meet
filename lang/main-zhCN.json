@@ -1116,7 +1116,8 @@
             "toggleFilmstrip": "开启/关闭幻灯片",
             "undock": "取消停靠到单独的窗口",
             "videoblur": "开启/关闭视频模糊",
-            "videomute": "启动/停止摄像头"
+            "videomute": "启动/停止摄像头",
+            "whiteboard": "显示/隐藏白板"
         },
         "addPeople": "添加人员到你的通话中",
         "audioOnlyOff": "禁用省流模式",
@@ -1147,6 +1148,7 @@
         "giphy": "关闭GIPHY菜单",
         "hangup": "离开会议",
         "help": "帮助",
+        "hideWhiteboard": "隐藏白板",
         "invite": "邀请其他人",
         "joinBreakoutRoom": "加入分组讨论室",
         "laugh": "大笑",
@@ -1192,6 +1194,7 @@
         "shareaudio": "分享音频",
         "sharedvideo": "分享视频",
         "shortcuts": "查看快捷键",
+        "showWhiteboard": "显示白板",
         "silence": "沉默",
         "speakerStats": "发言统计",
         "startScreenSharing": "开启共享屏幕",
