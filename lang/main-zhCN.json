@@ -441,7 +441,7 @@
         "answer": "接听",
         "audioCallTitle": "来电",
         "decline": "拒听",
-        "productLabel": "来自Jitsi Meet",
+        "productLabel": "来自 Jitsi Meet",
         "videoCallTitle": "视频通话"
     },
     "info": {
@@ -477,9 +477,11 @@
         "noRoom": "没有指定要呼入的会议室。",
         "numbers": "拨入号码",
         "password": "$t(lockRoomPasswordUppercase)：",
+        "reachedLimit": "你已达到你的计划上限",
         "sip": "SIP地址",
         "title": "分享",
-        "tooltip": "共享此会议的链接和拨号信息"
+        "tooltip": "共享此会议的链接和拨号信息",
+        "upgradeOptions": "请查看升级选项于"
     },
     "inlineDialogFailure": {
         "msg": "我们似乎出了点小问题。",

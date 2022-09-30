@@ -477,7 +477,7 @@
         "noRoom": "No room was specified to dial-in into.",
         "numbers": "Dial-in Numbers",
         "password": "$t(lockRoomPasswordUppercase): ",
-        "reachedLimit": "you have reached the limit for you plan.",
+        "reachedLimit": "You have reached the limit of your plan.",
         "sip": "SIP address",
         "title": "Share",
         "tooltip": "Share link and dial-in info for this meeting",
