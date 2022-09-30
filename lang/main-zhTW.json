@@ -1116,7 +1116,8 @@
             "toggleFilmstrip": "啟用/停用簡報",
             "undock": "取消停靠到單獨的视窗",
             "videoblur": "啟用/停用畫面模糊",
-            "videomute": "啟用/停用網路攝影機"
+            "videomute": "啟用/停用網路攝影機",
+            "whiteboard": "啟用/停用白板"
         },
         "addPeople": "新增人員到您的通話中",
         "audioOnlyOff": "停用低頻寬模式",
@@ -1147,6 +1148,7 @@
         "giphy": "啟用/停用GIPHY選單",
         "hangup": "離開會議",
         "help": "協助",
+        "hideWhiteboard": "停用白板",
         "invite": "邀請他人",
         "joinBreakoutRoom": "加入分組討論室",
         "laugh": "大笑",
@@ -1192,6 +1194,7 @@
         "shareaudio": "分享音訊",
         "sharedvideo": "分享影片",
         "shortcuts": "查看快捷鍵",
+        "showWhiteboard": "啟用白板",
         "silence": "沉默",
         "speakerStats": "發言統計",
         "startScreenSharing": "啟動畫面分享",
