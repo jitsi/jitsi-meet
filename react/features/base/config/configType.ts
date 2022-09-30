@@ -492,4 +492,8 @@ export interface IConfig {
     webrtcIceUdpDisable?: boolean;
     websocket?: string;
     websocketKeepAliveUrl?: string;
+    whiteboard?: {
+        collabServerBaseUrl?: string;
+        enabled?: boolean;
+    };
 }

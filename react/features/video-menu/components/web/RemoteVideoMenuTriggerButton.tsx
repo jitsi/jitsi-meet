@@ -9,7 +9,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons/svg';
-import { getParticipantById } from '../../../base/participants/functions';
+import { getLocalParticipant, getParticipantById } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
@@ -24,7 +24,7 @@ import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 // @ts-ignore
 import { renderConnectionStatus } from '../../actions.web';
 
-// @ts-ignore
+import FakeParticipantContextMenu from './FakeParticipantContextMenu';
 import ParticipantContextMenu from './ParticipantContextMenu';
 // @ts-ignore
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
@@ -39,6 +39,11 @@ interface Props extends WithTranslation {
      * Whether the remote video context menu is disabled.
      */
     _disabled: Boolean;
+
+    /**
+     * Shared video local participant owner.
+     */
+    _localVideoOwner?: boolean;
 
     /**
      * The position relative to the trigger the remote menu should display
@@ -237,15 +242,27 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderRemoteVideoMenu() {
-        const { _participant, _remoteControlState, classes } = this.props;
+        const { _localVideoOwner, _participant, _remoteControlState, classes } = this.props;
+
+        const props = {
+            className: classes.contextMenu,
+            onSelect: this._onPopoverClose,
+            participant: _participant,
+            thumbnailMenu: true
+        };
+
+        if (_participant?.isFakeParticipant) {
+            return (
+                <FakeParticipantContextMenu
+                    { ...props }
+                    localVideoOwner = { _localVideoOwner } />
+            );
+        }
 
         return (
             <ParticipantContextMenu
-                className = { classes.contextMenu }
-                onSelect = { this._onPopoverClose }
-                participant = { _participant }
-                remoteControlState = { _remoteControlState }
-                thumbnailMenu = { true } />
+                { ...props }
+                remoteControlState = { _remoteControlState } />
         );
     }
 }
@@ -261,6 +278,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { participantID, thumbnailType } = ownProps;
     let _remoteControlState = null;
+    const localParticipantId = getLocalParticipant(state)?.id;
     const participant = getParticipantById(state, participantID ?? '');
     const _participantDisplayName = participant?.name;
     const _isRemoteControlSessionActive = participant?.remoteControlSessionStatus ?? false;
@@ -271,6 +289,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
     const { remoteVideoMenu } = state['features/base/config'];
+    const { ownerId } = state['features/shared-video'];
 
     if (_supportsRemoteControl
             && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
@@ -301,6 +320,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
 
     return {
         _disabled: remoteVideoMenu?.disabled,
+        _localVideoOwner: Boolean(ownerId === localParticipantId),
         _menuPosition,
         _overflowDrawer: overflowDrawer,
         _participant: participant ?? { id: '' },

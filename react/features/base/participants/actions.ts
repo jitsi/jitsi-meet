@@ -407,6 +407,7 @@ export function participantLeft(id: string, conference: any, participantLeftProp
             id,
             isReplaced: participantLeftProps.isReplaced,
             isVirtualScreenshareParticipant: participantLeftProps.isVirtualScreenshareParticipant,
+            isWhiteboard: participantLeftProps.isWhiteboard,
             isFakeParticipant: participantLeftProps.isFakeParticipant
         }
     };

@@ -102,6 +102,8 @@ import { VideoQualityButton, VideoQualityDialog } from '../../../video-quality/c
 // @ts-ignore
 import { VideoBackgroundButton, toggleBackgroundEffect } from '../../../virtual-background';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
+import WhiteboardButton from '../../../whiteboard/components/web/WhiteboardButton';
+import { isWhiteboardEnabled } from '../../../whiteboard/functions';
 import {
     setFullScreen,
     setHangupMenuVisible,
@@ -318,6 +320,11 @@ interface Props extends WithTranslation {
      * Flag showing whether toolbar is visible.
      */
     _visible: boolean;
+
+    /**
+     * Whether the whiteboard is visible.
+     */
+    _whiteboardEnabled: boolean;
 
     /**
      * An object containing the CSS classes.
@@ -714,7 +721,8 @@ class Toolbox extends Component<Props> {
             _isMobile,
             _hasSalesforce,
             _multiStreamModeEnabled,
-            _screenSharing
+            _screenSharing,
+            _whiteboardEnabled
         } = this.props;
 
         const microphone = {
@@ -845,6 +853,12 @@ class Toolbox extends Component<Props> {
         };
 
 
+        const whiteboard = _whiteboardEnabled && {
+            key: 'whiteboard',
+            Content: WhiteboardButton,
+            group: 3
+        };
+
         const etherpad = {
             key: 'etherpad',
             Content: SharedDocumentButton,
@@ -932,6 +946,7 @@ class Toolbox extends Component<Props> {
             shareVideo,
             shareAudio,
             noiseSuppression,
+            whiteboard,
             etherpad,
             virtualBackground,
             dockIframe,
@@ -1533,7 +1548,8 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _whiteboardEnabled: isWhiteboardEnabled(state)
     };
 }
 

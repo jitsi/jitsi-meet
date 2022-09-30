@@ -16,7 +16,12 @@ import { toState } from '../redux/functions';
 import { getScreenShareTrack, getVideoTrackByParticipant } from '../tracks/functions';
 import { createDeferred } from '../util/helpers';
 
-import { JIGASI_PARTICIPANT_ICON, MAX_DISPLAY_NAME_LENGTH, PARTICIPANT_ROLE } from './constants';
+import {
+    JIGASI_PARTICIPANT_ICON,
+    MAX_DISPLAY_NAME_LENGTH,
+    PARTICIPANT_ROLE,
+    WHITEBOARD_PARTICIPANT_ICON
+} from './constants';
 // @ts-ignore
 import { preloadImage } from './preloadImage';
 import { Participant } from './types';
@@ -30,6 +35,9 @@ const AVATAR_CHECKED_URLS = new Map();
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant: Participant) => {
         return participant?.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
+    },
+    (participant: Participant) => {
+        return participant?.isWhiteboard ? WHITEBOARD_PARTICIPANT_ICON : null;
     },
     (participant: Participant) => {
         return participant?.avatarURL ? participant.avatarURL : null;
