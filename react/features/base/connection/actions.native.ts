@@ -3,7 +3,6 @@ import { Dispatch } from 'redux';
 
 // @ts-ignore
 import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
-// @ts-ignore
 import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 

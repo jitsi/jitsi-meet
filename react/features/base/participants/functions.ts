@@ -8,15 +8,12 @@ import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
-// @ts-ignore
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config';
+import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config/functions.any';
 import i18next from '../i18n/i18next';
 import { JitsiParticipantConnectionStatus, JitsiTrackStreamingStatus } from '../lib-jitsi-meet';
-// @ts-ignore
-import { shouldRenderVideoTrack } from '../media';
+import { shouldRenderVideoTrack } from '../media/functions';
 import { toState } from '../redux/functions';
-// @ts-ignore
-import { getScreenShareTrack, getVideoTrackByParticipant } from '../tracks';
+import { getScreenShareTrack, getVideoTrackByParticipant } from '../tracks/functions';
 import { createDeferred } from '../util/helpers';
 
 import { JIGASI_PARTICIPANT_ICON, MAX_DISPLAY_NAME_LENGTH, PARTICIPANT_ROLE } from './constants';
@@ -305,13 +302,14 @@ export function getFakeParticipants(stateful: IStateful) {
  * @returns {number}
  */
 export function getRemoteParticipantCount(stateful: IStateful) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful);
+    const participantsState = state['features/base/participants'];
 
     if (getMultipleVideoSupportFeatureFlag(state)) {
-        return state.remote.size - state.sortedRemoteVirtualScreenshareParticipants.size;
+        return participantsState.remote.size - participantsState.sortedRemoteVirtualScreenshareParticipants.size;
     }
 
-    return state.remote.size;
+    return participantsState.remote.size;
 }
 
 /**

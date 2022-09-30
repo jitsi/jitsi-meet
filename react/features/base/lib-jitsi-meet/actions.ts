@@ -14,8 +14,7 @@ import {
     LIB_WILL_DISPOSE,
     LIB_WILL_INIT
 } from './actionTypes';
-// @ts-ignore
-import { isAnalyticsEnabled } from './functions';
+import { isAnalyticsEnabled } from './functions.any';
 
 /**
  * Disposes (of) lib-jitsi-meet.

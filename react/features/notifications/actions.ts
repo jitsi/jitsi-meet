@@ -97,6 +97,7 @@ interface INotificationProps {
     description?: string;
     descriptionKey?: string;
     icon?: string;
+    sticky?: boolean;
     title?: string;
     titleArguments?: {
         [key: string]: string;

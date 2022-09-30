@@ -16,7 +16,6 @@ import {
 import {
     getLocalAudioTrack,
     getLocalVideoTrack
-    // @ts-ignore
 } from '../base/tracks/functions';
 
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';

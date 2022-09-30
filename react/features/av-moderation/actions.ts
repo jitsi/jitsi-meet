@@ -1,7 +1,5 @@
 import { IStore } from '../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { getConferenceState } from '../base/conference';
+import { getConferenceState } from '../base/conference/functions';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import { getParticipantById, isParticipantModerator } from '../base/participants/functions';
 import { Participant } from '../base/participants/types';
@@ -40,7 +38,7 @@ export const approveParticipantAudio = (id: string) => (dispatch: IStore['dispat
     const isVideoForceMuted = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
 
     if (isAudioModerationOn || !isVideoModerationOn || !isVideoForceMuted) {
-        conference.avModerationApprove(MEDIA_TYPE.AUDIO, id);
+        conference?.avModerationApprove(MEDIA_TYPE.AUDIO, id);
     }
 };
 
@@ -59,7 +57,7 @@ export const approveParticipantVideo = (id: string) => (dispatch: IStore['dispat
     const isVideoModerationOn = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 
     if (isVideoModerationOn && isVideoForceMuted) {
-        conference.avModerationApprove(MEDIA_TYPE.VIDEO, id);
+        conference?.avModerationApprove(MEDIA_TYPE.VIDEO, id);
     }
 };
 
@@ -90,7 +88,7 @@ export const rejectParticipantAudio = (id: string) => (dispatch: IStore['dispatc
     const isModerator = isParticipantModerator(participant);
 
     if (audioModeration && !isAudioForceMuted && !isModerator) {
-        conference.avModerationReject(MEDIA_TYPE.AUDIO, id);
+        conference?.avModerationReject(MEDIA_TYPE.AUDIO, id);
     }
 };
 
@@ -110,7 +108,7 @@ export const rejectParticipantVideo = (id: string) => (dispatch: IStore['dispatc
     const isModerator = isParticipantModerator(participant);
 
     if (videoModeration && !isVideoForceMuted && !isModerator) {
-        conference.avModerationReject(MEDIA_TYPE.VIDEO, id);
+        conference?.avModerationReject(MEDIA_TYPE.VIDEO, id);
     }
 };
 
