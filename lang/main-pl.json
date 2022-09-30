@@ -963,7 +963,6 @@
         "playSounds": "Włącz dźwięki",
         "reactions": "Reakcje",
         "sameAsSystem": "Jak system ({{label}})",
-        "screenTitle": "Ustawienia",
         "selectAudioOutput": "Wyjście audio",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
@@ -1343,6 +1342,7 @@
         "roomname": "Podaj nazwę sali konferencyjnej",
         "roomnameHint": "Wprowadź nazwę lub adres URL pokoju, do którego chcesz dołączyć. Możesz wymyślić nazwę, po prostu pozwól, aby osoby, z którymi się spotykasz, znały ją tak, aby wpisały tę samą nazwę.",
         "sendFeedback": "Wyślij opinię",
+        "settings": "Ustawienia",
         "startMeeting": "Rozpocznij spotkanie",
         "terms": "Warunki korzystania",
         "title": "Bezpieczna, w pełni funkcjonalna i całkowicie bezpłatna wideokonferencja"

@@ -967,7 +967,6 @@
         "playSounds": "Reproduzir som quando",
         "reactions": "Há uma reação na reunião",
         "sameAsSystem": "O mesmo que o sistema ({{label}})",
-        "screenTitle": "Definições",
         "selectAudioOutput": "Saída de áudio",
         "selectCamera": "Câmara",
         "selectMic": "Microfone",
@@ -1353,6 +1352,7 @@
         "roomname": "Digite o nome da sala",
         "roomnameHint": "Digite o nome ou URL da sala a que pretende entrar. Pode inventar um nome, basta informar as pessoas com quem se vai encontrar para que entrem com o mesmo nome.",
         "sendFeedback": "Enviar comentários",
+        "settings": "Definições",
         "startMeeting": "Iniciar reunião",
         "terms": "Termos",
         "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas"
