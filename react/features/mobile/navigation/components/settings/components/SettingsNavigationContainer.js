@@ -57,21 +57,21 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: Props) => {
                     name = { screen.settings.links.help }
                     options = {{
                         ...linkScreenOptions,
-                        title: t('helpView.header')
+                        title: t('helpView.title')
                     }} />
                 <SettingsStack.Screen
                     component = { TermsView }
                     name = { screen.settings.links.terms }
                     options = {{
                         ...linkScreenOptions,
-                        title: t('termsView.header')
+                        title: t('termsView.title')
                     }} />
                 <SettingsStack.Screen
                     component = { PrivacyView }
                     name = { screen.settings.links.privacy }
                     options = {{
                         ...linkScreenOptions,
-                        title: t('privacyView.header')
+                        title: t('privacyView.title')
                     }} />
             </SettingsStack.Navigator>
         </NavigationContainer>

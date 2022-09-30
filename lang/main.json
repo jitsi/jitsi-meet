@@ -82,7 +82,7 @@
         },
         "labels": {
             "buttonLabel": "Car mode",
-            "title": "Safe driving mode",
+            "title": "Car mode",
             "videoStopped": "Your video is stopped"
         }
     },
@@ -435,7 +435,7 @@
         "search": "Search GIPHY"
     },
     "helpView": {
-        "header": "Help center"
+        "title": "Help center"
     },
     "incomingCall": {
         "answer": "Answer",
@@ -553,6 +553,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
+        "title": "Live stream",
         "unavailableTitle": "Live Streaming unavailable",
         "youtubeTerms": "YouTube terms of services"
     },
@@ -595,6 +596,7 @@
         "passwordJoinButton": "Join",
         "reject": "Reject",
         "rejectAll": "Reject all",
+        "title": "Lobby",
         "toggleLabel": "Enable lobby"
     },
     "localRecording": {
@@ -737,13 +739,13 @@
             "videoModeration": "Start their video"
         },
         "close": "Close",
-        "header": "Participants",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})",
             "waitingLobby": "Waiting in lobby ({{count}})"
         },
-        "search": "Search participants"
+        "search": "Search participants",
+        "title": "Participants"
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "Set by another participant",
@@ -853,7 +855,7 @@
         "ringing": "Ringing..."
     },
     "privacyView": {
-        "header": "Privacy"
+        "title": "Privacy"
     },
     "profile": {
         "avatar": "avatar",
@@ -925,6 +927,7 @@
         "signIn": "Sign in",
         "signOut": "Sign out",
         "surfaceError": "Please select the current tab.",
+        "title": "Recording",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable",
         "uploadToCloud": "Upload to the cloud"
@@ -936,8 +939,8 @@
     "security": {
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
-        "header": "Security Options",
-        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button."
+        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
+        "title": "Security Options"
     },
     "settings": {
         "buttonLabel": "Settings",
@@ -1042,7 +1045,7 @@
         "title": "Your video call was interrupted because this computer went to sleep."
     },
     "termsView": {
-        "header": "Terms"
+        "title": "Terms"
     },
     "toggleTopPanelLabel": "Toggle top panel",
     "toolbar": {

@@ -111,23 +111,29 @@ const ConferenceNavigationContainer = () => {
                     name = { screen.conference.participants }
                     options = {{
                         ...participantsScreenOptions,
-                        title: t('participantsPane.header')
+                        title: t('participantsPane.title')
                     }} />
                 <ConferenceStack.Screen
                     component = { SecurityDialog }
                     name = { screen.conference.security }
                     options = {{
                         ...securityScreenOptions,
-                        title: t('security.header')
+                        title: t('security.title')
                     }} />
                 <ConferenceStack.Screen
                     component = { StartRecordingDialog }
                     name = { screen.conference.recording }
-                    options = { recordingScreenOptions } />
+                    options = {{
+                        ...recordingScreenOptions,
+                        title: t('recording.title')
+                    }} />
                 <ConferenceStack.Screen
                     component = { StartLiveStreamDialog }
                     name = { screen.conference.liveStream }
-                    options = { liveStreamScreenOptions } />
+                    options = {{
+                        ...liveStreamScreenOptions,
+                        title: t('liveStreaming.title')
+                    }} />
                 <ConferenceStack.Screen
                     component = { SpeakerStats }
                     name = { screen.conference.speakerStats }
@@ -152,7 +158,10 @@ const ConferenceNavigationContainer = () => {
                 <ConferenceStack.Screen
                     component = { LobbyNavigationContainer }
                     name = { screen.lobby.root }
-                    options = { lobbyNavigationContainerScreenOptions } />
+                    options = {{
+                        ...lobbyNavigationContainerScreenOptions,
+                        title: t('lobby.title')
+                    }} />
                 <ConferenceStack.Screen
                     component = { AddPeopleDialog }
                     name = { screen.conference.invite }
