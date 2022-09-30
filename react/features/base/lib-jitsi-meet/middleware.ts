@@ -93,6 +93,9 @@ function _setErrorHandlers() {
     if (JitsiMeetJS.getGlobalOnErrorHandler) {
         const oldOnErrorHandler = window.onerror;
 
+        // TODO: Don't remove this ignore. The build fails on macOS and we don't know yet why.
+
+        // @ts-ignore
         window.onerror = (message, source, lineno, colno, error) => { // eslint-disable-line max-params
             const errMsg = message || error?.message;
             const stack = error?.stack;
