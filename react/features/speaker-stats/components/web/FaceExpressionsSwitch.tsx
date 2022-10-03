@@ -51,7 +51,7 @@ export default function FaceExpressionsSwitch({ onChange, showFaceExpressions }:
             <label
                 className = { classes.switchLabel }
                 htmlFor = 'face-expressions-switch'>
-                { t('speakerStats.displayEmotions')}
+                { t('speakerStats.showEmotions')}
             </label>
             <Switch
                 checked = { showFaceExpressions }

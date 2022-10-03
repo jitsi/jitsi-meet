@@ -7,7 +7,7 @@
  * @private
  * @returns {number}
  */
-function getHoursCount(milliseconds) {
+function getHoursCount(milliseconds: number) {
     return Math.floor(milliseconds / (60 * 60 * 1000));
 }
 
@@ -18,7 +18,7 @@ function getHoursCount(milliseconds) {
  * @private
  * @returns {number}
  */
-function getMinutesCount(milliseconds) {
+function getMinutesCount(milliseconds: number) {
     return Math.floor(milliseconds / (60 * 1000) % 60);
 }
 
@@ -29,7 +29,7 @@ function getMinutesCount(milliseconds) {
  * @private
  * @returns {number}
  */
-function getSecondsCount(milliseconds) {
+function getSecondsCount(milliseconds: number) {
     return Math.floor(milliseconds / 1000 % 60);
 }
 
@@ -85,6 +85,6 @@ export function createLocalizedTime(time: number, t: Function) {
  * key for react to iterate upon.
  * @returns {string}
  */
-function createTimeDisplay(count, countNounKey, t) {
+function createTimeDisplay(count: number, countNounKey: string, t: Function) {
     return t(countNounKey, { count });
 }

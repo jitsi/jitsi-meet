@@ -579,7 +579,7 @@
         "minutes": "{{count}}m",
         "name": "Name",
         "seconds": "{{count}}s",
-        "speakerStats": "Speaker Stats",
+        "speakerStats": "Participants Stats",
         "speakerTime": "Speaker Time"
     },
     "startupoverlay": {
@@ -626,7 +626,7 @@
             "sharedvideo": "Toggle video sharing",
             "shortcuts": "Toggle shortcuts",
             "show": "Show on stage",
-            "speakerStats": "Toggle speaker statistics",
+            "speakerStats": "Toggle participants statistics",
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
             "videoblur": "",
@@ -662,7 +662,7 @@
         "shareRoom": "Invite someone",
         "sharedvideo": "Share video",
         "shortcuts": "View shortcuts",
-        "speakerStats": "Speaker stats",
+        "speakerStats": "Participants stats",
         "startScreenSharing": "Start screen sharing",
         "startSubtitles": "Start subtitles",
         "startvideoblur": "",

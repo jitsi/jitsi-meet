@@ -1,7 +1,6 @@
-/* @flow */
-
 import React, { Component } from 'react';
 
+// @ts-ignore
 import { translate } from '../../../base/i18n';
 import { createLocalizedTime } from '../timeFunctions';
 
@@ -13,12 +12,12 @@ type Props = {
     /**
      * The function to translate human-readable text.
      */
-    t: Function,
+    t: Function;
 
     /**
      * The milliseconds to be converted into a human-readable format.
      */
-    time: number
+    time: number;
 };
 
 /**

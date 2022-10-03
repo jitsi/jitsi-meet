@@ -19,5 +19,21 @@ export type InitInput = {
 export type DetectOutput = {
     faceBox?: FaceBox;
     faceCount: number;
-    faceExpression?: string;
+    faceExpression?: FaceExpression;
+};
+
+export type FaceExpression = {
+    expression: string;
+    score: number;
+};
+
+export type FaceLandmarks = {
+
+    // duration in milliseconds of the face landmarks
+    duration: number;
+    faceExpression: string;
+    score?: number;
+
+    // the start timestamp of the expression
+    timestamp: number;
 };

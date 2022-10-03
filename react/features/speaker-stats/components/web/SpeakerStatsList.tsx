@@ -13,40 +13,40 @@ import SpeakerStatsItem from './SpeakerStatsItem';
 const useStyles = makeStyles()(theme => {
     return {
         list: {
-            marginTop: theme.spacing(3),
-            marginBottom: theme.spacing(3)
-        },
-        item: {
-            height: theme.spacing(7),
-            [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                height: theme.spacing(8)
+            paddingTop: 90,
+            '& .item': {
+                height: theme.spacing(7),
+                [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
+                    height: theme.spacing(8)
+                },
+                '& .has-left': {
+                    color: theme.palette.text03
+                },
+                '& .avatar': {
+                    width: '32px',
+                    marginRight: theme.spacing(3),
+                    height: theme.spacing(5)
+                },
+                '& .time': {
+                    padding: '2px 4px',
+                    borderRadius: '4px',
+                    ...withPixelLineHeight(theme.typography.labelBold),
+                    [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
+                        ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                    },
+                    backgroundColor: theme.palette.ui02
+                },
+                '& .display-name': {
+                    ...withPixelLineHeight(theme.typography.bodyShortRegular),
+                    [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
+                        ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                    }
+                },
+                '& .dominant': {
+                    backgroundColor: theme.palette.success02
+                }
             }
-        },
-        avatar: {
-            height: theme.spacing(5)
-        },
-        expressions: {
-            paddingLeft: 29
-        },
-        hasLeft: {
-            color: theme.palette.text03
-        },
-        displayName: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
-            }
-        },
-        time: {
-            padding: '2px 4px',
-            borderRadius: '4px',
-            ...withPixelLineHeight(theme.typography.labelBold),
-            [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
-            }
-        },
-        dominant: {
-            backgroundColor: theme.palette.success02
+
         }
     };
 });
@@ -58,10 +58,11 @@ const useStyles = makeStyles()(theme => {
  */
 const SpeakerStatsList = () => {
     const { classes } = useStyles();
-    const items = abstractSpeakerStatsList(SpeakerStatsItem, classes);
+    const items = abstractSpeakerStatsList(SpeakerStatsItem);
 
     return (
         <div className = { classes.list }>
+            <div className = 'separator' />
             {items}
         </div>
     );
