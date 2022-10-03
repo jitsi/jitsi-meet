@@ -1,9 +1,11 @@
 import { Theme } from '@mui/material';
 import React, { ReactElement, useCallback, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
+import { hideDialog } from '../../../dialog/actions';
 import { IconClose } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
@@ -177,7 +179,7 @@ interface DialogProps {
         disabled?: boolean;
         key: string;
     };
-    onCancel: () => void;
+    onCancel?: () => void;
     onSubmit?: () => void;
     size?: 'large' | 'medium';
     title?: string;
@@ -198,12 +200,23 @@ const Dialog = ({
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
     const { isUnmounting } = useContext(DialogTransitionContext);
+    const dispatch = useDispatch();
+
+    const onClose = useCallback(() => {
+        onCancel?.();
+        dispatch(hideDialog());
+    }, [ onCancel ]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
         if (e.key === 'Escape') {
-            onCancel();
+            onClose();
         }
     }, []);
+
+    const submit = useCallback(() => {
+        onSubmit?.();
+        dispatch(hideDialog());
+    }, [ onSubmit ]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
@@ -215,7 +228,7 @@ const Dialog = ({
         <div className = { cx(classes.container, isUnmounting && 'unmount') }>
             <div
                 className = { classes.backdrop }
-                onClick = { onCancel } />
+                onClick = { onClose } />
             <div
                 aria-describedby = { description }
                 aria-labelledby = { title ?? t(titleKey ?? '') }
@@ -227,20 +240,20 @@ const Dialog = ({
                     <ClickableIcon
                         accessibilityLabel = { t('dialog.close') }
                         icon = { IconClose }
-                        onClick = { onCancel } />
+                        onClick = { onClose } />
                 </div>
                 <div className = { classes.content }>{children}</div>
                 <div className = { classes.footer }>
                     {cancelKey && <Button
                         accessibilityLabel = { t(cancelKey) }
                         labelKey = { cancelKey }
-                        onClick = { onCancel }
+                        onClick = { onClose }
                         type = 'tertiary' />}
                     {ok && <Button
                         accessibilityLabel = { t(ok.key) }
                         disabled = { ok.disabled }
                         labelKey = { ok.key }
-                        onClick = { onSubmit } />}
+                        onClick = { submit } />}
                 </div>
             </div>
         </div>

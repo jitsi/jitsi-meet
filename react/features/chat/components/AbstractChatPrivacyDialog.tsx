@@ -1,42 +1,40 @@
-// @flow
-
 import { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { getParticipantById } from '../../base/participants';
+import { IState, IStore } from '../../app/types';
+import { getParticipantById } from '../../base/participants/functions';
+import { Participant } from '../../base/participants/types';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { sendMessage, setPrivateMessageRecipient } from '../actions';
 
-type Props = {
-
-    /**
-     * The message that is about to be sent.
-     */
-    message: Object,
-
-    /**
-     * The ID of the participant that we think the message may be intended to.
-     */
-    participantID: string,
-
-    /**
-     * Function to be used to translate i18n keys.
-     */
-    t: Function,
+interface Props extends WithTranslation {
 
     /**
      * Prop to be invoked on sending the message.
      */
-    _onSendMessage: Function,
+    _onSendMessage: Function;
 
     /**
      * Prop to be invoked when the user wants to set a private recipient.
      */
-    _onSetMessageRecipient: Function,
+    _onSetMessageRecipient: Function;
 
     /**
      * The participant retrieved from Redux by the participanrID prop.
      */
-    _participant: Object
-};
+    _participant: Object;
+
+    /**
+     * The message that is about to be sent.
+     */
+    message: Object;
+
+    /**
+     * The ID of the participant that we think the message may be intended to.
+     */
+    participantID: string;
+}
 
 /**
  * Abstract class for the dialog displayed to avoid mis-sending private messages.
@@ -54,8 +52,6 @@ export class AbstractChatPrivacyDialog extends PureComponent<Props> {
         this._onSendPrivateMessage = this._onSendPrivateMessage.bind(this);
     }
 
-    _onSendGroupMessage: () => boolean;
-
     /**
      * Callback to be invoked for cancel action (user wants to send a group message).
      *
@@ -66,8 +62,6 @@ export class AbstractChatPrivacyDialog extends PureComponent<Props> {
 
         return true;
     }
-
-    _onSendPrivateMessage: () => boolean;
 
     /**
      * Callback to be invoked for submit action (user wants to send a private message).
@@ -90,13 +84,13 @@ export class AbstractChatPrivacyDialog extends PureComponent<Props> {
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {Props}
  */
-export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
+export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
         _onSendMessage: (message: Object) => {
             dispatch(sendMessage(message, true));
         },
 
-        _onSetMessageRecipient: participant => {
+        _onSetMessageRecipient: (participant: Participant) => {
             dispatch(setPrivateMessageRecipient(participant));
         }
     };
@@ -105,11 +99,11 @@ export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
 /**
  * Maps part of the Redux store to the props of this component.
  *
- * @param {Object} state - The Redux state.
+ * @param {IState} state - The Redux state.
  * @param {Props} ownProps - The own props of the component.
  * @returns {Props}
  */
-export function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
+export function _mapStateToProps(state: IState, ownProps: Props) {
     return {
         _participant: getParticipantById(state, ownProps.participantID)
     };

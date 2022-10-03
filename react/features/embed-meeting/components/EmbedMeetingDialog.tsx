@@ -1,25 +1,21 @@
-// @flow
-
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
+import { IState } from '../../app/types';
 import CopyButton from '../../base/buttons/CopyButton';
-import { getInviteURL } from '../../base/connection';
-import { Dialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
+import { getInviteURL } from '../../base/connection/functions';
+import { translate } from '../../base/i18n/functions';
+import Dialog from '../../base/ui/components/web/Dialog';
 
-type Props = {
+interface Props extends WithTranslation {
 
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
 
     /**
      * The URL of the conference.
      */
-    url: string
-};
+    url: string;
+}
 
 /**
  * Allow users to embed a jitsi meeting in an iframe.
@@ -37,11 +33,7 @@ function EmbedMeeting({ t, url }: Props) {
         + ' style="height: 100%; width: 100%; border: 0px;"></iframe>';
 
     return (
-        <Dialog
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = { 'embedMeeting.title' }
-            width = 'small'>
+        <Dialog titleKey = { 'embedMeeting.title' }>
             <div className = 'embed-meeting-dialog'>
                 <textarea
                     aria-label = { t('dialog.embedMeeting') }
@@ -60,7 +52,7 @@ function EmbedMeeting({ t, url }: Props) {
     );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: IState) => {
     return {
         url: getInviteURL(state)
     };
