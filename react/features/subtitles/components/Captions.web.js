@@ -2,24 +2,30 @@
 
 import React from 'react';
 
-import {getLocalParticipant} from '../../base/participants';
-import {connect} from '../../base/redux';
-import {getLargeVideoParticipant} from '../../large-video/functions';
-import {isLayoutTileView} from '../../video-layout';
+import { getLocalParticipant } from '../../base/participants';
+import { connect } from '../../base/redux';
+import { getLargeVideoParticipant } from '../../large-video/functions';
+import { isLayoutTileView } from '../../video-layout';
 
 import {
     _abstractMapStateToProps,
     AbstractCaptions,
     type AbstractCaptionsProps
 } from './AbstractCaptions';
-import {isMobileBrowser} from "../../base/environment/utils";
+import { isMobileBrowser } from '../../base/environment/utils';
+import { showTranscriptData } from '../actions';
+import { translate } from '../../base/i18n';
+import type { Dispatch } from 'redux';
 
-type Props = {
+export type Props = {
 
     /**
      * Whether the subtitles container is lifted above the invite box.
      */
-    _isLifted: boolean
+    _isLifted: boolean, /**
+     * The redux {@code dispatch} function.
+     */
+    dispatch: Dispatch<any>, _transcript: $ObjMap
 } & AbstractCaptionsProps;
 
 /**
@@ -28,59 +34,82 @@ type Props = {
  */
 
 let textStore = '';
+let transcriptJSonData;
+let stringData;
+let parseData;
 
-class Captions
-    extends AbstractCaptions<Props> {
+class Captions extends AbstractCaptions<Props> {
 
     /**
      * Renders the transcription text.
      *
-     * @param {string} id - The ID of the transcript message from which the
      * {@code text} has been created.
-     * @param {string} text - Subtitles text formatted with the participant's
      * name.
      * @protected
      * @returns {React$Element} - The React element which displays the text.
+     * @param props
      */
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: '',
+            i: 0
+        };
+    };
 
     componentDidMount() {
         setInterval(async () => {
-
             const args = `${textStore}`;
-
             try {
                 if (isMobileBrowser()) {
                     if (window.flutter_inappwebview) {
-                        console.log('beforeArgs', args);
-                        window.flutter_inappwebview.callHandler('myHandlerName', args);
-                        console.log('afterArgs', args);
+                        let structuredArgs = args.replaceAll('Fellow Jitser:', '');
+                        window.flutter_inappwebview.callHandler('handleTranscriptArgs', structuredArgs)
+                            .then((e) => {
+                                transcriptJSonData = JSON.stringify(e);
+                                const { transcriptBite } = JSON.parse(transcriptJSonData);
+                                this.setState({
+                                    i: this.state.i + 1,
+                                    data: `${transcriptBite[this.state.i]['bite']} ${transcriptBite[this.state.i]['count']}`
+                                });
+                                console.log(`dataaaaa  ${this.state.data}`);
+
+                            });
+                        this.props.dispatch(showTranscriptData(this.state.data));
                         textStore = '';
                     } else {
                         console.log('InAppWebViewNotLoaded');
                     }
                 } else {
                     window.opener.postMessage(JSON.stringify({
-                        'polytok': args,
-                    }), "https://custommeet4.centralus.cloudapp.azure.com/");
+                        'polytok': args
+                    }), 'https://custommeet4.centralus.cloudapp.azure.com/');
+                    window.addEventListener('message', (event) => {
+                        stringData = JSON.stringify(event.data);
+                        parseData = JSON.parse(stringData);
+                    });
+                    this.setState({
+                        i: this.state.i + 1,
+                        data: `${parseData[this.state.i]['bite']} ${parseData[this.state.i]['count']}`
+                    });
+                    console.log(`dataaaaa  ${this.state.data}`);
+                    this.props.dispatch(showTranscriptData(this.state.data));
                     textStore = '';
                 }
             } catch (e) {
                 console.log('got an exception : ', e);
             }
 
-        }, 30000);
+        }, 10000);
     }
 
+
     _renderParagraph(id: string, text: string): React$Element<*> {
-
         textStore = textStore + text;
-
-
-        return (
-            <p key={id}>
-                <span>{text}</span>
-            </p>
-        );
+        return (<p key={id}>
+            <span>{text}</span>
+        </p>);
     }
 
     /**
@@ -91,16 +120,11 @@ class Captions
      * @protected
      * @returns {React$Element} - The subtitles container.
      */
-    _renderSubtitlesContainer(
-        paragraphs: Array<React$Element<*>>): React$Element<*> {
-
+    _renderSubtitlesContainer(paragraphs: Array<React$Element<*>>): React$Element<*> {
         const className = this.props._isLifted ? 'transcription-subtitles lifted' : 'transcription-subtitles';
-
-        return (
-            <div className={className}>
-                {paragraphs}
-            </div>
-        );
+        return (<div className={className}>
+            {paragraphs}
+        </div>);
     }
 }
 
@@ -123,4 +147,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(Captions);
+export default translate(connect(mapStateToProps)(Captions));

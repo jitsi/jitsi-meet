@@ -298,6 +298,11 @@ type Props = {
      */
     toolbarButtons: Array<string>,
 
+    /**
+     * Display  translated strings..
+     */
+    _sendTranscriptMessage: string
+
 };
 
 declare var APP: Object;
@@ -1294,6 +1299,12 @@ class Toolbox extends Component<Props> {
                  })}>
                 <SideButtons/>
                 <ConnectButtons/>
+                <div><p style={{
+                    textAlign: 'start',
+                    fontSize: '14px',
+                    color: 'white',
+                    paddingLeft: '20%'
+                }}>{this.props._sendTranscriptMessage}</p></div>
             </div>
             <div
                 className="toolbox-content-wrapper1"
@@ -1417,6 +1428,7 @@ function _mapStateToProps(state, ownProps) {
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const { clientWidth } = state['features/base/responsive-ui'];
+    const { _sendTranscriptMessage } = state['features/subtitles'];
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1461,7 +1473,8 @@ function _mapStateToProps(state, ownProps) {
         _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _sendTranscriptMessage: _sendTranscriptMessage
     };
 }
 

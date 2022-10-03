@@ -1,26 +1,14 @@
 // @flow
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { translate } from '../../../base/i18n';
-import {
-    Icon,
-    IconAdd,
-    IconGem,
-    IconBeer,
-    IconEightStreek,
-    IconCyclone,
-    IconDollarGreen
-} from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
     isButtonEnabled,
-    isToolboxVisible
+    isToolboxEnabled
 } from '../../../toolbox/functions.web';
-// import { Modal, Button } from "react-bootstrap";
-import { openDialog, toggleDialog } from '../../../base/dialog';
 import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../base/flags';
 import { getConferenceName } from '../../../base/conference/functions';
-import { isToolboxEnabled } from '../../../toolbox/functions.web';
 import API from '../services';
 import { isMobileBrowser } from '../../../base/environment/utils';
 
@@ -114,7 +102,7 @@ const ConnectButtons = (props: Props) => {
             {adsList.map((value, index) => {
                 return (
                     <div key={index}>
-                        {timer == index || timer + 1 == index ?
+                        {timer === index || timer + 1 === index ?
                             <div style={{
                                 flexDirection: 'row',
                                 height: '50px',

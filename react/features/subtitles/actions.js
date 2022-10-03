@@ -3,10 +3,12 @@
 import {
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
-    TOGGLE_REQUESTING_SUBTITLES,
+    SEND_TRANSCRIPT_DATA,
     SET_REQUESTING_SUBTITLES,
+    TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
+import { Dispatch } from 'react';
 
 /**
  * Signals that a participant sent an endpoint message on the data channel.
@@ -56,7 +58,7 @@ export function removeTranscriptMessage(transcriptMessageID: string) {
  * }}
  */
 export function updateTranscriptMessage(transcriptMessageID: string,
-        newTranscriptMessage: Object) {
+    newTranscriptMessage: Object) {
     return {
         type: UPDATE_TRANSCRIPT_MESSAGE,
         transcriptMessageID,
@@ -90,5 +92,23 @@ export function setRequestingSubtitles(enabled: boolean) {
     return {
         type: SET_REQUESTING_SUBTITLES,
         enabled
+    };
+}
+
+/**
+ * It is used to show the details of transcriber data
+ *
+ * @param {boolean} enabled - The new state of the subtitles.
+ * @returns {{
+ *    type: SEND_TRANSCRIPT_DATA,
+ *    data: data
+ * }}
+ */
+export function showTranscriptData(data) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        dispatch({
+            type: SEND_TRANSCRIPT_DATA,
+            data: data
+        });
     };
 }
