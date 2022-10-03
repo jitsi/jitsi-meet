@@ -8,9 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v3
       with:
-        node-version: '16.x'
+        node-version: 16
+        cache: 'npm'
     - run: npm install
     - name: Check git status
       run: git status
@@ -25,9 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v3
       with:
-        node-version: '16.x'
+        node-version: 16
+        cache: 'npm'
     - run: npm install
     - run: make
   macos-ci:
@@ -35,8 +37,9 @@ jobs:
     runs-on: macOS-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v3
       with:
-        node-version: '16.x'
+        node-version: 16
+        cache: 'npm'
     - run: npm install
     - run: make
