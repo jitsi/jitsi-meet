@@ -1,8 +1,6 @@
-// @flow
-
-import { VIDEO_TYPE } from '../base/media';
-import { MiddlewareRegistry } from '../base/redux';
-import { getLocalVideoTrack } from '../base/tracks';
+import { VIDEO_TYPE } from '../base/media/constants';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { getLocalVideoTrack } from '../base/tracks/functions';
 
 import { SET_VIRTUAL_BACKGROUND } from './actionTypes';
 import { localTrackStopped } from './functions';

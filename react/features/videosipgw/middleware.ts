@@ -1,23 +1,24 @@
-// @flow
-
+import { IStore } from '../app/types';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
+import { IJitsiConference } from '../base/conference/reducer';
 import {
     JitsiConferenceEvents,
     JitsiSIPVideoGWStatus
 } from '../base/lib-jitsi-meet';
-import { MiddlewareRegistry } from '../base/redux';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import {
-    NOTIFICATION_TIMEOUT_TYPE,
     showErrorNotification,
     showNotification,
     showWarningNotification
-} from '../notifications';
+} from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import {
     SIP_GW_AVAILABILITY_CHANGED,
     SIP_GW_INVITE_ROOMS
 } from './actionTypes';
 import logger from './logger';
+import { SipRoom, SipSessionChangedEvent } from './types';
 
 /**
  * Middleware that captures conference video sip gw events and stores
@@ -38,10 +39,12 @@ MiddlewareRegistry.register(({ dispatch }) => next => action => {
 
         conference.on(
             JitsiConferenceEvents.VIDEO_SIP_GW_AVAILABILITY_CHANGED,
+
+            // @ts-ignore
             (...args) => dispatch(_availabilityChanged(...args)));
         conference.on(
             JitsiConferenceEvents.VIDEO_SIP_GW_SESSION_STATE_CHANGED,
-            event => {
+            (event: SipSessionChangedEvent) => {
                 const toDispatch = _sessionStateChanged(event);
 
                 // sessionStateChanged can decide there is nothing to dispatch
@@ -88,7 +91,7 @@ function _availabilityChanged(status: string) {
  * @private
  * @returns {void}
  */
-function _inviteRooms(rooms, conference, dispatch) {
+function _inviteRooms(rooms: SipRoom[], conference: IJitsiConference, dispatch: IStore['dispatch']) {
     for (const room of rooms) {
         const { id: sipAddress, name: displayName } = room;
 
@@ -141,7 +144,7 @@ function _inviteRooms(rooms, conference, dispatch) {
  * @private
  */
 function _sessionStateChanged(
-        event: Object) {
+        event: SipSessionChangedEvent) {
     switch (event.newState) {
     case JitsiSIPVideoGWStatus.STATE_PENDING: {
         return showNotification({
