@@ -5,10 +5,10 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { IconToggleRecording } from '../../../base/icons';
+import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import { FEATURES } from '../../../jaas/constants';
 import { getActiveSession, getRecordButtonProps } from '../../functions';
 
 import LocalRecordingManager from './LocalRecordingManager';
@@ -91,7 +91,7 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
                 'is_recording': _isRecordingRunning,
                 type: JitsiRecordingConstants.mode.FILE
             }));
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             this._onHandleClick();

@@ -7,19 +7,6 @@ export const STATUSES = {
 };
 
 /**
- * Service features for JaaS users.
- */
-export const FEATURES = {
-    INBOUND_CALL: 'inbound-call',
-    OUTBOUND_CALL: 'outbound-call',
-    RECORDING: 'recording',
-    SIP_INBOUND_CALL: 'sip-inbound-call',
-    SIP_OUTBOUND_CALL: 'sip-outbound-call',
-    STREAMING: 'streaming',
-    TRANSCRIPTION: 'transcription'
-};
-
-/**
  * URL for displaying JaaS upgrade options.
  */
 export const JAAS_UPGRADE_URL = 'https://jaas.8x8.vc/#/plan/upgrade';

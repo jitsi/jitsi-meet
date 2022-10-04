@@ -147,9 +147,10 @@ export function validateJwt(jwt: string) {
             errors.push('- `context` object is missing from the payload');
         } else if (context.features) {
             const { features } = context;
+            const meetFeatures = Object.values(MEET_FEATURES);
 
             Object.keys(features).forEach(feature => {
-                if (MEET_FEATURES.includes(feature)) {
+                if (meetFeatures.includes(feature)) {
                     const featureValue = features[feature];
 
                     // cannot use truthy or falsy because we need the exact value and type check.
