@@ -66,7 +66,7 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
     // the image happens to be in the cache and the browser is able to deliver the uncompressed/decoded image
     // before using the image in the drawImage call.
     return new Promise(resolve => {
-        const img = document.createElement('img') as any;
+        const img = document.createElement('img');
 
         img.onload = function() {
             // Create an off-screen canvas.
@@ -80,7 +80,7 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
 
             // Draw source image into the off-screen canvas.
             // TODO: keep aspect ratio and implement object-fit: cover.
-            context?.drawImage(img, 0, 0, width, height);
+            context?.drawImage(img as any, 0, 0, width, height);
 
             // Encode image to data-uri with base64 version of compressed image.
             resolve(canvas.toDataURL('image/jpeg', 0.5));
