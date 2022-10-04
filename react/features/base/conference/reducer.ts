@@ -42,6 +42,7 @@ export interface IJitsiConference {
     addTrack: Function;
     avModerationApprove: Function;
     avModerationReject: Function;
+    createVideoSIPGWSession: Function;
     disableAVModeration: Function;
     enableAVModeration: Function;
     getBreakoutRooms: Function;

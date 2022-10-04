@@ -1,5 +1,3 @@
-/* @flow */
-
 import { SIP_GW_INVITE_ROOMS } from './actionTypes';
 
 /**

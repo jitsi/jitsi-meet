@@ -1,9 +1,11 @@
-// @flow
-
+import { IStore } from '../app/types';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND, VIRTUAL_BACKGROUND_TRACK_CHANGED } from './actionTypes';
 import logger from './logger';
+import { VirtualBackgroundOptions } from './types';
 
 /**
  * Signals the local participant activate the virtual background video or not.
@@ -12,8 +14,8 @@ import logger from './logger';
  * @param {Object} jitsiTrack - Represents the jitsi track that will have backgraund effect applied.
  * @returns {Promise}
  */
-export function toggleBackgroundEffect(options: Object, jitsiTrack: Object) {
-    return async function(dispatch: Object => Object, getState: () => any) {
+export function toggleBackgroundEffect(options: VirtualBackgroundOptions, jitsiTrack: any) {
+    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         await dispatch(backgroundEnabled(options.enabled));
         await dispatch(setVirtualBackground(options));
         const state = getState();
@@ -46,7 +48,7 @@ export function toggleBackgroundEffect(options: Object, jitsiTrack: Object) {
  *     type: string,
  * }}
  */
-export function setVirtualBackground(options: Object) {
+export function setVirtualBackground(options?: VirtualBackgroundOptions) {
     return {
         type: SET_VIRTUAL_BACKGROUND,
         virtualSource: options?.url,

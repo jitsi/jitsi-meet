@@ -1,10 +1,8 @@
-// @flow
-
 import { JitsiTrackEvents } from '../base/lib-jitsi-meet';
-import { updateSettings } from '../base/settings';
+import { updateSettings } from '../base/settings/actions';
 
 import { toggleBackgroundEffect } from './actions';
-let filterSupport;
+let filterSupport: boolean | undefined;
 
 /**
  * Checks context filter support.
@@ -16,7 +14,7 @@ export function checkBlurSupport() {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
-        filterSupport = typeof ctx.filter !== 'undefined';
+        filterSupport = typeof ctx?.filter !== 'undefined';
 
         canvas.remove();
     }
@@ -30,7 +28,7 @@ export function checkBlurSupport() {
  * @param {Blob} blob - The link to add info with.
  * @returns {Promise<string>}
  */
-export const blobToData = (blob: Blob): Promise<string> =>
+export const blobToData = (blob: Blob) =>
     new Promise(resolve => {
         const reader = new FileReader();
 
@@ -61,7 +59,7 @@ export const toDataURL = async (url: string) => {
  * @returns {Promise<string>}
  *
  */
-export function resizeImage(base64image: any, width: number = 1920, height: number = 1080): Promise<string> {
+export function resizeImage(base64image: any, width = 1920, height = 1080): Promise<string> {
 
     // In order to work on Firefox browser we need to handle the asynchronous nature of image loading;  We need to use
     // a promise mechanism. The reason why it 'works' without this mechanism in Chrome is actually 'by accident' because
@@ -82,7 +80,7 @@ export function resizeImage(base64image: any, width: number = 1920, height: numb
 
             // Draw source image into the off-screen canvas.
             // TODO: keep aspect ratio and implement object-fit: cover.
-            context.drawImage(img, 0, 0, width, height);
+            context?.drawImage(img as any, 0, 0, width, height);
 
             // Encode image to data-uri with base64 version of compressed image.
             resolve(canvas.toDataURL('image/jpeg', 0.5));
@@ -100,7 +98,7 @@ export function resizeImage(base64image: any, width: number = 1920, height: numb
  * background option if the desktop track was stopped.
  * @returns {Promise}
  */
-export function localTrackStopped(dispatch: Function, desktopTrack: Object, currentLocalTrack: Object) {
+export function localTrackStopped(dispatch: Function, desktopTrack: any, currentLocalTrack: Object | null) {
     const noneOptions = {
         enabled: false,
         backgroundType: 'none',
@@ -108,8 +106,7 @@ export function localTrackStopped(dispatch: Function, desktopTrack: Object, curr
         backgroundEffectEnabled: false
     };
 
-    desktopTrack
-    && desktopTrack.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
+    desktopTrack?.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
         dispatch(toggleBackgroundEffect(noneOptions, currentLocalTrack));
 
         // Set x scale to default value.
@@ -129,7 +126,7 @@ export function localTrackStopped(dispatch: Function, desktopTrack: Object, curr
  * after the specified timeout is to be implemented.
  * @returns {Promise}
  */
-export function timeout(milliseconds: number, promise: Promise<*>): Promise<Object> {
+export function timeout(milliseconds: number, promise: Promise<any>): Promise<Object> {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             reject(new Error('408'));
