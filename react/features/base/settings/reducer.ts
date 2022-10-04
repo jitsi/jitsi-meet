@@ -37,6 +37,7 @@ const DEFAULT_STATE: ISettingsState = {
     soundsTalkWhileMuted: true,
     soundsReactions: true,
     startAudioOnly: false,
+    startCarMode: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
     userSelectedAudioOutputDeviceId: undefined,
@@ -74,6 +75,7 @@ export interface ISettingsState {
     soundsReactions?: boolean;
     soundsTalkWhileMuted?: boolean;
     startAudioOnly?: boolean;
+    startCarMode?: boolean;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;
     userSelectedAudioOutputDeviceId?: string;
