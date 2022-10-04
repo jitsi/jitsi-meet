@@ -5,12 +5,7 @@ import { createVirtualBackgroundEffect } from '../stream-effects/virtual-backgro
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND, VIRTUAL_BACKGROUND_TRACK_CHANGED } from './actionTypes';
 import logger from './logger';
-import { IVirtualBackground } from './reducer';
-
-interface VirtualBackgroundOptions extends IVirtualBackground {
-    enabled: boolean;
-    url?: string;
-}
+import { VirtualBackgroundOptions } from './types';
 
 /**
  * Signals the local participant activate the virtual background video or not.
