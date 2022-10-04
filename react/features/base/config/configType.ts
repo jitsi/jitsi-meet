@@ -481,7 +481,7 @@ export interface IConfig {
                 standard?: number;
             };
         };
-        minHeightForQualityLvl: {
+        minHeightForQualityLvl?: {
             [key: number]: string;
         };
         preferredCodec?: string;

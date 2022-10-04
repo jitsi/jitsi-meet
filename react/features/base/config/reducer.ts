@@ -52,10 +52,11 @@ const INITIAL_RN_STATE: IConfig = {
     disableAudioLevels: true,
 
     p2p: {
-        disabledCodec: '',
-        disableH264: false, // deprecated
-        preferredCodec: 'H264',
-        preferH264: true // deprecated
+        preferredCodec: 'VP8'
+    },
+
+    videoQuality: {
+        preferredCodec: 'VP8'
     }
 };
 
