@@ -1,4 +1,4 @@
-// @flow
+import { IState } from '../app/types';
 
 /**
  * Selector creator for determining if poll results should be displayed or not.
@@ -7,7 +7,7 @@
  * @returns {Function}
  */
 export function shouldShowResults(id: string) {
-    return function(state: Object) {
+    return function(state: IState) {
         return Boolean(state['features/polls']?.polls[id].showResults);
     };
 }
@@ -19,7 +19,7 @@ export function shouldShowResults(id: string) {
  * @returns {Function}
  */
 export function getPoll(pollId: string) {
-    return function(state: Object) {
+    return function(state: IState) {
         return state['features/polls'].polls[pollId];
     };
 }
@@ -27,10 +27,10 @@ export function getPoll(pollId: string) {
 /**
  * Selector for calculating the number of unread poll messages.
  *
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @returns {number} The number of unread messages.
  */
-export function getUnreadPollCount(state: Object) {
+export function getUnreadPollCount(state: IState) {
     const { nbUnreadPolls } = state['features/polls'];
 
     return nbUnreadPolls;
