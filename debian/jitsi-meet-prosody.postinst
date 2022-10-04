@@ -83,9 +83,11 @@ case "$1" in
             TURN_SECRET="$RET"
         fi
 
+        SELF_SIGNED_CHOICE="Generate a new self-signed certificate"
         # In the case of updating from an older version the configure of -prosody package may happen before the -config
         # one, so if JAAS_INPUT is empty (the question is not asked), let's ask it now.
-        db_get jitsi-meet/cert-choice
+        # If db_get returns an error (workaround for strange Debian failure) continue without stopping the config
+        db_get jitsi-meet/cert-choice || CERT_CHOICE=$SELF_SIGNED_CHOICE
         CERT_CHOICE="$RET"
         if [ -z "$CERT_CHOICE" ] ; then
             db_input critical jitsi-meet/cert-choice || true
@@ -93,7 +95,6 @@ case "$1" in
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
         fi
-        SELF_SIGNED_CHOICE="Generate a new self-signed certificate"
         if [ "$CERT_CHOICE" != "$SELF_SIGNED_CHOICE" ]; then
             db_get jitsi-meet/jaas-choice
             JAAS_INPUT="$RET"
