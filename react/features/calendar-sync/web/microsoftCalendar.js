@@ -6,8 +6,7 @@ import type { Dispatch } from 'redux';
 import { v4 as uuidV4 } from 'uuid';
 import { findWindows } from 'windows-iana';
 
-import { createDeferred } from '../../../../modules/util/helpers';
-import { parseStandardURIString, parseURLParams } from '../../base/util';
+import { createDeferred, parseStandardURIString, parseURLParams } from '../../base/util';
 import { getShareInfoText } from '../../invite';
 import { setCalendarAPIAuthState } from '../actions';
 

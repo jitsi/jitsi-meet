@@ -17,10 +17,13 @@ import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEff
 import { setAudioOnly } from '../audio-only/actions';
 import { getCurrentConference } from '../conference/functions';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
+import { createLocalTrack } from '../lib-jitsi-meet/functions.any';
 import { setScreenshareMuted } from '../media/actions';
-import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
+import { CAMERA_FACING_MODE, MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
+import { updateSettings } from '../settings/actions';
 /* eslint-enable lines-around-comment */
 
+import { SET_TRACK_OPERATIONS_PROMISE } from './actionTypes';
 import {
     addLocalTrack,
     replaceLocalTrack
@@ -28,9 +31,10 @@ import {
 import {
     createLocalTracksF,
     getLocalDesktopTrack,
-    getLocalJitsiAudioTrack
+    getLocalJitsiAudioTrack,
+    getLocalVideoTrack
 } from './functions';
-import { IShareOptions, IToggleScreenSharingOptions } from './types';
+import { IShareOptions, IToggleScreenSharingOptions, TrackOperationType } from './types';
 
 export * from './actions.any';
 
@@ -148,8 +152,6 @@ async function _toggleScreenSharing(
     const audioOnlySharing = isAudioOnlySharing(state);
     const screenSharing = isScreenVideoShared(state);
     const conference = getCurrentConference(state);
-    const localAudio = getLocalJitsiAudioTrack(state);
-    const localScreenshare = getLocalDesktopTrack(state['features/base/tracks']);
 
     // Toggle screenshare or audio-only share if the new state is not passed. Happens in the following two cases.
     // 1. ShareAudioDialog passes undefined when the user hits continue in the share audio demo modal.
@@ -199,11 +201,16 @@ async function _toggleScreenSharing(
                 throw new Error(AUDIO_ONLY_SCREEN_SHARE_NO_TRACK);
             }
         } else if (desktopVideoTrack) {
-            if (localScreenshare) {
-                await dispatch(replaceLocalTrack(localScreenshare.jitsiTrack, desktopVideoTrack, conference));
-            } else {
-                await dispatch(addLocalTrack(desktopVideoTrack));
-            }
+            await dispatch(executeTrackOperation(TrackOperationType.Video, async () => {
+                const localScreenshare = getLocalDesktopTrack(getState()['features/base/tracks']);
+
+                if (localScreenshare) {
+                    await dispatch(replaceLocalTrack(localScreenshare.jitsiTrack, desktopVideoTrack, conference));
+                } else {
+                    await dispatch(addLocalTrack(desktopVideoTrack));
+                }
+            }));
+
             if (isScreenshotCaptureEnabled(state, false, true)) {
                 dispatch(toggleScreenshotCaptureSummary(true));
             }
@@ -216,7 +223,9 @@ async function _toggleScreenSharing(
             // Noise suppression doesn't work with desktop audio because we can't chain track effects yet, disable it
             // first. We need to to wait for the effect to clear first or it might interfere with the audio mixer.
             await dispatch(setNoiseSuppressionEnabled(false));
-            _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
+
+            dispatch(executeTrackOperation(TrackOperationType.Audio,
+                () => _maybeApplyAudioMixerEffect(desktopAudioTrack, state)));
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
 
             // Handle the case where screen share was stopped from the browsers 'screen share in progress' window.
@@ -241,16 +250,25 @@ async function _toggleScreenSharing(
 
         dispatch(toggleScreenshotCaptureSummary(false));
 
-        // Mute the desktop track instead of removing it from the conference since we don't want the client to signal
-        // a source-remove to the remote peer for the screenshare track. Later when screenshare is enabled again, the
-        // same sender will be re-used without the need for signaling a new ssrc through source-add.
-        dispatch(setScreenshareMuted(true));
+        await dispatch(executeTrackOperation(TrackOperationType.Video, () => {
+            // Mute the desktop track instead of removing it from the conference since we don't want the client to
+            // signal a source-remove to the remote peer for the screenshare track. Later when screenshare is enabled
+            // again, the same sender will be re-used without the need for signaling a new ssrc through source-add.
+            dispatch(setScreenshareMuted(true));
+
+            return Promise.resolve();
+        }));
+
         if (desktopAudioTrack) {
-            if (localAudio) {
-                localAudio.setEffect(undefined);
-            } else {
-                await conference.replaceTrack(desktopAudioTrack, null);
-            }
+            await dispatch(executeTrackOperation(TrackOperationType.Audio, async () => {
+                const localAudio = getLocalJitsiAudioTrack(state);
+
+                if (localAudio) {
+                    await localAudio.setEffect(undefined);
+                } else {
+                    await conference.replaceTrack(desktopAudioTrack, null);
+                }
+            }));
             desktopAudioTrack.dispose();
             dispatch(setScreenshareAudioTrack(null));
         }
@@ -262,4 +280,103 @@ async function _toggleScreenSharing(
         // Notify the external API.
         APP.API.notifyScreenSharingStatusChanged(enable, screensharingDetails);
     }
+}
+
+
+/**
+ * Executes a track operation.
+ *
+ * @param {TrackOperationType} type - The type of the operation ('audio', 'video' or 'audio-video').
+ * @param {Function} operation - The operation.
+ * @returns {{
+ *      type: SET_TRACK_OPERATIONS_PROMISE,
+ *      audioTrackOperationsPromise: Promise<void>,
+ *      videoTrackOperationsPromise: Promise<void>
+ * }}
+ */
+export function executeTrackOperation(type: TrackOperationType, operation: () => Promise<any>) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const {
+            audioTrackOperationsPromise,
+            videoTrackOperationsPromise
+        } = getState()['features/base/track-operations'];
+
+        switch (type) {
+        case TrackOperationType.Audio: {
+            const promise = audioTrackOperationsPromise.then(operation, operation);
+
+            dispatch({
+                type: SET_TRACK_OPERATIONS_PROMISE,
+                audioTrackOperationsPromise: promise
+            });
+
+            return promise;
+        }
+        case TrackOperationType.Video: {
+            const promise = videoTrackOperationsPromise.then(operation, operation);
+
+            dispatch({
+                type: SET_TRACK_OPERATIONS_PROMISE,
+                videoTrackOperationsPromise: promise
+            });
+
+            return promise;
+        }
+        case TrackOperationType.AudioVideo: {
+            const promise = Promise.allSettled([
+                audioTrackOperationsPromise,
+                videoTrackOperationsPromise
+            ]).then(operation, operation);
+
+            dispatch({
+                type: SET_TRACK_OPERATIONS_PROMISE,
+                audioTrackOperationsPromise: promise,
+                videoTrackOperationsPromise: promise
+            });
+
+            return promise;
+        }
+        default: {
+            const unexpectedType: never = type;
+
+            return Promise.reject(new Error(`Unexpected track operation type: ${unexpectedType}`));
+        }
+        }
+    };
+}
+
+/**
+ * Toggles the facingMode constraint on the video stream.
+ *
+ * @returns {Function}
+ */
+export function toggleCamera() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
+        dispatch(executeTrackOperation(TrackOperationType.Video,
+
+            // eslint-disable-next-line valid-jsdoc
+            /**
+             * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
+             * but it seems to not trigger the re-rendering of the local video on Chrome;
+             * could be due to a plan B vs unified plan issue. Therefore, we use the legacy
+             * method defined in conference.js that manually takes care of updating the local
+             * video as well.
+             */
+            () => APP.conference.useVideoStream(null).then(() => {
+                const state = getState();
+                const tracks = state['features/base/tracks'];
+                const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+                const currentFacingMode = localVideoTrack.getCameraFacingMode();
+
+                const targetFacingMode = currentFacingMode === CAMERA_FACING_MODE.USER
+                    ? CAMERA_FACING_MODE.ENVIRONMENT
+                    : CAMERA_FACING_MODE.USER;
+
+                // Update the flipX value so the environment facing camera is not flipped, before the new track is
+                // created.
+                dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER }));
+
+                return createLocalTrack('video', null, null, { facingMode: targetFacingMode });
+            })
+            .then((newVideoTrack: any) => APP.conference.useVideoStream(newVideoTrack))));
 }

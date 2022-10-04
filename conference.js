@@ -12,7 +12,6 @@ import UIUtil from './modules/UI/util/UIUtil';
 import VideoLayout from './modules/UI/videolayout/VideoLayout';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
-import { createTaskQueue } from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
     createScreenSharingEvent,
@@ -111,6 +110,7 @@ import {
     addLocalTrack,
     createLocalTracksF,
     destroyLocalTracks,
+    executeTrackOperation,
     getLocalJitsiAudioTrack,
     getLocalJitsiVideoTrack,
     getLocalTracks,
@@ -122,6 +122,7 @@ import {
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
+import { TrackOperationType } from './react/features/base/tracks/types';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -246,29 +247,8 @@ function muteLocalAudio(muted) {
  *
  */
 function muteLocalVideo(muted) {
-    APP.store.dispatch(setVideoMuted(muted));
+    return APP.store.dispatch(setVideoMuted(muted));
 }
-
-/**
- * A queue for the async replaceLocalTrack action so that multiple audio
- * replacements cannot happen simultaneously. This solves the issue where
- * replaceLocalTrack is called multiple times with an oldTrack of null, causing
- * multiple local tracks of the same type to be used.
- *
- * @private
- * @type {Object}
- */
-const _replaceLocalAudioTrackQueue = createTaskQueue();
-
-/**
- * A task queue for replacement local video tracks. This separate queue exists
- * so video replacement is not blocked by audio replacement tasks in the queue
- * {@link _replaceLocalAudioTrackQueue}.
- *
- * @private
- * @type {Object}
- */
-const _replaceLocalVideoTrackQueue = createTaskQueue();
 
 /**
  *
@@ -687,47 +667,55 @@ export default {
             });
     },
 
-    startConference(con, tracks) {
-        tracks.forEach(track => {
-            if ((track.isAudioTrack() && this.isLocalAudioMuted())
-                || (track.isVideoTrack() && this.isLocalVideoMuted())) {
-                const mediaType = track.getType();
+    async startConference(conP, tracksP, connectionAndTracksPromiseFunction) {
+        const promiseCreator = connectionAndTracksPromiseFunction || (() => Promise.resolve([ tracksP, conP ]));
 
-                sendAnalytics(
-                    createTrackMutedEvent(mediaType, 'initial mute'));
-                logger.log(`${mediaType} mute: initially muted.`);
-                track.mute();
-            }
-        });
+        await APP.store.dispatch(executeTrackOperation(TrackOperationType.AudioVideo, () =>
+            promiseCreator().then(([ tracks, con ]) => {
+                con.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _connectionFailedHandler);
+                APP.connection = connection = con;
 
-        con.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _connectionFailedHandler);
-        APP.connection = connection = con;
+                tracks.forEach(track => {
+                    if ((track.isAudioTrack() && this.isLocalAudioMuted())
+                        || (track.isVideoTrack() && this.isLocalVideoMuted())) {
+                        const mediaType = track.getType();
 
-        this._createRoom(tracks);
+                        sendAnalytics(
+                            createTrackMutedEvent(mediaType, 'initial mute'));
+                        logger.log(`${mediaType} mute: initially muted.`);
+                        track.mute();
+                    }
+                });
 
-        // if user didn't give access to mic or camera or doesn't have
-        // them at all, we mark corresponding toolbar buttons as muted,
-        // so that the user can try unmute later on and add audio/video
-        // to the conference
-        if (!tracks.find(t => t.isAudioTrack())) {
-            this.setAudioMuteStatus(true);
-        }
+                const result = this._createRoom(tracks);
 
-        if (!tracks.find(t => t.isVideoTrack())) {
-            this.setVideoMuteStatus();
-        }
+                // if user didn't give access to mic or camera or doesn't have
+                // them at all, we mark corresponding toolbar buttons as muted,
+                // so that the user can try unmute later on and add audio/video
+                // to the conference
+                if (!tracks.find(t => t.isAudioTrack())) {
+                    this.setAudioMuteStatus(true);
+                }
 
-        if (config.iAmRecorder) {
-            this.recorder = new Recorder();
-        }
+                if (!tracks.find(t => t.isVideoTrack())) {
+                    this.setVideoMuteStatus();
+                }
 
-        if (config.startSilent) {
-            sendAnalytics(createStartSilentEvent());
-            APP.store.dispatch(showNotification({
-                descriptionKey: 'notify.startSilentDescription',
-                titleKey: 'notify.startSilentTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
-        }
+
+                if (config.startSilent) {
+                    sendAnalytics(createStartSilentEvent());
+                    APP.store.dispatch(showNotification({
+                        descriptionKey: 'notify.startSilentDescription',
+                        titleKey: 'notify.startSilentTitle'
+                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                }
+
+                if (config.iAmRecorder) {
+                    this.recorder = new Recorder();
+                }
+
+                return result;
+            })));
 
         // XXX The API will take care of disconnecting from the XMPP
         // server (and, thus, leaving the room) on unload.
@@ -796,44 +784,55 @@ export default {
 
             APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
 
-            const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
-            const tracks = await tryCreateLocalTracks;
+            return APP.store.dispatch(executeTrackOperation(TrackOperationType.AudioVideo, () => {
+                const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
 
-            // Initialize device list a second time to ensure device labels
-            // get populated in case of an initial gUM acceptance; otherwise
-            // they may remain as empty strings.
-            this._initDeviceList(true);
+                return tryCreateLocalTracks.then(tracks => {
+                    // Initialize device list a second time to ensure device labels
+                    // get populated in case of an initial gUM acceptance; otherwise
+                    // they may remain as empty strings.
+                    this._initDeviceList(true);
 
-            if (isPrejoinPageVisible(APP.store.getState())) {
-                return APP.store.dispatch(initPrejoin(tracks, errors));
-            }
+                    if (isPrejoinPageVisible(APP.store.getState())) {
+                        return APP.store.dispatch(initPrejoin(tracks, errors));
+                    }
 
-            logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
+                    logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
 
-            this._displayErrorsForCreateInitialLocalTracks(errors);
+                    this._displayErrorsForCreateInitialLocalTracks(errors);
 
-            let localTracks = handleStartAudioMuted(initialOptions, tracks);
+                    let localTracks = handleStartAudioMuted(initialOptions, tracks);
 
-            // in case where gum is slow and resolves after the startAudio/VideoMuted coming from jicofo, we can be
-            // join unmuted even though jicofo had instruct us to mute, so let's respect that before passing the tracks
-            if (!browser.isWebKitBased()) {
-                if (room?.isStartAudioMuted()) {
-                    localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
-                }
-            }
+                    // in case where gum is slow and resolves after the startAudio/VideoMuted coming from jicofo, we
+                    // can be join unmuted even though jicofo had instruct us to mute, so let's respect that before
+                    // passing the tracks
+                    if (!browser.isWebKitBased()) {
+                        if (room?.isStartAudioMuted()) {
+                            localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+                        }
+                    }
 
-            if (room?.isStartVideoMuted()) {
-                localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.VIDEO);
-            }
+                    if (room?.isStartVideoMuted()) {
+                        localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.VIDEO);
+                    }
 
-            return this._setLocalAudioVideoStreams(localTracks);
+                    return this._setLocalAudioVideoStreams(localTracks);
+                });
+            }));
         }
 
-        const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(roomName, initialOptions);
+        const initialTracksAndConnectionFuntion = () => {
+            let promise = this.createInitialLocalTracksAndConnect(roomName, initialOptions);
 
-        this._initDeviceList(true);
+            promise.then(() => {
+                this._initDeviceList(true);
+            });
+            promise = promise.then(([ tracks, con ]) => [ handleStartAudioMuted(initialOptions, tracks), con ]);
 
-        return this.startConference(con, handleStartAudioMuted(initialOptions, tracks));
+            return promise;
+        };
+
+        return this.startConference(undefined, undefined, initialTracksAndConnectionFuntion);
     },
 
     /**
@@ -936,42 +935,45 @@ export default {
             return;
         }
 
-        // Not ready to modify track's state yet
-        if (!this._localTracksInitialized) {
-            // This will only modify base/media.audio.muted which is then synced
-            // up with the track at the end of local tracks initialization.
-            muteLocalAudio(mute);
-            this.setAudioMuteStatus(mute);
+        APP.store.dispatch(executeTrackOperation(TrackOperationType.Audio, () => {
+            // Not ready to modify track's state yet
+            if (!this._localTracksInitialized) {
+                // This will only modify base/media.audio.muted which is then synced
+                // up with the track at the end of local tracks initialization.
+                const result = muteLocalAudio(mute);
 
-            return;
-        } else if (this.isLocalAudioMuted() === mute) {
-            // NO-OP
-            return;
-        }
+                this.setAudioMuteStatus(mute);
 
-        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+                return result;
+            } else if (this.isLocalAudioMuted() === mute) {
+                // NO-OP
+                return Promise.resolve();
+            }
 
-        if (!localAudio && !mute) {
-            const maybeShowErrorDialog = error => {
-                showUI && APP.store.dispatch(notifyMicError(error));
-            };
+            const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
 
-            createLocalTracksF({ devices: [ 'audio' ] })
-                .then(([ audioTrack ]) => audioTrack)
-                .catch(error => {
-                    maybeShowErrorDialog(error);
+            if (!localAudio && !mute) {
+                const maybeShowErrorDialog = error => {
+                    showUI && APP.store.dispatch(notifyMicError(error));
+                };
 
-                    // Rollback the audio muted status by using null track
-                    return null;
-                })
-                .then(async audioTrack => {
-                    await this._maybeApplyAudioMixerEffect(audioTrack);
+                return createLocalTracksF({ devices: [ 'audio' ] })
+                    .then(([ audioTrack ]) => audioTrack)
+                    .catch(error => {
+                        maybeShowErrorDialog(error);
 
-                    this.useAudioStream(audioTrack);
-                });
-        } else {
-            muteLocalAudio(mute);
-        }
+                        // Rollback the audio muted status by using null track
+                        return null;
+                    })
+                    .then(async audioTrack => {
+                        await this._maybeApplyAudioMixerEffect(audioTrack);
+
+                        return this.useAudioStream(audioTrack);
+                    });
+            }
+
+            return muteLocalAudio(mute);
+        }));
     },
 
     /**
@@ -1018,37 +1020,41 @@ export default {
             return;
         }
 
-        // If not ready to modify track's state yet adjust the base/media
-        if (!this._localTracksInitialized) {
-            // This will only modify base/media.video.muted which is then synced
-            // up with the track at the end of local tracks initialization.
-            muteLocalVideo(mute);
-            this.setVideoMuteStatus();
+        APP.store.dispatch(executeTrackOperation(TrackOperationType.Video, () => {
 
-            return;
-        } else if (this.isLocalVideoMuted() === mute) {
-            // NO-OP
-            return;
-        }
+            // If not ready to modify track's state yet adjust the base/media
+            if (!this._localTracksInitialized) {
+                // This will only modify base/media.video.muted which is then synced
+                // up with the track at the end of local tracks initialization.
+                const promise = muteLocalVideo(mute);
 
-        const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
+                this.setVideoMuteStatus();
 
-        if (!localVideo && !mute && !this.isCreatingLocalTrack) {
-            const maybeShowErrorDialog = error => {
-                showUI && APP.store.dispatch(notifyCameraError(error));
-            };
+                return promise;
+            } else if (this.isLocalVideoMuted() === mute) {
+                // NO-OP
+                return Promise.resolve();
+            }
+
+            const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
+
+            if (!localVideo && !mute && !this.isCreatingLocalTrack) {
+                const maybeShowErrorDialog = error => {
+                    showUI && APP.store.dispatch(notifyCameraError(error));
+                };
 
             this.isCreatingLocalTrack = true;
 
-            // Try to create local video if there wasn't any.
-            // This handles the case when user joined with no video
-            // (dismissed screen sharing screen or in audio only mode), but
-            // decided to add it later on by clicking on muted video icon or
-            // turning off the audio only mode.
-            //
-            // FIXME when local track creation is moved to react/redux
-            // it should take care of the use case described above
-            createLocalTracksF({ devices: [ 'video' ] })
+                // Try to create local video if there wasn't any.
+                // This handles the case when user joined with no video
+                // (dismissed screen sharing screen or in audio only mode), but
+                // decided to add it later on by clicking on muted video icon or
+                // turning off the audio only mode.
+                //
+                // FIXME when local track creation is moved to react/redux
+                // it should take care of the use case described above
+
+                return createLocalTracksF({ devices: [ 'video' ] })
                 .then(([ videoTrack ]) => videoTrack)
                 .catch(error => {
                     // FIXME should send some feedback to the API on error ?
@@ -1065,10 +1071,12 @@ export default {
                 .finally(() => {
                     this.isCreatingLocalTrack = false;
                 });
-        } else {
+
+            } // else
+
             // FIXME show error dialog if it fails (should be handled by react)
-            muteLocalVideo(mute);
-        }
+            return muteLocalVideo(mute);
+        }));
     },
 
     /**
@@ -1336,17 +1344,27 @@ export default {
         this.isSharingScreen = false;
         this.roomName = roomName;
 
-        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
-        const localTracks = await tryCreateLocalTracks;
+        const trackOperation = APP.store.dispatch(executeTrackOperation(TrackOperationType.AudioVideo, () => {
+            const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
 
-        this._displayErrorsForCreateInitialLocalTracks(errors);
-        localTracks.forEach(track => {
-            if ((track.isAudioTrack() && this.isLocalAudioMuted())
-                || (track.isVideoTrack() && this.isLocalVideoMuted())) {
-                track.mute();
-            }
-        });
-        this._createRoom(localTracks);
+            return tryCreateLocalTracks.then(localTracks => {
+                this._displayErrorsForCreateInitialLocalTracks(errors);
+                localTracks.forEach(track => {
+                    if ((track.isAudioTrack() && this.isLocalAudioMuted())
+                        || (track.isVideoTrack() && this.isLocalVideoMuted())) {
+                        track.mute();
+                    }
+                });
+
+                return this._createRoom(localTracks);
+            });
+        }));
+
+        try {
+            await trackOperation;
+        } catch (error) {
+            logger.error(error);
+        }
 
         return new Promise((resolve, reject) => {
             new ConferenceConnector(resolve, reject).connect();
@@ -1358,8 +1376,8 @@ export default {
 
         // Filter out the tracks that are muted (except on Safari).
         const tracks = browser.isWebKitBased() ? localTracks : localTracks.filter(track => !track.isMuted());
+        const promise = this._setLocalAudioVideoStreams(tracks);
 
-        this._setLocalAudioVideoStreams(tracks);
         this._room = room; // FIXME do not use this
 
         APP.store.dispatch(_conferenceWillJoin(room));
@@ -1367,6 +1385,8 @@ export default {
         sendLocalParticipant(APP.store, room);
 
         this._setupListeners();
+
+        return promise;
     },
 
     /**
@@ -1417,34 +1437,30 @@ export default {
         logger.debug(`useVideoStream: ${newTrack}`);
 
         return new Promise((resolve, reject) => {
-            _replaceLocalVideoTrackQueue.enqueue(onFinish => {
-                const oldTrack = getLocalJitsiVideoTrack(state);
+            const oldTrack = getLocalJitsiVideoTrack(state) ?? null;
 
-                logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
+            logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
 
-                if (oldTrack === newTrack) {
-                    resolve();
-                    onFinish();
+            if (oldTrack === newTrack) {
+                resolve();
 
-                    return;
-                }
+                return;
+            }
 
-                // Add the track to the conference if there is no existing track, replace it otherwise.
-                const trackAction = oldTrack
-                    ? replaceLocalTrack(oldTrack, newTrack, room)
-                    : addLocalTrack(newTrack);
+            // Add the track to the conference if there is no existing track, replace it otherwise.
+            const trackAction = oldTrack
+                ? replaceLocalTrack(oldTrack, newTrack, room)
+                : addLocalTrack(newTrack);
 
-                APP.store.dispatch(trackAction)
-                    .then(() => {
-                        this.setVideoMuteStatus();
-                    })
-                    .then(resolve)
-                    .catch(error => {
-                        logger.error(`useVideoStream failed: ${error}`);
-                        reject(error);
-                    })
-                    .then(onFinish);
-            });
+            APP.store.dispatch(trackAction)
+                .then(() => {
+                    this.setVideoMuteStatus();
+                })
+                .then(resolve)
+                .catch(error => {
+                    logger.error(`useVideoStream failed: ${error}`);
+                    reject(error);
+                });
         });
     },
 
@@ -1456,25 +1472,21 @@ export default {
      */
     useAudioStream(newTrack) {
         return new Promise((resolve, reject) => {
-            _replaceLocalAudioTrackQueue.enqueue(onFinish => {
-                const oldTrack = getLocalJitsiAudioTrack(APP.store.getState());
+            const oldTrack = getLocalJitsiAudioTrack(APP.store.getState());
 
-                if (oldTrack === newTrack) {
-                    resolve();
-                    onFinish();
+            if (oldTrack === newTrack) {
+                resolve();
 
-                    return;
-                }
+                return;
+            }
 
-                APP.store.dispatch(
-                replaceLocalTrack(oldTrack, newTrack, room))
-                    .then(() => {
-                        this.setAudioMuteStatus(this.isLocalAudioMuted());
-                    })
-                    .then(resolve)
-                    .catch(reject)
-                    .then(onFinish);
-            });
+            APP.store.dispatch(
+            replaceLocalTrack(oldTrack, newTrack, room))
+                .then(() => {
+                    this.setAudioMuteStatus(this.isLocalAudioMuted());
+                })
+                .then(resolve)
+                .catch(reject);
         });
     },
 
@@ -2029,27 +2041,31 @@ export default {
             }
         );
         room.on(JitsiConferenceEvents.STARTED_MUTED, () => {
-            const audioMuted = room.isStartAudioMuted();
-            const videoMuted = room.isStartVideoMuted();
-            const localTracks = getLocalTracks(APP.store.getState()['features/base/tracks']);
-            const promises = [];
+            const trackOperation = APP.store.dispatch(executeTrackOperation(TrackOperationType.AudioVideo, () => {
+                const audioMuted = room.isStartAudioMuted();
+                const videoMuted = room.isStartVideoMuted();
+                const localTracks = getLocalTracks(APP.store.getState()['features/base/tracks']);
+                const promises = [];
 
-            APP.store.dispatch(setAudioMuted(audioMuted));
-            APP.store.dispatch(setVideoMuted(videoMuted));
+                APP.store.dispatch(setAudioMuted(audioMuted));
+                APP.store.dispatch(setVideoMuted(videoMuted));
 
-            // Remove the tracks from the peerconnection.
-            for (const track of localTracks) {
-                // Always add the track on Safari because of a known issue where audio playout doesn't happen
-                // if the user joins audio and video muted, i.e., if there is no local media capture.
-                if (audioMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.AUDIO && !browser.isWebKitBased()) {
-                    promises.push(this.useAudioStream(null));
+                // Remove the tracks from the peerconnection.
+                for (const track of localTracks) {
+                    // Always add the track on Safari because of a known issue where audio playout doesn't happen
+                    // if the user joins audio and video muted, i.e., if there is no local media capture.
+                    if (audioMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.AUDIO && !browser.isWebKitBased()) {
+                        promises.push(this.useAudioStream(null));
+                    }
+                    if (videoMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.VIDEO) {
+                        promises.push(this.useVideoStream(null));
+                    }
                 }
-                if (videoMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.VIDEO) {
-                    promises.push(this.useVideoStream(null));
-                }
-            }
 
-            Promise.allSettled(promises)
+                return Promise.allSettled(promises);
+            }));
+
+            trackOperation
                 .then(() => {
                     APP.store.dispatch(showNotification({
                         titleKey: 'notify.mutedTitle',
@@ -2099,94 +2115,100 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             cameraDeviceId => {
-                const videoWasMuted = this.isLocalVideoMuted();
+                APP.store.dispatch(executeTrackOperation(TrackOperationType.Video, () => {
+                    const videoWasMuted = this.isLocalVideoMuted();
 
-                sendAnalytics(createDeviceChangedEvent('video', 'input'));
+                    sendAnalytics(createDeviceChangedEvent('video', 'input'));
 
-                createLocalTracksF({
-                    devices: [ 'video' ],
-                    cameraDeviceId
-                })
-                .then(([ stream ]) => {
-                    // if we are in audio only mode or video was muted before
-                    // changing device, then mute
-                    if (this.isAudioOnly() || videoWasMuted) {
-                        return stream.mute()
-                            .then(() => stream);
-                    }
+                    return createLocalTracksF({
+                        devices: [ 'video' ],
+                        cameraDeviceId
+                    })
+                    .then(([ stream ]) => {
+                        // if we are in audio only mode or video was muted before
+                        // changing device, then mute
+                        if (this.isAudioOnly() || videoWasMuted) {
+                            return stream.mute()
+                                .then(() => stream);
+                        }
 
-                    return stream;
-                })
-                .then(stream => {
-                    logger.info(`Switching the local video device to ${cameraDeviceId}.`);
+                        return stream;
+                    })
+                    .then(stream => {
+                        logger.info(`Switching the local video device to ${cameraDeviceId}.`);
 
-                    return this.useVideoStream(stream);
-                })
-                .then(() => {
-                    logger.info(`Switched local video device to ${cameraDeviceId}.`);
-                    this._updateVideoDeviceId();
-                })
-                .catch(error => {
-                    logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
+                        return this.useVideoStream(stream);
+                    })
+                    .then(() => {
+                        logger.info(`Switched local video device to ${cameraDeviceId}.`);
+                        this._updateVideoDeviceId();
+                    })
+                    .catch(error => {
+                        logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
 
-                    return APP.store.dispatch(notifyCameraError(error));
-                });
-            }
-        );
+                        return APP.store.dispatch(notifyCameraError(error));
+                    });
+                }));
+            });
 
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             async micDeviceId => {
-                const audioWasMuted = this.isLocalAudioMuted();
+                APP.store.dispatch(executeTrackOperation(TrackOperationType.Audio, () => {
+                    const audioWasMuted = this.isLocalAudioMuted();
 
-                // Disable noise suppression if it was enabled on the previous track.
-                await APP.store.dispatch(setNoiseSuppressionEnabled(false));
+                    // Disable noise suppression if it was enabled on the previous track.
+                    return APP.store.dispatch(setNoiseSuppressionEnabled(false)).then(() => {
 
-                // When the 'default' mic needs to be selected, we need to pass the real device id to gUM instead of
-                // 'default' in order to get the correct MediaStreamTrack from chrome because of the following bug.
-                // https://bugs.chromium.org/p/chromium/issues/detail?id=997689.
-                const isDefaultMicSelected = micDeviceId === 'default';
-                const selectedDeviceId = isDefaultMicSelected
-                    ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
-                    : micDeviceId;
+                        // When the 'default' mic needs to be selected, we need to pass the real device id to gUM
+                        // instead of 'default' in order to get the correct MediaStreamTrack from chrome because of the
+                        // following bug. https://bugs.chromium.org/p/chromium/issues/detail?id=997689.
+                        const isDefaultMicSelected = micDeviceId === 'default';
+                        const selectedDeviceId = isDefaultMicSelected
+                            ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
+                            : micDeviceId;
 
-                logger.info(`Switching audio input device to ${selectedDeviceId}`);
-                sendAnalytics(createDeviceChangedEvent('audio', 'input'));
-                createLocalTracksF({
-                    devices: [ 'audio' ],
-                    micDeviceId: selectedDeviceId
-                })
-                .then(([ stream ]) => {
-                    // if audio was muted before changing the device, mute
-                    // with the new device
-                    if (audioWasMuted) {
-                        return stream.mute()
-                            .then(() => stream);
-                    }
+                        logger.info(`Switching audio input device to ${selectedDeviceId}`);
+                        sendAnalytics(createDeviceChangedEvent('audio', 'input'));
 
-                    return stream;
-                })
-                .then(async stream => {
-                    await this._maybeApplyAudioMixerEffect(stream);
+                        return createLocalTracksF({
+                            devices: [ 'audio' ],
+                            micDeviceId: selectedDeviceId
+                        })
+                        .then(([ stream ]) => {
+                            // if audio was muted before changing the device, mute
+                            // with the new device
+                            if (audioWasMuted) {
+                                return stream.mute()
+                                    .then(() => stream);
+                            }
 
-                    return this.useAudioStream(stream);
-                })
-                .then(() => {
-                    const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+                            return stream;
+                        })
+                        .then(async stream => {
+                            await this._maybeApplyAudioMixerEffect(stream);
 
-                    if (localAudio && isDefaultMicSelected) {
-                        // workaround for the default device to be shown as selected in the
-                        // settings even when the real device id was passed to gUM because of the
-                        // above mentioned chrome bug.
-                        localAudio._realDeviceId = localAudio.deviceId = 'default';
-                    }
-                    logger.info(`switched local audio input device to: ${selectedDeviceId}`);
-                    this._updateAudioDeviceId();
-                })
-                .catch(err => {
-                    logger.error(`Failed to switch to selected audio input device ${selectedDeviceId}, error=${err}`);
-                    APP.store.dispatch(notifyMicError(err));
-                });
+                            return this.useAudioStream(stream);
+                        })
+                        .then(() => {
+                            const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+
+                            if (localAudio && isDefaultMicSelected) {
+                                // workaround for the default device to be shown as selected in the
+                                // settings even when the real device id was passed to gUM because of the
+                                // above mentioned chrome bug.
+                                localAudio._realDeviceId = localAudio.deviceId = 'default';
+                            }
+                            logger.info(`switched local audio input device to: ${selectedDeviceId}`);
+                            this._updateAudioDeviceId();
+                        })
+                        .catch(err => {
+                            logger.error(`Failed to switch to selected audio input device ${
+                                selectedDeviceId}, error=${err}`);
+                            APP.store.dispatch(notifyMicError(err));
+                        });
+                    });
+                }));
             }
         );
 
@@ -2321,173 +2343,181 @@ export default {
      * @returns {Promise}
      */
     _onDeviceListChanged(devices) {
-        const oldDevices = APP.store.getState()['features/base/devices'].availableDevices;
-        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
-        const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
+        const trackOperation = APP.store.dispatch(executeTrackOperation(TrackOperationType.AudioVideo, () => {
+            const oldDevices = APP.store.getState()['features/base/devices'].availableDevices;
+            const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+            const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
 
-        APP.store.dispatch(updateDeviceList(devices));
+            APP.store.dispatch(updateDeviceList(devices));
 
-        // Firefox users can choose their preferred device in the gUM prompt. In that case
-        // we should respect that and not attempt to switch to the preferred device from
-        // our settings.
-        const newLabelsOnly = mediaDeviceHelper.newDeviceListAddedLabelsOnly(oldDevices, devices);
-        const newDevices
-            = mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
-                devices,
-                this.isSharingScreen,
-                localVideo,
-                localAudio,
-                newLabelsOnly);
-        const promises = [];
-        const audioWasMuted = this.isLocalAudioMuted();
-        const videoWasMuted = this.isLocalVideoMuted();
-        const requestedInput = {
-            audio: Boolean(newDevices.audioinput),
-            video: Boolean(newDevices.videoinput)
-        };
+            // Firefox users can choose their preferred device in the gUM prompt. In that case
+            // we should respect that and not attempt to switch to the preferred device from
+            // our settings.
+            const newLabelsOnly = mediaDeviceHelper.newDeviceListAddedLabelsOnly(oldDevices, devices);
+            const newDevices
+                = mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
+                    devices,
+                    this.isSharingScreen,
+                    localVideo,
+                    localAudio,
+                    newLabelsOnly);
+            const promises = [];
+            const audioWasMuted = this.isLocalAudioMuted();
+            const videoWasMuted = this.isLocalVideoMuted();
+            const requestedInput = {
+                audio: Boolean(newDevices.audioinput),
+                video: Boolean(newDevices.videoinput)
+            };
 
-        if (typeof newDevices.audiooutput !== 'undefined') {
-            const { dispatch } = APP.store;
-            const setAudioOutputPromise
-                = setAudioOutputDeviceId(newDevices.audiooutput, dispatch)
-                    .catch(); // Just ignore any errors in catch block.
+            if (typeof newDevices.audiooutput !== 'undefined') {
+                const { dispatch } = APP.store;
+                const setAudioOutputPromise
+                    = setAudioOutputDeviceId(newDevices.audiooutput, dispatch)
+                        .catch(); // Just ignore any errors in catch block.
 
 
-            promises.push(setAudioOutputPromise);
-        }
+                promises.push(setAudioOutputPromise);
+            }
 
-        // Handles the use case when the default device is changed (we are always stopping the streams because it's
-        // simpler):
-        // If the default device is changed we need to first stop the local streams and then call GUM. Otherwise GUM
-        // will return a stream using the old default device.
-        if (requestedInput.audio && localAudio) {
-            localAudio.stopStream();
-        }
+            // Handles the use case when the default device is changed (we are always stopping the streams because it's
+            // simpler):
+            // If the default device is changed we need to first stop the local streams and then call GUM. Otherwise GUM
+            // will return a stream using the old default device.
+            if (requestedInput.audio && localAudio) {
+                localAudio.stopStream();
+            }
 
-        if (requestedInput.video && localVideo) {
-            localVideo.stopStream();
-        }
+            if (requestedInput.video && localVideo) {
+                localVideo.stopStream();
+            }
 
-        // Let's handle unknown/non-preferred devices
-        const newAvailDevices
-            = APP.store.getState()['features/base/devices'].availableDevices;
-        let newAudioDevices = [];
-        let oldAudioDevices = [];
+            // Let's handle unknown/non-preferred devices
+            const newAvailDevices
+                = APP.store.getState()['features/base/devices'].availableDevices;
+            let newAudioDevices = [];
+            let oldAudioDevices = [];
 
-        if (typeof newDevices.audiooutput === 'undefined') {
-            newAudioDevices = newAvailDevices.audioOutput;
-            oldAudioDevices = oldDevices.audioOutput;
-        }
+            if (typeof newDevices.audiooutput === 'undefined') {
+                newAudioDevices = newAvailDevices.audioOutput;
+                oldAudioDevices = oldDevices.audioOutput;
+            }
 
-        if (!requestedInput.audio) {
-            newAudioDevices = newAudioDevices.concat(newAvailDevices.audioInput);
-            oldAudioDevices = oldAudioDevices.concat(oldDevices.audioInput);
-        }
+            if (!requestedInput.audio) {
+                newAudioDevices = newAudioDevices.concat(newAvailDevices.audioInput);
+                oldAudioDevices = oldAudioDevices.concat(oldDevices.audioInput);
+            }
 
-        // check for audio
-        if (newAudioDevices.length > 0) {
-            APP.store.dispatch(
-                checkAndNotifyForNewDevice(newAudioDevices, oldAudioDevices));
-        }
+            // check for audio
+            if (newAudioDevices.length > 0) {
+                APP.store.dispatch(
+                    checkAndNotifyForNewDevice(newAudioDevices, oldAudioDevices));
+            }
 
-        // check for video
-        if (!requestedInput.video) {
-            APP.store.dispatch(
-                checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));
-        }
+            // check for video
+            if (!requestedInput.video) {
+                APP.store.dispatch(
+                    checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));
+            }
 
-        // When the 'default' mic needs to be selected, we need to
-        // pass the real device id to gUM instead of 'default' in order
-        // to get the correct MediaStreamTrack from chrome because of the
-        // following bug.
-        // https://bugs.chromium.org/p/chromium/issues/detail?id=997689
-        const hasDefaultMicChanged = newDevices.audioinput === 'default';
+            // When the 'default' mic needs to be selected, we need to
+            // pass the real device id to gUM instead of 'default' in order
+            // to get the correct MediaStreamTrack from chrome because of the
+            // following bug.
+            // https://bugs.chromium.org/p/chromium/issues/detail?id=997689
+            const hasDefaultMicChanged = newDevices.audioinput === 'default';
 
-        // This is the case when the local video is muted and a preferred device is connected.
-        if (requestedInput.video && this.isLocalVideoMuted()) {
-            // We want to avoid creating a new video track in order to prevent turning on the camera.
-            requestedInput.video = false;
-            APP.store.dispatch(updateSettings({ // Update the current selected camera for the device selection dialog.
-                cameraDeviceId: newDevices.videoinput
-            }));
-            delete newDevices.videoinput;
+            // This is the case when the local video is muted and a preferred device is connected.
+            if (requestedInput.video && this.isLocalVideoMuted()) {
+                // We want to avoid creating a new video track in order to prevent turning on the camera.
+                requestedInput.video = false;
 
-            // Removing the current video track in order to force the unmute to select the preferred device.
-            logger.debug('_onDeviceListChanged: Removing the current video track.');
-            this.useVideoStream(null);
+                // Update the current selected camera for the device selection dialog.
+                APP.store.dispatch(updateSettings({
+                    cameraDeviceId: newDevices.videoinput
+                }));
+                delete newDevices.videoinput;
 
-        }
+                // Removing the current video track in order to force the unmute to select the preferred device.
+                logger.debug('_onDeviceListChanged: Removing the current video track.');
+                this.useVideoStream(null);
 
-        promises.push(
-            mediaDeviceHelper.createLocalTracksAfterDeviceListChanged(
-                    createLocalTracksF,
-                    newDevices.videoinput,
-                    hasDefaultMicChanged
-                        ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
-                        : newDevices.audioinput)
-                .then(tracks => {
-                    // If audio or video muted before, or we unplugged current
-                    // device and selected new one, then mute new track.
-                    const muteSyncPromises = tracks.map(track => {
-                        if ((track.isVideoTrack() && videoWasMuted)
-                            || (track.isAudioTrack() && audioWasMuted)) {
-                            return track.mute();
+            }
+
+            newDevices.audioinput = hasDefaultMicChanged
+                ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
+                : newDevices.audioinput;
+
+            const promise = mediaDeviceHelper.createLocalTracksAfterDeviceListChanged(
+                        createLocalTracksF,
+                        newDevices.videoinput,
+                        newDevices.audioinput)
+                    .then(tracks => {
+                        // If audio or video muted before, or we unplugged current
+                        // device and selected new one, then mute new track.
+                        const muteSyncPromises = tracks.map(track => {
+                            if ((track.isVideoTrack() && videoWasMuted)
+                                || (track.isAudioTrack() && audioWasMuted)) {
+                                return track.mute();
+                            }
+
+                            return Promise.resolve();
+                        });
+
+                        return Promise.all(muteSyncPromises)
+                            .then(() =>
+                                Promise.all(Object.keys(requestedInput).map(mediaType => {
+                                    if (requestedInput[mediaType]) {
+                                        const useStream
+                                            = mediaType === 'audio'
+                                                ? this.useAudioStream.bind(this)
+                                                : this.useVideoStream.bind(this);
+                                        const track = tracks.find(t => t.getType() === mediaType) || null;
+
+                                        // Use the new stream or null if we failed to obtain it.
+                                        return useStream(track)
+                                            .then(() => {
+                                                if (track?.isAudioTrack() && hasDefaultMicChanged) {
+                                                    // workaround for the default device to be shown as selected in the
+                                                    // settings even when the real device id was passed to gUM because
+                                                    // of the above mentioned chrome bug.
+                                                    track._realDeviceId = track.deviceId = 'default';
+                                                }
+                                                mediaType === 'audio'
+                                                    ? this._updateAudioDeviceId()
+                                                    : this._updateVideoDeviceId();
+                                            });
+                                    }
+
+                                    return Promise.resolve();
+                                })));
+                    })
+                    .then(() => {
+                        // Log and sync known mute state.
+                        if (audioWasMuted) {
+                            sendAnalytics(createTrackMutedEvent(
+                                'audio',
+                                'device list changed'));
+                            logger.log('Audio mute: device list changed');
+                            muteLocalAudio(true);
                         }
 
-                        return Promise.resolve();
+                        if (!this.isSharingScreen && videoWasMuted) {
+                            sendAnalytics(createTrackMutedEvent(
+                                'video',
+                                'device list changed'));
+                            logger.log('Video mute: device list changed');
+                            muteLocalVideo(true);
+                        }
                     });
 
-                    return Promise.all(muteSyncPromises)
-                        .then(() =>
-                            Promise.all(Object.keys(requestedInput).map(mediaType => {
-                                if (requestedInput[mediaType]) {
-                                    const useStream
-                                        = mediaType === 'audio'
-                                            ? this.useAudioStream.bind(this)
-                                            : this.useVideoStream.bind(this);
-                                    const track = tracks.find(t => t.getType() === mediaType) || null;
+            promises.push(promise);
 
-                                    // Use the new stream or null if we failed to obtain it.
-                                    return useStream(track)
-                                        .then(() => {
-                                            if (track?.isAudioTrack() && hasDefaultMicChanged) {
-                                                // workaround for the default device to be shown as selected in the
-                                                // settings even when the real device id was passed to gUM because of
-                                                // the above mentioned chrome bug.
-                                                track._realDeviceId = track.deviceId = 'default';
-                                            }
-                                            mediaType === 'audio'
-                                                ? this._updateAudioDeviceId()
-                                                : this._updateVideoDeviceId();
-                                        });
-                                }
+            return Promise.all(promises);
+        }));
 
-                                return Promise.resolve();
-                            })));
-                })
-                .then(() => {
-                    // Log and sync known mute state.
-                    if (audioWasMuted) {
-                        sendAnalytics(createTrackMutedEvent(
-                            'audio',
-                            'device list changed'));
-                        logger.log('Audio mute: device list changed');
-                        muteLocalAudio(true);
-                    }
-
-                    if (!this.isSharingScreen && videoWasMuted) {
-                        sendAnalytics(createTrackMutedEvent(
-                            'video',
-                            'device list changed'));
-                        logger.log('Video mute: device list changed');
-                        muteLocalVideo(true);
-                    }
-                }));
-
-        return Promise.all(promises)
-            .then(() => {
-                APP.UI.onAvailableDevicesChanged(devices);
-            });
+        trackOperation.then(() => {
+            APP.UI.onAvailableDevicesChanged(devices);
+        });
     },
 
     /**

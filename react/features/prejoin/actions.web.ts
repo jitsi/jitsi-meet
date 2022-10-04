@@ -9,12 +9,14 @@ import { MEDIA_TYPE } from '../base/media/constants';
 import { isVideoMutedByUser } from '../base/media/functions';
 import { updateSettings } from '../base/settings/actions';
 import { replaceLocalTrack, trackAdded } from '../base/tracks/actions';
+import { executeTrackOperation } from '../base/tracks/actions.web';
 import {
     createLocalTracksF,
     getLocalAudioTrack,
     getLocalTracks,
     getLocalVideoTrack
 } from '../base/tracks/functions';
+import { TrackOperationType } from '../base/tracks/types';
 import { openURLInBrowser } from '../base/util/openURLInBrowser';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
@@ -228,31 +230,35 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
             dispatch(setJoiningInProgress(true));
         }
 
-        const state = getState();
-        let localTracks = getLocalTracks(state['features/base/tracks']);
-
         options && dispatch(updateConfig(options));
 
-        // Do not signal audio/video tracks if the user joins muted.
-        for (const track of localTracks) {
-            // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
-            // if the user joins audio and video muted.
-            if (track.muted
-                && !(browser.isWebKitBased() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
-                try {
-                    await dispatch(replaceLocalTrack(track.jitsiTrack, null));
-                } catch (error) {
-                    logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
+        const jitsiTracks = await dispatch(executeTrackOperation(TrackOperationType.AudioVideo, async () => {
+            const state = getState();
+            let localTracks = getLocalTracks(state['features/base/tracks']);
+
+            // Do not signal audio/video tracks if the user joins muted.
+            for (const track of localTracks) {
+                // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
+                // if the user joins audio and video muted.
+                if (track.muted
+                    && !(browser.isWebKitBased()
+                        && track.jitsiTrack
+                        && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
+                    try {
+                        await dispatch(replaceLocalTrack(track.jitsiTrack, null));
+                    } catch (error) {
+                        logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
+                    }
                 }
             }
-        }
 
-        // Re-fetch the local tracks after muted tracks have been removed above.
-        // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be used
-        // anymore.
-        localTracks = getLocalTracks(getState()['features/base/tracks']);
+            // Re-fetch the local tracks after muted tracks have been removed above.
+            // This is needed, because the tracks are effectively disposed by the
+            // replaceLocalTrack and should not be used anymore.
+            localTracks = getLocalTracks(getState()['features/base/tracks']);
 
-        const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
+            return localTracks.map((t: any) => t.jitsiTrack);
+        }));
 
         APP.conference.prejoinStart(jitsiTracks);
     };
@@ -288,16 +294,19 @@ export function joinConferenceWithoutAudio() {
         }
 
         dispatch(setJoiningInProgress(true));
-        const tracks = state['features/base/tracks'];
-        const audioTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
 
-        if (audioTrack) {
-            try {
-                await dispatch(replaceLocalTrack(audioTrack, null));
-            } catch (error) {
-                logger.error(`Failed to replace local audio with null: ${error}`);
+        await dispatch(executeTrackOperation(TrackOperationType.Audio, async () => {
+            const tracks = getState()['features/base/tracks'];
+            const audioTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
+
+            if (audioTrack) {
+                try {
+                    await dispatch(replaceLocalTrack(audioTrack, null));
+                } catch (error) {
+                    logger.error(`Failed to replace local audio with null: ${error}`);
+                }
             }
-        }
+        }));
 
         dispatch(joinConference({
             startSilent: true
@@ -357,17 +366,19 @@ function prejoinInitialized() {
 export function replaceAudioTrackById(deviceId: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         try {
-            const tracks = getState()['features/base/tracks'];
-            const newTrack = await createLocalTrack('audio', deviceId);
-            const oldTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
-            const micDeviceId = newTrack.getDeviceId();
+            await dispatch(executeTrackOperation(TrackOperationType.Audio, async () => {
+                const tracks = getState()['features/base/tracks'];
+                const newTrack = await createLocalTrack('audio', deviceId);
+                const oldTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
+                const micDeviceId = newTrack.getDeviceId();
 
-            logger.info(`Switching audio input device to ${micDeviceId}`);
-            dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
-                dispatch(updateSettings({
-                    micDeviceId
-                }));
-            });
+                logger.info(`Switching audio input device to ${micDeviceId}`);
+                await dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
+                    dispatch(updateSettings({
+                        micDeviceId
+                    }));
+                });
+            }));
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.audioTrackError'));
             logger.log('Error replacing audio track', err);
@@ -384,24 +395,28 @@ export function replaceAudioTrackById(deviceId: string) {
 export function replaceVideoTrackById(deviceId: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         try {
-            const tracks = getState()['features/base/tracks'];
-            const wasVideoMuted = isVideoMutedByUser(getState());
-            const [ newTrack ] = await createLocalTracksF(
-                { cameraDeviceId: deviceId,
-                    devices: [ 'video' ] },
-                { dispatch,
-                    getState }
-            );
-            const oldTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
-            const cameraDeviceId = newTrack.getDeviceId();
+            await dispatch(executeTrackOperation(TrackOperationType.Video, async () => {
+                const tracks = getState()['features/base/tracks'];
+                const wasVideoMuted = isVideoMutedByUser(getState());
+                const [ newTrack ] = await createLocalTracksF(
+                    { cameraDeviceId: deviceId,
+                        devices: [ 'video' ] },
+                    { dispatch,
+                        getState }
+                );
+                const oldTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+                const cameraDeviceId = newTrack.getDeviceId();
 
-            logger.info(`Switching camera to ${cameraDeviceId}`);
-            dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
-                dispatch(updateSettings({
-                    cameraDeviceId
-                }));
-            });
-            wasVideoMuted && newTrack.mute();
+                logger.info(`Switching camera to ${cameraDeviceId}`);
+                await dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
+                    dispatch(updateSettings({
+                        cameraDeviceId
+                    }));
+                });
+                if (wasVideoMuted) {
+                    await newTrack.mute();
+                }
+            }));
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.videoTrackError'));
             logger.log('Error replacing video track', err);

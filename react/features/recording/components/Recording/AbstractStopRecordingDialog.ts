@@ -6,8 +6,10 @@ import { IReduxState } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { setVideoMuted } from '../../../base/media/actions';
+import { executeTrackOperation } from '../../../base/tracks/actions';
+import { TrackOperationType } from '../../../base/tracks/types';
 import { stopLocalVideoRecording } from '../../actions';
-import { getActiveSession } from '../../functions';
+import { getActiveSession } from '../../functions.any';
 
 import LocalRecordingManager from './LocalRecordingManager';
 
@@ -78,18 +80,16 @@ export default class AbstractStopRecordingDialog<P extends IProps>
     _onSubmit() {
         sendAnalytics(createRecordingDialogEvent('stop', 'confirm.button'));
 
-        if (this.props._localRecording) {
-            this.props.dispatch(stopLocalVideoRecording());
-            if (this.props.localRecordingVideoStop) {
-                this.props.dispatch(setVideoMuted(true));
-            }
-        } else {
-            const { _fileRecordingSession } = this.props;
+        const { _conference, _fileRecordingSession, _localRecording, dispatch, localRecordingVideoStop } = this.props;
 
-            if (_fileRecordingSession) { // @ts-ignore
-                this.props._conference.stopRecording(_fileRecordingSession.id);
-                this._toggleScreenshotCapture();
+        if (_localRecording) {
+            dispatch(stopLocalVideoRecording());
+            if (localRecordingVideoStop) {
+                dispatch(executeTrackOperation(TrackOperationType.Video, () => dispatch(setVideoMuted(true))));
             }
+        } else if (_fileRecordingSession) { // @ts-ignore
+            _conference.stopRecording(_fileRecordingSession.id);
+            this._toggleScreenshotCapture();
         }
 
         return true;

@@ -2,7 +2,7 @@
 
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
-import { getActiveSession } from '../recording/functions';
+import { getActiveSession } from '../recording/functions.any';
 import { isScreenVideoShared } from '../screen-share/functions';
 
 import ScreenshotCaptureSummary from './ScreenshotCaptureSummary';

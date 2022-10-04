@@ -10,6 +10,17 @@
 export const SET_NO_SRC_DATA_NOTIFICATION_UID = 'SET_NO_SRC_DATA_NOTIFICATION_UID';
 
 /**
+ * Sets the track operation promise.
+ *
+ * {
+ *      type: SET_TRACK_OPERATIONS_PROMISE,
+ *      audioTrackOperationsPromise: Promise<void>,
+ *      videoTrackOperationsPromise: Promise<void>
+ * }
+ */
+export const SET_TRACK_OPERATIONS_PROMISE = 'SET_TRACK_OPERATIONS_PROMISE';
+
+/**
  * The type of redux action dispatched when a track has been (locally or
  * remotely) added to the conference.
  *

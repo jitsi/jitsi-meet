@@ -14,7 +14,8 @@ import { setAudioMuted, setVideoMuted } from '../base/media/actions';
 import { MEDIA_TYPE, MediaType, VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 import { muteRemoteParticipant } from '../base/participants/actions';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
-import { toggleScreensharing } from '../base/tracks/actions';
+import { executeTrackOperation, toggleScreensharing } from '../base/tracks/actions';
+import { TrackOperationType } from '../base/tracks/types';
 import { isModerationNotificationDisplayed } from '../notifications/functions';
 
 import logger from './logger';
@@ -51,8 +52,12 @@ export function muteLocal(enable: boolean, mediaType: MediaType, stopScreenShari
         }
 
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));
-        dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true)
-            : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
+
+        const trackOpType = isAudio ? TrackOperationType.Audio : TrackOperationType.Video;
+
+        dispatch(executeTrackOperation(trackOpType, () =>
+            dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true)
+                : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true))));
 
         // FIXME: The old conference logic still relies on this event being emitted.
         typeof APP === 'undefined'

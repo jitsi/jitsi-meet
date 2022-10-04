@@ -4,6 +4,7 @@ import { set } from '../redux/functions';
 
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
+    SET_TRACK_OPERATIONS_PROMISE,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
@@ -151,4 +152,32 @@ ReducerRegistry.register<INoSrcDataState>('features/base/no-src-data', (state = 
         return state;
     }
 });
+
+export interface ITrackOperations {
+    audioTrackOperationsPromise: Promise<void>;
+    videoTrackOperationsPromise: Promise<void>;
+}
+
+const DEFAULT_TRACK_OPERATIONS_STATE = {
+    audioTrackOperationsPromise: Promise.resolve(),
+    videoTrackOperationsPromise: Promise.resolve()
+};
+
+/**
+ * Listen for actions that mutate the no-src-data state, like the current notification id.
+ */
+ReducerRegistry.register<ITrackOperations>(
+    'features/base/track-operations',
+    (state = DEFAULT_TRACK_OPERATIONS_STATE, action): ITrackOperations => {
+        switch (action.type) {
+        case SET_TRACK_OPERATIONS_PROMISE:
+            return {
+                ...state,
+                audioTrackOperationsPromise: action.audioTrackOperationsPromise || state.audioTrackOperationsPromise,
+                videoTrackOperationsPromise: action.videoTrackOperationsPromise || state.videoTrackOperationsPromise
+            };
+        default:
+            return state;
+        }
+    });
 

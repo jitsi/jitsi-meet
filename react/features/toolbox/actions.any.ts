@@ -6,6 +6,8 @@ import { IStore } from '../app/types';
 import { setAudioOnly } from '../base/audio-only/actions';
 import { setVideoMuted } from '../base/media/actions';
 import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
+import { executeTrackOperation } from '../base/tracks/actions';
+import { TrackOperationType } from '../base/tracks/types';
 
 import {
     SET_TOOLBOX_ENABLED,
@@ -85,20 +87,21 @@ export function toggleToolboxVisible() {
  */
 export function handleToggleVideoMuted(muted: boolean, showUI: boolean, ensureTrack: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const state = getState();
-        const { enabled: audioOnly } = state['features/base/audio-only'];
+        const { enabled: audioOnly } = getState()['features/base/audio-only'];
 
         sendAnalytics(createToolbarEvent(VIDEO_MUTE, { enable: muted }));
         if (audioOnly) {
             dispatch(setAudioOnly(false));
         }
 
-        dispatch(
-            setVideoMuted(
-                muted,
-                MEDIA_TYPE.VIDEO,
-                VIDEO_MUTISM_AUTHORITY.USER,
-                ensureTrack));
+        dispatch(executeTrackOperation(TrackOperationType.Video, () =>
+            dispatch(
+                setVideoMuted(
+                    muted,
+                    MEDIA_TYPE.VIDEO,
+                    VIDEO_MUTISM_AUTHORITY.USER,
+                    ensureTrack))
+        ));
 
         // FIXME: The old conference logic still relies on this event being
         // emitted.

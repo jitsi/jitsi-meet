@@ -21,11 +21,13 @@ import { getNormalizedDisplayName } from '../participants/functions';
 import { toState } from '../redux/functions';
 import {
     destroyLocalTracks,
+    executeTrackOperation,
     replaceLocalTrack,
     trackAdded,
     trackRemoved
-} from '../tracks/actions.any';
+} from '../tracks/actions';
 import { getLocalTracks } from '../tracks/functions';
+import { TrackOperationType } from '../tracks/types';
 import { getBackendSafeRoomName } from '../util/uri';
 
 import {
@@ -144,27 +146,37 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
             sendAnalytics(createStartMutedConfigurationEvent('remote', audioMuted, videoMuted));
             logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${videoMuted ? 'video' : ''}`);
 
-            // XXX Jicofo tells lib-jitsi-meet to start with audio and/or video
-            // muted i.e. Jicofo expresses an intent. Lib-jitsi-meet has turned
-            // Jicofo's intent into reality by actually muting the respective
-            // tracks. The reality is expressed in base/tracks already so what
-            // is left is to express Jicofo's intent in base/media.
-            // TODO Maybe the app needs to learn about Jicofo's intent and
-            // transfer that intent to lib-jitsi-meet instead of lib-jitsi-meet
-            // acting on Jicofo's intent without the app's knowledge.
-            dispatch(setAudioMuted(audioMuted));
-            dispatch(setVideoMuted(videoMuted));
+            dispatch(executeTrackOperation(TrackOperationType.AudioVideo, () => {
+                const promises = [];
 
-            // Remove the tracks from peerconnection as well.
-            for (const track of localTracks) {
-                const trackType = track.jitsiTrack.getType();
+                // XXX Jicofo tells lib-jitsi-meet to start with audio and/or video
+                // muted i.e. Jicofo expresses an intent. Lib-jitsi-meet has turned
+                // Jicofo's intent into reality by actually muting the respective
+                // tracks. The reality is expressed in base/tracks already so what
+                // is left is to express Jicofo's intent in base/media.
+                // TODO Maybe the app needs to learn about Jicofo's intent and
+                // transfer that intent to lib-jitsi-meet instead of lib-jitsi-meet
+                // acting on Jicofo's intent without the app's knowledge.
+                promises.push(
+                    dispatch(setAudioMuted(audioMuted)).catch(e => logger.error(`Set audio muted failed: ${e}`)));
+                promises.push(
+                    dispatch(setVideoMuted(videoMuted)).catch(e => logger.error(`Set video muted failed: ${e}`)));
 
-                // Do not remove the audio track on RN. Starting with iOS 15 it will fail to unmute otherwise.
-                if ((audioMuted && trackType === MEDIA_TYPE.AUDIO && navigator.product !== 'ReactNative')
-                        || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
-                    dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
+                // Remove the tracks from peerconnection as well.
+                for (const track of localTracks) {
+                    const trackType = track.jitsiTrack.getType();
+
+                    // Do not remove the audio track on RN. Starting with iOS 15 it will fail to unmute otherwise.
+                    if ((audioMuted && trackType === MEDIA_TYPE.AUDIO && navigator.product !== 'ReactNative')
+                            || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
+                        promises.push(
+                            dispatch(replaceLocalTrack(track.jitsiTrack, null, conference))
+                            .catch(e => logger.error(`replaceLocalTrack failed: ${e}`)));
+                    }
                 }
-            }
+
+                return Promise.all(promises);
+            }));
         });
 
     conference.on(

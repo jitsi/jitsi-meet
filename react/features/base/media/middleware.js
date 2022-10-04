@@ -12,12 +12,10 @@ import {
     NOTIFICATION_TIMEOUT_TYPE,
     showWarningNotification
 } from '../../notifications';
-import { isForceMuted } from '../../participants-pane/functions';
 import { isScreenMediaShared } from '../../screen-share/functions';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
 import { SET_ROOM, isRoomValid } from '../conference';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config';
-import { getLocalParticipant } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
 import {
@@ -27,12 +25,11 @@ import {
     isLocalVideoTrackDesktop,
     setTrackMuted
 } from '../tracks';
+import { executeTrackOperation } from '../tracks/actions';
+import { TrackOperationType } from '../tracks/types';
 
 import {
-    SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
-    SET_SCREENSHARE_MUTED,
-    SET_VIDEO_MUTED,
     SET_VIDEO_UNMUTE_PERMISSIONS
 } from './actionTypes';
 import {
@@ -53,6 +50,9 @@ import {
     _AUDIO_INITIAL_MEDIA_STATE,
     _VIDEO_INITIAL_MEDIA_STATE
 } from './reducer';
+
+
+import './subscriber';
 
 /**
  * Implements the entry point of the middleware of the feature base/media.
@@ -83,16 +83,6 @@ MiddlewareRegistry.register(store => next => action => {
         return result;
     }
 
-    case SET_AUDIO_MUTED: {
-        const state = store.getState();
-        const participant = getLocalParticipant(state);
-
-        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
-            return;
-        }
-        break;
-    }
-
     case SET_AUDIO_UNMUTE_PERMISSIONS: {
         const { blocked, skipNotification } = action;
         const state = store.getState();
@@ -104,25 +94,6 @@ MiddlewareRegistry.register(store => next => action => {
                 descriptionKey: 'notify.audioUnmuteBlockedDescription',
                 titleKey: 'notify.audioUnmuteBlockedTitle'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-        }
-        break;
-    }
-
-    case SET_SCREENSHARE_MUTED: {
-        const state = store.getState();
-        const participant = getLocalParticipant(state);
-
-        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.SCREENSHARE, state)) {
-            return;
-        }
-        break;
-    }
-    case SET_VIDEO_MUTED: {
-        const state = store.getState();
-        const participant = getLocalParticipant(state);
-
-        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
-            return;
         }
         break;
     }
@@ -191,9 +162,12 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
     sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
 
     // Make sure we mute both the desktop and video tracks.
-    dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
+    dispatch(executeTrackOperation(TrackOperationType.Video,
+        () => dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY))));
     if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-        dispatch(setScreenshareMuted(audioOnly, MEDIA_TYPE.SCREENSHARE, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
+        dispatch(executeTrackOperation(TrackOperationType.Video,
+            () => dispatch(setScreenshareMuted(
+                audioOnly, MEDIA_TYPE.SCREENSHARE, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY))));
     }
 
     return next(action);
@@ -234,9 +208,9 @@ function _setRoom({ dispatch, getState }, next, action) {
     // Unconditionally express the desires/expectations/intents of the app and
     // the user i.e. the state of base/media. Eventually, practice/reality i.e.
     // the state of base/tracks will or will not agree with the desires.
-    dispatch(setAudioMuted(audioMuted));
+    dispatch(executeTrackOperation(TrackOperationType.Audio, () => dispatch(setAudioMuted(audioMuted))));
     dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
-    dispatch(setVideoMuted(videoMuted));
+    dispatch(executeTrackOperation(TrackOperationType.Video, () => dispatch(setVideoMuted(videoMuted))));
 
     // startAudioOnly
     //
@@ -296,21 +270,30 @@ function _setRoom({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _syncTrackMutedState({ getState }, track) {
-    const state = getState()['features/base/media'];
-    const mediaType = track.mediaType;
-    const muted = Boolean(state[mediaType].muted);
+function _syncTrackMutedState({ dispatch, getState }, track) {
+    const mediaType = track.mediaType === MEDIA_TYPE.PRESENTER
+        ? MEDIA_TYPE.VIDEO : track.mediaType;
+    const trackOpType = mediaType === MEDIA_TYPE.AUDIO ? TrackOperationType.Audio : TrackOperationType.Video;
 
-    // XXX If muted state of track when it was added is different from our media
-    // muted state, we need to mute track and explicitly modify 'muted' property
-    // on track. This is because though TRACK_ADDED action was dispatched it's
-    // not yet in redux state and JitsiTrackEvents.TRACK_MUTE_CHANGED may be
-    // fired before track gets to state.
-    if (track.muted !== muted) {
-        sendAnalytics(createSyncTrackStateEvent(mediaType, muted));
-        logger.log(`Sync ${mediaType} track muted state to ${muted ? 'muted' : 'unmuted'}`);
+    dispatch(executeTrackOperation(trackOpType, () => {
+        const state = getState()['features/base/media'];
 
-        track.muted = muted;
-        setTrackMuted(track.jitsiTrack, muted, state);
-    }
+        const muted = Boolean(state[mediaType].muted);
+
+        // XXX If muted state of track when it was added is different from our media
+        // muted state, we need to mute track and explicitly modify 'muted' property
+        // on track. This is because though TRACK_ADDED action was dispatched it's
+        // not yet in redux state and JitsiTrackEvents.TRACK_MUTE_CHANGED may be
+        // fired before track gets to state.
+        if (track.muted !== muted) {
+            sendAnalytics(createSyncTrackStateEvent(track.mediaType, muted));
+            logger.log(`Sync ${track.mediaType} track muted state to ${muted ? 'muted' : 'unmuted'}`);
+
+            track.muted = muted;
+
+            return setTrackMuted(track.jitsiTrack, muted, state);
+        }
+
+        return Promise.resolve();
+    }));
 }

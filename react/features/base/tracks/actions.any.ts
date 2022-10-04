@@ -3,22 +3,22 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
 import { showErrorNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
-import { createLocalTrack } from '../lib-jitsi-meet/functions.any';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
     MediaType,
+    SCREENSHARE_MUTISM_AUTHORITY,
     VIDEO_MUTISM_AUTHORITY,
     VIDEO_TYPE,
     VideoType
 } from '../media/constants';
 import { getLocalParticipant } from '../participants/functions';
-import { updateSettings } from '../settings/actions';
 
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
@@ -38,7 +38,8 @@ import {
     getLocalTrack,
     getLocalTracks,
     getLocalVideoTrack,
-    getTrackByJitsiTrack
+    getTrackByJitsiTrack,
+    setTrackMuted
 } from './functions';
 import logger from './logger';
 import { ITrackOptions } from './types';
@@ -57,7 +58,7 @@ export function addLocalTrack(newTrack: any) {
             await conference.addTrack(newTrack);
         }
 
-        const setMuted = newTrack.isVideoTrack()
+        const setMutedA = newTrack.isVideoTrack()
             ? getMultipleVideoSendingSupportFeatureFlag(getState())
             && newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
                 ? setScreenshareMuted
@@ -66,7 +67,7 @@ export function addLocalTrack(newTrack: any) {
         const isMuted = newTrack.isMuted();
 
         logger.log(`Adding ${newTrack.getType()} track - ${isMuted ? 'muted' : 'unmuted'}`);
-        await dispatch(setMuted(isMuted));
+        await dispatch(setMutedA(isMuted));
 
         return dispatch(_addTracks([ newTrack ]));
     };
@@ -216,6 +217,8 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                     mediaType: device
                 }
             });
+
+            return gumProcess;
         }
     };
 }
@@ -345,7 +348,7 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
             // should be falsey. As such, emit a mute event here to set up the app to reflect the track's mute
             // state. If this is not done, the current mute state of the app will be reflected on the track,
             // not vice-versa.
-            const setMuted = newTrack.isVideoTrack()
+            const setMutedA = newTrack.isVideoTrack()
                 ? getMultipleVideoSendingSupportFeatureFlag(getState())
                     && newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
                     ? setScreenshareMuted
@@ -356,7 +359,7 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
             sendAnalytics(createTrackMutedEvent(newTrack.getType(), 'track.replaced', isMuted));
             logger.log(`Replace ${newTrack.getType()} track - ${isMuted ? 'muted' : 'unmuted'}`);
 
-            await dispatch(setMuted(isMuted));
+            await dispatch(setMutedA(isMuted));
             await dispatch(_addTracks([ newTrack ]));
         }
     };
@@ -817,37 +820,48 @@ export function updateLastTrackVideoMediaEvent(track: any, name: string): {
     };
 }
 
+
 /**
- * Toggles the facingMode constraint on the video stream.
+ * Mutes or unmutes a local track with a specific media type.
  *
- * @returns {Function}
+ * @param {Object} options - Parameters of the function.
+ * @private
+ * @returns {void}
  */
-export function toggleCamera() {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+export function setMuted({ ensureTrack, authority, mediaType, muted }: {
+    authority?: number; ensureTrack: boolean; mediaType: MediaType; muted: boolean; }) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<any> => {
         const state = getState();
-        const tracks = state['features/base/tracks'];
-        const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
-        const currentFacingMode = localVideoTrack.getCameraFacingMode();
+        const localTrack = getLocalTrack(state['features/base/tracks'], mediaType, true);
 
-        /**
-         * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
-         * but it seems to not trigger the re-rendering of the local video on Chrome;
-         * could be due to a plan B vs unified plan issue. Therefore, we use the legacy
-         * method defined in conference.js that manually takes care of updating the local
-         * video as well.
-         */
-        await APP.conference.useVideoStream(null);
+        if (mediaType === MEDIA_TYPE.SCREENSHARE
+            && getMultipleVideoSendingSupportFeatureFlag(state)
+            && !muted) {
+            return Promise.resolve();
+        }
 
-        const targetFacingMode = currentFacingMode === CAMERA_FACING_MODE.USER
-            ? CAMERA_FACING_MODE.ENVIRONMENT
-            : CAMERA_FACING_MODE.USER;
+        if (localTrack) {
+            // The `jitsiTrack` property will have a value only for a localTrack for which `getUserMedia` has
+            // already completed. If there's no `jitsiTrack`, then the `muted` state will be applied once the
+            // `jitsiTrack` is created.
+            const { jitsiTrack } = localTrack;
+            const isAudioOnly = (mediaType === MEDIA_TYPE.VIDEO && authority === VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY)
+                || (mediaType === MEDIA_TYPE.SCREENSHARE && authority === SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY);
 
-        // Update the flipX value so the environment facing camera is not flipped, before the new track is created.
-        dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER }));
+            // Screenshare cannot be unmuted using the video mute button unless it is muted by audioOnly in
+            // the legacy screensharing mode.
+            if (jitsiTrack && (
+                jitsiTrack.videoType !== 'desktop' || isAudioOnly || getMultipleVideoSendingSupportFeatureFlag(state))
+            ) {
+                return setTrackMuted(jitsiTrack, muted, state).catch(
+                    () => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
+            }
+        } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(state))) {
+            // FIXME: This only runs on mobile now because web has its own way of
+            // creating local tracks. Adjust the check once they are unified.
+            return dispatch(createLocalTracksA({ devices: [ mediaType ] }));
+        }
 
-        const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
-
-        // FIXME: See above.
-        await APP.conference.useVideoStream(newVideoTrack);
+        return Promise.resolve();
     };
 }

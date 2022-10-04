@@ -18,6 +18,7 @@ import {
     TRACK_UPDATED
 } from './actionTypes';
 import {
+    executeTrackOperation,
     showNoDataFromSourceVideoError,
     toggleScreensharing,
     trackNoDataFromSourceNotificationInfoChanged
@@ -25,7 +26,7 @@ import {
 import {
     getTrackByJitsiTrack
 } from './functions.web';
-import { ITrack } from './types';
+import { ITrack, TrackOperationType } from './types';
 
 import './middleware.any';
 
@@ -67,9 +68,10 @@ MiddlewareRegistry.register(store => next => action => {
         const { jitsiTrack } = action.track;
         const muted = action.wasMuted;
         const isVideoTrack = jitsiTrack.getType() !== MEDIA_TYPE.AUDIO;
+        const { dispatch } = store;
 
         if (isVideoTrack && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
-            store.dispatch(setScreenshareMuted(!muted));
+            dispatch(executeTrackOperation(TrackOperationType.Video, () => dispatch(setScreenshareMuted(!muted))));
         } else if (isVideoTrack) {
             APP.conference.setVideoMuteStatus();
         } else {

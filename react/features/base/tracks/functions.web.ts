@@ -9,10 +9,12 @@ import {
     getUserSelectedMicDeviceId
 } from '../settings/functions.web';
 
+import { executeTrackOperation } from './actions.web';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import loadEffects from './loadEffects';
 import logger from './logger';
-import { ITrackOptions } from './types';
+import { ITrackOptions, TrackOperationType } from './types';
 
 export * from './functions.any';
 
@@ -107,14 +109,15 @@ export function createPrejoinTracks() {
     const initialDevices = [ 'audio' ];
     const requestedAudio = true;
     let requestedVideo = false;
-    const { startAudioOnly, startWithAudioMuted, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
+    const { dispatch, getState } = APP.store;
+    const { startAudioOnly, startWithAudioMuted, startWithVideoMuted } = getState()['features/base/settings'];
 
     // Always get a handle on the audio input device so that we have statistics even if the user joins the
     // conference muted. Previous implementation would only acquire the handle when the user first unmuted,
     // which would results in statistics ( such as "No audio input" or "Are you trying to speak?") being available
     // only after that point.
     if (startWithAudioMuted) {
-        APP.store.dispatch(setAudioMuted(true));
+        dispatch(executeTrackOperation(TrackOperationType.Audio, () => dispatch(setAudioMuted(true))));
     }
 
     if (!startWithVideoMuted && !startAudioOnly) {
@@ -128,10 +131,11 @@ export function createPrejoinTracks() {
         // Resolve with no tracks
         tryCreateLocalTracks = Promise.resolve([]);
     } else {
-        tryCreateLocalTracks = createLocalTracksF({
-            devices: initialDevices,
-            firePermissionPromptIsShownEvent: true
-        }, APP.store)
+        tryCreateLocalTracks = dispatch(executeTrackOperation(TrackOperationType.AudioVideo, () =>
+            createLocalTracksF({
+                devices: initialDevices,
+                firePermissionPromptIsShownEvent: true
+            }, APP.store)
                 .catch((err: Error) => {
                     if (requestedAudio && requestedVideo) {
 
@@ -177,7 +181,7 @@ export function createPrejoinTracks() {
                     errors.videoOnlyError = err;
 
                     return [];
-                });
+                })));
     }
 
     return {

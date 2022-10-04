@@ -23,6 +23,7 @@ import {
     getVideoTrackByParticipant,
     trackStreamingStatusChanged
 } from '../../../react/features/base/tracks';
+import { createDeferred } from '../../../react/features/base/util/helpers';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     isTrackStreamingStatusActive,
@@ -38,7 +39,6 @@ import { getParticipantsPaneOpen } from '../../../react/features/participants-pa
 import { PresenceLabel } from '../../../react/features/presence-status';
 import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
-import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';
 
 import { VIDEO_CONTAINER_TYPE, VideoContainer } from './VideoContainer';

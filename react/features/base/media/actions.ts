@@ -2,6 +2,11 @@ import { IStore } from '../../app/types';
 import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { isModerationNotificationDisplayed } from '../../notifications/functions';
+import { isForceMuted } from '../../participants-pane/functions';
+import { maybeStopMuteBecauseOfLocalRecording } from '../../recording/functions';
+import { getLocalParticipant } from '../participants/functions';
+import { setMuted } from '../tracks/actions.any';
+import { isUserInteractionRequiredForUnmute } from '../tracks/functions';
 
 import {
     SET_AUDIO_AVAILABLE,
@@ -53,10 +58,32 @@ export function setAudioAvailable(available: boolean) {
  * }}
  */
 export function setAudioMuted(muted: boolean, ensureTrack = false) {
-    return {
-        type: SET_AUDIO_MUTED,
-        ensureTrack,
-        muted
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const participant = getLocalParticipant(state);
+
+        if (!muted && isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
+            return Promise.resolve();
+        }
+
+        if (!muted
+            && isUserInteractionRequiredForUnmute(state)) {
+            return Promise.resolve();
+        }
+
+        const mutePromise = dispatch(setMuted({
+            muted,
+            ensureTrack,
+            mediaType: MEDIA_TYPE.AUDIO
+        }));
+
+        dispatch({
+            type: SET_AUDIO_MUTED,
+            ensureTrack,
+            muted
+        });
+
+        return mutePromise;
     };
 }
 
@@ -114,7 +141,7 @@ export function setScreenshareMuted(
                 ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.SCREENSHARE));
             }
 
-            return;
+            return Promise.resolve();
         }
 
         const oldValue = state['features/base/media'].screenshare.muted;
@@ -122,13 +149,28 @@ export function setScreenshareMuted(
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
 
-        return dispatch({
+        const participant = getLocalParticipant(state);
+
+        if (!newValue && isForceMuted(participant, MEDIA_TYPE.SCREENSHARE, state)) {
+            return Promise.resolve();
+        }
+
+        const mutePromise = dispatch(setMuted({
+            authority,
+            mediaType,
+            ensureTrack,
+            muted: Boolean(newValue)
+        }));
+
+        dispatch({
             type: SET_SCREENSHARE_MUTED,
             authority,
             mediaType,
             ensureTrack,
             muted: newValue
         });
+
+        return mutePromise;
     };
 }
 
@@ -163,7 +205,7 @@ export function setVideoAvailable(available: boolean) {
  */
 export function setVideoMuted(
         muted: boolean,
-        mediaType: string = MEDIA_TYPE.VIDEO,
+        mediaType: MediaType = MEDIA_TYPE.VIDEO,
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
         ensureTrack = false) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
@@ -175,21 +217,43 @@ export function setVideoMuted(
                 ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
             }
 
-            return;
+            return Promise.resolve();
         }
 
         const oldValue = state['features/base/media'].video.muted;
 
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
+        const participant = getLocalParticipant(state);
 
-        return dispatch({
+        if (!newValue && isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
+            return Promise.resolve();
+        }
+
+        if (maybeStopMuteBecauseOfLocalRecording(Boolean(newValue), dispatch)) {
+            return Promise.resolve();
+        }
+
+        if (!newValue && isUserInteractionRequiredForUnmute(state)) {
+            return Promise.resolve();
+        }
+
+        const mutePromise = dispatch(setMuted({
+            ensureTrack,
+            authority,
+            muted: Boolean(newValue),
+            mediaType
+        }));
+
+        dispatch({
             type: SET_VIDEO_MUTED,
             authority,
             mediaType,
             ensureTrack,
             muted: newValue
         });
+
+        return mutePromise;
     };
 }
 
