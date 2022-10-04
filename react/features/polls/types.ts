@@ -1,4 +1,4 @@
-export type Answer = {
+export interface Answer {
 
     /**
      * An array of boolean: true if the answer was chosen by the responder, else false.
@@ -19,9 +19,9 @@ export type Answer = {
      * Name of the voter.
      */
     voterName: string;
-};
+}
 
-export type Poll = {
+export interface Poll {
 
     /**
      * An array of answers:
@@ -60,4 +60,8 @@ export type Poll = {
      * Whether the results should be shown instead of the answer form.
      */
     showResults: boolean;
-};
+}
+
+export interface PollData extends Poll {
+    id: string;
+}

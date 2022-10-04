@@ -1,16 +1,13 @@
-// @flow
-
-import { getCurrentConference } from '../base/conference';
+import { IStore } from '../app/types';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
+import { getCurrentConference } from '../base/conference/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { playSound } from '../base/sounds';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { playSound } from '../base/sounds/actions';
 import { INCOMING_MSG_SOUND_ID } from '../chat/constants';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    NOTIFICATION_TYPE,
-    showNotification
-} from '../notifications';
+import { showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 
 import { RECEIVE_POLL } from './actionTypes';
 import { clearPolls, receiveAnswer, receivePoll } from './actions';
@@ -19,7 +16,7 @@ import {
     COMMAND_NEW_POLL,
     COMMAND_OLD_POLLS
 } from './constants';
-import type { Answer, Poll } from './types';
+import { Answer, Poll, PollData } from './types';
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
@@ -36,7 +33,7 @@ StateListenerRegistry.register(
         }
     });
 
-const parsePollData = (pollData): Poll | null => {
+const parsePollData = (pollData: PollData): Poll | null => {
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
@@ -84,9 +81,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { conference } = action;
 
         conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (_, data) => _handleReceivePollsMessage(data, dispatch));
+            (_: any, data: any) => _handleReceivePollsMessage(data, dispatch));
         conference.on(JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
-            (_, data) => _handleReceivePollsMessage(data, dispatch));
+            (_: any, data: any) => _handleReceivePollsMessage(data, dispatch));
 
         break;
     }
@@ -118,7 +115,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
  *
  * @returns {void}
  */
-function _handleReceivePollsMessage(data, dispatch) {
+function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch']) {
     switch (data.type) {
     case COMMAND_NEW_POLL: {
         const { question, answers, pollId, senderId, senderName } = data;
@@ -130,7 +127,7 @@ function _handleReceivePollsMessage(data, dispatch) {
             showResults: false,
             lastVote: null,
             question,
-            answers: answers.map(answer => {
+            answers: answers.map((answer: Answer) => {
                 return {
                     name: answer,
                     voters: new Map()

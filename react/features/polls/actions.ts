@@ -1,5 +1,3 @@
-// @flow
-
 import {
     CHANGE_VOTE,
     CLEAR_POLLS,
@@ -9,7 +7,7 @@ import {
     RESET_NB_UNREAD_POLLS,
     RETRACT_VOTE
 } from './actionTypes';
-import type { Answer, Poll } from './types';
+import { Answer, Poll } from './types';
 
 /**
  * Action to signal that existing polls needs to be cleared from state.
