@@ -34,8 +34,8 @@ function EmbedMeeting({ t, url }: Props) {
 
     return (
         <Dialog
-            cancel = {{ visible: false }}
-            ok = {{ visible: false }}
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
             titleKey = { 'embedMeeting.title' }>
             <div className = 'embed-meeting-dialog'>
                 <textarea

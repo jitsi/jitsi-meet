@@ -9,10 +9,10 @@ import { OPEN_DIALOG } from './actionTypes';
 // ! IMPORTANT - This whole middleware is only needed for the transition from from @atlaskit dialog to our component.
 // ! It should be removed when the transition is over.
 
-const newDialogsList = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNamePrompt, EmbedMeetingDialog ];
+const NEW_DIALOG_LIST = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNamePrompt, EmbedMeetingDialog ];
 
 // This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
-const isNewDialog = (component: any) => newDialogsList.some(comp => comp === component);
+const isNewDialog = (component: any) => NEW_DIALOG_LIST.some(comp => comp === component);
 
 /**
  * Implements the entry point of the middleware of the feature base/media.

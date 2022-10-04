@@ -173,15 +173,15 @@ const useStyles = makeStyles()((theme: Theme) => {
 
 interface DialogProps {
     cancel?: {
+        hidden?: boolean;
         translationKey?: string;
-        visible?: boolean;
     };
     children?: ReactElement | ReactElement[];
     description?: string;
     ok?: {
         disabled?: boolean;
+        hidden?: boolean;
         translationKey?: string;
-        visible?: boolean;
     };
     onCancel?: () => void;
     onSubmit?: () => void;
@@ -248,12 +248,12 @@ const Dialog = ({
                 </div>
                 <div className = { classes.content }>{children}</div>
                 <div className = { classes.footer }>
-                    {cancel.visible !== false && <Button
+                    {!cancel.hidden && <Button
                         accessibilityLabel = { t(cancel.translationKey ?? '') }
                         labelKey = { cancel.translationKey }
                         onClick = { onClose }
                         type = 'tertiary' />}
-                    {ok.visible !== false && <Button
+                    {!ok.hidden && <Button
                         accessibilityLabel = { t(ok.translationKey ?? '') }
                         disabled = { ok.disabled }
                         labelKey = { ok.translationKey }

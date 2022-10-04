@@ -72,8 +72,8 @@ class KeyboardShortcutsDialog extends Component<Props> {
 
         return (
             <Dialog
-                cancel = {{ visible: false }}
-                ok = {{ visible: false }}
+                cancel = {{ hidden: true }}
+                ok = {{ hidden: true }}
                 titleKey = 'keyboardShortcuts.keyboardShortcuts'>
                 <div
                     id = 'keyboard-shortcuts'>
