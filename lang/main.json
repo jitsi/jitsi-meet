@@ -623,6 +623,7 @@
         "no": "No",
         "participant": "Participant",
         "participantStats": "Participant Stats",
+        "selectTabTitle": "🎥 Please select this tab for recording",
         "sessionToken": "Session Token",
         "start": "Start Recording",
         "stop": "Stop Recording",

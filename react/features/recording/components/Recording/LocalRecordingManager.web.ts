@@ -1,18 +1,15 @@
 /* eslint-disable lines-around-comment */
+import i18next from 'i18next';
 import { v4 as uuidV4 } from 'uuid';
 import fixWebmDuration from 'webm-duration-fix';
 
 import { IStore } from '../../../app/types';
-// @ts-ignore
-import { getRoomName } from '../../../base/conference';
+import { getRoomName } from '../../../base/conference/functions';
 import { MEDIA_TYPE } from '../../../base/media/constants';
-// @ts-ignore
-import { getLocalTrack, getTrackState } from '../../../base/tracks';
+import { getLocalTrack, getTrackState } from '../../../base/tracks/functions';
 import { inIframe } from '../../../base/util/iframeUtils';
 // @ts-ignore
 import { stopLocalVideoRecording } from '../../actions.any';
-
-declare let APP: any;
 
 interface SelfRecording {
     on: boolean;
@@ -186,7 +183,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
 
         this.selfRecording.on = onlySelf;
         this.recordingData = [];
-        this.roomName = getRoomName(getState());
+        this.roomName = getRoomName(getState()) ?? '';
         let gdmStream: MediaStream = new MediaStream();
         const tracks = getTrackState(getState());
 
@@ -223,6 +220,9 @@ const LocalRecordingManager: ILocalRecordingManager = {
                 });
             }
 
+            const currentTitle = document.title;
+
+            document.title = i18next.t('localRecording.selectTabTitle');
             // @ts-ignore
             gdmStream = await navigator.mediaDevices.getDisplayMedia({
                 // @ts-ignore
@@ -235,6 +235,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
                     noiseSuppression: false
                 }
             });
+            document.title = currentTitle;
 
             // @ts-ignore
             const isBrowser = gdmStream.getVideoTracks()[0].getSettings().displaySurface === 'browser';
