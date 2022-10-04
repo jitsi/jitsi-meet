@@ -5,7 +5,7 @@ import { showErrorNotification, showNotification } from '../../notifications/act
 import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
+import { getMultipleVideoSendingSupportFeatureFlag, getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
@@ -407,10 +407,11 @@ export function trackAdded(track: any) {
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
 
-        // participantId
         const local = track.isLocal();
-        const mediaType = getMultipleVideoSendingSupportFeatureFlag(getState())
-            && track.getVideoType() === VIDEO_TYPE.DESKTOP
+        const isVirtualScreenshareParticipantCreated = local
+            ? getMultipleVideoSendingSupportFeatureFlag(getState())
+            : getMultipleVideoSupportFeatureFlag(getState());
+        const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP && isVirtualScreenshareParticipantCreated
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;
