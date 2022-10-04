@@ -1,9 +1,8 @@
 import React from 'react';
 
-// @ts-ignore
-import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
 import AbstractDisplayNamePrompt, { Props } from '../AbstractDisplayNamePrompt';
 
@@ -52,10 +51,10 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
     render() {
         return (
             <Dialog
-                isModal = { false }
+                cancel = {{ translationKey: 'dialog.Cancel' }}
+                ok = {{ translationKey: 'dialog.Ok' }}
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.displayNameRequired'
-                width = 'small'>
+                titleKey = 'dialog.displayNameRequired'>
                 <Input
                     autoFocus = { true }
                     label = { this.props.t('dialog.enterDisplayName') }

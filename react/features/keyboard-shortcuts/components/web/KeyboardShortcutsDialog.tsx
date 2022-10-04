@@ -3,10 +3,7 @@ import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
 
-import { IStore } from '../../../app/types';
-import { hideDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 
@@ -15,11 +12,6 @@ import Dialog from '../../../base/ui/components/web/Dialog';
  * {@link KeyboardShortcutsDialog}.
  */
 interface Props extends WithTranslation {
-
-    /**
-     * Dispatches close dialog.
-     */
-    _onCloseDialog: () => void;
 
     /**
      * An object containing the CSS classes.
@@ -80,7 +72,8 @@ class KeyboardShortcutsDialog extends Component<Props> {
 
         return (
             <Dialog
-                onCancel = { this.props._onCloseDialog }
+                cancel = {{ hidden: true }}
+                ok = {{ hidden: true }}
                 titleKey = 'keyboardShortcuts.keyboardShortcuts'>
                 <div
                     id = 'keyboard-shortcuts'>
@@ -130,16 +123,4 @@ class KeyboardShortcutsDialog extends Component<Props> {
     }
 }
 
-/**
- * Function that maps parts of Redux actions into component props.
- *
- * @param {Object} dispatch - Redux dispatch.
- * @returns {Object}
- */
-function mapDispatchToProps(dispatch: IStore['dispatch']) {
-    return {
-        _onCloseDialog: () => dispatch(hideDialog())
-    };
-}
-
-export default connect(null, mapDispatchToProps)(translate(withStyles(styles)(KeyboardShortcutsDialog)));
+export default translate(withStyles(styles)(KeyboardShortcutsDialog));

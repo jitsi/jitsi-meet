@@ -23,5 +23,6 @@ import '../virtual-background/middleware';
 import '../face-landmarks/middleware';
 import '../gifs/middleware';
 import '../whiteboard/middleware';
+import '../base/dialog/middleware';
 
 import './middlewares.any';
