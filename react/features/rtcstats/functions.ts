@@ -62,39 +62,40 @@ type Identity = {
 export function connectAndSendIdentity({ getState, dispatch }: IStore, identity: Identity) {
     const state = getState();
 
-    if (canSendRtcstatsData(state)) {
+    if (!canSendRtcstatsData(state)) {
+        return;
+    }
 
-        // Once the conference started connect to the rtcstats server and send data.
-        try {
-            RTCStats.connect(identity.isBreakoutRoom);
-            const localParticipant = getLocalParticipant(state);
-            const options = getConferenceOptions(state);
+    // Once the conference started connect to the rtcstats server and send data.
+    try {
+        RTCStats.connect(identity.isBreakoutRoom);
+        const localParticipant = getLocalParticipant(state);
+        const options = getConferenceOptions(state);
 
-            // The current implementation of rtcstats-server is configured to send data to amplitude, thus
-            // we add identity specific information so we can correlate on the amplitude side. If amplitude is
-            // not configured an empty object will be sent.
-            // The current configuration of the conference is also sent as metadata to rtcstats server.
-            // This is done in order to facilitate queries based on different conference configurations.
-            // e.g. Find all RTCPeerConnections that connect to a specific shard or were created in a
-            // conference with a specific version.
-            // XXX(george): we also want to be able to correlate between rtcstats and callstats, so we're
-            // appending the callstats user name (if it exists) to the display name.
-            const displayName = options.statisticsId
+        // The current implementation of rtcstats-server is configured to send data to amplitude, thus
+        // we add identity specific information so we can correlate on the amplitude side. If amplitude is
+        // not configured an empty object will be sent.
+        // The current configuration of the conference is also sent as metadata to rtcstats server.
+        // This is done in order to facilitate queries based on different conference configurations.
+        // e.g. Find all RTCPeerConnections that connect to a specific shard or were created in a
+        // conference with a specific version.
+        // XXX(george): we also want to be able to correlate between rtcstats and callstats, so we're
+        // appending the callstats user name (if it exists) to the display name.
+        const displayName = options.statisticsId
                 || options.statisticsDisplayName
                 || jitsiLocalStorage.getItem('callStatsUserName');
 
-            RTCStats.sendIdentityData({
-                ...getAmplitudeIdentity(),
-                ...options,
-                endpointId: localParticipant?.id,
-                confName: getAnalyticsRoomName(state, dispatch),
-                displayName,
-                ...identity
-            });
-        } catch (error) {
-            // If the connection failed do not impact jitsi-meet just silently fail.
-            logger.error('RTCStats connect failed with: ', error);
-        }
+        RTCStats.sendIdentityData({
+            ...getAmplitudeIdentity(),
+            ...options,
+            endpointId: localParticipant?.id,
+            confName: getAnalyticsRoomName(state, dispatch),
+            displayName,
+            ...identity
+        });
+    } catch (error) {
+        // If the connection failed do not impact jitsi-meet just silently fail.
+        logger.error('RTCStats connect failed with: ', error);
     }
 
 }
