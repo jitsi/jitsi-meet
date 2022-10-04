@@ -99,6 +99,7 @@
     for (id listener in self.listeners) {
         [listener performStartCallWithUUID:action.callUUID isVideo:action.isVideo];
     }
+    [action fulfill];
 }
 
 - (void)provider:(CXProvider *)provider didActivateAudioSession:(AVAudioSession *)audioSession {
