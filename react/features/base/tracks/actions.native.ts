@@ -4,9 +4,17 @@ import { IReduxState, IStore } from '../../app/types';
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
 import { setAudioOnly } from '../audio-only/actions';
 import JitsiMeetJS from '../lib-jitsi-meet';
+import {
+    setScreenshareMuted,
+    setVideoMuted
+} from '../media/actions';
+import {
+    MEDIA_TYPE,
+    VIDEO_MUTISM_AUTHORITY
+} from '../media/constants';
 
-import { destroyLocalDesktopTrackIfExists, replaceLocalTrack } from './actions.any';
-import { getLocalVideoTrack, isLocalVideoTrackDesktop } from './functions';
+import { addLocalTrack, replaceLocalTrack } from './actions.any';
+import { getLocalDesktopTrack, getTrackState, isLocalVideoTrackDesktop } from './functions.native';
 
 export * from './actions.any';
 
@@ -31,7 +39,8 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
                 _startScreenSharing(dispatch, state);
             }
         } else {
-            dispatch(destroyLocalDesktopTrackIfExists());
+            dispatch(setScreenshareMuted(true));
+            dispatch(setVideoMuted(false, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
             setPictureInPictureEnabled(true);
         }
     };
@@ -47,26 +56,33 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
  * @param {Object} state - The redux state.
  * @returns {void}
  */
-function _startScreenSharing(dispatch: Function, state: IReduxState) {
+async function _startScreenSharing(dispatch: Function, state: IReduxState) {
     setPictureInPictureEnabled(false);
 
-    JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })
-    .then((tracks: any[]) => {
+    try {
+        const tracks: any[] = await JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] });
         const track = tracks[0];
-        const currentLocalTrack = getLocalVideoTrack(state['features/base/tracks']);
-        const currentJitsiTrack = currentLocalTrack?.jitsiTrack;
+        const currentLocalDesktopTrack = getLocalDesktopTrack(getTrackState(state));
+        const currentJitsiTrack = currentLocalDesktopTrack?.jitsiTrack;
 
-        dispatch(replaceLocalTrack(currentJitsiTrack, track));
+        // The first time the user shares the screen we add the track and create the transceiver.
+        // Afterwards, we just replace the old track, so the transceiver will be reused.
+        if (currentJitsiTrack) {
+            dispatch(replaceLocalTrack(currentJitsiTrack, track));
+        } else {
+            dispatch(addLocalTrack(track));
+        }
+
+        dispatch(setVideoMuted(true, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
 
         const { enabled: audioOnly } = state['features/base/audio-only'];
 
         if (audioOnly) {
             dispatch(setAudioOnly(false));
         }
-    })
-    .catch((error: any) => {
+    } catch (error: any) {
         console.log('ERROR creating ScreeSharing stream ', error);
 
         setPictureInPictureEnabled(true);
-    });
+    }
 }
