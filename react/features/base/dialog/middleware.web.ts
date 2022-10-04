@@ -9,12 +9,10 @@ import { OPEN_DIALOG } from './actionTypes';
 // ! IMPORTANT - This whole middleware is only needed for the transition from from @atlaskit dialog to our component.
 // ! It should be removed when the transition is over.
 
-// This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
-const isNewDialog = (component: any) => {
-    const list = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNamePrompt, EmbedMeetingDialog ];
+const newDialogsList = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNamePrompt, EmbedMeetingDialog ];
 
-    return Boolean(list.find(comp => comp === component));
-};
+// This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
+const isNewDialog = (component: any) => newDialogsList.some(comp => comp === component);
 
 /**
  * Implements the entry point of the middleware of the feature base/media.
@@ -25,9 +23,7 @@ const isNewDialog = (component: any) => {
 MiddlewareRegistry.register(() => (next: Function) => (action: any) => {
     switch (action.type) {
     case OPEN_DIALOG: {
-        if (isNewDialog(action.component)) {
-            action.isNewDialog = true;
-        }
+        action.isNewDialog = isNewDialog(action.component);
     }
     }
 

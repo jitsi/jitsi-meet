@@ -172,12 +172,16 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 interface DialogProps {
-    cancelKey?: string;
+    cancel?: {
+        translationKey?: string;
+        visible?: boolean;
+    };
     children?: ReactElement | ReactElement[];
     description?: string;
     ok?: {
         disabled?: boolean;
-        key: string;
+        translationKey?: string;
+        visible?: boolean;
     };
     onCancel?: () => void;
     onSubmit?: () => void;
@@ -187,15 +191,15 @@ interface DialogProps {
 }
 
 const Dialog = ({
-    title,
-    titleKey,
-    description,
-    size = 'medium',
-    onCancel,
+    cancel = { translationKey: 'dialog.Cancel' },
     children,
-    ok,
-    cancelKey,
-    onSubmit
+    description,
+    ok = { translationKey: 'dialog.Ok' },
+    onCancel,
+    onSubmit,
+    size = 'medium',
+    title,
+    titleKey
 }: DialogProps) => {
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -244,15 +248,15 @@ const Dialog = ({
                 </div>
                 <div className = { classes.content }>{children}</div>
                 <div className = { classes.footer }>
-                    {cancelKey && <Button
-                        accessibilityLabel = { t(cancelKey) }
-                        labelKey = { cancelKey }
+                    {cancel.visible !== false && <Button
+                        accessibilityLabel = { t(cancel.translationKey ?? '') }
+                        labelKey = { cancel.translationKey }
                         onClick = { onClose }
                         type = 'tertiary' />}
-                    {ok && <Button
-                        accessibilityLabel = { t(ok.key) }
+                    {ok.visible !== false && <Button
+                        accessibilityLabel = { t(ok.translationKey ?? '') }
                         disabled = { ok.disabled }
-                        labelKey = { ok.key }
+                        labelKey = { ok.translationKey }
                         onClick = { submit } />}
                 </div>
             </div>

@@ -51,8 +51,8 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
     render() {
         return (
             <Dialog
-                cancelKey = 'dialog.Cancel'
-                ok = {{ key: 'dialog.Ok' }}
+                cancel = {{ translationKey: 'dialog.Cancel' }}
+                ok = {{ translationKey: 'dialog.Ok' }}
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.displayNameRequired'>
                 <Input

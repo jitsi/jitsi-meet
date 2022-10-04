@@ -3,7 +3,6 @@ import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
@@ -73,6 +72,8 @@ class KeyboardShortcutsDialog extends Component<Props> {
 
         return (
             <Dialog
+                cancel = {{ visible: false }}
+                ok = {{ visible: false }}
                 titleKey = 'keyboardShortcuts.keyboardShortcuts'>
                 <div
                     id = 'keyboard-shortcuts'>
@@ -122,4 +123,4 @@ class KeyboardShortcutsDialog extends Component<Props> {
     }
 }
 
-export default connect()(translate(withStyles(styles)(KeyboardShortcutsDialog)));
+export default translate(withStyles(styles)(KeyboardShortcutsDialog));

@@ -33,7 +33,10 @@ function EmbedMeeting({ t, url }: Props) {
         + ' style="height: 100%; width: 100%; border: 0px;"></iframe>';
 
     return (
-        <Dialog titleKey = { 'embedMeeting.title' }>
+        <Dialog
+            cancel = {{ visible: false }}
+            ok = {{ visible: false }}
+            titleKey = { 'embedMeeting.title' }>
             <div className = 'embed-meeting-dialog'>
                 <textarea
                     aria-label = { t('dialog.embedMeeting') }

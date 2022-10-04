@@ -18,10 +18,8 @@ class ChatPrivacyDialog extends AbstractChatPrivacyDialog {
     render() {
         return (
             <Dialog
-                cancelKey = 'dialog.sendPrivateMessageCancel'
-                ok = {{
-                    key: 'dialog.sendPrivateMessageOk'
-                }}
+                cancel = {{ translationKey: 'dialog.sendPrivateMessageCancel' }}
+                ok = {{ translationKey: 'dialog.sendPrivateMessageOk' }}
                 onCancel = { this._onSendGroupMessage }
                 onSubmit = { this._onSendPrivateMessage }
                 titleKey = 'dialog.sendPrivateMessageTitle'>

@@ -45,7 +45,7 @@ ReducerRegistry.register<IDialogState>('features/base/dialog', (state = {}, acti
         return assign(state, {
             component: action.component,
             componentProps: action.componentProps,
-            isNewDialog: Boolean(action.isNewDialog)
+            isNewDialog: action.isNewDialog
         });
 
     case HIDE_SHEET:
