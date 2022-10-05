@@ -251,7 +251,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             thumbnailMenu: true
         };
 
-        if (_participant?.isFakeParticipant) {
+        if (_participant?.fakeParticipant) {
             return (
                 <FakeParticipantContextMenu
                     { ...props }

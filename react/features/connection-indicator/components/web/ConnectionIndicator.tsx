@@ -13,7 +13,11 @@ import { IState } from '../../../app/types';
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { translate } from '../../../base/i18n/functions';
 import { MEDIA_TYPE } from '../../../base/media/constants';
-import { getLocalParticipant, getParticipantById } from '../../../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    isScreenShareParticipant
+} from '../../../base/participants/functions';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
 import {
@@ -401,7 +405,7 @@ export function _mapStateToProps(state: IState, ownProps: Props) {
 
     let firstVideoTrack;
 
-    if (sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant) {
+    if (sourceNameSignalingEnabled && isScreenShareParticipant(participant)) {
         firstVideoTrack = getVirtualScreenshareParticipantTrack(tracks, participantId);
     } else {
         firstVideoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);

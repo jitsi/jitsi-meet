@@ -9,7 +9,7 @@ import { IState } from '../../../app/types';
 // @ts-ignore
 import { isDisplayNameVisible } from '../../../base/config/functions.any';
 import { getLocalParticipant, getParticipantDisplayName } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/types';
+import { FakeParticipant, Participant } from '../../../base/participants/types';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { getLargeVideoParticipant } from '../../../large-video/functions';
@@ -64,7 +64,7 @@ const StageParticipantNameLabel = () => {
         && nameToDisplay
         && selectedId !== localId
         && !isTileView
-        && !largeVideoParticipant?.isWhiteboard
+        && largeVideoParticipant?.fakeParticipant !== FakeParticipant.Whiteboard
     ) {
         return (
             <div

@@ -39,7 +39,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (!getAutoPinSetting() || isFollowMeActive(store)) {
             break;
         }
-        shouldUpdateAutoPin = getParticipantById(store.getState(), action.participant.id)?.isFakeParticipant;
+        shouldUpdateAutoPin = Boolean(getParticipantById(store.getState(), action.participant.id)?.fakeParticipant);
         break;
     }
     }

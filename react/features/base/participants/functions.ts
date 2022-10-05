@@ -2,7 +2,7 @@
 // @ts-ignore
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
-import { IStore } from '../../app/types';
+import { IState, IStore } from '../../app/types';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { IStateful } from '../app/types';
@@ -24,7 +24,7 @@ import {
 } from './constants';
 // @ts-ignore
 import { preloadImage } from './preloadImage';
-import { Participant } from './types';
+import { FakeParticipant, Participant } from './types';
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
@@ -34,10 +34,10 @@ const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant: Participant) => {
-        return participant?.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
+        return participant?.fakeParticipant === FakeParticipant.Jigasi ? JIGASI_PARTICIPANT_ICON : null;
     },
     (participant: Participant) => {
-        return participant?.isWhiteboard ? WHITEBOARD_PARTICIPANT_ICON : null;
+        return participant?.fakeParticipant === FakeParticipant.Whiteboard ? WHITEBOARD_PARTICIPANT_ICON : null;
     },
     (participant: Participant) => {
         return participant?.avatarURL ? participant.avatarURL : null;
@@ -115,7 +115,7 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
         }
     }
 
-    // Remove shared video from the count.
+    // Remove fake participants from the count.
     if (fakeParticipants) {
         availableSlotsForActiveSpeakers -= fakeParticipants.size;
     }
@@ -302,6 +302,30 @@ export function getFakeParticipants(stateful: IStateful) {
 }
 
 /**
+ * Returns whether the fake participant is of local or virtual screenshare type.
+ *
+ * @param {IState} state - The (whole) redux state, or redux's.
+ * @param {string|undefined} participantId - The participant id.
+ * @returns {boolean} - True if it's one of the two.
+ */
+export function isScreenShareParticipantById(state: IState, participantId?: string): boolean {
+    const participant = getParticipantByIdOrUndefined(state, participantId);
+
+    return isScreenShareParticipant(participant);
+}
+
+/**
+ * Returns whether the fake participant is of local or virtual screenshare type.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's one of the two.
+ */
+export function isScreenShareParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.LocalScreenShare
+        || participant?.fakeParticipant === FakeParticipant.VirtualScreenShare;
+}
+
+/**
  * Returns a count of the known remote participants in the passed in redux state.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
@@ -349,15 +373,16 @@ export function getParticipantCountWithFake(stateful: IStateful) {
  * @returns {string}
  */
 export function getParticipantDisplayName(stateful: IStateful, id: string): string {
-    const participant = getParticipantById(stateful, id);
+    const state = toState(stateful);
+    const participant = getParticipantById(state, id);
     const {
         defaultLocalDisplayName,
         defaultRemoteDisplayName
-    } = toState(stateful)['features/base/config'];
+    } = state['features/base/config'];
 
     if (participant) {
-        if (participant.isVirtualScreenshareParticipant) {
-            return getScreenshareParticipantDisplayName(stateful, id);
+        if (isScreenShareParticipant(participant)) {
+            return getScreenshareParticipantDisplayName(state, id);
         }
 
         if (participant.name) {
@@ -546,7 +571,7 @@ export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
     }
 
     /* First check if we have an unmuted video track. */
-    const videoTrack = getVideoTrackByParticipant(state['features/base/tracks'], participant);
+    const videoTrack = getVideoTrackByParticipant(state, participant);
 
     if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
         return false;

@@ -252,7 +252,7 @@ function MeetingParticipantItem({
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
             {
-                ...(_participant?.isFakeParticipant ? {} : {
+                ...(_participant?.fakeParticipant ? {} : {
                     audioMediaState,
                     videoMediaState: _videoMediaState
                 })
@@ -269,7 +269,7 @@ function MeetingParticipantItem({
             raisedHand = { _raisedHand }
             youText = { youText }>
 
-            {!overflowDrawer && !_participant?.isFakeParticipant
+            {!overflowDrawer && !_participant?.fakeParticipant
                 && <>
                     {!isInBreakoutRoom && (
                         <ParticipantQuickAction
@@ -286,7 +286,7 @@ function MeetingParticipantItem({
                 </>
             }
 
-            {!overflowDrawer && (_localVideoOwner || _participant?.isWhiteboard) && _participant?.isFakeParticipant && (
+            {!overflowDrawer && (_localVideoOwner || _participant?.fakeParticipant) && (
                 <ParticipantActionEllipsis
                     accessibilityLabel = { participantActionEllipsisLabel }
                     onClick = { onContextMenu } />
