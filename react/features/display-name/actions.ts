@@ -1,7 +1,6 @@
-// @flow
+import { openDialog } from '../base/dialog/actions';
 
-import { openDialog } from '../../features/base/dialog';
-
+// @ts-ignore
 import { DisplayNamePrompt } from './components';
 
 /**
@@ -11,7 +10,7 @@ import { DisplayNamePrompt } from './components';
  * submit of the dialog.
  * @returns {Object}
  */
-export function openDisplayNamePrompt(onPostSubmit: ?Function) {
+export function openDisplayNamePrompt(onPostSubmit?: Function) {
     return openDialog(DisplayNamePrompt, {
         onPostSubmit
     });

@@ -1,5 +1,4 @@
-// @flow
-
+import { IState } from '../app/types';
 
 import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -23,20 +22,20 @@ function extractVpaasTenantFromPath(path: string) {
 /**
  * Returns the vpaas tenant.
  *
- * @param {Object} state - The global state.
+ * @param {IState} state - The global state.
  * @returns {string}
  */
-export function getVpaasTenant(state: Object) {
-    return extractVpaasTenantFromPath(state['features/base/connection'].locationURL.pathname);
+export function getVpaasTenant(state: IState) {
+    return extractVpaasTenantFromPath(state['features/base/connection'].locationURL?.pathname ?? '');
 }
 
 /**
  * Returns true if the current meeting is a vpaas one.
  *
- * @param {Object} state - The state of the app.
+ * @param {IState} state - The state of the app.
  * @returns {boolean}
  */
-export function isVpaasMeeting(state: Object) {
+export function isVpaasMeeting(state: IState) {
     const connection = state['features/base/connection'];
 
     if (connection?.locationURL?.pathname) {
@@ -57,8 +56,8 @@ export function isVpaasMeeting(state: Object) {
  * @returns {void}
  */
 export async function sendGetDetailsRequest({ appId, baseUrl }: {
-    appId: string,
-    baseUrl: string,
+    appId: string;
+    baseUrl: string;
 }) {
     const fullUrl = `${baseUrl}/v1/public/tenants/${encodeURIComponent(appId)}`;
 
@@ -70,7 +69,7 @@ export async function sendGetDetailsRequest({ appId, baseUrl }: {
         }
 
         throw new Error('Request not successful');
-    } catch (err) {
+    } catch (err: any) {
         throw new Error(err);
 
     }
@@ -79,11 +78,11 @@ export async function sendGetDetailsRequest({ appId, baseUrl }: {
 /**
  * Returns the billing id for vpaas meetings.
  *
- * @param {Object} state - The state of the app.
+ * @param {IState} state - The state of the app.
  * @param {string} feature - Feature to be looked up for disable state.
  * @returns {boolean}
  */
-export function isFeatureDisabled(state: Object, feature: string) {
+export function isFeatureDisabled(state: IState, feature: string) {
     return state['features/jaas'].disabledFeatures.includes(feature);
 }
 
@@ -96,8 +95,8 @@ export function isFeatureDisabled(state: Object, feature: string) {
  * @returns {void}
  */
 export async function sendGetJWTRequest({ appId, baseUrl }: {
-    appId: string,
-    baseUrl: string
+    appId: string;
+    baseUrl: string;
 }) {
     const fullUrl = `${baseUrl}/v1/public/token/${encodeURIComponent(appId)}`;
 
@@ -111,7 +110,7 @@ export async function sendGetJWTRequest({ appId, baseUrl }: {
         }
 
         throw new Error('Request not successful');
-    } catch (err) {
+    } catch (err: any) {
         throw new Error(err);
 
     }
@@ -120,10 +119,10 @@ export async function sendGetJWTRequest({ appId, baseUrl }: {
 /**
  * Gets a jaas JWT.
  *
- * @param {Object} state - Redux state.
+ * @param {IState} state - Redux state.
  * @returns {string} The JWT.
  */
-export async function getJaasJWT(state: Object) {
+export async function getJaasJWT(state: IState) {
     const baseUrl = state['features/base/config'].jaasTokenUrl;
     const appId = getVpaasTenant(state);
 
@@ -133,7 +132,7 @@ export async function getJaasJWT(state: Object) {
         try {
             const jwt = await sendGetJWTRequest({
                 appId,
-                baseUrl
+                baseUrl: baseUrl ?? ''
             });
 
             return jwt.token;

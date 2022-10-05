@@ -86,7 +86,7 @@ export interface ISettingsState {
     userSelectedMicDeviceLabel?: string;
     userSelectedNotifications?: {
         [key: string]: boolean;
-    } | boolean;
+    };
     userSelectedSkipPrejoin?: boolean;
     videoSettingsVisible?: boolean;
     visible?: boolean;

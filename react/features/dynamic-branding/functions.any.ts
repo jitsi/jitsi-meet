@@ -1,6 +1,6 @@
-// @flow
-
-import { toState } from '../base/redux';
+import { IState } from '../app/types';
+import { IStateful } from '../base/app/types';
+import { toState } from '../base/redux/functions';
 
 
 /**
@@ -10,13 +10,13 @@ import { toState } from '../base/redux';
  * @param {Object} state - A redux state.
  * @returns {string}
  */
-export function extractFqnFromPath(state?: Object) {
+export function extractFqnFromPath(state?: IState) {
     let pathname;
 
     if (window.location.pathname) {
         pathname = window.location.pathname;
-    } else if (state && state['features/base/connection']) {
-        pathname = state['features/base/connection'].locationURL.pathname;
+    } else if (state?.['features/base/connection']) {
+        pathname = state['features/base/connection'].locationURL?.pathname ?? '';
     } else {
         return '';
     }
@@ -34,7 +34,7 @@ export function extractFqnFromPath(state?: Object) {
  * {@code getState} function.
  * @returns {string}
  */
-export async function getDynamicBrandingUrl(stateful: Object | Function) {
+export async function getDynamicBrandingUrl(stateful: IStateful) {
     const state = toState(stateful);
 
     // NB: On web this is dispatched really early, before the config has been stored in the
@@ -61,6 +61,6 @@ export async function getDynamicBrandingUrl(stateful: Object | Function) {
  * @param {Object} state - Global state of the app.
  * @returns {boolean}
  */
-export function isDynamicBrandingDataLoaded(state: Object) {
+export function isDynamicBrandingDataLoaded(state: IState) {
     return state['features/dynamic-branding'].customizationReady;
 }

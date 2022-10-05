@@ -115,6 +115,7 @@ export interface IConfig {
     autoKnockLobby?: boolean;
     backgroundAlpha?: number;
     bosh?: string;
+    brandingDataUrl?: string;
     brandingRoomAlias?: string;
     breakoutRooms?: {
         hideAddRoomButton?: boolean;
@@ -342,6 +343,8 @@ export interface IConfig {
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
     inviteAppName?: string | null;
+    jaasFeedbackMetadataURL?: string;
+    jaasTokenUrl?: string;
     lastNLimits?: {
         [key: number]: number;
     };
