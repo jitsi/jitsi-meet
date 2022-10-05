@@ -5,7 +5,7 @@ import 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import './react/features/mobile/polyfills';
 // eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { View } from 'react-native';
 

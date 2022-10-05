@@ -1,8 +1,8 @@
 import { getAppProp } from '../../base/app';
 import {
     CONFERENCE_JOINED,
-    CONFERENCE_WILL_JOIN,
-    CONFERENCE_LEFT
+    CONFERENCE_LEFT,
+    CONFERENCE_WILL_JOIN
 } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
