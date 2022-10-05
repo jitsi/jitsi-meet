@@ -81,7 +81,7 @@ case "$1" in
                 db_go
                 db_get jitsi-meet/cert-choice
                 CERT_CHOICE="$RET"
-            end
+            fi
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
                 RET=""
