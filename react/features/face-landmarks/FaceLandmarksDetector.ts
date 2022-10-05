@@ -8,16 +8,16 @@ import { getBaseUrl } from '../base/util/helpers';
 
 import {
     addFaceExpression,
-    faceLandmarkDetectionStopped,
     clearFaceExpressionBuffer,
+    faceLandmarkDetectionStopped,
     newFaceBox
 } from './actions';
 import {
     DETECTION_TYPES,
-    INIT_WORKER,
     DETECT_FACE,
-    WEBHOOK_SEND_TIME_INTERVAL,
-    FACE_LANDMARK_DETECTION_ERROR_THRESHOLD
+    FACE_LANDMARK_DETECTION_ERROR_THRESHOLD,
+    INIT_WORKER,
+    WEBHOOK_SEND_TIME_INTERVAL
 } from './constants';
 import {
     getDetectionInterval,

@@ -3,10 +3,10 @@
 import { openDialog } from '../../base/dialog';
 import { IconCrown } from '../../base/icons';
 import {
+    PARTICIPANT_ROLE,
     getLocalParticipant,
     getParticipantById,
-    isParticipantModerator,
-    PARTICIPANT_ROLE
+    isParticipantModerator
 } from '../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 

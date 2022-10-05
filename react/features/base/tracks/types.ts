@@ -14,7 +14,6 @@ export interface TrackOptions {
     devices?: string[];
     facingMode?: string;
     firePermissionPromptIsShownEvent?: boolean;
-    fireSlowPromiseEvent?: boolean;
     micDeviceId?: string | null;
     timeout?: number;
 }

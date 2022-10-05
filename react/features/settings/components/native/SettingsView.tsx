@@ -36,7 +36,7 @@ import { screen } from '../../../mobile/navigation/routes';
 // @ts-ignore
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
 // @ts-ignore
-import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
+import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions';
 
 // @ts-ignore
 import FormRow from './FormRow';

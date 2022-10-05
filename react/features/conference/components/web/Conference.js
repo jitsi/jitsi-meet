@@ -11,7 +11,7 @@ import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
 import { setColorAlpha } from '../../../base/util';
 import { Chat } from '../../../chat';
-import { MainFilmstrip, StageFilmstrip, ScreenshareFilmstrip } from '../../../filmstrip';
+import { MainFilmstrip, ScreenshareFilmstrip, StageFilmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { LobbyScreen } from '../../../lobby';

@@ -12,11 +12,11 @@ import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import {
     ACTION_TRIGGER,
+    type ActionTrigger,
     AudioStateIcons,
     MEDIA_STATE,
-    type ActionTrigger,
-    VideoStateIcons,
-    MediaState
+    MediaState,
+    VideoStateIcons
 } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';

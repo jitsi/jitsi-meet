@@ -1,8 +1,8 @@
 import ReducerRegistry from '../../base/redux/ReducerRegistry';
 
 import {
-    _SET_APP_STATE_LISTENER,
-    APP_STATE_CHANGED
+    APP_STATE_CHANGED,
+    _SET_APP_STATE_LISTENER
 } from './actionTypes';
 
 export interface IBackgroundState {

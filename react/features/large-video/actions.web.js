@@ -6,7 +6,7 @@ import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { MEDIA_TYPE } from '../base/media';
 import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 
-import { UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT, SET_SEE_WHAT_IS_BEING_SHARED } from './actionTypes';
+import { SET_SEE_WHAT_IS_BEING_SHARED, UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT } from './actionTypes';
 
 export * from './actions.any';
 

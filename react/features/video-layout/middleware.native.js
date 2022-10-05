@@ -1,4 +1,4 @@
-import { MEDIA_TYPE, setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../base/media';
+import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY, setVideoMuted } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { CLIENT_RESIZED } from '../base/responsive-ui';
 import { setLargeVideoDimensions } from '../large-video/actions.any';

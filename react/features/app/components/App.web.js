@@ -3,9 +3,9 @@
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
-import { DialogContainer } from '../../base/dialog';
 import GlobalStyles from '../../base/ui/components/GlobalStyles';
 import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web';
+import DialogContainer from '../../base/ui/components/web/DialogContainer';
 import { ChromeExtensionBanner } from '../../chrome-extension-banner';
 
 import { AbstractApp } from './AbstractApp';

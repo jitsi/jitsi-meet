@@ -30,6 +30,8 @@ local jid_bare = require 'util.jid'.bare;
 local json = require 'util.json';
 local filters = require 'util.filters';
 local st = require 'util.stanza';
+local muc_util = module:require "muc/util";
+local valid_affiliations = muc_util.valid_affiliations;
 local MUC_NS = 'http://jabber.org/protocol/muc';
 local DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
 local DISPLAY_NAME_REQUIRED_FEATURE = 'http://jitsi.org/protocol/lobbyrooms#displayname_required';
@@ -436,8 +438,30 @@ end);
 
 function handle_create_lobby(event)
     local room = event.room;
+
+    -- since this is called by backend rather than triggered by UI, we need to handle a few additional things:
+    --  1. Make sure existing participants are already members or they will get kicked out when set_members_only(true)
+    --  2. Trigger a 104 (config change) status message so UI state is properly updated for existing users
+
+    -- make sure all existing occupants are members
+    for _, occupant in room:each_occupant() do
+        local affiliation = room:get_affiliation(occupant.bare_jid);
+        if valid_affiliations[affiliation or "none"] < valid_affiliations.member then
+            room:set_affiliation(true, occupant.bare_jid, 'member');
+        end
+    end
+    -- Now it is safe to set the room to members only
     room:set_members_only(true);
-    attach_lobby_room(room)
+
+    -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
+    room:broadcast_message(
+        st.message({ type='groupchat', from=room.jid })
+            :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+                :tag('status', { code='104' })
+    );
+
+    -- Attach the lobby room.
+    attach_lobby_room(room);
 end
 
 function handle_destroy_lobby(event)

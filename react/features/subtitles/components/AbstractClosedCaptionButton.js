@@ -1,10 +1,10 @@
 // @flow
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
+import { MEET_FEATURES } from '../../base/jwt/constants';
 import { isLocalParticipantModerator } from '../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
-import { FEATURES } from '../../jaas/constants';
 
 export type AbstractProps = AbstractButtonProps & {
 
@@ -61,7 +61,7 @@ export class AbstractClosedCaptionButton
                 'requesting_subtitles': Boolean(_requestingSubtitles)
             }));
 
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             this._handleClickOpenLanguageSelector();

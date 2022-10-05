@@ -6,7 +6,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { TranscribingLabel } from '../../../transcribing';
 import { VideoQualityLabel } from '../../../video-quality';
 
-import { LabelHitSlop, LABEL_ID_INSECURE_ROOM_NAME, LABEL_ID_QUALITY, LABEL_ID_TRANSCRIBING } from './constants';
+import { LABEL_ID_INSECURE_ROOM_NAME, LABEL_ID_QUALITY, LABEL_ID_TRANSCRIBING, LabelHitSlop } from './constants';
 import styles from './styles';
 
 import { InsecureRoomNameLabel } from './';

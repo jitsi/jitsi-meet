@@ -25,24 +25,24 @@ import {
     setPassword,
     setSubject
 } from '../../react/features/base/conference';
-import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/config';
+import { getWhitelistedJSON, overwriteConfig } from '../../react/features/base/config';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { isSupportedBrowser } from '../../react/features/base/environment';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../react/features/base/media';
 import {
+    LOCAL_PARTICIPANT_DEFAULT_ID,
     getLocalParticipant,
     getParticipantById,
-    pinParticipant,
-    kickParticipant,
-    raiseHand,
-    isParticipantModerator,
-    isLocalParticipantModerator,
-    hasRaisedHand,
     grantModerator,
+    hasRaisedHand,
+    isLocalParticipantModerator,
+    isParticipantModerator,
+    kickParticipant,
     overwriteParticipantsNames,
-    LOCAL_PARTICIPANT_DEFAULT_ID
+    pinParticipant,
+    raiseHand
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { getDisplayName } from '../../react/features/base/settings/functions.web';
@@ -78,12 +78,12 @@ import {
     captureLargeVideoScreenshot,
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
-import { toggleLobbyMode, answerKnockingParticipant } from '../../react/features/lobby/actions';
+import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
 import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
 import {
-    hideNotification,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
+    hideNotification,
     showNotification
 } from '../../react/features/notifications';
 import {
@@ -95,14 +95,14 @@ import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/f
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { isScreenAudioSupported } from '../../react/features/screen-share';
-import { startScreenShareFlow, startAudioScreenShareFlow } from '../../react/features/screen-share/actions';
+import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
-import { toggleRequestingSubtitles, setRequestingSubtitles } from '../../react/features/subtitles/actions';
+import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
-import { toggleTileView, setTileView } from '../../react/features/video-layout';
+import { setTileView, toggleTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
 import VirtualBackgroundDialog from '../../react/features/virtual-background/components/VirtualBackgroundDialog';

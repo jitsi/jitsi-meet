@@ -5,11 +5,11 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { SET_AUDIO_ONLY } from '../../base/audio-only';
 import {
     CONFERENCE_FAILED,
-    CONFERENCE_LEFT,
     CONFERENCE_JOINED,
+    CONFERENCE_LEFT,
     getCurrentConference
 } from '../../base/conference';
-import { getFeatureFlag, AUDIO_FOCUS_DISABLED } from '../../base/flags';
+import { AUDIO_FOCUS_DISABLED, getFeatureFlag } from '../../base/flags';
 import { MiddlewareRegistry } from '../../base/redux';
 
 import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes';

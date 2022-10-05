@@ -18,9 +18,9 @@ import {
     isTrackStreamingStatusInterrupted
 } from '../../functions';
 import AbstractConnectionIndicator, {
-    INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
-    type State as AbstractState
+    type State as AbstractState,
+    INDICATOR_DISPLAY_THRESHOLD
 } from '../AbstractConnectionIndicator';
 
 /**

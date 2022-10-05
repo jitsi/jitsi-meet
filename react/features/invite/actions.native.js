@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, ADD_PEOPLE_ENABLED } from '../base/flags';
+import { ADD_PEOPLE_ENABLED, getFeatureFlag } from '../base/flags';
 import { navigate } from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 import { beginShareRoom } from '../share-room';

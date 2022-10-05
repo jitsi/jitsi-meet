@@ -1,5 +1,5 @@
 import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
-import { Human, Config, FaceResult } from '@vladmandic/human';
+import { Config, FaceResult, Human } from '@vladmandic/human';
 
 import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
 import { DetectInput, DetectOutput, FaceBox, InitInput } from './types';

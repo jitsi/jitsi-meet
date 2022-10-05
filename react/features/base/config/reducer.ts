@@ -5,11 +5,11 @@ import ReducerRegistry from '../redux/ReducerRegistry';
 import { equals } from '../redux/functions';
 
 import {
-    UPDATE_CONFIG,
     CONFIG_WILL_LOAD,
     LOAD_CONFIG_ERROR,
+    OVERWRITE_CONFIG,
     SET_CONFIG,
-    OVERWRITE_CONFIG
+    UPDATE_CONFIG
 } from './actionTypes';
 import { IConfig } from './configType';
 // eslint-disable-next-line lines-around-comment
@@ -52,10 +52,11 @@ const INITIAL_RN_STATE: IConfig = {
     disableAudioLevels: true,
 
     p2p: {
-        disabledCodec: '',
-        disableH264: false, // deprecated
-        preferredCodec: 'H264',
-        preferH264: true // deprecated
+        preferredCodec: 'VP8'
+    },
+
+    videoQuality: {
+        preferredCodec: 'VP8'
     }
 };
 

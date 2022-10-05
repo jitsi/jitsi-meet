@@ -5,12 +5,11 @@ import ReducerRegistry from '../redux/ReducerRegistry';
 import { assign } from '../redux/functions';
 
 import {
-    _ADD_AUDIO_ELEMENT,
-    _REMOVE_AUDIO_ELEMENT,
     REGISTER_SOUND,
-    UNREGISTER_SOUND
+    UNREGISTER_SOUND,
+    _ADD_AUDIO_ELEMENT,
+    _REMOVE_AUDIO_ELEMENT
 } from './actionTypes';
-// @ts-ignore
 import logger from './logger';
 
 /**

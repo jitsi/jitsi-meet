@@ -17,8 +17,8 @@ import {
     updateProfile
 } from '../../../../google-api';
 import AbstractStartLiveStreamDialog, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractStartLiveStreamDialog';
 
 import StreamKeyForm from './StreamKeyForm';

@@ -4,9 +4,8 @@ import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-ignore
-import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
 
 /**
  * The type of the React {@code Component} props of
@@ -73,10 +72,9 @@ class KeyboardShortcutsDialog extends Component<Props> {
 
         return (
             <Dialog
-                cancelKey = { 'dialog.close' }
-                submitDisabled = { true }
-                titleKey = 'keyboardShortcuts.keyboardShortcuts'
-                width = 'small'>
+                cancel = {{ hidden: true }}
+                ok = {{ hidden: true }}
+                titleKey = 'keyboardShortcuts.keyboardShortcuts'>
                 <div
                     id = 'keyboard-shortcuts'>
                     <ul

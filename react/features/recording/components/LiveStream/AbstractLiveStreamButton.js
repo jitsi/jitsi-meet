@@ -1,13 +1,13 @@
 // @flow
 
 import { IconLiveStreaming } from '../../../base/icons';
+import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import { FEATURES } from '../../../jaas/constants';
 import { getActiveSession } from '../../functions';
 
 import { getLiveStreaming } from './functions';
@@ -85,7 +85,7 @@ export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P
     async _handleClick() {
         const { dispatch } = this.props;
 
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             this._onHandleClick();

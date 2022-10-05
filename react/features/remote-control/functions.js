@@ -4,7 +4,7 @@ import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 
 import { enableReceiver, stopReceiver } from './actions';
-import { REMOTE_CONTROL_MESSAGE_NAME, EVENTS } from './constants';
+import { EVENTS, REMOTE_CONTROL_MESSAGE_NAME } from './constants';
 import { keyboardEventToKey } from './keycodes';
 import logger from './logger';
 

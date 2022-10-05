@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { MEDIA_TYPE } from '../../../base/media';
-import { getParticipantByIdOrUndefined, PARTICIPANT_ROLE } from '../../../base/participants';
+import { PARTICIPANT_ROLE, getParticipantByIdOrUndefined } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
     getVideoTrackByParticipant,

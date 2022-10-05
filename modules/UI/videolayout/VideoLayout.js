@@ -5,8 +5,8 @@ import Logger from '@jitsi/logger';
 import { getMultipleVideoSupportFeatureFlag } from '../../../react/features/base/config';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
-    getPinnedParticipant,
-    getParticipantById
+    getParticipantById,
+    getPinnedParticipant
 } from '../../../react/features/base/participants';
 import {
     getTrackByMediaTypeAndParticipant,

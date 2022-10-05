@@ -11,8 +11,8 @@ import { connect } from '../../base/redux';
 import { Button } from '../../base/ui/components/web';
 import { BUTTON_TYPES } from '../../base/ui/constants';
 import {
-    openWebApp,
-    openDesktopApp
+    openDesktopApp,
+    openWebApp
 } from '../actions';
 import { _TNS } from '../constants';
 

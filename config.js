@@ -208,9 +208,12 @@ var config = {
 
     // Specify audio quality stereo and opusMaxAverageBitrate values in order to enable HD audio.
     // Beware, by doing so, you are disabling echo cancellation, noise suppression and AGC.
+    // Specify enableOpusDtx to enable support for opus-dtx where
+    // audio packets won’t be transmitted while participant is silent or muted.
     // audioQuality: {
     //     stereo: false,
     //     opusMaxAverageBitrate: null, // Value to fit the 6000 to 510000 range.
+    //     enableOpusDtx: false,
     // },
 
     // Video
@@ -374,6 +377,14 @@ var config = {
     // transcription: {
     //     // Whether the feature should be enabled or not.
     //     enabled: false,
+
+    //     // Translation languages.
+    //     // Available languages can be found in
+    //     // ./src/react/features/transcribing/translation-languages.json.
+    //     translationLanguages: ['en', 'es', 'fr', 'ro'],
+
+    //     // Important languages to show on the top of the language list.
+    //     translationLanguagesHead: ['en'],
 
     //     // If true transcriber will use the application language.
     //     // The application language is either explicitly set by participants in their settings or automatically
@@ -1163,7 +1174,7 @@ var config = {
         // For a list of all possible theme tokens and their current defaults, please check:
         // https://github.com/jitsi/jitsi-meet/tree/master/resources/custom-theme/custom-theme.json
         // For a short explanations on each of the tokens, please check:
-        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.js
+        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.ts
         // IMPORTANT!: This is work in progress so many of the various tokens are not yet applied in code
         // or they are partially applied.
         customTheme: {
@@ -1494,6 +1505,15 @@ var config = {
 
     // Application logo url
     // defaultLogoUrl: 'images/watermark.svg',
+
+    // Settings for the Excalidraw whiteboard integration.
+    // whiteboard: {
+    //     // Whether the feature is enabled or not.
+    //     enabled: true,
+    //     // The server used to support whiteboard collaboration.
+    //     // https://github.com/jitsi/excalidraw-backend
+    //     collabServerBaseUrl: 'https://excalidraw-backend.example.com',
+    // },
 };
 
 // Set the default values for JaaS customers

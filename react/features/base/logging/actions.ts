@@ -1,4 +1,4 @@
-import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
+import { SET_LOGGING_CONFIG, SET_LOG_COLLECTOR } from './actionTypes';
 
 /**
  * Stores a {@code Logger.LogCollector} instance which will be uploading logs

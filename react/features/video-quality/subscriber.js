@@ -15,10 +15,10 @@ import {
     isTopPanelEnabled
 } from '../filmstrip/functions';
 import {
+    LAYOUTS,
     getVideoQualityForLargeVideo,
     getVideoQualityForResizableFilmstripThumbnails,
     getVideoQualityForStageThumbnails,
-    LAYOUTS,
     shouldDisplayTileView
 } from '../video-layout';
 import { getCurrentLayout, getVideoQualityForScreenSharingFilmstrip } from '../video-layout/functions.any';

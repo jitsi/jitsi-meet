@@ -311,7 +311,7 @@ export interface IConfig {
     giphy?: {
         displayMode?: 'all' | 'tile' | 'chat';
         enabled?: boolean;
-        sdkKey?: '';
+        sdkKey?: string;
         tileTime?: number;
     };
     gravatar?: {
@@ -464,6 +464,8 @@ export interface IConfig {
         disableStartForAll?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
+        translationLanguages?: Array<string>;
+        translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
     };
     useHostPageLocalStorage?: boolean;
@@ -479,7 +481,7 @@ export interface IConfig {
                 standard?: number;
             };
         };
-        minHeightForQualityLvl: {
+        minHeightForQualityLvl?: {
             [key: number]: string;
         };
         preferredCodec?: string;
@@ -490,4 +492,8 @@ export interface IConfig {
     webrtcIceUdpDisable?: boolean;
     websocket?: string;
     websocketKeepAliveUrl?: string;
+    whiteboard?: {
+        collabServerBaseUrl?: string;
+        enabled?: boolean;
+    };
 }

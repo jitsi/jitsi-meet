@@ -4,15 +4,13 @@ import { assign, set } from '../base/redux/functions';
 
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
-    SET_FATAL_ERROR,
-    TOGGLE_SLOW_GUM_OVERLAY
+    SET_FATAL_ERROR
 } from './actionTypes';
 
 export interface IOverlayState {
     browser?: string;
     fatalError?: Error;
     isMediaPermissionPromptVisible?: boolean;
-    isSlowGUMOverlayVisible?: boolean;
     loadConfigOverlayVisible?: boolean;
 }
 
@@ -35,9 +33,6 @@ ReducerRegistry.register<IOverlayState>('features/overlay', (state = {}, action)
 
     case SET_FATAL_ERROR:
         return _setFatalError(state, action);
-
-    case TOGGLE_SLOW_GUM_OVERLAY:
-        return _toggleSlowGUMOverlay(state, action);
     }
 
     return state;
@@ -59,24 +54,6 @@ function _mediaPermissionPromptVisibilityChanged(
     return assign(state, {
         browser,
         isMediaPermissionPromptVisible: isVisible
-    });
-}
-
-/**
- * Reduces a specific redux action TOGGLE_SLOW_GUM_OVERLAY of
- * the feature overlay.
- *
- * @param {Object} state - The redux state of the feature overlay.
- * @param {Action} action - The redux action to reduce.
- * @private
- * @returns {Object} The new state of the feature overlay after the reduction of
- * the specified action.
- */
-function _toggleSlowGUMOverlay(
-        state: IOverlayState,
-        { isVisible }: { isVisible?: boolean; }) {
-    return assign(state, {
-        isSlowGUMOverlayVisible: isVisible
     });
 }
 

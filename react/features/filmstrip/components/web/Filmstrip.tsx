@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { FixedSizeList, FixedSizeGrid } from 'react-window';
+import { FixedSizeGrid, FixedSizeList } from 'react-window';
 import type { Dispatch } from 'redux';
 
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
@@ -29,10 +29,10 @@ import { getCurrentLayout } from '../../../video-layout';
 import { LAYOUTS } from '../../../video-layout/constants';
 import {
     setFilmstripVisible,
+    setTopPanelVisible,
     setUserFilmstripHeight,
     setUserFilmstripWidth,
     setUserIsResizing,
-    setTopPanelVisible,
     setVisibleRemoteParticipants
     // @ts-ignore
 } from '../../actions';
@@ -48,8 +48,8 @@ import {
 } from '../../constants';
 import {
     getVerticalViewMaxWidth,
-    shouldRemoteVideosBeVisible,
-    isStageFilmstripTopPanel
+    isStageFilmstripTopPanel,
+    shouldRemoteVideosBeVisible
     // @ts-ignore
 } from '../../functions';
 

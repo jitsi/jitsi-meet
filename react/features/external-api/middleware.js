@@ -12,14 +12,14 @@ import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     DOMINANT_SPEAKER_CHANGED,
+    PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
-    PARTICIPANT_JOINED,
     PARTICIPANT_ROLE_CHANGED,
     SET_LOADABLE_AVATAR_URL,
+    getDominantSpeakerParticipant,
     getLocalParticipant,
-    getParticipantById,
-    getDominantSpeakerParticipant
+    getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { getBaseUrl } from '../base/util';
@@ -163,10 +163,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_LEFT: {
         const { participant } = action;
-        const { isFakeParticipant, isVirtualScreenshareParticipant } = participant;
+        const { isFakeParticipant, isVirtualScreenshareParticipant, isWhiteboard } = participant;
 
         // Skip sending participant left event for fake or virtual screenshare participants.
-        if (isFakeParticipant || isVirtualScreenshareParticipant) {
+        if (isFakeParticipant || isVirtualScreenshareParticipant || isWhiteboard) {
             break;
         }
 

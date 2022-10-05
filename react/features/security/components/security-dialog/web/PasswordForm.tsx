@@ -38,6 +38,11 @@ interface Props extends WithTranslation {
      * The number of digits to be used in the password.
      */
     passwordNumberOfDigits?: number;
+
+    /**
+     * Whether or not the password should be visible.
+     */
+    visible: boolean;
 }
 
 /**
@@ -117,7 +122,7 @@ class PasswordForm extends Component<Props, State> {
             <span className = 'info-password-field info-value'>
                 {locked === LOCKED_LOCALLY ? (
                     <div className = 'info-password-local'>
-                        {this.props.password}
+                        {this.props.visible ? this.props.password : '******' }
                     </div>
                 ) : (
                     <div className = 'info-password-remote'>
@@ -156,6 +161,7 @@ class PasswordForm extends Component<Props, State> {
                         onChange = { this._onEnteredPasswordChange }
                         onKeyPress = { this._onKeyPress }
                         placeholder = { placeHolderText }
+                        type = 'password'
                         value = { this.state.enteredPassword } />
                 </div>
             );

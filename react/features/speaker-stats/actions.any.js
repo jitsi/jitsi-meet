@@ -1,12 +1,13 @@
 // @flow
 
 import {
+    INIT_REORDER_STATS,
     INIT_SEARCH,
     INIT_UPDATE_STATS,
-    UPDATE_STATS,
-    INIT_REORDER_STATS,
     RESET_SEARCH_CRITERIA,
-    TOGGLE_FACE_EXPRESSIONS
+    TOGGLE_FACE_EXPRESSIONS,
+    UPDATE_SORTED_SPEAKER_STATS_IDS,
+    UPDATE_STATS
 } from './actionTypes';
 
 /**
@@ -45,6 +46,19 @@ export function updateStats(stats: Object) {
     return {
         type: UPDATE_STATS,
         stats
+    };
+}
+
+/**
+ * Updates the speaker stats order.
+ *
+ * @param {Object} participantIds - Participant ids.
+ * @returns {Object}
+ */
+export function updateSortedSpeakerStatsIds(participantIds: Array<string>) {
+    return {
+        type: UPDATE_SORTED_SPEAKER_STATS_IDS,
+        participantIds
     };
 }
 

@@ -4,8 +4,6 @@ import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
 import { changeLanguageBundle } from './functions';
 import i18next from './i18next';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import logger from './logger';
 
 /**

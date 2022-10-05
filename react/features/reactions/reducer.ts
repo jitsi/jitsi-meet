@@ -1,11 +1,11 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    TOGGLE_REACTIONS_VISIBLE,
-    SET_REACTION_QUEUE,
     ADD_REACTION_BUFFER,
     FLUSH_REACTION_BUFFER,
-    SHOW_SOUNDS_NOTIFICATION
+    SET_REACTION_QUEUE,
+    SHOW_SOUNDS_NOTIFICATION,
+    TOGGLE_REACTIONS_VISIBLE
 } from './actionTypes';
 import { ReactionEmojiProps } from './constants';
 

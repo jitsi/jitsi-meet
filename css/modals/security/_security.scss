@@ -28,7 +28,7 @@
                         color: #6FB1EA;
                     }
 
-                    & > :first-child:not(:last-child) {
+                    & > :not(:last-child) {
                         margin-right: 24px;
                     }
                 }

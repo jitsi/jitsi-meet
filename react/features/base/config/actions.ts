@@ -8,9 +8,9 @@ import { parseURIString } from '../util/uri';
 import {
     CONFIG_WILL_LOAD,
     LOAD_CONFIG_ERROR,
+    OVERWRITE_CONFIG,
     SET_CONFIG,
-    UPDATE_CONFIG,
-    OVERWRITE_CONFIG
+    UPDATE_CONFIG
 } from './actionTypes';
 import { IConfig } from './configType';
 import { _CONFIG_STORE_PREFIX } from './constants';
@@ -116,8 +116,6 @@ export function setConfig(config: Object = {}) {
                 // On Web the config also comes from the window.config global,
                 // but it is resolved in the loadConfig procedure.
                 config,
-
-                // @ts-ignore
                 window.interfaceConfig,
                 locationURL);
 
@@ -144,7 +142,6 @@ export function storeConfig(baseURL: string, config: Object) {
         let b = false;
 
         try {
-            // @ts-ignore
             if (typeof window.config === 'undefined' || window.config !== config) {
                 jitsiLocalStorage.setItem(`${_CONFIG_STORE_PREFIX}/${baseURL}`, JSON.stringify(config));
                 b = true;

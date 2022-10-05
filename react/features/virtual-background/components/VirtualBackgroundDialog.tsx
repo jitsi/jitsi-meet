@@ -5,7 +5,7 @@ import Bourne from '@hapi/bourne';
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import { Theme } from '@mui/material';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -18,7 +18,7 @@ import { Dialog, hideDialog, openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCloseSmall, IconShareDesktop } from '../../base/icons/svg';
-import { browser, JitsiTrackErrors } from '../../base/lib-jitsi-meet';
+import { JitsiTrackErrors, browser } from '../../base/lib-jitsi-meet';
 // @ts-ignore
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { VIDEO_TYPE } from '../../base/media/constants';
@@ -34,7 +34,7 @@ import { showErrorNotification } from '../../notifications';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 // @ts-ignore
 import { toggleBackgroundEffect, virtualBackgroundTrackChanged } from '../actions';
-import { IMAGES, BACKGROUNDS_LIMIT, VIRTUAL_BACKGROUND_TYPE, type Image } from '../constants';
+import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 // @ts-ignore
 import { toDataURL } from '../functions';
 // @ts-ignore

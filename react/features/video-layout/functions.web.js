@@ -1,6 +1,6 @@
 import {
-    DEFAULT_MAX_COLUMNS,
     ABSOLUTE_MAX_COLUMNS,
+    DEFAULT_MAX_COLUMNS,
     TILE_PORTRAIT_ASPECT_RATIO
 } from '../filmstrip/constants';
 import {

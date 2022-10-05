@@ -965,7 +965,6 @@
         "playSounds": "Sviranje zvuka uključeno",
         "reactions": "Reakcije sastanka",
         "sameAsSystem": "Isto kao sustav ({{label}})",
-        "screenTitle": "Postavke",
         "selectAudioOutput": "Audio razultat",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
@@ -1340,6 +1339,7 @@
         "roomname": "Upiši ime sobe",
         "roomnameHint": "Upiši ime ili URL sobe kojoj se želiš pridružiti. Možeš izmisliti ime, ali obavijesti ljude s kojima se sastaješ da upišu isto ime.",
         "sendFeedback": "Pošalji povratnu informaciju",
+        "settings": "Postavke",
         "startMeeting": "Započni sastanak",
         "terms": "Uvjeti",
         "title": "Sigurno, funkcionalno i potpuno slobodno održavanje videokonferencija"

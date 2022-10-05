@@ -22,8 +22,6 @@ import {
     getParticipantCount
 } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { setLastN } from './actions';

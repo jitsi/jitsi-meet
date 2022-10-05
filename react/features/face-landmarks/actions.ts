@@ -5,8 +5,8 @@ import { AnyAction } from 'redux';
 import {
     ADD_FACE_EXPRESSION,
     ADD_TO_FACE_EXPRESSIONS_BUFFER,
-    FACE_LANDMARK_DETECTION_STOPPED,
     CLEAR_FACE_EXPRESSIONS_BUFFER,
+    FACE_LANDMARK_DETECTION_STOPPED,
     NEW_FACE_COORDINATES
 } from './actionTypes';
 import { FaceBox } from './types';

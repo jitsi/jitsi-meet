@@ -1,7 +1,7 @@
 // @flow
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { getFeatureFlag, HELP_BUTTON_ENABLED } from '../../base/flags';
+import { HELP_BUTTON_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconHelp } from '../../base/icons';
 import { connect } from '../../base/redux';

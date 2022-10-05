@@ -13,8 +13,8 @@ import {
 } from './actionTypes';
 import {
     NOTIFICATION_ICON,
-    NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
     SILENT_JOIN_THRESHOLD,
     SILENT_LEFT_THRESHOLD
@@ -97,6 +97,7 @@ interface INotificationProps {
     description?: string;
     descriptionKey?: string;
     icon?: string;
+    sticky?: boolean;
     title?: string;
     titleArguments?: {
         [key: string]: string;

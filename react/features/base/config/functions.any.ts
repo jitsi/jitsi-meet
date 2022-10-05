@@ -11,7 +11,7 @@ import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
 import CONFIG_WHITELIST from './configWhitelist';
-import { _CONFIG_STORE_PREFIX, FEATURE_FLAGS } from './constants';
+import { FEATURE_FLAGS, _CONFIG_STORE_PREFIX } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 

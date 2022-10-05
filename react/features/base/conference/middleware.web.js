@@ -6,9 +6,9 @@ import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
 import {
-    showNotification,
     NOTIFICATION_TIMEOUT_TYPE,
-    isModerationNotificationDisplayed
+    isModerationNotificationDisplayed,
+    showNotification
 } from '../../notifications';
 import {
     setPrejoinPageVisibility,
@@ -25,19 +25,19 @@ import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEff
 import { setAudioOnly } from '../audio-only';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { JitsiConferenceErrors, JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
-import { MEDIA_TYPE, setScreenshareMuted, VIDEO_TYPE } from '../media';
+import { MEDIA_TYPE, VIDEO_TYPE, setScreenshareMuted } from '../media';
 import { MiddlewareRegistry } from '../redux';
 import {
+    TOGGLE_SCREENSHARING,
     addLocalTrack,
     createLocalTracksF,
     getLocalDesktopTrack,
     getLocalJitsiAudioTrack,
     replaceLocalTrack,
-    toggleScreensharing,
-    TOGGLE_SCREENSHARING
+    toggleScreensharing
 } from '../tracks';
 
-import { CONFERENCE_FAILED, CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_JOINED } from './actionTypes';
+import { CONFERENCE_FAILED, CONFERENCE_JOINED, CONFERENCE_JOIN_IN_PROGRESS } from './actionTypes';
 import { getCurrentConference } from './functions';
 import './middleware.any';
 

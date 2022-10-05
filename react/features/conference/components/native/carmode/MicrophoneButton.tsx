@@ -1,17 +1,17 @@
 /* eslint-disable lines-around-comment */
 import React, { useCallback, useState } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
-    createShortcutEvent,
     ACTION_SHORTCUT_PRESSED as PRESSED,
-    ACTION_SHORTCUT_RELEASED as RELEASED
+    ACTION_SHORTCUT_RELEASED as RELEASED,
+    createShortcutEvent
 } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IState } from '../../../../app/types';
 // @ts-ignore
-import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags';
+import { AUDIO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../../base/media/constants';

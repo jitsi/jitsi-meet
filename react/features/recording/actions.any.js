@@ -3,7 +3,7 @@
 import { getMeetingRegion, getRecordingSharingUrl } from '../base/config';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getParticipantDisplayName } from '../base/participants';
-import { copyText } from '../base/util/helpers';
+import { copyText } from '../base/util/copyText';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
 import {
     NOTIFICATION_TIMEOUT_TYPE,

@@ -13,6 +13,7 @@ import {
 export interface IDialogState {
     component?: ComponentType;
     componentProps?: Object;
+    isNewDialog?: boolean;
     sheet?: ComponentType;
     sheetProps?: Object;
 }
@@ -43,7 +44,8 @@ ReducerRegistry.register<IDialogState>('features/base/dialog', (state = {}, acti
     case OPEN_DIALOG:
         return assign(state, {
             component: action.component,
-            componentProps: action.componentProps
+            componentProps: action.componentProps,
+            isNewDialog: action.isNewDialog
         });
 
     case HIDE_SHEET:

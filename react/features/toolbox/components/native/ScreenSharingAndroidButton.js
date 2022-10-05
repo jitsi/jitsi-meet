@@ -8,7 +8,7 @@ import { translate } from '../../../base/i18n';
 import { IconShareDesktop } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { toggleScreensharing, isLocalVideoTrackDesktop } from '../../../base/tracks';
+import { isLocalVideoTrackDesktop, toggleScreensharing } from '../../../base/tracks';
 
 /**
  * The type of the React {@code Component} props of {@link ScreenSharingAndroidButton}.

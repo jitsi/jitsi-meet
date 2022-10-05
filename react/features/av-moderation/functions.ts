@@ -4,7 +4,7 @@ import { isLocalParticipantModerator } from '../base/participants/functions';
 import { Participant } from '../base/participants/types';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
-import { MEDIA_TYPE_TO_WHITELIST_STORE_KEY, MEDIA_TYPE_TO_PENDING_STORE_KEY } from './constants';
+import { MEDIA_TYPE_TO_PENDING_STORE_KEY, MEDIA_TYPE_TO_WHITELIST_STORE_KEY } from './constants';
 
 /**
  * Returns this feature's root state.

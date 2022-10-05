@@ -5,11 +5,11 @@ import React from 'react';
 import { translate } from '../../base/i18n';
 import { Label } from '../../base/label';
 import { connect } from '../../base/redux';
-import { combineStyles, type StyleType } from '../../base/styles';
+import { type StyleType, combineStyles } from '../../base/styles';
 
 import AbstractVideoQualityLabel, {
-    _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _abstractMapStateToProps
 } from './AbstractVideoQualityLabel';
 import styles from './styles';
 

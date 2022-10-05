@@ -30,15 +30,15 @@ import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
+    getLocalParticipant,
     getParticipantById,
-    getRemoteParticipants,
-    getLocalParticipant
+    getRemoteParticipants
 } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { getLocalTracks, isLocalTrackMuted, toggleScreensharing } from '../../base/tracks';
-import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
+import { CLOSE_CHAT, OPEN_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
-import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
+import { closeChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
 import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes';
 import { setRequestingSubtitles } from '../../subtitles';
 import { muteLocal } from '../../video-menu/actions';

@@ -3,11 +3,12 @@ import _ from 'lodash';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    INIT_SEARCH,
-    UPDATE_STATS,
     INIT_REORDER_STATS,
+    INIT_SEARCH,
     RESET_SEARCH_CRITERIA,
-    TOGGLE_FACE_EXPRESSIONS
+    TOGGLE_FACE_EXPRESSIONS,
+    UPDATE_SORTED_SPEAKER_STATS_IDS,
+    UPDATE_STATS
 } from './actionTypes';
 
 /**
@@ -20,7 +21,8 @@ const INITIAL_STATE = {
     isOpen: false,
     pendingReorder: true,
     criteria: null,
-    showFaceExpressions: false
+    showFaceExpressions: false,
+    sortedSpeakerStatsIds: []
 };
 
 export interface ISpeakerStatsState {
@@ -28,6 +30,7 @@ export interface ISpeakerStatsState {
     isOpen: boolean;
     pendingReorder: boolean;
     showFaceExpressions: boolean;
+    sortedSpeakerStatsIds: Array<string>;
     stats: Object;
 }
 
@@ -40,6 +43,8 @@ ReducerRegistry.register<ISpeakerStatsState>('features/speaker-stats',
         return _updateStats(state, action);
     case INIT_REORDER_STATS:
         return _initReorderStats(state);
+    case UPDATE_SORTED_SPEAKER_STATS_IDS:
+        return _updateSortedSpeakerStats(state, action);
     case RESET_SEARCH_CRITERIA:
         return _updateCriteria(state, { criteria: null });
     case TOGGLE_FACE_EXPRESSIONS: {
@@ -71,13 +76,7 @@ function _updateCriteria(state: ISpeakerStatsState, { criteria }: { criteria: st
 }
 
 /**
- * Reduces a specific Redux action UPDATE_STATS of the feature
- * speaker-stats.
- * The speaker stats order is based on the stats object properties.
- * When updating without reordering, the new stats object properties are reordered
- * as the last in state, otherwise the order would be lost on each update.
- * If there was already a pending reorder, the stats object properties already have
- * the correct order, so the property order is not changing.
+ * Reduces a specific Redux action UPDATE_STATS of the feature speaker-stats.
  *
  * @param {Object} state - The Redux state of the feature speaker-stats.
  * @param {Action} action - The Redux action UPDATE_STATS to reduce.
@@ -85,31 +84,26 @@ function _updateCriteria(state: ISpeakerStatsState, { criteria }: { criteria: st
  * @returns {Object} - The new state after the reduction of the specified action.
  */
 function _updateStats(state: ISpeakerStatsState, { stats }: { stats: any; }) {
-    const finalStats = state.pendingReorder ? stats : state.stats;
+    return {
+        ...state,
+        stats
+    };
+}
 
-    if (!state.pendingReorder) {
-        // Avoid reordering the speaker stats object properties
-        const finalKeys = Object.keys(stats);
-
-        finalKeys.forEach(newStatId => {
-            finalStats[newStatId] = _.clone(stats[newStatId]);
-        });
-
-        Object.keys(finalStats).forEach(key => {
-            if (!finalKeys.includes(key)) {
-                delete finalStats[key];
-            }
-        });
-    }
-
-    return _.assign(
-        {},
-        state,
-        {
-            stats: { ...finalStats },
-            pendingReorder: false
-        }
-    );
+/**
+ * Reduces a specific Redux action UPDATE_SORTED_SPEAKER_STATS_IDS of the feature speaker-stats.
+ *
+ * @param {Object} state - The Redux state of the feature speaker-stats.
+ * @param {Action} action - The Redux action UPDATE_SORTED_SPEAKER_STATS_IDS to reduce.
+ * @private
+ * @returns {Object} The new state after the reduction of the specified action.
+ */
+function _updateSortedSpeakerStats(state: ISpeakerStatsState, { participantIds }: { participantIds: Array<string>; }) {
+    return {
+        ...state,
+        sortedSpeakerStatsIds: participantIds,
+        pendingReorder: false
+    };
 }
 
 /**

@@ -8,38 +8,38 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDialOutStatusUrl, getDialOutUrl, updateConfig } from '../base/config';
 import { browser } from '../base/lib-jitsi-meet';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
-import { isVideoMutedByUser, MEDIA_TYPE } from '../base/media';
+import { MEDIA_TYPE, isVideoMutedByUser } from '../base/media';
 import { updateSettings } from '../base/settings';
 import {
     createLocalTracksF,
     getLocalAudioTrack,
     getLocalTracks,
     getLocalVideoTrack,
-    trackAdded,
-    replaceLocalTrack
+    replaceLocalTrack,
+    trackAdded
 } from '../base/tracks';
 import { openURLInBrowser } from '../base/util';
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../notifications';
 
 import {
-    PREJOIN_JOINING_IN_PROGRESS,
     PREJOIN_INITIALIZED,
+    PREJOIN_JOINING_IN_PROGRESS,
+    SET_DEVICE_STATUS,
     SET_DIALOUT_COUNTRY,
     SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
-    SET_PREJOIN_DISPLAY_NAME_REQUIRED,
-    SET_SKIP_PREJOIN_RELOAD,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
+    SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_PREJOIN_PAGE_VISIBILITY,
-    SET_DEVICE_STATUS
+    SET_SKIP_PREJOIN_RELOAD
 } from './actionTypes';
 import {
-    getFullDialOutNumber,
     getDialOutConferenceUrl,
     getDialOutCountry,
+    getFullDialOutNumber,
     isJoinByPhoneDialogVisible
 } from './functions';
 import logger from './logger';

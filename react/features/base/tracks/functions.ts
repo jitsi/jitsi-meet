@@ -7,7 +7,7 @@ import {
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { setAudioMuted } from '../media/actions';
-import { MediaType, MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
+import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { getParticipantByIdOrUndefined, getVirtualScreenshareParticipantOwnerId } from '../participants/functions';
 import { Participant } from '../participants/types';
 import { toState } from '../redux/functions';
@@ -132,9 +132,6 @@ export async function createLocalPresenterTrack(options: TrackOptions, desktopHe
  * @param {boolean} [options.firePermissionPromptIsShownEvent] - Whether lib-jitsi-meet
  * should check for a {@code getUserMedia} permission prompt and fire a
  * corresponding event.
- * @param {boolean} [options.fireSlowPromiseEvent] - Whether lib-jitsi-meet
- * should check for a slow {@code getUserMedia} request and fire a
- * corresponding event.
  * @param {IStore} store - The redux store in the context of which the function
  * is to execute and from which state such as {@code config} is to be retrieved.
  * @returns {Promise<JitsiLocalTrack[]>}
@@ -145,7 +142,6 @@ export function createLocalTracksF(options: TrackOptions = {}, store?: IStore) {
         desktopSharingSourceDevice,
         desktopSharingSources,
         firePermissionPromptIsShownEvent,
-        fireSlowPromiseEvent,
         timeout
     } = options;
 
@@ -193,7 +189,6 @@ export function createLocalTracksF(options: TrackOptions = {}, store?: IStore) {
                     effects,
                     firefox_fake_device, // eslint-disable-line camelcase
                     firePermissionPromptIsShownEvent,
-                    fireSlowPromiseEvent,
                     micDeviceId,
                     resolution,
                     timeout

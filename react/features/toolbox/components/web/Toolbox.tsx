@@ -73,9 +73,9 @@ import {
 // @ts-ignore
 import { isSalesforceEnabled } from '../../../salesforce/functions';
 import {
+    ShareAudioButton,
     isScreenAudioSupported,
     isScreenVideoShared,
-    ShareAudioButton,
     startScreenShareFlow
     // @ts-ignore
 } from '../../../screen-share';
@@ -98,10 +98,12 @@ import {
     // @ts-ignore
 } from '../../../video-layout';
 // @ts-ignore
-import { VideoQualityDialog, VideoQualityButton } from '../../../video-quality/components';
+import { VideoQualityButton, VideoQualityDialog } from '../../../video-quality/components';
 // @ts-ignore
 import { VideoBackgroundButton, toggleBackgroundEffect } from '../../../virtual-background';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
+import WhiteboardButton from '../../../whiteboard/components/web/WhiteboardButton';
+import { isWhiteboardEnabled } from '../../../whiteboard/functions';
 import {
     setFullScreen,
     setHangupMenuVisible,
@@ -110,9 +112,10 @@ import {
     showToolbox
     // @ts-ignore
 } from '../../actions';
-import { THRESHOLDS, NOT_APPLICABLE, NOTIFY_CLICK_MODE } from '../../constants';
+import { NOTIFY_CLICK_MODE, NOT_APPLICABLE, THRESHOLDS } from '../../constants';
 // @ts-ignore
 import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions';
+import { getJwtDisabledButtons } from '../../functions.any';
 // @ts-ignore
 import DownloadButton from '../DownloadButton';
 // @ts-ignore
@@ -250,6 +253,11 @@ interface Props extends WithTranslation {
     _isVpaasMeeting: boolean;
 
     /**
+     * The array of toolbar buttons disabled through jwt features.
+     */
+    _jwtDisabledButons: string[];
+
+    /**
      * The ID of the local participant.
      */
     _localParticipantID: String;
@@ -318,6 +326,11 @@ interface Props extends WithTranslation {
      * Flag showing whether toolbar is visible.
      */
     _visible: boolean;
+
+    /**
+     * Whether the whiteboard is visible.
+     */
+    _whiteboardEnabled: boolean;
 
     /**
      * An object containing the CSS classes.
@@ -714,7 +727,8 @@ class Toolbox extends Component<Props> {
             _isMobile,
             _hasSalesforce,
             _multiStreamModeEnabled,
-            _screenSharing
+            _screenSharing,
+            _whiteboardEnabled
         } = this.props;
 
         const microphone = {
@@ -845,6 +859,12 @@ class Toolbox extends Component<Props> {
         };
 
 
+        const whiteboard = _whiteboardEnabled && {
+            key: 'whiteboard',
+            Content: WhiteboardButton,
+            group: 3
+        };
+
         const etherpad = {
             key: 'etherpad',
             Content: SharedDocumentButton,
@@ -932,6 +952,7 @@ class Toolbox extends Component<Props> {
             shareVideo,
             shareAudio,
             noiseSuppression,
+            whiteboard,
             etherpad,
             virtualBackground,
             dockIframe,
@@ -994,9 +1015,9 @@ class Toolbox extends Component<Props> {
     _getVisibleButtons() {
         const {
             _clientWidth,
-            _toolbarButtons
+            _toolbarButtons,
+            _jwtDisabledButons
         } = this.props;
-
 
         const buttons = this._getAllButtons();
 
@@ -1012,7 +1033,9 @@ class Toolbox extends Component<Props> {
             ...order.map(key => buttons[key as keyof typeof buttons]),
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
         ].filter(Boolean).filter(({ key, alias = NOT_APPLICABLE }) =>
-            isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons));
+            !_jwtDisabledButons.includes(key)
+            && (isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons))
+        );
 
         if (isHangupVisible) {
             sliceIndex -= 1;
@@ -1519,6 +1542,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _isIosMobile: isIosMobileBrowser(),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),
+        _jwtDisabledButons: getJwtDisabledButtons(state),
         _hasSalesforce: isSalesforceEnabled(state),
         _hangupMenuVisible: hangupMenuVisible,
         _localParticipantID: localParticipant?.id,
@@ -1533,7 +1557,8 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _whiteboardEnabled: isWhiteboardEnabled(state)
     };
 }
 

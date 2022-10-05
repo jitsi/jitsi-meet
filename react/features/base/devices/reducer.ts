@@ -8,8 +8,6 @@ import {
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { groupDevicesByKind } from './functions';
 import logger from './logger';
 

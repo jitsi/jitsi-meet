@@ -8,8 +8,8 @@ import { IconMessage } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { openChat } from '../../../chat/';
 import {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _mapStateToProps as _abstractMapStateToProps
 } from '../../../chat/components/web/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 

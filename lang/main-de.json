@@ -477,9 +477,11 @@
         "noRoom": "Keine Konferenz für die Einwahlinformationen angegeben.",
         "numbers": "Einwahlnummern",
         "password": "$t(lockRoomPasswordUppercase):",
+        "reachedLimit": "Sie haben die Grenzen Ihres Tarifs erreicht.",
         "sip": "SIP-Adresse",
         "title": "Teilen",
-        "tooltip": "Freigabe-Link und Einwahlinformationen für dieses Meeting"
+        "tooltip": "Freigabe-Link und Einwahlinformationen für dieses Meeting",
+        "upgradeOptions": "Bitte prüfen Sie Ihre Upgrade-Optionen auf"
     },
     "inlineDialogFailure": {
         "msg": "Es ist ein Fehler aufgetreten.",
@@ -938,6 +940,7 @@
         "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten"
     },
     "settings": {
+        "buttonLabel": "Einstellungen",
         "calendar": {
             "about": "Die Kalenderintegration von {{appName}} wird verwendet, um ein sicheres Zugreifen auf Ihren Kalender und Auslesen der bevorstehenden Termine zu ermöglichen.",
             "disconnect": "Getrennt",
@@ -966,7 +969,6 @@
         "playSounds": "Hinweistöne aktiviert",
         "reactions": "Interaktionen",
         "sameAsSystem": "Wie System ({{label}})",
-        "screenTitle": "Einstellungen",
         "selectAudioOutput": "Audioausgabe",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
@@ -1352,6 +1354,7 @@
         "roomname": "Konferenzname eingeben",
         "roomnameHint": "Name oder URL der Konferenz, der Sie beitreten möchten. Sie können einen Namen erfinden, er muss nur den anderen Personen übermittelt werden, damit diese der gleichen Konferenz beitreten.",
         "sendFeedback": "Feedback senden",
+        "settings": "Einstellungen",
         "startMeeting": "Meeting starten",
         "terms": "AGB",
         "title": "Sichere, voll funktionale und komplett kostenlose Videokonferenzen"

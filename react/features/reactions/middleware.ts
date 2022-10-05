@@ -30,8 +30,8 @@ import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 import {
     ADD_REACTION_BUFFER,
     FLUSH_REACTION_BUFFER,
-    SEND_REACTIONS,
     PUSH_REACTIONS,
+    SEND_REACTIONS,
     SHOW_SOUNDS_NOTIFICATION
 } from './actionTypes';
 import {
@@ -44,12 +44,12 @@ import {
 import { displayReactionSoundsNotification } from './actions.web';
 import {
     ENDPOINT_REACTION_NAME,
+    MUTE_REACTIONS_COMMAND,
+    MuteCommandAttributes,
     RAISE_HAND_SOUND_ID,
     REACTIONS,
     REACTION_SOUND,
-    SOUNDS_THRESHOLDS,
-    MUTE_REACTIONS_COMMAND,
-    MuteCommandAttributes
+    SOUNDS_THRESHOLDS
 } from './constants';
 import {
     getReactionMessageFromBuffer,

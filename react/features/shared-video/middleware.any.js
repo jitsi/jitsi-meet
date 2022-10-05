@@ -8,19 +8,19 @@ import { MEDIA_TYPE } from '../base/media';
 import {
     PARTICIPANT_LEFT,
     getLocalParticipant,
+    getParticipantById,
     participantJoined,
     participantLeft,
-    pinParticipant,
-    getParticipantById
+    pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { SET_SHARED_VIDEO_STATUS, RESET_SHARED_VIDEO_STATUS } from './actionTypes';
+import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import {
     resetSharedVideoStatus,
     setSharedVideoStatus
 } from './actions.any';
-import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME, PLAYBACK_STATUSES } from './constants';
+import { PLAYBACK_STATUSES, SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
 import { isSharingStatus } from './functions';
 import logger from './logger';
 

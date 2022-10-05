@@ -60,7 +60,12 @@ const StageParticipantNameLabel = () => {
     const toolboxVisible: boolean = useSelector(isToolboxVisible);
     const showDisplayName = useSelector(isDisplayNameVisible);
 
-    if (showDisplayName && nameToDisplay && selectedId !== localId && !isTileView) {
+    if (showDisplayName
+        && nameToDisplay
+        && selectedId !== localId
+        && !isTileView
+        && !largeVideoParticipant?.isWhiteboard
+    ) {
         return (
             <div
                 className = { cx(

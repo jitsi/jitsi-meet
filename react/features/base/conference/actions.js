@@ -41,8 +41,8 @@ import { getBackendSafeRoomName } from '../util';
 import {
     AUTH_STATUS_CHANGED,
     CONFERENCE_FAILED,
-    CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_JOINED,
+    CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_LEFT,
     CONFERENCE_LOCAL_SUBJECT_CHANGED,
     CONFERENCE_SUBJECT_CHANGED,
@@ -61,8 +61,8 @@ import {
     SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
-    SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
+    SET_ROOM,
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED
 } from './actionTypes';
@@ -76,8 +76,8 @@ import {
     commonUserJoinedHandling,
     commonUserLeftHandling,
     getConferenceOptions,
-    getCurrentConference,
     getConferenceState,
+    getCurrentConference,
     sendLocalParticipant
 } from './functions';
 import logger from './logger';

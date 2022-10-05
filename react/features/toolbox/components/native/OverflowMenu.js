@@ -8,7 +8,6 @@ import { bottomSheetStyles } from '../../../base/dialog/components/native/styles
 import { connect } from '../../../base/redux';
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import { SharedDocumentButton } from '../../../etherpad';
-import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionMenu } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { LiveStreamButton, RecordButton } from '../../../recording';
@@ -120,16 +119,12 @@ class OverflowMenu extends PureComponent<Props, State> {
             }
         };
 
-        const firstMenuButtonProps
-            = toolbarButtons.has('participantspane') ? topButtonProps : buttonProps;
-
         return (
             <BottomSheet
                 renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : null }>
-                {!toolbarButtons.has('participantspane') && <ParticipantsPaneButton { ...topButtonProps } />}
-                <OpenCarmodeButton { ...firstMenuButtonProps } />
+                <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
@@ -139,7 +134,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <LinkToSalesforceButton { ...buttonProps } />
                 <Divider style = { styles.divider } />
                 <SharedVideoButton { ...buttonProps } />
-                <ScreenSharingButton { ...buttonProps } />
+                {!toolbarButtons.has('screensharing') && <ScreenSharingButton { ...buttonProps } />}
                 <SpeakerStatsButton { ...buttonProps } />
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />

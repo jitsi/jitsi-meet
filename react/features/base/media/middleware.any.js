@@ -15,17 +15,17 @@ import {
 import { isForceMuted } from '../../participants-pane/functions';
 import { isScreenMediaShared } from '../../screen-share/functions';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
-import { isRoomValid, SET_ROOM } from '../conference';
+import { SET_ROOM, isRoomValid } from '../conference';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config';
 import { getLocalParticipant } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
 import {
+    TRACK_ADDED,
     destroyLocalTracks,
     isLocalTrackMuted,
     isLocalVideoTrackDesktop,
-    setTrackMuted,
-    TRACK_ADDED
+    setTrackMuted
 } from '../tracks';
 
 import {

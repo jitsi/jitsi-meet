@@ -2,7 +2,7 @@
 
 import { isNameReadOnly } from '../base/config';
 import { SERVER_URL_CHANGE_ENABLED, getFeatureFlag } from '../base/flags';
-import { i18next, DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n';
+import { DEFAULT_LANGUAGE, LANGUAGES, i18next } from '../base/i18n';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import {
     getLocalParticipant,

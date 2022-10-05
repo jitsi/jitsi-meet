@@ -27,6 +27,11 @@ declare let interfaceConfig: any;
 type Props = {
 
     /**
+     * Whether to hide the connection indicator.
+     */
+    disableConnectionIndicator?: boolean;
+
+    /**
      * Hide popover callback.
      */
     hidePopover: Function;
@@ -85,6 +90,7 @@ const useStyles = makeStyles()(() => {
 });
 
 const ThumbnailTopIndicators = ({
+    disableConnectionIndicator,
     hidePopover,
     indicatorsClassName,
     isVirtualScreenshareParticipant,
@@ -102,7 +108,7 @@ const ThumbnailTopIndicators = ({
     const _indicatorIconSize = NORMAL;
     const _connectionIndicatorAutoHideEnabled = Boolean(
         useSelector((state: IState) => state['features/base/config'].connectionIndicators?.autoHide) ?? true);
-    const _connectionIndicatorDisabled = _isMobile
+    const _connectionIndicatorDisabled = _isMobile || disableConnectionIndicator
         || Boolean(useSelector((state: IState) => state['features/base/config'].connectionIndicators?.disabled));
     const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;

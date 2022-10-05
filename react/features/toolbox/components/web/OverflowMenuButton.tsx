@@ -11,7 +11,7 @@ import { IState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 // @ts-ignore
 import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
-import { type ReactionEmojiProps, REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
+import { REACTIONS_MENU_HEIGHT, type ReactionEmojiProps } from '../../../reactions/constants';
 import { getReactionsQueue } from '../../../reactions/functions.any';
 import { DRAWER_MAX_HEIGHT } from '../../constants';
 

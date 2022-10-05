@@ -15,8 +15,8 @@ import Recorder from './modules/recorder/Recorder';
 import { createTaskQueue } from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
-    createStartSilentEvent,
     createScreenSharingEvent,
+    createStartSilentEvent,
     createTrackMutedEvent,
     sendAnalytics
 } from './react/features/analytics';
@@ -30,14 +30,15 @@ import { shouldShowModeratedNotification } from './react/features/av-moderation/
 import { setAudioOnly } from './react/features/base/audio-only';
 import {
     AVATAR_URL_COMMAND,
+    CONFERENCE_LEAVE_REASONS,
     EMAIL_COMMAND,
     _conferenceWillJoin,
     authStatusChanged,
     commonUserJoinedHandling,
     commonUserLeftHandling,
     conferenceFailed,
-    conferenceJoined,
     conferenceJoinInProgress,
+    conferenceJoined,
     conferenceLeft,
     conferenceSubjectChanged,
     conferenceTimestampChanged,
@@ -49,15 +50,14 @@ import {
     getConferenceOptions,
     kickedOut,
     lockStateChanged,
+    nonParticipantMessageReceived,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant,
-    nonParticipantMessageReceived,
-    CONFERENCE_LEAVE_REASONS
+    sendLocalParticipant
 } from './react/features/base/conference';
 import {
-    getReplaceParticipant,
-    getMultipleVideoSendingSupportFeatureFlag
+    getMultipleVideoSendingSupportFeatureFlag,
+    getReplaceParticipant
 } from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
@@ -69,7 +69,6 @@ import {
     updateDeviceList
 } from './react/features/base/devices';
 import {
-    browser,
     JitsiConferenceErrors,
     JitsiConferenceEvents,
     JitsiConnectionErrors,
@@ -78,14 +77,15 @@ import {
     JitsiMediaDevicesEvents,
     JitsiParticipantConnectionStatus,
     JitsiTrackErrors,
-    JitsiTrackEvents
+    JitsiTrackEvents,
+    browser
 } from './react/features/base/lib-jitsi-meet';
 import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
 import {
+    MEDIA_TYPE,
     getStartWithAudioMuted,
     getStartWithVideoMuted,
     isVideoMutedByUser,
-    MEDIA_TYPE,
     setAudioAvailable,
     setAudioMuted,
     setAudioUnmutePermissions,
@@ -140,11 +140,11 @@ import {
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
 import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     isModerationNotificationDisplayed,
-    showNotification,
-    NOTIFICATION_TIMEOUT_TYPE
+    showNotification
 } from './react/features/notifications';
-import { mediaPermissionPromptVisibilityChanged, toggleSlowGUMOverlay } from './react/features/overlay';
+import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import {
     initPrejoin,
@@ -153,7 +153,7 @@ import {
     setJoiningInProgress
 } from './react/features/prejoin';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
-import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
+import { isScreenAudioShared, setScreenAudioShareState } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from './react/features/screenshot-capture/functions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
@@ -519,11 +519,6 @@ export default {
             );
         }
 
-        JitsiMeetJS.mediaDevices.addEventListener(
-            JitsiMediaDevicesEvents.SLOW_GET_USER_MEDIA,
-            () => APP.store.dispatch(toggleSlowGUMOverlay(true))
-        );
-
         let tryCreateLocalTracks;
 
         // On Electron there is no permission prompt for granting permissions. That's why we don't need to
@@ -533,8 +528,7 @@ export default {
         const audioOptions = {
             devices: [ MEDIA_TYPE.AUDIO ],
             timeout,
-            firePermissionPromptIsShownEvent: true,
-            fireSlowPromiseEvent: true
+            firePermissionPromptIsShownEvent: true
         };
 
         // FIXME is there any simpler way to rewrite this spaghetti below ?
@@ -585,8 +579,7 @@ export default {
             tryCreateLocalTracks = createLocalTracksF({
                 devices: initialDevices,
                 timeout,
-                firePermissionPromptIsShownEvent: true,
-                fireSlowPromiseEvent: true
+                firePermissionPromptIsShownEvent: true
             })
                 .catch(err => {
                     if (requestedAudio && requestedVideo) {
@@ -629,8 +622,7 @@ export default {
                     return requestedVideo
                         ? createLocalTracksF({
                             devices: [ MEDIA_TYPE.VIDEO ],
-                            firePermissionPromptIsShownEvent: true,
-                            fireSlowPromiseEvent: true
+                            firePermissionPromptIsShownEvent: true
                         })
                         : [];
                 })
@@ -651,7 +643,6 @@ export default {
         // the user inputs their credentials, but the dialog would be
         // overshadowed by the overlay.
         tryCreateLocalTracks.then(tracks => {
-            APP.store.dispatch(toggleSlowGUMOverlay(false));
             APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
 
             return tracks;
@@ -791,7 +782,6 @@ export default {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: getStartWithAudioMuted(APP.store.getState())
-                || config.startSilent
                 || isUserInteractionRequiredForUnmute(APP.store.getState()),
             startWithVideoMuted: getStartWithVideoMuted(APP.store.getState())
                 || isUserInteractionRequiredForUnmute(APP.store.getState())

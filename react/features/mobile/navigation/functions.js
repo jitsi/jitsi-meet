@@ -6,8 +6,8 @@ import { useDispatch } from 'react-redux';
 
 import { appNavigate } from '../../app/actions';
 import {
-    getFeatureFlag,
-    PREJOIN_PAGE_ENABLED
+    PREJOIN_PAGE_ENABLED,
+    getFeatureFlag
 } from '../../base/flags';
 import { IconClose } from '../../base/icons';
 import { toState } from '../../base/redux';

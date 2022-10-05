@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconPlusCircle } from '../../base/icons/svg';
-import { VIRTUAL_BACKGROUND_TYPE, type Image } from '../constants';
+import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 // @ts-ignore
 import { resizeImage } from '../functions';
 // @ts-ignore

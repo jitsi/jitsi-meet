@@ -1,5 +1,5 @@
 import { MiddlewareRegistry } from '../base/redux';
-import { getHideSelfView, SETTINGS_UPDATED } from '../base/settings';
+import { SETTINGS_UPDATED, getHideSelfView } from '../base/settings';
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 
 import { openSettingsDialog } from './actions';

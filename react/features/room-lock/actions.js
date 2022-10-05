@@ -7,8 +7,8 @@ import {
     maybeRedirectToWelcomePage
 } from '../app/actions';
 import {
-    conferenceLeft,
     JITSI_CONFERENCE_URL_KEY,
+    conferenceLeft,
     setPassword
 } from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';

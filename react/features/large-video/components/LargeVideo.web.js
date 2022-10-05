@@ -17,6 +17,8 @@ import { getLargeVideoParticipant } from '../../large-video/functions';
 import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
 import { setTileView } from '../../video-layout/actions';
+import Whiteboard from '../../whiteboard/components/web/Whiteboard';
+import { isWhiteboardEnabled } from '../../whiteboard/functions';
 import { setSeeWhatIsBeingShared } from '../actions.web';
 
 import ScreenSharePlaceholder from './ScreenSharePlaceholder.web';
@@ -87,7 +89,7 @@ type Props = {
     /**
      * The large video participant id.
      */
-     _largeVideoParticipantId: string,
+    _largeVideoParticipantId: string,
 
     /**
      * Whether or not the local screen share is on large-video.
@@ -97,7 +99,12 @@ type Props = {
     /**
      * Whether or not the screen sharing is visible.
      */
-     _seeWhatIsBeingShared: boolean,
+    _seeWhatIsBeingShared: boolean,
+
+    /**
+     * Whether or not the whiteboard is enabled.
+     */
+    _whiteboardEnabled: boolean;
 
     /**
      * The Redux dispatch function.
@@ -166,7 +173,8 @@ class LargeVideo extends Component<Props> {
             _displayScreenSharingPlaceholder,
             _isChatOpen,
             _noAutoPlayVideo,
-            _showDominantSpeakerBadge
+            _showDominantSpeakerBadge,
+            _whiteboardEnabled
         } = this.props;
         const style = this._getCustomStyles();
         const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
@@ -178,6 +186,7 @@ class LargeVideo extends Component<Props> {
                 ref = { this._containerRef }
                 style = { style }>
                 <SharedVideo />
+                {_whiteboardEnabled && <Whiteboard />}
                 <div id = 'etherpad' />
 
                 <Watermarks />
@@ -361,7 +370,8 @@ function _mapStateToProps(state) {
         _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
-        _visibleFilmstrip: visible
+        _visibleFilmstrip: visible,
+        _whiteboardEnabled: isWhiteboardEnabled(state)
     };
 }
 

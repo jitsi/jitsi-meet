@@ -7,9 +7,9 @@ import {
 } from '../base/participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../base/participants/constants';
 import {
+    getLocalParticipant,
     getParticipantById,
-    getParticipantDisplayName,
-    getLocalParticipant
+    getParticipantDisplayName
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
@@ -129,10 +129,11 @@ MiddlewareRegistry.register(store => next => action => {
         const { participant: p } = action;
         const { conference } = state['features/base/conference'];
 
-        // Do not display notifications for the virtual screenshare tiles.
+        // Do not display notifications for the virtual screenshare and whiteboard tiles.
         if (conference
             && !p.local
             && !p.isVirtualScreenshareParticipant
+            && !p.isWhiteboard
             && !joinLeaveNotificationsDisabled()
             && !p.isReplacing) {
             dispatch(showParticipantJoinedNotification(
@@ -153,6 +154,7 @@ MiddlewareRegistry.register(store => next => action => {
             if (participant
                 && !participant.local
                 && !participant.isVirtualScreenshareParticipant
+                && !participant.isWhiteboard
                 && !action.participant.isReplaced) {
                 dispatch(showParticipantLeftNotification(
                     getParticipantDisplayName(state, participant.id)

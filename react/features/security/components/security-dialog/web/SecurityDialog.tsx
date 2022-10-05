@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { IState } from '../../../../app/types';
 // @ts-ignore
@@ -92,7 +92,7 @@ function SecurityDialog({
         <Dialog
             hideCancelButton = { true }
             submitDisabled = { true }
-            titleKey = 'security.header'
+            titleKey = 'security.title'
             width = { 'small' }>
             <div className = 'security-dialog'>
                 <LobbySection />

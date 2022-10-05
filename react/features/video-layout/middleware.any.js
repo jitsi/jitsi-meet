@@ -5,9 +5,9 @@ import { VIDEO_TYPE } from '../base/media';
 import {
     PARTICIPANT_LEFT,
     PIN_PARTICIPANT,
-    pinParticipant,
     getParticipantById,
-    getPinnedParticipant
+    getPinnedParticipant,
+    pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { TRACK_REMOVED } from '../base/tracks';
