@@ -73,10 +73,15 @@ case "$1" in
         # if first time config ask for certs, or if we are reconfiguring
         if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
             RET=""
-            db_input critical jitsi-meet/cert-choice || true
-            db_go
+            # ask the question only if there is nothing stored, option to pre-set it on install in automations
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
+            if [ -z "$CERT_CHOICE" ] ; then
+                db_input critical jitsi-meet/cert-choice || true
+                db_go
+                db_get jitsi-meet/cert-choice
+                CERT_CHOICE="$RET"
+            fi
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
                 RET=""
