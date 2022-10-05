@@ -69,6 +69,8 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
+    const [ isJoining, setIsJoining ]
+        = useState(false);
     const onChangeDisplayName = useCallback(event => {
         const fieldValue = getFieldValue(event);
 
@@ -79,6 +81,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     }, [ displayName ]);
 
     const onJoin = useCallback(() => {
+        setIsJoining(true);
         dispatch(connect());
         navigateRoot(screen.conference.root);
     }, [ dispatch ]);
@@ -111,7 +114,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     }, []);
 
     const { PRIMARY, SECONDARY } = BUTTON_TYPES;
-    const joinButtonDisabled = !displayName && isDisplayNameMandatory;
+    const joinButtonDisabled = isJoining || (!displayName && isDisplayNameMandatory);
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', goBack);
@@ -180,6 +183,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
                         type = { PRIMARY } />
                     <Button
                         accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
+                        disabled = { joinButtonDisabled }
                         labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
                         onClick = { onJoinLowBandwidth }
                         style = { styles.prejoinButton }
