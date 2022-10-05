@@ -177,6 +177,7 @@ interface DialogProps {
         translationKey?: string;
     };
     children?: ReactElement | ReactElement[];
+    className?: string;
     description?: string;
     ok?: {
         disabled?: boolean;
@@ -193,6 +194,7 @@ interface DialogProps {
 const Dialog = ({
     cancel = { translationKey: 'dialog.Cancel' },
     children,
+    className,
     description,
     ok = { translationKey: 'dialog.Ok' },
     onCancel,
@@ -237,7 +239,7 @@ const Dialog = ({
                 aria-describedby = { description }
                 aria-labelledby = { title ?? t(titleKey ?? '') }
                 aria-modal = { true }
-                className = { cx(classes.modal, isUnmounting && 'unmount', size) }
+                className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
                 role = 'dialog'>
                 <div className = { classes.header }>
                     <p className = { classes.title }>{title ?? t(titleKey ?? '')}</p>
@@ -256,6 +258,7 @@ const Dialog = ({
                     {!ok.hidden && <Button
                         accessibilityLabel = { t(ok.translationKey ?? '') }
                         disabled = { ok.disabled }
+                        id = 'modal-dialog-ok-button'
                         labelKey = { ok.translationKey }
                         onClick = { submit } />}
                 </div>

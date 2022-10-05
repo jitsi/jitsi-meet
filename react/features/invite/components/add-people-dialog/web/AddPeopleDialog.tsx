@@ -1,17 +1,24 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import React, { useEffect } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { createInviteDialogEvent, sendAnalytics } from '../../../../analytics';
-import { getInviteURL } from '../../../../base/connection';
-import { Dialog } from '../../../../base/dialog';
-import { translate } from '../../../../base/i18n';
+import { createInviteDialogEvent } from '../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../analytics/functions';
+import { IState } from '../../../../app/types';
+import { getInviteURL } from '../../../../base/connection/functions';
+import { translate } from '../../../../base/i18n/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
-import { connect } from '../../../../base/redux';
+import { connect } from '../../../../base/redux/functions';
+import Dialog from '../../../../base/ui/components/web/Dialog';
+// @ts-ignore
 import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions.any';
+// @ts-ignore
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
+// @ts-ignore
 import { isVpaasMeeting } from '../../../../jaas/functions';
+// @ts-ignore
 import { getActiveSession } from '../../../../recording';
+// @ts-ignore
 import { updateDialInNumbers } from '../../../actions';
 import {
     _getDefaultPhoneNumber,
@@ -21,95 +28,94 @@ import {
     isDialOutEnabled,
     isSharingEnabled,
     sharingFeatures
+    // @ts-ignore
 } from '../../../functions';
 
+// @ts-ignore
 import CopyMeetingLinkSection from './CopyMeetingLinkSection';
 import DialInLimit from './DialInLimit';
+// @ts-ignore
 import DialInSection from './DialInSection';
+// @ts-ignore
 import InviteByEmailSection from './InviteByEmailSection';
+// @ts-ignore
 import InviteContactsSection from './InviteContactsSection';
+// @ts-ignore
 import LiveStreamSection from './LiveStreamSection';
 
-declare var interfaceConfig: Object;
-
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * The object representing the dialIn feature.
      */
-    _dialIn: Object,
-
-    /**
-     * Whether or not embed meeting should be visible.
-     */
-    _embedMeetingVisible: boolean,
+    _dialIn: any;
 
     /**
      * Whether or not dial in number should be visible.
      */
-    _dialInVisible: boolean,
-
-    /**
-     * Whether or not url sharing button should be visible.
-     */
-    _urlSharingVisible: boolean,
+    _dialInVisible: boolean;
 
     /**
      * Whether or not email sharing features should be visible.
      */
-    _emailSharingVisible: boolean,
+    _emailSharingVisible: boolean;
+
+    /**
+     * Whether or not embed meeting should be visible.
+     */
+    _embedMeetingVisible: boolean;
 
     /**
      * The meeting invitation text.
      */
-    _invitationText: string,
+    _invitationText: string;
 
     /**
      * The custom no new-lines meeting invitation text for iOS default email.
      * Needed because of this mailto: iOS issue: https://developer.apple.com/forums/thread/681023.
      */
-    _invitationTextiOS: string,
+    _invitationTextiOS: string;
 
     /**
      * An alternate app name to be displayed in the email subject.
      */
-    _inviteAppName: ?string,
+    _inviteAppName?: string;
 
     /**
      * Whether or not invite contacts should be visible.
      */
-    _inviteContactsVisible: boolean,
+    _inviteContactsVisible: boolean;
 
     /**
      * The current url of the conference to be copied onto the clipboard.
      */
-    _inviteUrl: string,
+    _inviteUrl: string;
 
     /**
      * Whether or not the current meeting belongs to a JaaS user.
      */
-     _isVpaasMeeting: boolean,
+    _isVpaasMeeting: boolean;
 
     /**
      * The current known URL for a live stream in progress.
      */
-    _liveStreamViewURL: string,
+    _liveStreamViewURL: string;
 
     /**
      * The default phone number.
      */
-    _phoneNumber: ?string,
+    _phoneNumber?: string;
 
     /**
-     * Invoked to obtain translated strings.
+     * Whether or not url sharing button should be visible.
      */
-    t: Function,
+    _urlSharingVisible: boolean;
 
     /**
      * Method to update the dial in numbers.
      */
-    updateNumbers: Function
-};
+    updateNumbers: Function;
+}
 
 /**
  * Invite More component.
@@ -163,11 +169,9 @@ function AddPeopleDialog({
 
     return (
         <Dialog
-            cancelKey = { 'dialog.close' }
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = 'addPeople.inviteMorePrompt'
-            width = { 'small' }>
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
+            titleKey = 'addPeople.inviteMorePrompt'>
             <div className = 'invite-more-dialog'>
                 { _inviteContactsVisible && <InviteContactsSection /> }
                 {_urlSharingVisible ? <CopyMeetingLinkSection url = { _inviteUrl } /> : null}
@@ -207,7 +211,7 @@ function AddPeopleDialog({
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const currentLiveStreamingSession
         = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
     const { iAmRecorder, inviteAppName } = state['features/base/config'];
@@ -215,7 +219,7 @@ function mapStateToProps(state, ownProps) {
     const dialOutEnabled = isDialOutEnabled(state);
     const hideInviteContacts = iAmRecorder || (!addPeopleEnabled && !dialOutEnabled);
     const dialIn = state['features/invite'];
-    const phoneNumber = dialIn && dialIn.numbers ? _getDefaultPhoneNumber(dialIn.numbers) : undefined;
+    const phoneNumber = dialIn?.numbers ? _getDefaultPhoneNumber(dialIn.numbers) : undefined;
 
     return {
         _dialIn: dialIn,
@@ -233,9 +237,7 @@ function mapStateToProps(state, ownProps) {
         _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
         _isVpaasMeeting: isVpaasMeeting(state),
-        _liveStreamViewURL:
-            currentLiveStreamingSession
-                && currentLiveStreamingSession.liveStreamViewURL,
+        _liveStreamViewURL: currentLiveStreamingSession?.liveStreamViewURL,
         _phoneNumber: phoneNumber
     };
 }

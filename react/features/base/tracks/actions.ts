@@ -313,7 +313,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
  *     shareOptions: Object
  * }}
  */
-export function toggleScreensharing(enabled: boolean, audioOnly = false,
+export function toggleScreensharing(enabled: boolean | undefined, audioOnly = false,
         ignoreDidHaveVideo = false, shareOptions = {}) {
     return {
         type: TOGGLE_SCREENSHARING,

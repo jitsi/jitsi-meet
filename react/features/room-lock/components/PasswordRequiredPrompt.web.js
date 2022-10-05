@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { setPassword } from '../../base/conference';
-import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import Dialog from '../../base/ui/components/web/Dialog';
 import Input from '../../base/ui/components/web/Input';
 import { _cancelPasswordRequiredPrompt } from '../actions';
 
@@ -76,12 +76,9 @@ class PasswordRequiredPrompt extends Component<Props, State> {
     render() {
         return (
             <Dialog
-                disableBlanketClickDismiss = { true }
-                isModal = { false }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.passwordRequired'
-                width = 'small'>
+                titleKey = 'dialog.passwordRequired'>
                 { this._renderBody() }
             </Dialog>
         );

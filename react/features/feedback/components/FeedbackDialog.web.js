@@ -9,10 +9,10 @@ import {
     createFeedbackOpenEvent,
     sendAnalytics
 } from '../../analytics';
-import { Dialog } from '../../base/dialog';
 import { isMobileBrowser } from '../../base/environment/utils';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import Dialog from '../../base/ui/components/web/Dialog';
 import Input from '../../base/ui/components/web/Input';
 import { cancelFeedback, submitFeedback } from '../actions';
 
@@ -250,9 +250,10 @@ class FeedbackDialog extends Component<Props, State> {
 
         return (
             <Dialog
-                okKey = 'dialog.Submit'
+                ok = {{
+                    translationKey: 'dialog.Submit'
+                }}
                 onCancel = { this._onCancel }
-                onDialogRef = { this._onScrollTop }
                 onSubmit = { this._onSubmit }
                 titleKey = 'feedback.rateExperience'>
                 <div className = 'feedback-dialog'>

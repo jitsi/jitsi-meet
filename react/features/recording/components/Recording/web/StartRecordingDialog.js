@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
+import Dialog from '../../../../base/ui/components/web/Dialog';
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
 import { isScreenshotCaptureEnabled } from '../../../../screenshot-capture/functions';
 import { RECORDING_TYPES } from '../../../constants';
@@ -68,11 +68,12 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
 
         return (
             <Dialog
-                okDisabled = { this.isStartRecordingDisabled() }
-                okKey = 'dialog.startRecording'
+                ok = {{
+                    translationKey: 'dialog.startRecording',
+                    disabled: this.isStartRecordingDisabled()
+                }}
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.startRecording'
-                width = 'small'>
+                titleKey = 'dialog.startRecording'>
                 <StartRecordingDialogContent
                     fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
                     fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
