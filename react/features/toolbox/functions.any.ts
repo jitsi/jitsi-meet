@@ -24,7 +24,7 @@ export function isAudioMuteButtonDisabled(state: IState) {
 export function getJwtDisabledButtons(state: IState) {
     return Object.keys(FEATURES_TO_BUTTONS_MAPPING).reduce((acc: string[], current: string) => {
         if (!isJwtFeatureEnabled(state, current, true)) {
-            acc.push(current);
+            acc.push(FEATURES_TO_BUTTONS_MAPPING[current as keyof typeof FEATURES_TO_BUTTONS_MAPPING]);
         }
 
         return acc;
