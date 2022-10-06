@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { StyleType } from '../../styles';
@@ -48,6 +48,11 @@ type Props = {
     safeAreaInsets?: Array,
 
     /**
+     * Enable scroll for JitsiScreen.
+     */
+    scrollEnabled?: boolean,
+
+    /**
      * Additional style to be appended to the KeyboardAvoidingView containing the content of the modal.
      */
     style?: StyleType
@@ -61,10 +66,10 @@ const JitsiScreen = ({
     hasBottomTextInput = false,
     disableForcedKeyboardDismiss = false,
     safeAreaInsets = [ 'left', 'right' ],
+    scrollEnabled = false,
     style
-}: Props) => (
-    <View
-        style = { styles.jitsiScreenContainer }>
+}: Props) => {
+    const renderContent = () => (
         <JitsiKeyboardAvoidingView
             contentContainerStyle = { contentContainerStyle }
             disableForcedKeyboardDismiss = { disableForcedKeyboardDismiss }
@@ -74,12 +79,28 @@ const JitsiScreen = ({
             <SafeAreaView
                 edges = { safeAreaInsets }
                 style = { styles.safeArea }>
-                {children}
+                { children }
             </SafeAreaView>
             { footerComponent && footerComponent() }
         </JitsiKeyboardAvoidingView>
-    </View>
-);
+    );
+
+    if (scrollEnabled) {
+        return (
+            <ScrollView
+                bounces = { false }
+                style = { styles.jitsiScreenContainer }>
+                { renderContent() }
+            </ScrollView>
+        );
+    }
+
+    return (
+        <View style = { styles.jitsiScreenContainer }>
+            { renderContent() }
+        </View>
+    );
+};
 
 
 export default JitsiScreen;
