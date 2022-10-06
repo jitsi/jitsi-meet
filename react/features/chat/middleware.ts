@@ -165,13 +165,15 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case ADD_REACTION_MESSAGE: {
-        _handleReceivedMessage(store, {
-            id: localParticipant?.id ?? '',
-            message: action.message,
-            privateMessage: false,
-            timestamp: Date.now(),
-            lobbyChat: false
-        }, false, true);
+        if (localParticipant?.id) {
+            _handleReceivedMessage(store, {
+                id: localParticipant.id,
+                message: action.message,
+                privateMessage: false,
+                timestamp: Date.now(),
+                lobbyChat: false
+            }, false, true);
+        }
     }
     }
 
@@ -476,13 +478,17 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipientID:
         message: string, isLobbyPrivateMessage = false) {
     const state = getState();
     const localParticipant = getLocalParticipant(state);
-    const displayName = getParticipantDisplayName(state, localParticipant?.id ?? '');
+
+    if (!localParticipant?.id) {
+        return;
+    }
+    const displayName = getParticipantDisplayName(state, localParticipant.id);
     const { lobbyMessageRecipient } = state['features/chat'];
 
     dispatch(addMessage({
         displayName,
         hasRead: true,
-        id: localParticipant?.id,
+        id: localParticipant.id,
         messageType: MESSAGE_TYPE_LOCAL,
         message,
         privateMessage: !isLobbyPrivateMessage,
