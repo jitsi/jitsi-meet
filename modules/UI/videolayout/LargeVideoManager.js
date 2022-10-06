@@ -36,7 +36,8 @@ import {
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
 } from '../../../react/features/connection-indicator/functions';
-import { FILMSTRIP_BREAKPOINT, getVerticalViewMaxWidth, isFilmstripResizable } from '../../../react/features/filmstrip';
+import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
+import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../../react/features/filmstrip/functions';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
