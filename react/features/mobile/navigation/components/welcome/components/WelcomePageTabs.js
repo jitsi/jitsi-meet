@@ -68,7 +68,7 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
 
     return (
         <WelcomePage.Navigator
-            initialRouteName = { screen.welcome.tabs.recent }
+            backBehavior = { 'none' }
             screenOptions = {{
                 ...tabBarOptions,
                 headerShown: false
