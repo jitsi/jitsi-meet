@@ -7,13 +7,11 @@ import type { Dispatch } from 'redux';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
-import {
-    shouldHideShareAudioHelper,
-    updateSettings
-    // @ts-ignore
-} from '../../base/settings';
+import { updateSettings } from '../../base/settings/actions';
+import { shouldHideShareAudioHelper } from '../../base/settings/functions.any';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { toggleScreensharing } from '../../base/tracks';
+import { toggleScreensharing } from '../../base/tracks/actions';
 import Checkbox from '../../base/ui/components/web/Checkbox';
 
 /**

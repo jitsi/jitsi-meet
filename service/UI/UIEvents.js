@@ -40,7 +40,6 @@ export default {
      */
     TOGGLE_FILMSTRIP: 'UI.toggle_filmstrip',
 
-    TOGGLE_SCREENSHARING: 'UI.toggle_screensharing',
     HANGUP: 'UI.hangup',
     LOGOUT: 'UI.logout',
     VIDEO_DEVICE_CHANGED: 'UI.video_device_changed',

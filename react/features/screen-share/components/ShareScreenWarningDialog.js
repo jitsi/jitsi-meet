@@ -6,7 +6,9 @@ import type { Dispatch } from 'redux';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
-import { toggleScreensharing } from '../../base/tracks';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { toggleScreensharing } from '../../base/tracks/actions';
 
 export type Props = {
 

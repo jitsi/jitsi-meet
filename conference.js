@@ -2657,12 +2657,6 @@ export default {
                 APP.UI.updateLargeVideo(displayedUserId, true);
             }
         });
-
-        APP.UI.addListener(
-            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly, ignoreDidHaveVideo }) => {
-                this.toggleScreenSharing(enabled, { audioOnly }, ignoreDidHaveVideo);
-            }
-        );
     },
 
     /**
