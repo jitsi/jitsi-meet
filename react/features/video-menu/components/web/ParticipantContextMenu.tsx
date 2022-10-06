@@ -11,8 +11,6 @@ import { IState } from '../../../app/types';
 import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
@@ -20,6 +18,8 @@ import { getLocalParticipant } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 // @ts-ignore
 import { isParticipantAudioMuted } from '../../../base/tracks';
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 // @ts-ignore
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 // @ts-ignore

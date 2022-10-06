@@ -1,25 +1,29 @@
-// @flow
-
 import { useCallback, useRef, useState } from 'react';
 
 import { findAncestorByClass } from '../../../participants-pane/functions';
 
-type RaiseContext = {|
 
-    /**
-     * Target elements against which positioning calculations are made.
-     */
-    offsetTarget?: HTMLElement,
+type RaiseContext = {
 
     /**
      * The entity for which the menu is context menu is raised.
      */
-    entity?: string | Object,
-|};
+    entity?: string | Object;
+
+    /**
+     * Target elements against which positioning calculations are made.
+     */
+    offsetTarget?: HTMLElement | null;
+};
 
 const initialState = Object.freeze({});
 
-const useContextMenu = () => {
+const useContextMenu = (): [(force?: boolean | Object) => void,
+    (entity: string | Object, target: HTMLElement | null) => void,
+    (entity: string | Object) => (e: MouseEvent) => void,
+    () => void,
+    () => void,
+    RaiseContext] => {
     const [ raiseContext, setRaiseContext ] = useState < RaiseContext >(initialState);
     const isMouseOverMenu = useRef(false);
 
@@ -41,7 +45,7 @@ const useContextMenu = () => {
         });
     }, [ raiseContext ]);
 
-    const raiseMenu = useCallback((entity: string | Object, target: EventTarget) => {
+    const raiseMenu = useCallback((entity: string | Object, target: HTMLElement | null) => {
         setRaiseContext({
             entity,
             offsetTarget: findAncestorByClass(target, 'list-item-container')
@@ -55,7 +59,7 @@ const useContextMenu = () => {
         if (raisedEntity && raisedEntity === entity) {
             lowerMenu();
         } else {
-            raiseMenu(entity, e.target);
+            raiseMenu(entity, e.target as HTMLElement);
         }
     }, [ raiseContext ]);
 

@@ -17,8 +17,6 @@ import {
     isSupported as isAvModerationSupported
     // @ts-ignore
 } from '../../../av-moderation/functions';
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 // @ts-ignore
 import { openDialog } from '../../../base/dialog';
 import {
@@ -31,6 +29,8 @@ import {
     getParticipantCount,
     isEveryoneModerator
 } from '../../../base/participants/functions';
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 // @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import {

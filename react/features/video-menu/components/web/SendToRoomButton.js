@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
-import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { IconRingGroup } from '../../../base/icons';
+import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { sendParticipantToRoom } from '../../../breakout-rooms/actions';
 
 type Props = {

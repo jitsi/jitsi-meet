@@ -4,9 +4,9 @@ import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import ContextMenu from '../../base/components/context-menu/ContextMenu';
 import { isMobileBrowser } from '../../base/environment/utils';
 import { translate } from '../../base/i18n/functions';
+import ContextMenu from '../../base/ui/components/web/ContextMenu';
 
 type DownloadUpload = {
     download: number;

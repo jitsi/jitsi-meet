@@ -3,9 +3,9 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
-import useContextMenu from '../../../../../base/components/context-menu/useContextMenu';
 import { isLocalParticipantModerator } from '../../../../../base/participants';
 import { equals } from '../../../../../base/redux';
+import useContextMenu from '../../../../../base/ui/hooks/useContextMenu';
 import {
     getBreakoutRooms,
     getBreakoutRoomsConfig,
