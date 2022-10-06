@@ -161,11 +161,6 @@ interface Props extends WithTranslation {
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object;
-
-    /**
-     * Callback to be invoked when settings screen is focused.
-     */
-    onSettingsScreenFocused: Function;
 }
 
 /**
