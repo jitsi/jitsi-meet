@@ -55,8 +55,6 @@ class AudioOnlyButton extends AbstractButton<Props, *> {
         if (!_audioOnly && _startCarMode) {
             dispatch(setAudioOnly(true));
             navigate(screen.conference.carmode);
-        } else if (_audioOnly && _startCarMode) {
-            dispatch(setAudioOnly(false));
         } else {
             dispatch(toggleAudioOnly());
         }
