@@ -89,6 +89,11 @@ interface State {
     serverURL: string;
 
     /**
+     * State variable for start car mode.
+     */
+    startCarMode: boolean;
+
+    /**
      * State variable for the start with audio muted switch.
      */
     startWithAudioMuted: boolean;
@@ -135,6 +140,7 @@ interface Props extends WithTranslation {
         displayName: string;
         email: string;
         serverURL: string;
+        startCarMode: boolean;
         startWithAudioMuted: boolean;
         startWithVideoMuted: boolean;
     };
@@ -185,6 +191,7 @@ class SettingsView extends Component<Props, State> {
             displayName,
             email,
             serverURL,
+            startCarMode,
             startWithAudioMuted,
             startWithVideoMuted
         } = props._settings || {};
@@ -197,6 +204,7 @@ class SettingsView extends Component<Props, State> {
             displayName,
             email,
             serverURL,
+            startCarMode,
             startWithAudioMuted,
             startWithVideoMuted
         };
@@ -213,6 +221,8 @@ class SettingsView extends Component<Props, State> {
         this._onDisableSelfView = this._onDisableSelfView.bind(this);
         this._onStartAudioMutedChange
             = this._onStartAudioMutedChange.bind(this);
+        this._onStartCarmodeInLowBandwidthMode
+            = this._onStartCarmodeInLowBandwidthMode.bind(this);
         this._onStartVideoMutedChange
             = this._onStartVideoMutedChange.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
@@ -250,6 +260,7 @@ class SettingsView extends Component<Props, State> {
             displayName,
             email,
             serverURL,
+            startCarMode,
             startWithAudioMuted,
             startWithVideoMuted
         } = this.state;
@@ -324,6 +335,13 @@ class SettingsView extends Component<Props, State> {
                             textContentType = { 'URL' } // iOS only
                             theme = { textInputTheme }
                             value = { serverURL } />
+                        <Divider style = { styles.fieldSeparator } />
+                        <FormRow label = 'settingsView.startCarModeInLowBandwidthMode'>
+                            <Switch
+                                checked = { startCarMode }
+                                // @ts-ignore
+                                onChange = { this._onStartCarmodeInLowBandwidthMode } />
+                        </FormRow>
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow
                             label = 'settingsView.startWithAudioMuted'>
@@ -529,6 +547,23 @@ class SettingsView extends Component<Props, State> {
 
         this._updateSettings({
             disableSelfView
+        });
+    }
+
+    /** .
+     * Handles car mode in low bandwidth mode.
+     *
+     * @param {boolean} startCarMode - The new value.
+     * @private
+     * @returns {void}
+     */
+    _onStartCarmodeInLowBandwidthMode(startCarMode: boolean) {
+        this.setState({
+            startCarMode
+        });
+
+        this._updateSettings({
+            startCarMode
         });
     }
 
