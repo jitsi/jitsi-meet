@@ -24,7 +24,6 @@ import { updateSettings } from '../settings/actions';
 
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
-    TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
@@ -299,32 +298,6 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
 }
 
 /**
- * Signals that the local participant is ending screensharing or beginning the screensharing flow.
- *
- * @param {boolean} enabled - The state to toggle screen sharing to.
- * @param {boolean} audioOnly - Only share system audio.
- * @param {boolean} ignoreDidHaveVideo - Whether or not to ignore if video was on when sharing started.
- * @param {Object} shareOptions - The options to be passed for capturing screenshare.
- * @returns {{
- *     type: TOGGLE_SCREENSHARING,
- *     on: boolean,
- *     audioOnly: boolean,
- *     ignoreDidHaveVideo: boolean,
- *     shareOptions: Object
- * }}
- */
-export function toggleScreensharing(enabled: boolean | undefined, audioOnly = false,
-        ignoreDidHaveVideo = false, shareOptions = {}) {
-    return {
-        type: TOGGLE_SCREENSHARING,
-        enabled,
-        audioOnly,
-        ignoreDidHaveVideo,
-        shareOptions
-    };
-}
-
-/**
  * Replaces one track with another for one renegotiation instead of invoking
  * two renegotiations with a separate removeTrack and addTrack. Disposes the
  * removed track as well.
@@ -396,7 +369,7 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
  * conference.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
- * @returns {{ type: TRACK_ADDED, track: Track }}
+ * @returns {Function}
  */
 export function trackAdded(track: any) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
@@ -490,7 +463,13 @@ export function trackAdded(track: any) {
  *     track: Track
  * }}
  */
-export function trackMutedChanged(track: any) {
+export function trackMutedChanged(track: any): {
+    track: {
+        jitsiTrack: any;
+        muted: boolean;
+    };
+    type: 'TRACK_UPDATED';
+} {
     return {
         type: TRACK_UPDATED,
         track: {
@@ -511,7 +490,11 @@ export function trackMutedChanged(track: any) {
  *     track: Track
  * }}
  */
-export function trackMuteUnmuteFailed(track: any, wasMuting: boolean) {
+export function trackMuteUnmuteFailed(track: any, wasMuting: boolean): {
+    track: any;
+    type: 'TRACK_MUTE_UNMUTE_FAILED';
+    wasMuting: boolean;
+} {
     return {
         type: TRACK_MUTE_UNMUTE_FAILED,
         track,
@@ -549,7 +532,12 @@ export function trackNoDataFromSourceNotificationInfoChanged(track: any, noDataF
  *     track: Track
  * }}
  */
-export function trackRemoved(track: any) {
+export function trackRemoved(track: any): {
+    track: {
+        jitsiTrack: any;
+    };
+    type: 'TRACK_REMOVED';
+} {
     track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
@@ -571,7 +559,13 @@ export function trackRemoved(track: any) {
  *     track: Track
  * }}
  */
-export function trackVideoStarted(track: any) {
+export function trackVideoStarted(track: any): {
+    track: {
+        jitsiTrack: any;
+        videoStarted: true;
+    };
+    type: 'TRACK_UPDATED';
+} {
     return {
         type: TRACK_UPDATED,
         track: {
@@ -611,7 +605,13 @@ export function trackVideoTypeChanged(track: any, videoType: VideoType) {
  *     track: Track
  * }}
  */
-export function trackStreamingStatusChanged(track: any, streamingStatus: string) {
+export function trackStreamingStatusChanged(track: any, streamingStatus: string): {
+    track: {
+        jitsiTrack: any;
+        streamingStatus: string;
+    };
+    type: 'TRACK_UPDATED';
+} {
     return {
         type: TRACK_UPDATED,
         track: {
@@ -644,7 +644,7 @@ function _addTracks(tracks: any[]) {
  * about here is to be sure that the {@code getUserMedia} callbacks have
  * completed (i.e. Returned from the native side).
  */
-function _cancelGUMProcesses(getState: IStore['getState']) {
+function _cancelGUMProcesses(getState: IStore['getState']): Promise<any> {
     const logError
         = (error: Error) =>
             logger.error('gumProcess.cancel failed', JSON.stringify(error));
@@ -678,9 +678,9 @@ export function _disposeAndRemoveTracks(tracks: any[]) {
  * @returns {Promise} - A Promise resolved once {@link JitsiTrack.dispose()} is
  * done for every track from the list.
  */
-function _disposeTracks(tracks: any) {
+function _disposeTracks(tracks: any[]): Promise<any> {
     return Promise.all(
-        tracks.map((t: any) =>
+        tracks.map(t =>
             t.dispose()
                 .catch((err: Error) => {
                     // Track might be already disposed so ignore such an error.
@@ -701,7 +701,7 @@ function _disposeTracks(tracks: any) {
  * @private
  * @returns {Function}
  */
-function _onCreateLocalTracksRejected(error: Error, device: string) {
+function _onCreateLocalTracksRejected(error?: Error, device?: string) {
     return (dispatch: IStore['dispatch']) => {
         // If permissions are not allowed, alert the user.
         dispatch({
@@ -728,7 +728,7 @@ function _onCreateLocalTracksRejected(error: Error, device: string) {
  * @private
  * @returns {boolean}
  */
-function _shouldMirror(track: any) {
+function _shouldMirror(track: any): boolean {
     return (
         track?.isLocal()
             && track?.isVideoTrack()
@@ -755,7 +755,10 @@ function _shouldMirror(track: any) {
  *     trackType: MEDIA_TYPE
  * }}
  */
-function _trackCreateCanceled(mediaType: MediaType) {
+function _trackCreateCanceled(mediaType: MediaType): {
+    trackType: MediaType;
+    type: 'TRACK_CREATE_CANCELED';
+} {
     return {
         type: TRACK_CREATE_CANCELED,
         trackType: mediaType
@@ -806,7 +809,11 @@ export function setNoSrcDataNotificationUid(uid?: string) {
  *     name: string
  * }}
  */
-export function updateLastTrackVideoMediaEvent(track: any, name: string) {
+export function updateLastTrackVideoMediaEvent(track: any, name: string): {
+    name: string;
+    track: any;
+    type: 'TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT';
+} {
     return {
         type: TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
         track,

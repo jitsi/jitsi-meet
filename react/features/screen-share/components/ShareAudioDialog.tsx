@@ -6,6 +6,8 @@ import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import { updateSettings } from '../../base/settings/actions';
 import { shouldHideShareAudioHelper } from '../../base/settings/functions.any';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { toggleScreensharing } from '../../base/tracks/actions';
 import Checkbox from '../../base/ui/components/web/Checkbox';
 import Dialog from '../../base/ui/components/web/Dialog';
