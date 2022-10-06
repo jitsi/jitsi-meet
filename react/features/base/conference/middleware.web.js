@@ -186,6 +186,11 @@ async function _toggleScreenSharing({ enabled, audioOnly = false, shareOptions =
 
     if (enable) {
         let tracks;
+        const { _desktopSharingSourceDevice } = state['features/base/config'];
+
+        if (!shareOptions.desktopSharingSources && _desktopSharingSourceDevice) {
+            shareOptions.desktopSharingSourceDevice = _desktopSharingSourceDevice;
+        }
         const options = {
             devices: [ VIDEO_TYPE.DESKTOP ],
             ...shareOptions
