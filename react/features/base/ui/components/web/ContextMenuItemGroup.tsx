@@ -27,6 +27,14 @@ const useStyles = makeStyles()((theme: Theme) => {
 
             '& + &:not(:empty)': {
                 borderTop: `1px solid ${theme.palette.ui04}`
+            },
+
+            '&:first-of-type': {
+                paddingTop: 0
+            },
+
+            '&:last-of-type': {
+                paddingBottom: 0
             }
         }
     };

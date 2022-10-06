@@ -5,8 +5,6 @@ import { WithTranslation } from 'react-i18next';
 import { batch } from 'react-redux';
 
 import { IState } from '../../../app/types';
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { isMobileBrowser } from '../../../base/environment/utils';
 // @ts-ignore
 import { translate } from '../../../base/i18n';
@@ -22,6 +20,8 @@ import { getHideSelfView } from '../../../base/settings';
 // @ts-ignore
 import { getLocalVideoTrack } from '../../../base/tracks';
 import Button from '../../../base/ui/components/web/Button';
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 // @ts-ignore
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';

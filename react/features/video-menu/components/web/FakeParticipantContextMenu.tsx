@@ -8,10 +8,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import TogglePinToStageButton from '../../../../features/video-menu/components/web/TogglePinToStageButton';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { IconShareVideo } from '../../../base/icons/svg';
 import { Participant } from '../../../base/participants/types';
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 // @ts-ignore
 import { stopSharedVideo } from '../../../shared-video/actions.any';
 // @ts-ignore

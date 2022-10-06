@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
-import { showOverflowDrawer } from '../../../toolbox/functions.web';
-import Icon from '../../icons/components/Icon';
+import { showOverflowDrawer } from '../../../../toolbox/functions.web';
+import Icon from '../../../icons/components/Icon';
+import { withPixelLineHeight } from '../../../styles/functions.web';
 
 export type Props = {
 
@@ -86,7 +87,11 @@ const useStyles = makeStyles()((theme: Theme) => {
             },
 
             '&:hover': {
-                backgroundColor: theme.palette.ui04
+                backgroundColor: theme.palette.ui02
+            },
+
+            '&:active': {
+                backgroundColor: theme.palette.ui03
             }
         },
 
@@ -95,13 +100,22 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         contextMenuItemDrawer: {
-            padding: '12px 16px'
+            padding: '13px 16px'
         },
 
         contextMenuItemIcon: {
             '& svg': {
                 fill: theme.palette.icon01
             }
+        },
+
+        text: {
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: theme.palette.text01
+        },
+
+        drawerText: {
+            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
         }
     };
 });
@@ -142,7 +156,7 @@ const ContextMenuItem = ({
                     className = { styles.contextMenuItemIcon }
                     size = { 20 }
                     src = { icon } />}
-            <span className = { textClassName ?? '' }>{text}</span>
+            <span className = { cx(textClassName) }>{text}</span>
         </div>
     );
 };

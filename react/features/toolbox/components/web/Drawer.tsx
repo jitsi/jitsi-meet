@@ -31,8 +31,9 @@ type Props = {
 const useStyles = makeStyles()((theme: Theme) => {
     return {
         drawer: {
-            backgroundColor: theme.palette.ui02,
-            maxHeight: `calc(${DRAWER_MAX_HEIGHT})`
+            backgroundColor: theme.palette.ui01,
+            maxHeight: `calc(${DRAWER_MAX_HEIGHT})`,
+            borderRadius: '24px 24px 0 0'
         }
     };
 });
