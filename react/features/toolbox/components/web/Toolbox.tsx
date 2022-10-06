@@ -103,7 +103,7 @@ import { VideoQualityButton, VideoQualityDialog } from '../../../video-quality/c
 import { VideoBackgroundButton, toggleBackgroundEffect } from '../../../virtual-background';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
 import WhiteboardButton from '../../../whiteboard/components/web/WhiteboardButton';
-import { isWhiteboardEnabled } from '../../../whiteboard/functions';
+import { isWhiteboardButtonVisible } from '../../../whiteboard/functions';
 import {
     setFullScreen,
     setHangupMenuVisible,
@@ -1558,7 +1558,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,
         _visible: isToolboxVisible(state),
-        _whiteboardEnabled: isWhiteboardEnabled(state)
+        _whiteboardEnabled: isWhiteboardButtonVisible(state)
     };
 }
 
