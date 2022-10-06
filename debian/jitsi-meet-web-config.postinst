@@ -171,6 +171,17 @@ case "$1" in
             fi
         fi
 
+        # Fixes multi-stream flags to workaround problem with mobile joining a multi-stream call with multi-stream disabled
+        if ! grep -q "^config.flags.sourceNameSignaling*" $JITSI_MEET_CONFIG; then
+            echo "config.flags.sourceNameSignaling = true;" >> $JITSI_MEET_CONFIG
+        fi
+        if ! grep -q "^config.flags.sendMultipleVideoStreams*" $JITSI_MEET_CONFIG; then
+            echo "config.flags.sendMultipleVideoStreams = true;" >> $JITSI_MEET_CONFIG
+        fi
+        if ! grep -q "^config.flags.receiveMultipleVideoStreams*" $JITSI_MEET_CONFIG; then
+            echo "config.flags.receiveMultipleVideoStreams = true;" >> $JITSI_MEET_CONFIG
+        fi
+
         if [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
 
             # this is a reconfigure, lets just delete old links
