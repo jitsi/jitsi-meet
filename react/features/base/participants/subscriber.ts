@@ -68,7 +68,7 @@ function _updateScreenshareParticipants({ getState, dispatch }: IStore) {
 
     if (removedScreenshareSourceNames.length) {
         removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference, {
-            fakeParticipant: FakeParticipant.VirtualScreenShare,
+            fakeParticipant: FakeParticipant.RemoteScreenShare,
             isReplaced: undefined
         })));
     }

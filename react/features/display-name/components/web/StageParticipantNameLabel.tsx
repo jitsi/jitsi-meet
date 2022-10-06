@@ -8,8 +8,12 @@ import { makeStyles } from 'tss-react/mui';
 import { IState } from '../../../app/types';
 // @ts-ignore
 import { isDisplayNameVisible } from '../../../base/config/functions.any';
-import { getLocalParticipant, getParticipantDisplayName } from '../../../base/participants/functions';
-import { FakeParticipant, Participant } from '../../../base/participants/types';
+import {
+    getLocalParticipant,
+    getParticipantDisplayName,
+    isWhiteboardParticipant
+} from '../../../base/participants/functions';
+import { Participant } from '../../../base/participants/types';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { getLargeVideoParticipant } from '../../../large-video/functions';
@@ -64,7 +68,7 @@ const StageParticipantNameLabel = () => {
         && nameToDisplay
         && selectedId !== localId
         && !isTileView
-        && largeVideoParticipant?.fakeParticipant !== FakeParticipant.Whiteboard
+        && !isWhiteboardParticipant(largeVideoParticipant)
     ) {
         return (
             <div

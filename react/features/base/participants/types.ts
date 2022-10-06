@@ -1,8 +1,8 @@
 export enum FakeParticipant {
     Jigasi = 'Jigasi',
     LocalScreenShare = 'LocalScreenShare',
+    RemoteScreenShare = 'RemoteScreenShare',
     SharedVideo = 'SharedVideo',
-    VirtualScreenShare = 'VirtualScreenShare',
     Whiteboard = 'Whiteboard'
 }
 

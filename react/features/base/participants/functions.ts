@@ -34,10 +34,10 @@ const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant: Participant) => {
-        return participant?.fakeParticipant === FakeParticipant.Jigasi ? JIGASI_PARTICIPANT_ICON : null;
+        return isJigasiParticipant(participant) ? JIGASI_PARTICIPANT_ICON : null;
     },
     (participant: Participant) => {
-        return participant?.fakeParticipant === FakeParticipant.Whiteboard ? WHITEBOARD_PARTICIPANT_ICON : null;
+        return isWhiteboardParticipant(participant) ? WHITEBOARD_PARTICIPANT_ICON : null;
     },
     (participant: Participant) => {
         return participant?.avatarURL ? participant.avatarURL : null;
@@ -302,6 +302,36 @@ export function getFakeParticipants(stateful: IStateful) {
 }
 
 /**
+ * Returns whether the fake participant is Jigasi.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a Jigasi participant.
+ */
+function isJigasiParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.Jigasi;
+}
+
+/**
+ * Returns whether the fake participant is a local screenshare.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a local screenshare participant.
+ */
+export function isLocalScreenshareParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.LocalScreenShare;
+}
+
+/**
+ * Returns whether the fake participant is a remote screenshare.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a remote screenshare participant.
+ */
+export function isRemoteScreenshareParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.RemoteScreenShare;
+}
+
+/**
  * Returns whether the fake participant is of local or virtual screenshare type.
  *
  * @param {IState} state - The (whole) redux state, or redux's.
@@ -321,8 +351,17 @@ export function isScreenShareParticipantById(state: IState, participantId?: stri
  * @returns {boolean} - True if it's one of the two.
  */
 export function isScreenShareParticipant(participant?: Participant): boolean {
-    return participant?.fakeParticipant === FakeParticipant.LocalScreenShare
-        || participant?.fakeParticipant === FakeParticipant.VirtualScreenShare;
+    return isLocalScreenshareParticipant(participant) || isRemoteScreenshareParticipant(participant);
+}
+
+/**
+ * Returns whether the fake participant is a whiteboard.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a whiteboard participant.
+ */
+export function isWhiteboardParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.Whiteboard;
 }
 
 /**

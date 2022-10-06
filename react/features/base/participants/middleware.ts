@@ -75,7 +75,8 @@ import {
     getRemoteParticipants,
     hasRaisedHand,
     isLocalParticipantModerator,
-    isScreenShareParticipant
+    isScreenShareParticipant,
+    isWhiteboardParticipant
 } from './functions';
 import logger from './logger';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
@@ -268,22 +269,18 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PARTICIPANT_JOINED: {
-        const { fakeParticipant } = action.participant;
-
         // Do not play sounds when a screenshare or whiteboard participant tile is created for screenshare.
         (!isScreenShareParticipant(action.participant)
-            && fakeParticipant !== FakeParticipant.Whiteboard
+            && !isWhiteboardParticipant(action.participant)
         ) && _maybePlaySounds(store, action);
 
         return _participantJoinedOrUpdated(store, next, action);
     }
 
     case PARTICIPANT_LEFT: {
-        const { fakeParticipant } = action.participant;
-
         // Do not play sounds when a tile for screenshare or whiteboard is removed.
         (!isScreenShareParticipant(action.participant)
-            && fakeParticipant !== FakeParticipant.Whiteboard
+            && !isWhiteboardParticipant(action.participant)
         ) && _maybePlaySounds(store, action);
 
         break;

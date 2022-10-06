@@ -20,9 +20,9 @@ import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantById,
     getParticipantDisplayName,
+    isLocalScreenshareParticipant,
     isScreenShareParticipant
 } from '../../../react/features/base/participants';
-import { FakeParticipant } from '../../../react/features/base/participants/types';
 import {
     getVideoTrackByParticipant,
     trackStreamingStatusChanged
@@ -294,7 +294,7 @@ export default class LargeVideoManager {
 
                 isVideoRenderable = !isVideoMuted
                     && (APP.conference.isLocalId(id)
-                        || participant?.fakeParticipant === FakeParticipant.LocalScreenShare
+                        || isLocalScreenshareParticipant(participant)
                         || streamingStatusActive
                     );
                 this.videoTrack?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP

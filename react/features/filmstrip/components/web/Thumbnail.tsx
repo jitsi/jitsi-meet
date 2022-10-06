@@ -23,9 +23,11 @@ import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
     hasRaisedHand,
-    isScreenShareParticipant
+    isLocalScreenshareParticipant,
+    isScreenShareParticipant,
+    isWhiteboardParticipant
 } from '../../../base/participants/functions';
-import { FakeParticipant, Participant } from '../../../base/participants/types';
+import { Participant } from '../../../base/participants/types';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 // @ts-ignore
 import { isTestModeEnabled } from '../../../base/testing';
@@ -1051,7 +1053,7 @@ class Thumbnail extends Component<Props, State> {
                         _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
                     ) }>
                     <ThumbnailTopIndicators
-                        disableConnectionIndicator = { _participant?.fakeParticipant === FakeParticipant.Whiteboard }
+                        disableConnectionIndicator = { isWhiteboardParticipant(_participant) }
                         hidePopover = { this._hidePopover }
                         indicatorsClassName = { classes.indicatorsBackground }
                         isHovered = { isHovered }
@@ -1070,7 +1072,7 @@ class Thumbnail extends Component<Props, State> {
                         className = { classes.indicatorsBackground }
                         local = { local }
                         participantId = { id }
-                        showStatusIndicators = { _participant?.fakeParticipant !== FakeParticipant.Whiteboard }
+                        showStatusIndicators = { !isWhiteboardParticipant(_participant) }
                         thumbnailType = { _thumbnailType } />
                 </div>
                 {!_gifSrc && this._renderAvatar(styles.avatar) }
@@ -1122,7 +1124,7 @@ class Thumbnail extends Component<Props, State> {
         }
 
         if (fakeParticipant
-            && fakeParticipant !== FakeParticipant.Whiteboard
+            && !isWhiteboardParticipant(_participant)
             && !_isVirtualScreenshareParticipant
         ) {
             return this._renderFakeParticipant();
@@ -1144,7 +1146,7 @@ class Thumbnail extends Component<Props, State> {
                     classes = { classes }
                     containerClassName = { this._getContainerClassName() }
                     isHovered = { isHovered }
-                    isLocal = { fakeParticipant === FakeParticipant.LocalScreenShare }
+                    isLocal = { isLocalScreenshareParticipant(_participant) }
                     isMobile = { _isMobile }
                     onClick = { this._onClick }
                     onMouseEnter = { this._onMouseEnter }

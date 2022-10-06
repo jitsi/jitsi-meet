@@ -10,9 +10,9 @@ import {
     getLocalParticipant,
     getParticipantById,
     getParticipantDisplayName,
-    isScreenShareParticipant
+    isScreenShareParticipant,
+    isWhiteboardParticipant
 } from '../base/participants/functions';
-import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
@@ -135,7 +135,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (conference
             && !p.local
             && !isScreenShareParticipant(p)
-            && p.fakeParticipant !== FakeParticipant.Whiteboard
+            && !isWhiteboardParticipant(p)
             && !joinLeaveNotificationsDisabled()
             && !p.isReplacing) {
             dispatch(showParticipantJoinedNotification(
@@ -156,7 +156,7 @@ MiddlewareRegistry.register(store => next => action => {
             if (participant
                 && !participant.local
                 && !isScreenShareParticipant(participant)
-                && participant.fakeParticipant !== FakeParticipant.Whiteboard
+                && !isWhiteboardParticipant(participant)
                 && !action.participant.isReplaced) {
                 dispatch(showParticipantLeftNotification(
                     getParticipantDisplayName(state, participant.id)

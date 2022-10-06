@@ -534,7 +534,7 @@ export function createVirtualScreenshareParticipant(sourceName: string, local: b
 
         dispatch(participantJoined({
             conference: state['features/base/conference'].conference,
-            fakeParticipant: local ? FakeParticipant.LocalScreenShare : FakeParticipant.VirtualScreenShare,
+            fakeParticipant: local ? FakeParticipant.LocalScreenShare : FakeParticipant.RemoteScreenShare,
             id: sourceName,
             name: ownerName
         }));

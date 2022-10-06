@@ -18,8 +18,13 @@ import {
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
-import { isParticipantModerator, isScreenShareParticipant } from './functions';
-import { FakeParticipant, LocalParticipant, Participant } from './types';
+import {
+    isLocalScreenshareParticipant,
+    isParticipantModerator,
+    isRemoteScreenshareParticipant,
+    isScreenShareParticipant
+} from './functions';
+import { LocalParticipant, Participant } from './types';
 
 /**
  * Participant object.
@@ -279,7 +284,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             };
         }
 
-        if (fakeParticipant === FakeParticipant.LocalScreenShare) {
+        if (isLocalScreenshareParticipant(participant)) {
             return {
                 ...state,
                 localScreenShare: participant
@@ -298,7 +303,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         // The sort order of participants is preserved since Map remembers the original insertion order of the keys.
         state.sortedRemoteParticipants = new Map(sortedRemoteParticipants);
 
-        if (fakeParticipant === FakeParticipant.VirtualScreenShare) {
+        if (isRemoteScreenshareParticipant(participant)) {
             const sortedRemoteVirtualScreenshareParticipants = [ ...state.sortedRemoteVirtualScreenshareParticipants ];
 
             sortedRemoteVirtualScreenshareParticipants.push([ id, name ?? '' ]);
