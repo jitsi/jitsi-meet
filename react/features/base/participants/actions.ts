@@ -36,7 +36,7 @@ import {
     getVirtualScreenshareParticipantOwnerId
 } from './functions';
 import logger from './logger';
-import { Participant } from './types';
+import { FakeParticipant, Participant } from './types';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -386,10 +386,8 @@ export function hiddenParticipantLeft(id: string) {
  * instance.
  * @param {Object} participantLeftProps - Other participant properties.
  * @typedef {Object} participantLeftProps
+ * @param {FakeParticipant|undefined} participantLeftProps.fakeParticipant - The type of fake participant.
  * @param {boolean} participantLeftProps.isReplaced - Whether the participant is to be replaced in the meeting.
- * @param {boolean} participantLeftProps.isVirtualScreenshareParticipant - Whether the participant is a
- * virtual screen share participant.
- * @param {boolean} participantLeftProps.isFakeParticipant - Whether the participant is a fake participant.
  *
  * @returns {{
  *     type: PARTICIPANT_LEFT,
@@ -404,11 +402,9 @@ export function participantLeft(id: string, conference: any, participantLeftProp
         type: PARTICIPANT_LEFT,
         participant: {
             conference,
+            fakeParticipant: participantLeftProps.fakeParticipant,
             id,
-            isReplaced: participantLeftProps.isReplaced,
-            isVirtualScreenshareParticipant: participantLeftProps.isVirtualScreenshareParticipant,
-            isWhiteboard: participantLeftProps.isWhiteboard,
-            isFakeParticipant: participantLeftProps.isFakeParticipant
+            isReplaced: participantLeftProps.isReplaced
         }
     };
 }
@@ -538,9 +534,8 @@ export function createVirtualScreenshareParticipant(sourceName: string, local: b
 
         dispatch(participantJoined({
             conference: state['features/base/conference'].conference,
+            fakeParticipant: local ? FakeParticipant.LocalScreenShare : FakeParticipant.RemoteScreenShare,
             id: sourceName,
-            isVirtualScreenshareParticipant: true,
-            isLocalScreenShare: local,
             name: ownerName
         }));
     };

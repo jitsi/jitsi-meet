@@ -255,7 +255,7 @@ function _mapStateToProps(state) {
     const { participantId } = state['features/large-video'];
     const participant = getParticipantById(state, participantId);
     const { clientHeight: height, clientWidth: width } = state['features/base/responsive-ui'];
-    const videoTrack = getVideoTrackByParticipant(state['features/base/tracks'], participant);
+    const videoTrack = getVideoTrackByParticipant(state, participant);
     let disableVideo = false;
 
     if (participant?.local) {

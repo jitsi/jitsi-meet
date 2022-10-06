@@ -1,7 +1,7 @@
 import { IState, IStore } from '../../app/types';
 import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
-import { getParticipantById } from '../participants/functions';
+import { getParticipantById, isScreenShareParticipant } from '../participants/functions';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrack } from '../tracks';
@@ -31,7 +31,7 @@ export function getRemoteVideoType({ getState }: IStore, id: string) {
     const state = getState();
     const participant = getParticipantById(state, id);
 
-    if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+    if (getMultipleVideoSupportFeatureFlag(state) && isScreenShareParticipant(participant)) {
         return VIDEO_TYPE.DESKTOP;
     }
 
@@ -51,7 +51,7 @@ export function isLargeVideoReceived({ getState }: IStore): boolean {
     const tracks = state['features/base/tracks'];
     let videoTrack;
 
-    if (getMultipleVideoSupportFeatureFlag(state) && largeVideoParticipant?.isVirtualScreenshareParticipant) {
+    if (getMultipleVideoSupportFeatureFlag(state) && isScreenShareParticipant(largeVideoParticipant)) {
         videoTrack = getVirtualScreenshareParticipantTrack(tracks, largeVideoParticipantId);
     } else {
         videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId);
@@ -75,7 +75,7 @@ export function isRemoteVideoReceived({ getState }: IStore, id: string): boolean
     const participant = getParticipantById(state, id);
     let videoTrack;
 
-    if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+    if (getMultipleVideoSupportFeatureFlag(state) && isScreenShareParticipant(participant)) {
         videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
     } else {
         videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);

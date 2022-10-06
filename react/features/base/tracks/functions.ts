@@ -8,7 +8,11 @@ import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { setAudioMuted } from '../media/actions';
 import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
-import { getParticipantByIdOrUndefined, getVirtualScreenshareParticipantOwnerId } from '../participants/functions';
+import {
+    getParticipantByIdOrUndefined,
+    getVirtualScreenshareParticipantOwnerId,
+    isScreenShareParticipant
+} from '../participants/functions';
 import { Participant } from '../participants/types';
 import { toState } from '../redux/functions';
 import {
@@ -47,7 +51,7 @@ export function isParticipantMediaMuted(participant: Participant, mediaType: Med
 
     if (participant?.local) {
         return isLocalTrackMuted(tracks, mediaType);
-    } else if (!participant?.isFakeParticipant) {
+    } else if (!participant?.fakeParticipant) {
         return isRemoteTrackMuted(tracks, mediaType, participant.id);
     }
 
@@ -420,19 +424,21 @@ export function getLocalJitsiAudioTrack(state: IState) {
 /**
  * Returns track of specified media type for specified participant.
  *
- * @param {ITrack[]} tracks - List of all tracks.
+ * @param {IState} state - The redux state.
  * @param {Participant} participant - Participant Object.
  * @returns {(Track|undefined)}
  */
 export function getVideoTrackByParticipant(
-        tracks: ITrack[],
+        state: IState,
         participant?: Participant) {
 
     if (!participant) {
         return;
     }
 
-    if (participant?.isVirtualScreenshareParticipant) {
+    const tracks = state['features/base/tracks'];
+
+    if (isScreenShareParticipant(participant)) {
         return getVirtualScreenshareParticipantTrack(tracks, participant.id);
     }
 
@@ -448,8 +454,7 @@ export function getVideoTrackByParticipant(
  */
 export function getSourceNameByParticipantId(state: IState, participantId: string) {
     const participant = getParticipantByIdOrUndefined(state, participantId);
-    const tracks = state['features/base/tracks'];
-    const track = getVideoTrackByParticipant(tracks, participant);
+    const track = getVideoTrackByParticipant(state, participant);
 
     return track?.jitsiTrack?.getSourceName();
 }

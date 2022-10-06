@@ -10,6 +10,7 @@ import {
     hasRaisedHand,
     isParticipantModerator
 } from '../../../base/participants';
+import { FakeParticipant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux';
 import {
     isParticipantAudioMuted,
@@ -40,9 +41,9 @@ type Props = {
     _displayName: string,
 
     /**
-     * True if the participant is fake.
+     * The type of fake participant.
      */
-    _isFakeParticipant: boolean,
+    _fakeParticipant: FakeParticipant,
 
     /**
      * Whether or not the user is a moderator.
@@ -110,16 +111,16 @@ class MeetingParticipantItem extends PureComponent<Props> {
      */
     _onPress() {
         const {
+            _fakeParticipant,
             _local,
             _localVideoOwner,
-            _isFakeParticipant,
             _participantID,
             dispatch
         } = this.props;
 
-        if (_isFakeParticipant && _localVideoOwner) {
+        if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(_participantID));
-        } else if (!_isFakeParticipant) {
+        } else if (!_fakeParticipant) {
             if (_local) {
                 dispatch(showConnectionStatus(_participantID));
             } else {
@@ -188,8 +189,8 @@ function mapStateToProps(state, ownProps): Object {
         _audioMediaState: audioMediaState,
         _disableModeratorIndicator: disableModeratorIndicator,
         _displayName: getParticipantDisplayName(state, participant?.id),
+        _fakeParticipant: participant?.fakeParticipant,
         _isAudioMuted,
-        _isFakeParticipant: Boolean(participant?.isFakeParticipant),
         _isModerator: isParticipantModerator(participant),
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),

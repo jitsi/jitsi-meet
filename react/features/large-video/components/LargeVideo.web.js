@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { getMultipleVideoSupportFeatureFlag } from '../../base/config';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
-import { getLocalParticipant } from '../../base/participants';
+import { getLocalParticipant, isScreenShareParticipant } from '../../base/participants';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrack } from '../../base/tracks';
@@ -346,7 +346,7 @@ function _mapStateToProps(state) {
     const largeVideoParticipant = getLargeVideoParticipant(state);
     let videoTrack;
 
-    if (getMultipleVideoSupportFeatureFlag(state) && largeVideoParticipant?.isVirtualScreenshareParticipant) {
+    if (getMultipleVideoSupportFeatureFlag(state) && isScreenShareParticipant(largeVideoParticipant)) {
         videoTrack = getVirtualScreenshareParticipantTrack(tracks, largeVideoParticipant?.id);
     } else {
         videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipant?.id);

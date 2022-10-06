@@ -13,7 +13,7 @@ import participantsPaneTheme from '../../../base/components/themes/participantsP
 // @ts-ignore
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media/constants';
-import { getParticipantById } from '../../../base/participants/functions';
+import { getParticipantById, isScreenShareParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
@@ -174,7 +174,7 @@ function _mapStateToProps(state: IState): Object {
     sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
         const participant = getParticipantById(state, id);
 
-        return !participant?.isVirtualScreenshareParticipant;
+        return !isScreenShareParticipant(participant);
     });
 
     const participantsCount = sortedParticipantIds.length;

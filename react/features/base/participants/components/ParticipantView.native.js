@@ -13,6 +13,7 @@ import { connect } from '../../redux';
 import { TestHint } from '../../testing/components';
 import { getVideoTrackByParticipant } from '../../tracks';
 import { getParticipantById, shouldRenderParticipantVideo } from '../functions';
+import { FakeParticipant } from '../types';
 
 import styles from './styles';
 
@@ -31,11 +32,11 @@ type Props = {
     _connectionStatus: string,
 
     /**
-     * True if the participant which this component represents is fake.
+     * The type of participant if the participant which this component represents is fake.
      *
      * @private
      */
-    _isFakeParticipant: boolean,
+    _fakeParticipant?: FakeParticipant,
 
     /**
      * The name of the participant which this component represents.
@@ -174,7 +175,7 @@ class ParticipantView extends Component<Props> {
     render() {
         const {
             _connectionStatus: connectionStatus,
-            _isFakeParticipant,
+            _fakeParticipant,
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
             disableVideo,
@@ -190,7 +191,7 @@ class ParticipantView extends Component<Props> {
                 ? this.props.testHintId
                 : `org.jitsi.meet.Participant#${this.props.participantId}`;
 
-        const renderSharedVideo = _isFakeParticipant && !disableVideo;
+        const renderSharedVideo = _fakeParticipant && !disableVideo;
 
         return (
             <Container
@@ -208,7 +209,7 @@ class ParticipantView extends Component<Props> {
 
                 { renderSharedVideo && <SharedVideo /> }
 
-                { !_isFakeParticipant && renderVideo
+                { !_fakeParticipant && renderVideo
                     && <VideoTrack
                         onPress = { onPress }
                         videoTrack = { videoTrack }
@@ -248,8 +249,7 @@ class ParticipantView extends Component<Props> {
 function _mapStateToProps(state, ownProps) {
     const { disableVideo, participantId } = ownProps;
     const participant = getParticipantById(state, participantId);
-    const tracks = state['features/base/tracks'];
-    const videoTrack = getVideoTrackByParticipant(tracks, participant);
+    const videoTrack = getVideoTrackByParticipant(state, participant);
     let connectionStatus;
     let participantName;
 
@@ -257,7 +257,7 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
-        _isFakeParticipant: participant && participant.isFakeParticipant,
+        _fakeParticipant: participant?.fakeParticipant,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
         _videoTrack: videoTrack

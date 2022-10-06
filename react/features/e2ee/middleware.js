@@ -12,6 +12,7 @@ import {
     getParticipantById,
     getParticipantCount,
     getRemoteParticipants,
+    isScreenShareParticipant,
     participantUpdated
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
@@ -94,11 +95,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     case PARTICIPANT_JOINED: {
         const result = next(action);
-        const { e2eeEnabled, e2eeSupported, isVirtualScreenshareParticipant, local } = action.participant;
+        const { e2eeEnabled, e2eeSupported, local } = action.participant;
         const { everyoneEnabledE2EE } = getState()['features/e2ee'];
         const participantCount = getParticipantCount(getState);
 
-        if (isVirtualScreenshareParticipant) {
+        if (isScreenShareParticipant(action.participant)) {
             return result;
         }
 
@@ -138,9 +139,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const participant = getParticipantById(previosState, action.participant?.id) || {};
         const result = next(action);
         const newState = getState();
-        const { e2eeEnabled = false, e2eeSupported = false, isVirtualScreenshareParticipant } = participant;
+        const { e2eeEnabled = false, e2eeSupported = false } = participant;
 
-        if (isVirtualScreenshareParticipant) {
+        if (isScreenShareParticipant(participant)) {
             return result;
         }
 

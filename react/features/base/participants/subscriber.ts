@@ -9,6 +9,7 @@ import {
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 import { createVirtualScreenshareParticipant, participantLeft } from './actions';
+import { FakeParticipant } from './types';
 
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/tracks'],
@@ -56,8 +57,8 @@ function _updateScreenshareParticipants({ getState, dispatch }: IStore) {
 
         if (localScreenShare && !newLocalSceenshareSourceName) {
             dispatch(participantLeft(localScreenShare.id, conference, {
-                isReplaced: undefined,
-                isVirtualScreenshareParticipant: true
+                fakeParticipant: FakeParticipant.LocalScreenShare,
+                isReplaced: undefined
             }));
         }
     }
@@ -67,8 +68,8 @@ function _updateScreenshareParticipants({ getState, dispatch }: IStore) {
 
     if (removedScreenshareSourceNames.length) {
         removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference, {
-            isReplaced: undefined,
-            isVirtualScreenshareParticipant: true
+            fakeParticipant: FakeParticipant.RemoteScreenShare,
+            isReplaced: undefined
         })));
     }
 

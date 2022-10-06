@@ -74,11 +74,13 @@ import {
     getRaiseHandsQueue,
     getRemoteParticipants,
     hasRaisedHand,
-    isLocalParticipantModerator
+    isLocalParticipantModerator,
+    isScreenShareParticipant,
+    isWhiteboardParticipant
 } from './functions';
 import logger from './logger';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
-import { IJitsiParticipant } from './types';
+import { FakeParticipant, IJitsiParticipant } from './types';
 
 import './subscriber';
 
@@ -267,19 +269,19 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PARTICIPANT_JOINED: {
-        const { isVirtualScreenshareParticipant, isWhiteboard } = action.participant;
-
-        // Do not play sounds when a virtual participant tile is created for screenshare.
-        (!isVirtualScreenshareParticipant && !isWhiteboard) && _maybePlaySounds(store, action);
+        // Do not play sounds when a screenshare or whiteboard participant tile is created for screenshare.
+        (!isScreenShareParticipant(action.participant)
+            && !isWhiteboardParticipant(action.participant)
+        ) && _maybePlaySounds(store, action);
 
         return _participantJoinedOrUpdated(store, next, action);
     }
 
     case PARTICIPANT_LEFT: {
-        const { isVirtualScreenshareParticipant, isWhiteboard } = action.participant;
-
-        // Do not play sounds when a tile for screenshare is removed.
-        (!isVirtualScreenshareParticipant && !isWhiteboard) && _maybePlaySounds(store, action);
+        // Do not play sounds when a tile for screenshare or whiteboard is removed.
+        (!isScreenShareParticipant(action.participant)
+            && !isWhiteboardParticipant(action.participant)
+        ) && _maybePlaySounds(store, action);
 
         break;
     }
@@ -436,7 +438,7 @@ StateListenerRegistry.register(
                     store.dispatch(participantUpdated({
                         conference,
                         id: participant.getId(),
-                        isJigasi: value
+                        fakeParticipant: value ? FakeParticipant.Jigasi : undefined
                     })),
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 'features_screen-sharing': (participant: IJitsiParticipant, value: string) =>

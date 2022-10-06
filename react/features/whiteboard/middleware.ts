@@ -13,7 +13,6 @@ import { RESET_WHITEBOARD, SET_WHITEBOARD_OPEN } from './actionTypes';
 import { getCollabDetails, getCollabServerUrl, isWhiteboardPresent } from './functions';
 import { WHITEBOARD_ID, WHITEBOARD_PARTICIPANT_NAME } from './constants';
 import { resetWhiteboard, setWhiteboardOpen, setupWhiteboard } from './actions';
-import { getCurrentRoomId } from '../breakout-rooms/functions';
 
 // @ts-ignore
 import { addStageParticipant } from '../filmstrip/actions.web';
@@ -21,6 +20,8 @@ import { addStageParticipant } from '../filmstrip/actions.web';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { FakeParticipant } from '../base/participants/types';
+import { getCurrentRoomId } from '../breakout-rooms/functions';
 
 const focusWhiteboard = (store: IStore) => {
     const { dispatch, getState } = store;
@@ -32,9 +33,8 @@ const focusWhiteboard = (store: IStore) => {
     if (!isPresent) {
         dispatch(participantJoined({
             conference,
+            fakeParticipant: FakeParticipant.Whiteboard,
             id: WHITEBOARD_ID,
-            isFakeParticipant: true,
-            isWhiteboard: true,
             name: WHITEBOARD_PARTICIPANT_NAME
         }));
     }
@@ -85,11 +85,11 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
             return;
         }
 
-        dispatch(participantLeft(WHITEBOARD_ID, conference, { isWhiteboard: true }));
+        dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
         break;
     }
     case RESET_WHITEBOARD: {
-        dispatch(participantLeft(WHITEBOARD_ID, conference, { isWhiteboard: true }));
+        dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
         break;
     }
     }

@@ -9,6 +9,7 @@ import TogglePinToStageButton from '../../../../features/video-menu/components/w
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import { IconShareVideo } from '../../../base/icons/svg';
+import { isWhiteboardParticipant } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
@@ -106,7 +107,7 @@ const FakeParticipantContextMenu = ({
     }, [ setWhiteboardOpen ]);
 
     const _getActions = useCallback(() => {
-        if (participant.isWhiteboard) {
+        if (isWhiteboardParticipant(participant)) {
             return [ {
                 accessibilityLabel: t('toolbar.hideWhiteboard'),
                 icon: IconShareVideo,
@@ -123,7 +124,7 @@ const FakeParticipantContextMenu = ({
                 text: t('toolbar.stopSharedVideo')
             } ];
         }
-    }, [ localVideoOwner, participant.isWhiteboard ]);
+    }, [ localVideoOwner, participant.fakeParticipant ]);
 
     return (
         <ContextMenu
@@ -148,9 +149,11 @@ const FakeParticipantContextMenu = ({
 
             <ContextMenuItemGroup
                 actions = { _getActions() }>
-                {participant.isWhiteboard && <TogglePinToStageButton
-                    key = 'pinToStage'
-                    participantID = { WHITEBOARD_ID } />}
+                {isWhiteboardParticipant(participant) && (
+                    <TogglePinToStageButton
+                        key = 'pinToStage'
+                        participantID = { WHITEBOARD_ID } />
+                )}
             </ContextMenuItemGroup>
 
         </ContextMenu>

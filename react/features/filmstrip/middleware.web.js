@@ -9,7 +9,8 @@ import {
     PARTICIPANT_LEFT,
     getDominantSpeakerParticipant,
     getLocalParticipant,
-    getLocalScreenShareParticipant
+    getLocalScreenShareParticipant,
+    isScreenShareParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { CLIENT_RESIZED } from '../base/responsive-ui';
@@ -108,7 +109,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case PARTICIPANT_JOINED: {
         result = next(action);
-        if (action.participant?.isLocalScreenShare) {
+        if (isScreenShareParticipant(action.participant)) {
             break;
         }
 

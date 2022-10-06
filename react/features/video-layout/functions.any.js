@@ -124,7 +124,7 @@ export function updateAutoPinnedParticipant(
     const pinned = getPinnedParticipant(getState);
 
     // if the pinned participant is shared video or some other fake participant we want to skip auto-pinning
-    if (pinned?.isFakeParticipant) {
+    if (pinned?.fakeParticipant) {
         return;
     }
 

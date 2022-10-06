@@ -32,7 +32,8 @@ import {
     PARTICIPANT_LEFT,
     getLocalParticipant,
     getParticipantById,
-    getRemoteParticipants
+    getRemoteParticipants,
+    isScreenShareParticipant
 } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { getLocalTracks, isLocalTrackMuted, toggleScreensharing } from '../../base/tracks';
@@ -182,7 +183,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         const { participant } = action;
 
-        if (participant.isVirtualScreenshareParticipant) {
+        if (isScreenShareParticipant(participant)) {
             break;
         }
 
@@ -343,7 +344,7 @@ function _registerForNativeEvents(store) {
 
         participantsInfo.push(_participantToParticipantInfo(localParticipant));
         remoteParticipants.forEach(participant => {
-            if (!participant.isFakeParticipant) {
+            if (!participant.fakeParticipant) {
                 participantsInfo.push(_participantToParticipantInfo(participant));
             }
         });

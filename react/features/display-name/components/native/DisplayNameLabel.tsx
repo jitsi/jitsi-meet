@@ -72,7 +72,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
 
     return {
         _participantName: getParticipantDisplayName(state, ownProps.participantId ?? ''),
-        _render: participant && (!participant?.local || ownProps.contained) && !participant?.isFakeParticipant
+        _render: participant && (!participant?.local || ownProps.contained) && !participant?.fakeParticipant
     };
 }
 

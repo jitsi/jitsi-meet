@@ -19,7 +19,9 @@ import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantById,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isLocalScreenshareParticipant,
+    isScreenShareParticipant
 } from '../../../react/features/base/participants';
 import {
     getVideoTrackByParticipant,
@@ -265,8 +267,7 @@ export default class LargeVideoManager {
             let isVideoRenderable;
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const tracks = state['features/base/tracks'];
-                const videoTrack = getVideoTrackByParticipant(tracks, participant);
+                const videoTrack = getVideoTrackByParticipant(state, participant);
 
                 // Remove track streaming status listener from the old track and add it to the new track,
                 // in order to stop updating track streaming status for the old track and start it for the new track.
@@ -292,7 +293,10 @@ export default class LargeVideoManager {
                 const streamingStatusActive = isTrackStreamingStatusActive(videoTrack);
 
                 isVideoRenderable = !isVideoMuted
-                    && (APP.conference.isLocalId(id) || participant?.isLocalScreenShare || streamingStatusActive);
+                    && (APP.conference.isLocalId(id)
+                        || isLocalScreenshareParticipant(participant)
+                        || streamingStatusActive
+                    );
                 this.videoTrack?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP
                     && logger.debug(`Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${isVideoMuted},`
                     + ` streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${isVideoRenderable}`);
@@ -309,7 +313,7 @@ export default class LargeVideoManager {
             // progress.
             const legacyScreenshare = getMultipleVideoSupportFeatureFlag(state)
                                         && videoType === VIDEO_TYPE.DESKTOP
-                                        && !participant.isVirtualScreenshareParticipant;
+                                        && !isScreenShareParticipant(participant);
 
             const showAvatar
                 = isVideoContainer
@@ -329,11 +333,10 @@ export default class LargeVideoManager {
                 if ((!shouldDisplayTileView(state) || participant?.pinned) // In theory the tile view may not be
                 // enabled yet when we auto pin the participant.
 
-                        && participant && !participant.local && !participant.isFakeParticipant) {
+                        && participant && !participant.local && !participant.fakeParticipant) {
                     // remote participant only
 
-                    const tracks = state['features/base/tracks'];
-                    const track = getVideoTrackByParticipant(tracks, participant);
+                    const track = getVideoTrackByParticipant(state, participant);
 
                     const isScreenSharing = track?.videoType === 'desktop';
 
@@ -365,8 +368,7 @@ export default class LargeVideoManager {
             let messageKey;
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const tracks = state['features/base/tracks'];
-                const videoTrack = getVideoTrackByParticipant(tracks, participant);
+                const videoTrack = getVideoTrackByParticipant(state, participant);
 
                 messageKey = isTrackStreamingStatusInactive(videoTrack) ? 'connection.LOW_BANDWIDTH' : null;
             } else {
@@ -619,8 +621,7 @@ export default class LargeVideoManager {
             const state = APP.store.getState();
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const tracks = state['features/base/tracks'];
-                const videoTrack = getVideoTrackByParticipant(tracks, participant);
+                const videoTrack = getVideoTrackByParticipant(state, participant);
 
                 // eslint-disable-next-line no-param-reassign
                 show = !APP.conference.isLocalId(this.id)
