@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
 import { Icon, IconCopy } from '../../../../base/icons';
-import { copyText } from '../../../../base/util/copyText';
+import { copyText } from '../../../../base/util/copyText.web';
 import { _formatConferenceIDPin } from '../../../_utils';
 
 /**

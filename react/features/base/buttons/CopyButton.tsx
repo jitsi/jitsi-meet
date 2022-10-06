@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import Icon from '../icons/components/Icon';
 import { IconCheck, IconCopy } from '../icons/svg';
 import { withPixelLineHeight } from '../styles/functions.web';
-import { copyText } from '../util/copyText';
+import { copyText } from '../util/copyText.web';
 
 const styles = (theme: Theme) => {
     return {

@@ -16,7 +16,7 @@ import {
     IconYahoo
 } from '../../../../base/icons';
 import { Tooltip } from '../../../../base/tooltip';
-import { copyText } from '../../../../base/util/copyText';
+import { copyText } from '../../../../base/util/copyText.web';
 
 type Props = {
 
