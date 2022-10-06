@@ -69,12 +69,15 @@ class Captions extends AbstractCaptions<Props> {
                             .then((e) => {
                                 transcriptJSonData = JSON.stringify(e);
                                 const { transcriptBite } = JSON.parse(transcriptJSonData);
-                                this.setState({
-                                    i: this.state.i + 1,
-                                    data: `${transcriptBite[this.state.i]['bite']} ${transcriptBite[this.state.i]['count']}`
-                                });
-                                console.log(`dataaaaa  ${this.state.data}`);
-
+                                if (this.state.i < 6) {
+                                    this.setState({
+                                        i: this.state.i + 1,
+                                        data: `${transcriptBite[this.state.i]['bite']} ${transcriptBite[this.state.i]['count']}`
+                                    });
+                                } else {
+                                    this.state.data = '';
+                                    this.state.i = 0;
+                                }
                             });
                         this.props.dispatch(showTranscriptData(this.state.data));
                         textStore = '';
@@ -89,10 +92,15 @@ class Captions extends AbstractCaptions<Props> {
                         stringData = JSON.stringify(event.data);
                         parseData = JSON.parse(stringData);
                     });
-                    this.setState({
-                        i: this.state.i + 1,
-                        data: `${parseData[this.state.i]['bite']} ${parseData[this.state.i]['count']}`
-                    });
+                    if (this.state.i < 6) {
+                        this.setState({
+                            i: this.state.i + 1,
+                            data: `${parseData[this.state.i]['bite']} ${parseData[this.state.i]['count']}`
+                        });
+                    } else {
+                        this.state.data = '';
+                        this.state.i = 0;
+                    }
                     console.log(`dataaaaa  ${this.state.data}`);
                     this.props.dispatch(showTranscriptData(this.state.data));
                     textStore = '';
@@ -100,7 +108,6 @@ class Captions extends AbstractCaptions<Props> {
             } catch (e) {
                 console.log('got an exception : ', e);
             }
-
         }, 10000);
     }
 
