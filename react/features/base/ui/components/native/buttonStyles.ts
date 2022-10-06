@@ -4,12 +4,13 @@ const BUTTON_HEIGHT = BaseTheme.spacing[7];
 
 const button = {
     borderRadius: BaseTheme.shape.borderRadius,
-    height: BUTTON_HEIGHT
+    display: 'flex',
+    height: BUTTON_HEIGHT,
+    justifyContent: 'center'
 };
 
 const buttonLabel = {
     ...BaseTheme.typography.bodyShortBold,
-    padding: 6,
     textTransform: 'capitalize'
 };
 
