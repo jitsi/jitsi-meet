@@ -17,3 +17,15 @@ export interface TrackOptions {
     micDeviceId?: string | null;
     timeout?: number;
 }
+
+export interface ToggleScreenSharingOptions {
+    audioOnly: boolean;
+    enabled?: boolean;
+    shareOptions: ShareOptions;
+}
+
+export interface ShareOptions {
+    desktopSharingSourceDevice?: string;
+    desktopSharingSources?: string[];
+    desktopStream?: any;
+}

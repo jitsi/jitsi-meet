@@ -21,7 +21,7 @@ import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { toggleToolboxVisible } from '../../../toolbox/actions.any';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { JitsiPortal, Toolbox } from '../../../toolbox/components/web';
-import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
+import { LAYOUT_CLASSNAMES, getCurrentLayout } from '../../../video-layout';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 import {
     AbstractConference,
@@ -47,20 +47,6 @@ const FULL_SCREEN_EVENTS = [
     'mozfullscreenchange',
     'fullscreenchange'
 ];
-
-/**
- * The CSS class to apply to the root element of the conference so CSS can
- * modify the app layout.
- *
- * @private
- * @type {Object}
- */
-export const LAYOUT_CLASSNAMES = {
-    [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'horizontal-filmstrip',
-    [LAYOUTS.TILE_VIEW]: 'tile-view',
-    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'vertical-filmstrip',
-    [LAYOUTS.STAGE_FILMSTRIP_VIEW]: 'stage-filmstrip'
-};
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.

@@ -42,6 +42,8 @@ import {
     trackMuteUnmuteFailed,
     trackNoDataFromSourceNotificationInfoChanged,
     trackRemoved
+
+    // @ts-ignore
 } from './actions';
 import {
     getLocalTrack,

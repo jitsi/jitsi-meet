@@ -12,8 +12,9 @@ import {
     updateSettings
     // @ts-ignore
 } from '../../base/settings';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { toggleScreensharing } from '../../base/tracks';
+import { toggleScreensharing } from '../../base/tracks/actions';
 import Checkbox from '../../base/ui/components/web/Checkbox';
 
 /**

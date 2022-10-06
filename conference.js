@@ -2660,17 +2660,6 @@ export default {
                 APP.UI.updateLargeVideo(displayedUserId, true);
             }
         });
-
-        // Used in non-multi-stream.
-        APP.UI.addListener(
-            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly, ignoreDidHaveVideo, desktopStream }) => {
-                this.toggleScreenSharing(enabled,
-                    {
-                        audioOnly,
-                        desktopStream
-                    }, ignoreDidHaveVideo);
-            }
-        );
     },
 
     /**
