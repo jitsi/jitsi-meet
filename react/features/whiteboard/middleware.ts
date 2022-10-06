@@ -21,7 +21,6 @@ import { addStageParticipant } from '../filmstrip/actions.web';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { FakeParticipant } from '../base/participants/types';
-import { getCurrentRoomId } from '../breakout-rooms/functions';
 
 const focusWhiteboard = (store: IStore) => {
     const { dispatch, getState } = store;
@@ -65,15 +64,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
             const collabServerUrl = getCollabServerUrl(state);
 
             focusWhiteboard(store);
-            dispatch(setupWhiteboard({
-                collabDetails: {
-                    roomId: getCurrentRoomId(state),
-                    roomKey: collabDetails.roomKey
-                }
-            }));
+            dispatch(setupWhiteboard({ collabDetails }));
             conference.getMetadataHandler().setMetadata(WHITEBOARD_ID, {
                 collabServerUrl,
-                roomKey: collabDetails.roomKey
+                collabDetails
             });
 
             return;
@@ -107,7 +101,7 @@ StateListenerRegistry.register(
     state => getCurrentConference(state),
 
     // @ts-ignore
-    (conference, { dispatch, getState }, previousConference): void => {
+    (conference, { dispatch }, previousConference): void => {
         if (conference !== previousConference) {
             dispatch(resetWhiteboard());
         }
@@ -115,10 +109,7 @@ StateListenerRegistry.register(
             conference.on(JitsiConferenceEvents.METADATA_UPDATED, (metadata: any) => {
                 if (metadata[WHITEBOARD_ID]) {
                     dispatch(setupWhiteboard({
-                        collabDetails: {
-                            roomId: getCurrentRoomId(getState()),
-                            roomKey: metadata[WHITEBOARD_ID].roomKey
-                        }
+                        collabDetails: metadata[WHITEBOARD_ID].collabDetails
                     }));
                     dispatch(setWhiteboardOpen(true));
                 }

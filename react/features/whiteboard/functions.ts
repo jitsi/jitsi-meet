@@ -19,7 +19,7 @@ const getWhiteboardState = (state: IState): IWhiteboardState => state['features/
 /**
  * Indicates whether the whiteboard is enabled in the config.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
 export const isWhiteboardEnabled = (state: IState): boolean =>
@@ -31,7 +31,7 @@ export const isWhiteboardEnabled = (state: IState): boolean =>
 /**
  * Indicates whether the whiteboard is open.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
 export const isWhiteboardOpen = (state: IState): boolean => getWhiteboardState(state).isOpen;
@@ -39,7 +39,7 @@ export const isWhiteboardOpen = (state: IState): boolean => getWhiteboardState(s
 /**
  * Indicates whether the whiteboard button is visible.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
 export const isWhiteboardButtonVisible = (state: IState): boolean =>
@@ -48,16 +48,16 @@ export const isWhiteboardButtonVisible = (state: IState): boolean =>
 /**
  * Indicates whether the whiteboard is present as a meeting participant.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
 export const isWhiteboardPresent = (state: IState): boolean => getRemoteParticipants(state).has(WHITEBOARD_ID);
 
 /**
- * Returns the whiteboard collaboration link.
+ * Returns the whiteboard collaboration details.
  *
- * @param {Object} state - The state from the Redux store.
- * @returns {{ roomId: string, roomKey: string}|null}
+ * @param {IState} state - The state from the Redux store.
+ * @returns {{ roomId: string, roomKey: string}|undefined}
  */
 export const getCollabDetails = (state: IState): {
     roomId: string; roomKey: string;
@@ -66,7 +66,7 @@ export const getCollabDetails = (state: IState): {
 /**
  * Returns the whiteboard collaboration server url.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {string}
  */
 export const getCollabServerUrl = (state: IState): string | undefined => {
@@ -87,7 +87,7 @@ export const getCollabServerUrl = (state: IState): string | undefined => {
 /**
  * Whether the whiteboard is visible on stage.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
 export const isWhiteboardVisible = (state: IState): boolean =>
