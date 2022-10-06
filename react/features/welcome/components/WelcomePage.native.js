@@ -419,7 +419,8 @@ class WelcomePage extends AbstractWelcomePage<*> {
  */
 function _mapStateToProps(state) {
     return {
-        ..._abstractMapStateToProps(state),
+        ..._abstractMapStateToProps(state)
+
         // _reducedUI: state['features/base/responsive-ui'].reducedUI
     };
 }
