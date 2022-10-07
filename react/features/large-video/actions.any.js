@@ -7,6 +7,7 @@ import { MEDIA_TYPE } from '../base/media';
 import {
     getDominantSpeakerParticipant,
     getLocalParticipant,
+    getLocalScreenShareParticipant,
     getPinnedParticipant,
     getRemoteParticipants,
     getVirtualScreenshareParticipantByOwnerId
@@ -138,7 +139,18 @@ function _electParticipantInLargeVideo(state) {
         return participant.id;
     }
 
-    if (getAutoPinSetting()) {
+    const autoPinSetting = getAutoPinSetting();
+
+    if (autoPinSetting) {
+        // when the setting auto_pin_latest_screen_share is true as spot does, prioritize local screenshare
+        if (autoPinSetting === true) {
+            const localScreenShareParticipant = getLocalScreenShareParticipant(state);
+
+            if (localScreenShareParticipant) {
+                return localScreenShareParticipant.id;
+            }
+        }
+
         // Pick the most recent remote screenshare that was added to the conference.
         const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
 
