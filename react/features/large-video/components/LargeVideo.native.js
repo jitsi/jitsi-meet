@@ -5,7 +5,8 @@ import type { Dispatch } from 'redux';
 
 import { getSourceNameSignalingFeatureFlag } from '../../base/config/functions.any';
 import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
-import { ParticipantView, getParticipantById } from '../../base/participants';
+import ParticipantView from '../../base/participants/components/ParticipantView.native';
+import { getParticipantById } from '../../base/participants/functions';
 import { connect } from '../../base/redux';
 import {
     getVideoTrackByParticipant,

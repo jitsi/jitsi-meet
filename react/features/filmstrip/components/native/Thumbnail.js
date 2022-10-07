@@ -9,7 +9,6 @@ import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media';
 import {
     PARTICIPANT_ROLE,
-    ParticipantView,
     getLocalParticipant,
     getParticipantByIdOrUndefined,
     getParticipantCount,
@@ -18,6 +17,7 @@ import {
     isScreenShareParticipant,
     pinParticipant
 } from '../../../base/participants';
+import ParticipantView from '../../../base/participants/components/ParticipantView.native';
 import { FakeParticipant } from '../../../base/participants/types';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';

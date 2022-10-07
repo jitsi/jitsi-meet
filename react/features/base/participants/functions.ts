@@ -8,12 +8,10 @@ import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config/functions.any';
+import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import i18next from '../i18n/i18next';
-import { JitsiParticipantConnectionStatus, JitsiTrackStreamingStatus } from '../lib-jitsi-meet';
-import { shouldRenderVideoTrack } from '../media/functions';
 import { toState } from '../redux/functions';
-import { getScreenShareTrack, getVideoTrackByParticipant } from '../tracks/functions';
+import { getScreenShareTrack } from '../tracks/functions';
 import { createDeferred } from '../util/helpers';
 
 import {
@@ -600,63 +598,6 @@ export function isLocalParticipantModerator(stateful: IStateful) {
     }
 
     return isParticipantModerator(local);
-}
-
-/**
- * Returns true if the video of the participant should be rendered.
- * NOTE: This is currently only used on mobile.
- *
- * @param {Object|Function} stateful - Object or function that can be resolved
- * to the Redux state.
- * @param {string} id - The ID of the participant.
- * @returns {boolean}
- */
-export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
-    const state = toState(stateful);
-    const participant = getParticipantById(state, id);
-
-    if (!participant) {
-        return false;
-    }
-
-    /* First check if we have an unmuted video track. */
-    const videoTrack = getVideoTrackByParticipant(state, participant);
-
-    if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
-        return false;
-    }
-
-    /* Then check if the participant connection or track streaming status is active. */
-    if (getSourceNameSignalingFeatureFlag(state)) {
-        // Note that this will work only if a listener is registered for the track's TrackStreamingStatus.
-        // The associated TrackStreamingStatusImpl instance is not created or disposed when there are zero listeners.
-        if (videoTrack
-            && !videoTrack.local
-            && videoTrack.jitsiTrack?.getTrackStreamingStatus() !== JitsiTrackStreamingStatus.ACTIVE) {
-            return false;
-        }
-    } else {
-        const connectionStatus = participant.connectionStatus || JitsiParticipantConnectionStatus.ACTIVE;
-
-        if (connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE) {
-            return false;
-        }
-    }
-
-    /* Then check if audio-only mode is not active. */
-    const audioOnly = state['features/base/audio-only'].enabled;
-
-    if (!audioOnly) {
-        return true;
-    }
-
-    /* Last, check if the participant is sharing their screen and they are on stage. */
-    const remoteScreenShares = state['features/video-layout'].remoteScreenShares || [];
-    const largeVideoParticipantId = state['features/large-video'].participantId;
-    const participantIsInLargeVideoWithScreen
-        = participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
-
-    return participantIsInLargeVideoWithScreen;
 }
 
 /**

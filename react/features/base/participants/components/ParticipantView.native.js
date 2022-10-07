@@ -1,19 +1,23 @@
-// @flow
-
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
+import {
+    isParticipantConnectionStatusActive,
+    isParticipantConnectionStatusInactive,
+    isTrackStreamingStatusActive,
+    isTrackStreamingStatusInactive
+} from '../../../connection-indicator/functions';
 import { SharedVideo } from '../../../shared-video/components/native';
-import { Avatar } from '../../avatar';
-import { translate } from '../../i18n';
-import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
-import { VideoTrack } from '../../media';
-import { Container, TintedView } from '../../react';
-import { connect } from '../../redux';
+import Avatar from '../../avatar/components/Avatar';
+import { getSourceNameSignalingFeatureFlag } from '../../config/functions.any';
+import { translate } from '../../i18n/functions';
+import VideoTrack from '../../media/components/native/VideoTrack';
+import { shouldRenderVideoTrack } from '../../media/functions';
+import { Container } from '../../react';
+import { connect, toState } from '../../redux/functions';
 import { TestHint } from '../../testing/components';
-import { getVideoTrackByParticipant } from '../../tracks';
-import { getParticipantById, isSharedVideoParticipant, shouldRenderParticipantVideo } from '../functions';
-import { FakeParticipant } from '../types';
+import { getVideoTrackByParticipant } from '../../tracks/functions';
+import { getParticipantById, getParticipantDisplayName, isSharedVideoParticipant } from '../functions';
 
 import styles from './styles';
 
@@ -23,20 +27,11 @@ import styles from './styles';
 type Props = {
 
     /**
-     * The connection status of the participant. Her video will only be rendered
-     * if the connection status is 'active'; otherwise, the avatar will be
-     * rendered. If undefined, 'active' is presumed.
+     * Whether the connection is inactive or not.
      *
      * @private
      */
-    _connectionStatus: string,
-
-    /**
-     * The type of participant if the participant which this component represents is fake.
-     *
-     * @private
-     */
-    _fakeParticipant?: FakeParticipant,
+    _isConnectionInactive: boolean,
 
     /**
      * Whether the participant is a shared video participant.
@@ -129,24 +124,12 @@ type Props = {
 class ParticipantView extends Component<Props> {
 
     /**
-     * Renders the connection status label, if appropriate.
+     * Renders the inactive connection status label.
      *
-     * @param {string} connectionStatus - The status of the participant's
-     * connection.
      * @private
-     * @returns {ReactElement|null}
+     * @returns {ReactElement}
      */
-    _renderConnectionInfo(connectionStatus) {
-        let messageKey;
-
-        switch (connectionStatus) {
-        case JitsiParticipantConnectionStatus.INACTIVE:
-            messageKey = 'connection.LOW_BANDWIDTH';
-            break;
-        default:
-            return null;
-        }
-
+    _renderInactiveConnectionInfo() {
         const {
             avatarSize,
             _participantName: displayName,
@@ -165,7 +148,7 @@ class ParticipantView extends Component<Props> {
                 pointerEvents = 'box-none'
                 style = { containerStyle }>
                 <Text style = { styles.connectionInfoText }>
-                    { t(messageKey, { displayName }) }
+                    { t('connection.LOW_BANDWIDTH', { displayName }) }
                 </Text>
             </View>
         );
@@ -179,18 +162,13 @@ class ParticipantView extends Component<Props> {
      */
     render() {
         const {
-            _connectionStatus: connectionStatus,
-            _fakeParticipant,
+            _isConnectionInactive,
             _isSharedVideoParticipant,
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
             disableVideo,
             onPress
         } = this.props;
-
-        // If the connection has problems, we will "tint" the video / avatar.
-        const connectionProblem
-            = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
 
         const testHintId
             = this.props.testHintId
@@ -230,13 +208,8 @@ class ParticipantView extends Component<Props> {
                             size = { this.props.avatarSize } />
                     </View> }
 
-                { connectionProblem
-
-                    // If the connection has problems, tint the video / avatar.
-                    && <TintedView /> }
-
-                { this.props.useConnectivityInfoLabel
-                    && this._renderConnectionInfo(connectionStatus) }
+                { _isConnectionInactive && this.props.useConnectivityInfoLabel
+                    && this._renderInactiveConnectionInfo() }
             </Container>
         );
     }
@@ -256,19 +229,69 @@ function _mapStateToProps(state, ownProps) {
     const { disableVideo, participantId } = ownProps;
     const participant = getParticipantById(state, participantId);
     const videoTrack = getVideoTrackByParticipant(state, participant);
-    let connectionStatus;
-    let participantName;
 
     return {
-        _connectionStatus:
-            connectionStatus
-                || JitsiParticipantConnectionStatus.ACTIVE,
+        _isConnectionInactive: getSourceNameSignalingFeatureFlag(state)
+            ? isTrackStreamingStatusInactive(videoTrack) : isParticipantConnectionStatusInactive(participant),
         _isSharedVideoParticipant: isSharedVideoParticipant(participant),
-        _fakeParticipant: participant?.fakeParticipant,
-        _participantName: participantName,
+        _participantName: getParticipantDisplayName(state, participantId),
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
         _videoTrack: videoTrack
     };
+}
+
+/**
+ * Returns true if the video of the participant should be rendered.
+ *
+ * @param {Object|Function} stateful - Object or function that can be resolved
+ * to the Redux state.
+ * @param {string} id - The ID of the participant.
+ * @returns {boolean}
+ */
+function shouldRenderParticipantVideo(stateful, id) {
+    const state = toState(stateful);
+    const participant = getParticipantById(state, id);
+
+    if (!participant) {
+        return false;
+    }
+
+    /* First check if we have an unmuted video track. */
+    const videoTrack = getVideoTrackByParticipant(state, participant);
+
+    if (!videoTrack) {
+        return false;
+    }
+
+    if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
+        return false;
+    }
+
+    /* Then check if the participant connection or track streaming status is active. */
+    if (getSourceNameSignalingFeatureFlag(state)) {
+        // Note that this will work only if a listener is registered for the track's TrackStreamingStatus.
+        // The associated TrackStreamingStatusImpl instance is not created or disposed when there are zero listeners.
+        if (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack)) {
+            return false;
+        }
+    } else if (!isParticipantConnectionStatusActive(participant)) {
+        return false;
+    }
+
+    /* Then check if audio-only mode is not active. */
+    const audioOnly = state['features/base/audio-only'].enabled;
+
+    if (!audioOnly) {
+        return true;
+    }
+
+    /* Last, check if the participant is sharing their screen and they are on stage. */
+    const remoteScreenShares = state['features/video-layout'].remoteScreenShares || [];
+    const largeVideoParticipantId = state['features/large-video'].participantId;
+    const participantIsInLargeVideoWithScreen
+        = participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
+
+    return participantIsInLargeVideoWithScreen;
 }
 
 export default translate(connect(_mapStateToProps)(ParticipantView));
