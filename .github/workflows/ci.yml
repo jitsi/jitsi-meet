@@ -8,10 +8,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
     - uses: actions/setup-node@v3
       with:
         node-version: 16
         cache: 'npm'
+    - name: Get branch names
+      id: branch-name
+      uses: tj-actions/branch-names@v6
+    - name: Current branch name
+      run: |
+        echo "${{ steps.branch-name.outputs.current_branch }}"
+    - name: Get Base Ref branch name (i.e The target of a pull request.)
+      run: |
+        echo "${{ steps.branch-name.outputs.base_ref_branch }}"
+    - name: Get diff
+      # run: $(git diff --name-only --diff-filter=ACMRTUXB robertpin:${{ steps.branch-name.outputs.current_branch }}..jitsi:${{ steps.branch-name.outputs.base_ref_branch }} | grep -E '(.ts$|.tsx$|.js$)')
+      run: $(git diff --name-only origin/master origin/${GITHUB_HEAD_REF})
     - run: npm install
     - name: Check git status
       run: git status
