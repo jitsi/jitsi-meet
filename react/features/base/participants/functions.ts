@@ -11,6 +11,7 @@ import { isCORSAvatarURL } from '../avatar/functions';
 import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config/functions.any';
 import i18next from '../i18n/i18next';
 import { JitsiParticipantConnectionStatus, JitsiTrackStreamingStatus } from '../lib-jitsi-meet';
+import { VIDEO_TYPE } from '../media/constants';
 import { shouldRenderVideoTrack } from '../media/functions';
 import { toState } from '../redux/functions';
 import { getScreenShareTrack, getVideoTrackByParticipant } from '../tracks/functions';
@@ -384,6 +385,19 @@ export function getScreenshareParticipantDisplayName(stateful: IStateful, id: st
     const ownerDisplayName = getParticipantDisplayName(stateful, getVirtualScreenshareParticipantOwnerId(id));
 
     return i18next.t('screenshareDisplayName', { name: ownerDisplayName });
+}
+
+/**
+ * Returns a list of IDs of the participants that are currently screensharing.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
+ * @returns {Array<string>}
+ */
+export function getScreenshareParticipantIds(stateful: IStateful): Array<string> {
+    return toState(stateful)['features/base/tracks']
+        .filter(track => track.videoType === VIDEO_TYPE.DESKTOP && !track.muted)
+        .map(t => t.participantId);
 }
 
 /**

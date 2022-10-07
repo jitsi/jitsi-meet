@@ -35,6 +35,7 @@ import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     getLocalParticipant,
     getParticipantById,
+    getScreenshareParticipantIds,
     getVirtualScreenshareParticipantByOwnerId,
     grantModerator,
     hasRaisedHand,
@@ -889,8 +890,7 @@ function initCommands() {
             callback(Boolean(APP.store.getState()['features/base/config'].startSilent));
             break;
         case 'get-content-sharing-participants': {
-            const tracks = getState()['features/base/tracks'];
-            const sharingParticipantIds = tracks.filter(tr => tr.videoType === 'desktop').map(t => t.participantId);
+            const sharingParticipantIds = getScreenshareParticipantIds(APP.store.getState());
 
             callback({
                 sharingParticipantIds
