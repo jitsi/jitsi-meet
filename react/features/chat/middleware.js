@@ -2,10 +2,7 @@
 import { type Dispatch } from 'redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import {
-    CONFERENCE_JOINED,
-    getCurrentConference
-} from '../base/conference';
+import { CONFERENCE_JOINED, getCurrentConference } from '../base/conference';
 import { openDialog } from '../base/dialog';
 import {
     JitsiConferenceErrors,
@@ -21,19 +18,26 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { addGif } from '../gifs/actions';
 import { GIF_PREFIX } from '../gifs/constants';
 import { getGifDisplayMode, isGifMessage } from '../gifs/functions';
-import { NOTIFICATION_TIMEOUT_TYPE, showMessageNotification } from '../notifications';
+// import { NOTIFICATION_TIMEOUT_TYPE, showMessageNotification } from '../notifications';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
 import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
-import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
-import { endpointMessageReceived } from '../subtitles';
 import {
-    showToolbox
-} from '../toolbox/actions';
+    getReactionMessageFromBuffer,
+    isReactionsEnabled
+} from '../reactions/functions.any';
+import { endpointMessageReceived } from '../subtitles';
+import { showToolbox } from '../toolbox/actions';
 
 
-import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
+import {
+    ADD_MESSAGE,
+    CLOSE_CHAT,
+    OPEN_CHAT,
+    SEND_MESSAGE,
+    SET_IS_POLL_TAB_FOCUSED
+} from './actionTypes';
 import { addMessage, clearMessages } from './actions';
 import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
@@ -418,8 +422,8 @@ function _handleReceivedMessage({ dispatch, getState },
     const millisecondsTimestamp = timestampToDate.getTime();
 
     // skip message notifications on join (the messages having timestamp - coming from the history)
-    const shouldShowNotification = userSelectedNotifications['notify.chatMessages']
-        && !hasRead && !isReaction && !timestamp;
+    // const shouldShowNotification = userSelectedNotifications['notify.chatMessages']
+    //     && !hasRead && !isReaction && !timestamp;
 
     dispatch(addMessage({
         displayName,
@@ -434,12 +438,12 @@ function _handleReceivedMessage({ dispatch, getState },
         isReaction
     }));
 
-    if (shouldShowNotification) {
-        dispatch(showMessageNotification({
-            title: displayName,
-            description: message
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-    }
+    /*     if (shouldShowNotification) {
+            dispatch(showMessageNotification({
+                title: displayName,
+                description: message
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        } */
 
     if (typeof APP !== 'undefined') {
         // Logic for web only:
