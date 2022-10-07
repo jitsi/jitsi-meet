@@ -42,6 +42,8 @@
 --      * set "reservations_enable_password_support" to allow optional "password" (string)
 --        field in API payload. If set and not empty, then room password will be set
 --        to the given string.
+--      * By default, reservation checks are skipped for breakout rooms. You can subject
+--        breakout rooms to the same checks by setting "reservations_skip_breakout_rooms" to false.
 --
 --
 --  Example config:
@@ -87,6 +89,7 @@ local api_retry_delay = tonumber(module:get_option("reservations_api_retry_delay
 local max_occupants_enabled = module:get_option("reservations_enable_max_occupants", false);
 local lobby_support_enabled = module:get_option("reservations_enable_lobby_support", false);
 local password_support_enabled = module:get_option("reservations_enable_password_support", false);
+local skip_breakout_room = module:get_option("reservations_skip_breakout_rooms", true);
 
 
 -- Option for user to control HTTP response codes that will result in a retry.
@@ -97,6 +100,8 @@ end)
 
 
 local muc_component_host = module:get_option_string("main_muc");
+local breakout_muc_component_host = module:get_option_string('breakout_rooms_muc', 'breakout.'..module.host);
+
 
 -- How often to check and evict expired reservation data
 local expiry_check_period = 60;
@@ -589,6 +594,14 @@ module:hook("pre-iq/host", function(event)
     if get_room_from_jid(room_jid) ~= nil then
         module:log("debug", "Skip reservation check for existing room %s", room_jid);
         return;  -- room already exists. Continue with normal flow
+    end
+
+    if skip_breakout_room then
+        local _, host = jid.split(room_jid);
+        if host == breakout_muc_component_host then
+            module:log("debug", "Skip reservation check for breakout room %s", room_jid);
+            return;
+        end
     end
 
     local res = get_or_create_reservations(room_jid, stanza.attr.from);
