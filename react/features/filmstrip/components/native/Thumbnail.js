@@ -221,7 +221,7 @@ class Thumbnail extends PureComponent<Props> {
         } = this.props;
         const indicators = [];
 
-        if (!_fakeParticipant) {
+        if (!_fakeParticipant || _isVirtualScreenshare) {
             indicators.push(<View
                 key = 'top-left-indicators'
                 style = { [
