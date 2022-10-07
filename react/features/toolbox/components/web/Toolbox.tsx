@@ -100,8 +100,7 @@ import {
 // @ts-ignore
 import { VideoQualityButton, VideoQualityDialog } from '../../../video-quality/components';
 // @ts-ignore
-import { VideoBackgroundButton, toggleBackgroundEffect } from '../../../virtual-background';
-import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
+import { VideoBackgroundButton } from '../../../virtual-background';
 import WhiteboardButton from '../../../whiteboard/components/web/WhiteboardButton';
 import { isWhiteboardButtonVisible } from '../../../whiteboard/functions';
 import {
@@ -665,29 +664,11 @@ class Toolbox extends Component<Props> {
      */
     _doToggleScreenshare() {
         const {
-            _backgroundType,
             _desktopSharingButtonDisabled,
             _desktopSharingEnabled,
-            _localVideo,
             _screenSharing,
-            _virtualSource,
             dispatch
         } = this.props;
-
-        if (_backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            const noneOptions = {
-                enabled: false,
-                backgroundType: VIRTUAL_BACKGROUND_TYPE.NONE,
-                selectedThumbnail: VIRTUAL_BACKGROUND_TYPE.NONE,
-                backgroundEffectEnabled: false
-            };
-
-            _virtualSource.dispose();
-
-            dispatch(toggleBackgroundEffect(noneOptions, _localVideo));
-
-            return;
-        }
 
         if (_desktopSharingEnabled && !_desktopSharingButtonDisabled) {
             dispatch(startScreenShareFlow(!_screenSharing));

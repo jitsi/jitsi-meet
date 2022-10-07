@@ -12,7 +12,6 @@ import { hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 // @ts-ignore
 import Video from '../../base/media/components/Video';
-import { VIDEO_TYPE } from '../../base/media/constants';
 import { connect, equals } from '../../base/redux/functions';
 // @ts-ignore
 import { getCurrentCameraDeviceId } from '../../base/settings';
@@ -23,9 +22,6 @@ import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 // @ts-ignore
 import { toggleBackgroundEffect } from '../actions';
-import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
-// @ts-ignore
-import { localTrackStopped } from '../functions';
 // @ts-ignore
 import logger from '../logger';
 
@@ -208,11 +204,6 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
 
             return;
         }
-
-        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
-                && this.state.localTrackLoaded) {
-            this._applyBackgroundEffect();
-        }
     }
 
     /**
@@ -310,13 +301,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
             this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options) && this.state.localTrackLoaded) {
-            if (prevProps.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-                prevProps.options.url.dispose();
-            }
             this._applyBackgroundEffect();
-        }
-        if (this.props.options.url?.videoType === VIDEO_TYPE.DESKTOP) {
-            localTrackStopped(this.props.dispatch, this.props.options.url, this.state.jitsiTrack);
         }
     }
 
