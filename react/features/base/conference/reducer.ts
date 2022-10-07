@@ -49,6 +49,7 @@ export interface IJitsiConference {
     getLocalTracks: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
+    isCallstatsEnabled: Function;
     isEndConferenceSupported: Function;
     isLobbySupported: Function;
     kickParticipant: Function;
@@ -60,6 +61,7 @@ export interface IJitsiConference {
     replaceTrack: Function;
     sendCommand: Function;
     sendEndpointMessage: Function;
+    sendFeedback: Function;
     sendLobbyMessage: Function;
     sessionId: string;
     setDisplayName: Function;

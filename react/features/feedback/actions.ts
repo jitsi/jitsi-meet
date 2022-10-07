@@ -1,9 +1,8 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
+// @ts-ignore
 import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
-import { openDialog } from '../base/dialog';
+import { IStore } from '../app/types';
+import { IJitsiConference } from '../base/conference/reducer';
+import { openDialog } from '../base/dialog/actions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { isVpaasMeeting } from '../jaas/functions';
 
@@ -12,10 +11,10 @@ import {
     SUBMIT_FEEDBACK_ERROR,
     SUBMIT_FEEDBACK_SUCCESS
 } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { FeedbackDialog } from './components';
 import { sendFeedbackToJaaSRequest } from './functions';
-
-declare var config: Object;
 
 /**
  * Caches the passed in feedback in the redux store.
@@ -48,13 +47,13 @@ export function cancelFeedback(score: number, message: string) {
  * resolved with true if the dialog is disabled or the feedback was already
  * submitted. Rejected if another dialog is already displayed.
  */
-export function maybeOpenFeedbackDialog(conference: Object) {
+export function maybeOpenFeedbackDialog(conference: IJitsiConference) {
     type R = {
-        feedbackSubmitted: boolean,
-        showThankYou: boolean
+        feedbackSubmitted: boolean;
+        showThankYou: boolean;
     };
 
-    return (dispatch: Dispatch<any>, getState: Function): Promise<R> => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<R> => {
         const state = getState();
         const { feedbackPercentage = 100 } = state['features/base/config'];
 
@@ -105,7 +104,7 @@ export function maybeOpenFeedbackDialog(conference: Object) {
  * is closed.
  * @returns {Object}
  */
-export function openFeedbackDialog(conference: Object, onClose: ?Function) {
+export function openFeedbackDialog(conference: Object, onClose?: Function) {
     return openDialog(FeedbackDialog, {
         conference,
         onClose
@@ -120,8 +119,8 @@ export function openFeedbackDialog(conference: Object, onClose: ?Function) {
  *
  * @returns {Promise}
  */
-export function sendJaasFeedbackMetadata(conference: Object, feedback: Object) {
-    return (dispatch: Dispatch<any>, getState: Function): Promise<any> => {
+export function sendJaasFeedbackMetadata(conference: IJitsiConference, feedback: Object) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<any> => {
         const state = getState();
         const { jaasFeedbackMetadataURL } = state['features/base/config'];
 
@@ -135,7 +134,7 @@ export function sendJaasFeedbackMetadata(conference: Object, feedback: Object) {
         const feedbackData = {
             ...feedback,
             sessionId: conference.sessionId,
-            userId: user.id,
+            userId: user?.id,
             meetingFqn,
             jwt,
             tenant
@@ -159,8 +158,8 @@ export function sendJaasFeedbackMetadata(conference: Object, feedback: Object) {
 export function submitFeedback(
         score: number,
         message: string,
-        conference: Object) {
-    return (dispatch: Dispatch<any>) =>
+        conference: IJitsiConference) {
+    return (dispatch: IStore['dispatch']) =>
         conference.sendFeedback(score, message)
         .then(() => dispatch({ type: SUBMIT_FEEDBACK_SUCCESS }))
         .then(() => dispatch(sendJaasFeedbackMetadata(conference, { score,

@@ -1,5 +1,3 @@
-// @flow
-
 import logger from './logger';
 
 /**
@@ -9,7 +7,10 @@ import logger from './logger';
  * @param {Object} feedbackData - The feedback data object.
  * @returns {Promise}
  */
-export async function sendFeedbackToJaaSRequest(url: string, feedbackData: Object) {
+export async function sendFeedbackToJaaSRequest(url: string, feedbackData: {
+    jwt?: string; meetingFqn: string; message?: string; score?: number;
+    sessionId: string; tenant?: string; userId?: string;
+}) {
     const {
         jwt,
         sessionId,

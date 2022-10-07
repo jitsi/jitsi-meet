@@ -1,22 +1,21 @@
-// @flow
-
 import { batch } from 'react-redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_JOINED, getCurrentConference } from '../base/conference';
+import { IStore } from '../app/types';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { getCurrentConference } from '../base/conference/functions';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
+import { participantUpdated } from '../base/participants/actions';
 import {
-    PARTICIPANT_JOINED,
-    PARTICIPANT_LEFT,
-    PARTICIPANT_UPDATED,
     getLocalParticipant,
     getParticipantById,
     getParticipantCount,
     getRemoteParticipants,
-    isScreenShareParticipant,
-    participantUpdated
-} from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { playSound, registerSound, unregisterSound } from '../base/sounds';
+    isScreenShareParticipant
+} from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 
 import { SET_MEDIA_ENCRYPTION_KEY, TOGGLE_E2EE } from './actionTypes';
 import { setE2EEMaxMode, setEveryoneEnabledE2EE, setEveryoneSupportE2EE, toggleE2EE } from './actions';
@@ -66,7 +65,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             let newEveryoneSupportE2EE = true;
             let newEveryoneEnabledE2EE = true;
 
-            // eslint-disable-next-line no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             for (const [ key, p ] of getRemoteParticipants(state)) {
                 if (!p.e2eeEnabled) {
                     newEveryoneEnabledE2EE = false;
@@ -136,10 +135,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     case PARTICIPANT_LEFT: {
         const previosState = getState();
-        const participant = getParticipantById(previosState, action.participant?.id) || {};
+        const participant = getParticipantById(previosState, action.participant?.id);
         const result = next(action);
         const newState = getState();
-        const { e2eeEnabled = false, e2eeSupported = false } = participant;
+        const { e2eeEnabled = false, e2eeSupported = false } = participant ?? {};
 
         if (isScreenShareParticipant(participant)) {
             return result;
@@ -154,7 +153,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             let latestEveryoneEnabledE2EE = true;
             let latestEveryoneSupportE2EE = true;
 
-            // eslint-disable-next-line no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             for (const [ key, p ] of getRemoteParticipants(newState)) {
                 if (!p.e2eeEnabled) {
                     latestEveryoneEnabledE2EE = false;
@@ -190,7 +189,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case TOGGLE_E2EE: {
-        if (conference && conference.isE2EESupported() && conference.isE2EEEnabled() !== action.enabled) {
+        if (conference?.isE2EESupported() && conference.isE2EEEnabled() !== action.enabled) {
             logger.debug(`E2EE will be ${action.enabled ? 'enabled' : 'disabled'}`);
             conference.toggleE2EE(action.enabled);
 
@@ -199,7 +198,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
             dispatch(participantUpdated({
                 e2eeEnabled: action.enabled,
-                id: participant.id,
+                id: participant?.id ?? '',
                 local: true
             }));
 
@@ -212,7 +211,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case SET_MEDIA_ENCRYPTION_KEY: {
-        if (conference && conference.isE2EESupported()) {
+        if (conference?.isE2EESupported()) {
             const { exportedKey, index } = action.keyInfo;
 
             if (exportedKey) {
@@ -265,7 +264,7 @@ StateListenerRegistry.register(
  * @private
  * @returns {void}
  */
-function _updateMaxMode(dispatch, getState) {
+function _updateMaxMode(dispatch: IStore['dispatch'], getState: IStore['getState']) {
     const state = getState();
 
     const { e2ee = {} } = state['features/base/config'];

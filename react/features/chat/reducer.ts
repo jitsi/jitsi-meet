@@ -38,7 +38,7 @@ export interface IMessage {
     messageType: string;
     privateMessage: boolean;
     recipient: string;
-    timestamp: string;
+    timestamp: number;
 }
 
 export interface IChatState {
