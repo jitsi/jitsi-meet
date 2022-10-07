@@ -1,5 +1,6 @@
 import _ from 'lodash';
 
+import { getScreenshareParticipantIds } from '../participants/functions';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 import { isLocalCameraTrackMuted } from './functions';
@@ -8,8 +9,7 @@ import { isLocalCameraTrackMuted } from './functions';
  * Notifies when the list of currently sharing participants changes.
  */
 StateListenerRegistry.register(
-    /* selector */ state =>
-        state['features/base/tracks'].filter(tr => tr.videoType === 'desktop').map(t => t.participantId),
+    /* selector */ state => getScreenshareParticipantIds(state),
     /* listener */ (participantIDs, store, previousParticipantIDs) => {
         if (typeof APP !== 'object') {
             return;
