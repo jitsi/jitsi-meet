@@ -164,7 +164,13 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
             if (isVpaasMeeting(getState())) {
-                dispatch(redirectToStaticPage('/'));
+                const isOpenInsideIframe = window.location !== window.parent?.location;
+
+                if (isOpenInsideIframe) {
+                    window.location = 'about:blank';
+                } else {
+                    dispatch(redirectToStaticPage('/'));
+                }
 
                 return;
             }
