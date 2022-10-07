@@ -15,8 +15,6 @@ import StopLiveStreamDialog from '../../recording/components/LiveStream/web/Stop
 import StartRecordingDialog from '../../recording/components/Recording/web/StartRecordingDialog';
 // @ts-ignore
 import StopRecordingDialog from '../../recording/components/Recording/web/StopRecordingDialog';
-// @ts-ignore
-import PasswordRequiredPrompt from '../../room-lock/components/PasswordRequiredPrompt.web.js';
 import ShareAudioDialog from '../../screen-share/components/ShareAudioDialog';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
@@ -27,7 +25,7 @@ import { OPEN_DIALOG } from './actionTypes';
 
 const NEW_DIALOG_LIST = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNamePrompt, EmbedMeetingDialog,
     FeedbackDialog, AddPeopleDialog, PremiumFeatureDialog, StartLiveStreamDialog, StopLiveStreamDialog,
-    StartRecordingDialog, StopRecordingDialog, PasswordRequiredPrompt, ShareAudioDialog ];
+    StartRecordingDialog, StopRecordingDialog, ShareAudioDialog ];
 
 // This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
 const isNewDialog = (component: any) => NEW_DIALOG_LIST.some(comp => comp === component);
