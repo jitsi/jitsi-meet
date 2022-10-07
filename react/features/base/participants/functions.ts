@@ -355,6 +355,16 @@ export function isScreenShareParticipant(participant?: Participant): boolean {
 }
 
 /**
+ * Returns whether the (fake) participant is a shared video.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a shared video participant.
+ */
+export function isSharedVideoParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.SharedVideo;
+}
+
+/**
  * Returns whether the fake participant is a whiteboard.
  *
  * @param {Participant|undefined} participant - The participant entity.

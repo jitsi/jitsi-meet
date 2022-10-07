@@ -12,7 +12,7 @@ import { Container, TintedView } from '../../react';
 import { connect } from '../../redux';
 import { TestHint } from '../../testing/components';
 import { getVideoTrackByParticipant } from '../../tracks';
-import { getParticipantById, shouldRenderParticipantVideo } from '../functions';
+import { getParticipantById, isSharedVideoParticipant, shouldRenderParticipantVideo } from '../functions';
 import { FakeParticipant } from '../types';
 
 import styles from './styles';
@@ -37,6 +37,11 @@ type Props = {
      * @private
      */
     _fakeParticipant?: FakeParticipant,
+
+    /**
+     * Whether the participant is a shared video participant.
+     */
+    _isSharedVideoParticipant: boolean,
 
     /**
      * The name of the participant which this component represents.
@@ -176,6 +181,7 @@ class ParticipantView extends Component<Props> {
         const {
             _connectionStatus: connectionStatus,
             _fakeParticipant,
+            _isSharedVideoParticipant,
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
             disableVideo,
@@ -191,7 +197,7 @@ class ParticipantView extends Component<Props> {
                 ? this.props.testHintId
                 : `org.jitsi.meet.Participant#${this.props.participantId}`;
 
-        const renderSharedVideo = _fakeParticipant && !disableVideo;
+        const renderSharedVideo = _isSharedVideoParticipant && !disableVideo;
 
         return (
             <Container
@@ -209,7 +215,7 @@ class ParticipantView extends Component<Props> {
 
                 { renderSharedVideo && <SharedVideo /> }
 
-                { !_fakeParticipant && renderVideo
+                { renderVideo
                     && <VideoTrack
                         onPress = { onPress }
                         videoTrack = { videoTrack }
@@ -257,6 +263,7 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
+        _isSharedVideoParticipant: isSharedVideoParticipant(participant),
         _fakeParticipant: participant?.fakeParticipant,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
