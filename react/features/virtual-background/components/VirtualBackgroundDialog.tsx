@@ -26,7 +26,7 @@ import { Tooltip } from '../../base/tooltip';
 // @ts-ignore
 import { getLocalVideoTrack } from '../../base/tracks';
 // @ts-ignore
-import { toggleBackgroundEffect, virtualBackgroundTrackChanged } from '../actions';
+import { toggleBackgroundEffect } from '../actions';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 // @ts-ignore
 import { toDataURL } from '../functions';
@@ -439,7 +439,6 @@ function VirtualBackground({
         dispatch(hideDialog());
         logger.info(`Virtual background type: '${typeof options.backgroundType === 'undefined'
             ? 'none' : options.backgroundType}' applied!`);
-        dispatch(virtualBackgroundTrackChanged());
     }, [ dispatch, options, _localFlipX ]);
 
     // Prevent the selection of a new virtual background if it has not been applied by default
