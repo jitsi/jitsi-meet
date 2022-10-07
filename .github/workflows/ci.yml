@@ -24,8 +24,7 @@ jobs:
       run: |
         echo "${{ steps.branch-name.outputs.base_ref_branch }}"
     - name: Get diff
-      # run: $(git diff --name-only --diff-filter=ACMRTUXB robertpin:${{ steps.branch-name.outputs.current_branch }}..jitsi:${{ steps.branch-name.outputs.base_ref_branch }} | grep -E '(.ts$|.tsx$|.js$)')
-      run: $(git diff --name-only origin/master origin/${GITHUB_HEAD_REF})
+      run: $(git diff --name-only --diff-filter=ACMRTUXB ${{ steps.branch-name.outputs.current_branch }}..${{ steps.branch-name.outputs.base_ref_branch }} | grep -E '(.ts$|.tsx$|.js$)')
     - run: npm install
     - name: Check git status
       run: git status
