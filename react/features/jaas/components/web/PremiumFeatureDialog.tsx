@@ -1,11 +1,9 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 
 
-import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { openURLInBrowser } from '../../../base/util';
+import { translate } from '../../../base/i18n/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
+import { openURLInBrowser } from '../../../base/util/openURLInBrowser.web';
 import { JAAS_UPGRADE_URL } from '../../constants';
 
 /**
@@ -13,21 +11,18 @@ import { JAAS_UPGRADE_URL } from '../../constants';
  *
  * @returns {React$Element<any>}
  */
-class PremiumFeatureDialog extends PureComponent<*> {
+class PremiumFeatureDialog extends PureComponent<any> {
 
     /**
      * Instantiates a new component.
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: any) {
         super(props);
 
         this._onSubmitValue = this._onSubmitValue.bind(this);
     }
-
-
-    _onSubmitValue: () => void;
 
     /**
      * Callback to be invoked when the dialog ok is pressed.
@@ -48,11 +43,10 @@ class PremiumFeatureDialog extends PureComponent<*> {
 
         return (
             <Dialog
-                hideCancelButton = { true }
-                okKey = { t('dialog.viewUpgradeOptions') }
+                cancel = {{ hidden: true }}
+                ok = {{ translationKey: 'dialog.viewUpgradeOptions' }}
                 onSubmit = { this._onSubmitValue }
-                titleKey = { t('dialog.viewUpgradeOptionsTitle') }
-                width = { 'small' }>
+                titleKey = { t('dialog.viewUpgradeOptionsTitle') }>
                 <span>{t('dialog.viewUpgradeOptionsContent')}</span>
             </Dialog>
         );
