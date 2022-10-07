@@ -2,7 +2,6 @@
 import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
 import { IStore } from '../app/types';
 import { IJitsiConference } from '../base/conference/reducer';
-import { IConfig } from '../base/config/configType';
 import { openDialog } from '../base/dialog/actions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { isVpaasMeeting } from '../jaas/functions';
@@ -16,8 +15,6 @@ import {
 // @ts-ignore
 import { FeedbackDialog } from './components';
 import { sendFeedbackToJaaSRequest } from './functions';
-
-declare const config: IConfig;
 
 /**
  * Caches the passed in feedback in the redux store.

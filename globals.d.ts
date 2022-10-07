@@ -17,4 +17,6 @@ declare global {
         JITSI_MEET_LITE_SDK?: boolean;
         interfaceConfig?: any;
     }
+
+    const config: IConfig;
 }
