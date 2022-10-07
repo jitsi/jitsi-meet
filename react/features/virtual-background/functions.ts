@@ -1,7 +1,3 @@
-import { JitsiTrackEvents } from '../base/lib-jitsi-meet';
-import { updateSettings } from '../base/settings/actions';
-
-import { toggleBackgroundEffect } from './actions';
 let filterSupport: boolean | undefined;
 
 /**
@@ -86,33 +82,6 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
             resolve(canvas.toDataURL('image/jpeg', 0.5));
         };
         img.src = base64image;
-    });
-}
-
-/**
- * Check if the local desktop track was stopped and apply none option on virtual background.
- *
- * @param {Function} dispatch - The Redux dispatch function.
- * @param {Object} desktopTrack - The desktop track that needs to be checked if it was stopped.
- * @param {Object} currentLocalTrack - The current local track where we apply none virtual
- * background option if the desktop track was stopped.
- * @returns {Promise}
- */
-export function localTrackStopped(dispatch: Function, desktopTrack: any, currentLocalTrack: Object | null) {
-    const noneOptions = {
-        enabled: false,
-        backgroundType: 'none',
-        selectedThumbnail: 'none',
-        backgroundEffectEnabled: false
-    };
-
-    desktopTrack?.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
-        dispatch(toggleBackgroundEffect(noneOptions, currentLocalTrack));
-
-        // Set x scale to default value.
-        dispatch(updateSettings({
-            localFlipX: true
-        }));
     });
 }
 
