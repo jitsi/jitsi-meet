@@ -10,6 +10,7 @@ import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
 import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import i18next from '../i18n/i18next';
+import { VIDEO_TYPE } from '../media/constants';
 import { toState } from '../redux/functions';
 import { getScreenShareTrack } from '../tracks/functions';
 import { createDeferred } from '../util/helpers';
@@ -456,6 +457,19 @@ export function getScreenshareParticipantDisplayName(stateful: IStateful, id: st
     const ownerDisplayName = getParticipantDisplayName(stateful, getVirtualScreenshareParticipantOwnerId(id));
 
     return i18next.t('screenshareDisplayName', { name: ownerDisplayName });
+}
+
+/**
+ * Returns a list of IDs of the participants that are currently screensharing.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
+ * @returns {Array<string>}
+ */
+export function getScreenshareParticipantIds(stateful: IStateful): Array<string> {
+    return toState(stateful)['features/base/tracks']
+        .filter(track => track.videoType === VIDEO_TYPE.DESKTOP && !track.muted)
+        .map(t => t.participantId);
 }
 
 /**
