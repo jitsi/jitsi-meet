@@ -20,6 +20,7 @@ import {
     parseURIString,
     parseURLParams
 } from '../base/util';
+import { inIframe } from '../base/util/iframeUtils';
 import { isVpaasMeeting } from '../jaas/functions';
 import {
     NOTIFICATION_TIMEOUT_TYPE,
@@ -164,9 +165,9 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
             if (isVpaasMeeting(getState())) {
-                const isOpenInsideIframe = window.location !== window.parent?.location;
+                const isOpenedInIframe = inIframe();
 
-                if (isOpenInsideIframe) {
+                if (isOpenedInIframe) {
                     window.location = 'about:blank';
                 } else {
                     dispatch(redirectToStaticPage('/'));
