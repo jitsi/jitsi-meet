@@ -82,7 +82,7 @@
         },
         "labels": {
             "buttonLabel": "駕駛模式",
-            "title": "安全駕駛模式",
+            "title": "駕駛模式",
             "videoStopped": "您的視訊已停用"
         }
     },
@@ -270,6 +270,7 @@
         "gracefulShutdown": "我們目前正在維護中，請稍後再試。",
         "grantModeratorDialog": "您確定要授予{{participantName}}主持人權限嗎？",
         "grantModeratorTitle": "授予主持人權限",
+        "hide": "隱藏",
         "hideShareAudioHelper": "不再顯示",
         "incorrectPassword": "錯誤的用戶名稱或密碼",
         "incorrectRoomLockPassword": "密碼不符",
@@ -387,6 +388,7 @@
         "shareYourScreenDisabled": "畫面分享已停用。",
         "sharedVideoDialogError": "錯誤：網址無效",
         "sharedVideoLinkPlaceholder": "YouTube或影片網址",
+        "show": "顯示",
         "start": "開始",
         "startLiveStreaming": "啟動直播串流",
         "startRecording": "啟動錄製作業",
@@ -435,7 +437,7 @@
         "search": "搜尋 GIPHY"
     },
     "helpView": {
-        "header": "說明中心"
+        "title": "說明中心"
     },
     "incomingCall": {
         "answer": "接通",
@@ -553,6 +555,7 @@
         "signedInAs": "您目前登入名稱為：",
         "start": "啟動直播串流",
         "streamIdHelp": "這是什麼？",
+        "title": "直播串流",
         "unavailableTitle": "直播串流無法使用",
         "youtubeTerms": "YouTube服務條款"
     },
@@ -595,6 +598,7 @@
         "passwordJoinButton": "加入",
         "reject": "拒絕",
         "rejectAll": "拒絕所有人",
+        "title": "大廳",
         "toggleLabel": "啟用大廳模式"
     },
     "localRecording": {
@@ -621,6 +625,7 @@
         "no": "否",
         "participant": "與會者",
         "participantStats": "與會者狀態",
+        "selectTabTitle": "🎥請選擇此分頁進行錄製",
         "sessionToken": "工作階段Token",
         "start": "啟動錄製",
         "stop": "停用錄製",
@@ -737,13 +742,13 @@
             "videoModeration": "開啟視訊"
         },
         "close": "關閉",
-        "header": "與會者",
         "headings": {
             "lobby": "大廳（{{count}}人）",
             "participantsList": "會議與會者（{{count}}人）",
             "waitingLobby": "於大廳等候（{{count}}人）"
         },
-        "search": "搜尋與會者"
+        "search": "搜尋與會者",
+        "title": "與會者"
     },
     "passwordDigitsOnly": "上限為{{number}}位數",
     "passwordSetRemotely": "由其他與會者設定",
@@ -824,7 +829,7 @@
         "initiated": "通話已初始化",
         "joinAudioByPhone": "使用手機音訊裝置加入",
         "joinMeeting": "加入會議",
-        "joinMeetingInLowBandwidthMode": "以低帶寬模式加入",
+        "joinMeetingInLowBandwidthMode": "以低頻寬模式加入",
         "joinWithoutAudio": "無音訊情況下加入",
         "keyboardShortcuts": "啟用鍵盤快捷鍵",
         "linkCopied": "連結已複製到剪貼簿",
@@ -853,7 +858,7 @@
         "ringing": "鈴鈴鈴……"
     },
     "privacyView": {
-        "header": "隱私權"
+        "title": "隱私權"
     },
     "profile": {
         "avatar": "頭像",
@@ -925,6 +930,7 @@
         "signIn": "登入",
         "signOut": "登出",
         "surfaceError": "請選擇當前分頁",
+        "title": "錄製中",
         "unavailable": "喔哦！{{serviceName}}目前無法使用，我們正在解決此問題，請稍後再試。",
         "unavailableTitle": "錄製無法使用",
         "uploadToCloud": "上傳至雲端"
@@ -936,8 +942,8 @@
     "security": {
         "about": "您可以添加$t(lockRoomPassword)至您的會議，與會者在加入會議前必須先輸入$t(lockRoomPassword)。",
         "aboutReadOnly": "主持人可以添加$t(lockRoomPassword)至會議，與會者在加入會議前必須先輸入$t(lockRoomPassword)。",
-        "header": "安全性選項",
-        "insecureRoomNameWarning": "會議室名稱過於簡單，任何人都可以加入此會議，請考慮使用安全性選項以保護您的會議安全。"
+        "insecureRoomNameWarning": "會議室名稱過於簡單，任何人都可以加入此會議，請考慮使用安全性選項以保護您的會議安全。",
+        "title": "安全性選項"
     },
     "settings": {
         "buttonLabel": "設定",
@@ -953,7 +959,7 @@
         "desktopShareWarning": "您必須重新啟動桌面畫面分享以套用新的設定。",
         "devices": "裝置",
         "followMe": "全部人跟隨我",
-        "framesPerSecond": "影格率",
+        "framesPerSecond": "fps",
         "incomingMessage": "新訊息",
         "language": "語言",
         "loggedIn": "以{{name}}登入",
@@ -1004,6 +1010,7 @@
         "profileSection": "簡介",
         "serverURL": "伺服器網址",
         "showAdvanced": "顯示進階設定",
+        "startCarModeInLowBandwidthMode": "同時啟用駕駛模式與低頻寬模式",
         "startWithAudioMuted": "啟動並靜音",
         "startWithVideoMuted": "啟動並關閉影像",
         "terms": "條款",
@@ -1042,7 +1049,7 @@
         "title": "由於電腦進入休眠，您的視訊通話已經中斷。"
     },
     "termsView": {
-        "header": "條款"
+        "title": "條款"
     },
     "toggleTopPanelLabel": "啟用/停用頂部面板",
     "toolbar": {
