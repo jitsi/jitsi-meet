@@ -1345,10 +1345,10 @@
         "join": "建立/加入",
         "logo": {
             "calendar": "行事曆圖示",
-            "desktopPreviewThumbnail": "桌面畫面分享縮圖",
-            "googleLogo": "Google 商標",
-            "logoDeepLinking": "Jitsi meet 商標",
-            "microsoftLogo": "Microsoft 商標",
+            "desktopPreviewThumbnail": "桌面預覽縮圖",
+            "googleLogo": "Google圖示",
+            "logoDeepLinking": "Jitsi Meet圖示",
+            "microsoftLogo": "Microsoft圖示",
             "policyLogo": "政策圖示"
         },
         "mobileDownLoadLinkAndroid": "下載 Android 版本的手機應用程式",
@@ -1360,7 +1360,7 @@
         "recentListDelete": "刪除",
         "recentListEmpty": "目前最近使用是空白的，與您的團隊成員聊天，即會在此處找到最近使用過的會議。",
         "reducedUIText": "歡迎使用{{app}}！",
-        "roomNameAllowedChars": "會議室名稱不應包含以下字元：? & : '「 % #",
+        "roomNameAllowedChars": "會議室名稱不應包含以下字元：? & : ' \" % #",
         "roomname": "輸入會議室名稱",
         "roomnameHint": "請輸入您想加入的會議室名稱或網址，您可以用個名稱來建立會議室，只要其他人輸入相同的名稱就能加入會議室喔。",
         "sendFeedback": "傳送回饋",

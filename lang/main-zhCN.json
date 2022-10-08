@@ -1344,12 +1344,12 @@
         "jitsiOnMobile": "手机版Jitsi – 下载我们的APP，随时随地都能开始会议",
         "join": "创建/加入",
         "logo": {
-            "calendar": "日历logo",
+            "calendar": "日历图标",
             "desktopPreviewThumbnail": "桌面预览缩略图",
-            "googleLogo": "谷歌logo",
-            "logoDeepLinking": "Jitsi meet logo",
-            "microsoftLogo": "微软logo",
-            "policyLogo": "政策logo"
+            "googleLogo": "谷歌图标",
+            "logoDeepLinking": "Jitsi Meet图标",
+            "microsoftLogo": "微软图标",
+            "policyLogo": "政策图标"
         },
         "mobileDownLoadLinkAndroid": "从Google Play下载安卓版手机APP",
         "mobileDownLoadLinkFDroid": "从F-Droid下载安卓版手机APP",
@@ -1360,7 +1360,7 @@
         "recentListDelete": "删除",
         "recentListEmpty": "近期会议为空，与你的团队参会者聊天后，历史会议记录会出现在这里。",
         "reducedUIText": "欢迎使用{{app}}！",
-        "roomNameAllowedChars": "会议室名称不应包含以下任何字符：? & : ' \" % #",
+        "roomNameAllowedChars": "会议室名称不应包含以下字符：? & : ' \" % #",
         "roomname": "请输入会议室名称",
         "roomnameHint": "输入你想加入的会议室的名称或网址，你也可以使用不同的名称创建会议室，其他人只需输入相同的名称即可加入。",
         "sendFeedback": "发送反馈",
