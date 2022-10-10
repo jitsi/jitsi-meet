@@ -1,8 +1,8 @@
-// @flow
-
 import { Component } from 'react';
 
-import { MEDIA_TYPE } from '../../base/media';
+import { MEDIA_TYPE } from '../../base/media/constants';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { muteRemote } from '../actions';
 
 /**
@@ -14,17 +14,17 @@ export type Props = {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * The ID of the remote participant to be muted.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * Function to translate i18n labels.
      */
-    t: Function
+    t: Function;
 };
 
 /**
@@ -32,7 +32,7 @@ export type Props = {
  *
  * @augments Component
  */
-export default class AbstractMuteRemoteParticipantDialog<P:Props = Props, State=void>
+export default class AbstractMuteRemoteParticipantDialog<P extends Props = Props, State=void>
     extends Component<P, State> {
     /**
      * Initializes a new {@code AbstractMuteRemoteParticipantDialog} instance.
@@ -46,8 +46,6 @@ export default class AbstractMuteRemoteParticipantDialog<P:Props = Props, State=
         // Bind event handlers so they are only bound once per instance.
         this._onSubmit = this._onSubmit.bind(this);
     }
-
-    _onSubmit: () => boolean;
 
     /**
      * Handles the submit button action.

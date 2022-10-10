@@ -1,29 +1,23 @@
-// @flow
-
 import React, { Component } from 'react';
-import type { Dispatch } from 'redux';
+import { WithTranslation } from 'react-i18next';
 
-import { Dialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
-import { toggleScreensharing } from '../../base/tracks';
+import { IStore } from '../../app/types';
+import { translate } from '../../base/i18n/functions';
+import { connect } from '../../base/redux/functions';
+import { toggleScreensharing } from '../../base/tracks/actions';
+import Dialog from '../../base/ui/components/web/Dialog';
 
-export type Props = {
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-     dispatch: Dispatch<any>,
+export interface Props extends WithTranslation {
 
     /**
      * Whether or not the dialog was opened for the audio screen sharing flow or the normal one.
      */
-    _isAudioScreenShareWarning: Boolean,
+    _isAudioScreenShareWarning: Boolean;
 
     /**
-     * Invoked to obtain translated strings.
+     * The redux {@code dispatch} function.
      */
-    t: Function
+    dispatch: IStore['dispatch'];
 }
 
 /**
@@ -36,13 +30,11 @@ class ShareScreenWarningDialog extends Component<Props> {
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this._onStopSharing = this._onStopSharing.bind(this);
     }
-
-    _onStopSharing: () => boolean;
 
     /**
      * Stop current screen sharing session.
@@ -86,11 +78,9 @@ class ShareScreenWarningDialog extends Component<Props> {
         }
 
         return (<Dialog
-            hideCancelButton = { false }
-            okKey = { t(stopSharing) }
+            ok = {{ translationKey: stopSharing }}
             onSubmit = { this._onStopSharing }
-            titleKey = { t(title) }
-            width = { 'small' }>
+            titleKey = { t(title) }>
             <div className = 'share-screen-warn-dialog'>
                 <p className = 'header'> { t(header1) } </p>
                 <p className = 'description' > { t(description1) } </p>
@@ -99,7 +89,6 @@ class ShareScreenWarningDialog extends Component<Props> {
                 <p className = 'description' > { t(description2) } </p>
             </div>
         </Dialog>);
-
     }
 }
 

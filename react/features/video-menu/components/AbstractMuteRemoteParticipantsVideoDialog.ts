@@ -1,10 +1,11 @@
-// @flow
-
 import { Component } from 'react';
 
+import { IState } from '../../app/types';
 import { rejectParticipantVideo } from '../../av-moderation/actions';
 import { isEnabledFromState } from '../../av-moderation/functions';
-import { MEDIA_TYPE } from '../../base/media';
+import { MEDIA_TYPE } from '../../base/media/constants';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { muteRemote } from '../actions';
 
 /**
@@ -16,22 +17,22 @@ export type Props = {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Whether or not video moderation is on.
      */
-    isVideoModerationOn: boolean,
+    isVideoModerationOn: boolean;
 
     /**
      * The ID of the remote participant to be muted.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * Function to translate i18n labels.
      */
-    t: Function
+    t: Function;
 };
 
 /**
@@ -39,7 +40,7 @@ export type Props = {
  *
  * @augments Component
  */
-export default class AbstractMuteRemoteParticipantsVideoDialog<P:Props = Props, State=void>
+export default class AbstractMuteRemoteParticipantsVideoDialog<P extends Props = Props, State=void>
     extends Component<P, State> {
     /**
      * Initializes a new {@code AbstractMuteRemoteParticipantsVideoDialog} instance.
@@ -53,8 +54,6 @@ export default class AbstractMuteRemoteParticipantsVideoDialog<P:Props = Props, 
         // Bind event handlers so they are only bound once per instance.
         this._onSubmit = this._onSubmit.bind(this);
     }
-
-    _onSubmit: () => boolean;
 
     /**
      * Handles the submit button action.
@@ -76,11 +75,11 @@ export default class AbstractMuteRemoteParticipantsVideoDialog<P:Props = Props, 
  * Maps (parts of) the redux state to the associated
  * {@code AbstractDialogContainer}'s props.
  *
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @private
  * @returns {Object}
  */
-export function abstractMapStateToProps(state: Object) {
+export function abstractMapStateToProps(state: IState) {
     return {
         isVideoModerationOn: isEnabledFromState(MEDIA_TYPE.VIDEO, state)
     };

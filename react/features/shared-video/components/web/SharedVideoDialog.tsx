@@ -1,9 +1,8 @@
 import React from 'react';
 
-// @ts-ignore
-import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
@@ -73,14 +72,15 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<any> {
 
         return (
             <Dialog
-                hideCancelButton = { false }
-                okDisabled = { this.state.okDisabled }
-                okKey = { t('dialog.Share') }
+                ok = {{
+                    disabled: this.state.okDisabled,
+                    translationKey: 'dialog.Share'
+                }}
                 onSubmit = { this._onSubmitValue }
-                titleKey = { t('dialog.shareVideoTitle') }
-                width = { 'small' }>
+                titleKey = 'dialog.shareVideoTitle'>
                 <Input
                     autoFocus = { true }
+                    className = 'dialog-bottom-margin'
                     error = { error }
                     label = { t('dialog.videoLink') }
                     name = 'sharedVideoUrl'
