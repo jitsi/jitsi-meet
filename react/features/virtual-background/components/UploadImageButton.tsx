@@ -56,7 +56,6 @@ const useStyles = makeStyles()((theme: Theme) => {
             fontSize: '14px',
             fontWeight: '600',
             lineHeight: '20px',
-            marginLeft: '-10px',
             marginTop: theme.spacing(3),
             marginBottom: theme.spacing(2),
             color: '#669aec',

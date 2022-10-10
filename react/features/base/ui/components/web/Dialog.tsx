@@ -150,6 +150,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             boxSizing: 'border-box',
             padding: '0 24px',
             overflowX: 'hidden',
+            minHeight: '40px',
 
             '@media (max-width: 448px)': {
                 height: '100%'

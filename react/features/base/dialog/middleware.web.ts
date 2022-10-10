@@ -21,8 +21,14 @@ import SecurityDialog from '../../security/components/security-dialog/web/Securi
 import SharedVideoDialog from '../../shared-video/components/web/SharedVideoDialog';
 import SpeakerStats from '../../speaker-stats/components/web/SpeakerStats';
 import LanguageSelectorDialog from '../../subtitles/components/LanguageSelectorDialog.web';
+import GrantModeratorDialog from '../../video-menu/components/web/GrantModeratorDialog';
+import KickRemoteParticipantDialog from '../../video-menu/components/web/KickRemoteParticipantDialog';
 import MuteEveryoneDialog from '../../video-menu/components/web/MuteEveryoneDialog';
 import MuteEveryonesVideoDialog from '../../video-menu/components/web/MuteEveryonesVideoDialog';
+import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
+// @ts-ignore
+import VideoQualityDialog from '../../video-quality/components/VideoQualityDialog.web';
+import VirtualBackgroundDialog from '../../virtual-background/components/VirtualBackgroundDialog';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { OPEN_DIALOG } from './actionTypes';
@@ -33,7 +39,9 @@ import { OPEN_DIALOG } from './actionTypes';
 const NEW_DIALOG_LIST = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNamePrompt, EmbedMeetingDialog,
     FeedbackDialog, AddPeopleDialog, PremiumFeatureDialog, StartLiveStreamDialog, StopLiveStreamDialog,
     StartRecordingDialog, StopRecordingDialog, ShareAudioDialog, ShareScreenWarningDialog, SecurityDialog,
-    SharedVideoDialog, SpeakerStats, LanguageSelectorDialog, MuteEveryoneDialog, MuteEveryonesVideoDialog ];
+    SharedVideoDialog, SpeakerStats, LanguageSelectorDialog, MuteEveryoneDialog, MuteEveryonesVideoDialog,
+    GrantModeratorDialog, KickRemoteParticipantDialog, MuteRemoteParticipantsVideoDialog, VideoQualityDialog,
+    VirtualBackgroundDialog ];
 
 // This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
 const isNewDialog = (component: any) => NEW_DIALOG_LIST.some(comp => comp === component);
