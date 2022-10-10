@@ -15,7 +15,7 @@ import styles from './buttonStyles';
 
 export interface IButtonProps extends ButtonProps {
     color?: string;
-    contentStyle?:  Object | undefined;
+    contentStyle?: Object | undefined;
     labelStyle?: Object | undefined;
     style?: Object | undefined;
 }
@@ -90,10 +90,10 @@ const Button: React.FC<IButtonProps> = ({
             accessibilityLabel = { t(accessibilityLabel ?? '') }
             children = { t(labelKey ?? '') }
             color = { color }
-            contentStyle = {[
+            contentStyle = { [
                 styles.buttonContent,
                 contentStyle
-            ]}
+            ] }
             disabled = { disabled }
             // @ts-ignore
             icon = { icon }
