@@ -2,10 +2,10 @@
 
 import React, { PureComponent } from 'react';
 
-import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { getHideSelfView, updateSettings } from '../../../base/settings';
+import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 
 /**
  * The type of the React {@code Component} props of {@link HideSelfViewVideoButton}.

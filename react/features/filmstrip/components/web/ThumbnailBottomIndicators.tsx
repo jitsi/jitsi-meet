@@ -4,12 +4,14 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { IState } from '../../../app/types';
 import {
     getMultipleVideoSupportFeatureFlag,
     isDisplayNameVisible,
     isNameReadOnly
     // @ts-ignore
 } from '../../../base/config/functions.any';
+import { isScreenShareParticipantById } from '../../../base/participants/functions';
 // @ts-ignore
 import DisplayName from '../../../display-name/components/web/DisplayName';
 import { THUMBNAIL_TYPE } from '../../constants';
@@ -25,11 +27,6 @@ type Props = {
      * Class name for indicators container.
      */
     className: string;
-
-    /**
-     * Whether it is a virtual screenshare participant thumbnail.
-     */
-    isVirtualScreenshareParticipant: boolean;
 
     /**
      * Whether or not the indicators are for the local participant.
@@ -73,7 +70,6 @@ const useStyles = makeStyles()(() => {
 
 const ThumbnailBottomIndicators = ({
     className,
-    isVirtualScreenshareParticipant,
     local,
     participantId,
     showStatusIndicators = true,
@@ -84,6 +80,9 @@ const ThumbnailBottomIndicators = ({
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
     const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const _showDisplayName = useSelector(isDisplayNameVisible);
+    const isVirtualScreenshareParticipant = useSelector(
+        (state: IState) => isScreenShareParticipantById(state, participantId)
+    );
 
     return (<div className = { className }>
         {

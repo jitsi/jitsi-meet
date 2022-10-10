@@ -163,10 +163,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_LEFT: {
         const { participant } = action;
-        const { isFakeParticipant, isVirtualScreenshareParticipant, isWhiteboard } = participant;
+        const { fakeParticipant } = participant;
 
-        // Skip sending participant left event for fake or virtual screenshare participants.
-        if (isFakeParticipant || isVirtualScreenshareParticipant || isWhiteboard) {
+        // Skip sending participant left event for fake participants.
+        if (fakeParticipant) {
             break;
         }
 
@@ -177,13 +177,13 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const { defaultRemoteDisplayName } = state['features/base/config'];
         const { participant } = action;
-        const { id, isFakeParticipant, isVirtualScreenshareParticipant, local, name } = participant;
+        const { fakeParticipant, id, local, name } = participant;
 
         // The version of external api outside of middleware did not emit
         // the local participant being created.
         if (!local) {
-            // Skip sending participant joined event for fake or virtual screenshare participants.
-            if (isFakeParticipant || isVirtualScreenshareParticipant) {
+            // Skip sending participant joined event for fake participants.
+            if (fakeParticipant) {
                 break;
             }
 

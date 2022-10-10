@@ -18,7 +18,12 @@ import {
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
-import { isParticipantModerator } from './functions';
+import {
+    isLocalScreenshareParticipant,
+    isParticipantModerator,
+    isRemoteScreenshareParticipant,
+    isScreenShareParticipant
+} from './functions';
 import { LocalParticipant, Participant } from './types';
 
 /**
@@ -241,10 +246,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
     case PARTICIPANT_JOINED: {
         const participant = _participantJoined(action);
         const {
+            fakeParticipant,
             id,
-            isFakeParticipant,
-            isLocalScreenShare,
-            isVirtualScreenshareParticipant,
             name,
             pinned
         } = participant;
@@ -281,7 +284,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             };
         }
 
-        if (isLocalScreenShare) {
+        if (isLocalScreenshareParticipant(participant)) {
             return {
                 ...state,
                 localScreenShare: participant
@@ -300,7 +303,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         // The sort order of participants is preserved since Map remembers the original insertion order of the keys.
         state.sortedRemoteParticipants = new Map(sortedRemoteParticipants);
 
-        if (isVirtualScreenshareParticipant) {
+        if (isRemoteScreenshareParticipant(participant)) {
             const sortedRemoteVirtualScreenshareParticipants = [ ...state.sortedRemoteVirtualScreenshareParticipants ];
 
             sortedRemoteVirtualScreenshareParticipants.push([ id, name ?? '' ]);
@@ -308,7 +311,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
 
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
         }
-        if (isFakeParticipant) {
+        // Exclude the screenshare participant from the fake participant count to avoid duplicates.
+        if (fakeParticipant && !isScreenShareParticipant(participant)) {
             state.fakeParticipants.set(id, participant);
         }
 
@@ -509,12 +513,8 @@ function _participantJoined({ participant }: { participant: Participant; }) {
         connectionStatus,
         dominantSpeaker,
         email,
-        isFakeParticipant,
-        isVirtualScreenshareParticipant,
-        isLocalScreenShare,
+        fakeParticipant,
         isReplacing,
-        isJigasi,
-        isWhiteboard,
         loadableAvatarUrl,
         local,
         name,
@@ -543,13 +543,9 @@ function _participantJoined({ participant }: { participant: Participant; }) {
         connectionStatus,
         dominantSpeaker: dominantSpeaker || false,
         email,
+        fakeParticipant,
         id,
-        isFakeParticipant,
-        isVirtualScreenshareParticipant,
-        isLocalScreenShare,
         isReplacing,
-        isJigasi,
-        isWhiteboard,
         loadableAvatarUrl,
         local: local || false,
         name,

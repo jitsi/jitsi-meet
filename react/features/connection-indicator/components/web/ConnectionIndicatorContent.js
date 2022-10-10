@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { translate } from '../../../base/i18n';
 import { MEDIA_TYPE } from '../../../base/media';
-import { getLocalParticipant, getParticipantById } from '../../../base/participants';
+import { getLocalParticipant, getParticipantById, isScreenShareParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getSourceNameByParticipantId, getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionStatsTable } from '../../../connection-stats';
@@ -352,7 +352,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
         _isConnectionStatusInactive,
         _isConnectionStatusInterrupted,
-        _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant,
+        _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && isScreenShareParticipant(participant),
         _isLocalVideo: participant?.local,
         _region: participant?.region,
         _sourceName: getSourceNameByParticipantId(state, participantId),

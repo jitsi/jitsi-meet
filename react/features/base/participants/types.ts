@@ -1,3 +1,11 @@
+export enum FakeParticipant {
+    Jigasi = 'Jigasi',
+    LocalScreenShare = 'LocalScreenShare',
+    RemoteScreenShare = 'RemoteScreenShare',
+    SharedVideo = 'SharedVideo',
+    Whiteboard = 'Whiteboard'
+}
+
 export interface Participant {
     avatarURL?: string;
     botType?: string;
@@ -8,18 +16,14 @@ export interface Participant {
     e2eeEnabled?: boolean;
     e2eeSupported?: boolean;
     email?: string;
+    fakeParticipant?: FakeParticipant;
     features?: {
         'screen-sharing'?: boolean | string;
     };
     getId?: Function;
     id: string;
-    isFakeParticipant?: boolean;
-    isJigasi?: boolean;
-    isLocalScreenShare?: boolean;
     isReplaced?: boolean;
     isReplacing?: number;
-    isVirtualScreenshareParticipant?: boolean;
-    isWhiteboard?: boolean;
     jwtId?: string;
     loadableAvatarUrl?: string;
     loadableAvatarUrlUseCORS?: boolean;

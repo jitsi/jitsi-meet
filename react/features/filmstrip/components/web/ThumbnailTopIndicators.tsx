@@ -8,6 +8,7 @@ import { IState } from '../../../app/types';
 // @ts-ignore
 import { getMultipleVideoSupportFeatureFlag } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
+import { isScreenShareParticipantById } from '../../../base/participants/functions';
 // @ts-ignore
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
 import { STATS_POPOVER_POSITION, THUMBNAIL_TYPE } from '../../constants';
@@ -45,11 +46,6 @@ type Props = {
      * Whether or not the thumbnail is hovered.
      */
     isHovered: boolean;
-
-    /**
-     * Whether or not the thumbnail is a virtual screen share participant.
-     */
-    isVirtualScreenshareParticipant?: boolean;
 
     /**
      * Whether or not the indicators are for the local participant.
@@ -93,7 +89,6 @@ const ThumbnailTopIndicators = ({
     disableConnectionIndicator,
     hidePopover,
     indicatorsClassName,
-    isVirtualScreenshareParticipant,
     isHovered,
     local,
     participantId,
@@ -112,6 +107,9 @@ const ThumbnailTopIndicators = ({
         || Boolean(useSelector((state: IState) => state['features/base/config'].connectionIndicators?.disabled));
     const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
+    const isVirtualScreenshareParticipant = useSelector(
+        (state: IState) => isScreenShareParticipantById(state, participantId)
+    );
 
     if (_isMultiStreamEnabled && isVirtualScreenshareParticipant) {
         return (

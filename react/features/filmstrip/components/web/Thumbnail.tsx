@@ -22,7 +22,10 @@ import { pinParticipant } from '../../../base/participants/actions';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
-    hasRaisedHand
+    hasRaisedHand,
+    isLocalScreenshareParticipant,
+    isScreenShareParticipant,
+    isWhiteboardParticipant
 } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -1050,7 +1053,7 @@ class Thumbnail extends Component<Props, State> {
                         _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
                     ) }>
                     <ThumbnailTopIndicators
-                        disableConnectionIndicator = { _participant?.isWhiteboard }
+                        disableConnectionIndicator = { isWhiteboardParticipant(_participant) }
                         hidePopover = { this._hidePopover }
                         indicatorsClassName = { classes.indicatorsBackground }
                         isHovered = { isHovered }
@@ -1067,10 +1070,9 @@ class Thumbnail extends Component<Props, State> {
                     ) }>
                     <ThumbnailBottomIndicators
                         className = { classes.indicatorsBackground }
-                        isVirtualScreenshareParticipant = { false }
                         local = { local }
                         participantId = { id }
-                        showStatusIndicators = { !_participant?.isWhiteboard }
+                        showStatusIndicators = { !isWhiteboardParticipant(_participant) }
                         thumbnailType = { _thumbnailType } />
                 </div>
                 {!_gifSrc && this._renderAvatar(styles.avatar) }
@@ -1115,13 +1117,16 @@ class Thumbnail extends Component<Props, State> {
             return null;
         }
 
-        const { isFakeParticipant, isLocalScreenShare, isWhiteboard, local } = _participant;
+        const { fakeParticipant, local } = _participant;
 
         if (local) {
             return this._renderParticipant(true);
         }
 
-        if (isFakeParticipant && !isWhiteboard) {
+        if (fakeParticipant
+            && !isWhiteboardParticipant(_participant)
+            && !_isVirtualScreenshareParticipant
+        ) {
             return this._renderFakeParticipant();
         }
 
@@ -1141,7 +1146,7 @@ class Thumbnail extends Component<Props, State> {
                     classes = { classes }
                     containerClassName = { this._getContainerClassName() }
                     isHovered = { isHovered }
-                    isLocal = { isLocalScreenShare }
+                    isLocal = { isLocalScreenshareParticipant(_participant) }
                     isMobile = { _isMobile }
                     onClick = { this._onClick }
                     onMouseEnter = { this._onMouseEnter }
@@ -1177,11 +1182,12 @@ function _mapStateToProps(state: IState, ownProps: any): Object {
     const isLocal = participant?.local ?? true;
     const multipleVideoSupportEnabled = getMultipleVideoSupportFeatureFlag(state);
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
+    const _isVirtualScreenshareParticipant = multipleVideoSupportEnabled && isScreenShareParticipant(participant);
     const tracks = state['features/base/tracks'];
 
     let _videoTrack;
 
-    if (multipleVideoSupportEnabled && participant?.isVirtualScreenshareParticipant) {
+    if (_isVirtualScreenshareParticipant) {
         _videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
     } else {
         _videoTrack = isLocal
@@ -1304,7 +1310,7 @@ function _mapStateToProps(state: IState, ownProps: any): Object {
         _isScreenSharing: _videoTrack?.videoType === 'desktop',
         _isTestModeEnabled: isTestModeEnabled(state),
         _isVideoPlayable: id && isVideoPlayable(state, id),
-        _isVirtualScreenshareParticipant: multipleVideoSupportEnabled && participant?.isVirtualScreenshareParticipant,
+        _isVirtualScreenshareParticipant,
         _localFlipX: Boolean(localFlipX),
         _multipleVideoSupport: multipleVideoSupportEnabled,
         _participant: participant,

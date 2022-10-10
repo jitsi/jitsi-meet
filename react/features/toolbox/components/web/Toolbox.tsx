@@ -9,8 +9,6 @@ import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardsh
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 // @ts-ignore
 import { getMultipleVideoSendingSupportFeatureFlag, getToolbarButtons } from '../../../base/config';
 // @ts-ignore
@@ -30,6 +28,8 @@ import {
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { getLocalVideoTrack } from '../../../base/tracks';
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 // @ts-ignore
 import { toggleChat } from '../../../chat';
 // @ts-ignore
@@ -100,10 +100,9 @@ import {
 // @ts-ignore
 import { VideoQualityButton, VideoQualityDialog } from '../../../video-quality/components';
 // @ts-ignore
-import { VideoBackgroundButton, toggleBackgroundEffect } from '../../../virtual-background';
-import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
+import { VideoBackgroundButton } from '../../../virtual-background';
 import WhiteboardButton from '../../../whiteboard/components/web/WhiteboardButton';
-import { isWhiteboardEnabled } from '../../../whiteboard/functions';
+import { isWhiteboardButtonVisible } from '../../../whiteboard/functions';
 import {
     setFullScreen,
     setHangupMenuVisible,
@@ -665,29 +664,11 @@ class Toolbox extends Component<Props> {
      */
     _doToggleScreenshare() {
         const {
-            _backgroundType,
             _desktopSharingButtonDisabled,
             _desktopSharingEnabled,
-            _localVideo,
             _screenSharing,
-            _virtualSource,
             dispatch
         } = this.props;
-
-        if (_backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            const noneOptions = {
-                enabled: false,
-                backgroundType: VIRTUAL_BACKGROUND_TYPE.NONE,
-                selectedThumbnail: VIRTUAL_BACKGROUND_TYPE.NONE,
-                backgroundEffectEnabled: false
-            };
-
-            _virtualSource.dispose();
-
-            dispatch(toggleBackgroundEffect(noneOptions, _localVideo));
-
-            return;
-        }
 
         if (_desktopSharingEnabled && !_desktopSharingButtonDisabled) {
             dispatch(startScreenShareFlow(!_screenSharing));
@@ -1558,7 +1539,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,
         _visible: isToolboxVisible(state),
-        _whiteboardEnabled: isWhiteboardEnabled(state)
+        _whiteboardEnabled: isWhiteboardButtonVisible(state)
     };
 }
 

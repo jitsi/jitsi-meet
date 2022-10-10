@@ -4,8 +4,8 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { IconPinParticipant, IconUnpin } from '../../../base/icons';
+import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { togglePinStageParticipant } from '../../../filmstrip/actions.web';
 import { getPinnedActiveParticipants } from '../../../filmstrip/functions.web';
 

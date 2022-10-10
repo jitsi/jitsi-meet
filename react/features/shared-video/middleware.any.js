@@ -13,6 +13,7 @@ import {
     participantLeft,
     pinParticipant
 } from '../base/participants';
+import { FakeParticipant } from '../base/participants/types';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
@@ -55,7 +56,7 @@ MiddlewareRegistry.register(store => next => action => {
                     const videoParticipant = getParticipantById(state, value);
 
                     dispatch(participantLeft(value, conference, {
-                        isFakeParticipant: videoParticipant?.isFakeParticipant
+                        fakeParticipant: videoParticipant?.fakeParticipant
                     }));
 
                     if (localParticipantId !== from) {
@@ -162,8 +163,8 @@ function handleSharingVideoStatus(store, videoUrl, { state, time, from, muted },
 
         dispatch(participantJoined({
             conference,
+            fakeParticipant: FakeParticipant.SharedVideo,
             id: videoUrl,
-            isFakeParticipant: true,
             avatarURL,
             name: VIDEO_PLAYER_PARTICIPANT_NAME
         }));

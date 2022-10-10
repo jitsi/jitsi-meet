@@ -2,18 +2,17 @@
 // @ts-ignore
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
-import { IStore } from '../../app/types';
+import { IState, IStore } from '../../app/types';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config/functions.any';
+import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import i18next from '../i18n/i18next';
-import { JitsiParticipantConnectionStatus, JitsiTrackStreamingStatus } from '../lib-jitsi-meet';
-import { shouldRenderVideoTrack } from '../media/functions';
+import { VIDEO_TYPE } from '../media/constants';
 import { toState } from '../redux/functions';
-import { getScreenShareTrack, getVideoTrackByParticipant } from '../tracks/functions';
+import { getScreenShareTrack } from '../tracks/functions';
 import { createDeferred } from '../util/helpers';
 
 import {
@@ -24,7 +23,7 @@ import {
 } from './constants';
 // @ts-ignore
 import { preloadImage } from './preloadImage';
-import { Participant } from './types';
+import { FakeParticipant, Participant } from './types';
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
@@ -34,10 +33,10 @@ const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant: Participant) => {
-        return participant?.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
+        return isJigasiParticipant(participant) ? JIGASI_PARTICIPANT_ICON : null;
     },
     (participant: Participant) => {
-        return participant?.isWhiteboard ? WHITEBOARD_PARTICIPANT_ICON : null;
+        return isWhiteboardParticipant(participant) ? WHITEBOARD_PARTICIPANT_ICON : null;
     },
     (participant: Participant) => {
         return participant?.avatarURL ? participant.avatarURL : null;
@@ -115,7 +114,7 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
         }
     }
 
-    // Remove shared video from the count.
+    // Remove fake participants from the count.
     if (fakeParticipants) {
         availableSlotsForActiveSpeakers -= fakeParticipants.size;
     }
@@ -302,6 +301,79 @@ export function getFakeParticipants(stateful: IStateful) {
 }
 
 /**
+ * Returns whether the fake participant is Jigasi.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a Jigasi participant.
+ */
+function isJigasiParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.Jigasi;
+}
+
+/**
+ * Returns whether the fake participant is a local screenshare.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a local screenshare participant.
+ */
+export function isLocalScreenshareParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.LocalScreenShare;
+}
+
+/**
+ * Returns whether the fake participant is a remote screenshare.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a remote screenshare participant.
+ */
+export function isRemoteScreenshareParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.RemoteScreenShare;
+}
+
+/**
+ * Returns whether the fake participant is of local or virtual screenshare type.
+ *
+ * @param {IState} state - The (whole) redux state, or redux's.
+ * @param {string|undefined} participantId - The participant id.
+ * @returns {boolean} - True if it's one of the two.
+ */
+export function isScreenShareParticipantById(state: IState, participantId?: string): boolean {
+    const participant = getParticipantByIdOrUndefined(state, participantId);
+
+    return isScreenShareParticipant(participant);
+}
+
+/**
+ * Returns whether the fake participant is of local or virtual screenshare type.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's one of the two.
+ */
+export function isScreenShareParticipant(participant?: Participant): boolean {
+    return isLocalScreenshareParticipant(participant) || isRemoteScreenshareParticipant(participant);
+}
+
+/**
+ * Returns whether the (fake) participant is a shared video.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a shared video participant.
+ */
+export function isSharedVideoParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.SharedVideo;
+}
+
+/**
+ * Returns whether the fake participant is a whiteboard.
+ *
+ * @param {Participant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a whiteboard participant.
+ */
+export function isWhiteboardParticipant(participant?: Participant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.Whiteboard;
+}
+
+/**
  * Returns a count of the known remote participants in the passed in redux state.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
@@ -349,15 +421,16 @@ export function getParticipantCountWithFake(stateful: IStateful) {
  * @returns {string}
  */
 export function getParticipantDisplayName(stateful: IStateful, id: string): string {
-    const participant = getParticipantById(stateful, id);
+    const state = toState(stateful);
+    const participant = getParticipantById(state, id);
     const {
         defaultLocalDisplayName,
         defaultRemoteDisplayName
-    } = toState(stateful)['features/base/config'];
+    } = state['features/base/config'];
 
     if (participant) {
-        if (participant.isVirtualScreenshareParticipant) {
-            return getScreenshareParticipantDisplayName(stateful, id);
+        if (isScreenShareParticipant(participant)) {
+            return getScreenshareParticipantDisplayName(state, id);
         }
 
         if (participant.name) {
@@ -384,6 +457,19 @@ export function getScreenshareParticipantDisplayName(stateful: IStateful, id: st
     const ownerDisplayName = getParticipantDisplayName(stateful, getVirtualScreenshareParticipantOwnerId(id));
 
     return i18next.t('screenshareDisplayName', { name: ownerDisplayName });
+}
+
+/**
+ * Returns a list of IDs of the participants that are currently screensharing.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
+ * @returns {Array<string>}
+ */
+export function getScreenshareParticipantIds(stateful: IStateful): Array<string> {
+    return toState(stateful)['features/base/tracks']
+        .filter(track => track.videoType === VIDEO_TYPE.DESKTOP && !track.muted)
+        .map(t => t.participantId);
 }
 
 /**
@@ -526,63 +612,6 @@ export function isLocalParticipantModerator(stateful: IStateful) {
     }
 
     return isParticipantModerator(local);
-}
-
-/**
- * Returns true if the video of the participant should be rendered.
- * NOTE: This is currently only used on mobile.
- *
- * @param {Object|Function} stateful - Object or function that can be resolved
- * to the Redux state.
- * @param {string} id - The ID of the participant.
- * @returns {boolean}
- */
-export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
-    const state = toState(stateful);
-    const participant = getParticipantById(state, id);
-
-    if (!participant) {
-        return false;
-    }
-
-    /* First check if we have an unmuted video track. */
-    const videoTrack = getVideoTrackByParticipant(state['features/base/tracks'], participant);
-
-    if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
-        return false;
-    }
-
-    /* Then check if the participant connection or track streaming status is active. */
-    if (getSourceNameSignalingFeatureFlag(state)) {
-        // Note that this will work only if a listener is registered for the track's TrackStreamingStatus.
-        // The associated TrackStreamingStatusImpl instance is not created or disposed when there are zero listeners.
-        if (videoTrack
-            && !videoTrack.local
-            && videoTrack.jitsiTrack?.getTrackStreamingStatus() !== JitsiTrackStreamingStatus.ACTIVE) {
-            return false;
-        }
-    } else {
-        const connectionStatus = participant.connectionStatus || JitsiParticipantConnectionStatus.ACTIVE;
-
-        if (connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE) {
-            return false;
-        }
-    }
-
-    /* Then check if audio-only mode is not active. */
-    const audioOnly = state['features/base/audio-only'].enabled;
-
-    if (!audioOnly) {
-        return true;
-    }
-
-    /* Last, check if the participant is sharing their screen and they are on stage. */
-    const remoteScreenShares = state['features/video-layout'].remoteScreenShares || [];
-    const largeVideoParticipantId = state['features/large-video'].participantId;
-    const participantIsInLargeVideoWithScreen
-        = participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
-
-    return participantIsInLargeVideoWithScreen;
 }
 
 /**

@@ -73,10 +73,15 @@ case "$1" in
         # if first time config ask for certs, or if we are reconfiguring
         if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
             RET=""
-            db_input critical jitsi-meet/cert-choice || true
-            db_go
+            # ask the question only if there is nothing stored, option to pre-set it on install in automations
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
+            if [ -z "$CERT_CHOICE" ] ; then
+                db_input critical jitsi-meet/cert-choice || true
+                db_go
+                db_get jitsi-meet/cert-choice
+                CERT_CHOICE="$RET"
+            fi
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
                 RET=""
@@ -164,6 +169,17 @@ case "$1" in
                     echo "config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)" >> $JITSI_MEET_CONFIG
                 fi
             fi
+        fi
+
+        # Fixes multi-stream flags to workaround problem with mobile joining a multi-stream call with multi-stream disabled
+        if ! grep -q "^config.flags.sourceNameSignaling*" $JITSI_MEET_CONFIG; then
+            echo "config.flags.sourceNameSignaling = true;" >> $JITSI_MEET_CONFIG
+        fi
+        if ! grep -q "^config.flags.sendMultipleVideoStreams*" $JITSI_MEET_CONFIG; then
+            echo "config.flags.sendMultipleVideoStreams = true;" >> $JITSI_MEET_CONFIG
+        fi
+        if ! grep -q "^config.flags.receiveMultipleVideoStreams*" $JITSI_MEET_CONFIG; then
+            echo "config.flags.receiveMultipleVideoStreams = true;" >> $JITSI_MEET_CONFIG
         fi
 
         if [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then

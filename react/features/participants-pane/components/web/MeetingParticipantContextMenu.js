@@ -102,7 +102,7 @@ class MeetingParticipantContextMenu extends Component<Props> {
             thumbnailMenu: false
         };
 
-        if (_participant?.isFakeParticipant) {
+        if (_participant?.fakeParticipant) {
             return (
                 <FakeParticipantContextMenu
                     { ...props }

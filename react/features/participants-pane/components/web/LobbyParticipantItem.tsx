@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons/svg';
 import { hasRaisedHand } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/web/Button';
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 // @ts-ignore
 import { showLobbyChatButton } from '../../../lobby/functions';

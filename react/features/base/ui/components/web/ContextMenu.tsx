@@ -5,13 +5,13 @@ import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from '
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { getComputedOuterHeight } from '../../../participants-pane/functions';
+import { getComputedOuterHeight } from '../../../../participants-pane/functions';
 // @ts-ignore
-import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
+import { Drawer, JitsiPortal } from '../../../../toolbox/components/web';
 // @ts-ignore
-import { showOverflowDrawer } from '../../../toolbox/functions.web';
-import { withPixelLineHeight } from '../../styles/functions.web';
-import participantsPaneTheme from '../themes/participantsPaneTheme.json';
+import { showOverflowDrawer } from '../../../../toolbox/functions.web';
+import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
+import { withPixelLineHeight } from '../../../styles/functions.web';
 
 type Props = {
 
@@ -86,9 +86,10 @@ const MAX_HEIGHT = 400;
 const useStyles = makeStyles()((theme: Theme) => {
     return {
         contextMenu: {
-            backgroundColor: theme.palette.ui02,
-            borderRadius: `${Number(theme.shape.borderRadius) / 2}px`,
-            boxShadow: '0px 3px 16px rgba(0, 0, 0, 0.6), 0px 0px 4px 1px rgba(0, 0, 0, 0.25)',
+            backgroundColor: theme.palette.ui01,
+            border: `1px solid ${theme.palette.ui04}`,
+            borderRadius: `${Number(theme.shape.borderRadius)}px`,
+            boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             marginTop: `${(participantsPaneTheme.panePadding * 2) + theme.typography.bodyShortRegular.fontSize}px`,
@@ -97,7 +98,8 @@ const useStyles = makeStyles()((theme: Theme) => {
             top: 0,
             zIndex: 2,
             maxHeight: `${MAX_HEIGHT}px`,
-            overflowY: 'auto'
+            overflowY: 'auto',
+            padding: `${theme.spacing(2)} 0`
         },
 
         contextMenuHidden: {
@@ -106,6 +108,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         drawer: {
+            paddingTop: '16px',
 
             '& > div': {
                 ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
@@ -113,10 +116,6 @@ const useStyles = makeStyles()((theme: Theme) => {
                 '& svg': {
                     fill: theme.palette.icon01
                 }
-            },
-
-            '& > *:first-child': {
-                paddingTop: '15px!important'
             }
         }
     };

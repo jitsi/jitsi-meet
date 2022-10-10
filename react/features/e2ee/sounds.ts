@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The name of the bundled audio file which will be played when e2ee is disabled.
  *

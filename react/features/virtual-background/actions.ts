@@ -3,7 +3,7 @@ import { IStore } from '../app/types';
 // @ts-ignore
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
-import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND, VIRTUAL_BACKGROUND_TRACK_CHANGED } from './actionTypes';
+import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
 import logger from './logger';
 import { VirtualBackgroundOptions } from './types';
 
@@ -71,18 +71,5 @@ export function backgroundEnabled(backgroundEffectEnabled: boolean) {
     return {
         type: BACKGROUND_ENABLED,
         backgroundEffectEnabled
-    };
-}
-
-/**
- * Signals if the local track was changed due to a changes of the virtual background.
- *
- * @returns {{
- *    type: VIRTUAL_BACKGROUND_TRACK_CHANGED
- * }}
- */
-export function virtualBackgroundTrackChanged() {
-    return {
-        type: VIRTUAL_BACKGROUND_TRACK_CHANGED
     };
 }

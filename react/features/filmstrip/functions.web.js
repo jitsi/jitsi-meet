@@ -8,7 +8,8 @@ import {
     getParticipantById,
     getParticipantCount,
     getParticipantCountWithFake,
-    getPinnedParticipant
+    getPinnedParticipant,
+    isScreenShareParticipant
 } from '../base/participants';
 import { toState } from '../base/redux';
 import { shouldHideSelfView } from '../base/settings/functions.any';
@@ -129,7 +130,8 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
         const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
 
         isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly;
-    } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
+    } else if (!participant?.fakeParticipant || isScreenShareParticipant(participant)) {
+        // remote participants excluding shared video
         const isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, id);
 
         if (getSourceNameSignalingFeatureFlag(state)) {
@@ -589,7 +591,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         connectionStatus: _participant?.connectionStatus,
         canPlayEventReceived,
         videoStream: Boolean(_videoTrack),
-        isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
+        isRemoteParticipant: !_participant?.fakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
         isVirtualScreenshareParticipant: _isVirtualScreenshareParticipant,
         multipleVideoSupport: _multipleVideoSupport,

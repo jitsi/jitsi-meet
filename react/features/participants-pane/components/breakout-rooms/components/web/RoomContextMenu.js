@@ -5,12 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
-import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/components';
 import {
     IconClose,
     IconRingGroup
 } from '../../../../../base/icons';
 import { isLocalParticipantModerator } from '../../../../../base/participants';
+import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
 import { showOverflowDrawer } from '../../../../../toolbox/functions';
 

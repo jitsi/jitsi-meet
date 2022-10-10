@@ -129,7 +129,6 @@ const styles = () => {
             position: 'relative' as const,
             marginTop: 0,
             right: 'auto',
-            padding: '0',
             marginRight: '4px',
             marginBottom: '4px'
         }
@@ -251,7 +250,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             thumbnailMenu: true
         };
 
-        if (_participant?.isFakeParticipant) {
+        if (_participant?.fakeParticipant) {
             return (
                 <FakeParticipantContextMenu
                     { ...props }

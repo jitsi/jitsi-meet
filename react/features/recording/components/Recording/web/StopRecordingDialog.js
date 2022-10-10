@@ -2,9 +2,9 @@
 
 import React from 'react';
 
-import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
+import Dialog from '../../../../base/ui/components/web/Dialog';
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
 import AbstractStopRecordingDialog, {
     type Props,
@@ -29,10 +29,9 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
 
         return (
             <Dialog
-                okKey = 'dialog.confirm'
+                ok = {{ translationKey: 'dialog.confirm' }}
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.recording'
-                width = 'small'>
+                titleKey = 'dialog.recording'>
                 {t(localRecordingVideoStop ? 'recording.localRecordingVideoStop' : 'dialog.stopRecordingWarning') }
             </Dialog>
         );

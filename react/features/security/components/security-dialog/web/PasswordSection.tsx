@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../../base/i18n/functions';
-import { copyText } from '../../../../base/util/copyText';
+import { copyText } from '../../../../base/util/copyText.web';
 import { LOCKED_LOCALLY } from '../../../../room-lock/constants';
 import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 

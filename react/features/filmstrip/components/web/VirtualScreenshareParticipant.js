@@ -147,7 +147,6 @@ const VirtualScreenshareParticipant = ({
                 <ThumbnailTopIndicators
                     currentLayout = { currentLayout }
                     isHovered = { isHovered }
-                    isVirtualScreenshareParticipant = { true }
                     participantId = { participantId }
                     thumbnailType = { thumbnailType } />
             </div>
@@ -159,7 +158,6 @@ const VirtualScreenshareParticipant = ({
                 <ThumbnailBottomIndicators
                     className = { classes.indicatorsBackground }
                     currentLayout = { currentLayout }
-                    isVirtualScreenshareParticipant = { true }
                     local = { false }
                     participantId = { participantId }
                     showStatusIndicators = { true } />

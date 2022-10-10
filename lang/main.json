@@ -1010,6 +1010,7 @@
         "profileSection": "Profile",
         "serverURL": "Server URL",
         "showAdvanced": "Show advanced settings",
+        "startCarModeInLowBandwidthMode": "Start car mode in low bandwidth mode",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
         "terms": "Terms",

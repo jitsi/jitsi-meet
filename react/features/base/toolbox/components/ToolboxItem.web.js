@@ -2,9 +2,9 @@
 
 import React, { Fragment } from 'react';
 
-import ContextMenuItem from '../../components/context-menu/ContextMenuItem';
 import { Icon } from '../../icons';
 import { Tooltip } from '../../tooltip';
+import ContextMenuItem from '../../ui/components/web/ContextMenuItem';
 
 import AbstractToolboxItem from './AbstractToolboxItem';
 import type { Props as AbstractToolboxItemProps } from './AbstractToolboxItem';

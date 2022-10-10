@@ -6,7 +6,9 @@ import { getMultipleVideoSupportFeatureFlag } from '../../../react/features/base
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantById,
-    getPinnedParticipant
+    getPinnedParticipant,
+    isScreenShareParticipant,
+    isScreenShareParticipantById
 } from '../../../react/features/base/participants';
 import {
     getTrackByMediaTypeAndParticipant,
@@ -90,12 +92,13 @@ const VideoLayout = {
     getRemoteVideoType(id) {
         const state = APP.store.getState();
         const participant = getParticipantById(state, id);
+        const isScreenShare = isScreenShareParticipantById(state, id);
 
-        if (participant?.isFakeParticipant) {
+        if (participant?.fakeParticipant && !isScreenShare) {
             return VIDEO_TYPE.CAMERA;
         }
 
-        if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+        if (getMultipleVideoSupportFeatureFlag(state) && isScreenShare) {
             return VIDEO_TYPE.DESKTOP;
         }
 
@@ -190,7 +193,7 @@ const VideoLayout = {
 
         let videoTrack;
 
-        if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+        if (getMultipleVideoSupportFeatureFlag(state) && isScreenShareParticipant(participant)) {
             videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
         } else {
             videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);

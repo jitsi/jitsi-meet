@@ -1,5 +1,3 @@
-// @flow
-
 import {
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
@@ -102,7 +100,7 @@ export function setRequestingSubtitles(enabled: boolean) {
  *      type: UPDATE_TRANSLATION_LANGUAGE
  * }}
  */
-export function updateTranslationLanguage(value) {
+export function updateTranslationLanguage(value: boolean) {
     return {
         type: UPDATE_TRANSLATION_LANGUAGE,
         value
