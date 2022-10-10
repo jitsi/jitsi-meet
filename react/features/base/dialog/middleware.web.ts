@@ -16,6 +16,13 @@ import StartRecordingDialog from '../../recording/components/Recording/web/Start
 // @ts-ignore
 import StopRecordingDialog from '../../recording/components/Recording/web/StopRecordingDialog';
 import ShareAudioDialog from '../../screen-share/components/ShareAudioDialog';
+import ShareScreenWarningDialog from '../../screen-share/components/ShareScreenWarningDialog';
+import SecurityDialog from '../../security/components/security-dialog/web/SecurityDialog';
+import SharedVideoDialog from '../../shared-video/components/web/SharedVideoDialog';
+import SpeakerStats from '../../speaker-stats/components/web/SpeakerStats';
+import LanguageSelectorDialog from '../../subtitles/components/LanguageSelectorDialog.web';
+import MuteEveryoneDialog from '../../video-menu/components/web/MuteEveryoneDialog';
+import MuteEveryonesVideoDialog from '../../video-menu/components/web/MuteEveryonesVideoDialog';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { OPEN_DIALOG } from './actionTypes';
@@ -25,7 +32,8 @@ import { OPEN_DIALOG } from './actionTypes';
 
 const NEW_DIALOG_LIST = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNamePrompt, EmbedMeetingDialog,
     FeedbackDialog, AddPeopleDialog, PremiumFeatureDialog, StartLiveStreamDialog, StopLiveStreamDialog,
-    StartRecordingDialog, StopRecordingDialog, ShareAudioDialog ];
+    StartRecordingDialog, StopRecordingDialog, ShareAudioDialog, ShareScreenWarningDialog, SecurityDialog,
+    SharedVideoDialog, SpeakerStats, LanguageSelectorDialog, MuteEveryoneDialog, MuteEveryonesVideoDialog ];
 
 // This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
 const isNewDialog = (component: any) => NEW_DIALOG_LIST.some(comp => comp === component);

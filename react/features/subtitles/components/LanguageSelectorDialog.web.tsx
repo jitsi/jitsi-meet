@@ -4,10 +4,9 @@ import { useDispatch } from 'react-redux';
 
 import { IState } from '../../app/types';
 // @ts-ignore
-import { Dialog } from '../../base/dialog';
-// @ts-ignore
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { connect } from '../../base/redux/functions';
+import Dialog from '../../base/ui/components/web/Dialog';
 // @ts-ignore
 import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage } from '../actions';
 
@@ -25,8 +24,11 @@ interface ILanguageSelectorDialogProps {
  *
  * @returns {React$Element<any>}
  */
-const LanguageSelectorDialog = ({ _language, _translationLanguages, _translationLanguagesHead }:
-                                    ILanguageSelectorDialogProps) => {
+const LanguageSelectorDialog = ({
+    _language,
+    _translationLanguages,
+    _translationLanguagesHead
+}: ILanguageSelectorDialogProps) => {
 
     const dispatch = useDispatch();
     const off = 'transcribing.subtitlesOff';
@@ -65,10 +67,9 @@ const LanguageSelectorDialog = ({ _language, _translationLanguages, _translation
 
     return (
         <Dialog
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = 'transcribing.subtitles'
-            width = { 'small' }>
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
+            titleKey = 'transcribing.subtitles'>
             <LanguageList
                 items = { listItems }
                 onLanguageSelected = { onLanguageSelected }

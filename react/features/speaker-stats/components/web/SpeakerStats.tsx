@@ -5,8 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
-// @ts-ignore
-import { Dialog } from '../../../base/dialog';
+import Dialog from '../../../base/ui/components/web/Dialog';
 import { escapeRegexp } from '../../../base/util/helpers';
 // @ts-ignore
 import { initSearch, resetSearchCriteria, toggleFaceExpressions } from '../../actions';
@@ -55,9 +54,6 @@ const useStyles = makeStyles()((theme: Theme) => {
                     }
                 }
             }
-        },
-        footer: {
-            display: 'none !important'
         },
         labelsContainer: {
             position: 'relative'
@@ -115,12 +111,10 @@ const SpeakerStats = () => {
 
     return (
         <Dialog
-            cancelKey = 'dialog.close'
-            classes = {{ footer: classes.footer }}
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = 'speakerStats.speakerStats'
-            width = { showFaceExpressions ? '664px' : 'small' }>
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
+            size = { showFaceExpressions ? 'large' : 'medium' }
+            titleKey = 'speakerStats.speakerStats'>
             <div className = { classes.speakerStats }>
                 <div
                     className = {

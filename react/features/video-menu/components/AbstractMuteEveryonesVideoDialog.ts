@@ -1,12 +1,12 @@
-// @flow
+import { WithTranslation } from 'react-i18next';
 
-import React from 'react';
-
+import { IState } from '../../app/types';
 import { requestDisableVideoModeration, requestEnableVideoModeration } from '../../av-moderation/actions';
 import { isEnabledFromState, isSupported } from '../../av-moderation/functions';
-import { Dialog } from '../../base/dialog';
-import { MEDIA_TYPE } from '../../base/media';
-import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants';
+import { MEDIA_TYPE } from '../../base/media/constants';
+import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants/functions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { muteAllParticipants } from '../actions';
 
 import AbstractMuteRemoteParticipantsVideoDialog, {
@@ -17,19 +17,18 @@ import AbstractMuteRemoteParticipantsVideoDialog, {
  * The type of the React {@code Component} props of
  * {@link AbstractMuteEveryonesVideoDialog}.
  */
-export type Props = AbstractProps & {
-
-    content: string,
-    exclude: Array<string>,
-    title: string,
-    showAdvancedModerationToggle: boolean,
-    isVideoModerationEnabled: boolean,
-    isModerationSupported: boolean
+export type Props = AbstractProps & WithTranslation & {
+    content: string;
+    exclude: Array<string>;
+    isModerationSupported: boolean;
+    isVideoModerationEnabled: boolean;
+    showAdvancedModerationToggle: boolean;
+    title: string;
 };
 
 type State = {
-    moderationEnabled: boolean;
     content: string;
+    moderationEnabled: boolean;
 };
 
 /**
@@ -39,7 +38,7 @@ type State = {
  *
  * @augments AbstractMuteRemoteParticipantsVideoDialog
  */
-export default class AbstractMuteEveryonesVideoDialog<P: Props>
+export default class AbstractMuteEveryonesVideoDialog<P extends Props>
     extends AbstractMuteRemoteParticipantsVideoDialog<P, State> {
     static defaultProps = {
         exclude: [],
@@ -68,30 +67,20 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props>
     }
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Toggles advanced moderation switch.
      *
-     * @inheritdoc
-     * @returns {ReactElement}
+     * @returns {void}
      */
-    render() {
-        const { content, title } = this.props;
-
-        return (
-            <Dialog
-                okKey = 'dialog.muteParticipantsVideoButton'
-                onSubmit = { this._onSubmit }
-                titleString = { title }
-                width = 'small'>
-                <div>
-                    { content }
-                </div>
-            </Dialog>
-        );
+    _onToggleModeration() {
+        this.setState(state => {
+            return {
+                moderationEnabled: !state.moderationEnabled,
+                content: this.props.t(state.moderationEnabled
+                    ? 'dialog.muteEveryonesVideoDialog' : 'dialog.muteEveryonesVideoDialogModerationOn'
+                )
+            };
+        });
     }
-
-    _onSubmit: () => boolean;
-
-    _onToggleModeration: () => void;
 
     /**
      * Callback to be invoked when the value of this dialog is submitted.
@@ -118,17 +107,17 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props>
 /**
  * Maps (parts of) the Redux state to the associated {@code AbstractMuteEveryonesVideoDialog}'s props.
  *
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @param {Object} ownProps - The properties explicitly passed to the component.
  * @returns {Props}
  */
-export function abstractMapStateToProps(state: Object, ownProps: Props) {
+export function abstractMapStateToProps(state: IState, ownProps: Props) {
     const { exclude = [], t } = ownProps;
     const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 
     const whom = exclude
         // eslint-disable-next-line no-confusing-arrow
-        .map(id => id === getLocalParticipant(state).id
+        .map(id => id === getLocalParticipant(state)?.id
             ? t('dialog.muteEveryoneSelf')
             : getParticipantDisplayName(state, id))
         .join(', ');

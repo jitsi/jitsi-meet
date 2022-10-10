@@ -4,10 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { IState } from '../../../../app/types';
 // @ts-ignore
 import { setPassword as setPass } from '../../../../base/conference';
-// @ts-ignore
-import { Dialog } from '../../../../base/dialog';
 import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 import { connect } from '../../../../base/redux/functions';
+import Dialog from '../../../../base/ui/components/web/Dialog';
 // @ts-ignore
 import { E2EESection } from '../../../../e2ee/components';
 // @ts-ignore
@@ -90,10 +89,9 @@ function SecurityDialog({
 
     return (
         <Dialog
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = 'security.title'
-            width = { 'small' }>
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
+            titleKey = 'security.title'>
             <div className = 'security-dialog'>
                 <LobbySection />
                 <PasswordSection
