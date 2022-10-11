@@ -1,12 +1,9 @@
-// @flow
-
 import React from 'react';
 
-import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
-import AbstractGrantModeratorDialog
-, { abstractMapStateToProps } from '../AbstractGrantModeratorDialog';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
+import AbstractGrantModeratorDialog, { abstractMapStateToProps } from '../AbstractGrantModeratorDialog';
 
 /**
  * Dialog to confirm a grant moderator action.
@@ -21,10 +18,9 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
     render() {
         return (
             <Dialog
-                okKey = 'dialog.Yes'
+                ok = {{ translationKey: 'dialog.Yes' }}
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.grantModeratorTitle'
-                width = 'small'>
+                titleKey = 'dialog.grantModeratorTitle'>
                 <div>
                     { this.props.t('dialog.grantModeratorDialog', { participantName: this.props.participantName }) }
                 </div>

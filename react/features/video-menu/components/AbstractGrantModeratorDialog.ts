@@ -1,35 +1,29 @@
-// @flow
-
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import {
-    createRemoteVideoMenuButtonEvent,
-    sendAnalytics
-} from '../../analytics';
-import { getParticipantById, grantModerator } from '../../base/participants';
+import { createRemoteVideoMenuButtonEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { IState, IStore } from '../../app/types';
+import { grantModerator } from '../../base/participants/actions';
+import { getParticipantById } from '../../base/participants/functions';
 
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: IStore['dispatch'];
 
     /**
      * The ID of the remote participant to be granted moderator rights.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * The name of the remote participant to be granted moderator rights.
      */
-    participantName: string,
-
-    /**
-     * Function to translate i18n labels.
-     */
-    t: Function
-};
+    participantName: string;
+}
 
 /**
  * Abstract dialog to confirm granting moderator to a participant.
@@ -46,8 +40,6 @@ export default class AbstractGrantModeratorDialog
 
         this._onSubmit = this._onSubmit.bind(this);
     }
-
-    _onSubmit: () => boolean;
 
     /**
      * Callback for the confirm button.
@@ -73,13 +65,13 @@ export default class AbstractGrantModeratorDialog
 /**
  * Maps (parts of) the Redux state to the associated {@code AbstractMuteEveryoneDialog}'s props.
  *
- * @param {Object} state - The redux state.
+ * @param {IState} state - The redux state.
  * @param {Object} ownProps - The properties explicitly passed to the component.
  * @returns {Props}
  */
-export function abstractMapStateToProps(state: Object, ownProps: Props) {
+export function abstractMapStateToProps(state: IState, ownProps: Props) {
 
     return {
-        participantName: getParticipantById(state, ownProps.participantID).name
+        participantName: getParticipantById(state, ownProps.participantID)?.name
     };
 }

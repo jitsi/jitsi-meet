@@ -150,6 +150,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             boxSizing: 'border-box',
             padding: '0 24px',
             overflowX: 'hidden',
+            minHeight: '40px',
 
             '@media (max-width: 448px)': {
                 height: '100%'
@@ -242,10 +243,15 @@ const Dialog = ({
                 className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
                 role = 'dialog'>
                 <div className = { classes.header }>
-                    <p className = { classes.title }>{title ?? t(titleKey ?? '')}</p>
+                    <p
+                        className = { classes.title }
+                        id = 'dialog-title'>
+                        {title ?? t(titleKey ?? '')}
+                    </p>
                     <ClickableIcon
                         accessibilityLabel = { t('dialog.close') }
                         icon = { IconClose }
+                        id = 'modal-header-close-button'
                         onClick = { onClose } />
                 </div>
                 <div className = { classes.content }>{children}</div>

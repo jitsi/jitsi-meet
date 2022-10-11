@@ -94,7 +94,6 @@ const styles = (theme: Theme) => {
             },
 
             '& .video-background-preview-entry': {
-                marginLeft: '-10px',
                 height: '250px',
                 width: '570px',
                 marginBottom: theme.spacing(2),
