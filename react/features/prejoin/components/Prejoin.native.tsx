@@ -44,6 +44,7 @@ import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNav
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 // @ts-ignore
 import { screen } from '../../mobile/navigation/routes';
+import { clearNotifications } from '../../notifications/actions';
 // @ts-ignore
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 // @ts-ignore
@@ -83,6 +84,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const onJoin = useCallback(() => {
         setIsJoining(true);
         dispatch(connect());
+        dispatch(clearNotifications());
         navigateRoot(screen.conference.root);
     }, [ dispatch ]);
 
@@ -125,7 +127,8 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerLeft
+            headerLeft,
+            headerTitle: t('prejoin.joinMeeting')
         });
     }, [ navigation ]);
 
@@ -160,9 +163,6 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
             }
             <View style = { contentContainerStyles }>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
-                    <Text style = { styles.preJoinTitle as StyleProp<TextStyle> }>
-                        { t('prejoin.joinMeeting') }
-                    </Text>
                     <Text
                         numberOfLines = { 1 }
                         style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
