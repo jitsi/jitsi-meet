@@ -10,9 +10,7 @@ import { Avatar } from '../../../../../base/avatar';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
-// @ts-ignore
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 // @ts-ignore
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';

@@ -1,28 +1,22 @@
-/* eslint-disable lines-around-comment */
 import Spinner from '@atlaskit/spinner';
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { IState } from '../../app/types';
-// @ts-ignore
-import { hideDialog } from '../../base/dialog';
-// @ts-ignore
-import { translate } from '../../base/i18n';
+import { hideDialog } from '../../base/dialog/actions';
+import { translate } from '../../base/i18n/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import Video from '../../base/media/components/Video';
-import { connect, equals } from '../../base/redux/functions';
-// @ts-ignore
-import { getCurrentCameraDeviceId } from '../../base/settings';
-// @ts-ignore
+import { equals } from '../../base/redux/functions';
+import { getCurrentCameraDeviceId } from '../../base/settings/functions.web';
 import { createLocalTracksF } from '../../base/tracks/functions';
-// @ts-ignore
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-// @ts-ignore
 import { toggleBackgroundEffect } from '../actions';
-// @ts-ignore
 import logger from '../logger';
 
 const videoClassName = 'video-preview-video';
@@ -227,6 +221,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
         return (
             <div className = 'video-preview-loader'>
                 <Spinner
+
                     // @ts-ignore
                     invertColor = { true }
                     isCompleting = { false }
@@ -329,7 +324,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
  * @private
  * @returns {{Props}}
  */
-function _mapStateToProps(state: IState): Object {
+function _mapStateToProps(state: IState) {
     return {
         _currentCameraDeviceId: getCurrentCameraDeviceId(state)
     };

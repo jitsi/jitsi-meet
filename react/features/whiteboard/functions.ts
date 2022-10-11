@@ -1,14 +1,10 @@
-/* eslint-disable import/order */
 import md5 from 'js-md5';
 
-// @ts-ignore
-import { getPinnedParticipant } from '../../features/base/participants';
+import { getPinnedParticipant } from '../../features/base/participants/functions';
 import { IState } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { getRemoteParticipants, isLocalParticipantModerator } from '../base/participants/functions';
 import { appendURLParam } from '../base/util/uri';
-
-// @ts-ignore
 import { getCurrentRoomId, isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { WHITEBOARD_ID } from './constants';

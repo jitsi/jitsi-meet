@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
@@ -8,6 +7,7 @@ import {
     _STORE_CURRENT_CONFERENCE,
     _UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { isRecentListEnabled } from './functions';
 

@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { ComponentType, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +7,6 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IState } from '../../app/types';
 import { getLocalParticipant, getParticipantById } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
-// @ts-ignore
 import { registerVote, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
 import { Poll } from '../types';

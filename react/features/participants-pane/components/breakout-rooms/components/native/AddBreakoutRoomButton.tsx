@@ -1,10 +1,8 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Button from '../../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../../base/ui/constants';
-// @ts-ignore
 import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
 
 // @ts-ignore

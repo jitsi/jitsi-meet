@@ -11,8 +11,10 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-// @ts-ignore
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../../../base/config';
+import {
+    getMultipleVideoSupportFeatureFlag,
+    getSourceNameSignalingFeatureFlag
+} from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 // @ts-ignore
@@ -29,21 +31,16 @@ import {
 } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
-// @ts-ignore
-import { isTestModeEnabled } from '../../../base/testing';
+import { isTestModeEnabled } from '../../../base/testing/functions';
+import { trackStreamingStatusChanged, updateLastTrackVideoMediaEvent } from '../../../base/tracks/actions';
 import {
     getLocalAudioTrack,
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
-    getVirtualScreenshareParticipantTrack,
-    trackStreamingStatusChanged,
-    updateLastTrackVideoMediaEvent
-    // @ts-ignore
-} from '../../../base/tracks';
+    getVirtualScreenshareParticipantTrack
+} from '../../../base/tracks/functions';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
-// @ts-ignore
 import { hideGif, showGif } from '../../../gifs/actions';
-// @ts-ignore
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 // @ts-ignore
 import { PresenceLabel } from '../../../presence-status';
@@ -1178,7 +1175,7 @@ function _mapStateToProps(state: IState, ownProps: any): Object {
     const { participantID, filmstripType = FILMSTRIP_TYPE.MAIN } = ownProps;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
-    const id = participant?.id;
+    const id = participant?.id ?? '';
     const isLocal = participant?.local ?? true;
     const multipleVideoSupportEnabled = getMultipleVideoSupportFeatureFlag(state);
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);

@@ -20,7 +20,7 @@ export function isTrackStreamingStatusActive(videoTrack: ITrack) {
  * @param {Object} videoTrack - Track reference.
  * @returns {boolean} - Is streaming status inactive.
  */
-export function isTrackStreamingStatusInactive(videoTrack: ITrack) {
+export function isTrackStreamingStatusInactive(videoTrack?: ITrack) {
     const streamingStatus = videoTrack?.streamingStatus;
 
     return streamingStatus === JitsiTrackStreamingStatus.INACTIVE;
@@ -32,7 +32,7 @@ export function isTrackStreamingStatusInactive(videoTrack: ITrack) {
  * @param {Object} videoTrack - Track reference.
  * @returns {boolean} - Is streaming status interrupted.
  */
-export function isTrackStreamingStatusInterrupted(videoTrack: ITrack) {
+export function isTrackStreamingStatusInterrupted(videoTrack?: ITrack) {
     const streamingStatus = videoTrack?.streamingStatus;
 
     return streamingStatus === JitsiTrackStreamingStatus.INTERRUPTED;

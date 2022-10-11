@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import i18next from 'i18next';
 import { v4 as uuidV4 } from 'uuid';
 import fixWebmDuration from 'webm-duration-fix';
@@ -8,6 +7,7 @@ import { getRoomName } from '../../../base/conference/functions';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getLocalTrack, getTrackState } from '../../../base/tracks/functions';
 import { inIframe } from '../../../base/util/iframeUtils';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { stopLocalVideoRecording } from '../../actions.any';
 
@@ -223,6 +223,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
             const currentTitle = document.title;
 
             document.title = i18next.t('localRecording.selectTabTitle');
+
             // @ts-ignore
             gdmStream = await navigator.mediaDevices.getDisplayMedia({
                 // @ts-ignore

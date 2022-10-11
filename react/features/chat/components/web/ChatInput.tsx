@@ -1,16 +1,13 @@
-/* eslint-disable lines-around-comment */
 import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
-import { IState } from '../../../app/types';
+import { IState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconPlane, IconSmile } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
-// @ts-ignore
 import { areSmileysDisabled } from '../../functions';
 
 // @ts-ignore
@@ -29,7 +26,7 @@ interface Props extends WithTranslation {
     /**
      * Invoked to send chat messages.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * Callback to invoke on message send.

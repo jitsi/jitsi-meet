@@ -4,8 +4,7 @@ import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 
 import { IState } from '../../../app/types';
-// @ts-ignore
-import { getAvailableDevices } from '../../../base/devices';
+import { getAvailableDevices } from '../../../base/devices/actions';
 // @ts-ignore
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
 import { connect } from '../../../base/redux/functions';

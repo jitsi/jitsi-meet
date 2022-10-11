@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import type { AudioElement } from '../media';
 import ReducerRegistry from '../redux/ReducerRegistry';

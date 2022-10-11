@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { FlagGroupContext } from '@atlaskit/flag/flag-group';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import { Theme } from '@mui/material';
@@ -11,9 +10,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { IState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import { hideNotification } from '../../actions';
-// @ts-ignore
 import { areThereNotifications } from '../../functions';
 
 // @ts-ignore

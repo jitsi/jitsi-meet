@@ -1,11 +1,9 @@
-/* eslint-disable lines-around-comment */
 import { v4 as uuidv4 } from 'uuid';
 
 import { IState } from '../app/types';
-// @ts-ignore
-import { REACTIONS_ENABLED, getFeatureFlag } from '../base/flags';
+import { REACTIONS_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import { getLocalParticipant } from '../base/participants/functions';
-// @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import { REACTIONS, ReactionEmojiProps, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';

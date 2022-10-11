@@ -1,7 +1,8 @@
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
+import { IStore } from '../../app/types';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { extractYoutubeIdOrURL } from '../functions';
 
@@ -14,7 +15,7 @@ export interface Props extends WithTranslation {
     /**
      * Invoked to update the shared video link.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * Function to be invoked after typing a valid video.

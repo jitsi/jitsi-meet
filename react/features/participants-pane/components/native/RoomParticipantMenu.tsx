@@ -12,7 +12,6 @@ import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import { getBreakoutRooms } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import SendToBreakoutRoom from '../../../video-menu/components/native/SendToBreakoutRoom';

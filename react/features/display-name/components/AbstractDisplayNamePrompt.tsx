@@ -1,9 +1,8 @@
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
-// @ts-ignore
-import { updateSettings } from '../../base/settings';
+import { IStore } from '../../app/types';
+import { updateSettings } from '../../base/settings/actions';
 
 /**
  * The type of the React {@code Component} props of
@@ -14,7 +13,7 @@ export interface Props extends WithTranslation {
     /**
      * Invoked to update the local participant's display name.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * Function to be invoked after a successful display name change.

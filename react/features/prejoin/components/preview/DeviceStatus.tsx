@@ -11,8 +11,6 @@ import { connect } from '../../../base/redux/functions';
 import {
     getDeviceStatusText,
     getDeviceStatusType
-
-    // @ts-ignore
 } from '../../functions';
 
 export interface Props extends WithTranslation {

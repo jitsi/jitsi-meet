@@ -15,9 +15,7 @@ import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 // @ts-ignore
 import { stopSharedVideo } from '../../../shared-video/actions.any';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
-// @ts-ignore
 import { setWhiteboardOpen } from '../../../whiteboard/actions';
 import { WHITEBOARD_ID } from '../../../whiteboard/constants';
 

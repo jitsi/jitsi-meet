@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +7,6 @@ import { makeStyles } from 'tss-react/mui';
 import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../../analytics/functions';
 import Button from '../../../../../base/ui/components/web/Button';
-// @ts-ignore
 import { moveToRoom } from '../../../../../breakout-rooms/actions';
 
 type Props = {

@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
-// @ts-ignore
 import { isDisplayNameVisible } from '../../../base/config/functions.any';
 import {
     getLocalParticipant,
@@ -17,7 +16,6 @@ import { Participant } from '../../../base/participants/types';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { getLargeVideoParticipant } from '../../../large-video/functions';
-// @ts-ignore
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 // @ts-ignore
 import { isLayoutTileView } from '../../../video-layout';

@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -7,8 +6,8 @@ import { translate } from '../../../base/i18n/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import Switch from '../../../base/ui/components/web/Switch';
-// @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { toggleLobbyMode } from '../../actions';
 

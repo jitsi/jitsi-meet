@@ -9,7 +9,6 @@ import {
     getMultipleVideoSupportFeatureFlag,
     isDisplayNameVisible,
     isNameReadOnly
-    // @ts-ignore
 } from '../../../base/config/functions.any';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
 // @ts-ignore

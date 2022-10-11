@@ -5,8 +5,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
-// @ts-ignore
-import { getMultipleVideoSupportFeatureFlag } from '../../../base/config';
+import { getMultipleVideoSupportFeatureFlag } from '../../../base/config/functions.any';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
 // @ts-ignore

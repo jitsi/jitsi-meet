@@ -16,7 +16,6 @@ import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/f
 import GifsMenu from '../../../gifs/components/web/GifsMenu';
 // @ts-ignore
 import GifsMenuButton from '../../../gifs/components/web/GifsMenuButton';
-// @ts-ignore
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
 // @ts-ignore
 import { dockToolbox } from '../../../toolbox/actions.web';

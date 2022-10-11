@@ -1,7 +1,6 @@
-/* eslint-disable import/order */
 // @ts-ignore
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
-
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import traceInit from '@jitsi/rtcstats/trace-ws';
 

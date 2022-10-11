@@ -1,14 +1,12 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { getComputedOuterHeight } from '../../../../participants-pane/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../../toolbox/components/web';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
 import { withPixelLineHeight } from '../../../styles/functions.web';

@@ -8,16 +8,12 @@ import { IStore } from '../app/types';
 import {
     conferenceLeft,
     conferenceWillLeave,
-    createConference,
-    getCurrentConference
+    createConference
     // @ts-ignore
-} from '../base/conference';
+} from '../base/conference/actions';
 import { CONFERENCE_LEAVE_REASONS } from '../base/conference/constants';
-import {
-    setAudioMuted,
-    setVideoMuted
-    // @ts-ignore
-} from '../base/media';
+import { getCurrentConference } from '../base/conference/functions';
+import { setAudioMuted, setVideoMuted } from '../base/media/actions';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { getRemoteParticipants } from '../base/participants/functions';
 import {
@@ -230,7 +226,7 @@ export function moveToRoom(roomId?: string) {
             // dispatch(setRoom(_roomId));
             dispatch(createConference(_roomId));
             dispatch(setAudioMuted(audio.muted));
-            dispatch(setVideoMuted(video.muted));
+            dispatch(setVideoMuted(Boolean(video.muted)));
             dispatch(createDesiredLocalTracks());
         } else {
             const localTracks = getLocalTracks(getState()['features/base/tracks']);

@@ -10,15 +10,12 @@ import {
     requestDisableVideoModeration,
     requestEnableAudioModeration,
     requestEnableVideoModeration
-    // @ts-ignore
 } from '../../../av-moderation/actions';
 import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
-    // @ts-ignore
 } from '../../../av-moderation/functions';
-// @ts-ignore
-import { openDialog } from '../../../base/dialog';
+import { openDialog } from '../../../base/dialog/actions';
 import {
     IconCheck,
     IconHorizontalPoints,
@@ -31,7 +28,6 @@ import {
 } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
-// @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import {
     openSettingsDialog,

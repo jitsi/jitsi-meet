@@ -4,16 +4,14 @@ import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
 
-import { IState } from '../../../app/types';
+import { IState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../base/participants/functions';
-// @ts-ignore
-import { updateSettings } from '../../../base/settings';
+import { updateSettings } from '../../../base/settings/actions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
@@ -50,7 +48,7 @@ interface Props extends WithTranslation {
     /**
      * Invoked to update the participant's display name.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * A string to append to the displayName, if provided.

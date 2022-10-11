@@ -6,11 +6,9 @@ import clsx from 'clsx';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
 
-import { IState } from '../../../app/types';
-// @ts-ignore
-import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
+import { IState, IStore } from '../../../app/types';
+import { getSourceNameSignalingFeatureFlag } from '../../../base/config/functions.any';
 import { translate } from '../../../base/i18n/functions';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
@@ -24,8 +22,7 @@ import {
     getSourceNameByParticipantId,
     getTrackByMediaTypeAndParticipant,
     getVirtualScreenshareParticipantTrack
-    // @ts-ignore
-} from '../../../base/tracks';
+} from '../../../base/tracks/functions';
 import {
     isParticipantConnectionStatusInactive,
     isParticipantConnectionStatusInterrupted,
@@ -131,7 +128,7 @@ type Props = AbstractProps & WithTranslation & {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * Whether or not clicking the indicator should display a popover for more

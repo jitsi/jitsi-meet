@@ -1,10 +1,8 @@
-/* eslint-disable lines-around-comment */
 import { IStore } from '../app/types';
 import {
     CONFERENCE_JOINED,
     CONFERENCE_WILL_LEAVE
 } from '../base/conference/actionTypes';
-// @ts-ignore
 import { getCurrentConference } from '../base/conference/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getParticipantCount } from '../base/participants/functions';

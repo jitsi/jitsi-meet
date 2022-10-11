@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
+import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { updateSettings } from '../../../base/settings';
+import { updateSettings } from '../../../base/settings/actions';
 import { Button } from '../../../base/ui/components/web';
 import Input from '../../../base/ui/components/web/Input';
 
@@ -21,7 +19,7 @@ interface Props extends WithTranslation {
     /**
      * Invoked to set the local participant display name.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * Whether the polls feature is enabled or not.

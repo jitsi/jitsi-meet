@@ -7,10 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
-// @ts-ignore
 import { rejectParticipantAudio } from '../../../av-moderation/actions';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
-// @ts-ignore
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../../../base/participants/functions';
@@ -19,13 +17,10 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
 import useContextMenu from '../../../base/ui/hooks/useContextMenu';
 import { normalizeAccents } from '../../../base/util/strings.web';
-// @ts-ignore
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
-// @ts-ignore
-import { showOverflowDrawer } from '../../../toolbox/functions';
+import { showOverflowDrawer } from '../../../toolbox/functions.web';
 // @ts-ignore
 import { muteRemote } from '../../../video-menu/actions.any';
-// @ts-ignore
 import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 // @ts-ignore
 import { useParticipantDrawer } from '../../hooks';

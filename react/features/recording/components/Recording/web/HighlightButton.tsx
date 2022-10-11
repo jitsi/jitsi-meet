@@ -5,8 +5,7 @@ import React from 'react';
 
 // @ts-ignore
 import { StartRecordingDialog } from '../..';
-// @ts-ignore
-import { openDialog } from '../../../../base/dialog';
+import { openDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n/functions';
 import { IconHighlight } from '../../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../../base/jwt/constants';

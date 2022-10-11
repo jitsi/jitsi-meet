@@ -3,9 +3,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../../base/i18n/functions';
 import Input from '../../../../base/ui/components/web/Input';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { LOCKED_LOCALLY } from '../../../../room-lock';
+import { LOCKED_LOCALLY } from '../../../../room-lock/constants';
 
 /**
  * The type of the React {@code Component} props of {@link PasswordForm}.

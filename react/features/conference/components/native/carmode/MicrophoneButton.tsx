@@ -10,14 +10,12 @@ import {
 } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IState } from '../../../../app/types';
-// @ts-ignore
-import { AUDIO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../../../base/flags';
+import { AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags/constants';
+import { getFeatureFlag } from '../../../../base/flags/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../../base/media/constants';
-// @ts-ignore
-import { isLocalTrackMuted } from '../../../../base/tracks';
-// @ts-ignore
+import { isLocalTrackMuted } from '../../../../base/tracks/functions';
 import { isAudioMuteButtonDisabled } from '../../../../toolbox/functions.any';
 // @ts-ignore
 import { muteLocal } from '../../../../video-menu/actions';
@@ -37,7 +35,7 @@ const MicrophoneButton = (): JSX.Element | null => {
     const audioMuted = useSelector((state: IState) => isLocalTrackMuted(state['features/base/tracks'],
         MEDIA_TYPE.AUDIO));
     const disabled = useSelector(isAudioMuteButtonDisabled);
-    const enabledFlag = useSelector(state => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
+    const enabledFlag = useSelector((state: IState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
     const [ longPress, setLongPress ] = useState(false);
 
     if (!enabledFlag) {
