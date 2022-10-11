@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-#import <JitsiMeetSDK/JitsiMeetSDK.h>
+#import "JitsiMeetView+Private.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation JitsiMeetView (Private)
 
-static NSString * const updateViewPropsNotificationName = @"org.jitsi.meet.UpdateViewProps";
-
-@interface JitsiMeetView (Private)
-
-+ (void)updateProps:(NSDictionary *_Nonnull)newProps;
++ (void)updateProps:(NSDictionary *_Nonnull)newProps {
+    [[NSNotificationCenter defaultCenter] postNotificationName:updateViewPropsNotificationName object:nil userInfo:@{@"props": newProps}];
+}
 
 @end
-
-NS_ASSUME_NONNULL_END
