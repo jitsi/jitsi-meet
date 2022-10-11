@@ -41,6 +41,7 @@ import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNav
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 // @ts-ignore
 import { screen } from '../../mobile/navigation/routes';
+import { clearNotifications } from '../../notifications/actions';
 // @ts-ignore
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 // @ts-ignore
@@ -79,6 +80,7 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const onJoin = useCallback(() => {
         setIsJoining(true);
         dispatch(connect());
+        dispatch(clearNotifications());
         navigateRoot(screen.conference.root);
     }, [ dispatch ]);
 
