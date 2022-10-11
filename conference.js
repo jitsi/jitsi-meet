@@ -127,6 +127,7 @@ import {
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
+    toggleScreensharing as toggleScreensharingA,
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
@@ -1733,6 +1734,8 @@ export default {
      * is not specified and starts the procedure for obtaining new screen
      * sharing/video track otherwise.
      *
+     * NOTE: this is currently ONLY used in the non-multi-stream case.
+     *
      * @param {boolean} [toggle] - If true - new screen sharing track will be
      * obtained. If false - new video track will be obtain. If not specified -
      * toggles between screen sharing and camera video.
@@ -2658,9 +2661,14 @@ export default {
             }
         });
 
+        // Used in non-multi-stream.
         APP.UI.addListener(
-            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly, ignoreDidHaveVideo }) => {
-                this.toggleScreenSharing(enabled, { audioOnly }, ignoreDidHaveVideo);
+            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly, ignoreDidHaveVideo, desktopStream }) => {
+                this.toggleScreenSharing(enabled,
+                    {
+                        audioOnly,
+                        desktopStream
+                    }, ignoreDidHaveVideo);
             }
         );
     },
@@ -3216,7 +3224,7 @@ export default {
                         return;
                     }
 
-                    this.toggleScreenSharing(undefined, { desktopStream });
+                    APP.store.dispatch(toggleScreensharingA(undefined, false, false, { desktopStream }));
                 }
             });
         }

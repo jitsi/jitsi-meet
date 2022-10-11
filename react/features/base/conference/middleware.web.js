@@ -81,7 +81,7 @@ MiddlewareRegistry.register(store => next => action => {
                 return;
             }
 
-            const { enabled, audioOnly, ignoreDidHaveVideo } = action;
+            const { enabled, audioOnly, ignoreDidHaveVideo, shareOptions } = action;
 
             if (getMultipleVideoSendingSupportFeatureFlag(store.getState())) {
                 _toggleScreenSharing(action, store);
@@ -90,7 +90,8 @@ MiddlewareRegistry.register(store => next => action => {
                     {
                         enabled,
                         audioOnly,
-                        ignoreDidHaveVideo
+                        ignoreDidHaveVideo,
+                        desktopStream: shareOptions?.desktopStream
                     });
             }
         }
@@ -186,23 +187,30 @@ async function _toggleScreenSharing({ enabled, audioOnly = false, shareOptions =
 
     if (enable) {
         let tracks;
-        const { _desktopSharingSourceDevice } = state['features/base/config'];
 
-        if (!shareOptions.desktopSharingSources && _desktopSharingSourceDevice) {
-            shareOptions.desktopSharingSourceDevice = _desktopSharingSourceDevice;
+        // Spot proxy stream.
+        if (shareOptions.desktopStream) {
+            tracks = [ shareOptions.desktopStream ];
+        } else {
+            const { _desktopSharingSourceDevice } = state['features/base/config'];
+
+            if (!shareOptions.desktopSharingSources && _desktopSharingSourceDevice) {
+                shareOptions.desktopSharingSourceDevice = _desktopSharingSourceDevice;
+            }
+            const options = {
+                devices: [ VIDEO_TYPE.DESKTOP ],
+                ...shareOptions
+            };
+
+            try {
+                tracks = await createLocalTracksF(options);
+            } catch (error) {
+                _handleScreensharingError(error, store);
+
+                return;
+            }
         }
-        const options = {
-            devices: [ VIDEO_TYPE.DESKTOP ],
-            ...shareOptions
-        };
 
-        try {
-            tracks = await createLocalTracksF(options);
-        } catch (error) {
-            _handleScreensharingError(error, store);
-
-            return;
-        }
         const desktopAudioTrack = tracks.find(track => track.getType() === MEDIA_TYPE.AUDIO);
         const desktopVideoTrack = tracks.find(track => track.getType() === MEDIA_TYPE.VIDEO);
 
