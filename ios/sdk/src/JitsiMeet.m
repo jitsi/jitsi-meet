@@ -15,9 +15,8 @@
  */
 
 #import <Intents/Intents.h>
-#import <WebRTC/RTCLogging.h>
-#import "Orientation.h"
 
+#import "Dropbox.h"
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
@@ -26,10 +25,8 @@
 #import "RNSplashScreen.h"
 #import "ScheenshareEventEmiter.h"
 
-#if !defined(JITSI_MEET_SDK_LITE)
 #import <RNGoogleSignin/RNGoogleSignin.h>
-#import "Dropbox.h"
-#endif
+#import <WebRTC/RTCLogging.h>
 
 @implementation JitsiMeet {
     RCTBridgeWrapper *_bridgeWrapper;
@@ -80,9 +77,7 @@
 
     _launchOptions = [launchOptions copy];
 
-#if !defined(JITSI_MEET_SDK_LITE)
     [Dropbox setAppKey];
-#endif
 
     return YES;
 }
@@ -92,19 +87,14 @@
     restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *))restorationHandler {
 
     JitsiMeetConferenceOptions *options = [self optionsFromUserActivity:userActivity];
-    if (options) {
-        [JitsiMeetView updateProps:[options asProps]];
-        return true;
-    }
 
-    return false;
+    return options && [JitsiMeetView setPropsInViews:[options asProps]];
 }
 
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
 
-#if !defined(JITSI_MEET_SDK_LITE)
     if ([Dropbox application:app openURL:url options:options]) {
         return YES;
     }
@@ -114,7 +104,6 @@
                             options:options]) {
         return YES;
     }
-#endif
 
     if (_customUrlScheme == nil || ![_customUrlScheme isEqualToString:url.scheme]) {
         return NO;
@@ -123,13 +112,8 @@
     JitsiMeetConferenceOptions *conferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.room = [url absoluteString];
     }];
-    [JitsiMeetView updateProps:[conferenceOptions asProps]];
 
-    return true;
-}
-
-- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-    return [Orientation getOrientation];
+    return [JitsiMeetView setPropsInViews:[conferenceOptions asProps]];
 }
 
 #pragma mark - Utility methods

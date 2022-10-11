@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2022-present 8x8, Inc.
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +15,11 @@
  * limitations under the License.
  */
 
-#import <JitsiMeetSDK/JitsiMeetSDK.h>
+#import "JitsiMeetView.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@interface JitsiMeetView ()
 
-static NSString * const updateViewPropsNotificationName = @"org.jitsi.meet.UpdateViewProps";
-
-@interface JitsiMeetView (Private)
-
-+ (void)updateProps:(NSDictionary *_Nonnull)newProps;
++ (instancetype _Nullable)viewForExternalAPIScope:(NSString *_Nonnull)externalAPIScope;
++ (BOOL)setPropsInViews:(NSDictionary *_Nonnull)newProps;
 
 @end
-
-NS_ASSUME_NONNULL_END

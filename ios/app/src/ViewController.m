@@ -31,7 +31,7 @@
 
     JitsiMeetView *view = (JitsiMeetView *) self.view;
     view.delegate = self;
-
+  
     [view join:[[JitsiMeet sharedInstance] getInitialConferenceOptions]];
 }
 

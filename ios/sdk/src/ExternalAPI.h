@@ -16,8 +16,6 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 
-static NSString * const sendEventNotificationName = @"org.jitsi.meet.SendEvent";
-
 @interface ExternalAPI : RCTEventEmitter<RCTBridgeModule>
 
 - (void)sendHangUp;
