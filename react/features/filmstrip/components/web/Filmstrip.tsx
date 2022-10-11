@@ -5,24 +5,20 @@ import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { FixedSizeGrid, FixedSizeList } from 'react-window';
-import type { Dispatch } from 'redux';
 
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState } from '../../../app/types';
-// @ts-ignore
-import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config';
+import { IState, IStore } from '../../../app/types';
+import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg';
 import { Participant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 // @ts-ignore
 import { showToolbox } from '../../../toolbox/actions.web';
-// @ts-ignore
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 // @ts-ignore
 import { getCurrentLayout } from '../../../video-layout';
@@ -232,7 +228,7 @@ interface Props extends WithTranslation {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * The type of filmstrip to be displayed.

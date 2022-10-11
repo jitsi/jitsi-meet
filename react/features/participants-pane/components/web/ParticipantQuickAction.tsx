@@ -1,15 +1,11 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
 import { approveParticipant } from '../../../av-moderation/actions';
 import Button from '../../../base/ui/components/web/Button';
-// @ts-ignore
 import { QUICK_ACTION_BUTTON } from '../../constants';
 
 type Props = {

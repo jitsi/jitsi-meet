@@ -1,11 +1,10 @@
 /* eslint-disable lines-around-comment */
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
 // @ts-ignore
 import { connect } from '../../../../../connection';
-import { IState } from '../../../app/types';
+import { IState, IStore } from '../../../app/types';
 import { IConfig } from '../../../base/config/configType';
 import { toJid } from '../../../base/connection/functions';
 // @ts-ignore
@@ -55,7 +54,7 @@ interface Props extends WithTranslation {
     /**
      * Redux store dispatch method.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * Invoked when username and password are submitted.

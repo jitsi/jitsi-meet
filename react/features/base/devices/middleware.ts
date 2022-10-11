@@ -1,15 +1,14 @@
 import { AnyAction } from 'redux';
 
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import UIEvents from '../../../../service/UI/UIEvents';
 import { IStore } from '../../app/types';
 import { processExternalDeviceRequest } from '../../device-selection/functions';
 import { showNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
-// @ts-ignore
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import JitsiMeetJS, { JitsiMediaDevicesEvents, JitsiTrackErrors } from '../lib-jitsi-meet';

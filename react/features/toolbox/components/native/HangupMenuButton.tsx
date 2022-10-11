@@ -1,9 +1,7 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
-import { openSheet } from '../../../base/dialog';
+import { openSheet } from '../../../base/dialog/actions';
 import { IconHangup } from '../../../base/icons/svg';
 import IconButton from '../../../base/react/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../base/ui/constants';

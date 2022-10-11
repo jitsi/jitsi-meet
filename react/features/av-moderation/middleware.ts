@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { batch } from 'react-redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
@@ -19,6 +18,7 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { muteLocal } from '../video-menu/actions.any';
 

@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { IState } from '../app/types';
 import {
     isEnabledFromState,
@@ -7,8 +6,8 @@ import {
     isSupported
 } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
-// @ts-ignore
-import { INVITE_ENABLED, getFeatureFlag } from '../base/flags';
+import { INVITE_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
@@ -20,6 +19,7 @@ import {
 } from '../base/participants/functions';
 import { Participant } from '../base/participants/types';
 import { toState } from '../base/redux/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { normalizeAccents } from '../base/util/strings';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';

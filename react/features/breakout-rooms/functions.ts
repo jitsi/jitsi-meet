@@ -1,9 +1,7 @@
 import _ from 'lodash';
 
 import { IStateful } from '../base/app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { getCurrentConference } from '../base/conference';
+import { getCurrentConference } from '../base/conference/functions';
 import { getParticipantById, getParticipantCount, isLocalParticipantModerator } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 

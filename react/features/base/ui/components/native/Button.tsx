@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -95,6 +94,7 @@ const Button: React.FC<IButtonProps> = ({
                 contentStyle
             ] }
             disabled = { disabled }
+
             // @ts-ignore
             icon = { icon }
             labelStyle = { [

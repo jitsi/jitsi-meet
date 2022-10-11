@@ -9,12 +9,12 @@ import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardsh
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
-// @ts-ignore
-import { getMultipleVideoSendingSupportFeatureFlag, getToolbarButtons } from '../../../base/config';
-// @ts-ignore
-import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
-// @ts-ignore
-import { openDialog, toggleDialog } from '../../../base/dialog';
+import {
+    getMultipleVideoSendingSupportFeatureFlag,
+    getToolbarButtons,
+    isToolbarButtonEnabled
+} from '../../../base/config/functions.web';
+import { openDialog, toggleDialog } from '../../../base/dialog/actions';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
@@ -26,12 +26,10 @@ import {
     hasRaisedHand
 } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
-import { getLocalVideoTrack } from '../../../base/tracks';
+import { getLocalVideoTrack } from '../../../base/tracks/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
-// @ts-ignore
-import { toggleChat } from '../../../chat';
+import { toggleChat } from '../../../chat/actions.web';
 // @ts-ignore
 import { ChatButton } from '../../../chat/components';
 // @ts-ignore
@@ -40,13 +38,10 @@ import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 // @ts-ignore
 import { FeedbackButton } from '../../../feedback';
-// @ts-ignore
 import { setGifMenuVisibility } from '../../../gifs/actions';
-// @ts-ignore
 import { isGifEnabled } from '../../../gifs/functions';
 // @ts-ignore
 import { InviteButton } from '../../../invite/components/add-people-dialog';
-// @ts-ignore
 import { isVpaasMeeting } from '../../../jaas/functions';
 // @ts-ignore
 import { KeyboardShortcutsButton } from '../../../keyboard-shortcuts';
@@ -58,7 +53,6 @@ import {
 } from '../../../participants-pane/actions';
 // @ts-ignore
 import { ParticipantsPaneButton } from '../../../participants-pane/components/web';
-// @ts-ignore
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { addReactionToBuffer } from '../../../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';

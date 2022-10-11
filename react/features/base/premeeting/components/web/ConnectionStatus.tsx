@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { WithTranslation } from 'react-i18next';

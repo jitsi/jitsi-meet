@@ -1,26 +1,22 @@
-/* eslint-disable import/order */
+/* eslint-disable lines-around-comment */
 import { generateCollaborationLinkData } from '@jitsi/excalidraw';
+
 import { IStore } from '../app/types';
-
-import { participantJoined, participantLeft, pinParticipant } from '../base/participants/actions';
-
-// @ts-ignore
 import { getCurrentConference } from '../base/conference/functions';
-
-// @ts-ignore
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { RESET_WHITEBOARD, SET_WHITEBOARD_OPEN } from './actionTypes';
-import { getCollabDetails, getCollabServerUrl, isWhiteboardPresent } from './functions';
-import { WHITEBOARD_ID, WHITEBOARD_PARTICIPANT_NAME } from './constants';
-import { resetWhiteboard, setWhiteboardOpen, setupWhiteboard } from './actions';
-
+import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { participantJoined, participantLeft, pinParticipant } from '../base/participants/actions';
+import { FakeParticipant } from '../base/participants/types';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 // @ts-ignore
 import { addStageParticipant } from '../filmstrip/actions.web';
-
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { FakeParticipant } from '../base/participants/types';
+
+import { RESET_WHITEBOARD, SET_WHITEBOARD_OPEN } from './actionTypes';
+import { resetWhiteboard, setWhiteboardOpen, setupWhiteboard } from './actions';
+import { WHITEBOARD_ID, WHITEBOARD_PARTICIPANT_NAME } from './constants';
+import { getCollabDetails, getCollabServerUrl, isWhiteboardPresent } from './functions';
 
 const focusWhiteboard = (store: IStore) => {
     const { dispatch, getState } = store;

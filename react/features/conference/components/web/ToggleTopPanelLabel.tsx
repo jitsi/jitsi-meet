@@ -5,8 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IState } from '../../../app/types';
 import { IconMenuDown } from '../../../base/icons/svg/index';
-// @ts-ignore
-import { Label } from '../../../base/label';
+import Label from '../../../base/label/components/web/Label';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
 // @ts-ignore

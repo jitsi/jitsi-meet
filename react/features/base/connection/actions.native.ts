@@ -1,6 +1,5 @@
-/* eslint-disable lines-around-comment */
-import { Dispatch } from 'redux';
-
+import { IStore } from '../../app/types';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
@@ -74,7 +73,7 @@ export type ConnectionFailedError = {
  * @returns {Function}
  */
 export function connect(id?: string, password?: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const options = constructOptions(state);
         const { locationURL } = state['features/base/connection'];
@@ -266,7 +265,7 @@ function _connectionWillConnect(connection: Object) {
  * @returns {Function}
  */
 export function disconnect() {
-    return (dispatch: Dispatch<any>, getState: Function): Promise<void> => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<void> => {
         const state = getState();
 
         // The conference we have already joined or are joining.

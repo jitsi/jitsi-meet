@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -10,9 +8,7 @@ import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconPlusCircle } from '../../base/icons/svg';
 import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
-// @ts-ignore
 import { resizeImage } from '../functions';
-// @ts-ignore
 import logger from '../logger';
 
 interface Props extends WithTranslation {

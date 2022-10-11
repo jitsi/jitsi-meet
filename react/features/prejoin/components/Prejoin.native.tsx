@@ -17,9 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // @ts-ignore
 import { appNavigate } from '../../app/actions.native';
 import { IState } from '../../app/types';
-// @ts-ignore
 import { setAudioOnly } from '../../base/audio-only/actions';
-// @ts-ignore
 import { getConferenceName } from '../../base/conference/functions';
 // @ts-ignore
 import { connect } from '../../base/connection/actions.native';
@@ -30,8 +28,7 @@ import { getLocalParticipant } from '../../base/participants/functions';
 // @ts-ignore
 import { getFieldValue } from '../../base/react';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui/constants';
-// @ts-ignore
-import { updateSettings } from '../../base/settings';
+import { updateSettings } from '../../base/settings/actions';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import Button from '../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants';
@@ -48,7 +45,6 @@ import { screen } from '../../mobile/navigation/routes';
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 // @ts-ignore
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
-// @ts-ignore
 import { isDisplayNameRequired } from '../functions';
 import { PrejoinProps } from '../types';
 

@@ -1,7 +1,5 @@
-/* eslint-disable lines-around-comment */
 import { IState } from '../app/types';
 import { getLocalParticipant } from '../base/participants/functions';
-// @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import { DETECT_FACE, FACE_BOX_EVENT_TYPE, SEND_IMAGE_INTERVAL_MS } from './constants';

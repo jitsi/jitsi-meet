@@ -10,11 +10,9 @@ import { translate } from '../../../../base/i18n/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
-// @ts-ignore
 import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions.any';
 // @ts-ignore
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
-// @ts-ignore
 import { isVpaasMeeting } from '../../../../jaas/functions';
 // @ts-ignore
 import { getActiveSession } from '../../../../recording';

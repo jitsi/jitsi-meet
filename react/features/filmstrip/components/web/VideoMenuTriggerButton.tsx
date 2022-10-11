@@ -45,7 +45,7 @@ type Props = {
 const VideoMenuTriggerButton = ({
     hidePopover,
     local,
-    participantId,
+    participantId = '',
     popoverVisible,
     showPopover,
     thumbnailType,

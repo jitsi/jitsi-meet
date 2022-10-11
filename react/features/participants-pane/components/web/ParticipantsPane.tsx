@@ -6,17 +6,14 @@ import { WithTranslation } from 'react-i18next';
 
 import { IState } from '../../../app/types';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
-// @ts-ignore
-import { openDialog } from '../../../base/dialog';
+import { openDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import { IconClose, IconHorizontalPoints } from '../../../base/icons/svg';
-// @ts-ignore
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import Button from '../../../base/ui/components/web/Button';
 import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
-// @ts-ignore
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
@@ -27,7 +24,6 @@ import {
     getParticipantsPaneOpen,
     isMoreActionsVisible,
     isMuteAllVisible
-    // @ts-ignore
 } from '../../functions';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
 // @ts-ignore

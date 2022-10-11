@@ -1,18 +1,14 @@
-/* eslint-disable lines-around-comment */
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
 import { createE2EEEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { IState } from '../../app/types';
+import { IState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import Switch from '../../base/ui/components/web/Switch';
-// @ts-ignore
 import { toggleE2EE } from '../actions';
 import { MAX_MODE } from '../constants';
-// @ts-ignore
 import { doesEveryoneSupportE2EE } from '../functions';
 
 interface Props extends WithTranslation {
@@ -45,7 +41,7 @@ interface Props extends WithTranslation {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 }
 
 type State = {

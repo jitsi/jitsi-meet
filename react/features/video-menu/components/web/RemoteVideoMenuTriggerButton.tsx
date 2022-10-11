@@ -2,19 +2,16 @@
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { batch } from 'react-redux';
+import { batch, connect } from 'react-redux';
 
 import { IState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import { IconHorizontalPoints } from '../../../base/icons/svg';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 // @ts-ignore
 import { Popover } from '../../../base/popover';
-import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import Button from '../../../base/ui/components/web/Button';
 import ConnectionIndicatorContent from
@@ -318,14 +315,14 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     }
 
     return {
-        _disabled: remoteVideoMenu?.disabled,
+        _disabled: Boolean(remoteVideoMenu?.disabled),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _menuPosition,
         _overflowDrawer: overflowDrawer,
         _participant: participant ?? { id: '' },
         _participantDisplayName: _participantDisplayName ?? '',
         _remoteControlState,
-        _showConnectionInfo: showConnectionInfo
+        _showConnectionInfo: Boolean(showConnectionInfo)
     };
 }
 

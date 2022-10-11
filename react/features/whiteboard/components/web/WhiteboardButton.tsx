@@ -1,17 +1,10 @@
-/* eslint-disable import/order */
-import type { Dispatch } from 'redux';
-import { IState } from '../../../app/types';
-
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+/* eslint-disable lines-around-comment */
+import { IState, IStore } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
 import { IconHideWhiteboard, IconShowWhiteboard } from '../../../base/icons/svg';
-
-// @ts-ignore
-import { connect } from '../../../base/redux';
-
+import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-
 // @ts-ignore
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
 import { setWhiteboardOpen } from '../../actions';
@@ -28,7 +21,7 @@ type Props = AbstractButtonProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 };
 
 /**

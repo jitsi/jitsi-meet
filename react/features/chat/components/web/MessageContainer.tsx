@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import throttle from 'lodash/throttle';
 import React, { RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
@@ -11,14 +10,17 @@ import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
 
 interface State {
+
     /**
      * Whether or not message container has received new messages.
      */
     hasNewMessages: boolean;
+
     /**
      * Whether or not scroll position is at the bottom of container.
      */
     isScrolledToBottom: boolean;
+
     /**
      * The id of the last read message.
      */
@@ -275,6 +277,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
     */
     _findFirstUnreadMessage() {
         const messagesNodeList = document.querySelectorAll('.chatmessage-wrapper');
+
         // @ts-ignore
         const messagesToArray = [ ...messagesNodeList ];
 

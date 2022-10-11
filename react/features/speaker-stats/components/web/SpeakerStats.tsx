@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IState } from '../../../app/types';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import { escapeRegexp } from '../../../base/util/helpers';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { initSearch, resetSearchCriteria, toggleFaceExpressions } from '../../actions';
 import {

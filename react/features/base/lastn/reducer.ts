@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import {
     SET_CONFIG
 } from '../config/actionTypes';

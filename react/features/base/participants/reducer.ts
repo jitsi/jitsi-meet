@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
@@ -311,6 +310,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
 
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
         }
+
         // Exclude the screenshare participant from the fake participant count to avoid duplicates.
         if (fakeParticipant && !isScreenShareParticipant(participant)) {
             state.fakeParticipants.set(id, participant);
@@ -402,6 +402,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
 
         // Keep the remote screen share list sorted alphabetically.
         sortedSharesList.length && sortedSharesList.sort((a, b) => a[1].localeCompare(b[1]));
+
         // @ts-ignore
         state.sortedRemoteScreenshares = new Map(sortedSharesList);
 

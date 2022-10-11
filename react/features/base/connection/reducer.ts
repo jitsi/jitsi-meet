@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { SET_ROOM } from '../conference/actionTypes';
 import { JitsiConnectionErrors } from '../lib-jitsi-meet';
 import ReducerRegistry from '../redux/ReducerRegistry';
@@ -15,8 +14,9 @@ import {
 import { ConnectionFailedError } from './actions.native';
 
 export interface IConnectionState {
-    connecting?: Object;
+    connecting?: any;
     connection?: {
+        disconnect: Function;
         getJid: () => string;
         getLogs: () => Object;
     };

@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React from 'react';
@@ -9,6 +8,7 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux/functions';
 import AbstractRecordingLabel, {
     _mapStateToProps
+
     // @ts-ignore
 } from '../AbstractRecordingLabel';
 
@@ -57,6 +57,7 @@ class RecordingLabel extends AbstractRecordingLabel {
             <div>
                 <Label
                     className = { classes?.[mode] }
+
                     // @ts-ignore
                     text = { t(this._getLabelKey()) } />
             </div>

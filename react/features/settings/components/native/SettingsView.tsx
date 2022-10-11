@@ -26,8 +26,7 @@ import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
-import { updateSettings } from '../../../base/settings';
+import { updateSettings } from '../../../base/settings/actions';
 import BaseThemeNative from '../../../base/ui/components/BaseTheme.native';
 import Switch from '../../../base/ui/components/native/Switch';
 // @ts-ignore

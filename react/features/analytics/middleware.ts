@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { IState } from '../app/types';
 import {
     CONFERENCE_JOINED,

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
-import { IState } from '../../app/types';
+import { IState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import { updateSettings } from '../../base/settings/actions';
@@ -24,7 +23,7 @@ export interface Props extends WithTranslation {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 }
 
 /**

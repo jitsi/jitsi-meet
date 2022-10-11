@@ -16,7 +16,6 @@ import {
 import { StyleType } from '../../../base/styles';
 // @ts-ignore
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
-// @ts-ignore
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
 // @ts-ignore

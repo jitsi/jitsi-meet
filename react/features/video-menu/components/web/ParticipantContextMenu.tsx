@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IState } from '../../../app/types';
-// @ts-ignore
 import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
@@ -16,11 +15,9 @@ import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
-// @ts-ignore
-import { isParticipantAudioMuted } from '../../../base/tracks';
+import { isParticipantAudioMuted } from '../../../base/tracks/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
-// @ts-ignore
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import { setVolume } from '../../../filmstrip/actions.web';
@@ -29,7 +26,6 @@ import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { isForceMuted } from '../../../participants-pane/functions';
 // @ts-ignore
 import { requestRemoteControl, stopController } from '../../../remote-control';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 
 // @ts-ignore
@@ -146,7 +142,7 @@ const ParticipantContextMenu = ({
         isForceMuted(participant, MEDIA_TYPE.AUDIO, state));
     const _isVideoForceMuted = useSelector<IState>(state =>
         isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
-    const _isAudioMuted = useSelector(state => isParticipantAudioMuted(participant, state));
+    const _isAudioMuted = useSelector((state: IState) => isParticipantAudioMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent }
         = useSelector((state: IState) => state['features/base/config']);

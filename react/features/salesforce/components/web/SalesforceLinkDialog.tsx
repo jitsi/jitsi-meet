@@ -7,7 +7,8 @@ import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
-import { Dialog, hideDialog } from '../../../base/dialog';
+import { Dialog } from '../../../base/dialog';
+import { hideDialog } from '../../../base/dialog/actions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
 // @ts-ignore

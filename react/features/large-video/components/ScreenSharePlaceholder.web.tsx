@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -6,6 +5,7 @@ import { useStore } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../base/i18n/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { setSeeWhatIsBeingShared } from '../actions.web';
 

@@ -11,7 +11,6 @@ import { createGifSentEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
 import Input from '../../../base/ui/components/web/Input';
-// @ts-ignore
 import { sendMessage } from '../../../chat/actions.any';
 import { SCROLL_SIZE } from '../../../filmstrip/constants';
 import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
@@ -19,11 +18,8 @@ import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
-// @ts-ignore
 import { setGifDrawerVisibility } from '../../actions';
-// @ts-ignore
 import { formatGifUrlMessage, getGifAPIKey, getGifUrl } from '../../functions';
 
 const OVERFLOW_DRAWER_PADDING = 16;
