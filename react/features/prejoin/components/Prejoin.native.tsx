@@ -121,7 +121,8 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerLeft
+            headerLeft,
+            headerTitle: t('prejoin.joinMeeting')
         });
     }, [ navigation ]);
 
@@ -152,18 +153,17 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
                 isFocused
                 && <View style = { largeVideoContainerStyles }>
                     <LargeVideo />
+                    <View style = { styles.displayRoomNameBackdrop }>
+                        <Text
+                            numberOfLines = { 1 }
+                            style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                            { roomName }
+                        </Text>
+                    </View>
                 </View>
             }
             <View style = { contentContainerStyles }>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
-                    <Text style = { styles.preJoinTitle as StyleProp<TextStyle> }>
-                        { t('prejoin.joinMeeting') }
-                    </Text>
-                    <Text
-                        numberOfLines = { 1 }
-                        style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
-                        { roomName }
-                    </Text>
                     <TextInput
                         onChangeText = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
@@ -175,14 +175,13 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
                         disabled = { joinButtonDisabled }
                         labelKey = 'prejoin.joinMeeting'
                         onClick = { onJoin }
-                        style = { styles.prejoinButton }
+                        style = { styles.joinButton }
                         type = { PRIMARY } />
                     <Button
                         accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
                         disabled = { joinButtonDisabled }
                         labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
                         onClick = { onJoinLowBandwidth }
-                        style = { styles.prejoinButton }
                         type = { SECONDARY } />
                 </View>
                 <View style = { toolboxContainerStyles }>
