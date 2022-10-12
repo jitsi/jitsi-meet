@@ -27,6 +27,7 @@ import {
     navigateRoot
 } from '../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
+import { clearNotifications } from '../notifications';
 import { setFatalError } from '../overlay';
 
 import { getDefaultURL } from './functions';
@@ -143,6 +144,7 @@ export function appNavigate(uri?: string) {
                 navigateRoot(screen.preJoin);
             } else {
                 dispatch(connect());
+                dispatch(clearNotifications());
                 navigateRoot(screen.conference.root);
             }
         } else {
