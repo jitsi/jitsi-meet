@@ -48,7 +48,7 @@ import { isExternalAPIAvailable } from '../react-native-sdk/functions';
 
 import { READY_TO_CLOSE } from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';
-import { sendEvent } from './functions';
+import { _participantToParticipantInfo, sendEvent } from './functions';
 import logger from './logger';
 
 /**
@@ -287,24 +287,6 @@ externalAPIEnabled && StateListenerRegistry.register(
 
     }, 100));
 
-
-/**
- * Returns a participant info object based on the passed participant object from redux.
- *
- * @param {Participant} participant - The participant object from the redux store.
- * @returns {Object} - The participant info object.
- */
-function _participantToParticipantInfo(participant) {
-    return {
-        isLocal: participant.local,
-        email: participant.email,
-        name: participant.name,
-        participantId: participant.id,
-        displayName: participant.displayName,
-        avatarUrl: participant.avatarURL,
-        role: participant.role
-    };
-}
 
 /**
  * Registers for events sent from the native side via NativeEventEmitter.

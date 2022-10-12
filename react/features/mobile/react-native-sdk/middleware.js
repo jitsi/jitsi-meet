@@ -4,8 +4,10 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
 } from '../../base/conference';
+import { PARTICIPANT_JOINED } from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
+import { _participantToParticipantInfo } from '../external-api/functions';
 
 import { isExternalAPIAvailable } from './functions';
 
@@ -32,6 +34,13 @@ const externalAPIEnabled = isExternalAPIAvailable();
     case CONFERENCE_LEFT:
         //  Props are torn down at this point, perhaps need to leave this one out
         break;
+    case PARTICIPANT_JOINED: {
+        const { participant } = action;
+        const participantInfo = _participantToParticipantInfo(participant);
+
+        rnSdkHandlers.onParticipantJoined && rnSdkHandlers.onParticipantJoined(participantInfo);
+        break;
+    }
     }
 
 

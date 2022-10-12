@@ -12,6 +12,7 @@ import { View } from 'react-native';
 
 // eslint-disable-next-line no-unused-vars
 import { App } from './react/features/app/components/App.native';
+import { setAudioMuted, setVideoMuted } from './react/features/base/media';
 // eslint-disable-next-line no-unused-vars
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider';
 import { closeJitsiMeeting } from './react/features/mobile/react-native-sdk/functions';
@@ -27,6 +28,7 @@ type AppProps = {
         onConferenceJoined?: Function;
         onConferenceWillJoin?: Function;
         onConferenceLeft?: Function;
+        onParticipantJoined?: Function;
         settings?: {
             startWithAudioMuted?: boolean;
             startAudioOnly?: boolean;
@@ -48,6 +50,16 @@ const JitsiMeeting = forwardRef((props: AppProps, ref) => {
             const dispatch = app.current.state.store.dispatch;
 
             closeJitsiMeeting(dispatch);
+        },
+        setAudioMuted: muted => {
+            const dispatch = app.current.state.store.dispatch;
+
+            dispatch(setAudioMuted(muted));
+        },
+        setVideoMuted: muted => {
+            const dispatch = app.current.state.store.dispatch;
+
+            dispatch(setVideoMuted(muted));
         }
     }));
 
@@ -64,7 +76,8 @@ const JitsiMeeting = forwardRef((props: AppProps, ref) => {
                     onReadyToClose: props.meetingOptions.onReadyToClose,
                     onConferenceJoined: props.meetingOptions.onConferenceJoined,
                     onConferenceWillJoin: props.meetingOptions.onConferenceWillJoin,
-                    onConferenceLeft: props.meetingOptions.onConferenceLeft
+                    onConferenceLeft: props.meetingOptions.onConferenceLeft,
+                    onParticipantJoined: props.meetingOptions.onParticipantJoined
                 },
                 'flags': { ...props.flags }
             });
