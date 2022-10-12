@@ -15,7 +15,7 @@ local END_CONFERENCE_REASON = 'The meeting has been terminated';
 
 local end_conference_component = module:get_option_string('end_conference_component', 'endconference.'..module.host);
 if end_conference_component == nil then
-    log('error', 'No end_conference_component specified.');
+    module:log('error', 'No end_conference_component specified.');
     return;
 end
 
