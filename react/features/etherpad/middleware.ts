@@ -1,14 +1,12 @@
-// @flow
-
+// @ts-expect-error
 import UIEvents from '../../../service/UI/UIEvents';
-import { getCurrentConference } from '../base/conference';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { getCurrentConference } from '../base/conference/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
 import { setDocumentUrl } from './actions';
-
-declare var APP: Object;
 
 const ETHERPAD_COMMAND = 'etherpad';
 
@@ -26,7 +24,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { conference } = action;
 
         conference.addCommandListener(ETHERPAD_COMMAND,
-            ({ value }) => {
+            ({ value }: { value: string; }) => {
                 let url;
                 const { etherpad_base: etherpadBase } = getState()['features/base/config'];
 

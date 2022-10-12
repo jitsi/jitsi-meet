@@ -1,5 +1,3 @@
-// @flow
-
 import { SET_NOISY_AUDIO_INPUT_NOTIFICATION_UID } from './actionTypes';
 
 /**
@@ -13,7 +11,7 @@ import { SET_NOISY_AUDIO_INPUT_NOTIFICATION_UID } from './actionTypes';
  *     uid: number
  * }}
  */
-export function setNoisyAudioInputNotificationUid(uid: ?number) {
+export function setNoisyAudioInputNotificationUid(uid?: string) {
     return {
         type: SET_NOISY_AUDIO_INPUT_NOTIFICATION_UID,
         uid

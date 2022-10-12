@@ -1,6 +1,5 @@
-// @flow
-
-import { toState } from '../base/redux';
+import { IStateful } from '../base/app/types';
+import { toState } from '../base/redux/functions';
 
 const ETHERPAD_OPTIONS = {
     showControls: 'true',
@@ -15,7 +14,7 @@ const ETHERPAD_OPTIONS = {
  * @param {Function|Object} stateful - The redux store or {@code getState} function.
  * @returns {?string} - Current shared document URL or undefined.
  */
-export function getSharedDocumentUrl(stateful: Function | Object) {
+export function getSharedDocumentUrl(stateful: IStateful) {
     const state = toState(stateful);
     const { documentUrl } = state['features/etherpad'];
     const { displayName } = state['features/base/settings'];

@@ -1,5 +1,5 @@
-import { SET_CONFIG } from '../base/config';
-import { MiddlewareRegistry } from '../base/redux';
+import { SET_CONFIG } from '../base/config/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes';
 import { fetchCustomBrandingData } from './actions.native';
@@ -34,7 +34,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         // TODO: implement support for gradients.
         action.value.avatarBackgrounds = avatarBackgrounds.filter(
-            color => !color.includes('linear-gradient')
+            (color: string) => !color.includes('linear-gradient')
         );
 
         break;

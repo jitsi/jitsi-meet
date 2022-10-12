@@ -1,4 +1,5 @@
-import { doGetJSON } from '../base/util';
+import { IStore } from '../app/types';
+import { doGetJSON } from '../base/util/httpUtils';
 
 import { UNSET_DYNAMIC_BRANDING } from './actionTypes';
 import {
@@ -18,7 +19,7 @@ import logger from './logger';
  * @returns {Function}
  */
 export function fetchCustomBrandingData() {
-    return async function(dispatch: Function, getState: Function) {
+    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const state = getState();
         const dynamicBrandingUrl = await getDynamicBrandingUrl(state);
 

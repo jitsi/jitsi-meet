@@ -1,9 +1,5 @@
-// @flow
-
-import { UPDATE_DEVICE_LIST } from '../base/devices';
-import { MiddlewareRegistry } from '../base/redux';
-
-declare var APP: Object;
+import { UPDATE_DEVICE_LIST } from '../base/devices/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 /**
  * Implements the middleware of the feature device-selection.

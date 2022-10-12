@@ -1,4 +1,4 @@
-import { doGetJSON } from '../base/util';
+import { doGetJSON } from '../base/util/httpUtils';
 
 import {
     SET_DYNAMIC_BRANDING_DATA,
@@ -47,7 +47,7 @@ export function fetchCustomBrandingData() {
  * @param {Object} value - The custom data to be set.
  * @returns {Object}
  */
-export function setDynamicBrandingData(value) {
+export function setDynamicBrandingData(value: Object) {
     return {
         type: SET_DYNAMIC_BRANDING_DATA,
         value
