@@ -199,7 +199,9 @@ export const preJoinScreenOptions = {
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen02Header
     },
-    headerTitle: ''
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
 };
 
 /**
