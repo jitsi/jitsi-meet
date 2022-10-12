@@ -57,6 +57,13 @@ export const NOTIFICATION_ICON = {
 };
 
 /**
+ * The identifier of the disable self view notification.
+ *
+ * @type {string}
+ */
+export const DISABLE_SELF_VIEW_NOTIFICATION_ID = 'DISABLE_SELF_VIEW_NOTIFICATION_ID';
+
+/**
  * The identifier of the lobby notification.
  *
  * @type {string}

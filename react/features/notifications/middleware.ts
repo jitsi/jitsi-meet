@@ -70,7 +70,7 @@ const createTimeoutId = (notification: { timeout: number; uid: string; }, dispat
  * @param {Object} state - Global state.
  * @returns {Array<Object>} - Notifications state.
  */
-export const getNotifications = (state: IState) => {
+const getNotifications = (state: IState) => {
     const _visible = areThereNotifications(state);
     const { notifications } = state['features/notifications'];
 

@@ -1,7 +1,6 @@
 import { MiddlewareRegistry } from '../base/redux';
 import { SETTINGS_UPDATED, getHideSelfView } from '../base/settings';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
-import { getNotifications } from '../notifications/middleware';
+import { DISABLE_SELF_VIEW_NOTIFICATION_ID, NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 
 import { openSettingsDialog } from './actions';
 import { SETTINGS_TABS } from './constants';
@@ -11,26 +10,19 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     const result = next(action);
 
-
     switch (action.type) {
     case SETTINGS_UPDATED: {
         const newValue = action.settings.disableSelfView;
 
         if (newValue !== oldValue && newValue) {
-            const titleKey = 'notify.selfViewTitle';
-            const notifications = getNotifications(getState());
-            const hasSelfViewNotification = notifications.find(notification =>
-                notification.props.titleKey === titleKey);
-
-            if (!hasSelfViewNotification) {
-                dispatch(showNotification({
-                    titleKey,
-                    customActionNameKey: [ 'settings.title' ],
-                    customActionHandler: [ () =>
-                        dispatch(openSettingsDialog(SETTINGS_TABS.MORE))
-                    ]
-                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-            }
+            dispatch(showNotification({
+                uid: DISABLE_SELF_VIEW_NOTIFICATION_ID,
+                titleKey: 'notify.selfViewTitle',
+                customActionNameKey: [ 'settings.title' ],
+                customActionHandler: [ () =>
+                    dispatch(openSettingsDialog(SETTINGS_TABS.MORE))
+                ]
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
         }
     }
     }
