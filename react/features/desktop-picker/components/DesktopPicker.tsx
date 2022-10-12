@@ -1,14 +1,17 @@
-// @flow
-
+/* eslint-disable lines-around-comment */
 import Tabs from '@atlaskit/tabs';
 import React, { PureComponent } from 'react';
-import type { Dispatch } from 'redux';
+import { WithTranslation } from 'react-i18next';
 
-import { Dialog, hideDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
+import { IStore } from '../../app/types';
+import { hideDialog } from '../../base/dialog/actions';
+import { translate } from '../../base/i18n/functions';
+import { connect } from '../../base/redux/functions';
+import Dialog from '../../base/ui/components/web/Dialog';
+// @ts-ignore
 import { obtainDesktopSources } from '../functions';
 
+// @ts-ignore
 import DesktopPickerPane from './DesktopPickerPane';
 
 /**
@@ -45,29 +48,24 @@ const VALID_TYPES = Object.keys(TAB_LABELS);
 /**
  * The type of the React {@code Component} props of {@link DesktopPicker}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * An array with desktop sharing sources to be displayed.
      */
-    desktopSharingSources: Array<string>,
+    desktopSharingSources: Array<string>;
 
     /**
      * Used to request DesktopCapturerSources.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
      * The callback to be invoked when the component is closed or when a
      * DesktopCapturerSource has been chosen.
      */
-    onSourceChoose: Function,
-
-    /**
-     * Used to obtain translations.
-     */
-    t: Function
-};
+    onSourceChoose: Function;
+}
 
 /**
  * The type of the React {@code Component} state of {@link DesktopPicker}.
@@ -77,27 +75,27 @@ type State = {
     /**
      * The state of the audio screen share checkbox.
      */
-    screenShareAudio: boolean,
+    screenShareAudio: boolean;
 
     /**
      * The currently highlighted DesktopCapturerSource.
      */
-    selectedSource: Object,
+    selectedSource: any;
 
     /**
      * The desktop source type currently being displayed.
      */
-    selectedTab: number,
+    selectedTab: number;
 
     /**
      * An object containing all the DesktopCapturerSources.
      */
-    sources: Object,
+    sources: Object;
 
     /**
      * The desktop source types to fetch previews for.
      */
-    types: Array<string>
+    types: Array<string>;
 };
 
 
@@ -112,7 +110,7 @@ class DesktopPicker extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props) {
+    static getDerivedStateFromProps(props: Props) {
         return {
             types: DesktopPicker._getValidTypes(props.desktopSharingSources)
         };
@@ -125,14 +123,14 @@ class DesktopPicker extends PureComponent<Props, State> {
      * @private
      * @returns {Array<string>} The filtered types.
      */
-    static _getValidTypes(types = []) {
+    static _getValidTypes(types: string[] = []) {
         return types.filter(
             type => VALID_TYPES.includes(type));
     }
 
-    _poller = null;
+    _poller: any = null;
 
-    state = {
+    state: State = {
         screenShareAudio: false,
         selectedSource: {},
         selectedTab: 0,
@@ -195,33 +193,34 @@ class DesktopPicker extends PureComponent<Props, State> {
     render() {
         return (
             <Dialog
-                isModal = { false }
-                okDisabled = { Boolean(!this.state.selectedSource.id) }
-                okKey = 'dialog.Share'
+                ok = {{
+                    disabled: Boolean(!this.state.selectedSource.id),
+                    translationKey: 'dialog.Share'
+                }}
                 onCancel = { this._onCloseModal }
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.shareYourScreen'
-                width = 'medium' >
+                size = 'large'
+                titleKey = 'dialog.shareYourScreen'>
                 { this._renderTabs() }
             </Dialog>
         );
     }
 
     /**
-     * Computates the selected source.
+     * Computes the selected source.
      *
      * @param {Object} sources - The available sources.
      * @returns {Object} The selectedSource value.
      */
-    _getSelectedSource(sources = {}) {
+    _getSelectedSource(sources: any = {}) {
         const { selectedSource } = this.state;
 
         /**
          * If there are no sources for this type (or no sources for any type)
          * we can't select anything.
          */
-        if (!Array.isArray(sources[this._selectedTabType])
-                || sources[this._selectedTabType].length <= 0) {
+        if (!Array.isArray(sources[this._selectedTabType as keyof typeof sources])
+            || sources[this._selectedTabType as keyof typeof sources].length <= 0) {
             return {};
         }
 
@@ -235,7 +234,7 @@ class DesktopPicker extends PureComponent<Props, State> {
         if (!selectedSource // scenario 1)
                 || selectedSource.type !== this._selectedTabType // scenario 2)
                 || !sources[this._selectedTabType].some( // scenario 3)
-                        source => source.id === selectedSource.id)) {
+                        (source: any) => source.id === selectedSource.id)) {
             return {
                 id: sources[this._selectedTabType][0].id,
                 type: this._selectedTabType
@@ -247,8 +246,6 @@ class DesktopPicker extends PureComponent<Props, State> {
          */
         return selectedSource;
     }
-
-    _onCloseModal: (?string, string, ?boolean) => void;
 
     /**
      * Dispatches an action to hide the DesktopPicker and invokes the passed in
@@ -262,12 +259,10 @@ class DesktopPicker extends PureComponent<Props, State> {
      * screen sharing session.
      * @returns {void}
      */
-    _onCloseModal(id = '', type, screenShareAudio = false) {
+    _onCloseModal(id = '', type?: string, screenShareAudio = false) {
         this.props.onSourceChoose(id, type, screenShareAudio);
         this.props.dispatch(hideDialog());
     }
-
-    _onPreviewClick: (string, string) => void;
 
     /**
      * Sets the currently selected DesktopCapturerSource.
@@ -276,7 +271,7 @@ class DesktopPicker extends PureComponent<Props, State> {
      * @param {string} type - The type of DesktopCapturerSource.
      * @returns {void}
      */
-    _onPreviewClick(id, type) {
+    _onPreviewClick(id: string, type: string) {
         this.setState({
             selectedSource: {
                 id,
@@ -284,8 +279,6 @@ class DesktopPicker extends PureComponent<Props, State> {
             }
         });
     }
-
-    _onSubmit: () => void;
 
     /**
      * Request to close the modal and execute callbacks with the selected source
@@ -299,19 +292,17 @@ class DesktopPicker extends PureComponent<Props, State> {
         this._onCloseModal(id, type, screenShareAudio);
     }
 
-    _onTabSelected: () => void;
-
     /**
      * Stores the selected tab and updates the selected source via
      * {@code _getSelectedSource}.
      *
-     * @param {Object} tab - The configuration passed into atlaskit tabs to
+     * @param {Object} _tab - The configuration passed into atlaskit tabs to
      * describe how to display the selected tab.
      * @param {number} tabIndex - The index of the tab within the array of
      * displayed tabs.
      * @returns {void}
      */
-    _onTabSelected(tab, tabIndex) { // eslint-disable-line no-unused-vars
+    _onTabSelected(_tab: Object, tabIndex: number) {
         const { types, sources } = this.state;
 
         this._selectedTabType = types[tabIndex];
@@ -325,8 +316,6 @@ class DesktopPicker extends PureComponent<Props, State> {
         });
     }
 
-    _onShareAudioChecked: (boolean) => void;
-
     /**
      * Set the screenSharingAudio state indicating whether or not to also share
      * system audio.
@@ -334,7 +323,7 @@ class DesktopPicker extends PureComponent<Props, State> {
      * @param {boolean} checked - Share audio or not.
      * @returns {void}
      */
-    _onShareAudioChecked(checked) {
+    _onShareAudioChecked(checked: boolean) {
         this.setState({ screenShareAudio: checked });
     }
 
@@ -357,9 +346,9 @@ class DesktopPicker extends PureComponent<Props, State> {
                             onDoubleClick = { this._onSubmit }
                             onShareAudioChecked = { this._onShareAudioChecked }
                             selectedSourceId = { selectedSource.id }
-                            sources = { sources[type] }
+                            sources = { sources[type as keyof typeof sources] }
                             type = { type } />,
-                        label: t(TAB_LABELS[type])
+                        label: t(TAB_LABELS[type as keyof typeof TAB_LABELS])
                     };
                 });
 
@@ -393,8 +382,6 @@ class DesktopPicker extends PureComponent<Props, State> {
         this._poller = null;
     }
 
-    _updateSources: () => void;
-
     /**
      * Obtains the desktop sources and updates state with them.
      *
@@ -409,7 +396,7 @@ class DesktopPicker extends PureComponent<Props, State> {
                 this.state.types,
                 { thumbnailSize: THUMBNAIL_SIZE }
             )
-            .then(sources => {
+            .then((sources: any) => {
                 const selectedSource = this._getSelectedSource(sources);
 
                 // TODO: Maybe check if we have stopped the timer and unmounted

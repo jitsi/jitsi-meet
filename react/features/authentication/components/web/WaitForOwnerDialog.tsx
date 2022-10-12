@@ -1,32 +1,28 @@
-// @flow
-
 import React, { PureComponent } from 'react';
-import type { Dispatch } from 'redux';
+import { WithTranslation } from 'react-i18next';
 
-import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
+import { IStore } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { cancelWaitForOwner } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
  */
-type Props = {
+interface Props extends WithTranslation {
 
     /**
      * Redux store dispatch method.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
      * Function to be invoked after click.
      */
-    onAuthNow: ?Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
+    onAuthNow?: Function;
 }
 
 /**
@@ -48,8 +44,6 @@ class WaitForOwnerDialog extends PureComponent<Props> {
         this._onIAmHost = this._onIAmHost.bind(this);
     }
 
-    _onCancelWaitForOwner: () => void;
-
     /**
      * Called when the cancel button is clicked.
      *
@@ -62,8 +56,6 @@ class WaitForOwnerDialog extends PureComponent<Props> {
         dispatch(cancelWaitForOwner());
     }
 
-    _onIAmHost: () => void;
-
     /**
      * Called when the OK button is clicked.
      *
@@ -73,7 +65,7 @@ class WaitForOwnerDialog extends PureComponent<Props> {
     _onIAmHost() {
         const { onAuthNow } = this.props;
 
-        onAuthNow && onAuthNow();
+        onAuthNow?.();
     }
 
     /**
@@ -88,13 +80,12 @@ class WaitForOwnerDialog extends PureComponent<Props> {
 
         return (
             <Dialog
-                disableBlanketClickDismiss = { true }
-                hideCloseIconButton = { true }
-                okKey = { t('dialog.IamHost') }
+                disableBackdropClose = { true }
+                hideCloseButton = { true }
+                ok = {{ translationKey: 'dialog.IamHost' }}
                 onCancel = { this._onCancelWaitForOwner }
                 onSubmit = { this._onIAmHost }
-                titleKey = { t('dialog.WaitingForHostTitle') }
-                width = { 'small' }>
+                titleKey = { t('dialog.WaitingForHostTitle') }>
                 <span>
                     { t('dialog.WaitForHostMsg') }
                 </span>
