@@ -58,7 +58,6 @@ export default {
         left: '60%',
         padding: BaseTheme.spacing[3],
         position: 'absolute',
-        top: BaseTheme.spacing[3],
         width: '40%'
     },
 
