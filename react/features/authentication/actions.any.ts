@@ -1,15 +1,15 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import { checkIfCanJoin } from '../base/conference';
-import { openDialog } from '../base/dialog';
+import { IStore } from '../app/types';
+import { checkIfCanJoin } from '../base/conference/actions';
+import { IJitsiConference } from '../base/conference/reducer';
+import { openDialog } from '../base/dialog/actions';
 
 import {
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED, WAIT_FOR_OWNER
 } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { LoginDialog, WaitForOwnerDialog } from './components';
 import logger from './logger';
 
@@ -28,8 +28,8 @@ import logger from './logger';
 export function authenticateAndUpgradeRole(
         id: string,
         password: string,
-        conference: Object) {
-    return (dispatch: Dispatch<any>) => {
+        conference: IJitsiConference) {
+    return (dispatch: IStore['dispatch']) => {
         const process
             = conference.authenticateAndUpgradeRole({
                 id,
@@ -45,7 +45,7 @@ export function authenticateAndUpgradeRole(
         dispatch(_upgradeRoleStarted(process));
         process.then(
             /* onFulfilled */ () => dispatch(_upgradeRoleFinished(process, 1)),
-            /* onRejected */ error => {
+            /* onRejected */ (error: any) => {
                 // The lack of an error signals a cancellation.
                 if (error.authenticationError || error.connectionError) {
                     logger.error('authenticateAndUpgradeRole failed', error);
@@ -78,8 +78,8 @@ export function authenticateAndUpgradeRole(
  * }}
  */
 function _upgradeRoleFinished(
-        thenableWithCancel,
-        progressOrError: number | Object) {
+        thenableWithCancel: Object,
+        progressOrError: number | any) {
     let error;
     let progress;
 
@@ -121,7 +121,7 @@ function _upgradeRoleFinished(
  *     thenableWithCancel: Object
  * }}
  */
-function _upgradeRoleStarted(thenableWithCancel) {
+function _upgradeRoleStarted(thenableWithCancel: Object) {
     return {
         type: UPGRADE_ROLE_STARTED,
         thenableWithCancel
@@ -159,7 +159,7 @@ export function stopWaitForOwner() {
  * @returns {Function}
  */
 export function waitForOwner() {
-    return (dispatch: Dispatch<any>) =>
+    return (dispatch: IStore['dispatch']) =>
         dispatch({
             type: WAIT_FOR_OWNER,
             handler: () => dispatch(checkIfCanJoin()),

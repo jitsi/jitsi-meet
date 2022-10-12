@@ -20,4 +20,6 @@ declare global {
     }
 
     const config: IConfig;
+
+    const JitsiMeetJS: any;
 }

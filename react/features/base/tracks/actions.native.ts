@@ -2,12 +2,10 @@
 import { IState, IStore } from '../../app/types';
 // @ts-ignore
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
-// @ts-ignore
-import { setAudioOnly } from '../audio-only';
+import { setAudioOnly } from '../audio-only/actions';
 import JitsiMeetJS from '../lib-jitsi-meet';
 
 import { destroyLocalDesktopTrackIfExists, replaceLocalTrack } from './actions.any';
-// @ts-ignore
 import { getLocalVideoTrack, isLocalVideoTrackDesktop } from './functions';
 /* eslint-enable lines-around-comment */
 

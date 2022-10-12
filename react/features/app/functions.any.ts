@@ -1,7 +1,8 @@
-import { MEDIA_TYPE } from '../base/media';
-import { toState } from '../base/redux';
-import { isLocalCameraTrackMuted, isLocalTrackMuted } from '../base/tracks';
-import { addHashParamsToURL } from '../base/util';
+import { IStateful } from '../base/app/types';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { toState } from '../base/redux/functions';
+import { isLocalCameraTrackMuted, isLocalTrackMuted } from '../base/tracks/functions';
+import { addHashParamsToURL } from '../base/util/uri';
 
 /**
  * Adds the current track state to the passed URL.
@@ -10,7 +11,7 @@ import { addHashParamsToURL } from '../base/util';
  * @param {Function|Object} stateful - The redux store or {@code getState} function.
  * @returns {URL} - Returns the modified URL.
  */
-export function addTrackStateToURL(url, stateful) {
+export function addTrackStateToURL(url: string, stateful: IStateful) {
     const state = toState(stateful);
     const tracks = state['features/base/tracks'];
     const isVideoMuted = isLocalCameraTrackMuted(tracks);

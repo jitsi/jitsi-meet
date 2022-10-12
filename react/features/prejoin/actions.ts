@@ -1,15 +1,16 @@
-// @flow
-
-declare var JitsiMeetJS: Object;
-declare var APP: Object;
-
+/* eslint-disable lines-around-comment */
 import { v4 as uuidv4 } from 'uuid';
 
-import { getDialOutStatusUrl, getDialOutUrl, updateConfig } from '../base/config';
+import { IStore } from '../app/types';
+import { updateConfig } from '../base/config/actions';
+// @ts-ignore
+import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { browser } from '../base/lib-jitsi-meet';
+// @ts-ignore
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
-import { MEDIA_TYPE, isVideoMutedByUser } from '../base/media';
-import { updateSettings } from '../base/settings';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { isVideoMutedByUser } from '../base/media/functions';
+import { updateSettings } from '../base/settings/actions';
 import {
     createLocalTracksF,
     getLocalAudioTrack,
@@ -17,10 +18,15 @@ import {
     getLocalVideoTrack,
     replaceLocalTrack,
     trackAdded
+    // @ts-ignore
 } from '../base/tracks';
+// @ts-ignore
 import { openURLInBrowser } from '../base/util';
+// @ts-ignore
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../notifications';
+import { showErrorNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import { INotificationProps } from '../notifications/types';
 
 import {
     PREJOIN_INITIALIZED,
@@ -83,7 +89,7 @@ function pollForStatus(
         onSuccess: Function,
         onFail: Function,
         count = 0) {
-    return async function(dispatch: Function, getState: Function) {
+    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const state = getState();
 
         try {
@@ -96,7 +102,7 @@ function pollForStatus(
             switch (res) {
             case DIAL_OUT_STATUS.INITIATED:
             case DIAL_OUT_STATUS.RINGING: {
-                dispatch(setDialOutStatus(dialOutStatusToKeyMap[res]));
+                dispatch(setDialOutStatus(dialOutStatusToKeyMap[res as keyof typeof dialOutStatusToKeyMap]));
 
                 if (count < STATUS_REQ_CAP) {
                     return setTimeout(() => {
@@ -149,7 +155,7 @@ function pollForStatus(
  * @returns {Function}
  */
 export function dialOut(onSuccess: Function, onFail: Function) {
-    return async function(dispatch: Function, getState: Function) {
+    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const state = getState();
         const reqId = uuidv4();
         const url = getDialOutUrl(state);
@@ -168,8 +174,8 @@ export function dialOut(onSuccess: Function, onFail: Function) {
             await executeDialOutRequest(url, body, reqId);
 
             dispatch(pollForStatus(reqId, onSuccess, onFail));
-        } catch (err) {
-            const notification = {
+        } catch (err: any) {
+            const notification: INotificationProps = {
                 titleKey: 'prejoin.errorDialOut',
                 titleArguments: undefined
             };
@@ -199,7 +205,7 @@ export function dialOut(onSuccess: Function, onFail: Function) {
  * @returns {Function}
  */
 export function initPrejoin(tracks: Object[], errors: Object) {
-    return async function(dispatch: Function) {
+    return async function(dispatch: IStore['dispatch']) {
         dispatch(setPrejoinDeviceErrors(errors));
         dispatch(prejoinInitialized());
 
@@ -214,8 +220,8 @@ export function initPrejoin(tracks: Object[], errors: Object) {
  * @param {boolean} ignoreJoiningInProgress - If true we won't check the joiningInProgress flag.
  * @returns {Function}
  */
-export function joinConference(options?: Object, ignoreJoiningInProgress: boolean = false) {
-    return async function(dispatch: Function, getState: Function) {
+export function joinConference(options?: Object, ignoreJoiningInProgress = false) {
+    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         if (!ignoreJoiningInProgress) {
             const state = getState();
             const { joiningInProgress } = state['features/prejoin'];
@@ -251,7 +257,7 @@ export function joinConference(options?: Object, ignoreJoiningInProgress: boolea
         // anymore.
         localTracks = getLocalTracks(getState()['features/base/tracks']);
 
-        const jitsiTracks = localTracks.map(t => t.jitsiTrack);
+        const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
 
         APP.conference.prejoinStart(jitsiTracks);
     };
@@ -278,7 +284,7 @@ export function setJoiningInProgress(value: boolean) {
  * @returns {Function}
  */
 export function joinConferenceWithoutAudio() {
-    return async function(dispatch: Function, getState: Function) {
+    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const state = getState();
         const { joiningInProgress } = state['features/prejoin'];
 
@@ -329,7 +335,7 @@ export function makePrecallTest(conferenceOptions: Object) {
  * @returns {Function}
  */
 export function openDialInPage() {
-    return function(dispatch: Function, getState: Function) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const dialInPage = getDialInfoPageURL(getState());
 
         openURLInBrowser(dialInPage, true);
@@ -354,7 +360,7 @@ function prejoinInitialized() {
  * @returns {Function}
  */
 export function replaceAudioTrackById(deviceId: string) {
-    return async (dispatch: Function, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         try {
             const tracks = getState()['features/base/tracks'];
             const newTrack = await createLocalTrack('audio', deviceId);
@@ -381,7 +387,7 @@ export function replaceAudioTrackById(deviceId: string) {
  * @returns {Function}
  */
 export function replaceVideoTrackById(deviceId: Object) {
-    return async (dispatch: Function, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         try {
             const tracks = getState()['features/base/tracks'];
             const wasVideoMuted = isVideoMutedByUser(getState());
