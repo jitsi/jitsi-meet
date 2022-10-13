@@ -8,8 +8,7 @@ import { makeStyles } from 'tss-react/mui';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconClose } from '../../../base/icons/svg';
-// @ts-ignore
-import { ActionButton } from '../../../base/premeeting';
+import { Button } from '../../../base/ui/components/web';
 // @ts-ignore
 import Label from '../Label';
 // @ts-ignore
@@ -77,12 +76,12 @@ function DialOutDialog(props: Props) {
             <div className = { classes.picker }>
                 <CountryPicker onSubmit = { onSubmit } />
             </div>
-            <ActionButton
+            <Button
                 className = 'prejoin-dialog-btn'
+                fullWidth = { true }
+                labelKey = 'prejoin.callMe'
                 onClick = { onSubmit }
-                type = 'primary'>
-                {t('prejoin.callMe')}
-            </ActionButton>
+                type = 'primary' />
             <div className = 'prejoin-dialog-delimiter-container'>
                 <div className = 'prejoin-dialog-delimiter' />
                 <div className = 'prejoin-dialog-delimiter-txt-container'>
@@ -92,12 +91,12 @@ function DialOutDialog(props: Props) {
                 </div>
             </div>
             <div className = 'prejoin-dialog-dialin-container'>
-                <ActionButton
+                <Button
                     className = 'prejoin-dialog-btn'
+                    fullWidth = { true }
+                    labelKey = 'prejoin.iWantToDialIn'
                     onClick = { onTextButtonClick }
-                    type = 'text'>
-                    {t('prejoin.iWantToDialIn')}
-                </ActionButton>
+                    type = 'tertiary' />
             </div>
         </div>
     );

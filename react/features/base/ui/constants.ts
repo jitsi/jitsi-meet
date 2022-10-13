@@ -190,7 +190,8 @@ export const commonStyles = (theme: Theme) => {
             },
 
             '.prejoin-dialog-btn': {
-                width: '309px'
+                width: '309px',
+                marginBottom: '8px'
             },
 
             '.prejoin-dialog-dialin-container': {
