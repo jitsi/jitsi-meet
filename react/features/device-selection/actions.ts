@@ -1,11 +1,12 @@
-import { createDeviceChangedEvent, sendAnalytics } from '../analytics';
+import { createDeviceChangedEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
+import { IStore } from '../app/types';
 import {
-    getDeviceLabelById,
     setAudioInputDevice,
-    setAudioOutputDeviceId,
     setVideoInputDevice
-} from '../base/devices';
-import { updateSettings } from '../base/settings';
+} from '../base/devices/actions';
+import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions';
+import { updateSettings } from '../base/settings/actions';
 
 import { getDeviceSelectionDialogProps } from './functions';
 import logger from './logger';
@@ -18,8 +19,8 @@ import logger from './logger';
  * welcome page or not.
  * @returns {Function}
  */
-export function submitDeviceSelectionTab(newState, isDisplayedOnWelcomePage) {
-    return (dispatch, getState) => {
+export function submitDeviceSelectionTab(newState: any, isDisplayedOnWelcomePage: boolean) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getDeviceSelectionDialogProps(getState(), isDisplayedOnWelcomePage);
 
         if (newState.selectedVideoInputId && (newState.selectedVideoInputId !== currentState.selectedVideoInputId)) {

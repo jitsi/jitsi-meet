@@ -1,5 +1,5 @@
-import { APP_WILL_MOUNT } from '../base/app';
-import { MiddlewareRegistry } from '../base/redux';
+import { APP_WILL_MOUNT } from '../base/app/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes';
 import { fetchCustomBrandingData } from './actions.any';

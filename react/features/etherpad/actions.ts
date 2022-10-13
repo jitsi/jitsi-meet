@@ -1,5 +1,3 @@
-// @flow
-
 import {
     SET_DOCUMENT_EDITING_STATUS,
     SET_DOCUMENT_URL,
@@ -32,7 +30,7 @@ export function setDocumentEditingState(editing: boolean) {
  *    documentUrl: string
  * }}
  */
-export function setDocumentUrl(documentUrl: ?string) {
+export function setDocumentUrl(documentUrl?: string) {
     return {
         type: SET_DOCUMENT_URL,
         documentUrl

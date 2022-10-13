@@ -1,5 +1,3 @@
-// @flow
-
 import { SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID } from './actionTypes';
 
 /**
@@ -13,7 +11,7 @@ import { SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID } from './actionTypes';
  *     uid: number
  * }}
  */
-export function setNoAudioSignalNotificationUid(uid: ?number) {
+export function setNoAudioSignalNotificationUid(uid?: string) {
     return {
         type: SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID,
         uid

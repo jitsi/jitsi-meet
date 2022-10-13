@@ -1,11 +1,10 @@
-// @flow
-
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_JOINED } from '../base/conference';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { MiddlewareRegistry } from '../base/redux';
-import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { NOTIFICATION_TIMEOUT_TYPE, hideNotification, showNotification } from '../notifications';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import { hideNotification, showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { setNoisyAudioInputNotificationUid } from './actions';
 import { NOISY_AUDIO_INPUT_SOUND_ID } from './constants';
@@ -27,7 +26,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         conference.on(
             JitsiConferenceEvents.TRACK_MUTE_CHANGED,
-            track => {
+            (track: any) => {
                 const { noisyAudioInputNotificationUid } = getState()['features/noise-detection'];
 
                 // Hide the notification in case the user mutes the microphone

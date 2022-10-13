@@ -1,18 +1,24 @@
-import type { Dispatch } from 'redux';
-
-import { openSheet } from '../base/dialog';
+/* eslint-disable lines-around-comment */
+import { IStore } from '../app/types';
+import { openSheet } from '../base/dialog/actions';
+// @ts-ignore
 import { SharedVideoMenu } from '../video-menu';
+// @ts-ignore
 import { LocalVideoMenu } from '../video-menu/components/native';
 import ConnectionStatusComponent
+// @ts-ignore
     from '../video-menu/components/native/ConnectionStatusComponent';
+// @ts-ignore
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
 
 import { SET_VOLUME } from './actionTypes';
 import {
     ContextMenuLobbyParticipantReject
+    // @ts-ignore
 } from './components/native';
 import RoomParticipantMenu from './components/native/RoomParticipantMenu';
 export * from './actions.any';
+/* eslint-enable lines-around-comment */
 
 /**
  * Displays the context menu for the selected lobby participant.
@@ -42,8 +48,8 @@ export function showConnectionStatus(participantID: string) {
  * @param {boolean} local - Whether the participant is local or not.
  * @returns {Function}
  */
-export function showContextMenuDetails(participantId: string, local: boolean = false) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function showContextMenuDetails(participantId: string, local = false) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { remoteVideoMenu } = getState()['features/base/config'];
 
         if (local) {
@@ -92,6 +98,7 @@ export function setVolume(participantId: string, volume: number) {
  * @returns {Function}
  */
 export function showRoomParticipantMenu(room: Object, participantJid: string, participantName: string) {
+    // @ts-ignore
     return openSheet(RoomParticipantMenu, { room,
         participantJid,
         participantName });

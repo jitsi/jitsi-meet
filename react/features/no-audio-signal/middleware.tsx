@@ -1,20 +1,21 @@
-// @flow
-
 import React from 'react';
+import { AnyAction } from 'redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_JOINED } from '../base/conference';
-import {
-    formatDeviceLabel,
-    setAudioInputDevice
-} from '../base/devices';
+import { IStore } from '../app/types';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { setAudioInputDevice } from '../base/devices/actions';
+import { formatDeviceLabel } from '../base/devices/functions';
 import JitsiMeetJS, { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { MiddlewareRegistry } from '../base/redux';
-import { updateSettings } from '../base/settings';
-import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { NOTIFICATION_TIMEOUT_TYPE, hideNotification, showNotification } from '../notifications';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { updateSettings } from '../base/settings/actions';
+import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import { hideNotification, showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { setNoAudioSignalNotificationUid } from './actions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import DialInLink from './components/DialInLink';
 import { NO_AUDIO_SIGNAL_SOUND_ID } from './constants';
 import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';
@@ -48,11 +49,11 @@ MiddlewareRegistry.register(store => next => async action => {
  * @private
  * @returns {void}
  */
-async function _handleNoAudioSignalNotification({ dispatch, getState }, action) {
+async function _handleNoAudioSignalNotification({ dispatch, getState }: IStore, action: AnyAction) {
 
     const { conference } = action;
 
-    conference.on(JitsiConferenceEvents.AUDIO_INPUT_STATE_CHANGE, hasAudioInput => {
+    conference.on(JitsiConferenceEvents.AUDIO_INPUT_STATE_CHANGE, (hasAudioInput: boolean) => {
         const { noAudioSignalNotificationUid } = getState()['features/no-audio-signal'];
 
         // In case the notification is displayed but the conference detected audio input signal we hide it.
