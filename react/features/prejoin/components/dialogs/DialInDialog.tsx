@@ -8,8 +8,7 @@ import { makeStyles } from 'tss-react/mui';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowLeft } from '../../../base/icons/svg';
-// @ts-ignore
-import { ActionButton } from '../../../base/premeeting';
+import { Button } from '../../../base/ui/components/web';
 // @ts-ignore
 import { getCountryCodeFromPhone } from '../../utils';
 // @ts-ignore
@@ -153,18 +152,18 @@ function DialinDialog(props: Props) {
                 {t('prejoin.connectedWithAudioQ')}
             </Label>
             <div className = 'prejoin-dialog-dialin-btns'>
-                <ActionButton
+                <Button
                     className = 'prejoin-dialog-btn'
+                    fullWidth = { true }
+                    labelKey = 'prejoin.joinMeeting'
                     onClick = { onPrimaryButtonClick }
-                    type = 'primary'>
-                    {t('prejoin.joinMeeting')}
-                </ActionButton>
-                <ActionButton
+                    type = 'primary' />
+                <Button
                     className = 'prejoin-dialog-btn'
+                    fullWidth = { true }
+                    labelKey = 'dialog.Cancel'
                     onClick = { onTextButtonClick }
-                    type = 'text'>
-                    {t('dialog.Cancel')}
-                </ActionButton>
+                    type = 'tertiary' />
             </div>
         </div>
     );
