@@ -20,31 +20,20 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function toggleScreensharing(enabled: boolean): Function {
-    return (store: IStore) => _toggleScreenSharing(enabled, store);
-}
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
 
-/**
- * Toggles screen sharing.
- *
- * @private
- * @param {boolean} enabled - The state to toggle screen sharing to.
- * @param {Store} store - The redux.
- * @returns {void}
- */
-function _toggleScreenSharing(enabled: boolean, store: IStore): void {
-    const { dispatch, getState } = store;
-    const state = getState();
+        if (enabled) {
+            const isSharing = isLocalVideoTrackDesktop(state);
 
-    if (enabled) {
-        const isSharing = isLocalVideoTrackDesktop(state);
-
-        if (!isSharing) {
-            _startScreenSharing(dispatch, state);
+            if (!isSharing) {
+                _startScreenSharing(dispatch, state);
+            }
+        } else {
+            dispatch(destroyLocalDesktopTrackIfExists());
+            setPictureInPictureEnabled(true);
         }
-    } else {
-        dispatch(destroyLocalDesktopTrackIfExists());
-        setPictureInPictureEnabled(true);
-    }
+    };
 }
 
 /**
