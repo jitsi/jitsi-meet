@@ -16,6 +16,7 @@ import AbstractMessageRecipient, {
     type Props as AbstractProps
 } from '../AbstractMessageRecipient';
 
+
 type Props = AbstractProps & {
 
     /**
@@ -132,6 +133,7 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
                     }) }
                 </Text>
                 <TouchableHighlight
+                    underlayColor = { 'transparent' }
                     onPress = { this._onResetPrivateMessageRecipient }>
                     <Icon
                         src = { IconCancelSelection }
