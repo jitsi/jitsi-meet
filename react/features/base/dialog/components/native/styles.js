@@ -2,12 +2,10 @@ import { StyleSheet } from 'react-native';
 
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
-import { BoxModel, ColorPalette } from '../../../styles';
+import { BoxModel } from '../../../styles';
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
 
 const BORDER_RADIUS = 5;
-
-export const FIELD_UNDERLINE = ColorPalette.transparent;
 
 /**
  * NOTE: These Material guidelines based values are currently only used in
@@ -16,7 +14,7 @@ export const FIELD_UNDERLINE = ColorPalette.transparent;
  */
 export const MD_FONT_SIZE = 16;
 export const MD_ITEM_HEIGHT = 48;
-export const MD_ITEM_MARGIN_PADDING = 16;
+export const MD_ITEM_MARGIN_PADDING = BaseTheme.spacing[3];
 
 /**
  * Reusable (colored) style for text in any branded dialogs.
@@ -28,7 +26,7 @@ const brandedDialogText = {
 };
 
 const brandedDialogLabelStyle = {
-    color: ColorPalette.white,
+    color: BaseTheme.palette.text01,
     flexShrink: 1,
     fontSize: MD_FONT_SIZE,
     opacity: 0.90
@@ -41,7 +39,7 @@ const brandedDialogItemContainerStyle = {
 };
 
 const brandedDialogIconStyle = {
-    color: ColorPalette.white,
+    color: BaseTheme.palette.icon01,
     fontSize: 24
 };
 
@@ -61,7 +59,7 @@ export const inputDialog = {
  */
 export const bottomSheetStyles = {
     sheetAreaCover: {
-        backgroundColor: ColorPalette.transparent,
+        backgroundColor: 'transparent',
         flex: 1
     },
 
@@ -115,7 +113,7 @@ export const bottomSheetStyles = {
         /**
          * Additional style that is not directly used as a style object.
          */
-        underlayColor: ColorPalette.toggled
+        underlayColor: BaseTheme.palette.underlay01
     },
 
     /**

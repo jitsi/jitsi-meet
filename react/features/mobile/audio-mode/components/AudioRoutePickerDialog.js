@@ -14,7 +14,7 @@ import {
     IconDeviceSpeaker
 } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { ColorPalette } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import styles from './styles';
 
@@ -245,7 +245,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
             <TouchableHighlight
                 key = { device.type }
                 onPress = { this._onSelectDeviceFn(device) }
-                underlayColor = { ColorPalette.overflowMenuItemUnderlay } >
+                underlayColor = { BaseTheme.palette.underlay01 } >
                 <View style = { styles.deviceRow } >
                     <Icon
                         src = { icon }
