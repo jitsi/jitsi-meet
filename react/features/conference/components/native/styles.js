@@ -81,7 +81,7 @@ export default {
             padding: 12,
             fontSize: TITLE_BAR_BUTTON_SIZE
         },
-        underlayColor: BaseTheme.spacing.underlay01
+        underlayColor: 'transparent'
     },
 
     lonelyButton: {
@@ -116,7 +116,7 @@ export default {
             padding: 12,
             fontSize: TITLE_BAR_BUTTON_SIZE
         },
-        underlayColor: BaseTheme.spacing.underlay01
+        underlayColor: 'transparent'
     },
 
     titleBarSafeViewColor: {
