@@ -139,12 +139,12 @@ export function appNavigate(uri?: string) {
 
         if (room) {
             dispatch(createDesiredLocalTracks());
+            dispatch(clearNotifications());
 
             if (isPrejoinPageEnabled(getState())) {
                 navigateRoot(screen.preJoin);
             } else {
                 dispatch(connect());
-                dispatch(clearNotifications());
                 navigateRoot(screen.conference.root);
             }
         } else {
