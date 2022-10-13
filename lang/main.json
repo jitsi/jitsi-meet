@@ -1220,6 +1220,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
+        "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from {{here}}",
+        "sourceLanguageHere": "here",
         "error": "Transcribing failed. Please try again.",
         "expandedLabel": "Transcribing is currently on",
         "failedToStart": "Transcribing failed to start",
