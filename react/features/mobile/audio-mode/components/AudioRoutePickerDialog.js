@@ -243,7 +243,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
         const borderRadiusHighlightStyles = {
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16
-        }
+        };
         const speakerDeviceIsNotSelected = device.type !== 'SPEAKER';
 
         return (

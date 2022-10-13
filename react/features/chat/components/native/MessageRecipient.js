@@ -133,8 +133,8 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
                     }) }
                 </Text>
                 <TouchableHighlight
-                    underlayColor = { 'transparent' }
-                    onPress = { this._onResetPrivateMessageRecipient }>
+                    onPress = { this._onResetPrivateMessageRecipient }
+                    underlayColor = { 'transparent' }>
                     <Icon
                         src = { IconCancelSelection }
                         style = { _styles.messageRecipientCancelIcon } />
