@@ -1,0 +1,36 @@
+diff --git a/react/features/base/settings/constants.ts b/react/features/base/settings/constants.ts
+index 2cbd65d85..c7e1d1bc9 100644
+--- a/react/features/base/settings/constants.ts
++++ b/react/features/base/settings/constants.ts
+@@ -1,4 +1,4 @@
+ /**
+  * The default server URL to open if no other was specified.
+  */
+-export const DEFAULT_SERVER_URL = 'https://meet.jit.si';
++export const DEFAULT_SERVER_URL = 'https://meet.virtualcp.app';
+diff --git a/react/features/base/tracks/actions.any.ts b/react/features/base/tracks/actions.any.ts
+index c815f6e87..e2686fdc8 100644
+--- a/react/features/base/tracks/actions.any.ts
++++ b/react/features/base/tracks/actions.any.ts
+@@ -739,7 +739,7 @@ function _shouldMirror(track: any): boolean {
+             // of the value on the right side of the equality check is defined
+             // by jitsi-meet. The type definitions are surely compatible today
+             // but that may not be the case tomorrow.
+-            && track?.getCameraFacingMode() === CAMERA_FACING_MODE.USER);
++            && track?.getCameraFacingMode() === CAMERA_FACING_MODE.ENVIRONMENT);
+ }
+ 
+ /**
+diff --git a/webpack.config.js b/webpack.config.js
+index 0cd8806bf..1878545ae 100644
+--- a/webpack.config.js
++++ b/webpack.config.js
+@@ -12,7 +12,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+  * development with webpack-dev-server.
+  */
+ const devServerProxyTarget
+-    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
++    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://meet.virtualcp.app';
+ 
+ /**
+  * Build a Performance configuration object for the given size.
