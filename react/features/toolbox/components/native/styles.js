@@ -126,7 +126,8 @@ ColorSchemeRegistry.register('Toolbox', {
         style: {
             ...toolbarButton,
             backgroundColor: 'transparent'
-        }
+        },
+        underlayColor: 'transparent'
     },
 
     backgroundToggle: {
@@ -199,6 +200,7 @@ ColorSchemeRegistry.register('Toolbox', {
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton
-        }
+        },
+        underlayColor: 'transparent'
     }
 });
