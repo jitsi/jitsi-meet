@@ -1,7 +1,8 @@
 // @flow
 
 import { MD_ITEM_HEIGHT } from '../../../base/dialog';
-import { ColorPalette, createStyleSheet } from '../../../base/styles';
+import { createStyleSheet } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
  * The React {@code Component} styles of {@code AudioRoutePickerDialog}.
@@ -18,30 +19,30 @@ export default createStyleSheet({
         alignItems: 'center',
         flexDirection: 'row',
         height: MD_ITEM_HEIGHT,
-        marginLeft: 16
+        marginLeft: BaseTheme.spacing[3]
     },
 
     /**
      * Style for the {@code Icon} element in a row.
      */
     deviceIcon: {
-        color: ColorPalette.white,
-        fontSize: 24
+        color: BaseTheme.palette.icon01,
+        fontSize: BaseTheme.spacing[4]
     },
 
     /**
      * Style for the {@code Text} element in a row.
      */
     deviceText: {
-        color: ColorPalette.white,
+        color: BaseTheme.palette.text01,
         fontSize: 16,
-        marginLeft: 32
+        marginLeft: BaseTheme.spacing[5]
     },
 
     /**
      * Style for a row which is marked as selected.
      */
     selectedText: {
-        color: ColorPalette.blue
+        color: BaseTheme.palette.action01
     }
 });
