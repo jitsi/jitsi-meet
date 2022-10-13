@@ -240,11 +240,17 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     _renderDevice(device: Device) {
         const { icon, selected, text } = device;
         const selectedStyle = selected ? styles.selectedText : {};
+        const borderHighlightStyles = {
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16
+        }
+        const speakerIsNotSelected = device.type !== 'SPEAKER';
 
         return (
             <TouchableHighlight
                 key = { device.type }
                 onPress = { this._onSelectDeviceFn(device) }
+                style = { speakerIsNotSelected && borderHighlightStyles }
                 underlayColor = { BaseTheme.palette.underlay01 } >
                 <View style = { styles.deviceRow } >
                     <Icon
