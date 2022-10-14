@@ -18,7 +18,8 @@ const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
  *
  * @returns {Promise<JitsiLocalTrack>}
  */
-export function createLocalTrack(type: string, deviceId: string, timeout?: number, additionalOptions?: Object) {
+export function createLocalTrack(type: string, deviceId: string | null, timeout?: number | null,
+        additionalOptions?: Object) {
     return (
         JitsiMeetJS.createLocalTracks({
             cameraDeviceId: deviceId,

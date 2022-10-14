@@ -31,7 +31,7 @@ import { updateSettings } from '../../base/settings/actions';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import Button from '../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants';
-import { BrandingImageBackground } from '../../dynamic-branding';
+import { BrandingImageBackground } from '../../dynamic-branding/components/native';
 // @ts-ignore
 import { LargeVideo } from '../../large-video/components';
 // @ts-ignore
