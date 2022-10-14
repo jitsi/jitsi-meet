@@ -21,7 +21,7 @@ const CarModeFooter = (): JSX.Element => {
             pointerEvents = 'box-none'
             style = { styles.bottomContainer }>
             <Text style = { styles.videoStoppedLabel }>
-                {t('carmode.labels.videoStopped')}
+                { t('carmode.labels.videoStopped') }
             </Text>
             <SoundDeviceButton />
             <EndMeetingButton />

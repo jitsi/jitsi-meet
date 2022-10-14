@@ -24,10 +24,7 @@ export default {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        bottom: BaseTheme.spacing[8],
-        left: 0,
-        right: 0,
-        position: 'absolute'
+        bottom: BaseTheme.spacing[8]
     },
 
     /**
@@ -79,7 +76,7 @@ export default {
         flexShrink: 1,
         paddingHorizontal: 2,
         justifyContent: 'center',
-        marginTop: 8
+        marginTop: BaseTheme.spacing[2]
     },
 
     roomTimer: {
@@ -99,8 +96,8 @@ export default {
     title: {
         margin: 'auto',
         textAlign: 'center',
-        paddingVertical: 4,
-        paddingHorizontal: 16,
+        paddingVertical: BaseTheme.spacing[1],
+        paddingHorizontal: BaseTheme.spacing[3],
         color: BaseTheme.palette.text02
     },
 
@@ -141,7 +138,7 @@ export default {
 
     roomNameWrapper: {
         flexDirection: 'row',
-        marginRight: 10,
+        marginRight: BaseTheme.spacing[2],
         flexShrink: 1,
         flexGrow: 1
     },
@@ -150,7 +147,7 @@ export default {
         backgroundColor: 'rgba(0,0,0,0.6)',
         flexShrink: 1,
         justifyContent: 'center',
-        paddingHorizontal: 5
+        paddingHorizontal: BaseTheme.spacing[2]
     },
 
     roomName: {
@@ -166,7 +163,9 @@ export default {
     videoStoppedLabel: {
         ...BaseTheme.typography.bodyShortRegularLarge,
         color: BaseTheme.palette.text01,
-        marginBottom: BaseTheme.spacing[3]
+        marginBottom: BaseTheme.spacing[3],
+        textAlign: 'center',
+        width: '100%'
     },
 
     connectionIndicatorIcon: {
