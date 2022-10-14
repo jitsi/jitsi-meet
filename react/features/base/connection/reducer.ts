@@ -11,7 +11,7 @@ import {
     SET_LOCATION_URL,
     SHOW_CONNECTION_INFO
 } from './actionTypes';
-import { ConnectionFailedError } from './actions.native';
+import { ConnectionFailedError } from './actions.any';
 
 export interface IConnectionState {
     connecting?: any;

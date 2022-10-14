@@ -19,7 +19,6 @@ import { appNavigate } from '../../app/actions.native';
 import { IState } from '../../app/types';
 import { setAudioOnly } from '../../base/audio-only/actions';
 import { getConferenceName } from '../../base/conference/functions';
-// @ts-ignore
 import { connect } from '../../base/connection/actions.native';
 import { IconClose } from '../../base/icons/svg';
 // @ts-ignore
