@@ -85,8 +85,9 @@ class Captions extends AbstractCaptions<Props> {
                         console.log('InAppWebViewNotLoaded');
                     }
                 } else {
+                    let structuredWebArgs = args.replaceAll('Fellow Jitser:', '');
                     window.opener.postMessage(JSON.stringify({
-                        'polytok': args
+                        'polytok': structuredWebArgs
                     }), 'https://custommeet4.centralus.cloudapp.azure.com/');
                     window.addEventListener('message', (event) => {
                         stringData = JSON.stringify(event.data);
