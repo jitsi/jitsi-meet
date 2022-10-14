@@ -100,6 +100,7 @@ export default {
         backgroundColor: BaseTheme.palette.ui16,
         bottom: BaseTheme.spacing[3],
         borderRadius: 4,
+        margin: BaseTheme.spacing[3],
         paddingHorizontal: BaseTheme.spacing[3],
         paddingVertical: BaseTheme.spacing[1],
         position: 'absolute'
