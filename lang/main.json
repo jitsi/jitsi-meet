@@ -96,6 +96,7 @@
         "messageAccessibleTitleMe": "me says:",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
+        "sendButton": "Send",
         "newMessages": "New messages",
         "nickname": {
             "popover": "Choose a nickname",
