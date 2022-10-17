@@ -178,7 +178,8 @@ function getConfig(options = {}) {
                 exclude: /node_modules/,
                 loader: 'ts-loader',
                 options: {
-                    transpileOnly: !isProduction // Skip type checking for dev builds.
+                    configFile: 'tsconfig.web.json',
+                    transpileOnly: !isProduction // Skip type checking for dev builds.,
                 }
             } ]
         },
