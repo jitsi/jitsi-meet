@@ -1,44 +1,35 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
+// @ts-expect-error
 import { API_ID } from '../../../modules/API';
-import { setRoom } from '../base/conference';
+import { setRoom } from '../base/conference/actions';
 import {
     configWillLoad,
-    createFakeConfig,
     loadConfigError,
-    restoreConfig,
     setConfig,
     storeConfig
-} from '../base/config';
-import { setLocationURL } from '../base/connection';
+} from '../base/config/actions';
+import { createFakeConfig, restoreConfig } from '../base/config/functions.web';
+import { setLocationURL } from '../base/connection/actions.web';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
+import { inIframe } from '../base/util/iframeUtils';
+import { parseURLParams } from '../base/util/parseURLParams';
 import {
     appendURLParam,
     getBackendSafeRoomName,
-    parseURIString,
-    parseURLParams
-} from '../base/util';
-import { inIframe } from '../base/util/iframeUtils';
+    parseURIString
+} from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    clearNotifications,
-    showNotification
-} from '../notifications';
-import { setFatalError } from '../overlay';
+import { clearNotifications, showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import { setFatalError } from '../overlay/actions';
 
 import {
     redirectToStaticPage,
     redirectWithStoredParams,
     reloadWithStoredParams
 } from './actions.any';
-import { getDefaultURL, getName } from './functions';
+import { getDefaultURL, getName } from './functions.web';
 import logger from './logger';
-
-
-declare var interfaceConfig: Object;
+import { IStore } from './types';
 
 export * from './actions.any';
 
@@ -52,8 +43,8 @@ export * from './actions.any';
  * scheme, or a mere room name.
  * @returns {Function}
  */
-export function appNavigate(uri: ?string) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+export function appNavigate(uri?: string) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let location = parseURIString(uri);
 
         // If the specified location (URI) does not identify a host, use the app's
@@ -96,7 +87,7 @@ export function appNavigate(uri: ?string) {
         let url = `${baseURL}config.js`;
 
         // XXX In order to support multiple shards, tell the room to the deployment.
-        room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room)));
+        room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room) ?? ''));
 
         const { release } = parseURLParams(location, true, 'search');
 
@@ -113,7 +104,7 @@ export function appNavigate(uri: ?string) {
             try {
                 config = await loadConfig(url);
                 dispatch(storeConfig(baseURL, config));
-            } catch (error) {
+            } catch (error: any) {
                 config = restoreConfig(baseURL);
 
                 if (!config) {
@@ -155,8 +146,8 @@ export function appNavigate(uri: ?string) {
  * @param {boolean} options.feedbackSubmitted - Whether feedback was submitted.
  * @returns {Function}
  */
-export function maybeRedirectToWelcomePage(options: Object = {}) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolean; showThankYou?: boolean; } = {}) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
 
         const {
             enableClosePage
@@ -168,6 +159,7 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
                 const isOpenedInIframe = inIframe();
 
                 if (isOpenedInIframe) {
+                    // @ts-ignore
                     window.location = 'about:blank';
                 } else {
                     dispatch(redirectToStaticPage('/'));
@@ -182,8 +174,8 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
             // save whether current user is guest or not, and pass auth token,
             // before navigating to close page
-            window.sessionStorage.setItem('guest', !jwt);
-            window.sessionStorage.setItem('jwt', jwt);
+            window.sessionStorage.setItem('guest', (!jwt).toString());
+            window.sessionStorage.setItem('jwt', jwt ?? '');
 
             let path = 'close.html';
 
@@ -228,7 +220,7 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
  * @returns {Function}
  */
 export function reloadNow() {
-    return (dispatch: Dispatch<Function>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         dispatch(setFatalError(undefined));
 
         const state = getState();

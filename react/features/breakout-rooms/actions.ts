@@ -9,7 +9,6 @@ import {
     conferenceLeft,
     conferenceWillLeave,
     createConference
-    // @ts-ignore
 } from '../base/conference/actions';
 import { CONFERENCE_LEAVE_REASONS } from '../base/conference/constants';
 import { getCurrentConference } from '../base/conference/functions';
@@ -24,8 +23,7 @@ import {
 } from '../base/tracks';
 // @ts-ignore
 import { createDesiredLocalTracks } from '../base/tracks/actions';
-// @ts-ignore
-import { clearNotifications, showNotification } from '../notifications';
+import { clearNotifications, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { _RESET_BREAKOUT_ROOMS, _UPDATE_ROOM_COUNTER } from './actionTypes';
@@ -224,7 +222,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(clearNotifications());
 
             // dispatch(setRoom(_roomId));
-            dispatch(createConference(_roomId));
+            dispatch(createConference(_roomId?.toString()));
             dispatch(setAudioMuted(audio.muted));
             dispatch(setVideoMuted(Boolean(video.muted)));
             dispatch(createDesiredLocalTracks());

@@ -38,12 +38,15 @@ const DEFAULT_STATE = {
 };
 
 export interface IJitsiConference {
+    addCommandListener: Function;
     addTrack: Function;
+    authenticateAndUpgradeRole: Function;
     avModerationApprove: Function;
     avModerationReject: Function;
     createVideoSIPGWSession: Function;
     disableAVModeration: Function;
     enableAVModeration: Function;
+    end: Function;
     getBreakoutRooms: Function;
     getLocalTracks: Function;
     grantOwner: Function;
@@ -51,7 +54,11 @@ export interface IJitsiConference {
     isCallstatsEnabled: Function;
     isEndConferenceSupported: Function;
     isLobbySupported: Function;
+    isStartAudioMuted: Function;
+    isStartVideoMuted: Function;
+    join: Function;
     kickParticipant: Function;
+    lock: Function;
     muteParticipant: Function;
     myLobbyUserId: Function;
     myUserId: Function;
@@ -65,12 +72,15 @@ export interface IJitsiConference {
     sessionId: string;
     setDisplayName: Function;
     setLocalParticipantProperty: Function;
+    setSubject: Function;
 }
 
 export interface IConferenceState {
     authEnabled?: boolean;
     authLogin?: string;
-    authRequired?: Object;
+    authRequired?: {
+        join: Function;
+    };
     conference?: IJitsiConference;
     conferenceTimestamp?: number;
     e2eeSupported?: boolean;
@@ -207,7 +217,7 @@ function _conferenceFailed(state: IConferenceState, { conference, error }: { con
         return state;
     }
 
-    let authRequired;
+    let authRequired: any;
     let membersOnly;
     let passwordRequired;
 

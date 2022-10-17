@@ -1,11 +1,8 @@
-// @flow
-
-import { toState } from '../base/redux';
-import { getServerURL } from '../base/settings';
+import { IStateful } from '../base/app/types';
+import { toState } from '../base/redux/functions';
+import { getServerURL } from '../base/settings/functions.web';
 
 export * from './functions.any';
-
-declare var interfaceConfig: Object;
 
 /**
  * Retrieves the default URL for the app. This can either come from a prop to
@@ -15,7 +12,7 @@ declare var interfaceConfig: Object;
  * function.
  * @returns {string} - Default URL for the app.
  */
-export function getDefaultURL(stateful: Function | Object) {
+export function getDefaultURL(stateful: IStateful) {
     const state = toState(stateful);
     const { href } = window.location;
 

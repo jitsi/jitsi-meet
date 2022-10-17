@@ -229,7 +229,7 @@ export function createLocalTracksA(options: TrackOptions = {}) {
  * @param {JitsiLocalTrack|null} [track] - The local track that needs to be destroyed.
  * @returns {Function}
  */
-export function destroyLocalTracks(track = null) {
+export function destroyLocalTracks(track: any = null) {
     if (track) {
         return (dispatch: IStore['dispatch']) => {
             dispatch(_disposeAndRemoveTracks([ track ]));

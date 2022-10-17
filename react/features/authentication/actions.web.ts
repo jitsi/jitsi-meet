@@ -1,11 +1,12 @@
-// @flow
-
-import { maybeRedirectToWelcomePage } from '../app/actions';
+import { maybeRedirectToWelcomePage } from '../app/actions.web';
+import { IStore } from '../app/types';
 import { hideDialog, openDialog } from '../base/dialog/actions';
 
 import {
     CANCEL_LOGIN
 } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 export * from './actions.any';
@@ -30,7 +31,7 @@ export function cancelLogin() {
  * @returns {Function}
  */
 export function cancelWaitForOwner() {
-    return (dispatch: Function) => {
+    return (dispatch: IStore['dispatch']) => {
         dispatch(maybeRedirectToWelcomePage());
     };
 }
@@ -55,7 +56,7 @@ export function hideLoginDialog() {
  *
  * @returns {Function}.
  */
-export function openAuthDialog(room: String, onAuthNow: ?Function) {
+export function openAuthDialog(room: String, onAuthNow?: Function) {
     return openDialog(WaitForOwnerDialog, {
         room,
         onAuthNow

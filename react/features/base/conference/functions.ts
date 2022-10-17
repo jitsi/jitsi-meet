@@ -18,7 +18,6 @@ import { toState } from '../redux/functions';
 import { getJitsiMeetGlobalNS } from '../util/helpers';
 import { getBackendSafePath, safeDecodeURIComponent } from '../util/uri';
 
-// @ts-ignore
 import { setObfuscatedRoom } from './actions';
 import {
     AVATAR_URL_COMMAND,
@@ -86,7 +85,7 @@ export function _addLocalTracksToConference(
  * @returns {void}
  */
 export function commonUserJoinedHandling(
-        { dispatch }: IStore,
+        { dispatch }: { dispatch: IStore['dispatch']; },
         conference: IJitsiConference,
         user: any) {
     const id = user.getId();
@@ -122,7 +121,7 @@ export function commonUserJoinedHandling(
  * @returns {void}
  */
 export function commonUserLeftHandling(
-        { dispatch }: IStore,
+        { dispatch }: { dispatch: IStore['dispatch']; },
         conference: IJitsiConference,
         user: any) {
     const id = user.getId();

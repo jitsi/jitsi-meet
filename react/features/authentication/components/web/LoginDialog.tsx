@@ -5,6 +5,7 @@ import { WithTranslation } from 'react-i18next';
 // @ts-ignore
 import { connect } from '../../../../../connection';
 import { IState, IStore } from '../../../app/types';
+import { IJitsiConference } from '../../../base/conference/reducer';
 import { IConfig } from '../../../base/config/configType';
 import { toJid } from '../../../base/connection/functions';
 import { translate, translateToHTML } from '../../../base/i18n/functions';
@@ -15,7 +16,6 @@ import Input from '../../../base/ui/components/web/Input';
 import {
     authenticateAndUpgradeRole,
     cancelLogin
-    // @ts-ignore
 } from '../../actions.web';
 
 /**
@@ -27,7 +27,7 @@ interface Props extends WithTranslation {
      * {@link JitsiConference} That needs authentication - will hold a valid
      * value in XMPP login + guest access mode.
      */
-    _conference: Object;
+    _conference: IJitsiConference;
 
     /**
      * The server hosts specified in the global config.

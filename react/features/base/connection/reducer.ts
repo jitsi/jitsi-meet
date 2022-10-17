@@ -19,6 +19,7 @@ export interface IConnectionState {
         disconnect: Function;
         getJid: () => string;
         getLogs: () => Object;
+        initJitsiConference: Function;
     };
     error?: ConnectionFailedError;
     locationURL?: URL;

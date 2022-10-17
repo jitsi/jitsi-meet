@@ -1,5 +1,3 @@
-// @flow
-
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SET_FATAL_ERROR,
@@ -39,7 +37,7 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
  *     fatalError: ?Error
  * }}
  */
-export function setFatalError(fatalError: Object) {
+export function setFatalError(fatalError?: Object) {
     return {
         type: SET_FATAL_ERROR,
         fatalError

@@ -4,7 +4,6 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { PREJOIN_INITIALIZED } from '../../prejoin/actionTypes';
-// @ts-ignore
 import { setPrejoinPageVisibility } from '../../prejoin/actions';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
 import { setAudioOnly } from '../audio-only/actions';
