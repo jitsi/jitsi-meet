@@ -24,7 +24,7 @@ _Description: Full local server path to the SSL certificate file:
 Template: jitsi-meet/jvb-hostname
 Type: string
 _Description: The domain of the current installation (e.g. meet.jitsi.com):
- The value for the domain that is set in Jitsi Videobridge installation.
+ The value for the domain that is set in the Jitsi Videobridge installation.
 
 Template: jitsi-videobridge/jvb-hostname
 Type: string
