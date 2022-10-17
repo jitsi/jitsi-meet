@@ -41,7 +41,7 @@
 		4E812F3A28F9A4ED0087ACC9 /* JitsiMeetView+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E812F3628F9A4ED0087ACC9 /* JitsiMeetView+Private.m */; };
 		4ED4FFF32721B9B90074E620 /* JitsiAudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ED4FFF12721B9B90074E620 /* JitsiAudioSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4ED4FFF42721B9B90074E620 /* JitsiAudioSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ED4FFF22721B9B90074E620 /* JitsiAudioSession.m */; };
-		6F08DF7D4458EE3CF3F36F6D /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		6F08DF7D4458EE3CF3F36F6D /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		9A8EE79C77C17743BB66E8BD /* libPods-JitsiMeetSDKLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B46497DE9A95BDF5E312AF48 /* libPods-JitsiMeetSDKLite.a */; };
 		A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A934E8212F3ADB001E9388 /* Dropbox.m */; };
 		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
@@ -194,7 +194,7 @@
 			files = (
 				0BB9AD791F5EC6D7001C08DB /* Intents.framework in Frameworks */,
 				0BB9AD771F5EC6CE001C08DB /* CallKit.framework in Frameworks */,
-				6F08DF7D4458EE3CF3F36F6D /* (null) in Frameworks */,
+				6F08DF7D4458EE3CF3F36F6D /* BuildFile in Frameworks */,
 				3453F4A32680898C4A40E821 /* libPods-JitsiMeetSDK.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
