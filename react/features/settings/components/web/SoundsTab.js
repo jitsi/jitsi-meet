@@ -3,8 +3,8 @@
 import Checkbox from '@atlaskit/checkbox';
 import React from 'react';
 
-import { AbstractDialogTab } from '../../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
+import { AbstractDialogTab } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 
 declare var APP: Object;
@@ -121,15 +121,15 @@ class SoundsTab extends AbstractDialogTab<Props> {
                     onChange = { this._onChange } />
                 }
                 <Checkbox
-                    isChecked = { soundsIncomingMessage }
-                    label = { t('settings.incomingMessage') }
-                    name = 'soundsIncomingMessage'
-                    onChange = { this._onChange } />
+                    isChecked={false}
+                    label={t('settings.incomingMessage')}
+                    name="soundsIncomingMessage"
+                    onChange={this._onChange}/>
                 <Checkbox
-                    isChecked = { soundsParticipantJoined }
-                    label = { t('settings.participantJoined') }
-                    name = 'soundsParticipantJoined'
-                    onChange = { this._onChange } />
+                    isChecked={soundsParticipantJoined}
+                    label={t('settings.participantJoined')}
+                    name="soundsParticipantJoined"
+                    onChange={this._onChange}/>
                 <Checkbox
                     isChecked = { soundsParticipantLeft }
                     label = { t('settings.participantLeft') }
