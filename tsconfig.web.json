@@ -6,7 +6,6 @@
         "target": "es6",
         "jsx": "react",
         "lib": [ "webworker", "ES2020", "DOM" ],
-        "noEmit": true,
         "skipLibCheck": true,
         "moduleResolution": "Node",
         "strict": true,

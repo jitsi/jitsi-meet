@@ -6,7 +6,6 @@
         "jsx": "react-native",
         "lib": [ "ES2017"],
         "types": [ "react-native" ],
-        "noEmit": true,
         "skipLibCheck": true,
         "moduleResolution": "Node",
         "strict": true,
