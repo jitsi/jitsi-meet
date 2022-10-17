@@ -39,9 +39,10 @@ export function getJwtName(state: IState) {
  * @param {IState} state - The app state.
  * @param {string} feature - The feature we want to check.
  * @param {boolean} ifNoToken - Default value if there is no token.
- * @returns {string}
+ * @param {boolean} ifNotInFeatures - Default value if features prop exists but does not have the {@code feature}.
+ * @returns {bolean}
  */
-export function isJwtFeatureEnabled(state: IState, feature: string, ifNoToken = false) {
+export function isJwtFeatureEnabled(state: IState, feature: string, ifNoToken = false, ifNotInFeatures = false) {
     const { jwt } = state['features/base/jwt'];
 
     if (!jwt) {
@@ -53,6 +54,10 @@ export function isJwtFeatureEnabled(state: IState, feature: string, ifNoToken = 
     // If `features` is undefined, act as if everything is enabled.
     if (typeof features === 'undefined') {
         return true;
+    }
+
+    if (typeof features[feature as keyof typeof features] === 'undefined') {
+        return ifNotInFeatures;
     }
 
     return String(features[feature as keyof typeof features]) === 'true';
