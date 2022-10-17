@@ -1,15 +1,14 @@
 /* eslint-disable react/jsx-no-bind */
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../icons/components/Icon';
 import { IconCheck, IconCopy } from '../icons/svg';
 import { withPixelLineHeight } from '../styles/functions.web';
 import { copyText } from '../util/copyText.web';
 
-const styles = (theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         copyButton: {
             ...withPixelLineHeight(theme.typography.bodyLongRegular),
@@ -50,7 +49,7 @@ const styles = (theme: Theme) => {
             }
         }
     };
-};
+});
 
 let mounted: boolean;
 
@@ -60,11 +59,6 @@ type Props = {
      * Css class to apply on container.
      */
     className: string;
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: any;
 
     /**
      * The displayed text.
@@ -97,7 +91,8 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function CopyButton({ classes, className, displayedText, textToCopy, textOnHover, textOnCopySuccess, id }: Props) {
+function CopyButton({ className = '', displayedText, textToCopy, textOnHover, textOnCopySuccess, id }: Props) {
+    const { classes, cx } = useStyles();
     const [ isClicked, setIsClicked ] = useState(false);
     const [ isHovered, setIsHovered ] = useState(false);
 
@@ -174,7 +169,7 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
         if (isClicked) {
             return (
                 <>
-                    <div className = { clsx(classes.content, 'selected') }>
+                    <div className = { cx(classes.content, 'selected') }>
                         <span role = { 'alert' }>{ textOnCopySuccess }</span>
                     </div>
                     <Icon src = { IconCheck } />
@@ -184,7 +179,7 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
 
         return (
             <>
-                <div className = { clsx(classes.content) }>
+                <div className = { classes.content }>
                     <span> { isHovered ? textOnHover : displayedText } </span>
                 </div>
                 <Icon src = { IconCopy } />
@@ -195,7 +190,7 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
     return (
         <div
             aria-label = { textOnHover }
-            className = { clsx(className, classes.copyButton, isClicked ? ' clicked' : '') }
+            className = { cx(className, classes.copyButton, isClicked ? ' clicked' : '') }
             id = { id }
             onBlur = { onHoverOut }
             onClick = { onClick }
@@ -210,8 +205,4 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
     );
 }
 
-CopyButton.defaultProps = {
-    className: ''
-};
-
-export default withStyles(styles)(CopyButton);
+export default CopyButton;

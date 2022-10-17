@@ -17,12 +17,12 @@ interface Props extends WithTranslation {
     /**
      * List of strings with details about the connection.
      */
-    connectionDetails: string[];
+    connectionDetails?: string[];
 
     /**
      * The type of the connection. Can be: 'none', 'poor', 'nonOptimal' or 'good'.
      */
-    connectionType: string;
+    connectionType?: string;
 }
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -155,7 +155,7 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
     const arrowClassName = showDetails
         ? 'con-status-arrow con-status-arrow--up'
         : 'con-status-arrow';
-    const detailsText = connectionDetails.map(d => t(d)).join(' ');
+    const detailsText = connectionDetails?.map(d => t(d)).join(' ');
     const detailsClassName = showDetails
         ? 'con-status-details-visible'
         : 'con-status-details-hidden';
@@ -176,7 +176,7 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
         return null;
     }
 
-    const { connectionClass, icon, connectionText } = CONNECTION_TYPE_MAP[connectionType];
+    const { connectionClass, icon, connectionText } = CONNECTION_TYPE_MAP[connectionType ?? ''];
 
     return (
         <div className = { classes.connectionStatus }>
