@@ -7,6 +7,7 @@ import {
     getPinnedParticipant,
     pinParticipant
 } from '../base/participants';
+import { FakeParticipant } from '../base/participants/types';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
@@ -124,7 +125,7 @@ export function updateAutoPinnedParticipant(
     const pinned = getPinnedParticipant(getState);
 
     // if the pinned participant is shared video or some other fake participant we want to skip auto-pinning
-    if (pinned?.fakeParticipant) {
+    if (pinned?.fakeParticipant && pinned.fakeParticipant !== FakeParticipant.RemoteScreenShare) {
         return;
     }
 
