@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { ReactElement, useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { keyframes } from 'tss-react';
@@ -177,9 +177,11 @@ interface DialogProps {
         hidden?: boolean;
         translationKey?: string;
     };
-    children?: ReactElement | ReactElement[];
+    children?: React.ReactNode;
     className?: string;
     description?: string;
+    disableBackdropClose?: boolean;
+    hideCloseButton?: boolean;
     ok?: {
         disabled?: boolean;
         hidden?: boolean;
@@ -197,6 +199,8 @@ const Dialog = ({
     children,
     className,
     description,
+    disableBackdropClose,
+    hideCloseButton,
     ok = { translationKey: 'dialog.Ok' },
     onCancel,
     onSubmit,
@@ -214,16 +218,23 @@ const Dialog = ({
         dispatch(hideDialog());
     }, [ onCancel ]);
 
-    const handleKeyDown = useCallback((e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-            onClose();
-        }
-    }, []);
-
     const submit = useCallback(() => {
         onSubmit?.();
         dispatch(hideDialog());
     }, [ onSubmit ]);
+
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            onClose();
+        }
+        if (e.key === 'Enter') {
+            submit();
+        }
+    }, []);
+
+    const onBackdropClick = useCallback(() => {
+        !disableBackdropClose && onClose();
+    }, [ disableBackdropClose, onClose ]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
@@ -235,7 +246,7 @@ const Dialog = ({
         <div className = { cx(classes.container, isUnmounting && 'unmount') }>
             <div
                 className = { classes.backdrop }
-                onClick = { onClose } />
+                onClick = { onBackdropClick } />
             <div
                 aria-describedby = { description }
                 aria-labelledby = { title ?? t(titleKey ?? '') }
@@ -248,11 +259,13 @@ const Dialog = ({
                         id = 'dialog-title'>
                         {title ?? t(titleKey ?? '')}
                     </p>
-                    <ClickableIcon
-                        accessibilityLabel = { t('dialog.close') }
-                        icon = { IconClose }
-                        id = 'modal-header-close-button'
-                        onClick = { onClose } />
+                    {!hideCloseButton && (
+                        <ClickableIcon
+                            accessibilityLabel = { t('dialog.close') }
+                            icon = { IconClose }
+                            id = 'modal-header-close-button'
+                            onClick = { onClose } />
+                    )}
                 </div>
                 <div className = { classes.content }>{children}</div>
                 <div className = { classes.footer }>

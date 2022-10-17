@@ -7,11 +7,10 @@ import { connect } from '../../../../../connection';
 import { IState, IStore } from '../../../app/types';
 import { IConfig } from '../../../base/config/configType';
 import { toJid } from '../../../base/connection/functions';
-// @ts-ignore
-import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n/functions';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
 import {
     authenticateAndUpgradeRole,
@@ -255,19 +254,18 @@ class LoginDialog extends Component<Props, State> {
 
         return (
             <Dialog
-                disableBlanketClickDismiss = { true }
-                hideCloseIconButton = { true }
-                okDisabled = {
-                    connecting
-                    || loginStarted
-                    || !password
-                    || !username
-                }
-                okKey = { t('dialog.login') }
+                disableBackdropClose = { true }
+                hideCloseButton = { true }
+                ok = {{
+                    disabled: connecting
+                        || loginStarted
+                        || !password
+                        || !username,
+                    translationKey: 'dialog.login'
+                }}
                 onCancel = { this._onCancelLogin }
                 onSubmit = { this._onLogin }
-                titleKey = { t('dialog.authenticationRequired') }
-                width = { 'small' }>
+                titleKey = { t('dialog.authenticationRequired') }>
                 <Input
                     autoFocus = { true }
                     label = { t('dialog.user') }
@@ -278,6 +276,7 @@ class LoginDialog extends Component<Props, State> {
                     value = { username } />
                 <br />
                 <Input
+                    className = 'dialog-bottom-margin'
                     label = { t('dialog.userPassword') }
                     name = 'password'
                     onChange = { this._onPasswordChange }

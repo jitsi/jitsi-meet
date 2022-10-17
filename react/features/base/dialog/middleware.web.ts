@@ -1,5 +1,8 @@
 /* eslint-disable lines-around-comment */
+import LoginDialog from '../../authentication/components/web/LoginDialog';
+import WaitForOwnerDialog from '../../authentication/components/web/WaitForOwnerDialog';
 import ChatPrivacyDialog from '../../chat/components/web/ChatPrivacyDialog';
+import DesktopPicker from '../../desktop-picker/components/DesktopPicker';
 import DisplayNamePrompt from '../../display-name/components/web/DisplayNamePrompt';
 import EmbedMeetingDialog from '../../embed-meeting/components/EmbedMeetingDialog';
 // @ts-ignore
@@ -15,9 +18,12 @@ import StopLiveStreamDialog from '../../recording/components/LiveStream/web/Stop
 import StartRecordingDialog from '../../recording/components/Recording/web/StartRecordingDialog';
 // @ts-ignore
 import StopRecordingDialog from '../../recording/components/Recording/web/StopRecordingDialog';
+// @ts-ignore
+import RemoteControlAuthorizationDialog from '../../remote-control/components/RemoteControlAuthorizationDialog';
 import ShareAudioDialog from '../../screen-share/components/ShareAudioDialog';
 import ShareScreenWarningDialog from '../../screen-share/components/ShareScreenWarningDialog';
 import SecurityDialog from '../../security/components/security-dialog/web/SecurityDialog';
+import LogoutDialog from '../../settings/components/web/LogoutDialog';
 import SharedVideoDialog from '../../shared-video/components/web/SharedVideoDialog';
 import SpeakerStats from '../../speaker-stats/components/web/SpeakerStats';
 import LanguageSelectorDialog from '../../subtitles/components/LanguageSelectorDialog.web';
@@ -41,7 +47,8 @@ const NEW_DIALOG_LIST = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNam
     StartRecordingDialog, StopRecordingDialog, ShareAudioDialog, ShareScreenWarningDialog, SecurityDialog,
     SharedVideoDialog, SpeakerStats, LanguageSelectorDialog, MuteEveryoneDialog, MuteEveryonesVideoDialog,
     GrantModeratorDialog, KickRemoteParticipantDialog, MuteRemoteParticipantsVideoDialog, VideoQualityDialog,
-    VirtualBackgroundDialog ];
+    VirtualBackgroundDialog, LoginDialog, WaitForOwnerDialog, DesktopPicker, RemoteControlAuthorizationDialog,
+    LogoutDialog ];
 
 // This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
 const isNewDialog = (component: any) => NEW_DIALOG_LIST.some(comp => comp === component);

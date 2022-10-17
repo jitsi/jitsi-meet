@@ -11,8 +11,7 @@ import { Dialog } from '../../../base/dialog';
 import { hideDialog } from '../../../base/dialog/actions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
-// @ts-ignore
-import { getFieldValue } from '../../../base/react';
+import { getFieldValue } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { NOTES_MAX_LENGTH } from '../../constants';
 // @ts-ignore
@@ -20,7 +19,6 @@ import { useSalesforceLinkDialog } from '../../useSalesforceLinkDialog';
 
 import { RecordItem } from './RecordItem';
 
-// @ts-ignore
 const useStyles = makeStyles()((theme: Theme) => {
     return {
         container: {
@@ -102,7 +100,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             minHeight: '130px',
             resize: 'vertical',
             width: '100%',
-            boxSizing: 'borderBox',
+            boxSizing: 'border-box',
             overflow: 'hidden',
             border: '1px solid',
             borderColor: theme.palette.ui05,
