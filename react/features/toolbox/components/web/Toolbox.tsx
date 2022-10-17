@@ -6,6 +6,8 @@ import { batch } from 'react-redux';
 
 // @ts-ignore
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
+// @ts-ignore
+import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/functions';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IState } from '../../../app/types';
@@ -81,6 +83,7 @@ import { SettingsButton } from '../../../settings';
 import { SharedVideoButton } from '../../../shared-video/components';
 // @ts-ignore
 import { SpeakerStatsButton } from '../../../speaker-stats/components/web';
+import SpeakerStats from '../../../speaker-stats/components/web/SpeakerStats';
 import {
     ClosedCaptionButton
     // @ts-ignore
@@ -241,6 +244,12 @@ interface Props extends WithTranslation {
     _isProfileDisabled: boolean;
 
     /**
+     * Whether or not speaker stats is disable.
+     */
+     _isSpeakerStatsDisabled: boolean;
+
+
+     /**
      * Whether or not the current meeting belongs to a JaaS user.
      */
     _isVpaasMeeting: boolean;
@@ -399,6 +408,7 @@ class Toolbox extends Component<Props> {
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
+        this._onShortcutSpeakerStats = this._onShortcutSpeakerStats.bind(this);
         this._onEscKey = this._onEscKey.bind(this);
     }
 
@@ -409,7 +419,8 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons, t, dispatch, _reactionsEnabled, _gifsEnabled } = this.props;
+        const { _toolbarButtons, t, dispatch, _reactionsEnabled, _gifsEnabled, _isSpeakerStatsDisabled } = this.props;
+
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
@@ -445,6 +456,11 @@ class Toolbox extends Component<Props> {
                 character: 'W',
                 exec: this._onShortcutToggleTileView,
                 helpDescription: 'toolbar.tileViewToggle'
+            },
+            !_isSpeakerStatsDisabled && isToolbarButtonEnabled('stats', _toolbarButtons) && {
+                character: 'T',
+                exec: this._onShortcutSpeakerStats,
+                helpDescription: 'keyboardShortcuts.showSpeakerStats'
             }
         ];
 
@@ -698,9 +714,10 @@ class Toolbox extends Component<Props> {
     _getAllButtons() {
         const {
             _feedbackConfigured,
+            _hasSalesforce,
             _isIosMobile,
             _isMobile,
-            _hasSalesforce,
+            _isSpeakerStatsDisabled,
             _multiStreamModeEnabled,
             _screenSharing,
             _whiteboardEnabled
@@ -864,7 +881,7 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
-        const speakerStats = {
+        const speakerStats = !_isSpeakerStatsDisabled && {
             key: 'stats',
             Content: SpeakerStatsButton,
             group: 3
@@ -1204,6 +1221,34 @@ class Toolbox extends Component<Props> {
         this._doToggleScreenshare();
     }
 
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling speaker stats.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onShortcutSpeakerStats() {
+        sendAnalytics(createShortcutEvent(
+            'speaker.stats'
+        ));
+
+        this._doToggleSpekearStats();
+    }
+
+    /**
+     * Dispatches an action to toggle speakerStats.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleSpekearStats() {
+        const { dispatch } = this.props;
+
+        dispatch(toggleDialog(SpeakerStats, {
+            conference: APP.conference
+        }));
+    }
 
     /**
      * Toggle the toolbar visibility when tabbing into it.
@@ -1481,6 +1526,7 @@ class Toolbox extends Component<Props> {
 function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
+
     const {
         buttonsWithNotifyClick,
         callStatsID,
@@ -1516,6 +1562,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _isProfileDisabled: Boolean(disableProfile),
         _isIosMobile: isIosMobileBrowser(),
         _isMobile: isMobileBrowser(),
+        _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
         _isVpaasMeeting: isVpaasMeeting(state),
         _jwtDisabledButons: getJwtDisabledButtons(state),
         _hasSalesforce: isSalesforceEnabled(state),

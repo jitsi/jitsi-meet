@@ -224,9 +224,29 @@ var config = {
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
 
+    // speakerStats: {
+    //     // Specifies whether the speaker stats is enable or not.
+    //     disabled: false,
+
+    //     // Specifies whether there will be a search field in speaker stats or not.
+    //     disableSearch: false,
+
+    //     // Specifies whether participants in speaker stats should be ordered or not, and with what priority.
+    //     // 'role', <- Moderators on top.
+    //     // 'name', <- Alphabetically by name.
+    //     // 'hasLeft', <- The ones that have left in the bottom.
+    //     order: [
+    //         'role',
+    //         'name',
+    //         'hasLeft',
+    //     ],
+    // },
+
+    // DEPRECATED. Please use speakerStats.disableSearch instead.
     // Specifies whether there will be a search field in speaker stats or not
     // disableSpeakerStatsSearch: false,
 
+    // DEPRECATED. Please use speakerStats.order .
     // Specifies whether participants in speaker stats should be ordered or not, and with what priority
     // speakerStatsOrder: [
     //  'role', <- Moderators on top

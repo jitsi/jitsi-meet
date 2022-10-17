@@ -14,7 +14,17 @@ import {
  * @returns {boolean} - True if the speaker stats search is disabled and false otherwise.
  */
 export function isSpeakerStatsSearchDisabled(state: Object) {
-    return state['features/base/config']?.disableSpeakerStatsSearch;
+    return state['features/base/config']?.speakerStats.disableSearch;
+}
+
+/**
+ * Checks if the speaker stats is disabled.
+ *
+ * @param {*} state - The redux state.
+ * @returns {boolean} - True if the speaker stats search is disabled and false otherwise.
+ */
+export function isSpeakerStatsDisabled(state: Object) {
+    return state['features/base/config']?.speakerStats?.disabled;
 }
 
 /**
@@ -24,7 +34,7 @@ export function isSpeakerStatsSearchDisabled(state: Object) {
  * @returns {Array<string>} - The speaker stats order array or an empty array.
  */
 export function getSpeakerStatsOrder(state: Object) {
-    return state['features/base/config']?.speakerStatsOrder ?? [
+    return state['features/base/config']?.speakerStats.order ?? [
         'role',
         'name',
         'hasLeft'

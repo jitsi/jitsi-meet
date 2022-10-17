@@ -450,6 +450,25 @@ function _translateLegacyConfig(oldValue: IConfig) {
         };
     }
 
+    newValue.speakerStats = newValue.speakerStats || {};
+
+    if (oldValue.disableSpeakerStatsSearch !== undefined
+        && newValue.speakerStats.disableSearch === undefined
+    ) {
+        newValue.speakerStats = {
+            ...newValue.speakerStats,
+            disableSearch: oldValue.disableSpeakerStatsSearch
+        };
+    }
+
+    if (oldValue.speakerStatsOrder !== undefined
+         && newValue.speakerStats.order === undefined) {
+        newValue.speakerStats = {
+            ...newValue.speakerStats,
+            order: oldValue.speakerStatsOrder
+        };
+    }
+
     return newValue;
 }
 
