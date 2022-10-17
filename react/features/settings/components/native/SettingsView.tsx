@@ -7,7 +7,8 @@ import { WithTranslation } from 'react-i18next';
 import {
     Alert,
     NativeModules,
-    Platform, ScrollView,
+    Platform,
+    ScrollView,
     Text,
     View
 } from 'react-native';
