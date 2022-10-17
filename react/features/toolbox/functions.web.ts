@@ -1,6 +1,8 @@
 import { IState } from '../app/types';
 import { getToolbarButtons } from '../base/config/functions.web';
 import { hasAvailableDevices } from '../base/devices/functions';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { isScreenMediaShared } from '../screen-share/functions';
 import { isWhiteboardVisible } from '../whiteboard/functions';
 
@@ -84,8 +86,9 @@ export function isAudioSettingsButtonDisabled(state: IState) {
 export function isDesktopShareButtonDisabled(state: IState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
     const videoOrShareInProgress = !muted || isScreenMediaShared(state);
+    const enabledInJwt = isJwtFeatureEnabled(state, MEET_FEATURES.SCREEN_SHARING, true, true);
 
-    return unmuteBlocked && !videoOrShareInProgress;
+    return !enabledInJwt || (unmuteBlocked && !videoOrShareInProgress);
 }
 
 /**
