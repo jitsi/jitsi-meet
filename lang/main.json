@@ -96,7 +96,6 @@
         "messageAccessibleTitleMe": "me says:",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
-        "sendButton": "Send",
         "newMessages": "New messages",
         "nickname": {
             "popover": "Choose a nickname",
@@ -105,6 +104,7 @@
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
+        "sendButton": "Send",
         "smileysPanel": "Emoji panel",
         "tabs": {
             "chat": "Chat",
