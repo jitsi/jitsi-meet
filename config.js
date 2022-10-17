@@ -224,9 +224,6 @@ var config = {
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
 
-    // Specifies whether the speaker stats is enable or not
-    // speakerStats.disabled
-
     // speakerStats: {
     //     // Specifies whether the speaker stats is enable or not.
     //     disabled: false,
@@ -242,7 +239,7 @@ var config = {
     //         'role',
     //         'name',
     //         'hasLeft',
-    //     ]
+    //     ],
     // },
 
     // DEPRECATED. Please use speakerStats.disableSearch instead.
