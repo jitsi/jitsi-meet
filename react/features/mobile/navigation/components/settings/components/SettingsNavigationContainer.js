@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import HelpView from '../../../../../settings/components/native/HelpView';
@@ -38,6 +38,14 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: Props) => {
     const baseSettingsScreenOptions = isInWelcomePage ? welcomeScreenOptions : settingsScreenOptions;
     const { t } = useTranslation();
 
+    const SettingsScreen = useCallback(() =>
+        (
+            <SettingsView
+                addBottomInset = { !isInWelcomePage }
+                scrollBounces = { isInWelcomePage } />
+        )
+    );
+
     return (
         <NavigationContainer
             independent = { true }
@@ -46,12 +54,13 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: Props) => {
             <SettingsStack.Navigator
                 initialRouteName = { screen.settings.main }>
                 <SettingsStack.Screen
-                    component = { SettingsView }
                     name = { screen.settings.main }
                     options = {{
                         ...baseSettingsScreenOptions,
                         title: t('settings.title')
-                    }} />
+                    }}>
+                    { SettingsScreen }
+                </SettingsStack.Screen>
                 <SettingsStack.Screen
                     component = { HelpView }
                     name = { screen.settings.links.help }
