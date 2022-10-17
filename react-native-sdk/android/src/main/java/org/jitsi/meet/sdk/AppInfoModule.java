@@ -75,8 +75,8 @@ class AppInfoModule
         constants.put(
             "version",
             packageInfo == null ? "" : packageInfo.versionName);
-        constants.put("LIBRE_BUILD", BuildConfig.LIBRE_BUILD);
-        constants.put("GOOGLE_SERVICES_ENABLED", BuildConfig.GOOGLE_SERVICES_ENABLED);
+        constants.put("LIBRE_BUILD", false);  //Comment out the real buildconfig
+        constants.put("GOOGLE_SERVICES_ENABLED", false);
 
         return constants;
     }

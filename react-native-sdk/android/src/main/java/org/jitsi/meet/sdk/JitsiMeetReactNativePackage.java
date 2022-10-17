@@ -1,4 +1,4 @@
-package com.jitsimeetreactnative;
+package org.jisti.meet.sdk;
 
 import androidx.annotation.NonNull;
 
@@ -10,6 +10,7 @@ import com.facebook.react.uimanager.ViewManager;
 import org.devio.rn.splashscreen.SplashScreenModule;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class JitsiMeetReactNativePackage implements ReactPackage {
                 new ProximityModule(reactContext),
                 new WiFiStatsModule(reactContext),
                 new com.jitsimeetreactnative.net.NAT64AddrInfoModule(reactContext)
-                );
+                ));
         return modules;
     }
 
