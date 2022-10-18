@@ -25,7 +25,7 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
             const { remoteParticipants } = state['features/filmstrip'];
 
             reorderedParticipants = [ ...remoteParticipants, participantId ];
-            store.dispatch(setRemoteParticipants(reorderedParticipants));
+            store.dispatch(setRemoteParticipants(Array.from(new Set(reorderedParticipants))));
         }
 
         return;
@@ -92,7 +92,7 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
         ];
     }
 
-    store.dispatch(setRemoteParticipants(reorderedParticipants));
+    store.dispatch(setRemoteParticipants(Array.from(new Set(reorderedParticipants))));
 }
 
 /**
