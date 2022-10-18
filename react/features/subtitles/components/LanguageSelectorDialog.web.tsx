@@ -24,7 +24,6 @@ import LanguageList from './LanguageList';
 
 interface ILanguageSelectorDialogProps extends WithTranslation {
     _language: string;
-    _sourceLanguage: string;
     _translationLanguages: Array<string>;
     _translationLanguagesHead: Array<string>;
 }
