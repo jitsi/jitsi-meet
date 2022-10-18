@@ -95,11 +95,9 @@ const LanguageSelectorDialog = ({
         dispatch(toggleLanguageSelectorDialog());
     }, [ _language ]);
 
-    const [sourceLanguage, setSourceLanguage] = useState(i18next.language);
-
     const onSourceLanguageClick = useCallback(() => {
         dispatch(openSettingsDialog(SETTINGS_TABS.MORE, false));
-    }, [setSourceLanguage]);
+    }, []);
 
     return (
         <Dialog
@@ -109,7 +107,7 @@ const LanguageSelectorDialog = ({
             <p className = { styles.paragraphWrapper } >
                 {
                     translateToHTML(t, 'transcribing.sourceLanguageDesc', {
-                        'sourceLanguage': t(`languages:${sourceLanguage}`).toLowerCase()
+                        'sourceLanguage': t(`languages:${i18next.language}`).toLowerCase()
                     })
                 }<span
                     className = { styles.spanWrapper }
