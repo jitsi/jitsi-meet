@@ -29,10 +29,11 @@ const useStyles = makeStyles()((theme: Theme) => {
     return {
         itemContainer: {
             display: 'flex',
-            color: theme.palette.text01,
+            color: theme.palette.text02,
             alignItems: 'center',
             fontSize: '14px',
             cursor: 'pointer',
+            padding: '5px 0',
             '&:hover': {
                 backgroundColor: theme.palette.ui04
             }

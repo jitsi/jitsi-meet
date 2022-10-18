@@ -1226,6 +1226,8 @@
         "labelToolTip": "The meeting is being transcribed",
         "off": "Transcribing stopped",
         "pending": "Preparing to transcribe the meeting...",
+        "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
+        "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
         "subtitles": "Subtitles",
