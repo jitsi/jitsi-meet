@@ -1226,6 +1226,8 @@
         "labelToolTip": "此會議正在轉錄",
         "off": "轉錄已停用",
         "pending": "準備轉錄會議……",
+        "sourceLanguageDesc": "會議語言當前設定為<b>{{sourceLanguage}}</b><br/>您可以在這裡",
+        "sourceLanguageHere": "修改",
         "start": "開始顯示字幕",
         "stop": "停用顯示字幕",
         "subtitles": "字幕",
