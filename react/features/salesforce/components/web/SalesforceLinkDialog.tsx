@@ -6,13 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { Dialog } from '../../../base/dialog';
 import { hideDialog } from '../../../base/dialog/actions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
 import { getFieldValue } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import Dialog from '../../../base/ui/components/web/Dialog';
 import { NOTES_MAX_LENGTH } from '../../constants';
 // @ts-ignore
 import { useSalesforceLinkDialog } from '../../useSalesforceLinkDialog';
@@ -254,16 +253,19 @@ function SalesforceLinkDialog() {
 
     return (
         <Dialog
+            back = {{
+                hidden: !selectedRecord,
+                onClick: () => setSelectedRecord(null),
+                translationKey: 'dialog.Back'
+            }}
+            cancel = {{ hidden: true }}
             disableEnter = { true }
-            disableFooter = { !selectedRecord }
-            height = { 'medium' }
-            okDisabled = { !selectedRecord }
-            okKey = 'dialog.linkMeeting'
-            /* eslint-disable-next-line react/jsx-no-bind */
-            onDecline = { () => setSelectedRecord(null) }
+            ok = {{
+                translationKey: 'dialog.linkMeeting',
+                hidden: !selectedRecord
+            }}
             onSubmit = { handleSubmit }
-            titleKey = 'dialog.linkMeetingTitle'
-            width = { 'small' }>
+            titleKey = 'dialog.linkMeetingTitle'>
             <div className = { classes.container } >
                 {renderRecordsSearch()}
                 {renderContent()}
