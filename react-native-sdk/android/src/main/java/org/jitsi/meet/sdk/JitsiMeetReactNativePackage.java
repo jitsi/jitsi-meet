@@ -1,4 +1,4 @@
-package org.jisti.meet.sdk;
+package org.jitsi.meet.sdk;
 
 import androidx.annotation.NonNull;
 
@@ -6,8 +6,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
-
-import org.devio.rn.splashscreen.SplashScreenModule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,15 +21,13 @@ public class JitsiMeetReactNativePackage implements ReactPackage {
                 new AndroidSettingsModule(reactContext),
                 new AppInfoModule(reactContext),
                 new AudioModeModule(reactContext),
-                new DropboxModule(reactContext),
                 new JavaScriptSandboxModule(reactContext),
                 new LocaleDetector(reactContext),
                 new LogBridgeModule(reactContext),
-                new SplashScreenModule(reactContext),
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext),
                 new WiFiStatsModule(reactContext),
-                new com.jitsimeetreactnative.net.NAT64AddrInfoModule(reactContext)
+                new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)
                 ));
         return modules;
     }

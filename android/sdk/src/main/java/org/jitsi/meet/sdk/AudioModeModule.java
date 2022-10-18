@@ -196,7 +196,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
                     deviceInfo.putBoolean("selected", device.equals(selectedDevice));
                     data.pushMap(deviceInfo);
                 }
-                ReactInstanceManagerHolder.emitEvent(DEVICE_CHANGE_EVENT, data);
+                getContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(DEVICE_CHANGE_EVENT, data);
                 JitsiMeetLogger.i(TAG + " Updating audio device list");
             }
         });
@@ -210,6 +210,10 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    public ReactContext getContext(){
+        return this.getReactApplicationContext();
     }
 
     /**

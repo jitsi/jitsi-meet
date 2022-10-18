@@ -87,4 +87,49 @@ fs.copyFileSync('../ios/sdk/src/JitsiAudioSession+Private.h', './ios/src/JitsiAu
 fs.copyFileSync('../ios/sdk/src/LocaleDetector.m', './ios/src/LocaleDetector.m');
 fs.copyFileSync('../ios/sdk/src/POSIX.m', './ios/src/POSIX.m');
 fs.copyFileSync('../ios/sdk/src/Proximity.m', './ios/src/Proximity.m');
+copyFolderRecursiveSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/log',
+     './android/src/main/java/org/jitsi/meet/sdk/log');
+copyFolderRecursiveSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/net',
+    './android/src/main/java/org/jitsi/meet/sdk/net');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/AndroidSettingsModule.java',
+    './android/src/main/java/org/jitsi/meet/sdk/AndroidSettingsModule.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/AppInfoModule.java',
+    './android/src/main/java/org/jitsi/meet/sdk/AppInfoModule.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/AudioDeviceHandlerConnectionService.java',
+    './android/src/main/java/org/jitsi/meet/sdk/AudioDeviceHandlerConnectionService.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/AudioDeviceHandlerGeneric.java',
+    './android/src/main/java/org/jitsi/meet/sdk/AudioDeviceHandlerGeneric.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/AudioModeModule.java',
+    './android/src/main/java/org/jitsi/meet/sdk/AudioModeModule.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/ConnectionService.java',
+    './android/src/main/java/org/jitsi/meet/sdk/ConnectionService.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/JavaScriptSandboxModule.java',
+    './android/src/main/java/org/jitsi/meet/sdk/JavaScriptSandboxModule.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/LocaleDetector.java',
+    './android/src/main/java/org/jitsi/meet/sdk/LocaleDetector.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/LogBridgeModule.java',
+    './android/src/main/java/org/jitsi/meet/sdk/LogBridgeModule.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/PictureInPictureModule.java',
+    './android/src/main/java/org/jitsi/meet/sdk/PictureInPictureModule.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/ProximityModule.java',
+    './android/src/main/java/org/jitsi/meet/sdk/ProximityModule.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/RNConnectionService.java',
+    './android/src/main/java/org/jitsi/meet/sdk/RNConnectionService.java');
+fs.copyFileSync(
+    '../android/sdk/src/main/java/org/jitsi/meet/sdk/WiFiStatsModule.java',
+    './android/src/main/java/org/jitsi/meet/sdk/WiFiStatsModule.java');
 
