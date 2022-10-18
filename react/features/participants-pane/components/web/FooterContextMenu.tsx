@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { IState } from '../../../app/types';
 import {
     requestDisableAudioModeration,
     requestDisableVideoModeration,
@@ -87,7 +88,7 @@ type Props = {
 
 export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {
     const dispatch = useDispatch();
-    const isModerationSupported = useSelector(isAvModerationSupported);
+    const isModerationSupported = useSelector((state: IState) => isAvModerationSupported()(state));
     const allModerators = useSelector(isEveryoneModerator);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
     const participantCount = useSelector(getParticipantCount);

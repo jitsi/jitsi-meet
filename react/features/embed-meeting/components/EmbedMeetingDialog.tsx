@@ -3,13 +3,12 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { IState } from '../../app/types';
-import CopyButton from '../../base/buttons/CopyButton';
+import CopyButton from '../../base/buttons/CopyButton.web';
 import { getInviteURL } from '../../base/connection/functions';
 import { translate } from '../../base/i18n/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 
 interface Props extends WithTranslation {
-
 
     /**
      * The URL of the conference.

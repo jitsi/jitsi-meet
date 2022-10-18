@@ -4,64 +4,18 @@ import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 
 import {
-    CONNECTION_DISCONNECTED,
-    CONNECTION_ESTABLISHED,
-    CONNECTION_FAILED,
-    CONNECTION_WILL_CONNECT,
-    SET_LOCATION_URL
+    CONNECTION_WILL_CONNECT
 } from './actionTypes';
-import { constructOptions } from './actions.any';
+import {
+    connectionDisconnected,
+    connectionEstablished,
+    connectionFailed,
+    constructOptions
+} from './actions.any';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
 
 export * from './actions.any';
-
-/**
- * The error structure passed to the {@link connectionFailed} action.
- *
- * Note there was an intention to make the error resemble an Error instance (to
- * the extent that jitsi-meet needs it).
- */
-export type ConnectionFailedError = {
-
-    /**
-     * The invalid credentials that were used to authenticate and the
-     * authentication failed.
-     */
-    credentials?: {
-
-        /**
-         * The XMPP user's ID.
-         */
-        jid: string;
-
-        /**
-         * The XMPP user's password.
-         */
-        password: string;
-    };
-
-    /**
-     * The details about the connection failed event.
-     */
-    details?: Object;
-
-    /**
-     * Error message.
-     */
-    message?: string;
-
-    /**
-     * One of {@link JitsiConnectionError} constants (defined in
-     * lib-jitsi-meet).
-     */
-    name: string;
-
-    /**
-     * Indicates whether this event is recoverable or not.
-     */
-    recoverable?: boolean;
-};
 
 /**
  * Opens new connection.
@@ -170,76 +124,6 @@ export function connect(id?: string, password?: string) {
 }
 
 /**
- * Create an action for when the signaling connection has been lost.
- *
- * @param {JitsiConnection} connection - The {@code JitsiConnection} which
- * disconnected.
- * @private
- * @returns {{
- *     type: CONNECTION_DISCONNECTED,
- *     connection: JitsiConnection
- * }}
- */
-export function connectionDisconnected(connection: Object) {
-    return {
-        type: CONNECTION_DISCONNECTED,
-        connection
-    };
-}
-
-/**
- * Create an action for when the signaling connection has been established.
- *
- * @param {JitsiConnection} connection - The {@code JitsiConnection} which was
- * established.
- * @param {number} timeEstablished - The time at which the
- * {@code JitsiConnection} which was established.
- * @public
- * @returns {{
- *     type: CONNECTION_ESTABLISHED,
- *     connection: JitsiConnection,
- *     timeEstablished: number
- * }}
- */
-export function connectionEstablished(
-        connection: Object, timeEstablished: number) {
-    return {
-        type: CONNECTION_ESTABLISHED,
-        connection,
-        timeEstablished
-    };
-}
-
-/**
- * Create an action for when the signaling connection could not be created.
- *
- * @param {JitsiConnection} connection - The {@code JitsiConnection} which
- * failed.
- * @param {ConnectionFailedError} error - Error.
- * @public
- * @returns {{
- *     type: CONNECTION_FAILED,
- *     connection: JitsiConnection,
- *     error: ConnectionFailedError
- * }}
- */
-export function connectionFailed(
-        connection: Object,
-        error: ConnectionFailedError) {
-    const { credentials } = error;
-
-    if (credentials && !Object.keys(credentials).length) {
-        error.credentials = undefined;
-    }
-
-    return {
-        type: CONNECTION_FAILED,
-        connection,
-        error
-    };
-}
-
-/**
  * Create an action for when a connection will connect.
  *
  * @param {JitsiConnection} connection - The {@code JitsiConnection} which will
@@ -312,22 +196,5 @@ export function disconnect() {
         }
 
         return promise;
-    };
-}
-
-/**
- * Sets the location URL of the application, connection, conference, etc.
- *
- * @param {URL} [locationURL] - The location URL of the application,
- * connection, conference, etc.
- * @returns {{
- *     type: SET_LOCATION_URL,
- *     locationURL: URL
- * }}
- */
-export function setLocationURL(locationURL?: URL) {
-    return {
-        type: SET_LOCATION_URL,
-        locationURL
     };
 }

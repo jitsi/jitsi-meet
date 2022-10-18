@@ -6,14 +6,19 @@
         "target": "es6",
         "jsx": "react",
         "lib": [ "webworker", "ES2020", "DOM" ],
-        "noEmit": false,
+        "skipLibCheck": true,
         "moduleResolution": "Node",
         "strict": true,
         "noImplicitAny": true,
         "strictPropertyInitialization": false,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "moduleSuffixes": [".web", ""]
     },
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "**/mobile/*",
+        "**/native/*",
+        "**/*.native.ts",
+        "**/*.native.tsx"
     ]
 }

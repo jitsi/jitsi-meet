@@ -10,7 +10,7 @@ import {
     connectionEstablished,
     connectionFailed,
     constructOptions
-} from './react/features/base/connection/actions';
+} from './react/features/base/connection/actions.web';
 import { openDialog } from './react/features/base/dialog/actions';
 import { setJWT } from './react/features/base/jwt';
 import {

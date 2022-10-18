@@ -1,0 +1,33 @@
+{
+    "include": ["react/features/**/*.ts", "react/features/**/*.tsx", "./custom.d.ts", "./globals.native.d.ts"],
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "target": "ESNext",
+        "jsx": "react-native",
+        "lib": [ "ES2017"],
+        "types": [ "react-native" ],
+        "skipLibCheck": true,
+        "moduleResolution": "Node",
+        "strict": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": false,
+        "resolveJsonModule": true,
+        "moduleSuffixes": [".native", ""]
+    },
+    "exclude": [
+        "node_modules",
+        "react/features/base/components/participants-pane-list",
+        "react/features/connection-stats",
+        "react/features/e2ee",
+        "react/features/embed-meeting",
+        "react/features/face-landmarks",
+        "react/features/feedback",
+        "react/features/screen-share",
+        "react/features/stream-effects/noise-suppression",
+        "react/features/stream-effects/rnnoise",
+        "react/features/virtual-background",
+        "**/web/*",
+        "**/*.web.ts",
+        "**/*.web.tsx"
+    ]
+}

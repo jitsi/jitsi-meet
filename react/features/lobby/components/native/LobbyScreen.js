@@ -12,7 +12,7 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
-import { BrandingImageBackground } from '../../../dynamic-branding';
+import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
 import { LargeVideo } from '../../../large-video/components';
 import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';

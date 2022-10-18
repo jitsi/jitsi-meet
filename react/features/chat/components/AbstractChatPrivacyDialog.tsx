@@ -86,7 +86,7 @@ export class AbstractChatPrivacyDialog extends PureComponent<Props> {
  */
 export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
-        _onSendMessage: (message: Object) => {
+        _onSendMessage: (message: string) => {
             dispatch(sendMessage(message, true));
         },
 
