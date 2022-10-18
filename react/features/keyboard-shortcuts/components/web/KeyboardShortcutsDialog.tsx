@@ -1,22 +1,16 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
-import { translate } from '../../../base/i18n/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Dialog from '../../../base/ui/components/web/Dialog';
 
 /**
  * The type of the React {@code Component} props of
  * {@link KeyboardShortcutsDialog}.
  */
-interface Props extends WithTranslation {
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: any;
+interface Props {
 
     /**
      * A Map with keyboard keys as keys and translation keys as values.
@@ -31,7 +25,7 @@ interface Props extends WithTranslation {
  *
  * @returns {Object}
  */
-const styles = (theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         list: {
             listStyleType: 'none',
@@ -40,7 +34,9 @@ const styles = (theme: Theme) => {
             '& .shortcuts-list__item': {
                 display: 'flex',
                 justifyContent: 'space-between',
-                marginBottom: theme.spacing(2)
+                marginBottom: theme.spacing(2),
+                ...withPixelLineHeight(theme.typography.labelRegular),
+                color: theme.palette.text01
             },
 
             '& .item-action': {
@@ -51,51 +47,14 @@ const styles = (theme: Theme) => {
             }
         }
     };
-};
+});
 
-/**
- * Implements a React {@link Component} which displays a dialog describing
- * registered keyboard shortcuts.
- *
- * @augments Component
- */
-class KeyboardShortcutsDialog extends Component<Props> {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const shortcuts = Array.from(this.props.shortcutDescriptions)
-            .map(description => this._renderShortcutsListItem(...description));
+const KeyboardShortcutsDialog = ({ shortcutDescriptions }: Props) => {
+    const { classes, cx } = useStyles();
+    const { t } = useTranslation();
 
-        return (
-            <Dialog
-                cancel = {{ hidden: true }}
-                ok = {{ hidden: true }}
-                titleKey = 'keyboardShortcuts.keyboardShortcuts'>
-                <div
-                    id = 'keyboard-shortcuts'>
-                    <ul
-                        className = { clsx('shortcuts-list', this.props.classes.list) }
-                        id = 'keyboard-shortcuts-list'>
-                        {shortcuts}
-                    </ul>
-                </div>
-            </Dialog>
-        );
-    }
-
-    /**
-     * Creates a {@code ReactElement} for describing a single keyboard shortcut.
-     *
-     * @param {string} keyboardKey - The keyboard key that triggers an action.
-     * @param {string} translationKey - A description of what the action does.
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderShortcutsListItem(keyboardKey: string, translationKey: string) {
+    // eslint-disable-next-line react/no-multi-comp
+    const _renderShortcutsListItem = (keyboardKey: string, translationKey: string) => {
         let modifierKey = 'Alt';
 
         if (window.navigator?.platform) {
@@ -109,18 +68,35 @@ class KeyboardShortcutsDialog extends Component<Props> {
                 className = 'shortcuts-list__item'
                 key = { keyboardKey }>
                 <span
-                    aria-label = { this.props.t(translationKey) }
+                    aria-label = { t(translationKey) }
                     className = 'shortcuts-list__description'>
-                    { this.props.t(translationKey) }
+                    {t(translationKey)}
                 </span>
                 <span className = 'item-action'>
-                    { keyboardKey.startsWith(':')
+                    {keyboardKey.startsWith(':')
                         ? `${modifierKey} + ${keyboardKey.slice(1)}`
-                        : keyboardKey }
+                        : keyboardKey}
                 </span>
             </li>
         );
-    }
-}
+    };
 
-export default translate(withStyles(styles)(KeyboardShortcutsDialog));
+    return (
+        <Dialog
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
+            titleKey = 'keyboardShortcuts.keyboardShortcuts'>
+            <div
+                id = 'keyboard-shortcuts'>
+                <ul
+                    className = { cx('shortcuts-list', classes.list) }
+                    id = 'keyboard-shortcuts-list'>
+                    {Array.from(shortcutDescriptions)
+                        .map(description => _renderShortcutsListItem(...description))}
+                </ul>
+            </div>
+        </Dialog>
+    );
+};
+
+export default KeyboardShortcutsDialog;
