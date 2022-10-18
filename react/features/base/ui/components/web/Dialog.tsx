@@ -173,6 +173,11 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 interface DialogProps {
+    back?: {
+        hidden?: boolean;
+        onClick?: () => void;
+        translationKey?: string;
+    };
     cancel?: {
         hidden?: boolean;
         translationKey?: string;
@@ -181,6 +186,7 @@ interface DialogProps {
     className?: string;
     description?: string;
     disableBackdropClose?: boolean;
+    disableEnter?: boolean;
     hideCloseButton?: boolean;
     ok?: {
         disabled?: boolean;
@@ -195,12 +201,14 @@ interface DialogProps {
 }
 
 const Dialog = ({
+    back = { hidden: true },
     cancel = { translationKey: 'dialog.Cancel' },
     children,
     className,
     description,
     disableBackdropClose,
     hideCloseButton,
+    disableEnter,
     ok = { translationKey: 'dialog.Ok' },
     onCancel,
     onSubmit,
@@ -227,7 +235,7 @@ const Dialog = ({
         if (e.key === 'Escape') {
             onClose();
         }
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !disableEnter) {
             submit();
         }
     }, []);
@@ -269,6 +277,12 @@ const Dialog = ({
                 </div>
                 <div className = { classes.content }>{children}</div>
                 <div className = { classes.footer }>
+                    {!back.hidden && <Button
+                        accessibilityLabel = { t(back.translationKey ?? '') }
+                        labelKey = { back.translationKey }
+                        // eslint-disable-next-line react/jsx-handler-names
+                        onClick = { back.onClick }
+                        type = 'secondary' />}
                     {!cancel.hidden && <Button
                         accessibilityLabel = { t(cancel.translationKey ?? '') }
                         labelKey = { cancel.translationKey }
