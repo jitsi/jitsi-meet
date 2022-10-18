@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import CopyButton from '../../../../base/buttons/CopyButton';
+import CopyButton from '../../../../base/buttons/CopyButton.web';
 import { translate } from '../../../../base/i18n';
 import { getDecodedURI } from '../../../../base/util';
 
