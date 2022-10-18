@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "增加會議連結",
-        "confirmAddLink": "您要為此活動加入 Jitsi 連結嗎？",
+        "confirmAddLink": "您要為此活動加入Jitsi連結嗎？",
         "error": {
             "appConfiguration": "行事曆整合尚未正確設定。",
             "generic": "發生錯誤，請檢查行事曆設定，或是重新整理行事曆。",
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "此會議尚無訊息，在此開始對話聊天！",
         "privateNotice": "傳送私人訊息至{{recipient}}",
+        "sendButton": "傳送",
         "smileysPanel": "Emoji 面板",
         "tabs": {
             "chat": "聊天",
@@ -118,7 +119,7 @@
         "buttonTextEdge": "安裝 Edge 外掛程式",
         "close": "關閉",
         "dontShowAgain": "不要再問了",
-        "installExtensionText": "安裝適用於 Google 行事曆及 Office 365 整合的擴充功能"
+        "installExtensionText": "安裝適用於Google行事曆及Office 365整合的擴充功能"
     },
     "connectingOverlay": {
         "joiningRoom": "正在將您連接至您的會議……"
@@ -140,7 +141,7 @@
     },
     "connectionindicator": {
         "address": "位址：",
-        "audio_ssrc": "音訊 SSRC：",
+        "audio_ssrc": "音訊SSRC：",
         "bandwidth": "估計頻寬：",
         "bitrate": "連線速率：",
         "bridgeCount": "伺服器數量：",
@@ -155,7 +156,7 @@
         "maxEnabledResolution": "最大傳輸",
         "more": "顯示更多",
         "packetloss": "丟包率：",
-        "participant_id": "與會者 ID：",
+        "participant_id": "與會者ID：",
         "quality": {
             "good": "很好",
             "inactive": "未啟用",
@@ -172,7 +173,7 @@
         "status": "連接：",
         "transport": "傳輸協定：",
         "transport_plural": "傳輸：",
-        "video_ssrc": "視訊 SSRC："
+        "video_ssrc": "視訊SSRC："
     },
     "dateUtils": {
         "earlier": "稍早",
@@ -183,10 +184,10 @@
         "appNotInstalled": "您需要在手機上安裝{{app}}行動應用程式才能加入這場會議。",
         "description": "甚麼事情都沒發生？我們已嘗試在您的{{app}}桌面應用程式開啟會議。請再試一次，或是在{{app}}網路應用程式開啟會議。",
         "descriptionWithoutWeb": "甚麼事情都沒發生？我們已試著將您的會議在桌面應用程式{{app}}中啟動。",
-        "downloadApp": "下載 App",
-        "ifDoNotHaveApp": "如果您尚未安裝 App：",
-        "ifHaveApp": "如果您已經有 App 了：",
-        "joinInApp": "使用 App 加入會議",
+        "downloadApp": "下載App",
+        "ifDoNotHaveApp": "如果您尚未安裝App：",
+        "ifHaveApp": "如果您已經此App：",
+        "joinInApp": "使用App加入會議",
         "launchWebButton": "在瀏覽器開啟",
         "title": "正在{{app}}發起您的會議……",
         "tryAgainButton": "在桌面上再試一次",

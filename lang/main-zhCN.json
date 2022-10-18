@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "会议中还没有消息，在这里开始谈话吧！",
         "privateNotice": "与{{recipient}}的私聊",
+        "sendButton": "发送",
         "smileysPanel": "表情符号面板",
         "tabs": {
             "chat": "聊天",
