@@ -191,7 +191,7 @@ class AudioDeviceHandlerGeneric implements
     }
 
     @Override
-    public void stop() {
+    public void stop(AudioModeModule audioModeModule) {
         audioManager.unregisterAudioDeviceCallback(audioDeviceCallback);
     }
 

@@ -26,10 +26,12 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -233,7 +235,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
 
     private void setAudioDeviceHandler() {
         if (audioDeviceHandler != null) {
-            audioDeviceHandler.stop();
+            audioDeviceHandler.stop(this);
         }
 
         if (useConnectionService()) {
@@ -472,7 +474,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         /**
          * Stop audio device detection.
          */
-        void stop();
+        void stop(AudioModeModule audioModeModule);
 
         /**
          * Set the appropriate route for the given audio device.

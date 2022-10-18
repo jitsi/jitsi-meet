@@ -141,8 +141,9 @@ class AudioDeviceHandlerConnectionService implements
         JitsiMeetLogger.i("Using " + TAG + " as the audio device handler");
 
         module = audioModeModule;
+        ReactContext context = module.getContext();
 
-        RNConnectionService rcs = ReactInstanceManagerHolder.getNativeModule(RNConnectionService.class);
+        RNConnectionService rcs = context.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(this);
         } else {
@@ -151,8 +152,11 @@ class AudioDeviceHandlerConnectionService implements
     }
 
     @Override
-    public void stop() {
-        RNConnectionService rcs = ReactInstanceManagerHolder.getNativeModule(RNConnectionService.class);
+    public void stop(AudioModeModule audioModeModule) {
+        module = audioModeModule;
+        ReactContext context = module.getContext();
+
+        RNConnectionService rcs = context.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(null);
         } else {
