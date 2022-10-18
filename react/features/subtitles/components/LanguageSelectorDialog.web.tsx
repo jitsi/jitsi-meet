@@ -32,13 +32,17 @@ interface ILanguageSelectorDialogProps extends WithTranslation {
 const useStyles = makeStyles()((theme: Theme) => {
     return {
         paragraphWrapper: {
-            margin: '10px 0px'
+            fontSize: 14,
+            margin: '10px 0px',
+            color: theme.palette.text01
         },
         spanWrapper: {
             fontWeight: 700,
             cursor: 'pointer',
+            color: theme.palette.link01,
             '&:hover': {
-                backgroundColor: theme.palette.ui04
+                backgroundColor: theme.palette.ui04,
+                color: theme.palette.link01Hover
             }
         }
     };
@@ -52,7 +56,6 @@ const useStyles = makeStyles()((theme: Theme) => {
 const LanguageSelectorDialog = ({
     t,
     _language,
-    _sourceLanguage,
     _translationLanguages,
     _translationLanguagesHead
 }: ILanguageSelectorDialogProps) => {
@@ -92,9 +95,11 @@ const LanguageSelectorDialog = ({
         dispatch(toggleLanguageSelectorDialog());
     }, [ _language ]);
 
-    const onClickSourceLanguage = useCallback(() => {
+    const [sourceLanguage, setSourceLanguage] = useState(i18next.language);
+
+    const onSourceLanguageClick = useCallback(() => {
         dispatch(openSettingsDialog(SETTINGS_TABS.MORE, false));
-    }, [ ]);
+    }, [setSourceLanguage]);
 
     return (
         <Dialog
@@ -102,11 +107,13 @@ const LanguageSelectorDialog = ({
             ok = {{ hidden: true }}
             titleKey = 'transcribing.subtitles'>
             <p className = { styles.paragraphWrapper } >
-                { translateToHTML(t, 'transcribing.sourceLanguageDesc', {
-                    'sourceLanguage': t(`languages:${_sourceLanguage}`).toLowerCase()
-                }) }<span
+                {
+                    translateToHTML(t, 'transcribing.sourceLanguageDesc', {
+                        'sourceLanguage': t(`languages:${sourceLanguage}`).toLowerCase()
+                    })
+                }<span
                     className = { styles.spanWrapper }
-                    onClick = { onClickSourceLanguage }>{t('transcribing.sourceLanguageHere')}.</span>
+                    onClick = { onSourceLanguageClick }>{t('transcribing.sourceLanguageHere')}.</span>
             </p>
             <LanguageList
                 items = { listItems }
@@ -131,15 +138,13 @@ function mapStateToProps(state: IState) {
 
     const languages = transcription?.translationLanguages ?? TRANSLATION_LANGUAGES;
     const languagesHead = transcription?.translationLanguagesHead ?? TRANSLATION_LANGUAGES_HEAD;
-    const sourceLanguage = i18next.language;
 
     return {
         _conference: conference,
         _language,
-        _sourceLanguage: sourceLanguage,
         _translationLanguages: languages,
         _translationLanguagesHead: languagesHead
     };
 }
 
-export default connect(mapStateToProps)(translate(LanguageSelectorDialog));
+export default translate(connect(mapStateToProps)(LanguageSelectorDialog));
