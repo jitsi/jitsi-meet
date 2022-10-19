@@ -1,7 +1,6 @@
 import { sha512_256 as sha512 } from 'js-sha512';
 import _ from 'lodash';
 
-// @ts-ignore
 import { getName } from '../../app/functions';
 import { IState, IStore } from '../../app/types';
 import { determineTranscriptionLanguage } from '../../transcribing/functions';

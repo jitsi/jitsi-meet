@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,9 +7,9 @@ import { makeStyles } from 'tss-react/mui';
 import { IState } from '../../../app/types';
 import { IconRaisedHand } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
-// @ts-ignore
 import { open as openParticipantsPane } from '../../../participants-pane/actions';
 
 const useStyles = makeStyles()((theme: Theme) => {

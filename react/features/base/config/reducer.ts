@@ -12,8 +12,6 @@ import {
     UPDATE_CONFIG
 } from './actionTypes';
 import { IConfig } from './configType';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { _cleanupConfig } from './functions';
 
 declare let interfaceConfig: any;

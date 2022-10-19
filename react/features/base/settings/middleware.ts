@@ -16,7 +16,6 @@ import { parseURLParams } from '../util/parseURLParams';
 
 import { SETTINGS_UPDATED } from './actionTypes';
 import { updateSettings } from './actions';
-// @ts-ignore
 import { handleCallIntegrationChange, handleCrashReportingChange } from './functions';
 import { ISettingsState } from './reducer';
 

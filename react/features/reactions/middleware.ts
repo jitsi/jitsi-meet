@@ -5,8 +5,6 @@ import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOIN_IN_PROGRESS, SET_START_REACTIONS_MUTED } from '../base/conference/actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { setStartReactionsMuted } from '../base/conference/actions';
 import {
     getParticipantById,

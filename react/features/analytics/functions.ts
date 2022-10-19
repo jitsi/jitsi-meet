@@ -1,7 +1,5 @@
-/* eslint-disable lines-around-comment */
-// @ts-ignore
+// @ts-expect-error
 import { API_ID } from '../../../modules/API/constants';
-// @ts-ignore
 import { getName as getAppName } from '../app/functions';
 import { IStore } from '../app/types';
 import { getAnalyticsRoomName } from '../base/conference/functions';
@@ -14,10 +12,9 @@ import JitsiMeetJS, {
     browser
 } from '../base/lib-jitsi-meet';
 import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions.any';
-// @ts-ignore
-import { loadScript } from '../base/util';
 import { getJitsiMeetGlobalNS } from '../base/util/helpers';
 import { inIframe } from '../base/util/iframeUtils';
+import { loadScript } from '../base/util/loadScript';
 import { parseURIString } from '../base/util/uri';
 
 import AmplitudeHandler from './handlers/AmplitudeHandler';
@@ -258,7 +255,7 @@ function _loadHandlers(scriptURLs: any[] = [], handlerConstructorOptions: Object
 
     return Promise.all(promises).then(values => {
         for (const el of values) {
-            if (el.type === 'error') {
+            if (el.type === 'error') { // @ts-ignore
                 logger.warn(`Failed to load ${el.url}: ${el.error}`);
             }
         }

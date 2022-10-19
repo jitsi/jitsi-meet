@@ -51,7 +51,6 @@ import {
 
 // @ts-ignore
 import AudioTracksContainer from './AudioTracksContainer';
-// @ts-ignore
 import Thumbnail from './Thumbnail';
 // @ts-ignore
 import ThumbnailWrapper from './ThumbnailWrapper';

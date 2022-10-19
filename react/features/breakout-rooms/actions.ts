@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import i18next from 'i18next';
 import _ from 'lodash';
 
@@ -15,14 +14,12 @@ import { getCurrentConference } from '../base/conference/functions';
 import { setAudioMuted, setVideoMuted } from '../base/media/actions';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { getRemoteParticipants } from '../base/participants/functions';
+import { createDesiredLocalTracks } from '../base/tracks/actions';
 import {
     getLocalTracks,
     isLocalCameraTrackMuted,
     isLocalTrackMuted
-    // @ts-ignore
-} from '../base/tracks';
-// @ts-ignore
-import { createDesiredLocalTracks } from '../base/tracks/actions';
+} from '../base/tracks/functions';
 import { clearNotifications, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
@@ -186,6 +183,7 @@ export function moveToRoom(roomId?: string) {
 
             // eslint-disable-next-line no-new-wrappers
             _roomId = new String(id);
+
             // @ts-ignore
             _roomId.domain = domainParts.join('@');
         }

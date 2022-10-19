@@ -1,13 +1,10 @@
 /* eslint-disable lines-around-comment */
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-// @ts-ignore
 import { appNavigate } from '../../app/actions';
 import { IState, IStore } from '../../app/types';
 import { endpointMessageReceived } from '../../subtitles/actions.any';
-// @ts-ignore
 import { getReplaceParticipant } from '../config/functions';
-// @ts-ignore
 import { disconnect } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';

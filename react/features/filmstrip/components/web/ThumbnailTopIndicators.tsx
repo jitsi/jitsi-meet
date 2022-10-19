@@ -8,15 +8,12 @@ import { IState } from '../../../app/types';
 import { getMultipleVideoSupportFeatureFlag } from '../../../base/config/functions.any';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
-// @ts-ignore
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
 import { STATS_POPOVER_POSITION, THUMBNAIL_TYPE } from '../../constants';
 // @ts-ignore
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
-// @ts-ignore
 import PinnedIndicator from './PinnedIndicator';
-// @ts-ignore
 import RaisedHandIndicator from './RaisedHandIndicator';
 // @ts-ignore
 import StatusIndicators from './StatusIndicators';

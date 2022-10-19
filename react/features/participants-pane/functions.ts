@@ -19,8 +19,6 @@ import {
 } from '../base/participants/functions';
 import { Participant } from '../base/participants/types';
 import { toState } from '../base/redux/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { normalizeAccents } from '../base/util/strings';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 

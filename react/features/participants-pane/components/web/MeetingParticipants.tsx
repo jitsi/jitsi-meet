@@ -22,7 +22,6 @@ import { showOverflowDrawer } from '../../../toolbox/functions.web';
 // @ts-ignore
 import { muteRemote } from '../../../video-menu/actions.any';
 import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
-// @ts-ignore
 import { useParticipantDrawer } from '../../hooks';
 
 import { InviteButton } from './InviteButton';

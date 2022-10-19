@@ -6,7 +6,8 @@ import React, { Component } from 'react';
 import { IState } from '../../../app/types';
 import { getAvailableDevices } from '../../../base/devices/actions';
 // @ts-ignore
-import { DialogWithTabs, hideDialog } from '../../../base/dialog';
+import { DialogWithTabs } from '../../../base/dialog';
+import { hideDialog } from '../../../base/dialog/actions';
 import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore

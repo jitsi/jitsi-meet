@@ -17,7 +17,6 @@ import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functio
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
-// @ts-ignore
 import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 
 // @ts-ignore

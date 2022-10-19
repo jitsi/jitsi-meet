@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import UIEvents from '../../../../service/UI/UIEvents';
 import { createAudioOnlyChangedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';

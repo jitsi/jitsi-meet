@@ -1,6 +1,6 @@
 import { AnyAction } from 'redux';
 
-// @ts-ignore
+// @ts-expect-error
 import UIEvents from '../../../../service/UI/UIEvents';
 import { IStore } from '../../app/types';
 import { processExternalDeviceRequest } from '../../device-selection/functions';

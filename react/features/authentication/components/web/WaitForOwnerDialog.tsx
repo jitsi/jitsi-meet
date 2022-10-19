@@ -5,8 +5,6 @@ import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { cancelWaitForOwner } from '../../actions.web';
 
 /**

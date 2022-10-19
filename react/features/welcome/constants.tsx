@@ -2,7 +2,6 @@
 import React from 'react';
 
 import { IconEventNote, IconRestore, IconSettings } from '../base/icons/svg';
-// @ts-ignore
 import BaseTheme from '../base/ui/components/BaseTheme';
 
 // @ts-ignore

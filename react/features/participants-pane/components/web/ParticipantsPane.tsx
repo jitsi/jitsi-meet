@@ -17,7 +17,6 @@ import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
-// @ts-ignore
 import { close } from '../../actions';
 import {
     findAncestorByClass,
