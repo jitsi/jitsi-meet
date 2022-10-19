@@ -4,8 +4,6 @@ import { WithTranslation } from 'react-i18next';
 import { IState, IStore } from '../../app/types';
 import { getParticipantById } from '../../base/participants/functions';
 import { Participant } from '../../base/participants/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { sendMessage, setPrivateMessageRecipient } from '../actions';
 
 interface Props extends WithTranslation {

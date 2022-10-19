@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
 import { IStore } from '../app/types';
 import { IJitsiConference } from '../base/conference/reducer';

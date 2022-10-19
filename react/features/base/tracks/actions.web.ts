@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-// @ts-ignore
+// @ts-expect-error
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
 import { IState, IStore } from '../../app/types';
 import { showModeratedNotification } from '../../av-moderation/actions';

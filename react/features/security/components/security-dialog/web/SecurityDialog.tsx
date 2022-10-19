@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { IState } from '../../../../app/types';
-// @ts-ignore
-import { setPassword as setPass } from '../../../../base/conference';
+import { setPassword as setPass } from '../../../../base/conference/actions';
 import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 import { connect } from '../../../../base/redux/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';

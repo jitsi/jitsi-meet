@@ -11,7 +11,6 @@ import {
     isNameReadOnly
 } from '../../../base/config/functions.any';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
-// @ts-ignore
 import DisplayName from '../../../display-name/components/web/DisplayName';
 import { THUMBNAIL_TYPE } from '../../constants';
 

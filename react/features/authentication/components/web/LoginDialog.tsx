@@ -1,8 +1,7 @@
-/* eslint-disable lines-around-comment */
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-ignore
+// @ts-expect-error
 import { connect } from '../../../../../connection';
 import { IState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';

@@ -4,8 +4,6 @@ import { useDispatch } from 'react-redux';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { leaveConference } from '../../../base/conference/actions';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';

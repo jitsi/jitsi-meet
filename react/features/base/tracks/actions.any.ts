@@ -7,9 +7,7 @@ import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
 import { getMultipleVideoSendingSupportFeatureFlag, getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { createLocalTrack } from '../lib-jitsi-meet/functions';
+import { createLocalTrack } from '../lib-jitsi-meet/functions.any';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
     CAMERA_FACING_MODE,

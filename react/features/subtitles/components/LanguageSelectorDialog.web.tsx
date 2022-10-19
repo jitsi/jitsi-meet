@@ -14,7 +14,6 @@ import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 // @ts-ignore
 import { openSettingsDialog } from '../../settings/actions';
-// @ts-ignore
 import { SETTINGS_TABS } from '../../settings/constants';
 // @ts-ignore
 import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage } from '../actions';

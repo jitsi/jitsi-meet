@@ -1,4 +1,3 @@
-// @ts-ignore
 import Platform from '../react/Platform';
 
 /**

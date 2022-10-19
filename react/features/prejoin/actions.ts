@@ -3,25 +3,20 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { IStore } from '../app/types';
 import { updateConfig } from '../base/config/actions';
-// @ts-ignore
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { browser } from '../base/lib-jitsi-meet';
-// @ts-ignore
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { isVideoMutedByUser } from '../base/media/functions';
 import { updateSettings } from '../base/settings/actions';
+import { replaceLocalTrack, trackAdded } from '../base/tracks/actions';
 import {
     createLocalTracksF,
     getLocalAudioTrack,
     getLocalTracks,
-    getLocalVideoTrack,
-    replaceLocalTrack,
-    trackAdded
-    // @ts-ignore
-} from '../base/tracks';
-// @ts-ignore
-import { openURLInBrowser } from '../base/util';
+    getLocalVideoTrack
+} from '../base/tracks/functions';
+import { openURLInBrowser } from '../base/util/openURLInBrowser';
 // @ts-ignore
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { showErrorNotification } from '../notifications/actions';
@@ -386,7 +381,7 @@ export function replaceAudioTrackById(deviceId: string) {
  * @param {string} deviceId - The deviceId of the camera.
  * @returns {Function}
  */
-export function replaceVideoTrackById(deviceId: Object) {
+export function replaceVideoTrackById(deviceId: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         try {
             const tracks = getState()['features/base/tracks'];

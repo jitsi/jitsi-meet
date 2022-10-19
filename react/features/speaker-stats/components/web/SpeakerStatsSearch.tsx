@@ -7,8 +7,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
-// @ts-ignore
-import { getFieldValue } from '../../../base/react';
+import { getFieldValue } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { MOBILE_BREAKPOINT } from '../../constants';
 // @ts-ignore

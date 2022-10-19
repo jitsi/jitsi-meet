@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch } from 'react-redux';
 
-// @ts-ignore
+// @ts-expect-error
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 // @ts-ignore
 import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/functions';
@@ -51,7 +51,6 @@ import { NoiseSuppressionButton } from '../../../noise-suppression/components';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
-    // @ts-ignore
 } from '../../../participants-pane/actions';
 // @ts-ignore
 import { ParticipantsPaneButton } from '../../../participants-pane/components/web';
@@ -109,7 +108,6 @@ import {
     // @ts-ignore
 } from '../../actions';
 import { NOTIFY_CLICK_MODE, NOT_APPLICABLE, THRESHOLDS } from '../../constants';
-// @ts-ignore
 import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions';
 import { getJwtDisabledButtons } from '../../functions.any';
 // @ts-ignore

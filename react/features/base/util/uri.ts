@@ -1,6 +1,4 @@
 import { parseURLParams } from './parseURLParams';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { normalizeNFKC } from './strings';
 
 /**

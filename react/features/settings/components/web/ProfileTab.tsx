@@ -2,7 +2,7 @@
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-ignore
+// @ts-expect-error
 import UIEvents from '../../../../../service/UI/UIEvents';
 import { createProfilePanelButtonEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
