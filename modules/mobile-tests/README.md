@@ -24,3 +24,13 @@ Basically, you write a normal WebDriver test, and use Appium as the Selenium ser
 * All test files are declared in ./modules/mobile-tests/specs
 * Desired capabilities, for example new devices that are available for testing,
 will be added to ./modules/mobile-tests/helpers/capabilities.js.
+* In order to find YOUR_TESTING_DEVICE_ID you need to:
+  * iOS
+    * Go to Settings > General and tap About.
+    * Look for the serial number. You might need to scroll down to find the IMEI/MEID.
+    * Copy the IMEI/MEID
+  * Android
+    * First you need to install ADB by following this:
+      * https://www.howtogeek.com/125769/how-to-install-and-use-abd-the-android-debug-bridge-utility/
+    * Open terminal and run 'adb devices'.
+    * If your physical testing device is plugged in your USB, the previous command will return its ID.

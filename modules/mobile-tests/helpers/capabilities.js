@@ -1,49 +1,55 @@
-const {
-    APP_PATH_SIMULATOR,
-    APPIUM_VERSION,
-    AUTOMATION_NAME,
-    DEVICE_ID,
-    DEVICE_NAME,
-    ORG_ID,
-    PLATFORM_NAME,
-    PLATFORM_VERSION,
-    RELEASE_APP_PATH
-} = require('./constants');
+const IOS = {
+    // eslint-disable-next-line max-len
+    'appium:app': 'Users/cchitu/Library/Developer/Xcode/DerivedData/jitsi-meet-gpsplsfarleyxebhmcufemivqqbl/Build/Products/Debug-iphonesimulator/jitsi-meet.app',
+    'appium:appiumVersion': '1.22.3',
+    'appium:automationName': 'XCUITest',
+    'appium:newCommandTimeout': 240,
+    platformName: 'iOS',
+    'appium:platformVersion': process.env.PLATFORM_VERSION,
+    'appium:udid': process.env.DEVICE_ID,
+    'appium:xcodeOrgId': 'AJT772J42H',
+    'appium:xcodeSigningId': 'iPhone Developer'
+};
+
+const DEVICE_IOS = {
+    ...IOS,
+    // eslint-disable-next-line max-len
+    'appium:app': '/Users/cchitu/Library/Developer/Xcode/Archives/2022-09-01/JitsiMeet.xcarchive/Products/Applications/jitsi-meet.app'
+}
+
+const DEVICE_ANDROID = {
+    'appium:appActivity': '.MainActivity',
+    'appium:appPackage': 'org.jitsi.meet',
+    'appium:appiumVersion': '1.22.3',
+    'appium:automationName': 'UiAutomator2',
+    'appium:newCommandTimeout': 240,
+    platformName: 'Android',
+    'appium:platformVersion': process.env.PLATFORM_VERSION,
+    'appium:uid': process.env.DEVICE_ID
+}
 
 module.exports = {
+    IOS: {
+        ...IOS
+    },
+
+    DEVICE_IOS: {
+        ...DEVICE_IOS
+    },
+
     iPhone13ProSimulator: {
-        'appium:app': APP_PATH_SIMULATOR,
-        'appium:appiumVersion': APPIUM_VERSION,
-        'appium:automationName': AUTOMATION_NAME || 'XCUITest',
-        'appium:deviceName': DEVICE_NAME || 'iPhone 13 Pro',
-        'appium:newCommandTimeout': 240,
-        platformName: PLATFORM_NAME || 'iOS',
-        'appium:platformVersion': '15.5',
-        'appium:xcodeOrgId': ORG_ID,
-        'appium:xcodeSigningId': 'iPhone Developer'
+        ...IOS
     },
 
     iPhoneXs: {
-        'appium:app': RELEASE_APP_PATH,
-        'appium:appiumVersion': APPIUM_VERSION,
-        'appium:automationName': AUTOMATION_NAME || 'XCUITest',
-        'appium:deviceName': DEVICE_NAME || 'iPhone Xs',
-        'appium:newCommandTimeout': 240,
-        platformName: PLATFORM_NAME || 'iOS',
-        'appium:platformVersion': PLATFORM_VERSION || '15.1',
-        'appium:udid': DEVICE_ID || '00008020-001E59493AE1002E',
-        'appium:xcodeOrgId': ORG_ID,
-        'appium:xcodeSigningId': 'iPhone Developer'
+        ...DEVICE_IOS,
+        'appium:platformVersion': '15.1',
+        'appium:udid': '00008020-001E59493AE1002E'
     },
 
     ONEPLUSA5000: {
-        'appium:appActivity': '.MainActivity',
-        'appium:appPackage': 'org.jitsi.meet',
-        'appium:appiumVersion': APPIUM_VERSION,
-        'appium:automationName': AUTOMATION_NAME || 'UiAutomator2',
-        'appium:newCommandTimeout': 240,
-        platformName: PLATFORM_NAME || 'Android',
-        'appium:platformVersion': PLATFORM_VERSION || '10.0',
-        'appium:uid': DEVICE_ID || '2ff2f58d'
+        ...DEVICE_ANDROID,
+        'appium:platformVersion': '10.0',
+        'appium:uid': '2ff2f58d'
     }
 };
