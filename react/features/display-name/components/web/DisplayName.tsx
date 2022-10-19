@@ -1,12 +1,11 @@
 /* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-import { IState, IStore } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
+import { IState } from '../../../app/types';
 import {
     getParticipantById,
     getParticipantDisplayName
@@ -22,33 +21,12 @@ import { appendSuffix } from '../../functions';
 /**
  * The type of the React {@code Component} props of {@link DisplayName}.
  */
-interface Props extends WithTranslation {
-
-    /**
-     * The participant's current display name which should be shown when in
-     * edit mode. Can be different from what is shown when not editing.
-     */
-    _configuredDisplayName: string;
-
-    /**
-     * The participant's current display name which should be shown.
-     */
-    _nameToDisplay: string;
+interface Props {
 
     /**
      * Whether or not the display name should be editable on click.
      */
     allowEditing: boolean;
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: any;
-
-    /**
-     * Invoked to update the participant's display name.
-     */
-    dispatch: IStore['dispatch'];
 
     /**
      * A string to append to the displayName, if provided.
@@ -72,23 +50,7 @@ interface Props extends WithTranslation {
     thumbnailType: string;
 }
 
-/**
- * The type of the React {@code Component} state of {@link DisplayName}.
- */
-type State = {
-
-    /**
-     * The current value of the display name in the edit field.
-     */
-    editDisplayNameValue: string;
-
-    /**
-     * Whether or not the component should be displaying an editable input.
-     */
-    isEditing: boolean;
-};
-
-const styles = (theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         displayName: {
             ...withPixelLineHeight(theme.typography.labelBold),
@@ -108,232 +70,93 @@ const styles = (theme: Theme) => {
             color: theme.palette.text01
         }
     };
-};
+});
 
-/**
- * React {@code Component} for displaying and editing a participant's name.
- *
- * @augments Component
- */
-class DisplayName extends Component<Props, State> {
-    _nameInput?: HTMLInputElement;
+const DisplayName = ({
+    allowEditing,
+    displayNameSuffix,
+    elementID,
+    participantID,
+    thumbnailType
+}: Props) => {
+    const { classes } = useStyles();
+    const configuredDisplayName = useSelector((state: IState) => getParticipantById(state, participantID))?.name ?? '';
+    const nameToDisplay = useSelector((state: IState) => getParticipantDisplayName(state, participantID));
+    const [ editDisplayNameValue, setEditDisplayNameValue ] = useState('');
+    const [ isEditing, setIsEditing ] = useState(false);
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+    const nameInputRef = useRef<HTMLInputElement | null>(null);
 
-    static defaultProps = {
-        _configuredDisplayName: ''
-    };
-
-    /**
-     * Initializes a new {@code DisplayName} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            editDisplayNameValue: '',
-            isEditing: false
-        };
-
-        /**
-         * The internal reference to the HTML element backing the React
-         * {@code Component} input with id {@code editDisplayName}. It is
-         * necessary for automatically selecting the display name input field
-         * when starting to edit the display name.
-         *
-         * @private
-         * @type {HTMLInputElement}
-         */
-        this._nameInput = undefined;
-
-        // Bind event handlers so they are only bound once for every instance.
-        this._onChange = this._onChange.bind(this);
-        this._onKeyDown = this._onKeyDown.bind(this);
-        this._onStartEditing = this._onStartEditing.bind(this);
-        this._onSubmit = this._onSubmit.bind(this);
-        this._setNameInputRef = this._setNameInputRef.bind(this);
-    }
-
-    /**
-     * Automatically selects the input field's value after starting to edit the
-     * display name.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidUpdate(previousProps: Props, previousState: State) {
-        if (!previousState.isEditing
-            && this.state.isEditing
-            && this._nameInput) {
-            this._nameInput.select();
+    useEffect(() => {
+        if (isEditing && nameInputRef.current) {
+            nameInputRef.current.select();
         }
-    }
+    }, [ isEditing ]);
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const {
-            _nameToDisplay,
-            allowEditing,
-            displayNameSuffix,
-            classes,
-            elementID,
-            t,
-            thumbnailType
-        } = this.props;
-
-        if (allowEditing && this.state.isEditing) {
-            return (
-                <input
-                    autoFocus = { true }
-                    className = { classes.editDisplayName }
-                    id = 'editDisplayName'
-                    onBlur = { this._onSubmit }
-                    onChange = { this._onChange }
-                    onClick = { this._onClick }
-                    onKeyDown = { this._onKeyDown }
-                    placeholder = { t('defaultNickname') }
-                    ref = { this._setNameInputRef }
-                    spellCheck = { 'false' }
-                    type = 'text'
-                    value = { this.state.editDisplayNameValue } />
-            );
-        }
-
-        return (
-            <Tooltip
-                content = { appendSuffix(_nameToDisplay, displayNameSuffix) }
-                position = { getIndicatorsTooltipPosition(thumbnailType) }>
-                <span
-                    className = { `displayname ${classes.displayName}` }
-                    id = { elementID }
-                    onClick = { this._onStartEditing }>
-                    { appendSuffix(_nameToDisplay, displayNameSuffix) }
-                </span>
-            </Tooltip>
-        );
-    }
-
-    /**
-     * Stop click event propagation.
-     *
-     * @param {MouseEvent} e - The click event.
-     * @private
-     * @returns {void}
-     */
-    _onClick(e: React.MouseEvent) {
+    const onClick = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
-    }
+    }, []);
 
-    /**
-     * Updates the internal state of the display name entered into the edit
-     * field.
-     *
-     * @param {Object} event - DOM Event for value change.
-     * @private
-     * @returns {void}
-     */
-    _onChange(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({
-            editDisplayNameValue: event.target.value
-        });
-    }
+    const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setEditDisplayNameValue(event.target.value);
+    }, []);
 
-    /**
-     * Submits the edited display name update if the enter key is pressed.
-     *
-     * @param {Event} event - Key down event object.
-     * @private
-     * @returns {void}
-     */
-    _onKeyDown(event: React.KeyboardEvent) {
-        if (event.key === 'Enter') {
-            this._onSubmit();
-        }
-    }
-
-    /**
-     * Updates the component to display an editable input field and sets the
-     * initial value to the current display name.
-     *
-     * @param {MouseEvent} e - The click event.
-     * @private
-     * @returns {void}
-     */
-    _onStartEditing(e: React.MouseEvent) {
-        if (this.props.allowEditing) {
-            e.stopPropagation();
-            this.setState({
-                isEditing: true,
-                editDisplayNameValue: this.props._configuredDisplayName
-            });
-        }
-    }
-
-    /**
-     * Dispatches an action to update the display name if any change has
-     * occurred after editing. Clears any temporary state used to keep track
-     * of pending display name changes and exits editing mode.
-     *
-     * @param {Event} event - Key down event object.
-     * @private
-     * @returns {void}
-     */
-    _onSubmit() {
-        const { editDisplayNameValue } = this.state;
-        const { dispatch } = this.props;
-
-        // Store display name in settings
+    const onSubmit = useCallback(() => {
         dispatch(updateSettings({
             displayName: editDisplayNameValue
         }));
 
-        this.setState({
-            isEditing: false,
-            editDisplayNameValue: ''
-        });
+        setEditDisplayNameValue('');
+        setIsEditing(false);
+        nameInputRef.current = null;
+    }, [ editDisplayNameValue, nameInputRef ]);
 
-        this._nameInput = undefined;
+    const onKeyDown = useCallback((event: React.KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            onSubmit();
+        }
+    }, [ onSubmit ]);
+
+    const onStartEditing = useCallback((e: React.MouseEvent) => {
+        if (allowEditing) {
+            e.stopPropagation();
+            setIsEditing(true);
+            setEditDisplayNameValue(configuredDisplayName);
+        }
+    }, [ allowEditing ]);
+
+    if (allowEditing && isEditing) {
+        return (
+            <input
+                autoFocus = { true }
+                className = { classes.editDisplayName }
+                id = 'editDisplayName'
+                onBlur = { onSubmit }
+                onChange = { onChange }
+                onClick = { onClick }
+                onKeyDown = { onKeyDown }
+                placeholder = { t('defaultNickname') }
+                ref = { nameInputRef }
+                spellCheck = { 'false' }
+                type = 'text'
+                value = { editDisplayNameValue } />
+        );
     }
 
-    /**
-     * Sets the internal reference to the HTML element backing the React
-     * {@code Component} input with id {@code editDisplayName}.
-     *
-     * @param {HTMLInputElement} element - The DOM/HTML element for this
-     * {@code Component}'s input.
-     * @private
-     * @returns {void}
-     */
-    _setNameInputRef(element: HTMLInputElement) {
-        this._nameInput = element;
-    }
-}
+    return (
+        <Tooltip
+            content = { appendSuffix(nameToDisplay, displayNameSuffix) }
+            position = { getIndicatorsTooltipPosition(thumbnailType) }>
+            <span
+                className = { `displayname ${classes.displayName}` }
+                id = { elementID }
+                onClick = { onStartEditing }>
+                {appendSuffix(nameToDisplay, displayNameSuffix)}
+            </span>
+        </Tooltip>
+    );
+};
 
-/**
- * Maps (parts of) the redux state to the props of this component.
- *
- * @param {Object} state - The redux store/state.
- * @param {Props} ownProps - The own props of the component.
- * @private
- * @returns {{
- *     _configuredDisplayName: string,
- *     _nameToDisplay: string
- * }}
- */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
-    const { participantID } = ownProps;
-    const participant = getParticipantById(state, participantID ?? '');
 
-    return {
-        _configuredDisplayName: participant?.name,
-        _nameToDisplay: getParticipantDisplayName(state, participantID ?? '')
-    };
-}
-
-export default translate(connect(_mapStateToProps)(withStyles(styles)(DisplayName)));
+export default DisplayName;
