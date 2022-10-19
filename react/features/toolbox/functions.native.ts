@@ -1,5 +1,5 @@
-// @flow
-
+import { IState } from '../app/types';
+import { IStateful } from '../base/app/types';
 import { hasAvailableDevices } from '../base/devices';
 import { TOOLBOX_ALWAYS_VISIBLE, TOOLBOX_ENABLED, getFeatureFlag } from '../base/flags';
 import { getParticipantCountWithFake } from '../base/participants';
@@ -23,7 +23,7 @@ const WIDTH = {
  * @returns {Set}
  */
 export function getMovableButtons(width: number): Set<string> {
-    let buttons = [];
+    let buttons: string[] = [];
 
     switch (true) {
     case width >= WIDTH.FIT_9_ICONS: {
@@ -56,10 +56,10 @@ export function getMovableButtons(width: number): Set<string> {
 /**
  * Indicates if the desktop share button is disabled or not.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isDesktopShareButtonDisabled(state: Object) {
+export function isDesktopShareButtonDisabled(state: IState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
     const videoOrShareInProgress = !muted || isLocalVideoTrackDesktop(state);
 
@@ -69,11 +69,11 @@ export function isDesktopShareButtonDisabled(state: Object) {
 /**
  * Returns true if the toolbox is visible.
  *
- * @param {Object | Function} stateful - A function or object that can be
+ * @param {IStateful} stateful - A function or object that can be
  * resolved to Redux state by the function {@code toState}.
  * @returns {boolean}
  */
-export function isToolboxVisible(stateful: Object | Function) {
+export function isToolboxVisible(stateful: IStateful) {
     const state = toState(stateful);
     const { toolbarConfig } = state['features/base/config'];
     const { alwaysVisible } = toolbarConfig || {};
@@ -89,10 +89,10 @@ export function isToolboxVisible(stateful: Object | Function) {
 /**
  * Indicates if the video mute button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {IState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isVideoMuteButtonDisabled(state: Object) {
+export function isVideoMuteButtonDisabled(state: IState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
 
     return !hasAvailableDevices(state, 'videoInput')

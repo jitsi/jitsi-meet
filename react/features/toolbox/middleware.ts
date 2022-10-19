@@ -1,6 +1,6 @@
-// @flow
+import { AnyAction } from 'redux';
 
-import { MiddlewareRegistry } from '../base/redux';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -9,8 +9,6 @@ import {
 } from './actionTypes';
 
 import './subscriber';
-
-declare var APP: Object;
 
 /**
  * Middleware which intercepts Toolbox actions to handle changes to the
@@ -25,7 +23,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CLEAR_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
 
-        clearTimeout(timeoutID);
+        clearTimeout(timeoutID ?? undefined);
         break;
     }
 
@@ -34,9 +32,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
-        const { handler, timeoutMS } = action;
+        const { handler, timeoutMS }: { handler: Function; timeoutMS: number; } = action;
 
-        clearTimeout(timeoutID);
+        clearTimeout(timeoutID ?? undefined);
         action.timeoutID = setTimeout(handler, timeoutMS);
 
         break;
@@ -47,10 +45,10 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 type DocumentElement = {
-    +requestFullscreen?: Function,
-    +mozRequestFullScreen?: Function,
-    +webkitRequestFullscreen?: Function
-}
+    mozRequestFullScreen?: Function;
+    requestFullscreen?: Function;
+    webkitRequestFullscreen?: Function;
+};
 
 /**
  * Makes an external request to enter or exit full screen mode.
@@ -62,7 +60,7 @@ type DocumentElement = {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setFullScreen(next, action) {
+function _setFullScreen(next: Function, action: AnyAction) {
     const result = next(action);
 
     if (typeof APP === 'object') {
@@ -88,14 +86,14 @@ function _setFullScreen(next, action) {
         if (typeof document.exitFullscreen === 'function') {
             document.exitFullscreen();
 
-        // $FlowExpectedError
+        // @ts-ignore
         } else if (typeof document.mozCancelFullScreen === 'function') {
-            // $FlowExpectedError
+            // @ts-ignore
             document.mozCancelFullScreen();
 
-        // $FlowExpectedError
+        // @ts-ignore
         } else if (typeof document.webkitExitFullscreen === 'function') {
-            // $FlowExpectedError
+            // @ts-ignore
             document.webkitExitFullscreen();
         }
     }

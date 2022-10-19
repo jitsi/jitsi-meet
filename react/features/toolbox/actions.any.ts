@@ -1,20 +1,18 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
+// @ts-expect-error
 import UIEvents from '../../../service/UI/UIEvents';
-import { VIDEO_MUTE, createToolbarEvent, sendAnalytics } from '../analytics';
-import { setAudioOnly } from '../base/audio-only';
-import { VIDEO_MUTISM_AUTHORITY, setVideoMuted } from '../base/media';
-import { getLocalVideoType } from '../base/tracks';
+import { VIDEO_MUTE, createToolbarEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
+import { IStore } from '../app/types';
+import { setAudioOnly } from '../base/audio-only/actions';
+import { setVideoMuted } from '../base/media/actions';
+import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
+import { getLocalVideoType } from '../base/tracks/functions';
 
 import {
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
-
-declare var APP: Object;
 
 /**
  * Enables/disables the toolbox.
@@ -38,9 +36,10 @@ export function setToolboxEnabled(enabled: boolean): Object {
  * @param {boolean} visible - True to show the toolbox or false to hide it.
  * @returns {Function}
  */
-export function setToolboxVisible(visible: boolean): Object {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const { toolbarConfig: { alwaysVisible } } = getState()['features/base/config'];
+export function setToolboxVisible(visible: boolean) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { toolbarConfig } = getState()['features/base/config'];
+        const alwaysVisible = toolbarConfig?.alwaysVisible;
 
         if (!visible && alwaysVisible) {
             return;
@@ -59,9 +58,10 @@ export function setToolboxVisible(visible: boolean): Object {
  * @returns {Function}
  */
 export function toggleToolboxVisible() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { toolbarConfig: { alwaysVisible } } = state['features/base/config'];
+        const { toolbarConfig } = getState()['features/base/config'];
+        const alwaysVisible = toolbarConfig?.alwaysVisible;
         const { visible } = state['features/toolbox'];
 
         if (visible && alwaysVisible) {
@@ -84,8 +84,8 @@ export function toggleToolboxVisible() {
  * created if missing.
  * @returns {Function}
  */
-export function handleToggleVideoMuted(muted, showUI, ensureTrack) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function handleToggleVideoMuted(muted: boolean, showUI: boolean, ensureTrack: boolean) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { enabled: audioOnly } = state['features/base/audio-only'];
         const tracks = state['features/base/tracks'];
