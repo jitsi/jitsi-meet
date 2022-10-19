@@ -2,10 +2,10 @@
 import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState, IStore } from '../../../app/types';
+import { IState } from '../../../app/types';
 import {
     getParticipantById,
     getParticipantDisplayName
@@ -24,25 +24,9 @@ import { appendSuffix } from '../../functions';
 interface Props {
 
     /**
-     * The participant's current display name which should be shown when in
-     * edit mode. Can be different from what is shown when not editing.
-     */
-    _configuredDisplayName?: string;
-
-    /**
-     * The participant's current display name which should be shown.
-     */
-    _nameToDisplay: string;
-
-    /**
      * Whether or not the display name should be editable on click.
      */
     allowEditing: boolean;
-
-    /**
-     * Invoked to update the participant's display name.
-     */
-    dispatch: IStore['dispatch'];
 
     /**
      * A string to append to the displayName, if provided.
@@ -89,56 +73,56 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 const DisplayName = ({
-    _configuredDisplayName = '',
-    _nameToDisplay,
     allowEditing,
-    dispatch,
     displayNameSuffix,
     elementID,
+    participantID,
     thumbnailType
 }: Props) => {
     const { classes } = useStyles();
+    const configuredDisplayName = useSelector((state: IState) => getParticipantById(state, participantID))?.name ?? '';
+    const nameToDisplay = useSelector((state: IState) => getParticipantDisplayName(state, participantID));
     const [ editDisplayNameValue, setEditDisplayNameValue ] = useState('');
     const [ isEditing, setIsEditing ] = useState(false);
+    const dispatch = useDispatch();
     const { t } = useTranslation();
-    const _nameInputRef = useRef<HTMLInputElement | null>(null);
+    const nameInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
-        if (isEditing && _nameInputRef.current) {
-            _nameInputRef.current.select();
+        if (isEditing && nameInputRef.current) {
+            nameInputRef.current.select();
         }
     }, [ isEditing ]);
 
-    const _onClick = useCallback((e: React.MouseEvent) => {
+    const onClick = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
     }, []);
 
-    const _onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setEditDisplayNameValue(event.target.value);
     }, []);
 
-    const _onSubmit = useCallback(() => {
-        // Store display name in settings
+    const onSubmit = useCallback(() => {
         dispatch(updateSettings({
             displayName: editDisplayNameValue
         }));
 
         setEditDisplayNameValue('');
         setIsEditing(false);
-        _nameInputRef.current = null;
-    }, [ editDisplayNameValue, _nameInputRef ]);
+        nameInputRef.current = null;
+    }, [ editDisplayNameValue, nameInputRef ]);
 
-    const _onKeyDown = useCallback((event: React.KeyboardEvent) => {
+    const onKeyDown = useCallback((event: React.KeyboardEvent) => {
         if (event.key === 'Enter') {
-            _onSubmit();
+            onSubmit();
         }
-    }, [ _onSubmit ]);
+    }, [ onSubmit ]);
 
-    const _onStartEditing = useCallback((e: React.MouseEvent) => {
+    const onStartEditing = useCallback((e: React.MouseEvent) => {
         if (allowEditing) {
             e.stopPropagation();
             setIsEditing(true);
-            setEditDisplayNameValue(_configuredDisplayName);
+            setEditDisplayNameValue(configuredDisplayName);
         }
     }, [ allowEditing ]);
 
@@ -148,12 +132,12 @@ const DisplayName = ({
                 autoFocus = { true }
                 className = { classes.editDisplayName }
                 id = 'editDisplayName'
-                onBlur = { _onSubmit }
-                onChange = { _onChange }
-                onClick = { _onClick }
-                onKeyDown = { _onKeyDown }
+                onBlur = { onSubmit }
+                onChange = { onChange }
+                onClick = { onClick }
+                onKeyDown = { onKeyDown }
                 placeholder = { t('defaultNickname') }
-                ref = { _nameInputRef }
+                ref = { nameInputRef }
                 spellCheck = { 'false' }
                 type = 'text'
                 value = { editDisplayNameValue } />
@@ -162,37 +146,17 @@ const DisplayName = ({
 
     return (
         <Tooltip
-            content = { appendSuffix(_nameToDisplay, displayNameSuffix) }
+            content = { appendSuffix(nameToDisplay, displayNameSuffix) }
             position = { getIndicatorsTooltipPosition(thumbnailType) }>
             <span
                 className = { `displayname ${classes.displayName}` }
                 id = { elementID }
-                onClick = { _onStartEditing }>
-                {appendSuffix(_nameToDisplay, displayNameSuffix)}
+                onClick = { onStartEditing }>
+                {appendSuffix(nameToDisplay, displayNameSuffix)}
             </span>
         </Tooltip>
     );
 };
 
-/**
- * Maps (parts of) the redux state to the props of this component.
- *
- * @param {Object} state - The redux store/state.
- * @param {Props} ownProps - The own props of the component.
- * @private
- * @returns {{
- *     _configuredDisplayName: string,
- *     _nameToDisplay: string
- * }}
- */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
-    const { participantID } = ownProps;
-    const participant = getParticipantById(state, participantID ?? '');
 
-    return {
-        _configuredDisplayName: participant?.name,
-        _nameToDisplay: getParticipantDisplayName(state, participantID ?? '')
-    };
-}
-
-export default connect(_mapStateToProps)(DisplayName);
+export default DisplayName;
