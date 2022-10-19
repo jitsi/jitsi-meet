@@ -1,19 +1,20 @@
-// @flow
-
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
+import Audio from '../../../base/media/components/Audio.web';
 import { InputField, PreMeetingScreen } from '../../../base/premeeting';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import Button from '../../../base/ui/components/web/Button';
 import ChatInput from '../../../chat/components/web/ChatInput';
 import MessageContainer from '../../../chat/components/web/MessageContainer';
+import { WAITING_ROOM_SOUND_PATH } from '../../sounds';
 import AbstractLobbyScreen, {
     type Props,
     _mapStateToProps
 } from '../AbstractLobbyScreen';
+
 
 /**
  * Implements a waiting screen that represents the participant being in the lobby.
@@ -73,6 +74,10 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                 showCopyUrlButton = { showCopyUrlButton }
                 showDeviceStatus = { _deviceStatusVisible }
                 title = { t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient }) }>
+                <Audio
+                    autoPlay = { true }
+                    loop = { true }
+                    src = { WAITING_ROOM_SOUND_PATH } />
                 { this._renderContent() }
             </PreMeetingScreen>
         );
@@ -104,7 +109,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
     _onToggleChat: () => void;
 
-    _renderContent: () => React$Element<*>;
+    _renderContent: () => React.ReactElement;
 
     /**
      * Renders the joining (waiting) fragment of the screen.

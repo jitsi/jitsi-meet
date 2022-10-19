@@ -24,6 +24,11 @@ export type Props = {
     _deviceStatusVisible: boolean,
 
     /**
+     * Indicates whether waiting music is enabled.
+     */
+    _enableWaitingMusic: boolean,
+
+    /**
      * True if knocking is already happening, so we're waiting for a response.
      */
     _knocking: boolean,
@@ -437,6 +442,7 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
  * @returns {Props}
  */
 export function _mapStateToProps(state: Object): $Shape<Props> {
+    const enableWaitingMusic = state['features/base/config']?.enableWaitingMusic;
     const localParticipant = getLocalParticipant(state);
     const participantId = localParticipant?.id;
     const inviteEnabledFlag = getFeatureFlag(state, INVITE_ENABLED, true);
@@ -450,6 +456,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
 
     return {
         _deviceStatusVisible: deviceStatusVisible,
+        _enableWaitingMusic: enableWaitingMusic,
         _knocking: knocking,
         _lobbyChatMessages: messages,
         _lobbyMessageRecipient: lobbyMessageRecipient?.name,

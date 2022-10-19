@@ -625,6 +625,9 @@ var config = {
     // a call is hangup.
     // enableClosePage: false,
 
+    // Whether to enable waiting music or not.
+    // enableWaitingMusic: true,
+
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // Setting this to null, will also disable showing the remote videos
     // when the toolbar is shown on mouse movements

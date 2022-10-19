@@ -22,6 +22,11 @@ export type AudioElement = {
 type Props = {
 
     /**
+     * Autoplay prop.
+     */
+    autoPlay: boolean,
+
+    /**
      * A callback which will be called with {@code AbstractAudio} instance once
      * the audio element is loaded.
      */

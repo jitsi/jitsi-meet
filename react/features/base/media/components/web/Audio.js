@@ -43,7 +43,8 @@ export default class Audio extends AbstractAudio {
     render() {
         return (
             <audio
-                loop = { Boolean(this.props.loop) }
+                autoPlay = { this.props.autoPlay }
+                loop = { this.props.loop }
                 onCanPlayThrough = { this._onCanPlayThrough }
                 preload = 'auto'
 

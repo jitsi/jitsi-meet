@@ -8,6 +8,11 @@ import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
+import Audio from '../../../base/media/components/Audio';
+import {
+    getParticipantCountWithFake,
+    isLocalParticipantModerator
+} from '../../../base/participants';
 import { connect as reactReduxConnect } from '../../../base/redux';
 import { setColorAlpha } from '../../../base/util';
 import { Chat } from '../../../chat';
@@ -23,11 +28,12 @@ import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { JitsiPortal, Toolbox } from '../../../toolbox/components/web';
 import { LAYOUT_CLASSNAMES, getCurrentLayout } from '../../../video-layout';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
+import { WAITING_ROOM_SOUND_PATH } from '../../sounds';
 import {
     AbstractConference,
+    type AbstractProps,
     abstractMapStateToProps
 } from '../AbstractConference';
-import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
@@ -59,6 +65,11 @@ type Props = AbstractProps & {
     _backgroundAlpha: number,
 
     /**
+     * Whether the local user is the moderator.
+     */
+    _isModerator: boolean,
+
+    /**
      * The CSS class to apply to the root of {@link Conference} to modify the
      * application layout.
      */
@@ -70,9 +81,14 @@ type Props = AbstractProps & {
     _mouseMoveCallbackInterval: number,
 
     /**
-     *Whether or not the notifications should be displayed in the overflow drawer.
+     * Whether or not the notifications should be displayed in the overflow drawer.
      */
     _overflowDrawer: boolean,
+
+    /**
+     * Number of participants in the meeting.
+     */
+    _participantCount: number,
 
     /**
      * Name for this conference room.
@@ -89,7 +105,14 @@ type Props = AbstractProps & {
      */
     _showPrejoin: boolean,
 
+    /**
+     * The Redux dispatch function.
+     */
     dispatch: Function,
+
+    /**
+     * The translate function.
+     */
     t: Function
 }
 
@@ -197,12 +220,17 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
+            _isModerator,
             _layoutClassName,
             _notificationsVisible,
             _overflowDrawer,
+            _participantCount,
             _showLobby,
             _showPrejoin
         } = this.props;
+
+        const lonely = !_showPrejoin && _participantCount === 1;
+        const lonelyModerator = _isModerator && lonely;
 
         return (
             <div
@@ -242,9 +270,16 @@ class Conference extends AbstractConference<Props, *> {
 
                     <CalleeInfoContainer />
 
-                    { _showPrejoin && <Prejoin />}
-                    { _showLobby && <LobbyScreen />}
+                    { _showPrejoin && <Prejoin /> }
+                    { _showLobby && <LobbyScreen /> }
                 </div>
+                {
+                    lonelyModerator
+                    && <Audio
+                        autoPlay = { true }
+                        loop = { true }
+                        src = { WAITING_ROOM_SOUND_PATH } />
+                }
                 <ParticipantsPane />
             </div>
         );
@@ -378,13 +413,16 @@ class Conference extends AbstractConference<Props, *> {
 function _mapStateToProps(state) {
     const { backgroundAlpha, mouseMoveCallbackInterval } = state['features/base/config'];
     const { overflowDrawer } = state['features/toolbox'];
+    const participantCount = getParticipantCountWithFake(state);
 
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
+        _isModerator: isLocalParticipantModerator(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _overflowDrawer: overflowDrawer,
+        _participantCount: participantCount,
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state)
