@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 const IOS = {
     // eslint-disable-next-line max-len
     'appium:app': 'Users/cchitu/Library/Developer/Xcode/DerivedData/jitsi-meet-gpsplsfarleyxebhmcufemivqqbl/Build/Products/Debug-iphonesimulator/jitsi-meet.app',
@@ -15,7 +17,7 @@ const DEVICE_IOS = {
     ...IOS,
     // eslint-disable-next-line max-len
     'appium:app': '/Users/cchitu/Library/Developer/Xcode/Archives/2022-09-01/JitsiMeet.xcarchive/Products/Applications/jitsi-meet.app'
-}
+};
 
 const DEVICE_ANDROID = {
     'appium:appActivity': '.MainActivity',
@@ -26,7 +28,7 @@ const DEVICE_ANDROID = {
     platformName: 'Android',
     'appium:platformVersion': process.env.PLATFORM_VERSION,
     'appium:uid': process.env.DEVICE_ID
-}
+};
 
 module.exports = {
     IOS: {
