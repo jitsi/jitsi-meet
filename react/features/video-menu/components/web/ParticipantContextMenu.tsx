@@ -45,6 +45,8 @@ import {
     VolumeSlider
     // @ts-ignore
 } from './';
+import VerifyParticipantButton from './VerifyParticipantButton';
+import { displayVerification } from '../../../e2ee/functions';
 
 interface IProps {
 
@@ -150,6 +152,7 @@ const ParticipantContextMenu = ({
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
+    const shouldDisplayVerification = useSelector(displayVerification);
 
     const _currentRoomId = useSelector(getCurrentRoomId);
     const _rooms: Array<{ id: string; }> = Object.values(useSelector(getBreakoutRooms));
@@ -223,6 +226,15 @@ const ParticipantContextMenu = ({
                     participantID = { _getCurrentParticipantId() } />
             );
         }
+
+        if (shouldDisplayVerification) {
+            buttons2.push(
+                <VerifyParticipantButton
+                    key = 'verify'
+                    participantID = { _getCurrentParticipantId() } />
+            );
+        }
+
     }
 
     if (stageFilmstrip) {

@@ -412,6 +412,9 @@
         "viewUpgradeOptions": "View upgrade options",
         "viewUpgradeOptionsContent": "To get unlimited access to premium features like recording, transcriptions, RTMP Streaming & more, you'll need to upgrade your plan.",
         "viewUpgradeOptionsTitle": "You discovered a premium feature!",
+        "verifyChannelConfirm": "They match",
+        "verifyChannelDismiss": "They do not match",
+        "verifyChannelTitle": "Check the characters",
         "yourEntireScreen": "Your entire screen"
     },
     "documentSharing": {
@@ -1297,6 +1300,7 @@
         "show": "Show on stage",
         "showSelfView": "Show self view",
         "unpinFromStage": "Unpin",
+        "verify": "Verify participant",
         "videoMuted": "Camera disabled",
         "videomute": "Participant has stopped the camera"
     },

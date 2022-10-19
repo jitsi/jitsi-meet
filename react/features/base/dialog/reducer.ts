@@ -32,6 +32,11 @@ ReducerRegistry.register<IDialogState>('features/base/dialog', (state = {}, acti
     case HIDE_DIALOG: {
         const { component } = action;
 
+        console.log("XXX middleware1 ", typeof component === 'undefined');
+        console.log("XXX middleware2 ", state.component === component);
+        console.log("XXX middleware3 ", component);
+        console.log("XXX middleware4 ", state.component);
+
         if (typeof component === 'undefined' || state.component === component) {
             return assign(state, {
                 component: undefined,

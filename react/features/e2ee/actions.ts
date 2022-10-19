@@ -1,8 +1,10 @@
 import {
+    CHANNEL_VERIFIED,
     SET_EVERYONE_ENABLED_E2EE,
     SET_EVERYONE_SUPPORT_E2EE,
     SET_MAX_MODE,
     SET_MEDIA_ENCRYPTION_KEY,
+    START_VERIFICATION,
     TOGGLE_E2EE } from './actionTypes';
 
 /**
@@ -78,5 +80,20 @@ export function setMediaEncryptionKey(keyInfo: Object) {
     return {
         type: SET_MEDIA_ENCRYPTION_KEY,
         keyInfo
+    };
+}
+
+export function startVerification(pId: string) {
+    return {
+        type: START_VERIFICATION,
+        pId
+    };
+}
+
+export function channelVerified(isVerified: boolean, pId: string) {
+    return {
+        type: CHANNEL_VERIFIED,
+        isVerified,
+        pId
     };
 }

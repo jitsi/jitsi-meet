@@ -17,12 +17,15 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 
-import { SET_MEDIA_ENCRYPTION_KEY, TOGGLE_E2EE } from './actionTypes';
+import { CHANNEL_VERIFIED, SET_MEDIA_ENCRYPTION_KEY, START_VERIFICATION, TOGGLE_E2EE } from './actionTypes';
 import { setE2EEMaxMode, setEveryoneEnabledE2EE, setEveryoneSupportE2EE, toggleE2EE } from './actions';
 import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID, MAX_MODE } from './constants';
 import { isMaxModeReached, isMaxModeThresholdReached } from './functions';
 import logger from './logger';
 import { E2EE_OFF_SOUND_FILE, E2EE_ON_SOUND_FILE } from './sounds';
+import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { openDialog } from '../base/dialog/actions';
+import ChannelVerificationDialog from './components/ChannelVerificationDialog';
 
 /**
  * Middleware that captures actions related to E2EE.
@@ -239,6 +242,19 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         break;
     }
+
+    case CHANNEL_VERIFIED: {
+        const { isVerified, pId } = action;
+        conference?.markParticipantChannelVerified(isVerified, pId);
+        break;
+    }
+
+    case START_VERIFICATION: {
+        console.log("XXX START_VERIFICATION1 ", conference)
+        console.log("XXX START_VERIFICATION2 ", action.pId)
+        conference?.startVerification(action.pId);
+        break;
+    }
     }
 
     return next(action);
@@ -254,6 +270,10 @@ StateListenerRegistry.register(
         if (previousConference) {
             dispatch(toggleE2EE(false));
         }
+
+        conference.on(JitsiConferenceEvents.E2EE_SAS_READY, (pId, sas) => {
+           dispatch(openDialog(ChannelVerificationDialog, { pId, sas }));
+        });
     });
 
 /**

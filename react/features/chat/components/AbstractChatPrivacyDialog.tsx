@@ -32,6 +32,8 @@ interface IProps extends WithTranslation {
      * The ID of the participant that we think the message may be intended to.
      */
     participantID: string;
+
+    sas: string;
 }
 
 /**
@@ -103,6 +105,7 @@ export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
  */
 export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     return {
-        _participant: getParticipantById(state, ownProps.participantID)
+        _participant: getParticipantById(state, ownProps.participantID),
+        sas: ownProps.sas
     };
 }

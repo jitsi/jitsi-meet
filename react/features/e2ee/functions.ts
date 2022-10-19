@@ -1,6 +1,9 @@
+import { co } from 'react-emoji-render/data/aliases';
 import { IStateful } from '../base/app/types';
 import { getParticipantCount } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
+
+import { IReduxState } from '../app/types';
 
 import { MAX_MODE_LIMIT, MAX_MODE_THRESHOLD } from './constants';
 
@@ -55,3 +58,15 @@ export function isMaxModeThresholdReached(stateful: IStateful) {
 
     return participantCount >= MAX_MODE_LIMIT + MAX_MODE_THRESHOLD;
 }
+
+/**
+ * Returns whether e2ee is enabled by the backend.
+ *
+ * @returns {boolean}
+ */
+ export function displayVerification(state: IReduxState) {
+    const { conference } = state['features/base/conference'];
+
+    return Boolean(conference.isE2EEEnabled());
+};
+

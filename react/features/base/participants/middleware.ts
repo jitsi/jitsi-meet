@@ -149,7 +149,7 @@ MiddlewareRegistry.register(store => next => action => {
     case KICK_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
 
-        conference?.kickParticipant(action.id);
+        conference?.startVerification(action.id);
         break;
     }
 

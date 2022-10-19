@@ -68,6 +68,7 @@ export interface IJitsiConference {
     joinLobby: Function;
     kickParticipant: Function;
     lock: Function;
+    markParticipantChannelVerified: Function;
     muteParticipant: Function;
     myLobbyUserId: Function;
     myUserId: Function;
@@ -89,6 +90,7 @@ export interface IJitsiConference {
     setReceiverConstraints: Function;
     setSenderVideoConstraint: Function;
     setSubject: Function;
+    startVerification: Function;
 }
 
 export interface IConferenceState {
