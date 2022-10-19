@@ -1,8 +1,5 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import { overwriteConfig } from '../base/config';
+import { IStore } from '../app/types';
+import { overwriteConfig } from '../base/config/actions';
 import { isMobileBrowser } from '../base/environment/utils';
 
 import {
@@ -15,8 +12,8 @@ import {
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
-import { setToolboxVisible } from './actions';
-import { getToolbarTimeout } from './functions';
+import { setToolboxVisible } from './actions.web';
+import { getToolbarTimeout } from './functions.web';
 
 export * from './actions.any';
 
@@ -26,8 +23,8 @@ export * from './actions.any';
  * @param {boolean} dock - True if dock, false otherwise.
  * @returns {Function}
  */
-export function dockToolbox(dock: boolean): Function {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function dockToolbox(dock: boolean) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { visible } = state['features/toolbox'];
         const toolbarTimeout = getToolbarTimeout(state);
@@ -72,10 +69,12 @@ export function fullScreenChanged(fullScreen: boolean) {
  * caring about the extended toolbar side panels.
  * @returns {Function}
  */
-export function hideToolbox(force: boolean = false): Function {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function hideToolbox(force = false) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { toolbarConfig: { alwaysVisible, autoHideWhileChatIsOpen } } = state['features/base/config'];
+        const { toolbarConfig } = state['features/base/config'];
+        const alwaysVisible = toolbarConfig?.alwaysVisible;
+        const autoHideWhileChatIsOpen = toolbarConfig?.autoHideWhileChatIsOpen;
         const { hovered } = state['features/toolbox'];
         const toolbarTimeout = getToolbarTimeout(state);
 
@@ -124,14 +123,13 @@ export function setFullScreen(fullScreen: boolean) {
  * @param {number} timeout - Timeout for showing the toolbox.
  * @returns {Function}
  */
-export function showToolbox(timeout: number = 0): Object {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function showToolbox(timeout = 0) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const {
-            toolbarConfig: { initialTimeout, alwaysVisible },
-            toolbarConfig
-        } = state['features/base/config'];
+        const { toolbarConfig } = state['features/base/config'];
         const toolbarTimeout = getToolbarTimeout(state);
+        const initialTimeout = toolbarConfig?.initialTimeout;
+        const alwaysVisible = toolbarConfig?.alwaysVisible;
 
         const {
             enabled,
@@ -183,7 +181,7 @@ export function setOverflowDrawer(displayAsDrawer: boolean) {
  *     type: CLEAR_TOOLBOX_TIMEOUT
  * }}
  */
-export function clearToolboxTimeout(): Object {
+export function clearToolboxTimeout() {
     return {
         type: CLEAR_TOOLBOX_TIMEOUT
     };
@@ -249,8 +247,8 @@ export function setToolbarHovered(hovered: boolean): Object {
  *     timeoutMS: number
  * }}
  */
-export function setToolboxTimeout(handler: Function, timeoutMS: number): Object {
-    return function(dispatch) {
+export function setToolboxTimeout(handler: Function, timeoutMS: number) {
+    return function(dispatch: IStore['dispatch']) {
         if (isMobileBrowser()) {
             return;
         }
