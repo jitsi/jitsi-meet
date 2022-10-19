@@ -87,7 +87,6 @@ class ParticipantsCount extends PureComponent<Props> {
 
         return (
             <Label
-                color = { COLORS.white }
                 icon = { IconUserGroups }
                 onClick = { !this.props._isSpeakerStatsDisabled && this._onClick }
                 text = { count } />
