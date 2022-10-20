@@ -27,7 +27,8 @@ type Props = AbstractButtonProps & {
  * Component that renders a toolbar button for the whiteboard.
  */
 class WhiteboardButton extends AbstractButton<Props, any, any> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.whiteboard';
+    accessibilityLabel = 'toolbar.accessibilityLabel.showWhiteboard';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.hideWhiteboard';
     icon = IconWhiteboard;
     label = 'toolbar.showWhiteboard';
     toggledIcon = IconWhiteboardHide;

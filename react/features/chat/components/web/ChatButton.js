@@ -24,30 +24,13 @@ type Props = AbstractButtonProps & {
  * Implementation of a button for accessing chat pane.
  */
 class ChatButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.chat';
+    accessibilityLabel = 'toolbar.accessibilityLabel.openChat';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeChat';
     icon = IconMessage;
     label = 'toolbar.openChat';
     toggledLabel = 'toolbar.closeChat';
-
-    /**
-     * Retrieves tooltip dynamically.
-     */
-    get tooltip() {
-        if (this._isToggled()) {
-            return 'toolbar.closeChat';
-        }
-
-        return 'toolbar.openChat';
-    }
-
-    /**
-     * Required by linter due to AbstractButton overwritten prop being writable.
-     *
-     * @param {string} _value - The value.
-     */
-    set tooltip(_value) {
-        // Unused.
-    }
+    tooltip = 'toolbar.openChat';
+    toggledTooltip = 'toolbar.closeChat';
 
     /**
      * Indicates whether this button is in toggled state or not.

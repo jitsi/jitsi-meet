@@ -46,8 +46,10 @@ type Props = AbstractButtonProps & {
  */
 class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.mute';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.unmute';
     label = 'toolbar.mute';
     tooltip = 'toolbar.mute';
+    toggledTooltip = 'toolbar.unmute';
 
     /**
      * Initializes a new {@code AudioMuteButton} instance.
