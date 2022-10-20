@@ -27,7 +27,7 @@ type Props = {
  */
 function JitsiThemeProvider(props: Props) {
     return (
-        <StyledEngineProvider injectFirst = { true }>
+        <StyledEngineProvider>
             <ThemeProvider theme = { props._theme }>{ props.children }</ThemeProvider>
         </StyledEngineProvider>
     );
