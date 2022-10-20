@@ -8,13 +8,13 @@ import { FixedSizeGrid, FixedSizeList } from 'react-window';
 
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState, IStore } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg';
-import { Participant } from '../../../base/participants/types';
+import { IParticipant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 // @ts-ignore
@@ -62,7 +62,7 @@ declare let APP: any;
 /**
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Additional CSS class names top add to the root.
@@ -122,7 +122,7 @@ interface Props extends WithTranslation {
     /**
      * The local screen share participant. This prop is behind the sourceNameSignaling feature flag.
      */
-    _localScreenShare: Participant;
+    _localScreenShare: IParticipant;
 
     /**
      * Whether or not the filmstrip videos should currently be displayed.
@@ -264,7 +264,7 @@ type State = {
  *
  * @augments Component
  */
-class Filmstrip extends PureComponent <Props, State> {
+class Filmstrip extends PureComponent <IProps, State> {
 
     _throttledResize: Function;
 
@@ -274,7 +274,7 @@ class Filmstrip extends PureComponent <Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -878,9 +878,9 @@ class Filmstrip extends PureComponent <Props, State> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];

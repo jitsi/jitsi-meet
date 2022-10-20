@@ -1,4 +1,4 @@
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functions.any';
 import { isWindows } from '../base/environment/environment';
 import { isMobileBrowser } from '../base/environment/utils';
@@ -9,20 +9,20 @@ import { getLocalDesktopTrack, getLocalVideoTrack } from '../base/tracks/functio
 /**
  * Is the current screen sharing session audio only.
  *
- * @param {IState} state - The state of the application.
+ * @param {IReduxState} state - The state of the application.
  * @returns {boolean}
  */
-export function isAudioOnlySharing(state: IState) {
+export function isAudioOnlySharing(state: IReduxState) {
     return isScreenAudioShared(state) && !isScreenVideoShared(state);
 }
 
 /**
  * State of audio sharing.
  *
- * @param {IState} state - The state of the application.
+ * @param {IReduxState} state - The state of the application.
  * @returns {boolean}
  */
-export function isScreenAudioShared(state: IState) {
+export function isScreenAudioShared(state: IReduxState) {
     return state['features/screen-share'].isSharingAudio;
 }
 
@@ -39,20 +39,20 @@ export function isScreenAudioSupported() {
 /**
  * Is any screen media currently being shared, audio or video.
  *
- * @param {IState} state - The state of the application.
+ * @param {IReduxState} state - The state of the application.
  * @returns {boolean}
  */
-export function isScreenMediaShared(state: IState) {
+export function isScreenMediaShared(state: IReduxState) {
     return isScreenAudioShared(state) || isScreenVideoShared(state);
 }
 
 /**
  * Is screen sharing currently active.
  *
- * @param {IState} state - The state of the application.
+ * @param {IReduxState} state - The state of the application.
  * @returns {boolean}
  */
-export function isScreenVideoShared(state: IState) {
+export function isScreenVideoShared(state: IReduxState) {
     const tracks = state['features/base/tracks'];
     const localScreenshare = getLocalDesktopTrack(tracks);
 

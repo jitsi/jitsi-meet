@@ -1,4 +1,4 @@
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import {
     CONFERENCE_JOINED,
     CONFERENCE_WILL_LEAVE,
@@ -27,7 +27,7 @@ import { createHandlers, initAnalytics, resetAnalytics, sendAnalytics } from './
  * @param {Object} state - The redux state.
  * @returns {Object} - The local tracks duration.
  */
-function calculateLocalTrackDuration(state: IState) {
+function calculateLocalTrackDuration(state: IReduxState) {
     const now = Date.now();
     const { localTracksDuration } = state['features/analytics'];
     const { conference } = state['features/base/conference'];

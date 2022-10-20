@@ -1,4 +1,4 @@
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { hasAvailableDevices } from '../base/devices';
 import { TOOLBOX_ALWAYS_VISIBLE, TOOLBOX_ENABLED, getFeatureFlag } from '../base/flags';
@@ -56,10 +56,10 @@ export function getMovableButtons(width: number): Set<string> {
 /**
  * Indicates if the desktop share button is disabled or not.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isDesktopShareButtonDisabled(state: IState) {
+export function isDesktopShareButtonDisabled(state: IReduxState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
     const videoOrShareInProgress = !muted || isLocalVideoTrackDesktop(state);
 
@@ -89,10 +89,10 @@ export function isToolboxVisible(stateful: IStateful) {
 /**
  * Indicates if the video mute button is disabled or not.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isVideoMuteButtonDisabled(state: IState) {
+export function isVideoMuteButtonDisabled(state: IReduxState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
 
     return !hasAvailableDevices(state, 'videoInput')

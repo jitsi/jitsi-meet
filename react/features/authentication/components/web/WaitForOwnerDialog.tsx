@@ -10,7 +10,7 @@ import { cancelWaitForOwner } from '../../actions.web';
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Redux store dispatch method.
@@ -28,14 +28,14 @@ interface Props extends WithTranslation {
  *
  * @returns {React$Element<any>}
  */
-class WaitForOwnerDialog extends PureComponent<Props> {
+class WaitForOwnerDialog extends PureComponent<IProps> {
     /**
      * Instantiates a new component.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onCancelWaitForOwner = this._onCancelWaitForOwner.bind(this);

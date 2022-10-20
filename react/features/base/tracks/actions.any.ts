@@ -41,7 +41,7 @@ import {
     getTrackByJitsiTrack
 } from './functions';
 import logger from './logger';
-import { TrackOptions } from './types';
+import { ITrackOptions } from './types';
 
 /**
  * Add a given local track to the conference.
@@ -131,7 +131,7 @@ export function createDesiredLocalTracks(...desiredTypes: any) {
  * @param {Object} [options] - For info @see JitsiMeetJS.createLocalTracks.
  * @returns {Function}
  */
-export function createLocalTracksA(options: TrackOptions = {}) {
+export function createLocalTracksA(options: ITrackOptions = {}) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const devices
             = options.devices || [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ];

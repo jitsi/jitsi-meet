@@ -1,11 +1,11 @@
-interface TypographyType {
+interface ITypographyType {
     fontSize: number;
     fontWeight: string;
     letterSpacing: number;
     lineHeight: number;
 }
 
-export interface Palette {
+export interface IPalette {
     action01: string;
     action01Active: string;
     action01Hover: string;
@@ -60,21 +60,21 @@ export interface Palette {
     warning02: string;
 }
 
-export interface Typography {
-    bodyLongBold: TypographyType;
-    bodyLongBoldLarge: TypographyType;
-    bodyLongRegular: TypographyType;
-    bodyLongRegularLarge: TypographyType;
-    bodyShortBold: TypographyType;
-    bodyShortBoldLarge: TypographyType;
-    bodyShortRegular: TypographyType;
-    bodyShortRegularLarge: TypographyType;
-    heading1: TypographyType;
-    heading2: TypographyType;
-    heading3: TypographyType;
-    heading4: TypographyType;
-    heading5: TypographyType;
-    heading6: TypographyType;
-    labelBold: TypographyType;
-    labelRegular: TypographyType;
+export interface ITypography {
+    bodyLongBold: ITypographyType;
+    bodyLongBoldLarge: ITypographyType;
+    bodyLongRegular: ITypographyType;
+    bodyLongRegularLarge: ITypographyType;
+    bodyShortBold: ITypographyType;
+    bodyShortBoldLarge: ITypographyType;
+    bodyShortRegular: ITypographyType;
+    bodyShortRegularLarge: ITypographyType;
+    heading1: ITypographyType;
+    heading2: ITypographyType;
+    heading3: ITypographyType;
+    heading4: ITypographyType;
+    heading5: ITypographyType;
+    heading6: ITypographyType;
+    labelBold: ITypographyType;
+    labelRegular: ITypographyType;
 }

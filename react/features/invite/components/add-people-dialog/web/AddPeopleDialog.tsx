@@ -4,7 +4,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { createInviteDialogEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
-import { IState } from '../../../../app/types';
+import { IReduxState } from '../../../../app/types';
 import { getInviteURL } from '../../../../base/connection/functions';
 import { translate } from '../../../../base/i18n/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
@@ -41,7 +41,7 @@ import InviteContactsSection from './InviteContactsSection';
 // @ts-ignore
 import LiveStreamSection from './LiveStreamSection';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The object representing the dialIn feature.
@@ -135,7 +135,7 @@ function AddPeopleDialog({
     _liveStreamViewURL,
     _phoneNumber,
     t,
-    updateNumbers }: Props) {
+    updateNumbers }: IProps) {
 
     /**
      * Updates the dial-in numbers.
@@ -207,9 +207,9 @@ function AddPeopleDialog({
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The properties explicitly passed to the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const currentLiveStreamingSession
         = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
     const { iAmRecorder, inviteAppName } = state['features/base/config'];
@@ -244,7 +244,7 @@ function mapStateToProps(state: IState, ownProps: Partial<Props>) {
  * Maps dispatching of some action to React component props.
  *
  * @param {Function} dispatch - Redux action dispatcher.
- * @returns {Props}
+ * @returns {IProps}
  */
 const mapDispatchToProps = {
     updateNumbers: () => updateDialInNumbers()

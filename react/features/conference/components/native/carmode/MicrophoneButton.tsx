@@ -9,7 +9,7 @@ import {
     createShortcutEvent
 } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
-import { IState } from '../../../../app/types';
+import { IReduxState } from '../../../../app/types';
 import { AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags/constants';
 import { getFeatureFlag } from '../../../../base/flags/functions';
 import Icon from '../../../../base/icons/components/Icon';
@@ -32,10 +32,10 @@ const LONG_PRESS = 'long.press';
  */
 const MicrophoneButton = (): JSX.Element | null => {
     const dispatch = useDispatch();
-    const audioMuted = useSelector((state: IState) => isLocalTrackMuted(state['features/base/tracks'],
+    const audioMuted = useSelector((state: IReduxState) => isLocalTrackMuted(state['features/base/tracks'],
         MEDIA_TYPE.AUDIO));
     const disabled = useSelector(isAudioMuteButtonDisabled);
-    const enabledFlag = useSelector((state: IState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
+    const enabledFlag = useSelector((state: IReduxState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
     const [ longPress, setLongPress ] = useState(false);
 
     if (!enabledFlag) {

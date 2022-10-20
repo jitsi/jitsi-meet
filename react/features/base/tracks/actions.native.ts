@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 // @ts-ignore
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
 import { setAudioOnly } from '../audio-only/actions';
@@ -42,7 +42,7 @@ export function toggleScreensharing(enabled: boolean): Function {
  * @param {Object} state - The redux state.
  * @returns {void}
  */
-function _startScreenSharing(dispatch: Function, state: IState) {
+function _startScreenSharing(dispatch: Function, state: IReduxState) {
     setPictureInPictureEnabled(false);
 
     JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })

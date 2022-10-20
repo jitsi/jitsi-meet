@@ -2,7 +2,7 @@ import React from 'react';
 import { ColorValue } from 'react-native';
 import { Switch as NativeSwitch } from 'react-native-paper';
 
-import { SwitchProps } from '../types';
+import { ISwitchProps } from '../types';
 
 import {
     DISABLED_TRACK_COLOR,
@@ -10,7 +10,7 @@ import {
     THUMB_COLOR
 } from './switchStyles';
 
-interface Props extends SwitchProps {
+interface IProps extends ISwitchProps {
 
     /**
      * Custom styles for the switch.
@@ -38,7 +38,7 @@ const Switch = ({
         false: DISABLED_TRACK_COLOR
     },
     style
-}: Props) => (
+}: IProps) => (
     <NativeSwitch
         disabled = { disabled }
         onValueChange = { onChange }

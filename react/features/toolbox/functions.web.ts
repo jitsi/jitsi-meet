@@ -1,4 +1,4 @@
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import { getToolbarButtons } from '../base/config/functions.web';
 import { hasAvailableDevices } from '../base/devices/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
@@ -26,11 +26,11 @@ export function getToolboxHeight() {
  *
  * @param {string} name - The name of the setting section as defined in
  * interface_config.js.
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {boolean|undefined} - True to indicate that the given toolbar button
  * is enabled, false - otherwise.
  */
-export function isButtonEnabled(name: string, state: IState) {
+export function isButtonEnabled(name: string, state: IReduxState) {
     const toolbarButtons = getToolbarButtons(state);
 
     return toolbarButtons.indexOf(name) !== -1;
@@ -39,11 +39,11 @@ export function isButtonEnabled(name: string, state: IState) {
 /**
  * Indicates if the toolbox is visible or not.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean} - True to indicate that the toolbox is visible, false -
  * otherwise.
  */
-export function isToolboxVisible(state: IState) {
+export function isToolboxVisible(state: IReduxState) {
     const { iAmRecorder, iAmSipGateway, toolbarConfig } = state['features/base/config'];
     const { alwaysVisible } = toolbarConfig || {};
     const {
@@ -67,10 +67,10 @@ export function isToolboxVisible(state: IState) {
 /**
  * Indicates if the audio settings button is disabled or not.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isAudioSettingsButtonDisabled(state: IState) {
+export function isAudioSettingsButtonDisabled(state: IReduxState) {
 
     return !(hasAvailableDevices(state, 'audioInput')
         || hasAvailableDevices(state, 'audioOutput'))
@@ -80,10 +80,10 @@ export function isAudioSettingsButtonDisabled(state: IState) {
 /**
  * Indicates if the desktop share button is disabled or not.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isDesktopShareButtonDisabled(state: IState) {
+export function isDesktopShareButtonDisabled(state: IReduxState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
     const videoOrShareInProgress = !muted || isScreenMediaShared(state);
     const enabledInJwt = isJwtFeatureEnabled(state, MEET_FEATURES.SCREEN_SHARING, true, true);
@@ -94,20 +94,20 @@ export function isDesktopShareButtonDisabled(state: IState) {
 /**
  * Indicates if the video settings button is disabled or not.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isVideoSettingsButtonDisabled(state: IState) {
+export function isVideoSettingsButtonDisabled(state: IReduxState) {
     return !hasAvailableDevices(state, 'videoInput');
 }
 
 /**
  * Indicates if the video mute button is disabled or not.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isVideoMuteButtonDisabled(state: IState) {
+export function isVideoMuteButtonDisabled(state: IReduxState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
 
     return !hasAvailableDevices(state, 'videoInput') || (unmuteBlocked && Boolean(muted));
@@ -117,30 +117,30 @@ export function isVideoMuteButtonDisabled(state: IState) {
  * If an overflow drawer should be displayed or not.
  * This is usually done for mobile devices or on narrow screens.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function showOverflowDrawer(state: IState) {
+export function showOverflowDrawer(state: IReduxState) {
     return state['features/toolbox'].overflowDrawer;
 }
 
 /**
  * Indicates whether the toolbox is enabled or not.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export function isToolboxEnabled(state: IState) {
+export function isToolboxEnabled(state: IReduxState) {
     return state['features/toolbox'].enabled;
 }
 
 /**
  * Returns the toolbar timeout from config or the default value.
  *
- * @param {IState} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @returns {number} - Toolbar timeout in milliseconds.
  */
-export function getToolbarTimeout(state: IState) {
+export function getToolbarTimeout(state: IReduxState) {
     const { toolbarConfig } = state['features/base/config'];
 
     return toolbarConfig?.timeout || TOOLBAR_TIMEOUT;

@@ -13,6 +13,19 @@ module.exports = {
             parserOptions: {
                 sourceType: 'module',
                 project: [ './tsconfig.web.json', './tsconfig.native.json' ]
+            },
+            rules: {
+                '@typescript-eslint/naming-convention': [
+                    'error',
+                    {
+                        'selector': 'interface',
+                        'format': [ 'PascalCase' ],
+                        'custom': {
+                            'regex': '^I[A-Z]',
+                            'match': true
+                        }
+                    }
+                ]
             }
         }
     ],

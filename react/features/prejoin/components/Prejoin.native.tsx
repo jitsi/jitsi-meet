@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // @ts-ignore
 import { appNavigate } from '../../app/actions.native';
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { setAudioOnly } from '../../base/audio-only/actions';
 import { getConferenceName } from '../../base/conference/functions';
 import { connect } from '../../base/connection/actions.native';
@@ -56,11 +56,11 @@ const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
     const isFocused = useIsFocused();
     const { t } = useTranslation();
     const aspectRatio = useSelector(
-        (state: IState) => state['features/base/responsive-ui']?.aspectRatio
+        (state: IReduxState) => state['features/base/responsive-ui']?.aspectRatio
     );
-    const localParticipant = useSelector((state: IState) => getLocalParticipant(state));
-    const isDisplayNameMandatory = useSelector((state: IState) => isDisplayNameRequired(state));
-    const roomName = useSelector((state: IState) => getConferenceName(state));
+    const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
+    const isDisplayNameMandatory = useSelector((state: IReduxState) => isDisplayNameRequired(state));
+    const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');

@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 // @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { getLocalParticipant } from '../../../base/participants/functions';
 // @ts-ignore
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
@@ -49,12 +49,12 @@ const Whiteboard: () => JSX.Element = () => {
     const isOpen = useSelector(isWhiteboardOpen);
     const isVisible = useSelector(isWhiteboardVisible);
     const isInTileView = useSelector(shouldDisplayTileView);
-    const { clientHeight, clientWidth } = useSelector((state: IState) => state['features/base/responsive-ui']);
-    const { visible: filmstripVisible, isResizing } = useSelector((state: IState) => state['features/filmstrip']);
+    const { clientHeight, clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const { visible: filmstripVisible, isResizing } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const filmstripWidth: number = useSelector(getVerticalViewMaxWidth);
     const collabDetails = useSelector(getCollabDetails);
     const collabServerUrl = useSelector(getCollabServerUrl);
-    const { defaultRemoteDisplayName } = useSelector((state: IState) => state['features/base/config']);
+    const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const localParticipantName = useSelector(getLocalParticipant)?.name || defaultRemoteDisplayName || 'Fellow Jitster';
 
     useEffect(() => {

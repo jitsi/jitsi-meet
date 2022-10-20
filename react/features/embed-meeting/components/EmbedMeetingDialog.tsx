@@ -2,13 +2,13 @@ import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import CopyButton from '../../base/buttons/CopyButton.web';
 import { getInviteURL } from '../../base/connection/functions';
 import { translate } from '../../base/i18n/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The URL of the conference.
@@ -21,7 +21,7 @@ interface Props extends WithTranslation {
  *
  * @returns {React$Element<any>}
  */
-function EmbedMeeting({ t, url }: Props) {
+function EmbedMeeting({ t, url }: IProps) {
     /**
      * Get the embed code for a jitsi meeting.
      *
@@ -54,7 +54,7 @@ function EmbedMeeting({ t, url }: Props) {
     );
 }
 
-const mapStateToProps = (state: IState) => {
+const mapStateToProps = (state: IReduxState) => {
     return {
         url: getInviteURL(state)
     };

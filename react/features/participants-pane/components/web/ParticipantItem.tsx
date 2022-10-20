@@ -19,7 +19,7 @@ import {
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Type of trigger for the participant actions.
@@ -121,7 +121,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 /**
  * A component representing a participant entry in ParticipantPane and Lobby.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {ReactNode}
  */
 function ParticipantItem({
@@ -141,7 +141,7 @@ function ParticipantItem({
     t,
     videoMediaState = MEDIA_STATE.NONE,
     youText
-}: Props) {
+}: IProps) {
     const onClick = useCallback(
         () => openDrawerForParticipant?.({
             participantID,

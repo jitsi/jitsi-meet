@@ -2,7 +2,7 @@ import { sha512_256 as sha512 } from 'js-sha512';
 import _ from 'lodash';
 
 import { getName } from '../../app/functions';
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { determineTranscriptionLanguage } from '../../transcribing/functions';
 import { IStateful } from '../app/types';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
@@ -29,18 +29,18 @@ import { IJitsiConference } from './reducer';
 /**
  * Returns root conference state.
  *
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {Object} Conference state.
  */
-export const getConferenceState = (state: IState) => state['features/base/conference'];
+export const getConferenceState = (state: IReduxState) => state['features/base/conference'];
 
 /**
  * Is the conference joined or not.
  *
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const getIsConferenceJoined = (state: IState) => Boolean(getConferenceState(state).conference);
+export const getIsConferenceJoined = (state: IReduxState) => Boolean(getConferenceState(state).conference);
 
 /**
  * Attach a set of local tracks to a conference.
@@ -292,21 +292,21 @@ export function getCurrentConference(stateful: IStateful): any {
 /**
  * Returns the stored room name.
  *
- * @param {IState} state - The current state of the app.
+ * @param {IReduxState} state - The current state of the app.
  * @returns {string}
  */
-export function getRoomName(state: IState) {
+export function getRoomName(state: IReduxState) {
     return getConferenceState(state).room;
 }
 
 /**
  * Get an obfuscated room name or create and persist it if it doesn't exists.
  *
- * @param {IState} state - The current state of the app.
+ * @param {IReduxState} state - The current state of the app.
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {string} - Obfuscated room name.
  */
-export function getOrCreateObfuscatedRoomName(state: IState, dispatch: IStore['dispatch']) {
+export function getOrCreateObfuscatedRoomName(state: IReduxState, dispatch: IStore['dispatch']) {
     let { obfuscatedRoom } = getConferenceState(state);
     const { obfuscatedRoomSource } = getConferenceState(state);
     const room = getRoomName(state);
@@ -330,11 +330,11 @@ export function getOrCreateObfuscatedRoomName(state: IState, dispatch: IStore['d
  * Analytics may require an obfuscated room name, this functions decides based on a config if the normal or
  * obfuscated room name should be returned.
  *
- * @param {IState} state - The current state of the app.
+ * @param {IReduxState} state - The current state of the app.
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {string} - Analytics room name.
  */
-export function getAnalyticsRoomName(state: IState, dispatch: IStore['dispatch']) {
+export function getAnalyticsRoomName(state: IReduxState, dispatch: IStore['dispatch']) {
     const { analysis: { obfuscateRoomName = false } = {} } = state['features/base/config'];
 
     if (obfuscateRoomName) {

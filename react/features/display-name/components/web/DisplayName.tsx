@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import {
     getParticipantById,
     getParticipantDisplayName
@@ -21,7 +21,7 @@ import { appendSuffix } from '../../functions';
 /**
  * The type of the React {@code Component} props of {@link DisplayName}.
  */
-interface Props {
+interface IProps {
 
     /**
      * Whether or not the display name should be editable on click.
@@ -78,10 +78,11 @@ const DisplayName = ({
     elementID,
     participantID,
     thumbnailType
-}: Props) => {
+}: IProps) => {
     const { classes } = useStyles();
-    const configuredDisplayName = useSelector((state: IState) => getParticipantById(state, participantID))?.name ?? '';
-    const nameToDisplay = useSelector((state: IState) => getParticipantDisplayName(state, participantID));
+    const configuredDisplayName = useSelector((state: IReduxState) =>
+        getParticipantById(state, participantID))?.name ?? '';
+    const nameToDisplay = useSelector((state: IReduxState) => getParticipantDisplayName(state, participantID));
     const [ editDisplayNameValue, setEditDisplayNameValue ] = useState('');
     const [ isEditing, setIsEditing ] = useState(false);
     const dispatch = useDispatch();

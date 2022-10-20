@@ -178,12 +178,12 @@ const DEFAULT_STATE = {
     }
 };
 
-interface Dimensions {
+interface IDimensions {
     height: number;
     width: number;
 }
 
-interface FilmstripDimensions {
+interface IFilmstripDimensions {
     filmstripHeight?: number;
     filmstripWidth?: number;
     gridDimensions?: {
@@ -191,7 +191,7 @@ interface FilmstripDimensions {
         rows: number;
     };
     hasScroll?: boolean;
-    thumbnailSize?: Dimensions;
+    thumbnailSize?: IDimensions;
 }
 
 export interface IFilmstripState {
@@ -202,9 +202,9 @@ export interface IFilmstripState {
     enabled: boolean;
     horizontalViewDimensions: {
         hasScroll?: boolean;
-        local?: Dimensions;
-        remote?: Dimensions;
-        remoteVideosContainer?: Dimensions;
+        local?: IDimensions;
+        remote?: IDimensions;
+        remoteVideosContainer?: IDimensions;
     };
     isResizing: boolean;
     participantsVolume: {
@@ -214,11 +214,11 @@ export interface IFilmstripState {
     screenshareFilmstripDimensions: {
         filmstripHeight?: number;
         filmstripWidth?: number;
-        thumbnailSize?: Dimensions;
+        thumbnailSize?: IDimensions;
     };
     screenshareFilmstripParticipantId?: string | null;
-    stageFilmstripDimensions: FilmstripDimensions;
-    tileViewDimensions?: FilmstripDimensions;
+    stageFilmstripDimensions: IFilmstripDimensions;
+    tileViewDimensions?: IFilmstripDimensions;
     topPanelHeight: {
         current: number | null;
         userSet: number | null;
@@ -231,12 +231,12 @@ export interface IFilmstripState {
                 rows: number;
             };
             hasScroll: boolean;
-            thumbnailSize: Dimensions;
+            thumbnailSize: IDimensions;
         };
         hasScroll?: boolean;
-        local?: Dimensions;
-        remote?: Dimensions;
-        remoteVideosContainer?: Dimensions;
+        local?: IDimensions;
+        remote?: IDimensions;
+        remoteVideosContainer?: IDimensions;
     };
     visible: boolean;
     visibleParticipantsEndIndex: number;

@@ -31,7 +31,7 @@ const OK_BUTTON_ID = 'modal-dialog-ok-button';
  *
  * @static
  */
-interface Props extends DialogProps, WithTranslation {
+interface IProps extends DialogProps, WithTranslation {
 
     /**
      * An object containing the CSS classes.
@@ -127,7 +127,7 @@ const styles = (theme: Theme) => {
 /**
  * Web dialog that uses atlaskit modal-dialog to display dialogs.
  */
-class StatelessDialog extends Component<Props> {
+class StatelessDialog extends Component<IProps> {
     static defaultProps = {
         hideCloseIconButton: false
     };
@@ -138,7 +138,7 @@ class StatelessDialog extends Component<Props> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.

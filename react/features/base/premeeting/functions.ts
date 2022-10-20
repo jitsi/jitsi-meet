@@ -1,6 +1,6 @@
 import { findIndex } from 'lodash';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 
 import { CONNECTION_TYPE } from './constants';
 
@@ -191,7 +191,7 @@ function _getConnectionDataFromTestResults({ fractionalLoss: l, throughput: t }:
  *   connectionDetails: string[]
  * }}
  */
-export function getConnectionData(state: IState) {
+export function getConnectionData(state: IReduxState) {
     const { precallTestResults } = state['features/prejoin'];
 
     if (precallTestResults) {

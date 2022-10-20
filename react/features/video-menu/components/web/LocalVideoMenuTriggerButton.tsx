@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconHorizontalPoints } from '../../../base/icons/svg';
@@ -38,7 +38,7 @@ import TogglePinToStageButton from './TogglePinToStageButton';
  * The type of the React {@code Component} props of
  * {@link LocalVideoMenuTriggerButton}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The id of the local participant.
@@ -140,7 +140,7 @@ const styles = () => {
  *
  * @augments {Component}
  */
-class LocalVideoMenuTriggerButton extends Component<Props> {
+class LocalVideoMenuTriggerButton extends Component<IProps> {
 
     /**
      * Initializes a new LocalVideoMenuTriggerButton instance.
@@ -148,7 +148,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onPopoverClose = this._onPopoverClose.bind(this);
@@ -266,9 +266,9 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { thumbnailType } = ownProps;
     const localParticipant = getLocalParticipant(state);
     const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];

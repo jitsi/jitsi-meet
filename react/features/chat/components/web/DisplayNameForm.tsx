@@ -14,7 +14,7 @@ import KeyboardAvoider from './KeyboardAvoider';
 /**
  * The type of the React {@code Component} props of {@DisplayNameForm}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Invoked to set the local participant display name.
@@ -43,7 +43,7 @@ type State = {
  *
  * @augments Component
  */
-class DisplayNameForm extends Component<Props, State> {
+class DisplayNameForm extends Component<IProps, State> {
     state = {
         displayName: ''
     };
@@ -54,7 +54,7 @@ class DisplayNameForm extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.

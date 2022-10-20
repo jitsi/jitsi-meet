@@ -4,7 +4,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import {
     getMultipleVideoSupportFeatureFlag,
     isDisplayNameVisible,
@@ -79,7 +79,7 @@ const ThumbnailBottomIndicators = ({
     const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const _showDisplayName = useSelector(isDisplayNameVisible);
     const isVirtualScreenshareParticipant = useSelector(
-        (state: IState) => isScreenShareParticipantById(state, participantId)
+        (state: IReduxState) => isScreenShareParticipantById(state, participantId)
     );
 
     return (<div className = { className }>

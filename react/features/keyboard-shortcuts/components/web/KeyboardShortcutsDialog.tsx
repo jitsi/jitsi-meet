@@ -10,7 +10,7 @@ import Dialog from '../../../base/ui/components/web/Dialog';
  * The type of the React {@code Component} props of
  * {@link KeyboardShortcutsDialog}.
  */
-interface Props {
+interface IProps {
 
     /**
      * A Map with keyboard keys as keys and translation keys as values.
@@ -49,7 +49,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-const KeyboardShortcutsDialog = ({ shortcutDescriptions }: Props) => {
+const KeyboardShortcutsDialog = ({ shortcutDescriptions }: IProps) => {
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
 

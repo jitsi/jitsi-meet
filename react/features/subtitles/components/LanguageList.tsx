@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 import LanguageListItem from './LanguageListItem';
 
 interface ILanguageListProps {
-    items: Array<LanguageItem>;
+    items: Array<ILanguageItem>;
     onLanguageSelected: (lang: string) => void;
     selectedLanguage: string;
 }
@@ -20,7 +20,7 @@ const useStyles = makeStyles()(() => {
 });
 
 
-interface LanguageItem {
+interface ILanguageItem {
     id: string;
     lang: string;
     selected: boolean;

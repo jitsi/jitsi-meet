@@ -13,7 +13,7 @@ import { IconClose } from '../../../base/icons/svg';
 // @ts-ignore
 import Label from '../Label';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The phone number that is being called.
@@ -63,10 +63,10 @@ const useStyles = makeStyles()((theme: Theme) => {
 /**
  * Dialog displayed when the user gets called by the meeting.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {ReactElement}
  */
-function CallingDialog(props: Props) {
+function CallingDialog(props: IProps) {
     const { number, onClose, status, t } = props;
     const { classes } = useStyles();
 

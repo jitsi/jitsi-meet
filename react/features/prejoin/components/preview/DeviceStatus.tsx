@@ -3,7 +3,7 @@ import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheckSolid, IconExclamationTriangle } from '../../../base/icons/svg';
@@ -13,7 +13,7 @@ import {
     getDeviceStatusType
 } from '../../functions';
 
-export interface Props extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * The text to be displayed in relation to the status of the audio/video devices.
@@ -81,7 +81,7 @@ const iconMap = {
  *
  * @returns {ReactElement}
  */
-function DeviceStatus({ deviceStatusType, deviceStatusText, t }: Props) {
+function DeviceStatus({ deviceStatusType, deviceStatusText, t }: IProps) {
     const { classes, cx } = useStyles();
     const { src, className } = iconMap[deviceStatusType as keyof typeof iconMap];
     const hasError = deviceStatusType === 'warning';
@@ -109,7 +109,7 @@ function DeviceStatus({ deviceStatusType, deviceStatusText, t }: Props) {
  * @param {Object} state - The redux state.
  * @returns {{ deviceStatusText: string, deviceStatusText: string }}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     return {
         deviceStatusText: getDeviceStatusText(state),
         deviceStatusType: getDeviceStatusType(state)

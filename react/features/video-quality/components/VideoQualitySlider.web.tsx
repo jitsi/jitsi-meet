@@ -6,7 +6,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { setAudioOnly } from '../../base/audio-only/actions';
 import { translate } from '../../base/i18n/functions';
 import { setLastN } from '../../base/lastn/actions';
@@ -47,7 +47,7 @@ const createEvent = function(quality: string) {
 /**
  * The type of the React {@code Component} props of {@link VideoQualitySlider}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether or not the conference is in audio only mode.
@@ -118,7 +118,7 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class VideoQualitySlider extends Component<Props> {
+class VideoQualitySlider extends Component<IProps> {
     _sliderOptions: Array<Object>;
 
     /**
@@ -127,7 +127,7 @@ class VideoQualitySlider extends Component<Props> {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -358,9 +358,9 @@ class VideoQualitySlider extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const { p2p } = state['features/base/conference'];
     const { preferredVideoQuality } = state['features/video-quality'];

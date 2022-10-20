@@ -7,9 +7,9 @@ import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconCloseCircle } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
-import { InputProps } from '../types';
+import { IInputProps } from '../types';
 
-interface IInputProps extends InputProps {
+interface IProps extends IInputProps {
     accessibilityLabel?: string;
     autoFocus?: boolean;
     bottomLabel?: string;
@@ -127,7 +127,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-const Input = React.forwardRef<any, IInputProps>(({
+const Input = React.forwardRef<any, IProps>(({
     accessibilityLabel,
     autoFocus,
     bottomLabel,
@@ -149,7 +149,7 @@ const Input = React.forwardRef<any, IInputProps>(({
     textarea = false,
     type = 'text',
     value
-}: IInputProps, ref) => {
+}: IProps, ref) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
 

@@ -10,7 +10,7 @@ import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardsh
 import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/functions';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import {
     getMultipleVideoSendingSupportFeatureFlag,
     getToolbarButtons,
@@ -146,7 +146,7 @@ import VideoSettingsButton from './VideoSettingsButton';
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * String showing if the virtual background type is desktop-share.
@@ -376,14 +376,14 @@ const styles = () => {
  *
  * @augments Component
  */
-class Toolbox extends Component<Props> {
+class Toolbox extends Component<IProps> {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
-     * @param {Props} props - The read-only React {@code Component} props with
+     * @param {IProps} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -521,7 +521,7 @@ class Toolbox extends Component<Props> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         const { _dialog, _visible, dispatch } = this.props;
 
 
@@ -1521,7 +1521,7 @@ class Toolbox extends Component<Props> {
  * @private
  * @returns {{}}
  */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
 

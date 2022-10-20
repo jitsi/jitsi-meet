@@ -11,7 +11,7 @@ import { Tooltip } from '../../../tooltip';
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Additional CSS class name.
@@ -89,7 +89,7 @@ const BaseIndicator = ({
     t,
     tooltipKey,
     tooltipPosition = 'top'
-}: Props) => {
+}: IProps) => {
     const { classes: styles } = useStyles();
     const style: any = {};
 

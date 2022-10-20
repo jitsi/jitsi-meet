@@ -8,7 +8,7 @@ import Dialog from '../../../base/ui/components/web/Dialog';
 /**
  * The type of {@link LogoutDialog}'s React {@code Component} props.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Logout handler.
@@ -22,7 +22,7 @@ interface Props extends WithTranslation {
  * @param {Object} props - The props of the component.
  * @returns {React$Element}.
  */
-function LogoutDialog({ onLogout, t }: Props) {
+function LogoutDialog({ onLogout, t }: IProps) {
     return (
         <Dialog
             ok = {{ translationKey: 'dialog.Yes' }}

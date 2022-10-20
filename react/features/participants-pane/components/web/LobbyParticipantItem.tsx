@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons/svg';
 import { hasRaisedHand } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/types';
+import { IParticipant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/web/Button';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
@@ -34,7 +34,7 @@ type Props = {
     /**
      * Participant reference.
      */
-    participant: Participant;
+    participant: IParticipant;
 };
 
 const useStyles = makeStyles()((theme: Theme) => {

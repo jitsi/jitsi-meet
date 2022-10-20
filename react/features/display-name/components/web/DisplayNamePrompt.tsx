@@ -4,7 +4,7 @@ import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
-import AbstractDisplayNamePrompt, { Props } from '../AbstractDisplayNamePrompt';
+import AbstractDisplayNamePrompt, { IProps } from '../AbstractDisplayNamePrompt';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
@@ -30,7 +30,7 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {

@@ -36,7 +36,7 @@ import {
     getVirtualScreenshareParticipantOwnerId
 } from './functions';
 import logger from './logger';
-import { FakeParticipant, Participant } from './types';
+import { FakeParticipant, IParticipant } from './types';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -153,13 +153,13 @@ export function localParticipantIdChanged(id: string) {
 /**
  * Action to signal that a local participant has joined.
  *
- * @param {Participant} participant={} - Information about participant.
+ * @param {IParticipant} participant={} - Information about participant.
  * @returns {{
  *     type: PARTICIPANT_JOINED,
- *     participant: Participant
+ *     participant: IParticipant
  * }}
  */
-export function localParticipantJoined(participant: Participant = { id: '' }) {
+export function localParticipantJoined(participant: IParticipant = { id: '' }) {
     return participantJoined(set(participant, 'local', true));
 }
 
@@ -254,13 +254,13 @@ export function participantConnectionStatusChanged(id: string, connectionStatus:
 /**
  * Action to signal that a participant has joined.
  *
- * @param {Participant} participant - Information about participant.
+ * @param {IParticipant} participant - Information about participant.
  * @returns {{
  *     type: PARTICIPANT_JOINED,
- *     participant: Participant
+ *     participant: IParticipant
  * }}
  */
-export function participantJoined(participant: Participant) {
+export function participantJoined(participant: IParticipant) {
     // Only the local participant is not identified with an id-conference pair.
     if (participant.local) {
         return {
@@ -304,7 +304,7 @@ export function participantJoined(participant: Participant) {
  * @param {JitsiParticipant} jitsiParticipant - The ID of the participant.
  * @returns {{
 *     type: PARTICIPANT_UPDATED,
-*     participant: Participant
+*     participant: IParticipant
 * }}
 */
 export function updateRemoteParticipantFeatures(jitsiParticipant: any) {
@@ -471,16 +471,16 @@ export function screenshareParticipantDisplayNameChanged(id: string, name: strin
 /**
  * Action to signal that some of participant properties has been changed.
  *
- * @param {Participant} participant={} - Information about participant. To
+ * @param {IParticipant} participant={} - Information about participant. To
  * identify the participant the object should contain either property id with
  * value the id of the participant or property local with value true (if the
  * local participant hasn't joined the conference yet).
  * @returns {{
  *     type: PARTICIPANT_UPDATED,
- *     participant: Participant
+ *     participant: IParticipant
  * }}
  */
-export function participantUpdated(participant: Participant = { id: '' }) {
+export function participantUpdated(participant: IParticipant = { id: '' }) {
     const participantToUpdate = {
         ...participant
     };
@@ -645,7 +645,7 @@ export function raiseHand(enabled: boolean) {
  *      participant: Object
  * }}
  */
-export function raiseHandUpdateQueue(participant: Participant) {
+export function raiseHandUpdateQueue(participant: IParticipant) {
     return {
         type: RAISE_HAND_UPDATED,
         participant
@@ -689,7 +689,7 @@ export function overwriteParticipantName(id: string, name: string) {
  * @param {Array<Object>} participantList - The list of participants to overwrite.
  * @returns {Object}
  */
-export function overwriteParticipantsNames(participantList: Participant[]) {
+export function overwriteParticipantsNames(participantList: IParticipant[]) {
     return {
         type: OVERWRITE_PARTICIPANTS_NAMES,
         participantList

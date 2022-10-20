@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 
 export * from './functions.any';
 
@@ -9,7 +9,7 @@ export * from './functions.any';
  * @param {Object} state - The state of the application.
  * @returns {void}
  */
-export function getCurrentCameraDeviceId(state: IState) {
+export function getCurrentCameraDeviceId(state: IReduxState) {
     return getDeviceIdByType(state, 'isVideoTrack');
 }
 
@@ -19,7 +19,7 @@ export function getCurrentCameraDeviceId(state: IState) {
  * @param {Object} state - The state of the application.
  * @returns {void}
  */
-export function getCurrentMicDeviceId(state: IState) {
+export function getCurrentMicDeviceId(state: IReduxState) {
     return getDeviceIdByType(state, 'isAudioTrack');
 }
 
@@ -29,7 +29,7 @@ export function getCurrentMicDeviceId(state: IState) {
  * @param {Object} state - The state of the application.
  * @returns {void}
  */
-export function getCurrentOutputDeviceId(state: IState) {
+export function getCurrentOutputDeviceId(state: IReduxState) {
     return state['features/base/settings'].audioOutputDeviceId;
 }
 
@@ -40,7 +40,7 @@ export function getCurrentOutputDeviceId(state: IState) {
  * @param {string} isType - Can be 'isVideoTrack' | 'isAudioTrack'.
  * @returns {string}
  */
-function getDeviceIdByType(state: IState, isType: string) {
+function getDeviceIdByType(state: IReduxState, isType: string) {
     const [ deviceId ] = state['features/base/tracks']
         .map(t => t.jitsiTrack)
         .filter(t => t?.isLocal() && t[isType as keyof typeof t]())
@@ -55,7 +55,7 @@ function getDeviceIdByType(state: IState, isType: string) {
  * @param {Object} state - The state of the application.
  * @returns {string}
  */
-export function getDisplayName(state: IState): string {
+export function getDisplayName(state: IReduxState): string {
     return state['features/base/settings'].displayName || '';
 }
 

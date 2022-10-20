@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 import React, { useEffect, useState } from 'react';
 
-import { IState } from '../../../../app/types';
+import { IReduxState } from '../../../../app/types';
 import { setPassword as setPass } from '../../../../base/conference/actions';
 import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 import { connect } from '../../../../base/redux/functions';
@@ -13,7 +13,7 @@ import { LobbySection } from '../../../../lobby';
 
 import PasswordSection from './PasswordSection';
 
-export interface NotifyClick {
+export interface INotifyClick {
     key: string;
     preventExecution: boolean;
 }
@@ -23,7 +23,7 @@ type Props = {
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    _buttonsWithNotifyClick: Array<string | NotifyClick>;
+    _buttonsWithNotifyClick: Array<string | INotifyClick>;
 
     /**
      * Whether or not the current user can modify the current password.
@@ -123,7 +123,7 @@ function SecurityDialog({
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     const {
         conference,
         e2eeSupported,

@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-import { IState, IStore } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconHideWhiteboard, IconShowWhiteboard } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
@@ -71,7 +71,7 @@ class WhiteboardButton extends AbstractButton<Props, any, any> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _toggled: isWhiteboardVisible(state)
     };

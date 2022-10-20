@@ -1,4 +1,4 @@
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../participants/functions';
@@ -9,10 +9,10 @@ import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrac
  * {@link TestHint} and other components from the testing package will be
  * rendered in various places across the app to help with automatic testing.
  *
- * @param {IState} state - The redux store state.
+ * @param {IReduxState} state - The redux store state.
  * @returns {boolean}
  */
-export function isTestModeEnabled(state: IState): boolean {
+export function isTestModeEnabled(state: IReduxState): boolean {
     const testingConfig = state['features/base/config'].testing;
 
     return Boolean(testingConfig?.testMode);

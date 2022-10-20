@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 // @ts-expect-error
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
@@ -34,7 +34,7 @@ import {
     getLocalDesktopTrack,
     getLocalJitsiAudioTrack
 } from './functions';
-import { ShareOptions, ToggleScreenSharingOptions } from './types';
+import { IShareOptions, IToggleScreenSharingOptions } from './types';
 
 export * from './actions.any';
 
@@ -53,7 +53,7 @@ export function toggleScreensharing(
         enabled?: boolean,
         audioOnly = false,
         ignoreDidHaveVideo = false,
-        shareOptions: ShareOptions = {}) {
+        shareOptions: IShareOptions = {}) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // check for A/V Moderation when trying to start screen sharing
         if ((enabled || enabled === undefined)
@@ -129,7 +129,7 @@ function _handleScreensharingError(
  * @param {*} state - The redux state.
  * @returns {void}
  */
-async function _maybeApplyAudioMixerEffect(desktopAudioTrack: any, state: IState): Promise<void> {
+async function _maybeApplyAudioMixerEffect(desktopAudioTrack: any, state: IReduxState): Promise<void> {
     const localAudio = getLocalJitsiAudioTrack(state);
     const conference = getCurrentConference(state);
 
@@ -159,7 +159,7 @@ async function _toggleScreenSharing(
             enabled,
             audioOnly = false,
             shareOptions = {}
-        }: ToggleScreenSharingOptions,
+        }: IToggleScreenSharingOptions,
         store: IStore
 ): Promise<void> {
     const { dispatch, getState } = store;

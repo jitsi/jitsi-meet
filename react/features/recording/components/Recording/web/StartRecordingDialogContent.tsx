@@ -17,7 +17,7 @@ import { RECORDING_TYPES } from '../../../constants';
 // @ts-ignore
 import { getRecordingDurationEstimation } from '../../../functions';
 import AbstractStartRecordingDialogContent, {
-    Props,
+    IProps,
     mapStateToProps
 } from '../AbstractStartRecordingDialogContent';
 import {
@@ -34,7 +34,7 @@ import {
 /**
  * The start recording dialog content for the mobile application.
  */
-class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Props> {
+class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IProps> {
     /**
      * Renders the component.
      *

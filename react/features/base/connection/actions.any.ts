@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import {
     appendURLParam,
     getBackendSafeRoomName,
@@ -140,7 +140,7 @@ export function connectionFailed(
  * @returns {Object} The options to be passed to the constructor of
  * {@code JitsiConnection}.
  */
-export function constructOptions(state: IState) {
+export function constructOptions(state: IReduxState) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
     const options = _.cloneDeep(state['features/base/config']);

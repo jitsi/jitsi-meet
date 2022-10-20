@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, View } from 'react-native';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import {
     getParticipantById,
     getParticipantDisplayName,
@@ -68,7 +68,7 @@ class DisplayNameLabel extends React.Component<Props> {
  * @param {Props} ownProps - The own props of the component.
  * @returns {Props}
  */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<Props>) {
     const participant = getParticipantById(state, ownProps.participantId ?? '');
 
     return {

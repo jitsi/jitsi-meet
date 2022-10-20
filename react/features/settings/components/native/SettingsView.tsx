@@ -19,7 +19,7 @@ import {
 
 // @ts-ignore
 import { getDefaultURL } from '../../../app/functions';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n/functions';
@@ -50,7 +50,7 @@ import styles, { PLACEHOLDER_COLOR, PLACEHOLDER_TEXT_COLOR } from './styles';
 const { AppInfo } = NativeModules;
 
 
-interface State {
+interface IState {
 
     /**
      * State variable for the disable call integration switch.
@@ -107,7 +107,7 @@ interface State {
  * The type of the React {@code Component} props of
  * {@link SettingsView}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The ID of the local participant.
@@ -175,7 +175,7 @@ interface Props extends WithTranslation {
 /**
  * The native container rendering the app settings page.
  */
-class SettingsView extends Component<Props, State> {
+class SettingsView extends Component<IProps, IState> {
     _urlField: Object;
 
     /**
@@ -184,7 +184,7 @@ class SettingsView extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         const {
@@ -239,7 +239,7 @@ class SettingsView extends Component<Props, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         const { _settings } = this.props;
 
         if (!_.isEqual(prevProps._settings, _settings)) {
@@ -753,9 +753,9 @@ class SettingsView extends Component<Props, State> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
 
     return {

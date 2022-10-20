@@ -1,7 +1,7 @@
 // @ts-ignore
 import jwtDecode from 'jwt-decode';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { getLocalParticipant } from '../participants/functions';
 import { parseURLParams } from '../util/parseURLParams';
 
@@ -24,10 +24,10 @@ export function parseJWTFromURLParams(url: URL | Location = window.location) {
 /**
  * Returns the user name after decoding the jwt.
  *
- * @param {IState} state - The app state.
+ * @param {IReduxState} state - The app state.
  * @returns {string}
  */
-export function getJwtName(state: IState) {
+export function getJwtName(state: IReduxState) {
     const { user } = state['features/base/jwt'];
 
     return user?.name;
@@ -36,13 +36,13 @@ export function getJwtName(state: IState) {
 /**
  * Check if the given JWT feature is enabled.
  *
- * @param {IState} state - The app state.
+ * @param {IReduxState} state - The app state.
  * @param {string} feature - The feature we want to check.
  * @param {boolean} ifNoToken - Default value if there is no token.
  * @param {boolean} ifNotInFeatures - Default value if features prop exists but does not have the {@code feature}.
  * @returns {bolean}
  */
-export function isJwtFeatureEnabled(state: IState, feature: string, ifNoToken = false, ifNotInFeatures = false) {
+export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoToken = false, ifNotInFeatures = false) {
     const { jwt } = state['features/base/jwt'];
 
     if (!jwt) {

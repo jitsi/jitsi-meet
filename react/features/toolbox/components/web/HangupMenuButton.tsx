@@ -11,7 +11,7 @@ import HangupToggleButton from './HangupToggleButton';
 /**
  * The type of the React {@code Component} props of {@link HangupMenuButton}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * ID of the menu that is controlled by this button.
@@ -39,14 +39,14 @@ interface Props extends WithTranslation {
  *
  * @augments Component
  */
-class HangupMenuButton extends Component<Props> {
+class HangupMenuButton extends Component<IProps> {
     /**
      * Initializes a new {@code HangupMenuButton} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

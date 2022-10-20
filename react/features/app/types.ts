@@ -78,11 +78,11 @@ import { IVirtualBackground } from '../virtual-background/reducer';
 import { IWhiteboardState } from '../whiteboard/reducer';
 
 export interface IStore {
-    dispatch: ThunkDispatch<IState, void, AnyAction>;
-    getState: () => IState;
+    dispatch: ThunkDispatch<IReduxState, void, AnyAction>;
+    getState: () => IReduxState;
 }
 
-export interface IState {
+export interface IReduxState {
     'features/analytics': IAnalyticsState;
     'features/authentication': IAuthenticationState;
     'features/av-moderation': IAVModerationState;

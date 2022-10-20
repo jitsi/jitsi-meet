@@ -8,17 +8,17 @@ import { LOCKED_LOCALLY } from '../../../../room-lock/constants';
 import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 
 import PasswordForm from './PasswordForm';
-import { NotifyClick } from './SecurityDialog';
+import { INotifyClick } from './SecurityDialog';
 
 const DIGITS_ONLY = /^\d+$/;
 const KEY = 'add-passcode';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    buttonsWithNotifyClick: Array<string | NotifyClick>;
+    buttonsWithNotifyClick: Array<string | INotifyClick>;
 
     /**
      * Whether or not the current user can modify the current password.
@@ -80,7 +80,7 @@ function PasswordSection({
     passwordNumberOfDigits,
     setPassword,
     setPasswordEditEnabled,
-    t }: Props) {
+    t }: IProps) {
 
     const formRef = useRef<HTMLDivElement>(null);
     const [ passwordVisible, setPasswordVisible ] = useState(false);
@@ -117,7 +117,7 @@ function PasswordSection({
 
         let notifyMode;
         const notify = buttonsWithNotifyClick.find(
-            (btn: string | NotifyClick) =>
+            (btn: string | INotifyClick) =>
                 (typeof btn === 'string' && btn === KEY)
                 || (typeof btn === 'object' && btn.key === KEY)
         );

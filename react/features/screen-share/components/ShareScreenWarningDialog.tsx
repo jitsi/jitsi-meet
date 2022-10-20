@@ -7,7 +7,7 @@ import { connect } from '../../base/redux/functions';
 import { toggleScreensharing } from '../../base/tracks/actions';
 import Dialog from '../../base/ui/components/web/Dialog';
 
-export interface Props extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * Whether or not the dialog was opened for the audio screen sharing flow or the normal one.
@@ -23,14 +23,14 @@ export interface Props extends WithTranslation {
 /**
  *  Component that displays the share audio helper dialog.
  */
-class ShareScreenWarningDialog extends Component<Props> {
+class ShareScreenWarningDialog extends Component<IProps> {
 
     /**
      * Instantiates a new component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onStopSharing = this._onStopSharing.bind(this);
