@@ -1,16 +1,15 @@
-// @flow
-
+import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
-import { shouldHideShareAudioHelper } from '../base/settings';
-import { toggleScreensharing } from '../base/tracks';
+import { shouldHideShareAudioHelper } from '../base/settings/functions';
+import { toggleScreensharing } from '../base/tracks/actions';
 
 import {
     SET_SCREENSHARE_CAPTURE_FRAME_RATE,
     SET_SCREENSHARE_TRACKS,
     SET_SCREEN_AUDIO_SHARE_STATE
 } from './actionTypes';
-import { ShareAudioDialog } from './components';
+import ShareAudioDialog from './components/ShareAudioDialog';
 import ShareMediaWarningDialog from './components/ShareScreenWarningDialog';
 import { isAudioOnlySharing, isScreenVideoShared } from './functions';
 
@@ -55,7 +54,7 @@ export function setScreenshareFramerate(captureFrameRate: number) {
  *      desktopAudioTrack: JitsiTrack
  * }}
  */
-export function setScreenshareAudioTrack(desktopAudioTrack) {
+export function setScreenshareAudioTrack(desktopAudioTrack: any) {
     return {
         type: SET_SCREENSHARE_TRACKS,
         desktopAudioTrack
@@ -69,12 +68,12 @@ export function setScreenshareAudioTrack(desktopAudioTrack) {
  * @returns {void}
  */
 export function startAudioScreenShareFlow() {
-    return (dispatch: Object => Object, getState: () => any) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const audioOnlySharing = isAudioOnlySharing(state);
 
         // If we're already in a normal screen sharing session, warn the user.
-        if (isScreenVideoShared(state)) {
+        if (isScreenVideoShared(state)) { // @ts-ignore
             dispatch(openDialog(ShareMediaWarningDialog, { _isAudioScreenShareWarning: true }));
 
             return;
@@ -92,6 +91,7 @@ export function startAudioScreenShareFlow() {
             return;
         }
 
+        // @ts-ignore
         dispatch(openDialog(ShareAudioDialog));
     };
 }
@@ -104,12 +104,12 @@ export function startAudioScreenShareFlow() {
  * @returns {void}
  */
 export function startScreenShareFlow(enabled: boolean) {
-    return (dispatch: Object => Object, getState: () => any) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const audioOnlySharing = isAudioOnlySharing(state);
 
         // If we're in an audio screen sharing session, warn the user.
-        if (audioOnlySharing) {
+        if (audioOnlySharing) { // @ts-ignore
             dispatch(openDialog(ShareMediaWarningDialog, { _isAudioScreenShareWarning: false }));
 
             return;

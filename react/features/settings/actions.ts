@@ -1,21 +1,22 @@
-// @flow
 import { batch } from 'react-redux';
 
-
+import { IStore } from '../app/types';
 import {
     setFollowMe,
     setStartMutedPolicy,
     setStartReactionsMuted
-} from '../base/conference';
-import { openDialog } from '../base/dialog';
-import { i18next } from '../base/i18n';
-import { updateSettings } from '../base/settings';
+} from '../base/conference/actions';
+import { openDialog } from '../base/dialog/actions';
+import i18next from '../base/i18n/i18next';
+import { updateSettings } from '../base/settings/actions';
 import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { LogoutDialog, SettingsDialog } from './components';
 import {
     getModeratorTabProps,
@@ -23,8 +24,6 @@ import {
     getProfileTabProps,
     getSoundsTabProps
 } from './functions';
-
-declare var APP: Object;
 
 /**
  * Opens {@code LogoutDialog}.
@@ -46,7 +45,7 @@ export function openLogoutDialog(onLogout: Function) {
  * welcome page or not.
  * @returns {Function}
  */
-export function openSettingsDialog(defaultTab: string, isDisplayedOnWelcomePage: boolean) {
+export function openSettingsDialog(defaultTab: string, isDisplayedOnWelcomePage?: boolean) {
     return openDialog(SettingsDialog, {
         defaultTab,
         isDisplayedOnWelcomePage
@@ -85,8 +84,8 @@ function setVideoSettingsVisibility(value: boolean) {
  * @param {Object} newState - The new settings.
  * @returns {Function}
  */
-export function submitMoreTab(newState: Object): Function {
-    return (dispatch, getState) => {
+export function submitMoreTab(newState: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getMoreTabProps(getState());
 
         const showPrejoinPage = newState.showPrejoinPage;
@@ -134,8 +133,8 @@ export function submitMoreTab(newState: Object): Function {
  * @param {Object} newState - The new settings.
  * @returns {Function}
  */
-export function submitModeratorTab(newState: Object): Function {
-    return (dispatch, getState) => {
+export function submitModeratorTab(newState: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getModeratorTabProps(getState());
 
         if (newState.followMeEnabled !== currentState.followMeEnabled) {
@@ -164,8 +163,8 @@ export function submitModeratorTab(newState: Object): Function {
  * @param {Object} newState - The new settings.
  * @returns {Function}
  */
-export function submitProfileTab(newState: Object): Function {
-    return (dispatch, getState) => {
+export function submitProfileTab(newState: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getProfileTabProps(getState());
 
         if (newState.displayName !== currentState.displayName) {
@@ -184,8 +183,8 @@ export function submitProfileTab(newState: Object): Function {
  * @param {Object} newState - The new settings.
  * @returns {Function}
  */
-export function submitSoundsTab(newState: Object): Function {
-    return (dispatch, getState) => {
+export function submitSoundsTab(newState: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getSoundsTabProps(getState());
         const shouldNotUpdateReactionSounds = getModeratorTabProps(getState()).startReactionsMuted;
         const shouldUpdate = (newState.soundsIncomingMessage !== currentState.soundsIncomingMessage)
@@ -219,7 +218,7 @@ export function submitSoundsTab(newState: Object): Function {
  * @returns {void}
  */
 export function toggleAudioSettings() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const value = getState()['features/settings'].audioSettingsVisible;
 
         dispatch(setAudioSettingsVisibility(!value));
@@ -232,7 +231,7 @@ export function toggleAudioSettings() {
  * @returns {void}
  */
 export function toggleVideoSettings() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const value = getState()['features/settings'].videoSettingsVisible;
 
         dispatch(setVideoSettingsVisibility(!value));

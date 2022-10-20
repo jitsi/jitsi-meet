@@ -1,24 +1,26 @@
-// @flow
-
-import { isNameReadOnly } from '../base/config';
-import { SERVER_URL_CHANGE_ENABLED, getFeatureFlag } from '../base/flags';
-import { DEFAULT_LANGUAGE, LANGUAGES, i18next } from '../base/i18n';
+/* eslint-disable lines-around-comment */
+import { IReduxState } from '../app/types';
+import { IStateful } from '../base/app/types';
+import { isNameReadOnly } from '../base/config/functions';
+import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
+import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n/i18next';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import {
     getLocalParticipant,
     isLocalParticipantModerator
-} from '../base/participants';
-import { toState } from '../base/redux';
-import { getHideSelfView } from '../base/settings';
-import { parseStandardURIString } from '../base/util';
+} from '../base/participants/functions';
+import { toState } from '../base/redux/functions';
+import { getHideSelfView } from '../base/settings/functions';
+import { parseStandardURIString } from '../base/util/uri';
+// @ts-ignore
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
+// @ts-ignore
 import { isFollowMeActive } from '../follow-me';
 import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
 
 import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
-
-declare var interfaceConfig: Object;
 
 /**
  * Used for web. Indicates if the setting section is enabled.
@@ -39,7 +41,7 @@ export function isSettingEnabled(settingName: string) {
  * {@code getState} function to be used to retrieve the state.
  * @returns {boolean} True to indicate that user can change Server URL, false otherwise.
  */
-export function isServerURLChangeEnabled(stateful: Object | Function) {
+export function isServerURLChangeEnabled(stateful: IStateful) {
     const state = toState(stateful);
     const flag = getFeatureFlag(state, SERVER_URL_CHANGE_ENABLED, true);
 
@@ -88,10 +90,14 @@ export function normalizeUserInputURL(url: string) {
  * {@code getState} function to be used to retrieve the state.
  * @returns {Object} - The section of notifications to be configured.
  */
-export function getNotificationsMap(stateful: Object | Function) {
+export function getNotificationsMap(stateful: IStateful) {
     const state = toState(stateful);
     const { notifications } = state['features/base/config'];
     const { userSelectedNotifications } = state['features/base/settings'];
+
+    if (!userSelectedNotifications) {
+        return {};
+    }
 
     return Object.keys(userSelectedNotifications)
         .filter(key => !notifications || notifications.includes(key))
@@ -111,7 +117,7 @@ export function getNotificationsMap(stateful: Object | Function) {
  * {@code getState} function to be used to retrieve the state.
  * @returns {Object} - The properties for the "More" tab from settings dialog.
  */
-export function getMoreTabProps(stateful: Object | Function) {
+export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
     const language = i18next.language || DEFAULT_LANGUAGE;
@@ -147,7 +153,7 @@ export function getMoreTabProps(stateful: Object | Function) {
  * {@code getState} function to be used to retrieve the state.
  * @returns {Object} - The properties for the "More" tab from settings dialog.
  */
-export function getModeratorTabProps(stateful: Object | Function) {
+export function getModeratorTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const {
         conference,
@@ -179,7 +185,7 @@ export function getModeratorTabProps(stateful: Object | Function) {
  * {@code getState} function to be used to retrieve the state.
  * @returns {boolean} True to indicate that moderator tab should be visible, false otherwise.
  */
-export function shouldShowModeratorSettings(stateful: Object | Function) {
+export function shouldShowModeratorSettings(stateful: IStateful) {
     const state = toState(stateful);
     const { hideModeratorSettingsTab } = getParticipantsPaneConfig(state);
     const hasModeratorRights = Boolean(isSettingEnabled('moderator') && isLocalParticipantModerator(state));
@@ -196,7 +202,7 @@ export function shouldShowModeratorSettings(stateful: Object | Function) {
  * @returns {Object} - The properties for the "Profile" tab from settings
  * dialog.
  */
-export function getProfileTabProps(stateful: Object | Function) {
+export function getProfileTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const {
         authEnabled,
@@ -209,8 +215,8 @@ export function getProfileTabProps(stateful: Object | Function) {
     return {
         authEnabled: Boolean(conference && authEnabled),
         authLogin,
-        displayName: localParticipant.name,
-        email: localParticipant.email,
+        displayName: localParticipant?.name,
+        email: localParticipant?.email,
         readOnlyName: isNameReadOnly(state),
         hideEmailInSettings
     };
@@ -225,7 +231,7 @@ export function getProfileTabProps(stateful: Object | Function) {
  * @returns {Object} - The properties for the "Sounds" tab from settings
  * dialog.
  */
-export function getSoundsTabProps(stateful: Object | Function) {
+export function getSoundsTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const {
         soundsIncomingMessage,
@@ -259,21 +265,21 @@ export function getSoundsTabProps(stateful: Object | Function) {
  *
  * @returns {Promise<Object[]>}
  */
-export function createLocalVideoTracks(ids: string[], timeout: ?number) {
+export function createLocalVideoTracks(ids: string[], timeout?: number) {
     return Promise.all(ids.map(deviceId => createLocalTrack('video', deviceId, timeout)
-                   .then(jitsiTrack => {
-                       return {
-                           jitsiTrack,
-                           deviceId
-                       };
-                   })
-                   .catch(() => {
-                       return {
-                           jitsiTrack: null,
-                           deviceId,
-                           error: 'deviceSelection.previewUnavailable'
-                       };
-                   })));
+                    .then((jitsiTrack: any) => {
+                        return {
+                            jitsiTrack,
+                            deviceId
+                        };
+                    })
+                    .catch(() => {
+                        return {
+                            jitsiTrack: null,
+                            deviceId,
+                            error: 'deviceSelection.previewUnavailable'
+                        };
+                    })));
 }
 
 
@@ -290,7 +296,7 @@ export function createLocalVideoTracks(ids: string[], timeout: ?number) {
  *   label: string
  * }[]>}
  */
-export function createLocalAudioTracks(devices: Object[], timeout: ?number) {
+export function createLocalAudioTracks(devices: MediaDeviceInfo[], timeout?: number) {
     return Promise.all(
         devices.map(async ({ deviceId, label }) => {
             let jitsiTrack = null;
@@ -317,7 +323,7 @@ export function createLocalAudioTracks(devices: Object[], timeout: ?number) {
  * @param {Object} state - The state of the application.
  * @returns {boolean}
  */
-export function getAudioSettingsVisibility(state: Object) {
+export function getAudioSettingsVisibility(state: IReduxState) {
     return state['features/settings'].audioSettingsVisible;
 }
 
@@ -327,6 +333,6 @@ export function getAudioSettingsVisibility(state: Object) {
  * @param {Object} state - The state of the application.
  * @returns {boolean}
  */
-export function getVideoSettingsVisibility(state: Object) {
+export function getVideoSettingsVisibility(state: IReduxState) {
     return state['features/settings'].videoSettingsVisible;
 }

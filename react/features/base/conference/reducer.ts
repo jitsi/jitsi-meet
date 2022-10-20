@@ -70,6 +70,7 @@ export interface IJitsiConference {
     sendFeedback: Function;
     sendLobbyMessage: Function;
     sessionId: string;
+    setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setLocalParticipantProperty: Function;
     setSubject: Function;
