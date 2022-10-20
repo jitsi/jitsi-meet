@@ -343,7 +343,8 @@ class Filmstrip extends PureComponent <IProps, IState> {
             _verticalViewGrid,
             _verticalViewMaxWidth,
             classes,
-            filmstripType
+            filmstripType,
+            t
         } = this.props;
         const { isMouseDown } = this.state;
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
@@ -434,6 +435,12 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     _verticalViewGrid && 'no-vertical-padding',
                     _verticalViewBackground && classes.filmstripBackground) }
                 style = { filmstripStyle }>
+                <span
+                    aria-level = { 1 }
+                    className = 'sr-only'
+                    role = 'heading'>
+                    { t('filmstrip.accessibilityLabel.heading') }
+                </span>
                 { toolbar }
                 {_resizableFilmstrip
                     ? <div

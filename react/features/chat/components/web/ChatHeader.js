@@ -46,9 +46,12 @@ function Header({ onCancel, className, isPollsEnabled, t }: Props) {
 
     return (
         <div
-            className = { className || 'chat-dialog-header' }
-            role = 'heading'>
-            { t(isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
+            className = { className || 'chat-dialog-header' }>
+            <span
+                aria-level = { 1 }
+                role = 'heading'>
+                { t(isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
+            </span>
             <Icon
                 ariaLabel = { t('toolbar.closeChat') }
                 onClick = { onCancel }
