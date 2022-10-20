@@ -235,7 +235,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
 
     private void setAudioDeviceHandler() {
         if (audioDeviceHandler != null) {
-            audioDeviceHandler.stop(this);
+            audioDeviceHandler.stop();
         }
 
         if (useConnectionService()) {
