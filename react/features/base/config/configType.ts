@@ -448,7 +448,6 @@ export interface IConfig {
         callStatsThreshold?: number;
         capScreenshareBitrate?: number;
         disableE2EE?: boolean;
-        enableThumbnailReordering?: boolean;
         mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
