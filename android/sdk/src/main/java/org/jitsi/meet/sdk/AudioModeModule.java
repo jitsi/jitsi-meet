@@ -474,7 +474,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         /**
          * Stop audio device detection.
          */
-        void stop(AudioModeModule audioModeModule);
+        void stop();
 
         /**
          * Set the appropriate route for the given audio device.

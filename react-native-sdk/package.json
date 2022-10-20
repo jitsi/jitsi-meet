@@ -1,5 +1,5 @@
 {
-    "name": "jitsi-meet-react-native-test",
+    "name": "jitsi-meet-react-native",
     "version": "0.0.1",
     "description": "React Native SDK for Jitsi Meet.",
     "main": "index.js",

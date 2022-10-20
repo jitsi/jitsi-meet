@@ -22,6 +22,8 @@ import android.os.Build;
 import android.telecom.CallAudioState;
 import androidx.annotation.RequiresApi;
 
+import com.facebook.react.bridge.ReactContext;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,6 +50,8 @@ class AudioDeviceHandlerConnectionService implements
      * Reference to the main {@code AudioModeModule}.
      */
     private AudioModeModule module;
+
+    private ReactContext context;
 
     /**
      * Converts any of the "DEVICE_" constants into the corresponding
@@ -141,7 +145,7 @@ class AudioDeviceHandlerConnectionService implements
         JitsiMeetLogger.i("Using " + TAG + " as the audio device handler");
 
         module = audioModeModule;
-        ReactContext context = module.getContext();
+        context = module.getContext();
 
         RNConnectionService rcs = context.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
@@ -152,10 +156,7 @@ class AudioDeviceHandlerConnectionService implements
     }
 
     @Override
-    public void stop(AudioModeModule audioModeModule) {
-        module = audioModeModule;
-        ReactContext context = module.getContext();
-
+    public void stop() {
         RNConnectionService rcs = context.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(null);
