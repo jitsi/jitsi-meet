@@ -282,7 +282,7 @@ class Conference extends AbstractConference<Props, *> {
                             Enjoy some music while waiting for other participants to join
                         </div>
                         <Audio
-                            autoPlay = { false }
+                            autoPlay = { true }
                             loop = { true }
                             src = { WAITING_ROOM_SOUND_PATH } />
                     </>
