@@ -65,10 +65,6 @@ var config = {
         // issues related to insertable streams.
         // disableE2EE: false,
 
-        // Enables/disables thumbnail reordering in the filmstrip. It is enabled by default unless explicitly
-        // disabled by the below option.
-        // enableThumbnailReordering: true,
-
         // Enables XMPP WebSocket (as opposed to BOSH) for the given amount of users.
         // mobileXmppWsThreshold: 10, // enable XMPP WebSockets on mobile for 10% of the users
 

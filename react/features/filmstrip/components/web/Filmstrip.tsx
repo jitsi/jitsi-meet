@@ -170,11 +170,6 @@ interface IProps extends WithTranslation {
     _thumbnailWidth: number;
 
     /**
-     * Flag that indicates whether the thumbnails will be reordered.
-     */
-    _thumbnailsReordered: Boolean;
-
-    /**
      * Whether or not the filmstrip is top panel.
      */
     _topPanelFilmstrip: boolean;
@@ -551,11 +546,11 @@ class Filmstrip extends PureComponent <IProps, State> {
      * @returns {Object}
      */
     _calculateIndices(startIndex: number, stopIndex: number) {
-        const { _currentLayout, _iAmRecorder, _thumbnailsReordered, _disableSelfView } = this.props;
+        const { _currentLayout, _iAmRecorder, _disableSelfView } = this.props;
         let start = startIndex;
         let stop = stopIndex;
 
-        if (_thumbnailsReordered && !_disableSelfView) {
+        if (!_disableSelfView) {
             // In tile view, the indices needs to be offset by 1 because the first thumbnail is that of the local
             // endpoint. The remote participants start from index 1.
             if (!_iAmRecorder && _currentLayout === LAYOUTS.TILE_VIEW) {
@@ -609,14 +604,13 @@ class Filmstrip extends PureComponent <IProps, State> {
             _columns,
             _iAmRecorder,
             _remoteParticipants,
-            _remoteParticipantsLength,
-            _thumbnailsReordered
+            _remoteParticipantsLength
         } = this.props;
         const index = (rowIndex * _columns) + columnIndex;
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
-        const localIndex = _thumbnailsReordered && !_disableSelfView ? 0 : _remoteParticipantsLength;
-        const remoteIndex = _thumbnailsReordered && !_iAmRecorder && !_disableSelfView ? index - 1 : index;
+        const localIndex = _disableSelfView ? _remoteParticipantsLength : 0;
+        const remoteIndex = !_iAmRecorder && !_disableSelfView ? index - 1 : index;
 
         if (index > _remoteParticipantsLength - (_iAmRecorder ? 1 : 0)) {
             return `empty-${index}`;
@@ -883,8 +877,7 @@ class Filmstrip extends PureComponent <IProps, State> {
 function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
-    const { testing = {}, iAmRecorder } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    const { iAmRecorder } = state['features/base/config'];
     const { topPanelHeight, topPanelVisible, visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const { localScreenShare } = state['features/base/participants'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
@@ -929,7 +922,6 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
         _remoteParticipantsLength: _remoteParticipants?.length,
-        _thumbnailsReordered: enableThumbnailReordering,
         _topPanelHeight: topPanelHeight.current,
         _topPanelMaxHeight: topPanelHeight.current || TOP_FILMSTRIP_HEIGHT,
         _topPanelVisible,
