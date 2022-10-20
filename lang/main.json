@@ -1147,7 +1147,8 @@
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
             "videoblur": "Toggle video blur",
-            "videomute": "Start / Stop camera",
+            "videomute": "Stop camera",
+            "videounmute": "Start camera",
             "whiteboard": "Show / Hide whiteboard"
         },
         "addPeople": "Add people to your call",
@@ -1238,7 +1239,8 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videoSettings": "Video settings",
-        "videomute": "Start / Stop camera"
+        "videomute": "Stop camera",
+        "videounmute": "Start camera"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",

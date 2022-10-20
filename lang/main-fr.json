@@ -1065,7 +1065,8 @@
             "toggleCamera": "Changer de caméra",
             "toggleFilmstrip": "Afficher ou masquer les vignettes vidéo",
             "videoblur": "Activer / désactiver le floutage",
-            "videomute": "Activer / Couper la vidéo"
+            "videomute": "Couper la caméra",
+            "videounmute": "Activer la caméra"
         },
         "addPeople": "Ajouter des personnes à votre appel",
         "audioOnlyOff": "Désactiver le mode bande passante réduite",
@@ -1149,7 +1150,8 @@
         "tileViewToggle": "Activer / Désactiver la vue mosaïque",
         "toggleCamera": "Changer de caméra",
         "videoSettings": "Paramètres vidéo",
-        "videomute": "Démarrer / Arrêter la caméra"
+        "videomute": "Couper la caméra",
+        "videounmute": "Activer la caméra"
     },
     "transcribing": {
         "ccButtonTooltip": "Activer / Désactiver les sous-titres",
