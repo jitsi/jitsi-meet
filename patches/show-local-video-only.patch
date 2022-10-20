@@ -1,0 +1,26 @@
+diff --git a/android/gradle.properties b/android/gradle.properties
+index 111357527..35224bebf 100644
+--- a/android/gradle.properties
++++ b/android/gradle.properties
+@@ -11,7 +11,7 @@
+ # The setting is particularly useful for tweaking memory settings.
+ # Default value: -Xmx1024m -XX:MaxPermSize=256m
+ 
+-org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
++org.gradle.jvmargs=-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+ 
+ # When configured, Gradle will run in incubating parallel mode.
+ # This option should only be used with decoupled projects. More details, visit
+diff --git a/react/features/large-video/actions.any.js b/react/features/large-video/actions.any.js
+index c795a0f16..ed098b77c 100644
+--- a/react/features/large-video/actions.any.js
++++ b/react/features/large-video/actions.any.js
+@@ -44,7 +44,7 @@ export function selectParticipantInLargeVideo(participant: ?string) {
+             return;
+         }
+ 
+-        const participantId = participant ?? _electParticipantInLargeVideo(state);
++        const participantId = getLocalParticipant(state)?.id;
+         const largeVideo = state['features/large-video'];
+         const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+         let latestScreenshareParticipantId;

@@ -44,7 +44,7 @@ export function selectParticipantInLargeVideo(participant: ?string) {
             return;
         }
 
-        const participantId = participant ?? _electParticipantInLargeVideo(state);
+        const participantId = getLocalParticipant(state)?.id;
         const largeVideo = state['features/large-video'];
         const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
         let latestScreenshareParticipantId;
