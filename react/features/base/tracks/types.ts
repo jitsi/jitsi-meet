@@ -1,4 +1,4 @@
-export interface TrackOptions {
+export interface ITrackOptions {
     cameraDeviceId?: string | null;
     constraints?: {
         video?: {
@@ -18,13 +18,13 @@ export interface TrackOptions {
     timeout?: number;
 }
 
-export interface ToggleScreenSharingOptions {
+export interface IToggleScreenSharingOptions {
     audioOnly: boolean;
     enabled?: boolean;
-    shareOptions: ShareOptions;
+    shareOptions: IShareOptions;
 }
 
-export interface ShareOptions {
+export interface IShareOptions {
     desktopSharingSourceDevice?: string;
     desktopSharingSources?: string[];
     desktopStream?: any;

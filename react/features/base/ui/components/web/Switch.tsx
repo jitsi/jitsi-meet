@@ -3,9 +3,9 @@ import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../environment/utils';
-import { SwitchProps } from '../types';
+import { ISwitchProps } from '../types';
 
-interface Props extends SwitchProps {
+interface IProps extends ISwitchProps {
 
     /**
      * Id of the toggle.
@@ -78,7 +78,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-const Switch = ({ id, checked, disabled, onChange }: Props) => {
+const Switch = ({ id, checked, disabled, onChange }: IProps) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
 

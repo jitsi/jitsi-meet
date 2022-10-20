@@ -17,7 +17,7 @@ type DownloadUpload = {
  * The type of the React {@code Component} props of
  * {@link ConnectionStatsTable}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The audio SSRC of this client.
@@ -246,7 +246,7 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class ConnectionStatsTable extends Component<Props> {
+class ConnectionStatsTable extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *

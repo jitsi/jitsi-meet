@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 // eslint-disable-next-line lines-around-comment
@@ -324,7 +324,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
  * @private
  * @returns {{Props}}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _currentCameraDeviceId: getCurrentCameraDeviceId(state)
     };

@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import {
@@ -29,7 +29,7 @@ import {
     isScreenShareParticipant,
     isWhiteboardParticipant
 } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/types';
+import { IParticipant } from '../../../base/participants/types';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { isTestModeEnabled } from '../../../base/testing/functions';
 import { trackStreamingStatusChanged, updateLastTrackVideoMediaEvent } from '../../../base/tracks/actions';
@@ -198,7 +198,7 @@ export type Props = {
     /**
      * An object with information about the participant related to the thumbnail.
      */
-    _participant: Participant;
+    _participant: IParticipant;
 
     /**
      * Whether or not the participant has the hand raised.
@@ -1171,7 +1171,7 @@ class Thumbnail extends Component<Props, State> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: IState, ownProps: any): Object {
+function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     const { participantID, filmstripType = FILMSTRIP_TYPE.MAIN } = ownProps;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);

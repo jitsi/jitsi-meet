@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import { escapeRegexp } from '../../../base/util/helpers';
 // eslint-disable-next-line lines-around-comment
@@ -87,9 +87,9 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 const SpeakerStats = () => {
-    const { faceLandmarks } = useSelector((state: IState) => state['features/base/config']);
-    const { showFaceExpressions } = useSelector((state: IState) => state['features/speaker-stats']);
-    const { clientWidth } = useSelector((state: IState) => state['features/base/responsive-ui']);
+    const { faceLandmarks } = useSelector((state: IReduxState) => state['features/base/config']);
+    const { showFaceExpressions } = useSelector((state: IReduxState) => state['features/speaker-stats']);
+    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const displaySwitch = faceLandmarks?.enableDisplayFaceExpressions && clientWidth > DISPLAY_SWITCH_BREAKPOINT;
     const displayLabels = clientWidth > MOBILE_BREAKPOINT;
     const dispatch = useDispatch();

@@ -13,19 +13,19 @@ import {
 import Icon from '../../../icons/components/Icon';
 import { IconCloseCircle } from '../../../icons/svg';
 import BaseTheme from '../../../ui/components/BaseTheme.native';
-import { InputProps } from '../types';
+import { IInputProps } from '../types';
 
 import styles from './inputStyles';
 
-interface IInputProps extends InputProps {
+interface IProps extends IInputProps {
 
     /**
      * Custom styles to be applied to the component.
      */
-    customStyles?: CustomStyles;
+    customStyles?: ICustomStyles;
 }
 
-interface CustomStyles {
+interface ICustomStyles {
     container?: Object;
     input?: Object;
 }
@@ -40,7 +40,7 @@ const Input = ({
     onChange,
     placeholder,
     value
-}: IInputProps) => {
+}: IProps) => {
     const [ focused, setFocused ] = useState(false);
     const handleChange = useCallback((e: NativeSyntheticEvent<TextInputChangeEventData>) => {
         const { nativeEvent: { text } } = e;

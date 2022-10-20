@@ -1,6 +1,6 @@
 import { NativeModules } from 'react-native';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { REPLACE_PARTICIPANT } from '../flags/constants';
 import { getFeatureFlag } from '../flags/functions';
 
@@ -32,6 +32,6 @@ export function _cleanupConfig(config: IConfig) {
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function getReplaceParticipant(state: IState): string {
+export function getReplaceParticipant(state: IReduxState): string {
     return getFeatureFlag(state, REPLACE_PARTICIPANT, false);
 }

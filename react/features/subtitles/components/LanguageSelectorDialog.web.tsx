@@ -6,7 +6,7 @@ import { WithTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 // @ts-ignore
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { translate, translateToHTML } from '../../base/i18n/functions';
@@ -127,7 +127,7 @@ const LanguageSelectorDialog = ({
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const { _language } = state['features/subtitles'];
     const { transcription } = state['features/base/config'];

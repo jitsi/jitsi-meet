@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { openDialog } from '../../../base/dialog/actions';
 import { IconClose, IconHorizontalPoints } from '../../../base/icons/svg';
@@ -97,7 +97,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 const ParticipantsPane = () => {
     const { classes } = useStyles();
     const paneOpen = useSelector(getParticipantsPaneOpen);
-    const isBreakoutRoomsSupported = useSelector((state: IState) => state['features/base/conference'])
+    const isBreakoutRoomsSupported = useSelector((state: IReduxState) => state['features/base/conference'])
         .conference?.getBreakoutRooms()?.isSupported();
     const showAddRoomButton = useSelector(isAddBreakoutRoomButtonVisible);
     const showFooter = useSelector(isLocalParticipantModerator);

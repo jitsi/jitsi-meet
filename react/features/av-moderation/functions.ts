@@ -1,7 +1,7 @@
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import { isLocalParticipantModerator } from '../base/participants/functions';
-import { Participant } from '../base/participants/types';
+import { IParticipant } from '../base/participants/types';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { MEDIA_TYPE_TO_PENDING_STORE_KEY, MEDIA_TYPE_TO_WHITELIST_STORE_KEY } from './constants';
@@ -9,10 +9,10 @@ import { MEDIA_TYPE_TO_PENDING_STORE_KEY, MEDIA_TYPE_TO_WHITELIST_STORE_KEY } fr
 /**
  * Returns this feature's root state.
  *
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {Object} Feature state.
  */
-const getState = (state: IState) => state['features/av-moderation'];
+const getState = (state: IReduxState) => state['features/av-moderation'];
 
 /**
  * We use to construct once the empty array so we can keep the same instance between calls
@@ -26,10 +26,10 @@ const EMPTY_ARRAY: any[] = [];
  * Returns whether moderation is enabled per media type.
  *
  * @param {MEDIA_TYPE} mediaType - The media type to check.
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const isEnabledFromState = (mediaType: MediaType, state: IState) =>
+export const isEnabledFromState = (mediaType: MediaType, state: IReduxState) =>
     (mediaType === MEDIA_TYPE.AUDIO
         ? getState(state)?.audioModerationEnabled
         : getState(state)?.videoModerationEnabled) === true;
@@ -40,14 +40,14 @@ export const isEnabledFromState = (mediaType: MediaType, state: IState) =>
  * @param {MEDIA_TYPE} mediaType - The media type to check.
  * @returns {boolean}
  */
-export const isEnabled = (mediaType: MediaType) => (state: IState) => isEnabledFromState(mediaType, state);
+export const isEnabled = (mediaType: MediaType) => (state: IReduxState) => isEnabledFromState(mediaType, state);
 
 /**
  * Returns whether moderation is supported by the backend.
  *
  * @returns {boolean}
  */
-export const isSupported = () => (state: IState) => {
+export const isSupported = () => (state: IReduxState) => {
     const { conference } = state['features/base/conference'];
 
     return Boolean(!isInBreakoutRoom(state) && conference?.isAVModerationSupported());
@@ -57,10 +57,10 @@ export const isSupported = () => (state: IState) => {
  * Returns whether local participant is approved to unmute a media type.
  *
  * @param {MEDIA_TYPE} mediaType - The media type to check.
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const isLocalParticipantApprovedFromState = (mediaType: MediaType, state: IState) => {
+export const isLocalParticipantApprovedFromState = (mediaType: MediaType, state: IReduxState) => {
     const approved = (mediaType === MEDIA_TYPE.AUDIO
         ? getState(state).audioUnmuteApproved
         : getState(state).videoUnmuteApproved) === true;
@@ -75,7 +75,7 @@ export const isLocalParticipantApprovedFromState = (mediaType: MediaType, state:
  * @returns {boolean}
  */
 export const isLocalParticipantApproved = (mediaType: MediaType) =>
-    (state: IState) =>
+    (state: IReduxState) =>
         isLocalParticipantApprovedFromState(mediaType, state);
 
 /**
@@ -85,7 +85,7 @@ export const isLocalParticipantApproved = (mediaType: MediaType) =>
  * @param {MEDIA_TYPE} mediaType - The media type to check.
  * @returns {boolean}
  */
-export const isParticipantApproved = (id: string, mediaType: MediaType) => (state: IState) => {
+export const isParticipantApproved = (id: string, mediaType: MediaType) => (state: IReduxState) => {
     const storeKey = MEDIA_TYPE_TO_WHITELIST_STORE_KEY[mediaType];
 
     const avModerationState = getState(state);
@@ -97,11 +97,11 @@ export const isParticipantApproved = (id: string, mediaType: MediaType) => (stat
 /**
  * Returns a selector creator which determines if the participant is pending or not for a media type.
  *
- * @param {Participant} participant - The participant.
+ * @param {IParticipant} participant - The participant.
  * @param {MEDIA_TYPE} mediaType - The media type to check.
  * @returns {boolean}
  */
-export const isParticipantPending = (participant: Participant, mediaType: MediaType) => (state: IState) => {
+export const isParticipantPending = (participant: IParticipant, mediaType: MediaType) => (state: IReduxState) => {
     const storeKey = MEDIA_TYPE_TO_PENDING_STORE_KEY[mediaType];
     const arr = getState(state)[storeKey];
 
@@ -115,7 +115,7 @@ export const isParticipantPending = (participant: Participant, mediaType: MediaT
  * @param {Object} state - The global state.
  * @returns {Array<Object>}
  */
-export const getParticipantsAskingToAudioUnmute = (state: IState) => {
+export const getParticipantsAskingToAudioUnmute = (state: IReduxState) => {
     if (isLocalParticipantModerator(state)) {
         return getState(state).pendingAudio;
     }
@@ -131,6 +131,6 @@ export const getParticipantsAskingToAudioUnmute = (state: IState) => {
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export const shouldShowModeratedNotification = (mediaType: MediaType, state: IState) =>
+export const shouldShowModeratedNotification = (mediaType: MediaType, state: IReduxState) =>
     isEnabledFromState(mediaType, state)
     && !isLocalParticipantApprovedFromState(mediaType, state);

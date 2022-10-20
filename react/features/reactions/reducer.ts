@@ -7,7 +7,7 @@ import {
     SHOW_SOUNDS_NOTIFICATION,
     TOGGLE_REACTIONS_VISIBLE
 } from './actionTypes';
-import { ReactionEmojiProps } from './constants';
+import { IReactionEmojiProps } from './constants';
 
 export interface IReactionsState {
 
@@ -24,7 +24,7 @@ export interface IReactionsState {
     /**
     * The array of reactions to animate.
     */
-    queue: Array<ReactionEmojiProps>;
+    queue: Array<IReactionEmojiProps>;
 
     /**
      * A number, non-zero value which identifies the timer created by a call
@@ -38,7 +38,7 @@ export interface IReactionsState {
     visible: boolean;
 }
 
-export interface ReactionsAction extends Partial<IReactionsState> {
+export interface IReactionsAction extends Partial<IReactionsState> {
 
     /**
      * The message to be added to the chat.
@@ -79,7 +79,7 @@ function _getInitialState(): IReactionsState {
 
 ReducerRegistry.register<IReactionsState>(
     'features/reactions',
-    (state = _getInitialState(), action: ReactionsAction): IReactionsState => {
+    (state = _getInitialState(), action: IReactionsAction): IReactionsState => {
         switch (action.type) {
 
         case TOGGLE_REACTIONS_VISIBLE:

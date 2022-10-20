@@ -4,7 +4,7 @@ import aliases from 'react-emoji-render/data/aliases';
 // @ts-ignore
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import { escapeRegexp } from '../base/util/helpers';
 
 import { IMessage } from './reducer';
@@ -83,10 +83,10 @@ export function replaceNonUnicodeEmojis(message: string) {
 /**
  * Selector for calculating the number of unread chat messages.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {number} The number of unread messages.
  */
-export function getUnreadCount(state: IState) {
+export function getUnreadCount(state: IReduxState) {
     const { lastReadMessage, messages } = state['features/chat'];
     const messagesCount = messages.length;
 
@@ -124,10 +124,10 @@ export function getUnreadCount(state: IState) {
 /**
  * Get whether the chat smileys are disabled or not.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {boolean} The disabled flag.
  */
-export function areSmileysDisabled(state: IState) {
+export function areSmileysDisabled(state: IReduxState) {
     const disableChatSmileys = state['features/base/config']?.disableChatSmileys === true;
 
     return disableChatSmileys;

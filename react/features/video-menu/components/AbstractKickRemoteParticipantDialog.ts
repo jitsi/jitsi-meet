@@ -6,7 +6,7 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
 import { kickParticipant } from '../../base/participants/actions';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The Redux dispatch function.
@@ -23,13 +23,13 @@ interface Props extends WithTranslation {
  * Abstract dialog to confirm a remote participant kick action.
  */
 export default class AbstractKickRemoteParticipantDialog
-    extends Component<Props> {
+    extends Component<IProps> {
     /**
      * Initializes a new {@code AbstractKickRemoteParticipantDialog} instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onSubmit = this._onSubmit.bind(this);

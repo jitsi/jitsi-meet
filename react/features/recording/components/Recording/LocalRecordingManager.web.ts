@@ -11,7 +11,7 @@ import { inIframe } from '../../../base/util/iframeUtils';
 // @ts-ignore
 import { stopLocalVideoRecording } from '../../actions.any';
 
-interface SelfRecording {
+interface ISelfRecording {
     on: boolean;
     withVideo: boolean;
 }
@@ -29,7 +29,7 @@ interface ILocalRecordingManager {
     recordingData: Blob[];
     roomName: string;
     saveRecording: (recordingData: Blob[], filename: string) => void;
-    selfRecording: SelfRecording;
+    selfRecording: ISelfRecording;
     startLocalRecording: (store: IStore, onlySelf: boolean) => void;
     stopLocalRecording: () => void;
     stream: MediaStream | undefined;

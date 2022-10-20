@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp } from '../../../base/icons/svg';
@@ -11,7 +11,7 @@ import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { ReactionEmojiProps } from '../../constants';
+import { IReactionEmojiProps } from '../../constants';
 import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
@@ -20,7 +20,7 @@ import RaiseHandButton from './RaiseHandButton';
 import ReactionEmoji from './ReactionEmoji';
 import ReactionsMenu from './ReactionsMenu';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether or not reactions are enabled.
@@ -61,7 +61,7 @@ interface Props extends WithTranslation {
     /**
      * The array of reactions to be displayed.
      */
-    reactionsQueue: Array<ReactionEmojiProps>;
+    reactionsQueue: Array<IReactionEmojiProps>;
 }
 
 /**
@@ -79,7 +79,7 @@ function ReactionsMenuButton({
     notifyMode,
     reactionsQueue,
     t
-}: Props) {
+}: IProps) {
     const visible = useSelector(getReactionsMenuVisibility);
     const toggleReactionsMenu = useCallback(() => {
         dispatch(toggleReactionsMenuVisibility());
@@ -134,7 +134,7 @@ function ReactionsMenuButton({
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     return {
         _reactionsEnabled: isReactionsEnabled(state),
         isOpen: getReactionsMenuVisibility(state),

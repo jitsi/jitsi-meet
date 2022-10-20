@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { rejectParticipantAudio } from '../../../av-moderation/actions';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
@@ -160,7 +160,7 @@ function MeetingParticipants({
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: IState): Object {
+function _mapStateToProps(state: IReduxState): Object {
     let sortedParticipantIds: any = getSortedParticipantIds(state);
 
     // Filter out the virtual screenshare participants since we do not want them to be displayed as separate

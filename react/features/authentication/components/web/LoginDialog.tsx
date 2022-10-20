@@ -3,7 +3,7 @@ import { WithTranslation } from 'react-i18next';
 
 // @ts-expect-error
 import { connect } from '../../../../../connection';
-import { IState, IStore } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { IConfig } from '../../../base/config/configType';
 import { toJid } from '../../../base/connection/functions';
@@ -20,7 +20,7 @@ import {
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * {@link JitsiConference} That needs authentication - will hold a valid
@@ -91,13 +91,13 @@ type State = {
  *
  *  @returns {React$Element<any>}
  */
-class LoginDialog extends Component<Props, State> {
+class LoginDialog extends Component<IProps, State> {
     /**
      * Initializes a new {@code LoginDialog} instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -294,9 +294,9 @@ class LoginDialog extends Component<Props, State> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     const {
         error: authenticateAndUpgradeRoleError,
         progress,

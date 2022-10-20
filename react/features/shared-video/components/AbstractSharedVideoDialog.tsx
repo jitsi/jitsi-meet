@@ -10,7 +10,7 @@ import { extractYoutubeIdOrURL } from '../functions';
  * The type of the React {@code Component} props of
  * {@link AbstractSharedVideoDialog}.
  */
-export interface Props extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * Invoked to update the shared video link.
@@ -26,14 +26,14 @@ export interface Props extends WithTranslation {
 /**
  * Implements an abstract class for {@code SharedVideoDialog}.
  */
-export default class AbstractSharedVideoDialog<S> extends Component < Props, S > {
+export default class AbstractSharedVideoDialog<S> extends Component < IProps, S > {
 
     /**
      * Instantiates a new component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onSetVideoLink = this._onSetVideoLink.bind(this);

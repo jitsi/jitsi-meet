@@ -7,7 +7,7 @@ import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IState, IStore } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config/functions.any';
 import { translate } from '../../../base/i18n/functions';
 import { MEDIA_TYPE } from '../../../base/media/constants';
@@ -394,7 +394,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
  * @param {Props} ownProps - The own props of the component.
  * @returns {Props}
  */
-export function _mapStateToProps(state: IState, ownProps: Props) {
+export function _mapStateToProps(state: IReduxState, ownProps: Props) {
     const { participantId } = ownProps;
     const tracks = state['features/base/tracks'];
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);

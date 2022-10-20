@@ -18,7 +18,7 @@ import {
     SIP_GW_INVITE_ROOMS
 } from './actionTypes';
 import logger from './logger';
-import { SipRoom, SipSessionChangedEvent } from './types';
+import { ISipRoom, ISipSessionChangedEvent } from './types';
 
 /**
  * Middleware that captures conference video sip gw events and stores
@@ -44,7 +44,7 @@ MiddlewareRegistry.register(({ dispatch }) => next => action => {
             (...args) => dispatch(_availabilityChanged(...args)));
         conference.on(
             JitsiConferenceEvents.VIDEO_SIP_GW_SESSION_STATE_CHANGED,
-            (event: SipSessionChangedEvent) => {
+            (event: ISipSessionChangedEvent) => {
                 const toDispatch = _sessionStateChanged(event);
 
                 // sessionStateChanged can decide there is nothing to dispatch
@@ -91,7 +91,7 @@ function _availabilityChanged(status: string) {
  * @private
  * @returns {void}
  */
-function _inviteRooms(rooms: SipRoom[], conference: IJitsiConference, dispatch: IStore['dispatch']) {
+function _inviteRooms(rooms: ISipRoom[], conference: IJitsiConference, dispatch: IStore['dispatch']) {
     for (const room of rooms) {
         const { id: sipAddress, name: displayName } = room;
 
@@ -144,7 +144,7 @@ function _inviteRooms(rooms: SipRoom[], conference: IJitsiConference, dispatch: 
  * @private
  */
 function _sessionStateChanged(
-        event: SipSessionChangedEvent) {
+        event: ISipSessionChangedEvent) {
     switch (event.newState) {
     case JitsiSIPVideoGWStatus.STATE_PENDING: {
         return showNotification({

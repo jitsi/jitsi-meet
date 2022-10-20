@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { IconMenuDown } from '../../../base/icons/svg/index';
 import Label from '../../../base/label/components/web/Label';
 // @ts-ignore
@@ -14,7 +14,7 @@ import { setTopPanelVisible } from '../../../filmstrip/actions.web';
 const ToggleTopPanelLabel = () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const topPanelHidden = !useSelector((state: IState) => state['features/filmstrip'].topPanelVisible);
+    const topPanelHidden = !useSelector((state: IReduxState) => state['features/filmstrip'].topPanelVisible);
     const onClick = useCallback(() => {
         dispatch(setTopPanelVisible(true));
     }, []);

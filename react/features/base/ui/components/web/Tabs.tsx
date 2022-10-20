@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../../environment/utils';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
-interface TabProps {
+interface ITabProps {
     accessibilityLabel: string;
     onChange: (id: string) => void;
     selected: string;
@@ -83,7 +83,7 @@ const Tabs = ({
     onChange,
     selected,
     accessibilityLabel
-}: TabProps) => {
+}: ITabProps) => {
     const { classes, cx } = useStyles();
     const isMobile = isMobileBrowser();
 

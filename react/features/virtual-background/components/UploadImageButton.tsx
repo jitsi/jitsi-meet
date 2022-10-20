@@ -11,7 +11,7 @@ import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage } from '../functions';
 import logger from '../logger';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Callback used to set the 'loading' state of the parent component.
@@ -74,7 +74,7 @@ function UploadImageButton({
     showLabel,
     storedImages,
     t
-}: Props) {
+}: IProps) {
     const { classes } = useStyles();
     const uploadImageButton = useRef<HTMLInputElement>(null);
     const uploadImageKeyPress = useCallback(e => {

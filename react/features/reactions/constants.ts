@@ -85,7 +85,7 @@ export const SILENCE_SOUND_ID = `${REACTION_SOUND}_SILENCE_`;
  */
 export const RAISE_HAND_SOUND_ID = 'RAISE_HAND_SOUND';
 
-export interface ReactionEmojiProps {
+export interface IReactionEmojiProps {
 
     /**
      * Reaction to be displayed.
@@ -160,6 +160,6 @@ export type ReactionThreshold = {
     threshold: number;
 };
 
-export interface MuteCommandAttributes {
+export interface IMuteCommandAttributes {
     startReactionsMuted?: string;
 }

@@ -3,10 +3,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { IconRaisedHand } from '../../../base/icons/svg';
 import { getParticipantById, hasRaisedHand } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/types';
+import { IParticipant } from '../../../base/participants/types';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
 
 /**
@@ -54,7 +54,7 @@ const RaisedHandIndicator = ({
     participantId,
     tooltipPosition
 }: Props) => {
-    const participant: Participant | undefined = useSelector((state: IState) =>
+    const participant: IParticipant | undefined = useSelector((state: IReduxState) =>
         getParticipantById(state, participantId));
     const _raisedHand = hasRaisedHand(participant);
     const { classes: styles, theme } = useStyles();

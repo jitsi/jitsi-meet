@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';
 // @ts-ignore
@@ -81,7 +81,7 @@ class HelpView extends PureComponent<Props> {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _url: state['features/base/config'].helpCentreURL || DEFAULT_HELP_CENTRE_URL
     };

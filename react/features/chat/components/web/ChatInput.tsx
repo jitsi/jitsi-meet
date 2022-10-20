@@ -1,7 +1,7 @@
 import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import { IState, IStore } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconPlane, IconSmile } from '../../../base/icons/svg';
@@ -16,7 +16,7 @@ import SmileysPanel from './SmileysPanel';
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether chat emoticons are disabled.
@@ -55,7 +55,7 @@ type State = {
  *
  * @augments Component
  */
-class ChatInput extends Component<Props, State> {
+class ChatInput extends Component<IProps, State> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     state = {
@@ -69,7 +69,7 @@ class ChatInput extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._textArea = React.createRef<HTMLTextAreaElement>();
@@ -254,7 +254,7 @@ class ChatInput extends Component<Props, State> {
  *     _areSmileysDisabled: boolean
  * }}
  */
-const mapStateToProps = (state: IState) => {
+const mapStateToProps = (state: IReduxState) => {
     return {
         _areSmileysDisabled: areSmileysDisabled(state)
     };

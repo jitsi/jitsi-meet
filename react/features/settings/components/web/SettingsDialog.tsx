@@ -3,7 +3,7 @@ import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { getAvailableDevices } from '../../../base/devices/actions';
 // @ts-ignore
 import { DialogWithTabs } from '../../../base/dialog';
@@ -295,7 +295,7 @@ class SettingsDialog extends Component<Props> {
  *     tabs: Array<Object>
  * }}
  */
-function _mapStateToProps(state: IState, ownProps: any) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { classes, isDisplayedOnWelcomePage } = ownProps;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 

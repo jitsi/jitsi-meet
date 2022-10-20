@@ -2,7 +2,7 @@
 // @ts-ignore
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { IStateful } from '../app/types';
@@ -23,7 +23,7 @@ import {
 } from './constants';
 // @ts-ignore
 import { preloadImage } from './preloadImage';
-import { FakeParticipant, Participant } from './types';
+import { FakeParticipant, IParticipant } from './types';
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
@@ -32,16 +32,16 @@ const AVATAR_QUEUE: Object[] = [];
 const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
-    (participant: Participant) => {
+    (participant: IParticipant) => {
         return isJigasiParticipant(participant) ? JIGASI_PARTICIPANT_ICON : null;
     },
-    (participant: Participant) => {
+    (participant: IParticipant) => {
         return isWhiteboardParticipant(participant) ? WHITEBOARD_PARTICIPANT_ICON : null;
     },
-    (participant: Participant) => {
+    (participant: IParticipant) => {
         return participant?.avatarURL ? participant.avatarURL : null;
     },
-    (participant: Participant, store: IStore) => {
+    (participant: IParticipant, store: IStore) => {
         const config = store.getState()['features/base/config'];
         const isGravatarDisabled = config.gravatar?.disabled;
 
@@ -132,7 +132,7 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
  * @param {Store} store - Redux store.
  * @returns {Promise}
  */
-export function getFirstLoadableAvatarUrl(participant: Participant, store: IStore) {
+export function getFirstLoadableAvatarUrl(participant: IParticipant, store: IStore) {
     const deferred: any = createDeferred();
     const fullPromise = deferred.promise
         .then(() => _getFirstLoadableAvatarUrl(participant, store))
@@ -162,7 +162,7 @@ export function getFirstLoadableAvatarUrl(participant: Participant, store: IStor
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
- * @returns {(Participant|undefined)}
+ * @returns {(IParticipant|undefined)}
  */
 export function getLocalParticipant(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
@@ -175,7 +175,7 @@ export function getLocalParticipant(stateful: IStateful) {
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state features/base/participants.
- * @returns {(Participant|undefined)}
+ * @returns {(IParticipant|undefined)}
  */
 export function getLocalScreenShareParticipant(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
@@ -189,7 +189,7 @@ export function getLocalScreenShareParticipant(stateful: IStateful) {
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
  * retrieve the state features/base/participants.
  * @param {string} id - The owner ID of the screenshare participant to retrieve.
- * @returns {(Participant|undefined)}
+ * @returns {(IParticipant|undefined)}
  */
 export function getVirtualScreenshareParticipantByOwnerId(stateful: IStateful, id: string) {
     const state = toState(stateful);
@@ -226,9 +226,9 @@ export function getNormalizedDisplayName(name: string) {
  * features/base/participants.
  * @param {string} id - The ID of the participant to retrieve.
  * @private
- * @returns {(Participant|undefined)}
+ * @returns {(IParticipant|undefined)}
  */
-export function getParticipantById(stateful: IStateful, id: string): Participant | undefined {
+export function getParticipantById(stateful: IStateful, id: string): IParticipant | undefined {
     const state = toState(stateful)['features/base/participants'];
     const { local, localScreenShare, remote } = state;
 
@@ -245,7 +245,7 @@ export function getParticipantById(stateful: IStateful, id: string): Participant
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @param {string|undefined} [participantID] - An optional partipantID argument.
- * @returns {Participant|undefined}
+ * @returns {IParticipant|undefined}
  */
 export function getParticipantByIdOrUndefined(stateful: IStateful, participantID?: string) {
     return participantID ? getParticipantById(stateful, participantID) : getLocalParticipant(stateful);
@@ -294,7 +294,7 @@ export function getVirtualScreenshareParticipantOwnerId(id: string) {
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
- * @returns {Map<string, Participant>} - The Map with fake participants.
+ * @returns {Map<string, IParticipant>} - The Map with fake participants.
  */
 export function getFakeParticipants(stateful: IStateful) {
     return toState(stateful)['features/base/participants'].fakeParticipants;
@@ -303,41 +303,41 @@ export function getFakeParticipants(stateful: IStateful) {
 /**
  * Returns whether the fake participant is Jigasi.
  *
- * @param {Participant|undefined} participant - The participant entity.
+ * @param {IParticipant|undefined} participant - The participant entity.
  * @returns {boolean} - True if it's a Jigasi participant.
  */
-function isJigasiParticipant(participant?: Participant): boolean {
+function isJigasiParticipant(participant?: IParticipant): boolean {
     return participant?.fakeParticipant === FakeParticipant.Jigasi;
 }
 
 /**
  * Returns whether the fake participant is a local screenshare.
  *
- * @param {Participant|undefined} participant - The participant entity.
+ * @param {IParticipant|undefined} participant - The participant entity.
  * @returns {boolean} - True if it's a local screenshare participant.
  */
-export function isLocalScreenshareParticipant(participant?: Participant): boolean {
+export function isLocalScreenshareParticipant(participant?: IParticipant): boolean {
     return participant?.fakeParticipant === FakeParticipant.LocalScreenShare;
 }
 
 /**
  * Returns whether the fake participant is a remote screenshare.
  *
- * @param {Participant|undefined} participant - The participant entity.
+ * @param {IParticipant|undefined} participant - The participant entity.
  * @returns {boolean} - True if it's a remote screenshare participant.
  */
-export function isRemoteScreenshareParticipant(participant?: Participant): boolean {
+export function isRemoteScreenshareParticipant(participant?: IParticipant): boolean {
     return participant?.fakeParticipant === FakeParticipant.RemoteScreenShare;
 }
 
 /**
  * Returns whether the fake participant is of local or virtual screenshare type.
  *
- * @param {IState} state - The (whole) redux state, or redux's.
+ * @param {IReduxState} state - The (whole) redux state, or redux's.
  * @param {string|undefined} participantId - The participant id.
  * @returns {boolean} - True if it's one of the two.
  */
-export function isScreenShareParticipantById(state: IState, participantId?: string): boolean {
+export function isScreenShareParticipantById(state: IReduxState, participantId?: string): boolean {
     const participant = getParticipantByIdOrUndefined(state, participantId);
 
     return isScreenShareParticipant(participant);
@@ -346,30 +346,30 @@ export function isScreenShareParticipantById(state: IState, participantId?: stri
 /**
  * Returns whether the fake participant is of local or virtual screenshare type.
  *
- * @param {Participant|undefined} participant - The participant entity.
+ * @param {IParticipant|undefined} participant - The participant entity.
  * @returns {boolean} - True if it's one of the two.
  */
-export function isScreenShareParticipant(participant?: Participant): boolean {
+export function isScreenShareParticipant(participant?: IParticipant): boolean {
     return isLocalScreenshareParticipant(participant) || isRemoteScreenshareParticipant(participant);
 }
 
 /**
  * Returns whether the (fake) participant is a shared video.
  *
- * @param {Participant|undefined} participant - The participant entity.
+ * @param {IParticipant|undefined} participant - The participant entity.
  * @returns {boolean} - True if it's a shared video participant.
  */
-export function isSharedVideoParticipant(participant?: Participant): boolean {
+export function isSharedVideoParticipant(participant?: IParticipant): boolean {
     return participant?.fakeParticipant === FakeParticipant.SharedVideo;
 }
 
 /**
  * Returns whether the fake participant is a whiteboard.
  *
- * @param {Participant|undefined} participant - The participant entity.
+ * @param {IParticipant|undefined} participant - The participant entity.
  * @returns {boolean} - True if it's a whiteboard participant.
  */
-export function isWhiteboardParticipant(participant?: Participant): boolean {
+export function isWhiteboardParticipant(participant?: IParticipant): boolean {
     return participant?.fakeParticipant === FakeParticipant.Whiteboard;
 }
 
@@ -501,7 +501,7 @@ export function getParticipantPresenceStatus(stateful: IStateful, id: string) {
  * features/base/participants.
  * @returns {Map<string, Object>}
  */
-export function getRemoteParticipants(stateful: IStateful): Map<string, Participant> {
+export function getRemoteParticipants(stateful: IStateful): Map<string, IParticipant> {
     return toState(stateful)['features/base/participants'].remote;
 }
 
@@ -522,7 +522,7 @@ export function getRemoteParticipantsSorted(stateful: IStateful) {
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
- * @returns {(Participant|undefined)}
+ * @returns {(IParticipant|undefined)}
  */
 export function getPinnedParticipant(stateful: IStateful) {
     const state = toState(stateful);
@@ -549,7 +549,7 @@ export function getPinnedParticipant(stateful: IStateful) {
  * @param {string} participant - Participant object.
  * @returns {boolean}
  */
-export function isParticipantModerator(participant?: Participant) {
+export function isParticipantModerator(participant?: IParticipant) {
     return participant?.role === PARTICIPANT_ROLE.MODERATOR;
 }
 
@@ -558,7 +558,7 @@ export function isParticipantModerator(participant?: Participant) {
  *
  * @param {(Function|Object)} stateful - The (whole) redux state or redux's
  * {@code getState} function to be used to retrieve the state features/base/participants.
- * @returns {Participant} - The participant from the redux store.
+ * @returns {IParticipant} - The participant from the redux store.
  */
 export function getDominantSpeakerParticipant(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
@@ -621,7 +621,7 @@ export function isLocalParticipantModerator(stateful: IStateful) {
  * @param {Store} store - Redux store.
  * @returns {?string}
  */
-async function _getFirstLoadableAvatarUrl(participant: Participant, store: IStore) {
+async function _getFirstLoadableAvatarUrl(participant: IParticipant, store: IStore) {
     for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
         const url = AVATAR_CHECKER_FUNCTIONS[i](participant, store);
 
@@ -683,6 +683,6 @@ export function getRaiseHandsQueue(stateful: IStateful): Array<{ id: string; rai
  * @param {Object} participant - The participant.
  * @returns {boolean} - Whether participant has raise hand or not.
  */
-export function hasRaisedHand(participant?: Participant): boolean {
+export function hasRaisedHand(participant?: IParticipant): boolean {
     return Boolean(participant?.raisedHandTimestamp);
 }

@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../../app/types';
+import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDownSmall, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
@@ -12,7 +12,7 @@ import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables'
 import { CONNECTION_TYPE } from '../../constants';
 import { getConnectionData } from '../../functions';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * List of strings with details about the connection.
@@ -145,10 +145,10 @@ const CONNECTION_TYPE_MAP: {
 /**
  * Component displaying information related to the connection & audio/video quality.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {ReactElement}
  */
-function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
+function ConnectionStatus({ connectionDetails, t, connectionType }: IProps) {
     const { classes } = useStyles();
 
     const [ showDetails, toggleDetails ] = useState(false);
@@ -219,7 +219,7 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
  * @param {Object} state - The redux state.
  * @returns {Object}
  */
-function mapStateToProps(state: IState): Object {
+function mapStateToProps(state: IReduxState): Object {
     const { connectionDetails, connectionType } = getConnectionData(state);
 
     return {

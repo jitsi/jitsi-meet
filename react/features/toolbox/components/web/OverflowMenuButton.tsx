@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
 import { REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
@@ -23,7 +23,7 @@ import OverflowToggleButton from './OverflowToggleButton';
 /**
  * The type of the React {@code Component} props of {@link OverflowMenuButton}.
  */
-interface Props {
+interface IProps {
 
     /**
      * ID of the menu that is controlled by this button.
@@ -65,9 +65,9 @@ const OverflowMenuButton = ({
     isOpen,
     onVisibilityChange,
     showMobileReactions
-}: Props) => {
+}: IProps) => {
     const { classes } = useStyles();
-    const overflowDrawer = useSelector((state: IState) => state['features/toolbox'].overflowDrawer);
+    const overflowDrawer = useSelector((state: IReduxState) => state['features/toolbox'].overflowDrawer);
     const reactionsQueue = useSelector(getReactionsQueue);
 
     const onCloseDialog = useCallback(() => {

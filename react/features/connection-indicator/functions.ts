@@ -1,5 +1,5 @@
 import { JitsiParticipantConnectionStatus, JitsiTrackStreamingStatus } from '../base/lib-jitsi-meet';
-import { Participant } from '../base/participants/types';
+import { IParticipant } from '../base/participants/types';
 import { ITrack } from '../base/tracks/reducer';
 
 /**
@@ -44,7 +44,7 @@ export function isTrackStreamingStatusInterrupted(videoTrack?: ITrack) {
  * @param {Object} participant - Participant reference.
  * @returns {boolean} - Is connection status active.
  */
-export function isParticipantConnectionStatusActive(participant: Participant) {
+export function isParticipantConnectionStatusActive(participant: IParticipant) {
     const connectionStatus = participant?.connectionStatus;
 
     return connectionStatus === JitsiParticipantConnectionStatus.ACTIVE;
@@ -56,7 +56,7 @@ export function isParticipantConnectionStatusActive(participant: Participant) {
  * @param {Object} participant - Participant reference.
  * @returns {boolean} - Is connection status inactive.
  */
-export function isParticipantConnectionStatusInactive(participant?: Participant) {
+export function isParticipantConnectionStatusInactive(participant?: IParticipant) {
     const connectionStatus = participant?.connectionStatus;
 
     return connectionStatus === JitsiParticipantConnectionStatus.INACTIVE;
@@ -68,7 +68,7 @@ export function isParticipantConnectionStatusInactive(participant?: Participant)
  * @param {Object} participant - Participant reference.
  * @returns {boolean} - Is connection status interrupted.
  */
-export function isParticipantConnectionStatusInterrupted(participant?: Participant) {
+export function isParticipantConnectionStatusInterrupted(participant?: IParticipant) {
     const connectionStatus = participant?.connectionStatus;
 
     return connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED;

@@ -3,7 +3,7 @@ import { Theme } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../../app/types';
+import { IReduxState } from '../../../../app/types';
 import DeviceStatus from '../../../../prejoin/components/preview/DeviceStatus';
 // @ts-ignore
 import { Toolbox } from '../../../../toolbox/components/web';
@@ -17,7 +17,7 @@ import ConnectionStatus from './ConnectionStatus';
 // @ts-ignore
 import Preview from './Preview';
 
-interface Props {
+interface IProps {
 
     /**
      * The list of toolbar buttons to render.
@@ -111,7 +111,7 @@ const PreMeetingScreen = ({
     title,
     videoMuted,
     videoTrack
-}: Props) => {
+}: IProps) => {
     const { classes } = useStyles();
     const containerClassName = `premeeting-screen ${className ? className : ''}`;
     const style = _premeetingBackground ? {
@@ -157,7 +157,7 @@ const PreMeetingScreen = ({
  * @param {Object} ownProps - The props passed to the component.
  * @returns {Object}
  */
-function mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { hiddenPremeetingButtons, hideConferenceSubject } = state['features/base/config'];
     const toolbarButtons = getToolbarButtons(state);
     const premeetingButtons = (ownProps.thirdParty

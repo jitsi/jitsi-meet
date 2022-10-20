@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config/functions.any';
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
@@ -30,7 +30,7 @@ import UploadImageButton from './UploadImageButton';
 // @ts-ignore
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The list of Images to choose from.
@@ -94,7 +94,7 @@ const onError = (event: any) => {
  * @private
  * @returns {{Props}}
  */
-function _mapStateToProps(state: IState): Object {
+function _mapStateToProps(state: IReduxState): Object {
     const { localFlipX } = state['features/base/settings'];
     const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
     const hasBrandingImages = Boolean(dynamicBrandingImages.length);
@@ -281,7 +281,7 @@ function VirtualBackground({
     dispatch,
     initialOptions,
     t
-}: Props) {
+}: IProps) {
     const { classes, cx } = useStyles();
     const [ previewIsLoaded, setPreviewIsLoaded ] = useState(false);
     const [ options, setOptions ] = useState<any>({ ...initialOptions });

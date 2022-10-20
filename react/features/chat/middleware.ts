@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 import { AnyAction } from 'redux';
 
-import { IState, IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
@@ -366,7 +366,7 @@ export function handleLobbyMessageReceived(message: string, participantId: strin
  * @param {string} id - The knocking participant id.
  * @returns {string}
  */
-function getLobbyChatDisplayName(state: IState, id: string) {
+function getLobbyChatDisplayName(state: IReduxState, id: string) {
     const { knockingParticipants } = state['features/lobby'];
     const { lobbyMessageRecipient } = state['features/chat'];
 
@@ -508,7 +508,7 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipientID:
  * @param {Object} action - The action being dispatched now.
  * @returns {string?}
  */
-function _shouldSendPrivateMessageTo(state: IState, action: AnyAction) {
+function _shouldSendPrivateMessageTo(state: IReduxState, action: AnyAction) {
     if (action.ignorePrivacy) {
         // Shortcut: this is only true, if we already displayed the notice, so no need to show it again.
         return undefined;

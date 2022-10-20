@@ -14,7 +14,7 @@ import { getCountryCodeFromPhone } from '../../utils';
 // @ts-ignore
 import Label from '../Label';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The number to call in order to join the conference.
@@ -98,10 +98,10 @@ const useStyles = makeStyles()((theme: Theme) => {
  * This component displays the dialog with all the information
  * to join a meeting by calling it.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {React$Element}
  */
-function DialinDialog(props: Props) {
+function DialinDialog(props: IProps) {
     const {
         number,
         onBack,

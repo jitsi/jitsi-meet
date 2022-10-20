@@ -14,7 +14,7 @@ import Label from '../Label';
 // @ts-ignore
 import CountryPicker from '../country-picker/CountryPicker';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Closes a dialog.
@@ -52,10 +52,10 @@ const useStyles = makeStyles()((theme: Theme) => {
  * This component displays the dialog from which the user can enter the
  * phone number in order to be called by the meeting.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {React$Element}
  */
-function DialOutDialog(props: Props) {
+function DialOutDialog(props: IProps) {
     const { onClose, onTextButtonClick, onSubmit, t } = props;
     const { classes } = useStyles();
 

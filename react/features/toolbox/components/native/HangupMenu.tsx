@@ -7,7 +7,7 @@ import { createBreakoutRoomsEvent, createToolbarEvent } from '../../../analytics
 import { sendAnalytics } from '../../../analytics/functions';
 // @ts-ignore
 import { appNavigate } from '../../../app/actions';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 // @ts-ignore
@@ -31,7 +31,8 @@ function HangupMenu() {
     const dispatch = useDispatch();
     const _styles = useSelector(state => ColorSchemeRegistry.get(state, 'Toolbox'));
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
-    const isModerator = useSelector((state: IState) => getLocalParticipant(state)?.role === PARTICIPANT_ROLE.MODERATOR);
+    const isModerator = useSelector((state: IReduxState) =>
+        getLocalParticipant(state)?.role === PARTICIPANT_ROLE.MODERATOR);
     const { DESTRUCTIVE, SECONDARY } = BUTTON_TYPES;
 
     const handleEndConference = useCallback(() => {

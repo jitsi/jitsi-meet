@@ -3,7 +3,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { createE2EEEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import Switch from '../../base/ui/components/web/Switch';
@@ -11,7 +11,7 @@ import { toggleE2EE } from '../actions';
 import { MAX_MODE } from '../constants';
 import { doesEveryoneSupportE2EE } from '../functions';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The resource for the description, computed based on the maxMode and whether the switch is toggled or not.
@@ -58,13 +58,13 @@ type State = {
  *
  * @augments Component
  */
-class E2EESection extends Component<Props, State> {
+class E2EESection extends Component<IProps, State> {
     /**
      * Implements React's {@link Component#getDerivedStateFromProps()}.
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, state: State) {
+    static getDerivedStateFromProps(props: IProps, state: State) {
         if (props._toggled !== state.toggled) {
 
             return {
@@ -80,7 +80,7 @@ class E2EESection extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -151,9 +151,9 @@ class E2EESection extends Component<Props, State> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     const { enabled: e2eeEnabled, maxMode } = state['features/e2ee'];
     const { e2eeLabels } = state['features/base/config'];
 

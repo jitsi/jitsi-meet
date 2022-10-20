@@ -172,7 +172,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-interface DialogProps {
+interface IDialogProps {
     back?: {
         hidden?: boolean;
         onClick?: () => void;
@@ -215,7 +215,7 @@ const Dialog = ({
     size = 'medium',
     title,
     titleKey
-}: DialogProps) => {
+}: IDialogProps) => {
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
     const { isUnmounting } = useContext(DialogTransitionContext);

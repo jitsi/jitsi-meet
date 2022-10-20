@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import { updateSettings } from '../../base/settings/actions';
@@ -13,7 +13,7 @@ import Dialog from '../../base/ui/components/web/Dialog';
 /**
  * The type of the React {@code Component} props of {@link ShareAudioDialog}.
  */
-export interface Props extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * Boolean stored in local storage that determines whether or not the dialog will be displayed again.
@@ -29,14 +29,14 @@ export interface Props extends WithTranslation {
 /**
  * Component that displays the audio screen share helper dialog.
  */
-class ShareAudioDialog extends Component<Props> {
+class ShareAudioDialog extends Component<IProps> {
 
     /**
      * Instantiates a new component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onContinue = this._onContinue.bind(this);
@@ -101,11 +101,11 @@ class ShareAudioDialog extends Component<Props> {
 /**
  * Maps part of the Redux state to the props of this component.
  *
- * @param {IState} state - The Redux state.
+ * @param {IReduxState} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState): Partial<Props> {
+function _mapStateToProps(state: IReduxState): Partial<IProps> {
 
     return {
         _shouldHideShareAudioHelper: shouldHideShareAudioHelper(state)

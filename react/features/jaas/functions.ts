@@ -1,4 +1,4 @@
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 
 import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -22,20 +22,20 @@ function extractVpaasTenantFromPath(path: string) {
 /**
  * Returns the vpaas tenant.
  *
- * @param {IState} state - The global state.
+ * @param {IReduxState} state - The global state.
  * @returns {string}
  */
-export function getVpaasTenant(state: IState) {
+export function getVpaasTenant(state: IReduxState) {
     return extractVpaasTenantFromPath(state['features/base/connection'].locationURL?.pathname ?? '');
 }
 
 /**
  * Returns true if the current meeting is a vpaas one.
  *
- * @param {IState} state - The state of the app.
+ * @param {IReduxState} state - The state of the app.
  * @returns {boolean}
  */
-export function isVpaasMeeting(state: IState) {
+export function isVpaasMeeting(state: IReduxState) {
     const connection = state['features/base/connection'];
 
     if (connection?.locationURL?.pathname) {
@@ -78,11 +78,11 @@ export async function sendGetDetailsRequest({ appId, baseUrl }: {
 /**
  * Returns the billing id for vpaas meetings.
  *
- * @param {IState} state - The state of the app.
+ * @param {IReduxState} state - The state of the app.
  * @param {string} feature - Feature to be looked up for disable state.
  * @returns {boolean}
  */
-export function isFeatureDisabled(state: IState, feature: string) {
+export function isFeatureDisabled(state: IReduxState, feature: string) {
     return state['features/jaas'].disabledFeatures.includes(feature);
 }
 
@@ -119,10 +119,10 @@ export async function sendGetJWTRequest({ appId, baseUrl }: {
 /**
  * Gets a jaas JWT.
  *
- * @param {IState} state - Redux state.
+ * @param {IReduxState} state - Redux state.
  * @returns {string} The JWT.
  */
-export async function getJaasJWT(state: IState) {
+export async function getJaasJWT(state: IReduxState) {
     const baseUrl = state['features/base/config'].jaasTokenUrl;
     const appId = getVpaasTenant(state);
 

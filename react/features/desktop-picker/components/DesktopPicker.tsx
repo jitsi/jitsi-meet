@@ -48,7 +48,7 @@ const VALID_TYPES = Object.keys(TAB_LABELS);
 /**
  * The type of the React {@code Component} props of {@link DesktopPicker}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * An array with desktop sharing sources to be displayed.
@@ -104,13 +104,13 @@ type State = {
  *
  * @augments Component
  */
-class DesktopPicker extends PureComponent<Props, State> {
+class DesktopPicker extends PureComponent<IProps, State> {
     /**
      * Implements React's {@link Component#getDerivedStateFromProps()}.
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props) {
+    static getDerivedStateFromProps(props: IProps) {
         return {
             types: DesktopPicker._getValidTypes(props.desktopSharingSources)
         };
@@ -151,7 +151,7 @@ class DesktopPicker extends PureComponent<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

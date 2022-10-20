@@ -2,7 +2,7 @@
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions';
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { endpointMessageReceived } from '../../subtitles/actions.any';
 import { getReplaceParticipant } from '../config/functions';
 import { disconnect } from '../connection/actions';
@@ -84,7 +84,7 @@ import { IJitsiConference } from './reducer';
  * @private
  * @returns {void}
  */
-function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore['dispatch'], state: IState) {
+function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore['dispatch'], state: IReduxState) {
     // A simple logger for conference errors received through
     // the listener. These errors are not handled now, but logged.
     conference.on(JitsiConferenceEvents.CONFERENCE_ERROR,

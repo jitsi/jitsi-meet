@@ -6,7 +6,7 @@ import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { COLORS } from '../../constants';
 
-interface Props {
+interface IProps {
 
     /**
      * Own CSS class name.
@@ -89,7 +89,7 @@ const Label = ({
     id,
     onClick,
     text
-}: Props) => {
+}: IProps) => {
     const { classes, cx } = useStyles();
 
     return (

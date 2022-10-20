@@ -1,4 +1,4 @@
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import { showOverflowDrawer } from '../toolbox/functions.web';
 
 import { GIF_PREFIX } from './constants';
@@ -7,11 +7,11 @@ import { IGif } from './reducer';
 /**
  * Gets the URL of the GIF for the given participant or null if there's none.
  *
- * @param {IState} state - Redux state.
+ * @param {IReduxState} state - Redux state.
  * @param {string} participantId - Id of the participant for which to remove the GIF.
  * @returns {Object}
  */
-export function getGifForParticipant(state: IState, participantId: string): IGif {
+export function getGifForParticipant(state: IReduxState, participantId: string): IGif {
     return isGifEnabled(state) ? state['features/gifs'].gifList.get(participantId) || {} : {};
 }
 
@@ -29,10 +29,10 @@ export function isGifMessage(message: string) {
 /**
  * Returns the visibility state of the gifs menu.
  *
- * @param {IState} state - The state of the application.
+ * @param {IReduxState} state - The state of the application.
  * @returns {boolean}
  */
-export function isGifsMenuOpen(state: IState) {
+export function isGifsMenuOpen(state: IReduxState) {
     const overflowDrawer = showOverflowDrawer(state);
     const { drawerVisible, menuOpen } = state['features/gifs'];
 
@@ -66,20 +66,20 @@ export function formatGifUrlMessage(url: string) {
 /**
  * Get the Giphy API Key from config.
  *
- * @param {IState} state - Redux state.
+ * @param {IReduxState} state - Redux state.
  * @returns {string}
  */
-export function getGifAPIKey(state: IState) {
+export function getGifAPIKey(state: IReduxState) {
     return state['features/base/config']?.giphy?.sdkKey ?? '';
 }
 
 /**
  * Returns whether or not the feature is enabled.
  *
- * @param {IState} state - Redux state.
+ * @param {IReduxState} state - Redux state.
  * @returns {boolean}
  */
-export function isGifEnabled(state: IState) {
+export function isGifEnabled(state: IReduxState) {
     const { disableThirdPartyRequests } = state['features/base/config'];
     const { giphy } = state['features/base/config'];
 
@@ -93,10 +93,10 @@ export function isGifEnabled(state: IState) {
 /**
  * Get the GIF display mode.
  *
- * @param {IState} state - Redux state.
+ * @param {IReduxState} state - Redux state.
  * @returns {string}
  */
-export function getGifDisplayMode(state: IState) {
+export function getGifDisplayMode(state: IReduxState) {
     const { giphy } = state['features/base/config'];
 
     return giphy?.displayMode || 'all';

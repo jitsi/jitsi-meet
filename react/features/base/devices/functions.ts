@@ -1,4 +1,4 @@
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { updateSettings } from '../settings/actions';
 import { ISettingsState } from '../settings/reducer';
@@ -24,7 +24,7 @@ const webrtcKindToJitsiKindTranslator = {
  * @returns {boolean} - True if the labels are already initialized and false
  * otherwise.
  */
-export function areDeviceLabelsInitialized(state: IState) {
+export function areDeviceLabelsInitialized(state: IReduxState) {
     // TODO: Replace with something that doesn't use APP when the conference.js logic is reactified.
     if (APP.conference._localTracksInitialized) {
         return true;
@@ -60,7 +60,7 @@ export function getAudioOutputDeviceId() {
  * of the preceding types.
  * @returns {string|undefined}
  */
-export function getDefaultDeviceId(state: IState, kind: string) {
+export function getDefaultDeviceId(state: IReduxState, kind: string) {
     const kindToSearch = webrtcKindToJitsiKindTranslator[kind as keyof typeof webrtcKindToJitsiKindTranslator] || kind;
     const availableDevices = state['features/base/devices'].availableDevices;
     const defaultDevice = (availableDevices[kindToSearch as keyof typeof availableDevices] || [])
@@ -85,7 +85,7 @@ export function getDefaultDeviceId(state: IState, kind: string) {
  * of the preceding types.
  * @returns {string|undefined}
  */
-export function getDeviceIdByLabel(state: IState, label: string, kind: string) {
+export function getDeviceIdByLabel(state: IReduxState, label: string, kind: string) {
     const kindToSearch = webrtcKindToJitsiKindTranslator[kind as keyof typeof webrtcKindToJitsiKindTranslator] || kind;
 
     const availableDevices = state['features/base/devices'].availableDevices;
@@ -108,7 +108,7 @@ export function getDeviceIdByLabel(state: IState, label: string, kind: string) {
  * of the preceding types.
  * @returns {string|undefined}
  */
-export function getDeviceLabelById(state: IState, id: string, kind: string) {
+export function getDeviceLabelById(state: IReduxState, id: string, kind: string) {
     const kindToSearch = webrtcKindToJitsiKindTranslator[kind as keyof typeof webrtcKindToJitsiKindTranslator] || kind;
 
     const availableDevices = state['features/base/devices'].availableDevices;
@@ -127,7 +127,7 @@ export function getDeviceLabelById(state: IState, id: string, kind: string) {
  * @param {Object} state - The redux state.
  * @returns {Object|undefined}
  */
-export function getDevicesFromURL(state: IState) {
+export function getDevicesFromURL(state: IReduxState) {
     const urlParams
         = parseURLParams(state['features/base/connection'].locationURL ?? '');
 
@@ -204,7 +204,7 @@ export function formatDeviceLabel(label: string) {
  * @param {Object} state - The state of the application.
  * @returns {Object[]}
  */
-export function getAudioInputDeviceData(state: IState) {
+export function getAudioInputDeviceData(state: IReduxState) {
     return state['features/base/devices'].availableDevices.audioInput?.map(
         ({ deviceId, label }) => {
             return {
@@ -220,7 +220,7 @@ export function getAudioInputDeviceData(state: IState) {
  * @param {Object} state - The state of the application.
  * @returns {Object[]}
  */
-export function getAudioOutputDeviceData(state: IState) {
+export function getAudioOutputDeviceData(state: IReduxState) {
     return state['features/base/devices'].availableDevices.audioOutput?.map(
         ({ deviceId, label }) => {
             return {
@@ -236,7 +236,7 @@ export function getAudioOutputDeviceData(state: IState) {
  * @param {Object} state - The state of the application.
  * @returns {string[]}
  */
-export function getVideoDeviceIds(state: IState) {
+export function getVideoDeviceIds(state: IReduxState) {
     return state['features/base/devices'].availableDevices.videoInput?.map(({ deviceId }) => deviceId);
 }
 
@@ -248,7 +248,7 @@ export function getVideoDeviceIds(state: IState) {
  *
  * @returns {boolean}
  */
-export function hasAvailableDevices(state: IState, type: string) {
+export function hasAvailableDevices(state: IReduxState, type: string) {
     if (state['features/base/devices'] === undefined) {
         return true;
     }
