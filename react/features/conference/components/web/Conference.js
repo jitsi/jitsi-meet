@@ -273,12 +273,19 @@ class Conference extends AbstractConference<Props, *> {
                     { _showPrejoin && <Prejoin /> }
                     { _showLobby && <LobbyScreen /> }
                 </div>
+
                 {
                     lonelyModerator
-                    && <Audio
-                        autoPlay = { true }
-                        loop = { true }
-                        src = { WAITING_ROOM_SOUND_PATH } />
+                    && <>
+                        <div id = 'lonely-meeting-message'>
+                            <div className = 'record' />
+                            Enjoy some music while waiting for other participants to join
+                        </div>
+                        <Audio
+                            autoPlay = { false }
+                            loop = { true }
+                            src = { WAITING_ROOM_SOUND_PATH } />
+                    </>
                 }
                 <ParticipantsPane />
             </div>

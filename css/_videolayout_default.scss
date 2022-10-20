@@ -193,6 +193,80 @@
     z-index: $reloadZ; /*The reload button should appear on top of the header!*/
 }
 
+#lonely-meeting-message {
+    bottom: 80px;
+    color: white;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    overflow: hidden;
+    position: absolute;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+
+    .record {
+        animation: 5s spinnow infinite linear;
+        position: relative;
+        margin: 19px auto;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background:
+            linear-gradient(30deg, transparent 40%, rgba(42, 41, 40, .85) 40%) no-repeat 100% 0,
+            linear-gradient(60deg, rgba(42, 41, 40, .85) 60%, transparent 60%) no-repeat 0 100%,
+            repeating-radial-gradient(#2a2928, #2a2928 4px, #ada9a0 5px, #2a2928 6px);
+        background-size: 50% 100%, 100% 50%, 100% 100%;
+        -moz-animation: 5s spinnow infinite linear;
+        -webkit-animation: 5s spinnow infinite linear;
+
+        @-webkit-keyframes spinnow {
+            100% {
+                transform: rotate(360deg);
+                -webkit-transform: rotate(360deg);
+            }
+        }
+        @-moz-keyframes spinnow {
+            100% {
+                transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+            }
+        }
+    }
+
+    .record:after {
+        animation: 5s spinnow infinite linear;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -35px;
+        border: solid 1px #d9a388;
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 4px #da5b33,
+        inset 0 0 0 27px #da5b33;
+        background: #b5ac9a;
+        content: '';
+        -moz-animation: 5s spinnow infinite linear;
+        -webkit-animation: 5s spinnow infinite linear;
+
+        @-webkit-keyframes spinnow {
+            100% {
+                transform: rotate(360deg);
+                -webkit-transform: rotate(360deg);
+            }
+        }
+        @-moz-keyframes spinnow {
+            100% {
+                transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+            }
+        }
+    }
+}
+
 #dominantSpeaker {
     visibility: hidden;
     width: 300px;
