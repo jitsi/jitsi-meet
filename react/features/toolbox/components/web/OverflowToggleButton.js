@@ -26,25 +26,11 @@ type Props = AbstractButtonProps & {
  */
 class OverflowToggleButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeMoreActions';
     icon = IconDotsHorizontal;
     label = 'toolbar.moreActions';
     toggledLabel = 'toolbar.moreActions';
-
-    /**
-     * Retrieves tooltip dynamically.
-     */
-    get tooltip() {
-        return 'toolbar.moreActions';
-    }
-
-    /**
-     * Required by linter due to AbstractButton overwritten prop being writable.
-     *
-     * @param {string} _value - The value.
-     */
-    set tooltip(_value) {
-        // Unused.
-    }
+    tooltip = 'toolbar.moreActions';
 
     /**
      * Indicates whether this button is in toggled state or not.

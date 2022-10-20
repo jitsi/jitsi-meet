@@ -30,23 +30,8 @@ class HangupToggleButton extends AbstractButton<Props, any, any> {
     label = 'toolbar.hangup';
     toggledIcon = IconCloseLarge;
     toggledLabel = 'toolbar.hangup';
+    tooltip = 'toolbar.hangup';
     props: Props;
-
-    /**
-     * Retrieves tooltip dynamically.
-     */
-    get tooltip() {
-        return 'toolbar.hangup';
-    }
-
-    /**
-     * Required by linter due to AbstractButton overwritten prop being writable.
-     *
-     * @param {string} _value - The value.
-     */
-    set tooltip(_value) {
-        // Unused.
-    }
 
     /**
      * Indicates whether this button is in toggled state or not.

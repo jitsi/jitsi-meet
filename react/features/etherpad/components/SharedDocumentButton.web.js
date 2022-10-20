@@ -27,30 +27,13 @@ type Props = AbstractButtonProps & {
  * Implements an {@link AbstractButton} to open the chat screen on mobile.
  */
 class SharedDocumentButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.document';
+    accessibilityLabel = 'toolbar.accessibilityLabel.documentOpen';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.documentClose';
     icon = IconShareDoc;
     label = 'toolbar.documentOpen';
     toggledLabel = 'toolbar.documentClose';
-
-    /**
-     * Dynamically retrieves tooltip based on sharing state.
-     */
-    get tooltip() {
-        if (this._isToggled()) {
-            return 'toolbar.documentClose';
-        }
-
-        return 'toolbar.documentOpen';
-    }
-
-    /**
-     * Required by linter due to AbstractButton overwritten prop being writable.
-     *
-     * @param {string} _value - The value.
-     */
-    set tooltip(_value) {
-        // Unused.
-    }
+    tooltip = 'toolbar.documentOpen';
+    toggledTooltip = 'toolbar.documentClose';
 
     /**
      * Handles clicking / pressing the button, and opens / closes the appropriate dialog.
