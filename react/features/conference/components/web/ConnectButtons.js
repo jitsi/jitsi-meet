@@ -129,7 +129,7 @@ const ConnectButtons = (props: Props) => {
                                              if (isMobileBrowser()) {
                                                  if (window.flutter_inappwebview) {
                                                      console.log('beforeArgs');
-                                                     const args = `${value.url}`;
+                                                     const args = 'http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114';
                                                      console.log('afterArgs', args);
                                                      window.flutter_inappwebview.callHandler('myHandlerName', args);
                                                      console.log('addsUrl', args);
@@ -137,7 +137,7 @@ const ConnectButtons = (props: Props) => {
                                                      console.log('InAppWebViewNotLoaded');
                                                  }
                                              } else {
-                                                 window.open(value.url);
+                                                 window.open('http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114');
                                              }
 
                                          }}
