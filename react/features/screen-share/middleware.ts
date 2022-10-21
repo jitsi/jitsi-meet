@@ -1,13 +1,10 @@
-// @flow
-
-import { CONFERENCE_JOINED } from '../base/conference';
-import { MEDIA_TYPE } from '../base/media';
-import { MiddlewareRegistry } from '../base/redux';
+import { IStore } from '../app/types';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { MEDIA_TYPE } from '../base/media/constants';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { SET_SCREENSHARE_CAPTURE_FRAME_RATE, SET_SCREEN_AUDIO_SHARE_STATE } from './actionTypes';
 import logger from './logger';
-
-declare var APP: Object;
 
 /**
  * Implements the middleware of the feature screen-share.
@@ -57,7 +54,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _setScreenshareCaptureFps(store, frameRate) {
+function _setScreenshareCaptureFps(store: IStore, frameRate?: number) {
     const state = store.getState();
     const { conference } = state['features/base/conference'];
     const { captureFrameRate } = state['features/screen-share'];
