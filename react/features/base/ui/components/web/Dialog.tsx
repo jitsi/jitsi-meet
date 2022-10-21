@@ -1,5 +1,6 @@
 import { Theme } from '@mui/material';
 import React, { useCallback, useContext, useEffect } from 'react';
+import FocusLock from 'react-focus-lock';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { keyframes } from 'tss-react';
@@ -57,7 +58,6 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         modal: {
-            zIndex: 1,
             backgroundColor: theme.palette.ui01,
             border: `1px solid ${theme.palette.ui03}`,
             boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
@@ -168,6 +168,10 @@ const useStyles = makeStyles()((theme: Theme) => {
             '& button:last-child': {
                 marginLeft: '16px'
             }
+        },
+
+        focusLock: {
+            zIndex: 1
         }
     };
 });
@@ -255,47 +259,49 @@ const Dialog = ({
             <div
                 className = { classes.backdrop }
                 onClick = { onBackdropClick } />
-            <div
-                aria-describedby = { description }
-                aria-labelledby = { title ?? t(titleKey ?? '') }
-                aria-modal = { true }
-                className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
-                role = 'dialog'>
-                <div className = { classes.header }>
-                    <p
-                        className = { classes.title }
-                        id = 'dialog-title'>
-                        {title ?? t(titleKey ?? '')}
-                    </p>
-                    {!hideCloseButton && (
-                        <ClickableIcon
-                            accessibilityLabel = { t('dialog.close') }
-                            icon = { IconClose }
-                            id = 'modal-header-close-button'
-                            onClick = { onClose } />
-                    )}
+            <FocusLock className = { classes.focusLock }>
+                <div
+                    aria-describedby = { description }
+                    aria-labelledby = { title ?? t(titleKey ?? '') }
+                    aria-modal = { true }
+                    className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
+                    role = 'dialog'>
+                    <div className = { classes.header }>
+                        <p
+                            className = { classes.title }
+                            id = 'dialog-title'>
+                            {title ?? t(titleKey ?? '')}
+                        </p>
+                        {!hideCloseButton && (
+                            <ClickableIcon
+                                accessibilityLabel = { t('dialog.close') }
+                                icon = { IconClose }
+                                id = 'modal-header-close-button'
+                                onClick = { onClose } />
+                        )}
+                    </div>
+                    <div className = { classes.content }>{children}</div>
+                    <div className = { classes.footer }>
+                        {!back.hidden && <Button
+                            accessibilityLabel = { t(back.translationKey ?? '') }
+                            labelKey = { back.translationKey }
+                            // eslint-disable-next-line react/jsx-handler-names
+                            onClick = { back.onClick }
+                            type = 'secondary' />}
+                        {!cancel.hidden && <Button
+                            accessibilityLabel = { t(cancel.translationKey ?? '') }
+                            labelKey = { cancel.translationKey }
+                            onClick = { onClose }
+                            type = 'tertiary' />}
+                        {!ok.hidden && <Button
+                            accessibilityLabel = { t(ok.translationKey ?? '') }
+                            disabled = { ok.disabled }
+                            id = 'modal-dialog-ok-button'
+                            labelKey = { ok.translationKey }
+                            onClick = { submit } />}
+                    </div>
                 </div>
-                <div className = { classes.content }>{children}</div>
-                <div className = { classes.footer }>
-                    {!back.hidden && <Button
-                        accessibilityLabel = { t(back.translationKey ?? '') }
-                        labelKey = { back.translationKey }
-                        // eslint-disable-next-line react/jsx-handler-names
-                        onClick = { back.onClick }
-                        type = 'secondary' />}
-                    {!cancel.hidden && <Button
-                        accessibilityLabel = { t(cancel.translationKey ?? '') }
-                        labelKey = { cancel.translationKey }
-                        onClick = { onClose }
-                        type = 'tertiary' />}
-                    {!ok.hidden && <Button
-                        accessibilityLabel = { t(ok.translationKey ?? '') }
-                        disabled = { ok.disabled }
-                        id = 'modal-dialog-ok-button'
-                        labelKey = { ok.translationKey }
-                        onClick = { submit } />}
-                </div>
-            </div>
+            </FocusLock>
         </div>
     );
 };
