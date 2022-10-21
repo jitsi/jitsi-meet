@@ -19,6 +19,8 @@
         "**/mobile/*",
         "**/native/*",
         "**/*.native.ts",
-        "**/*.native.tsx"
+        "**/*.native.tsx",
+        "**/*.ios.ts",
+        "**/*.android.ts"
     ]
 }

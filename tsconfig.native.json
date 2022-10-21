@@ -12,12 +12,13 @@
         "noImplicitAny": true,
         "strictPropertyInitialization": false,
         "resolveJsonModule": true,
-        "moduleSuffixes": [".native", ""]
+        "moduleSuffixes": [".native", ".ios", ".android", ""]
     },
     "exclude": [
         "node_modules",
         "react/features/base/components/participants-pane-list",
         "react/features/connection-stats",
+        "react/features/desktop-picker",
         "react/features/e2ee",
         "react/features/embed-meeting",
         "react/features/face-landmarks",
@@ -26,6 +27,7 @@
         "react/features/stream-effects/noise-suppression",
         "react/features/stream-effects/rnnoise",
         "react/features/virtual-background",
+        "react/features/whiteboard",
         "**/web/*",
         "**/*.web.ts",
         "**/*.web.tsx"

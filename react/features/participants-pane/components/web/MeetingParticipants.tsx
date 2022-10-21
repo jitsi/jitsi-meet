@@ -15,7 +15,7 @@ import { getParticipantById, isScreenShareParticipant } from '../../../base/part
 import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
-import useContextMenu from '../../../base/ui/hooks/useContextMenu';
+import useContextMenu from '../../../base/ui/hooks/useContextMenu.web';
 import { normalizeAccents } from '../../../base/util/strings.web';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';

@@ -1,4 +1,4 @@
-import { getSdkBundlePath } from '../../app/functions';
+import { getSdkBundlePath } from '../../app/functions.native';
 
 /**
  * Returns the location of the sounds. On iOS it's the location of the SDK

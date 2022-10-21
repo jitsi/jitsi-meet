@@ -419,7 +419,7 @@ export function safeDecodeURIComponent(text: string) {
  * @returns {string} - A {@code String} representation of the specified
  * {@code obj} which is supposed to represent a URL.
  */
-export function toURLString(obj?: (Object | string)): string | undefined | null {
+export function toURLString(obj?: (Object | string)) {
     let str;
 
     switch (typeof obj) {

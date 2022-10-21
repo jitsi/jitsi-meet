@@ -19,7 +19,7 @@ import { setPreferredVideoQuality } from '../actions';
 import { DEFAULT_LAST_N, VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';
 
-import Slider from './Slider';
+import Slider from './Slider.web';
 
 const {
     ULTRA,

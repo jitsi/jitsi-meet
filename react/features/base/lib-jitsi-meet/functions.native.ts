@@ -1,9 +1,8 @@
-// @flow
-
+// @ts-ignore
 import Bourne from '@hapi/bourne';
 import { NativeModules } from 'react-native';
 
-import { loadScript } from '../util';
+import { loadScript } from '../util/loadScript.native';
 
 import logger from './logger';
 

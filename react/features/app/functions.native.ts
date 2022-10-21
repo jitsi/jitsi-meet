@@ -1,9 +1,8 @@
-// @flow
-
 import { NativeModules } from 'react-native';
 
-import { toState } from '../base/redux';
-import { getServerURL } from '../base/settings';
+import { IStateful } from '../base/app/types';
+import { toState } from '../base/redux/functions';
+import { getServerURL } from '../base/settings/functions';
 
 export * from './functions.any';
 
@@ -15,7 +14,7 @@ export * from './functions.any';
  * function.
  * @returns {string} - Default URL for the app.
  */
-export function getDefaultURL(stateful: Function | Object) {
+export function getDefaultURL(stateful: IStateful) {
     const state = toState(stateful);
 
     return getServerURL(state);

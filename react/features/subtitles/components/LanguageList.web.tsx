@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 
-import LanguageListItem from './LanguageListItem';
+import LanguageListItem from './LanguageListItem.web';
 
 interface ILanguageListProps {
     items: Array<ILanguageItem>;

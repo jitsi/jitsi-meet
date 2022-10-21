@@ -18,7 +18,7 @@ import { SETTINGS_TABS } from '../../settings/constants';
 // @ts-ignore
 import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage } from '../actions';
 
-import LanguageList from './LanguageList';
+import LanguageList from './LanguageList.web';
 
 
 interface ILanguageSelectorDialogProps extends WithTranslation {

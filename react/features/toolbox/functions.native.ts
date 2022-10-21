@@ -1,10 +1,11 @@
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
-import { hasAvailableDevices } from '../base/devices';
-import { TOOLBOX_ALWAYS_VISIBLE, TOOLBOX_ENABLED, getFeatureFlag } from '../base/flags';
-import { getParticipantCountWithFake } from '../base/participants';
-import { toState } from '../base/redux';
-import { isLocalVideoTrackDesktop } from '../base/tracks';
+import { hasAvailableDevices } from '../base/devices/functions';
+import { TOOLBOX_ALWAYS_VISIBLE, TOOLBOX_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
+import { getParticipantCountWithFake } from '../base/participants/functions';
+import { toState } from '../base/redux/functions';
+import { isLocalVideoTrackDesktop } from '../base/tracks/functions';
 
 export * from './functions.any';
 
