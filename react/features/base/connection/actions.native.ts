@@ -141,12 +141,16 @@ function _connectionWillConnect(connection: Object) {
     };
 }
 
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Closes connection.
  *
+ * @param {boolean} _ - Used in web.
  * @returns {Function}
  */
-export function disconnect() {
+export function disconnect(_?: boolean) {
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<void> => {
         const state = getState();
 

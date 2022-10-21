@@ -4,13 +4,13 @@ import { TouchableRipple } from 'react-native-paper';
 import Icon from '../../../icons/components/Icon';
 import BaseTheme from '../../../ui/components/BaseTheme.native';
 import { BUTTON_TYPES } from '../../../ui/constants';
-import { IconButtonProps } from '../../types';
+import { IIconButtonProps } from '../../types';
 
 // @ts-ignore
 import styles from './styles';
 
 
-const IconButton: React.FC<IconButtonProps> = ({
+const IconButton: React.FC<IIconButtonProps> = ({
     accessibilityLabel,
     color: iconColor,
     disabled,
@@ -20,7 +20,7 @@ const IconButton: React.FC<IconButtonProps> = ({
     style,
     tapColor,
     type
-}: IconButtonProps) => {
+}: IIconButtonProps) => {
     const { PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
 
     let color;

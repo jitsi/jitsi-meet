@@ -45,13 +45,13 @@ import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 // @ts-ignore
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
 import { isDisplayNameRequired } from '../functions';
-import { PrejoinProps } from '../types';
+import { IPrejoinProps } from '../types';
 
 // @ts-ignore
 import styles from './styles';
 
 
-const Prejoin: React.FC<PrejoinProps> = ({ navigation }: PrejoinProps) => {
+const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const dispatch = useDispatch();
     const isFocused = useIsFocused();
     const { t } = useTranslation();

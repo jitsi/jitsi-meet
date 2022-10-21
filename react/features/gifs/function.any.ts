@@ -1,5 +1,4 @@
 import { IReduxState } from '../app/types';
-import { showOverflowDrawer } from '../toolbox/functions.web';
 
 import { GIF_PREFIX } from './constants';
 import { IGif } from './reducer';
@@ -24,19 +23,6 @@ export function getGifForParticipant(state: IReduxState, participantId: string):
 export function isGifMessage(message: string) {
     return message.trim().toLowerCase()
         .startsWith(GIF_PREFIX);
-}
-
-/**
- * Returns the visibility state of the gifs menu.
- *
- * @param {IReduxState} state - The state of the application.
- * @returns {boolean}
- */
-export function isGifsMenuOpen(state: IReduxState) {
-    const overflowDrawer = showOverflowDrawer(state);
-    const { drawerVisible, menuOpen } = state['features/gifs'];
-
-    return overflowDrawer ? drawerVisible : menuOpen;
 }
 
 /**

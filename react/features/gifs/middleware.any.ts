@@ -4,7 +4,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { ADD_GIF_FOR_PARTICIPANT, HIDE_GIF_FOR_PARTICIPANT, SHOW_GIF_FOR_PARTICIPANT } from './actionTypes';
 import { removeGif } from './actions';
 import { GIF_DEFAULT_TIMEOUT } from './constants';
-import { getGifForParticipant } from './functions';
+import { getGifForParticipant } from './function.any';
 
 /**
  * Middleware which intercepts Gifs actions to handle changes to the
@@ -57,5 +57,5 @@ MiddlewareRegistry.register(store => next => action => {
 function _clearGifTimeout(state: IReduxState, id: string) {
     const gif = getGifForParticipant(state, id);
 
-    clearTimeout(gif?.timeoutID);
+    clearTimeout(gif?.timeoutID ?? -1);
 }

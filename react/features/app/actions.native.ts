@@ -1,38 +1,41 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import { setRoom } from '../base/conference';
+/* eslint-disable lines-around-comment */
+import { setRoom } from '../base/conference/actions';
 import {
     configWillLoad,
-    createFakeConfig,
     loadConfigError,
-    restoreConfig,
     setConfig,
     storeConfig
-} from '../base/config';
-import { connect, disconnect, setLocationURL } from '../base/connection';
+} from '../base/config/actions';
+import {
+    createFakeConfig,
+    restoreConfig
+} from '../base/config/functions';
+import { connect, disconnect, setLocationURL } from '../base/connection/actions';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
-import { createDesiredLocalTracks } from '../base/tracks';
+import { createDesiredLocalTracks } from '../base/tracks/actions';
+import { parseURLParams } from '../base/util/parseURLParams';
 import {
     appendURLParam,
     getBackendSafeRoomName,
     parseURIString,
-    parseURLParams,
     toURLString
-} from '../base/util';
+} from '../base/util/uri';
+// @ts-ignore
 import { isPrejoinPageEnabled } from '../mobile/navigation/functions';
 import {
     goBackToRoot,
     navigateRoot
+    // @ts-ignore
 } from '../mobile/navigation/rootNavigationContainerRef';
+// @ts-ignore
 import { screen } from '../mobile/navigation/routes';
-import { clearNotifications } from '../notifications';
+import { clearNotifications } from '../notifications/actions';
+// @ts-ignore
 import { setFatalError } from '../overlay';
 
-import { getDefaultURL } from './functions';
-import { addTrackStateToURL } from './functions.native';
+import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
+import { IStore } from './types';
 
 export * from './actions.any';
 
@@ -48,7 +51,7 @@ export * from './actions.any';
 export function appNavigate(uri?: string) {
     logger.info(`appNavigate to ${uri}`);
 
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let location = parseURIString(uri);
 
         // If the specified location (URI) does not identify a host, use the app's
@@ -93,7 +96,7 @@ export function appNavigate(uri?: string) {
         let url = `${baseURL}config.js`;
 
         // XXX In order to support multiple shards, tell the room to the deployment.
-        room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room)));
+        room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room) ?? ''));
 
         const { release } = parseURLParams(location, true, 'search');
 
@@ -110,7 +113,7 @@ export function appNavigate(uri?: string) {
             try {
                 config = await loadConfig(url);
                 dispatch(storeConfig(baseURL, config));
-            } catch (error) {
+            } catch (error: any) {
                 config = restoreConfig(baseURL);
 
                 if (!config) {
@@ -160,13 +163,14 @@ export function appNavigate(uri?: string) {
  * @returns {Function}
  */
 export function reloadNow() {
-    return (dispatch: Dispatch<Function>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         dispatch(setFatalError(undefined));
 
         const state = getState();
         const { locationURL } = state['features/base/connection'];
 
         // Preserve the local tracks muted state after the reload.
+        // @ts-ignore
         const newURL = addTrackStateToURL(locationURL, state);
 
         logger.info(`Reloading the conference using URL: ${locationURL}`);

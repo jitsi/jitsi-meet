@@ -21,7 +21,7 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { addGif } from '../gifs/actions';
 import { GIF_PREFIX } from '../gifs/constants';
-import { getGifDisplayMode, isGifMessage } from '../gifs/functions';
+import { getGifDisplayMode, isGifMessage } from '../gifs/function.any';
 import { showMessageNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { resetNbUnreadPollsMessages } from '../polls/actions';

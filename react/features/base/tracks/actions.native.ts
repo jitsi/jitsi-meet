@@ -17,7 +17,7 @@ export * from './actions.any';
  * @param {boolean} enabled - The state to toggle screen sharing to.
  * @returns {Function}
  */
-export function toggleScreensharing(enabled: boolean): Function {
+export function toggleScreensharing(enabled: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
