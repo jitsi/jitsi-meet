@@ -2,7 +2,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     REMOVE_TRANSCRIPT_MESSAGE,
-    SEND_TRANSCRIPT_DATA,
+    SEND_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
@@ -14,7 +14,7 @@ import {
 const defaultState = {
     _transcriptMessages: new Map(),
     _requestingSubtitles: false,
-    _sendTranscriptMessage: String
+    _sendTranscriptMessage: []
 };
 
 /**
@@ -22,7 +22,7 @@ const defaultState = {
  * to update the rendered transcription subtitles.
  */
 ReducerRegistry.register('features/subtitles', (
-        state = defaultState, action) => {
+    state = defaultState, action) => {
     switch (action.type) {
     case REMOVE_TRANSCRIPT_MESSAGE:
         return _removeTranscriptMessage(state, action);
@@ -39,7 +39,7 @@ ReducerRegistry.register('features/subtitles', (
             ...state,
             _requestingSubtitles: action.enabled
         };
-    case SEND_TRANSCRIPT_DATA:
+    case SEND_TRANSCRIPT_MESSAGE:
         return {
             ...state,
             _sendTranscriptMessage: action.data
@@ -80,7 +80,10 @@ function _removeTranscriptMessage(state, { transcriptMessageID }) {
  * reduction of the specified action.
  */
 function _updateTranscriptMessage(state,
-        { transcriptMessageID, newTranscriptMessage }) {
+    {
+        transcriptMessageID,
+        newTranscriptMessage
+    }) {
     const newTranscriptMessages = new Map(state._transcriptMessages);
 
     // Updates the new message for the given key in the Map.

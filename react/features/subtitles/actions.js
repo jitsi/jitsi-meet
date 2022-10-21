@@ -3,7 +3,7 @@
 import {
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
-    SEND_TRANSCRIPT_DATA,
+    SEND_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
@@ -98,17 +98,18 @@ export function setRequestingSubtitles(enabled: boolean) {
 /**
  * It is used to show the details of transcriber data
  *
- * @param {boolean} enabled - The new state of the subtitles.
  * @returns {{
- *    type: SEND_TRANSCRIPT_DATA,
- *    data: data
+ *    type: SEND_TRANSCRIPT_MESSAGE,
+ *    data: bite
  * }}
+ * @param bite
  */
-export function showTranscriptData(data) {
+export function showTranscriptData(bite) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         dispatch({
-            type: SEND_TRANSCRIPT_DATA,
-            data: data
+            type: SEND_TRANSCRIPT_MESSAGE,
+            data: bite
         });
     };
 }
+

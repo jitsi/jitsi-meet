@@ -115,6 +115,7 @@ import DownloadSelfie from './DownloadSelfie';
 import jwt_decode from 'jwt-decode';
 import DownloadAudioRecorder from './DownloadAudioRecorder';
 import DownloadVideoRecorder from './DownloadVideoRecorder';
+import TokDetails from '../../../tok-details/components/web/TokDetails';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -1297,12 +1298,12 @@ class Toolbox extends Component<Props> {
                  })}>
                 <SideButtons/>
                 <ConnectButtons/>
-                {<p style={{
+                {/*  {<p style={{
                     textAlign: 'start',
                     fontSize: '14px',
                     color: 'white',
                     paddingLeft: '20%'
-                }}>{this.props._sendTranscriptMessage}</p>}
+                }}>{this.props._sendTranscriptMessage}</p>} */}
             </div>
             <div
                 className="toolbox-content-wrapper1"
@@ -1367,6 +1368,7 @@ class Toolbox extends Component<Props> {
                                         </ContextMenuItemGroup>))}
                             </ContextMenu>
                         </OverflowMenuButton>)}
+                    <TokDetails/>
                     {this.decodeJwt.selfie === 'N' ? '' : this.decodeJwt.celebrity === 'Y' ? '' : this.decodeJwt.selfie === 'A' ?
                         <DownloadAudioRecorder
                             buttonKey="selfie"

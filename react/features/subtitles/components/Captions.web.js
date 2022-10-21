@@ -37,6 +37,7 @@ let textStore = '';
 let transcriptJSonData;
 let stringData;
 let parseData;
+let allData = [];
 
 class Captions extends AbstractCaptions<Props> {
 
@@ -53,13 +54,13 @@ class Captions extends AbstractCaptions<Props> {
     constructor(props) {
         super(props);
         this.state = {
-            data: '',
-            i: 0
+            data: ''
         };
     };
 
     componentDidMount() {
         setInterval(async () => {
+            allData = [];
             const args = `${textStore}`;
             try {
                 if (isMobileBrowser()) {
@@ -69,15 +70,14 @@ class Captions extends AbstractCaptions<Props> {
                             .then((e) => {
                                 transcriptJSonData = JSON.stringify(e);
                                 const { transcriptBite } = JSON.parse(transcriptJSonData);
-                                if (this.state.i < 6) {
-                                    this.setState({
-                                        i: this.state.i + 1,
-                                        data: `${transcriptBite[this.state.i]['bite']} ${transcriptBite[this.state.i]['count']}`
-                                    });
-                                } else {
-                                    this.state.data = '';
-                                    this.state.i = 0;
+                                console.log('transcriptBite', transcriptBite);
+                                for (let i = 0; i < transcriptBite.length; i++) {
+                                    allData.push(`${transcriptBite[i]['bite']} ${transcriptBite[i]['count']}`);
                                 }
+                                this.setState({
+                                    data: allData
+                                });
+
                             });
                         this.props.dispatch(showTranscriptData(this.state.data));
                         textStore = '';
@@ -92,17 +92,15 @@ class Captions extends AbstractCaptions<Props> {
                     window.addEventListener('message', (event) => {
                         stringData = JSON.stringify(event.data);
                         parseData = JSON.parse(stringData);
+                        console.log('parseData', parseData);
                     });
-                    if (this.state.i < 6) {
-                        this.setState({
-                            i: this.state.i + 1,
-                            data: `${parseData[this.state.i]['bite']} ${parseData[this.state.i]['count']}`
-                        });
-                    } else {
-                        this.state.data = '';
-                        this.state.i = 0;
+                    for (let i = 0; i < parseData.length; i++) {
+                        allData.push(`${parseData[i]['bite']} ${parseData[i]['count']}`);
                     }
-                    console.log(`dataaaaa  ${this.state.data}`);
+
+                    this.setState({
+                        data: allData
+                    });
                     this.props.dispatch(showTranscriptData(this.state.data));
                     textStore = '';
                 }

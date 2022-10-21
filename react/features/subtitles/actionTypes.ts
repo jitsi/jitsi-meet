@@ -39,11 +39,11 @@ export const UPDATE_TRANSCRIPT_MESSAGE = 'UPDATE_TRANSCRIPT_MESSAGE';
  * given message_id to be added or updated is received.
  *
  * {
- *      type: SEND_TRANSCRIPT_DATA,
- *      _sendTranscriptMessage: string,
+ *      type: SEND_TRANSCRIPT_MESSAGE,
+ *      _sendTranscriptMessage: Array,
  * }
  */
-export const SEND_TRANSCRIPT_DATA = 'SEND_TRANSCRIPT_DATA';
+export const SEND_TRANSCRIPT_MESSAGE = 'SEND_TRANSCRIPT_MESSAGE';
 
 /**
  * The type of (redux) action which indicates that the user pressed the
