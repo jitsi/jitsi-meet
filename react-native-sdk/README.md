@@ -46,3 +46,4 @@ Run `cd ios && pod install && cd ..`
 - Add Copy Sounds step to build.gradle
 - Include copy sounds step in podspec (if possible)
 - Add ranges for dependencies
+- Add Build_Config for react native to AppInfoModule
