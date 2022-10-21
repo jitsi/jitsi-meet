@@ -599,13 +599,13 @@
         "passwordJoinButton": "Entra",
         "reject": "Respingi",
         "rejectAll": "Respingi tutti",
+        "title": "Sala d'attesa",
         "toggleLabel": "Attiva sala d'attesa"
     },
     "localRecording": {
         "clientState": {
             "off": "Spento",
             "on": "Acceso",
-            "unknown": "Sconosciuto"
             "unknown": "Sconosciuto"
         },
         "dialogTitle": "Controlli di registrazione locale",
