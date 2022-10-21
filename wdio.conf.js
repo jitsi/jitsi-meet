@@ -1,16 +1,13 @@
-const { ONEPLUSA5000 } = require('./modules/mobile-tests/helpers/capabilities');
-const { MAX_INSTANCES } = require('./modules/mobile-tests/helpers/constants');
+/* eslint-disable no-unused-vars, object-shorthand */
 
+const { ONEPLUSA5000 } = require('./modules/mobile-tests/helpers/capabilities');
 
 exports.config = {
     //
     // ====================
     // Runner Configuration
     // ====================
-    // WebdriverIO allows it to run your tests in arbitrary locations (e.g. locally or
-    // on a remote machine).
-    runner: 'local',
-
+    //
     port: 4723,
 
     //
@@ -30,7 +27,7 @@ exports.config = {
     // will be called from there.
     //
     specs: [
-        './modules/mobile-tests/specs/**/*.js'
+        './modules/mobile-tests/specs/test.e2e.js'
     ],
 
     // Patterns to exclude.
@@ -55,18 +52,31 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: MAX_INSTANCES,
 
-    //
+    maxInstances: 10,
+
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    capabilities: [
-        ONEPLUSA5000
-    ],
+    capabilities: [ {
 
-    //
+        ONEPLUSA5000,
+
+        // maxInstances can get overwritten per capability. So if you have an in-house Selenium
+        // grid with only 5 firefox instances available you can make sure that not more than
+        // 5 instances get started at a time.
+
+        maxInstances: 5,
+        browserName: 'chrome',
+        acceptInsecureCerts: true
+
+        // If outputDir is provided WebdriverIO can capture driver session logs
+        // it is possible to configure which logTypes to include/exclude.
+        // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
+        // excludeDriverLogs: ['bugreport', 'server'],
+    } ],
+
     // ===================
     // Test Configurations
     // ===================
@@ -75,11 +85,11 @@ exports.config = {
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'info',
 
-    //
     // Set specific log levels per logger
     // loggers:
     // - webdriver, webdriverio
     // - @wdio/browserstack-service, @wdio/devtools-service, @wdio/sauce-service
+    // - @wdio/mocha-framework, @wdio/jasmine-framework
     // - @wdio/local-runner
     // - @wdio/sumologic-reporter
     // - @wdio/cli, @wdio/config, @wdio/utils
@@ -93,43 +103,27 @@ exports.config = {
     // bail (default is 0 - don't bail, run all tests).
     bail: 0,
 
-    //
     // Set a base URL in order to shorten url command calls. If your `url` parameter starts
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
     baseUrl: 'http://127.0.0.1:4723/wd/hub/',
 
-    //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
 
-    //
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
     connectionRetryTimeout: 120000,
 
-    //
     // Default request retries count
     connectionRetryCount: 3,
 
-    //
     // Test runner services
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: [ 'selenium-standalone', 'electron', [ 'appium', {
-        command: 'appium',
-        args: {
-            // This is needed to tell Appium that we can execute local ADB commands
-            // and to automatically download the latest version of ChromeDriver
-            relaxedSecurity: true,
-            address: 'localhost',
-
-            // Write the Appium logs to a file in the root of the directory
-            log: './appium.log'
-        }
-    } ], 'crossbrowsertesting', 'eslinter', 'slack' ],
+    services: [ 'appium' ],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -137,9 +131,8 @@ exports.config = {
     //
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
-    framework: 'mocha',
+    framework: 'jasmine',
 
-    //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
     //
@@ -152,20 +145,19 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    // reporters: ['dot'],
+    reporters: [ 'junit' ],
 
+    // Options to be passed to Jasmine.
+    jasmineOpts: {
+        // Jasmine default timeout
+        defaultTimeoutInterval: 60000,
 
-    //
-    // Options to be passed to Mocha.
-    // See the full list at http://mochajs.org/
-    mochaOpts: {
-        ui: 'bdd',
-
-        /**
-         * NOTE: This has been increased for more stable Appium Native app
-         * tests because they can take a bit longer.
-         */
-        timeout: 3 * 60 * 1000 // 3min
+        // The Jasmine framework allows interception of each assertion in order to log the state of the application
+        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
+        // an assertion fails.
+        expectationResultHandler: function(passed, assertion) {
+            // do something
+        }
     }
 
     //
@@ -310,8 +302,8 @@ exports.config = {
     // },
     /**
     * Gets executed when a refresh happens.
-    * @param {String} oldSessionId session ID of the old session
-    * @param {String} newSessionId session ID of the new session
+    * @param {String} oldSessionId session ID of the old session.
+    * @param {String} newSessionId session ID of the new session.
     */
     // onReload: function(oldSessionId, newSessionId) {
     // }

@@ -60,8 +60,6 @@
     "@types/w3c-image-capture": "1.0.6",
     "@vladmandic/human": "2.6.5",
     "@vladmandic/human-models": "2.5.9",
-    "@wdio/cli": "7.20.9",
-    "@wdio/mocha-framework": "7.23.0",
     "@wdio/sync": "7.20.9",
     "@xmldom/xmldom": "0.7.5",
     "amplitude-js": "8.2.1",
@@ -166,6 +164,11 @@
     "@types/zxcvbn": "4.4.1",
     "@typescript-eslint/eslint-plugin": "5.30.5",
     "@typescript-eslint/parser": "5.30.4",
+    "@wdio/appium-service": "7.20.8",
+    "@wdio/cli": "7.25.2",
+    "@wdio/crossbrowsertesting-service": "7.20.9",
+    "@wdio/jasmine-framework": "7.25.1",
+    "@wdio/junit-reporter": "7.25.1",
     "babel-loader": "8.2.3",
     "babel-plugin-optional-require": "0.3.1",
     "circular-dependency-plugin": "5.2.0",
@@ -210,7 +213,8 @@
     "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
-    "start": "make dev"
+    "start": "make dev",
+    "wdio": "wdio run wdio.conf.js --watch"
   },
   "resolutions": {
     "@types/react": "17.0.14",
