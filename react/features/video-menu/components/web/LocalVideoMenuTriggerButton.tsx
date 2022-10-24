@@ -9,8 +9,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconHorizontalPoints } from '../../../base/icons/svg';
 import { getLocalParticipant } from '../../../base/participants/functions';
-// @ts-ignore
-import { Popover } from '../../../base/popover';
+import Popover from '../../../base/popover/components/Popover.web';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import { getHideSelfView } from '../../../base/settings/functions.web';
 import { getLocalVideoTrack } from '../../../base/tracks/functions';

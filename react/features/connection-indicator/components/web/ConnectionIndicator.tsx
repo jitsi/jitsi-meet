@@ -16,8 +16,7 @@ import {
     getParticipantById,
     isScreenShareParticipant
 } from '../../../base/participants/functions';
-// @ts-ignore
-import { Popover } from '../../../base/popover';
+import Popover from '../../../base/popover/components/Popover.web';
 import {
     getSourceNameByParticipantId,
     getTrackByMediaTypeAndParticipant,
@@ -253,7 +252,6 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                     participantId = { participantId } /> }
                 disablePopover = { !enableStatsDisplay }
                 id = 'participant-connection-indicator'
-                noPaddingContent = { true }
                 onPopoverClose = { this._onHidePopover }
                 onPopoverOpen = { this._onShowPopover }
                 position = { statsPopoverPosition }
