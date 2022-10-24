@@ -54,7 +54,10 @@ const INITIAL_RN_STATE: IConfig = {
     },
 
     videoQuality: {
-        preferredCodec: 'VP8'
+        // FIXME: Mobile codecs should probably be configurable separately, rather
+        // than requiring this override here...
+        enforcePreferredCodec: true,
+        preferredCodec: 'vp8'
     }
 };
 
