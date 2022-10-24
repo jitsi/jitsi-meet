@@ -45,12 +45,22 @@ function handle_get_room_census(event)
         return { status_code = 400; }
     end
 
-    room_data = {}
+    room_data = {};
+    moderator = {};
     for room in host_session.modules.muc.each_room() do
         if not is_healthcheck_room(room.jid) then
             local occupants = room._occupants;
             if occupants then
-                participant_count = iterators.count(room:each_occupant()) - 1; -- subtract focus
+                participant_count = iterators.count(room:each_occupant()) - 1;
+                for k, v in pairs(occupants) do
+                    if string.find(k, "/focus") == nil then
+                        local last_index = 0;
+                        while k:sub(last_index+1, k:len()):find("%/") ~= nil do
+                            last_index = last_index + k:sub(last_index+1, k:len()):find("%/");
+                        end
+                        table.insert(moderator, string.sub(k, last_index+1, string.len(k)));
+                    end
+                end -- subtract focus
             else
                 participant_count = 0
             end
@@ -58,6 +68,7 @@ function handle_get_room_census(event)
                 room_name = room.jid;
                 participants = participant_count;
                 created_time = room.created_timestamp;
+                moderator = moderator;
             });
         end
     end
