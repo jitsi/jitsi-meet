@@ -6,6 +6,7 @@ import type { Dispatch } from 'redux';
 import { openDialog } from '../../../base/dialog';
 import { IconUserGroups } from '../../../base/icons';
 import { Label } from '../../../base/label';
+import { COLORS } from '../../../base/label/constants';
 import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { SpeakerStats } from '../../../speaker-stats';
@@ -35,7 +36,7 @@ type Props = {
     /**
      * Weather or not the speaker stats is disabled.
      */
-     _isSpeakerStatsDisabled: Boolean,
+    _isSpeakerStatsDisabled: Boolean,
 };
 
 /**
@@ -86,7 +87,9 @@ class ParticipantsCount extends PureComponent<Props> {
 
         return (
             <Label
+                color = { COLORS.white }
                 icon = { IconUserGroups }
+                iconColor = '#fff'
                 onClick = { !this.props._isSpeakerStatsDisabled && this._onClick }
                 text = { count } />
         );
