@@ -1,9 +1,11 @@
-/* @flow */
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 
+import { IReduxState } from '../../../app/types';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { DialogPortal, Drawer, JitsiPortal } from '../../../toolbox/components/web';
 import { isMobileBrowser } from '../../environment/utils';
-import { connect } from '../../redux';
+import { connect } from '../../redux/functions';
 import { getContextMenuStyle } from '../functions.web';
 
 /**
@@ -14,55 +16,60 @@ type Props = {
     /**
      * A child React Element to use as the trigger for showing the dialog.
      */
-    children: React$Node,
+    children: ReactNode;
 
     /**
      * Additional CSS classnames to apply to the root of the {@code Popover}
      * component.
      */
-    className: string,
+    className?: string;
 
     /**
      * The ReactElement to display within the dialog.
      */
-    content: Object,
+    content: ReactNode;
 
     /**
      * Whether displaying of the popover should be prevented.
      */
-    disablePopover: boolean,
+    disablePopover?: boolean;
 
     /**
      * An id attribute to apply to the root of the {@code Popover}
      * component.
      */
-    id: string,
+    id?: string;
 
     /**
     * Callback to invoke when the popover has closed.
     */
-    onPopoverClose: Function,
+    onPopoverClose: Function;
 
     /**
      * Callback to invoke when the popover has opened.
      */
-    onPopoverOpen: Function,
+    onPopoverOpen: Function;
 
     /**
      * Whether to display the Popover as a drawer.
      */
-    overflowDrawer: boolean,
+    overflowDrawer?: boolean;
 
     /**
      * From which side of the dialog trigger the dialog should display. The
      * value will be passed to {@code InlineDialog}.
      */
-    position: string,
+    position: string;
+
+    /**
+     * Whether the trigger for open/ close should be click or hover.
+     */
+    trigger?: 'hover' | 'click';
 
     /**
      * Whether the popover is visible or not.
      */
-    visible: boolean
+    visible: boolean;
 };
 
 /**
@@ -73,7 +80,12 @@ type State = {
     /**
      * The style to apply to the context menu in order to position it correctly.
      */
-    contextMenuStyle: Object
+    contextMenuStyle?: {
+        bottom?: string;
+        left?: string;
+        position: string;
+        top?: string;
+    } | null;
 };
 
 /**
@@ -90,13 +102,14 @@ class Popover extends Component<Props, State> {
      */
     static defaultProps = {
         className: '',
-        id: ''
+        id: '',
+        trigger: 'hover'
     };
 
     /**
      * Reference to the dialog container.
      */
-    _containerRef: Object;
+    _containerRef: React.RefObject<HTMLDivElement>;
 
     _contextMenuRef: HTMLElement;
 
@@ -119,11 +132,12 @@ class Popover extends Component<Props, State> {
         this._onKeyPress = this._onKeyPress.bind(this);
         this._containerRef = React.createRef();
         this._onEscKey = this._onEscKey.bind(this);
-        this._onThumbClick = this._onThumbClick.bind(this);
+        this._onClick = this._onClick.bind(this);
         this._onTouchStart = this._onTouchStart.bind(this);
         this._setContextMenuRef = this._setContextMenuRef.bind(this);
         this._setContextMenuStyle = this._setContextMenuStyle.bind(this);
         this._getCustomDialogStyle = this._getCustomDialogStyle.bind(this);
+        this._onOutsideClick = this._onOutsideClick.bind(this);
     }
 
     /**
@@ -134,6 +148,10 @@ class Popover extends Component<Props, State> {
      */
     componentDidMount() {
         window.addEventListener('touchstart', this._onTouchStart);
+        if (this.props.trigger === 'click') {
+            // @ts-ignore
+            window.addEventListener('click', this._onOutsideClick);
+        }
     }
 
     /**
@@ -144,6 +162,22 @@ class Popover extends Component<Props, State> {
      */
     componentWillUnmount() {
         window.removeEventListener('touchstart', this._onTouchStart);
+        if (this.props.trigger === 'click') {
+            // @ts-ignore
+            window.removeEventListener('click', this._onOutsideClick);
+        }
+    }
+
+    /**
+     * Handles click outside the popover.
+     *
+     * @param {MouseEvent} e - The click event.
+     * @returns {void}
+     */
+    _onOutsideClick(e: React.MouseEvent) { // @ts-ignore
+        if (!this._containerRef?.current?.contains(e.target) && this.props.visible) {
+            this._onHideDialog();
+        }
     }
 
     /**
@@ -153,7 +187,7 @@ class Popover extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, className, content, id, overflowDrawer, visible } = this.props;
+        const { children, className, content, id, overflowDrawer, visible, trigger } = this.props;
 
         if (overflowDrawer) {
             return (
@@ -177,10 +211,12 @@ class Popover extends Component<Props, State> {
             <div
                 className = { className }
                 id = { id }
-                onClick = { this._onThumbClick }
+                onClick = { this._onClick }
                 onKeyPress = { this._onKeyPress }
-                onMouseEnter = { this._onShowDialog }
-                onMouseLeave = { this._onHideDialog }
+                { ...(trigger === 'hover' ? {
+                    onMouseEnter: this._onShowDialog,
+                    onMouseLeave: this._onHideDialog
+                } : {}) }
                 ref = { this._containerRef }>
                 { visible && (
                     <DialogPortal
@@ -195,8 +231,6 @@ class Popover extends Component<Props, State> {
         );
     }
 
-    _setContextMenuStyle: (size: Object) => void;
-
     /**
      * Sets the context menu dialog style for positioning it on screen.
      *
@@ -204,13 +238,11 @@ class Popover extends Component<Props, State> {
      *
      * @returns {void}
      */
-    _setContextMenuStyle(size) {
+    _setContextMenuStyle(size: DOMRectReadOnly) {
         const style = this._getCustomDialogStyle(size);
 
         this.setState({ contextMenuStyle: style });
     }
-
-    _setContextMenuRef: (elem: HTMLElement) => void;
 
     /**
      * Sets the context menu's ref.
@@ -219,11 +251,9 @@ class Popover extends Component<Props, State> {
      *
      * @returns {void}
      */
-    _setContextMenuRef(elem) {
+    _setContextMenuRef(elem: HTMLElement) {
         this._contextMenuRef = elem;
     }
-
-    _onTouchStart: (event: TouchEvent) => void;
 
     /**
      * Hide dialog on touch outside of the context menu.
@@ -232,17 +262,15 @@ class Popover extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onTouchStart(event) {
+    _onTouchStart(event: TouchEvent) {
         if (this.props.visible
             && !this.props.overflowDrawer
             && this._contextMenuRef
-            && this._contextMenuRef.contains
+            && this._contextMenuRef.contains // @ts-ignore
             && !this._contextMenuRef.contains(event.target)) {
             this._onHideDialog();
         }
     }
-
-    _onHideDialog: () => void;
 
     /**
      * Stops displaying the {@code InlineDialog}.
@@ -260,8 +288,6 @@ class Popover extends Component<Props, State> {
         }
     }
 
-    _onShowDialog: (Object) => void;
-
     /**
      * Displays the {@code InlineDialog} and calls any registered onPopoverOpen
      * callbacks.
@@ -270,15 +296,13 @@ class Popover extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onShowDialog(event) {
-        event && event.stopPropagation();
+    _onShowDialog(event?: React.MouseEvent | React.KeyboardEvent) {
+        event?.stopPropagation();
 
         if (!this.props.disablePopover) {
             this.props.onPopoverOpen();
         }
     }
-
-    _onThumbClick: (Object) => void;
 
     /**
      * Prevents switching from tile view to stage view on accidentally clicking
@@ -288,11 +312,18 @@ class Popover extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onThumbClick(event) {
-        event.stopPropagation();
-    }
+    _onClick(event: React.MouseEvent) {
+        const { trigger, visible } = this.props;
 
-    _onKeyPress: (Object) => void;
+        event.stopPropagation();
+        if (trigger === 'click') {
+            if (visible) {
+                this._onHideDialog();
+            } else {
+                this._onShowDialog();
+            }
+        }
+    }
 
     /**
      * KeyPress handler for accessibility.
@@ -301,7 +332,7 @@ class Popover extends Component<Props, State> {
      *
      * @returns {void}
      */
-    _onKeyPress(e) {
+    _onKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             if (this.props.visible) {
@@ -312,8 +343,6 @@ class Popover extends Component<Props, State> {
         }
     }
 
-    _onEscKey: (Object) => void;
-
     /**
      * KeyPress handler for accessibility.
      *
@@ -321,7 +350,7 @@ class Popover extends Component<Props, State> {
      *
      * @returns {void}
      */
-    _onEscKey(e) {
+    _onEscKey(e: React.KeyboardEvent) {
         if (e.key === 'Escape') {
             e.preventDefault();
             e.stopPropagation();
@@ -331,8 +360,6 @@ class Popover extends Component<Props, State> {
         }
     }
 
-    _getCustomDialogStyle: (DOMRectReadOnly) => void;
-
     /**
      * Gets style for positioning the context menu on screen in regards to the trigger's
      * position.
@@ -341,8 +368,8 @@ class Popover extends Component<Props, State> {
      *
      * @returns {Object} - The new style of the context menu.
      */
-    _getCustomDialogStyle(size) {
-        if (this._containerRef && this._containerRef.current) {
+    _getCustomDialogStyle(size: DOMRectReadOnly) {
+        if (this._containerRef?.current) {
             const bounds = this._containerRef.current.getBoundingClientRect();
 
             return getContextMenuStyle(bounds, size, this.props.position);
@@ -385,7 +412,7 @@ class Popover extends Component<Props, State> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
         overflowDrawer: state['features/toolbox'].overflowDrawer
     };

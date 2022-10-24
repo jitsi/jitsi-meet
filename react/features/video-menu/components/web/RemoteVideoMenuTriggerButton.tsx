@@ -10,8 +10,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconHorizontalPoints } from '../../../base/icons/svg';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
-// @ts-ignore
-import { Popover } from '../../../base/popover';
+import Popover from '../../../base/popover/components/Popover.web';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import Button from '../../../base/ui/components/web/Button';
 import ConnectionIndicatorContent from

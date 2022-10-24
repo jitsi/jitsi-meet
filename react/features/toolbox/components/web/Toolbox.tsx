@@ -356,7 +356,8 @@ const styles = () => {
             position: 'relative' as const,
             right: 'auto',
             maxHeight: 'inherit',
-            margin: 0
+            margin: 0,
+            marginBottom: '8px'
         },
 
         hangupMenu: {

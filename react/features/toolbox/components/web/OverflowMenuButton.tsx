@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import InlineDialog from '@atlaskit/inline-dialog';
 import React, { ReactNode, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -7,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
+import Popover from '../../../base/popover/components/Popover.web';
 // @ts-ignore
 import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
 import { REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
@@ -74,6 +74,10 @@ const OverflowMenuButton = ({
         onVisibilityChange(false);
     }, [ onVisibilityChange ]);
 
+    const onOpenDialog = useCallback(() => {
+        onVisibilityChange(true);
+    }, [ onVisibilityChange ]);
+
     const onEscClick = useCallback((event: React.KeyboardEvent) => {
         if (event.key === 'Escape' && isOpen) {
             event.preventDefault();
@@ -118,16 +122,17 @@ const OverflowMenuButton = ({
                         </JitsiPortal>
                     </>
                 ) : (
-                    <InlineDialog
+                    <Popover
                         content = { children }
-                        isOpen = { isOpen }
-                        onClose = { onCloseDialog }
-                        placement = 'top-end'>
+                        onPopoverClose = { onCloseDialog }
+                        onPopoverOpen = { onOpenDialog }
+                        position = 'top'
+                        trigger = 'click'
+                        visible = { isOpen }>
                         <OverflowToggleButton
-                            handleClick = { toggleDialogVisibility }
                             isOpen = { isOpen }
                             onKeyDown = { onEscClick } />
-                    </InlineDialog>
+                    </Popover>
                 )
             }
         </div>
