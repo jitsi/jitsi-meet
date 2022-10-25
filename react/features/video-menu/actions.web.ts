@@ -1,4 +1,3 @@
-// @flow
 import { SHOW_CONNECTION_INFO } from '../base/connection/actionTypes';
 
 export * from './actions.any';

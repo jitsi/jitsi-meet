@@ -1,32 +1,24 @@
-// @flow
+// @ts-ignore
 import { getLogger } from '@jitsi/logger';
-import type { Dispatch } from 'redux';
 
+// @ts-expect-error
 import UIEvents from '../../../service/UI/UIEvents';
 import {
     AUDIO_MUTE,
     VIDEO_MUTE,
     createRemoteMuteConfirmedEvent,
-    createToolbarEvent,
-    sendAnalytics
-} from '../analytics';
+    createToolbarEvent
+} from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
+import { IStore } from '../app/types';
 import { rejectParticipantAudio, rejectParticipantVideo, showModeratedNotification } from '../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../av-moderation/functions';
-import {
-    MEDIA_TYPE,
-    VIDEO_MUTISM_AUTHORITY,
-    setAudioMuted,
-    setVideoMuted
-} from '../base/media';
-import {
-    getLocalParticipant,
-    getRemoteParticipants,
-    muteRemoteParticipant
-} from '../base/participants';
-import { toggleScreensharing } from '../base/tracks';
-import { isModerationNotificationDisplayed } from '../notifications';
-
-declare var APP: Object;
+import { setAudioMuted, setVideoMuted } from '../base/media/actions';
+import { MEDIA_TYPE, MediaType, VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
+import { muteRemoteParticipant } from '../base/participants/actions';
+import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
+import { toggleScreensharing } from '../base/tracks/actions';
+import { isModerationNotificationDisplayed } from '../notifications/functions';
 
 const logger = getLogger(__filename);
 
@@ -38,8 +30,8 @@ const logger = getLogger(__filename);
  * @param {boolean} stopScreenSharing - Whether or not to stop the screensharing.
  * @returns {Function}
  */
-export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE, stopScreenSharing: boolean = false) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function muteLocal(enable: boolean, mediaType: MediaType, stopScreenSharing = false) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const isAudio = mediaType === MEDIA_TYPE.AUDIO;
 
         if (!isAudio && mediaType !== MEDIA_TYPE.VIDEO) {
@@ -78,8 +70,8 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE, stopScreenShar
  * @param {MEDIA_TYPE} mediaType - The type of the media channel to mute.
  * @returns {Function}
  */
-export function muteRemote(participantId: string, mediaType: MEDIA_TYPE) {
-    return (dispatch: Dispatch<any>) => {
+export function muteRemote(participantId: string, mediaType: MediaType) {
+    return (dispatch: IStore['dispatch']) => {
         if (mediaType !== MEDIA_TYPE.AUDIO && mediaType !== MEDIA_TYPE.VIDEO) {
             logger.error(`Unsupported media type: ${mediaType}`);
 
@@ -97,10 +89,10 @@ export function muteRemote(participantId: string, mediaType: MEDIA_TYPE) {
  * @param {MEDIA_TYPE} mediaType - The media type to mute.
  * @returns {Function}
  */
-export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYPE) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function muteAllParticipants(exclude: Array<string>, mediaType: MediaType) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const localId = getLocalParticipant(state).id;
+        const localId = getLocalParticipant(state)?.id ?? '';
 
         if (!exclude.includes(localId)) {
             dispatch(muteLocal(true, mediaType, mediaType !== MEDIA_TYPE.AUDIO));

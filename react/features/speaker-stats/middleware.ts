@@ -1,12 +1,10 @@
-// @flow
-
 import {
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
 } from '../base/participants/actionTypes';
-import { MiddlewareRegistry } from '../base/redux';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
     INIT_SEARCH,

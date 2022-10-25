@@ -1,11 +1,6 @@
-// @flow
-
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    hideNotification,
-    showErrorNotification,
-    showNotification
-} from '../notifications';
+import { IStore } from '../app/types';
+import { hideNotification, showErrorNotification, showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import {
     SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
@@ -69,7 +64,7 @@ export function potentialTranscriberJoined(participantId: string) {
  * @returns {Function}
  */
 export function showPendingTranscribingNotification() {
-    return async (dispatch: Function) => {
+    return async (dispatch: IStore['dispatch']) => {
         const notification = await dispatch(showNotification({
             descriptionKey: 'transcribing.pending',
             titleKey: 'dialog.transcribing'
@@ -92,7 +87,7 @@ export function showPendingTranscribingNotification() {
  *     uid: number
  * }}
  */
-export function setPendingTranscribingNotificationUid(uid: ?number) {
+export function setPendingTranscribingNotificationUid(uid?: string) {
     return {
         type: SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
         uid
@@ -106,7 +101,7 @@ export function setPendingTranscribingNotificationUid(uid: ?number) {
  * @returns {Function}
  */
 export function hidePendingTranscribingNotification() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { pendingNotificationUid } = getState()['features/transcribing'];
 
         if (pendingNotificationUid) {

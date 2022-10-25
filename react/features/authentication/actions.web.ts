@@ -5,9 +5,8 @@ import { hideDialog, openDialog } from '../base/dialog/actions';
 import {
     CANCEL_LOGIN
 } from './actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { LoginDialog, WaitForOwnerDialog } from './components';
+import LoginDialog from './components/web/LoginDialog';
+import WaitForOwnerDialog from './components/web/WaitForOwnerDialog';
 
 export * from './actions.any';
 

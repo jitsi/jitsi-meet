@@ -1,5 +1,3 @@
-// @flow
-
 import {
     INIT_REORDER_STATS,
     INIT_SEARCH,
@@ -55,7 +53,7 @@ export function updateStats(stats: Object) {
  * @param {Object} participantIds - Participant ids.
  * @returns {Object}
  */
-export function updateSortedSpeakerStatsIds(participantIds: Array<string>) {
+export function updateSortedSpeakerStatsIds(participantIds?: Array<string>) {
     return {
         type: UPDATE_SORTED_SPEAKER_STATS_IDS,
         participantIds

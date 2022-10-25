@@ -6,8 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import { escapeRegexp } from '../../../base/util/helpers';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { initSearch, resetSearchCriteria, toggleFaceExpressions } from '../../actions';
 import {
     DISPLAY_SWITCH_BREAKPOINT,
@@ -107,7 +105,9 @@ const SpeakerStats = () => {
     useEffect(() => {
         showFaceExpressions && !displaySwitch && dispatch(toggleFaceExpressions());
     }, [ clientWidth ]);
-    useEffect(() => () => dispatch(resetSearchCriteria()), []);
+    useEffect(() => () => {
+        dispatch(resetSearchCriteria());
+    }, []);
 
     return (
         <Dialog
