@@ -41,7 +41,7 @@
     "@microsoft/microsoft-graph-client": "3.0.1",
     "@mui/material": "5.10.2",
     "@mui/styles": "5.10.2",
-    "@react-native-async-storage/async-storage": "1.15.14",
+    "@react-native-async-storage/async-storage": "1.17.3",
     "@react-native-community/clipboard": "1.5.1",
     "@react-native-community/netinfo": "7.1.7",
     "@react-native-community/slider": "4.1.12",
