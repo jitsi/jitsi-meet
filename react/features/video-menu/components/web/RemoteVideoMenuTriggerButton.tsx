@@ -43,8 +43,7 @@ interface IProps extends WithTranslation {
 
     /**
      * The position relative to the trigger the remote menu should display
-     * from. Valid values are those supported by AtlasKit
-     * {@code InlineDialog}.
+     * from.
      */
     _menuPosition: string;
 

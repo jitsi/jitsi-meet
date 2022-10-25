@@ -48,7 +48,7 @@ type Props = {
     /**
      * Callback to invoke when the popover has opened.
      */
-    onPopoverOpen: Function;
+    onPopoverOpen?: Function;
 
     /**
      * Whether to display the Popover as a drawer.
@@ -56,8 +56,7 @@ type Props = {
     overflowDrawer?: boolean;
 
     /**
-     * From which side of the dialog trigger the dialog should display. The
-     * value will be passed to {@code InlineDialog}.
+     * Where should the popover content be placed.
      */
     position: string;
 
@@ -89,7 +88,7 @@ type State = {
 };
 
 /**
- * Implements a React {@code Component} for showing an {@code InlineDialog} on
+ * Implements a React {@code Component} for showing an {@code Popover} on
  * mouseenter of the trigger and contents, and hiding the dialog on mouseleave.
  *
  * @augments Component
@@ -273,7 +272,7 @@ class Popover extends Component<Props, State> {
     }
 
     /**
-     * Stops displaying the {@code InlineDialog}.
+     * Stops displaying the {@code Popover}.
      *
      * @private
      * @returns {void}
@@ -289,7 +288,7 @@ class Popover extends Component<Props, State> {
     }
 
     /**
-     * Displays the {@code InlineDialog} and calls any registered onPopoverOpen
+     * Displays the {@code Popover} and calls any registered onPopoverOpen
      * callbacks.
      *
      * @param {Object} event - The mouse event or the keypress event to intercept.
@@ -300,7 +299,7 @@ class Popover extends Component<Props, State> {
         event?.stopPropagation();
 
         if (!this.props.disablePopover) {
-            this.props.onPopoverOpen();
+            this.props.onPopoverOpen?.();
         }
     }
 
@@ -377,7 +376,7 @@ class Popover extends Component<Props, State> {
     }
 
     /**
-     * Renders the React Element to be displayed in the {@code InlineDialog}.
+     * Renders the React Element to be displayed in the {@code Popover}.
      * Also adds padding to support moving the mouse from the trigger to the
      * dialog to prevent mouseleave events.
      *
