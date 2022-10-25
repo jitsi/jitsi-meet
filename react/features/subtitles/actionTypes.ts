@@ -46,6 +46,17 @@ export const UPDATE_TRANSCRIPT_MESSAGE = 'UPDATE_TRANSCRIPT_MESSAGE';
 export const SEND_TRANSCRIPT_MESSAGE = 'SEND_TRANSCRIPT_MESSAGE';
 
 /**
+ * The type of (redux) action which indicates that a transcript with an
+ * given message_id to be added or updated is received.
+ *
+ * {
+ *      type: SEND_TRANSCRIPT_BITE,
+ *      _sendTranscriptMessage: String,
+ * }
+ */
+export const SEND_TRANSCRIPT_BITE = 'SEND_TRANSCRIPT_BITE';
+
+/**
  * The type of (redux) action which indicates that the user pressed the
  * ClosedCaption button, to either enable or disable subtitles based on the
  * current state.

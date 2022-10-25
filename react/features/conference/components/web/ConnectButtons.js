@@ -11,6 +11,7 @@ import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../base/flags';
 import { getConferenceName } from '../../../base/conference/functions';
 import API from '../services';
 import { isMobileBrowser } from '../../../base/environment/utils';
+import './Connect.css';
 
 declare var interfaceConfig: Object;
 
@@ -47,7 +48,11 @@ export type Props = {
     /**
      * True if the navigation bar should be visible.
      */
-    _visible: boolean
+    _visible: boolean,
+    /**
+     * Display  translated strings..
+     */
+    _sendTranscriptBite: string
 }
 
 /**
@@ -103,38 +108,19 @@ const ConnectButtons = (props: Props) => {
                 return (
                     <div key={index}>
                         {timer === index || timer + 1 === index ?
-                            <div style={{
-                                flexDirection: 'row',
-                                height: '50px',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginLeft: '16px'
-
-                            }}>
-                                <div style={{
-                                    marginTop: '3px',
-                                    marginBottom: '3px',
-                                    height: '34px',
-                                    marginLeft: '3px',
-                                    marginRight: '3px',
-                                    width: '49px',
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                    <img style={{
-                                        height: '28px',
-                                        width: '40px'
-                                    }}
-                                         onClick={() => {
-                                             if (isMobileBrowser()) {
-                                                 if (window.flutter_inappwebview) {
-                                                     console.log('beforeArgs');
-                                                     const args = 'http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114';
-                                                     console.log('afterArgs', args);
-                                                     window.flutter_inappwebview.callHandler('myHandlerName', args);
-                                                     console.log('addsUrl', args);
-                                                 } else {
-                                                     console.log('InAppWebViewNotLoaded');
+                            <div className="urlHeader">
+                                <div className="alignment">
+                                    <img
+                                        onClick={() => {
+                                            if (isMobileBrowser()) {
+                                                if (window.flutter_inappwebview) {
+                                                    console.log('beforeArgs');
+                                                    const args = 'http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114';
+                                                    console.log('afterArgs', args);
+                                                    window.flutter_inappwebview.callHandler('myHandlerName', args);
+                                                    console.log('addsUrl', args);
+                                                } else {
+                                                    console.log('InAppWebViewNotLoaded');
                                                  }
                                              } else {
                                                  window.open('http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114');
@@ -142,11 +128,13 @@ const ConnectButtons = (props: Props) => {
 
                                          }}
                                          src={value.iconUrl}/>
+                                    {/* <p className='urlP'>{value.title}</p> */}
                                     <p style={{
-                                        textAlign: 'center',
+                                        textAlign: 'start',
                                         fontSize: '14px',
-                                        color: 'white'
-                                    }}>{value.title}</p>
+                                        color: 'white',
+                                        paddingLeft: '10%'
+                                    }}>{props._sendTranscriptBite}</p>
                                 </div>
                             </div> : null}
                     </div>
@@ -169,14 +157,16 @@ function mapStateToProps(state) {
     // const participantCount = getParticipantCount(state);
     // const isAlone = participantCount === 1;
     // const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
+    const { _sendTranscriptBite } = state['features/subtitles'];
 
     return {
         _shouldShow: isButtonEnabled('invite', state),
         _toolboxVisible: isToolboxEnabled(state),
         _meetingName: getConferenceName(state),
         _meetingNameEnabled:
-            getFeatureFlag(state, MEETING_NAME_ENABLED, true)
+            getFeatureFlag(state, MEETING_NAME_ENABLED, true),
         // _visible: isToolboxVisible(state)
+        _sendTranscriptBite: _sendTranscriptBite
     };
 }
 

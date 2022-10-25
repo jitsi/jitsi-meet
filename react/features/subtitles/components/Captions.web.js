@@ -13,7 +13,7 @@ import {
     type AbstractCaptionsProps
 } from './AbstractCaptions';
 import { isMobileBrowser } from '../../base/environment/utils';
-import { showTranscriptData } from '../actions';
+import { showTranscriptData, showTranscriptionBite } from '../actions';
 import { translate } from '../../base/i18n';
 import type { Dispatch } from 'redux';
 
@@ -54,7 +54,9 @@ class Captions extends AbstractCaptions<Props> {
     constructor(props) {
         super(props);
         this.state = {
-            data: ''
+            data: '',
+            bite: '',
+            i: 0
         };
     };
 
@@ -77,9 +79,19 @@ class Captions extends AbstractCaptions<Props> {
                                 this.setState({
                                     data: allData
                                 });
-
+                                if (this.state.i < 12) {
+                                    console.log('setState');
+                                    this.setState({
+                                        i: this.state.i + 1,
+                                        bite: `${parseData[this.state.i]['bite']}`
+                                    });
+                                } else {
+                                    this.state.bite = '';
+                                    this.state.i = 0;
+                                }
                             });
                         this.props.dispatch(showTranscriptData(this.state.data));
+                        this.props.dispatch(showTranscriptionBite(this.state.bite));
                         textStore = '';
                     } else {
                         console.log('InAppWebViewNotLoaded');
@@ -102,6 +114,18 @@ class Captions extends AbstractCaptions<Props> {
                         data: allData
                     });
                     this.props.dispatch(showTranscriptData(this.state.data));
+
+                    if (this.state.i < 12) {
+                        console.log('setState');
+                        this.setState({
+                            i: this.state.i + 1,
+                            bite: `${parseData[this.state.i]['bite']}`
+                        });
+                    } else {
+                        this.state.bite = '';
+                        this.state.i = 0;
+                    }
+                    this.props.dispatch(showTranscriptionBite(this.state.bite));
                     textStore = '';
                 }
             } catch (e) {

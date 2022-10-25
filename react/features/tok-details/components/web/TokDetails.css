@@ -51,12 +51,22 @@
     background-color: #1c2946;
 }
 
+
+.collapseTitle:hover {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    cursor: pointer;
+}
+
 .collapseTitle {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     padding: 10px;
 }
+
 
 .collapseP {
     font-size: 12px;
@@ -65,6 +75,19 @@
 .collapseIcon {
     height: 16px;
     width: 16px;
+}
+
+.iconUrl:hover {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-between;
+    width: 94%;
+    border: 1px solid black;
+    border-radius: 2px;
+    padding: 6px;
+    margin-top: 2px;
+    cursor: pointer;
 }
 
 .iconUrl {

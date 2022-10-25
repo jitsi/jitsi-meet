@@ -257,7 +257,7 @@ function getDevServerConfig() {
                 warnings: false
             }
         },
-        host: '192.168.0.109',
+        host: '192.168.0.107',
         hot: true,
         proxy: {
             '/': {

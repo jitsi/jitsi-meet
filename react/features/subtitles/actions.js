@@ -3,6 +3,7 @@
 import {
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
+    SEND_TRANSCRIPT_BITE,
     SEND_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES,
@@ -111,5 +112,24 @@ export function showTranscriptData(bite) {
             data: bite
         });
     };
+}
+
+/**
+ * It is used to show the details of transcriber data
+ *
+ * @returns {{
+ *    type: SEND_TRANSCRIPT_BITE,
+ *    data: bite
+ * }}
+ * @param bite
+ */
+export function showTranscriptionBite(bite) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        dispatch({
+            type: SEND_TRANSCRIPT_BITE,
+            data: bite
+        });
+    };
+
 }
 
