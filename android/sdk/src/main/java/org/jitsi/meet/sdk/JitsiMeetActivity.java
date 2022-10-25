@@ -164,7 +164,7 @@ public class JitsiMeetActivity extends AppCompatActivity
     // Helper methods
     //
 
-    protected JitsiMeetView getJitsiView() {
+    public JitsiMeetView getJitsiView() {
         return jitsiView;
     }
 
