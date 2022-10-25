@@ -367,7 +367,8 @@ const styles = () => {
             flexDirection: 'column' as const,
             rowGap: '8px',
             margin: 0,
-            padding: '16px'
+            padding: '16px',
+            marginBottom: '8px'
         }
     };
 };

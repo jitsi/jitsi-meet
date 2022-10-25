@@ -1,12 +1,12 @@
 // @flow
 
-import InlineDialog from '@atlaskit/inline-dialog';
 import React from 'react';
 
 import {
     getVideoDeviceIds,
     setVideoInputDeviceAndUpdateSettings
 } from '../../../../base/devices';
+import Popover from '../../../../base/popover/components/Popover.web';
 import { connect } from '../../../../base/redux';
 import { SMALL_MOBILE_WIDTH } from '../../../../base/responsive-ui/constants';
 import { getCurrentCameraDeviceId } from '../../../../base/settings';
@@ -18,17 +18,17 @@ import VideoSettingsContent, { type Props as VideoSettingsProps } from './VideoS
 
 type Props = VideoSettingsProps & {
 
-   /**
+    /**
     * Component children (the Video button).
     */
     children: React$Node,
 
-   /**
+    /**
     * Flag controlling the visibility of the popup.
     */
     isOpen: boolean,
 
-   /**
+    /**
     * Callback executed when the popup closes.
     */
     onClose: Function,
@@ -36,7 +36,7 @@ type Props = VideoSettingsProps & {
     /**
      * The popup placement enum value.
      */
-     popupPlacement: string
+    popupPlacement: string
 }
 
 /**
@@ -55,17 +55,18 @@ function VideoSettingsPopup({
 }: Props) {
     return (
         <div className = 'video-preview'>
-            <InlineDialog
+            <Popover
                 content = { <VideoSettingsContent
                     currentCameraDeviceId = { currentCameraDeviceId }
                     setVideoInputDevice = { setVideoInputDevice }
                     toggleVideoSettings = { onClose }
                     videoDeviceIds = { videoDeviceIds } /> }
-                isOpen = { isOpen }
-                onClose = { onClose }
-                placement = { popupPlacement }>
+                onPopoverClose = { onClose }
+                position = { popupPlacement }
+                trigger = 'click'
+                visible = { isOpen }>
                 { children }
-            </InlineDialog>
+            </Popover>
         </div>
     );
 }
@@ -83,7 +84,7 @@ function mapStateToProps(state) {
     return {
         currentCameraDeviceId: getCurrentCameraDeviceId(state),
         isOpen: getVideoSettingsVisibility(state),
-        popupPlacement: clientWidth <= SMALL_MOBILE_WIDTH ? 'auto' : 'top-start',
+        popupPlacement: clientWidth <= SMALL_MOBILE_WIDTH ? 'auto' : 'top-end',
         videoDeviceIds: getVideoDeviceIds(state)
     };
 }

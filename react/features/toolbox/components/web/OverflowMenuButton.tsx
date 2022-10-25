@@ -31,7 +31,7 @@ interface IProps {
     ariaControls: string;
 
     /**
-     * A child React Element to display within {@code InlineDialog}.
+     * A child React Element to display within {@code Popover}.
      */
     children: ReactNode;
 
