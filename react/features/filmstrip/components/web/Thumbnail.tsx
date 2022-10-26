@@ -363,7 +363,6 @@ const defaultStyles = (theme: Theme) => {
             position: 'absolute' as const,
             width: '100%',
             height: '100%',
-            zIndex: 11,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
