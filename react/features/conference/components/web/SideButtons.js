@@ -1,13 +1,12 @@
 // @flow
 
-import React, { useState } from 'react';
+import React from 'react';
 import { translate } from '../../../base/i18n';
-import { Icon, IconAdd, IconBookmark, IconTicket,IconCart } from '../../../base/icons';
+import { Icon, IconBookmark, IconTicket } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
-import { openDialog, toggleDialog } from '../../../base/dialog';
-import { NewModal6 } from '../../../Modal';
-import { NewModal7 } from '../../../Modal';
+import { isButtonEnabled } from '../../../toolbox/functions.web';
+import { openDialog } from '../../../base/dialog';
+import { NewModal6, NewModal7 } from '../../../Modal';
 
 declare var interfaceConfig: Object;
 
@@ -52,21 +51,35 @@ function SideButtons({
     dispatch,
 }: Props) {
     return (
-        true
-            ? <div className={`invite-more-container${true ? '' : ' elevated'}`}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                    <div style={{ borderRadius: '40%', margin: '10px' }}
-                        className='invite-more-button'
-                        onClick={() => { dispatch(openDialog(NewModal6)) }}>
-                        <Icon src={IconBookmark} />
-                    </div>
-                    <div style={{ borderRadius: '40%', margin: '10px' }}
-                        className='invite-more-button'
-                        onClick={() => { dispatch(openDialog(NewModal7)) }}>
-                        <Icon src={IconTicket} />
-                    </div>
+        <div className={`invite-more-container${true ? '' : ' elevated'}`}>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'flex-start'
+            }}>
+                <div style={{
+                    borderRadius: '40%',
+                    margin: '10px'
+                }}
+                     className="invite-more-button"
+                     onClick={() => {
+                         dispatch(openDialog(NewModal6));
+                     }}>
+                    <Icon src={IconBookmark}/>
                 </div>
-            </div> : null
+                <div style={{
+                    borderRadius: '40%',
+                    margin: '10px'
+                }}
+                     className="invite-more-button"
+                     onClick={() => {
+                         dispatch(openDialog(NewModal7));
+                     }}>
+                    <Icon src={IconTicket}/>
+                </div>
+            </div>
+        </div>
     );
 }
 

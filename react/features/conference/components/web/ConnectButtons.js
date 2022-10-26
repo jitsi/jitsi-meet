@@ -110,17 +110,17 @@ const ConnectButtons = (props: Props) => {
                         {timer === index || timer + 1 === index ?
                             <div className="urlHeader">
                                 <div className="alignment">
-                                    <img
-                                        onClick={() => {
-                                            if (isMobileBrowser()) {
-                                                if (window.flutter_inappwebview) {
-                                                    console.log('beforeArgs');
-                                                    const args = 'http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114';
-                                                    console.log('afterArgs', args);
-                                                    window.flutter_inappwebview.callHandler('myHandlerName', args);
-                                                    console.log('addsUrl', args);
-                                                } else {
-                                                    console.log('InAppWebViewNotLoaded');
+                                    <img className="showImg"
+                                         onClick={() => {
+                                             if (isMobileBrowser()) {
+                                                 if (window.flutter_inappwebview) {
+                                                     console.log('beforeArgs');
+                                                     const args = 'http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114';
+                                                     console.log('afterArgs', args);
+                                                     window.flutter_inappwebview.callHandler('myHandlerName', args);
+                                                     console.log('addsUrl', args);
+                                                 } else {
+                                                     console.log('InAppWebViewNotLoaded');
                                                  }
                                              } else {
                                                  window.open('http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114');
