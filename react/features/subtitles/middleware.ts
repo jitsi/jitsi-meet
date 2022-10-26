@@ -1,7 +1,8 @@
-// @flow
 import i18next from 'i18next';
+import { AnyAction } from 'redux';
 
-import { MiddlewareRegistry } from '../base/redux';
+import { IStore } from '../app/types';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
     ENDPOINT_MESSAGE_RECEIVED,
@@ -81,7 +82,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _endpointMessageReceived({ dispatch, getState }, next, action) {
+function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { json } = action;
 
     if (!(json
@@ -93,7 +94,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
     const state = getState();
     const translationLanguage
         = state['features/base/conference'].conference
-            .getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
+            ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
 
     try {
         const transcriptMessageID = json.message_id;
@@ -125,7 +126,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
             // We update the previous transcript message with the same
             // message ID or adds a new transcript message if it does not
             // exist in the map.
-            const newTranscriptMessage = {
+            const newTranscriptMessage: any = {
                 ...state['features/subtitles']._transcriptMessages
                         .get(transcriptMessageID)
                     || { participantName }
@@ -173,19 +174,19 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _requestingSubtitlesChange({ getState }) {
+function _requestingSubtitlesChange({ getState }: IStore) {
     const state = getState();
     const { _language } = state['features/subtitles'];
     const { conference } = state['features/base/conference'];
 
     const requestingSubtitles = _language !== 'transcribing.subtitlesOff';
 
-    conference.setLocalParticipantProperty(
+    conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
         requestingSubtitles);
 
     if (requestingSubtitles) {
-        conference.setLocalParticipantProperty(
+        conference?.setLocalParticipantProperty(
             P_NAME_TRANSLATION_LANGUAGE,
             _language.replace('translation-languages:', ''));
     }
@@ -200,11 +201,11 @@ function _requestingSubtitlesChange({ getState }) {
  * @private
  * @returns {void}
  */
-function _requestingSubtitlesSet({ getState }, enabled: boolean) {
+function _requestingSubtitlesSet({ getState }: IStore, enabled: boolean) {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
-    conference.setLocalParticipantProperty(
+    conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
         enabled);
 }
@@ -219,15 +220,15 @@ function _requestingSubtitlesSet({ getState }, enabled: boolean) {
  * @returns {void}
  */
 function _setClearerOnTranscriptMessage(
-        dispatch,
-        transcriptMessageID,
-        transcriptMessage) {
+        dispatch: IStore['dispatch'],
+        transcriptMessageID: string,
+        transcriptMessage: { clearTimeOut?: number; }) {
     if (transcriptMessage.clearTimeOut) {
         clearTimeout(transcriptMessage.clearTimeOut);
     }
 
     transcriptMessage.clearTimeOut
-        = setTimeout(
+        = window.setTimeout(
             () => dispatch(removeTranscriptMessage(transcriptMessageID)),
             REMOVE_AFTER_MS);
 }

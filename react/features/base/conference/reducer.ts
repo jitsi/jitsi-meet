@@ -48,6 +48,7 @@ export interface IJitsiConference {
     enableAVModeration: Function;
     end: Function;
     getBreakoutRooms: Function;
+    getLocalParticipantProperty: Function;
     getLocalTracks: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;

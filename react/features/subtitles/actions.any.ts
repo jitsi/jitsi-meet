@@ -95,12 +95,12 @@ export function setRequestingSubtitles(enabled: boolean) {
 /**
  * Signals that the local user has selected language for the translation.
  *
- * @param {boolean} value - The selected language for translation.
+ * @param {string} value - The selected language for translation.
  * @returns {{
  *      type: UPDATE_TRANSLATION_LANGUAGE
  * }}
  */
-export function updateTranslationLanguage(value: boolean) {
+export function updateTranslationLanguage(value: string) {
     return {
         type: UPDATE_TRANSLATION_LANGUAGE,
         value

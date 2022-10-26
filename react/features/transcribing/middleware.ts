@@ -1,13 +1,11 @@
-// @flow
-
-import { MiddlewareRegistry } from '../base/redux';
-import { toggleRequestingSubtitles } from '../subtitles';
-
 import {
     HIDDEN_PARTICIPANT_JOINED,
     HIDDEN_PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
-} from './../base/participants';
+} from '../base/participants/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { toggleRequestingSubtitles } from '../subtitles/actions.any';
+
 import {
     _TRANSCRIBER_JOINED,
     _TRANSCRIBER_LEFT

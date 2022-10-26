@@ -1,40 +1,37 @@
-// @flow
-
 import _ from 'lodash';
 
-import {
-    PARTICIPANT_ROLE,
-    getParticipantById
-} from '../base/participants';
+import { IReduxState } from '../app/types';
+import { PARTICIPANT_ROLE } from '../base/participants/constants';
+import { getParticipantById } from '../base/participants/functions';
 
 /**
  * Checks if the speaker stats search is disabled.
  *
- * @param {*} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {boolean} - True if the speaker stats search is disabled and false otherwise.
  */
-export function isSpeakerStatsSearchDisabled(state: Object) {
-    return state['features/base/config']?.speakerStats.disableSearch;
+export function isSpeakerStatsSearchDisabled(state: IReduxState) {
+    return state['features/base/config']?.speakerStats?.disableSearch;
 }
 
 /**
  * Checks if the speaker stats is disabled.
  *
- * @param {*} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {boolean} - True if the speaker stats search is disabled and false otherwise.
  */
-export function isSpeakerStatsDisabled(state: Object) {
+export function isSpeakerStatsDisabled(state: IReduxState) {
     return state['features/base/config']?.speakerStats?.disabled;
 }
 
 /**
  * Gets whether participants in speaker stats should be ordered or not, and with what priority.
  *
- * @param {*} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {Array<string>} - The speaker stats order array or an empty array.
  */
-export function getSpeakerStatsOrder(state: Object) {
-    return state['features/base/config']?.speakerStats.order ?? [
+export function getSpeakerStatsOrder(state: IReduxState) {
+    return state['features/base/config']?.speakerStats?.order ?? [
         'role',
         'name',
         'hasLeft'
@@ -44,42 +41,42 @@ export function getSpeakerStatsOrder(state: Object) {
 /**
  * Gets speaker stats.
  *
- * @param {*} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {Object} - The speaker stats.
  */
-export function getSpeakerStats(state: Object) {
+export function getSpeakerStats(state: IReduxState) {
     return state['features/speaker-stats']?.stats ?? {};
 }
 
 /**
  * Gets speaker stats search criteria.
  *
- * @param {*} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {string | null} - The search criteria.
  */
-export function getSearchCriteria(state: Object) {
+export function getSearchCriteria(state: IReduxState) {
     return state['features/speaker-stats']?.criteria;
 }
 
 /**
  * Gets if speaker stats reorder is pending.
  *
- * @param {*} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {boolean} - The pending reorder flag.
  */
-export function getPendingReorder(state: Object) {
+export function getPendingReorder(state: IReduxState) {
     return state['features/speaker-stats']?.pendingReorder ?? false;
 }
 
 /**
  * Get sorted speaker stats ids based on a configuration setting.
  *
- * @param {Object} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @param {Object} stats - The current speaker stats.
  * @returns {Object} - Ordered speaker stats ids.
  * @public
  */
-export function getSortedSpeakerStatsIds(state: Object, stats: Object) {
+export function getSortedSpeakerStatsIds(state: IReduxState, stats: Object) {
     const orderConfig = getSpeakerStatsOrder(state);
 
     if (orderConfig) {
@@ -98,7 +95,7 @@ export function getSortedSpeakerStatsIds(state: Object, stats: Object) {
      * @param {Object} nextParticipant - The second participant for comparison.
      * @returns {number} - The sort order of the two participants.
      */
-    function compareFn(currentParticipant, nextParticipant) {
+    function compareFn(currentParticipant: any, nextParticipant: any) {
         if (orderConfig.includes('hasLeft')) {
             if (nextParticipant.hasLeft() && !currentParticipant.hasLeft()) {
                 return -1;
@@ -139,13 +136,13 @@ export function getSortedSpeakerStatsIds(state: Object, stats: Object) {
 /**
  * Enhance speaker stats to include data needed for ordering.
  *
- * @param {Object} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @param {Object} stats - Speaker stats.
  * @param {Array<string>} orderConfig - Ordering configuration.
  * @returns {Object} - Enhanced speaker stats.
  * @public
  */
-function getEnhancedStatsForOrdering(state, stats, orderConfig) {
+function getEnhancedStatsForOrdering(state: IReduxState, stats: any, orderConfig?: string[]) {
     if (!orderConfig) {
         return stats;
     }
@@ -166,14 +163,14 @@ function getEnhancedStatsForOrdering(state, stats, orderConfig) {
 /**
  * Filter stats by search criteria.
  *
- * @param {Object} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @param {Object | undefined} stats - The unfiltered stats.
  *
  * @returns {Object} - Filtered speaker stats.
  * @public
  */
-export function filterBySearchCriteria(state: Object, stats: ?Object) {
-    const filteredStats = _.cloneDeep(stats ?? getSpeakerStats(state));
+export function filterBySearchCriteria(state: IReduxState, stats?: Object) {
+    const filteredStats: any = _.cloneDeep(stats ?? getSpeakerStats(state));
     const criteria = getSearchCriteria(state);
 
     if (criteria !== null) {
@@ -194,14 +191,14 @@ export function filterBySearchCriteria(state: Object, stats: ?Object) {
 /**
  * Reset the hidden speaker stats.
  *
- * @param {Object} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @param {Object | undefined} stats - The unfiltered stats.
  *
  * @returns {Object} - Speaker stats.
  * @public
  */
-export function resetHiddenStats(state: Object, stats: ?Object) {
-    const resetStats = _.cloneDeep(stats ?? getSpeakerStats(state));
+export function resetHiddenStats(state: IReduxState, stats?: Object) {
+    const resetStats: any = _.cloneDeep(stats ?? getSpeakerStats(state));
 
     for (const id in resetStats) {
         if (resetStats[id].hidden) {
