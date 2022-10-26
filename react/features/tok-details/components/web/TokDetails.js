@@ -75,7 +75,7 @@ const Tok = (props: Props) => {
                         Close
                     </button>
                 }
-                snapPoints={({ maxHeight }) => [ maxHeight / 4, maxHeight * 0.6 ]}
+                snapPoints={({ maxHeight }) => [ maxHeight / 2, maxHeight * 0.6 ]}
             >
                 <div style={{
                     padding: '4px 16px 4px 16px'
