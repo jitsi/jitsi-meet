@@ -2,15 +2,21 @@
 
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../app/types';
 import { CLOSE_CAPTIONS_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
 import { translate } from '../../base/i18n/functions';
 import { IconSubtitles } from '../../base/icons/svg';
+import { navigate }
+    from '../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../mobile/navigation/routes';
 
 import {
     AbstractClosedCaptionButton,
-    _abstractMapStateToProps
+    _abstractMapStateToProps,
+    IAbstractProps
 } from './AbstractClosedCaptionButton';
+
 
 /**
  * A button which starts/stops the transcriptions.
@@ -21,6 +27,15 @@ class ClosedCaptionButton
     icon = IconSubtitles;
     label = 'transcribing.start';
     toggledLabel = 'transcribing.stop';
+
+    /**
+     * Toggle language selection dialog.
+     *
+     * @returns {void}
+     */
+    _handleClickOpenLanguageSelector() {
+        navigate(screen.conference.subtitles);
+    }
 }
 
 /**
@@ -32,7 +47,7 @@ class ClosedCaptionButton
  * @private
  * @returns {Props}
  */
-export function mapStateToProps(state: Object, ownProps: Object) {
+export function mapStateToProps(state: IReduxState, ownProps: IAbstractProps) {
     const enabled = getFeatureFlag(state, CLOSE_CAPTIONS_ENABLED, true);
     const abstractProps = _abstractMapStateToProps(state, ownProps);
 

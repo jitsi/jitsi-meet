@@ -135,6 +135,11 @@ export const recordingScreenOptions = presentationScreenOptions;
 export const liveStreamScreenOptions = presentationScreenOptions;
 
 /**
+ * Screen options for subtitles modal.
+ */
+export const subtitlesScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for lobby modal.
  */
 export const lobbyScreenOptions = {
