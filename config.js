@@ -1503,6 +1503,8 @@ var config = {
     //     displayMode: 'all',
     //     // How long the GIF should be displayed on the tile (in milliseconds).
     //     tileTime: 5000,
+    //     // Limit results by rating: g, pg, pg-13, r. Default value: g.
+    //     rating: 'pg',
     // },
 
     // Logging

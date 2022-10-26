@@ -20,7 +20,12 @@ import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { setGifDrawerVisibility } from '../../actions';
-import { formatGifUrlMessage, getGifAPIKey, getGifUrl } from '../../functions';
+import {
+    formatGifUrlMessage,
+    getGifAPIKey,
+    getGifRating,
+    getGifUrl
+} from '../../function.any';
 
 const OVERFLOW_DRAWER_PADDING = 16;
 
@@ -88,12 +93,13 @@ function GifsMenu() {
     const { t } = useTranslation();
     const overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const rating = useSelector(getGifRating);
 
     const fetchGifs = useCallback(async (offset = 0) => {
         const options: TrendingOptions = {
-            rating: 'pg-13',
             limit: 20,
-            offset
+            offset,
+            rating
         };
 
         if (!searchKey) {
