@@ -49,6 +49,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 
         input: {
             backgroundColor: theme.palette.ui03,
+            background: theme.palette.ui03,
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             padding: '10px 16px',
