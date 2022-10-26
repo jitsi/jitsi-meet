@@ -1,19 +1,16 @@
-// @flow
-
 import _ from 'lodash';
 
+import { IStore } from '../app/types';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
-import {
-    PARTICIPANT_LEFT,
-    getParticipantById,
-    getPinnedParticipant,
-    pinParticipant
-} from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
-import { updateSettings } from '../base/settings';
-import { setFilmstripVisible } from '../filmstrip';
-import { addStageParticipant } from '../filmstrip/actions.web';
-import { setTileView } from '../video-layout';
+import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
+import { pinParticipant } from '../base/participants/actions';
+import { getParticipantById, getPinnedParticipant } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { updateSettings } from '../base/settings/actions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { addStageParticipant, setFilmstripVisible } from '../filmstrip/actions';
+import { setTileView } from '../video-layout/actions.any';
 
 import {
     setFollowMeModerator,
@@ -24,8 +21,6 @@ import { isFollowMeActive } from './functions';
 import logger from './logger';
 
 import './subscriber';
-
-declare var APP: Object;
 
 /**
  * The timeout after which a follow-me command that has been received will be
@@ -43,7 +38,7 @@ const _FOLLOW_ME_RECEIVED_TIMEOUT = 30;
  *
  * @type {TimeoutID}
  */
-let nextOnStageTimeout;
+let nextOnStageTimeout: number;
 
 /**
  * A count of how many seconds the nextOnStageTimeout has ticked while waiting
@@ -66,7 +61,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = action;
 
         conference.addCommandListener(
-            FOLLOW_ME_COMMAND, ({ attributes }, id) => {
+            FOLLOW_ME_COMMAND, ({ attributes }: any, id: string) => {
                 _onFollowMeCommand(attributes, id, store);
             });
         break;
@@ -94,7 +89,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _onFollowMeCommand(attributes = {}, id, store) {
+function _onFollowMeCommand(attributes: any = {}, id: string, store: IStore) {
     const state = store.getState();
 
     // We require to know who issued the command because (1) only a
@@ -124,7 +119,7 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         const { conference } = state['features/base/conference'];
 
         // As this participant is not stored in redux store we do the checks on the JitsiParticipant from lib-jitsi-meet
-        const participant = conference.getParticipantById(id);
+        const participant = conference?.getParticipantById(id);
 
         if (!iAmRecorder || !participant || participant.getRole() !== 'moderator'
             || !participant.isHiddenFromRecorder()) {
@@ -187,7 +182,8 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         const stageParticipants = JSON.parse(attributes.pinnedStageParticipants);
 
         if (!_.isEqual(stageParticipants, oldState.pinnedStageParticipants)) {
-            stageParticipants.forEach(p => store.dispatch(addStageParticipant(p.participantId, true)));
+            stageParticipants.forEach((p: { participantId: string; }) =>
+                store.dispatch(addStageParticipant(p.participantId, true)));
         }
     }
 
@@ -207,14 +203,14 @@ function _onFollowMeCommand(attributes = {}, id, store) {
  * @private
  * @returns {void}
  */
-function _pinVideoThumbnailById(store, clickId) {
+function _pinVideoThumbnailById(store: IStore, clickId: string) {
     if (getParticipantById(store.getState(), clickId)) {
         clearTimeout(nextOnStageTimeout);
         nextOnStageTimer = 0;
 
         store.dispatch(pinParticipant(clickId));
     } else {
-        nextOnStageTimeout = setTimeout(() => {
+        nextOnStageTimeout = window.setTimeout(() => {
             if (nextOnStageTimer > _FOLLOW_ME_RECEIVED_TIMEOUT) {
                 nextOnStageTimer = 0;
 

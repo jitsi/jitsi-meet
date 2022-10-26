@@ -29,7 +29,7 @@ export function getReceiverVideoQualityLevel(availableHeight: number, heightToLe
  * @returns {Map<number, number>|undefined} - A mapping of minimal thumbnail height required for given quality level or
  * {@code undefined} if the map contains invalid values.
  */
-export function validateMinHeightForQualityLvl(minHeightForQualityLvl) {
+export function validateMinHeightForQualityLvl(minHeightForQualityLvl?: { [key: number]: string; }) {
     if (typeof minHeightForQualityLvl !== 'object'
         || Object.keys(minHeightForQualityLvl).map(lvl => Number(lvl))
             .find(lvl => lvl === null || isNaN(lvl) || lvl < 0)) {
@@ -51,7 +51,7 @@ export function validateMinHeightForQualityLvl(minHeightForQualityLvl) {
 
     for (const level of levelsSorted) {
         const configQuality = minHeightForQualityLvl[level];
-        const appQuality = CFG_LVL_TO_APP_QUALITY_LVL[configQuality];
+        const appQuality = CFG_LVL_TO_APP_QUALITY_LVL[configQuality as keyof typeof CFG_LVL_TO_APP_QUALITY_LVL];
 
         if (!appQuality) {
             return undefined;

@@ -1,5 +1,3 @@
-// @flow
-
 import {
     SET_FOLLOW_ME_MODERATOR,
     SET_FOLLOW_ME_STATE
@@ -14,7 +12,7 @@ import {
  *     id, string
  * }}
  */
-export function setFollowMeModerator(id: ?string) {
+export function setFollowMeModerator(id?: string) {
     return {
         type: SET_FOLLOW_ME_MODERATOR,
         id
@@ -30,7 +28,7 @@ export function setFollowMeModerator(id: ?string) {
  *     state: Object
  * }}
  */
-export function setFollowMeState(state: ?Object) {
+export function setFollowMeState(state?: Object) {
     return {
         type: SET_FOLLOW_ME_STATE,
         state

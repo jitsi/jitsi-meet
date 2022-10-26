@@ -1,13 +1,11 @@
-// @flow
-import type { Dispatch } from 'redux';
-
-import { TILE_VIEW_ENABLED, getFeatureFlag } from '../base/flags';
-import {
-    getParticipantCount,
-    getPinnedParticipant,
-    pinParticipant
-} from '../base/participants';
+import { IReduxState, IStore } from '../app/types';
+import { TILE_VIEW_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
+import { pinParticipant } from '../base/participants/actions';
+import { getParticipantCount, getPinnedParticipant } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
@@ -15,8 +13,6 @@ import { getReceiverVideoQualityLevel } from '../video-quality/functions';
 import { getMinHeightForQualityLvlMap } from '../video-quality/selector';
 
 import { LAYOUTS } from './constants';
-
-declare var interfaceConfig: Object;
 
 /**
  * A selector for retrieving the current automatic pinning setting.
@@ -40,7 +36,7 @@ export function getAutoPinSetting() {
  * @param {Object} state - The redux state.
  * @returns {string}
  */
-export function getCurrentLayout(state: Object) {
+export function getCurrentLayout(state: IReduxState) {
     if (navigator.product === 'ReactNative') {
         // FIXME: what should this return?
         return undefined;
@@ -65,8 +61,8 @@ export function getCurrentLayout(state: Object) {
  * @param {Object} state - The redux state.
  * @returns {boolean} True if tile view should be displayed.
  */
-export function shouldDisplayTileView(state: Object = {}) {
-    const { tileViewEnabled } = state['features/video-layout'];
+export function shouldDisplayTileView(state: IReduxState) {
+    const { tileViewEnabled } = state['features/video-layout'] ?? {};
 
     if (tileViewEnabled !== undefined) {
         // If the user explicitly requested a view mode, we
@@ -119,7 +115,7 @@ export function shouldDisplayTileView(state: Object = {}) {
  * @returns {void}
  */
 export function updateAutoPinnedParticipant(
-        screenShares: Array<string>, { dispatch, getState }: { dispatch: Dispatch<any>, getState: Function }) {
+        screenShares: Array<string>, { dispatch, getState }: IStore) {
     const state = getState();
     const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
     const pinned = getPinnedParticipant(getState);
@@ -155,7 +151,7 @@ export function updateAutoPinnedParticipant(
  * @param {Object} state - The redux state.
  * @returns {boolean}
  */
-export function isLayoutTileView(state: Object) {
+export function isLayoutTileView(state: IReduxState) {
     return getCurrentLayout(state) === LAYOUTS.TILE_VIEW;
 }
 
@@ -189,7 +185,7 @@ function getVideoQualityForHeight(height: number) {
  * @param {Object} state - Redux state.
  * @returns {number}
  */
-export function getVideoQualityForResizableFilmstripThumbnails(height, state) {
+export function getVideoQualityForResizableFilmstripThumbnails(height: number, state: IReduxState) {
     if (!height) {
         return VIDEO_QUALITY_LEVELS.LOW;
     }
@@ -204,7 +200,7 @@ export function getVideoQualityForResizableFilmstripThumbnails(height, state) {
  * @param {Object} state - Redux state.
  * @returns {number}
  */
-export function getVideoQualityForScreenSharingFilmstrip(height, state) {
+export function getVideoQualityForScreenSharingFilmstrip(height: number, state: IReduxState) {
     if (!height) {
         return VIDEO_QUALITY_LEVELS.LOW;
     }
@@ -218,7 +214,7 @@ export function getVideoQualityForScreenSharingFilmstrip(height, state) {
  * @param {number} largeVideoHeight - The height of the large video.
  * @returns {number} - The video quality for the large video.
  */
-export function getVideoQualityForLargeVideo(largeVideoHeight) {
+export function getVideoQualityForLargeVideo(largeVideoHeight: number) {
     return getVideoQualityForHeight(largeVideoHeight);
 }
 
@@ -229,7 +225,7 @@ export function getVideoQualityForLargeVideo(largeVideoHeight) {
  * @param {Object} state - Redux state.
  * @returns {number}
  */
-export function getVideoQualityForStageThumbnails(height, state) {
+export function getVideoQualityForStageThumbnails(height: number, state: IReduxState) {
     if (!height) {
         return VIDEO_QUALITY_LEVELS.LOW;
     }

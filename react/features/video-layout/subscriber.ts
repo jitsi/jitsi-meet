@@ -1,13 +1,13 @@
-// @flow
-
 import debounce from 'lodash/debounce';
 
-import { getMultipleVideoSupportFeatureFlag } from '../base/config';
-import { StateListenerRegistry, equals } from '../base/redux';
-import { isFollowMeActive } from '../follow-me';
+import { getMultipleVideoSupportFeatureFlag } from '../base/config/functions';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { equals } from '../base/redux/functions';
+import { ITrack } from '../base/tracks/reducer';
+import { isFollowMeActive } from '../follow-me/functions';
 
-import { setRemoteParticipantsWithScreenShare, virtualScreenshareParticipantsUpdated } from './actions';
-import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
+import { setRemoteParticipantsWithScreenShare, virtualScreenshareParticipantsUpdated } from './actions.web';
+import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions.web';
 
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].sortedRemoteVirtualScreenshareParticipants,
@@ -60,7 +60,7 @@ StateListenerRegistry.register(
         }
 
         const oldScreenSharesOrder = store.getState()['features/video-layout'].remoteScreenShares || [];
-        const knownSharingParticipantIds = tracks.reduce((acc, track) => {
+        const knownSharingParticipantIds = tracks.reduce((acc: string[], track: ITrack) => {
             if (track.mediaType === 'video' && track.videoType === 'desktop') {
                 const skipTrack = getAutoPinSetting() === 'remote-only' && track.local;
 
@@ -76,11 +76,11 @@ StateListenerRegistry.register(
         // by looping through the known sharing participants and removing any
         // participant IDs which are no longer sharing.
         const newScreenSharesOrder = oldScreenSharesOrder.filter(
-            participantId => knownSharingParticipantIds.includes(participantId));
+            (participantId: string) => knownSharingParticipantIds.includes(participantId));
 
         // Make sure all new sharing participant get added to the end of the
         // known screen shares.
-        knownSharingParticipantIds.forEach(participantId => {
+        knownSharingParticipantIds.forEach((participantId: string) => {
             if (!newScreenSharesOrder.includes(participantId)) {
                 newScreenSharesOrder.push(participantId);
             }

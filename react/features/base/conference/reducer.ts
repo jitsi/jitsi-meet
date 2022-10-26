@@ -50,6 +50,7 @@ export interface IJitsiConference {
     getBreakoutRooms: Function;
     getLocalParticipantProperty: Function;
     getLocalTracks: Function;
+    getParticipantById: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
     isCallstatsEnabled: Function;
@@ -74,6 +75,8 @@ export interface IJitsiConference {
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setLocalParticipantProperty: Function;
+    setReceiverConstraints: Function;
+    setSenderVideoConstraint: Function;
     setSubject: Function;
 }
 

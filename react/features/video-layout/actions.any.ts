@@ -1,6 +1,4 @@
-// @flow
-
-import type { Dispatch } from 'redux';
+import { IStore } from '../app/types';
 
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
@@ -54,7 +52,7 @@ export function virtualScreenshareParticipantsUpdated(participantIds: Array<stri
  *     enabled: ?boolean
  * }}
  */
-export function setTileView(enabled: ?boolean) {
+export function setTileView(enabled?: boolean) {
     return {
         type: SET_TILE_VIEW,
         enabled
@@ -68,7 +66,7 @@ export function setTileView(enabled: ?boolean) {
  * @returns {Function}
  */
 export function toggleTileView() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const tileViewActive = shouldDisplayTileView(getState());
 
         dispatch(setTileView(!tileViewActive));
