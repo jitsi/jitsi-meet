@@ -364,7 +364,7 @@ class Prejoin extends Component<Props, State> {
         return (
             <PreMeetingScreen
                 showDeviceStatus = { deviceStatusVisible }
-                title = { t('prejoin.joinMeeting') }
+                title = { t('prejoin.title') }
                 videoMuted = { !showCameraPreview }
                 videoTrack = { videoTrack }>
                 <div
