@@ -12,7 +12,7 @@ import {
 import {
     removeTranscriptMessage,
     updateTranscriptMessage
-} from './actions.web';
+} from './actions';
 import logger from './logger';
 
 /**
