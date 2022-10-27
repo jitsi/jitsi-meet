@@ -1,11 +1,10 @@
 /* eslint-disable no-undef */
-
+const path = require('path');
 const appiumVersion = '1.22.3';
 
 module.exports = {
     IOS: {
-        // eslint-disable-next-line max-len
-        'appium:app': '~/Library/Developer/Xcode/Archives/2022-09-01/JitsiMeet.xcarchive/Products/Applications/jitsi-meet.app',
+        'appium:app': path.join(process.cwd(),'ios/app/out/jitsi-meet.app'),
         'appium:appiumVersion': appiumVersion,
         'appium:automationName': 'XCUITest',
         'appium:newCommandTimeout': 240,
