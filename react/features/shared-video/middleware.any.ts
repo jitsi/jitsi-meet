@@ -1,20 +1,15 @@
-// @flow
-
 import { batch } from 'react-redux';
 
+import { IStore } from '../app/types';
 import { CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_LEFT } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
-import { MEDIA_TYPE } from '../base/media';
-import {
-    PARTICIPANT_LEFT,
-    getLocalParticipant,
-    getParticipantById,
-    participantJoined,
-    participantLeft,
-    pinParticipant
-} from '../base/participants';
+import { IJitsiConference } from '../base/conference/reducer';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
+import { participantJoined, participantLeft, pinParticipant } from '../base/participants/actions';
+import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
-import { MiddlewareRegistry } from '../base/redux';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import {
@@ -25,8 +20,6 @@ import { PLAYBACK_STATUSES, SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from '
 import { isSharingStatus } from './functions';
 import logger from './logger';
 
-
-declare var APP: Object;
 
 /**
  * Middleware that captures actions related to video sharing and updates
@@ -45,7 +38,8 @@ MiddlewareRegistry.register(store => next => action => {
         const localParticipantId = getLocalParticipant(state)?.id;
 
         conference.addCommandListener(SHARED_VIDEO,
-            ({ value, attributes }) => {
+            ({ value, attributes }: { attributes: {
+                from: string; muted: string; state: string; time: string; }; value: string; }) => {
 
                 const { from } = attributes;
                 const sharedVideoStatus = attributes.state;
@@ -77,7 +71,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (action.participant.id === stateOwnerId) {
             batch(() => {
                 dispatch(resetSharedVideoStatus());
-                dispatch(participantLeft(statevideoUrl, conference));
+                dispatch(participantLeft(statevideoUrl ?? '', conference));
             });
         }
         break;
@@ -126,7 +120,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             sendShareVideoCommand({
                 conference,
-                id: statevideoUrl,
+                id: statevideoUrl ?? '',
                 localParticipantId,
                 muted: true,
                 status: 'stop',
@@ -152,10 +146,12 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {JitsiConference} conference - The current conference.
  * @returns {void}
  */
-function handleSharingVideoStatus(store, videoUrl, { state, time, from, muted }, conference) {
+function handleSharingVideoStatus(store: IStore, videoUrl: string,
+        { state, time, from, muted }: { from: string; muted: string; state: string; time: string; },
+        conference: IJitsiConference) {
     const { dispatch, getState } = store;
-    const localParticipantId = getLocalParticipant(getState()).id;
-    const oldStatus = getState()['features/shared-video']?.status;
+    const localParticipantId = getLocalParticipant(getState())?.id;
+    const oldStatus = getState()['features/shared-video']?.status ?? '';
 
     if (state === 'start' || ![ 'playing', 'pause', 'start' ].includes(oldStatus)) {
         const youtubeId = videoUrl.match(/http/) ? false : videoUrl;
@@ -195,7 +191,10 @@ function handleSharingVideoStatus(store, videoUrl, { state, time, from, muted },
  * @param {string} time - The seek position of the video.
  * @returns {void}
  */
-function sendShareVideoCommand({ id, status, conference, localParticipantId, time, muted, volume }) {
+function sendShareVideoCommand({ id, status, conference, localParticipantId = '', time, muted, volume }: {
+    conference: IJitsiConference; id: string; localParticipantId?: string; muted: boolean;
+    status: string; time: number; volume: number;
+}) {
     conference.sendCommandOnce(SHARED_VIDEO, {
         value: id,
         attributes: {

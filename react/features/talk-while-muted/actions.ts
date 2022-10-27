@@ -1,5 +1,3 @@
-// @flow
-
 import { SET_CURRENT_NOTIFICATION_UID } from './actionTypes';
 
 /**
@@ -13,7 +11,7 @@ import { SET_CURRENT_NOTIFICATION_UID } from './actionTypes';
  *     uid: number
  * }}
  */
-export function setCurrentNotificationUid(uid: ?number) {
+export function setCurrentNotificationUid(uid?: string) {
     return {
         type: SET_CURRENT_NOTIFICATION_UID,
         uid

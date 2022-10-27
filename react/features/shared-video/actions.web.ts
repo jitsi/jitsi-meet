@@ -1,5 +1,3 @@
-// @flow
-
 import { SET_DISABLE_BUTTON } from './actionTypes';
 
 export * from './actions.any';

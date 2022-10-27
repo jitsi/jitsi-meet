@@ -1,8 +1,6 @@
-// @flow
-
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
-import { getLocalParticipant } from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
+import { getLocalParticipant } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { setDisableButton } from './actions.web';
 import { SHARED_VIDEO } from './constants';
@@ -17,7 +15,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case CONFERENCE_JOIN_IN_PROGRESS: {
         const { conference } = action;
 
-        conference.addCommandListener(SHARED_VIDEO, ({ attributes }) => {
+        conference.addCommandListener(SHARED_VIDEO, ({ attributes }: { attributes:
+            { from: string; state: string; }; }) => {
             const { from } = attributes;
             const status = attributes.state;
 
