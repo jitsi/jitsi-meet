@@ -3,8 +3,9 @@ const path = require('path');
 const appiumVersion = '1.22.3';
 
 module.exports = {
+
     IOS: {
-        'appium:app': path.join(process.cwd(),'ios/app/out/jitsi-meet.app'),
+        'appium:app': path.join(process.cwd(), 'ios/app/out/jitsi-meet.app'),
         'appium:appiumVersion': appiumVersion,
         'appium:automationName': 'XCUITest',
         'appium:newCommandTimeout': 240,
