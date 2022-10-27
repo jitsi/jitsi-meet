@@ -51,7 +51,7 @@ class AudioDeviceHandlerConnectionService implements
      */
     private AudioModeModule module;
 
-    private ReactContext context;
+    private RNConnectionService rcs;
 
     /**
      * Converts any of the "DEVICE_" constants into the corresponding
@@ -145,9 +145,8 @@ class AudioDeviceHandlerConnectionService implements
         JitsiMeetLogger.i("Using " + TAG + " as the audio device handler");
 
         module = audioModeModule;
-        context = module.getContext();
+        rcs = module.getContext().getNativeModule(RNConnectionService.class);
 
-        RNConnectionService rcs = context.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(this);
         } else {
@@ -157,9 +156,9 @@ class AudioDeviceHandlerConnectionService implements
 
     @Override
     public void stop() {
-        RNConnectionService rcs = context.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(null);
+            rcs = null;
         } else {
             JitsiMeetLogger.w(TAG + " Couldn't set call audio state listener, module is null");
         }
