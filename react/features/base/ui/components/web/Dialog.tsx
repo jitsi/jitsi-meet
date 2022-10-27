@@ -228,13 +228,13 @@ const Dialog = ({
     const dispatch = useDispatch();
 
     const onClose = useCallback(() => {
-        onCancel?.();
         dispatch(hideDialog());
+        onCancel?.();
     }, [ onCancel ]);
 
     const submit = useCallback(() => {
-        onSubmit?.();
         dispatch(hideDialog());
+        onSubmit?.();
     }, [ onSubmit ]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
