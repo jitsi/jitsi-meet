@@ -277,7 +277,8 @@ class ConferenceConnector {
     /**
      *
      */
-    constructor(resolve, reject) {
+    constructor(resolve, reject, conference) {
+        this._conference = conference;
         this._resolve = resolve;
         this._reject = reject;
         this.reconnectTimeout = null;
@@ -333,6 +334,36 @@ class ConferenceConnector {
             const [ code, msg ] = params;
 
             APP.UI.notifyReservationError(code, msg);
+            break;
+        }
+
+        case JitsiConferenceErrors.REDIRECTED: {
+            const [ vnode, focusJid ] = params;
+
+            const config = APP.store.getState()['features/base/config'];
+            const oldDomain = config.hosts.domain;
+
+            config.hosts.domain = `${vnode}.meet.jitsi`;
+            config.hosts.muc = config.hosts.muc.replace(oldDomain, config.hosts.domain);
+            config.hosts.visitorFocus = focusJid;
+
+            config.bosh += `?vnode=${vnode}`;
+            config.websocket += `?vnode=${vnode}`;
+
+            connection.disconnect().then(() => {
+                connect(this._conference.roomName).then(con => {
+                    const localTracks = getLocalTracks(APP.store.getState()['features/base/tracks']);
+
+                    const jitsiTracks = localTracks.map(t => t.jitsiTrack);
+
+                    // visitors connect muted
+                    jitsiTracks.forEach(t => t.mute());
+
+                    // TODO disable option to unmute audio or video
+                    this._conference.startConference(con, jitsiTracks);
+                });
+            });
+
             break;
         }
 
@@ -732,7 +763,7 @@ export default {
         // XXX The API will take care of disconnecting from the XMPP
         // server (and, thus, leaving the room) on unload.
         return new Promise((resolve, reject) => {
-            new ConferenceConnector(resolve, reject).connect();
+            new ConferenceConnector(resolve, reject, this).connect();
         });
     },
 
@@ -1349,7 +1380,7 @@ export default {
         this._createRoom(localTracks);
 
         return new Promise((resolve, reject) => {
-            new ConferenceConnector(resolve, reject).connect();
+            new ConferenceConnector(resolve, reject, this).connect();
         });
     },
 
