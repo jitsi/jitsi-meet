@@ -1,53 +1,76 @@
-// @flow
-
-/* eslint-disable react/jsx-no-bind */
-
-import React, { useState } from 'react';
+import { Theme } from '@mui/material';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { isIosMobileBrowser } from '../../../../base/environment/utils';
-import { translate } from '../../../../base/i18n';
+import Icon from '../../../../base/icons/components/Icon';
 import {
-    Icon,
-    IconArrowDownSmall,
     IconCopy,
-    IconEmail,
+    IconEnvelope,
     IconGoogle,
-    IconOutlook,
+    IconOffice365,
     IconYahoo
-} from '../../../../base/icons';
+} from '../../../../base/icons/svg';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { Tooltip } from '../../../../base/tooltip';
 import { copyText } from '../../../../base/util/copyText.web';
 
-type Props = {
+interface IProps {
 
     /**
      * The encoded invitation subject.
      */
-    inviteSubject: string,
+    inviteSubject: string;
 
     /**
      * The encoded invitation text to be sent.
      */
-    inviteText: string,
+    inviteText: string;
 
     /**
      * The encoded no new-lines iOS invitation text to be sent on default mail.
      */
-    inviteTextiOS: string,
+    inviteTextiOS: string;
+}
 
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
-};
+const useStyles = makeStyles()((theme: Theme) => {
+    return {
+        container: {
+            marginTop: theme.spacing(4)
+        },
+
+        label: {
+            marginBottom: theme.spacing(2)
+        },
+
+        iconRow: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+        },
+
+        iconContainer: {
+            display: 'block',
+            padding: theme.spacing(2),
+            cursor: 'pointer',
+
+            '& svg>path': {
+                fill: theme.palette.icon01
+            }
+        }
+    };
+});
 
 /**
  * Component that renders email invite options.
  *
- * @returns {React$Element<any>}
+ * @returns {ReactNode}
  */
-function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: Props) {
-    const [ isActive, setIsActive ] = useState(false);
+function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IProps) {
+    const { classes } = useStyles();
+    const { t } = useTranslation();
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
     const encodedInviteText = encodeURIComponent(inviteText);
     const encodedInviteTextiOS = encodeURIComponent(inviteTextiOS);
@@ -70,7 +93,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: P
      *
      * @returns {void}
      */
-    function _onCopyTextKeyPress(e) {
+    function _onCopyTextKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             copyText(inviteText);
@@ -78,38 +101,15 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: P
     }
 
     /**
-     * Toggles the email invite drawer.
-     *
-     * @returns {void}
-     */
-    function _onToggleActiveState() {
-        setIsActive(!isActive);
-    }
-
-    /**
-     * Toggles the email invite drawer.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    function _onToggleActiveStateKeyPress(e) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            setIsActive(!isActive);
-        }
-    }
-
-    /**
      * Renders clickable elements that each open an email client
      * containing a conference invite.
      *
-     * @returns {React$Element<any>}
+     * @returns {ReactNode}
      */
     function renderEmailIcons() {
         const PROVIDER_MAPPING = [
             {
-                icon: IconEmail,
+                icon: IconEnvelope,
                 tooltipKey: 'addPeople.defaultEmail',
                 url: `mailto:?subject=${encodedInviteSubject}&body=${encodedDefaultEmailText}`
             },
@@ -119,7 +119,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: P
                 url: `https://mail.google.com/mail/?view=cm&fs=1&su=${encodedInviteSubject}&body=${encodedInviteText}`
             },
             {
-                icon: IconOutlook,
+                icon: IconOffice365,
                 tooltipKey: 'addPeople.outlookEmail',
                 // eslint-disable-next-line max-len
                 url: `https://outlook.office.com/mail/deeplink/compose?subject=${encodedInviteSubject}&body=${encodedInviteText}`
@@ -141,7 +141,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: P
                             position = 'top'>
                             <a
                                 aria-label = { t(tooltipKey) }
-                                className = 'provider-icon'
+                                className = { classes.iconContainer }
                                 href = { url }
                                 rel = 'noopener noreferrer'
                                 target = '_blank'>
@@ -157,26 +157,18 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: P
 
     return (
         <>
-            <div>
-                <div
-                    aria-expanded = { isActive }
-                    aria-label = { t('addPeople.shareInvite') }
-                    className = { `invite-more-dialog email-container${isActive ? ' active' : ''}` }
-                    onClick = { _onToggleActiveState }
-                    onKeyPress = { _onToggleActiveStateKeyPress }
-                    role = 'button'
-                    tabIndex = { 0 }>
-                    <span>{t('addPeople.shareInvite')}</span>
-                    <Icon src = { IconArrowDownSmall } />
-                </div>
-                <div className = { `invite-more-dialog icon-container${isActive ? ' active' : ''}` }>
+            <div className = { classes.container }>
+                <p className = { classes.label }>{t('addPeople.shareInvite')}</p>
+                <div className = { classes.iconRow }>
                     <Tooltip
                         content = { t('addPeople.copyInvite') }
                         position = 'top'>
                         <div
                             aria-label = { t('addPeople.copyInvite') }
-                            className = 'copy-invite-icon'
+                            className = { classes.iconContainer }
+                            // eslint-disable-next-line react/jsx-no-bind
                             onClick = { _onCopyText }
+                            // eslint-disable-next-line react/jsx-no-bind
                             onKeyPress = { _onCopyTextKeyPress }
                             role = 'button'
                             tabIndex = { 0 }>
@@ -190,4 +182,4 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: P
     );
 }
 
-export default translate(InviteByEmailSection);
+export default InviteByEmailSection;

@@ -11,8 +11,6 @@ import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions.any';
-// @ts-ignore
-import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { isVpaasMeeting } from '../../../../jaas/functions';
 // @ts-ignore
 import { getActiveSession } from '../../../../recording';
@@ -29,12 +27,10 @@ import {
     // @ts-ignore
 } from '../../../functions';
 
-// @ts-ignore
 import CopyMeetingLinkSection from './CopyMeetingLinkSection';
 import DialInLimit from './DialInLimit';
 // @ts-ignore
 import DialInSection from './DialInSection';
-// @ts-ignore
 import InviteByEmailSection from './InviteByEmailSection';
 // @ts-ignore
 import InviteContactsSection from './InviteContactsSection';
@@ -57,11 +53,6 @@ interface IProps extends WithTranslation {
      * Whether or not email sharing features should be visible.
      */
     _emailSharingVisible: boolean;
-
-    /**
-     * Whether or not embed meeting should be visible.
-     */
-    _embedMeetingVisible: boolean;
 
     /**
      * The meeting invitation text.
@@ -122,7 +113,6 @@ interface IProps extends WithTranslation {
  */
 function AddPeopleDialog({
     _dialIn,
-    _embedMeetingVisible,
     _dialInVisible,
     _urlSharingVisible,
     _emailSharingVisible,
@@ -135,7 +125,8 @@ function AddPeopleDialog({
     _liveStreamViewURL,
     _phoneNumber,
     t,
-    updateNumbers }: IProps) {
+    updateNumbers
+}: IProps) {
 
     /**
      * Updates the dial-in numbers.
@@ -181,7 +172,6 @@ function AddPeopleDialog({
                             inviteTextiOS = { _invitationTextiOS } />
                         : null
                 }
-                { _embedMeetingVisible && <EmbedMeetingTrigger /> }
                 <div className = 'invite-more-dialog separator' />
                 {
                     _liveStreamViewURL
@@ -221,7 +211,6 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     return {
         _dialIn: dialIn,
-        _embedMeetingVisible: !isVpaasMeeting(state) && isSharingEnabled(sharingFeatures.embed),
         _dialInVisible: isSharingEnabled(sharingFeatures.dialIn),
         _urlSharingVisible: isDynamicBrandingDataLoaded(state) && isSharingEnabled(sharingFeatures.url),
         _emailSharingVisible: isSharingEnabled(sharingFeatures.email),
