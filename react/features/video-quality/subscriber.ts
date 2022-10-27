@@ -1,26 +1,30 @@
-/* global APP */
-
 import debounce from 'lodash/debounce';
 
-import { _handleParticipantError } from '../base/conference';
-import { getSourceNameSignalingFeatureFlag } from '../base/config';
-import { MEDIA_TYPE } from '../base/media';
-import { getLocalParticipant } from '../base/participants';
-import { StateListenerRegistry } from '../base/redux';
-import { getRemoteScreenSharesSourceNames, getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks';
-import { reportError } from '../base/util';
+import { IStore } from '../app/types';
+import { _handleParticipantError } from '../base/conference/functions';
+import { getSourceNameSignalingFeatureFlag } from '../base/config/functions';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { getLocalParticipant } from '../base/participants/functions';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import {
+    getRemoteScreenSharesSourceNames,
+    getTrackSourceNameByMediaTypeAndParticipant
+} from '../base/tracks/functions';
+import { reportError } from '../base/util/helpers';
 import {
     getActiveParticipantsIds,
     getScreenshareFilmstripParticipantId,
     isTopPanelEnabled
+
+    // @ts-ignore
 } from '../filmstrip/functions';
+import { LAYOUTS } from '../video-layout/constants';
 import {
-    LAYOUTS,
     getVideoQualityForLargeVideo,
     getVideoQualityForResizableFilmstripThumbnails,
     getVideoQualityForStageThumbnails,
     shouldDisplayTileView
-} from '../video-layout';
+} from '../video-layout/functions';
 import { getCurrentLayout, getVideoQualityForScreenSharingFilmstrip } from '../video-layout/functions.any';
 
 import {
@@ -301,7 +305,7 @@ StateListenerRegistry.register(
  * @param {number} preferred - The user preferred max frame height.
  * @returns {void}
  */
-function _setSenderVideoConstraint(preferred, { getState }) {
+function _setSenderVideoConstraint(preferred: number, { getState }: IStore) {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
@@ -311,7 +315,7 @@ function _setSenderVideoConstraint(preferred, { getState }) {
 
     logger.info(`Setting sender resolution to ${preferred}`);
     conference.setSenderVideoConstraint(preferred)
-        .catch(error => {
+        .catch((error: any) => {
             _handleParticipantError(error);
             reportError(error, `Changing sender resolution to ${preferred} failed.`);
         });
@@ -323,7 +327,7 @@ function _setSenderVideoConstraint(preferred, { getState }) {
  * @param {*} store - The redux store.
  * @returns {void}
  */
-function _updateReceiverVideoConstraints({ getState }) {
+function _updateReceiverVideoConstraints({ getState }: IStore) {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
@@ -339,7 +343,7 @@ function _updateReceiverVideoConstraints({ getState }) {
         maxReceiverVideoQualityForScreenSharingFilmstrip,
         preferredVideoQuality
     } = state['features/video-quality'];
-    const { participantId: largeVideoParticipantId } = state['features/large-video'];
+    const { participantId: largeVideoParticipantId = '' } = state['features/large-video'];
     const maxFrameHeightForTileView = Math.min(maxReceiverVideoQualityForTileView, preferredVideoQuality);
     const maxFrameHeightForStageFilmstrip = Math.min(maxReceiverVideoQualityForStageFilmstrip, preferredVideoQuality);
     const maxFrameHeightForVerticalFilmstrip
@@ -352,20 +356,20 @@ function _updateReceiverVideoConstraints({ getState }) {
     const { visibleRemoteParticipants } = state['features/filmstrip'];
     const tracks = state['features/base/tracks'];
     const sourceNameSignaling = getSourceNameSignalingFeatureFlag(state);
-    const localParticipantId = getLocalParticipant(state).id;
+    const localParticipantId = getLocalParticipant(state)?.id;
     const activeParticipantsIds = getActiveParticipantsIds(state);
     const screenshareFilmstripParticipantId = isTopPanelEnabled(state) && getScreenshareFilmstripParticipantId(state);
 
-    const receiverConstraints = {
+    const receiverConstraints: any = {
         constraints: {},
         defaultConstraints: { 'maxHeight': VIDEO_QUALITY_LEVELS.NONE },
         lastN
     };
 
-    let remoteScreenSharesSourceNames;
-    let visibleRemoteTrackSourceNames = [];
-    let largeVideoSourceName;
-    let activeParticipantsSources = [];
+    let remoteScreenSharesSourceNames: string[];
+    let visibleRemoteTrackSourceNames: string[] = [];
+    let largeVideoSourceName: string | undefined;
+    let activeParticipantsSources: string[] = [];
 
     if (sourceNameSignaling) {
         receiverConstraints.onStageSources = [];
@@ -390,7 +394,7 @@ function _updateReceiverVideoConstraints({ getState }) {
         }
 
         if (activeParticipantsIds?.length > 0) {
-            activeParticipantsIds.forEach(participantId => {
+            activeParticipantsIds.forEach((participantId: string) => {
                 let sourceName;
 
                 if (remoteScreenSharesSourceNames.includes(participantId)) {
@@ -491,7 +495,7 @@ function _updateReceiverVideoConstraints({ getState }) {
 
     try {
         conference.setReceiverConstraints(receiverConstraints);
-    } catch (error) {
+    } catch (error: any) {
         _handleParticipantError(error);
         reportError(error, `Failed to set receiver video constraints ${JSON.stringify(receiverConstraints)}`);
     }

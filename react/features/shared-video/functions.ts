@@ -1,6 +1,5 @@
-// @flow
-
-import { getFakeParticipants } from '../base/participants';
+import { IStateful } from '../base/app/types';
+import { getFakeParticipants } from '../base/participants/functions';
 
 import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from './constants';
 
@@ -40,10 +39,10 @@ export function isSharingStatus(status: string) {
  * @param {Object | Function} stateful - The Redux state or a function that gets resolved to the Redux state.
  * @returns {boolean}
  */
-export function isVideoPlaying(stateful: Object | Function): boolean {
+export function isVideoPlaying(stateful: IStateful): boolean {
     let videoPlaying = false;
 
-    // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [ id, p ] of getFakeParticipants(stateful)) {
         if (p.name === VIDEO_PLAYER_PARTICIPANT_NAME || p.name === YOUTUBE_PLAYER_PARTICIPANT_NAME) {
             videoPlaying = true;

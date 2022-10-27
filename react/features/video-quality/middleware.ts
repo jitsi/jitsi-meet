@@ -1,8 +1,6 @@
-// @flow
-
-import { CONFERENCE_JOINED } from '../base/conference';
-import { SET_CONFIG } from '../base/config';
-import { MiddlewareRegistry } from '../base/redux';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { SET_CONFIG } from '../base/config/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { setPreferredVideoQuality } from './actions';
 import logger from './logger';
@@ -24,7 +22,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             const { resolution } = getState()['features/base/config'];
 
             if (typeof resolution !== 'undefined') {
-                dispatch(setPreferredVideoQuality(Number.parseInt(resolution, 10)));
+                dispatch(setPreferredVideoQuality(Number.parseInt(`${resolution}`, 10)));
                 logger.info(`Configured preferred receiver video frame height to: ${resolution}`);
             }
         }

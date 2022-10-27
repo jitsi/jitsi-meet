@@ -1,15 +1,11 @@
-// @flow
-
+// @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
-import { CONFERENCE_WILL_LEAVE } from '../base/conference';
-import { MEDIA_TYPE } from '../base/media';
-import {
-    PARTICIPANT_JOINED,
-    PARTICIPANT_UPDATED,
-    getLocalParticipant
-} from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
-import { TRACK_ADDED, TRACK_REMOVED, TRACK_STOPPED } from '../base/tracks';
+import { CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { PARTICIPANT_JOINED, PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
+import { getLocalParticipant } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { TRACK_ADDED, TRACK_REMOVED, TRACK_STOPPED } from '../base/tracks/actionTypes';
 import { PARTICIPANTS_PANE_CLOSE, PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
 
 import './middleware.any';

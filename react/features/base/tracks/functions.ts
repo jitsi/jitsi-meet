@@ -496,7 +496,7 @@ export function getVirtualScreenshareParticipantTrack(tracks: ITrack[], virtualS
  * @param {string[]} screenShareParticipantIds - Participant ID.
  * @returns {(string[])}
  */
-export function getRemoteScreenSharesSourceNames(state: IReduxState, screenShareParticipantIds = []) {
+export function getRemoteScreenSharesSourceNames(state: IReduxState, screenShareParticipantIds: string[] = []) {
     const tracks = state['features/base/tracks'];
 
     return getMultipleVideoSupportFeatureFlag(state)

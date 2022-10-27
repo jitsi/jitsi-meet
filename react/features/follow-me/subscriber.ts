@@ -1,11 +1,12 @@
-// @flow
-
-import { getCurrentConference } from '../base/conference';
+import { IReduxState, IStore } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
 import {
     getPinnedParticipant,
     isLocalParticipantModerator
-} from '../base/participants';
-import { StateListenerRegistry } from '../base/redux';
+} from '../base/participants/functions';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { getPinnedActiveParticipants, isStageFilmstripEnabled } from '../filmstrip/functions.web';
 import { shouldDisplayTileView } from '../video-layout/functions';
 
@@ -84,14 +85,14 @@ StateListenerRegistry.register(
  * @param {Object} state - The redux state.
  * @returns {Object}
  */
-function _getFollowMeState(state) {
+function _getFollowMeState(state: IReduxState) {
     const pinnedParticipant = getPinnedParticipant(state);
     const stageFilmstrip = isStageFilmstripEnabled(state);
 
     return {
         filmstripVisible: state['features/filmstrip'].visible,
         maxStageParticipants: stageFilmstrip ? state['features/base/settings'].maxStageParticipants : undefined,
-        nextOnStage: stageFilmstrip ? undefined : pinnedParticipant && pinnedParticipant.id,
+        nextOnStage: stageFilmstrip ? undefined : pinnedParticipant?.id,
         pinnedStageParticipants: stageFilmstrip ? JSON.stringify(getPinnedActiveParticipants(state)) : undefined,
         sharedDocumentVisible: state['features/etherpad'].editing,
         tileViewEnabled: shouldDisplayTileView(state)
@@ -107,7 +108,7 @@ function _getFollowMeState(state) {
  * @returns {void}
  */
 function _sendFollowMeCommand(
-        newSelectedValue, store) { // eslint-disable-line no-unused-vars
+        newSelectedValue: any, store: IStore) {
     const state = store.getState();
     const conference = getCurrentConference(state);
 

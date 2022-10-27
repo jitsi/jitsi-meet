@@ -1,6 +1,4 @@
-// @flow
-
-import type { Dispatch } from 'redux';
+import { IStore } from '../app/types';
 
 import {
     SET_MAX_RECEIVER_VIDEO_QUALITY_FOR_LARGE_VIDEO,
@@ -125,7 +123,7 @@ export function setPreferredVideoQuality(preferredVideoQuality: number) {
  * @returns {void}
  */
 export function setVideoQuality(frameHeight: number) {
-    return (dispatch: Dispatch<any>) => {
+    return (dispatch: IStore['dispatch']) => {
         if (frameHeight < VIDEO_QUALITY_LEVELS.LOW) {
             logger.error(`Invalid frame height for video quality - ${frameHeight}`);
 

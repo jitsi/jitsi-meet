@@ -1,3 +1,4 @@
+import { IReduxState } from '../app/types';
 import {
     ABSOLUTE_MAX_COLUMNS,
     DEFAULT_MAX_COLUMNS,
@@ -7,11 +8,11 @@ import {
     getNumberOfPartipantsForTileView,
     getThumbnailMinHeight,
     getTileDefaultAspectRatio
-} from '../filmstrip/functions';
+
+    // @ts-ignore
+} from '../filmstrip/functions.web';
 
 export * from './functions.any';
-
-declare var interfaceConfig: Object;
 
 /**
  * Returns how many columns should be displayed in tile view. The number
@@ -24,7 +25,8 @@ declare var interfaceConfig: Object;
  * @param {boolean} options.disableTileEnlargement - Custom value to be used instead of config.disableTileEnlargement.
  * @returns {number}
  */
-export function getMaxColumnCount(state, options = {}) {
+export function getMaxColumnCount(state: IReduxState, options: {
+    disableResponsiveTiles?: boolean; disableTileEnlargement?: boolean; width?: number; } = {}) {
     if (typeof interfaceConfig === 'undefined') {
         return DEFAULT_MAX_COLUMNS;
     }
@@ -69,7 +71,7 @@ export function getMaxColumnCount(state, options = {}) {
  * @returns {Object} An object is return with the desired number of columns,
  * rows, and visible rows (the rest should overflow) for the tile view layout.
  */
-export function getNotResponsiveTileViewGridDimensions(state: Object, stageFilmstrip: boolean = false) {
+export function getNotResponsiveTileViewGridDimensions(state: IReduxState, stageFilmstrip = false) {
     const maxColumns = getMaxColumnCount(state);
     const { activeParticipants } = state['features/filmstrip'];
     const numberOfParticipants = stageFilmstrip ? activeParticipants.length : getNumberOfPartipantsForTileView(state);

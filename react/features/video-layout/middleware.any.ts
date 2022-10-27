@@ -1,19 +1,17 @@
-// @flow
-
-import { getCurrentConference } from '../base/conference';
-import { VIDEO_TYPE } from '../base/media';
-import {
-    PARTICIPANT_LEFT,
-    PIN_PARTICIPANT,
-    getParticipantById,
-    getPinnedParticipant,
-    pinParticipant
-} from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { TRACK_REMOVED } from '../base/tracks';
-import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad';
+import { IStore } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
+import { VIDEO_TYPE } from '../base/media/constants';
+import { PARTICIPANT_LEFT, PIN_PARTICIPANT } from '../base/participants/actionTypes';
+import { pinParticipant } from '../base/participants/actions';
+import { getParticipantById, getPinnedParticipant } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { TRACK_REMOVED } from '../base/tracks/actionTypes';
+import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad/actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
-import { isFollowMeActive } from '../follow-me';
+import { isFollowMeActive } from '../follow-me/functions';
 
 import { SET_TILE_VIEW } from './actionTypes';
 import { setRemoteParticipantsWithScreenShare, setTileView } from './actions';
@@ -21,7 +19,7 @@ import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 
 import './subscriber';
 
-let previousTileViewEnabled;
+let previousTileViewEnabled: boolean | undefined;
 
 /**
  * Middleware which intercepts actions and updates tile view related state.
@@ -88,7 +86,7 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_REMOVED: {
         const { jitsiTrack } = action.track;
 
-        if (jitsiTrack && jitsiTrack.isVideoTrack() && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
+        if (jitsiTrack?.isVideoTrack() && jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP) {
             const participantId = jitsiTrack.getParticipantId();
             const oldScreenShares = store.getState()['features/video-layout'].remoteScreenShares || [];
             const newScreenShares = oldScreenShares.filter(id => id !== participantId);
@@ -134,7 +132,7 @@ StateListenerRegistry.register(
  * @param {Object} store - The Redux Store.
  * @returns {void}
  */
-function _restoreTileViewState({ dispatch, getState }) {
+function _restoreTileViewState({ dispatch, getState }: IStore) {
     const { tileViewEnabled } = getState()['features/video-layout'];
 
     if (tileViewEnabled === undefined && previousTileViewEnabled !== undefined) {
@@ -150,7 +148,7 @@ function _restoreTileViewState({ dispatch, getState }) {
  * @param {Object} store - The Redux Store.
  * @returns {void}
  */
-function _storeTileViewStateAndClear({ dispatch, getState }) {
+function _storeTileViewStateAndClear({ dispatch, getState }: IStore) {
     const { tileViewEnabled } = getState()['features/video-layout'];
 
     if (tileViewEnabled !== undefined) {
