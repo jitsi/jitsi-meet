@@ -45,11 +45,11 @@ const Input = ({
     const handleChange = useCallback((e: NativeSyntheticEvent<TextInputChangeEventData>) => {
         const { nativeEvent: { text } } = e;
 
-        onChange(text);
+        onChange?.(text);
     }, []);
 
     const clearInput = useCallback(() => {
-        onChange('');
+        onChange?.('');
     }, []);
 
     const blur = useCallback(() => {

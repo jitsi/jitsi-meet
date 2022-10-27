@@ -21,6 +21,7 @@ interface IProps extends IInputProps {
     minRows?: number;
     name?: string;
     onKeyPress?: (e: React.KeyboardEvent) => void;
+    readOnly?: boolean;
     textarea?: boolean;
     type?: 'text' | 'email' | 'number' | 'password';
 }
@@ -147,6 +148,7 @@ const Input = React.forwardRef<any, IProps>(({
     onChange,
     onKeyPress,
     placeholder,
+    readOnly = false,
     textarea = false,
     type = 'text',
     value
@@ -155,9 +157,9 @@ const Input = React.forwardRef<any, IProps>(({
     const isMobile = isMobileBrowser();
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-        onChange(e.target.value), []);
+        onChange?.(e.target.value), []);
 
-    const clearInput = useCallback(() => onChange(''), []);
+    const clearInput = useCallback(() => onChange?.(''), []);
 
     return (
         <div className = { cx(styles.inputContainer, className) }>
@@ -183,6 +185,7 @@ const Input = React.forwardRef<any, IProps>(({
                         onChange = { handleChange }
                         onKeyPress = { onKeyPress }
                         placeholder = { placeholder }
+                        readOnly = { readOnly }
                         ref = { ref }
                         value = { value } />
                 ) : (
@@ -198,6 +201,7 @@ const Input = React.forwardRef<any, IProps>(({
                         onChange = { handleChange }
                         onKeyPress = { onKeyPress }
                         placeholder = { placeholder }
+                        readOnly = { readOnly }
                         ref = { ref }
                         type = { type }
                         value = { value } />
