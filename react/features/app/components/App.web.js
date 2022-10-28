@@ -3,7 +3,7 @@
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
-import GlobalStyles from '../../base/ui/components/GlobalStyles';
+import GlobalStyles from '../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web';
 import DialogContainer from '../../base/ui/components/web/DialogContainer';
 import { ChromeExtensionBanner } from '../../chrome-extension-banner';

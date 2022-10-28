@@ -1,6 +1,3 @@
-// @ts-ignore
-import { getLogger } from '@jitsi/logger';
-
 // @ts-expect-error
 import UIEvents from '../../../service/UI/UIEvents';
 import {
@@ -20,7 +17,7 @@ import { getLocalParticipant, getRemoteParticipants } from '../base/participants
 import { toggleScreensharing } from '../base/tracks/actions';
 import { isModerationNotificationDisplayed } from '../notifications/functions';
 
-const logger = getLogger(__filename);
+import logger from './logger';
 
 /**
  * Mutes the local participant.

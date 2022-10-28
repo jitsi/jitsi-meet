@@ -13,7 +13,7 @@ import {
 } from '../base/participants';
 import { getLocalDesktopTrack, getLocalVideoTrack, toggleScreensharing } from '../base/tracks';
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
-import { isScreenVideoShared } from '../screen-share';
+import { isScreenVideoShared } from '../screen-share/functions';
 
 import {
     CAPTURE_EVENTS,

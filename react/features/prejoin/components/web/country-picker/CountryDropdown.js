@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { countries } from '../../utils';
+import { countries } from '../../../utils';
 
 import CountryRow from './CountryRow';
 

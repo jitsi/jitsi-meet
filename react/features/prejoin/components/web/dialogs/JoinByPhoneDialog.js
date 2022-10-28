@@ -2,18 +2,18 @@
 
 import React, { PureComponent } from 'react';
 
-import { connect } from '../../../base/redux';
+import { connect } from '../../../../base/redux';
 import {
     getConferenceId,
     getDefaultDialInNumber,
     updateDialInNumbers
-} from '../../../invite';
+} from '../../../../invite';
 import {
     dialOut as dialOutAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
     openDialInPage as openDialInPageAction
-} from '../../actions';
-import { getDialOutStatus, getFullDialOutNumber } from '../../functions';
+} from '../../../actions';
+import { getDialOutStatus, getFullDialOutNumber } from '../../../functions';
 
 import CallingDialog from './CallingDialog';
 import DialInDialog from './DialInDialog';

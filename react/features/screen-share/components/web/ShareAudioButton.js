@@ -2,19 +2,19 @@
 
 import type { Dispatch } from 'redux';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../../base/i18n';
 import {
     IconShareAudio,
     IconStopAudioShare
-} from '../../base/icons';
-import { connect } from '../../base/redux';
+} from '../../../base/icons';
+import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
-} from '../../base/toolbox/components';
-import { setOverflowMenuVisible } from '../../toolbox/actions';
-import { startAudioScreenShareFlow } from '../actions';
-import { isAudioOnlySharing } from '../functions';
+} from '../../../base/toolbox/components';
+import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
+import { startAudioScreenShareFlow } from '../../actions.web';
+import { isAudioOnlySharing } from '../../functions';
 
 type Props = AbstractButtonProps & {
 

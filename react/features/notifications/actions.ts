@@ -128,7 +128,7 @@ export function showNotification(props: INotificationProps = {}, type?: string) 
                 type: SHOW_NOTIFICATION,
                 props,
                 timeout: getNotificationTimeout(type, notificationTimeouts),
-                uid: props.uid || window.Date.now().toString()
+                uid: props.uid || Date.now().toString()
             });
         }
     };

@@ -2,7 +2,7 @@ import { Theme } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import Icon from '../../base/icons/components/Icon';
+import Icon from '../../../base/icons/components/Icon';
 
 type Props = {
 

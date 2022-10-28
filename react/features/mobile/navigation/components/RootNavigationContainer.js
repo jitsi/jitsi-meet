@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
-import Prejoin from '../../../prejoin/components/Prejoin.native';
+import Prejoin from '../../../prejoin/components/native/Prejoin';
 import WelcomePage from '../../../welcome/components/WelcomePage';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';

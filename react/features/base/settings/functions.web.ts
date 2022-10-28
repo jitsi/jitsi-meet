@@ -58,24 +58,3 @@ function getDeviceIdByType(state: IReduxState, isType: string) {
 export function getDisplayName(state: IReduxState): string {
     return state['features/base/settings'].displayName || '';
 }
-
-
-/**
- * Handles changes to the `disableCallIntegration` setting.
- * Noop on web.
- *
- * @param {boolean} disabled - Whether call integration is disabled or not.
- * @returns {void}
- */
-// eslint-disable-next-line @typescript-eslint/no-empty-function, require-jsdoc
-export function handleCallIntegrationChange(disabled: boolean) { }
-
-/**
- * Handles changes to the `disableCrashReporting` setting.
- * Noop on web.
- *
- * @param {boolean} disabled - Whether crash reporting is disabled or not.
- * @returns {void}
- */
-// eslint-disable-next-line @typescript-eslint/no-empty-function, require-jsdoc
-export function handleCrashReportingChange(disabled: boolean) { }

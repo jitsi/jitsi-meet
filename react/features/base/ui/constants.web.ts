@@ -1,23 +1,6 @@
 import { Theme } from '@mui/material';
 
-/**
- * The types of the buttons.
- */
-export enum BUTTON_TYPES {
-    DESTRUCTIVE = 'destructive',
-    PRIMARY = 'primary',
-    SECONDARY = 'secondary',
-    TERTIARY = 'tertiary'
-}
-
-/**
- * The modes of the buttons.
- */
-export const BUTTON_MODES: {
-    CONTAINED: 'contained';
-} = {
-    CONTAINED: 'contained'
-};
+export * from './constants.any';
 
 /**
  * Returns an object containing the declaration of the common, reusable CSS classes.
