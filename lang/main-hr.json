@@ -483,7 +483,7 @@
         "reachedLimit": "Dosegnuo/la si granicu tvog plana.",
         "sip": "SIP adresa",
         "title": "Dijeli",
-        "tooltip": "Dijeli poveznicu i informacije o pozivnom broju za ovaj sastanak"
+        "tooltip": "Dijeli poveznicu i informacije o pozivnom broju za ovaj sastanak",
         "upgradeOptions": "Uključi opciju za nadogradnju"
     },
     "inlineDialogFailure": {
