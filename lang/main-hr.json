@@ -11,7 +11,6 @@
         "defaultEmail": "Tvoja zadana e-mail adresa",
         "disabled": "Ne možeš pozvati ljude.",
         "failedToAdd": "Neuspjelo dodavanje sudionika",
-        "footerText": "Biranje je isključeno.",
         "googleEmail": "Google e-pošta",
         "inviteMoreHeader": "Na sastanku si samo ti",
         "inviteMoreMailSubject": "Pridruži se sastanku {{appName}}",
@@ -38,7 +37,7 @@
         "speaker": "Zvučnik"
     },
     "audioOnly": {
-        "audioOnly": "Samo zvuk"
+        "audioOnly": "Niska stopa prijenosa podataka"
     },
     "breakoutRooms": {
         "actions": {
@@ -79,7 +78,6 @@
     },
     "carmode": {
         "actions": {
-            "leaveMeeting": "Napusti sastanak",
             "selectSoundDevice": "Odaberi audio uređaj"
         },
         "labels": {
@@ -98,6 +96,7 @@
         "messageAccessibleTitleMe": "ja kažem:",
         "messageTo": "Privatna poruka za {{recipient}}",
         "messagebox": "Upiši poruku",
+        "newMessages": "Nove poruke",
         "nickname": {
             "popover": "Odaberi nadimak",
             "title": "Upiši nadimak za chat",
@@ -105,6 +104,7 @@
         },
         "noMessagesMessage": "Na sastanku još nema poruka. Započni razgovor ovdje!",
         "privateNotice": "Privatna poruka za {{recipient}}",
+        "sendButton": "Pošalji",
         "smileysPanel": "Ploča emojija",
         "tabs": {
             "chat": "Chat",
@@ -137,16 +137,16 @@
         "FETCH_SESSION_ID": "Dohvaćanje ID-a sesije …",
         "GET_SESSION_ID_ERROR": "Greška prilikom dohvaćanja ID-a sesije: {{code}}",
         "GOT_SESSION_ID": "Dohvaćanje ID-a sesije … Gotovo",
-        "LOW_BANDWIDTH": "Video za {{displayName}} je isključen radi uštede brzine prijenosa"
+        "LOW_BANDWIDTH": "Video za {{displayName}} je isključen radi uštede stope prijenosa podataka"
     },
     "connectionindicator": {
         "address": "Adresa:",
         "audio_ssrc": "Audio SSRC:",
-        "bandwidth": "Procijenjena brzina prijenosa:",
+        "bandwidth": "Procijenjena stopa prijenosa podataka:",
         "bitrate": "Stopa bitova:",
         "bridgeCount": "Broj poslužitelja: ",
         "codecs": "Kodeki (A/V): ",
-        "connectedTo": "Povezan na:",
+        "connectedTo": "Povezano na:",
         "framerate": "Broj sličica u sekundi:",
         "less": "Pokaži manje",
         "localaddress": "Adresa lokalnog uređaja:",
@@ -340,7 +340,6 @@
         "recentlyUsedObjects": "Tvoji nedavno korišteni objekti",
         "recording": "Snimanje",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Nije moguće dok je prijenos uživo aktivan",
-        "recordingDisabledTooltip": "Pokretanje snimanja isključeno.",
         "rejoinNow": "Ponovo se priduži sada",
         "remoteControlAllowedMessage": "{{user}} je prihvatio/la tvoj zahtjev za daljinskim upravljanjem!",
         "remoteControlDeniedMessage": "{{user}} je odbacio/la tvoj zahtjev za daljinskim upravljanjem!",
@@ -390,6 +389,7 @@
         "shareYourScreenDisabled": "Dijeljenje ekrana isključeno.",
         "sharedVideoDialogError": "Greška: Neispravan URL",
         "sharedVideoLinkPlaceholder": "YouTube poveznica ili izravna poveznica videa",
+        "show": "Pokaži",
         "start": "Pokreni ",
         "startLiveStreaming": "Pokreni prijenos uživo",
         "startRecording": "Pokreni snimanje",
@@ -475,14 +475,16 @@
         "label": "Informacije o pozivnom broju",
         "liveStreamURL": "Prijenos uživo:",
         "moreNumbers": "Više brojeva",
-        "noNumbers": "Nema brojeva pozivnog broja.",
+        "noNumbers": "Nema pozivnih brojeva.",
         "noPassword": "Ništa",
         "noRoom": "Za nazivanje nije određena niti jedna soba.",
-        "numbers": "Brojevi pozivnog broja",
+        "numbers": "Pozivni brojevi",
         "password": "$t(lockRoomPasswordUppercase): ",
+        "reachedLimit": "Dosegnuo/la si granicu tvog plana.",
         "sip": "SIP adresa",
         "title": "Dijeli",
-        "tooltip": "Dijeli poveznicu i informacije o pozivnom broju za ovaj sastanak"
+        "tooltip": "Dijeli poveznicu i informacije o pozivnom broju za ovaj sastanak",
+        "upgradeOptions": "Uključi opciju za nadogradnju"
     },
     "inlineDialogFailure": {
         "msg": "Spotaknuli smo se.",
@@ -498,11 +500,11 @@
         "searchPlaceholder": "Sudionik ili broj telefona",
         "send": "Pošalji"
     },
-    "jitsiHome": "{{logo}} Logotip, poveznice na početnu stranicu",
+    "jitsiHome": "{{logo}} Logotip, poveznice na početnu web stranicu",
     "keyboardShortcuts": {
         "focusLocal": "Postavi fokus na tvoj video",
         "focusRemote": "Postavi fokus na video druge osobe",
-        "fullScreen": "Pokreni ili izađi iz cjeloekranskog prikaza",
+        "fullScreen": "Pokreni ili prekini cjeloekranski prikaz",
         "giphyMenu": "Uključi/isključi GIPHY izbornik",
         "keyboardShortcuts": "Tipkovni prečaci",
         "localRecording": "Pokaži ili sakrij kontrole lokalnog snimanja",
@@ -516,6 +518,10 @@
         "toggleScreensharing": "Mijenjaj između dijeljenja kamere i ekrana",
         "toggleShortcuts": "Pokaži ili sakrij tipkovne prečace",
         "videoMute": "Pokreni ili prekini svoju kameru"
+    },
+    "largeVideo": {
+        "screenIsShared": "Dijeliš svoj ekran",
+        "showMeWhatImSharing": "Pokaži mi što dijelim"
     },
     "liveStreaming": {
         "busy": "Radimo na oslobađanju resursa za prijenos. Pokušaj ponovno za par minuta.",
@@ -550,6 +556,7 @@
         "signedInAs": "Trenutačno si prijavljan/a kao:",
         "start": "Započni prijenos uživo",
         "streamIdHelp": "Što je ovo?",
+        "title": "Prijenos uživo",
         "unavailableTitle": "Prijenos uživo nije dostupan",
         "youtubeTerms": "Uvjeti YouTube usluge"
     },
@@ -592,6 +599,7 @@
         "passwordJoinButton": "Pridruži se",
         "reject": "Odbij",
         "rejectAll": "Odbij sve",
+        "title": "Predvorje",
         "toggleLabel": "Uključi predvorje"
     },
     "localRecording": {
@@ -618,6 +626,7 @@
         "no": "Ne",
         "participant": "Sudionik",
         "participantStats": "Statistika sudionika",
+        "selectTabTitle": "🎥 Odaberi ovu karticu za snimanje",
         "sessionToken": "Token sesije",
         "start": "Pokreni snimanje",
         "stop": "Prekini snimanje",
@@ -821,7 +830,7 @@
         "initiated": "Poziv inicijaliziran",
         "joinAudioByPhone": "Pridruži se putem telefona",
         "joinMeeting": "Pridruži se sastanku",
-        "joinMeetingInLowBandwidthMode": "Pridruži se sa sporom brzinom prijenosa",
+        "joinMeetingInLowBandwidthMode": "Pridruži se u modusu niske stope prijenosa podataka",
         "joinWithoutAudio": "Pridruži se bez zvuka",
         "keyboardShortcuts": "Uključi tipkovne prečace",
         "linkCopied": "Poveznica kopirana u međuspremnik",
@@ -922,6 +931,7 @@
         "signIn": "Privaji se",
         "signOut": "Odjavi se",
         "surfaceError": "Odaberi trenutačnu karticu.",
+        "title": "Snimanje",
         "unavailable": "Ups! Usluga {{serviceName}} trenutačno nije dostupna. Radimo na rješavanju problema. Pokušaj kasnije ponovo.",
         "unavailableTitle": "Snimanje nije dostupno",
         "uploadToCloud": "Prenesi u oblak"
@@ -937,6 +947,7 @@
         "insecureRoomNameWarning": "Ime sobe nije sigurno. Neželjeni sudionici mogu se pridružiti tvojoj konferenciji. Osiguraj sastanak pomoću sigurnosne tipke."
     },
     "settings": {
+        "buttonLabel": "Postavke",
         "calendar": {
             "about": "Integracija {{appName}} kalendara koristi se za siguran pristup tvom kalendaru kako bi mogao čitati nadolazeće događaje.",
             "disconnect": "Odspoji",
@@ -945,7 +956,7 @@
             "title": "Kalendar"
         },
         "desktopShareFramerate": "Broj sličica u sekundi za dijeljenje radne površine",
-        "desktopShareHighFpsWarning": "Veći broj sličica u sekundi za dijeljenje radne površine može utjecati na brzinu prijenosa. Kako bi se nove postavke primijenile moraš ponovo pokrenuti dijeljenje ekrana.",
+        "desktopShareHighFpsWarning": "Veći broj sličica u sekundi za dijeljenje radne površine može utjecati na tvoju stopu prijenosa podataka. Za primjenu novih postavki moraš ponovo pokrenuti dijeljenje ekrana.",
         "desktopShareWarning": "Za primjenu novih postavki moraš ponovo pokrenuti dijeljenje ekrana.",
         "devices": "Uređaji",
         "followMe": "Svatko me prati",
@@ -992,12 +1003,18 @@
         "displayName": "Prikazno ime",
         "displayNamePlaceholderText": "Npr.: John Doe",
         "email": "E-mail adresa",
+        "goTo": "Idi na",
         "header": "Postavke",
+        "help": "Pomoć",
+        "links": "Poveznice",
+        "privacy": "Privatnost",
         "profileSection": "Profil",
         "serverURL": "URL poslužitelja",
         "showAdvanced": "Pokaži napredne postavke",
+        "startCarModeInLowBandwidthMode": "Pokreni automobilski modus u modusu niske stope prijenosa podataka",
         "startWithAudioMuted": "Počni s isključenim zvukom",
         "startWithVideoMuted": "Počni s isključenim zvukom videa",
+        "terms": "Uvjeti",
         "version": "Verzija"
     },
     "share": {
@@ -1054,6 +1071,7 @@
             "document": "Uključi/Isključi dijeljeni dokument",
             "download": "Preuzmi naše aplikacije",
             "embedMeeting": "Ugradi sastanak",
+            "endConference": "Završi sastanak za sve",
             "expand": "Rasklopi",
             "feedback": "Napiši povratnu informaciju",
             "fullScreen": "Uključi/Isključi cjeloekranski prikaz",
@@ -1063,7 +1081,8 @@
             "help": "Pomoć",
             "invite": "Pozovi ljude",
             "kick": "Izbaci sudionika",
-            "laugh": "Smij se",
+            "laugh": "Nasmij se",
+            "leaveConference": "Napusti sastanak",
             "like": "Palac gore",
             "linkToSalesforce": "Poveznica na Salesforce",
             "lobbyButton": "Uključi/Isključi modus predvorja",
@@ -1104,11 +1123,12 @@
             "toggleFilmstrip": "Uključi/Isključi slike videa",
             "undock": "Odspoji u zasebni prozor",
             "videoblur": "Uključi/Isključi zamućenje videa",
-            "videomute": "Pokreni/Prekini kameru"
+            "videomute": "Pokreni/Prekini kameru",
+            "whiteboard": "Pokaži/Sakrij ploču za prezentacije"
         },
-        "addPeople": "Dodaj ljude tvom pozivu",
-        "audioOnlyOff": "Isključi opciju „Samo zvuk”",
-        "audioOnlyOn": "Uključi opciju „Samo zvuk”",
+        "addPeople": "Dodaj ljude svom pozivu",
+        "audioOnlyOff": "Isključi modus niske stope prijenosa podataka",
+        "audioOnlyOn": "Uključi modus niske stope prijenosa podataka",
         "audioRoute": "Odaberi audio uređaj",
         "audioSettings": "Postavke zvuka",
         "authenticate": "Autentificiraj se",
@@ -1126,6 +1146,7 @@
         "download": "Preuzmi naše aplikacije",
         "e2ee": "Obostrano šifriranje",
         "embedMeeting": "Ugradi sastanak",
+        "endConference": "Završi sastanak za sve",
         "enterFullScreen": "Uključi cjeloekranski prikaz",
         "enterTileView": "Uključi pločasti prikaz",
         "exitFullScreen": "Isključi cjeloekranski prikaz",
@@ -1134,10 +1155,12 @@
         "giphy": "Uključi/Isključi GIPHY izbornik",
         "hangup": "Napusti sastanak",
         "help": "Pomoć",
+        "hideWhiteboard": "Sakrij ploču za prezentacije",
         "invite": "Pozovi ljude",
         "joinBreakoutRoom": "Pridruži se sobi podgrupe",
-        "laugh": "Smij se",
+        "laugh": "Nasmij se",
         "leaveBreakoutRoom": "Napusti sobu predgrupe",
+        "leaveConference": "Napusti  sastanak",
         "like": "Palac gore",
         "linkToSalesforce": "Poveznica na Salesforce",
         "lobbyButtonDisable": "Isključi modus predvorja",
@@ -1147,13 +1170,13 @@
         "lowerYourHand": "Spusti ruku",
         "moreActions": "Više radnji",
         "moreOptions": "Više opcija",
-        "mute": "Isključi/Uključi",
+        "mute": "Isključi/Uključi zvuk",
         "muteEveryone": "Isključi zvuk svih sudionika",
         "muteEveryonesVideo": "Isključi kamere svih sudionika",
         "noAudioSignalDesc": "Ako ga nisi namjerno isključio/la u postavkama sustava ili hardvera, razmisli o mijenjanju uređaja.",
         "noAudioSignalDescSuggestion": "Ako ga nisi namjerno isključio/la u postavkama sustava ili hardvera, razmisli o prebacivanju na predloženi uređaj.",
         "noAudioSignalDialInDesc": "Nazvati možeš i pomoću:",
-        "noAudioSignalDialInLinkDesc": "Brojevi za nazivanje",
+        "noAudioSignalDialInLinkDesc": "Pozivni brojevi",
         "noAudioSignalTitle": "Tvoj mikrofon ne šalje signale!",
         "noiseSuppression": "Suzbijanje šumova",
         "noisyAudioInputDesc": "Čini se da tvoj mikrofon stvara šumove. Razmisli o isključivanju zvuka ili promjeni uređaja.",
@@ -1178,6 +1201,7 @@
         "shareaudio": "Dijeli zvuk",
         "sharedvideo": "Dijeli video",
         "shortcuts": "Prikaži prečace",
+        "showWhiteboard": "Pokaži ploču za prezentacije",
         "silence": "Tišina",
         "speakerStats": "Statistika govornika",
         "startScreenSharing": "Pokreni dijeljenje ekrana",
@@ -1200,10 +1224,14 @@
         "expandedLabel": "Transkribiranje je trenutačno uključeno",
         "failedToStart": "Neuspjelo pokretanje transkribiranja",
         "labelToolTip": "Sastanak se transkribira",
-        "off": "Transkribiranje prekinuto",
-        "pending": "Priprema za transkribiranje ssastanka …",
+        "off": "Transkribiranje je prekinuto",
+        "pending": "Priprema za transkribiranje sastanka …",
+        "sourceLanguageDesc": "Trenutačno je jezik sastanka postavljen na <b>{{sourceLanguage}}</b>. <br/> Možeš ga promijeniti ",
+        "sourceLanguageHere": "ovdje",
         "start": "Počni pokazivati titlove",
         "stop": "Prekini pokazivati titlove",
+        "subtitles": "Titlovi",
+        "subtitlesOff": "Isključeno",
         "tr": "TR"
     },
     "userMedia": {
@@ -1231,7 +1259,7 @@
     "videoStatus": {
         "adjustFor": "Prilagodi za:",
         "audioOnly": "AUD",
-        "audioOnlyExpanded": "Koristiš modus „Samo zvuk”. U ovom modusu primat ćeš samo zvuk i dijeljenje ekrana.",
+        "audioOnlyExpanded": "Koristiš modus niske stope prijenosa podataka. U ovom modusu primat ćeš samo zvuk i dijeljenje ekrana.",
         "bestPerformance": "Najbolja performanca",
         "callQuality": "Kvaliteta videa",
         "hd": "HD",
@@ -1239,10 +1267,10 @@
         "highDefinition": "Visoka rezolucija",
         "highestQuality": "Najviše kvlaiteta",
         "labelTooiltipNoVideo": "Bez videa",
-        "labelTooltipAudioOnly": "Modus „Samo zvuk” uključen",
+        "labelTooltipAudioOnly": "Modus niske stope prijenosa podataka je uključen",
         "ld": "LD",
         "ldTooltip": "Prikazivanje videa u niskoj rezoluciji",
-        "lowDefinition": "Miska rezolucija",
+        "lowDefinition": "Niska rezolucija",
         "performanceSettings": "Postavke performance",
         "sd": "SD",
         "sdTooltip": "Prikazivanje videa u standardnoj rezoluciji",
