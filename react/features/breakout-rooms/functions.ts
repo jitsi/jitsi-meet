@@ -2,7 +2,12 @@ import _ from 'lodash';
 
 import { IStateful } from '../base/app/types';
 import { getCurrentConference } from '../base/conference/functions';
-import { getParticipantById, getParticipantCount, isLocalParticipantModerator } from '../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    getParticipantCount,
+    isLocalParticipantModerator
+} from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
 import { FEATURE_KEY } from './constants';
@@ -40,25 +45,42 @@ export const getRoomsInfo = (stateful: IStateful) => {
 
     // only main roomn
     if (!breakoutRooms || Object.keys(breakoutRooms).length === 0) {
+        // filter out hidden participants
+        const conferenceParticipants = conference?.getParticipants().filter(participant => !participant._hidden);
+
+        const localParticipant = getLocalParticipant(stateful);
+        let localParticipantInfo;
+
+        if (localParticipant) {
+            localParticipantInfo = {
+                role: localParticipant.role,
+                displayName: localParticipant.name,
+                avatarUrl: localParticipant.loadableAvatarUrl,
+                id: localParticipant.id
+            };
+        }
+
         return {
             ...initialRoomsInfo,
             rooms: [ {
                 isMainRoom: true,
                 id: conference?.room?.roomjid,
                 jid: conference?.room?.myroomjid,
-                participants: conference?.participants && Object.keys(conference.participants).length
-                    ? Object.keys(conference.participants).map(participantId => {
-                        const participantItem = conference?.participants[participantId];
-                        const storeParticipant = getParticipantById(stateful, participantItem._id);
+                participants: conferenceParticipants?.length > 0
+                    ? [
+                        localParticipantInfo,
+                        ...conferenceParticipants.map(participantItem => {
+                            const storeParticipant = getParticipantById(stateful, participantItem._id);
 
-                        return {
-                            jid: participantItem._jid,
-                            role: participantItem._role,
-                            displayName: participantItem._displayName,
-                            avatarUrl: storeParticipant?.loadableAvatarUrl,
-                            id: participantItem._id
-                        };
-                    }) : []
+                            return {
+                                jid: participantItem._jid,
+                                role: participantItem._role,
+                                displayName: participantItem._displayName,
+                                avatarUrl: storeParticipant?.loadableAvatarUrl,
+                                id: participantItem._id
+                            };
+                        }) ]
+                    : [ localParticipantInfo ]
             } ]
         };
     }
