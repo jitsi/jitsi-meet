@@ -9,7 +9,6 @@ import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { setAudioMuted } from '../media/actions';
 import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import {
-    getParticipantByIdOrUndefined,
     getVirtualScreenshareParticipantOwnerId,
     isScreenShareParticipant
 } from '../participants/functions';
@@ -443,20 +442,6 @@ export function getVideoTrackByParticipant(
     }
 
     return getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participant.id);
-}
-
-/**
- * Returns source name for specified participant id.
- *
- * @param {IReduxState} state - The Redux state.
- * @param {string} participantId - Participant ID.
- * @returns {string | undefined}
- */
-export function getSourceNameByParticipantId(state: IReduxState, participantId: string) {
-    const participant = getParticipantByIdOrUndefined(state, participantId);
-    const track = getVideoTrackByParticipant(state, participant);
-
-    return track?.jitsiTrack?.getSourceName();
 }
 
 /**

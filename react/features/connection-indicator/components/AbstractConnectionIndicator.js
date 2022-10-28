@@ -35,17 +35,7 @@ export type Props = {
     /**
      * Custom icon style.
      */
-    iconStyle?: Object,
-
-    /**
-     * The source name of the track.
-     */
-    _sourceName: string,
-
-    /**
-     * The flag whether source name signaling is enabled.
-     */
-    _sourceNameSignalingEnabled: string
+    iconStyle?: Object
 };
 
 /**
@@ -100,13 +90,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * returns {void}
      */
     componentDidMount() {
-        statsEmitter.subscribeToClientStats(
-            this.props.participantId, this._onStatsUpdated);
-
-        if (this.props._sourceNameSignalingEnabled) {
-            statsEmitter.subscribeToClientStats(
-                this.props._sourceName, this._onStatsUpdated);
-        }
+        statsEmitter.subscribeToClientStats(this.props.participantId, this._onStatsUpdated);
     }
 
     /**
@@ -122,15 +106,6 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
             statsEmitter.subscribeToClientStats(
                 this.props.participantId, this._onStatsUpdated);
         }
-
-        if (this.props._sourceNameSignalingEnabled) {
-            if (prevProps._sourceName !== this.props._sourceName) {
-                statsEmitter.unsubscribeToClientStats(
-                    prevProps._sourceName, this._onStatsUpdated);
-                statsEmitter.subscribeToClientStats(
-                    this.props._sourceName, this._onStatsUpdated);
-            }
-        }
     }
 
     /**
@@ -141,13 +116,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * @returns {void}
      */
     componentWillUnmount() {
-        statsEmitter.unsubscribeToClientStats(
-            this.props.participantId, this._onStatsUpdated);
-
-        if (this.props._sourceNameSignalingEnabled) {
-            statsEmitter.unsubscribeToClientStats(
-                this.props._sourceName, this._onStatsUpdated);
-        }
+        statsEmitter.unsubscribeToClientStats(this.props.participantId, this._onStatsUpdated);
 
         clearTimeout(this.autoHideTimeout);
     }
