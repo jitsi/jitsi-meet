@@ -129,7 +129,10 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: [ 'junit' ],
+    reporters: [ 'dot', [
+        'junit', {
+        outputDir: './modules/mobile-tests/results'
+    } ] ],
 
     // Options to be passed to Jasmine.
     jasmineOpts: {
