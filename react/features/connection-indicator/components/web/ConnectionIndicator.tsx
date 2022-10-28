@@ -18,7 +18,6 @@ import {
 } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import {
-    getSourceNameByParticipantId,
     getTrackByMediaTypeAndParticipant,
     getVirtualScreenshareParticipantTrack
 } from '../../../base/tracks/functions';
@@ -420,9 +419,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: Props) {
         _popoverDisabled: state['features/base/config'].connectionIndicators?.disableDetails,
         _videoTrack: firstVideoTrack,
         _isConnectionStatusInactive,
-        _isConnectionStatusInterrupted,
-        _sourceName: getSourceNameByParticipantId(state, participantId),
-        _sourceNameSignalingEnabled: sourceNameSignalingEnabled
+        _isConnectionStatusInterrupted
     };
 }
 export default translate(connect(_mapStateToProps)(
