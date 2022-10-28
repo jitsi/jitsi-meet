@@ -321,7 +321,8 @@ class ConnectionStatsTable extends Component<IProps> {
                 <tbody>
                     { isLocalVideo ? this._renderBandwidth() : null }
                     { isLocalVideo ? this._renderTransport() : null }
-                    { isLocalVideo ? this._renderRegion() : null }
+                    { this._renderRegion() }
+                    { isLocalVideo ? this._renderBridgeCount() : null }
                     { this._renderAudioSsrc() }
                     { this._renderVideoSsrc() }
                     { this._renderParticipantId() }
@@ -717,19 +718,15 @@ class ConnectionStatsTable extends Component<IProps> {
      * @returns {ReactElement}
      */
     _renderStatistics() {
-        const isRemoteVideo = !this.props.isLocalVideo;
-
         return (
             <table>
                 <tbody>
                     { this._renderConnectionSummary() }
                     { this._renderBitrate() }
                     { this._renderPacketLoss() }
-                    { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
                     { this._renderCodecs() }
-                    { isRemoteVideo ? null : this._renderBridgeCount() }
                 </tbody>
             </table>
         );
