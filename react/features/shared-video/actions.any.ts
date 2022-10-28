@@ -1,9 +1,12 @@
-import { getCurrentConference } from '../base/conference';
+import { IStore } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
-import { getLocalParticipant } from '../base/participants';
-import { SharedVideoDialog } from '../shared-video/components';
+import { getLocalParticipant } from '../base/participants/functions';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { SharedVideoDialog } from './components';
 
 /**
  * Resets the status of the shared video.
@@ -37,7 +40,9 @@ export function resetSharedVideoStatus() {
  *     videoUrl: string,
  * }}
  */
-export function setSharedVideoStatus({ videoUrl, status, time, ownerId, muted }) {
+export function setSharedVideoStatus({ videoUrl, status, time, ownerId, muted }: {
+    muted?: boolean; ownerId?: string; status: string; time: number; videoUrl: string;
+}) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
         ownerId,
@@ -54,7 +59,7 @@ export function setSharedVideoStatus({ videoUrl, status, time, ownerId, muted })
  * @param {Function} onPostSubmit - The function to be invoked when a valid link is entered.
  * @returns {Function}
  */
-export function showSharedVideoDialog(onPostSubmit) {
+export function showSharedVideoDialog(onPostSubmit: Function) {
     return openDialog(SharedVideoDialog, { onPostSubmit });
 }
 
@@ -65,12 +70,12 @@ export function showSharedVideoDialog(onPostSubmit) {
  * @returns {Function}
  */
 export function stopSharedVideo() {
-    return (dispatch, getState) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { ownerId } = state['features/shared-video'];
         const localParticipant = getLocalParticipant(state);
 
-        if (ownerId === localParticipant.id) {
+        if (ownerId === localParticipant?.id) {
             dispatch(resetSharedVideoStatus());
         }
     };
@@ -84,8 +89,8 @@ export function stopSharedVideo() {
  *
  * @returns {Function}
  */
-export function playSharedVideo(videoUrl) {
-    return (dispatch, getState) => {
+export function playSharedVideo(videoUrl: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState());
 
         if (conference) {
@@ -95,7 +100,7 @@ export function playSharedVideo(videoUrl) {
                 videoUrl,
                 status: 'start',
                 time: 0,
-                ownerId: localParticipant.id
+                ownerId: localParticipant?.id
             }));
         }
     };
@@ -108,14 +113,14 @@ export function playSharedVideo(videoUrl) {
  * @returns {Function}
  */
 export function toggleSharedVideo() {
-    return (dispatch, getState) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { status } = state['features/shared-video'];
+        const { status = '' } = state['features/shared-video'];
 
         if ([ 'playing', 'start', 'pause' ].includes(status)) {
             dispatch(stopSharedVideo());
         } else {
-            dispatch(showSharedVideoDialog(id => dispatch(playSharedVideo(id))));
+            dispatch(showSharedVideoDialog((id: string) => dispatch(playSharedVideo(id))));
         }
     };
 }

@@ -1,7 +1,7 @@
-// @flow
+import { IStore } from '../app/types';
+import { toggleDialog } from '../base/dialog/actions';
 
-import { toggleDialog } from '../base/dialog';
-
+// @ts-ignore
 import { SecurityDialog } from './components/security-dialog';
 
 /**
@@ -10,7 +10,7 @@ import { SecurityDialog } from './components/security-dialog';
  * @returns {Function}
  */
 export function toggleSecurityDialog() {
-    return function(dispatch: (Object) => Object) {
+    return function(dispatch: IStore['dispatch']) {
         dispatch(toggleDialog(SecurityDialog));
     };
 }

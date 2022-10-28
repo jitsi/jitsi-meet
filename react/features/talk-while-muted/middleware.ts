@@ -1,17 +1,14 @@
-// @flow
-
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_JOINED } from '../base/conference';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { MEDIA_TYPE, setAudioMuted } from '../base/media';
-import { getLocalParticipant, raiseHand } from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
-import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    hideNotification,
-    showNotification
-} from '../notifications';
+import { setAudioMuted } from '../base/media/actions';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { raiseHand } from '../base/participants/actions';
+import { getLocalParticipant } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import { hideNotification, showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { isForceMuted } from '../participants-pane/functions';
 import { isAudioMuteButtonDisabled } from '../toolbox/functions.any';
 
@@ -35,7 +32,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED: {
         conference.on(
             JitsiConferenceEvents.TRACK_MUTE_CHANGED,
-            track => {
+            (track: any) => {
                 const { currentNotificationUid } = getState()['features/talk-while-muted'];
 
                 if (currentNotificationUid && track.isAudioTrack() && track.isLocal() && !track.isMuted()) {

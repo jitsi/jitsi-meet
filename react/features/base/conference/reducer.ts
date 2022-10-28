@@ -68,6 +68,7 @@ export interface IJitsiConference {
     removeTrack: Function;
     replaceTrack: Function;
     sendCommand: Function;
+    sendCommandOnce: Function;
     sendEndpointMessage: Function;
     sendFeedback: Function;
     sendLobbyMessage: Function;

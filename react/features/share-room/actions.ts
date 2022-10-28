@@ -1,6 +1,5 @@
-/* @flow */
-
-import { getInviteURL } from '../base/connection';
+import { IStore } from '../app/types';
+import { getInviteURL } from '../base/connection/functions';
 
 import { BEGIN_SHARE_ROOM, END_SHARE_ROOM } from './actionTypes';
 
@@ -11,8 +10,8 @@ import { BEGIN_SHARE_ROOM, END_SHARE_ROOM } from './actionTypes';
  * @public
  * @returns {Function}
  */
-export function beginShareRoom(roomURL: ?string): Function {
-    return (dispatch, getState) => {
+export function beginShareRoom(roomURL?: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!roomURL) {
             // eslint-disable-next-line no-param-reassign
             roomURL = getInviteURL(getState);
@@ -37,7 +36,7 @@ export function beginShareRoom(roomURL: ?string): Function {
  *     shared: boolean
  * }}
  */
-export function endShareRoom(roomURL: string, shared: boolean): Object {
+export function endShareRoom(roomURL: string, shared: boolean) {
     return {
         type: END_SHARE_ROOM,
         roomURL,
