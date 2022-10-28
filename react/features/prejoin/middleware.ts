@@ -1,13 +1,14 @@
-// @flow
+import { AnyAction } from 'redux';
 
-import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference';
-import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
-import { MiddlewareRegistry } from '../base/redux';
-import { updateSettings } from '../base/settings';
+import { IStore } from '../app/types';
+import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { updateSettings } from '../base/settings/actions';
 import {
     TRACK_ADDED,
     TRACK_NO_DATA_FROM_SOURCE
-} from '../base/tracks';
+} from '../base/tracks/actionTypes';
 
 import {
     setDeviceStatusOk,
@@ -83,7 +84,7 @@ MiddlewareRegistry.register(store => next => async action => {
  * @param {Object} action - The Redux action.
  * @returns {Object}
  */
-function _conferenceJoined({ dispatch }, next, action) {
+function _conferenceJoined({ dispatch }: IStore, next: Function, action: AnyAction) {
     dispatch(setJoiningInProgress(false));
 
     return next(action);

@@ -50,6 +50,7 @@ export interface IJitsiConference {
     getBreakoutRooms: Function;
     getLocalParticipantProperty: Function;
     getLocalTracks: Function;
+    getMeetingUniqueId: Function;
     getParticipantById: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;

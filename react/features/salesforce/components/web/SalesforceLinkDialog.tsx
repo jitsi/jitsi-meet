@@ -13,7 +13,6 @@ import { getFieldValue } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import { NOTES_MAX_LENGTH } from '../../constants';
-// @ts-ignore
 import { useSalesforceLinkDialog } from '../../useSalesforceLinkDialog';
 
 import { RecordItem } from './RecordItem';
@@ -168,7 +167,9 @@ function SalesforceLinkDialog() {
     const renderSelection = () => (
         <div>
             <div className = { classes.recordInfo }>
+                {/* @ts-ignore */}
                 <RecordItem { ...selectedRecord } />
+                {/* @ts-ignore */}
                 {selectedRecordOwner && <RecordItem { ...selectedRecordOwner } />}
                 {hasDetailsErrors && renderDetailsErrors()}
             </div>
@@ -199,7 +200,7 @@ function SalesforceLinkDialog() {
                 onChange = { handleChange }
                 placeholder = { t('dialog.searchInSalesforce') }
                 tabIndex = { 0 }
-                value = { searchTerm } />
+                value = { searchTerm ?? '' } />
             {(!isLoading && !hasRecordsErrors) && (
                 <div className = { classes.resultLabel }>
                     {showSearchResults
