@@ -1,5 +1,3 @@
-// @flow
-
 export const countries = [
     { name: 'Afghanistan',
         dialCode: '93',
@@ -745,7 +743,7 @@ export const countries = [
         code: 'zw' }
 ];
 
-const countriesByCodeMap = countries.reduce((result, country) => {
+const countriesByCodeMap = countries.reduce<any>((result, country) => {
     result[country.dialCode] = country;
 
     return result;
@@ -755,7 +753,7 @@ const countriesByCodeMap = countries.reduce((result, country) => {
  * Map between country dial codes and country objects.
  *
  */
-const codesByNumbersMap = countries.reduce((result, country) => {
+const codesByNumbersMap = countries.reduce<any>((result, country) => {
     result[country.dialCode] = country.code;
 
     return result;

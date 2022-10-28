@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getCurrentConference } from '../base/conference';
+import { IReduxState } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
+import { hideNotification, showNotification } from '../notifications/actions';
 import {
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
-    SALESFORCE_LINK_NOTIFICATION_ID,
-    hideNotification,
-    showNotification
-} from '../notifications';
+    SALESFORCE_LINK_NOTIFICATION_ID
+} from '../notifications/constants';
 
 import {
     executeLinkMeetingRequest,
@@ -21,18 +21,20 @@ import {
 export const useSalesforceLinkDialog = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const [ selectedRecord, setSelectedRecord ] = useState(null);
-    const [ selectedRecordOwner, setSelectedRecordOwner ] = useState(null);
+    const [ selectedRecord, setSelectedRecord ] = useState<{
+        id: string; name: string; onClick: Function; type: string; } | null>(null);
+    const [ selectedRecordOwner, setSelectedRecordOwner ] = useState<{
+        id: string; name: string; type: string; } | null>(null);
     const [ records, setRecords ] = useState([]);
     const [ isLoading, setLoading ] = useState(false);
-    const [ searchTerm, setSearchTerm ] = useState(null);
+    const [ searchTerm, setSearchTerm ] = useState<string | null>(null);
     const [ notes, setNotes ] = useState('');
     const [ hasRecordsErrors, setRecordsErrors ] = useState(false);
     const [ hasDetailsErrors, setDetailsErrors ] = useState(false);
     const conference = useSelector(getCurrentConference);
     const sessionId = conference.getMeetingUniqueId();
-    const { salesforceUrl } = useSelector(state => state['features/base/config']);
-    const { jwt } = useSelector(state => state['features/base/jwt']);
+    const { salesforceUrl = '' } = useSelector((state: IReduxState) => state['features/base/config']);
+    const { jwt = '' } = useSelector((state: IReduxState) => state['features/base/jwt']);
     const showSearchResults = searchTerm && searchTerm.length > 1;
     const showNoResults = showSearchResults && records.length === 0;
 
@@ -98,8 +100,8 @@ export const useSalesforceLinkDialog = () => {
 
         try {
             await executeLinkMeetingRequest(salesforceUrl, jwt, sessionId, {
-                id: selectedRecord.id,
-                type: selectedRecord.type,
+                id: selectedRecord?.id,
+                type: selectedRecord?.type,
                 notes
             });
             dispatch(hideNotification(SALESFORCE_LINK_NOTIFICATION_ID));
@@ -108,7 +110,7 @@ export const useSalesforceLinkDialog = () => {
                 uid: SALESFORCE_LINK_NOTIFICATION_ID,
                 appearance: NOTIFICATION_TYPE.SUCCESS
             }, NOTIFICATION_TIMEOUT_TYPE.LONG));
-        } catch (error) {
+        } catch (error: any) {
             dispatch(hideNotification(SALESFORCE_LINK_NOTIFICATION_ID));
             dispatch(showNotification({
                 titleKey: 'notify.linkToSalesforceError',

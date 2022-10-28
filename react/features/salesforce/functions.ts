@@ -1,16 +1,15 @@
-// @flow
-
-import { doGetJSON } from '../base/util';
+import { IReduxState } from '../app/types';
+import { doGetJSON } from '../base/util/httpUtils';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
 /**
  * Determines whether Salesforce is enabled for the current conference.
  *
- * @param {Function|Object} state - The redux store, the redux
+ * @param {IReduxState} state - The redux store, the redux
  * {@code getState} function, or the redux state itself.
  * @returns {boolean}
  */
-export const isSalesforceEnabled = (state: Function | Object) => {
+export const isSalesforceEnabled = (state: IReduxState) => {
     const { salesforceUrl } = state['features/base/config'];
     const isBreakoutRoom = isInBreakoutRoom(state);
 
@@ -66,9 +65,12 @@ export async function searchSessionRecords(
 export async function getSessionRecordDetails(
         url: string,
         jwt: string,
-        item: Object
+        item: {
+            id: string;
+            type: string;
+        } | null
 ) {
-    const fullUrl = `${url}/records/${item.id}?type=${item.type}`;
+    const fullUrl = `${url}/records/${item?.id}?type=${item?.type}`;
 
     return doGetJSON(fullUrl, true, {
         headers: {
@@ -90,7 +92,11 @@ export async function executeLinkMeetingRequest(
         url: string,
         jwt: string,
         sessionId: String,
-        body: Object
+        body: {
+            id?: string;
+            notes: string;
+            type?: string;
+        }
 ) {
     const fullUrl = `${url}/sessions/${sessionId}/records/${body.id}`;
     const res = await fetch(fullUrl, {

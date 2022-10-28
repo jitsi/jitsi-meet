@@ -1,26 +1,26 @@
-// @flow
+import { AnyAction } from 'redux';
 
+// @ts-expect-error
 import UIEvents from '../../../service/UI/UIEvents';
+import { IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     LOCK_STATE_CHANGED,
     SET_PASSWORD_FAILED
-} from '../base/conference';
-import { hideDialog } from '../base/dialog';
+} from '../base/conference/actionTypes';
+import { hideDialog } from '../base/dialog/actions';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
-import { MiddlewareRegistry } from '../base/redux';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    showNotification
-} from '../notifications';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { _openPasswordRequiredPrompt } from './actions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { PasswordRequiredPrompt } from './components';
 import { LOCKED_REMOTELY } from './constants';
 import logger from './logger';
-
-declare var APP: Object;
 
 /**
  * Middleware that captures conference failed and checks for password required
@@ -83,7 +83,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {*}
  */
-function _conferenceJoined({ dispatch }, next, action) {
+function _conferenceJoined({ dispatch }: IStore, next: Function, action: AnyAction) {
     dispatch(hideDialog(PasswordRequiredPrompt));
 
     return next(action);
@@ -101,7 +101,7 @@ function _conferenceJoined({ dispatch }, next, action) {
  * @private
  * @returns {*}
  */
-function _conferenceFailed({ dispatch }, next, action) {
+function _conferenceFailed({ dispatch }: IStore, next: Function, action: AnyAction) {
     const { conference, error } = action;
 
     if (conference && error.name === JitsiConferenceErrors.PASSWORD_REQUIRED) {
@@ -132,7 +132,7 @@ function _conferenceFailed({ dispatch }, next, action) {
  * @private
  * @returns {*}
  */
-function _setPasswordFailed(store, next, action) {
+function _setPasswordFailed(store: IStore, next: Function, action: AnyAction) {
     if (typeof APP !== 'undefined') {
         // TODO Remove this logic when displaying of error messages on web is
         // handled through react/redux.

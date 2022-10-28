@@ -1,14 +1,13 @@
-// @flow
-
-import { openDialog } from '../base/dialog';
+import { IStore } from '../app/types';
+import { openDialog } from '../base/dialog/actions';
+import { hideNotification, showNotification } from '../notifications/actions';
 import {
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
-    SALESFORCE_LINK_NOTIFICATION_ID,
-    hideNotification,
-    showNotification
-} from '../notifications';
+    SALESFORCE_LINK_NOTIFICATION_ID
+} from '../notifications/constants';
 
+// @ts-ignore
 import { SalesforceLinkDialog } from './components';
 import { isSalesforceEnabled } from './functions';
 
@@ -18,7 +17,7 @@ import { isSalesforceEnabled } from './functions';
  * @returns {void}
  */
 export function showSalesforceNotification() {
-    return (dispatch: Object, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!isSalesforceEnabled(getState())) {
             return;
         }

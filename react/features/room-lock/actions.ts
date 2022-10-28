@@ -1,22 +1,18 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
 import {
     appNavigate,
     maybeRedirectToWelcomePage
-} from '../app/actions';
-import {
-    JITSI_CONFERENCE_URL_KEY,
-    conferenceLeft,
-    setPassword
-} from '../base/conference';
-import { hideDialog, openDialog } from '../base/dialog';
+} from '../app/actions.web';
+import { IStore } from '../app/types';
+import { conferenceLeft, setPassword } from '../base/conference/actions';
+import { JITSI_CONFERENCE_URL_KEY } from '../base/conference/constants';
+import { IJitsiConference } from '../base/conference/reducer';
+import { hideDialog, openDialog } from '../base/dialog/actions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { SecurityDialog } from '../security/components/security-dialog';
 
+// @ts-ignore
 import { PasswordRequiredPrompt } from './components';
-
-declare var APP: Object;
 
 /**
  * Cancels a prompt for a password to join a specific conference/room.
@@ -26,8 +22,8 @@ declare var APP: Object;
  * @protected
  * @returns {Function}
  */
-export function _cancelPasswordRequiredPrompt(conference: Object) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function _cancelPasswordRequiredPrompt(conference: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
 
         if (typeof APP !== 'undefined') {
             // when we are redirecting the library should handle any
@@ -70,9 +66,9 @@ export function _cancelPasswordRequiredPrompt(conference: Object) {
  * @returns {Function}
  */
 export function endRoomLockRequest(
-        conference: { lock: Function },
-        password: ?string) {
-    return (dispatch: Function) => {
+        conference: IJitsiConference,
+        password?: string) {
+    return (dispatch: IStore['dispatch']) => {
         const setPassword_
             = password
                 ? dispatch(setPassword(conference, conference.lock, password))
@@ -95,7 +91,7 @@ export function endRoomLockRequest(
  *     props: PropTypes
  * }}
  */
-export function _openPasswordRequiredPrompt(conference: Object) {
+export function _openPasswordRequiredPrompt(conference: IJitsiConference) {
     return openDialog(PasswordRequiredPrompt, { conference });
 }
 
@@ -105,12 +101,12 @@ export function _openPasswordRequiredPrompt(conference: Object) {
  * @returns {Function}
  */
 export function unlockRoom() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { conference } = getState()['features/base/conference'];
 
         return dispatch(setPassword(
             conference,
-            conference.lock,
+            conference?.lock,
             ''
         ));
     };

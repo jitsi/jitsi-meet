@@ -1,7 +1,3 @@
-// @flow
-
-declare var interfaceConfig: Object;
-
 /**
  * Tells whether presence status should be displayed.
  *
