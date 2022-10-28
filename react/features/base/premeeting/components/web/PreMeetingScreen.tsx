@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
-import DeviceStatus from '../../../../prejoin/components/preview/DeviceStatus';
+import DeviceStatus from '../../../../prejoin/components/web/preview/DeviceStatus';
 // @ts-ignore
 import { Toolbox } from '../../../../toolbox/components/web';
 import { getConferenceName } from '../../../conference/functions';

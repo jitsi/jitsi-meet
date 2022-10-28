@@ -3,15 +3,15 @@ import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
-import Icon from '../../../base/icons/components/Icon';
-import { IconCheckSolid, IconExclamationTriangle } from '../../../base/icons/svg';
-import { connect } from '../../../base/redux/functions';
+import { IReduxState } from '../../../../app/types';
+import { translate } from '../../../../base/i18n/functions';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconCheckSolid, IconExclamationTriangle } from '../../../../base/icons/svg';
+import { connect } from '../../../../base/redux/functions';
 import {
     getDeviceStatusText,
     getDeviceStatusType
-} from '../../functions';
+} from '../../../functions';
 
 export interface IProps extends WithTranslation {
 

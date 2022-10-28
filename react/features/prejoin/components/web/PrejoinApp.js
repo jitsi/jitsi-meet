@@ -4,14 +4,14 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 import { batch } from 'react-redux';
 
-import { BaseApp } from '../../../features/base/app';
-import { getConferenceOptions } from '../../base/conference/functions';
-import { setConfig } from '../../base/config';
-import { DialogContainer } from '../../base/dialog';
-import { createPrejoinTracks } from '../../base/tracks';
-import GlobalStyles from '../../base/ui/components/GlobalStyles';
-import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web';
-import { initPrejoin, makePrecallTest } from '../actions';
+import { BaseApp } from '../../../base/app';
+import { getConferenceOptions } from '../../../base/conference/functions';
+import { setConfig } from '../../../base/config';
+import { DialogContainer } from '../../../base/dialog';
+import { createPrejoinTracks } from '../../../base/tracks';
+import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
+import JitsiThemeProvider from '../../../base/ui/components/JitsiThemeProvider.web';
+import { initPrejoin, makePrecallTest } from '../../actions';
 
 import PrejoinThirdParty from './PrejoinThirdParty';
 

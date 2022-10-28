@@ -68,12 +68,14 @@ import {
 // @ts-ignore
 import { isSalesforceEnabled } from '../../../salesforce/functions';
 import {
-    ShareAudioButton,
-    isScreenAudioSupported,
-    isScreenVideoShared,
     startScreenShareFlow
-    // @ts-ignore
-} from '../../../screen-share';
+} from '../../../screen-share/actions.web';
+// @ts-ignore
+import ShareAudioButton from '../../../screen-share/components/web/ShareAudioButton';
+import {
+    isScreenAudioSupported,
+    isScreenVideoShared
+} from '../../../screen-share/functions';
 // @ts-ignore
 import SecurityDialogButton from '../../../security/components/security-dialog/web/SecurityDialogButton';
 // @ts-ignore

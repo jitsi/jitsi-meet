@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import { findAncestorByClass } from '../../../participants-pane/functions';
+import { findAncestorByClass } from '../functions.web';
 
 
 type RaiseContext = {

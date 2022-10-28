@@ -5,13 +5,14 @@ import { shouldHideShareAudioHelper } from '../base/settings/functions';
 import { toggleScreensharing } from '../base/tracks/actions';
 
 import {
-    SET_SCREENSHARE_CAPTURE_FRAME_RATE,
     SET_SCREENSHARE_TRACKS,
     SET_SCREEN_AUDIO_SHARE_STATE
 } from './actionTypes';
-import ShareAudioDialog from './components/ShareAudioDialog';
-import ShareMediaWarningDialog from './components/ShareScreenWarningDialog';
+import ShareAudioDialog from './components/web/ShareAudioDialog';
+import ShareMediaWarningDialog from './components/web/ShareScreenWarningDialog';
 import { isAudioOnlySharing, isScreenVideoShared } from './functions';
+
+export * from './actions.any';
 
 /**
  * Updates the current known status of the shared video.
@@ -26,22 +27,6 @@ export function setScreenAudioShareState(isSharingAudio: boolean) {
     return {
         type: SET_SCREEN_AUDIO_SHARE_STATE,
         isSharingAudio
-    };
-}
-
-/**
- * Updates the capture frame rate for screenshare in redux.
- *
- * @param {number} captureFrameRate - The frame rate to be used for screenshare.
- * @returns {{
- *      type: SET_SCREENSHARE_CAPTURE_FRAME_RATE,
- *      captureFrameRate: number
- * }}
- */
-export function setScreenshareFramerate(captureFrameRate: number) {
-    return {
-        type: SET_SCREENSHARE_CAPTURE_FRAME_RATE,
-        captureFrameRate
     };
 }
 

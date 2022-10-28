@@ -3,28 +3,28 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
-import { Avatar } from '../../base/avatar';
-import { isNameReadOnly } from '../../base/config';
-import { translate } from '../../base/i18n';
-import { IconArrowDown, IconArrowUp, IconPhone, IconVolumeOff } from '../../base/icons';
-import { isVideoMutedByUser } from '../../base/media';
-import { getLocalParticipant } from '../../base/participants';
-import { ActionButton, InputField, PreMeetingScreen } from '../../base/premeeting';
-import { connect } from '../../base/redux';
-import { getDisplayName, updateSettings } from '../../base/settings';
-import { getLocalJitsiVideoTrack } from '../../base/tracks';
+import { Avatar } from '../../../base/avatar';
+import { isNameReadOnly } from '../../../base/config';
+import { translate } from '../../../base/i18n';
+import { IconArrowDown, IconArrowUp, IconPhone, IconVolumeOff } from '../../../base/icons';
+import { isVideoMutedByUser } from '../../../base/media';
+import { getLocalParticipant } from '../../../base/participants';
+import { ActionButton, InputField, PreMeetingScreen } from '../../../base/premeeting';
+import { connect } from '../../../base/redux';
+import { getDisplayName, updateSettings } from '../../../base/settings';
+import { getLocalJitsiVideoTrack } from '../../../base/tracks';
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
     setJoinByPhoneDialogVisiblity as setJoinByPhoneDialogVisiblityAction
-} from '../actions';
+} from '../../actions';
 import {
     isDeviceStatusVisible,
     isDisplayNameRequired,
     isJoinByPhoneButtonVisible,
     isJoinByPhoneDialogVisible,
     isPrejoinDisplayNameVisible
-} from '../functions';
+} from '../../functions';
 
 import DropdownButton from './DropdownButton';
 import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';

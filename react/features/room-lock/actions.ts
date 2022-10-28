@@ -1,7 +1,7 @@
 import {
     appNavigate,
     maybeRedirectToWelcomePage
-} from '../app/actions.web';
+} from '../app/actions';
 import { IStore } from '../app/types';
 import { conferenceLeft, setPassword } from '../base/conference/actions';
 import { JITSI_CONFERENCE_URL_KEY } from '../base/conference/constants';
@@ -29,6 +29,8 @@ export function _cancelPasswordRequiredPrompt(conference: any) {
             // when we are redirecting the library should handle any
             // unload and clean of the connection.
             APP.API.notifyReadyToClose();
+
+            // @ts-ignore
             dispatch(maybeRedirectToWelcomePage());
 
             return;

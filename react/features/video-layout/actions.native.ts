@@ -11,7 +11,7 @@ export * from './actions.any';
  *    enabled: boolean
  * }}
  */
-export function setIsCarmode(enabled) {
+export function setIsCarmode(enabled: boolean) {
     return {
         type: SET_CAR_MODE,
         enabled

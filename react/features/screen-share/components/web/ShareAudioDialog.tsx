@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import { IReduxState, IStore } from '../../app/types';
-import { translate } from '../../base/i18n/functions';
-import { connect } from '../../base/redux/functions';
-import { updateSettings } from '../../base/settings/actions';
-import { shouldHideShareAudioHelper } from '../../base/settings/functions.any';
-import { toggleScreensharing } from '../../base/tracks/actions';
-import Checkbox from '../../base/ui/components/web/Checkbox';
-import Dialog from '../../base/ui/components/web/Dialog';
+import { IReduxState, IStore } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+import { updateSettings } from '../../../base/settings/actions';
+import { shouldHideShareAudioHelper } from '../../../base/settings/functions.any';
+import { toggleScreensharing } from '../../../base/tracks/actions';
+import Checkbox from '../../../base/ui/components/web/Checkbox';
+import Dialog from '../../../base/ui/components/web/Dialog';
 
 /**
  * The type of the React {@code Component} props of {@link ShareAudioDialog}.

@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 
-import { Icon, IconArrowDown } from '../../../base/icons';
+import { Icon, IconArrowDown } from '../../../../base/icons';
 
 type Props = {
 

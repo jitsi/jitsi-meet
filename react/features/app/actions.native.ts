@@ -157,6 +157,23 @@ export function appNavigate(uri?: string) {
 }
 
 /**
+ * Check if the welcome page is enabled and redirects to it.
+ * If requested show a thank you dialog before that.
+ * If we have a close page enabled, redirect to it without
+ * showing any other dialog.
+ *
+ * @param {Object} _options - Used to decide which particular close page to show
+ * or if close page is disabled, whether we should show the thankyou dialog.
+ * @param {boolean} options.showThankYou - Whether we should
+ * show thank you dialog.
+ * @param {boolean} options.feedbackSubmitted - Whether feedback was submitted.
+ * @returns {Function}
+ */
+export function maybeRedirectToWelcomePage(_options: { feedbackSubmitted?: boolean; showThankYou?: boolean; } = {}) {
+    // Dummy.
+}
+
+/**
  * Reloads the page.
  *
  * @protected

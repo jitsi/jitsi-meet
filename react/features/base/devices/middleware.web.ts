@@ -119,7 +119,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     case NOTIFY_CAMERA_ERROR: {
-        if (typeof APP !== 'object' || !action.error) {
+        if (!action.error) {
             break;
         }
 
@@ -147,7 +147,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case NOTIFY_MIC_ERROR: {
-        if (typeof APP !== 'object' || !action.error) {
+        if (!action.error) {
             break;
         }
 

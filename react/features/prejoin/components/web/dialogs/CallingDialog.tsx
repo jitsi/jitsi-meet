@@ -6,10 +6,10 @@ import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
-import { Avatar } from '../../../base/avatar';
-import { translate } from '../../../base/i18n/functions';
-import Icon from '../../../base/icons/components/Icon';
-import { IconClose } from '../../../base/icons/svg';
+import { Avatar } from '../../../../base/avatar';
+import { translate } from '../../../../base/i18n/functions';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconClose } from '../../../../base/icons/svg';
 // @ts-ignore
 import Label from '../Label';
 

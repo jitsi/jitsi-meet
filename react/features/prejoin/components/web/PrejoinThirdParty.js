@@ -2,12 +2,12 @@
 
 import React, { Component } from 'react';
 
-import { translate } from '../../base/i18n';
-import { isVideoMutedByUser } from '../../base/media';
-import { PreMeetingScreen } from '../../base/premeeting';
-import { connect } from '../../base/redux';
-import { getLocalJitsiVideoTrack } from '../../base/tracks';
-import { isDeviceStatusVisible } from '../functions';
+import { translate } from '../../../base/i18n';
+import { isVideoMutedByUser } from '../../../base/media';
+import { PreMeetingScreen } from '../../../base/premeeting';
+import { connect } from '../../../base/redux';
+import { getLocalJitsiVideoTrack } from '../../../base/tracks';
+import { isDeviceStatusVisible } from '../../functions';
 
 type Props = {
 
