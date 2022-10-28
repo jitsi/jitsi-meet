@@ -115,7 +115,7 @@ const ConnectButtons = (props: Props) => {
                                              if (isMobileBrowser()) {
                                                  if (window.flutter_inappwebview) {
                                                      console.log('beforeArgs');
-                                                     const args = 'http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114';
+                                                     const args = `${value.url}`;
                                                      console.log('afterArgs', args);
                                                      window.flutter_inappwebview.callHandler('myHandlerName', args);
                                                      console.log('addsUrl', args);
@@ -123,18 +123,19 @@ const ConnectButtons = (props: Props) => {
                                                      console.log('InAppWebViewNotLoaded');
                                                  }
                                              } else {
-                                                 window.open('http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/114');
+                                                 window.open(value.url);
                                              }
 
                                          }}
                                          src={value.iconUrl}/>
-                                    {/* <p className='urlP'>{value.title}</p> */}
+                                     <p className='urlP'>{value.title}</p>
+                                    {/*
                                     <p style={{
                                         textAlign: 'start',
                                         fontSize: '14px',
                                         color: 'white',
                                         paddingLeft: '10%'
-                                    }}>{props._sendTranscriptBite}</p>
+                                    }}>{props._sendTranscriptBite}</p>*/}
                                 </div>
                             </div> : null}
                     </div>

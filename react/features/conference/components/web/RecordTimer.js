@@ -10,7 +10,7 @@ type Props = {
     _subject: string
 }
 const RecordTimer = (props) => {
-    const [ timer, setTimer ] = useState(3595);
+    const [ timer, setTimer ] = useState(86400);
     const [ isActive, setIsActive ] = useState(false);
     const increment = useRef(null);
 

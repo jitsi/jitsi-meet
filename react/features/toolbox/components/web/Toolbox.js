@@ -116,6 +116,7 @@ import jwt_decode from 'jwt-decode';
 import DownloadAudioRecorder from './DownloadAudioRecorder';
 import DownloadVideoRecorder from './DownloadVideoRecorder';
 import TokDetails from '../../../tok-details/components/web/TokDetails';
+import TokMarks from "../../../tok-details/components/web/TokMarks";
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -1293,6 +1294,7 @@ class Toolbox extends Component<Props> {
                      onMouseOver: this._onMouseOver
                  })}>
                 <SideButtons/>
+                {/*<TokMarks/>*/}
                 <ConnectButtons/>
             </div>
             <div
