@@ -2,12 +2,10 @@ import React from 'react';
 import { TouchableRipple } from 'react-native-paper';
 
 import Icon from '../../../icons/components/Icon';
-import BaseTheme from '../../../ui/components/BaseTheme.native';
-import { BUTTON_TYPES } from '../../../ui/constants';
-import { IIconButtonProps } from '../../types';
-
-// @ts-ignore
-import styles from './styles';
+import styles from '../../../react/components/native/styles';
+import { IIconButtonProps } from '../../../react/types';
+import { BUTTON_TYPES } from '../../constants';
+import BaseTheme from '../BaseTheme.native';
 
 
 const IconButton: React.FC<IIconButtonProps> = ({
