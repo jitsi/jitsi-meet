@@ -1,21 +1,16 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { openDialog, openSheet } from '../../../base/dialog/actions';
 import { IconHorizontalPoints } from '../../../base/icons/svg';
-import IconButton from '../../../base/react/components/native/IconButton';
 import Button from '../../../base/ui/components/native/Button';
+import IconButton from '../../../base/ui/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
-import MuteEveryoneDialog
-// @ts-ignore
-    from '../../../video-menu/components/native/MuteEveryoneDialog';
+import MuteEveryoneDialog from '../../../video-menu/components/native/MuteEveryoneDialog';
 import { isMoreActionsVisible, isMuteAllVisible } from '../../functions';
 
-// @ts-ignore
 import { ContextMenuMore } from './ContextMenuMore';
-// @ts-ignore
 import styles from './styles';
 
 
