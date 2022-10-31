@@ -1,34 +1,31 @@
-// @flow
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { translate } from '../../../../base/i18n';
-import { Icon, IconCopy } from '../../../../base/icons';
+import { translate } from '../../../../base/i18n/functions';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconCopy } from '../../../../base/icons/svg';
 import { copyText } from '../../../../base/util/copyText.web';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { _formatConferenceIDPin } from '../../../_utils';
 
 /**
  * The type of the React {@code Component} props of {@link DialInNumber}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * The numeric identifier for the current conference, used after dialing a
      * the number to join the conference.
      */
-    conferenceID: number,
+    conferenceID: string | number;
 
     /**
      * The phone number to dial to begin the process of dialing into a
      * conference.
      */
-    phoneNumber: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    phoneNumber: string;
+}
 
 /**
  * React {@code Component} responsible for displaying a telephone number and
@@ -36,7 +33,7 @@ type Props = {
  *
  * @augments Component
  */
-class DialInNumber extends Component<Props> {
+class DialInNumber extends Component<IProps> {
 
     /**
      * Initializes a new DialInNumber instance.
@@ -44,15 +41,13 @@ class DialInNumber extends Component<Props> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
         this._onCopyText = this._onCopyText.bind(this);
         this._onCopyTextKeyPress = this._onCopyTextKeyPress.bind(this);
     }
-
-    _onCopyText: () => void;
 
     /**
      * Copies the dial-in information to the clipboard.
@@ -69,8 +64,6 @@ class DialInNumber extends Component<Props> {
         copyText(textToCopy);
     }
 
-    _onCopyTextKeyPress: (Object) => void;
-
     /**
      * KeyPress handler for accessibility.
      *
@@ -78,7 +71,7 @@ class DialInNumber extends Component<Props> {
      *
      * @returns {void}
      */
-    _onCopyTextKeyPress(e) {
+    _onCopyTextKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             this._onCopyText();

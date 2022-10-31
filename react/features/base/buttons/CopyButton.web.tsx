@@ -11,22 +11,20 @@ import { copyText } from '../util/copyText.web';
 const useStyles = makeStyles()((theme: Theme) => {
     return {
         copyButton: {
-            ...withPixelLineHeight(theme.typography.bodyLongRegular),
+            ...withPixelLineHeight(theme.typography.bodyShortBold),
             borderRadius: theme.shape.borderRadius,
             display: 'flex',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-start',
             alignItems: 'center',
-            padding: '8px 8px 8px 16px',
-            marginTop: 5,
-            width: 'calc(100% - 24px)',
-            height: 24,
-
+            padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
+            width: '100%',
+            boxSizing: 'border-box',
             background: theme.palette.action01,
             cursor: 'pointer',
+            color: theme.palette.text01,
 
             '&:hover': {
-                backgroundColor: theme.palette.action01Hover,
-                fontWeight: 600
+                backgroundColor: theme.palette.action01Hover
             },
 
             '&.clicked': {
@@ -34,9 +32,10 @@ const useStyles = makeStyles()((theme: Theme) => {
             },
 
             '& > div > svg > path': {
-                fill: theme.palette.text01
+                fill: theme.palette.icon01
             }
         },
+
         content: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -47,18 +46,22 @@ const useStyles = makeStyles()((theme: Theme) => {
             '&.selected': {
                 fontWeight: 600
             }
+        },
+
+        icon: {
+            marginRight: theme.spacing(2)
         }
     };
 });
 
 let mounted: boolean;
 
-type Props = {
+interface IProps {
 
     /**
      * Css class to apply on container.
      */
-    className: string;
+    className?: string;
 
     /**
      * The displayed text.
@@ -84,14 +87,14 @@ type Props = {
      * The text that needs to be copied (might differ from the displayedText).
      */
     textToCopy: string;
-};
+}
 
 /**
  * Component meant to enable users to copy the conference URL.
  *
  * @returns {React$Element<any>}
  */
-function CopyButton({ className = '', displayedText, textToCopy, textOnHover, textOnCopySuccess, id }: Props) {
+function CopyButton({ className = '', displayedText, textToCopy, textOnHover, textOnCopySuccess, id }: IProps) {
     const { classes, cx } = useStyles();
     const [ isClicked, setIsClicked ] = useState(false);
     const [ isHovered, setIsHovered ] = useState(false);
@@ -169,20 +172,26 @@ function CopyButton({ className = '', displayedText, textToCopy, textOnHover, te
         if (isClicked) {
             return (
                 <>
+                    <Icon
+                        className = { classes.icon }
+                        size = { 24 }
+                        src = { IconCheck } />
                     <div className = { cx(classes.content, 'selected') }>
                         <span role = { 'alert' }>{ textOnCopySuccess }</span>
                     </div>
-                    <Icon src = { IconCheck } />
                 </>
             );
         }
 
         return (
             <>
+                <Icon
+                    className = { classes.icon }
+                    size = { 24 }
+                    src = { IconCopy } />
                 <div className = { classes.content }>
                     <span> { isHovered ? textOnHover : displayedText } </span>
                 </div>
-                <Icon src = { IconCopy } />
             </>
         );
     }
