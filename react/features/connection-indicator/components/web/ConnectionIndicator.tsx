@@ -415,13 +415,15 @@ export function _mapStateToProps(state: IReduxState, ownProps: Props) {
 
     return {
         _connectionIndicatorInactiveDisabled:
-        Boolean(state['features/base/config'].connectionIndicators?.inactiveDisabled),
+            Boolean(state['features/base/config'].connectionIndicators?.inactiveDisabled),
+        _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && isScreenShareParticipant(participant),
         _popoverDisabled: state['features/base/config'].connectionIndicators?.disableDetails,
         _videoTrack: firstVideoTrack,
         _isConnectionStatusInactive,
         _isConnectionStatusInterrupted
     };
 }
+
 export default translate(connect(_mapStateToProps)(
     // @ts-ignore
     withStyles(styles)(ConnectionIndicator)));
