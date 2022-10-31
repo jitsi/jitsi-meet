@@ -8,14 +8,10 @@ import { IconHorizontalPoints } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
-import MuteEveryoneDialog
-// @ts-ignore
-    from '../../../video-menu/components/native/MuteEveryoneDialog';
+import MuteEveryoneDialog from '../../../video-menu/components/native/MuteEveryoneDialog';
 import { isMoreActionsVisible, isMuteAllVisible } from '../../functions';
 
-// @ts-ignore
 import { ContextMenuMore } from './ContextMenuMore';
-// @ts-ignore
 import styles from './styles';
 
 
