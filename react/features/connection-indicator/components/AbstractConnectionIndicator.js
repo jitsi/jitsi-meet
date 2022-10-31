@@ -2,9 +2,8 @@
 
 import { Component } from 'react';
 
+import { getVirtualScreenshareParticipantOwnerId } from '../../base/participants/functions';
 import statsEmitter from '../statsEmitter';
-
-declare var interfaceConfig: Object;
 
 const defaultAutoHideTimeout = 5000;
 
@@ -25,6 +24,11 @@ export type Props = {
      * How long the connection indicator should remain displayed before hiding.
      */
     _autoHideTimeout: number,
+
+    /**
+     * Whether or not the statistics are for screen share.
+     */
+    _isVirtualScreenshareParticipant: boolean,
 
     /**
      * The ID of the participant associated with the displayed connection indication and
@@ -90,7 +94,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * returns {void}
      */
     componentDidMount() {
-        statsEmitter.subscribeToClientStats(this.props.participantId, this._onStatsUpdated);
+        statsEmitter.subscribeToClientStats(this._getRealParticipantId(this.props), this._onStatsUpdated);
     }
 
     /**
@@ -100,11 +104,12 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * returns {void}
      */
     componentDidUpdate(prevProps: Props) {
-        if (prevProps.participantId !== this.props.participantId) {
-            statsEmitter.unsubscribeToClientStats(
-                prevProps.participantId, this._onStatsUpdated);
-            statsEmitter.subscribeToClientStats(
-                this.props.participantId, this._onStatsUpdated);
+        const prevParticipantId = this._getRealParticipantId(prevProps);
+        const participantId = this._getRealParticipantId(this.props);
+
+        if (prevParticipantId !== participantId) {
+            statsEmitter.unsubscribeToClientStats(prevParticipantId, this._onStatsUpdated);
+            statsEmitter.subscribeToClientStats(participantId, this._onStatsUpdated);
         }
     }
 
@@ -116,9 +121,23 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * @returns {void}
      */
     componentWillUnmount() {
-        statsEmitter.unsubscribeToClientStats(this.props.participantId, this._onStatsUpdated);
+        statsEmitter.unsubscribeToClientStats(this._getRealParticipantId(this.props), this._onStatsUpdated);
 
         clearTimeout(this.autoHideTimeout);
+    }
+
+    /**
+     * Gets the "real" participant ID. FOr a virtual screenshare participant, that is its "owner".
+     *
+     * @param {Props} props - The props where to extract the data from.
+     * @returns {string | undefined } The resolved participant ID.
+     */
+    _getRealParticipantId(props: Props) {
+        if (props._isVirtualScreenshareParticipant) {
+            return getVirtualScreenshareParticipantOwnerId(props.participantId);
+        }
+
+        return props.participantId;
     }
 
     _onStatsUpdated: (Object) => void;

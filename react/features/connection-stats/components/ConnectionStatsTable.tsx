@@ -84,7 +84,9 @@ interface IProps extends WithTranslation {
      *     [ ssrc ]: Number
      * }}.
      */
-    framerate: Object;
+    framerate: {
+        [ssrc: string]: number;
+    };
 
     /**
      * Whether or not the statistics are for local video.
@@ -461,21 +463,16 @@ class ConnectionStatsTable extends Component<IProps> {
      * @returns {ReactElement}
      */
     _renderCodecs() {
-        const { codec, t } = this.props;
+        const { audioSsrc, codec, t, videoSsrc } = this.props;
 
         let codecString = 'N/A';
 
         if (codec) {
-            const audioCodecs = Object.values(codec)
-                .map(c => c.audio)
-                .filter(Boolean);
-            const videoCodecs = Object.values(codec)
-                .map(c => c.video)
-                .filter(Boolean);
+            const audioCodec = codec[audioSsrc]?.audio;
+            const videoCodec = codec[videoSsrc]?.video;
 
-            if (audioCodecs.length || videoCodecs.length) {
-                // Use a Set to eliminate duplicates.
-                codecString = Array.from(new Set([ ...audioCodecs, ...videoCodecs ])).join(', ');
+            if (audioCodec || videoCodec) {
+                codecString = [ audioCodec, videoCodec ].filter(Boolean).join(', ');
             }
         }
 
@@ -573,11 +570,12 @@ class ConnectionStatsTable extends Component<IProps> {
      * @returns {ReactElement}
      */
     _renderFrameRate() {
-        const { framerate, t } = this.props;
+        const { framerate, t, videoSsrc } = this.props;
+        let frameRateString = 'N/A';
 
-        const frameRateString = Object.keys(framerate || {})
-            .map(ssrc => framerate[ssrc as keyof typeof framerate])
-            .join(', ') || 'N/A';
+        if (framerate) {
+            frameRateString = String(framerate[videoSsrc] ?? 'N/A');
+        }
 
         return (
             <tr>
@@ -639,20 +637,21 @@ class ConnectionStatsTable extends Component<IProps> {
      * @returns {ReactElement}
      */
     _renderResolution() {
-        const { resolution, maxEnabledResolution, t } = this.props;
+        const { resolution, maxEnabledResolution, t, videoSsrc } = this.props;
+        let resolutionString = 'N/A';
 
-        let resolutionString = Object.keys(resolution || {})
-            .map(ssrc => {
-                const { width, height } = resolution[ssrc];
+        if (resolution && videoSsrc) {
+            const { width, height } = resolution[videoSsrc] ?? { };
 
-                return `${width}x${height}`;
-            })
-            .join(', ') || 'N/A';
+            if (width && height) {
+                resolutionString = `${width}x${height}`;
 
-        if (maxEnabledResolution && maxEnabledResolution < 720) {
-            const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
+                if (maxEnabledResolution && maxEnabledResolution < 720) {
+                    const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
 
-            resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
+                    resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
+                }
+            }
         }
 
         return (
