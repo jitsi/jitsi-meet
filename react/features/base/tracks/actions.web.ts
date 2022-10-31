@@ -38,8 +38,6 @@ import { IShareOptions, IToggleScreenSharingOptions } from './types';
 
 export * from './actions.any';
 
-declare const APP: any;
-
 /**
  * Signals that the local participant is ending screensharing or beginning the screensharing flow.
  *

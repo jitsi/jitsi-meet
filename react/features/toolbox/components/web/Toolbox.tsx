@@ -350,8 +350,6 @@ interface IProps extends WithTranslation {
     toolbarButtons: Array<string>;
 }
 
-declare let APP: any;
-
 const styles = () => {
     return {
         contextMenu: {

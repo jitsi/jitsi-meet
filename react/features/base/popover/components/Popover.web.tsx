@@ -11,7 +11,7 @@ import { getContextMenuStyle } from '../functions.web';
 /**
  * The type of the React {@code Component} props of {@link Popover}.
  */
-type Props = {
+interface IProps {
 
     /**
      * A child React Element to use as the trigger for showing the dialog.
@@ -69,12 +69,12 @@ type Props = {
      * Whether the popover is visible or not.
      */
     visible: boolean;
-};
+}
 
 /**
  * The type of the React {@code Component} state of {@link Popover}.
  */
-type State = {
+interface IState {
 
     /**
      * The style to apply to the context menu in order to position it correctly.
@@ -85,7 +85,7 @@ type State = {
         position: string;
         top?: string;
     } | null;
-};
+}
 
 /**
  * Implements a React {@code Component} for showing an {@code Popover} on
@@ -93,7 +93,7 @@ type State = {
  *
  * @augments Component
  */
-class Popover extends Component<Props, State> {
+class Popover extends Component<IProps, IState> {
     /**
      * Default values for {@code Popover} component's properties.
      *
@@ -118,7 +118,7 @@ class Popover extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -409,7 +409,7 @@ class Popover extends Component<Props, State> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
     return {

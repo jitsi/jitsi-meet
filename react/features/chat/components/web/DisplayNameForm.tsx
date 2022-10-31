@@ -30,20 +30,20 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@DisplayNameForm}.
  */
-type State = {
+interface IState {
 
     /**
      * User provided display name when the input text is provided in the view.
      */
     displayName: string;
-};
+}
 
 /**
  * React Component for requesting the local participant to set a display name.
  *
  * @augments Component
  */
-class DisplayNameForm extends Component<IProps, State> {
+class DisplayNameForm extends Component<IProps, IState> {
     state = {
         displayName: ''
     };

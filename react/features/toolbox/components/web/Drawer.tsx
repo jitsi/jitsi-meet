@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 import { DRAWER_MAX_HEIGHT } from '../../constants';
 
 
-type Props = {
+interface IProps {
 
     /**
      * The component(s) to be displayed within the drawer menu.
@@ -26,7 +26,7 @@ type Props = {
      * Function that hides the drawer.
      */
     onClose: Function;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -48,7 +48,7 @@ function Drawer({
     className = '',
     isOpen,
     onClose
-}: Props) {
+}: IProps) {
     const { classes: styles } = useStyles();
 
     /**

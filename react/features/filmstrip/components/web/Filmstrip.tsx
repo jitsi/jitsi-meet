@@ -57,8 +57,6 @@ import ThumbnailWrapper from './ThumbnailWrapper';
 // @ts-ignore
 import { styles } from './styles';
 
-declare let APP: any;
-
 /**
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
@@ -230,7 +228,7 @@ interface IProps extends WithTranslation {
     filmstripType: string;
 }
 
-type State = {
+interface IState {
 
     /**
      * Initial top panel height on drag handle mouse down.
@@ -251,7 +249,7 @@ type State = {
      * Initial mouse position on drag handle mouse down.
      */
     mousePosition?: number | null;
-};
+}
 
 /**
  * Implements a React {@link Component} which represents the filmstrip on
@@ -259,7 +257,7 @@ type State = {
  *
  * @augments Component
  */
-class Filmstrip extends PureComponent <IProps, State> {
+class Filmstrip extends PureComponent <IProps, IState> {
 
     _throttledResize: Function;
 

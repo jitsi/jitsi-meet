@@ -15,20 +15,20 @@ import { renderArrowBackButton }
 import styles from './styles';
 
 
-type Props = {
+interface IProps {
 
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object;
-};
+}
 
 /**
  * The URL at which the terms (of service/use) are available to the user.
  */
 const TERMS_URL = 'https://jitsi.org/meet/terms';
 
-const TermsView = ({ navigation }: Props) => {
+const TermsView = ({ navigation }: IProps) => {
 
     useEffect(() => {
         // @ts-ignore

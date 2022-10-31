@@ -12,7 +12,7 @@ import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import styles from './styles';
 
-type Props = {
+interface IProps {
 
     /**
      * The name of the participant to render.
@@ -33,12 +33,12 @@ type Props = {
      * The ID of the participant to render the label for.
      */
     participantId: string;
-};
+}
 
 /**
  * Renders a label with the display name of the on-stage participant.
  */
-class DisplayNameLabel extends React.Component<Props> {
+class DisplayNameLabel extends React.Component<IProps> {
     /**
      * Implements {@code Component#render}.
      *
@@ -65,10 +65,10 @@ class DisplayNameLabel extends React.Component<Props> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {any} state - The Redux state.
- * @param {Props} ownProps - The own props of the component.
- * @returns {Props}
+ * @param {IProps} ownProps - The own props of the component.
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const participant = getParticipantById(state, ownProps.participantId ?? '');
 
     return {

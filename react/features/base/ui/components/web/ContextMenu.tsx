@@ -34,7 +34,7 @@ const getComputedOuterHeight = (element: HTMLElement) => {
         + getFloatStyleProperty(computedStyle, 'margin-bottom');
 };
 
-type Props = {
+interface IProps {
 
     /**
      * Accessibility label for menu container.
@@ -100,7 +100,7 @@ type Props = {
      * Callback for the mouse leaving the component.
      */
     onMouseLeave?: (e?: React.MouseEvent) => void;
-};
+}
 
 const MAX_HEIGHT = 400;
 
@@ -156,7 +156,7 @@ const ContextMenu = ({
     onDrawerClose,
     onMouseEnter,
     onMouseLeave
-}: Props) => {
+}: IProps) => {
     const [ isHidden, setIsHidden ] = useState(true);
     const containerRef = useRef<HTMLDivElement | null>(null);
     const { classes: styles, cx } = useStyles();

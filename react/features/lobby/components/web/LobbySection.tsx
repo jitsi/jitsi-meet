@@ -29,18 +29,18 @@ interface IProps extends WithTranslation {
     dispatch: Function;
 }
 
-type State = {
+interface IState {
 
     /**
      * True if the lobby switch is toggled on.
      */
     lobbyEnabled: boolean;
-};
+}
 
 /**
  * Implements a security feature section to control lobby mode.
  */
-class LobbySection extends PureComponent<IProps, State> {
+class LobbySection extends PureComponent<IProps, IState> {
     /**
      * Instantiates a new component.
      *
@@ -61,7 +61,7 @@ class LobbySection extends PureComponent<IProps, State> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: IProps, state: State) {
+    static getDerivedStateFromProps(props: IProps, state: IState) {
         if (props._lobbyEnabled !== state.lobbyEnabled) {
 
             return {

@@ -44,13 +44,13 @@ interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 }
 
-type State = {
+interface IState {
 
     /**
      * True if the switch is toggled on.
      */
     toggled: boolean;
-};
+}
 
 /**
  * Implements a React {@code Component} for displaying a security dialog section with a field
@@ -58,13 +58,13 @@ type State = {
  *
  * @augments Component
  */
-class E2EESection extends Component<IProps, State> {
+class E2EESection extends Component<IProps, IState> {
     /**
      * Implements React's {@link Component#getDerivedStateFromProps()}.
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: IProps, state: State) {
+    static getDerivedStateFromProps(props: IProps, state: IState) {
         if (props._toggled !== state.toggled) {
 
             return {

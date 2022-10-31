@@ -10,8 +10,6 @@ import { moveToRoom } from './actions';
 import logger from './logger';
 import { IRooms } from './types';
 
-declare const APP: any;
-
 /**
  * Registers a change handler for state['features/base/conference'].conference to
  * set the event listeners needed for the breakout rooms feature to operate.

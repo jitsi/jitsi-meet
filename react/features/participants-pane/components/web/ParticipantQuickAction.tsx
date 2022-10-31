@@ -8,7 +8,7 @@ import { approveParticipant } from '../../../av-moderation/actions';
 import Button from '../../../base/ui/components/web/Button';
 import { QUICK_ACTION_BUTTON } from '../../constants';
 
-type Props = {
+interface IProps {
 
     /**
      * The translated ask unmute aria label.
@@ -44,7 +44,7 @@ type Props = {
      * The name of the participant.
      */
     participantName: string;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -61,7 +61,7 @@ const ParticipantQuickAction = ({
     muteParticipantButtonText,
     participantID,
     participantName
-}: Props) => {
+}: IProps) => {
     const { classes: styles } = useStyles();
     const dispatch = useDispatch();
     const { t } = useTranslation();

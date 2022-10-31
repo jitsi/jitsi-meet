@@ -3,7 +3,7 @@ import { Component } from 'react';
 /**
  * The type of the React {@code Component} props of {@link AbstractDialogTab}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * Function that closes the dialog.
@@ -19,7 +19,7 @@ export type Props = {
      * The id of the tab.
      */
     tabId: number;
-};
+}
 
 
 /**
@@ -27,7 +27,7 @@ export type Props = {
  *
  * @augments Component
  */
-class AbstractDialogTab<P extends Props, S> extends Component<P, S> {
+class AbstractDialogTab<P extends IProps, S> extends Component<P, S> {
     /**
      * Initializes a new {@code AbstractDialogTab} instance.
      *

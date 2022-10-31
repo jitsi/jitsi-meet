@@ -63,8 +63,6 @@ interface IProps extends WithTranslation {
     setPasswordEditEnabled: Function;
 }
 
-declare let APP: any;
-
 /**
  * Component that handles the password manipulation from the invite dialog.
  *

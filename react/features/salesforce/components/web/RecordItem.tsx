@@ -8,7 +8,7 @@ import { RECORD_TYPE } from '../../constants';
 /**
  * The type of the React {@code Component} props of {@link RecordItem}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The id of the record.
@@ -29,7 +29,7 @@ type Props = {
      * The type of the record.
      */
     type: string;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -70,7 +70,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 /**
  * Component to render Record data.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {React$Element<any>}
  */
 export const RecordItem = ({
@@ -79,7 +79,7 @@ export const RecordItem = ({
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onClick = () => {},
     type
-}: Props) => {
+}: IProps) => {
     const { t } = useTranslation();
     const Icon = RECORD_TYPE[type as keyof typeof RECORD_TYPE].icon;
     const { classes } = useStyles();

@@ -68,7 +68,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-type Props = {
+interface IProps {
 
     /**
      * Whether the menu is open.
@@ -84,9 +84,9 @@ type Props = {
      * Callback for the mouse leaving this item.
      */
     onMouseLeave?: (e?: React.MouseEvent) => void;
-};
+}
 
-export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {
+export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProps) => {
     const dispatch = useDispatch();
     const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
     const allModerators = useSelector(isEveryoneModerator);

@@ -18,7 +18,7 @@ export interface INotifyClick {
     preventExecution: boolean;
 }
 
-type Props = {
+interface IProps {
 
     /**
      * Toolbar buttons which have their click exposed through the API.
@@ -61,7 +61,7 @@ type Props = {
      * Action that sets the conference password.
      */
     setPassword: Function;
-};
+}
 
 /**
  * Component that renders the security options dialog.
@@ -77,7 +77,7 @@ function SecurityDialog({
     _passwordNumberOfDigits,
     _showE2ee,
     setPassword
-}: Props) {
+}: IProps) {
     const [ passwordEditEnabled, setPasswordEditEnabled ] = useState(false);
 
     useEffect(() => {
@@ -121,7 +121,7 @@ function SecurityDialog({
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState) {
     const {

@@ -70,7 +70,7 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link DesktopPicker}.
  */
-type State = {
+interface IState {
 
     /**
      * The state of the audio screen share checkbox.
@@ -96,7 +96,7 @@ type State = {
      * The desktop source types to fetch previews for.
      */
     types: Array<string>;
-};
+}
 
 
 /**
@@ -104,7 +104,7 @@ type State = {
  *
  * @augments Component
  */
-class DesktopPicker extends PureComponent<IProps, State> {
+class DesktopPicker extends PureComponent<IProps, IState> {
     /**
      * Implements React's {@link Component#getDerivedStateFromProps()}.
      *
@@ -130,7 +130,7 @@ class DesktopPicker extends PureComponent<IProps, State> {
 
     _poller: any = null;
 
-    state: State = {
+    state: IState = {
         screenShareAudio: false,
         selectedSource: {},
         selectedTab: 0,

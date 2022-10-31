@@ -21,7 +21,7 @@ import { VideoQualityLabel } from '../../../../video-quality';
 import styles from './styles';
 
 
-type Props = {
+interface IProps {
 
     /**
      * Name of the meeting we're currently in.
@@ -33,16 +33,16 @@ type Props = {
      */
     _meetingNameEnabled: boolean;
 
-};
+}
 
 /**
  * Implements a navigation bar component that is rendered on top of the
  * carmode screen.
  *
- * @param {Props} props - The React props passed to this component.
+ * @param {IProps} props - The React props passed to this component.
  * @returns {JSX.Element}
  */
-const TitleBar = (props: Props): JSX.Element => {
+const TitleBar = (props: IProps): JSX.Element => {
     const localParticipant = useSelector(getLocalParticipant);
     const localParticipantId = localParticipant?.id;
 
@@ -83,7 +83,7 @@ const TitleBar = (props: Props): JSX.Element => {
  * Maps part of the Redux store to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
     const { hideConferenceSubject } = state['features/base/config'];

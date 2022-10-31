@@ -146,13 +146,13 @@ type Props = AbstractProps & WithTranslation & {
     statsPopoverPosition: string;
 };
 
-type State = AbstractState & {
+interface IState extends AbstractState {
 
     /**
      * Whether popover is ivisible or not.
      */
     popoverVisible: boolean;
-};
+}
 
 const styles = (theme: Theme) => {
     return {
@@ -206,7 +206,7 @@ const styles = (theme: Theme) => {
  *
  * @augments {Component}
  */
-class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
+class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
     /**
      * Initializes a new {@code ConnectionIndicator} instance.
      *

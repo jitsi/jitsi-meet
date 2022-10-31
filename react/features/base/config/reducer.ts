@@ -14,8 +14,6 @@ import {
 import { IConfig } from './configType';
 import { _cleanupConfig } from './functions';
 
-declare let interfaceConfig: any;
-
 /**
  * The initial state of the feature base/config when executing in a
  * non-React Native environment. The mandatory configuration to be passed to
