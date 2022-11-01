@@ -62,12 +62,14 @@ import {
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
-    getDefaultDeviceId,
     notifyCameraError,
     notifyMicError,
-    setAudioOutputDeviceId,
     updateDeviceList
-} from './react/features/base/devices';
+} from './react/features/base/devices/actions.web';
+import {
+    getDefaultDeviceId,
+    setAudioOutputDeviceId
+} from './react/features/base/devices/functions.web';
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents,

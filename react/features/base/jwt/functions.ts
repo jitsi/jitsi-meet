@@ -16,7 +16,7 @@ import { MEET_FEATURES } from './constants';
  * @returns {string} The JSON Web Token (JWT), if any, defined by the specified
  * {@code url}; otherwise, {@code undefined}.
  */
-export function parseJWTFromURLParams(url: URL | Location = window.location) {
+export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
     // @ts-ignore
     return parseURLParams(url, true, 'search').jwt;
 }

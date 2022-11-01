@@ -1,7 +1,9 @@
+/* eslint-disable lines-around-comment */
 import React from 'react';
 import { TouchableRipple } from 'react-native-paper';
 
 import Icon from '../../../icons/components/Icon';
+// @ts-ignore
 import styles from '../../../react/components/native/styles';
 import { IIconButtonProps } from '../../../react/types';
 import { BUTTON_TYPES } from '../../constants';

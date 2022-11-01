@@ -8,7 +8,7 @@ import { makeStyles } from 'tss-react/mui';
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconArrowLeft } from '../../../../base/icons/svg';
-import { Button } from '../../../../base/ui/components/web';
+import Button from '../../../../base/ui/components/web/Button';
 // @ts-ignore
 import { getCountryCodeFromPhone } from '../../../utils';
 // @ts-ignore

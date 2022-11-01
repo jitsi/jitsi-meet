@@ -35,7 +35,7 @@ import {
     setAudioOutputDeviceId
 } from './functions';
 import logger from './logger';
-import { IDevicesState } from './reducer';
+import { IDevicesState } from './types';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {

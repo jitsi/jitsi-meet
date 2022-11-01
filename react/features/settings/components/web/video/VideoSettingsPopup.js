@@ -3,9 +3,11 @@
 import React from 'react';
 
 import {
-    getVideoDeviceIds,
     setVideoInputDeviceAndUpdateSettings
-} from '../../../../base/devices';
+} from '../../../../base/devices/actions.web';
+import {
+    getVideoDeviceIds
+} from '../../../../base/devices/functions.web';
 import Popover from '../../../../base/popover/components/Popover.web';
 import { connect } from '../../../../base/redux';
 import { SMALL_MOBILE_WIDTH } from '../../../../base/responsive-ui/constants';

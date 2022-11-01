@@ -3,8 +3,8 @@ import { API_ID } from '../../../modules/API/constants';
 import { getName as getAppName } from '../app/functions';
 import { IStore } from '../app/types';
 import { getAnalyticsRoomName } from '../base/conference/functions';
+import checkChromeExtensionsInstalled from '../base/environment/checkChromeExtensionsInstalled';
 import {
-    checkChromeExtensionsInstalled,
     isMobileBrowser
 } from '../base/environment/utils';
 import JitsiMeetJS, {

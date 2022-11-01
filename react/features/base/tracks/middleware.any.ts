@@ -2,11 +2,9 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
-import { hideNotification } from '../../notifications/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
-import { getAvailableDevices } from '../devices/actions';
 import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
@@ -14,43 +12,31 @@ import {
     SET_VIDEO_MUTED,
     TOGGLE_CAMERA_FACING_MODE
 } from '../media/actionTypes';
-import { setScreenshareMuted, toggleCameraFacingMode } from '../media/actions';
+import { toggleCameraFacingMode } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
     MediaType,
     SCREENSHARE_MUTISM_AUTHORITY,
-    VIDEO_MUTISM_AUTHORITY,
-    VIDEO_TYPE
+    VIDEO_MUTISM_AUTHORITY
 } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 import {
-    TRACK_ADDED,
-    TRACK_MUTE_UNMUTE_FAILED,
-    TRACK_NO_DATA_FROM_SOURCE,
-    TRACK_REMOVED,
-    TRACK_STOPPED,
     TRACK_UPDATED
 } from './actionTypes';
 import {
     createLocalTracksA,
     destroyLocalTracks,
-    showNoDataFromSourceVideoError,
-    toggleScreensharing,
     trackMuteUnmuteFailed,
-    trackNoDataFromSourceNotificationInfoChanged,
     trackRemoved
 } from './actions';
 import {
     getLocalTrack,
-    getTrackByJitsiTrack,
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
-import { ITrack } from './reducer';
-
 import './subscriber';
 
 /**
@@ -63,29 +49,6 @@ import './subscriber';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case TRACK_ADDED: {
-        const { local } = action.track;
-
-        // The devices list needs to be refreshed when no initial video permissions
-        // were granted and a local video track is added by umuting the video.
-        if (local) {
-            store.dispatch(getAvailableDevices());
-        }
-
-        break;
-    }
-    case TRACK_NO_DATA_FROM_SOURCE: {
-        const result = next(action);
-
-        _handleNoDataFromSourceErrors(store, action);
-
-        return result;
-    }
-
-    case TRACK_REMOVED: {
-        _removeNoDataFromSourceNotification(store, action.track);
-        break;
-    }
     case SET_AUDIO_MUTED:
         if (!action.muted
                 && isUserInteractionRequiredForUnmute(store.getState())) {
@@ -153,82 +116,6 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-
-    case TRACK_MUTE_UNMUTE_FAILED: {
-        const { jitsiTrack } = action.track;
-        const muted = action.wasMuted;
-        const isVideoTrack = jitsiTrack.getType() !== MEDIA_TYPE.AUDIO;
-
-        if (typeof APP !== 'undefined') {
-            if (isVideoTrack && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP
-                && getMultipleVideoSendingSupportFeatureFlag(store.getState())) {
-                store.dispatch(setScreenshareMuted(!muted));
-            } else if (isVideoTrack) {
-                APP.conference.setVideoMuteStatus();
-            } else {
-                APP.conference.setAudioMuteStatus(!muted);
-            }
-        }
-        break;
-    }
-
-    case TRACK_STOPPED: {
-        const { jitsiTrack } = action.track;
-
-        if (typeof APP !== 'undefined'
-            && getMultipleVideoSendingSupportFeatureFlag(store.getState())
-            && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
-            store.dispatch(toggleScreensharing(false));
-        }
-        break;
-    }
-
-    case TRACK_UPDATED: {
-        // TODO Remove the following calls to APP.UI once components interested
-        // in track mute changes are moved into React and/or redux.
-        if (typeof APP !== 'undefined') {
-            const result = next(action);
-            const state = store.getState();
-
-            if (isPrejoinPageVisible(state)) {
-                return result;
-            }
-
-            const { jitsiTrack } = action.track;
-            const muted = jitsiTrack.isMuted();
-            const participantID = jitsiTrack.getParticipantId();
-            const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
-
-            if (isVideoTrack) {
-                // Do not change the video mute state for local presenter tracks.
-                if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
-                    APP.conference.mutePresenter(muted);
-                } else if (jitsiTrack.isLocal() && !(jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP)) {
-                    APP.conference.setVideoMuteStatus();
-                } else if (jitsiTrack.isLocal() && muted && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
-                    !getMultipleVideoSendingSupportFeatureFlag(state)
-                        && store.dispatch(toggleScreensharing(false, false, true));
-                } else {
-                    APP.UI.setVideoMuted(participantID);
-                }
-            } else if (jitsiTrack.isLocal()) {
-                APP.conference.setAudioMuteStatus(muted);
-            } else {
-                APP.UI.setAudioMuted(participantID, muted);
-            }
-
-            return result;
-        }
-
-        // Mobile.
-        const { jitsiTrack, local } = action.track;
-
-        if (local && jitsiTrack.isMuted()
-                && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
-            store.dispatch(toggleScreensharing(false));
-        }
-        break;
-    }
     }
 
     return next(action);
@@ -260,53 +147,6 @@ StateListenerRegistry.register(
     });
 
 /**
- * Handles no data from source errors.
- *
- * @param {Store} store - The redux store in which the specified action is
- * dispatched.
- * @param {Action} action - The redux action dispatched in the specified store.
- * @private
- * @returns {void}
- */
-function _handleNoDataFromSourceErrors(store: IStore, action: any) {
-    const { getState, dispatch } = store;
-
-    const track = getTrackByJitsiTrack(getState()['features/base/tracks'], action.track.jitsiTrack);
-
-    if (!track || !track.local) {
-        return;
-    }
-
-    const { jitsiTrack } = track;
-
-    if (track.mediaType === MEDIA_TYPE.AUDIO && track.isReceivingData) {
-        _removeNoDataFromSourceNotification(store, action.track);
-    }
-
-    if (track.mediaType === MEDIA_TYPE.VIDEO) {
-        const { noDataFromSourceNotificationInfo = {} } = track;
-
-        if (track.isReceivingData) {
-            if (noDataFromSourceNotificationInfo.timeout) {
-                clearTimeout(noDataFromSourceNotificationInfo.timeout);
-                dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
-            }
-
-            // try to remove the notification if there is one.
-            _removeNoDataFromSourceNotification(store, action.track);
-        } else {
-            if (noDataFromSourceNotificationInfo.timeout) {
-                return;
-            }
-
-            const timeout = setTimeout(() => dispatch(showNoDataFromSourceVideoError(jitsiTrack)), 5000);
-
-            dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, { timeout }));
-        }
-    }
-}
-
-/**
  * Gets the local track associated with a specific {@code MEDIA_TYPE} in a
  * specific redux store.
  *
@@ -332,23 +172,6 @@ function _getLocalTrack(
             getState()['features/base/tracks'],
             mediaType,
             includePending));
-}
-
-/**
- * Removes the no data from source notification associated with the JitsiTrack if displayed.
- *
- * @param {Store} store - The redux store.
- * @param {Track} track - The redux action dispatched in the specified store.
- * @returns {void}
- */
-function _removeNoDataFromSourceNotification({ getState, dispatch }: IStore, track: ITrack) {
-    const t = getTrackByJitsiTrack(getState()['features/base/tracks'], track.jitsiTrack);
-    const { jitsiTrack, noDataFromSourceNotificationInfo = {} } = t || {};
-
-    if (noDataFromSourceNotificationInfo?.uid) {
-        dispatch(hideNotification(noDataFromSourceNotificationInfo.uid));
-        dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
-    }
 }
 
 /**

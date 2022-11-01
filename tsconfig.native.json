@@ -24,6 +24,7 @@
         "react/features/embed-meeting",
         "react/features/face-landmarks",
         "react/features/feedback",
+        "react/features/no-audio-signal",
         "react/features/noise-suppression",
         "react/features/screen-share",
         "react/features/stream-effects/noise-suppression",

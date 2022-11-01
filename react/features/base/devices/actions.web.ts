@@ -1,7 +1,7 @@
 import { IStore } from '../../app/types';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { updateSettings } from '../settings/actions';
-import { getUserSelectedOutputDeviceId } from '../settings/functions.any';
+import { getUserSelectedOutputDeviceId } from '../settings/functions.web';
 
 import {
     ADD_PENDING_DEVICE_REQUEST,
