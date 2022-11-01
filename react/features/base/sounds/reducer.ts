@@ -96,8 +96,6 @@ function _addOrRemoveAudioElement(state: ISoundsState, action: any) {
                     audioElement: undefined
                 }));
         }
-    } else {
-        logger.warn(`${action.type}: no sound for id: ${soundId}`);
     }
 
     return nextState;
