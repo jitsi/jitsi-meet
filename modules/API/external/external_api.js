@@ -1189,10 +1189,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @param {string} participantId - Participant id (JID) of the participant
      * that needs to be pinned on the stage view.
+     * @param {string} [videoType] - Indicates the type of thumbnail to be pinned when multistream support is enabled.
+     * Accepts "camera" or "desktop" values. Default is "camera". Any invalid values will be ignored and default will
+     * be used.
      * @returns {void}
      */
-    pinParticipant(participantId) {
-        this.executeCommand('pinParticipant', participantId);
+    pinParticipant(participantId, videoType) {
+        this.executeCommand('pinParticipant', participantId, videoType);
     }
 
     /**
@@ -1283,10 +1286,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * the large video participant.
      *
      * @param {string} participantId - Jid of the participant to be displayed on the large video.
+     * @param {string} [videoType] - Indicates the type of video to be set when multistream support is enabled.
+     * Accepts "camera" or "desktop" values. Default is "camera". Any invalid values will be ignored and default will
+     * be used.
      * @returns {void}
      */
-    setLargeVideoParticipant(participantId) {
-        this.executeCommand('setLargeVideoParticipant', participantId);
+    setLargeVideoParticipant(participantId, videoType) {
+        this.executeCommand('setLargeVideoParticipant', participantId, videoType);
     }
 
     /**
