@@ -3,7 +3,7 @@
 const wdio = require('webdriverio');
 
 const {
-    ANDROID
+    IOS
 } = require('../helpers/capabilities');
 const { getSelector } = require('../helpers/getSelector');
 
@@ -11,7 +11,7 @@ const { getSelector } = require('../helpers/getSelector');
 const options = {
     path: '/wd/hub',
     port: 4723,
-    capabilities: ANDROID
+    capabilities: IOS
 };
 
 const delay = ms => new Promise(res => setTimeout(res, ms));

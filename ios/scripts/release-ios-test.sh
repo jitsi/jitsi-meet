@@ -1,32 +1,31 @@
 #!/bin/bash
 
-BASE_DIR=$HOME/Work/jitsi-meet/ios/
-BUILD_DIR=$BASE_DIR/build
-FOCUS_ARCHIVE=$BUILD_DIR/JitsiMeet.xcarchive
-FOCUS_APP=$BUILD_DIR/jitsi-meet.app
+BASE_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[1]}" || echo "${BASH_SOURCE[1]}")")" && pwd)
+BUILD_DIR=$BASE_DIR/ios/build
+ARCHIVE_DIR=$BUILD_DIR/JitsiMeet.xcarchive
+APP_DIR=$ARCHIVE_DIR/Products/Applications/jitsi-meet.app
 
 
 echo "Cleaning up old archive & app..."
-rm -rf $FOCUS_ARCHIVE $FOCUS_APP
+rm -rf $ARCHIVE_DIR $APP_DIR
 
 echo "Cleaning up workspace..."
 xcodebuild clean \
-    -workspace ios/jitsi-meet.xcworkspace \
+    -workspace $BASE_DIR/ios/jitsi-meet.xcworkspace \
     -scheme JitsiMeet
 
 echo "Building archive..."
 xcodebuild archive \
-    -workspace $BASE_DIR/jitsi-meet.xcworkspace \
+    -workspace $BASE_DIR/ios/jitsi-meet.xcworkspace \
     -scheme JitsiMeet \
-    -sdk iphoneos \
-    -destination='generic/platform=iOS' \
+    -destination 'generic/platform=iOS' \
     -configuration Release \
-    -archivePath $FOCUS_ARCHIVE
+    -archivePath $ARCHIVE_DIR
 
 echo "Exporting archive..."
 xcodebuild -exportArchive \
-     -archivePath $FOCUS_ARCHIVE  \
+     -archivePath $ARCHIVE_DIR  \
      -exportPath $BUILD_DIR \
-     -exportOptionsPlist $BASE_DIR/app/src/Info.plist
+     -exportOptionsPlist $BASE_DIR/ios/app/src/Info.plist
 
 echo "Done"
