@@ -9,7 +9,6 @@ import {
     _ADD_AUDIO_ELEMENT,
     _REMOVE_AUDIO_ELEMENT
 } from './actionTypes';
-import logger from './logger';
 
 /**
  * The structure use by this reducer to describe a sound.
@@ -96,8 +95,6 @@ function _addOrRemoveAudioElement(state: ISoundsState, action: any) {
                     audioElement: undefined
                 }));
         }
-    } else {
-        logger.warn(`${action.type}: no sound for id: ${soundId}`);
     }
 
     return nextState;
