@@ -14,6 +14,7 @@
 --     admins = { "focusUser@auth.jitmeet.example.com" }
 --     muc_room_locking = false
 --     muc_room_default_public_jids = true
+--     hidden_domain = "recorder.jitmeet.example.com"
 --
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, 'util.async');
@@ -55,6 +56,7 @@ module:depends('jitsi_session');
 
 local breakout_rooms_muc_service;
 local main_muc_service;
+local hidden_domain = module:get_option_string('hidden_domain')
 
 -- Maps a breakout room jid to the main room jid
 local main_rooms_map = {};
@@ -97,7 +99,9 @@ function get_participants(room)
     if room then
         for room_nick, occupant in room:each_occupant() do
             -- Filter focus as we keep it as a hidden participant
-            if jid_node(occupant.jid) ~= 'focus' then
+            local node, host = jid_split(occupant.jid);
+            local isHiddenParticipant = host == hidden_domain
+            if node ~= 'focus' and not isHiddenParticipant then
                 local display_name = occupant:get_presence():get_child_text(
                     'nick', 'http://jabber.org/protocol/nick');
                 local real_nick = internal_room_jid_match_rewrite(room_nick);
