@@ -12,7 +12,6 @@ import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmute
 import { MEDIA_TYPE } from '../media/constants';
 import {
     dominantSpeakerChanged,
-    participantConnectionStatusChanged,
     participantKicked,
     participantMutedUs,
     participantPresenceChanged,
@@ -219,10 +218,6 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
     conference.on(
         JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED, // @ts-ignore
         (...args: any[]) => dispatch(nonParticipantMessageReceived(...args)));
-
-    conference.on(
-        JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED, // @ts-ignore
-        (...args: any[]) => dispatch(participantConnectionStatusChanged(...args)));
 
     conference.on(
         JitsiConferenceEvents.USER_JOINED,

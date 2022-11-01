@@ -77,7 +77,6 @@ import {
     JitsiConnectionEvents,
     JitsiE2ePingEvents,
     JitsiMediaDevicesEvents,
-    JitsiParticipantConnectionStatus,
     JitsiTrackErrors,
     JitsiTrackEvents,
     browser
@@ -101,9 +100,7 @@ import {
     getNormalizedDisplayName,
     getVirtualScreenshareParticipantByOwnerId,
     localParticipantAudioLevelChanged,
-    localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
-    participantConnectionStatusChanged,
     participantKicked,
     participantMutedUs,
     participantPresenceChanged,
@@ -2276,11 +2273,6 @@ export default {
                 APP.store.dispatch(p2pStatusChanged(p2p)));
 
         room.on(
-            JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
-            (id, connectionStatus) => APP.store.dispatch(
-                participantConnectionStatusChanged(id, connectionStatus)));
-
-        room.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             (dominant, previous, silence) => {
                 APP.store.dispatch(dominantSpeakerChanged(dominant, previous, Boolean(silence), room));
@@ -2289,16 +2281,6 @@ export default {
         room.on(
             JitsiConferenceEvents.CONFERENCE_CREATED_TIMESTAMP,
             conferenceTimestamp => APP.store.dispatch(conferenceTimestampChanged(conferenceTimestamp)));
-
-        room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
-            APP.store.dispatch(localParticipantConnectionStatusChanged(
-                JitsiParticipantConnectionStatus.INTERRUPTED));
-        });
-
-        room.on(JitsiConferenceEvents.CONNECTION_RESTORED, () => {
-            APP.store.dispatch(localParticipantConnectionStatusChanged(
-                JitsiParticipantConnectionStatus.ACTIVE));
-        });
 
         room.on(
             JitsiConferenceEvents.DISPLAY_NAME_CHANGED,

@@ -104,27 +104,6 @@ export function kickParticipant(id: string) {
 }
 
 /**
- * Creates an action to signal the connection status of the local participant
- * has changed.
- *
- * @param {string} connectionStatus - The current connection status of the local
- * participant, as enumerated by the library's participantConnectionStatus
- * constants.
- * @returns {Function}
- */
-export function localParticipantConnectionStatusChanged(connectionStatus: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const participant = getLocalParticipant(getState);
-
-        if (participant) {
-            return dispatch(participantConnectionStatusChanged(
-                participant.id,
-                connectionStatus));
-        }
-    };
-}
-
-/**
  * Action to signal that the ID of local participant has changed. It happens
  * when the local participant joins a new conference or leaves an existing
  * conference.
@@ -224,30 +203,6 @@ export function muteRemoteParticipant(id: string, mediaType: string) {
         type: MUTE_REMOTE_PARTICIPANT,
         id,
         mediaType
-    };
-}
-
-/**
- * Action to update a participant's connection status.
- *
- * @param {string} id - Participant's ID.
- * @param {string} connectionStatus - The new connection status of the
- * participant.
- * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: {
- *         connectionStatus: string,
- *         id: string
- *     }
- * }}
- */
-export function participantConnectionStatusChanged(id: string, connectionStatus: string) {
-    return {
-        type: PARTICIPANT_UPDATED,
-        participant: {
-            connectionStatus,
-            id
-        }
     };
 }
 

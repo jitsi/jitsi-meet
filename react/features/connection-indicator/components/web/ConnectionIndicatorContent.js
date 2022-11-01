@@ -15,8 +15,6 @@ import {
 import { ConnectionStatsTable } from '../../../connection-stats';
 import { saveLogs } from '../../actions';
 import {
-    isParticipantConnectionStatusInactive,
-    isParticipantConnectionStatusInterrupted,
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
 } from '../../functions';
@@ -71,12 +69,6 @@ type Props = AbstractProps & {
      * The audio SSRC of this client.
      */
     _audioSsrc: number,
-
-    /**
-     * The current condition of the user's connection, matching one of the
-     * enumerated values in the library.
-     */
-    _connectionStatus: string,
 
     /**
      * Whether or not should display the "Show More" link in the local video
@@ -330,17 +322,11 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         videoTrack = getVirtualScreenshareParticipantTrack(tracks, participant?.id);
     }
 
-    const _isConnectionStatusInactive = sourceNameSignalingEnabled
-        ? isTrackStreamingStatusInactive(videoTrack)
-        : isParticipantConnectionStatusInactive(participant);
-
-    const _isConnectionStatusInterrupted = sourceNameSignalingEnabled
-        ? isTrackStreamingStatusInterrupted(videoTrack)
-        : isParticipantConnectionStatusInterrupted(participant);
+    const _isConnectionStatusInactive = isTrackStreamingStatusInactive(videoTrack);
+    const _isConnectionStatusInterrupted = isTrackStreamingStatusInterrupted(videoTrack);
 
     return {
         _audioSsrc: audioTrack ? conference?.getSsrcByTrack(audioTrack.jitsiTrack) : undefined,
-        _connectionStatus: participant?.connectionStatus,
         _enableSaveLogs: state['features/base/config'].enableSaveLogs,
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
         _isConnectionStatusInactive,

@@ -97,7 +97,6 @@ export function commonUserJoinedHandling(
 
         dispatch(participantJoined({
             botType: user.getBotType(),
-            connectionStatus: user.getConnectionStatus(),
             conference,
             id,
             name: displayName,

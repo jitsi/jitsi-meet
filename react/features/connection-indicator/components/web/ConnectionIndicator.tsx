@@ -22,8 +22,6 @@ import {
     getVirtualScreenshareParticipantTrack
 } from '../../../base/tracks/functions';
 import {
-    isParticipantConnectionStatusInactive,
-    isParticipantConnectionStatusInterrupted,
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
 } from '../../functions';
@@ -85,12 +83,6 @@ type Props = AbstractProps & WithTranslation & {
      * Disable/enable inactive indicator.
      */
     _connectionIndicatorInactiveDisabled: boolean;
-
-    /**
-     * The current condition of the user's connection, matching one of the
-     * enumerated values in the library.
-     */
-    _connectionStatus: string;
 
     /**
      * Whether the indicator popover is disabled.
@@ -405,13 +397,8 @@ export function _mapStateToProps(state: IReduxState, ownProps: Props) {
         firstVideoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
     }
 
-    const _isConnectionStatusInactive = sourceNameSignalingEnabled
-        ? isTrackStreamingStatusInactive(firstVideoTrack)
-        : isParticipantConnectionStatusInactive(participant);
-
-    const _isConnectionStatusInterrupted = sourceNameSignalingEnabled
-        ? isTrackStreamingStatusInterrupted(firstVideoTrack)
-        : isParticipantConnectionStatusInterrupted(participant);
+    const _isConnectionStatusInactive = isTrackStreamingStatusInactive(firstVideoTrack);
+    const _isConnectionStatusInterrupted = isTrackStreamingStatusInterrupted(firstVideoTrack);
 
     return {
         _connectionIndicatorInactiveDisabled:

@@ -2,7 +2,7 @@
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import { CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
 import { MEDIA_TYPE } from '../base/media/constants';
-import { PARTICIPANT_JOINED, PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
+import { PARTICIPANT_JOINED } from '../base/participants/actionTypes';
 import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_STOPPED } from '../base/tracks/actionTypes';
@@ -34,18 +34,6 @@ MiddlewareRegistry.register(store => next => action => {
             VideoLayout.updateVideoMutedForNoTracks(action.participant.id);
         }
         break;
-
-    case PARTICIPANT_UPDATED: {
-        // Look for actions that triggered a change to connectionStatus. This is
-        // done instead of changing the connection status change action to be
-        // explicit in order to minimize changes to other code.
-        if (typeof action.participant.connectionStatus !== 'undefined') {
-            VideoLayout.onParticipantConnectionStatusChanged(
-                action.participant.id,
-                action.participant.connectionStatus);
-        }
-        break;
-    }
 
     case PARTICIPANTS_PANE_CLOSE:
     case PARTICIPANTS_PANE_OPEN:

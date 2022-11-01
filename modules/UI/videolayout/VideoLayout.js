@@ -114,23 +114,6 @@ const VideoLayout = {
     },
 
     /**
-     * Shows/hides warning about a user's connectivity issues.
-     *
-     * @param {string} id - The ID of the remote participant(MUC nickname).
-     * @returns {void}
-     */
-    onParticipantConnectionStatusChanged(id) {
-        if (APP.conference.isLocalId(id)) {
-
-            return;
-        }
-
-        // We have to trigger full large video update to transition from
-        // avatar to video on connectivity restored.
-        this._updateLargeVideoIfDisplayed(id, true);
-    },
-
-    /**
      * On last N change event.
      *
      * @param endpointsLeavingLastN the list currently leaving last N

@@ -19,7 +19,7 @@ import {
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../base/tracks/functions';
-import { isParticipantConnectionStatusActive, isTrackStreamingStatusActive } from '../connection-indicator/functions';
+import { isTrackStreamingStatusActive } from '../connection-indicator/functions';
 import { isSharingStatus } from '../shared-video/functions';
 import {
     LAYOUTS,
@@ -134,13 +134,7 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
         // remote participants excluding shared video
         const isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, id);
 
-        if (getSourceNameSignalingFeatureFlag(state)) {
-            isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly
-                && isTrackStreamingStatusActive(videoTrack);
-        } else {
-            isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly
-                && isParticipantConnectionStatusActive(participant);
-        }
+        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly && isTrackStreamingStatusActive(videoTrack);
     }
 
     return isPlayable;
@@ -588,7 +582,6 @@ export function getDisplayModeInput(props: Object, state: Object) {
         isAudioOnly: _isAudioOnly,
         tileViewActive,
         isVideoPlayable: _isVideoPlayable,
-        connectionStatus: _participant?.connectionStatus,
         canPlayEventReceived,
         videoStream: Boolean(_videoTrack),
         isRemoteParticipant: !_participant?.fakeParticipant && !_participant?.local,
