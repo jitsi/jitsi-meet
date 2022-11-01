@@ -3,12 +3,10 @@ import React from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { IState } from '../../../../app/types';
-// @ts-ignore
+import { IReduxState } from '../../../../app/types';
 import { getConferenceName } from '../../../../base/conference/functions';
-// @ts-ignore
-import { MEETING_NAME_ENABLED, getFeatureFlag } from '../../../../base/flags';
-// @ts-ignore
+import { MEETING_NAME_ENABLED } from '../../../../base/flags/constants';
+import { getFeatureFlag } from '../../../../base/flags/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../../base/participants/functions';
 import { connect } from '../../../../base/redux/functions';
@@ -87,7 +85,7 @@ const TitleBar = (props: Props): JSX.Element => {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     const { hideConferenceSubject } = state['features/base/config'];
 
     return {

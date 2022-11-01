@@ -4,7 +4,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 // @ts-ignore
@@ -16,7 +16,6 @@ import {
 import { StyleType } from '../../../base/styles';
 // @ts-ignore
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
-// @ts-ignore
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
 // @ts-ignore
@@ -26,7 +25,7 @@ import { supportsLocalRecording } from '../../functions';
  * The type of the React {@code Component} props of
  * {@link AbstractStartRecordingDialogContent}.
  */
-export interface Props extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * Style of the dialogs feature.
@@ -147,7 +146,7 @@ export interface Props extends WithTranslation {
  *
  * @augments Component
  */
-class AbstractStartRecordingDialogContent<P extends Props> extends Component<P> {
+class AbstractStartRecordingDialogContent<P extends IProps> extends Component<P> {
     /**
      * Initializes a new {@code AbstractStartRecordingDialogContent} instance.
      *
@@ -334,9 +333,9 @@ class AbstractStartRecordingDialogContent<P extends Props> extends Component<P> 
  * Maps part of the redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-export function mapStateToProps(state: IState) {
+export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
     const _localRecordingAvailable
         = !localRecording?.disable && supportsLocalRecording();

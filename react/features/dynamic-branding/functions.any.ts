@@ -1,4 +1,4 @@
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 
@@ -10,7 +10,7 @@ import { toState } from '../base/redux/functions';
  * @param {Object} state - A redux state.
  * @returns {string}
  */
-export function extractFqnFromPath(state?: IState) {
+export function extractFqnFromPath(state?: IReduxState) {
     let pathname;
 
     if (window.location.pathname) {
@@ -61,6 +61,6 @@ export async function getDynamicBrandingUrl(stateful: IStateful) {
  * @param {Object} state - Global state of the app.
  * @returns {boolean}
  */
-export function isDynamicBrandingDataLoaded(state: IState) {
+export function isDynamicBrandingDataLoaded(state: IReduxState) {
     return state['features/dynamic-branding'].customizationReady;
 }

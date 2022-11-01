@@ -1,4 +1,4 @@
-export interface IconButtonProps {
+export interface IIconButtonProps {
     accessibilityLabel?: string;
     color?: string;
     disabled?: boolean;

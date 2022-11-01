@@ -9,7 +9,7 @@ import {
 
 export interface IScreenShareState {
     captureFrameRate?: number;
-    desktopAudioTrack?: Object;
+    desktopAudioTrack?: any;
     isSharingAudio?: boolean;
 }
 

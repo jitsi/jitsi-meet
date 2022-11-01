@@ -2,23 +2,17 @@
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { batch } from 'react-redux';
+import { batch, connect } from 'react-redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import { IconHorizontalPoints } from '../../../base/icons/svg';
 import { getLocalParticipant } from '../../../base/participants/functions';
-// @ts-ignore
-import { Popover } from '../../../base/popover';
-import { connect } from '../../../base/redux/functions';
-// @ts-ignore
+import Popover from '../../../base/popover/components/Popover.web';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
-// @ts-ignore
-import { getHideSelfView } from '../../../base/settings';
-// @ts-ignore
-import { getLocalVideoTrack } from '../../../base/tracks';
+import { getHideSelfView } from '../../../base/settings/functions.web';
+import { getLocalVideoTrack } from '../../../base/tracks/functions';
 import Button from '../../../base/ui/components/web/Button';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
@@ -43,7 +37,7 @@ import TogglePinToStageButton from './TogglePinToStageButton';
  * The type of the React {@code Component} props of
  * {@link LocalVideoMenuTriggerButton}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The id of the local participant.
@@ -52,8 +46,7 @@ interface Props extends WithTranslation {
 
     /**
      * The position relative to the trigger the local video menu should display
-     * from. Valid values are those supported by AtlasKit
-     * {@code InlineDialog}.
+     * from.
      */
     _menuPosition: string;
 
@@ -145,7 +138,7 @@ const styles = () => {
  *
  * @augments {Component}
  */
-class LocalVideoMenuTriggerButton extends Component<Props> {
+class LocalVideoMenuTriggerButton extends Component<IProps> {
 
     /**
      * Initializes a new LocalVideoMenuTriggerButton instance.
@@ -153,7 +146,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onPopoverClose = this._onPopoverClose.bind(this);
@@ -271,9 +264,9 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { thumbnailType } = ownProps;
     const localParticipant = getLocalParticipant(state);
     const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];
@@ -303,8 +296,8 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
         _showHideSelfViewButton: showHideSelfViewButton,
         _overflowDrawer: overflowDrawer,
-        _localParticipantId: localParticipant?.id,
-        _showConnectionInfo: showConnectionInfo,
+        _localParticipantId: localParticipant?.id ?? '',
+        _showConnectionInfo: Boolean(showConnectionInfo),
         _showPinToStage: isStageFilmstripAvailable(state)
     };
 }

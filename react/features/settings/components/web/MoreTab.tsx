@@ -1,8 +1,7 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-ignore
+// @ts-expect-error
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import AbstractDialogTab, {
     Props as AbstractDialogTabProps

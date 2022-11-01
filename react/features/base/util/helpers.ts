@@ -84,19 +84,14 @@ export function getBaseUrl(w: Window = window) {
  * NOTE: After React-ifying everything this should be the only global.
  */
 export function getJitsiMeetGlobalNS() {
-    // @ts-ignore
     if (!window.JitsiMeetJS) {
-        // @ts-ignore
         window.JitsiMeetJS = {};
     }
 
-    // @ts-ignore
     if (!window.JitsiMeetJS.app) {
-        // @ts-ignore
         window.JitsiMeetJS.app = {};
     }
 
-    // @ts-ignore
     return window.JitsiMeetJS.app;
 }
 

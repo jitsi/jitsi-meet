@@ -7,7 +7,7 @@ import {
     RESET_NB_UNREAD_POLLS,
     RETRACT_VOTE
 } from './actionTypes';
-import { Answer, Poll } from './types';
+import { IAnswer, IPoll } from './types';
 
 /**
  * Action to signal that existing polls needs to be cleared from state.
@@ -44,16 +44,16 @@ export const setVoteChanging = (pollId: string, value: boolean) => {
  * Action to signal that a new poll was received.
  *
  * @param {string} pollId - The id of the incoming poll.
- * @param {Poll} poll - The incoming Poll object.
+ * @param {IPoll} poll - The incoming Poll object.
  * @param {boolean} notify - Whether to send or not a notification.
  * @returns {{
  *     type: RECEIVE_POLL,
- *     poll: Poll,
+ *     poll: IPoll,
  *     pollId: string,
  *     notify: boolean
  * }}
  */
-export const receivePoll = (pollId: string, poll: Poll, notify: boolean) => {
+export const receivePoll = (pollId: string, poll: IPoll, notify: boolean) => {
     return {
         type: RECEIVE_POLL,
         poll,
@@ -66,14 +66,14 @@ export const receivePoll = (pollId: string, poll: Poll, notify: boolean) => {
  * Action to signal that a new answer was received.
  *
  * @param {string} pollId - The id of the incoming poll.
- * @param {Answer} answer - The incoming Answer object.
+ * @param {IAnswer} answer - The incoming Answer object.
  * @returns {{
  *     type: RECEIVE_ANSWER,
- *     answer: Answer,
+ *     answer: IAnswer,
  *     pollId: string
  * }}
  */
-export const receiveAnswer = (pollId: string, answer: Answer) => {
+export const receiveAnswer = (pollId: string, answer: IAnswer) => {
     return {
         type: RECEIVE_ANSWER,
         answer,

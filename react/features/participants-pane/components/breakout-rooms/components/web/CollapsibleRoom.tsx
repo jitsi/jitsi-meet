@@ -1,18 +1,15 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { ReactElement, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../../../app/types';
+import { IReduxState } from '../../../../../app/types';
 import ListItem from '../../../../../base/components/participants-pane-list/ListItem';
 import Icon from '../../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../../../base/styles/functions.web';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { ACTION_TRIGGER } from '../../../../constants';
 import { participantMatchesSearch } from '../../../../functions';
@@ -131,7 +128,7 @@ export const CollapsibleRoom = ({
     const raiseMenu = useCallback(target => {
         onRaiseMenu(target);
     }, [ onRaiseMenu ]);
-    const { defaultRemoteDisplayName } = useSelector((state: IState) => state['features/base/config']);
+    const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const moderator = useSelector(isLocalParticipantModerator);
 

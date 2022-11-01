@@ -1,9 +1,10 @@
 // @flow
 
+import { getCurrentConference } from '../base/conference/functions';
 import { StateListenerRegistry } from '../base/redux';
 import { shouldDisplayTileView } from '../video-layout';
 
-import { setTileViewDimensions } from './actions';
+import { setRemoteParticipants, setTileViewDimensions } from './actions';
 import { getTileViewParticipantCount } from './functions.native';
 import './subscriber.any';
 
@@ -28,5 +29,16 @@ StateListenerRegistry.register(
     /* listener */ (isTileView, store) => {
         if (isTileView) {
             store.dispatch(setTileViewDimensions());
+        }
+    });
+
+/**
+ * Listens for changes in the current conference and clears remote participants from this feature.
+ */
+StateListenerRegistry.register(
+    state => getCurrentConference(state),
+    (conference, { dispatch }, previousConference) => {
+        if (conference !== previousConference) {
+            dispatch(setRemoteParticipants([]));
         }
     });

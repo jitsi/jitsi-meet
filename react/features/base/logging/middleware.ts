@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import Logger from '@jitsi/logger';
 

@@ -1,16 +1,12 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { COLORS } from '../../constants';
-import AbstractLabel, {
-    type Props as AbstractProps
-} from '../AbstractLabel';
 
-type Props = AbstractProps & {
+interface IProps {
 
     /**
      * Own CSS class name.
@@ -18,15 +14,14 @@ type Props = AbstractProps & {
     className?: string;
 
     /**
-     * An object containing the CSS classes.
-     */
-    classes: any;
-
-    /**
      * The color of the label.
      */
     color?: string;
 
+    /**
+     * An SVG icon to be rendered as the content of the label.
+     */
+    icon?: Function;
 
     /**
      * Color for the icon.
@@ -43,16 +38,14 @@ type Props = AbstractProps & {
      */
     onClick?: (e?: React.MouseEvent) => void;
 
-};
+    /**
+     * String or component that will be rendered as the label itself.
+     */
+    text?: string;
 
-/**
- * Creates the styles for the component.
- *
- * @param {Object} theme - The current UI theme.
- *
- * @returns {Object}
- */
-const styles = (theme: Theme) => {
+}
+
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         label: {
             ...withPixelLineHeight(theme.typography.labelRegular),
@@ -86,51 +79,33 @@ const styles = (theme: Theme) => {
             background: theme.palette.actionDanger
         }
     };
+});
+
+const Label = ({
+    className,
+    color,
+    icon,
+    iconColor,
+    id,
+    onClick,
+    text
+}: IProps) => {
+    const { classes, cx } = useStyles();
+
+    return (
+        <div
+            className = { cx(classes.label, onClick && classes.clickable,
+                color && classes[color], className
+            ) }
+            id = { id }
+            onClick = { onClick }>
+            {icon && <Icon
+                color = { iconColor }
+                size = '16'
+                src = { icon } />}
+            {text && <span className = { icon && classes.withIcon }>{text}</span>}
+        </div>
+    );
 };
 
-
-/**
- * React Component for showing short text in a circle.
- *
- * @augments Component
- */
-class Label extends AbstractLabel<Props, any> {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     */
-    render() {
-        const {
-            classes,
-            className,
-            color,
-            icon,
-            iconColor,
-            id,
-            onClick,
-            text
-        } = this.props;
-        const labelClassName = clsx(
-            classes.label,
-            onClick && classes.clickable,
-            color && classes[color],
-            className
-        );
-
-        return (
-            <div
-                className = { labelClassName }
-                id = { id }
-                onClick = { onClick }>
-                { icon && <Icon
-                    color = { iconColor }
-                    size = '16'
-                    src = { icon } /> }
-                { text && <span className = { icon && classes.withIcon }>{text}</span> }
-            </div>
-        );
-    }
-}
-
-export default withStyles(styles)(Label);
+export default Label;

@@ -19,7 +19,7 @@ jobs:
       run: npm run lang-sort
     - name: Check if the git repository is clean
       run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
-    - run: npm run lint
+    - run: npm run lint:ci
     - run: for file in lang/*.json; do npx --yes jsonlint -q $file || exit 1; done
   linux-build:
     name: Build Frontend (Linux)

@@ -1,6 +1,5 @@
-// @ts-ignore
-import { CONFERENCE_JOINED, CONFERENCE_LEFT, SET_PASSWORD } from '../base/conference';
-import { Participant } from '../base/participants/types';
+import { CONFERENCE_JOINED, CONFERENCE_LEFT, SET_PASSWORD } from '../base/conference/actionTypes';
+import { IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -22,13 +21,13 @@ const DEFAULT_STATE = {
     passwordJoinFailed: false
 };
 
-interface KnockingParticipant extends Participant {
+interface IKnockingParticipant extends IParticipant {
     chattingWithModerator?: string;
 }
 
 export interface ILobbyState {
     knocking: boolean;
-    knockingParticipants: KnockingParticipant[];
+    knockingParticipants: IKnockingParticipant[];
     lobbyEnabled: boolean;
     lobbyVisible: boolean;
     passwordJoinFailed: boolean;
@@ -124,7 +123,7 @@ ReducerRegistry.register<ILobbyState>('features/lobby', (state = DEFAULT_STATE, 
  * @param {Object} state - The current Redux state of the feature.
  * @returns {Object}
  */
-function _knockingParticipantArrivedOrUpdated(participant: KnockingParticipant, state: ILobbyState) {
+function _knockingParticipantArrivedOrUpdated(participant: IKnockingParticipant, state: ILobbyState) {
     let existingParticipant = state.knockingParticipants.find(p => p.id === participant.id);
 
     existingParticipant = {

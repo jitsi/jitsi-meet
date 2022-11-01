@@ -6,8 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
-// @ts-ignore
+import { IReduxState } from '../../../app/types';
 import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
@@ -15,12 +14,10 @@ import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/u
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/types';
-// @ts-ignore
-import { isParticipantAudioMuted } from '../../../base/tracks';
+import { IParticipant } from '../../../base/participants/types';
+import { isParticipantAudioMuted } from '../../../base/tracks/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
-// @ts-ignore
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import { setVolume } from '../../../filmstrip/actions.web';
@@ -29,7 +26,6 @@ import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { isForceMuted } from '../../../participants-pane/functions';
 // @ts-ignore
 import { requestRemoteControl, stopController } from '../../../remote-control';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 
 // @ts-ignore
@@ -97,7 +93,7 @@ type Props = {
     /**
      * Participant reference.
      */
-    participant: Participant;
+    participant: IParticipant;
 
     /**
      * The current state of the participant's remote control session.
@@ -142,20 +138,20 @@ const ParticipantContextMenu = ({
 
     const localParticipant = useSelector(getLocalParticipant);
     const _isModerator = Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR);
-    const _isAudioForceMuted = useSelector<IState>(state =>
+    const _isAudioForceMuted = useSelector<IReduxState>(state =>
         isForceMuted(participant, MEDIA_TYPE.AUDIO, state));
-    const _isVideoForceMuted = useSelector<IState>(state =>
+    const _isVideoForceMuted = useSelector<IReduxState>(state =>
         isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
-    const _isAudioMuted = useSelector(state => isParticipantAudioMuted(participant, state));
+    const _isAudioMuted = useSelector((state: IReduxState) => isParticipantAudioMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent }
-        = useSelector((state: IState) => state['features/base/config']);
+        = useSelector((state: IReduxState) => state['features/base/config']);
     const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
-    const { participantsVolume } = useSelector((state: IState) => state['features/filmstrip']);
+    const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
-    const isModerationSupported = useSelector(isAvModerationSupported);
+    const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
 
     const _currentRoomId = useSelector(getCurrentRoomId);

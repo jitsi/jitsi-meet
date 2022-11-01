@@ -1,16 +1,13 @@
-/* eslint-disable lines-around-comment */
 import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconPlane, IconSmile } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
-// @ts-ignore
 import { areSmileysDisabled } from '../../functions';
 
 // @ts-ignore
@@ -19,7 +16,7 @@ import SmileysPanel from './SmileysPanel';
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether chat emoticons are disabled.
@@ -29,7 +26,7 @@ interface Props extends WithTranslation {
     /**
      * Invoked to send chat messages.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * Callback to invoke on message send.
@@ -58,7 +55,7 @@ type State = {
  *
  * @augments Component
  */
-class ChatInput extends Component<Props, State> {
+class ChatInput extends Component<IProps, State> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     state = {
@@ -72,7 +69,7 @@ class ChatInput extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._textArea = React.createRef<HTMLTextAreaElement>();
@@ -257,7 +254,7 @@ class ChatInput extends Component<Props, State> {
  *     _areSmileysDisabled: boolean
  * }}
  */
-const mapStateToProps = (state: IState) => {
+const mapStateToProps = (state: IReduxState) => {
     return {
         _areSmileysDisabled: areSmileysDisabled(state)
     };

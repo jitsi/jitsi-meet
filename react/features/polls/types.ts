@@ -1,4 +1,4 @@
-export interface Answer {
+export interface IAnswer {
 
     /**
      * An array of boolean: true if the answer was chosen by the responder, else false.
@@ -21,7 +21,7 @@ export interface Answer {
     voterName: string;
 }
 
-export interface Poll {
+export interface IPoll {
 
     /**
      * An array of answers:
@@ -62,6 +62,6 @@ export interface Poll {
     showResults: boolean;
 }
 
-export interface PollData extends Poll {
+export interface IPollData extends IPoll {
     id: string;
 }

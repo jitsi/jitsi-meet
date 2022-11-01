@@ -16,7 +16,7 @@ import {
     COMMAND_NEW_POLL,
     COMMAND_OLD_POLLS
 } from './constants';
-import { Answer, Poll, PollData } from './types';
+import { IAnswer, IPoll, IPollData } from './types';
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
@@ -33,7 +33,7 @@ StateListenerRegistry.register(
         }
     });
 
-const parsePollData = (pollData: PollData): Poll | null => {
+const parsePollData = (pollData: IPollData): IPoll | null => {
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
@@ -127,7 +127,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch']) {
             showResults: false,
             lastVote: null,
             question,
-            answers: answers.map((answer: Answer) => {
+            answers: answers.map((answer: IAnswer) => {
                 return {
                     name: answer,
                     voters: new Map()
@@ -148,7 +148,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch']) {
     case COMMAND_ANSWER_POLL: {
         const { pollId, answers, voterId, voterName } = data;
 
-        const receivedAnswer: Answer = {
+        const receivedAnswer: IAnswer = {
             voterId,
             voterName,
             pollId,

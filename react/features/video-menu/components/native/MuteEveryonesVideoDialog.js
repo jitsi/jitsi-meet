@@ -35,22 +35,6 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
     }
 
     /**
-     * Toggles advanced moderation switch.
-     *
-     * @returns {void}
-     */
-    _onToggleModeration() {
-        this.setState(state => {
-            return {
-                moderationEnabled: !state.moderationEnabled,
-                content: this.props.t(state.moderationEnabled
-                    ? 'dialog.muteEveryonesVideoDialog' : 'dialog.muteEveryonesVideoDialogModerationOn'
-                )
-            };
-        });
-    }
-
-    /**
      * Implements {@code Component#render}.
      *
      * @inheritdoc

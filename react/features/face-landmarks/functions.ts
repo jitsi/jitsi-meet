@@ -1,7 +1,5 @@
-/* eslint-disable lines-around-comment */
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import { getLocalParticipant } from '../base/participants/functions';
-// @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import { DETECT_FACE, FACE_BOX_EVENT_TYPE, SEND_IMAGE_INTERVAL_MS } from './constants';
@@ -91,7 +89,7 @@ export function sendFaceExpressionToServer(
  * @param  {Object} state - Redux state.
  * @returns {boolean} - True if sent, false otherwise.
  */
-export async function sendFaceExpressionsWebhook(state: IState) {
+export async function sendFaceExpressionsWebhook(state: IReduxState) {
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
@@ -193,21 +191,21 @@ export async function sendDataToWorker(
  * Gets face box for a participant id.
  *
  * @param {string} id - The participant id.
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {Object}
  */
-function getFaceBoxForId(id: string, state: IState) {
+function getFaceBoxForId(id: string, state: IReduxState) {
     return state['features/face-landmarks'].faceBoxes[id];
 }
 
 /**
  * Gets the video object position for a participant id.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @param {string} id - The participant id.
  * @returns {string} - CSS object-position in the shape of '{horizontalPercentage}% {verticalPercentage}%'.
  */
-export function getVideoObjectPosition(state: IState, id?: string) {
+export function getVideoObjectPosition(state: IReduxState, id?: string) {
     const faceBox = id && getFaceBoxForId(id, state);
 
     if (faceBox) {
@@ -224,10 +222,10 @@ export function getVideoObjectPosition(state: IState, id?: string) {
 /**
  * Gets the video object position for a participant id.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {number} - Number of milliseconds for doing face detection.
  */
-export function getDetectionInterval(state: IState) {
+export function getDetectionInterval(state: IReduxState) {
     const { faceLandmarks } = state['features/base/config'];
 
     return Math.max(faceLandmarks?.captureInterval || SEND_IMAGE_INTERVAL_MS);
@@ -236,10 +234,10 @@ export function getDetectionInterval(state: IState) {
 /**
  * Returns the duration in seconds of a face expression.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @param {number} faceExpressionCount - The number of consecutive face expressions.
  * @returns {number} - Duration of face expression in seconds.
  */
-export function getFaceExpressionDuration(state: IState, faceExpressionCount: number) {
+export function getFaceExpressionDuration(state: IReduxState, faceExpressionCount: number) {
     return faceExpressionCount * (getDetectionInterval(state) / 1000);
 }

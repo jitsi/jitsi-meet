@@ -3,11 +3,11 @@ import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
+import { getAvailableDevices } from '../../../base/devices/actions';
 // @ts-ignore
-import { getAvailableDevices } from '../../../base/devices';
-// @ts-ignore
-import { DialogWithTabs, hideDialog } from '../../../base/dialog';
+import { DialogWithTabs } from '../../../base/dialog';
+import { hideDialog } from '../../../base/dialog/actions';
 import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
@@ -295,7 +295,7 @@ class SettingsDialog extends Component<Props> {
  *     tabs: Array<Object>
  * }}
  */
-function _mapStateToProps(state: IState, ownProps: any) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { classes, isDisplayedOnWelcomePage } = ownProps;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 

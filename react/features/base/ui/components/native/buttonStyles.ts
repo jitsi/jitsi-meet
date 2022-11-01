@@ -23,6 +23,10 @@ export default {
         ...buttonLabel
     },
 
+    buttonContent: {
+        height: BUTTON_HEIGHT
+    },
+
     buttonLabelDisabled: {
         ...buttonLabel,
         color: BaseTheme.palette.text03

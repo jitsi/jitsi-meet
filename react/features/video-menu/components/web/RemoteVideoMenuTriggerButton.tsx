@@ -2,19 +2,15 @@
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { batch } from 'react-redux';
+import { batch, connect } from 'react-redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import { IconHorizontalPoints } from '../../../base/icons/svg';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/types';
-// @ts-ignore
-import { Popover } from '../../../base/popover';
-import { connect } from '../../../base/redux/functions';
-// @ts-ignore
+import { IParticipant } from '../../../base/participants/types';
+import Popover from '../../../base/popover/components/Popover.web';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import Button from '../../../base/ui/components/web/Button';
 import ConnectionIndicatorContent from
@@ -33,7 +29,7 @@ import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
  * The type of the React {@code Component} props of
  * {@link RemoteVideoMenuTriggerButton}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether the remote video context menu is disabled.
@@ -47,8 +43,7 @@ interface Props extends WithTranslation {
 
     /**
      * The position relative to the trigger the remote menu should display
-     * from. Valid values are those supported by AtlasKit
-     * {@code InlineDialog}.
+     * from.
      */
     _menuPosition: string;
 
@@ -60,7 +55,7 @@ interface Props extends WithTranslation {
     /**
      * Participant reference.
      */
-    _participant: Participant;
+    _participant: IParticipant;
 
     /**
      * The ID for the participant on which the remote video menu will act.
@@ -141,7 +136,7 @@ const styles = () => {
  *
  * @augments {Component}
  */
-class RemoteVideoMenuTriggerButton extends Component<Props> {
+class RemoteVideoMenuTriggerButton extends Component<IProps> {
 
     /**
      * Initializes a new RemoteVideoMenuTriggerButton instance.
@@ -149,7 +144,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onPopoverClose = this._onPopoverClose.bind(this);
@@ -272,9 +267,9 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { participantID, thumbnailType } = ownProps;
     let _remoteControlState = null;
     const localParticipantId = getLocalParticipant(state)?.id;
@@ -318,14 +313,14 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     }
 
     return {
-        _disabled: remoteVideoMenu?.disabled,
+        _disabled: Boolean(remoteVideoMenu?.disabled),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _menuPosition,
         _overflowDrawer: overflowDrawer,
         _participant: participant ?? { id: '' },
         _participantDisplayName: _participantDisplayName ?? '',
         _remoteControlState,
-        _showConnectionInfo: showConnectionInfo
+        _showConnectionInfo: Boolean(showConnectionInfo)
     };
 }
 

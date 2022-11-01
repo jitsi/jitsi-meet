@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment */
-// @ts-ignore
-import { CAR_MODE_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { IReduxState } from '../../../app/types';
+import { CAR_MODE_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconCar } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
@@ -34,12 +35,12 @@ class OpenCarmodeButton extends AbstractButton<AbstractButtonProps, any, any> {
 /**
  * Maps part of the Redux state to the props of this component.
  *
- * @param {Object} state - The Redux state.
+ * @param {IReduxState} state - The Redux state.
  * @param {AbstractButtonProps} ownProps - The properties explicitly passed to the component instance.
  * @private
  * @returns {Object}
  */
-function _mapStateToProps(state: Object, ownProps: AbstractButtonProps): Object {
+function _mapStateToProps(state: IReduxState, ownProps: AbstractButtonProps): Object {
     const enabled = getFeatureFlag(state, CAR_MODE_ENABLED, true);
     const { visible = enabled } = ownProps;
 

@@ -1,20 +1,18 @@
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../participants/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrack } from '../tracks';
+import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrack } from '../tracks/functions';
 
 /**
  * Indicates whether the test mode is enabled. When it's enabled
  * {@link TestHint} and other components from the testing package will be
  * rendered in various places across the app to help with automatic testing.
  *
- * @param {IState} state - The redux store state.
+ * @param {IReduxState} state - The redux store state.
  * @returns {boolean}
  */
-export function isTestModeEnabled(state: IState): boolean {
+export function isTestModeEnabled(state: IReduxState): boolean {
     const testingConfig = state['features/base/config'].testing;
 
     return Boolean(testingConfig?.testMode);
@@ -46,7 +44,7 @@ export function getRemoteVideoType({ getState }: IStore, id: string) {
  */
 export function isLargeVideoReceived({ getState }: IStore): boolean {
     const state = getState();
-    const largeVideoParticipantId = state['features/large-video'].participantId;
+    const largeVideoParticipantId = state['features/large-video'].participantId ?? '';
     const largeVideoParticipant = getParticipantById(state, largeVideoParticipantId ?? '');
     const tracks = state['features/base/tracks'];
     let videoTrack;
@@ -59,7 +57,8 @@ export function isLargeVideoReceived({ getState }: IStore): boolean {
 
     const lastMediaEvent = state['features/large-video']?.lastMediaEvent;
 
-    return videoTrack && !videoTrack.muted && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough');
+    return Boolean(videoTrack && !videoTrack.muted
+        && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough'));
 }
 
 /**
@@ -82,5 +81,6 @@ export function isRemoteVideoReceived({ getState }: IStore, id: string): boolean
     }
     const lastMediaEvent = videoTrack?.lastMediaEvent;
 
-    return videoTrack && !videoTrack.muted && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough');
+    return Boolean(videoTrack && !videoTrack.muted
+        && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough'));
 }

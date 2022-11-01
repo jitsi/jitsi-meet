@@ -1,3 +1,3 @@
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 
-export type IStateful = Function | IStore | IState;
+export type IStateful = Function | IStore | IReduxState;

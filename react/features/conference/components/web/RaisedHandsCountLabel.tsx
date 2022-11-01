@@ -1,17 +1,15 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { IconRaisedHand } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
-// @ts-ignore
 import { open as openParticipantsPane } from '../../../participants-pane/actions';
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -27,7 +25,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 const RaisedHandsCountLabel = () => {
     const { classes: styles, theme } = useStyles();
     const dispatch = useDispatch();
-    const raisedHandsCount = useSelector((state: IState) =>
+    const raisedHandsCount = useSelector((state: IReduxState) =>
         (state['features/base/participants'].raisedHandsQueue || []).length);
     const { t } = useTranslation();
     const onClick = useCallback(() => {

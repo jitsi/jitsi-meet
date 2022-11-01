@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 

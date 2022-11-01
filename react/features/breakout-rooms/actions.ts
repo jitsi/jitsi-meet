@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import i18next from 'i18next';
 import _ from 'lodash';
 
@@ -8,28 +7,20 @@ import { IStore } from '../app/types';
 import {
     conferenceLeft,
     conferenceWillLeave,
-    createConference,
-    getCurrentConference
-    // @ts-ignore
-} from '../base/conference';
+    createConference
+} from '../base/conference/actions';
 import { CONFERENCE_LEAVE_REASONS } from '../base/conference/constants';
-import {
-    setAudioMuted,
-    setVideoMuted
-    // @ts-ignore
-} from '../base/media';
+import { getCurrentConference } from '../base/conference/functions';
+import { setAudioMuted, setVideoMuted } from '../base/media/actions';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { getRemoteParticipants } from '../base/participants/functions';
+import { createDesiredLocalTracks } from '../base/tracks/actions';
 import {
     getLocalTracks,
     isLocalCameraTrackMuted,
     isLocalTrackMuted
-    // @ts-ignore
-} from '../base/tracks';
-// @ts-ignore
-import { createDesiredLocalTracks } from '../base/tracks/actions';
-// @ts-ignore
-import { clearNotifications, showNotification } from '../notifications';
+} from '../base/tracks/functions';
+import { clearNotifications, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { _RESET_BREAKOUT_ROOMS, _UPDATE_ROOM_COUNTER } from './actionTypes';
@@ -192,6 +183,7 @@ export function moveToRoom(roomId?: string) {
 
             // eslint-disable-next-line no-new-wrappers
             _roomId = new String(id);
+
             // @ts-ignore
             _roomId.domain = domainParts.join('@');
         }
@@ -228,9 +220,9 @@ export function moveToRoom(roomId?: string) {
             dispatch(clearNotifications());
 
             // dispatch(setRoom(_roomId));
-            dispatch(createConference(_roomId));
+            dispatch(createConference(_roomId?.toString()));
             dispatch(setAudioMuted(audio.muted));
-            dispatch(setVideoMuted(video.muted));
+            dispatch(setVideoMuted(Boolean(video.muted)));
             dispatch(createDesiredLocalTracks());
         } else {
             const localTracks = getLocalTracks(getState()['features/base/tracks']);

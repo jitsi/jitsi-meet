@@ -12,7 +12,6 @@ import { toggleDialog } from '../../react/features/base/dialog';
 import { clickOnVideo } from '../../react/features/filmstrip/actions';
 import { KeyboardShortcutsDialog }
     from '../../react/features/keyboard-shortcuts';
-import { SpeakerStats } from '../../react/features/speaker-stats';
 
 const logger = Logger.getLogger(__filename);
 
@@ -248,13 +247,6 @@ const KeyboardShortcut = {
             APP.conference.muteAudio(true);
         });
         this._addShortcutToHelp('SPACE', 'keyboardShortcuts.pushToTalk');
-
-        this.registerShortcut('T', null, () => {
-            sendAnalytics(createShortcutEvent('speaker.stats'));
-            APP.store.dispatch(toggleDialog(SpeakerStats, {
-                conference: APP.conference
-            }));
-        }, 'keyboardShortcuts.showSpeakerStats');
 
         /**
          * FIXME: Currently focus keys are directly implemented below in

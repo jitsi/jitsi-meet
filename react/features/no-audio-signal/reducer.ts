@@ -4,7 +4,7 @@ import { set } from '../base/redux/functions';
 import { SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID } from './actionTypes';
 
 export interface INoAudioSignalState {
-    noAudioSignalNotificationUid?: number;
+    noAudioSignalNotificationUid?: string;
 }
 
 /**

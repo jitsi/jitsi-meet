@@ -9,7 +9,7 @@ import {
     RESET_NB_UNREAD_POLLS,
     RETRACT_VOTE
 } from './actionTypes';
-import { Answer, Poll } from './types';
+import { IAnswer, IPoll } from './types';
 
 const INITIAL_STATE = {
     polls: {},
@@ -21,7 +21,7 @@ const INITIAL_STATE = {
 export interface IPollsState {
     nbUnreadPolls: number;
     polls: {
-        [pollId: string]: Poll;
+        [pollId: string]: IPoll;
     };
 }
 
@@ -71,7 +71,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
     // The answer is added  to an existing poll
     case RECEIVE_ANSWER: {
 
-        const { pollId, answer }: { answer: Answer; pollId: string; } = action;
+        const { pollId, answer }: { answer: IAnswer; pollId: string; } = action;
 
         // if the poll doesn't exist
         if (!(pollId in state.polls)) {

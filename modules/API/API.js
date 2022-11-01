@@ -95,8 +95,8 @@ import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/part
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
-import { isScreenAudioSupported } from '../../react/features/screen-share';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
+import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
 import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';

@@ -92,3 +92,4 @@ twa/*.apk
 twa/*.aab
 twa/assetlinks.json
 
+tsconfig.json

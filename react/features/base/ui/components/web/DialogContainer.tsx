@@ -1,13 +1,13 @@
 import { ModalTransition } from '@atlaskit/modal-dialog';
 import React, { Component, ComponentType } from 'react';
 
-import { IState } from '../../../../app/types';
-import { ReactionEmojiProps } from '../../../../reactions/constants';
+import { IReduxState } from '../../../../app/types';
+import { IReactionEmojiProps } from '../../../../reactions/constants';
 import { connect } from '../../../redux/functions';
 
 import DialogTransition from './DialogTransition';
 
-interface Props {
+interface IProps {
 
     /**
      * The component to render.
@@ -27,7 +27,7 @@ interface Props {
     /**
      * Array of reactions to be displayed.
      */
-    _reactionsQueue: Array<ReactionEmojiProps>;
+    _reactionsQueue: Array<IReactionEmojiProps>;
 
     /**
      * True if the UI is in a compact state where we don't show dialogs.
@@ -40,7 +40,7 @@ interface Props {
  * for supporting @atlaskit's modal animations.
  *
  */
-class DialogContainer extends Component<Props> {
+class DialogContainer extends Component<IProps> {
 
     /**
      * Returns the dialog to be displayed.
@@ -85,9 +85,9 @@ class DialogContainer extends Component<Props> {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     const stateFeaturesBaseDialog = state['features/base/dialog'];
     const { reducedUI } = state['features/base/responsive-ui'];
 

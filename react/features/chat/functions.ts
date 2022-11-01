@@ -4,8 +4,10 @@ import aliases from 'react-emoji-render/data/aliases';
 // @ts-ignore
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import { escapeRegexp } from '../base/util/helpers';
+
+import { IMessage } from './reducer';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -81,10 +83,10 @@ export function replaceNonUnicodeEmojis(message: string) {
 /**
  * Selector for calculating the number of unread chat messages.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {number} The number of unread messages.
  */
-export function getUnreadCount(state: IState) {
+export function getUnreadCount(state: IReduxState) {
     const { lastReadMessage, messages } = state['features/chat'];
     const messagesCount = messages.length;
 
@@ -93,14 +95,11 @@ export function getUnreadCount(state: IState) {
     }
 
     let reactionMessages = 0;
-
-    if (!lastReadMessage) {
-        return 0;
-    }
+    let lastReadIndex;
 
     if (navigator.product === 'ReactNative') {
         // React native stores the messages in a reversed order.
-        const lastReadIndex = messages.indexOf(lastReadMessage);
+        lastReadIndex = messages.indexOf(<IMessage>lastReadMessage);
 
         for (let i = 0; i < lastReadIndex; i++) {
             if (messages[i].isReaction) {
@@ -111,7 +110,7 @@ export function getUnreadCount(state: IState) {
         return lastReadIndex - reactionMessages;
     }
 
-    const lastReadIndex = messages.lastIndexOf(lastReadMessage);
+    lastReadIndex = messages.lastIndexOf(<IMessage>lastReadMessage);
 
     for (let i = lastReadIndex + 1; i < messagesCount; i++) {
         if (messages[i].isReaction) {
@@ -123,24 +122,12 @@ export function getUnreadCount(state: IState) {
 }
 
 /**
- * Selector for calculating the number of unread chat messages.
- *
- * @param {IState} state - The redux state.
- * @returns {number} The number of unread messages.
- */
-export function getUnreadMessagesCount(state: IState) {
-    const { nbUnreadMessages } = state['features/chat'];
-
-    return nbUnreadMessages;
-}
-
-/**
  * Get whether the chat smileys are disabled or not.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {boolean} The disabled flag.
  */
-export function areSmileysDisabled(state: IState) {
+export function areSmileysDisabled(state: IReduxState) {
     const disableChatSmileys = state['features/base/config']?.disableChatSmileys === true;
 
     return disableChatSmileys;

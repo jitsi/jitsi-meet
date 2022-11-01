@@ -2,7 +2,6 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
 import { openSheet } from '../../../../base/dialog/actions';
 import Button from '../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';

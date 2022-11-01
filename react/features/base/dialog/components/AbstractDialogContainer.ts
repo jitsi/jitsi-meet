@@ -1,12 +1,12 @@
 import React, { Component, ComponentType } from 'react';
 
-import { IState } from '../../../app/types';
-import { ReactionEmojiProps } from '../../../reactions/constants';
+import { IReduxState } from '../../../app/types';
+import { IReactionEmojiProps } from '../../../reactions/constants';
 
 /**
  * The type of the React {@code Component} props of {@link DialogContainer}.
  */
-interface Props {
+interface IProps {
 
     /**
      * The component to render.
@@ -21,7 +21,7 @@ interface Props {
     /**
      * Array of reactions to be displayed.
      */
-    _reactionsQueue: Array<ReactionEmojiProps>;
+    _reactionsQueue: Array<IReactionEmojiProps>;
 
     /**
      * True if the UI is in a compact state where we don't show dialogs.
@@ -32,7 +32,7 @@ interface Props {
 /**
  * Implements a DialogContainer responsible for showing all dialogs.
  */
-export default class AbstractDialogContainer extends Component<Props> {
+export default class AbstractDialogContainer extends Component<IProps> {
     /**
      * Returns the dialog to be displayed.
      *
@@ -58,9 +58,9 @@ export default class AbstractDialogContainer extends Component<Props> {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-export function abstractMapStateToProps(state: IState) {
+export function abstractMapStateToProps(state: IReduxState) {
     const stateFeaturesBaseDialog = state['features/base/dialog'];
     const { reducedUI } = state['features/base/responsive-ui'];
 

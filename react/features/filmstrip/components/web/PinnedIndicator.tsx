@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { IconPinParticipant } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
@@ -56,7 +56,7 @@ const PinnedIndicator = ({
     tooltipPosition
 }: Props) => {
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
-    const pinned = useSelector((state: IState) => getParticipantById(state, participantId))?.pinned;
+    const pinned = useSelector((state: IReduxState) => getParticipantById(state, participantId))?.pinned;
     const activePinnedParticipants: Array<{ participantId: string; pinned: boolean; }>
         = useSelector(getPinnedActiveParticipants);
     const isPinned = activePinnedParticipants.find(p => p.participantId === participantId);

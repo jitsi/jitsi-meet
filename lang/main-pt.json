@@ -81,8 +81,8 @@
             "selectSoundDevice": "Seleccionar dispositivo de som"
         },
         "labels": {
-            "buttonLabel": "Modo carro",
-            "title": "Modo de condução segura",
+            "buttonLabel": "Modo automóvel",
+            "title": "Modo automóvel",
             "videoStopped": "O seu vídeo está parado"
         }
     },
@@ -96,7 +96,7 @@
         "messageAccessibleTitleMe": "Eu disse:",
         "messageTo": "Mensagem privada para {{recipient}}",
         "messagebox": "Escreva uma mensagem",
-        "newMessages": "novas mensagens",
+        "newMessages": "Novas mensagens",
         "nickname": {
             "popover": "Escolha um apelido",
             "title": "Introduza um apelido para usar o chat",
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "Ainda não há mensagens na reunião. Comece aqui uma conversa!",
         "privateNotice": "Mensagem privada para {{recipient}}",
+        "sendButton": "Enviar",
         "smileysPanel": "Painel de Emojis",
         "tabs": {
             "chat": "Chat",
@@ -270,6 +271,7 @@
         "gracefulShutdown": "O nosso serviço está atualmente em manutenção. Por favor, tente novamente mais tarde.",
         "grantModeratorDialog": "Tem a certeza que quer conceder direitos de moderador a {{participantName}}?",
         "grantModeratorTitle": "Conceder direitos de moderador",
+        "hide": "Esconder",
         "hideShareAudioHelper": "Não mostrar esta caixa de diálogo novamente",
         "incorrectPassword": "Nome de utilizador ou palavra-passe incorretos",
         "incorrectRoomLockPassword": "Palavra-passe incorreta",
@@ -387,6 +389,7 @@
         "shareYourScreenDisabled": "Partilha de ecrã desactivada.",
         "sharedVideoDialogError": "Erro: URL inválido",
         "sharedVideoLinkPlaceholder": "Link do YouTube ou link direto do vídeo",
+        "show": "Mostrar",
         "start": "Iniciar ",
         "startLiveStreaming": "Iniciar a transmissão em direto",
         "startRecording": "Iniciar gravação",
@@ -435,7 +438,7 @@
         "search": "Procurar no GIPHY"
     },
     "helpView": {
-        "header": "Centro de ajuda"
+        "title": "Centro de ajuda"
     },
     "incomingCall": {
         "answer": "Responder",
@@ -477,9 +480,11 @@
         "noRoom": "Não foi especificado nenhuma sala para ligar.",
         "numbers": "Números para entrar por chamada telefónica",
         "password": "$t(lockRoomPasswordUppercase): ",
+        "reachedLimit": "atingiu o limite do seu plano.",
         "sip": "Endereços SIP",
         "title": "Partilhar",
-        "tooltip": "Partilhar link e acesso telefónico para esta reunião"
+        "tooltip": "Partilhar link e acesso telefónico para esta reunião",
+        "upgradeOptions": "Por favor, verifique as opções de atualização em"
     },
     "inlineDialogFailure": {
         "msg": "Tivemos um pequeno problema.",
@@ -551,6 +556,7 @@
         "signedInAs": "Está conectado como:",
         "start": "Iniciar uma transmissão em direto",
         "streamIdHelp": "O que é isso?",
+        "title": "Transmissão em direto",
         "unavailableTitle": "Transmissão em direto indisponível",
         "youtubeTerms": "Termos de serviços do YouTube"
     },
@@ -593,6 +599,7 @@
         "passwordJoinButton": "Solicitar",
         "reject": "Rejeitar",
         "rejectAll": "Rejeitar todos",
+        "title": "Sala de espera",
         "toggleLabel": "Ativar sala de espera"
     },
     "localRecording": {
@@ -619,6 +626,7 @@
         "no": "Não",
         "participant": "Participante",
         "participantStats": "Estatísticas dos Participantes",
+        "selectTabTitle": "🎥 Por favor selecione este separador para gravação",
         "sessionToken": "Token de Sessão",
         "start": "Iniciar gravação",
         "stop": "Parar gravação",
@@ -735,13 +743,13 @@
             "videoModeration": "Ligar a câmara deles"
         },
         "close": "Fechar",
-        "header": "Participantes",
         "headings": {
             "lobby": "Sala de espera ({{count}})",
             "participantsList": "Participantes da reunião ({{count}})",
             "waitingLobby": "Aguardam na sala de espera ({{count}})"
         },
-        "search": "Pesquisar participantes"
+        "search": "Pesquisar participantes",
+        "title": "Participantes"
     },
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "passwordSetRemotely": "Definido por outro participante",
@@ -851,7 +859,7 @@
         "ringing": "Tocando..."
     },
     "privacyView": {
-        "header": "Privacidade"
+        "title": "Privacidade"
     },
     "profile": {
         "avatar": "avatar",
@@ -923,6 +931,7 @@
         "signIn": "Entrar",
         "signOut": "Sair",
         "surfaceError": "Por favor, seleccione o separador actual.",
+        "title": "Gravação",
         "unavailable": "Oops! O {{serviceName}} está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
         "unavailableTitle": "Gravação indisponível",
         "uploadToCloud": "Enviar para a nuvem"
@@ -934,8 +943,8 @@
     "security": {
         "about": "Pode adicionar uma $t(lockRoomPassword) à sua reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
         "aboutReadOnly": "Os participantes moderadores podem acrescentar uma $t(lockRoomPassword) à reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
-        "header": "Opções de segurança",
-        "insecureRoomNameWarning": "O nome da sala é inseguro. Participantes indesejados podem juntar-se à sua conferência. Considere proteger a sua reunião utilizando o botão de segurança."
+        "insecureRoomNameWarning": "O nome da sala é inseguro. Participantes indesejados podem juntar-se à sua conferência. Considere proteger a sua reunião utilizando o botão de segurança.",
+        "title": "Opções de segurança"
     },
     "settings": {
         "buttonLabel": "Definições",
@@ -1001,7 +1010,8 @@
         "privacy": "Privacidade",
         "profileSection": "Perfil",
         "serverURL": "URL do servidor",
-        "showAdvanced": "",
+        "showAdvanced": "Mostrar definições avançadas",
+        "startCarModeInLowBandwidthMode": "Iniciar o modo automóvel em modo de baixa largura de banda",
         "startWithAudioMuted": "Iniciar sem áudio",
         "startWithVideoMuted": "Iniciar sem vídeo",
         "terms": "Termos",
@@ -1040,7 +1050,7 @@
         "title": "Sua chamada de vídeo foi interrompida, porque seu computador foi dormir."
     },
     "termsView": {
-        "header": "Termos"
+        "title": "Termos"
     },
     "toggleTopPanelLabel": "Mostrar ou ocultar o painel superior",
     "toolbar": {
@@ -1052,7 +1062,7 @@
             "boo": "Vaia",
             "breakoutRoom": "Entrar/Sair salas instantâneas",
             "callQuality": "Gerir a qualidade do vídeo",
-            "carmode": "Modo carro",
+            "carmode": "Modo automóvel",
             "cc": "Mudar legendas",
             "chat": "Abrir / Fechar chat",
             "clap": "Aplausos",
@@ -1113,7 +1123,8 @@
             "toggleFilmstrip": "Mudar a película de filme",
             "undock": "Desancorar numa janela separada",
             "videoblur": "Mudar o desfoque de vídeo",
-            "videomute": "Iniciar / Parar câmara"
+            "videomute": "Iniciar / Parar câmara",
+            "whiteboard": "Mostrar / Esconder quadro branco"
         },
         "addPeople": "Adicione pessoas à sua chamada",
         "audioOnlyOff": "Desativar modo de largura de banda baixa",
@@ -1144,6 +1155,7 @@
         "giphy": "Ativar/Desativar o menu GIPHY",
         "hangup": "Sair da reunião",
         "help": "Ajuda",
+        "hideWhiteboard": "Esconder quadro branco",
         "invite": "Convidar pessoas",
         "joinBreakoutRoom": "Entrar na sala",
         "laugh": "Risos",
@@ -1189,6 +1201,7 @@
         "shareaudio": "Partilhar áudio",
         "sharedvideo": "Partilhar vídeo",
         "shortcuts": "Ver atalhos",
+        "showWhiteboard": "Mostrar quadro branco",
         "silence": "Silêncio",
         "speakerStats": "Estatísticas dos participantes",
         "startScreenSharing": "Iniciar partilha de ecrã",
@@ -1213,6 +1226,8 @@
         "labelToolTip": "A reunião esta sendo transcrita",
         "off": "Transcrição parada",
         "pending": "Preparando a transcrição da reunião...",
+        "sourceLanguageDesc": "Atualmente a língua da reunião está definida para <b>{{sourceLanguage}}</b>. <br/> Pode alterá-la a partir ",
+        "sourceLanguageHere": "daqui",
         "start": "Exibir legendas",
         "stop": "Não exibir legendas",
         "subtitles": "Legendas",

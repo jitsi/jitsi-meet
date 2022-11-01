@@ -7,7 +7,7 @@ import { SET_CONFIG } from '../config/actionTypes';
 import { SET_LOCATION_URL } from '../connection/actionTypes';
 import { participantUpdated } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
-import { Participant } from '../participants/types';
+import { IParticipant } from '../participants/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { SET_JWT } from './actionTypes';
@@ -56,7 +56,7 @@ function _overwriteLocalParticipant(
 
     if ((avatarURL || email || name)
             && (localParticipant = getLocalParticipant(getState))) {
-        const newProperties: Participant = {
+        const newProperties: IParticipant = {
             id: localParticipant.id,
             local: true
         };
@@ -191,7 +191,7 @@ function _undoOverwriteLocalParticipant(
 
     if ((avatarURL || name || email)
             && (localParticipant = getLocalParticipant(getState))) {
-        const newProperties: Participant = {
+        const newProperties: IParticipant = {
             id: localParticipant.id,
             local: true
         };

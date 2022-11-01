@@ -1,4 +1,4 @@
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { IStateful } from '../app/types';
 import CONFIG_WHITELIST from '../config/configWhitelist';
 import { IConfigState } from '../config/reducer';
@@ -263,7 +263,7 @@ function _getUserSelectedDeviceId(options: {
  * @param {Object} state - The state of the application.
  * @returns {boolean}
  */
-export function shouldHideShareAudioHelper(state: IState): boolean | undefined {
+export function shouldHideShareAudioHelper(state: IReduxState): boolean | undefined {
 
     return state['features/base/settings'].hideShareAudioHelper;
 }
@@ -274,7 +274,7 @@ export function shouldHideShareAudioHelper(state: IState): boolean | undefined {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-export function shouldHideSelfView(state: IState) {
+export function shouldHideSelfView(state: IReduxState) {
     return getParticipantCount(state) === 1 ? false : getHideSelfView(state);
 }
 
@@ -284,6 +284,6 @@ export function shouldHideSelfView(state: IState) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-export function getHideSelfView(state: IState) {
+export function getHideSelfView(state: IReduxState) {
     return state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView;
 }

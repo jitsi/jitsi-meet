@@ -1,10 +1,8 @@
-/* eslint-disable lines-around-comment */
-import type { Dispatch } from 'redux';
-
-// @ts-ignore
+// @ts-expect-error
 import UIEvents from '../../../../service/UI/UIEvents';
 import { createAudioOnlyChangedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
+import { IStore } from '../../app/types';
 
 import { SET_AUDIO_ONLY } from './actionTypes';
 import logger from './logger';
@@ -22,7 +20,7 @@ declare let APP: any;
  * }}
  */
 export function setAudioOnly(audioOnly: boolean) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { enabled: oldValue } = getState()['features/base/audio-only'];
 
         if (oldValue !== audioOnly) {
@@ -49,7 +47,7 @@ export function setAudioOnly(audioOnly: boolean) {
  * @returns {Function}
  */
 export function toggleAudioOnly() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { enabled } = getState()['features/base/audio-only'];
 
         return dispatch(setAudioOnly(!enabled));

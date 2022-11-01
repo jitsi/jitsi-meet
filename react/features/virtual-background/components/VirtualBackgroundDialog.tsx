@@ -9,35 +9,28 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../app/types';
-// @ts-ignore
-import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config';
-// @ts-ignore
-import { Dialog, hideDialog } from '../../base/dialog';
+import { IReduxState } from '../../app/types';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config/functions.any';
+import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCloseSmall } from '../../base/icons/svg';
-// @ts-ignore
 import { connect } from '../../base/redux/functions';
-// @ts-ignore
-import { updateSettings } from '../../base/settings';
+import { updateSettings } from '../../base/settings/actions';
 // @ts-ignore
 import { Tooltip } from '../../base/tooltip';
-// @ts-ignore
-import { getLocalVideoTrack } from '../../base/tracks';
-// @ts-ignore
+import { getLocalVideoTrack } from '../../base/tracks/functions';
+import Dialog from '../../base/ui/components/web/Dialog';
 import { toggleBackgroundEffect } from '../actions';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
-// @ts-ignore
 import { toDataURL } from '../functions';
-// @ts-ignore
 import logger from '../logger';
 
 import UploadImageButton from './UploadImageButton';
 // @ts-ignore
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The list of Images to choose from.
@@ -101,7 +94,7 @@ const onError = (event: any) => {
  * @private
  * @returns {{Props}}
  */
-function _mapStateToProps(state: IState): Object {
+function _mapStateToProps(state: IReduxState): Object {
     const { localFlipX } = state['features/base/settings'];
     const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
     const hasBrandingImages = Boolean(dynamicBrandingImages.length);
@@ -121,13 +114,15 @@ const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackg
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
+        dialogContainer: {
+            width: 'auto'
+        },
         container: {
             display: 'flex',
             flexDirection: 'column'
         },
         dialog: {
             alignSelf: 'flex-start',
-            marginLeft: '-10px',
             position: 'relative',
             maxHeight: '300px',
             color: 'white',
@@ -286,7 +281,7 @@ function VirtualBackground({
     dispatch,
     initialOptions,
     t
-}: Props) {
+}: IProps) {
     const { classes, cx } = useStyles();
     const [ previewIsLoaded, setPreviewIsLoaded ] = useState(false);
     const [ options, setOptions ] = useState<any>({ ...initialOptions });
@@ -459,12 +454,15 @@ function VirtualBackground({
 
     return (
         <Dialog
-            hideCancelButton = { false }
-            okKey = { 'virtualBackground.apply' }
+            className = { classes.dialogContainer }
+            ok = {{
+                disabled: !options || loading || !previewIsLoaded,
+                translationKey: 'virtualBackground.apply'
+            }}
             onCancel = { cancelVirtualBackground }
             onSubmit = { applyVirtualBackground }
-            submitDisabled = { !options || loading || !previewIsLoaded }
-            titleKey = { 'virtualBackground.title' } >
+            size = 'large'
+            titleKey = 'virtualBackground.title' >
             <VirtualBackgroundPreview
                 loadedPreview = { loadedPreviewState }
                 options = { options } />

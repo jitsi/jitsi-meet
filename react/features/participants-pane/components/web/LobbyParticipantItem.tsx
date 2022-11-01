@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,15 +6,15 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons/svg';
 import { hasRaisedHand } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/types';
+import { IParticipant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/web/Button';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { showLobbyChatButton } from '../../../lobby/functions';
 import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
-// @ts-ignore
 import { useLobbyActions } from '../../hooks';
 
 import ParticipantItem from './ParticipantItem';
@@ -36,7 +34,7 @@ type Props = {
     /**
      * Participant reference.
      */
-    participant: Participant;
+    participant: IParticipant;
 };
 
 const useStyles = makeStyles()((theme: Theme) => {

@@ -1,4 +1,4 @@
-export interface TrackOptions {
+export interface ITrackOptions {
     cameraDeviceId?: string | null;
     constraints?: {
         video?: {
@@ -16,4 +16,16 @@ export interface TrackOptions {
     firePermissionPromptIsShownEvent?: boolean;
     micDeviceId?: string | null;
     timeout?: number;
+}
+
+export interface IToggleScreenSharingOptions {
+    audioOnly: boolean;
+    enabled?: boolean;
+    shareOptions: IShareOptions;
+}
+
+export interface IShareOptions {
+    desktopSharingSourceDevice?: string;
+    desktopSharingSources?: string[];
+    desktopStream?: any;
 }

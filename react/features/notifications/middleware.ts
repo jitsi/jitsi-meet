@@ -1,4 +1,4 @@
-import { IState, IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import {
     PARTICIPANT_JOINED,
@@ -70,7 +70,7 @@ const createTimeoutId = (notification: { timeout: number; uid: string; }, dispat
  * @param {Object} state - Global state.
  * @returns {Array<Object>} - Notifications state.
  */
-const getNotifications = (state: IState) => {
+const getNotifications = (state: IReduxState) => {
     const _visible = areThereNotifications(state);
     const { notifications } = state['features/notifications'];
 

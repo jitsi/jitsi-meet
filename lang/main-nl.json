@@ -785,7 +785,7 @@
         "about": "U kunt een $t(lockRoomPassword) toevoegen aan uw vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "aboutReadOnly": "Moderators kunnen een $t(lockRoomPassword) toevoegen aan de vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "insecureRoomNameWarning": "De naam van de ruimte is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. Overweeg uw vergadering te beveiligen via de beveiligingsknop.",
-        "securityOptions": "Beveiligingsopties"
+        "title": "Beveiligingsopties"
     },
     "settings": {
         "calendar": {

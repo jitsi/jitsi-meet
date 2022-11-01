@@ -1,5 +1,6 @@
 import { Theme } from '@mui/material';
-import React, { ReactElement, useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
+import FocusLock from 'react-focus-lock';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { keyframes } from 'tss-react';
@@ -20,6 +21,8 @@ const useStyles = makeStyles()((theme: Theme) => {
             width: '100%',
             height: '100%',
             position: 'fixed',
+            color: theme.palette.text01,
+            ...withPixelLineHeight(theme.typography.bodyLongRegular),
             top: 0,
             left: 0,
             display: 'flex',
@@ -57,7 +60,6 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         modal: {
-            zIndex: 1,
             backgroundColor: theme.palette.ui01,
             border: `1px solid ${theme.palette.ui03}`,
             boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
@@ -150,6 +152,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             boxSizing: 'border-box',
             padding: '0 24px',
             overflowX: 'hidden',
+            minHeight: '40px',
 
             '@media (max-width: 448px)': {
                 height: '100%'
@@ -167,18 +170,30 @@ const useStyles = makeStyles()((theme: Theme) => {
             '& button:last-child': {
                 marginLeft: '16px'
             }
+        },
+
+        focusLock: {
+            zIndex: 1
         }
     };
 });
 
-interface DialogProps {
+interface IDialogProps {
+    back?: {
+        hidden?: boolean;
+        onClick?: () => void;
+        translationKey?: string;
+    };
     cancel?: {
         hidden?: boolean;
         translationKey?: string;
     };
-    children?: ReactElement | ReactElement[];
+    children?: React.ReactNode;
     className?: string;
     description?: string;
+    disableBackdropClose?: boolean;
+    disableEnter?: boolean;
+    hideCloseButton?: boolean;
     ok?: {
         disabled?: boolean;
         hidden?: boolean;
@@ -192,37 +207,48 @@ interface DialogProps {
 }
 
 const Dialog = ({
+    back = { hidden: true },
     cancel = { translationKey: 'dialog.Cancel' },
     children,
     className,
     description,
+    disableBackdropClose,
+    hideCloseButton,
+    disableEnter,
     ok = { translationKey: 'dialog.Ok' },
     onCancel,
     onSubmit,
     size = 'medium',
     title,
     titleKey
-}: DialogProps) => {
+}: IDialogProps) => {
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
     const { isUnmounting } = useContext(DialogTransitionContext);
     const dispatch = useDispatch();
 
     const onClose = useCallback(() => {
-        onCancel?.();
         dispatch(hideDialog());
+        onCancel?.();
     }, [ onCancel ]);
+
+    const submit = useCallback(() => {
+        dispatch(hideDialog());
+        onSubmit?.();
+    }, [ onSubmit ]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
         if (e.key === 'Escape') {
             onClose();
         }
+        if (e.key === 'Enter' && !disableEnter) {
+            submit();
+        }
     }, []);
 
-    const submit = useCallback(() => {
-        onSubmit?.();
-        dispatch(hideDialog());
-    }, [ onSubmit ]);
+    const onBackdropClick = useCallback(() => {
+        !disableBackdropClose && onClose();
+    }, [ disableBackdropClose, onClose ]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
@@ -234,35 +260,50 @@ const Dialog = ({
         <div className = { cx(classes.container, isUnmounting && 'unmount') }>
             <div
                 className = { classes.backdrop }
-                onClick = { onClose } />
-            <div
-                aria-describedby = { description }
-                aria-labelledby = { title ?? t(titleKey ?? '') }
-                aria-modal = { true }
-                className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
-                role = 'dialog'>
-                <div className = { classes.header }>
-                    <p className = { classes.title }>{title ?? t(titleKey ?? '')}</p>
-                    <ClickableIcon
-                        accessibilityLabel = { t('dialog.close') }
-                        icon = { IconClose }
-                        onClick = { onClose } />
+                onClick = { onBackdropClick } />
+            <FocusLock className = { classes.focusLock }>
+                <div
+                    aria-describedby = { description }
+                    aria-labelledby = { title ?? t(titleKey ?? '') }
+                    aria-modal = { true }
+                    className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
+                    role = 'dialog'>
+                    <div className = { classes.header }>
+                        <p
+                            className = { classes.title }
+                            id = 'dialog-title'>
+                            {title ?? t(titleKey ?? '')}
+                        </p>
+                        {!hideCloseButton && (
+                            <ClickableIcon
+                                accessibilityLabel = { t('dialog.close') }
+                                icon = { IconClose }
+                                id = 'modal-header-close-button'
+                                onClick = { onClose } />
+                        )}
+                    </div>
+                    <div className = { classes.content }>{children}</div>
+                    <div className = { classes.footer }>
+                        {!back.hidden && <Button
+                            accessibilityLabel = { t(back.translationKey ?? '') }
+                            labelKey = { back.translationKey }
+                            // eslint-disable-next-line react/jsx-handler-names
+                            onClick = { back.onClick }
+                            type = 'secondary' />}
+                        {!cancel.hidden && <Button
+                            accessibilityLabel = { t(cancel.translationKey ?? '') }
+                            labelKey = { cancel.translationKey }
+                            onClick = { onClose }
+                            type = 'tertiary' />}
+                        {!ok.hidden && <Button
+                            accessibilityLabel = { t(ok.translationKey ?? '') }
+                            disabled = { ok.disabled }
+                            id = 'modal-dialog-ok-button'
+                            labelKey = { ok.translationKey }
+                            onClick = { submit } />}
+                    </div>
                 </div>
-                <div className = { classes.content }>{children}</div>
-                <div className = { classes.footer }>
-                    {!cancel.hidden && <Button
-                        accessibilityLabel = { t(cancel.translationKey ?? '') }
-                        labelKey = { cancel.translationKey }
-                        onClick = { onClose }
-                        type = 'tertiary' />}
-                    {!ok.hidden && <Button
-                        accessibilityLabel = { t(ok.translationKey ?? '') }
-                        disabled = { ok.disabled }
-                        id = 'modal-dialog-ok-button'
-                        labelKey = { ok.translationKey }
-                        onClick = { submit } />}
-                </div>
-            </div>
+            </FocusLock>
         </div>
     );
 };

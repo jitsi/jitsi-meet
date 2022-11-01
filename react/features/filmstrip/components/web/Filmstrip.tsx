@@ -5,24 +5,20 @@ import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { FixedSizeGrid, FixedSizeList } from 'react-window';
-import type { Dispatch } from 'redux';
 
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState } from '../../../app/types';
-// @ts-ignore
-import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config';
+import { IReduxState, IStore } from '../../../app/types';
+import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg';
-import { Participant } from '../../../base/participants/types';
+import { IParticipant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 // @ts-ignore
 import { showToolbox } from '../../../toolbox/actions.web';
-// @ts-ignore
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 // @ts-ignore
 import { getCurrentLayout } from '../../../video-layout';
@@ -55,7 +51,6 @@ import {
 
 // @ts-ignore
 import AudioTracksContainer from './AudioTracksContainer';
-// @ts-ignore
 import Thumbnail from './Thumbnail';
 // @ts-ignore
 import ThumbnailWrapper from './ThumbnailWrapper';
@@ -67,7 +62,7 @@ declare let APP: any;
 /**
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Additional CSS class names top add to the root.
@@ -127,7 +122,7 @@ interface Props extends WithTranslation {
     /**
      * The local screen share participant. This prop is behind the sourceNameSignaling feature flag.
      */
-    _localScreenShare: Participant;
+    _localScreenShare: IParticipant;
 
     /**
      * Whether or not the filmstrip videos should currently be displayed.
@@ -173,11 +168,6 @@ interface Props extends WithTranslation {
      * The width of the thumbnail.
      */
     _thumbnailWidth: number;
-
-    /**
-     * Flag that indicates whether the thumbnails will be reordered.
-     */
-    _thumbnailsReordered: Boolean;
 
     /**
      * Whether or not the filmstrip is top panel.
@@ -232,7 +222,7 @@ interface Props extends WithTranslation {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * The type of filmstrip to be displayed.
@@ -269,7 +259,7 @@ type State = {
  *
  * @augments Component
  */
-class Filmstrip extends PureComponent <Props, State> {
+class Filmstrip extends PureComponent <IProps, State> {
 
     _throttledResize: Function;
 
@@ -279,7 +269,7 @@ class Filmstrip extends PureComponent <Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -556,11 +546,11 @@ class Filmstrip extends PureComponent <Props, State> {
      * @returns {Object}
      */
     _calculateIndices(startIndex: number, stopIndex: number) {
-        const { _currentLayout, _iAmRecorder, _thumbnailsReordered, _disableSelfView } = this.props;
+        const { _currentLayout, _iAmRecorder, _disableSelfView } = this.props;
         let start = startIndex;
         let stop = stopIndex;
 
-        if (_thumbnailsReordered && !_disableSelfView) {
+        if (!_disableSelfView) {
             // In tile view, the indices needs to be offset by 1 because the first thumbnail is that of the local
             // endpoint. The remote participants start from index 1.
             if (!_iAmRecorder && _currentLayout === LAYOUTS.TILE_VIEW) {
@@ -614,14 +604,13 @@ class Filmstrip extends PureComponent <Props, State> {
             _columns,
             _iAmRecorder,
             _remoteParticipants,
-            _remoteParticipantsLength,
-            _thumbnailsReordered
+            _remoteParticipantsLength
         } = this.props;
         const index = (rowIndex * _columns) + columnIndex;
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
-        const localIndex = _thumbnailsReordered && !_disableSelfView ? 0 : _remoteParticipantsLength;
-        const remoteIndex = _thumbnailsReordered && !_iAmRecorder && !_disableSelfView ? index - 1 : index;
+        const localIndex = _disableSelfView ? _remoteParticipantsLength : 0;
+        const remoteIndex = !_iAmRecorder && !_disableSelfView ? index - 1 : index;
 
         if (index > _remoteParticipantsLength - (_iAmRecorder ? 1 : 0)) {
             return `empty-${index}`;
@@ -883,13 +872,12 @@ class Filmstrip extends PureComponent <Props, State> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
-    const { testing = {}, iAmRecorder } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    const { iAmRecorder } = state['features/base/config'];
     const { topPanelHeight, topPanelVisible, visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const { localScreenShare } = state['features/base/participants'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
@@ -934,7 +922,6 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
         _remoteParticipantsLength: _remoteParticipants?.length,
-        _thumbnailsReordered: enableThumbnailReordering,
         _topPanelHeight: topPanelHeight.current,
         _topPanelMaxHeight: topPanelHeight.current || TOP_FILMSTRIP_HEIGHT,
         _topPanelVisible,
