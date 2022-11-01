@@ -339,13 +339,6 @@ function on_occupant_joined(event)
         return;
     end
 
-    local _, host = jid_split(event.occupant.jid)
-
-    -- skip participants with hidden domain
-    if host == hidden_domain then
-       return
-    end
-
     local main_room = get_main_room(room.jid);
 
     if main_room and main_room._data.breakout_rooms_active then
