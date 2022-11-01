@@ -63,7 +63,7 @@ export function escapeRegexp(s: string) {
  * @param {Object} w - Window object to use instead of the built in one.
  * @returns {string}
  */
-export function getBaseUrl(w: Window = window) {
+export function getBaseUrl(w: typeof window = window) {
     const doc = w.document;
     const base = doc.querySelector('base');
 

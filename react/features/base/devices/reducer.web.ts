@@ -8,8 +8,9 @@ import {
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
-import { groupDevicesByKind } from './functions';
+import { groupDevicesByKind } from './functions.web';
 import logger from './logger';
+import { IDevicesState } from './types';
 
 
 const DEFAULT_STATE: IDevicesState = {
@@ -24,19 +25,6 @@ const DEFAULT_STATE: IDevicesState = {
         video: false
     }
 };
-
-export interface IDevicesState {
-    availableDevices: {
-        audioInput?: MediaDeviceInfo[];
-        audioOutput?: MediaDeviceInfo[];
-        videoInput?: MediaDeviceInfo[];
-    };
-    pendingRequests: Object[];
-    permissions: {
-        audio: boolean;
-        video: boolean;
-    };
-}
 
 /**
  * Listen for actions which changes the state of known and used devices.

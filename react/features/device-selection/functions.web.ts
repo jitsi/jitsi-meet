@@ -6,13 +6,13 @@ import {
     setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDevice,
     setVideoInputDeviceAndUpdateSettings
-} from '../base/devices/actions';
+} from '../base/devices/actions.web';
 import {
     areDeviceLabelsInitialized,
     getAudioOutputDeviceId,
     getDeviceIdByLabel,
     groupDevicesByKind
-} from '../base/devices/functions';
+} from '../base/devices/functions.web';
 import { isIosMobileBrowser } from '../base/environment/utils';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux/functions';
@@ -20,7 +20,7 @@ import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId,
     getUserSelectedOutputDeviceId
-} from '../base/settings/functions.any';
+} from '../base/settings/functions.web';
 
 /**
  * Returns the properties for the device selection dialog from Redux state.

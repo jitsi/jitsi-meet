@@ -8,8 +8,8 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { getCurrentConference } from '../../base/conference/functions';
+import checkChromeExtensionsInstalled from '../../base/environment/checkChromeExtensionsInstalled';
 import {
-    checkChromeExtensionsInstalled,
     isMobileBrowser
 } from '../../base/environment/utils';
 import { translate } from '../../base/i18n';

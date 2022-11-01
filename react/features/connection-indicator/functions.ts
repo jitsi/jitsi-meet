@@ -1,6 +1,6 @@
 import { JitsiParticipantConnectionStatus, JitsiTrackStreamingStatus } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
-import { ITrack } from '../base/tracks/reducer';
+import { ITrack } from '../base/tracks/types';
 
 /**
  * Checks if the passed track's streaming status is active.

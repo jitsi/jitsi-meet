@@ -3,7 +3,7 @@ import debounce from 'lodash/debounce';
 import { getMultipleVideoSupportFeatureFlag } from '../base/config/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { equals } from '../base/redux/functions';
-import { ITrack } from '../base/tracks/reducer';
+import { ITrack } from '../base/tracks/types';
 import { isFollowMeActive } from '../follow-me/functions';
 
 import { setRemoteParticipantsWithScreenShare, virtualScreenshareParticipantsUpdated } from './actions.web';

@@ -4,11 +4,13 @@ import React from 'react';
 
 import { areAudioLevelsEnabled } from '../../../../base/config/functions';
 import {
-    getAudioInputDeviceData,
-    getAudioOutputDeviceData,
     setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDevice as setAudioOutputDeviceAction
-} from '../../../../base/devices';
+} from '../../../../base/devices/actions.web';
+import {
+    getAudioInputDeviceData,
+    getAudioOutputDeviceData
+} from '../../../../base/devices/functions.web';
 import Popover from '../../../../base/popover/components/Popover.web';
 import { connect } from '../../../../base/redux';
 import { SMALL_MOBILE_WIDTH } from '../../../../base/responsive-ui/constants';

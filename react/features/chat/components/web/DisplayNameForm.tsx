@@ -5,7 +5,7 @@ import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
-import { Button } from '../../../base/ui/components/web';
+import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 
 // @ts-ignore
