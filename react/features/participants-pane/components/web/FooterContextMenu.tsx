@@ -19,7 +19,7 @@ import {
 import { openDialog } from '../../../base/dialog/actions';
 import {
     IconCheck,
-    IconHorizontalPoints,
+    IconDotsHorizontal,
     IconVideoOff
 } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
@@ -162,7 +162,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
                     actions = { [ {
                         accessibilityLabel: t('participantsPane.actions.moreModerationControls'),
                         id: 'participants-pane-open-moderation-control-settings',
-                        icon: IconHorizontalPoints,
+                        icon: IconDotsHorizontal,
                         onClick: openModeratorSettings,
                         text: t('participantsPane.actions.moreModerationControls')
                     } ] } />

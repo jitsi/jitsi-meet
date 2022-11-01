@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { IconHideWhiteboard, IconShowWhiteboard } from '../../../base/icons/svg';
+import { IconWhiteboard, IconWhiteboardHide } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -29,9 +29,9 @@ type Props = AbstractButtonProps & {
  */
 class WhiteboardButton extends AbstractButton<Props, any, any> {
     accessibilityLabel = 'toolbar.accessibilityLabel.whiteboard';
-    icon = IconShowWhiteboard;
+    icon = IconWhiteboard;
     label = 'toolbar.showWhiteboard';
-    toggledIcon = IconHideWhiteboard;
+    toggledIcon = IconWhiteboardHide;
     toggledLabel = 'toolbar.hideWhiteboard';
     toggledTooltip = 'toolbar.hideWhiteboard';
     tooltip = 'toolbar.showWhiteboard';

@@ -2,7 +2,7 @@
 
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconChat, IconChatUnread } from '../../../base/icons';
+import { IconChatUnread, IconMessage } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
@@ -31,7 +31,7 @@ type Props = AbstractButtonProps & {
  */
 class ChatButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.chat';
-    icon = IconChat;
+    icon = IconMessage;
     label = 'toolbar.chat';
     toggledIcon = IconChatUnread;
 

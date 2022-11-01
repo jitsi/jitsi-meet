@@ -54,9 +54,10 @@ const useStyles = makeStyles()((theme: Theme) => {
             borderRadius: Number(theme.shape.borderRadius) / 2,
             color: theme.palette.text01,
             display: 'flex',
-            height: 28,
             margin: '0 0 4px 4px',
-            padding: '0 8px'
+            padding: '6px',
+            height: 28,
+            boxSizing: 'border-box'
         },
         withIcon: {
             marginLeft: 8
@@ -65,11 +66,11 @@ const useStyles = makeStyles()((theme: Theme) => {
             cursor: 'pointer'
         },
         [COLORS.white]: {
-            background: theme.palette.text01,
-            color: theme.palette.ui04,
+            background: theme.palette.ui09,
+            color: theme.palette.text04,
 
             '& svg': {
-                fill: theme.palette.ui04
+                fill: theme.palette.icon04
             }
         },
         [COLORS.green]: {

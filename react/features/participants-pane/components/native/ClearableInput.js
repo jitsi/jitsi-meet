@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
-import { Icon, IconCloseSolid } from '../../../base/icons';
+import { Icon, IconCloseCircle } from '../../../base/icons';
 
 import styles from './styles';
 
@@ -184,7 +184,7 @@ function ClearableInput({
                     style = { [ styles.clearButton, customStyles?.clearButton ] }>
                     <Icon
                         size = { 22 }
-                        src = { IconCloseSolid }
+                        src = { IconCloseCircle }
                         style = { [ styles.clearIcon, customStyles?.clearIcon ] } />
                 </TouchableOpacity>
             )}

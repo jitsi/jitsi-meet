@@ -8,7 +8,7 @@ import { makeStyles } from 'tss-react/mui';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import Icon from '../../../base/icons/components/Icon';
-import { IconCheck, IconClose } from '../../../base/icons/svg';
+import { IconCheck, IconCloseLarge } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { admitMultiple } from '../../../lobby/actions.web';
@@ -132,7 +132,7 @@ export default function LobbyParticipants() {
                             <Icon
                                 className = { classes.icon }
                                 size = { 20 }
-                                src = { IconClose } />
+                                src = { IconCloseLarge } />
                             <span>{ t('lobby.reject')}</span>
                         </li>
                     </ul>

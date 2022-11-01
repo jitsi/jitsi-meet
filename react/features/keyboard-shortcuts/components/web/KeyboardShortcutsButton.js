@@ -2,7 +2,7 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconDeviceDocument } from '../../../base/icons';
+import { IconShortcuts } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { openKeyboardShortcutsDialog } from '../../actions';
@@ -23,7 +23,7 @@ type Props = AbstractButtonProps & {
  */
 class KeyboardShortcutsButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shortcuts';
-    icon = IconDeviceDocument;
+    icon = IconShortcuts;
     label = 'toolbar.shortcuts';
     tooltip = 'toolbar.shortcuts';
 

@@ -2,7 +2,7 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { openDialog } from '../../base/dialog';
-import { IconMuteEveryone } from '../../base/icons';
+import { IconMicSlash } from '../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
 import { MuteEveryoneDialog } from './';
@@ -30,7 +30,7 @@ export type Props = AbstractButtonProps & {
  */
 export default class AbstractMuteEveryoneElseButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryoneElse';
-    icon = IconMuteEveryone;
+    icon = IconMicSlash;
     label = 'videothumbnail.domuteOthers';
 
     /**

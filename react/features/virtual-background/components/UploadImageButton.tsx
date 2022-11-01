@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
-import { IconPlusCircle } from '../../base/icons/svg';
+import { IconPlus } from '../../base/icons/svg';
 import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage } from '../functions';
 import logger from '../logger';
@@ -127,7 +127,7 @@ function UploadImageButton({
                 <Icon
                     className = { classes.addBackground }
                     size = { 20 }
-                    src = { IconPlusCircle } />
+                    src = { IconPlus } />
                 {t('virtualBackground.addBackground')}
             </label>}
 

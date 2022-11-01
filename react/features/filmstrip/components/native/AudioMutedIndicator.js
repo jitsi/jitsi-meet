@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { IconMicDisabled } from '../../../base/icons';
+import { IconMicSlash } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 /**
@@ -16,7 +16,7 @@ export default class AudioMutedIndicator extends Component<{}> {
      */
     render() {
         return (
-            <BaseIndicator icon = { IconMicDisabled } />
+            <BaseIndicator icon = { IconMicSlash } />
         );
     }
 }

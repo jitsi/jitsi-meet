@@ -2,7 +2,7 @@
 
 import { CLOSE_CAPTIONS_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
-import { IconClosedCaption } from '../../base/icons';
+import { IconSubtitles } from '../../base/icons';
 import { connect } from '../../base/redux';
 
 import {
@@ -16,7 +16,7 @@ import {
 class ClosedCaptionButton
     extends AbstractClosedCaptionButton {
     accessibilityLabel = 'toolbar.accessibilityLabel.cc';
-    icon = IconClosedCaption;
+    icon = IconSubtitles;
     label = 'transcribing.start';
     toggledLabel = 'transcribing.stop';
 }

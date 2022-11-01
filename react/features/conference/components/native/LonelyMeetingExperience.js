@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 
 import { INVITE_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { Icon, IconAddPeople } from '../../../base/icons';
+import { Icon, IconAddUser } from '../../../base/icons';
 import { getParticipantCountWithFake } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import Button from '../../../base/ui/components/native/Button';
@@ -68,7 +68,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
         return (
             <Icon
                 size = { 20 }
-                src = { IconAddPeople } />
+                src = { IconAddUser } />
         );
     }
 

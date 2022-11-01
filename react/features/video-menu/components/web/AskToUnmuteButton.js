@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { approveParticipant } from '../../../av-moderation/actions';
-import { IconMicrophoneEmpty } from '../../../base/icons';
+import { IconMic } from '../../../base/icons';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 
 type Props = {
@@ -40,7 +40,7 @@ const AskToUnmuteButton = ({ isAudioForceMuted, isVideoForceMuted, participantID
     return (
         <ContextMenuItem
             accessibilityLabel = { text }
-            icon = { IconMicrophoneEmpty }
+            icon = { IconMic }
             onClick = { _onClick }
             text = { text } />
     );

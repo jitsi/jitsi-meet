@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IconPinParticipant, IconUnpin } from '../../../base/icons';
+import { IconPin, IconPinned } from '../../../base/icons';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { togglePinStageParticipant } from '../../../filmstrip/actions.web';
 import { getPinnedActiveParticipants } from '../../../filmstrip/functions.web';
@@ -46,7 +46,7 @@ const TogglePinToStageButton = ({ className, noIcon = false, onClick, participan
         ? t('videothumbnail.unpinFromStage')
         : t('videothumbnail.pinToStage');
 
-    const icon = isActive ? IconUnpin : IconPinParticipant;
+    const icon = isActive ? IconPinned : IconPin;
 
     return (
         <ContextMenuItem

@@ -3,7 +3,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { IconRaisedHand } from '../../../base/icons';
+import { IconRaiseHand } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import AbstractRaisedHandIndicator, {
@@ -28,7 +28,7 @@ class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
         return (
             <View style = { styles.raisedHandIndicator }>
                 <BaseIndicator
-                    icon = { IconRaisedHand }
+                    icon = { IconRaiseHand }
                     iconStyle = { styles.raisedHandIcon } />
             </View>
         );

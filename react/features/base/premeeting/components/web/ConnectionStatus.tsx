@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
-import { IconArrowDownSmall, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
+import { IconArrowDown, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
 import { connect } from '../../../redux/functions';
 import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
 import { CONNECTION_TYPE } from '../../constants';
@@ -201,7 +201,7 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: IProps) {
                     onKeyPress = { onKeyPressToggleDetails }
                     role = 'button'
                     size = { 24 }
-                    src = { IconArrowDownSmall }
+                    src = { IconArrowDown }
                     tabIndex = { 0 } />
             </div>
             <div

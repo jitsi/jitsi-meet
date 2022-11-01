@@ -2,7 +2,7 @@
 import React, { useCallback } from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconInfo } from '../../../base/icons';
+import { IconInfoCircle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { renderConnectionStatus } from '../../actions.web';
@@ -38,7 +38,7 @@ const ConnectionStatusButton = ({
     return (
         <ContextMenuItem
             accessibilityLabel = { t('videothumbnail.connectionInfo') }
-            icon = { IconInfo }
+            icon = { IconInfoCircle }
             onClick = { onClick }
             text = { t('videothumbnail.connectionInfo') } />
     );

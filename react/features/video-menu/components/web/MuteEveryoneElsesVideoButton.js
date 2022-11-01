@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconMuteVideoEveryoneElse } from '../../../base/icons';
+import { IconVideoOff } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import AbstractMuteEveryoneElsesVideoButton, {
@@ -39,7 +39,7 @@ class MuteEveryoneElsesVideoButton extends AbstractMuteEveryoneElsesVideoButton 
         return (
             <ContextMenuItem
                 accessibilityLabel = { t('toolbar.accessibilityLabel.muteEveryoneElsesVideoStream') }
-                icon = { IconMuteVideoEveryoneElse }
+                icon = { IconVideoOff }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick }
                 text = { t('videothumbnail.domuteVideoOfOthers') } />

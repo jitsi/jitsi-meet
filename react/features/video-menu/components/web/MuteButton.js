@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconMicrophoneEmptySlash } from '../../../base/icons';
+import { IconMicSlash } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import AbstractMuteButton, {
@@ -51,7 +51,7 @@ class MuteButton extends AbstractMuteButton {
             <ContextMenuItem
                 accessibilityLabel = { t('dialog.muteParticipantButton') }
                 className = 'mutelink'
-                icon = { IconMicrophoneEmptySlash }
+                icon = { IconMicSlash }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick }
                 text = { t('dialog.muteParticipantButton') } />

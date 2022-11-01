@@ -9,7 +9,7 @@ import { makeStyles } from 'tss-react/mui';
 import { Avatar } from '../../../../base/avatar';
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconClose } from '../../../../base/icons/svg';
+import { IconCloseLarge } from '../../../../base/icons/svg';
 // @ts-ignore
 import Label from '../Label';
 
@@ -78,7 +78,7 @@ function CallingDialog(props: IProps) {
                     onClick = { onClose }
                     role = 'button'
                     size = { 24 }
-                    src = { IconClose } />
+                    src = { IconCloseLarge } />
             </div>
             <Label className = 'prejoin-dialog-calling-label'>
                 {t(status)}

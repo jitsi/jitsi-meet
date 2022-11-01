@@ -8,7 +8,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { Icon, IconPlusCalendar } from '../../base/icons';
+import { Icon, IconCalendar } from '../../base/icons';
 import { AbstractPage } from '../../base/react';
 import { connect } from '../../base/redux';
 import { SETTINGS_TABS, openSettingsDialog } from '../../settings';
@@ -205,7 +205,7 @@ class CalendarList extends AbstractPage<Props> {
                     role = 'button'>
                     <Icon
                         className = 'meetings-list-empty-icon'
-                        src = { IconPlusCalendar } />
+                        src = { IconCalendar } />
                     <span>{ t('welcomepage.connectCalendarButton') }</span>
                 </div>
             </div>

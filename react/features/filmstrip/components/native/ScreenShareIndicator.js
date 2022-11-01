@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { IconShareDesktop } from '../../../base/icons';
+import { IconScreenshare } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 /**
@@ -12,6 +12,6 @@ import { BaseIndicator } from '../../../base/react';
  */
 export default function ScreenShareIndicator() {
     return (
-        <BaseIndicator icon = { IconShareDesktop } />
+        <BaseIndicator icon = { IconScreenshare } />
     );
 }

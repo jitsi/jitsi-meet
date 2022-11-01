@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { IconPinParticipant } from '../../../base/icons';
+import { IconPin } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 /**
@@ -12,6 +12,6 @@ import { BaseIndicator } from '../../../base/react';
  */
 export default function PinnedIndicator() {
     return (
-        <BaseIndicator icon = { IconPinParticipant } />
+        <BaseIndicator icon = { IconPin } />
     );
 }

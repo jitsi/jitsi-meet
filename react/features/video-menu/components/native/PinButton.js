@@ -1,7 +1,7 @@
 // @flow
 
 import { translate } from '../../../base/i18n';
-import { IconPin } from '../../../base/icons';
+import { IconEnlarge } from '../../../base/icons';
 import { pinParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -35,7 +35,7 @@ export type Props = AbstractButtonProps & {
  */
 class PinButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.show';
-    icon = IconPin;
+    icon = IconEnlarge;
     label = 'videothumbnail.show';
 
     /**

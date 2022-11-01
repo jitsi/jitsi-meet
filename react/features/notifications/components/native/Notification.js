@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose } from '../../../base/icons';
+import { Icon, IconCloseLarge } from '../../../base/icons';
 import { replaceNonUnicodeEmojis } from '../../../chat/functions';
 import AbstractNotification, {
     type Props
@@ -47,7 +47,7 @@ class Notification extends AbstractNotification<Props> {
                 </View>
                 <TouchableOpacity onPress = { this._onDismissed }>
                     <Icon
-                        src = { IconClose }
+                        src = { IconCloseLarge }
                         style = { styles.dismissIcon } />
                 </TouchableOpacity>
             </View>

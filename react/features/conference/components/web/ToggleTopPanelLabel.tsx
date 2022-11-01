@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { IconMenuDown } from '../../../base/icons/svg/index';
+import { IconArrowDown } from '../../../base/icons/svg/index';
 import Label from '../../../base/label/components/web/Label';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
@@ -23,7 +23,7 @@ const ToggleTopPanelLabel = () => {
         content = { t('toggleTopPanelLabel') }
         position = { 'bottom' }>
         <Label
-            icon = { IconMenuDown }
+            icon = { IconArrowDown }
             onClick = { onClick } />
     </Tooltip>);
 };

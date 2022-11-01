@@ -311,15 +311,11 @@ const defaultStyles = (theme: Theme) => {
             overflow: 'hidden',
 
             '&:not(:empty)': {
-                padding: '2px'
+                padding: '4px 8px'
             },
 
             '& > *:not(:last-child)': {
-                marginRight: '4px'
-            },
-
-            '&:not(.top-indicators) > span:last-child': {
-                marginRight: '6px'
+                marginRight: '8px'
             }
         },
 

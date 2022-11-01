@@ -3,7 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
-import { IconShareVideo } from '../../../base/icons';
+import { IconPlay } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
@@ -35,7 +35,7 @@ type Props = AbstractButtonProps & {
  */
 class SharedVideoButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
-    icon = IconShareVideo;
+    icon = IconPlay;
     label = 'toolbar.sharedvideo';
     toggledLabel = 'toolbar.stopSharedVideo';
 

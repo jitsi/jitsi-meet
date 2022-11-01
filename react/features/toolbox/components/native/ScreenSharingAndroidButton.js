@@ -5,7 +5,7 @@ import {
     getFeatureFlag
 } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconShareDesktop } from '../../../base/icons';
+import { IconScreenshare } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isLocalVideoTrackDesktop, toggleScreensharing } from '../../../base/tracks';
@@ -36,7 +36,7 @@ type Props = AbstractButtonProps & {
  */
 class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
-    icon = IconShareDesktop;
+    icon = IconScreenshare;
     label = 'toolbar.startScreenSharing';
     toggledLabel = 'toolbar.stopScreenSharing';
 

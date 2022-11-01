@@ -54,11 +54,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         iconContainer: {
             display: 'block',
             padding: theme.spacing(2),
-            cursor: 'pointer',
-
-            '& svg>path': {
-                fill: theme.palette.icon01
-            }
+            cursor: 'pointer'
         }
     };
 });

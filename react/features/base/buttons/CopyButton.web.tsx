@@ -31,7 +31,7 @@ const useStyles = makeStyles()((theme: Theme) => {
                 background: theme.palette.success02
             },
 
-            '& > div > svg > path': {
+            '& > div > svg': {
                 fill: theme.palette.icon01
             }
         },

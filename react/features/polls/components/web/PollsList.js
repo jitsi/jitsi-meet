@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 
-import { Icon, IconChatUnread } from '../../../base/icons';
+import { Icon, IconMessage } from '../../../base/icons';
 import { browser } from '../../../base/lib-jitsi-meet';
 
 import PollItem from './PollItem';
@@ -42,7 +42,7 @@ const PollsList = () => {
                 ? <div className = 'pane-content'>
                     <Icon
                         className = 'empty-pane-icon'
-                        src = { IconChatUnread } />
+                        src = { IconMessage } />
                     <span className = 'empty-pane-message'>{t('polls.results.empty')}</span>
                 </div>
                 : listPolls.map((id, index) => (

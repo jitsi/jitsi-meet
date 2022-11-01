@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 
 import { Avatar } from '../../../../base/avatar';
 import { translate } from '../../../../base/i18n';
-import { Icon, IconPhone } from '../../../../base/icons';
+import { Icon, IconPhoneRinging } from '../../../../base/icons';
 import { MultiSelectAutocomplete } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import { isVpaasMeeting } from '../../../../jaas/functions';
@@ -515,7 +515,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
     _renderTelephoneIcon() {
         return (
             <span className = 'add-telephone-icon'>
-                <Icon src = { IconPhone } />
+                <Icon src = { IconPhoneRinging } />
             </span>
         );
     }

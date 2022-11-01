@@ -1,5 +1,5 @@
 import { translate } from '../../../base/i18n';
-import { IconRaisedHand } from '../../../base/icons';
+import { IconRaiseHand } from '../../../base/icons';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -21,7 +21,7 @@ type Props = AbstractButtonProps & {
  */
 class RaiseHandButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
-    icon = IconRaisedHand;
+    icon = IconRaiseHand;
     label = 'toolbar.raiseHand';
     toggledLabel = 'toolbar.raiseHand';
 

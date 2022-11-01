@@ -233,7 +233,7 @@ function ActionButton({
                     tabIndex = { tabIndex }>
                     <Icon
                         className = 'icon'
-                        size = { 14 }
+                        size = { 24 }
                         src = { OptionsIcon } />
                 </div>
             }

@@ -7,7 +7,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconClose } from '../../../../base/icons/svg';
+import { IconCloseLarge } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
 // @ts-ignore
 import Label from '../Label';
@@ -70,7 +70,7 @@ function DialOutDialog(props: IProps) {
                     onClick = { onClose }
                     role = 'button'
                     size = { 24 }
-                    src = { IconClose } />
+                    src = { IconCloseLarge } />
             </div>
             <Label>{t('prejoin.callMeAtNumber')}</Label>
             <div className = { classes.picker }>

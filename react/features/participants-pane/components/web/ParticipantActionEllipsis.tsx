@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IconHorizontalPoints } from '../../../base/icons/svg';
+import { IconDotsHorizontal } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 
 interface IProps {
@@ -19,7 +19,7 @@ interface IProps {
 const ParticipantActionEllipsis = ({ accessibilityLabel, onClick }: IProps) => (
     <Button
         accessibilityLabel = { accessibilityLabel }
-        icon = { IconHorizontalPoints }
+        icon = { IconDotsHorizontal }
         onClick = { onClick }
         size = 'small' />
 );

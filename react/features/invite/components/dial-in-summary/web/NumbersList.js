@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
-import { Icon, IconSip } from '../../../../base/icons';
+import { Icon, IconPhoneRinging } from '../../../../base/icons';
 
 type Props = {
 
@@ -157,7 +157,7 @@ class NumbersList extends Component<Props> {
             return (
                 <td className = 'flag-cell'>
                     {countryCode === 'SIP'
-                        ? <Icon src = { IconSip } />
+                        ? <Icon src = { IconPhoneRinging } />
                         : <i className = { `flag iti-flag ${countryCode}` } />
                     }
                 </td>);

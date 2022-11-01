@@ -1,7 +1,7 @@
 // @flow
 
 import { translate } from '../../base/i18n';
-import { IconClosedCaption } from '../../base/icons';
+import { IconSubtitles } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { toggleLanguageSelectorDialog } from '../actions';
 
@@ -16,7 +16,7 @@ import {
 class ClosedCaptionButton
     extends AbstractClosedCaptionButton {
     accessibilityLabel = 'toolbar.accessibilityLabel.cc';
-    icon = IconClosedCaption;
+    icon = IconSubtitles;
     tooltip = 'transcribing.ccButtonTooltip';
     label = 'toolbar.startSubtitles';
     labelProps = {

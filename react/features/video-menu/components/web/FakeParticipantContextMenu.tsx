@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import TogglePinToStageButton from '../../../../features/video-menu/components/web/TogglePinToStageButton';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-import { IconShareVideo } from '../../../base/icons/svg';
+import { IconPlay } from '../../../base/icons/svg';
 import { isWhiteboardParticipant } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
@@ -108,7 +108,7 @@ const FakeParticipantContextMenu = ({
         if (isWhiteboardParticipant(participant)) {
             return [ {
                 accessibilityLabel: t('toolbar.hideWhiteboard'),
-                icon: IconShareVideo,
+                icon: IconPlay,
                 onClick: _onHideWhiteboard,
                 text: t('toolbar.hideWhiteboard')
             } ];
@@ -117,7 +117,7 @@ const FakeParticipantContextMenu = ({
         if (localVideoOwner) {
             return [ {
                 accessibilityLabel: t('toolbar.stopSharedVideo'),
-                icon: IconShareVideo,
+                icon: IconPlay,
                 onClick: _onStopSharedVideo,
                 text: t('toolbar.stopSharedVideo')
             } ];

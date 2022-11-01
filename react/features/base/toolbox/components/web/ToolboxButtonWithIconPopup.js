@@ -129,7 +129,7 @@ export default function ToolboxButtonWithIconPopup(props: Props) {
                         { ...iconProps }
                         ariaHasPopup = { ariaHasPopup }
                         ariaLabel = { ariaLabel }
-                        size = { 9 }
+                        size = { 16 }
                         src = { icon } />
                 </Popover>
             </div>

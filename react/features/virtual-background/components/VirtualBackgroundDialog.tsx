@@ -14,7 +14,7 @@ import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config/fun
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
-import { IconCloseSmall } from '../../base/icons/svg';
+import { IconCloseLarge } from '../../base/icons/svg';
 import { connect } from '../../base/redux/functions';
 import { updateSettings } from '../../base/settings/actions';
 // @ts-ignore
@@ -582,7 +582,7 @@ function VirtualBackground({
                                     onKeyPress = { deleteStoredImageKeyPress }
                                     role = 'button'
                                     size = { 15 }
-                                    src = { IconCloseSmall }
+                                    src = { IconCloseLarge }
                                     tabIndex = { 0 } />
                             </div>
                         ))}

@@ -1,6 +1,6 @@
 // @flow
 
-import { IconLiveStreaming } from '../../../base/icons';
+import { IconSites } from '../../../base/icons';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
@@ -50,7 +50,7 @@ export type Props = AbstractButtonProps & {
  */
 export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'dialog.accessibilityLabel.liveStreaming';
-    icon = IconLiveStreaming;
+    icon = IconSites;
     label = 'dialog.startLiveStreaming';
     toggledLabel = 'dialog.stopLiveStreaming';
 

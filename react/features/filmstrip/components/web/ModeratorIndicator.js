@@ -24,7 +24,7 @@ type Props = {
 const ModeratorIndicator = ({ tooltipPosition }: Props) => (
     <BaseIndicator
         icon = { IconCrown }
-        iconSize = { 15 }
+        iconSize = { 16 }
         tooltipKey = 'videothumbnail.moderator'
         tooltipPosition = { tooltipPosition } />
 );

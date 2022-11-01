@@ -4,7 +4,7 @@ import type { Dispatch } from 'redux';
 
 import { VIDEO_SHARE_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconShareVideo } from '../../../base/icons';
+import { IconPlay } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -39,7 +39,7 @@ type Props = AbstractButtonProps & {
  */
 class VideoShareButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
-    icon = IconShareVideo;
+    icon = IconPlay;
     label = 'toolbar.sharedvideo';
     toggledLabel = 'toolbar.stopSharedVideo';
 
