@@ -21,6 +21,17 @@
     margin-top: 2px;
 }
 
+.transcriptMarks:hover {
+    display: flex;
+    justify-content: space-between;
+    width: 94%;
+    border-bottom: 1px solid black;
+    border-radius: 2px;
+    padding: 6px;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
 .transcriptMarks {
     display: flex;
     justify-content: space-between;

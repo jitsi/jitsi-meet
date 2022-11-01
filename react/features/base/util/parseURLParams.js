@@ -3,6 +3,7 @@
 import Bourne from '@hapi/bourne';
 
 import { reportError } from './helpers';
+import {jitsiLocalStorage} from "@jitsi/js-utils";
 
 /**
  * A list if keys to ignore when parsing.
@@ -54,8 +55,10 @@ export function parseURLParams(
 
             if (!dontParse) {
                 const decoded = decodeURIComponent(value).replace(/\\&/, '&');
-
                 value = decoded === 'undefined' ? undefined : Bourne.parse(decoded);
+                console.log('Params Key ', key, ' Value ', value);
+                jitsiLocalStorage.setItem(key,value);
+                jitsiLocalStorage.getItem(key);
             }
         } catch (e) {
             reportError(

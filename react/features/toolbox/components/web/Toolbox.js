@@ -354,8 +354,6 @@ class Toolbox extends Component<Props> {
         const jwt = APP.store.getState()['features/base/jwt'];
         console.log('JWTToken111', jwt.jwt);
         this.decodeJwt = jwt_decode(jwt.jwt);
-        console.log('decodeJwt111', this.decodeJwt);
-
         // Bind event handlers so they are only bound once per instance.
         this._onMouseOut = this._onMouseOut.bind(this);
         this._onMouseOver = this._onMouseOver.bind(this);
@@ -1294,7 +1292,6 @@ class Toolbox extends Component<Props> {
                      onMouseOver: this._onMouseOver
                  })}>
                 <SideButtons/>
-                {/*<TokMarks/>*/}
                 <ConnectButtons/>
             </div>
             <div

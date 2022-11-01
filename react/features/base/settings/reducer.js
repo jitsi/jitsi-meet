@@ -28,7 +28,7 @@ const DEFAULT_STATE = {
     micDeviceId: undefined,
     serverURL: undefined,
     hideShareAudioHelper: false,
-    soundsIncomingMessage: true,
+    soundsIncomingMessage: false,
     soundsParticipantJoined: true,
     soundsParticipantLeft: true,
     soundsTalkWhileMuted: true,

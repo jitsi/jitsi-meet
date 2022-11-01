@@ -184,15 +184,14 @@ export function submitSoundsTab(newState: Object): Function {
     return (dispatch, getState) => {
         const currentState = getSoundsTabProps(getState());
         const shouldNotUpdateReactionSounds = getModeratorTabProps(getState()).startReactionsMuted;
-        const shouldUpdate = (newState.soundsIncomingMessage !== currentState.soundsIncomingMessage)
-            || (newState.soundsParticipantJoined !== currentState.soundsParticipantJoined)
+        const shouldUpdate =
+             (newState.soundsParticipantJoined !== currentState.soundsParticipantJoined)
             || (newState.soundsParticipantLeft !== currentState.soundsParticipantLeft)
             || (newState.soundsTalkWhileMuted !== currentState.soundsTalkWhileMuted)
             || (newState.soundsReactions !== currentState.soundsReactions);
 
         if (shouldUpdate) {
             const settingsToUpdate = {
-                soundsIncomingMessage: newState.soundsIncomingMessage,
                 soundsParticipantJoined: newState.soundsParticipantJoined,
                 soundsParticipantLeft: newState.soundsParticipantLeft,
                 soundsTalkWhileMuted: newState.soundsTalkWhileMuted,

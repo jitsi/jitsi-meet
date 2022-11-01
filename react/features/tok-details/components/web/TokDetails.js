@@ -1,13 +1,13 @@
 import TokDetailsButoon from './TokDetailsButoon';
 import './TokDetails.css';
-import React, { useEffect, useRef, useState } from 'react';
-import { BottomSheet } from 'react-spring-bottom-sheet';
+import React, {useEffect, useRef, useState} from 'react';
+import {BottomSheet} from 'react-spring-bottom-sheet';
 import 'react-spring-bottom-sheet/dist/style.css';
 import Collapsible from 'react-collapsible';
-import { IconLink, IconSlowMotion, IconUpDownArrow } from '../../../base/icons';
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
-import { isMobileBrowser } from '../../../base/environment/utils';
+import {IconLink, IconSlowMotion, IconUpDownArrow} from '../../../base/icons';
+import {translate} from '../../../base/i18n';
+import {connect} from '../../../base/redux';
+import {isMobileBrowser} from '../../../base/environment/utils';
 
 export type Props = {
     /**
@@ -20,9 +20,31 @@ export type Props = {
     _sendTranscriptCount: Array<string>
 }
 const Tok = (props: Props) => {
-    const [ open, setOpen ] = useState(false);
+    const [open, setOpen] = useState(false);
     const focusOPenRef = useRef();
 
+    let tokMarksList = [
+        {
+            "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/103",
+            "duration": "00:58",
+            "name": "Skullcandy",
+        },
+        {
+            "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/107",
+            "duration": "00:59",
+            "name": "Tripole",
+        },
+        {
+            "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/112",
+            "duration": "00:31",
+            "name": "Rollex",
+        },
+        {
+            "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/129",
+            "duration": "01:15",
+            "name": "Realme 10 R",
+        }
+    ]
     const tokBytesTrigger = () => {
         return (
             <div className="BottomCollapse">
@@ -75,7 +97,7 @@ const Tok = (props: Props) => {
                         Close
                     </button>
                 }
-                snapPoints={({ maxHeight }) => [ maxHeight / 2, maxHeight * 0.6 ]}
+                snapPoints={({maxHeight}) => [maxHeight / 2, maxHeight * 0.6]}
             >
                 <div style={{
                     padding: '4px 16px 4px 16px'
@@ -92,7 +114,7 @@ const Tok = (props: Props) => {
                             </div>
                         </div>
                     </Collapsible>
-                    <div style={{ marginTop: '10px' }}></div>
+                    <div style={{marginTop: '10px'}}></div>
                     <Collapsible trigger={tokShopTrigger()} open={true}>
                         <div className="collapseHeader">
                             <div className="transcriptHead" onClick={() => {
@@ -122,55 +144,42 @@ const Tok = (props: Props) => {
                             </div>
                         </div>
                     </Collapsible>
-                    <div style={{ marginTop: '10px' }}></div>
+                    <div style={{marginTop: '10px'}}></div>
                     <Collapsible trigger={tokMarkTrigger()} open={true}>
                         <div className="collapseHeader">
-                            <div className="transcriptHead">
-                                <div className="transcriptMarks">
-                                    <div className="tokMarkDiv">
-                                        <IconSlowMotion width={'20px'}
-                                                        height={'20px'}/>
-                                        <p className="tokMarkP">Tok
-                                            TimeStamp1</p>
+                            {tokMarksList.map((value, index) => {
+                                return (
+                                    <div className="transcriptHead" key={index}
+                                         onClick={() => {
+                                             if (isMobileBrowser()) {
+                                                 if (window.flutter_inappwebview) {
+                                                     console.log('beforeTokMarkUrl');
+                                                     const args = value.url;
+                                                     console.log('beforeTokMarkUrl', args);
+                                                     window.flutter_inappwebview.callHandler('handleTokMarkUrls', args);
+                                                 } else {
+                                                     console.log('InAppWebViewNotLoaded');
+                                                 }
+                                             } else {
+                                                 window.open(value.url);
+                                             }
+                                         }}>
+                                        <div
+                                            className="transcriptMarks">
+                                            <div className="tokMarkDiv">
+                                                <IconSlowMotion
+                                                    width={'20px'}
+                                                    height={'20px'}/>
+                                                <p className="tokMarkP">
+                                                    {value.name}</p>
+                                            </div>
+                                            <div>
+                                                <p>{value.duration}</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p>00:05:10</p>
-                                    </div>
-                                </div>
-                                <div className="transcriptMarks">
-                                    <div className="tokMarkDiv">
-                                        <IconSlowMotion width={'20px'}
-                                                        height={'20px'}/>
-                                        <p className="tokMarkP">Tok
-                                            TimeStamp2</p>
-                                    </div>
-                                    <div>
-                                        <p>00:06:20</p>
-                                    </div>
-                                </div>
-                                <div className="transcriptMarks">
-                                    <div className="tokMarkDiv">
-                                        <IconSlowMotion width={'20px'}
-                                                        height={'20px'}/>
-                                        <p className="tokMarkP">Tok
-                                            TimeStamp3</p>
-                                    </div>
-                                    <div>
-                                        <p>00:03:30</p>
-                                    </div>
-                                </div>
-                                <div className="transcriptMarks">
-                                    <div className="tokMarkDiv">
-                                        <IconSlowMotion width={'20px'}
-                                                        height={'20px'}/>
-                                        <p className="tokMarkP">Tok
-                                            TimeStamp4</p>
-                                    </div>
-                                    <div>
-                                        <p>00:04:50</p>
-                                    </div>
-                                </div>
-                            </div>
+                                )
+                            })}
                         </div>
                     </Collapsible>
                 </div>
@@ -181,8 +190,8 @@ const Tok = (props: Props) => {
 };
 
 function _mapStateToProps(state) {
-    const { _sendTranscriptMessage } = state['features/subtitles'];
-    const { _sendTranscriptCount } = state['features/subtitles'];
+    const {_sendTranscriptMessage} = state['features/subtitles'];
+    const {_sendTranscriptCount} = state['features/subtitles'];
     return {
         _sendTranscriptMessage: _sendTranscriptMessage,
         _sendTranscriptCount: _sendTranscriptCount

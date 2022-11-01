@@ -7,6 +7,7 @@ import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 import { openDialog } from '../../../base/dialog';
 import { NewModal6, NewModal7 } from '../../../Modal';
+import TokMarks from "../../../tok-details/components/web/TokMarks";
 
 declare var interfaceConfig: Object;
 
@@ -58,16 +59,7 @@ function SideButtons({
                 alignItems: 'flex-start',
                 justifyContent: 'flex-start'
             }}>
-                <div style={{
-                    borderRadius: '40%',
-                    margin: '10px'
-                }}
-                     className="invite-more-button"
-                     onClick={() => {
-                         dispatch(openDialog(NewModal6));
-                     }}>
-                    <Icon src={IconBookmark}/>
-                </div>
+                <TokMarks/>
                 <div style={{
                     borderRadius: '40%',
                     margin: '10px'
