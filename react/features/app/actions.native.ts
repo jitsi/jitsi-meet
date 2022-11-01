@@ -162,14 +162,10 @@ export function appNavigate(uri?: string) {
  * If we have a close page enabled, redirect to it without
  * showing any other dialog.
  *
- * @param {Object} _options - Used to decide which particular close page to show
- * or if close page is disabled, whether we should show the thankyou dialog.
- * @param {boolean} options.showThankYou - Whether we should
- * show thank you dialog.
- * @param {boolean} options.feedbackSubmitted - Whether feedback was submitted.
+ * @param {Object} options - Ignored.
  * @returns {Function}
  */
-export function maybeRedirectToWelcomePage(_options: { feedbackSubmitted?: boolean; showThankYou?: boolean; } = {}) {
+export function maybeRedirectToWelcomePage(options: any) { // eslint-disable-line @typescript-eslint/no-unused-vars
     // Dummy.
 }
 

@@ -1,4 +1,5 @@
 /* eslint-disable lines-around-comment */
+
 import { IReduxState, IStore } from '../../app/types';
 // @ts-ignore
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
@@ -10,6 +11,8 @@ import { getLocalVideoTrack, isLocalVideoTrackDesktop } from './functions';
 /* eslint-enable lines-around-comment */
 
 export * from './actions.any';
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 /**
  * Signals that the local participant is ending screensharing or beginning the screensharing flow.
@@ -36,6 +39,8 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
         }
     };
 }
+
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 /**
  * Creates desktop track and replaces the local one.
