@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "增加會議連結",
-        "confirmAddLink": "您要為此活動加入 Jitsi 連結嗎？",
+        "confirmAddLink": "您要為此活動加入Jitsi連結嗎？",
         "error": {
             "appConfiguration": "行事曆整合尚未正確設定。",
             "generic": "發生錯誤，請檢查行事曆設定，或是重新整理行事曆。",
@@ -82,7 +82,7 @@
         },
         "labels": {
             "buttonLabel": "駕駛模式",
-            "title": "安全駕駛模式",
+            "title": "駕駛模式",
             "videoStopped": "您的視訊已停用"
         }
     },
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "此會議尚無訊息，在此開始對話聊天！",
         "privateNotice": "傳送私人訊息至{{recipient}}",
+        "sendButton": "傳送",
         "smileysPanel": "Emoji 面板",
         "tabs": {
             "chat": "聊天",
@@ -118,7 +119,7 @@
         "buttonTextEdge": "安裝 Edge 外掛程式",
         "close": "關閉",
         "dontShowAgain": "不要再問了",
-        "installExtensionText": "安裝適用於 Google 行事曆及 Office 365 整合的擴充功能"
+        "installExtensionText": "安裝適用於Google行事曆及Office 365整合的擴充功能"
     },
     "connectingOverlay": {
         "joiningRoom": "正在將您連接至您的會議……"
@@ -140,7 +141,7 @@
     },
     "connectionindicator": {
         "address": "位址：",
-        "audio_ssrc": "音訊 SSRC：",
+        "audio_ssrc": "音訊SSRC：",
         "bandwidth": "估計頻寬：",
         "bitrate": "連線速率：",
         "bridgeCount": "伺服器數量：",
@@ -155,7 +156,7 @@
         "maxEnabledResolution": "最大傳輸",
         "more": "顯示更多",
         "packetloss": "丟包率：",
-        "participant_id": "與會者 ID：",
+        "participant_id": "與會者ID：",
         "quality": {
             "good": "很好",
             "inactive": "未啟用",
@@ -172,7 +173,7 @@
         "status": "連接：",
         "transport": "傳輸協定：",
         "transport_plural": "傳輸：",
-        "video_ssrc": "視訊 SSRC："
+        "video_ssrc": "視訊SSRC："
     },
     "dateUtils": {
         "earlier": "稍早",
@@ -183,10 +184,10 @@
         "appNotInstalled": "您需要在手機上安裝{{app}}行動應用程式才能加入這場會議。",
         "description": "甚麼事情都沒發生？我們已嘗試在您的{{app}}桌面應用程式開啟會議。請再試一次，或是在{{app}}網路應用程式開啟會議。",
         "descriptionWithoutWeb": "甚麼事情都沒發生？我們已試著將您的會議在桌面應用程式{{app}}中啟動。",
-        "downloadApp": "下載 App",
-        "ifDoNotHaveApp": "如果您尚未安裝 App：",
-        "ifHaveApp": "如果您已經有 App 了：",
-        "joinInApp": "使用 App 加入會議",
+        "downloadApp": "下載App",
+        "ifDoNotHaveApp": "如果您尚未安裝App：",
+        "ifHaveApp": "如果您已經此App：",
+        "joinInApp": "使用App加入會議",
         "launchWebButton": "在瀏覽器開啟",
         "title": "正在{{app}}發起您的會議……",
         "tryAgainButton": "在桌面上再試一次",
@@ -270,6 +271,7 @@
         "gracefulShutdown": "我們目前正在維護中，請稍後再試。",
         "grantModeratorDialog": "您確定要授予{{participantName}}主持人權限嗎？",
         "grantModeratorTitle": "授予主持人權限",
+        "hide": "隱藏",
         "hideShareAudioHelper": "不再顯示",
         "incorrectPassword": "錯誤的用戶名稱或密碼",
         "incorrectRoomLockPassword": "密碼不符",
@@ -387,6 +389,7 @@
         "shareYourScreenDisabled": "畫面分享已停用。",
         "sharedVideoDialogError": "錯誤：網址無效",
         "sharedVideoLinkPlaceholder": "YouTube或影片網址",
+        "show": "顯示",
         "start": "開始",
         "startLiveStreaming": "啟動直播串流",
         "startRecording": "啟動錄製作業",
@@ -435,7 +438,7 @@
         "search": "搜尋 GIPHY"
     },
     "helpView": {
-        "header": "說明中心"
+        "title": "說明中心"
     },
     "incomingCall": {
         "answer": "接通",
@@ -553,6 +556,7 @@
         "signedInAs": "您目前登入名稱為：",
         "start": "啟動直播串流",
         "streamIdHelp": "這是什麼？",
+        "title": "直播串流",
         "unavailableTitle": "直播串流無法使用",
         "youtubeTerms": "YouTube服務條款"
     },
@@ -595,6 +599,7 @@
         "passwordJoinButton": "加入",
         "reject": "拒絕",
         "rejectAll": "拒絕所有人",
+        "title": "大廳",
         "toggleLabel": "啟用大廳模式"
     },
     "localRecording": {
@@ -621,6 +626,7 @@
         "no": "否",
         "participant": "與會者",
         "participantStats": "與會者狀態",
+        "selectTabTitle": "🎥請選擇此分頁進行錄製",
         "sessionToken": "工作階段Token",
         "start": "啟動錄製",
         "stop": "停用錄製",
@@ -737,13 +743,13 @@
             "videoModeration": "開啟視訊"
         },
         "close": "關閉",
-        "header": "與會者",
         "headings": {
             "lobby": "大廳（{{count}}人）",
             "participantsList": "會議與會者（{{count}}人）",
             "waitingLobby": "於大廳等候（{{count}}人）"
         },
-        "search": "搜尋與會者"
+        "search": "搜尋與會者",
+        "title": "與會者"
     },
     "passwordDigitsOnly": "上限為{{number}}位數",
     "passwordSetRemotely": "由其他與會者設定",
@@ -824,7 +830,7 @@
         "initiated": "通話已初始化",
         "joinAudioByPhone": "使用手機音訊裝置加入",
         "joinMeeting": "加入會議",
-        "joinMeetingInLowBandwidthMode": "以低帶寬模式加入",
+        "joinMeetingInLowBandwidthMode": "以低頻寬模式加入",
         "joinWithoutAudio": "無音訊情況下加入",
         "keyboardShortcuts": "啟用鍵盤快捷鍵",
         "linkCopied": "連結已複製到剪貼簿",
@@ -853,7 +859,7 @@
         "ringing": "鈴鈴鈴……"
     },
     "privacyView": {
-        "header": "隱私權"
+        "title": "隱私權"
     },
     "profile": {
         "avatar": "頭像",
@@ -925,6 +931,7 @@
         "signIn": "登入",
         "signOut": "登出",
         "surfaceError": "請選擇當前分頁",
+        "title": "錄製中",
         "unavailable": "喔哦！{{serviceName}}目前無法使用，我們正在解決此問題，請稍後再試。",
         "unavailableTitle": "錄製無法使用",
         "uploadToCloud": "上傳至雲端"
@@ -936,8 +943,8 @@
     "security": {
         "about": "您可以添加$t(lockRoomPassword)至您的會議，與會者在加入會議前必須先輸入$t(lockRoomPassword)。",
         "aboutReadOnly": "主持人可以添加$t(lockRoomPassword)至會議，與會者在加入會議前必須先輸入$t(lockRoomPassword)。",
-        "header": "安全性選項",
-        "insecureRoomNameWarning": "會議室名稱過於簡單，任何人都可以加入此會議，請考慮使用安全性選項以保護您的會議安全。"
+        "insecureRoomNameWarning": "會議室名稱過於簡單，任何人都可以加入此會議，請考慮使用安全性選項以保護您的會議安全。",
+        "title": "安全性選項"
     },
     "settings": {
         "buttonLabel": "設定",
@@ -953,7 +960,7 @@
         "desktopShareWarning": "您必須重新啟動桌面畫面分享以套用新的設定。",
         "devices": "裝置",
         "followMe": "全部人跟隨我",
-        "framesPerSecond": "影格率",
+        "framesPerSecond": "fps",
         "incomingMessage": "新訊息",
         "language": "語言",
         "loggedIn": "以{{name}}登入",
@@ -1004,6 +1011,7 @@
         "profileSection": "簡介",
         "serverURL": "伺服器網址",
         "showAdvanced": "顯示進階設定",
+        "startCarModeInLowBandwidthMode": "同時啟用駕駛模式與低頻寬模式",
         "startWithAudioMuted": "啟動並靜音",
         "startWithVideoMuted": "啟動並關閉影像",
         "terms": "條款",
@@ -1042,7 +1050,7 @@
         "title": "由於電腦進入休眠，您的視訊通話已經中斷。"
     },
     "termsView": {
-        "header": "條款"
+        "title": "條款"
     },
     "toggleTopPanelLabel": "啟用/停用頂部面板",
     "toolbar": {
@@ -1218,6 +1226,8 @@
         "labelToolTip": "此會議正在轉錄",
         "off": "轉錄已停用",
         "pending": "準備轉錄會議……",
+        "sourceLanguageDesc": "會議語言當前設定為<b>{{sourceLanguage}}</b><br/>您可以在這裡",
+        "sourceLanguageHere": "修改",
         "start": "開始顯示字幕",
         "stop": "停用顯示字幕",
         "subtitles": "字幕",
@@ -1338,10 +1348,10 @@
         "join": "建立/加入",
         "logo": {
             "calendar": "行事曆圖示",
-            "desktopPreviewThumbnail": "桌面畫面分享縮圖",
-            "googleLogo": "Google 商標",
-            "logoDeepLinking": "Jitsi meet 商標",
-            "microsoftLogo": "Microsoft 商標",
+            "desktopPreviewThumbnail": "桌面預覽縮圖",
+            "googleLogo": "Google圖示",
+            "logoDeepLinking": "Jitsi Meet圖示",
+            "microsoftLogo": "Microsoft圖示",
             "policyLogo": "政策圖示"
         },
         "mobileDownLoadLinkAndroid": "下載 Android 版本的手機應用程式",
@@ -1353,7 +1363,7 @@
         "recentListDelete": "刪除",
         "recentListEmpty": "目前最近使用是空白的，與您的團隊成員聊天，即會在此處找到最近使用過的會議。",
         "reducedUIText": "歡迎使用{{app}}！",
-        "roomNameAllowedChars": "會議室名稱不應包含以下字元：? & : '「 % #",
+        "roomNameAllowedChars": "會議室名稱不應包含以下字元：? & : ' \" % #",
         "roomname": "輸入會議室名稱",
         "roomnameHint": "請輸入您想加入的會議室名稱或網址，您可以用個名稱來建立會議室，只要其他人輸入相同的名稱就能加入會議室喔。",
         "sendFeedback": "傳送回饋",
