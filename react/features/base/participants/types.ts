@@ -47,5 +47,9 @@ export interface LocalParticipant extends Participant {
 }
 
 export interface IJitsiParticipant {
+    getDisplayName: () => string;
     getId: () => string;
+    getJid: () => string;
+    getRole: () => string;
+    isHidden: () => boolean;
 }

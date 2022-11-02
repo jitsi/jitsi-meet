@@ -47,6 +47,7 @@ export interface IJitsiConference {
     enableAVModeration: Function;
     getBreakoutRooms: Function;
     getLocalTracks: Function;
+    getParticipants: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
     isEndConferenceSupported: Function;
@@ -58,6 +59,7 @@ export interface IJitsiConference {
     on: Function;
     removeTrack: Function;
     replaceTrack: Function;
+    room: IJitsiConferenceRoom;
     sendCommand: Function;
     sendEndpointMessage: Function;
     sendLobbyMessage: Function;
@@ -91,6 +93,11 @@ export interface IConferenceState {
     startReactionsMuted?: boolean;
     startVideoMutedPolicy?: boolean;
     subject?: string;
+}
+
+export interface IJitsiConferenceRoom {
+    myroomjid: string;
+    roomjid: string;
 }
 
 /**
