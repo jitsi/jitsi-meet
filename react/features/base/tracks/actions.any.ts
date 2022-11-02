@@ -5,7 +5,7 @@ import { showErrorNotification, showNotification } from '../../notifications/act
 import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
-import { getMultipleVideoSendingSupportFeatureFlag, getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { createLocalTrack } from '../lib-jitsi-meet/functions.any';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
@@ -379,9 +379,7 @@ export function trackAdded(track: any) {
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
 
         const local = track.isLocal();
-        const isVirtualScreenshareParticipantCreated = local
-            ? getMultipleVideoSendingSupportFeatureFlag(getState())
-            : getMultipleVideoSupportFeatureFlag(getState());
+        const isVirtualScreenshareParticipantCreated = !local || getMultipleVideoSendingSupportFeatureFlag(getState());
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP && isVirtualScreenshareParticipantCreated
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();

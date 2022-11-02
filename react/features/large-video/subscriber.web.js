@@ -1,11 +1,8 @@
 // @flow
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
-import { getMultipleVideoSupportFeatureFlag } from '../base/config';
-import { MEDIA_TYPE } from '../base/media';
-import { isScreenShareParticipant } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
-import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrack } from '../base/tracks';
+import { getVideoTrackByParticipant } from '../base/tracks';
 
 import { getLargeVideoParticipant } from './functions';
 
@@ -25,14 +22,7 @@ StateListenerRegistry.register(
 StateListenerRegistry.register(
     /* selector */ state => {
         const largeVideoParticipant = getLargeVideoParticipant(state);
-        const tracks = state['features/base/tracks'];
-        let videoTrack;
-
-        if (getMultipleVideoSupportFeatureFlag(state) && isScreenShareParticipant(largeVideoParticipant)) {
-            videoTrack = getVirtualScreenshareParticipantTrack(tracks, largeVideoParticipant?.id);
-        } else {
-            videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipant?.id);
-        }
+        const videoTrack = getVideoTrackByParticipant(state, largeVideoParticipant);
 
         return {
             participantId: largeVideoParticipant?.id,

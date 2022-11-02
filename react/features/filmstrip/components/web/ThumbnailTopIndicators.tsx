@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { getMultipleVideoSupportFeatureFlag } from '../../../base/config/functions.any';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
@@ -99,13 +98,12 @@ const ThumbnailTopIndicators = ({
         useSelector((state: IReduxState) => state['features/base/config'].connectionIndicators?.autoHide) ?? true);
     const _connectionIndicatorDisabled = _isMobile || disableConnectionIndicator
         || Boolean(useSelector((state: IReduxState) => state['features/base/config'].connectionIndicators?.disabled));
-    const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
     const isVirtualScreenshareParticipant = useSelector(
         (state: IReduxState) => isScreenShareParticipantById(state, participantId)
     );
 
-    if (_isMultiStreamEnabled && isVirtualScreenshareParticipant) {
+    if (isVirtualScreenshareParticipant) {
         return (
             <div className = { styles.container }>
                 {!_connectionIndicatorDisabled
@@ -144,7 +142,7 @@ const ThumbnailTopIndicators = ({
                 <div className = { cx(indicatorsClassName, 'top-indicators') }>
                     <StatusIndicators
                         participantID = { participantId }
-                        screenshare = { !_isMultiStreamEnabled } />
+                        screenshare = { false } />
                 </div>
             )}
         </div>

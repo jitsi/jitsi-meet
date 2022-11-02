@@ -13,8 +13,7 @@ import {
 import { toState } from '../base/redux';
 import { shouldHideSelfView } from '../base/settings/functions.any';
 import {
-    getLocalVideoTrack,
-    getTrackByMediaTypeAndParticipant,
+    getVideoTrackByParticipant,
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../base/tracks/functions';
@@ -119,9 +118,7 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
     const tracks = state['features/base/tracks'];
     const participant = id ? getParticipantById(state, id) : getLocalParticipant(state);
     const isLocal = participant?.local ?? true;
-
-    const videoTrack
-        = isLocal ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    const videoTrack = getVideoTrackByParticipant(state, participant);
     const isAudioOnly = Boolean(state['features/base/audio-only'].enabled);
     let isPlayable = false;
 
@@ -514,24 +511,21 @@ export function computeDisplayModeFromInput(input: Object) {
         isScreenSharing,
         canPlayEventReceived,
         isRemoteParticipant,
-        multipleVideoSupport,
         stageParticipantsVisible,
         tileViewActive
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
 
-    if (multipleVideoSupport) {
-        // Display video for virtual screen share participants in all layouts.
-        if (isVirtualScreenshareParticipant) {
-            return DISPLAY_VIDEO;
-        }
+    // Display video for virtual screen share participants in all layouts.
+    if (isVirtualScreenshareParticipant) {
+        return DISPLAY_VIDEO;
+    }
 
-        // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A virtual
-        // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior consistent
-        // and an avatar is displayed on the original participant thumbnail as long as screenshare is in progress.
-        if (isScreenSharing) {
-            return DISPLAY_AVATAR;
-        }
+    // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A virtual
+    // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior consistent
+    // and an avatar is displayed on the original participant thumbnail as long as screenshare is in progress.
+    if (isScreenSharing) {
+        return DISPLAY_AVATAR;
     }
 
     if (!tileViewActive && filmstripType === FILMSTRIP_TYPE.MAIN && ((isScreenSharing && isRemoteParticipant)
@@ -565,7 +559,6 @@ export function getDisplayModeInput(props: Object, state: Object) {
         _isVirtualScreenshareParticipant,
         _isScreenSharing,
         _isVideoPlayable,
-        _multipleVideoSupport,
         _participant,
         _stageParticipantsVisible,
         _videoTrack,
@@ -586,7 +579,6 @@ export function getDisplayModeInput(props: Object, state: Object) {
         isRemoteParticipant: !_participant?.fakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
         isVirtualScreenshareParticipant: _isVirtualScreenshareParticipant,
-        multipleVideoSupport: _multipleVideoSupport,
         stageParticipantsVisible: _stageParticipantsVisible,
         videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
     };

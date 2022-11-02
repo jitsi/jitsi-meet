@@ -11,9 +11,6 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-import {
-    getMultipleVideoSupportFeatureFlag
-} from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 // @ts-ignore
@@ -33,10 +30,8 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { isTestModeEnabled } from '../../../base/testing/functions';
 import { trackStreamingStatusChanged, updateLastTrackVideoMediaEvent } from '../../../base/tracks/actions';
 import {
-    getLocalAudioTrack,
-    getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
-    getVirtualScreenshareParticipantTrack
+    getVideoTrackByParticipant
 } from '../../../base/tracks/functions';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
@@ -1163,20 +1158,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const id = participant?.id ?? '';
     const isLocal = participant?.local ?? true;
-    const multipleVideoSupportEnabled = getMultipleVideoSupportFeatureFlag(state);
-    const _isVirtualScreenshareParticipant = multipleVideoSupportEnabled && isScreenShareParticipant(participant);
+    const _isVirtualScreenshareParticipant = isScreenShareParticipant(participant);
     const tracks = state['features/base/tracks'];
-
-    let _videoTrack;
-
-    if (_isVirtualScreenshareParticipant) {
-        _videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
-    } else {
-        _videoTrack = isLocal
-            ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
-    }
-    const _audioTrack = isLocal
-        ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
+    const _videoTrack = getVideoTrackByParticipant(state, participant);
+    const _audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
     const _currentLayout = getCurrentLayout(state);
     let size: any = {};
     let _isMobilePortrait = false;
@@ -1294,7 +1279,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _isVideoPlayable: id && isVideoPlayable(state, id),
         _isVirtualScreenshareParticipant,
         _localFlipX: Boolean(localFlipX),
-        _multipleVideoSupport: multipleVideoSupportEnabled,
         _participant: participant,
         _raisedHand: hasRaisedHand(participant),
         _stageFilmstripLayout: isStageFilmstripAvailable(state),

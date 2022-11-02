@@ -4,7 +4,6 @@ import React, { PureComponent } from 'react';
 import { Image, View } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import { getMultipleVideoSupportFeatureFlag } from '../../../base/config';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media';
 import {
@@ -403,7 +402,6 @@ function _mapStateToProps(state, ownProps) {
     const id = participant?.id;
     const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
     const videoTrack = getVideoTrackByParticipant(state, participant);
-    const isMultiStreamSupportEnabled = getMultipleVideoSupportFeatureFlag(state);
     const isScreenShare = videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const participantCount = getParticipantCount(state);
     const renderDominantSpeakerIndicator = participant && participant.dominantSpeaker && participantCount > 2;
@@ -418,7 +416,7 @@ function _mapStateToProps(state, ownProps) {
         _fakeParticipant: participant?.fakeParticipant,
         _gifSrc: mode === 'chat' ? null : gifSrc,
         _isScreenShare: isScreenShare,
-        _isVirtualScreenshare: isMultiStreamSupportEnabled && isScreenShareParticipant(participant),
+        _isVirtualScreenshare: isScreenShareParticipant(participant),
         _local: participant?.local,
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participantId: id,

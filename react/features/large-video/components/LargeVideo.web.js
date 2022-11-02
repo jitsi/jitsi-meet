@@ -3,12 +3,11 @@
 import React, { Component } from 'react';
 
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
-import { getMultipleVideoSupportFeatureFlag } from '../../base/config';
-import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media';
-import { getLocalParticipant, isScreenShareParticipant } from '../../base/participants';
+import { VIDEO_TYPE } from '../../base/media';
+import { getLocalParticipant } from '../../base/participants';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
-import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrack } from '../../base/tracks';
+import { getVideoTrackByParticipant } from '../../base/tracks';
 import { setColorAlpha } from '../../base/util';
 import { StageParticipantNameLabel } from '../../display-name';
 import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../filmstrip';
@@ -340,20 +339,11 @@ function _mapStateToProps(state) {
     const { width: verticalFilmstripWidth, visible } = state['features/filmstrip'];
     const { defaultLocalDisplayName, hideDominantSpeakerBadge } = state['features/base/config'];
     const { seeWhatIsBeingShared } = state['features/large-video'];
-
-    const tracks = state['features/base/tracks'];
     const localParticipantId = getLocalParticipant(state)?.id;
     const largeVideoParticipant = getLargeVideoParticipant(state);
-    let videoTrack;
-
-    if (getMultipleVideoSupportFeatureFlag(state) && isScreenShareParticipant(largeVideoParticipant)) {
-        videoTrack = getVirtualScreenshareParticipantTrack(tracks, largeVideoParticipant?.id);
-    } else {
-        videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipant?.id);
-    }
+    const videoTrack = getVideoTrackByParticipant(state, largeVideoParticipant);
     const isLocalScreenshareOnLargeVideo = largeVideoParticipant?.id?.includes(localParticipantId)
         && videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
-
     const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
 
     return {

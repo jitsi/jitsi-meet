@@ -10,7 +10,6 @@ import { Provider } from 'react-redux';
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
 import { Avatar } from '../../../react/features/base/avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
-import { getMultipleVideoSupportFeatureFlag } from '../../../react/features/base/config';
 import { i18next } from '../../../react/features/base/i18n';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
@@ -294,9 +293,7 @@ export default class LargeVideoManager {
             // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior
             // consistent and an avatar is displayed on the original participant thumbnail as long as screenshare is in
             // progress.
-            const legacyScreenshare = getMultipleVideoSupportFeatureFlag(state)
-                                        && videoType === VIDEO_TYPE.DESKTOP
-                                        && !isScreenShareParticipant(participant);
+            const legacyScreenshare = videoType === VIDEO_TYPE.DESKTOP && !isScreenShareParticipant(participant);
 
             const showAvatar
                 = isVideoContainer
