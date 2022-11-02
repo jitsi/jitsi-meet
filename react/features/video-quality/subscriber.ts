@@ -2,14 +2,10 @@ import debounce from 'lodash/debounce';
 
 import { IStore } from '../app/types';
 import { _handleParticipantError } from '../base/conference/functions';
-import { getSourceNameSignalingFeatureFlag } from '../base/config/functions';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { getLocalParticipant } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import {
-    getRemoteScreenSharesSourceNames,
-    getTrackSourceNameByMediaTypeAndParticipant
-} from '../base/tracks/functions';
+import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks/functions';
 import { reportError } from '../base/util/helpers';
 import {
     getActiveParticipantsIds,
@@ -355,7 +351,6 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
     const { remoteScreenShares } = state['features/video-layout'];
     const { visibleRemoteParticipants } = state['features/filmstrip'];
     const tracks = state['features/base/tracks'];
-    const sourceNameSignaling = getSourceNameSignalingFeatureFlag(state);
     const localParticipantId = getLocalParticipant(state)?.id;
     const activeParticipantsIds = getActiveParticipantsIds(state);
     const screenshareFilmstripParticipantId = isTopPanelEnabled(state) && getScreenshareFilmstripParticipantId(state);
@@ -366,67 +361,54 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         lastN
     };
 
-    let remoteScreenSharesSourceNames: string[];
-    let visibleRemoteTrackSourceNames: string[] = [];
+    const activeParticipantsSources: string[] = [];
+    const visibleRemoteTrackSourceNames: string[] = [];
     let largeVideoSourceName: string | undefined;
-    let activeParticipantsSources: string[] = [];
 
-    if (sourceNameSignaling) {
-        receiverConstraints.onStageSources = [];
-        receiverConstraints.selectedSources = [];
+    receiverConstraints.onStageSources = [];
+    receiverConstraints.selectedSources = [];
 
-        remoteScreenSharesSourceNames = getRemoteScreenSharesSourceNames(state, remoteScreenShares);
+    if (visibleRemoteParticipants?.size) {
+        visibleRemoteParticipants.forEach(participantId => {
+            let sourceName;
 
-        if (visibleRemoteParticipants?.size) {
-            visibleRemoteParticipants.forEach(participantId => {
-                let sourceName;
-
-                if (remoteScreenSharesSourceNames.includes(participantId)) {
-                    sourceName = participantId;
-                } else {
-                    sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
-                }
-
-                if (sourceName) {
-                    visibleRemoteTrackSourceNames.push(sourceName);
-                }
-            });
-        }
-
-        if (activeParticipantsIds?.length > 0) {
-            activeParticipantsIds.forEach((participantId: string) => {
-                let sourceName;
-
-                if (remoteScreenSharesSourceNames.includes(participantId)) {
-                    sourceName = participantId;
-                } else {
-                    sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
-                }
-
-                if (sourceName) {
-                    activeParticipantsSources.push(sourceName);
-                }
-            });
-
-        }
-
-        if (localParticipantId !== largeVideoParticipantId) {
-            if (remoteScreenSharesSourceNames.includes(largeVideoParticipantId)) {
-                largeVideoSourceName = largeVideoParticipantId;
+            if (remoteScreenShares.includes(participantId)) {
+                sourceName = participantId;
             } else {
-                largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
-                    tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId
-                );
+                sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
             }
-        }
-    } else {
-        receiverConstraints.onStageEndpoints = [];
-        receiverConstraints.selectedEndpoints = [];
 
-        remoteScreenSharesSourceNames = remoteScreenShares;
-        visibleRemoteTrackSourceNames = [ ...visibleRemoteParticipants ];
-        largeVideoSourceName = largeVideoParticipantId;
-        activeParticipantsSources = activeParticipantsIds;
+            if (sourceName) {
+                visibleRemoteTrackSourceNames.push(sourceName);
+            }
+        });
+    }
+
+    if (activeParticipantsIds?.length > 0) {
+        activeParticipantsIds.forEach((participantId: string) => {
+            let sourceName;
+
+            if (remoteScreenShares.includes(participantId)) {
+                sourceName = participantId;
+            } else {
+                sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+            }
+
+            if (sourceName) {
+                activeParticipantsSources.push(sourceName);
+            }
+        });
+
+    }
+
+    if (localParticipantId !== largeVideoParticipantId) {
+        if (remoteScreenShares.includes(largeVideoParticipantId)) {
+            largeVideoSourceName = largeVideoParticipantId;
+        } else {
+            largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
+                tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId
+            );
+        }
     }
 
     // Tile view.
@@ -440,9 +422,8 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         });
 
         // Prioritize screenshare in tile view.
-        if (remoteScreenSharesSourceNames?.length) {
-            receiverConstraints[sourceNameSignaling ? 'selectedSources' : 'selectedEndpoints']
-                = remoteScreenSharesSourceNames;
+        if (remoteScreenShares?.length) {
+            receiverConstraints.selectedSources = remoteScreenShares;
         }
 
     // Stage view.
@@ -479,7 +460,7 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
                     };
             }
 
-            receiverConstraints[sourceNameSignaling ? 'onStageSources' : 'onStageEndpoints'] = onStageSources;
+            receiverConstraints.onStageSources = onStageSources;
         } else if (largeVideoSourceName) {
             let quality = VIDEO_QUALITY_UNLIMITED;
 
@@ -488,8 +469,7 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
                 quality = maxFrameHeightForLargeVideo;
             }
             receiverConstraints.constraints[largeVideoSourceName] = { 'maxHeight': quality };
-            receiverConstraints[sourceNameSignaling ? 'onStageSources' : 'onStageEndpoints']
-                = [ largeVideoSourceName ];
+            receiverConstraints.onStageSources = [ largeVideoSourceName ];
         }
     }
 

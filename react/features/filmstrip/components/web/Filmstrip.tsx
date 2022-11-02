@@ -9,7 +9,7 @@ import { FixedSizeGrid, FixedSizeList } from 'react-window';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
-import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config/functions.web';
+import { getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
@@ -915,7 +915,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _isToolboxVisible: isToolboxVisible(state),
         _isVerticalFilmstrip,
-        _localScreenShare: getSourceNameSignalingFeatureFlag(state) && localScreenShare,
+        _localScreenShare: localScreenShare,
         _mainFilmstripVisible: visible,
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,

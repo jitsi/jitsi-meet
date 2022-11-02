@@ -1,7 +1,6 @@
 // @flow
 import type { Dispatch } from 'redux';
 
-import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -216,18 +215,16 @@ export function setVerticalViewDimensions() {
             remoteVideosContainerHeight
                 = clientHeight - (disableSelfView ? 0 : thumbnails?.local?.height) - VERTICAL_FILMSTRIP_VERTICAL_MARGIN;
 
-            if (getSourceNameSignalingFeatureFlag(state)) {
-                // Account for the height of the local screen share thumbnail when calculating the height of the remote
-                // videos container.
-                const localCameraThumbnailHeight = thumbnails?.local?.height;
-                const localScreenShareThumbnailHeight
-                    = localScreenShare && !disableSelfView ? thumbnails?.local?.height : 0;
+            // Account for the height of the local screen share thumbnail when calculating the height of the remote
+            // videos container.
+            const localCameraThumbnailHeight = thumbnails?.local?.height;
+            const localScreenShareThumbnailHeight
+                = localScreenShare && !disableSelfView ? thumbnails?.local?.height : 0;
 
-                remoteVideosContainerHeight = clientHeight
-                    - localCameraThumbnailHeight
-                    - localScreenShareThumbnailHeight
-                    - VERTICAL_FILMSTRIP_VERTICAL_MARGIN;
-            }
+            remoteVideosContainerHeight = clientHeight
+                - localCameraThumbnailHeight
+                - localScreenShareThumbnailHeight
+                - VERTICAL_FILMSTRIP_VERTICAL_MARGIN;
 
             hasScroll
                 = remoteVideosContainerHeight

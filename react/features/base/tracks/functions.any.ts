@@ -1,7 +1,6 @@
 import { IReduxState } from '../../app/types';
 import {
-    getMultipleVideoSendingSupportFeatureFlag,
-    getMultipleVideoSupportFeatureFlag
+    getMultipleVideoSendingSupportFeatureFlag
 } from '../config/functions.any';
 import { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
@@ -244,29 +243,6 @@ export function getVirtualScreenshareParticipantTrack(tracks: ITrack[], virtualS
     const ownderId = getVirtualScreenshareParticipantOwnerId(virtualScreenshareParticipantId);
 
     return getScreenShareTrack(tracks, ownderId);
-}
-
-/**
- * Returns track source names of given screen share participant ids.
- *
- * @param {IReduxState} state - The entire redux state.
- * @param {string[]} screenShareParticipantIds - Participant ID.
- * @returns {(string[])}
- */
-export function getRemoteScreenSharesSourceNames(state: IReduxState, screenShareParticipantIds: string[] = []) {
-    const tracks = state['features/base/tracks'];
-
-    return getMultipleVideoSupportFeatureFlag(state)
-        ? screenShareParticipantIds
-        : screenShareParticipantIds.reduce((acc: string[], id) => {
-            const sourceName = getScreenShareTrack(tracks, id)?.jitsiTrack.getSourceName();
-
-            if (sourceName) {
-                acc.push(sourceName);
-            }
-
-            return acc;
-        }, []);
 }
 
 /**

@@ -4,7 +4,7 @@ import React, { PureComponent } from 'react';
 import { Image, View } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../../../base/config';
+import { getMultipleVideoSupportFeatureFlag } from '../../../base/config';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media';
 import {
@@ -110,11 +110,6 @@ type Props = {
      * Whether to show the moderator indicator or not.
      */
     _renderModeratorIndicator: boolean,
-
-    /**
-     * Whether source name signaling is enabled.
-     */
-    _sourceNameSignalingEnabled: boolean,
 
     /**
      * The video track that will be displayed in the thumbnail.
@@ -266,9 +261,9 @@ class Thumbnail extends PureComponent<Props> {
         // Listen to track streaming status changed event to keep it updated.
         // TODO: after converting this component to a react function component,
         // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
+        const { _videoTrack, dispatch } = this.props;
 
-        if (_sourceNameSignalingEnabled && _videoTrack && !_videoTrack.local) {
+        if (_videoTrack && !_videoTrack.local) {
             _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                 this.handleTrackStreamingStatusChanged);
             dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
@@ -286,10 +281,9 @@ class Thumbnail extends PureComponent<Props> {
     componentDidUpdate(prevProps: Props) {
         // TODO: after converting this component to a react function component,
         // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
+        const { _videoTrack, dispatch } = this.props;
 
-        if (_sourceNameSignalingEnabled
-            && prevProps._videoTrack?.jitsiTrack?.getSourceName() !== _videoTrack?.jitsiTrack?.getSourceName()) {
+        if (prevProps._videoTrack?.jitsiTrack?.getSourceName() !== _videoTrack?.jitsiTrack?.getSourceName()) {
             if (prevProps._videoTrack && !prevProps._videoTrack.local) {
                 prevProps._videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                     this.handleTrackStreamingStatusChanged);
@@ -314,9 +308,9 @@ class Thumbnail extends PureComponent<Props> {
     componentWillUnmount() {
         // TODO: after converting this component to a react function component,
         // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
+        const { _videoTrack, dispatch } = this.props;
 
-        if (_sourceNameSignalingEnabled && _videoTrack && !_videoTrack.local) {
+        if (_videoTrack && !_videoTrack.local) {
             _videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                 this.handleTrackStreamingStatusChanged);
             dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
@@ -432,7 +426,6 @@ function _mapStateToProps(state, ownProps) {
         _raisedHand: hasRaisedHand(participant),
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
-        _sourceNameSignalingEnabled: getSourceNameSignalingFeatureFlag(state),
         _videoTrack: videoTrack
     };
 }

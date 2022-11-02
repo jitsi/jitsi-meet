@@ -10,10 +10,7 @@ import { Provider } from 'react-redux';
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
 import { Avatar } from '../../../react/features/base/avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
-import {
-    getMultipleVideoSupportFeatureFlag,
-    getSourceNameSignalingFeatureFlag
-} from '../../../react/features/base/config';
+import { getMultipleVideoSupportFeatureFlag } from '../../../react/features/base/config';
 import { i18next } from '../../../react/features/base/i18n';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
@@ -158,19 +155,16 @@ export default class LargeVideoManager {
      * @returns {void}
      */
     destroy() {
-        this.videoContainer.removeResizeListener(
-            this._onVideoResolutionUpdate);
+        this.videoContainer.removeResizeListener(this._onVideoResolutionUpdate);
 
-        if (getSourceNameSignalingFeatureFlag(APP.store.getState())) {
-            // Remove track streaming status listener.
-            // TODO: when this class is converted to a function react component,
-            // use a custom hook to update a local track streaming status.
-            if (this.videoTrack && !this.videoTrack.local) {
-                this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged);
-                APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
-                    this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
-            }
+        // Remove track streaming status listener.
+        // TODO: when this class is converted to a function react component,
+        // use a custom hook to update a local track streaming status.
+        if (this.videoTrack && !this.videoTrack.local) {
+            this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                this.handleTrackStreamingStatusChanged);
+            APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
+                this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
         }
 
         this.removePresenceLabel();

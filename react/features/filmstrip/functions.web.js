@@ -1,6 +1,5 @@
 // @flow
 
-import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import { isMobileBrowser } from '../base/environment/utils';
 import { MEDIA_TYPE } from '../base/media';
 import {
@@ -229,7 +228,7 @@ export function getNumberOfPartipantsForTileView(state) {
     const { iAmRecorder } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
     const { localScreenShare } = state['features/base/participants'];
-    const localParticipantsCount = getSourceNameSignalingFeatureFlag(state) && localScreenShare ? 2 : 1;
+    const localParticipantsCount = localScreenShare ? 2 : 1;
     const numberOfParticipants = getParticipantCountWithFake(state)
         - (iAmRecorder ? 1 : 0)
         - (disableSelfView ? localParticipantsCount : 0);

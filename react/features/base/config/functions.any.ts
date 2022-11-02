@@ -60,8 +60,7 @@ export function getMeetingRegion(state: IReduxState) {
  * @returns {boolean}
  */
 export function getMultipleVideoSupportFeatureFlag(state: IReduxState) {
-    return (getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
-        && getSourceNameSignalingFeatureFlag(state)) ?? true;
+    return getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT);
 }
 
 /**
@@ -73,16 +72,6 @@ export function getMultipleVideoSupportFeatureFlag(state: IReduxState) {
 export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
     return navigator.product !== 'ReactNative'
         && ((getMultipleVideoSupportFeatureFlag(state) ?? true) && isUnifiedPlanEnabled(state));
-}
-
-/**
- * Selector used to get the sourceNameSignaling feature flag.
- *
- * @param {Object} state - The global state.
- * @returns {boolean}
- */
-export function getSourceNameSignalingFeatureFlag(state: IReduxState) {
-    return getFeatureFlag(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING) ?? true;
 }
 
 /**
