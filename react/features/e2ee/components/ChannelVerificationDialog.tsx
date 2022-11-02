@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 
 import { IState, IStore } from "../../app/types";
 import { hideDialog } from '../../base/dialog/actions';
@@ -18,7 +18,7 @@ interface Props {
 /**
  * Class for the dialog displayed for E2EE sas verification.
  */
-export class ChannelVerificationDialog extends PureComponent<Props> {
+export class ChannelVerificationDialog extends Component<Props> {
     /**
      * Instantiates a new instance.
      *
@@ -48,15 +48,11 @@ export class ChannelVerificationDialog extends PureComponent<Props> {
     }
 
     _onDismissed() {
-        console.log("XXX middleware dismissed")
-        this.props.dispatch(hideDialog(undefined));
         this.props.dispatch(channelVerified(false, this.props.pId));
         return true;
     }
     
     _onConfirmed() {
-        console.log("XXX middleware confirmed")
-        this.props.dispatch(hideDialog(undefined));
         this.props.dispatch(channelVerified(true, this.props.pId));
         return true;
     }

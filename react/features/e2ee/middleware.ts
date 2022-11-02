@@ -274,6 +274,10 @@ StateListenerRegistry.register(
         conference.on(JitsiConferenceEvents.E2EE_SAS_READY, (pId, sas) => {
            dispatch(openDialog(ChannelVerificationDialog, { pId, sas }));
         });
+
+        conference.on(JitsiConferenceEvents.E2EE_SAS_COMPLETED, (pId, success) => {
+            console.log("XXX verification completed", success)
+         });
     });
 
 /**
