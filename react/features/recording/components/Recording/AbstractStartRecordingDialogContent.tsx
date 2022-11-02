@@ -113,7 +113,7 @@ export interface IProps extends WithTranslation {
     /**
      * Callback to change the local recording only self setting.
      */
-    onLocalRecordingSelfChange: Function;
+    onLocalRecordingSelfChange: () => void;
 
     /**
      * Callback to be invoked on sharing setting change.
