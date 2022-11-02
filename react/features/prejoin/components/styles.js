@@ -1,6 +1,5 @@
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
-const SECONDARY_COLOR = BaseTheme.palette.border04;
 
 export default {
     joinButton: {
@@ -83,16 +82,6 @@ export default {
         textAlign: 'center'
     },
 
-    field: {
-        backgroundColor: BaseTheme.palette.field02,
-        borderColor: SECONDARY_COLOR,
-        borderRadius: BaseTheme.shape.borderRadius,
-        borderWidth: 2,
-        color: BaseTheme.palette.text06,
-        height: BaseTheme.spacing[7],
-        textAlign: 'center'
-    },
-
     preJoinRoomName: {
         ...BaseTheme.typography.heading5,
         color: BaseTheme.palette.text01,
@@ -102,11 +91,9 @@ export default {
     displayRoomNameBackdrop: {
         alignSelf: 'center',
         backgroundColor: BaseTheme.palette.ui16,
-        bottom: BaseTheme.spacing[3],
-        borderRadius: 4,
+        borderRadius: BaseTheme.shape.borderRadius,
         margin: BaseTheme.spacing[3],
         paddingHorizontal: BaseTheme.spacing[3],
-        paddingVertical: BaseTheme.spacing[1],
-        position: 'absolute'
+        paddingVertical: BaseTheme.spacing[1]
     }
 };

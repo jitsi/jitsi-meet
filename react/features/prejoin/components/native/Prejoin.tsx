@@ -1,4 +1,4 @@
-/* eslint-disable lines-around-comment  */
+/* eslint-disable lines-around-comment */
 
 import { useIsFocused } from '@react-navigation/native';
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
@@ -161,8 +161,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             <View style = { contentContainerStyles }>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <Input
-                        // @ts-ignore
-                        autoFocus = { true }
                         customStyles = {{ input: styles.customInput }}
                         onChange = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
