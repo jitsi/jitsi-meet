@@ -1,6 +1,6 @@
 import { co } from 'react-emoji-render/data/aliases';
 import { IStateful } from '../base/app/types';
-import { getParticipantCount } from '../base/participants/functions';
+import { getParticipantById, getParticipantCount } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
 import { IReduxState } from '../app/types';
@@ -64,9 +64,10 @@ export function isMaxModeThresholdReached(stateful: IStateful) {
  *
  * @returns {boolean}
  */
- export function displayVerification(state: IReduxState) {
+ export function displayVerification(state: IReduxState, pId: string) {
     const { conference } = state['features/base/conference'];
-
-    return Boolean(conference.isE2EEEnabled());
+    const participant = getParticipantById(state, pId);
+    
+    return Boolean(conference.isE2EEEnabled() && participant.sasVerified === undefined);
 };
 

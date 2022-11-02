@@ -152,7 +152,7 @@ const ParticipantContextMenu = ({
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
-    const shouldDisplayVerification = useSelector(displayVerification);
+    const shouldDisplayVerification = useSelector((state: IReduxState) => displayVerification(state, participant?.id));
 
     const _currentRoomId = useSelector(getCurrentRoomId);
     const _rooms: Array<{ id: string; }> = Object.values(useSelector(getBreakoutRooms));

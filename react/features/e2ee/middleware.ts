@@ -250,8 +250,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case START_VERIFICATION: {
-        console.log("XXX START_VERIFICATION1 ", conference)
-        console.log("XXX START_VERIFICATION2 ", action.pId)
         conference?.startVerification(action.pId);
         break;
     }
@@ -276,7 +274,11 @@ StateListenerRegistry.register(
         });
 
         conference.on(JitsiConferenceEvents.E2EE_SAS_COMPLETED, (pId, success) => {
-            console.log("XXX verification completed", success)
+            dispatch(participantUpdated({
+                sasVerified: success,
+                id: pId,
+                local: true
+            }));
          });
     });
 
