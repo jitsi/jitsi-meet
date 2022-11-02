@@ -7,6 +7,8 @@ import { ISwitchProps } from '../types';
 
 interface IProps extends ISwitchProps {
 
+    className?: string;
+
     /**
      * Id of the toggle.
      */
@@ -78,7 +80,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-const Switch = ({ id, checked, disabled, onChange }: IProps) => {
+const Switch = ({ className, id, checked, disabled, onChange }: IProps) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
 
@@ -89,7 +91,7 @@ const Switch = ({ id, checked, disabled, onChange }: IProps) => {
     return (
         <label
             className = { cx('toggle-container', styles.container, checked && styles.containerOn,
-                isMobile && 'is-mobile', disabled && 'disabled') }>
+                isMobile && 'is-mobile', disabled && 'disabled', className) }>
             <input
                 type = 'checkbox'
                 { ...(id ? { id } : {}) }
