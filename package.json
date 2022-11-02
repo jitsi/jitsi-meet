@@ -36,7 +36,7 @@
     "@jitsi/js-utils": "2.0.4",
     "@jitsi/logger": "2.0.0",
     "@jitsi/rnnoise-wasm": "0.1.0",
-    "@jitsi/rtcstats": "9.3.0",
+    "@jitsi/rtcstats": "9.4.0",
     "@matrix-org/olm": "https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.3.tgz",
     "@microsoft/microsoft-graph-client": "3.0.1",
     "@mui/material": "5.10.2",
