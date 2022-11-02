@@ -18,6 +18,7 @@ echo "Building archive..."
 xcodebuild archive \
     -workspace $BASE_DIR/ios/jitsi-meet.xcworkspace \
     -scheme JitsiMeet \
+    -allowProvisioningUpdates \
     -destination 'generic/platform=iOS' \
     -configuration Release \
     -archivePath $ARCHIVE_DIR
@@ -25,7 +26,7 @@ xcodebuild archive \
 echo "Exporting archive..."
 xcodebuild -exportArchive \
      -archivePath $ARCHIVE_DIR  \
+     -exportOptionsPlist $BASE_DIR/ios/app/src/Info.plist \
      -exportPath $BUILD_DIR \
-     -exportOptionsPlist $BASE_DIR/ios/app/src/Info.plist
 
 echo "Done"
