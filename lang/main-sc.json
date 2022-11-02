@@ -1358,18 +1358,6 @@
         "mobileDownLoadLinkFDroid": "Iscàrriga s'aplicatzione mòbile pro F-Droid",
         "mobileDownLoadLinkIos": "Iscàrriga s'aplicatzione mòbile pro iOS",
         "moderatedMessage": "O <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">prenota un'URL de riunione<\/a> in antìtzipu, aunde as a èssere s'unicu moderadore.",
-        "privacy": "Riservadesa",
-        "recentList": "Reghentes",
-        "recentListDelete": "Delete entry",
-        "recentListEmpty": "Your recent list is currently empty. Chat with your team and you will find all your recent meetings here.",
-        "reducedUIText": "Welcome to {{app}}!",
-        "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
-        "roomname": "Enter room name",
-        "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
-        "sendFeedback": "Send feedback",
-        "settings": "Settings",
-        "startMeeting": "Start meeting",
-        "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing"
+        "privacy": "Riservadesa"
     }
 }
