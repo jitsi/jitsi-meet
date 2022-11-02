@@ -401,7 +401,6 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
-    const { iAmRecorder } = state['features/base/config'];
     const { soundsIncomingMessage: soundEnabled, userSelectedNotifications } = state['features/base/settings'];
 
     if (soundEnabled && shouldPlaySound && !isChatOpen) {
@@ -454,10 +453,6 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
             privateMessage,
             ts: timestamp
         });
-
-        if (!iAmRecorder) {
-            dispatch(showToolbox(4000));
-        }
     }
 }
 
