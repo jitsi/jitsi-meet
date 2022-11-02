@@ -1,7 +1,5 @@
-// @flow
-
-import React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import React, { ReactElement } from 'react';
+import { Text, View } from 'react-native';
 
 import { getConferenceName } from '../../../base/conference/functions';
 import { translate } from '../../../base/i18n';
@@ -9,8 +7,9 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
-import BaseTheme from '../../../base/ui/components/BaseTheme';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
+import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
 import { LargeVideo } from '../../../large-video/components';
@@ -24,6 +23,7 @@ import AbstractLobbyScreen, {
     _mapStateToProps as abstractMapStateToProps } from '../AbstractLobbyScreen';
 
 import styles from './styles';
+
 
 type Props = AbstractProps & {
 
@@ -99,9 +99,9 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
     _onSwitchToPasswordMode: () => void;
 
-    _renderContent: () => React$Element<*>;
+    _renderContent: () => ReactElement;
 
-    _renderToolbarButtons: () => React$Element<*>;
+    _renderToolbarButtons: () => ReactElement;
 
     _onNavigateToLobbyChat: () => void;
 
@@ -152,10 +152,10 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { displayName } = this.state;
 
         return (
-            <TextInput
-                onChangeText = { this._onChangeDisplayName }
+            <Input
+                customStyles = {{ input: styles.customInput }}
+                onChange = { this._onChangeDisplayName }
                 placeholder = { t('lobby.nameField') }
-                style = { styles.field }
                 value = { displayName } />
         );
     }
@@ -179,13 +179,13 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
         return (
             <View style = { styles.formWrapper }>
-                <TextInput
+                <Input
                     autoCapitalize = 'none'
                     autoCompleteType = 'off'
-                    onChangeText = { this._onChangePassword }
+                    customStyles = {{ input: styles.customInput }}
+                    onChange = { this._onChangePassword }
                     placeholder = { t('lobby.passwordField') }
                     secureTextEntry = { true }
-                    style = { styles.field }
                     value = { this.state.password } />
                 { _passwordJoinFailed && <Text style = { styles.fieldError }>
                     { t('lobby.invalidPassword') }

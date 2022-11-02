@@ -124,20 +124,12 @@ export default {
 
     formWrapper: {
         alignSelf: 'stretch',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: 38
     },
 
-    field: {
-        alignSelf: 'stretch',
-        backgroundColor: BaseTheme.palette.field02,
-        borderColor: SECONDARY_COLOR,
-        borderRadius: BaseTheme.shape.borderRadius,
-        borderWidth: 2,
-        color: BaseTheme.palette.text06,
-        height: BaseTheme.spacing[7],
-        marginTop: 38,
+    customInput: {
         marginHorizontal: BaseTheme.spacing[3],
-        padding: BaseTheme.spacing[2],
         textAlign: 'center'
     },
 
