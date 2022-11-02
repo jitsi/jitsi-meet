@@ -1,10 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import {
-    NativeSyntheticEvent,
+    KeyboardTypeOptions,
+    NativeSyntheticEvent, ReturnKeyTypeOptions,
     StyleProp,
     Text,
     TextInput,
     TextInputChangeEventData,
+    TextInputFocusEventData,
+    TextInputSubmitEditingEventData,
     TouchableOpacity,
     View,
     ViewStyle
@@ -18,11 +21,18 @@ import { IInputProps } from '../types';
 import styles from './inputStyles';
 
 interface IProps extends IInputProps {
-
-    /**
-     * Custom styles to be applied to the component.
-     */
+    accessibilityLabel?: string | undefined;
+    autoCapitalize?: string | undefined;
+    autoFocus?: boolean;
     customStyles?: ICustomStyles;
+    editable?: boolean | undefined;
+    keyboardType?: KeyboardTypeOptions;
+    onBlur?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
+    onFocus?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
+    onSubmitEditing?: (value: string) => void;
+    returnKeyType?: ReturnKeyTypeOptions | undefined;
+    secureTextEntry?: boolean | undefined;
+    textContentType?: string;
 }
 
 interface ICustomStyles {
@@ -31,14 +41,24 @@ interface ICustomStyles {
 }
 
 const Input = ({
+    accessibilityLabel,
+    autoCapitalize,
+    autoFocus,
     clearable,
     customStyles,
     disabled,
     error,
     icon,
+    keyboardType,
     label,
+    onBlur,
     onChange,
+    onFocus,
+    onSubmitEditing,
     placeholder,
+    returnKeyType,
+    secureTextEntry,
+    textContentType,
     value
 }: IProps) => {
     const [ focused, setFocused ] = useState(false);
@@ -52,28 +72,46 @@ const Input = ({
         onChange?.('');
     }, []);
 
-    const blur = useCallback(() => {
+    const handleBlur = useCallback((e: NativeSyntheticEvent<TextInputFocusEventData>) => {
         setFocused(false);
+        onBlur?.(e);
     }, []);
 
-    const focus = useCallback(() => {
+    const handleFocus = useCallback((e: NativeSyntheticEvent<TextInputFocusEventData>) => {
         setFocused(true);
+        onFocus?.(e);
+    }, []);
+
+    const handleSubmitEditing = useCallback((e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
+        const { nativeEvent: { text } } = e;
+
+        onSubmitEditing?.(text);
     }, []);
 
     return (<View style = { [ styles.inputContainer, customStyles?.container ] }>
-        {label && <Text style = { styles.label }>{label}</Text>}
+        {label && <Text style = { styles.label }>{ label }</Text>}
         <View style = { styles.fieldContainer as StyleProp<ViewStyle> }>
             {icon && <Icon
                 size = { 22 }
                 src = { icon }
                 style = { styles.icon } />}
             <TextInput
+                accessibilityLabel = { accessibilityLabel }
+                autoCapitalize = { autoCapitalize }
+                autoComplete = { 'off' }
+                autoCorrect = { false }
+                autoFocus = { autoFocus }
                 editable = { !disabled }
-                onBlur = { blur }
+                keyboardType = { keyboardType }
+                onBlur = { handleBlur }
                 onChange = { handleChange }
-                onFocus = { focus }
+                onFocus = { handleFocus }
+                onSubmitEditing = { handleSubmitEditing }
                 placeholder = { placeholder }
                 placeholderTextColor = { BaseTheme.palette.text02 }
+                returnKeyType = { returnKeyType }
+                secureTextEntry = { secureTextEntry }
+                spellCheck = { false }
                 style = { [ styles.input,
                     disabled && styles.inputDisabled,
                     clearable && styles.clearableInput,
@@ -82,8 +120,9 @@ const Input = ({
                     error && styles.inputError,
                     customStyles?.input
                 ] }
-                value = { `${value}` } />
-            {clearable && !disabled && value !== '' && (
+                textContentType = { textContentType }
+                value = { value } />
+            { clearable && !disabled && value !== '' && (
                 <TouchableOpacity
                     onPress = { clearInput }
                     style = { styles.clearButton as StyleProp<ViewStyle> }>
