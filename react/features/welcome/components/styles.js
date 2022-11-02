@@ -214,6 +214,12 @@ export default {
         overflow: 'hidden'
     },
 
+    customInput: {
+        fontSize: 24,
+        lineHeight: 32,
+        textAlign: 'center'
+    },
+
     recentList: {
         backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1,
