@@ -1003,6 +1003,7 @@
         "displayName": "Display name",
         "displayNamePlaceholderText": "Eg: John Doe",
         "email": "Email",
+        "emailPlaceholderText": "email@example.com",
         "goTo": "Go to",
         "header": "Settings",
         "help": "Help",
