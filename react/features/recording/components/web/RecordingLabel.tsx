@@ -1,14 +1,14 @@
-/* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React from 'react';
 
 import { translate } from '../../../base/i18n/functions';
-// @ts-ignore
-import { Label } from '../../../base/label';
+import Label from '../../../base/label/components/web/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux/functions';
 import AbstractRecordingLabel, {
     _mapStateToProps
+
     // @ts-ignore
 } from '../AbstractRecordingLabel';
 
@@ -19,7 +19,7 @@ import AbstractRecordingLabel, {
  *
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         [JitsiRecordingConstants.mode.STREAM]: {
             background: theme.palette.ui03
@@ -56,7 +56,8 @@ class RecordingLabel extends AbstractRecordingLabel {
         return (
             <div>
                 <Label
-                    className = { classes && classes[mode] }
+                    className = { classes?.[mode] }
+
                     // @ts-ignore
                     text = { t(this._getLabelKey()) } />
             </div>

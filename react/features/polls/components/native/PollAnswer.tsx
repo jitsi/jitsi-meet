@@ -7,7 +7,6 @@ import { getLocalParticipant } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
 import Switch from '../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
-// @ts-ignore
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
@@ -33,7 +32,7 @@ const PollAnswer = (props: AbstractProps) => {
         <>
             <Text style = { dialogStyles.questionText } >{ poll.question }</Text>
             <Text style = { dialogStyles.questionOwnerText } >{
-                t('polls.by', { name: localParticipant.name })
+                t('polls.by', { name: localParticipant?.name })
             }
             </Text>
             <View style = { chatStyles.answerContent }>

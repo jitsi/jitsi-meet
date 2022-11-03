@@ -15,12 +15,12 @@ import { renderArrowBackButton }
 import styles from './styles';
 
 
-type Props = {
+interface IProps {
 
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
-    navigation: Object
+    navigation: Object;
 }
 
 /**
@@ -28,7 +28,7 @@ type Props = {
  */
 const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
 
-const PrivacyView = ({ navigation }: Props) => {
+const PrivacyView = ({ navigation }: IProps) => {
 
     useEffect(() => {
         // @ts-ignore

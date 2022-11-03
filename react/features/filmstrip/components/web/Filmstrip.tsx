@@ -1,41 +1,34 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { FixedSizeList, FixedSizeGrid } from 'react-window';
-import type { Dispatch } from 'redux';
+import { FixedSizeGrid, FixedSizeList } from 'react-window';
 
-import {
-    createShortcutEvent,
-    createToolbarEvent,
-    sendAnalytics
-    // @ts-ignore
-} from '../../../analytics';
-import { IState } from '../../../app/types';
-// @ts-ignore
-import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config';
+import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState, IStore } from '../../../app/types';
+import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
-import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg/index';
-import { Participant } from '../../../base/participants/reducer';
+import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg';
+import { IParticipant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 // @ts-ignore
 import { showToolbox } from '../../../toolbox/actions.web';
-// @ts-ignore
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 // @ts-ignore
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { getCurrentLayout } from '../../../video-layout';
+import { LAYOUTS } from '../../../video-layout/constants';
 import {
     setFilmstripVisible,
+    setTopPanelVisible,
     setUserFilmstripHeight,
     setUserFilmstripWidth,
     setUserIsResizing,
-    setTopPanelVisible,
     setVisibleRemoteParticipants
     // @ts-ignore
 } from '../../actions';
@@ -51,219 +44,211 @@ import {
 } from '../../constants';
 import {
     getVerticalViewMaxWidth,
-    shouldRemoteVideosBeVisible,
-    isStageFilmstripTopPanel
+    isStageFilmstripTopPanel,
+    shouldRemoteVideosBeVisible
     // @ts-ignore
 } from '../../functions';
 
 // @ts-ignore
 import AudioTracksContainer from './AudioTracksContainer';
-// @ts-ignore
 import Thumbnail from './Thumbnail';
 // @ts-ignore
 import ThumbnailWrapper from './ThumbnailWrapper';
 // @ts-ignore
 import { styles } from './styles';
 
-declare let APP: any;
-
 /**
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Additional CSS class names top add to the root.
      */
-    _className: string,
+    _className: string;
 
     /**
      * The number of columns in tile view.
      */
-    _columns: number,
+    _columns: number;
 
     /**
      * The current layout of the filmstrip.
      */
-    _currentLayout: string,
+    _currentLayout: string;
 
     /**
      * Whether or not to hide the self view.
      */
-    _disableSelfView: boolean,
+    _disableSelfView: boolean;
 
     /**
      * The height of the filmstrip.
      */
-    _filmstripHeight: number,
+    _filmstripHeight: number;
 
     /**
      * The width of the filmstrip.
      */
-    _filmstripWidth: number,
+    _filmstripWidth: number;
 
     /**
      * Whether or not we have scroll on the filmstrip.
      */
-    _hasScroll: boolean,
+    _hasScroll: boolean;
 
     /**
      * Whether this is a recorder or not.
      */
-    _iAmRecorder: boolean,
+    _iAmRecorder: boolean;
 
     /**
      * Whether the filmstrip button is enabled.
      */
-    _isFilmstripButtonEnabled: boolean,
+    _isFilmstripButtonEnabled: boolean;
 
     /**
     * Whether or not the toolbox is displayed.
     */
-    _isToolboxVisible: Boolean,
+    _isToolboxVisible: Boolean;
 
     /**
      * Whether or not the current layout is vertical filmstrip.
      */
-    _isVerticalFilmstrip: boolean,
+    _isVerticalFilmstrip: boolean;
 
     /**
      * The local screen share participant. This prop is behind the sourceNameSignaling feature flag.
      */
-    _localScreenShare: Participant,
+    _localScreenShare: IParticipant;
 
     /**
      * Whether or not the filmstrip videos should currently be displayed.
      */
-    _mainFilmstripVisible: boolean,
+    _mainFilmstripVisible: boolean;
 
     /**
      * The maximum width of the vertical filmstrip.
      */
-    _maxFilmstripWidth: number,
+    _maxFilmstripWidth: number;
 
     /**
      * The maximum height of the top panel.
      */
-    _maxTopPanelHeight: number,
+    _maxTopPanelHeight: number;
 
     /**
      * The participants in the call.
      */
-    _remoteParticipants: Array<Object>,
+    _remoteParticipants: Array<Object>;
 
     /**
      * The length of the remote participants array.
      */
-    _remoteParticipantsLength: number,
+    _remoteParticipantsLength: number;
 
     /**
      * Whether or not the filmstrip should be user-resizable.
      */
-    _resizableFilmstrip: boolean,
+    _resizableFilmstrip: boolean;
 
     /**
      * The number of rows in tile view.
      */
-    _rows: number,
+    _rows: number;
 
     /**
      * The height of the thumbnail.
      */
-    _thumbnailHeight: number,
+    _thumbnailHeight: number;
 
     /**
      * The width of the thumbnail.
      */
-    _thumbnailWidth: number,
-
-    /**
-     * Flag that indicates whether the thumbnails will be reordered.
-     */
-    _thumbnailsReordered: Boolean,
+    _thumbnailWidth: number;
 
     /**
      * Whether or not the filmstrip is top panel.
      */
-    _topPanelFilmstrip: boolean,
+    _topPanelFilmstrip: boolean;
 
     /**
      * The height of the top panel (user resized).
      */
-    _topPanelHeight?: number,
+    _topPanelHeight?: number;
 
     /**
      * The max height of the top panel.
      */
-    _topPanelMaxHeight: number,
+    _topPanelMaxHeight: number;
 
     /**
      * Whether or not the top panel is visible.
      */
-    _topPanelVisible: boolean,
+    _topPanelVisible: boolean;
 
     /**
      * The width of the vertical filmstrip (user resized).
      */
-    _verticalFilmstripWidth?: number,
+    _verticalFilmstripWidth?: number;
 
     /**
      * Whether or not the vertical filmstrip should have a background color.
      */
-    _verticalViewBackground: boolean,
+    _verticalViewBackground: boolean;
 
     /**
      * Whether or not the vertical filmstrip should be displayed as grid.
      */
-    _verticalViewGrid: boolean,
+    _verticalViewGrid: boolean;
 
     /**
      * The max width of the vertical filmstrip.
      */
-    _verticalViewMaxWidth: number,
+    _verticalViewMaxWidth: number;
 
     /**
      * Additional CSS class names to add to the container of all the thumbnails.
      */
-    _videosClassName: string,
+    _videosClassName: string;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
      * The type of filmstrip to be displayed.
      */
-    filmstripType: string
+    filmstripType: string;
 }
 
-type State = {
+interface IState {
 
     /**
      * Initial top panel height on drag handle mouse down.
      */
-    dragFilmstripHeight?: number,
+    dragFilmstripHeight?: number;
 
     /**
      * Initial filmstrip width on drag handle mouse down.
      */
-    dragFilmstripWidth?: number|null,
+    dragFilmstripWidth?: number | null;
 
     /**
      * Whether or not the mouse is pressed.
      */
-    isMouseDown: boolean,
+    isMouseDown: boolean;
 
     /**
      * Initial mouse position on drag handle mouse down.
      */
-    mousePosition?: number|null
+    mousePosition?: number | null;
 }
 
 /**
@@ -272,7 +257,7 @@ type State = {
  *
  * @augments Component
  */
-class Filmstrip extends PureComponent <Props, State> {
+class Filmstrip extends PureComponent <IProps, IState> {
 
     _throttledResize: Function;
 
@@ -282,7 +267,7 @@ class Filmstrip extends PureComponent <Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -559,11 +544,11 @@ class Filmstrip extends PureComponent <Props, State> {
      * @returns {Object}
      */
     _calculateIndices(startIndex: number, stopIndex: number) {
-        const { _currentLayout, _iAmRecorder, _thumbnailsReordered, _disableSelfView } = this.props;
+        const { _currentLayout, _iAmRecorder, _disableSelfView } = this.props;
         let start = startIndex;
         let stop = stopIndex;
 
-        if (_thumbnailsReordered && !_disableSelfView) {
+        if (!_disableSelfView) {
             // In tile view, the indices needs to be offset by 1 because the first thumbnail is that of the local
             // endpoint. The remote participants start from index 1.
             if (!_iAmRecorder && _currentLayout === LAYOUTS.TILE_VIEW) {
@@ -611,20 +596,19 @@ class Filmstrip extends PureComponent <Props, State> {
      * @param {Object} data - An object with the indexes identifying the ThumbnailWrapper instance.
      * @returns {string} - The key.
      */
-    _gridItemKey({ columnIndex, rowIndex }: {columnIndex: number, rowIndex: number}) {
+    _gridItemKey({ columnIndex, rowIndex }: { columnIndex: number; rowIndex: number; }) {
         const {
             _disableSelfView,
             _columns,
             _iAmRecorder,
             _remoteParticipants,
-            _remoteParticipantsLength,
-            _thumbnailsReordered
+            _remoteParticipantsLength
         } = this.props;
         const index = (rowIndex * _columns) + columnIndex;
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
-        const localIndex = _thumbnailsReordered && !_disableSelfView ? 0 : _remoteParticipantsLength;
-        const remoteIndex = _thumbnailsReordered && !_iAmRecorder && !_disableSelfView ? index - 1 : index;
+        const localIndex = _disableSelfView ? _remoteParticipantsLength : 0;
+        const remoteIndex = !_iAmRecorder && !_disableSelfView ? index - 1 : index;
 
         if (index > _remoteParticipantsLength - (_iAmRecorder ? 1 : 0)) {
             return `empty-${index}`;
@@ -643,8 +627,8 @@ class Filmstrip extends PureComponent <Props, State> {
      * @param {Object} data - Information about the rendered items.
      * @returns {void}
      */
-    _onListItemsRendered({ visibleStartIndex, visibleStopIndex }
-        : { visibleStartIndex: number, visibleStopIndex: number }) {
+    _onListItemsRendered({ visibleStartIndex, visibleStopIndex }: {
+        visibleStartIndex: number; visibleStopIndex: number; }) {
         const { dispatch } = this.props;
         const { startIndex, stopIndex } = this._calculateIndices(visibleStartIndex, visibleStopIndex);
 
@@ -663,10 +647,10 @@ class Filmstrip extends PureComponent <Props, State> {
         visibleRowStartIndex,
         visibleRowStopIndex
     }: {
-        visibleColumnStartIndex: number,
-        visibleColumnStopIndex: number,
-        visibleRowStartIndex: number,
-        visibleRowStopIndex: number
+        visibleColumnStartIndex: number;
+        visibleColumnStopIndex: number;
+        visibleRowStartIndex: number;
+        visibleRowStopIndex: number;
     }) {
         const { _columns, dispatch } = this.props;
         const start = (visibleRowStartIndex * _columns) + visibleColumnStartIndex;
@@ -797,6 +781,7 @@ class Filmstrip extends PureComponent <Props, State> {
     _onShortcutToggleFilmstrip() {
         sendAnalytics(createShortcutEvent(
             'toggle.filmstrip',
+            ACTION_SHORTCUT_TRIGGERED,
             {
                 enable: this.props._mainFilmstripVisible
             }));
@@ -885,13 +870,12 @@ class Filmstrip extends PureComponent <Props, State> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState, ownProps: any) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
-    const { testing = {}, iAmRecorder } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    const { iAmRecorder } = state['features/base/config'];
     const { topPanelHeight, topPanelVisible, visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const { localScreenShare } = state['features/base/participants'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
@@ -935,8 +919,7 @@ function _mapStateToProps(state: IState, ownProps: any) {
         _mainFilmstripVisible: visible,
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
-        _remoteParticipantsLength: _remoteParticipants.length,
-        _thumbnailsReordered: enableThumbnailReordering,
+        _remoteParticipantsLength: _remoteParticipants?.length,
         _topPanelHeight: topPanelHeight.current,
         _topPanelMaxHeight: topPanelHeight.current || TOP_FILMSTRIP_HEIGHT,
         _topPanelVisible,

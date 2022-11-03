@@ -20,7 +20,7 @@ msgstr ""
 #. Type: select
 #. Choices
 #: ../jitsi-meet-web-config.templates:1001
-msgid "Generate a new self-signed certificate (You will later get a chance to obtain a Let's encrypt certificate)"
+msgid "Generate a new self-signed certificate"
 msgstr ""
 
 #. Type: select
@@ -84,7 +84,7 @@ msgstr ""
 #. Description
 #: ../jitsi-meet-web-config.templates:4001
 msgid ""
-"The value for the hostname that is set in Jitsi Videobridge installation."
+"The value of the domain that is set in the Jitsi Videobridge installation."
 msgstr ""
 
 #. Type: boolean

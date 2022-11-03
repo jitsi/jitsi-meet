@@ -1,4 +1,3 @@
-// @flow
 
 import React from 'react';
 import { View } from 'react-native';
@@ -20,7 +19,7 @@ type Props = {
     /**
      * The children component(s) of the Modal, to be rendered.
      */
-    children: React$Node,
+    children: React.ReactNode,
 
     /**
      * Disabled forced keyboard dismiss?
@@ -62,9 +61,8 @@ const JitsiScreen = ({
     disableForcedKeyboardDismiss = false,
     safeAreaInsets = [ 'left', 'right' ],
     style
-}: Props) => (
-    <View
-        style = { styles.jitsiScreenContainer }>
+}: Props) => {
+    const renderContent = () => (
         <JitsiKeyboardAvoidingView
             contentContainerStyle = { contentContainerStyle }
             disableForcedKeyboardDismiss = { disableForcedKeyboardDismiss }
@@ -74,12 +72,18 @@ const JitsiScreen = ({
             <SafeAreaView
                 edges = { safeAreaInsets }
                 style = { styles.safeArea }>
-                {children}
+                { children }
             </SafeAreaView>
             { footerComponent && footerComponent() }
         </JitsiKeyboardAvoidingView>
-    </View>
-);
+    );
+
+    return (
+        <View style = { styles.jitsiScreenContainer }>
+            { renderContent() }
+        </View>
+    );
+};
 
 
 export default JitsiScreen;

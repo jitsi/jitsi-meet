@@ -1,89 +1,88 @@
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React, { ReactNode } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
 import { ACTION_TRIGGER } from '../../../participants-pane/constants';
 import { isMobileBrowser } from '../../environment/utils';
+import { withPixelLineHeight } from '../../styles/functions.web';
 import participantsPaneTheme from '../themes/participantsPaneTheme.json';
 
-type Props = {
+interface IProps {
 
     /**
      * List item actions.
      */
-    actions: ReactNode,
+    actions: ReactNode;
 
     /**
      * List item container class name.
      */
-    className: string,
+    className?: string;
 
     /**
      * Whether or not the actions should be hidden.
      */
-    hideActions?: boolean,
+    hideActions?: boolean;
 
     /**
      * Icon to be displayed on the list item. (Avatar for participants).
      */
-    icon: ReactNode,
+    icon: ReactNode;
 
     /**
      * Id of the container.
      */
-    id: string,
+    id?: string;
 
     /**
      * Indicators to be displayed on the list item.
      */
-    indicators?: ReactNode,
+    indicators?: ReactNode;
 
     /**
      * Whether or not the item is highlighted.
      */
-    isHighlighted?: boolean,
+    isHighlighted?: boolean;
 
     /**
      * Click handler.
      */
-    onClick: (e?: React.MouseEvent) => void,
+    onClick?: (e?: React.MouseEvent) => void;
 
     /**
      * Long press handler.
      */
-    onLongPress: (e?: EventTarget) => void,
+    onLongPress?: (e?: EventTarget) => void;
 
     /**
      * Mouse leave handler.
      */
-    onMouseLeave: (e?: React.MouseEvent) => void,
+    onMouseLeave?: (e?: React.MouseEvent) => void;
 
     /**
      * Data test id.
      */
-    testId?: string,
+    testId?: string;
 
     /**
      * Text children to be displayed on the list item.
      */
-    textChildren: ReactNode | string,
+    textChildren: ReactNode | string;
 
     /**
      * The actions trigger. Can be Hover or Permanent.
      */
-    trigger: string
+    trigger: string;
 
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         container: {
             alignItems: 'center',
             color: theme.palette.text01,
             display: 'flex',
-            ...theme.typography.bodyShortRegular,
-            lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
             margin: `0 -${participantsPaneTheme.panePadding}px`,
             padding: `0 ${participantsPaneTheme.panePadding}px`,
             position: 'relative',
@@ -105,9 +104,8 @@ const useStyles = makeStyles((theme: any) => {
             },
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
-                ...theme.typography.bodyShortRegularLarge,
-                lineHeight: `${theme.typography.bodyShortRegularLarge.lineHeight}px`,
-                padding: `${theme.spacing(2)}px ${participantsPaneTheme.panePadding}px`
+                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+                padding: `${theme.spacing(2)} ${participantsPaneTheme.panePadding}px`
             }
         },
 
@@ -127,7 +125,7 @@ const useStyles = makeStyles((theme: any) => {
         name: {
             display: 'flex',
             flex: 1,
-            marginRight: `${theme.spacing(2)}px`,
+            marginRight: theme.spacing(2),
             overflow: 'hidden',
             flexDirection: 'column',
             justifyContent: 'flex-start'
@@ -144,7 +142,7 @@ const useStyles = makeStyles((theme: any) => {
             },
 
             '& > *:not(:last-child)': {
-                marginRight: `${theme.spacing(2)}px`
+                marginRight: theme.spacing(2)
             },
 
             '& .jitsi-icon': {
@@ -190,8 +188,8 @@ const ListItem = ({
     testId,
     textChildren,
     trigger
-}: Props) => {
-    const styles = useStyles();
+}: IProps) => {
+    const { classes: styles, cx } = useStyles();
     const _isMobile = isMobileBrowser();
     let timeoutHandler: number;
 
@@ -204,7 +202,7 @@ const ListItem = ({
     function _onTouchStart(e: React.TouchEvent) {
         const target = e.touches[0].target;
 
-        timeoutHandler = window.setTimeout(() => onLongPress(target), 600);
+        timeoutHandler = window.setTimeout(() => onLongPress?.(target), 600);
     }
 
     /**
@@ -229,7 +227,7 @@ const ListItem = ({
 
     return (
         <div
-            className = { clsx('list-item-container',
+            className = { cx('list-item-container',
                 styles.container,
                 isHighlighted && styles.highlighted,
                 className
@@ -254,7 +252,7 @@ const ListItem = ({
                 </div>
                 {indicators && (
                     <div
-                        className = { clsx('indicators',
+                        className = { cx('indicators',
                             styles.indicators,
                             (isHighlighted || trigger === ACTION_TRIGGER.PERMANENT) && styles.indicatorsHidden
                         ) }>
@@ -263,7 +261,7 @@ const ListItem = ({
                 )}
                 {!hideActions && (
                     <div
-                        className = { clsx('actions',
+                        className = { cx('actions',
                             styles.actionsContainer,
                             trigger === ACTION_TRIGGER.PERMANENT && styles.actionsPermanent,
                             isHighlighted && styles.actionsVisible

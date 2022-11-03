@@ -9,11 +9,10 @@ import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
-import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionsMenuButton } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { TileViewButton } from '../../../video-layout';
-import { isToolboxVisible, getMovableButtons } from '../../functions.native';
+import { getMovableButtons, isToolboxVisible } from '../../functions.native';
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
 import VideoMuteButton from '../VideoMuteButton';
@@ -21,6 +20,7 @@ import VideoMuteButton from '../VideoMuteButton';
 import HangupMenuButton from './HangupMenuButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import RaiseHandButton from './RaiseHandButton';
+import ScreenSharingButton from './ScreenSharingButton';
 import styles from './styles';
 
 /**
@@ -99,7 +99,7 @@ function Toolbox(props: Props) {
                           styles = { buttonStylesBorderless }
                           toggledStyles = { backgroundToggledStyle } />
                 }
-
+                {additionalButtons.has('screensharing') && <ScreenSharingButton styles = { buttonStylesBorderless } />}
                 { additionalButtons.has('raisehand') && (_reactionsEnabled
                     ? <ReactionsMenuButton
                         styles = { buttonStylesBorderless }
@@ -108,11 +108,6 @@ function Toolbox(props: Props) {
                         styles = { buttonStylesBorderless }
                         toggledStyles = { backgroundToggledStyle } />)}
                 {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
-                {
-                    additionalButtons.has('participantspane')
-                    && <ParticipantsPaneButton
-                        styles = { buttonStylesBorderless } />
-                }
                 <OverflowMenuButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />

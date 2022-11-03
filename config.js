@@ -22,6 +22,8 @@ if (subdomain.startsWith('<!--')) {
     subdomain = '';
 }
 
+var enableJaaS = false;
+
 var config = {
     // Connection
     //
@@ -62,10 +64,6 @@ var config = {
         // Disables the End to End Encryption feature. Useful for debugging
         // issues related to insertable streams.
         // disableE2EE: false,
-
-        // Enables/disables thumbnail reordering in the filmstrip. It is enabled by default unless explicitly
-        // disabled by the below option.
-        // enableThumbnailReordering: true,
 
         // Enables XMPP WebSocket (as opposed to BOSH) for the given amount of users.
         // mobileXmppWsThreshold: 10, // enable XMPP WebSockets on mobile for 10% of the users
@@ -112,7 +110,7 @@ var config = {
 
         // Signal that this client supports receiving multiple video streams. Without this flag jicofo will enable
         // multi-stream backward compatibility.
-        receiveMultipleVideoStreams: true,
+        // receiveMultipleVideoStreams: true,
     },
 
     // Disables moderator indicators.
@@ -206,9 +204,12 @@ var config = {
 
     // Specify audio quality stereo and opusMaxAverageBitrate values in order to enable HD audio.
     // Beware, by doing so, you are disabling echo cancellation, noise suppression and AGC.
+    // Specify enableOpusDtx to enable support for opus-dtx where
+    // audio packets won’t be transmitted while participant is silent or muted.
     // audioQuality: {
     //     stereo: false,
     //     opusMaxAverageBitrate: null, // Value to fit the 6000 to 510000 range.
+    //     enableOpusDtx: false,
     // },
 
     // Video
@@ -219,9 +220,29 @@ var config = {
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
 
+    // speakerStats: {
+    //     // Specifies whether the speaker stats is enable or not.
+    //     disabled: false,
+
+    //     // Specifies whether there will be a search field in speaker stats or not.
+    //     disableSearch: false,
+
+    //     // Specifies whether participants in speaker stats should be ordered or not, and with what priority.
+    //     // 'role', <- Moderators on top.
+    //     // 'name', <- Alphabetically by name.
+    //     // 'hasLeft', <- The ones that have left in the bottom.
+    //     order: [
+    //         'role',
+    //         'name',
+    //         'hasLeft',
+    //     ],
+    // },
+
+    // DEPRECATED. Please use speakerStats.disableSearch instead.
     // Specifies whether there will be a search field in speaker stats or not
     // disableSpeakerStatsSearch: false,
 
+    // DEPRECATED. Please use speakerStats.order .
     // Specifies whether participants in speaker stats should be ordered or not, and with what priority
     // speakerStatsOrder: [
     //  'role', <- Moderators on top
@@ -372,6 +393,14 @@ var config = {
     // transcription: {
     //     // Whether the feature should be enabled or not.
     //     enabled: false,
+
+    //     // Translation languages.
+    //     // Available languages can be found in
+    //     // ./src/react/features/transcribing/translation-languages.json.
+    //     translationLanguages: ['en', 'es', 'fr', 'ro'],
+
+    //     // Important languages to show on the top of the language list.
+    //     translationLanguagesHead: ['en'],
 
     //     // If true transcriber will use the application language.
     //     // The application language is either explicitly set by participants in their settings or automatically
@@ -822,7 +851,7 @@ var config = {
     // Application ID and Secret.
     // callStatsID: '',
     // callStatsSecret: '',
-    // callstatsStoreLogs: true,
+    // callStatsApplicationLogsDisabled: false,
 
     // The callstats initialize config params as described in the API:
     // https://docs.callstats.io/docs/javascript#callstatsinitialize-with-app-secret
@@ -1161,7 +1190,7 @@ var config = {
         // For a list of all possible theme tokens and their current defaults, please check:
         // https://github.com/jitsi/jitsi-meet/tree/master/resources/custom-theme/custom-theme.json
         // For a short explanations on each of the tokens, please check:
-        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.js
+        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.ts
         // IMPORTANT!: This is work in progress so many of the various tokens are not yet applied in code
         // or they are partially applied.
         customTheme: {
@@ -1287,11 +1316,6 @@ var config = {
     // {"countryCode":"US","tollFree":false,"formattedNumber":"+1 123-456-7890"}
     // dialInConfCodeUrl is the conference mapper converting a meeting id to a PIN used for dial-in
     // or the other way around (more info in resources/cloud-api.swagger)
-    //
-    // For JaaS customers the default values are:
-    // dialInNumbersUrl: 'https://conference-mapper.jitsi.net/v1/access/dids',
-    // dialInConfCodeUrl: 'https://conference-mapper.jitsi.net/v1/access',
-    //
 
     // List of undocumented settings used in jitsi-meet
     /**
@@ -1444,6 +1468,10 @@ var config = {
     //     // (displaying multiple participants on stage besides the vertical filmstrip)
     //     disableStageFilmstrip: false,
 
+    //     // Default number of participants that can be displayed on stage.
+    //     // The user can change this in settings. Number must be between 1 and 6.
+    //     stageFilmstripParticipants: 1,
+
     //     // Disables the top panel (only shown when a user is sharing their screen).
     //     disableTopPanel: false,
 
@@ -1475,6 +1503,8 @@ var config = {
     //     displayMode: 'all',
     //     // How long the GIF should be displayed on the tile (in milliseconds).
     //     tileTime: 5000,
+    //     // Limit results by rating: g, pg, pg-13, r. Default value: g.
+    //     rating: 'pg',
     // },
 
     // Logging
@@ -1493,4 +1523,20 @@ var config = {
 
     // Application logo url
     // defaultLogoUrl: 'images/watermark.svg',
+
+    // Settings for the Excalidraw whiteboard integration.
+    // whiteboard: {
+    //     // Whether the feature is enabled or not.
+    //     enabled: true,
+    //     // The server used to support whiteboard collaboration.
+    //     // https://github.com/jitsi/excalidraw-backend
+    //     collabServerBaseUrl: 'https://excalidraw-backend.example.com',
+    // },
 };
+
+// Set the default values for JaaS customers
+if (enableJaaS) {
+    config.dialInNumbersUrl = 'https://conference-mapper.jitsi.net/v1/access/dids';
+    config.dialInConfCodeUrl = 'https://conference-mapper.jitsi.net/v1/access';
+    config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)
+}

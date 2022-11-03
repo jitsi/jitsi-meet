@@ -2,27 +2,26 @@ import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
+    CLEAR_STAGE_PARTICIPANTS,
     REMOVE_STAGE_PARTICIPANT,
-    SET_STAGE_PARTICIPANTS,
     SET_FILMSTRIP_ENABLED,
+    SET_FILMSTRIP_HEIGHT,
     SET_FILMSTRIP_VISIBLE,
     SET_FILMSTRIP_WIDTH,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_REMOTE_PARTICIPANTS,
+    SET_SCREENSHARE_FILMSTRIP_PARTICIPANT,
+    SET_SCREENSHARING_TILE_DIMENSIONS,
     SET_STAGE_FILMSTRIP_DIMENSIONS,
+    SET_STAGE_PARTICIPANTS,
     SET_TILE_VIEW_DIMENSIONS,
+    SET_TOP_PANEL_VISIBILITY,
+    SET_USER_FILMSTRIP_HEIGHT,
     SET_USER_FILMSTRIP_WIDTH,
     SET_USER_IS_RESIZING,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
-    SET_VOLUME,
-    SET_MAX_STAGE_PARTICIPANTS,
-    CLEAR_STAGE_PARTICIPANTS,
-    SET_SCREENSHARING_TILE_DIMENSIONS,
-    SET_USER_FILMSTRIP_HEIGHT,
-    SET_FILMSTRIP_HEIGHT,
-    SET_TOP_PANEL_VISIBILITY,
-    SET_SCREENSHARE_FILMSTRIP_PARTICIPANT
+    SET_VOLUME
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -55,14 +54,6 @@ const DEFAULT_STATE = {
      * @type {boolean}
      */
     isResizing: false,
-
-    /**
-     * The current max number of participants to be displayed on the stage filmstrip.
-     *
-     * @public
-     * @type {Number}
-     */
-    maxStageParticipants: 1,
 
     /**
      * The custom audio volume levels per participant.
@@ -187,36 +178,35 @@ const DEFAULT_STATE = {
     }
 };
 
-interface Dimensions {
+interface IDimensions {
     height: number;
     width: number;
 }
 
-interface FilmstripDimensions {
+interface IFilmstripDimensions {
     filmstripHeight?: number;
     filmstripWidth?: number;
     gridDimensions?: {
         columns: number;
         rows: number;
-    }
+    };
     hasScroll?: boolean;
-    thumbnailSize?: Dimensions;
+    thumbnailSize?: IDimensions;
 }
 
 export interface IFilmstripState {
     activeParticipants: Array<{
         participantId: string;
-        pinned?: boolean
+        pinned?: boolean;
     }>;
     enabled: boolean;
     horizontalViewDimensions: {
         hasScroll?: boolean;
-        local?: Dimensions;
-        remote?: Dimensions;
-        remoteVideosContainer?: Dimensions;
+        local?: IDimensions;
+        remote?: IDimensions;
+        remoteVideosContainer?: IDimensions;
     };
     isResizing: boolean;
-    maxStageParticipants: number;
     participantsVolume: {
         [participantId: string]: number;
     };
@@ -224,14 +214,14 @@ export interface IFilmstripState {
     screenshareFilmstripDimensions: {
         filmstripHeight?: number;
         filmstripWidth?: number;
-        thumbnailSize?: Dimensions;
+        thumbnailSize?: IDimensions;
     };
-    screenshareFilmstripParticipantId?: string|null;
-    stageFilmstripDimensions: FilmstripDimensions;
-    tileViewDimensions?: FilmstripDimensions;
+    screenshareFilmstripParticipantId?: string | null;
+    stageFilmstripDimensions: IFilmstripDimensions;
+    tileViewDimensions?: IFilmstripDimensions;
     topPanelHeight: {
-        current: number|null;
-        userSet: number|null;
+        current: number | null;
+        userSet: number | null;
     };
     topPanelVisible: boolean;
     verticalViewDimensions: {
@@ -241,21 +231,21 @@ export interface IFilmstripState {
                 rows: number;
             };
             hasScroll: boolean;
-            thumbnailSize: Dimensions;
+            thumbnailSize: IDimensions;
         };
         hasScroll?: boolean;
-        local?: Dimensions;
-        remote?: Dimensions;
-        remoteVideosContainer?: Dimensions;
+        local?: IDimensions;
+        remote?: IDimensions;
+        remoteVideosContainer?: IDimensions;
     };
     visible: boolean;
     visibleParticipantsEndIndex: number;
     visibleParticipantsStartIndex: number;
     visibleRemoteParticipants: Set<string>;
     width: {
-        current: number|null;
-        userSet: number|null;
-    }
+        current: number | null;
+        userSet: number | null;
+    };
 }
 
 ReducerRegistry.register<IFilmstripState>(
@@ -395,12 +385,6 @@ ReducerRegistry.register<IFilmstripState>(
             return {
                 ...state,
                 activeParticipants: state.activeParticipants.filter(p => p.participantId !== action.participantId)
-            };
-        }
-        case SET_MAX_STAGE_PARTICIPANTS: {
-            return {
-                ...state,
-                maxStageParticipants: action.maxParticipants
             };
         }
         case CLEAR_STAGE_PARTICIPANTS: {

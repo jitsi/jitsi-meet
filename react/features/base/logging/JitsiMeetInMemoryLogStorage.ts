@@ -35,7 +35,7 @@ export default class JitsiMeetInMemoryLogStorage {
      * representing log lines or aggregated lines objects.
      * @returns {void}
      */
-    storeLogs(logEntries: (string|{text: string})[]) {
+    storeLogs(logEntries: (string | { text: string; })[]) {
         for (let i = 0, len = logEntries.length; i < len; i++) {
             const logEntry = logEntries[i];
 

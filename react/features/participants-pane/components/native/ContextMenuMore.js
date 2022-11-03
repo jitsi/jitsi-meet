@@ -11,10 +11,10 @@ import {
     requestEnableVideoModeration
 } from '../../../av-moderation/actions';
 import {
-    isSupported as isAvModerationSupported,
-    isEnabled as isAvModerationEnabled
+    isEnabled as isAvModerationEnabled,
+    isSupported as isAvModerationSupported
 } from '../../../av-moderation/functions';
-import { openDialog, hideSheet } from '../../../base/dialog/actions';
+import { hideSheet, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
     Icon,

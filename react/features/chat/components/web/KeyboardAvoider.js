@@ -1,13 +1,8 @@
 // @flow
 
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 
 import { isIosMobileBrowser } from '../../../base/environment/utils';
-
-const Avoider = styled.div`
-    height: ${props => props.elementHeight}px;
-`;
 
 /**
  * Component that renders an element to lift the chat input above the Safari keyboard,
@@ -54,7 +49,7 @@ function KeyboardAvoider() {
         };
     }, []);
 
-    return <Avoider elementHeight = { elementHeight } />;
+    return <div style = {{ height: `${elementHeight}px` }} />;
 }
 
 export default KeyboardAvoider;

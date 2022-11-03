@@ -5,7 +5,7 @@ import { Image, Text, View } from 'react-native';
 
 import { Icon } from '../../../icons';
 import { type StyleType } from '../../../styles';
-import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
+import AbstractStatelessAvatar, { type IProps as AbstractProps } from '../AbstractStatelessAvatar';
 
 import styles from './styles';
 

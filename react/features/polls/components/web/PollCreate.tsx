@@ -1,25 +1,24 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
-import { IconMenu } from '../../../base/icons/svg/index';
+import { IconMenu } from '../../../base/icons/svg';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
-import { Theme } from '../../../base/ui/types';
-// @ts-ignore
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 // @ts-ignore
 import AbstractPollCreate from '../AbstractPollCreate';
 // @ts-ignore
 import type { AbstractProps } from '../AbstractPollCreate';
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         buttonMargin: {
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         }
     };
 });
@@ -37,7 +36,7 @@ const PollCreate = ({
     setQuestion,
     t
 }: AbstractProps) => {
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
@@ -59,7 +58,7 @@ const PollCreate = ({
      * This state allows us to requestFocus asynchronously, without having to worry
      * about whether a newly created input field has been rendered yet or not.
      */
-    const [ lastFocus, requestFocus ] = useState<number|null>(null);
+    const [ lastFocus, requestFocus ] = useState<number | null>(null);
 
     useEffect(() => {
         if (lastFocus === null) {

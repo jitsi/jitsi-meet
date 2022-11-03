@@ -80,6 +80,7 @@
         },
         "noMessagesMessage": "Det finns ännu inga meddelanden i mötet. Påbörja en konversation!",
         "privateNotice": "Privat meddelande till {{recipient}}",
+        "sendButton": "Skicka",
         "smileysPanel": "Emoji panel",
         "tabs": {
             "chat": "Chat",
@@ -122,7 +123,6 @@
         "bridgeCount": "Serverantal: ",
         "codecs": "Codecs (A/V):",
         "connectedTo": "Ansluten till:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Bildfrekvens:",
         "less": "Visa mindre",
         "localaddress": "Lokal adress:",
@@ -401,7 +401,7 @@
         "veryGood": "Mycket bra"
     },
     "helpView": {
-        "header": "Hjälpcenter"
+        "title": "Hjälpcenter"
     },
     "incomingCall": {
         "answer": "Svara",
@@ -510,6 +510,7 @@
         "signedInAs": "Du är nu inloggad som:",
         "start": "Starta en livesändning",
         "streamIdHelp": "Vad är det här?",
+        "title": "Livesändning",
         "unavailableTitle": "Livesändning otillgänglig",
         "youtubeTerms": "Tjänstevillkor för YouTube"
     },
@@ -548,6 +549,7 @@
         "passwordJoinButton": "Anslut",
         "reject": "Avvisa",
         "rejectAll": "Avvisa alla",
+        "title": "Väntrum",
         "toggleLabel": "Aktivera väntrum"
     },
     "localRecording": {
@@ -656,12 +658,12 @@
             "unblockEveryoneMicCamera": "Aktivera allas mikrofon och kamera"
         },
         "close": "Stäng",
-        "header": "Deltagare",
         "headings": {
             "lobby": "Väntrum ({{count}})",
             "participantsList": "Mötesdeltagare ({{count}})",
             "waitingLobby": "Väntar i väntrum ({{count}})"
-        }
+        },
+        "title": "Deltagare"
     },
     "passwordDigitsOnly": "Ange max {{number}} siffror",
     "passwordSetRemotely": "satt av en annan deltagare",
@@ -804,6 +806,7 @@
         "serviceName": "Inspelningstjänst",
         "signIn": "Logga in",
         "signOut": "Logga ut",
+        "title": "Inspelning",
         "unavailable": "{{serviceName}} är inte tillgänglig. Vi försöker åtgärda felet. Försök igen senare.",
         "unavailableTitle": "Inspelning kan inte göras",
         "uploadToCloud": "Ladda upp till molnet"

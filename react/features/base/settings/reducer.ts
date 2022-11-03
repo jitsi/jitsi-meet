@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
@@ -26,6 +25,7 @@ const DEFAULT_STATE: ISettingsState = {
     displayName: undefined,
     email: undefined,
     localFlipX: true,
+    maxStageParticipants: 1,
     micDeviceId: undefined,
     serverURL: undefined,
     hideShareAudioHelper: false,
@@ -36,6 +36,7 @@ const DEFAULT_STATE: ISettingsState = {
     soundsTalkWhileMuted: true,
     soundsReactions: true,
     startAudioOnly: false,
+    startCarMode: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
     userSelectedAudioOutputDeviceId: undefined,
@@ -51,19 +52,21 @@ const DEFAULT_STATE: ISettingsState = {
 };
 
 export interface ISettingsState {
-    audioOutputDeviceId?: string|boolean;
-    avatarURL?: string|boolean;
-    cameraDeviceId?: string|boolean;
+    audioOutputDeviceId?: string | boolean;
+    audioSettingsVisible?: boolean;
+    avatarURL?: string;
+    cameraDeviceId?: string | boolean;
     disableCallIntegration?: boolean;
     disableCrashReporting?: boolean;
     disableP2P?: boolean;
     disableSelfView?: boolean;
-    displayName?: string|boolean;
-    email?: string|boolean;
+    displayName?: string;
+    email?: string;
     hideShareAudioHelper?: boolean;
     localFlipX?: boolean;
-    micDeviceId?: string|boolean;
-    serverURL?: string|boolean;
+    maxStageParticipants?: number;
+    micDeviceId?: string | boolean;
+    serverURL?: string;
     soundsIncomingMessage?: boolean;
     soundsParticipantJoined?: boolean;
     soundsParticipantKnocking?: boolean;
@@ -71,18 +74,20 @@ export interface ISettingsState {
     soundsReactions?: boolean;
     soundsTalkWhileMuted?: boolean;
     startAudioOnly?: boolean;
+    startCarMode?: boolean;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;
-    userSelectedAudioOutputDeviceId?: string|boolean;
-    userSelectedAudioOutputDeviceLabel?: string|boolean;
-    userSelectedCameraDeviceId?: string|boolean;
-    userSelectedCameraDeviceLabel?: string|boolean;
-    userSelectedMicDeviceId?: string|boolean;
-    userSelectedMicDeviceLabel?: string|boolean;
+    userSelectedAudioOutputDeviceId?: string;
+    userSelectedAudioOutputDeviceLabel?: string;
+    userSelectedCameraDeviceId?: string;
+    userSelectedCameraDeviceLabel?: string;
+    userSelectedMicDeviceId?: string;
+    userSelectedMicDeviceLabel?: string;
     userSelectedNotifications?: {
         [key: string]: boolean;
-    }|boolean,
+    };
     userSelectedSkipPrejoin?: boolean;
+    videoSettingsVisible?: boolean;
     visible?: boolean;
 }
 
@@ -97,6 +102,7 @@ const filterSubtree: ISettingsState = {};
 Object.keys(DEFAULT_STATE).forEach(key => {
     const key1 = key as keyof typeof filterSubtree;
 
+    // @ts-ignore
     filterSubtree[key1] = true;
 });
 

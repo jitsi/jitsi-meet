@@ -1,64 +1,64 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    TOGGLE_REACTIONS_VISIBLE,
-    SET_REACTION_QUEUE,
     ADD_REACTION_BUFFER,
     FLUSH_REACTION_BUFFER,
-    SHOW_SOUNDS_NOTIFICATION
+    SET_REACTION_QUEUE,
+    SHOW_SOUNDS_NOTIFICATION,
+    TOGGLE_REACTIONS_VISIBLE
 } from './actionTypes';
-import { ReactionEmojiProps } from './constants';
+import { IReactionEmojiProps } from './constants';
 
 export interface IReactionsState {
 
     /**
      * An array that contains the reactions buffer to be sent.
      */
-    buffer: Array<string>,
+    buffer: Array<string>;
 
     /**
      * Whether or not the disable reaction sounds notification was shown.
      */
-    notificationDisplayed: boolean,
+    notificationDisplayed: boolean;
 
     /**
     * The array of reactions to animate.
     */
-    queue: Array<ReactionEmojiProps>,
+    queue: Array<IReactionEmojiProps>;
 
     /**
      * A number, non-zero value which identifies the timer created by a call
      * to setTimeout().
      */
-    timeoutID: number|null,
+    timeoutID: number | null;
 
     /**
      * The indicator that determines whether the reactions menu is visible.
      */
-    visible: boolean
+    visible: boolean;
 }
 
-export interface ReactionsAction extends Partial<IReactionsState> {
+export interface IReactionsAction extends Partial<IReactionsState> {
 
     /**
      * The message to be added to the chat.
      */
-    message?: string,
+    message?: string;
 
     /**
      * The reaction to be added to buffer.
      */
-    reaction?: string,
+    reaction?: string;
 
     /**
      * The reactions to be added to the animation queue.
      */
-    reactions?: Array<string>,
+    reactions?: Array<string>;
 
     /**
      * The action type.
      */
-    type: string
+    type: string;
 }
 
 /**
@@ -79,7 +79,7 @@ function _getInitialState(): IReactionsState {
 
 ReducerRegistry.register<IReactionsState>(
     'features/reactions',
-    (state = _getInitialState(), action: ReactionsAction): IReactionsState => {
+    (state = _getInitialState(), action: IReactionsAction): IReactionsState => {
         switch (action.type) {
 
         case TOGGLE_REACTIONS_VISIBLE:

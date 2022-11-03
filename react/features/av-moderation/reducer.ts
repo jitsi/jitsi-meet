@@ -4,6 +4,7 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
 } from '../base/participants/actionTypes';
+import { IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -29,13 +30,13 @@ const initialState = {
 
 export interface IAVModerationState {
     audioModerationEnabled: boolean;
-    audioUnmuteApproved?: boolean|undefined;
-    audioWhitelist: { [id: string]: boolean };
-    pendingAudio: Array<{ id: string }>;
-    pendingVideo: Array<{ id: string }>;
+    audioUnmuteApproved?: boolean | undefined;
+    audioWhitelist: { [id: string]: boolean; };
+    pendingAudio: Array<{ id: string; }>;
+    pendingVideo: Array<{ id: string; }>;
     videoModerationEnabled: boolean;
-    videoUnmuteApproved?: boolean|undefined;
-    videoWhitelist: { [id: string]: boolean };
+    videoUnmuteApproved?: boolean | undefined;
+    videoWhitelist: { [id: string]: boolean; };
 }
 
 /**
@@ -47,11 +48,11 @@ export interface IAVModerationState {
  * @private
  * @returns {boolean} - Whether state instance was modified.
  */
-function _updatePendingParticipant(mediaType: MediaType, participant: any, state: any = {}) {
+function _updatePendingParticipant(mediaType: MediaType, participant: IParticipant, state: IAVModerationState) {
     let arrayItemChanged = false;
     const storeKey = MEDIA_TYPE_TO_PENDING_STORE_KEY[mediaType];
     const arr = state[storeKey];
-    const newArr = arr.map((pending: { id: string}) => {
+    const newArr = arr.map((pending: { id: string; }) => {
         if (pending.id === participant.id) {
             arrayItemChanged = true;
 

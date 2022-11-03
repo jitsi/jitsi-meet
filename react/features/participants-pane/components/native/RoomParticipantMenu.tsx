@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 // @ts-ignore
@@ -12,7 +12,6 @@ import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import { getBreakoutRooms } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import SendToBreakoutRoom from '../../../video-menu/components/native/SendToBreakoutRoom';
@@ -24,44 +23,44 @@ import styles from '../../../video-menu/components/native/styles';
  */
 const AVATAR_SIZE = 24;
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The list of all breakout rooms.
      */
-    _rooms: Array<any>,
+    _rooms: Array<any>;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * The jid of the selected participant.
      */
-    participantJid: string,
+    participantJid: string;
 
     /**
      * The display name of the selected participant.
      */
-    participantName: string,
+    participantName: string;
 
     /**
      * The room the participant is in.
      */
-    room: any
+    room: any;
 }
 
 /**
  * Class to implement a popup menu that opens upon long pressing a thumbnail.
  */
-class RoomParticipantMenu extends PureComponent<Props> {
+class RoomParticipantMenu extends PureComponent<IProps> {
     /**
      * Constructor of the component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onCancel = this._onCancel.bind(this);
@@ -138,9 +137,9 @@ class RoomParticipantMenu extends PureComponent<Props> {
  *
  * @param {Object} state - Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _rooms: Object.values(getBreakoutRooms(state))
     };

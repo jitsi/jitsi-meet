@@ -1,26 +1,26 @@
 import { PureComponent } from 'react';
 
-export type Props = {
+export interface IProps {
 
     /**
      * Color of the (initials based) avatar, if needed.
      */
-    color?: string,
+    color?: string;
 
     /**
      * Initials to be used to render the initials based avatars.
      */
-    initials?: string,
+    initials?: string;
 
     /**
      * Callback to signal the failure of the loading of the URL.
      */
-    onAvatarLoadError?: Function,
+    onAvatarLoadError?: Function;
 
     /**
      * Additional parameters to be passed to onAvatarLoadError function.
      */
-    onAvatarLoadErrorParams?: Object,
+    onAvatarLoadErrorParams?: Object;
 
     /**
      * Expected size of the avatar.
@@ -30,14 +30,14 @@ export type Props = {
     /**
      * The URL of the avatar to render.
      */
-    url?: string|Function
-};
+    url?: string | Function;
+}
 
 /**
  * Implements an abstract stateless avatar component that renders an avatar purely from what gets passed through
  * props.
  */
-export default class AbstractStatelessAvatar<P extends Props> extends PureComponent<P> {
+export default class AbstractStatelessAvatar<P extends IProps> extends PureComponent<P> {
     /**
      * Checks if the passed prop is a loaded icon or not.
      *

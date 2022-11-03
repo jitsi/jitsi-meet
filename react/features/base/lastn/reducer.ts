@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import {
     SET_CONFIG
 } from '../config/actionTypes';
@@ -7,7 +6,6 @@ import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
 
 import { SET_LAST_N } from './actionTypes';
-// @ts-ignore
 import { validateLastNLimits } from './functions';
 
 export interface ILastNState {
@@ -42,6 +40,6 @@ ReducerRegistry.register<ILastNState>('features/base/lastn', (state = {}, action
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _setConfig(state: ILastNState, { config }: {config: IConfig}) {
+function _setConfig(state: ILastNState, { config }: { config: IConfig; }) {
     return set(state, 'lastNLimits', validateLastNLimits(config.lastNLimits));
 }

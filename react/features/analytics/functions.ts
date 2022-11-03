@@ -1,25 +1,20 @@
-/* eslint-disable lines-around-comment */
-// @ts-ignore
+// @ts-expect-error
 import { API_ID } from '../../../modules/API/constants';
-// @ts-ignore
 import { getName as getAppName } from '../app/functions';
 import { IStore } from '../app/types';
-// @ts-ignore
-import { getAnalyticsRoomName } from '../base/conference';
+import { getAnalyticsRoomName } from '../base/conference/functions';
+import checkChromeExtensionsInstalled from '../base/environment/checkChromeExtensionsInstalled';
 import {
-    checkChromeExtensionsInstalled,
     isMobileBrowser
 } from '../base/environment/utils';
 import JitsiMeetJS, {
     analytics,
     browser
 } from '../base/lib-jitsi-meet';
-// @ts-ignore
-import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions';
-// @ts-ignore
-import { loadScript } from '../base/util';
+import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions.any';
 import { getJitsiMeetGlobalNS } from '../base/util/helpers';
 import { inIframe } from '../base/util/iframeUtils';
+import { loadScript } from '../base/util/loadScript';
 import { parseURIString } from '../base/util/uri';
 
 import AmplitudeHandler from './handlers/AmplitudeHandler';
@@ -67,7 +62,7 @@ export function resetAnalytics() {
  * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
  * @returns {Promise} Resolves with the handlers that have been successfully loaded.
  */
-export async function createHandlers({ getState }: { getState: Function }) {
+export async function createHandlers({ getState }: { getState: Function; }) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
 
     if (!isAnalyticsEnabled(getState)) {
@@ -98,15 +93,15 @@ export async function createHandlers({ getState }: { getState: Function }) {
     const handlerConstructorOptions = {
         amplitudeAPPKey,
         blackListedEvents,
-        envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
+        envType: deploymentInfo?.envType || 'dev',
         googleAnalyticsTrackingId,
         matomoEndpoint,
         matomoSiteID,
         group,
         host,
-        product: deploymentInfo && deploymentInfo.product,
-        subproduct: deploymentInfo && deploymentInfo.environment,
-        user: user && user.id,
+        product: deploymentInfo?.product,
+        subproduct: deploymentInfo?.environment,
+        user: user?.id,
         version: JitsiMeetJS.version,
         whiteListedEvents
     };
@@ -260,7 +255,7 @@ function _loadHandlers(scriptURLs: any[] = [], handlerConstructorOptions: Object
 
     return Promise.all(promises).then(values => {
         for (const el of values) {
-            if (el.type === 'error') {
+            if (el.type === 'error') { // @ts-ignore
                 logger.warn(`Failed to load ${el.url}: ${el.error}`);
             }
         }

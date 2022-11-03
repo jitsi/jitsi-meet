@@ -1,4 +1,6 @@
-import { applyMiddleware, Middleware } from 'redux';
+import { Middleware, applyMiddleware } from 'redux';
+
+import { IReduxState, IStore } from '../../app/types';
 
 /**
  * A registry for Redux middleware, allowing features to register their
@@ -40,7 +42,7 @@ class MiddlewareRegistry {
      * @param {Middleware} middleware - A Redux middleware.
      * @returns {void}
      */
-    register(middleware: Middleware<any, any>) {
+    register(middleware: Middleware<any, IReduxState, IStore['dispatch']>) {
         this._elements.push(middleware);
     }
 }

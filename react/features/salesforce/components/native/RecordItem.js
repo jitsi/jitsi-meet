@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, TouchableHighlight } from 'react-native';
+import { Text, TouchableHighlight, View } from 'react-native';
 
 import { Icon } from '../../../base/icons';
 import { RECORD_TYPE } from '../../constants';

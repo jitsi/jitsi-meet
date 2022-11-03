@@ -31,12 +31,12 @@ import com.facebook.react.common.LifecycleState;
 import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
+import com.oney.WebRTCModule.EglUtils;
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
 import org.devio.rn.splashscreen.SplashScreenModule;
-import org.webrtc.SoftwareVideoDecoderFactory;
-import org.webrtc.SoftwareVideoEncoderFactory;
+import org.webrtc.EglBase;
 import org.webrtc.audio.AudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule;
 
@@ -85,11 +85,14 @@ class ReactInstanceManagerHolder {
         WebRTCModule.Options options = new WebRTCModule.Options();
 
         AudioDeviceModule adm = JavaAudioDeviceModule.builder(reactContext)
+            .setEnableVolumeLogger(false)
             .createAudioDeviceModule();
         options.setAudioDeviceModule(adm);
 
-        options.setVideoDecoderFactory(new SoftwareVideoDecoderFactory());
-        options.setVideoEncoderFactory(new SoftwareVideoEncoderFactory());
+        EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
+
+        options.setVideoDecoderFactory(new WebRTCVideoDecoderFactory(eglContext));
+        options.setVideoEncoderFactory(new WebRTCVideoEncoderFactory(eglContext));
 
         nativeModules.add(new WebRTCModule(reactContext, options));
 
@@ -128,6 +131,7 @@ class ReactInstanceManagerHolder {
             new com.zmxv.RNSound.RNSoundPackage(),
             new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
             new com.horcrux.svg.SvgPackage(),
+            new org.wonday.orientation.OrientationPackage(),
             new ReactPackageAdapter() {
                 @Override
                 public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {

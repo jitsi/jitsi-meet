@@ -1,11 +1,12 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
+    UPDATE_BREAKOUT_ROOMS,
     _RESET_BREAKOUT_ROOMS,
-    _UPDATE_ROOM_COUNTER,
-    UPDATE_BREAKOUT_ROOMS
+    _UPDATE_ROOM_COUNTER
 } from './actionTypes';
 import { FEATURE_KEY } from './constants';
+import { IRooms } from './types';
 
 const DEFAULT_STATE = {
     rooms: {},
@@ -14,21 +15,7 @@ const DEFAULT_STATE = {
 
 export interface IBreakoutRoomsState {
     roomCounter: number;
-    rooms: {
-        [id: string]: {
-            id: string;
-            isMainRoom?: boolean;
-            jid: string;
-            name: string;
-            participants: {
-                [jid: string]: {
-                    displayName: string;
-                    jid: string;
-                    role: string;
-                }
-            }
-        }
-    };
+    rooms: IRooms;
 }
 
 /**

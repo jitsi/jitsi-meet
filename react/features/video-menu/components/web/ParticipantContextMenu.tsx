@@ -1,37 +1,31 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
+
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
-// @ts-ignore
+import { IReduxState } from '../../../app/types';
 import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
-import { IconShareVideo } from '../../../base/icons/svg/index';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
-// @ts-ignore
-import { isParticipantAudioMuted } from '../../../base/tracks';
-// @ts-ignore
+import { IParticipant } from '../../../base/participants/types';
+import { isParticipantAudioMuted } from '../../../base/tracks/functions';
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import { setVolume } from '../../../filmstrip/actions.web';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
-// @ts-ignore
 import { isForceMuted } from '../../../participants-pane/functions';
 // @ts-ignore
 import { requestRemoteControl, stopController } from '../../../remote-control';
-// @ts-ignore
-import { stopSharedVideo } from '../../../shared-video/actions.any';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 
 // @ts-ignore
@@ -43,11 +37,11 @@ import {
     AskToUnmuteButton,
     ConnectionStatusButton,
     GrantModeratorButton,
+    KickButton,
     MuteButton,
     MuteEveryoneElseButton,
     MuteEveryoneElsesVideoButton,
     MuteVideoButton,
-    KickButton,
     PrivateMessageMenuButton,
     RemoteControlButton,
     TogglePinToStageButton,
@@ -55,17 +49,17 @@ import {
     // @ts-ignore
 } from './';
 
-type Props = {
+interface IProps {
 
     /**
      * Class name for the context menu.
      */
-    className?: string,
+    className?: string;
 
     /**
      * Closes a drawer if open.
      */
-    closeDrawer?: () => void,
+    closeDrawer?: () => void;
 
     /**
      * The participant for which the drawer is open.
@@ -74,50 +68,45 @@ type Props = {
     drawerParticipant?: {
         displayName: string;
         participantID: string;
-    },
-
-    /**
-     * Shared video local participant owner.
-     */
-    localVideoOwner?: boolean,
+    };
 
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget?: HTMLElement,
+    offsetTarget?: HTMLElement;
 
     /**
      * Callback for the mouse entering the component.
      */
-    onEnter?: (e?: React.MouseEvent) => void,
+    onEnter?: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for the mouse leaving the component.
      */
-    onLeave?: (e?: React.MouseEvent) => void,
+    onLeave?: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for making a selection in the menu.
      */
-    onSelect: (value?: boolean | React.MouseEvent) => void,
+    onSelect: (value?: boolean | React.MouseEvent) => void;
 
     /**
      * Participant reference.
      */
-    participant: Participant,
+    participant: IParticipant;
 
     /**
      * The current state of the participant's remote control session.
      */
-    remoteControlState?: number,
+    remoteControlState?: number;
 
     /**
      * Whether or not the menu is displayed in the thumbnail remote video menu.
      */
-    thumbnailMenu?: boolean
+    thumbnailMenu?: boolean;
 }
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         text: {
             color: theme.palette.text02,
@@ -135,7 +124,6 @@ const ParticipantContextMenu = ({
     className,
     closeDrawer,
     drawerParticipant,
-    localVideoOwner,
     offsetTarget,
     onEnter,
     onLeave,
@@ -143,42 +131,37 @@ const ParticipantContextMenu = ({
     participant,
     remoteControlState,
     thumbnailMenu
-}: Props) => {
+}: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     const localParticipant = useSelector(getLocalParticipant);
     const _isModerator = Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR);
-    const _isAudioForceMuted = useSelector(state =>
+    const _isAudioForceMuted = useSelector<IReduxState>(state =>
         isForceMuted(participant, MEDIA_TYPE.AUDIO, state));
-    const _isVideoForceMuted = useSelector(state =>
+    const _isVideoForceMuted = useSelector<IReduxState>(state =>
         isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
-    const _isAudioMuted = useSelector(state => isParticipantAudioMuted(participant, state));
+    const _isAudioMuted = useSelector((state: IReduxState) => isParticipantAudioMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent }
-        = useSelector((state: IState) => state['features/base/config']);
+        = useSelector((state: IReduxState) => state['features/base/config']);
     const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
-    const { participantsVolume } = useSelector((state: IState) => state['features/filmstrip']);
+    const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
-    const isModerationSupported = useSelector(isAvModerationSupported);
+    const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
 
     const _currentRoomId = useSelector(getCurrentRoomId);
-    const _rooms: Array<{id: string}> = Object.values(useSelector(getBreakoutRooms));
+    const _rooms: Array<{ id: string; }> = Object.values(useSelector(getBreakoutRooms));
 
     const _onVolumeChange = useCallback(value => {
         dispatch(setVolume(participant.id, value));
     }, [ setVolume, dispatch ]);
 
     const clickHandler = useCallback(() => onSelect(true), [ onSelect ]);
-
-    const _onStopSharedVideo = useCallback(() => {
-        clickHandler();
-        dispatch(stopSharedVideo());
-    }, [ stopSharedVideo ]);
 
     const _getCurrentParticipantId = useCallback(() => {
         const drawer = _overflowDrawer && !thumbnailMenu;
@@ -195,13 +178,6 @@ const ParticipantContextMenu = ({
         && (_overflowDrawer || thumbnailMenu)
         && typeof _volume === 'number'
         && !isNaN(_volume);
-
-    const fakeParticipantActions = [ {
-        accessibilityLabel: t('toolbar.stopSharedVideo'),
-        icon: IconShareVideo,
-        onClick: _onStopSharedVideo,
-        text: t('toolbar.stopSharedVideo')
-    } ];
 
     if (_isModerator) {
         if ((thumbnailMenu || _overflowDrawer) && isModerationSupported && _isAudioMuted) {
@@ -327,36 +303,29 @@ const ParticipantContextMenu = ({
                         size = { 20 } />,
                     text: drawerParticipant.displayName
                 } ] } />}
-            {participant?.isFakeParticipant ? localVideoOwner && (
-                <ContextMenuItemGroup
-                    actions = { fakeParticipantActions } />
-            ) : (
-                <>
-                    {buttons.length > 0 && (
-                        <ContextMenuItemGroup>
-                            {buttons}
-                        </ContextMenuItemGroup>
-                    )}
-                    <ContextMenuItemGroup>
-                        {buttons2}
-                    </ContextMenuItemGroup>
-                    {showVolumeSlider && (
-                        <ContextMenuItemGroup>
-                            <VolumeSlider
-                                initialValue = { _volume }
-                                key = 'volume-slider'
-                                onChange = { _onVolumeChange } />
-                        </ContextMenuItemGroup>
-                    )}
-                    {breakoutRoomsButtons.length > 0 && (
-                        <ContextMenuItemGroup>
-                            <div className = { styles.text }>
-                                {t('breakoutRooms.actions.sendToBreakoutRoom')}
-                            </div>
-                            {breakoutRoomsButtons}
-                        </ContextMenuItemGroup>
-                    )}
-                </>
+            {buttons.length > 0 && (
+                <ContextMenuItemGroup>
+                    {buttons}
+                </ContextMenuItemGroup>
+            )}
+            <ContextMenuItemGroup>
+                {buttons2}
+            </ContextMenuItemGroup>
+            {showVolumeSlider && (
+                <ContextMenuItemGroup>
+                    <VolumeSlider
+                        initialValue = { _volume }
+                        key = 'volume-slider'
+                        onChange = { _onVolumeChange } />
+                </ContextMenuItemGroup>
+            )}
+            {breakoutRoomsButtons.length > 0 && (
+                <ContextMenuItemGroup>
+                    <div className = { styles.text }>
+                        {t('breakoutRooms.actions.sendToBreakoutRoom')}
+                    </div>
+                    {breakoutRoomsButtons}
+                </ContextMenuItemGroup>
             )}
         </ContextMenu>
     );

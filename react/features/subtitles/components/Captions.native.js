@@ -6,9 +6,9 @@ import { Container, Text } from '../../base/react';
 import { connect } from '../../base/redux';
 
 import {
-    _abstractMapStateToProps,
     AbstractCaptions,
-    type AbstractCaptionsProps
+    type AbstractCaptionsProps,
+    _abstractMapStateToProps
 } from './AbstractCaptions';
 import styles from './styles';
 

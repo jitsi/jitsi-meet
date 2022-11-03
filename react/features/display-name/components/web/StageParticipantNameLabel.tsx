@@ -1,25 +1,28 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
+
+import { Theme } from '@mui/material';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
-// @ts-ignore
+import { IReduxState } from '../../../app/types';
 import { isDisplayNameVisible } from '../../../base/config/functions.any';
-import { getLocalParticipant, getParticipantDisplayName } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import {
+    getLocalParticipant,
+    getParticipantDisplayName,
+    isWhiteboardParticipant
+} from '../../../base/participants/functions';
+import { IParticipant } from '../../../base/participants/types';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { getLargeVideoParticipant } from '../../../large-video/functions';
-// @ts-ignore
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 // @ts-ignore
 import { isLayoutTileView } from '../../../video-layout';
 
 import DisplayNameBadge from './DisplayNameBadge';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         badgeContainer: {
             ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
@@ -47,10 +50,10 @@ const useStyles = makeStyles((theme: any) => {
  * @returns {ReactElement|null}
  */
 const StageParticipantNameLabel = () => {
-    const classes = useStyles();
-    const largeVideoParticipant: Participant = useSelector(getLargeVideoParticipant);
+    const { classes, cx } = useStyles();
+    const largeVideoParticipant: IParticipant = useSelector(getLargeVideoParticipant);
     const selectedId = largeVideoParticipant?.id;
-    const nameToDisplay = useSelector((state: IState) => getParticipantDisplayName(state, selectedId));
+    const nameToDisplay = useSelector((state: IReduxState) => getParticipantDisplayName(state, selectedId));
 
     const localParticipant = useSelector(getLocalParticipant);
     const localId = localParticipant?.id;
@@ -59,10 +62,15 @@ const StageParticipantNameLabel = () => {
     const toolboxVisible: boolean = useSelector(isToolboxVisible);
     const showDisplayName = useSelector(isDisplayNameVisible);
 
-    if (showDisplayName && nameToDisplay && selectedId !== localId && !isTileView) {
+    if (showDisplayName
+        && nameToDisplay
+        && selectedId !== localId
+        && !isTileView
+        && !isWhiteboardParticipant(largeVideoParticipant)
+    ) {
         return (
             <div
-                className = { clsx(
+                className = { cx(
                     'stage-participant-label',
                     classes.badgeContainer,
                     toolboxVisible && classes.containerElevated

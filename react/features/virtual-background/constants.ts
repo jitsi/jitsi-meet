@@ -5,17 +5,16 @@
  */
 export const VIRTUAL_BACKGROUND_TYPE = {
     IMAGE: 'image',
-    DESKTOP_SHARE: 'desktop-share',
     BLUR: 'blur',
     NONE: 'none'
 };
 
 
 export type Image = {
-    id: string,
-    src: string,
-    tooltip?: string
-}
+    id: string;
+    src: string;
+    tooltip?: string;
+};
 
 // The limit of virtual background uploads is 24. When the number
 // of uploads is 25 we trigger the deleteStoredImage function to delete

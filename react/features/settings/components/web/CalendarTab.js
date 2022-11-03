@@ -5,12 +5,12 @@ import React, { Component } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { Button } from '../../../base/ui/components/web';
+import Button from '../../../base/ui/components/web/Button';
 import {
     CALENDAR_TYPE,
     MicrosoftSignInButton,
-    clearCalendarIntegration,
     bootstrapCalendarIntegration,
+    clearCalendarIntegration,
     isCalendarEnabled,
     signIn
 } from '../../../calendar-sync';

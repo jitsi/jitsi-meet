@@ -15,7 +15,7 @@ echo "Releasing Jitsi Meet SDK Lite ${SDK_VERSION}"
 pushd ${RELEASE_REPO}
 
 # Generate podspec file
-cat JitsiMeetSDKLite.podspec.tpl | sed -e s/VERSION/${SDK_VERSION}/g > JitsiMeetSDKLite.podspec
+cat JitsiMeetSDKLite.podspec.tpl | sed -e s/VERSION/${SDK_VERSION}-lite/g > JitsiMeetSDKLite.podspec
 
 # Cleanup
 rm -rf lite/Frameworks/*
@@ -35,7 +35,6 @@ xcodebuild archive \
     -sdk iphonesimulator \
     -destination='generic/platform=iOS Simulator' \
     -archivePath ios/sdk/out/ios-simulator \
-    ENABLE_BITCODE=NO \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild archive \
@@ -45,7 +44,6 @@ xcodebuild archive \
     -sdk iphoneos \
     -destination='generic/platform=iOS' \
     -archivePath ios/sdk/out/ios-device \
-    ENABLE_BITCODE=NO \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild -create-xcframework \
@@ -66,7 +64,7 @@ cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework lite/Frameworks/
 if [[ $DO_GIT_TAG == 1 ]]; then
     git add -A .
     git commit -m "${SDK_VERSION} lite"
-    git tag "lite-${SDK_VERSION}"
+    git tag "${SDK_VERSION}-lite"
 fi
 
 popd

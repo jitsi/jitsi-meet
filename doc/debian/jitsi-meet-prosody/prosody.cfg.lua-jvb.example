@@ -65,10 +65,12 @@ VirtualHost "jitmeet.example.com"
         "muc_lobby_rooms";
         "muc_breakout_rooms";
         "av_moderation";
+        "room_metadata";
     }
     c2s_require_encryption = false
     lobby_muc = "lobby.jitmeet.example.com"
     breakout_rooms_muc = "breakout.jitmeet.example.com"
+    room_metadata_component = "metadata.jitmeet.example.com"
     main_muc = "conference.jitmeet.example.com"
     -- muc_lobby_whitelist = { "recorder.jitmeet.example.com" } -- Here we can whitelist jibri to enter lobby enabled rooms
 
@@ -141,18 +143,6 @@ Component "lobby.jitmeet.example.com" "muc"
         "polls";
     }
 
--- Enables dial-in for Jitsi meet components customers
--- Note: make sure you have the following packages installed: lua-basexx, liblua5.3-dev, libssl-dev, luarocks
--- and execute $ sudo luarocks install luajwtjitsi 3.0-0
-VirtualHost "jigasi.meet.jitsi"
-    enabled = false -- Jitsi meet components customers remove this line
-    modules_enabled = {
-      "ping";
-      "bosh";
-      "muc_password_check";
-    }
-    authentication = "token"
-    app_id = "jitsi";
-    asap_key_server = "https://jaas-public-keys.jitsi.net/jitsi-components/prod-8x8"
-    asap_accepted_issuers = { "jaas-components" }
-    asap_accepted_audiences = { "jigasi.jitmeet.example.com" }
+Component "metadata.jitmeet.example.com" "room_metadata_component"
+    muc_component = "conference.jitmeet.example.com"
+    breakout_rooms_component = "breakout.jitmeet.example.com"

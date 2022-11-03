@@ -4,14 +4,15 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
-import { ActionButton, InputField, PreMeetingScreen } from '../../../base/premeeting';
+import { InputField, PreMeetingScreen } from '../../../base/premeeting';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
+import Button from '../../../base/ui/components/web/Button';
 import ChatInput from '../../../chat/components/web/ChatInput';
 import MessageContainer from '../../../chat/components/web/MessageContainer';
 import AbstractLobbyScreen, {
-    _mapStateToProps,
-    type Props
+    type Props,
+    _mapStateToProps
 } from '../AbstractLobbyScreen';
 
 /**
@@ -222,22 +223,22 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     _renderPasswordJoinButtons() {
-        const { t } = this.props;
-
         return (
             <>
-                <ActionButton
+                <Button
+                    className = 'lobby-button-margin'
+                    fullWidth = { true }
+                    labelKey = 'prejoin.joinMeeting'
                     onClick = { this._onJoinWithPassword }
                     testId = 'lobby.passwordJoinButton'
-                    type = 'primary'>
-                    { t('prejoin.joinMeeting') }
-                </ActionButton>
-                <ActionButton
+                    type = 'primary' />
+                <Button
+                    className = 'lobby-button-margin'
+                    fullWidth = { true }
+                    labelKey = 'lobby.backToKnockModeButton'
                     onClick = { this._onSwitchToKnockMode }
                     testId = 'lobby.backToKnockModeButton'
-                    type = 'secondary'>
-                    { t('lobby.backToKnockModeButton') }
-                </ActionButton>
+                    type = 'secondary' />
             </>
         );
     }
@@ -248,30 +249,35 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, _isLobbyChatActive, _renderPassword, t } = this.props;
+        const { _knocking, _isLobbyChatActive, _renderPassword } = this.props;
 
         return (
             <>
-                { _knocking || <ActionButton
+                {_knocking || <Button
+                    className = 'lobby-button-margin'
                     disabled = { !this.state.displayName }
+                    fullWidth = { true }
+                    labelKey = 'lobby.knockButton'
                     onClick = { this._onAskToJoin }
                     testId = 'lobby.knockButton'
-                    type = 'primary'>
-                    { t('lobby.knockButton') }
-                </ActionButton> }
-                { (_knocking && _isLobbyChatActive) && <ActionButton
-                    className = 'open-chat-button'
+                    type = 'primary' />
+                }
+                {(_knocking && _isLobbyChatActive) && <Button
+                    className = 'lobby-button-margin open-chat-button'
+                    fullWidth = { true }
+                    labelKey = 'toolbar.openChat'
                     onClick = { this._onToggleChat }
                     testId = 'toolbar.openChat'
-                    type = 'primary' >
-                    { t('toolbar.openChat') }
-                </ActionButton> }
-                {_renderPassword && <ActionButton
+                    type = 'primary' />
+                }
+                {_renderPassword && <Button
+                    className = 'lobby-button-margin'
+                    fullWidth = { true }
+                    labelKey = 'lobby.enterPasswordButton'
                     onClick = { this._onSwitchToPasswordMode }
                     testId = 'lobby.enterPasswordButton'
-                    type = 'secondary'>
-                    { t('lobby.enterPasswordButton') }
-                </ActionButton> }
+                    type = 'secondary' />
+                }
             </>
         );
     }

@@ -1,5 +1,3 @@
-// @flow
-
 import '../authentication/middleware';
 import '../dynamic-branding/middleware';
 import '../gifs/middleware';

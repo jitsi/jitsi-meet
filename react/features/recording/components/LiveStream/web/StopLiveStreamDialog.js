@@ -2,9 +2,9 @@
 
 import React from 'react';
 
-import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
+import Dialog from '../../../../base/ui/components/web/Dialog';
 import AbstractStopLiveStreamDialog, {
     _mapStateToProps
 } from '../AbstractStopLiveStreamDialog';
@@ -26,10 +26,9 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
     render() {
         return (
             <Dialog
-                okKey = 'dialog.stopLiveStreaming'
+                ok = {{ translationKey: 'dialog.stopLiveStreaming' }}
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.liveStreaming'
-                width = 'small'>
+                titleKey = 'dialog.liveStreaming'>
                 { this.props.t('dialog.stopStreamingWarning') }
             </Dialog>
         );

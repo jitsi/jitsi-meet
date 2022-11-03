@@ -3,12 +3,12 @@
 import React, { PureComponent } from 'react';
 
 import { conferenceWillJoin, getConferenceName } from '../../base/conference';
-import { getFeatureFlag, INVITE_ENABLED } from '../../base/flags';
+import { INVITE_ENABLED, getFeatureFlag } from '../../base/flags';
 import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
 import { updateSettings } from '../../base/settings';
 import { isDeviceStatusVisible } from '../../prejoin/functions';
-import { cancelKnocking, joinWithPassword, setPasswordJoinFailed, startKnocking, onSendMessage } from '../actions';
+import { cancelKnocking, joinWithPassword, onSendMessage, setPasswordJoinFailed, startKnocking } from '../actions';
 
 export const SCREEN_STATES = {
     EDIT: 1,

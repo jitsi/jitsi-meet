@@ -1,29 +1,28 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import Icon from '../../../base/icons/components/Icon';
-import { IconCheck, IconClose } from '../../../base/icons/svg/index';
+import { IconCheck, IconClose } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
 import { admitMultiple } from '../../../lobby/actions.web';
 // @ts-ignore
-import { getLobbyEnabled, getKnockingParticipants } from '../../../lobby/functions';
+import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
-// @ts-ignore
-import { showOverflowDrawer } from '../../../toolbox/functions';
-// @ts-ignore
+import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 
 // @ts-ignore
 import LobbyParticipantItems from './LobbyParticipantItems';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         drawerActions: {
             listStyleType: 'none',
@@ -39,7 +38,6 @@ const useStyles = makeStyles((theme: any) => {
 
             '&:first-child': {
                 marginTop: '15px'
-
             },
 
             '&:hover': {
@@ -56,6 +54,7 @@ const useStyles = makeStyles((theme: any) => {
             justifyContent: 'space-between'
         },
         heading: {
+            // @ts-ignore
             ...withPixelLineHeight(theme.typography.heading7),
             color: theme.palette.text02
         },
@@ -76,7 +75,7 @@ export default function LobbyParticipants() {
     const lobbyEnabled = useSelector(getLobbyEnabled);
     const participants: Array<Object> = useSelector(getKnockingParticipants);
     const { t } = useTranslation();
-    const classes = useStyles();
+    const { classes } = useStyles();
     const dispatch = useDispatch();
     const admitAll = useCallback(() => {
         dispatch(admitMultiple(participants));
@@ -114,9 +113,9 @@ export default function LobbyParticipants() {
                         <li className = { classes.drawerItem }>
                             <Avatar
                                 className = { classes.icon }
-                                participantId = { drawerParticipant && drawerParticipant.participantID }
+                                participantId = { drawerParticipant?.participantID }
                                 size = { 20 } />
-                            <span>{ drawerParticipant && drawerParticipant.displayName }</span>
+                            <span>{ drawerParticipant?.displayName }</span>
                         </li>
                         <li
                             className = { classes.drawerItem }

@@ -1,48 +1,48 @@
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 
 import Icon from '../../../icons/components/Icon';
-import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
+import AbstractStatelessAvatar, { type IProps as AbstractProps } from '../AbstractStatelessAvatar';
 import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
 
-type Props = AbstractProps & {
+interface IProps extends AbstractProps {
 
     /**
      * External class name passed through props.
      */
-    className?: string,
+    className?: string;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The default avatar URL if we want to override the app bundled one (e.g. AlwaysOnTop).
      */
-    defaultAvatar?: string,
+    defaultAvatar?: string;
 
     /**
      * ID of the component to be rendered.
      */
-    id?: string,
+    id?: string;
 
     /**
      * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
      */
-    status?: string,
+    status?: string;
 
     /**
      * TestId of the element, if any.
      */
-    testId?: string,
+    testId?: string;
 
     /**
      * Indicates whether to load the avatar using CORS or not.
      */
-    useCORS?: boolean
-};
+    useCORS?: boolean;
+}
 
 /**
  * Creates the styles for the component.
@@ -56,8 +56,8 @@ const styles = () => {
             borderRadius: '50%',
             color: 'rgba(255, 255, 255, 1)',
             fontWeight: '100',
-            objectFit: 'cover',
-            textAlign: 'center',
+            objectFit: 'cover' as const,
+            textAlign: 'center' as const,
 
             '&.avatar-small': {
                 height: '28px !important',
@@ -80,7 +80,7 @@ const styles = () => {
         },
 
         badge: {
-            position: 'relative',
+            position: 'relative' as const,
 
             '&.avatar-badge:after': {
                 borderRadius: '50%',
@@ -115,14 +115,14 @@ const styles = () => {
  * Implements a stateless avatar component that renders an avatar purely from what gets passed through
  * props.
  */
-class StatelessAvatar extends AbstractStatelessAvatar<Props> {
+class StatelessAvatar extends AbstractStatelessAvatar<IProps> {
 
     /**
      * Instantiates a new {@code Component}.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onAvatarLoadError = this._onAvatarLoadError.bind(this);
@@ -262,5 +262,4 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     }
 }
 
-// @ts-ignore
 export default withStyles(styles)(StatelessAvatar);

@@ -1,26 +1,23 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import Logger from '@jitsi/logger';
 
+import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
-// @ts-ignore
-import { CONFERENCE_JOINED, getCurrentConference } from '../conference';
+import { CONFERENCE_JOINED } from '../conference/actionTypes';
+import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import JitsiMeetJS, {
     JitsiConferenceEvents
 } from '../lib-jitsi-meet';
 import { LIB_WILL_INIT } from '../lib-jitsi-meet/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
-// @ts-ignore
-import { isTestModeEnabled } from '../testing';
+import { isTestModeEnabled } from '../testing/functions';
 
 import buildExternalApiLogTransport from './ExternalApiLogTransport';
 import JitsiMeetInMemoryLogStorage from './JitsiMeetInMemoryLogStorage';
 import JitsiMeetLogStorage from './JitsiMeetLogStorage';
 import { SET_LOGGING_CONFIG } from './actionTypes';
 import { setLogCollector, setLoggingConfig } from './actions';
-
-declare let APP: any;
 
 /**
  * The Redux middleware of the feature base/logging.
@@ -64,7 +61,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _appWillMount({ getState }: {getState: Function}, next: Function, action: any) {
+function _appWillMount({ getState }: IStore, next: Function, action: any) {
     const { config } = getState()['features/base/logging'];
 
     _setLogLevels(Logger, config);
@@ -90,7 +87,7 @@ function _appWillMount({ getState }: {getState: Function}, next: Function, actio
  * @private
  * @returns {*}
  */
-function _conferenceJoined({ getState }: { getState: Function }, next: Function, action: any) {
+function _conferenceJoined({ getState }: IStore, next: Function, action: any) {
 
     // Wait until the joined event is processed, so that the JitsiMeetLogStorage
     // will be ready.
@@ -137,7 +134,7 @@ function _conferenceJoined({ getState }: { getState: Function }, next: Function,
  * @private
  * @returns {void}
  */
-function _initLogging({ dispatch, getState }: {dispatch: Function, getState: Function},
+function _initLogging({ dispatch, getState }: IStore,
         loggingConfig: any, isTestingEnabled: boolean) {
     const { logCollector } = getState()['features/base/logging'];
 
@@ -194,7 +191,7 @@ function _initLogging({ dispatch, getState }: {dispatch: Function, getState: Fun
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _libWillInit({ getState }: { getState: Function }, next: Function, action: any) {
+function _libWillInit({ getState }: IStore, next: Function, action: any) {
     // Adding the if in order to preserve the logic for web after enabling
     // LIB_WILL_INIT action for web in initLib action.
     if (typeof APP === 'undefined') {
@@ -218,7 +215,7 @@ function _libWillInit({ getState }: { getState: Function }, next: Function, acti
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _setConfig({ dispatch }: { dispatch: Function }, next: Function, action: any) {
+function _setConfig({ dispatch }: IStore, next: Function, action: any) {
     const result = next(action);
 
     dispatch(setLoggingConfig(action.config?.logging));
@@ -240,7 +237,7 @@ function _setConfig({ dispatch }: { dispatch: Function }, next: Function, action
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _setLoggingConfig({ dispatch, getState }: { dispatch: Function, getState: Function },
+function _setLoggingConfig({ dispatch, getState }: IStore,
         next: Function, action: any) {
     const result = next(action);
     const newValue = getState()['features/base/logging'].config;

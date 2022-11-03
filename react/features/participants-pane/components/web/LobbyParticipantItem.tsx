@@ -1,53 +1,51 @@
-/* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/styles';
-import React, { useCallback, useState, useRef } from 'react';
+import { Theme } from '@mui/material';
+import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
-import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons/svg/index';
+import { IconChat, IconCloseCircle, IconHorizontalPoints } from '../../../base/icons/svg';
 import { hasRaisedHand } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
+import { IParticipant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/web/Button';
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { showLobbyChatButton } from '../../../lobby/functions';
-// @ts-ignore
 import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
-// @ts-ignore
 import { useLobbyActions } from '../../hooks';
 
-// @ts-ignore
 import ParticipantItem from './ParticipantItem';
 
-type Props = {
+interface IProps {
 
     /**
      * Callback used to open a drawer with admit/reject actions.
      */
-    openDrawerForParticipant: Function,
+    openDrawerForParticipant: Function;
 
     /**
      * If an overflow drawer should be displayed.
      */
-    overflowDrawer: boolean,
+    overflowDrawer: boolean;
 
     /**
      * Participant reference.
      */
-    participant: Participant
-};
+    participant: IParticipant;
+}
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         button: {
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         },
         moreButton: {
             paddingRight: '6px',
             paddingLeft: '6px',
-            marginRight: `${theme.spacing(2)}px`
+            marginRight: theme.spacing(2)
         },
         contextMenu: {
             position: 'fixed',
@@ -61,12 +59,12 @@ export const LobbyParticipantItem = ({
     overflowDrawer,
     participant: p,
     openDrawerForParticipant
-}: Props) => {
+}: IProps) => {
     const { id } = p;
     const [ admit, reject, chat ] = useLobbyActions({ participantID: id });
     const { t } = useTranslation();
     const [ isOpen, setIsOpen ] = useState(false);
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     const showChat = useSelector(showLobbyChatButton(p));
 

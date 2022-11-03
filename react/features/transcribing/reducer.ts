@@ -1,10 +1,10 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    _TRANSCRIBER_JOINED,
-    _TRANSCRIBER_LEFT,
+    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
     _POTENTIAL_TRANSCRIBER_JOINED,
-    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
+    _TRANSCRIBER_JOINED,
+    _TRANSCRIBER_LEFT
 } from './actionTypes';
 
 /**
@@ -62,9 +62,9 @@ export interface ITranscribingState {
     isDialing: boolean;
     isTerminating: boolean;
     isTranscribing: boolean;
-    pendingNotificationUid?: number;
+    pendingNotificationUid?: string;
     potentialTranscriberJIDs: string[];
-    transcriberJID?: string|null;
+    transcriberJID?: string | null;
 }
 
 /**

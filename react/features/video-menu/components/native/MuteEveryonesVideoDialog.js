@@ -6,8 +6,8 @@ import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import AbstractMuteEveryonesVideoDialog, {
-    abstractMapStateToProps as _mapStateToProps,
-    type Props } from '../AbstractMuteEveryonesVideoDialog';
+    type Props,
+    abstractMapStateToProps as _mapStateToProps } from '../AbstractMuteEveryonesVideoDialog';
 
 import styles from './styles';
 
@@ -32,22 +32,6 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
                 onValueChange = { this._onToggleModeration }
                 value = { !this.state.moderationEnabled } />
         );
-    }
-
-    /**
-     * Toggles advanced moderation switch.
-     *
-     * @returns {void}
-     */
-    _onToggleModeration() {
-        this.setState(state => {
-            return {
-                moderationEnabled: !state.moderationEnabled,
-                content: this.props.t(state.moderationEnabled
-                    ? 'dialog.muteEveryonesVideoDialog' : 'dialog.muteEveryonesVideoDialogModerationOn'
-                )
-            };
-        });
     }
 
     /**

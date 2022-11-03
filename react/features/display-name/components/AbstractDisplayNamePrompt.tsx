@@ -1,38 +1,37 @@
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
-// @ts-ignore
-import { updateSettings } from '../../base/settings';
+import { IStore } from '../../app/types';
+import { updateSettings } from '../../base/settings/actions';
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractDisplayNamePrompt}.
  */
-export interface Props extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * Invoked to update the local participant's display name.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
      * Function to be invoked after a successful display name change.
      */
-    onPostSubmit?: Function
+    onPostSubmit?: Function;
 }
 
 /**
  * Implements an abstract class for {@code DisplayNamePrompt}.
  */
 export default class AbstractDisplayNamePrompt<S>
-    extends Component<Props, S> {
+    extends Component<IProps, S> {
     /**
      * Instantiates a new component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onSetDisplayName = this._onSetDisplayName.bind(this);
@@ -61,7 +60,7 @@ export default class AbstractDisplayNamePrompt<S>
             displayName
         }));
 
-        onPostSubmit && onPostSubmit();
+        onPostSubmit?.();
 
         return true;
     }

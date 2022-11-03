@@ -1,22 +1,21 @@
 import React from 'react';
 
-// @ts-ignore
-import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
-import AbstractDisplayNamePrompt, { Props } from '../AbstractDisplayNamePrompt';
+import AbstractDisplayNamePrompt, { IProps } from '../AbstractDisplayNamePrompt';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
  */
-type State = {
+interface IState {
 
     /**
      * The name to show in the display name text field.
      */
-    displayName: string
-};
+    displayName: string;
+}
 
 /**
  * Implements a React {@code Component} for displaying a dialog with an field
@@ -24,14 +23,14 @@ type State = {
  *
  * @augments Component
  */
-class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
+class DisplayNamePrompt extends AbstractDisplayNamePrompt<IState> {
     /**
      * Initializes a new {@code DisplayNamePrompt} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -52,12 +51,13 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
     render() {
         return (
             <Dialog
-                isModal = { false }
+                cancel = {{ translationKey: 'dialog.Cancel' }}
+                ok = {{ translationKey: 'dialog.Ok' }}
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.displayNameRequired'
-                width = 'small'>
+                titleKey = 'dialog.displayNameRequired'>
                 <Input
                     autoFocus = { true }
+                    className = 'dialog-bottom-margin'
                     label = { this.props.t('dialog.enterDisplayName') }
                     name = 'displayName'
                     onChange = { this._onDisplayNameChange }

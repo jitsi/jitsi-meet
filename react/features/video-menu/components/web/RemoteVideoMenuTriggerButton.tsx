@@ -1,19 +1,16 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
-// @ts-ignore
-import { translate } from '../../../base/i18n';
-import { IconHorizontalPoints } from '../../../base/icons/svg/index';
-import { getParticipantById } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/reducer';
-// @ts-ignore
-import { Popover } from '../../../base/popover';
-// @ts-ignore
+import { translate } from '../../../base/i18n/functions';
+import { IconHorizontalPoints } from '../../../base/icons/svg';
+import { getLocalParticipant, getParticipantById } from '../../../base/participants/functions';
+import { IParticipant } from '../../../base/participants/types';
+import Popover from '../../../base/popover/components/Popover.web';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import Button from '../../../base/ui/components/web/Button';
 import ConnectionIndicatorContent from
@@ -23,7 +20,7 @@ import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 // @ts-ignore
 import { renderConnectionStatus } from '../../actions.web';
 
-// @ts-ignore
+import FakeParticipantContextMenu from './FakeParticipantContextMenu';
 import ParticipantContextMenu from './ParticipantContextMenu';
 // @ts-ignore
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
@@ -32,84 +29,88 @@ import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
  * The type of the React {@code Component} props of
  * {@link RemoteVideoMenuTriggerButton}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether the remote video context menu is disabled.
      */
-    _disabled: Boolean,
+    _disabled: Boolean;
+
+    /**
+     * Shared video local participant owner.
+     */
+    _localVideoOwner?: boolean;
 
     /**
      * The position relative to the trigger the remote menu should display
-     * from. Valid values are those supported by AtlasKit
-     * {@code InlineDialog}.
+     * from.
      */
-    _menuPosition: string,
+    _menuPosition: string;
 
     /**
      * Whether to display the Popover as a drawer.
      */
-    _overflowDrawer: boolean,
+    _overflowDrawer: boolean;
 
     /**
      * Participant reference.
      */
-    _participant: Participant,
+    _participant: IParticipant;
 
     /**
      * The ID for the participant on which the remote video menu will act.
      */
-    _participantDisplayName: string,
+    _participantDisplayName: string;
 
     /**
      * The current state of the participant's remote control session.
      */
-    _remoteControlState: number,
+    _remoteControlState: number;
 
     /**
      * Whether the popover should render the Connection Info stats.
      */
-    _showConnectionInfo: Boolean,
+    _showConnectionInfo: Boolean;
 
     /**
      * Whether or not the button should be visible.
      */
-    buttonVisible: boolean,
+    buttonVisible: boolean;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Hides popover.
      */
-    hidePopover: Function,
+    hidePopover: Function;
 
     /**
      * The ID for the participant on which the remote video menu will act.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * Whether the popover is visible or not.
      */
-    popoverVisible: boolean,
+    popoverVisible: boolean;
 
     /**
      * Shows popover.
      */
-    showPopover: Function,
+    showPopover: Function;
 
     /**
      * The type of the thumbnail.
      */
-    thumbnailType: string
+    thumbnailType: string;
 }
 
 const styles = () => {
@@ -120,10 +121,9 @@ const styles = () => {
         },
 
         contextMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             marginTop: 0,
             right: 'auto',
-            padding: '0',
             marginRight: '4px',
             marginBottom: '4px'
         }
@@ -136,7 +136,7 @@ const styles = () => {
  *
  * @augments {Component}
  */
-class RemoteVideoMenuTriggerButton extends Component<Props> {
+class RemoteVideoMenuTriggerButton extends Component<IProps> {
 
     /**
      * Initializes a new RemoteVideoMenuTriggerButton instance.
@@ -144,7 +144,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onPopoverClose = this._onPopoverClose.bind(this);
@@ -236,15 +236,27 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderRemoteVideoMenu() {
-        const { _participant, _remoteControlState, classes } = this.props;
+        const { _localVideoOwner, _participant, _remoteControlState, classes } = this.props;
+
+        const props = {
+            className: classes.contextMenu,
+            onSelect: this._onPopoverClose,
+            participant: _participant,
+            thumbnailMenu: true
+        };
+
+        if (_participant?.fakeParticipant) {
+            return (
+                <FakeParticipantContextMenu
+                    { ...props }
+                    localVideoOwner = { _localVideoOwner } />
+            );
+        }
 
         return (
             <ParticipantContextMenu
-                className = { classes.contextMenu }
-                onSelect = { this._onPopoverClose }
-                participant = { _participant }
-                remoteControlState = { _remoteControlState }
-                thumbnailMenu = { true } />
+                { ...props }
+                remoteControlState = { _remoteControlState } />
         );
     }
 }
@@ -255,11 +267,12 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { participantID, thumbnailType } = ownProps;
     let _remoteControlState = null;
+    const localParticipantId = getLocalParticipant(state)?.id;
     const participant = getParticipantById(state, participantID ?? '');
     const _participantDisplayName = participant?.name;
     const _isRemoteControlSessionActive = participant?.remoteControlSessionStatus ?? false;
@@ -270,6 +283,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
     const { remoteVideoMenu } = state['features/base/config'];
+    const { ownerId } = state['features/shared-video'];
 
     if (_supportsRemoteControl
             && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
@@ -299,16 +313,16 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     }
 
     return {
-        _disabled: remoteVideoMenu?.disabled,
+        _disabled: Boolean(remoteVideoMenu?.disabled),
+        _localVideoOwner: Boolean(ownerId === localParticipantId),
         _menuPosition,
         _overflowDrawer: overflowDrawer,
-        _participant: participant,
-        _participantDisplayName,
+        _participant: participant ?? { id: '' },
+        _participantDisplayName: _participantDisplayName ?? '',
         _remoteControlState,
-        _showConnectionInfo: showConnectionInfo
+        _showConnectionInfo: Boolean(showConnectionInfo)
     };
 }
 
 export default translate(connect(_mapStateToProps)(
-    // @ts-ignore
     withStyles(styles)(RemoteVideoMenuTriggerButton)));

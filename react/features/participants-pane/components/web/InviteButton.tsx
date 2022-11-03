@@ -1,13 +1,13 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
-import { createToolbarEvent, sendAnalytics } from '../../../analytics';
-import { IconInviteMore } from '../../../base/icons/svg/index';
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IconInviteMore } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { beginAddPeople } from '../../../invite';
 

@@ -2,12 +2,13 @@
 
 import React, { Component } from 'react';
 
-import { Dialog, hideDialog } from '../../base/dialog';
+import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { getLocalVideoTrack } from '../../base/tracks';
-import { grant, deny } from '../actions';
+import Dialog from '../../base/ui/components/web/Dialog';
+import { deny, grant } from '../actions';
 
 declare var APP: Object;
 
@@ -68,11 +69,10 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
     render() {
         return (
             <Dialog
-                okKey = { 'dialog.allow' }
+                ok = {{ translationKey: 'dialog.allow' }}
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.remoteControlTitle'
-                width = 'small'>
+                titleKey = 'dialog.remoteControlTitle'>
                 {
                     this.props.t(
                         'dialog.remoteControlRequestMessage',

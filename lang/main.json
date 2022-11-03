@@ -82,7 +82,7 @@
         },
         "labels": {
             "buttonLabel": "Car mode",
-            "title": "Safe driving mode",
+            "title": "Car mode",
             "videoStopped": "Your video is stopped"
         }
     },
@@ -96,7 +96,7 @@
         "messageAccessibleTitleMe": "me says:",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
-        "newMessages": "new messages",
+        "newMessages": "New messages",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
+        "sendButton": "Send",
         "smileysPanel": "Emoji panel",
         "tabs": {
             "chat": "Chat",
@@ -146,7 +147,6 @@
         "bridgeCount": "Server count: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Connected to:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Frame rate:",
         "less": "Show less",
         "localaddress": "Local address:",
@@ -271,6 +271,7 @@
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "grantModeratorDialog": "Are you sure you want to grant moderator rights to {{participantName}}?",
         "grantModeratorTitle": "Grant moderator rights",
+        "hide": "Hide",
         "hideShareAudioHelper": "Don't show this dialog again",
         "incorrectPassword": "Incorrect username or password",
         "incorrectRoomLockPassword": "Incorrect password",
@@ -388,6 +389,7 @@
         "shareYourScreenDisabled": "Screen sharing disabled.",
         "sharedVideoDialogError": "Error: Invalid URL",
         "sharedVideoLinkPlaceholder": "YouTube link or direct video link",
+        "show": "Show",
         "start": "Start ",
         "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
@@ -436,7 +438,7 @@
         "search": "Search GIPHY"
     },
     "helpView": {
-        "header": "Help center"
+        "title": "Help center"
     },
     "incomingCall": {
         "answer": "Answer",
@@ -478,9 +480,11 @@
         "noRoom": "No room was specified to dial-in into.",
         "numbers": "Dial-in Numbers",
         "password": "$t(lockRoomPasswordUppercase): ",
+        "reachedLimit": "You have reached the limit of your plan.",
         "sip": "SIP address",
         "title": "Share",
-        "tooltip": "Share link and dial-in info for this meeting"
+        "tooltip": "Share link and dial-in info for this meeting",
+        "upgradeOptions": "Please check the upgrade options on"
     },
     "inlineDialogFailure": {
         "msg": "We stumbled a bit.",
@@ -552,6 +556,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
+        "title": "Live Stream",
         "unavailableTitle": "Live Streaming unavailable",
         "youtubeTerms": "YouTube terms of services"
     },
@@ -594,6 +599,7 @@
         "passwordJoinButton": "Join",
         "reject": "Reject",
         "rejectAll": "Reject all",
+        "title": "Lobby",
         "toggleLabel": "Enable lobby"
     },
     "localRecording": {
@@ -620,6 +626,7 @@
         "no": "No",
         "participant": "Participant",
         "participantStats": "Participant Stats",
+        "selectTabTitle": "🎥 Please select this tab for recording",
         "sessionToken": "Session Token",
         "start": "Start Recording",
         "stop": "Stop Recording",
@@ -736,13 +743,13 @@
             "videoModeration": "Start their video"
         },
         "close": "Close",
-        "header": "Participants",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})",
             "waitingLobby": "Waiting in lobby ({{count}})"
         },
-        "search": "Search participants"
+        "search": "Search participants",
+        "title": "Participants"
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "Set by another participant",
@@ -852,7 +859,7 @@
         "ringing": "Ringing..."
     },
     "privacyView": {
-        "header": "Privacy"
+        "title": "Privacy"
     },
     "profile": {
         "avatar": "avatar",
@@ -924,6 +931,7 @@
         "signIn": "Sign in",
         "signOut": "Sign out",
         "surfaceError": "Please select the current tab.",
+        "title": "Recording",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable",
         "uploadToCloud": "Upload to the cloud"
@@ -935,8 +943,8 @@
     "security": {
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
-        "header": "Security Options",
-        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button."
+        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
+        "title": "Security Options"
     },
     "settings": {
         "buttonLabel": "Settings",
@@ -968,7 +976,6 @@
         "playSounds": "Play sound on",
         "reactions": "Meeting reactions",
         "sameAsSystem": "Same as system ({{label}})",
-        "screenTitle": "Settings",
         "selectAudioOutput": "Audio output",
         "selectCamera": "Camera",
         "selectMic": "Microphone",
@@ -1004,6 +1011,7 @@
         "profileSection": "Profile",
         "serverURL": "Server URL",
         "showAdvanced": "Show advanced settings",
+        "startCarModeInLowBandwidthMode": "Start car mode in low bandwidth mode",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
         "terms": "Terms",
@@ -1042,7 +1050,7 @@
         "title": "Your video call was interrupted because this computer went to sleep."
     },
     "termsView": {
-        "header": "Terms"
+        "title": "Terms"
     },
     "toggleTopPanelLabel": "Toggle top panel",
     "toolbar": {
@@ -1115,7 +1123,8 @@
             "toggleFilmstrip": "Toggle filmstrip",
             "undock": "Undock into separate window",
             "videoblur": "Toggle video blur",
-            "videomute": "Start / Stop camera"
+            "videomute": "Start / Stop camera",
+            "whiteboard": "Show / Hide whiteboard"
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable low bandwidth mode",
@@ -1146,6 +1155,7 @@
         "giphy": "Toggle GIPHY menu",
         "hangup": "Leave the meeting",
         "help": "Help",
+        "hideWhiteboard": "Hide whiteboard",
         "invite": "Invite people",
         "joinBreakoutRoom": "Join breakout room",
         "laugh": "Laugh",
@@ -1191,6 +1201,7 @@
         "shareaudio": "Share audio",
         "sharedvideo": "Share video",
         "shortcuts": "View shortcuts",
+        "showWhiteboard": "Show whiteboard",
         "silence": "Silence",
         "speakerStats": "Speaker stats",
         "startScreenSharing": "Start screen sharing",
@@ -1215,6 +1226,8 @@
         "labelToolTip": "The meeting is being transcribed",
         "off": "Transcribing stopped",
         "pending": "Preparing to transcribe the meeting...",
+        "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
+        "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
         "subtitles": "Subtitles",
@@ -1354,6 +1367,7 @@
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
+        "settings": "Settings",
         "startMeeting": "Start meeting",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing"

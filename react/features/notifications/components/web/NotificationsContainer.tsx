@@ -1,34 +1,32 @@
-/* eslint-disable lines-around-comment */
 import { FlagGroupContext } from '@atlaskit/flag/flag-group';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import { hideNotification } from '../../actions';
-// @ts-ignore
 import { areThereNotifications } from '../../functions';
 
 // @ts-ignore
 import Notification from './Notification';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether we are a SIP gateway or not.
      */
-    _iAmSipGateway: boolean,
+    _iAmSipGateway: boolean;
 
     /**
      * Whether or not the chat is open.
      */
-    _isChatOpen: boolean,
+    _isChatOpen: boolean;
 
     /**
      * The notifications to be displayed, with the first index being the
@@ -37,28 +35,28 @@ interface Props extends WithTranslation {
     _notifications: Array<{
         props: Object;
         uid: number;
-    }>,
+    }>;
 
     /**
      * JSS classes object.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Invoked to update the redux store in order to remove notifications.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Whether or not the notifications are displayed in a portal.
      */
-    portal?: boolean
+    portal?: boolean;
 }
 
-const useStyles = (theme: any) => {
+const useStyles = (theme: Theme) => {
     return {
         container: {
-            position: 'absolute',
+            position: 'absolute' as const,
             left: '16px',
             bottom: '90px',
             width: '400px',
@@ -124,7 +122,7 @@ const useStyles = (theme: any) => {
  *
  * @augments {Component}
  */
-class NotificationsContainer extends Component<Props> {
+class NotificationsContainer extends Component<IProps> {
     _api: Object;
     _timeouts: Map<string, number>;
 
@@ -133,7 +131,7 @@ class NotificationsContainer extends Component<Props> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._timeouts = new Map();
@@ -183,11 +181,11 @@ class NotificationsContainer extends Component<Props> {
      * Emits an action to remove the notification from the redux store so it
      * stops displaying.
      *
-     * @param {number} uid - The id of the notification to be removed.
+     * @param {string} uid - The id of the notification to be removed.
      * @private
      * @returns {void}
      */
-    _onDismissed(uid: number) {
+    _onDismissed(uid: string) {
         const timeout = this._timeouts.get(`${uid}`);
 
         if (timeout) {
@@ -237,9 +235,9 @@ class NotificationsContainer extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     const { notifications } = state['features/notifications'];
     const { iAmSipGateway } = state['features/base/config'];
     const { isOpen: isChatOpen } = state['features/chat'];
@@ -252,5 +250,4 @@ function _mapStateToProps(state: IState) {
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(withStyles(useStyles)(NotificationsContainer)));

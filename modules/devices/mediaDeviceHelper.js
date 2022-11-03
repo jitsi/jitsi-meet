@@ -1,10 +1,12 @@
 /* global APP, JitsiMeetJS */
 
 import {
-    getAudioOutputDeviceId,
     notifyCameraError,
     notifyMicError
-} from '../../react/features/base/devices';
+} from '../../react/features/base/devices/actions.web';
+import {
+    getAudioOutputDeviceId
+} from '../../react/features/base/devices/functions.web';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId,

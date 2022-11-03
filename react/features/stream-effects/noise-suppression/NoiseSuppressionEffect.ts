@@ -1,5 +1,4 @@
-// @ts-ignore
-import { getBaseUrl } from '../../base/util';
+import { getBaseUrl } from '../../base/util/helpers';
 
 import logger from './logger';
 
@@ -47,7 +46,7 @@ export class NoiseSuppressionEffect {
      * @param {MediaStream} audioStream - Audio stream which will be mixed with _mixAudio.
      * @returns {MediaStream} - MediaStream containing both audio tracks mixed together.
      */
-    startEffect(audioStream: MediaStream) : MediaStream {
+    startEffect(audioStream: MediaStream): MediaStream {
         this._originalMediaTrack = audioStream.getAudioTracks()[0];
         this._audioContext = new AudioContext();
         this._audioSource = this._audioContext.createMediaStreamSource(audioStream);

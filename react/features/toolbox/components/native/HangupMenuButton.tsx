@@ -1,12 +1,9 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
-import { openSheet } from '../../../base/dialog';
-// @ts-ignore
-import { IconHangup } from '../../../base/icons';
-import IconButton from '../../../base/react/components/native/IconButton';
+import { openSheet } from '../../../base/dialog/actions';
+import { IconHangup } from '../../../base/icons/svg';
+import IconButton from '../../../base/ui/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 
 import HangupMenu from './HangupMenu';
@@ -17,7 +14,7 @@ import HangupMenu from './HangupMenu';
  *
  * @returns {JSX.Element} - The hangup menu button.
  */
-const HangupMenuButton = () : JSX.Element => {
+const HangupMenuButton = (): JSX.Element => {
     const dispatch = useDispatch();
 
     const onSelect = useCallback(() => {

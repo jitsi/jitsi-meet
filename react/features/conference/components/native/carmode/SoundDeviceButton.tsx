@@ -2,7 +2,6 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
 import { openSheet } from '../../../../base/dialog/actions';
 import Button from '../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
@@ -18,7 +17,7 @@ import styles from './styles';
  *
  * @returns {JSX.Element} - The sound device button.
  */
-const SelectSoundDevice = () : JSX.Element => {
+const SelectSoundDevice = (): JSX.Element => {
     const dispatch = useDispatch();
 
     const onSelect = useCallback(() =>

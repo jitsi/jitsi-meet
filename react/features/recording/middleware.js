@@ -43,8 +43,8 @@ import {
     RECORDING_ON_SOUND_ID
 } from './constants';
 import {
-    getSessionById,
-    getResourceId
+    getResourceId,
+    getSessionById
 } from './functions';
 import logger from './logger';
 import {
@@ -222,31 +222,39 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
         } else if (updatedSessionData.status !== PENDING) {
             dispatch(hidePendingRecordingNotification(mode));
 
-            if (updatedSessionData.status === ON
-                && (!oldSessionData || oldSessionData.status !== ON)) {
-                if (typeof recordingLimit === 'object') {
-                    // Show notification with additional information to the initiator.
-                    dispatch(showRecordingLimitNotification(mode));
-                } else {
-                    dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
+            if (updatedSessionData.status === ON) {
+
+                // We receive 2 updates of the session status ON. The first one is from jibri when it joins.
+                // The second one is from jicofo which will deliever the initiator value. Since the start
+                // recording notification uses the initiator value we skip the jibri update and show the
+                // notification on the update from jicofo.
+                // FIXE: simplify checks when the backend start sending only one status ON update containing the
+                // initiator.
+                if (initiator && (!oldSessionData || !oldSessionData.initiator)) {
+                    if (typeof recordingLimit === 'object') {
+                        dispatch(showRecordingLimitNotification(mode));
+                    } else {
+                        dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
+                    }
                 }
+                if (!oldSessionData || oldSessionData.status !== ON) {
+                    sendAnalytics(createRecordingEvent('start', mode));
 
-                sendAnalytics(createRecordingEvent('start', mode));
+                    let soundID;
 
-                let soundID;
+                    if (mode === JitsiRecordingConstants.mode.FILE) {
+                        soundID = RECORDING_ON_SOUND_ID;
+                    } else if (mode === JitsiRecordingConstants.mode.STREAM) {
+                        soundID = LIVE_STREAMING_ON_SOUND_ID;
+                    }
 
-                if (mode === JitsiRecordingConstants.mode.FILE) {
-                    soundID = RECORDING_ON_SOUND_ID;
-                } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-                    soundID = LIVE_STREAMING_ON_SOUND_ID;
-                }
+                    if (soundID) {
+                        dispatch(playSound(soundID));
+                    }
 
-                if (soundID) {
-                    dispatch(playSound(soundID));
-                }
-
-                if (typeof APP !== 'undefined') {
-                    APP.API.notifyRecordingStatusChanged(true, mode);
+                    if (typeof APP !== 'undefined') {
+                        APP.API.notifyRecordingStatusChanged(true, mode);
+                    }
                 }
             } else if (updatedSessionData.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {

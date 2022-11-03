@@ -2,135 +2,70 @@
 
 set -e
 
-DEB_CONF_RESULT=`debconf-show jitsi-meet-web-config | grep jvb-hostname`
-DOMAIN="${DEB_CONF_RESULT##*:}"
+echo "-------------------------------------------------------------------------"
+echo "This script will:"
+echo "- Need a working DNS record pointing to this machine(for hostname ${DOMAIN})"
+echo "- Install additional dependencies in order to request Let’s Encrypt certificate (acme.sh)"
+echo "- Configure and reload nginx or apache2, whichever is used"
+echo "- Configure the coturn server to use Let's Encrypt certificate and add required deploy hooks"
+echo "- Configure renew of certificate"
+echo ""
+
+EMAIL=$1
+
+if [ -z "$EMAIL" ]; then
+  echo "You need to agree to the ACME server's Subscriber Agreement (https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf) "
+  echo "by providing an email address for important account notifications"
+
+  echo -n "Enter your email and press [ENTER]: "
+  read EMAIL
+fi
+
+DOMAIN=$2
+if [ -z "$DOMAIN" ]; then
+  DEB_CONF_RESULT=$(debconf-show jitsi-meet-web-config | grep jitsi-meet/jvb-hostname)
+  DOMAIN="${DEB_CONF_RESULT##*:}"
+fi
 # remove whitespace
 DOMAIN="$(echo -e "${DOMAIN}" | tr -d '[:space:]')"
 
-echo "-------------------------------------------------------------------------"
-echo "This script will:"
-echo "- Need a working DNS record pointing to this machine(for domain ${DOMAIN})"
-echo "- Download certbot-auto from https://dl.eff.org to /usr/local/sbin"
-echo "- Install additional dependencies in order to request Let’s Encrypt certificate"
-echo "- If running with jetty serving web content, will stop Jitsi Videobridge"
-echo "- Configure and reload nginx or apache2, whichever is used"
-echo "- Configure the coturn server to use Let's Encrypt certificate and add required deploy hooks"
-echo "- Add command in weekly cron job to renew certificates regularly"
-echo ""
-echo "You need to agree to the ACME server's Subscriber Agreement (https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf) "
-echo "by providing an email address for important account notifications"
 
-echo -n "Enter your email and press [ENTER]: "
-read EMAIL
+export HOME=/opt/acmesh
+curl https://get.acme.sh | sh -s email=$EMAIL
 
-CERTBOT="$(command -v certbot || true)"
-if [ ! -x "$CERTBOT" ] ; then
-    DISTRO=$(lsb_release -is)
-    DISTRO_VERSION=$(lsb_release -rs)
+# Checks whether nginx or apache is installed
+NGINX_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx' 2>/dev/null | awk '{print $3}' || true)"
+NGINX_FULL_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-full' 2>/dev/null | awk '{print $3}' || true)"
+NGINX_EXTRAS_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-extras' 2>/dev/null | awk '{print $3}' || true)"
+APACHE_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'apache2' 2>/dev/null | awk '{print $3}' || true)"
 
-    if [ "$DISTRO" != "Debian" ] && [ "$DISTRO" != "Ubuntu" ]; then
-        echo "$DISTRO $DISTRO_VERSION is not supported"
-        echo "Only Debian and Ubuntu 18.04+ are supported"
-        exit 1
-    fi
-
-    if [ "$DISTRO" = "Ubuntu" ]; then
-        apt-get update
-        apt-get -y install software-properties-common
-        add-apt-repository -y universe
-        if [ "$DISTRO_VERSION" = "18.04" ]; then
-            add-apt-repository -y ppa:certbot/certbot
-        fi
-    fi
-
-    apt-get update
-    apt-get -y install certbot
-
-    CERTBOT="$(command -v certbot)"
+RELOAD_CMD=""
+if [ "$NGINX_INSTALL_CHECK" = "installed" ] || [ "$NGINX_INSTALL_CHECK" = "unpacked" ] \
+   || [ "$NGINX_FULL_INSTALL_CHECK" = "installed" ] || [ "$NGINX_FULL_INSTALL_CHECK" = "unpacked" ] \
+   || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "installed" ] || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "unpacked" ]; then
+    RELOAD_CMD="systemctl force-reload nginx.service"
+elif [ "$APACHE_INSTALL_CHECK" = "installed" ] || [ "$APACHE_INSTALL_CHECK" = "unpacked" ] ; then
+    RELOAD_CMD="systemctl force-reload apache2.service"
+else
+    RELOAD_CMD="echo 'No webserver found'"
 fi
 
-CRON_FILE="/etc/cron.weekly/letsencrypt-renew"
-if [ ! -d "/etc/cron.weekly" ] ; then
-    mkdir "/etc/cron.weekly"
-fi
-echo "#!/bin/bash" > $CRON_FILE
-echo "$CERTBOT renew >> /var/log/le-renew.log" >> $CRON_FILE
+RELOAD_CMD+=" && /usr/share/jitsi-meet/scripts/coturn-le-update.sh ${DOMAIN}"
 
-CERT_KEY="/etc/letsencrypt/live/$DOMAIN/privkey.pem"
-CERT_CRT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
+ISSUE_FAILED_CODE=0
+ISSUE_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh -f --issue -d ${DOMAIN} -w /usr/share/jitsi-meet --server letsencrypt"
+eval "${ISSUE_CERT_CMD}" || ISSUE_FAILED_CODE=$?
 
-if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
-
-    TURN_CONFIG="/etc/turnserver.conf"
-    TURN_HOOK=/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh
-    if [ -f $TURN_CONFIG ] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
-        mkdir -p $(dirname $TURN_HOOK)
-
-        cp /usr/share/jitsi-meet-turnserver/coturn-certbot-deploy.sh $TURN_HOOK
-        chmod u+x $TURN_HOOK
-        sed -i "s/jitsi-meet.example.com/$DOMAIN/g" $TURN_HOOK
-
-        $CERTBOT certonly --noninteractive \
-        --webroot --webroot-path /usr/share/jitsi-meet \
-        -d $DOMAIN \
-        --agree-tos --email $EMAIL \
-        --deploy-hook $TURN_HOOK
+INSTALL_CERT_CMD="/opt/acmesh/.acme.sh/acme.sh -f --install-cert -d ${DOMAIN} --key-file /etc/jitsi/meet/${DOMAIN}.key --fullchain-file /etc/jitsi/meet/${DOMAIN}.crt --reloadcmd \"${RELOAD_CMD}\""
+if [ ${ISSUE_FAILED_CODE} -ne 0 ] ; then
+    # it maybe this certificate already exists (code 2 - skip, no need to renew)
+    if [ ${ISSUE_FAILED_CODE} -eq 2 ]; then
+        eval "$INSTALL_CERT_CMD"
     else
-        $CERTBOT certonly --noninteractive \
-        --webroot --webroot-path /usr/share/jitsi-meet \
-        -d $DOMAIN \
-        --agree-tos --email $EMAIL
+        echo "Issuing the certificate from Let's Encrypt failed, continuing ..."
+        echo "You can retry later by executing:"
+        echo "/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL"
     fi
-
-    echo "Configuring nginx"
-
-    CONF_FILE="/etc/nginx/sites-available/$DOMAIN.conf"
-    CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
-    CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
-    sed -i "s/ssl_certificate_key\ \/etc\/jitsi\/meet\/.*key/ssl_certificate_key\ $CERT_KEY_ESC/g" \
-        $CONF_FILE
-    CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
-    CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
-    sed -i "s/ssl_certificate\ \/etc\/jitsi\/meet\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
-        $CONF_FILE
-    
-    if type service >/dev/null 2>&1
-    then 
-        service nginx reload
-        echo "service nginx reload" >> $CRON_FILE
-    else 
-        systemctl reload nginx.service 
-        echo "systemctl reload nginx.service" >> $CRON_FILE
-    fi
-    
-elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
-
-    $CERTBOT certonly --noninteractive \
-    --webroot --webroot-path /usr/share/jitsi-meet \
-    -d $DOMAIN \
-    --agree-tos --email $EMAIL
-
-    echo "Configuring apache2"
-
-    CONF_FILE="/etc/apache2/sites-available/$DOMAIN.conf"
-    CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
-    CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
-    sed -i "s/SSLCertificateKeyFile\ \/etc\/jitsi\/meet\/.*key/SSLCertificateKeyFile\ $CERT_KEY_ESC/g" \
-        $CONF_FILE
-    CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
-    CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
-    sed -i "s/SSLCertificateFile\ \/etc\/jitsi\/meet\/.*crt/SSLCertificateFile\ $CERT_CRT_ESC/g" \
-        $CONF_FILE
-    
-    if type service >/dev/null 2>&1
-    then 
-        service apache2 reload
-        echo "service apache2 reload" >> $CRON_FILE
-    else 
-        systemctl reload apache2.service 
-        echo "systemctl reload apache2.service" >> $CRON_FILE
-    fi
+else
+    eval "$INSTALL_CERT_CMD"
 fi
-
-# the cron file that will renew certificates
-chmod a+x $CRON_FILE

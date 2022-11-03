@@ -2,8 +2,7 @@
 import React from 'react';
 
 import { connect } from '../../../base/redux';
-import { LAYOUT_CLASSNAMES } from '../../../conference/components/web/Conference';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { LAYOUTS, LAYOUT_CLASSNAMES, getCurrentLayout } from '../../../video-layout';
 import {
     FILMSTRIP_TYPE
 } from '../../constants';

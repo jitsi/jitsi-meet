@@ -1,10 +1,10 @@
 import {
+    BOO_SOUND_FILES,
     CLAP_SOUND_FILES,
     LAUGH_SOUND_FILES,
     LIKE_SOUND_FILES,
-    BOO_SOUND_FILES,
-    SURPRISE_SOUND_FILES,
-    SILENCE_SOUND_FILES
+    SILENCE_SOUND_FILES,
+    SURPRISE_SOUND_FILES
 } from './sounds';
 
 /**
@@ -85,17 +85,17 @@ export const SILENCE_SOUND_ID = `${REACTION_SOUND}_SILENCE_`;
  */
 export const RAISE_HAND_SOUND_ID = 'RAISE_HAND_SOUND';
 
-export interface ReactionEmojiProps {
+export interface IReactionEmojiProps {
 
     /**
      * Reaction to be displayed.
      */
-    reaction: string,
+    reaction: string;
 
     /**
      * Id of the reaction.
      */
-    uid: string
+    uid: string;
 }
 
 export const SOUNDS_THRESHOLDS = [ 1, 4, 10 ];
@@ -107,7 +107,7 @@ interface IReactions {
         shortcutChar: string;
         soundFiles: string[];
         soundId: string;
-    }
+    };
 }
 
 export const REACTIONS: IReactions = {
@@ -156,10 +156,10 @@ export const REACTIONS: IReactions = {
 };
 
 export type ReactionThreshold = {
-    reaction: string,
-    threshold: number
-}
+    reaction: string;
+    threshold: number;
+};
 
-export interface MuteCommandAttributes {
+export interface IMuteCommandAttributes {
     startReactionsMuted?: string;
 }

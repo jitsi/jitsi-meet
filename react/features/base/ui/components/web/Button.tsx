@@ -1,25 +1,24 @@
-import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { BUTTON_TYPES } from '../../constants';
-import { Theme } from '../../types';
-import { ButtonProps } from '../types';
+import { IButtonProps } from '../types';
 
-interface IButtonProps extends ButtonProps {
+interface IProps extends IButtonProps {
 
     /**
      * Class name used for additional styles.
      */
-    className?: string,
+    className?: string;
 
     /**
      * Whether or not the button should be full width.
      */
-    fullWidth?: boolean,
+    fullWidth?: boolean;
 
     /**
      * The id of the button.
@@ -48,7 +47,7 @@ interface IButtonProps extends ButtonProps {
     testId?: string;
 }
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         button: {
             backgroundColor: theme.palette.action01,
@@ -76,7 +75,7 @@ const useStyles = makeStyles((theme: Theme) => {
                 boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
             },
 
-            '& svg': {
+            '& div > svg': {
                 fill: theme.palette.icon01
             }
         },
@@ -95,7 +94,7 @@ const useStyles = makeStyles((theme: Theme) => {
                 backgroundColor: theme.palette.action02Active
             },
 
-            '& svg': {
+            '& div > svg': {
                 fill: theme.palette.icon04
             }
         },
@@ -138,7 +137,7 @@ const useStyles = makeStyles((theme: Theme) => {
                 color: theme.palette.text03
             },
 
-            '& svg': {
+            '& div > svg': {
                 fill: theme.palette.icon03
             }
         },
@@ -148,7 +147,7 @@ const useStyles = makeStyles((theme: Theme) => {
         },
 
         textWithIcon: {
-            marginLeft: `${theme.spacing(2)}px`
+            marginLeft: theme.spacing(2)
         },
 
         small: {
@@ -179,6 +178,7 @@ const useStyles = makeStyles((theme: Theme) => {
 
 const Button = React.forwardRef<any, any>(({
     accessibilityLabel,
+    autoFocus = false,
     className,
     disabled,
     fullWidth,
@@ -191,14 +191,15 @@ const Button = React.forwardRef<any, any>(({
     size = 'medium',
     testId,
     type = BUTTON_TYPES.PRIMARY
-}: IButtonProps, ref) => {
-    const styles = useStyles();
+}: IProps, ref) => {
+    const { classes: styles, cx } = useStyles();
     const { t } = useTranslation();
 
     return (
         <button
             aria-label = { accessibilityLabel }
-            className = { clsx(styles.button, styles[type],
+            autoFocus = { autoFocus }
+            className = { cx(styles.button, styles[type],
                 disabled && styles.disabled,
                 icon && !(labelKey || label) && `${styles.iconButton} iconButton`,
                 styles[size], fullWidth && styles.fullWidth, className) }

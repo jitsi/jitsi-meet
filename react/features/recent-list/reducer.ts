@@ -1,13 +1,13 @@
-/* eslint-disable lines-around-comment */
 import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
+    DELETE_RECENT_LIST_ENTRY,
     _STORE_CURRENT_CONFERENCE,
-    _UPDATE_CONFERENCE_DURATION,
-    DELETE_RECENT_LIST_ENTRY
+    _UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { isRecentListEnabled } from './functions';
 
@@ -83,7 +83,7 @@ function _deleteRecentListEntry(
  * @param {Object} action - The redux action.
  * @returns {Object}
  */
-function _storeCurrentConference(state: IRecentListState, { locationURL }: { locationURL: { href: string } }) {
+function _storeCurrentConference(state: IRecentListState, { locationURL }: { locationURL: { href: string; }; }) {
     const conference = locationURL.href;
 
     // If the current conference is already in the list, we remove it to re-add
@@ -111,8 +111,8 @@ function _storeCurrentConference(state: IRecentListState, { locationURL }: { loc
  * @param {Object} action - The redux action.
  * @returns {Object} The next redux state of the feature {@code recent-list}.
  */
-function _updateConferenceDuration(state: IRecentListState, { locationURL }: { locationURL: { href: string } }) {
-    if (locationURL && locationURL.href && state.length) {
+function _updateConferenceDuration(state: IRecentListState, { locationURL }: { locationURL: { href: string; }; }) {
+    if (locationURL?.href && state.length) {
         const mostRecentIndex = state.length - 1;
         const mostRecent = state[mostRecentIndex];
 

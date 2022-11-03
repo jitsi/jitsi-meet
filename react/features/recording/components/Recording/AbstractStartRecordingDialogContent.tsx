@@ -2,12 +2,9 @@
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import {
-    createRecordingDialogEvent,
-    sendAnalytics
-    // @ts-ignore
-} from '../../../analytics';
-import { IState } from '../../../app/types';
+import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 // @ts-ignore
@@ -19,9 +16,7 @@ import {
 import { StyleType } from '../../../base/styles';
 // @ts-ignore
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
-// @ts-ignore
 import { isVpaasMeeting } from '../../../jaas/functions';
-// @ts-ignore
 import { RECORDING_TYPES } from '../../constants';
 // @ts-ignore
 import { supportsLocalRecording } from '../../functions';
@@ -30,120 +25,120 @@ import { supportsLocalRecording } from '../../functions';
  * The type of the React {@code Component} props of
  * {@link AbstractStartRecordingDialogContent}.
  */
-export interface Props extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * Style of the dialogs feature.
      */
-    _dialogStyles: StyleType,
+    _dialogStyles: StyleType;
 
     /**
      * Whether to hide the storage warning or not.
      */
-    _hideStorageWarning: boolean,
+    _hideStorageWarning: boolean;
 
     /**
      * Whether local recording is available or not.
      */
-    _localRecordingAvailable: boolean,
+    _localRecordingAvailable: boolean;
 
     /**
      * Whether local recording is enabled or not.
      */
-    _localRecordingEnabled: boolean,
+    _localRecordingEnabled: boolean;
 
     /**
      * Whether we won't notify the other participants about the recording.
      */
-    _localRecordingNoNotification: boolean,
+    _localRecordingNoNotification: boolean;
 
     /**
      * Whether self local recording is enabled or not.
      */
-    _localRecordingSelfEnabled: boolean,
+    _localRecordingSelfEnabled: boolean;
 
     /**
      * The color-schemed stylesheet of this component.
      */
-    _styles: StyleType,
+    _styles: StyleType;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Whether to show file recordings service, even if integrations
      * are enabled.
      */
-    fileRecordingsServiceEnabled: boolean,
+    fileRecordingsServiceEnabled: boolean;
 
     /**
      * Whether to show the possibility to share file recording with other people (e.g. Meeting participants), based on
      * the actual implementation on the backend.
      */
-    fileRecordingsServiceSharingEnabled: boolean,
+    fileRecordingsServiceSharingEnabled: boolean;
 
     /**
      * If true the content related to the integrations will be shown.
      */
-    integrationsEnabled: boolean,
+    integrationsEnabled: boolean;
 
     /**
      * <tt>true</tt> if we have valid oauth token.
      */
-    isTokenValid: boolean,
+    isTokenValid: boolean;
 
     /**
      * <tt>true</tt> if we are in process of validating the oauth token.
      */
-    isValidating: boolean,
+    isValidating: boolean;
 
     /**
      * Whether or not the current meeting is a vpaas one.
      */
-    isVpaas: boolean,
+    isVpaas: boolean;
 
     /**
      * Whether or not we should only record the local streams.
      */
-    localRecordingOnlySelf: boolean,
+    localRecordingOnlySelf: boolean;
 
     /**
      * The function will be called when there are changes related to the
      * switches.
      */
-    onChange: Function,
+    onChange: Function;
 
     /**
      * Callback to change the local recording only self setting.
      */
-    onLocalRecordingSelfChange: Function,
+    onLocalRecordingSelfChange: () => void;
 
     /**
      * Callback to be invoked on sharing setting change.
      */
-    onSharingSettingChanged: () => void,
+    onSharingSettingChanged: () => void;
 
     /**
      * The currently selected recording service of type: RECORDING_TYPES.
      */
-    selectedRecordingService: string | null,
+    selectedRecordingService: string | null;
 
     /**
      * Boolean to set file recording sharing on or off.
      */
-    sharingSetting: boolean,
+    sharingSetting: boolean;
 
     /**
      * Number of MiB of available space in user's Dropbox account.
      */
-    spaceLeft: number | null,
+    spaceLeft: number | null;
 
     /**
      * The display name of the user's Dropbox account.
      */
-    userName: string | null
+    userName: string | null;
 }
 
 /**
@@ -151,7 +146,7 @@ export interface Props extends WithTranslation {
  *
  * @augments Component
  */
-class AbstractStartRecordingDialogContent<P extends Props> extends Component<P> {
+class AbstractStartRecordingDialogContent<P extends IProps> extends Component<P> {
     /**
      * Initializes a new {@code AbstractStartRecordingDialogContent} instance.
      *
@@ -338,9 +333,9 @@ class AbstractStartRecordingDialogContent<P extends Props> extends Component<P> 
  * Maps part of the redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-export function mapStateToProps(state: IState) {
+export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
     const _localRecordingAvailable
         = !localRecording?.disable && supportsLocalRecording();

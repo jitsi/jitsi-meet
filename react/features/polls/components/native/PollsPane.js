@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-color-literals */
 // @flow
 
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 

@@ -1,4 +1,3 @@
-import Clipboard from '@react-native-community/clipboard';
 import React, { PureComponent } from 'react';
 import {
     Text,
@@ -6,7 +5,7 @@ import {
 } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags';
+import { MEETING_PASSWORD_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../../base/participants';
@@ -16,6 +15,7 @@ import Button from '../../../../base/ui/components/native/Button';
 import Input from '../../../../base/ui/components/native/Input';
 import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
+import { copyText } from '../../../../base/util/copyText.native';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../../../room-lock';
@@ -475,7 +475,7 @@ class SecurityDialog extends PureComponent<Props, State> {
     _onCopy() {
         const { passwordInputValue } = this.state;
 
-        Clipboard.setString(passwordInputValue);
+        copyText(passwordInputValue);
     }
 
     _onSubmit: () => void;

@@ -1,17 +1,14 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import type { AudioElement } from '../media';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { assign } from '../redux/functions';
 
 import {
-    _ADD_AUDIO_ELEMENT,
-    _REMOVE_AUDIO_ELEMENT,
     REGISTER_SOUND,
-    UNREGISTER_SOUND
+    UNREGISTER_SOUND,
+    _ADD_AUDIO_ELEMENT,
+    _REMOVE_AUDIO_ELEMENT
 } from './actionTypes';
-// @ts-ignore
-import logger from './logger';
 
 /**
  * The structure use by this reducer to describe a sound.
@@ -23,20 +20,20 @@ export type Sound = {
      * Becomes available once the sound resource gets loaded and the sound can
      * not be played until that happens.
      */
-    audioElement?: AudioElement,
+    audioElement?: AudioElement;
 
     /**
      * This field is container for all optional parameters related to the sound.
      */
-    options?: Object,
+    options?: Object;
 
     /**
      * This field describes the source of the audio resource to be played. It
      * can be either a path to the file or an object depending on the platform
      * (native vs web).
      */
-    src?: Object | string
-}
+    src?: Object | string;
+};
 
 /**
  * Initial/default state of the feature {@code base/sounds}. It is a {@code Map}
@@ -98,8 +95,6 @@ function _addOrRemoveAudioElement(state: ISoundsState, action: any) {
                     audioElement: undefined
                 }));
         }
-    } else {
-        logger.warn(`${action.type}: no sound for id: ${soundId}`);
     }
 
     return nextState;

@@ -2,7 +2,7 @@
 
 import { SET_CONFIG } from '../base/config';
 import { ADD_KNOWN_DOMAINS } from '../base/known-domains';
-import { equals, MiddlewareRegistry } from '../base/redux';
+import { MiddlewareRegistry, equals } from '../base/redux';
 import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
 
 import { REFRESH_CALENDAR } from './actionTypes';

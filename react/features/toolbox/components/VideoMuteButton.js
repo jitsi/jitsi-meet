@@ -6,7 +6,7 @@ import {
     createShortcutEvent,
     sendAnalytics
 } from '../../analytics';
-import { getFeatureFlag, VIDEO_MUTE_BUTTON_ENABLED } from '../../base/flags';
+import { VIDEO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { AbstractButton, AbstractVideoMuteButton } from '../../base/toolbox/components';

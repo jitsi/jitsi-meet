@@ -2,6 +2,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 
+import { IReduxState } from '../../../app/types';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { isDesktopShareButtonDisabled } from '../../functions.native';
@@ -30,7 +31,7 @@ const ScreenSharingButton = (props: any) => (
  * @private
  * @returns {Object}
  */
-function _mapStateToProps(state: object): object {
+function _mapStateToProps(state: IReduxState) {
     return {
         _disabled: isDesktopShareButtonDisabled(state)
     };

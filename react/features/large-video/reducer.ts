@@ -4,9 +4,9 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     SET_LARGE_VIDEO_DIMENSIONS,
+    SET_SEE_WHAT_IS_BEING_SHARED,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION,
-    UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT,
-    SET_SEE_WHAT_IS_BEING_SHARED
+    UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT
 } from './actionTypes';
 
 export interface ILargeVideoState {

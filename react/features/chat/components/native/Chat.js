@@ -8,8 +8,8 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../base/redux';
 import { closeChat } from '../../actions.any';
 import AbstractChat, {
-    _mapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _mapStateToProps
 } from '../AbstractChat';
 
 import ChatInputBar from './ChatInputBar';

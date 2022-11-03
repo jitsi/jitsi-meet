@@ -1,57 +1,56 @@
-/* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
-import { IconVolume } from '../../../base/icons/svg/index';
-// @ts-ignore
+import { IconVolume } from '../../../base/icons/svg';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
 
 /**
  * The type of the React {@code Component} props of {@link VolumeSlider}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * The value of the audio slider should display at when the component first
      * mounts. Changes will be stored in state. The value should be a number
      * between 0 and 1.
      */
-    initialValue: number,
+    initialValue: number;
 
     /**
      * The callback to invoke when the audio slider value changes.
      */
-    onChange: Function
+    onChange: Function;
 }
 
 /**
  * The type of the React {@code Component} state of {@link VolumeSlider}.
  */
-type State = {
+interface IState {
 
     /**
      * The volume of the participant's audio element. The value will
      * be represented by a slider.
      */
-    volumeLevel: number
-};
+    volumeLevel: number;
+}
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         container: {
             minHeight: '40px',
             minWidth: '180px',
             width: '100%',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box' as const,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -65,17 +64,17 @@ const styles = (theme: any) => {
         icon: {
             minWidth: '20px',
             padding: '5px',
-            position: 'relative'
+            position: 'relative' as const
         },
 
         sliderContainer: {
-            position: 'relative',
+            position: 'relative' as const,
             width: '100%',
             paddingRight: '5px'
         },
 
         slider: {
-            position: 'absolute',
+            position: 'absolute' as const,
             width: '100%',
             top: '50%',
             transform: 'translate(0, -50%)'
@@ -89,14 +88,14 @@ const styles = (theme: any) => {
  *
  * @augments Component
  */
-class VolumeSlider extends Component<Props, State> {
+class VolumeSlider extends Component<IProps, IState> {
     /**
      * Initializes a new {@code VolumeSlider} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -169,5 +168,4 @@ class VolumeSlider extends Component<Props, State> {
     }
 }
 
-// @ts-ignore
 export default translate(withStyles(styles)(VolumeSlider));

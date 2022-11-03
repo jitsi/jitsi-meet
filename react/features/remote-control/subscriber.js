@@ -3,11 +3,12 @@
 import {
     getParticipantById,
     getVirtualScreenshareParticipantByOwnerId,
-    getVirtualScreenshareParticipantOwnerId
+    getVirtualScreenshareParticipantOwnerId,
+    isScreenShareParticipant
 } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
 
-import { resume, pause } from './actions';
+import { pause, resume } from './actions';
 
 /**
  * Listens for large video participant ID changes.
@@ -24,7 +25,7 @@ StateListenerRegistry.register(
 
         const participant = getParticipantById(state, participantId);
 
-        if (participant?.isVirtualScreenshareParticipant) {
+        if (isScreenShareParticipant(participant)) {
             // multistream support is enabled and the user has selected the desktop sharing thumbnail.
             const id = getVirtualScreenshareParticipantOwnerId(participantId);
 

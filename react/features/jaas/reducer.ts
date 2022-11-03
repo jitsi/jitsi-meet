@@ -11,7 +11,7 @@ const DEFAULT_STATE = {
 };
 
 export interface IJaaSState {
-    [key: string]: any
+    [key: string]: any;
 }
 
 /**

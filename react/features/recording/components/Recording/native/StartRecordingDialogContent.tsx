@@ -10,12 +10,11 @@ import { connect } from '../../../../base/redux/functions';
 import Button from '../../../../base/ui/components/native/Button';
 import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
-// @ts-ignore
 import { RECORDING_TYPES } from '../../../constants';
 // @ts-ignore
 import { getRecordingDurationEstimation } from '../../../functions';
 import AbstractStartRecordingDialogContent, {
-    Props,
+    IProps,
     mapStateToProps
 } from '../AbstractStartRecordingDialogContent';
 import {
@@ -30,7 +29,7 @@ import {
 /**
  * The start recording dialog content for the mobile application.
  */
-class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<Props> {
+class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IProps> {
     /**
      * Renders the component.
      *

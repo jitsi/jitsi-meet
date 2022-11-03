@@ -9,7 +9,7 @@ import { USER_INTERACTION_RECEIVED } from './actionTypes';
  *
  * @type {Function|null}
  */
-let userInteractionListener: Function|null = null;
+let userInteractionListener: Function | null = null;
 
 /**
  * Implements the entry point of the middleware of the feature base/user-interaction.
@@ -56,7 +56,7 @@ function _onUserInteractionReceived(dispatch: Function, event: any) {
  * @private
  * @returns {void}
  */
-function _startListeningForUserInteraction({ dispatch }: {dispatch: Function}) {
+function _startListeningForUserInteraction({ dispatch }: { dispatch: Function; }) {
     _stopListeningForUserInteraction();
 
     userInteractionListener = _onUserInteractionReceived.bind(null, dispatch);

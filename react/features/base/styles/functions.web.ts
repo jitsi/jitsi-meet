@@ -32,7 +32,7 @@ export function getFixedPlatformStyle(style: StyleType): StyleType {
  * @param {Object} base - The base object containing the `lineHeight` property.
  * @returns {Object}
  */
-export function withPixelLineHeight(base: any): Object {
+export function withPixelLineHeight(base: any) {
     return {
         ...base,
         lineHeight: `${base.lineHeight}px`

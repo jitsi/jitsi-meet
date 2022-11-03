@@ -3,12 +3,10 @@ import React from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { IState } from '../../../../app/types';
-// @ts-ignore
+import { IReduxState } from '../../../../app/types';
 import { getConferenceName } from '../../../../base/conference/functions';
-// @ts-ignore
-import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../../base/flags';
-// @ts-ignore
+import { MEETING_NAME_ENABLED } from '../../../../base/flags/constants';
+import { getFeatureFlag } from '../../../../base/flags/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../../base/participants/functions';
 import { connect } from '../../../../base/redux/functions';
@@ -23,29 +21,29 @@ import { VideoQualityLabel } from '../../../../video-quality';
 import styles from './styles';
 
 
-type Props = {
+interface IProps {
 
     /**
      * Name of the meeting we're currently in.
      */
-    _meetingName: string,
+    _meetingName: string;
 
     /**
      * Whether displaying the current meeting name is enabled or not.
      */
-    _meetingNameEnabled: boolean,
+    _meetingNameEnabled: boolean;
 
-};
+}
 
 /**
  * Implements a navigation bar component that is rendered on top of the
  * carmode screen.
  *
- * @param {Props} props - The React props passed to this component.
+ * @param {IProps} props - The React props passed to this component.
  * @returns {JSX.Element}
  */
-const TitleBar = (props: Props) : JSX.Element => {
-    const localParticipant: any = useSelector(getLocalParticipant);
+const TitleBar = (props: IProps): JSX.Element => {
+    const localParticipant = useSelector(getLocalParticipant);
     const localParticipantId = localParticipant?.id;
 
     return (<>
@@ -85,9 +83,9 @@ const TitleBar = (props: Props) : JSX.Element => {
  * Maps part of the Redux store to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     const { hideConferenceSubject } = state['features/base/config'];
 
     return {

@@ -5,7 +5,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { VideoTrack } from '../../../base/media';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
@@ -147,7 +147,6 @@ const VirtualScreenshareParticipant = ({
                 <ThumbnailTopIndicators
                     currentLayout = { currentLayout }
                     isHovered = { isHovered }
-                    isVirtualScreenshareParticipant = { true }
                     participantId = { participantId }
                     thumbnailType = { thumbnailType } />
             </div>
@@ -159,7 +158,6 @@ const VirtualScreenshareParticipant = ({
                 <ThumbnailBottomIndicators
                     className = { classes.indicatorsBackground }
                     currentLayout = { currentLayout }
-                    isVirtualScreenshareParticipant = { true }
                     local = { false }
                     participantId = { participantId }
                     showStatusIndicators = { true } />

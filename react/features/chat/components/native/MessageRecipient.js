@@ -11,10 +11,11 @@ import { type StyleType } from '../../../base/styles';
 import {
     setParams
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { setPrivateMessageRecipient, setLobbyChatActiveState } from '../../actions.any';
+import { setLobbyChatActiveState, setPrivateMessageRecipient } from '../../actions.any';
 import AbstractMessageRecipient, {
     type Props as AbstractProps
 } from '../AbstractMessageRecipient';
+
 
 type Props = AbstractProps & {
 
@@ -132,7 +133,8 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
                     }) }
                 </Text>
                 <TouchableHighlight
-                    onPress = { this._onResetPrivateMessageRecipient }>
+                    onPress = { this._onResetPrivateMessageRecipient }
+                    underlayColor = { 'transparent' }>
                     <Icon
                         src = { IconCancelSelection }
                         style = { _styles.messageRecipientCancelIcon } />

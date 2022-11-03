@@ -6,9 +6,9 @@ import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
-import { TILE_ASPECT_RATIO, TILE_HORIZONTAL_MARGIN, FILMSTRIP_TYPE } from '../../constants';
-import { showGridInVerticalView, getActiveParticipantsIds } from '../../functions';
+import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
+import { FILMSTRIP_TYPE, TILE_ASPECT_RATIO, TILE_HORIZONTAL_MARGIN } from '../../constants';
+import { getActiveParticipantsIds, showGridInVerticalView } from '../../functions';
 
 import Thumbnail from './Thumbnail';
 
@@ -153,9 +153,7 @@ function _mapStateToProps(state, ownProps) {
     const _currentLayout = getCurrentLayout(state);
     const { remoteParticipants: remote } = state['features/filmstrip'];
     const activeParticipants = getActiveParticipantsIds(state);
-    const { testing = {} } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     const filmstripType = ownProps.data?.filmstripType;
@@ -244,18 +242,18 @@ function _mapStateToProps(state, ownProps) {
         }
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
-        const localIndex = enableThumbnailReordering && !disableSelfView ? 0 : remoteParticipantsLength;
+        const localIndex = disableSelfView ? remoteParticipantsLength : 0;
 
         // Local screen share is inserted at index 1 after the local camera.
-        const localScreenShareIndex = enableThumbnailReordering && !disableSelfView ? 1 : remoteParticipantsLength;
+        const localScreenShareIndex = disableSelfView ? remoteParticipantsLength : 1;
 
         let remoteIndex;
 
         if (sourceNameSignalingEnabled) {
-            remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView
+            remoteIndex = !iAmRecorder && !disableSelfView
                 ? index - localParticipantsLength : index;
         } else {
-            remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView ? index - 1 : index;
+            remoteIndex = !iAmRecorder && !disableSelfView ? index - 1 : index;
         }
 
         if (!iAmRecorder && index === localIndex) {

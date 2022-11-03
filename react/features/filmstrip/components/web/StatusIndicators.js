@@ -3,7 +3,11 @@
 import React, { Component } from 'react';
 
 import { MEDIA_TYPE } from '../../../base/media';
-import { getParticipantByIdOrUndefined, PARTICIPANT_ROLE } from '../../../base/participants';
+import {
+    PARTICIPANT_ROLE,
+    getParticipantByIdOrUndefined,
+    isScreenShareParticipantById
+} from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
     getVideoTrackByParticipant,
@@ -104,8 +108,9 @@ function _mapStateToProps(state, ownProps) {
 
     if (participant?.local) {
         isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
-    } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
-        const track = getVideoTrackByParticipant(tracks, participant);
+    } else if (!participant?.fakeParticipant || isScreenShareParticipantById(state, participantID)) {
+        // remote participants excluding shared video
+        const track = getVideoTrackByParticipant(state, participant);
 
         isScreenSharing = track?.videoType === 'desktop';
         isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);

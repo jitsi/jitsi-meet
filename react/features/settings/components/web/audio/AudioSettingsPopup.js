@@ -1,15 +1,17 @@
 // @flow
 
-import InlineDialog from '@atlaskit/inline-dialog';
 import React from 'react';
 
 import { areAudioLevelsEnabled } from '../../../../base/config/functions';
 import {
-    getAudioInputDeviceData,
-    getAudioOutputDeviceData,
     setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDevice as setAudioOutputDeviceAction
-} from '../../../../base/devices';
+} from '../../../../base/devices/actions.web';
+import {
+    getAudioInputDeviceData,
+    getAudioOutputDeviceData
+} from '../../../../base/devices/functions.web';
+import Popover from '../../../../base/popover/components/Popover.web';
 import { connect } from '../../../../base/redux';
 import { SMALL_MOBILE_WIDTH } from '../../../../base/responsive-ui/constants';
 import {
@@ -24,17 +26,17 @@ import AudioSettingsContent, { type Props as AudioSettingsContentProps } from '.
 
 type Props = AudioSettingsContentProps & {
 
-   /**
+    /**
     * Component's children (the audio button).
     */
     children: React$Node,
 
-   /**
+    /**
     * Flag controlling the visibility of the popup.
     */
     isOpen: boolean,
 
-   /**
+    /**
     * Callback executed when the popup closes.
     */
     onClose: Function,
@@ -65,7 +67,7 @@ function AudioSettingsPopup({
 }: Props) {
     return (
         <div className = 'audio-preview'>
-            <InlineDialog
+            <Popover
                 content = { <AudioSettingsContent
                     currentMicDeviceId = { currentMicDeviceId }
                     currentOutputDeviceId = { currentOutputDeviceId }
@@ -74,11 +76,12 @@ function AudioSettingsPopup({
                     outputDevices = { outputDevices }
                     setAudioInputDevice = { setAudioInputDevice }
                     setAudioOutputDevice = { setAudioOutputDevice } /> }
-                isOpen = { isOpen }
-                onClose = { onClose }
-                placement = { popupPlacement }>
+                onPopoverClose = { onClose }
+                position = { popupPlacement }
+                trigger = 'click'
+                visible = { isOpen }>
                 {children}
-            </InlineDialog>
+            </Popover>
         </div>
     );
 }
@@ -93,7 +96,7 @@ function mapStateToProps(state) {
     const { clientWidth } = state['features/base/responsive-ui'];
 
     return {
-        popupPlacement: clientWidth <= SMALL_MOBILE_WIDTH ? 'auto' : 'top-start',
+        popupPlacement: clientWidth <= SMALL_MOBILE_WIDTH ? 'auto' : 'top-end',
         currentMicDeviceId: getCurrentMicDeviceId(state),
         currentOutputDeviceId: getCurrentOutputDeviceId(state),
         isOpen: getAudioSettingsVisibility(state),

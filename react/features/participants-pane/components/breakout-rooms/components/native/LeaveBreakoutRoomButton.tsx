@@ -2,11 +2,10 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
-import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
+import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../../analytics/functions';
 import Button from '../../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../../base/ui/constants';
-// @ts-ignore
 import { moveToRoom } from '../../../../../breakout-rooms/actions';
 
 // @ts-ignore

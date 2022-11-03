@@ -10,7 +10,7 @@ import {
     connectionEstablished,
     connectionFailed,
     constructOptions
-} from './react/features/base/connection/actions';
+} from './react/features/base/connection/actions.web';
 import { openDialog } from './react/features/base/dialog/actions';
 import { setJWT } from './react/features/base/jwt';
 import {
@@ -19,7 +19,7 @@ import {
 } from './react/features/base/lib-jitsi-meet';
 import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
 import { getCustomerDetails } from './react/features/jaas/actions.any';
-import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
+import { getJaasJWT, isVpaasMeeting } from './react/features/jaas/functions';
 import {
     setPrejoinDisplayNameRequired
 } from './react/features/prejoin/actions';

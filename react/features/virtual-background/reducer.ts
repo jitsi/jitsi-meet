@@ -2,7 +2,6 @@ import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
-import { VIRTUAL_BACKGROUND_TYPE } from './constants';
 
 const STORE_NAME = 'features/virtual-background';
 
@@ -11,7 +10,7 @@ export interface IVirtualBackground {
     backgroundType?: string;
     blurValue?: number;
     selectedThumbnail?: string;
-    virtualSource?: string;
+    virtualSource?: { videoType: string; };
 }
 
 /**
@@ -31,7 +30,7 @@ ReducerRegistry.register<IVirtualBackground>(STORE_NAME, (state = {}, action): I
     /**
      * Sets up the persistence of the feature {@code virtual-background}.
      */
-    PersistenceRegistry.register(STORE_NAME, state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE);
+    PersistenceRegistry.register(STORE_NAME);
 
     switch (action.type) {
     case SET_VIRTUAL_BACKGROUND: {

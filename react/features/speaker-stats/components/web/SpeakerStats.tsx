@@ -1,19 +1,16 @@
-/* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
-// @ts-ignore
-import { Dialog } from '../../../base/dialog';
+import { IReduxState } from '../../../app/types';
+import Dialog from '../../../base/ui/components/web/Dialog';
 import { escapeRegexp } from '../../../base/util/helpers';
-// @ts-ignore
-import { resetSearchCriteria, toggleFaceExpressions, initSearch } from '../../actions';
+import { initSearch, resetSearchCriteria, toggleFaceExpressions } from '../../actions';
 import {
     DISPLAY_SWITCH_BREAKPOINT,
     MOBILE_BREAKPOINT,
     RESIZE_SEARCH_SWITCH_CONTAINER_BREAKPOINT
-    // @ts-ignore
 } from '../../constants';
 
 import FaceExpressionsSwitch from './FaceExpressionsSwitch';
@@ -21,7 +18,7 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         speakerStats: {
             '& .row': {
@@ -56,9 +53,6 @@ const useStyles = makeStyles((theme: any) => {
                 }
             }
         },
-        footer: {
-            display: 'none !important'
-        },
         labelsContainer: {
             position: 'relative'
         },
@@ -91,13 +85,13 @@ const useStyles = makeStyles((theme: any) => {
 });
 
 const SpeakerStats = () => {
-    const { faceLandmarks } = useSelector((state: IState) => state['features/base/config']);
-    const { showFaceExpressions } = useSelector((state: IState) => state['features/speaker-stats']);
-    const { clientWidth } = useSelector((state: IState) => state['features/base/responsive-ui']);
+    const { faceLandmarks } = useSelector((state: IReduxState) => state['features/base/config']);
+    const { showFaceExpressions } = useSelector((state: IReduxState) => state['features/speaker-stats']);
+    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const displaySwitch = faceLandmarks?.enableDisplayFaceExpressions && clientWidth > DISPLAY_SWITCH_BREAKPOINT;
     const displayLabels = clientWidth > MOBILE_BREAKPOINT;
     const dispatch = useDispatch();
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const onToggleFaceExpressions = useCallback(() =>
         dispatch(toggleFaceExpressions())
@@ -111,16 +105,16 @@ const SpeakerStats = () => {
     useEffect(() => {
         showFaceExpressions && !displaySwitch && dispatch(toggleFaceExpressions());
     }, [ clientWidth ]);
-    useEffect(() => () => dispatch(resetSearchCriteria()), []);
+    useEffect(() => () => {
+        dispatch(resetSearchCriteria());
+    }, []);
 
     return (
         <Dialog
-            cancelKey = 'dialog.close'
-            classes = {{ footer: classes.footer }}
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = 'speakerStats.speakerStats'
-            width = { showFaceExpressions ? '664px' : 'small' }>
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
+            size = { showFaceExpressions ? 'large' : 'medium' }
+            titleKey = 'speakerStats.speakerStats'>
             <div className = { classes.speakerStats }>
                 <div
                     className = {

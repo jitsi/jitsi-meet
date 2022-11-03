@@ -37,7 +37,7 @@ export interface IResponsiveUIState {
         left: number;
         right: number;
         top: number;
-    }
+    };
 }
 
 ReducerRegistry.register<IResponsiveUIState>('features/base/responsive-ui',

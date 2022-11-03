@@ -15,7 +15,7 @@ export type MediaType = 'audio' | 'video' | 'presenter' | 'screenshare';
  *
  * @enum {string}
  */
-export const MEDIA_TYPE: {[key: string]: MediaType} = {
+export const MEDIA_TYPE: { [key: string]: MediaType; } = {
     AUDIO: 'audio',
     PRESENTER: 'presenter',
     SCREENSHARE: 'screenshare',
@@ -54,7 +54,9 @@ export const VIDEO_MUTISM_AUTHORITY = {
  *
  * @enum {string}
  */
-export const VIDEO_TYPE = {
+export const VIDEO_TYPE: { [key: string]: VideoType; } = {
     CAMERA: 'camera',
     DESKTOP: 'desktop'
 };
+
+export type VideoType = 'camera' | 'desktop';

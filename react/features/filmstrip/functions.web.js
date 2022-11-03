@@ -8,7 +8,8 @@ import {
     getParticipantById,
     getParticipantCount,
     getParticipantCountWithFake,
-    getPinnedParticipant
+    getPinnedParticipant,
+    isScreenShareParticipant
 } from '../base/participants';
 import { toState } from '../base/redux';
 import { shouldHideSelfView } from '../base/settings/functions.any';
@@ -18,12 +19,12 @@ import {
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../base/tracks/functions';
-import { isTrackStreamingStatusActive, isParticipantConnectionStatusActive } from '../connection-indicator/functions';
+import { isParticipantConnectionStatusActive, isTrackStreamingStatusActive } from '../connection-indicator/functions';
 import { isSharingStatus } from '../shared-video/functions';
 import {
+    LAYOUTS,
     getCurrentLayout,
-    getNotResponsiveTileViewGridDimensions,
-    LAYOUTS
+    getNotResponsiveTileViewGridDimensions
 } from '../video-layout';
 
 import {
@@ -129,7 +130,8 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
         const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
 
         isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly;
-    } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
+    } else if (!participant?.fakeParticipant || isScreenShareParticipant(participant)) {
+        // remote participants excluding shared video
         const isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, id);
 
         if (getSourceNameSignalingFeatureFlag(state)) {
@@ -589,7 +591,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         connectionStatus: _participant?.connectionStatus,
         canPlayEventReceived,
         videoStream: Boolean(_videoTrack),
-        isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
+        isRemoteParticipant: !_participant?.fakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
         isVirtualScreenshareParticipant: _isVirtualScreenshareParticipant,
         multipleVideoSupport: _multipleVideoSupport,
@@ -751,7 +753,7 @@ export function isStageFilmstripTopPanel(state, minParticipantCount = 0) {
 export function isStageFilmstripEnabled(state) {
     const { filmstrip } = state['features/base/config'];
 
-    return !(filmstrip?.disableStageFilmstrip ?? true) && interfaceConfig.VERTICAL_FILMSTRIP;
+    return !filmstrip?.disableStageFilmstrip && interfaceConfig.VERTICAL_FILMSTRIP;
 }
 
 /**

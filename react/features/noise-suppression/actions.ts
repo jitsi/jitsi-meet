@@ -1,11 +1,7 @@
-/* eslint-disable lines-around-comment */
-import { Dispatch } from 'redux';
-
-// @ts-ignore
-import { getLocalJitsiAudioTrack } from '../base/tracks';
-// @ts-ignore
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../notifications';
-// @ts-ignore
+import { IStore } from '../app/types';
+import { getLocalJitsiAudioTrack } from '../base/tracks/functions';
+import { showErrorNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
 import { SET_NOISE_SUPPRESSION_ENABLED } from './actionTypes';
@@ -21,7 +17,7 @@ import logger from './logger';
  *      enabled: boolean
  * }}
  */
-export function setNoiseSuppressionEnabledState(enabled: boolean) : any {
+export function setNoiseSuppressionEnabledState(enabled: boolean): any {
     return {
         type: SET_NOISE_SUPPRESSION_ENABLED,
         enabled
@@ -33,8 +29,8 @@ export function setNoiseSuppressionEnabledState(enabled: boolean) : any {
  *
  * @returns {Function}
  */
-export function toggleNoiseSuppression() : any {
-    return (dispatch: Dispatch, getState: Function) => {
+export function toggleNoiseSuppression(): any {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (isNoiseSuppressionEnabled(getState())) {
             dispatch(setNoiseSuppressionEnabled(false));
         } else {
@@ -50,8 +46,8 @@ export function toggleNoiseSuppression() : any {
  *
  * @returns {Function}
  */
-export function setNoiseSuppressionEnabled(enabled: boolean) : any {
-    return async (dispatch: Dispatch, getState: Function) => {
+export function setNoiseSuppressionEnabled(enabled: boolean): any {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
         const localAudio = getLocalJitsiAudioTrack(state);
@@ -82,6 +78,7 @@ export function setNoiseSuppressionEnabled(enabled: boolean) : any {
                 error
             );
 
+            // @ts-ignore
             dispatch(showErrorNotification({
                 titleKey: 'notify.noiseSuppressionFailedTitle'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));

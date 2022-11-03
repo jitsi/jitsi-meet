@@ -30,15 +30,16 @@ import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
+    getLocalParticipant,
     getParticipantById,
     getRemoteParticipants,
-    getLocalParticipant
+    isScreenShareParticipant
 } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { getLocalTracks, isLocalTrackMuted, toggleScreensharing } from '../../base/tracks';
-import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
+import { CLOSE_CHAT, OPEN_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
-import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
+import { closeChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
 import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes';
 import { setRequestingSubtitles } from '../../subtitles';
 import { muteLocal } from '../../video-menu/actions';
@@ -182,7 +183,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         const { participant } = action;
 
-        if (participant.isVirtualScreenshareParticipant) {
+        if (isScreenShareParticipant(participant)) {
             break;
         }
 
@@ -343,7 +344,7 @@ function _registerForNativeEvents(store) {
 
         participantsInfo.push(_participantToParticipantInfo(localParticipant));
         remoteParticipants.forEach(participant => {
-            if (!participant.isFakeParticipant) {
+            if (!participant.fakeParticipant) {
                 participantsInfo.push(_participantToParticipantInfo(participant));
             }
         });

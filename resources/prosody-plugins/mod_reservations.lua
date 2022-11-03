@@ -33,8 +33,17 @@
 --        returns true if API call should be retried. By default, retries are done for 5XX
 --        responses. Timeouts are never retried, and HTTP call failures are always retried.
 --      * set "reservations_enable_max_occupants" to true to enable integration with
---        mod_muc_max_occupants. Setting thia will allow optional "max_occupants"
+--        mod_muc_max_occupants. Setting thia will allow optional "max_occupants" (integer)
 --        payload from API to influence max occupants allowed for a given room.
+--      * set "reservations_enable_lobby_support" to true to enable integration
+--        with "muc_lobby_rooms". Setting this will allow optional "lobby" (boolean)
+--        fields in API payload. If set to true, Lobby will be enabled for the room.
+--        "persistent_lobby" module must also be enabled for this to work.
+--      * set "reservations_enable_password_support" to allow optional "password" (string)
+--        field in API payload. If set and not empty, then room password will be set
+--        to the given string.
+--      * By default, reservation checks are skipped for breakout rooms. You can subject
+--        breakout rooms to the same checks by setting "reservations_skip_breakout_rooms" to false.
 --
 --
 --  Example config:
@@ -56,7 +65,10 @@
 --            return code >= 500 or code == 408
 --        end
 --
-
+--        reservations_enable_max_occupants = true  -- support "max_occupants" field
+--        reservations_enable_lobby_support = true  -- support "lobby" field
+--        reservations_enable_password_support = true  -- support "password" field
+--
 
 local jid = require 'util.jid';
 local http = require "net.http";
@@ -75,6 +87,9 @@ local api_timeout = module:get_option("reservations_api_timeout", 20);
 local api_retry_count = tonumber(module:get_option("reservations_api_retry_count", 3));
 local api_retry_delay = tonumber(module:get_option("reservations_api_retry_delay", 3));
 local max_occupants_enabled = module:get_option("reservations_enable_max_occupants", false);
+local lobby_support_enabled = module:get_option("reservations_enable_lobby_support", false);
+local password_support_enabled = module:get_option("reservations_enable_password_support", false);
+local skip_breakout_room = module:get_option("reservations_skip_breakout_rooms", true);
 
 
 -- Option for user to control HTTP response codes that will result in a retry.
@@ -85,6 +100,8 @@ end)
 
 
 local muc_component_host = module:get_option_string("main_muc");
+local breakout_muc_component_host = module:get_option_string('breakout_rooms_muc', 'breakout.'..module.host);
+
 
 -- How often to check and evict expired reservation data
 local expiry_check_period = 60;
@@ -248,7 +265,7 @@ function RoomReservation:enqueue_or_route_event(event)
 end
 
 --- Updates status and initiates event routing. Called internally when API call complete.
-function RoomReservation:set_status_success(start_time, duration, mail_owner, conflict_id, max_occupants)
+function RoomReservation:set_status_success(start_time, duration, mail_owner, conflict_id, data)
     module:log("info", "Reservation created successfully for %s", self.room_jid);
     self.meta = {
         status = STATUS.SUCCESS;
@@ -259,8 +276,14 @@ function RoomReservation:set_status_success(start_time, duration, mail_owner, co
         error_text = nil;
         error_code = nil;
     }
-    if max_occupants_enabled and max_occupants then
-        self.meta.max_occupants = max_occupants
+    if max_occupants_enabled and data.max_occupants then
+        self.meta.max_occupants = data.max_occupants
+    end
+    if lobby_support_enabled and data.lobby then
+        self.meta.lobby = data.lobby
+    end
+    if password_support_enabled and data.password then
+        self.meta.password = data.password
     end
     self:route_pending_events()
 end
@@ -400,7 +423,7 @@ function RoomReservation:parse_conference_response(response_body)
     end
     data.duration = duration;
 
-    -- if optional max_occupants field set, cast to number
+    -- if optional "max_occupants" field set, cast to number
     if data.max_occupants ~= nil then
         local max_occupants = tonumber(data.max_occupants)
         if max_occupants == nil or max_occupants < 1 then
@@ -409,6 +432,24 @@ function RoomReservation:parse_conference_response(response_body)
             return;
         end
         data.max_occupants = max_occupants
+    end
+
+    -- if optional "lobby" field set, accept boolean true or "true"
+    if data.lobby ~= nil then
+        if (type(data.lobby) == "boolean" and data.lobby) or data.lobby == "true" then
+            data.lobby = true
+        else
+            data.lobby = false
+        end
+    end
+
+    -- if optional "password" field set, it has to be string
+    if data.password ~= nil then
+        if type(data.password) ~= "string" then
+            -- N.B. invalid "password" rejected even if reservations_enable_password_support=false
+            module:log("error", "Invalid type for password - string expected");
+            return;
+        end
     end
 
     local start_time = datetime.parse(data.start_time);  -- N.B. we lose milliseconds portion of the date
@@ -458,7 +499,7 @@ function RoomReservation:handler_conference_data_returned_from_api(response_body
         module:log("error", "API returned success code but invalid payload");
         self:set_status_failed(500, 'Invalid response from reservation server');
     else
-        self:set_status_success(data.start_time, data.duration, data.mail_owner, data.id, data.max_occupants)
+        self:set_status_success(data.start_time, data.duration, data.mail_owner, data.id, data)
     end
 end
 
@@ -555,6 +596,14 @@ module:hook("pre-iq/host", function(event)
         return;  -- room already exists. Continue with normal flow
     end
 
+    if skip_breakout_room then
+        local _, host = jid.split(room_jid);
+        if host == breakout_muc_component_host then
+            module:log("debug", "Skip reservation check for breakout room %s", room_jid);
+            return;
+        end
+    end
+
     local res = get_or_create_reservations(room_jid, stanza.attr.from);
     res:enqueue_or_route_event(event);  -- hand over to reservation obj to route event
     return true;
@@ -591,29 +640,57 @@ local function room_destroyed(event)
     end
 end
 
---- If max_occupants_enabled, update room max_occupants if returned by API
+
 local function room_created(event)
-    local res;
     local room = event.room
 
-    if max_occupants_enabled and not is_healthcheck_room(room.jid) then
-        res = reservations[room.jid]
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
 
-        if res and res.meta.max_occupants ~= nil then
-            module:log("info", "Setting max_occupants %d for room %s", res.meta.max_occupants, room.jid);
-            room._data.max_occupants = res.meta.max_occupants
-        end
+    local res = reservations[room.jid]
+
+    if res and max_occupants_enabled and res.meta.max_occupants ~= nil then
+        module:log("info", "Setting max_occupants %d for room %s", res.meta.max_occupants, room.jid);
+        room._data.max_occupants = res.meta.max_occupants
+    end
+
+    if res and password_support_enabled and res.meta.password ~= nil then
+        module:log("info", "Setting password for room %s", room.jid);
+        room:set_password(res.meta.password);
     end
 end
+
+
+local function room_pre_create(event)
+    local room = event.room
+
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
+
+    local res = reservations[room.jid]
+
+    if res and lobby_support_enabled and res.meta.lobby then
+        module:log("info", "Enabling lobby for room %s", room.jid);
+        prosody.events.fire_event("create-persistent-lobby-room", { room = room; });
+    end
+end
+
 
 function process_host(host)
     if host == muc_component_host then -- the conference muc component
         module:log("info", "Hook to muc-room-destroyed on %s", host);
         module:context(host):hook("muc-room-destroyed", room_destroyed, -1);
 
-        if max_occupants_enabled then
-            module:log("info", "Hook to muc-room-created on %s (mod_muc_max_occupants integration enabled)", host);
+        if max_occupants_enabled or password_support_enabled then
+            module:log("info", "Hook to muc-room-created on %s (max_occupants or password integration enabled)", host);
             module:context(host):hook("muc-room-created", room_created);
+        end
+
+        if lobby_support_enabled then
+            module:log("info", "Hook to muc-room-pre-create on %s (lobby integration enabled)", host);
+            module:context(host):hook("muc-room-pre-create", room_pre_create);
         end
     end
 end

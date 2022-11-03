@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getLocalParticipant } from '../../base/participants';
-import { initUpdateStats } from '../actions.any';
+import { initUpdateStats } from '../actions';
 import {
     SPEAKER_STATS_RELOAD_INTERVAL
 } from '../constants';
@@ -21,7 +21,11 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const conference = useSelector(state => state['features/base/conference'].conference);
-    const { stats: speakerStats, showFaceExpressions } = useSelector(state => state['features/speaker-stats']);
+    const {
+        stats: speakerStats,
+        showFaceExpressions,
+        sortedSpeakerStatsIds
+    } = useSelector(state => state['features/speaker-stats']);
     const localParticipant = useSelector(getLocalParticipant);
     const { defaultRemoteDisplayName } = useSelector(
         state => state['features/base/config']) || {};
@@ -80,7 +84,10 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
     }, [ faceExpressions ]);
 
     const localSpeakerStats = Object.keys(speakerStats).length === 0 ? getSpeakerStats() : speakerStats;
-    const userIds = Object.keys(localSpeakerStats).filter(id => localSpeakerStats[id] && !localSpeakerStats[id].hidden);
+    const localSortedSpeakerStatsIds
+        = sortedSpeakerStatsIds.length === 0 ? Object.keys(localSpeakerStats) : sortedSpeakerStatsIds;
+
+    const userIds = localSortedSpeakerStatsIds.filter(id => localSpeakerStats[id] && !localSpeakerStats[id].hidden);
 
     return userIds.map(userId => {
         const statsModel = localSpeakerStats[userId];

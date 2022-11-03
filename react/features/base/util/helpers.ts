@@ -1,5 +1,3 @@
-import clipboardCopy from 'clipboard-copy';
-
 /**
  * A helper function that behaves similar to Object.assign, but only reassigns a
  * property in target if it's defined in source.
@@ -24,22 +22,6 @@ export function assignIfDefined(target: Object, source: Object) {
     return to;
 }
 
-/**
- * Tries to copy a given text to the clipboard.
- * Returns true if the action succeeds.
- *
- * @param {string} textToCopy - Text to be copied.
- * @returns {Promise<boolean>}
- */
-export async function copyText(textToCopy: string) {
-    try {
-        await clipboardCopy(textToCopy);
-
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
 
 /**
  * Creates a deferred object.
@@ -81,11 +63,11 @@ export function escapeRegexp(s: string) {
  * @param {Object} w - Window object to use instead of the built in one.
  * @returns {string}
  */
-export function getBaseUrl(w: Window = window) {
+export function getBaseUrl(w: typeof window = window) {
     const doc = w.document;
     const base = doc.querySelector('base');
 
-    if (base && base.href) {
+    if (base?.href) {
         return base.href;
     }
 
@@ -102,19 +84,14 @@ export function getBaseUrl(w: Window = window) {
  * NOTE: After React-ifying everything this should be the only global.
  */
 export function getJitsiMeetGlobalNS() {
-    // @ts-ignore
     if (!window.JitsiMeetJS) {
-        // @ts-ignore
         window.JitsiMeetJS = {};
     }
 
-    // @ts-ignore
     if (!window.JitsiMeetJS.app) {
-        // @ts-ignore
         window.JitsiMeetJS.app = {};
     }
 
-    // @ts-ignore
     return window.JitsiMeetJS.app;
 }
 
@@ -127,7 +104,7 @@ export function getJitsiMeetGlobalNS() {
  */
 export function reportError(e: Error, msg = '') {
     console.error(msg, e);
-    window.onerror && window.onerror(msg, undefined, undefined, undefined, e);
+    window.onerror?.(msg, undefined, undefined, undefined, e);
 }
 
 /**

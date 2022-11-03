@@ -1,6 +1,6 @@
 // @flow
 
-import { getFeatureFlag, FILMSTRIP_ENABLED } from '../base/flags';
+import { FILMSTRIP_ENABLED, getFeatureFlag } from '../base/flags';
 import {
     getLocalParticipant,
     getParticipantCountWithFake,

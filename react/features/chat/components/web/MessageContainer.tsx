@@ -1,25 +1,26 @@
-/* eslint-disable lines-around-comment */
 import throttle from 'lodash/throttle';
 import React, { RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
-// @ts-ignore
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
-import AbstractMessageContainer, { Props } from '../AbstractMessageContainer';
+import AbstractMessageContainer, { IProps } from '../AbstractMessageContainer';
 
 // @ts-ignore
 import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
 
-interface State {
+interface IState {
+
     /**
      * Whether or not message container has received new messages.
      */
     hasNewMessages: boolean;
+
     /**
      * Whether or not scroll position is at the bottom of container.
      */
     isScrolledToBottom: boolean;
+
     /**
      * The id of the last read message.
      */
@@ -31,12 +32,12 @@ interface State {
  *
  * @augments AbstractMessageContainer
  */
-export default class MessageContainer extends AbstractMessageContainer<Props, State> {
+export default class MessageContainer extends AbstractMessageContainer<IProps, IState> {
     /**
      * Component state used to decide when the hasNewMessages button to appear
      * and where to scroll when click on hasNewMessages button.
      */
-    state: State = {
+    state: IState = {
         hasNewMessages: false,
         isScrolledToBottom: true,
         lastReadMessageId: ''
@@ -62,10 +63,10 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
     /**
      * Initializes a new {@code MessageContainer} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code MessageContainer} instance with.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._messageListRef = React.createRef<HTMLDivElement>();
@@ -87,7 +88,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
     render() {
         const groupedMessages = this._getMessagesGroupedBySender();
         const messages = groupedMessages.map((group, index) => {
-            const messageType = group[0] && group[0].messageType;
+            const messageType = group[0]?.messageType;
 
             return (
                 <ChatMessageGroup
@@ -140,7 +141,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         const hasNewMessages = this.props.messages.length !== prevProps.messages.length;
 
         if (hasNewMessages) {
@@ -276,6 +277,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
     */
     _findFirstUnreadMessage() {
         const messagesNodeList = document.querySelectorAll('.chatmessage-wrapper');
+
         // @ts-ignore
         const messagesToArray = [ ...messagesNodeList ];
 

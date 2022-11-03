@@ -24,14 +24,14 @@ const blacklist = [ '__proto__', 'constructor', 'prototype' ];
 export function parseURLParams(
         url: URL | string,
         dontParse = false,
-        source = 'hash'): Object {
+        source = 'hash') {
     if (typeof url === 'string') {
         // eslint-disable-next-line no-param-reassign
         url = new URL(url);
     }
     const paramStr = source === 'search' ? url.search : url.hash;
     const params: any = {};
-    const paramParts = (paramStr && paramStr.substr(1).split('&')) || [];
+    const paramParts = paramStr?.substr(1).split('&') || [];
 
     // Detect and ignore hash params for hash routers.
     if (source === 'hash' && paramParts.length === 1) {

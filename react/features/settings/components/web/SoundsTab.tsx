@@ -17,48 +17,48 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
     /**
      * Whether or not the reactions feature is enabled.
      */
-    enableReactions: Boolean,
+    enableReactions: Boolean;
 
     /**
      * Whether or not moderator muted the sounds.
      */
-    moderatorMutedSoundsReactions: Boolean,
+    moderatorMutedSoundsReactions: Boolean;
 
     /**
      * Whether or not the sound for the incoming message should play.
      */
-    soundsIncomingMessage: Boolean,
+    soundsIncomingMessage: Boolean;
 
     /**
      * Whether or not the sound for the participant joined should play.
      */
-    soundsParticipantJoined: Boolean,
+    soundsParticipantJoined: Boolean;
 
     /**
      * Whether or not the sound for the participant entering the lobby should play.
      */
-    soundsParticipantKnocking: Boolean,
+    soundsParticipantKnocking: Boolean;
 
     /**
      * Whether or not the sound for the participant left should play.
      */
-    soundsParticipantLeft: Boolean,
+    soundsParticipantLeft: Boolean;
 
     /**
     * Whether or not the sound for reactions should play.
     */
-    soundsReactions: Boolean,
+    soundsReactions: Boolean;
 
     /**
      * Whether or not the sound for the talk while muted notification should play.
      */
-    soundsTalkWhileMuted: Boolean,
+    soundsTalkWhileMuted: Boolean;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
-}
+    t: Function;
+};
 
 /**
  * React {@code Component} for modifying the local user's sound settings.

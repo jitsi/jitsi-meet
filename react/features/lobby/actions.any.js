@@ -12,18 +12,18 @@ import { getLocalParticipant } from '../base/participants';
 import { onLobbyChatInitialized, removeLobbyChatParticipant, sendMessage } from '../chat/actions.any';
 import { LOBBY_CHAT_MESSAGE } from '../chat/constants';
 import { handleLobbyMessageReceived } from '../chat/middleware';
-import { hideNotification, LOBBY_NOTIFICATION_ID } from '../notifications';
+import { LOBBY_NOTIFICATION_ID, hideNotification } from '../notifications';
 import { showNotification } from '../notifications/actions';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
     KNOCKING_PARTICIPANT_LEFT,
+    REMOVE_LOBBY_CHAT_WITH_MODERATOR,
     SET_KNOCKING_STATE,
     SET_LOBBY_MODE_ENABLED,
-    SET_PASSWORD_JOIN_FAILED,
-    SET_LOBBY_VISIBILITY,
     SET_LOBBY_PARTICIPANT_CHAT_STATE,
-    REMOVE_LOBBY_CHAT_WITH_MODERATOR
+    SET_LOBBY_VISIBILITY,
+    SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
 import { LOBBY_CHAT_INITIALIZED, MODERATOR_IN_CHAT_WITH_LEFT } from './constants';
 import { getKnockingParticipants, getLobbyEnabled } from './functions';

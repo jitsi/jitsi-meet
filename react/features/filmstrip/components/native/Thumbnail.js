@@ -9,14 +9,16 @@ import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media';
 import {
     PARTICIPANT_ROLE,
-    ParticipantView,
-    getParticipantCount,
-    isEveryoneModerator,
-    pinParticipant,
-    getParticipantByIdOrUndefined,
     getLocalParticipant,
-    hasRaisedHand
+    getParticipantByIdOrUndefined,
+    getParticipantCount,
+    hasRaisedHand,
+    isEveryoneModerator,
+    isScreenShareParticipant,
+    pinParticipant
 } from '../../../base/participants';
+import ParticipantView from '../../../base/participants/components/ParticipantView.native';
+import { FakeParticipant } from '../../../base/participants/types';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import {
@@ -57,9 +59,9 @@ type Props = {
     _gifSrc: ?string,
 
     /**
-     * Indicates whether the participant is fake.
+     * The type of participant if the participant is fake.
      */
-    _isFakeParticipant: boolean,
+    _fakeParticipant?: FakeParticipant,
 
     /**
      * Indicates whether the participant is screen sharing.
@@ -189,13 +191,13 @@ class Thumbnail extends PureComponent<Props> {
      * @returns {void}
      */
     _onThumbnailLongPress() {
-        const { _participantId, _local, _isFakeParticipant, _localVideoOwner, dispatch } = this.props;
+        const { _fakeParticipant, _participantId, _local, _localVideoOwner, dispatch } = this.props;
 
-        if (_isFakeParticipant && _localVideoOwner) {
+        if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(_participantId));
         }
 
-        if (!_isFakeParticipant) {
+        if (!_fakeParticipant) {
             dispatch(showContextMenuDetails(_participantId, _local));
         }
     }
@@ -208,9 +210,9 @@ class Thumbnail extends PureComponent<Props> {
     _renderIndicators() {
         const {
             _audioMuted: audioMuted,
+            _fakeParticipant,
             _isScreenShare: isScreenShare,
             _isVirtualScreenshare,
-            _isFakeParticipant,
             _renderModeratorIndicator: renderModeratorIndicator,
             _participantId: participantId,
             _pinned,
@@ -219,7 +221,7 @@ class Thumbnail extends PureComponent<Props> {
         } = this.props;
         const indicators = [];
 
-        if (!_isFakeParticipant) {
+        if (!_fakeParticipant || _isVirtualScreenshare) {
             indicators.push(<View
                 key = 'top-left-indicators'
                 style = { [
@@ -342,8 +344,8 @@ class Thumbnail extends PureComponent<Props> {
      */
     render() {
         const {
+            _fakeParticipant,
             _gifSrc,
-            _isFakeParticipant,
             _isScreenShare: isScreenShare,
             _isVirtualScreenshare,
             _participantId: participantId,
@@ -378,7 +380,7 @@ class Thumbnail extends PureComponent<Props> {
                     : <>
                         <ParticipantView
                             avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
-                            disableVideo = { isScreenShare || _isFakeParticipant }
+                            disableVideo = { isScreenShare || _fakeParticipant }
                             participantId = { participantId }
                             zOrder = { 1 } />
                         {
@@ -406,7 +408,7 @@ function _mapStateToProps(state, ownProps) {
     const localParticipantId = getLocalParticipant(state).id;
     const id = participant?.id;
     const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
-    const videoTrack = getVideoTrackByParticipant(tracks, participant);
+    const videoTrack = getVideoTrackByParticipant(state, participant);
     const isMultiStreamSupportEnabled = getMultipleVideoSupportFeatureFlag(state);
     const isScreenShare = videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const participantCount = getParticipantCount(state);
@@ -419,10 +421,10 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _audioMuted: audioTrack?.muted ?? true,
+        _fakeParticipant: participant?.fakeParticipant,
         _gifSrc: mode === 'chat' ? null : gifSrc,
-        _isFakeParticipant: participant?.isFakeParticipant,
         _isScreenShare: isScreenShare,
-        _isVirtualScreenshare: isMultiStreamSupportEnabled && participant?.isVirtualScreenshareParticipant,
+        _isVirtualScreenshare: isMultiStreamSupportEnabled && isScreenShareParticipant(participant),
         _local: participant?.local,
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participantId: id,

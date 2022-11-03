@@ -2,14 +2,14 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    SET_SCREEN_AUDIO_SHARE_STATE,
     SET_SCREENSHARE_CAPTURE_FRAME_RATE,
-    SET_SCREENSHARE_TRACKS
+    SET_SCREENSHARE_TRACKS,
+    SET_SCREEN_AUDIO_SHARE_STATE
 } from './actionTypes';
 
 export interface IScreenShareState {
     captureFrameRate?: number;
-    desktopAudioTrack?: Object;
+    desktopAudioTrack?: any;
     isSharingAudio?: boolean;
 }
 

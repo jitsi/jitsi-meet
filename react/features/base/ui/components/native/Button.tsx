@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,19 +8,21 @@ import {
 
 import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
 import BaseTheme from '../BaseTheme.native';
-import { ButtonProps } from '../types';
+import { IButtonProps } from '../types';
 
 import styles from './buttonStyles';
 
-export interface IButtonProps extends ButtonProps {
+export interface IProps extends IButtonProps {
     color?: string;
+    contentStyle?: Object | undefined;
     labelStyle?: Object | undefined;
     style?: Object | undefined;
 }
 
-const Button: React.FC<IButtonProps> = ({
+const Button: React.FC<IProps> = ({
     accessibilityLabel,
     color: buttonColor,
+    contentStyle,
     disabled,
     icon,
     labelKey,
@@ -29,7 +30,7 @@ const Button: React.FC<IButtonProps> = ({
     onClick: onPress,
     style,
     type
-}: IButtonProps) => {
+}: IProps) => {
     const { t } = useTranslation();
     const { CONTAINED } = BUTTON_MODES;
     const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
@@ -88,7 +89,12 @@ const Button: React.FC<IButtonProps> = ({
             accessibilityLabel = { t(accessibilityLabel ?? '') }
             children = { t(labelKey ?? '') }
             color = { color }
+            contentStyle = { [
+                styles.buttonContent,
+                contentStyle
+            ] }
             disabled = { disabled }
+
             // @ts-ignore
             icon = { icon }
             labelStyle = { [

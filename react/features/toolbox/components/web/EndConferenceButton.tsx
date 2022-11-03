@@ -1,15 +1,11 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-// @ts-ignore
-import { endConference } from '../../../base/conference';
-// @ts-ignore
-import { isLocalParticipantModerator } from '../../../base/participants';
+import { endConference } from '../../../base/conference/actions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
-// @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 
 /**

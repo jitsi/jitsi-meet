@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { Icon } from '../../../icons';
-import { Popover } from '../../../popover';
+import Popover from '../../../popover/components/Popover.web';
 
 type Props = {
 

@@ -22,8 +22,8 @@ const splitter = new GraphemeSplitter();
  * @param {Array<string>} customAvatarBackgrounds - Custom avatar background values.
  * @returns {string}
  */
-export function getAvatarColor(initials: string|undefined, customAvatarBackgrounds: Array<string>) {
-    const hasCustomAvatarBackgronds = customAvatarBackgrounds && customAvatarBackgrounds.length;
+export function getAvatarColor(initials: string | undefined, customAvatarBackgrounds: Array<string>) {
+    const hasCustomAvatarBackgronds = customAvatarBackgrounds?.length;
     const colorsBase = hasCustomAvatarBackgronds ? customAvatarBackgrounds : AVATAR_COLORS;
 
     let colorIndex = 0;
@@ -76,6 +76,6 @@ export function getInitials(s?: string) {
  * @param {Array<string>} corsURLs - The URL pattern that matches a URL that needs to be handled with CORS.
  * @returns {void}
  */
-export function isCORSAvatarURL(url: string | any = '', corsURLs: Array<string> = []) {
+export function isCORSAvatarURL(url: string, corsURLs: Array<string> = []): boolean {
     return corsURLs.some(pattern => url.startsWith(pattern));
 }

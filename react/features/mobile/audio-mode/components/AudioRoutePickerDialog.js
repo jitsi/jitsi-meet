@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
 
-import { hideSheet, BottomSheet } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import {
@@ -14,7 +14,7 @@ import {
     IconDeviceSpeaker
 } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { ColorPalette } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import styles from './styles';
 
@@ -240,12 +240,18 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     _renderDevice(device: Device) {
         const { icon, selected, text } = device;
         const selectedStyle = selected ? styles.selectedText : {};
+        const borderRadiusHighlightStyles = {
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16
+        };
+        const speakerDeviceIsNotSelected = device.type !== 'SPEAKER';
 
         return (
             <TouchableHighlight
                 key = { device.type }
                 onPress = { this._onSelectDeviceFn(device) }
-                underlayColor = { ColorPalette.overflowMenuItemUnderlay } >
+                style = { speakerDeviceIsNotSelected && borderRadiusHighlightStyles }
+                underlayColor = { BaseTheme.palette.underlay01 } >
                 <View style = { styles.deviceRow } >
                     <Icon
                         src = { icon }

@@ -2,12 +2,12 @@ import { Component } from 'react';
 
 import { IMessage } from '../reducer';
 
-export interface Props {
+export interface IProps {
 
     /**
      * The messages array to render.
      */
-    messages: IMessage[]
+    messages: IMessage[];
 }
 
 /**
@@ -15,7 +15,7 @@ export interface Props {
  *
  * @augments PureComponent
  */
-export default class AbstractMessageContainer<P extends Props, S> extends Component<P, S> {
+export default class AbstractMessageContainer<P extends IProps, S> extends Component<P, S> {
     static defaultProps = {
         messages: [] as IMessage[]
     };

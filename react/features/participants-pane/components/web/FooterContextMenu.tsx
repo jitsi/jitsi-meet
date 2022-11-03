@@ -1,25 +1,22 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
+import { IReduxState } from '../../../app/types';
 import {
     requestDisableAudioModeration,
     requestDisableVideoModeration,
     requestEnableAudioModeration,
     requestEnableVideoModeration
-    // @ts-ignore
 } from '../../../av-moderation/actions';
 import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
-    // @ts-ignore
 } from '../../../av-moderation/functions';
-// @ts-ignore
-import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
-// @ts-ignore
-import { openDialog } from '../../../base/dialog';
+import { openDialog } from '../../../base/dialog/actions';
 import {
     IconCheck,
     IconHorizontalPoints,
@@ -30,18 +27,19 @@ import {
     getParticipantCount,
     isEveryoneModerator
 } from '../../../base/participants/functions';
-// @ts-ignore
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import {
-    SETTINGS_TABS,
     openSettingsDialog,
     shouldShowModeratorSettings
     // @ts-ignore
 } from '../../../settings';
+import { SETTINGS_TABS } from '../../../settings/constants';
 // @ts-ignore
 import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         contextMenu: {
             bottom: 'auto',
@@ -70,27 +68,27 @@ const useStyles = makeStyles((theme: any) => {
     };
 });
 
-type Props = {
+interface IProps {
 
     /**
      * Whether the menu is open.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Drawer close callback.
      */
-    onDrawerClose: Function,
+    onDrawerClose: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for the mouse leaving this item.
      */
-    onMouseLeave?: Function
-};
+    onMouseLeave?: (e?: React.MouseEvent) => void;
+}
 
-export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {
+export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProps) => {
     const dispatch = useDispatch();
-    const isModerationSupported = useSelector(isAvModerationSupported);
+    const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
     const allModerators = useSelector(isEveryoneModerator);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
     const participantCount = useSelector(getParticipantCount);
@@ -108,7 +106,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
 
     const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
 
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const muteAllVideo = useCallback(
         () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);

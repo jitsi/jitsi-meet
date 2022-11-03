@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { LocalParticipant, Participant } from '../base/participants/reducer';
+import { ILocalParticipant, IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -9,11 +9,11 @@ import {
     CLOSE_CHAT,
     EDIT_MESSAGE,
     OPEN_CHAT,
-    SET_PRIVATE_MESSAGE_RECIPIENT,
+    REMOVE_LOBBY_CHAT_PARTICIPANT,
     SET_IS_POLL_TAB_FOCUSED,
-    SET_LOBBY_CHAT_RECIPIENT,
     SET_LOBBY_CHAT_ACTIVE_STATE,
-    REMOVE_LOBBY_CHAT_PARTICIPANT
+    SET_LOBBY_CHAT_RECIPIENT,
+    SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -38,7 +38,7 @@ export interface IMessage {
     messageType: string;
     privateMessage: boolean;
     recipient: string;
-    timestamp: string;
+    timestamp: number;
 }
 
 export interface IChatState {
@@ -49,10 +49,10 @@ export interface IChatState {
     lobbyMessageRecipient?: {
         id: string;
         name: string;
-    } | LocalParticipant,
+    } | ILocalParticipant;
     messages: IMessage[];
     nbUnreadMessages: number;
-    privateMessageRecipient?: Participant;
+    privateMessageRecipient?: IParticipant;
 }
 
 ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, action): IChatState => {

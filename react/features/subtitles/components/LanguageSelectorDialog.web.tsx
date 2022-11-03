@@ -1,40 +1,75 @@
 /* eslint-disable lines-around-comment */
-import React, { useState, useEffect, useCallback } from 'react';
+import { Theme } from '@mui/material';
+import i18next from 'i18next';
+import React, { useCallback, useEffect, useState } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 // @ts-ignore
-import { Dialog } from '../../base/dialog';
-// @ts-ignore
-import { LANGUAGES, TRANSLATION_LANGUAGES_HEAD, TRANSLATION_LANGUAGES_EXCLUDE } from '../../base/i18n';
+import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
+import { translate, translateToHTML } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
+import Dialog from '../../base/ui/components/web/Dialog';
 // @ts-ignore
-import { updateTranslationLanguage, setRequestingSubtitles, toggleLangugeSelectorDialog } from '../actions';
+import { openSettingsDialog } from '../../settings/actions';
+import { SETTINGS_TABS } from '../../settings/constants';
+// @ts-ignore
+import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage } from '../actions';
 
-import LanguageList from './LanguageList';
+import LanguageList from './LanguageList.web';
 
-interface ILanguageSelectorDialogProps {
-    _language: string,
-    t: Function,
+
+interface ILanguageSelectorDialogProps extends WithTranslation {
+    _language: string;
+    _translationLanguages: Array<string>;
+    _translationLanguagesHead: Array<string>;
 }
+
+const useStyles = makeStyles()((theme: Theme) => {
+    return {
+        paragraphWrapper: {
+            fontSize: 14,
+            margin: '10px 0px',
+            color: theme.palette.text01
+        },
+        spanWrapper: {
+            fontWeight: 700,
+            cursor: 'pointer',
+            color: theme.palette.link01,
+            '&:hover': {
+                backgroundColor: theme.palette.ui04,
+                color: theme.palette.link01Hover
+            }
+        }
+    };
+});
 
 /**
  * Component that renders the subtitle language selector dialog.
  *
  * @returns {React$Element<any>}
  */
-const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => {
+const LanguageSelectorDialog = ({
+    t,
+    _language,
+    _translationLanguages,
+    _translationLanguagesHead
+}: ILanguageSelectorDialogProps) => {
+    const { classes: styles } = useStyles();
     const dispatch = useDispatch();
     const off = 'transcribing.subtitlesOff';
     const [ language, setLanguage ] = useState(off);
 
-    const importantLanguages = TRANSLATION_LANGUAGES_HEAD.map((lang: string) => `languages:${lang}`);
-    const fixedItems = [ off, ...importantLanguages ];
-
-    const languages = LANGUAGES
-        .filter((lang: string) => !TRANSLATION_LANGUAGES_EXCLUDE.includes(lang))
-        .map((lang: string) => `languages:${lang}`)
-        .filter((lang: string) => !(lang === language || importantLanguages.includes(lang)));
+    const languagesHead = _translationLanguagesHead.map((lang: string) => `translation-languages:${lang}`);
+    // The off and the head languages are always on the top of the list. But once you are selecting
+    // a language from the translationLanguages, that language is moved under the fixedItems list,
+    // until a new languages is selected. FixedItems keep their positions.
+    const fixedItems = [ off, ...languagesHead ];
+    const languages = _translationLanguages
+        .map((lang: string) => `translation-languages:${lang}`)
+        .filter((lang: string) => !(lang === language || languagesHead.includes(lang)));
 
     const listItems = (fixedItems.includes(language)
         ? [ ...fixedItems, ...languages ]
@@ -55,15 +90,27 @@ const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => 
         setLanguage(e);
         dispatch(updateTranslationLanguage(e));
         dispatch(setRequestingSubtitles(e !== off));
-        dispatch(toggleLangugeSelectorDialog());
+        dispatch(toggleLanguageSelectorDialog());
     }, [ _language ]);
+
+    const onSourceLanguageClick = useCallback(() => {
+        dispatch(openSettingsDialog(SETTINGS_TABS.MORE, false));
+    }, []);
 
     return (
         <Dialog
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = 'transcribing.subtitles'
-            width = { 'small' }>
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
+            titleKey = 'transcribing.subtitles'>
+            <p className = { styles.paragraphWrapper } >
+                {
+                    translateToHTML(t, 'transcribing.sourceLanguageDesc', {
+                        'sourceLanguage': t(`languages:${i18next.language}`).toLowerCase()
+                    })
+                }<span
+                    className = { styles.spanWrapper }
+                    onClick = { onSourceLanguageClick }>{t('transcribing.sourceLanguageHere')}.</span>
+            </p>
             <LanguageList
                 items = { listItems }
                 onLanguageSelected = { onLanguageSelected }
@@ -80,19 +127,20 @@ const LanguageSelectorDialog = ({ _language }: ILanguageSelectorDialogProps) => 
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state: IState) {
-    const {
-        conference
-    } = state['features/base/conference'];
+function mapStateToProps(state: IReduxState) {
+    const { conference } = state['features/base/conference'];
+    const { _language } = state['features/subtitles'];
+    const { transcription } = state['features/base/config'];
 
-    const {
-        _language
-    } = state['features/subtitles'];
+    const languages = transcription?.translationLanguages ?? TRANSLATION_LANGUAGES;
+    const languagesHead = transcription?.translationLanguagesHead ?? TRANSLATION_LANGUAGES_HEAD;
 
     return {
         _conference: conference,
-        _language
+        _language,
+        _translationLanguages: languages,
+        _translationLanguagesHead: languagesHead
     };
 }
 
-export default connect(mapStateToProps)(LanguageSelectorDialog);
+export default translate(connect(mapStateToProps)(LanguageSelectorDialog));

@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { approveParticipant } from '../../../av-moderation/actions';
-import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { IconMicrophoneEmpty } from '../../../base/icons';
+import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 
 type Props = {
 

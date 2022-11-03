@@ -1,10 +1,10 @@
 /* eslint-disable lines-around-comment */
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import {
-    IconNoiseSuppressionOn,
-    IconNoiseSuppressionOff
-} from '../../base/icons/svg/index';
+    IconNoiseSuppressionOff,
+    IconNoiseSuppressionOn
+} from '../../base/icons/svg';
 import { connect } from '../../base/redux/functions';
 import {
     AbstractButton,
@@ -23,7 +23,7 @@ type Props = AbstractButtonProps & {
      */
     dispatch: Function;
 
-}
+};
 
 /**
  * Component that renders a toolbar button for toggling noise suppression.
@@ -70,7 +70,7 @@ class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: IState): Object {
+function _mapStateToProps(state: IReduxState): Object {
     return {
         _isNoiseSuppressionEnabled: isNoiseSuppressionEnabled(state)
     };

@@ -2,25 +2,19 @@
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-ignore
+// @ts-expect-error
 import UIEvents from '../../../../../service/UI/UIEvents';
-import {
-    sendAnalytics,
-    createProfilePanelButtonEvent
-    // @ts-ignore
-} from '../../../analytics';
+import { createProfilePanelButtonEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 // @ts-ignore
 import { AbstractDialogTab } from '../../../base/dialog';
 // @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';
-import { Button } from '../../../base/ui/components/web';
+import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 // @ts-ignore
 import { openLogoutDialog } from '../../actions';
-
-// eslint-disable-next-line no-var
-declare var APP: any;
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.
@@ -30,38 +24,38 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
     /**
      * Whether or not server-side authentication is available.
      */
-    authEnabled: boolean,
+    authEnabled: boolean;
 
     /**
      * The name of the currently (server-side) authenticated user.
      */
-    authLogin: string,
+    authLogin: string;
 
     /**
      * The display name to display for the local participant.
      */
-    displayName: string,
+    displayName: string;
 
     /**
      * The email to display for the local participant.
      */
-    email: string,
+    email: string;
 
     /**
      * Whether to hide the email input in the profile settings.
      */
-    hideEmailInSettings?: boolean,
+    hideEmailInSettings?: boolean;
 
     /**
      * If the display name is read only.
      */
-    readOnlyName: boolean,
+    readOnlyName: boolean;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
-}
+    t: Function;
+};
 
 /**
  * React {@code Component} for modifying the local user's profile.

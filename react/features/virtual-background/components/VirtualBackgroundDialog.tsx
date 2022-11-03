@@ -4,87 +4,73 @@ import Spinner from '@atlaskit/spinner';
 import Bourne from '@hapi/bourne';
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
-import React, { useState, useEffect, useCallback } from 'react';
+import { Theme } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../app/types';
-// @ts-ignore
-import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config';
-// @ts-ignore
-import { Dialog, hideDialog, openDialog } from '../../base/dialog';
+import { IReduxState } from '../../app/types';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config/functions.any';
+import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
-import { IconCloseSmall, IconShareDesktop } from '../../base/icons/svg/index';
-import { browser, JitsiTrackErrors } from '../../base/lib-jitsi-meet';
-// @ts-ignore
-import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
-import { VIDEO_TYPE } from '../../base/media/constants';
+import { IconCloseSmall } from '../../base/icons/svg';
 import { connect } from '../../base/redux/functions';
-// @ts-ignore
-import { updateSettings } from '../../base/settings';
+import { updateSettings } from '../../base/settings/actions';
 // @ts-ignore
 import { Tooltip } from '../../base/tooltip';
-// @ts-ignore
-import { getLocalVideoTrack } from '../../base/tracks';
-// @ts-ignore
-import { showErrorNotification } from '../../notifications';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-// @ts-ignore
-import { toggleBackgroundEffect, virtualBackgroundTrackChanged } from '../actions';
-import { IMAGES, BACKGROUNDS_LIMIT, VIRTUAL_BACKGROUND_TYPE, type Image } from '../constants';
-// @ts-ignore
+import { getLocalVideoTrack } from '../../base/tracks/functions';
+import Dialog from '../../base/ui/components/web/Dialog';
+import { toggleBackgroundEffect } from '../actions';
+import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { toDataURL } from '../functions';
-// @ts-ignore
 import logger from '../logger';
 
 import UploadImageButton from './UploadImageButton';
 // @ts-ignore
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The list of Images to choose from.
      */
-    _images: Array<Image>,
+    _images: Array<Image>;
 
     /**
      * Returns the jitsi track that will have backgraund effect applied.
      */
-    _jitsiTrack: Object,
+    _jitsiTrack: Object;
 
     /**
      * The current local flip x status.
      */
-    _localFlipX: boolean,
+    _localFlipX: boolean;
 
     /**
     * Whether or not multi-stream send support is enabled.
     */
-    _multiStreamModeEnabled: boolean,
+    _multiStreamModeEnabled: boolean;
 
     /**
      * Returns the selected thumbnail identifier.
      */
-    _selectedThumbnail: string,
+    _selectedThumbnail: string;
 
     /**
      * If the upload button should be displayed or not.
      */
-    _showUploadButton: boolean,
+    _showUploadButton: boolean;
 
     /**
      * Returns the selected virtual background object.
      */
-    _virtualBackground: any,
+    _virtualBackground: any;
 
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * The initial options copied in the state for the {@code VirtualBackground} component.
@@ -92,7 +78,7 @@ interface Props extends WithTranslation {
      * NOTE: currently used only for electron in order to open the dialog in the correct state after desktop sharing
      * selection.
      */
-    initialOptions: Object
+    initialOptions: Object;
 }
 
 const onError = (event: any) => {
@@ -108,7 +94,7 @@ const onError = (event: any) => {
  * @private
  * @returns {{Props}}
  */
-function _mapStateToProps(state: IState): Object {
+function _mapStateToProps(state: IReduxState): Object {
     const { localFlipX } = state['features/base/settings'];
     const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
     const hasBrandingImages = Boolean(dynamicBrandingImages.length);
@@ -126,15 +112,17 @@ function _mapStateToProps(state: IState): Object {
 
 const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackground));
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
+        dialogContainer: {
+            width: 'auto'
+        },
         container: {
             display: 'flex',
             flexDirection: 'column'
         },
         dialog: {
             alignSelf: 'flex-start',
-            marginLeft: '-10px',
             position: 'relative',
             maxHeight: '300px',
             color: 'white',
@@ -152,7 +140,7 @@ const useStyles = makeStyles((theme: any) => {
                 border: '2px solid #99bbf3'
             },
             '& .background-option': {
-                marginTop: `${theme.spacing(2)}px`,
+                marginTop: theme.spacing(2),
                 borderRadius: `${theme.shape.borderRadius}px`,
                 height: '60px',
                 width: '107px',
@@ -290,25 +278,16 @@ function VirtualBackground({
     _selectedThumbnail,
     _showUploadButton,
     _virtualBackground,
-    _multiStreamModeEnabled,
     dispatch,
     initialOptions,
     t
-}: Props) {
-    const classes = useStyles();
+}: IProps) {
+    const { classes, cx } = useStyles();
     const [ previewIsLoaded, setPreviewIsLoaded ] = useState(false);
     const [ options, setOptions ] = useState<any>({ ...initialOptions });
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
-    let { disableScreensharingVirtualBackground } = useSelector((state: IState) => state['features/base/config']);
-
-    // Disable screenshare as virtual background in multi-stream mode.
-    disableScreensharingVirtualBackground = disableScreensharingVirtualBackground || _multiStreamModeEnabled;
-
-    const [ activeDesktopVideo ] = useState(_virtualBackground?.virtualSource?.videoType === VIDEO_TYPE.DESKTOP
-        ? _virtualBackground.virtualSource
-        : null);
     const [ initialVirtualBackground ] = useState(_virtualBackground);
     const deleteStoredImage = useCallback(e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
@@ -373,71 +352,6 @@ function VirtualBackground({
             enableSlideBlur();
         }
     }, [ enableSlideBlur ]);
-
-
-    const shareDesktop = useCallback(async () => {
-        if (disableScreensharingVirtualBackground) {
-            return;
-        }
-
-        let isCancelled = false, url;
-
-        try {
-            url = await createLocalTrack('desktop', '');
-        } catch (e: any) {
-            if (e.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED) {
-                isCancelled = true;
-            } else {
-                logger.error(e);
-            }
-        }
-
-        if (!url) {
-            if (!isCancelled) {
-                dispatch(showErrorNotification({
-                    titleKey: 'virtualBackground.desktopShareError'
-                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
-                logger.error('Could not create desktop share as a virtual background!');
-            }
-
-            /**
-             * For electron createLocalTrack will open the {@code DesktopPicker} dialog and hide the
-             * {@code VirtualBackgroundDialog}. That's why we need to reopen the {@code VirtualBackgroundDialog}
-             * and restore the current state through {@code initialOptions} prop.
-             */
-            if (browser.isElectron()) {
-                dispatch(openDialog(VirtualBackgroundDialog, { initialOptions: options }));
-            }
-
-            return;
-        }
-
-        const newOptions = {
-            backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE,
-            enabled: true,
-            selectedThumbnail: 'desktop-share',
-            url
-        };
-
-        /**
-         * For electron createLocalTrack will open the {@code DesktopPicker} dialog and hide the
-         * {@code VirtualBackgroundDialog}. That's why we need to reopen the {@code VirtualBackgroundDialog}
-         * and force it to show desktop share virtual background through {@code initialOptions} prop.
-         */
-        if (browser.isElectron()) {
-            dispatch(openDialog(VirtualBackgroundDialog, { initialOptions: newOptions }));
-        } else {
-            setOptions(newOptions);
-            logger.info('"Desktop-share" option set for virtual background preview!');
-        }
-    }, [ dispatch, options ]);
-
-    const shareDesktopKeyPress = useCallback(e => {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            shareDesktop();
-        }
-    }, [ shareDesktop ]);
 
     const removeBackground = useCallback(async () => {
         setOptions({
@@ -508,27 +422,18 @@ function VirtualBackground({
     }, [ setUploadedImageBackground ]);
 
     const applyVirtualBackground = useCallback(async () => {
-        if (activeDesktopVideo) {
-            await activeDesktopVideo.dispose();
-        }
         setLoading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
-        if (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            dispatch(updateSettings({
-                localFlipX: !_localFlipX
-            }));
-        } else {
 
-            // Set x scale to default value.
-            dispatch(updateSettings({
-                localFlipX: true
-            }));
-        }
+        // Set x scale to default value.
+        dispatch(updateSettings({
+            localFlipX: true
+        }));
+
         dispatch(hideDialog());
         logger.info(`Virtual background type: '${typeof options.backgroundType === 'undefined'
             ? 'none' : options.backgroundType}' applied!`);
-        dispatch(virtualBackgroundTrackChanged());
     }, [ dispatch, options, _localFlipX ]);
 
     // Prevent the selection of a new virtual background if it has not been applied by default
@@ -549,12 +454,15 @@ function VirtualBackground({
 
     return (
         <Dialog
-            hideCancelButton = { false }
-            okKey = { 'virtualBackground.apply' }
+            className = { classes.dialogContainer }
+            ok = {{
+                disabled: !options || loading || !previewIsLoaded,
+                translationKey: 'virtualBackground.apply'
+            }}
             onCancel = { cancelVirtualBackground }
             onSubmit = { applyVirtualBackground }
-            submitDisabled = { !options || loading || !previewIsLoaded }
-            titleKey = { 'virtualBackground.title' } >
+            size = 'large'
+            titleKey = 'virtualBackground.title' >
             <VirtualBackgroundPreview
                 loadedPreview = { loadedPreviewState }
                 options = { options } />
@@ -575,7 +483,7 @@ function VirtualBackground({
                         showLabel = { previewIsLoaded }
                         storedImages = { storedImages } />}
                     <div
-                        className = { clsx(classes.dialog, { [classes.dialogMarginTop]: previewIsLoaded }) }
+                        className = { cx(classes.dialog, { [classes.dialogMarginTop]: previewIsLoaded }) }
                         role = 'radiogroup'
                         tabIndex = { -1 }>
                         <Tooltip
@@ -584,7 +492,7 @@ function VirtualBackground({
                             <div
                                 aria-checked = { _selectedThumbnail === 'none' }
                                 aria-label = { t('virtualBackground.removeBackground') }
-                                className = { clsx('background-option', 'virtual-background-none', {
+                                className = { cx('background-option', 'virtual-background-none', {
                                     'none-selected': _selectedThumbnail === 'none'
                                 }) }
                                 onClick = { removeBackground }
@@ -600,7 +508,7 @@ function VirtualBackground({
                             <div
                                 aria-checked = { _selectedThumbnail === 'slight-blur' }
                                 aria-label = { t('virtualBackground.slightBlur') }
-                                className = { clsx('background-option', 'slight-blur', {
+                                className = { cx('background-option', 'slight-blur', {
                                     'slight-blur-selected': _selectedThumbnail === 'slight-blur'
                                 }) }
                                 onClick = { enableSlideBlur }
@@ -616,7 +524,7 @@ function VirtualBackground({
                             <div
                                 aria-checked = { _selectedThumbnail === 'blur' }
                                 aria-label = { t('virtualBackground.blur') }
-                                className = { clsx('background-option', 'blur', {
+                                className = { cx('background-option', 'blur', {
                                     'blur-selected': _selectedThumbnail === 'blur'
                                 }) }
                                 onClick = { enableBlur }
@@ -626,27 +534,6 @@ function VirtualBackground({
                                 {t('virtualBackground.blur')}
                             </div>
                         </Tooltip>
-                        {!disableScreensharingVirtualBackground && (
-                            <Tooltip
-                                content = { t('virtualBackground.desktopShare') }
-                                position = { 'top' }>
-                                <div
-                                    aria-checked = { _selectedThumbnail === 'desktop-share' }
-                                    aria-label = { t('virtualBackground.desktopShare') }
-                                    className = { clsx('background-option', 'desktop-share', {
-                                        'desktop-share-selected': _selectedThumbnail === 'desktop-share'
-                                    }) }
-                                    onClick = { shareDesktop }
-                                    onKeyPress = { shareDesktopKeyPress }
-                                    role = 'radio'
-                                    tabIndex = { 0 }>
-                                    <Icon
-                                        className = 'share-desktop-icon'
-                                        size = { 30 }
-                                        src = { IconShareDesktop } />
-                                </div>
-                            </Tooltip>
-                        )}
                         {_images.map(image => (
                             <Tooltip
                                 content = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
@@ -675,7 +562,7 @@ function VirtualBackground({
                                 <img
                                     alt = { t('virtualBackground.uploadedImage', { index: index + 1 }) }
                                     aria-checked = { _selectedThumbnail === image.id }
-                                    className = { clsx('background-option', {
+                                    className = { cx('background-option', {
                                         'thumbnail-selected': _selectedThumbnail === image.id,
                                         'thumbnail': _selectedThumbnail !== image.id
                                     }) }

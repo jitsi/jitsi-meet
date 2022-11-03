@@ -1,52 +1,51 @@
 /* eslint-disable lines-around-comment */
-import { withStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React from 'react';
 
 // @ts-ignore
 import { StartRecordingDialog } from '../..';
-// @ts-ignore
-import { openDialog } from '../../../../base/dialog';
+import { openDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n/functions';
 import { IconHighlight } from '../../../../base/icons/svg';
-// @ts-ignore
-import { Label } from '../../../../base/label';
+import { MEET_FEATURES } from '../../../../base/jwt/constants';
+import Label from '../../../../base/label/components/web/Label';
 import { connect } from '../../../../base/redux/functions';
 // @ts-ignore
 import { Tooltip } from '../../../../base/tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
 // @ts-ignore
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
-import { FEATURES } from '../../../../jaas/constants';
 import AbstractHighlightButton, {
-    _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _abstractMapStateToProps
     // @ts-ignore
 } from '../AbstractHighlightButton';
 
 type Props = AbstractProps & {
-    _disabled: boolean,
+    _disabled: boolean;
 
     /**
      * The message to show within the label's tooltip.
      */
-    _tooltipKey: string,
+    _tooltipKey: string;
 
     /**
      * Flag controlling visibility of the component.
      */
-    _visible: boolean,
+    _visible: boolean;
 };
 
 /**
  * The type of the React {@code Component} state of {@link HighlightButton}.
  */
-type State = {
+interface IState {
 
     /**
      * Whether the notification which prompts for starting recording is open is not.
      */
-    isNotificationOpen: boolean
-};
+    isNotificationOpen: boolean;
+}
 
 /**
  * Creates the styles for the component.
@@ -55,7 +54,7 @@ type State = {
  *
  * @returns {Object}
  */
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         container: {
             position: 'relative'
@@ -64,11 +63,11 @@ const styles = (theme: any) => {
             background: theme.palette.text02,
             margin: '0 4px 4px 4px'
         },
-        regular: {
+        regular: { // @ts-ignore
             background: theme.palette.field02,
             margin: '0 4px 4px 4px'
         },
-        highlightNotification: {
+        highlightNotification: { // @ts-ignore
             backgroundColor: theme.palette.field02,
             borderRadius: '6px',
             boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.25)',
@@ -82,7 +81,7 @@ const styles = (theme: any) => {
             top: '32px',
             width: 320
         },
-        highlightNotificationButton: {
+        highlightNotificationButton: { // @ts-ignore
             color: theme.palette.field01Focus,
             cursor: 'pointer',
             fontWeight: '600',
@@ -95,7 +94,7 @@ const styles = (theme: any) => {
  * React {@code Component} responsible for displaying an action that
  * allows users to highlight a meeting moment.
  */
-export class HighlightButton extends AbstractHighlightButton<Props, State> {
+export class HighlightButton extends AbstractHighlightButton<Props, IState> {
     /**
      * Initializes a new HighlightButton instance.
      *
@@ -140,7 +139,7 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
     async _onOpenDialog() {
         // @ts-ignore
         const { dispatch } = this.props;
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             dispatch(openDialog(StartRecordingDialog));
@@ -154,8 +153,8 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
     * @param {Event} e - The click event.
     * @returns {void}
     */
-    _onClick(e: React.MouseEvent) {
-        e.stopPropagation();
+    _onClick(e?: React.MouseEvent) {
+        e?.stopPropagation();
 
         // @ts-ignore
         const { _disabled } = this.props;

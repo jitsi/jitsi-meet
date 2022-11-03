@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { Text, View } from 'react-native';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import {
     getParticipantById,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isScreenShareParticipant
 } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 
 // @ts-ignore
 import styles from './styles';
 
-type Props = {
+interface IProps {
 
     /**
      * The name of the participant to render.
@@ -37,7 +38,7 @@ type Props = {
 /**
  * Renders a label with the display name of the on-stage participant.
  */
-class DisplayNameLabel extends React.Component<Props> {
+class DisplayNameLabel extends React.Component<IProps> {
     /**
      * Implements {@code Component#render}.
      *
@@ -64,15 +65,16 @@ class DisplayNameLabel extends React.Component<Props> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {any} state - The Redux state.
- * @param {Props} ownProps - The own props of the component.
- * @returns {Props}
+ * @param {IProps} ownProps - The own props of the component.
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState, ownProps: any) {
-    const participant = getParticipantById(state, ownProps.participantId);
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
+    const participant = getParticipantById(state, ownProps.participantId ?? '');
 
     return {
-        _participantName: getParticipantDisplayName(state, ownProps.participantId),
-        _render: participant && (!participant?.local || ownProps.contained) && !participant?.isFakeParticipant
+        _participantName: getParticipantDisplayName(state, ownProps.participantId ?? ''),
+        _render: participant && (!participant?.local || ownProps.contained)
+            && (!participant?.fakeParticipant || isScreenShareParticipant(participant))
     };
 }
 

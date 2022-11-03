@@ -59,4 +59,9 @@ export const DETECTION_TYPES = {
 /**
  * Threshold for detection score of face.
  */
-export const FACE_DETECTION_SCORE_THRESHOLD = 0.6;
+export const FACE_DETECTION_SCORE_THRESHOLD = 0.75;
+
+/**
+ * Threshold for stopping detection after a certain number of consecutive errors have occurred.
+ */
+export const FACE_LANDMARK_DETECTION_ERROR_THRESHOLD = 4;

@@ -67,7 +67,7 @@ type ButtonsWithNotifyClick = 'camera' |
     'add-passcode' |
     '__end';
 
-type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
+export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'E2EE_OFF_SOUND' |
     'E2EE_ON_SOUND' |
     'INCOMING_MSG_SOUND' |
@@ -105,22 +105,28 @@ export interface IConfig {
         scriptURLs?: Array<string>;
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
+    appId?: string;
     audioLevelsInterval?: number;
     audioQuality?: {
-        opusMaxAverageBitrate?: number|null;
+        opusMaxAverageBitrate?: number | null;
         stereo?: boolean;
     };
     autoCaptionOnRecord?: boolean;
     autoKnockLobby?: boolean;
     backgroundAlpha?: number;
     bosh?: string;
+    brandingDataUrl?: string;
     brandingRoomAlias?: string;
     breakoutRooms?: {
         hideAddRoomButton?: boolean;
         hideAutoAssignButton?: boolean;
         hideJoinRoomButton?: boolean;
     };
-    buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | { key: ButtonsWithNotifyClick; preventExecution: boolean }>;
+    buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | {
+        key: ButtonsWithNotifyClick;
+        preventExecution: boolean;
+    }>;
+    callDisplayName?: string;
     callStatsConfigParams?: {
         additionalIDs?: {
             customerID?: string;
@@ -144,7 +150,7 @@ export interface IConfig {
     callStatsSecret?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
-        chromeExtensionsInfo?: Array<{id: string; path: string}>;
+        chromeExtensionsInfo?: Array<{ id: string; path: string; }>;
         edgeUrl?: string;
         url?: string;
     };
@@ -165,8 +171,8 @@ export interface IConfig {
                 ideal?: number;
                 max?: number;
                 min?: number;
-            }
-        }
+            };
+        };
     };
     corsAvatarURLs?: Array<string>;
     defaultLanguage?: string;
@@ -188,7 +194,7 @@ export interface IConfig {
     };
     dialInConfCodeUrl?: string;
     dialInNumbersUrl?: string;
-    disable1On1Mode?: boolean|null;
+    disable1On1Mode?: boolean | null;
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
@@ -296,6 +302,7 @@ export interface IConfig {
         disableTopPanel?: boolean;
         minParticipantCountForTopPanel?: number;
     };
+    firefox_fake_device?: string;
     flags?: {
         sendMultipleVideoStreams?: boolean;
         sourceNameSignaling?: boolean;
@@ -305,7 +312,8 @@ export interface IConfig {
     giphy?: {
         displayMode?: 'all' | 'tile' | 'chat';
         enabled?: boolean;
-        sdkKey?: '';
+        rating?: 'g' | 'pg' | 'pg-13' | 'r';
+        sdkKey?: string;
         tileTime?: number;
     };
     gravatar?: {
@@ -313,6 +321,8 @@ export interface IConfig {
         disabled?: boolean;
     };
     gravatarBaseURL?: string;
+    guestDialOutStatusUrl?: string;
+    guestDialOutUrl?: string;
     helpCentreURL?: string;
     hiddenPremeetingButtons?: Array<'microphone' | 'camera' | 'select-background' | 'invite' | 'settings'>;
     hideAddRoomButton?: boolean;
@@ -333,7 +343,9 @@ export interface IConfig {
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
-    inviteAppName?: string|null;
+    inviteAppName?: string | null;
+    jaasFeedbackMetadataURL?: string;
+    jaasTokenUrl?: string;
     lastNLimits?: {
         [key: number]: number;
     };
@@ -351,7 +363,7 @@ export interface IConfig {
         notifyAllParticipants?: boolean;
     };
     localSubject?: string;
-    locationURL?: string;
+    locationURL?: URL;
     maxFullResolutionParticipants?: number;
     moderatedRoomServiceUrl?: string;
     mouseMoveCallbackInterval?: number;
@@ -373,7 +385,7 @@ export interface IConfig {
         iceTransportPolicy?: string;
         preferH264?: boolean;
         preferredCodec?: string;
-        stunServers?: Array<{urls: string}>;
+        stunServers?: Array<{ urls: string; }>;
     };
     participantsPane?: {
         hideModeratorSettingsTab?: boolean;
@@ -400,12 +412,14 @@ export interface IConfig {
         hideStorageWarning?: boolean;
         sharingEnabled?: boolean;
     };
+    recordingSharingUrl?: string;
     remoteVideoMenu?: {
         disableGrantModerator?: boolean;
         disableKick?: boolean;
         disablePrivateChat?: boolean;
         disabled?: boolean;
     };
+    replaceParticipant?: string;
     requireDisplayName?: boolean;
     resolution?: number;
     roomPasswordNumberOfDigits?: number;
@@ -414,8 +428,14 @@ export interface IConfig {
         enabled?: boolean;
         mode?: 'always' | 'recording';
     };
-    speakerStatsOrder?: Array<'role'|'name'|'hasLeft'>;
-    startAudioMuted?: boolean;
+    serviceUrl?: string;
+    speakerStats?: {
+        disableSearch?: boolean;
+        disabled?: boolean;
+        order?: Array<'role' | 'name' | 'hasLeft'>;
+    };
+    speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
+    startAudioMuted?: number;
     startAudioOnly?: boolean;
     startLastN?: number;
     startScreenSharing?: boolean;
@@ -429,7 +449,6 @@ export interface IConfig {
         callStatsThreshold?: number;
         capScreenshareBitrate?: number;
         disableE2EE?: boolean;
-        enableThumbnailReordering?: boolean;
         mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
@@ -453,6 +472,8 @@ export interface IConfig {
         disableStartForAll?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
+        translationLanguages?: Array<string>;
+        translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
     };
     useHostPageLocalStorage?: boolean;
@@ -466,11 +487,12 @@ export interface IConfig {
                 high?: number;
                 low?: number;
                 standard?: number;
-            }
+            };
         };
-        minHeightForQualityLvl: {
+        minHeightForQualityLvl?: {
             [key: number]: string;
         };
+        persist?: boolean;
         preferredCodec?: string;
         resizeDesktopForPresenter?: boolean;
     };
@@ -478,4 +500,9 @@ export interface IConfig {
     webrtcIceTcpDisable?: boolean;
     webrtcIceUdpDisable?: boolean;
     websocket?: string;
+    websocketKeepAliveUrl?: string;
+    whiteboard?: {
+        collabServerBaseUrl?: string;
+        enabled?: boolean;
+    };
 }

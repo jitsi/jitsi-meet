@@ -1,13 +1,11 @@
 /* eslint-disable lines-around-comment */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { IState } from '../../../../app/types';
-// @ts-ignore
-import { setPassword as setPass } from '../../../../base/conference';
-// @ts-ignore
-import { Dialog } from '../../../../base/dialog';
+import { IReduxState } from '../../../../app/types';
+import { setPassword as setPass } from '../../../../base/conference/actions';
 import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 import { connect } from '../../../../base/redux/functions';
+import Dialog from '../../../../base/ui/components/web/Dialog';
 // @ts-ignore
 import { E2EESection } from '../../../../e2ee/components';
 // @ts-ignore
@@ -15,55 +13,55 @@ import { LobbySection } from '../../../../lobby';
 
 import PasswordSection from './PasswordSection';
 
-export interface NotifyClick {
+export interface INotifyClick {
     key: string;
     preventExecution: boolean;
 }
 
-type Props = {
+interface IProps {
 
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    _buttonsWithNotifyClick: Array<string | NotifyClick>,
+    _buttonsWithNotifyClick: Array<string | INotifyClick>;
 
     /**
      * Whether or not the current user can modify the current password.
      */
-    _canEditPassword: boolean,
+    _canEditPassword: boolean;
 
     /**
      * The JitsiConference for which to display a lock state and change the
      * password.
      */
-    _conference: Object,
+    _conference: Object;
 
     /**
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    _locked: string,
+    _locked: string;
 
     /**
      * The current known password for the JitsiConference.
      */
-    _password: string,
+    _password: string;
 
     /**
      * The number of digits to be used in the password.
      */
-    _passwordNumberOfDigits?: number,
+    _passwordNumberOfDigits?: number;
 
     /**
      * Indicates whether e2ee will be displayed or not.
      */
-    _showE2ee: boolean,
+    _showE2ee: boolean;
 
     /**
      * Action that sets the conference password.
      */
-    setPassword: Function
-};
+    setPassword: Function;
+}
 
 /**
  * Component that renders the security options dialog.
@@ -79,7 +77,7 @@ function SecurityDialog({
     _passwordNumberOfDigits,
     _showE2ee,
     setPassword
-}: Props) {
+}: IProps) {
     const [ passwordEditEnabled, setPasswordEditEnabled ] = useState(false);
 
     useEffect(() => {
@@ -90,10 +88,9 @@ function SecurityDialog({
 
     return (
         <Dialog
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = 'security.header'
-            width = { 'small' }>
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
+            titleKey = 'security.title'>
             <div className = 'security-dialog'>
                 <LobbySection />
                 <PasswordSection
@@ -124,9 +121,9 @@ function SecurityDialog({
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     const {
         conference,
         e2eeSupported,

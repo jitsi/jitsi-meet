@@ -4,9 +4,17 @@ import { equals } from '../redux/functions';
 import { SET_JWT } from './actionTypes';
 
 export interface IJwtState {
+    callee?: {
+        name: string;
+    };
     group?: string;
     jwt?: string;
     server?: string;
+    tenant?: string;
+    user?: {
+        id: string;
+        name: string;
+    };
 }
 
 /**

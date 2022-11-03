@@ -8,7 +8,6 @@ import { bottomSheetStyles } from '../../../base/dialog/components/native/styles
 import { connect } from '../../../base/redux';
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import { SharedDocumentButton } from '../../../etherpad';
-import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionMenu } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { LiveStreamButton, RecordButton } from '../../../recording';
@@ -16,6 +15,7 @@ import SecurityDialogButton
     from '../../../security/components/security-dialog/native/SecurityDialogButton';
 import { SharedVideoButton } from '../../../shared-video/components';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
+import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import styles from '../../../video-menu/components/native/styles';
@@ -55,7 +55,12 @@ type Props = {
     /**
      * Used for hiding the dialog when the selection was completed.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Whether or not speaker stats is disable.
+     */
+    _isSpeakerStatsDisabled: boolean
 };
 
 type State = {
@@ -96,6 +101,7 @@ class OverflowMenu extends PureComponent<Props, State> {
      */
     render() {
         const {
+            _isSpeakerStatsDisabled,
             _reactionsEnabled,
             _width
         } = this.props;
@@ -120,16 +126,12 @@ class OverflowMenu extends PureComponent<Props, State> {
             }
         };
 
-        const firstMenuButtonProps
-            = toolbarButtons.has('participantspane') ? topButtonProps : buttonProps;
-
         return (
             <BottomSheet
                 renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : null }>
-                {!toolbarButtons.has('participantspane') && <ParticipantsPaneButton { ...topButtonProps } />}
-                <OpenCarmodeButton { ...firstMenuButtonProps } />
+                <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
@@ -139,8 +141,8 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <LinkToSalesforceButton { ...buttonProps } />
                 <Divider style = { styles.divider } />
                 <SharedVideoButton { ...buttonProps } />
-                <ScreenSharingButton { ...buttonProps } />
-                <SpeakerStatsButton { ...buttonProps } />
+                {!toolbarButtons.has('screensharing') && <ScreenSharingButton { ...buttonProps } />}
+                {!_isSpeakerStatsDisabled && <SpeakerStatsButton { ...buttonProps } />}
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <ClosedCaptionButton { ...buttonProps } />
@@ -181,6 +183,7 @@ class OverflowMenu extends PureComponent<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
+        _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
         _reactionsEnabled: isReactionsEnabled(state),
         _width: state['features/base/responsive-ui'].clientWidth
     };

@@ -1,9 +1,9 @@
-import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
-import { IconPinParticipant } from '../../../base/icons/svg/index';
+import { IReduxState } from '../../../app/types';
+import { IconPinParticipant } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
 // eslint-disable-next-line lines-around-comment
@@ -13,26 +13,26 @@ import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../fu
 /**
  * The type of the React {@code Component} props of {@link PinnedIndicator}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The font-size for the icon.
      */
-    iconSize: number,
+    iconSize: number;
 
     /**
      * The participant id who we want to render the raised hand indicator
      * for.
      */
-    participantId: string,
+    participantId: string;
 
     /**
      * From which side of the indicator the tooltip should appear from.
      */
-    tooltipPosition: string
-};
+    tooltipPosition: string;
+}
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles()(() => {
     return {
         pinnedIndicator: {
             backgroundColor: 'rgba(0, 0, 0, .7)',
@@ -54,20 +54,22 @@ const PinnedIndicator = ({
     iconSize,
     participantId,
     tooltipPosition
-}: Props) => {
+}: IProps) => {
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
-    const pinned = useSelector((state: IState) => getParticipantById(state, participantId))?.pinned;
-    const activePinnedParticipants: Array<{participantId: string; pinned: boolean}>
+    const pinned = useSelector((state: IReduxState) => getParticipantById(state, participantId))?.pinned;
+    const activePinnedParticipants: Array<{ participantId: string; pinned: boolean; }>
         = useSelector(getPinnedActiveParticipants);
     const isPinned = activePinnedParticipants.find(p => p.participantId === participantId);
-    const styles = useStyles();
+    const { classes: styles } = useStyles();
 
     if ((stageFilmstrip && !isPinned) || (!stageFilmstrip && !pinned)) {
         return null;
     }
 
     return (
-        <div className = { styles.pinnedIndicator }>
+        <div
+            className = { styles.pinnedIndicator }
+            id = { `pin-indicator-${participantId}` }>
             <BaseIndicator
                 icon = { IconPinParticipant }
                 iconSize = { `${iconSize}px` }

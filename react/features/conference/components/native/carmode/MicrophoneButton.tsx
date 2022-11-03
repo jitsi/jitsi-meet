@@ -1,24 +1,21 @@
 /* eslint-disable lines-around-comment */
 import React, { useCallback, useState } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
-    createShortcutEvent,
-    sendAnalytics,
     ACTION_SHORTCUT_PRESSED as PRESSED,
-    ACTION_SHORTCUT_RELEASED as RELEASED
-    // @ts-ignore
-} from '../../../../analytics';
-import { IState } from '../../../../app/types';
-// @ts-ignore
-import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags';
+    ACTION_SHORTCUT_RELEASED as RELEASED,
+    createShortcutEvent
+} from '../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../analytics/functions';
+import { IReduxState } from '../../../../app/types';
+import { AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags/constants';
+import { getFeatureFlag } from '../../../../base/flags/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons/svg/index';
+import { IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../../base/media/constants';
-// @ts-ignore
-import { isLocalTrackMuted } from '../../../../base/tracks';
-// @ts-ignore
+import { isLocalTrackMuted } from '../../../../base/tracks/functions';
 import { isAudioMuteButtonDisabled } from '../../../../toolbox/functions.any';
 // @ts-ignore
 import { muteLocal } from '../../../../video-menu/actions';
@@ -33,12 +30,12 @@ const LONG_PRESS = 'long.press';
  *
  * @returns {JSX.Element} - The audio mute round button.
  */
-const MicrophoneButton = () : JSX.Element|null => {
+const MicrophoneButton = (): JSX.Element | null => {
     const dispatch = useDispatch();
-    const audioMuted = useSelector((state: IState) => isLocalTrackMuted(state['features/base/tracks'],
+    const audioMuted = useSelector((state: IReduxState) => isLocalTrackMuted(state['features/base/tracks'],
         MEDIA_TYPE.AUDIO));
     const disabled = useSelector(isAudioMuteButtonDisabled);
-    const enabledFlag = useSelector(state => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
+    const enabledFlag = useSelector((state: IReduxState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
     const [ longPress, setLongPress ] = useState(false);
 
     if (!enabledFlag) {

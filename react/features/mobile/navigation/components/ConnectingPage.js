@@ -7,7 +7,7 @@ import { SafeAreaView, Text, View } from 'react-native';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 
-import { navigationStyles, TEXT_COLOR } from './styles';
+import { TEXT_COLOR, navigationStyles } from './styles';
 
 const ConnectingPage = () => {
     const { t } = useTranslation();

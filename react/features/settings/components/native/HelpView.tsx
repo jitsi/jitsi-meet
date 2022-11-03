@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';
 // @ts-ignore
@@ -19,23 +19,23 @@ import styles from './styles';
 
 const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
 
-type Props = {
+interface IProps {
 
     /**
      * The URL to display in the Help Centre.
      */
-    _url: string,
+    _url: string;
 
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
-    navigation: Object
+    navigation: Object;
 }
 
 /**
  * Implements a page that renders the help content for the app.
  */
-class HelpView extends PureComponent<Props> {
+class HelpView extends PureComponent<IProps> {
     /**
      * Implements React's {@link Component#componentDidMount()}. Invoked
      * immediately after mounting occurs.
@@ -79,9 +79,9 @@ class HelpView extends PureComponent<Props> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _url: state['features/base/config'].helpCentreURL || DEFAULT_HELP_CENTRE_URL
     };

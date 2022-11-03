@@ -6,7 +6,7 @@ import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appNavigate } from '../../../app/actions';
-import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { FULLSCREEN_ENABLED, PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -14,12 +14,12 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { DisplayNameLabel } from '../../../display-name';
-import { BrandingImageBackground } from '../../../dynamic-branding';
+import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
-    isFilmstripVisible,
-    TileView
+    TileView,
+    isFilmstripVisible
 } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
@@ -31,7 +31,7 @@ import { navigate }
 import { shouldEnableAutoKnock } from '../../../mobile/navigation/functions';
 import { screen } from '../../../mobile/navigation/routes';
 import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture';
-import { Captions } from '../../../subtitles';
+import { Captions } from '../../../subtitles/components';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
 import { isToolboxVisible } from '../../../toolbox/functions';
@@ -61,12 +61,17 @@ type Props = AbstractProps & {
     _aspectRatio: Symbol,
 
     /**
+     * Whether the audio only is enabled or not.
+     */
+    _audioOnlyEnabled: boolean,
+
+    /**
      * Branding styles for conference.
      */
     _brandingStyles: Object,
 
     /**
-     * Wherther the calendar feature is enabled or not.
+     * Whether the calendar feature is enabled or not.
      */
     _calendarEnabled: boolean,
 
@@ -135,6 +140,11 @@ type Props = AbstractProps & {
     _showLobby: boolean,
 
     /**
+     * Indicates whether the car mode is enabled.
+     */
+    _startCarMode: boolean,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
@@ -142,7 +152,12 @@ type Props = AbstractProps & {
     /**
     * Object containing the safe area insets.
     */
-    insets: Object
+    insets: Object,
+
+    /**
+     * Default prop for navigating between screen components(React Navigation).
+     */
+    navigation: Object
 };
 
 type State = {
@@ -192,7 +207,17 @@ class Conference extends AbstractConference<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
+        const {
+            _audioOnlyEnabled,
+            _startCarMode,
+            navigation
+        } = this.props;
+
         BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+
+        if (_audioOnlyEnabled && _startCarMode) {
+            navigation.navigate(screen.conference.carmode);
+        }
     }
 
     /**
@@ -536,6 +561,8 @@ function _mapStateToProps(state) {
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const { backgroundColor } = state['features/dynamic-branding'];
+    const { startCarMode } = state['features/base/settings'];
+    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
     const participantCount = getParticipantCount(state);
     const brandingStyles = backgroundColor ? {
         backgroundColor
@@ -544,6 +571,7 @@ function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
+        _audioOnlyEnabled: Boolean(audioOnlyEnabled),
         _brandingStyles: brandingStyles,
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
@@ -556,6 +584,7 @@ function _mapStateToProps(state) {
         _reducedUI: reducedUI,
         _shouldEnableAutoKnock: shouldEnableAutoKnock(state),
         _showLobby: getIsLobbyVisible(state),
+        _startCarMode: startCarMode,
         _toolboxVisible: isToolboxVisible(state)
     };
 }

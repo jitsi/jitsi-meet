@@ -1,8 +1,9 @@
 /* eslint-disable lines-around-comment */
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { MOBILE_BREAKPOINT } from '../../constants';
 // @ts-ignore
 import abstractSpeakerStatsList from '../AbstractSpeakerStatsList';
@@ -10,20 +11,20 @@ import abstractSpeakerStatsList from '../AbstractSpeakerStatsList';
 // @ts-ignore
 import SpeakerStatsItem from './SpeakerStatsItem';
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         list: {
-            marginTop: `${theme.spacing(3)}px`,
-            marginBottom: `${theme.spacing(3)}px`
+            marginTop: theme.spacing(3),
+            marginBottom: theme.spacing(3)
         },
         item: {
-            height: `${theme.spacing(7)}px`,
+            height: theme.spacing(7),
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                height: `${theme.spacing(8)}px`
+                height: theme.spacing(8)
             }
         },
         avatar: {
-            height: `${theme.spacing(5)}px`
+            height: theme.spacing(5)
         },
         expressions: {
             paddingLeft: 29
@@ -32,21 +33,17 @@ const useStyles = makeStyles((theme: any) => {
             color: theme.palette.text03
         },
         displayName: {
-            ...theme.typography.bodyShortRegular,
-            lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                ...theme.typography.bodyShortRegularLarge,
-                lineHeight: `${theme.typography.bodyShortRegular.lineHeightLarge}px`
+                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
             }
         },
         time: {
             padding: '2px 4px',
             borderRadius: '4px',
-            ...theme.typography.labelBold,
-            lineHeight: `${theme.typography.labelBold.lineHeight}px`,
+            ...withPixelLineHeight(theme.typography.labelBold),
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                ...theme.typography.bodyShortRegularLarge,
-                lineHeight: `${theme.typography.bodyShortRegular.lineHeightLarge}px`
+                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
             }
         },
         dominant: {
@@ -61,7 +58,7 @@ const useStyles = makeStyles((theme: any) => {
  * @returns {React$Element<any>}
  */
 const SpeakerStatsList = () => {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const items = abstractSpeakerStatsList(SpeakerStatsItem, classes);
 
     return (

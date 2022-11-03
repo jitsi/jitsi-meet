@@ -17,12 +17,12 @@ import { validateJwt } from '../jwt';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
-    getLocalParticipant,
-    getParticipantById,
-    getPinnedParticipant,
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    getLocalParticipant,
+    getParticipantById,
+    getPinnedParticipant
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
@@ -135,7 +135,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
         if (TRIGGER_READY_TO_CLOSE_REASONS.includes(reason)) {
-            if (typeof APP === undefined) {
+            if (typeof APP === 'undefined') {
                 dispatch(readyToClose());
             } else {
                 APP.API.notifyReadyToClose();

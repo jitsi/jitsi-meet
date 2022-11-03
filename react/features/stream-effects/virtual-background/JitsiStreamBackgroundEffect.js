@@ -4,8 +4,8 @@ import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
 
 import {
     CLEAR_TIMEOUT,
-    TIMEOUT_TICK,
     SET_TIMEOUT,
+    TIMEOUT_TICK,
     timerWorkerScript
 } from './TimerWorker';
 
@@ -48,11 +48,6 @@ export default class JitsiStreamBackgroundEffect {
             this._virtualImage = document.createElement('img');
             this._virtualImage.crossOrigin = 'anonymous';
             this._virtualImage.src = this._options.virtualBackground.virtualSource;
-        }
-        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            this._virtualVideo = document.createElement('video');
-            this._virtualVideo.autoplay = true;
-            this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
         }
         this._model = model;
         this._segmentationPixelCount = this._options.width * this._options.height;
@@ -98,14 +93,6 @@ export default class JitsiStreamBackgroundEffect {
 
         // Smooth out the edges.
         this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)';
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            // Save current context before applying transformations.
-            this._outputCanvasCtx.save();
-
-            // Flip the canvas and prevent mirror behaviour.
-            this._outputCanvasCtx.scale(-1, 1);
-            this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
-        }
         this._outputCanvasCtx.drawImage(
             this._segmentationMaskCanvas,
             0,
@@ -117,31 +104,15 @@ export default class JitsiStreamBackgroundEffect {
             this._inputVideoElement.width,
             this._inputVideoElement.height
         );
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            this._outputCanvasCtx.restore();
-        }
         this._outputCanvasCtx.globalCompositeOperation = 'source-in';
         this._outputCanvasCtx.filter = 'none';
 
         // Draw the foreground video.
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            // Save current context before applying transformations.
-            this._outputCanvasCtx.save();
-
-            // Flip the canvas and prevent mirror behaviour.
-            this._outputCanvasCtx.scale(-1, 1);
-            this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
-        }
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            this._outputCanvasCtx.restore();
-        }
 
         // Draw the background.
-
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
             this._outputCanvasCtx.drawImage(
                 backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
                     ? this._virtualImage : this._virtualVideo,

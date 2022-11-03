@@ -1,69 +1,67 @@
 /* eslint-disable react/jsx-no-bind */
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../../base/i18n/functions';
-import { copyText } from '../../../../base/util/helpers';
+import { copyText } from '../../../../base/util/copyText.web';
+import { LOCKED_LOCALLY } from '../../../../room-lock/constants';
 import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 
-// @ts-ignore
 import PasswordForm from './PasswordForm';
-import { NotifyClick } from './SecurityDialog';
+import { INotifyClick } from './SecurityDialog';
 
 const DIGITS_ONLY = /^\d+$/;
 const KEY = 'add-passcode';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    buttonsWithNotifyClick: Array<string | NotifyClick>,
+    buttonsWithNotifyClick: Array<string | INotifyClick>;
 
     /**
      * Whether or not the current user can modify the current password.
      */
-    canEditPassword: boolean,
+    canEditPassword: boolean;
 
     /**
      * The JitsiConference for which to display a lock state and change the
      * password.
      */
-    conference: any,
+    conference: any;
 
     /**
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    locked: string,
+    locked: string;
 
     /**
      * The current known password for the JitsiConference.
      */
-    password: string,
+    password: string;
 
     /**
      * Whether or not to show the password in editing mode.
      */
-    passwordEditEnabled: boolean,
+    passwordEditEnabled: boolean;
 
     /**
      * The number of digits to be used in the password.
      */
-    passwordNumberOfDigits?: number,
+    passwordNumberOfDigits?: number;
 
     /**
      * Action that sets the conference password.
      */
-    setPassword: Function,
+    setPassword: Function;
 
     /**
      * Method that sets whether the password editing is enabled or not.
      */
-    setPasswordEditEnabled: Function
+    setPasswordEditEnabled: Function;
 }
-
-declare let APP: any;
 
 /**
  * Component that handles the password manipulation from the invite dialog.
@@ -80,9 +78,10 @@ function PasswordSection({
     passwordNumberOfDigits,
     setPassword,
     setPasswordEditEnabled,
-    t }: Props) {
+    t }: IProps) {
 
     const formRef = useRef<HTMLDivElement>(null);
+    const [ passwordVisible, setPasswordVisible ] = useState(false);
 
     /**
      * Callback invoked to set a password on the current JitsiConference.
@@ -116,7 +115,7 @@ function PasswordSection({
 
         let notifyMode;
         const notify = buttonsWithNotifyClick.find(
-            (btn: string | NotifyClick) =>
+            (btn: string | INotifyClick) =>
                 (typeof btn === 'string' && btn === KEY)
                 || (typeof btn === 'object' && btn.key === KEY)
         );
@@ -231,6 +230,52 @@ function PasswordSection({
     }
 
     /**
+     * Callback invoked to show the current password.
+     *
+     * @returns {void}
+     */
+    function onPasswordShow() {
+        setPasswordVisible(true);
+    }
+
+    /**
+     * Callback invoked to show the current password.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    function onPasswordShowKeyPressHandler(e: React.KeyboardEvent) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            setPasswordVisible(true);
+        }
+    }
+
+    /**
+     * Callback invoked to hide the current password.
+     *
+     * @returns {void}
+     */
+    function onPasswordHide() {
+        setPasswordVisible(false);
+    }
+
+    /**
+     * Callback invoked to hide the current password.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    function onPasswordHideKeyPressHandler(e: React.KeyboardEvent) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            setPasswordVisible(false);
+        }
+    }
+
+    /**
      * Method that renders the password action(s) based on the current
      * locked-status of the conference.
      *
@@ -283,6 +328,17 @@ function PasswordSection({
                                 tabIndex = { 0 }>{ t('dialog.copy') }</a>
                         </> : null
                     }
+                    {locked === LOCKED_LOCALLY && (
+                        <a
+                            aria-label = { t(passwordVisible ? 'dialog.hide' : 'dialog.show') }
+                            onClick = { passwordVisible ? onPasswordHide : onPasswordShow }
+                            onKeyPress = { passwordVisible
+                                ? onPasswordHideKeyPressHandler
+                                : onPasswordShowKeyPressHandler
+                            }
+                            role = 'button'
+                            tabIndex = { 0 }>{t(passwordVisible ? 'dialog.hide' : 'dialog.show')}</a>
+                    )}
                 </>
             );
         }
@@ -312,7 +368,8 @@ function PasswordSection({
                         locked = { locked }
                         onSubmit = { onPasswordSubmit }
                         password = { password }
-                        passwordNumberOfDigits = { passwordNumberOfDigits } />
+                        passwordNumberOfDigits = { passwordNumberOfDigits }
+                        visible = { passwordVisible } />
                 </div>
                 <div className = 'security-dialog password-actions'>
                     { renderPasswordActions() }

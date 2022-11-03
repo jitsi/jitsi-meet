@@ -3,15 +3,15 @@ import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { IconArrowUp } from '../../../base/icons/svg/index';
+import { IconArrowUp } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { ReactionEmojiProps } from '../../constants';
+import { IReactionEmojiProps } from '../../constants';
 import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
@@ -20,48 +20,48 @@ import RaiseHandButton from './RaiseHandButton';
 import ReactionEmoji from './ReactionEmoji';
 import ReactionsMenu from './ReactionsMenu';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether or not reactions are enabled.
      */
-    _reactionsEnabled: Boolean,
+    _reactionsEnabled: Boolean;
 
     /**
      * The button's key.
      */
-    buttonKey?: string,
+    buttonKey?: string;
 
     /**
      * Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Click handler for raise hand functionality.
      */
-    handleClick: Function,
+    handleClick: Function;
 
     /**
      * Whether or not it's a mobile browser.
      */
-    isMobile: boolean,
+    isMobile: boolean;
 
     /**
      * Whether or not the reactions menu is open.
      */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
      * Notify mode for `toolbarButtonClicked` event -
      * whether to only notify or to also prevent button click routine.
      */
-    notifyMode?: string,
+    notifyMode?: string;
 
     /**
      * The array of reactions to be displayed.
      */
-    reactionsQueue: Array<ReactionEmojiProps>
+    reactionsQueue: Array<IReactionEmojiProps>;
 }
 
 /**
@@ -79,7 +79,7 @@ function ReactionsMenuButton({
     notifyMode,
     reactionsQueue,
     t
-}: Props) {
+}: IProps) {
     const visible = useSelector(getReactionsMenuVisibility);
     const toggleReactionsMenu = useCallback(() => {
         dispatch(toggleReactionsMenuVisibility());
@@ -134,7 +134,7 @@ function ReactionsMenuButton({
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     return {
         _reactionsEnabled: isReactionsEnabled(state),
         isOpen: getReactionsMenuVisibility(state),

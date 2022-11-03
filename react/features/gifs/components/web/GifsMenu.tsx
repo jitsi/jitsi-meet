@@ -1,19 +1,16 @@
 /* eslint-disable lines-around-comment */
 import { GiphyFetch, TrendingOptions } from '@giphy/js-fetch-api';
 import { Grid } from '@giphy/react-components';
-import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { createGifSentEvent, sendAnalytics } from '../../../analytics';
-import { IState } from '../../../app/types';
-// @ts-ignore
-import InputField from '../../../base/premeeting/components/web/InputField';
-import BaseTheme from '../../../base/ui/components/BaseTheme.web';
-// @ts-ignore
+import { createGifSentEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState } from '../../../app/types';
+import Input from '../../../base/ui/components/web/Input';
 import { sendMessage } from '../../../chat/actions.any';
 import { SCROLL_SIZE } from '../../../filmstrip/constants';
 import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
@@ -21,20 +18,22 @@ import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
-// @ts-ignore
 import { setGifDrawerVisibility } from '../../actions';
-// @ts-ignore
-import { formatGifUrlMessage, getGifAPIKey, getGifUrl } from '../../functions';
+import {
+    formatGifUrlMessage,
+    getGifAPIKey,
+    getGifRating,
+    getGifUrl
+} from '../../function.any';
 
-const OVERFLOW_DRAWER_PADDING = BaseTheme.spacing(3);
+const OVERFLOW_DRAWER_PADDING = 16;
 
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         gifsMenu: {
             width: '100%',
-            marginBottom: `${theme.spacing(2)}px`,
+            marginBottom: theme.spacing(2),
             display: 'flex',
             flexDirection: 'column',
 
@@ -45,16 +44,7 @@ const useStyles = makeStyles((theme: any) => {
         },
 
         searchField: {
-            backgroundColor: theme.palette.field01,
-            borderRadius: `${theme.shape.borderRadius}px`,
-            border: 'none',
-            outline: 0,
-            ...theme.typography.bodyShortRegular,
-            lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`,
-            color: theme.palette.text01,
-            padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
-            width: '100%',
-            marginBottom: `${theme.spacing(3)}px`
+            marginBottom: theme.spacing(3)
         },
 
         gifContainer: {
@@ -69,11 +59,11 @@ const useStyles = makeStyles((theme: any) => {
             alignItems: 'center',
             justifyContent: 'center',
             color: '#fff',
-            marginTop: `${theme.spacing(1)}px`
+            marginTop: theme.spacing(1)
         },
 
         overflowMenu: {
-            padding: `${theme.spacing(3)}px`,
+            padding: theme.spacing(3),
             width: '100%',
             boxSizing: 'border-box'
         },
@@ -95,20 +85,21 @@ const useStyles = makeStyles((theme: any) => {
  * @returns {ReactElement}
  */
 function GifsMenu() {
-    const API_KEY: string = useSelector(getGifAPIKey);
+    const API_KEY = useSelector(getGifAPIKey);
     const giphyFetch = new GiphyFetch(API_KEY);
     const [ searchKey, setSearchKey ] = useState<string>();
-    const styles = useStyles();
+    const { classes: styles, cx } = useStyles();
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const overflowDrawer: boolean = useSelector(showOverflowDrawer);
-    const { clientWidth } = useSelector((state: IState) => state['features/base/responsive-ui']);
+    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const rating = useSelector(getGifRating);
 
     const fetchGifs = useCallback(async (offset = 0) => {
         const options: TrendingOptions = {
-            rating: 'pg-13',
             limit: 20,
-            offset
+            offset,
+            rating
         };
 
         if (!searchKey) {
@@ -188,20 +179,30 @@ function GifsMenu() {
     // This fixes that.
     useEffect(() => setSearchKey(''), []);
 
+    const onInputKeyPress = useCallback((e: React.KeyboardEvent) => {
+        e.stopPropagation();
+    }, []);
+
     const gifMenu = (
         <div
-            className = { clsx(styles.gifsMenu,
+            className = { cx(styles.gifsMenu,
                 overflowDrawer && styles.overflowMenu
             ) }>
-            <InputField
+            <Input
                 autoFocus = { true }
-                className = { clsx(styles.searchField, 'gif-input') }
+                className = { cx(styles.searchField, 'gif-input') }
                 onChange = { handleSearchKeyChange }
-                placeHolder = { t('giphy.search') }
-                testId = 'gifSearch.key'
-                type = 'text' />
+                onKeyPress = { onInputKeyPress }
+                placeholder = { t('giphy.search') }
+                // eslint-disable-next-line react/jsx-no-bind
+                ref = { inputElement => {
+                    inputElement?.focus();
+                    setTimeout(() => inputElement?.focus(), 200);
+                } }
+                type = 'text'
+                value = { searchKey ?? '' } />
             <div
-                className = { clsx(styles.gifContainer,
+                className = { cx(styles.gifContainer,
                 overflowDrawer && styles.gifContainerOverflow) }>
                 <Grid
                     columns = { 2 }

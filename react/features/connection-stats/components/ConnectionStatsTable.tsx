@@ -1,27 +1,28 @@
-import { withStyles } from '@material-ui/styles';
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import ContextMenu from '../../base/components/context-menu/ContextMenu';
 import { isMobileBrowser } from '../../base/environment/utils';
 import { translate } from '../../base/i18n/functions';
+import ContextMenu from '../../base/ui/components/web/ContextMenu';
 
 type DownloadUpload = {
     download: number;
     upload: number;
-}
+};
 
 /**
  * The type of the React {@code Component} props of
  * {@link ConnectionStatsTable}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The audio SSRC of this client.
      */
-    audioSsrc: number,
+    audioSsrc: number;
 
     /**
      * Statistics related to bandwidth.
@@ -30,7 +31,7 @@ interface Props extends WithTranslation {
      *     upload: Number
      * }}.
      */
-    bandwidth: DownloadUpload,
+    bandwidth: DownloadUpload;
 
     /**
      * Statistics related to bitrate.
@@ -39,48 +40,43 @@ interface Props extends WithTranslation {
      *     upload: Number
      * }}.
      */
-    bitrate: DownloadUpload,
+    bitrate: DownloadUpload;
 
     /**
      * The number of bridges (aka media servers) currently used in the
      * conference.
      */
-    bridgeCount: number,
+    bridgeCount: number;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any,
+    classes: any;
 
     /**
      * Audio/video codecs in use for the connection.
      */
     codec: {
         [key: string]: {
-            audio: string;
-            video: string;
-        }
-    },
+            audio: string | undefined;
+            video: string | undefined;
+        };
+    };
 
     /**
      * A message describing the connection quality.
      */
-    connectionSummary: string,
+    connectionSummary: string;
 
     /**
      * Whether or not should display the "Show More" link.
      */
-    disableShowMoreStats: boolean,
-
-    /**
-     * The end-to-end round-trip-time.
-     */
-    e2eRtt: number,
+    disableShowMoreStats: boolean;
 
     /**
      * Whether or not should display the "Save Logs" link.
      */
-    enableSaveLogs: boolean,
+    enableSaveLogs: boolean;
 
     /**
      * Statistics related to frame rates for each ssrc.
@@ -88,33 +84,35 @@ interface Props extends WithTranslation {
      *     [ ssrc ]: Number
      * }}.
      */
-    framerate: Object,
+    framerate: {
+        [ssrc: string]: number;
+    };
 
     /**
      * Whether or not the statistics are for local video.
      */
-    isLocalVideo: boolean,
+    isLocalVideo: boolean;
 
     /**
      * Whether or not the statistics are for screen share.
      */
-    isVirtualScreenshareParticipant: boolean,
+    isVirtualScreenshareParticipant: boolean;
 
     /**
      * The send-side max enabled resolution (aka the highest layer that is not
      * suspended on the send-side).
      */
-    maxEnabledResolution: number,
+    maxEnabledResolution: number;
 
     /**
      * Callback to invoke when the user clicks on the download logs link.
      */
-    onSaveLogs: () => void,
+    onSaveLogs: () => void;
 
     /**
      * Callback to invoke when the show additional stats link is clicked.
      */
-    onShowMore: (e?: React.MouseEvent) => void,
+    onShowMore: (e?: React.MouseEvent) => void;
 
     /**
      * Statistics related to packet loss.
@@ -123,17 +121,17 @@ interface Props extends WithTranslation {
      *     upload: Number
      * }}.
      */
-    packetLoss: DownloadUpload,
+    packetLoss: DownloadUpload;
 
     /**
      * The endpoint id of this client.
      */
-    participantId: string,
+    participantId: string;
 
     /**
      * The region that we think the client is in.
      */
-    region: string,
+    region: string;
 
     /**
      * Statistics related to display resolutions for each ssrc.
@@ -148,24 +146,19 @@ interface Props extends WithTranslation {
         [ssrc: string]: {
             height: number;
             width: number;
-        }
-    },
+        };
+    };
 
     /**
      * The region of the media server that we are connected to.
      */
-    serverRegion: string,
+    serverRegion: string;
 
     /**
      * Whether or not additional stats about bandwidth and transport should be
      * displayed. Will not display even if true for remote participants.
      */
-    shouldShowMore: boolean,
-
-    /**
-     * Whether source name signaling is enabled.
-     */
-    sourceNameSignalingEnabled: boolean,
+    shouldShowMore: boolean;
 
     /**
      * Statistics related to transports.
@@ -178,12 +171,12 @@ interface Props extends WithTranslation {
         remoteCandidateType: string;
         transportType: string;
         type: string;
-    }>,
+    }>;
 
     /**
      * The video SSRC of this client.
      */
-    videoSsrc: number
+    videoSsrc: number;
 }
 
 /**
@@ -198,11 +191,11 @@ function onClick(event: React.MouseEvent) {
     event.stopPropagation();
 }
 
-const styles = (theme: any) => {
+const styles = (theme: Theme) => {
     return {
         actions: {
             margin: '10px auto',
-            textAlign: 'center'
+            textAlign: 'center' as const
         },
         connectionStatsTable: {
             '&, & > table': {
@@ -226,17 +219,17 @@ const styles = (theme: any) => {
             }
         },
         contextMenu: {
-            position: 'relative',
+            position: 'relative' as const,
             marginTop: 0,
             right: 'auto',
-            padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
-            marginLeft: `${theme.spacing(1)}px`,
-            marginRight: `${theme.spacing(1)}px`,
-            marginBottom: `${theme.spacing(1)}px`
+            padding: `${theme.spacing(2)} ${theme.spacing(1)}`,
+            marginLeft: theme.spacing(1),
+            marginRight: theme.spacing(1),
+            marginBottom: theme.spacing(1)
         },
         download: {},
         mobile: {
-            margin: `${theme.spacing(3)}px`
+            margin: theme.spacing(3)
         },
         status: {
             fontWeight: 'bold'
@@ -250,7 +243,7 @@ const styles = (theme: any) => {
  *
  * @augments Component
  */
-class ConnectionStatsTable extends Component<Props> {
+class ConnectionStatsTable extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -330,7 +323,8 @@ class ConnectionStatsTable extends Component<Props> {
                 <tbody>
                     { isLocalVideo ? this._renderBandwidth() : null }
                     { isLocalVideo ? this._renderTransport() : null }
-                    { isLocalVideo ? this._renderRegion() : null }
+                    { this._renderRegion() }
+                    { isLocalVideo ? this._renderBridgeCount() : null }
                     { this._renderAudioSsrc() }
                     { this._renderVideoSsrc() }
                     { this._renderParticipantId() }
@@ -469,28 +463,17 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderCodecs() {
-        const { codec, t, sourceNameSignalingEnabled } = this.props;
+        const { audioSsrc, codec, t, videoSsrc } = this.props;
 
-        if (!codec) {
-            return;
-        }
+        let codecString = 'N/A';
 
-        let codecString;
+        if (codec) {
+            const audioCodec = codec[audioSsrc]?.audio;
+            const videoCodec = codec[videoSsrc]?.video;
 
-        if (sourceNameSignalingEnabled) {
-            codecString = `${codec.audio}, ${codec.video}`;
-        } else {
-            // Only report one codec, in case there are multiple for a user.
-            Object.keys(codec || {})
-                .forEach(ssrc => {
-                    const { audio, video } = codec[ssrc];
-
-                    codecString = `${audio}, ${video}`;
-                });
-        }
-
-        if (!codecString) {
-            codecString = 'N/A';
+            if (audioCodec || videoCodec) {
+                codecString = [ audioCodec, videoCodec ].filter(Boolean).join(', ');
+            }
         }
 
         return (
@@ -520,27 +503,6 @@ class ConnectionStatsTable extends Component<Props> {
                     <span>{ this.props.t('connectionindicator.status') }</span>
                 </td>
                 <td>{ this.props.connectionSummary }</td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a table row as a ReactElement for displaying end-to-end RTT and
-     * the region.
-     *
-     * @returns {ReactElement}
-     * @private
-     */
-    _renderE2eRtt() {
-        const { e2eRtt, t } = this.props;
-        const str = e2eRtt ? `${e2eRtt.toFixed(0)}ms` : 'N/A';
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.e2e_rtt') }</span>
-                </td>
-                <td>{ str }</td>
             </tr>
         );
     }
@@ -608,16 +570,11 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderFrameRate() {
-        const { framerate, t, sourceNameSignalingEnabled } = this.props;
+        const { framerate, t, videoSsrc } = this.props;
+        let frameRateString = 'N/A';
 
-        let frameRateString;
-
-        if (sourceNameSignalingEnabled) {
-            frameRateString = framerate || 'N/A';
-        } else {
-            frameRateString = Object.keys(framerate || {})
-                .map(ssrc => framerate[ssrc as keyof typeof framerate])
-                .join(', ') || 'N/A';
+        if (framerate) {
+            frameRateString = String(framerate[videoSsrc] ?? 'N/A');
         }
 
         return (
@@ -680,25 +637,21 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderResolution() {
-        const { resolution, maxEnabledResolution, t, sourceNameSignalingEnabled } = this.props;
-        let resolutionString;
+        const { resolution, maxEnabledResolution, t, videoSsrc } = this.props;
+        let resolutionString = 'N/A';
 
-        if (sourceNameSignalingEnabled) {
-            resolutionString = resolution ? `${resolution.width}x${resolution.height}` : 'N/A';
-        } else {
-            resolutionString = Object.keys(resolution || {})
-                .map(ssrc => {
-                    const { width, height } = resolution[ssrc];
+        if (resolution && videoSsrc) {
+            const { width, height } = resolution[videoSsrc] ?? { };
 
-                    return `${width}x${height}`;
-                })
-                .join(', ') || 'N/A';
-        }
+            if (width && height) {
+                resolutionString = `${width}x${height}`;
 
-        if (maxEnabledResolution && maxEnabledResolution < 720) {
-            const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
+                if (maxEnabledResolution && maxEnabledResolution < 720) {
+                    const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
 
-            resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
+                    resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
+                }
+            }
         }
 
         return (
@@ -764,20 +717,15 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderStatistics() {
-        const isRemoteVideo = !this.props.isLocalVideo;
-
         return (
             <table>
                 <tbody>
                     { this._renderConnectionSummary() }
                     { this._renderBitrate() }
                     { this._renderPacketLoss() }
-                    { isRemoteVideo ? this._renderE2eRtt() : null }
-                    { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
                     { this._renderCodecs() }
-                    { isRemoteVideo ? null : this._renderBridgeCount() }
                 </tbody>
             </table>
         );
@@ -809,11 +757,11 @@ class ConnectionStatsTable extends Component<Props> {
         }
 
         const data: {
-            localIP: string[],
-            localPort: string[],
-            remoteIP: string[],
-            remotePort: string[],
-            transportType: string[]
+            localIP: string[];
+            localPort: string[];
+            remoteIP: string[];
+            remotePort: string[];
+            transportType: string[];
         } = {
             localIP: [],
             localPort: [],
@@ -988,5 +936,4 @@ function getStringFromArray(array: string[]) {
     return res;
 }
 
-// @ts-ignore
 export default translate(withStyles(styles)(ConnectionStatsTable));

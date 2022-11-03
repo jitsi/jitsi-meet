@@ -84,56 +84,6 @@
             }
         }
 
-        &.icon-container {
-            display: none;
-
-            &.active {
-                display: flex;
-                width: calc(100% - 26px);
-                padding: 8px 8px 8px 16px;
-
-                background: #2A3A4B;
-                border: 1px solid #5E6D7A;
-                border-top: none;
-                border-radius: 0 0 3px 3px;
-
-                .copy-invite-icon, .provider-icon {
-                    align-items: center;
-                    cursor: pointer;
-                    display: flex;
-                    height: 40px;
-                    place-content: center;
-                    width: 40px;
-                }
-
-                &:hover > div:hover {
-                    background-color: rgba(255, 255, 255, 0.2);
-                    border-radius: 4px;
-                }
-
-                & > :not(:last-child) {
-                    margin-right: 16px;
-                }
-
-                .copy-invite-icon > div > svg > path {
-                    fill: #A4B8D1;
-                }
-            }
-        }
-
-        &.dial-in-display {
-            .info-label {
-                color: #A4B8D1;
-            }
-
-            .dial-in-copy {
-                display: inline-block;
-                vertical-align: middle;
-                cursor: pointer;
-                height: 24px;
-            }
-        }
-
         &.invite-buttons {
             width: 100%;
             text-align: right;

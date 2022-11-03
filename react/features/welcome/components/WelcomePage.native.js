@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 
 import { getName } from '../../app/functions';
-import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
 import JitsiStatusBar from '../../base/modal/components/JitsiStatusBar';
@@ -21,19 +20,14 @@ import WelcomePageTabs
     from '../../mobile/navigation/components/welcome/components/WelcomePageTabs';
 
 import {
+    type Props as AbstractProps,
     AbstractWelcomePage,
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
 
 type Props = AbstractProps & {
-
-    /**
-     * The color schemed style of the Header component.
-     */
-    _headerStyles: Object,
 
     /**
      * Default prop for navigating between screen components(React Navigation).
@@ -425,8 +419,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
  */
 function _mapStateToProps(state) {
     return {
-        ..._abstractMapStateToProps(state),
-        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+        ..._abstractMapStateToProps(state)
 
         // _reducedUI: state['features/base/responsive-ui'].reducedUI
     };

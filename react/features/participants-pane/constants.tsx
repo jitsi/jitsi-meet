@@ -13,12 +13,12 @@ import {
  */
 export const REDUCER_KEY = 'features/participants-pane';
 
-export type ActionTrigger = 'Hover' | 'Permanent'
+export type ActionTrigger = 'Hover' | 'Permanent';
 
 /**
  * Enum of possible participant action triggers.
  */
-export const ACTION_TRIGGER: {HOVER: ActionTrigger, PERMANENT: ActionTrigger} = {
+export const ACTION_TRIGGER: { HOVER: ActionTrigger; PERMANENT: ActionTrigger; } = {
     HOVER: 'Hover',
     PERMANENT: 'Permanent'
 };
@@ -28,7 +28,7 @@ export type MediaState = 'DominantSpeaker' | 'Muted' | 'ForceMuted' | 'Unmuted' 
 /**
  * Enum of possible participant media states.
  */
-export const MEDIA_STATE: { [key: string]: MediaState } = {
+export const MEDIA_STATE: { [key: string]: MediaState; } = {
     DOMINANT_SPEAKER: 'DominantSpeaker',
     MUTED: 'Muted',
     FORCE_MUTED: 'ForceMuted',
@@ -42,9 +42,9 @@ export type QuickActionButtonType = 'Mute' | 'AskToUnmute' | 'None';
  * Enum of possible participant mute button states.
  */
 export const QUICK_ACTION_BUTTON: {
-    ASK_TO_UNMUTE: QuickActionButtonType,
-    MUTE: QuickActionButtonType,
-    NONE: QuickActionButtonType
+    ASK_TO_UNMUTE: QuickActionButtonType;
+    MUTE: QuickActionButtonType;
+    NONE: QuickActionButtonType;
 } = {
     MUTE: 'Mute',
     ASK_TO_UNMUTE: 'AskToUnmute',

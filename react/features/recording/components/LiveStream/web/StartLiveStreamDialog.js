@@ -3,9 +3,9 @@
 import Spinner from '@atlaskit/spinner';
 import React from 'react';
 
-import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
+import Dialog from '../../../../base/ui/components/web/Dialog';
 import {
     GOOGLE_API_STATES,
     GoogleSignInButton,
@@ -17,8 +17,8 @@ import {
     updateProfile
 } from '../../../../google-api';
 import AbstractStartLiveStreamDialog, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractStartLiveStreamDialog';
 
 import StreamKeyForm from './StreamKeyForm';
@@ -85,12 +85,10 @@ class StartLiveStreamDialog
 
         return (
             <Dialog
-                cancelKey = 'dialog.Cancel'
-                okKey = 'dialog.startLiveStreaming'
+                ok = {{ translationKey: 'dialog.startLiveStreaming' }}
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                titleKey = 'liveStreaming.start'
-                width = { 'small' }>
+                titleKey = 'liveStreaming.start'>
                 <div className = 'live-stream-dialog'>
                     { _googleApiApplicationClientID
                         ? this._renderYouTubePanel() : null }

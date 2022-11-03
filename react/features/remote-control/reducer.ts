@@ -35,7 +35,7 @@ export interface IRemoteControlState {
         controller?: string;
         enabled: boolean;
         transport?: Object;
-    }
+    };
 }
 
 /**

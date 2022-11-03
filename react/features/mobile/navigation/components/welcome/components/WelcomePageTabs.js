@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { CalendarList, isCalendarEnabled } from '../../../../../calendar-sync';
@@ -40,6 +41,7 @@ type Props = {
 
 
 const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocused }: Props) => {
+    const { t } = useTranslation();
     const RecentListScreen = useCallback(() =>
         (
             <RecentList
@@ -66,7 +68,7 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
 
     return (
         <WelcomePage.Navigator
-            initialRouteName = { screen.welcome.tabs.recent }
+            backBehavior = { 'none' }
             screenOptions = {{
                 ...tabBarOptions,
                 headerShown: false
@@ -78,7 +80,10 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
                     }
                 }}
                 name = { screen.welcome.tabs.recent }
-                options = { recentListTabBarOptions }>
+                options = {{
+                    ...recentListTabBarOptions,
+                    title: t('welcomepage.recentList')
+                }}>
                 { RecentListScreen }
             </WelcomePage.Screen>
             {
@@ -90,7 +95,10 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
                     }
                 }}
                 name = { screen.welcome.tabs.calendar }
-                options = { calendarListTabBarOptions }>
+                options = {{
+                    ...calendarListTabBarOptions,
+                    title: t('welcomepage.calendar')
+                }}>
                 { CalendarListScreen }
             </WelcomePage.Screen>
             }
@@ -101,7 +109,10 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
                     }
                 }}
                 name = { screen.settings.main }
-                options = { settingsTabBarOptions }>
+                options = {{
+                    ...settingsTabBarOptions,
+                    title: t('welcomepage.settings')
+                }}>
                 { SettingsScreen }
             </WelcomePage.Screen>
         </WelcomePage.Navigator>

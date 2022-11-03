@@ -4,7 +4,7 @@ import React from 'react';
 import { getToolbarButtons } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { connect } from '../../../base/redux';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import {
     ASPECT_RATIO_BREAKPOINT,
     FILMSTRIP_BREAKPOINT,

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { equals, set } from '../redux/functions';
 
-import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
+import { SET_LOGGING_CONFIG, SET_LOG_COLLECTOR } from './actionTypes';
 
 const DEFAULT_LOGGING_CONFIG = {
     // default log level for the app and lib-jitsi-meet
@@ -60,9 +60,13 @@ export interface ILoggingState {
         disableLogCollector?: boolean;
         loggers: {
             [key: string]: LogLevel;
-        }
+        };
     };
-    logCollector?: Object;
+    logCollector?: {
+        flush: () => void;
+        start: () => void;
+        stop: () => void;
+    };
 }
 
 ReducerRegistry.register<ILoggingState>(

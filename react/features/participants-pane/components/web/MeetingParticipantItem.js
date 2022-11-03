@@ -19,7 +19,7 @@ import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks';
-import { ACTION_TRIGGER, type MediaState, MEDIA_STATE } from '../../constants';
+import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
 import {
     getParticipantAudioMediaState,
     getParticipantVideoMediaState,
@@ -251,7 +251,12 @@ function MeetingParticipantItem({
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
-            audioMediaState = { audioMediaState }
+            {
+                ...(_participant?.fakeParticipant ? {} : {
+                    audioMediaState,
+                    videoMediaState: _videoMediaState
+                })
+            }
             disableModeratorIndicator = { _disableModeratorIndicator }
             displayName = { _displayName }
             isHighlighted = { isHighlighted }
@@ -262,10 +267,9 @@ function MeetingParticipantItem({
             overflowDrawer = { overflowDrawer }
             participantID = { _participantID }
             raisedHand = { _raisedHand }
-            videoMediaState = { _videoMediaState }
             youText = { youText }>
 
-            {!overflowDrawer && !_participant?.isFakeParticipant
+            {!overflowDrawer && !_participant?.fakeParticipant
                 && <>
                     {!isInBreakoutRoom && (
                         <ParticipantQuickAction
@@ -282,7 +286,7 @@ function MeetingParticipantItem({
                 </>
             }
 
-            {!overflowDrawer && _localVideoOwner && _participant?.isFakeParticipant && (
+            {!overflowDrawer && (_localVideoOwner || _participant?.fakeParticipant) && (
                 <ParticipantActionEllipsis
                     accessibilityLabel = { participantActionEllipsisLabel }
                     onClick = { onContextMenu } />
