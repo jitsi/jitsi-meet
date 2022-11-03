@@ -37,6 +37,7 @@ curl https://get.acme.sh | sh -s email=$EMAIL
 NGINX_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx' 2>/dev/null | awk '{print $3}' || true)"
 NGINX_FULL_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-full' 2>/dev/null | awk '{print $3}' || true)"
 NGINX_EXTRAS_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-extras' 2>/dev/null | awk '{print $3}' || true)"
+OPENRESTY_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'openresty' 2>/dev/null | awk '{print $3}' || true)"
 APACHE_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'apache2' 2>/dev/null | awk '{print $3}' || true)"
 
 RELOAD_CMD=""
@@ -44,6 +45,8 @@ if [ "$NGINX_INSTALL_CHECK" = "installed" ] || [ "$NGINX_INSTALL_CHECK" = "unpac
    || [ "$NGINX_FULL_INSTALL_CHECK" = "installed" ] || [ "$NGINX_FULL_INSTALL_CHECK" = "unpacked" ] \
    || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "installed" ] || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "unpacked" ]; then
     RELOAD_CMD="systemctl force-reload nginx.service"
+elif [ "$OPENRESTY_INSTALL_CHECK" = "installed" ] || [ "$OPENRESTY_INSTALL_CHECK" = "unpacked" ] ; then
+    RELOAD_CMD="systemctl force-reload openresty.service"
 elif [ "$APACHE_INSTALL_CHECK" = "installed" ] || [ "$APACHE_INSTALL_CHECK" = "unpacked" ] ; then
     RELOAD_CMD="systemctl force-reload apache2.service"
 else
