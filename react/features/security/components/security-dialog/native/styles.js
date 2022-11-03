@@ -74,8 +74,7 @@ export default {
         color: BaseTheme.palette.text01
     },
 
-    passwordInput: {
-        color: BaseTheme.palette.text01,
+    customContainer: {
         width: 208
     },
 

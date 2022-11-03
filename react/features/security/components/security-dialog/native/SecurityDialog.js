@@ -352,10 +352,9 @@ class SecurityDialog extends PureComponent<Props, State> {
                         accessibilityLabel = { t('info.addPassword') }
                         autoFocus = { true }
                         clearable = { true }
-                        customStyles = {{ container: styles.passwordInput }}
+                        customStyles = {{ container: styles.customContainer }}
                         onChange = { this._onChangeText }
                         placeholder = { t('dialog.password') }
-                        placeholderTextColor = { BaseTheme.palette.text03 }
                         value = { passwordInputValue }
                         { ...textInputProps } />
                 );
