@@ -4,7 +4,6 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 export const AVATAR_SIZE = 40;
 export const DARK_GREY = 'rgb(28, 32, 37)';
 export const LIGHT_GREY = 'rgb(209, 219, 232)';
-export const ICON_SIZE = 15;
 
 export default {
 
@@ -42,15 +41,6 @@ export default {
         color: BaseTheme.palette.ui02,
         fontSize: 18,
         textAlign: 'center'
-    },
-
-    clearIconContainer: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.section01,
-        borderRadius: 12,
-        justifyContent: 'center',
-        height: 24,
-        width: 24
     },
 
     /**
@@ -95,18 +85,6 @@ export default {
         padding: 5
     },
 
-    searchField: {
-        backgroundColor: BaseTheme.palette.section01,
-        borderBottomRightRadius: 10,
-        borderTopRightRadius: 10,
-        color: DARK_GREY,
-        flex: 1,
-        fontSize: 17,
-        paddingVertical: 7,
-        paddingLeft: 0,
-        textAlign: 'left'
-    },
-
     selectedIcon: {
         color: BaseTheme.palette.icon01,
         fontSize: 20,
@@ -120,29 +98,9 @@ export default {
         marginLeft: 85
     },
 
-    searchFieldWrapper: {
-        backgroundColor: BaseTheme.palette.section01,
-        alignItems: 'stretch',
-        flexDirection: 'row',
-        height: 36,
-        marginHorizontal: 15,
-        marginVertical: 8,
-        borderWidth: 0,
-        borderRadius: 10,
-        overflow: 'hidden'
-    },
-
     searchIcon: {
         color: BaseTheme.palette.icon01,
         fontSize: 22
-    },
-
-    searchIconWrapper: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.section01,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        width: ICON_SIZE + 16
     },
 
     shareIcon: {
