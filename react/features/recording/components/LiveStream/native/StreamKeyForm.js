@@ -1,18 +1,18 @@
-// @flow
-
 import React from 'react';
-import { Linking, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Linking, Text, TouchableOpacity, View } from 'react-native';
 
 import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import { StyleType } from '../../../../base/styles';
+import Input from '../../../../base/ui/components/native/Input';
 import AbstractStreamKeyForm, {
     type Props as AbstractProps
 } from '../AbstractStreamKeyForm';
 import { getLiveStreaming } from '../functions';
 
-import styles, { PLACEHOLDER_COLOR } from './styles';
+
+import styles from './styles';
 
 type Props = AbstractProps & {
 
@@ -65,15 +65,10 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                         t('dialog.streamKey')
                     }
                 </Text>
-                <TextInput
-                    onChangeText = { this._onInputChange }
+                <Input
+                    customStyles = {{ input: styles.streamKeyInput }}
+                    onChange = { this._onInputChange }
                     placeholder = { t('liveStreaming.enterStreamKey') }
-                    placeholderTextColor = { PLACEHOLDER_COLOR }
-                    selectionColor = { PLACEHOLDER_COLOR }
-                    style = { [
-                        _dialogStyles.text,
-                        styles.streamKeyInput
-                    ] }
                     value = { this.props.value } />
                 <View style = { styles.formFooter }>
                     {
