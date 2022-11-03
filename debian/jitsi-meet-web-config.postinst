@@ -57,6 +57,10 @@ case "$1" in
            || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "unpacked" ] ; then
             FORCE_NGINX="true"
         fi
+        OPENRESTY_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'openresty' 2>/dev/null | awk '{print $3}' || true)"
+        if [ "$OPENRESTY_INSTALL_CHECK" = "installed" ] || [ "$OPENRESTY_INSTALL_CHECK" = "unpacked" ] ; then
+            FORCE_OPENRESTY="true"
+        fi
         APACHE_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'apache2' 2>/dev/null | awk '{print $3}' || true)"
         if [ "$APACHE_INSTALL_CHECK" = "installed" ] || [ "$APACHE_INSTALL_CHECK" = "unpacked" ] ; then
             FORCE_APACHE="true"
@@ -182,21 +186,41 @@ case "$1" in
             echo "config.flags.receiveMultipleVideoStreams = true;" >> $JITSI_MEET_CONFIG
         fi
 
-        if [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+        if [[ "$FORCE_OPENRESTY" = "true" ]]; then
+            NGX_COMMON_CONF_PATH="/usr/local/openresty/nginx/conf/$JVB_HOSTNAME.conf"
+            NGX_SVC_NAME=openresty
+            OPENRESTY_NGX_CONF="/usr/local/openresty/nginx/conf/nginx.conf"
+        else
+            NGX_COMMON_CONF_PATH="/etc/nginx/sites-available/$JVB_HOSTNAME.conf"
+            NGX_SVC_NAME=nginx
+        fi
+
+        if [[ ( "$FORCE_NGINX" = "true" || "$FORCE_OPENRESTY" = "true" ) && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
 
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then
                 rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME_OLD.conf
                 rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
+                if [[ "$FORCE_OPENRESTY" = "true" ]]; then
+                    sed -i "/include.*$JVB_HOSTNAME_OLD/d" "$OPENRESTY_NGX_CONF"
+                fi
             fi
 
             # nginx conf
-            if [ ! -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf ] ; then
-                cp /usr/share/jitsi-meet-web-config/jitsi-meet.example /etc/nginx/sites-available/$JVB_HOSTNAME.conf
-                if [ ! -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf ] ; then
-                    ln -s /etc/nginx/sites-available/$JVB_HOSTNAME.conf /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
+            if [ ! -f "$NGX_COMMON_CONF_PATH" ] ; then
+                cp /usr/share/jitsi-meet-web-config/jitsi-meet.example "$NGX_COMMON_CONF_PATH"
+                if [ ! -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf ] && ! [[ "$FORCE_OPENRESTY" = "true" ]] ; then
+                    ln -s "$NGX_COMMON_CONF_PATH" /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
                 fi
-                sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+                sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" "$NGX_COMMON_CONF_PATH"
+
+                if [[ "$FORCE_OPENRESTY" = "true" ]]; then
+                    OPENRESTY_NGX_CONF_MD5_ORIG=$(dpkg-query -s openresty | sed -n '/\/nginx\.conf /{s@.* @@;p}')
+                    OPENRESTY_NGX_CONF_MD5_USERS=$(md5sum "$OPENRESTY_NGX_CONF" | sed 's@ .*@@')
+                    if [[ "$OPENRESTY_NGX_CONF_MD5_USERS" = "$OPENRESTY_NGX_CONF_MD5_ORIG" ]]; then
+                       sed -i "/^http \x7b/,/^\x7d/s@^\x7d@\tinclude $NGX_COMMON_CONF_PATH;\n\x7d@" "$OPENRESTY_NGX_CONF"
+                    fi
+                fi
             fi
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
@@ -204,14 +228,14 @@ case "$1" in
                 CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
                 CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
                 sed -i "s/ssl_certificate_key\ \/etc\/jitsi\/meet\/.*key/ssl_certificate_key\ $CERT_KEY_ESC/g" \
-                    /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+                    "$NGX_COMMON_CONF_PATH"
                 CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
                 CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
                 sed -i "s/ssl_certificate\ \/etc\/jitsi\/meet\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
-                    /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+                    "$NGX_COMMON_CONF_PATH"
             fi
 
-            invoke-rc.d nginx reload || true
+            invoke-rc.d $NGX_SVC_NAME reload || true
         elif [[ "$FORCE_APACHE" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
 
             # this is a reconfigure, lets just delete old links
