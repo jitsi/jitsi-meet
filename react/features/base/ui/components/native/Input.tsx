@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { forwardRef, useCallback, useState } from 'react';
 import {
     KeyboardTypeOptions,
     NativeSyntheticEvent, ReturnKeyTypeOptions,
@@ -46,7 +46,7 @@ interface ICustomStyles {
     input?: Object;
 }
 
-const Input = ({
+const Input = forwardRef(({
     accessibilityLabel,
     autoCapitalize,
     autoFocus,
@@ -72,7 +72,7 @@ const Input = ({
     secureTextEntry,
     textContentType,
     value
-}: IProps) => {
+}: IProps, ref) => {
     const [ focused, setFocused ] = useState(false);
     const handleChange = useCallback((e: NativeSyntheticEvent<TextInputChangeEventData>) => {
         const { nativeEvent: { text } } = e;
@@ -131,6 +131,7 @@ const Input = ({
                 onSubmitEditing = { handleSubmitEditing }
                 placeholder = { placeholder }
                 placeholderTextColor = { BaseTheme.palette.text02 }
+                ref = { ref }
                 returnKeyType = { returnKeyType }
                 secureTextEntry = { secureTextEntry }
                 spellCheck = { false }
@@ -156,6 +157,6 @@ const Input = ({
             )}
         </View>
     </View>);
-};
+});
 
 export default Input;
