@@ -81,8 +81,8 @@
             "selectSoundDevice": "Seleccionar dispositivo de som"
         },
         "labels": {
-            "buttonLabel": "Modo automóvel",
-            "title": "Modo automóvel",
+            "buttonLabel": "Modo de condução",
+            "title": "Modo de condução",
             "videoStopped": "O seu vídeo está parado"
         }
     },
@@ -1011,7 +1011,7 @@
         "profileSection": "Perfil",
         "serverURL": "URL do servidor",
         "showAdvanced": "Mostrar definições avançadas",
-        "startCarModeInLowBandwidthMode": "Iniciar o modo automóvel em modo de baixa largura de banda",
+        "startCarModeInLowBandwidthMode": "Iniciar o modo de condução em modo de baixa largura de banda",
         "startWithAudioMuted": "Iniciar sem áudio",
         "startWithVideoMuted": "Iniciar sem vídeo",
         "terms": "Termos",
@@ -1062,7 +1062,7 @@
             "boo": "Vaia",
             "breakoutRoom": "Entrar/Sair salas instantâneas",
             "callQuality": "Gerir a qualidade do vídeo",
-            "carmode": "Modo automóvel",
+            "carmode": "Modo de condução",
             "cc": "Mudar legendas",
             "chat": "Abrir / Fechar chat",
             "clap": "Aplausos",

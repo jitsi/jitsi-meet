@@ -365,6 +365,7 @@
         "signedInAs": "Sisäänkirjautunut käyttäjä:",
         "start": "Aloita suoratoisto",
         "streamIdHelp": "Mikä tämä on?",
+        "title": "Suoratoisto",
         "unavailableTitle": "Suoratoisto ei käytettävissä"
     },
     "localRecording": {
@@ -475,6 +476,7 @@
         "serviceName": "Nauhoituspalvelu",
         "signIn": "Kirjaudu sisään",
         "signOut": "Kirjaudu ulos",
+        "title": "Nauhoitetaan",
         "unavailable": "Hups! {{serviceName}} ei ole käytettävissä. Yritämme ratkaista ongelman. Yritä myöhemmin uudelleen.",
         "unavailableTitle": "Nauhoitus ei käytettävissä"
     },

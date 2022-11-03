@@ -81,8 +81,8 @@
             "selectSoundDevice": "Scegli audio"
         },
         "labels": {
-            "buttonLabel": "Modalità in auto",
-            "title": "Modalità guida sicura",
+            "buttonLabel": "Modalità Auto",
+            "title": "Modalità Auto",
             "videoStopped": "Il tuo video è fermo"
         }
     },
@@ -438,7 +438,7 @@
         "search": "Cerca in GIPHY"
     },
     "helpView": {
-        "header": "Aiuto"
+        "title": "Aiuto"
     },
     "incomingCall": {
         "answer": "Rispondi",
@@ -556,7 +556,7 @@
         "signedInAs": "Sei attualmente collegato come:",
         "start": "Inizia una diretta",
         "streamIdHelp": "Cos'è questo?",
-        "title": "Diretta YouTube",
+        "title": "Diretta",
         "unavailableTitle": "La diretta non è disponibile",
         "youtubeTerms": "Condizioni di utilizzo di YouTube"
     },
@@ -859,7 +859,7 @@
         "ringing": "Sta suonando..."
     },
     "privacyView": {
-        "header": "Privacy"
+        "title": "Privacy"
     },
     "profile": {
         "avatar": "avatar",
@@ -1011,7 +1011,7 @@
         "profileSection": "Profilo",
         "serverURL": "URL del server",
         "showAdvanced": "Impostazioni avanzate",
-        "startCarModeInLowBandwidthMode": "Avvia modalità auto con solo audio",
+        "startCarModeInLowBandwidthMode": "Avvia modalità Auto con solo audio",
         "startWithAudioMuted": "Inizia con audio disattivato",
         "startWithVideoMuted": "Inizia con video disattivato",
         "terms": "Termini",
@@ -1050,7 +1050,7 @@
         "title": "La video chiamata si è interrotta perché il computer è stato sospeso."
     },
     "termsView": {
-        "header": "Termini"
+        "title": "Termini"
     },
     "toggleTopPanelLabel": "Scheda superiore",
     "toolbar": {
@@ -1062,7 +1062,7 @@
             "boo": "Boo",
             "breakoutRoom": "Sottogruppo (entra/esci)",
             "callQuality": "Imposta qualità della chiamata",
-            "carmode": "Modalità in auto",
+            "carmode": "Modalità Auto",
             "cc": "Sottotitoli",
             "chat": "Conversazione",
             "clap": "Applaudi",

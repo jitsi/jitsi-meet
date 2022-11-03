@@ -331,7 +331,7 @@
         "veryGood": "Veľmi dobrý"
     },
     "helpView": {
-        "header": "Centrum pomoci"
+        "title": "Centrum pomoci"
     },
     "incomingCall": {
         "answer": "Odpovedať",
@@ -432,6 +432,7 @@
         "signedInAs": "Ste prihlásený ako:",
         "start": "Začať živé vysielanie",
         "streamIdHelp": "Čo je to?",
+        "title": "Živé vysielanie",
         "unavailableTitle": "Živé vysielanie nie je k dispozícií",
         "youtubeTerms": "Podmienky poskytovania služby YouTube"
     },
@@ -466,6 +467,7 @@
         "passwordField": "Zadajte heslo do konferencie",
         "passwordJoinButton": "Vstúpiť",
         "reject": "Odmietnuť",
+        "title": "Čakáreň",
         "toggleLabel": "Zapnúť čakáreň"
     },
     "localRecording": {
@@ -623,6 +625,7 @@
         "serviceName": "Nahrávacia služba",
         "signIn": "Prihlásiť",
         "signOut": "Odhlásiť",
+        "title": "Nahrávanie",
         "unavailable": "Oh! Služba {{serviceName}} nie je dostupná. Pracujeme na riešeni problému. Skúste prosím neskôr.",
         "unavailableTitle": "Nahrávanie nie je dostupné"
     },

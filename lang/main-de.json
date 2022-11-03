@@ -436,7 +436,7 @@
         "search": "GIPHY durchsuchen"
     },
     "helpView": {
-        "header": "Hilfecenter"
+        "title": "Hilfecenter"
     },
     "incomingCall": {
         "answer": "Antworten",
@@ -554,6 +554,7 @@
         "signedInAs": "Sie sind derzeit angemeldet als:",
         "start": "Einen Livestream starten",
         "streamIdHelp": "Was ist das?",
+        "title": "Livestream",
         "unavailableTitle": "Livestreaming nicht verfügbar",
         "youtubeTerms": "YouTube-Nutzungsbedingungen"
     },
@@ -596,6 +597,7 @@
         "passwordJoinButton": "Beitreten",
         "reject": "Ablehnen",
         "rejectAll": "Alle ablehnen",
+        "title": "Lobby",
         "toggleLabel": "Lobby aktivieren"
     },
     "localRecording": {
@@ -738,13 +740,13 @@
             "videoModeration": "Kamera einschalten"
         },
         "close": "Schließen",
-        "header": "Anwesende",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Anwesende ({{count}})",
             "waitingLobby": "In der Lobby ({{count}})"
         },
-        "search": "Suche Anwesende"
+        "search": "Suche Anwesende",
+        "title": "Anwesende"
     },
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
     "passwordSetRemotely": "von einer anderen Person gesetzt",
@@ -854,7 +856,7 @@
         "ringing": "Es klingelt …"
     },
     "privacyView": {
-        "header": "Datenschutz"
+        "title": "Datenschutz"
     },
     "profile": {
         "avatar": "Benutzerbild",
@@ -926,6 +928,7 @@
         "signIn": "Anmelden",
         "signOut": "Abmelden",
         "surfaceError": "Bitte das aktuelle Tab auswählen.",
+        "title": "Aufnahme",
         "unavailable": "Oh! Der {{serviceName}} ist aktuell nicht verfügbar. Wir arbeiten an der Behebung des Problems. Bitte versuchen Sie es später noch einmal.",
         "unavailableTitle": "Aufnahme nicht verfügbar",
         "uploadToCloud": "In die Cloud hochladen"
@@ -937,8 +940,8 @@
     "security": {
         "about": "Sie können Ihre Konferenz mit einem Passwort sichern. Teilnehmer müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
         "aboutReadOnly": "Mit Moderationsrechten kann die Konferenz mit einem Passwort gesichert werden. Personen müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
-        "header": "Sicherheitsoptionen",
-        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten"
+        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten",
+        "title": "Sicherheitsoptionen"
     },
     "settings": {
         "buttonLabel": "Einstellungen",
@@ -1043,7 +1046,7 @@
         "title": "Die Konferenz wurde unterbrochen, weil der Standby-Modus aktiviert wurde."
     },
     "termsView": {
-        "header": "Nutzungsbedingungen"
+        "title": "Nutzungsbedingungen"
     },
     "toggleTopPanelLabel": "Obere Leiste ein-/ausschalten",
     "toolbar": {

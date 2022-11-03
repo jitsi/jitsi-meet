@@ -381,6 +381,7 @@
         "signedInAs": "Vous êtes actuellement connecté en tant que :",
         "start": "Démarrer une diffusion en direct",
         "streamIdHelp": "Qu'est-ce que c'est?",
+        "title": "Diffusion en direct",
         "unavailableTitle": "Diffusion en direct non disponible"
     },
     "localRecording": {
@@ -494,6 +495,7 @@
         "serviceName": "Service d'enregistrement",
         "signIn": "Se connecter",
         "signOut": "Se déconnecter",
+        "title": "Enregistrement",
         "unavailable": "Oups! Le {{serviceName}} n'est pas disponible pour le moment. Nous nous efforçons de régler le problème. Veuillez réessayer plus tard.",
         "unavailableTitle": "Enregistrement non disponible"
     },
