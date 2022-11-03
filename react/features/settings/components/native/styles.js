@@ -98,8 +98,9 @@ export default {
     },
 
     formSectionTitleText: {
-        ...BaseTheme.typography.heading5,
         color: BaseTheme.palette.text01,
+        fontSize: 14,
+        opacity: 0.6,
         textAlign: 'center'
     },
 
