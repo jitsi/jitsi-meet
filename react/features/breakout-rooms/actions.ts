@@ -32,8 +32,6 @@ import {
 } from './functions';
 import logger from './logger';
 
-declare let APP: any;
-
 /**
  * Action to create a breakout room.
  *

@@ -55,21 +55,21 @@ const useStyles = makeStyles()((theme: Theme) => {
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsSearch}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The function to initiate the change in the speaker stats table.
      */
     onSearch: Function;
 
-};
+}
 
 /**
  * React component for display an individual user's speaker stats.
  *
  * @returns {React$Element<any>}
  */
-function SpeakerStatsSearch({ onSearch }: Props) {
+function SpeakerStatsSearch({ onSearch }: IProps) {
     const { classes, theme } = useStyles();
     const { t } = useTranslation();
     const disableSpeakerStatsSearch = useSelector(isSpeakerStatsSearchDisabled);

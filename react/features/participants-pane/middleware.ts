@@ -2,8 +2,6 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { PARTICIPANTS_PANE_CLOSE, PARTICIPANTS_PANE_OPEN } from './actionTypes';
 
-declare let APP: any;
-
 /**
  * Middleware which intercepts participants pane actions.
  *

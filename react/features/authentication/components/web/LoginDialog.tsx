@@ -68,7 +68,7 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link LoginDialog}.
  */
-type State = {
+interface IState {
 
     /**
      * Authentication process starts before joining the conference room.
@@ -84,14 +84,14 @@ type State = {
      * The user entered local participant name.
      */
     username: string;
-};
+}
 
 /**
  * Component that renders the login in conference dialog.
  *
  *  @returns {React$Element<any>}
  */
-class LoginDialog extends Component<IProps, State> {
+class LoginDialog extends Component<IProps, IState> {
     /**
      * Initializes a new {@code LoginDialog} instance.
      *

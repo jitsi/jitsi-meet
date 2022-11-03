@@ -35,14 +35,14 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link VolumeSlider}.
  */
-type State = {
+interface IState {
 
     /**
      * The volume of the participant's audio element. The value will
      * be represented by a slider.
      */
     volumeLevel: number;
-};
+}
 
 const styles = (theme: Theme) => {
     return {
@@ -88,7 +88,7 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class VolumeSlider extends Component<IProps, State> {
+class VolumeSlider extends Component<IProps, IState> {
     /**
      * Initializes a new {@code VolumeSlider} instance.
      *

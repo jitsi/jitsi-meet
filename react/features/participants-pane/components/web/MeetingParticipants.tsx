@@ -53,7 +53,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-type Props = {
+interface IProps {
     currentRoom?: { name: string; };
     overflowDrawer?: boolean;
     participantsCount?: number;
@@ -61,7 +61,7 @@ type Props = {
     setSearchString: (newValue: string) => void;
     showInviteButton?: boolean;
     sortedParticipantIds?: Array<string>;
-};
+}
 
 /**
  * Renders the MeetingParticipantList component.
@@ -81,7 +81,7 @@ function MeetingParticipants({
     setSearchString,
     showInviteButton,
     sortedParticipantIds = []
-}: Props) {
+}: IProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
@@ -158,7 +158,7 @@ function MeetingParticipants({
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState): Object {
     let sortedParticipantIds: any = getSortedParticipantIds(state);

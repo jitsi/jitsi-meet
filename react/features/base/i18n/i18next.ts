@@ -1,5 +1,3 @@
-declare let APP: any;
-
 import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
 import i18next from 'i18next';
 import I18nextXHRBackend from 'i18next-xhr-backend';

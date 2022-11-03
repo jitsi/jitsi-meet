@@ -16,7 +16,7 @@ import { participantMatchesSearch } from '../../../../functions';
 import ParticipantActionEllipsis from '../../../web/ParticipantActionEllipsis';
 import ParticipantItem from '../../../web/ParticipantItem';
 
-type Props = {
+interface IProps {
 
     /**
      * Type of trigger for the breakout room actions.
@@ -78,7 +78,7 @@ type Props = {
      * Toggles the room participant context menu.
      */
     toggleParticipantMenu: Function;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -118,7 +118,7 @@ export const CollapsibleRoom = ({
     room,
     searchString,
     toggleParticipantMenu
-}: Props) => {
+}: IProps) => {
     const { t } = useTranslation();
     const { classes: styles, cx } = useStyles();
     const [ collapsed, setCollapsed ] = useState(false);

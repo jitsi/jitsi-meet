@@ -17,9 +17,7 @@ import { THUMBNAIL_TYPE } from '../../constants';
 // @ts-ignore
 import StatusIndicators from './StatusIndicators';
 
-declare let interfaceConfig: any;
-
-type Props = {
+interface IProps {
 
     /**
      * Class name for indicators container.
@@ -45,7 +43,7 @@ type Props = {
      * The type of thumbnail.
      */
     thumbnailType: string;
-};
+}
 
 const useStyles = makeStyles()(() => {
     return {
@@ -72,7 +70,7 @@ const ThumbnailBottomIndicators = ({
     participantId,
     showStatusIndicators = true,
     thumbnailType
-}: Props) => {
+}: IProps) => {
     const { classes: styles } = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;

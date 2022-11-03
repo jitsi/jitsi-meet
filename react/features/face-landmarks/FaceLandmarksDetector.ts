@@ -23,7 +23,6 @@ import {
     sendFaceExpressionsWebhook
 } from './functions';
 import logger from './logger';
-declare const APP: any;
 
 /**
  * Class for face language detection.

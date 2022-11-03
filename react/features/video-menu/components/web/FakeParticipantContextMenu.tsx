@@ -19,7 +19,7 @@ import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { setWhiteboardOpen } from '../../../whiteboard/actions';
 import { WHITEBOARD_ID } from '../../../whiteboard/constants';
 
-type Props = {
+interface IProps {
 
     /**
      * Class name for the context menu.
@@ -74,7 +74,7 @@ type Props = {
      * Whether or not the menu is displayed in the thumbnail remote video menu.
      */
     thumbnailMenu?: boolean;
-};
+}
 
 const FakeParticipantContextMenu = ({
     className,
@@ -87,7 +87,7 @@ const FakeParticipantContextMenu = ({
     onSelect,
     participant,
     thumbnailMenu
-}: Props) => {
+}: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);

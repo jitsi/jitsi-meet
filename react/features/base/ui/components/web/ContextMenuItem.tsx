@@ -7,7 +7,7 @@ import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
-export type Props = {
+export interface IProps {
 
     /**
      * Label used for accessibility.
@@ -69,7 +69,7 @@ export type Props = {
      * Class name for the text.
      */
     textClassName?: string;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -131,7 +131,7 @@ const ContextMenuItem = ({
     onKeyPress,
     testId,
     text,
-    textClassName }: Props) => {
+    textClassName }: IProps) => {
     const { classes: styles, cx } = useStyles();
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
 

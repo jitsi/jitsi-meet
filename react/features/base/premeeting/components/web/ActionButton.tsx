@@ -6,7 +6,7 @@ import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
-type Props = {
+interface IProps {
 
     /**
      * Icon to display in the options section.
@@ -78,7 +78,7 @@ type Props = {
      * The type of th button: primary, secondary, text.
      */
     type: string;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -183,7 +183,7 @@ function ActionButton({
     ariaPressed,
     ariaLabel,
     ariaDropDownLabel
-}: Props) {
+}: IProps) {
     const { classes, cx } = useStyles();
 
     const onKeyPressHandler = useCallback(e => {

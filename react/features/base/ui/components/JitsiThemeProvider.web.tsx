@@ -6,7 +6,7 @@ import { IReduxState } from '../../../app/types';
 
 import BaseTheme from './BaseTheme.web';
 
-type Props = {
+interface IProps {
 
     /**
      * The default theme or theme set through advanced branding.
@@ -17,7 +17,7 @@ type Props = {
     * The children of the component.
     */
     children: React.ReactNode;
-};
+}
 
 /**
  * The theme provider for the web app.
@@ -25,7 +25,7 @@ type Props = {
  * @param {Object} props - The props of the component.
  * @returns {React.ReactNode}
  */
-function JitsiThemeProvider(props: Props) {
+function JitsiThemeProvider(props: IProps) {
     return (
         <StyledEngineProvider injectFirst = { true }>
             <ThemeProvider theme = { props._theme }>{ props.children }</ThemeProvider>
@@ -37,7 +37,7 @@ function JitsiThemeProvider(props: Props) {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
     const { muiBrandedTheme } = state['features/dynamic-branding'];

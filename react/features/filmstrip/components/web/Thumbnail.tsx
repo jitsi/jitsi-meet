@@ -75,12 +75,10 @@ import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 // @ts-ignore
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
 
-declare let interfaceConfig: any;
-
 /**
  * The type of the React {@code Component} state of {@link Thumbnail}.
  */
-export type State = {
+export interface IState {
 
     /**
      * Indicates that the canplay event has been received.
@@ -101,12 +99,12 @@ export type State = {
      * Whether popover is visible or not.
      */
     popoverVisible: boolean;
-};
+}
 
 /**
  * The type of the React {@code Component} props of {@link Thumbnail}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * The audio track related to the participant.
@@ -277,7 +275,7 @@ export type Props = {
      * there is empty space.
      */
     width?: number;
-};
+}
 
 const defaultStyles = (theme: Theme) => {
     return {
@@ -384,7 +382,7 @@ const defaultStyles = (theme: Theme) => {
  *
  * @augments Component
  */
-class Thumbnail extends Component<Props, State> {
+class Thumbnail extends Component<IProps, IState> {
     /**
      * The long touch setTimeout handler.
      */
@@ -402,7 +400,7 @@ class Thumbnail extends Component<Props, State> {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         const state = {
@@ -487,7 +485,7 @@ class Thumbnail extends Component<Props, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: Props, prevState: State) {
+    componentDidUpdate(prevProps: IProps, prevState: IState) {
         if (prevState.displayMode !== this.state.displayMode) {
             this._onDisplayModeChanged();
         }
@@ -567,7 +565,7 @@ class Thumbnail extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, prevState: State) {
+    static getDerivedStateFromProps(props: IProps, prevState: IState) {
         if (!props._videoTrack && prevState.canPlayEventReceived) {
             const newState = {
                 ...prevState,
@@ -1168,7 +1166,7 @@ class Thumbnail extends Component<Props, State> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     const { participantID, filmstripType = FILMSTRIP_TYPE.MAIN } = ownProps;

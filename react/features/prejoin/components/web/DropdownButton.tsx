@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
 
-type Props = {
+interface IProps {
 
     /**
      * Attribute used in automated testing.
@@ -30,7 +30,7 @@ type Props = {
      * Function to be called on key pressed.
      */
     onKeyPressed: (e?: React.KeyboardEvent) => void;
-};
+}
 
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -72,7 +72,7 @@ const DropdownButton = ({
     onButtonClick,
     onKeyPressed,
     label
-}: Props) => {
+}: IProps) => {
     const { classes } = useStyles();
 
     return (

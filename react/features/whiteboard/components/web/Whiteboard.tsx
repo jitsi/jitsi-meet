@@ -26,8 +26,6 @@ import {
  */
 const HEIGHT_OFFSET = 80;
 
-declare const interfaceConfig: any;
-
 interface IDimensions {
 
     /* The height of the component. */
