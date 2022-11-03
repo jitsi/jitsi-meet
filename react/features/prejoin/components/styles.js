@@ -79,6 +79,10 @@ export default {
         marginHorizontal: BaseTheme.spacing[3]
     },
 
+    customInput: {
+        textAlign: 'center'
+    },
+
     field: {
         backgroundColor: BaseTheme.palette.field02,
         borderColor: SECONDARY_COLOR,
