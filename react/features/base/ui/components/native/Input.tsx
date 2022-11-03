@@ -27,6 +27,10 @@ interface IProps extends IInputProps {
     customStyles?: ICustomStyles;
     editable?: boolean | undefined;
     keyboardType?: KeyboardTypeOptions;
+    maxLength?: number | undefined;
+    minHeight?: number | string | undefined;
+    multiline?: boolean | undefined;
+    numberOfLines?: number | undefined;
     onBlur?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
     onFocus?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
     onSubmitEditing?: (value: string) => void;
@@ -51,6 +55,10 @@ const Input = ({
     icon,
     keyboardType,
     label,
+    maxLength,
+    minHeight,
+    multiline,
+    numberOfLines,
     onBlur,
     onChange,
     onFocus,
@@ -103,6 +111,10 @@ const Input = ({
                 autoFocus = { autoFocus }
                 editable = { !disabled }
                 keyboardType = { keyboardType }
+                maxLength = { maxLength }
+                minHeight = { minHeight }
+                multiline = { multiline }
+                numberOfLines = { numberOfLines }
                 onBlur = { handleBlur }
                 onChange = { handleChange }
                 onFocus = { handleFocus }
