@@ -1,5 +1,3 @@
-// @flow
-
 import { BoxModel } from '../../../../base/styles';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 
@@ -17,6 +15,11 @@ export default {
 
     avatar: {
         backgroundColor: LIGHT_GREY
+    },
+
+    customContainer: {
+        marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: BaseTheme.spacing[2]
     },
 
     avatarText: {
@@ -130,8 +133,8 @@ export default {
     },
 
     searchIcon: {
-        color: DARK_GREY,
-        fontSize: ICON_SIZE
+        color: BaseTheme.palette.icon01,
+        fontSize: 22
     },
 
     searchIconWrapper: {
