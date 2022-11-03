@@ -7,14 +7,8 @@ export default {
     },
 
     clearableInput: {
-        wrapper: {
-            marginBottom: BaseTheme.spacing[3],
-            marginTop: BaseTheme.spacing[3]
-        },
-
-        input: {
-            textAlign: 'left'
-        }
+        marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: BaseTheme.spacing[2]
     },
 
     grid: {
