@@ -6,7 +6,7 @@ import {
     Text,
     TextInput,
     TextInputChangeEventData,
-    TextInputFocusEventData,
+    TextInputFocusEventData, TextInputKeyPressEventData,
     TextInputSubmitEditingEventData,
     TouchableOpacity,
     View,
@@ -24,6 +24,7 @@ interface IProps extends IInputProps {
     accessibilityLabel?: string | undefined;
     autoCapitalize?: string | undefined;
     autoFocus?: boolean;
+    blurOnSubmit?: boolean | undefined;
     customStyles?: ICustomStyles;
     editable?: boolean | undefined;
     keyboardType?: KeyboardTypeOptions;
@@ -33,6 +34,7 @@ interface IProps extends IInputProps {
     numberOfLines?: number | undefined;
     onBlur?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
     onFocus?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
+    onKeyPress?: ((e: NativeSyntheticEvent<TextInputKeyPressEventData>) => void) | undefined;
     onSubmitEditing?: (value: string) => void;
     returnKeyType?: ReturnKeyTypeOptions | undefined;
     secureTextEntry?: boolean | undefined;
@@ -48,6 +50,7 @@ const Input = ({
     accessibilityLabel,
     autoCapitalize,
     autoFocus,
+    blurOnSubmit,
     clearable,
     customStyles,
     disabled,
@@ -62,6 +65,7 @@ const Input = ({
     onBlur,
     onChange,
     onFocus,
+    onKeyPress,
     onSubmitEditing,
     placeholder,
     returnKeyType,
@@ -90,6 +94,10 @@ const Input = ({
         onFocus?.(e);
     }, []);
 
+    const handleKeyPress = useCallback((e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+        onKeyPress?.(e);
+    }, []);
+
     const handleSubmitEditing = useCallback((e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
         const { nativeEvent: { text } } = e;
 
@@ -109,6 +117,7 @@ const Input = ({
                 autoComplete = { 'off' }
                 autoCorrect = { false }
                 autoFocus = { autoFocus }
+                blurOnSubmit = { blurOnSubmit }
                 editable = { !disabled }
                 keyboardType = { keyboardType }
                 maxLength = { maxLength }
@@ -118,6 +127,7 @@ const Input = ({
                 onBlur = { handleBlur }
                 onChange = { handleChange }
                 onFocus = { handleFocus }
+                onKeyPress = { handleKeyPress }
                 onSubmitEditing = { handleSubmitEditing }
                 placeholder = { placeholder }
                 placeholderTextColor = { BaseTheme.palette.text02 }
