@@ -8,7 +8,7 @@ import { getLocalParticipant } from '../../../base/participants';
 import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
-import { shouldHideSelfView } from '../../../base/settings/functions.any';
+import { getHideSelfView } from '../../../base/settings/functions.any';
 import { isToolboxVisible } from '../../../toolbox/functions';
 import { setVisibleRemoteParticipants } from '../../actions';
 import {
@@ -320,7 +320,7 @@ class Filmstrip extends PureComponent<Props> {
  */
 function _mapStateToProps(state) {
     const { enabled, remoteParticipants } = state['features/filmstrip'];
-    const disableSelfView = shouldHideSelfView(state);
+    const disableSelfView = getHideSelfView(state);
     const showRemoteVideos = shouldRemoteVideosBeVisible(state);
     const responsiveUI = state['features/base/responsive-ui'];
 

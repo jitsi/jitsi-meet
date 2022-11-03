@@ -3,7 +3,6 @@ import { IStateful } from '../app/types';
 import CONFIG_WHITELIST from '../config/configWhitelist';
 import { IConfigState } from '../config/reducer';
 import { IJwtState } from '../jwt/reducer';
-import { getParticipantCount } from '../participants/functions';
 import { toState } from '../redux/functions';
 import { parseURLParams } from '../util/parseURLParams';
 
@@ -112,16 +111,6 @@ export function getServerURL(stateful: IStateful) {
 export function shouldHideShareAudioHelper(state: IReduxState): boolean | undefined {
 
     return state['features/base/settings'].hideShareAudioHelper;
-}
-
-/**
- * Whether we should hide self view.
- *
- * @param {Object} state - Redux state.
- * @returns {boolean}
- */
-export function shouldHideSelfView(state: IReduxState) {
-    return getParticipantCount(state) === 1 ? false : getHideSelfView(state);
 }
 
 /**

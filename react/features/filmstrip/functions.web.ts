@@ -11,7 +11,7 @@ import {
     isScreenShareParticipant
 } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
-import { shouldHideSelfView } from '../base/settings/functions.web';
+import { getHideSelfView } from '../base/settings/functions.any';
 import {
     getVideoTrackByParticipant,
     isLocalTrackMuted,
@@ -218,7 +218,7 @@ export function getTileDefaultAspectRatio(disableResponsiveTiles: boolean,
  */
 export function getNumberOfPartipantsForTileView(state: IReduxState) {
     const { iAmRecorder } = state['features/base/config'];
-    const disableSelfView = shouldHideSelfView(state);
+    const disableSelfView = getHideSelfView(state);
     const { localScreenShare } = state['features/base/participants'];
     const localParticipantsCount = localScreenShare ? 2 : 1;
     const numberOfParticipants = getParticipantCountWithFake(state)

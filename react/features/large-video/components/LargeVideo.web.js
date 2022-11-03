@@ -4,9 +4,10 @@ import React, { Component } from 'react';
 
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { VIDEO_TYPE } from '../../base/media';
-import { getLocalParticipant } from '../../base/participants';
+import { getLocalParticipant, getParticipantCount } from '../../base/participants';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
+import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant } from '../../base/tracks';
 import { setColorAlpha } from '../../base/util';
 import { StageParticipantNameLabel } from '../../display-name';
@@ -105,6 +106,21 @@ type Props = {
      */
     _whiteboardEnabled: boolean;
 
+     /**
+     * Whether or not the hideSelfView is enabled.
+     */
+    _hideSelfView: boolean;
+
+    /**
+     * Whether or not is only 1 participant in the meeting.
+     */
+    _aloneInTheMeeting: boolean;
+
+    /**
+     * Local Participant id.
+     */
+    _localParticipantId: string;
+
     /**
      * The Redux dispatch function.
      */
@@ -146,7 +162,14 @@ class LargeVideo extends Component<Props> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: Props) {
-        const { _visibleFilmstrip, _isScreenSharing, _seeWhatIsBeingShared, _largeVideoParticipantId } = this.props;
+        const {
+            _visibleFilmstrip,
+            _isScreenSharing,
+            _seeWhatIsBeingShared,
+            _largeVideoParticipantId,
+            _hideSelfView,
+            _localParticipantId,
+            _aloneInTheMeeting } = this.props;
 
         if (prevProps._visibleFilmstrip !== _visibleFilmstrip) {
             this._updateLayout();
@@ -158,6 +181,10 @@ class LargeVideo extends Component<Props> {
 
         if (_isScreenSharing && _seeWhatIsBeingShared) {
             VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, true);
+        }
+
+        if (_aloneInTheMeeting && prevProps._hideSelfView !== _hideSelfView) {
+            VideoLayout.updateLargeVideo(_localParticipantId, true, false);
         }
     }
 
@@ -361,7 +388,10 @@ function _mapStateToProps(state) {
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,
-        _whiteboardEnabled: isWhiteboardEnabled(state)
+        _whiteboardEnabled: isWhiteboardEnabled(state),
+        _hideSelfView: getHideSelfView(state),
+        _localParticipantId: localParticipantId,
+        _aloneInTheMeeting: getParticipantCount(state) === 1
     };
 }
 
