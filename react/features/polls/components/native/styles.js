@@ -1,10 +1,15 @@
-// @flow
-
 import { createStyleSheet } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 
 export const dialogStyles = createStyleSheet({
+
+    customContainer: {
+        marginBottom: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[2]
+    },
+
     questionText: {
         ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text01,
@@ -19,29 +24,10 @@ export const dialogStyles = createStyleSheet({
         marginLeft: BaseTheme.spacing[2]
     },
 
-    questionField: {
-        borderWidth: 1,
-        borderColor: BaseTheme.palette.border05,
-        borderRadius: BaseTheme.shape.borderRadius,
-        color: BaseTheme.palette.text01,
-        fontSize: 14,
-        marginHorizontal: BaseTheme.spacing[3],
-        marginBottom: BaseTheme.spacing[3],
-        paddingBottom: BaseTheme.spacing[2],
-        paddingLeft: BaseTheme.spacing[3],
-        paddingRight: BaseTheme.spacing[3],
-        paddingTop: BaseTheme.spacing[2]
-    },
-
     optionContainer: {
         flexDirection: 'column',
         marginTop: BaseTheme.spacing[3],
         marginHorizontal: BaseTheme.spacing[3]
-    },
-
-    optionFieldLabel: {
-        color: BaseTheme.palette.text03,
-        marginBottom: BaseTheme.spacing[2]
     },
 
     optionRemoveButtonText: {
@@ -62,6 +48,7 @@ export const dialogStyles = createStyleSheet({
 });
 
 export const resultsStyles = createStyleSheet({
+
     title: {
         fontSize: 24,
         fontWeight: 'bold'
@@ -120,11 +107,6 @@ export const resultsStyles = createStyleSheet({
 });
 
 export const chatStyles = createStyleSheet({
-    questionFieldLabel: {
-        color: BaseTheme.palette.text03,
-        marginBottom: BaseTheme.spacing[2],
-        marginLeft: BaseTheme.spacing[3]
-    },
 
     noPollContent: {
         alignItems: 'center',
