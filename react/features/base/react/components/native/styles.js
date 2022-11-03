@@ -164,5 +164,10 @@ export default {
     iconButtonContainerSecondary: {
         ...iconButtonContainer,
         backgroundColor: BaseTheme.palette.action02
+    },
+
+    iconButtonContainerDisabled: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.disabled01
     }
 };

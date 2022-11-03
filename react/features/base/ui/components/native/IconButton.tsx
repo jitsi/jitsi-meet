@@ -44,6 +44,11 @@ const IconButton: React.FC<IIconButtonProps> = ({
         rippleColor = tapColor;
     }
 
+    if (disabled) {
+        color = BaseTheme.palette.icon03;
+        iconButtonContainerStyles = styles.iconButtonContainerDisabled;
+        rippleColor = 'transparent';
+    }
 
     return (
         <TouchableRipple
