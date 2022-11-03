@@ -16,9 +16,9 @@ export interface IAnswer {
     voterId: string;
 
     /**
-     * Name of the voter.
+     * Name of the voter for this answer.
      */
-    voterName: string;
+    voterName?: string;
 }
 
 export interface IPoll {
@@ -27,7 +27,7 @@ export interface IPoll {
      * An array of answers:
      * the name of the answer name and a map of ids and names of voters voting for this option.
      */
-    answers: Array<{ name: string; voters: Map<string, string>; }>;
+    answers: Array<{ name: string; voters: Array<string>; }>;
 
     /**
      * Whether the poll vote is being edited/changed.
@@ -49,12 +49,6 @@ export interface IPoll {
      * ID of the sender of this poll.
      */
     senderId: string;
-
-    /**
-     * Name of the sender of this poll
-     * Store poll sender name in case they exit the call.
-     */
-    senderName: string;
 
     /**
      * Whether the results should be shown instead of the answer form.

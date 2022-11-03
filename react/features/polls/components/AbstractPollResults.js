@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createPollEvent, sendAnalytics } from '../../analytics';
+import { getParticipantDisplayName } from '../../base/participants';
 import { getParticipantById } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
@@ -55,6 +56,7 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
 
     const pollDetails = useSelector(getPoll(pollId));
     const participant = useBoundSelector(getParticipantById, pollDetails.senderId);
+    const reduxState = useSelector(state => state);
 
     const [ showDetails, setShowDetails ] = useState(false);
     const toggleIsDetailed = useCallback(() => {
@@ -63,27 +65,29 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
     });
 
     const answers: Array<AnswerInfo> = useMemo(() => {
-        const voterSet = new Set();
+        const allVoters = new Set();
 
         // Getting every voters ID that participates to the poll
         for (const answer of pollDetails.answers) {
-            for (const [ voterId ] of answer.voters) {
-                voterSet.add(voterId);
-            }
+            // checking if the voters is an array for supporting old structure model
+            const voters = answer.voters?.length ? answer.voters : Object.keys(answer.voters);
+
+            voters.forEach(voter => allVoters.add(voter));
         }
 
-        const totalVoters = voterSet.size;
-
         return pollDetails.answers.map(answer => {
-            const percentage = totalVoters === 0 ? 0 : Math.round(answer.voters.size / totalVoters * 100);
+            const nrOfVotersPerAnswer = answer.voters ? Object.keys(answer.voters).length : 0;
+            const percentage = allVoters.size > 0 ? Math.round(nrOfVotersPerAnswer / allVoters.size * 100) : 0;
 
             let voters = null;
 
-            if (showDetails) {
-                voters = [ ...answer.voters ].map(([ id, name ]) => {
+            if (showDetails && answer.voters) {
+                const answerVoters = answer.voters?.length ? [ ...answer.voters ] : Object.keys({ ...answer.voters });
+
+                voters = answerVoters.map(id => {
                     return {
                         id,
-                        name
+                        name: getParticipantDisplayName(reduxState, id)
                     };
                 });
             }
@@ -92,7 +96,7 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
                 name: answer.name,
                 percentage,
                 voters,
-                voterCount: answer.voters.size
+                voterCount: nrOfVotersPerAnswer
             };
         });
     }, [ pollDetails.answers, showDetails ]);
