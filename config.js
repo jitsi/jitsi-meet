@@ -65,10 +65,6 @@ var config = {
         // issues related to insertable streams.
         // disableE2EE: false,
 
-        // Enables/disables thumbnail reordering in the filmstrip. It is enabled by default unless explicitly
-        // disabled by the below option.
-        // enableThumbnailReordering: true,
-
         // Enables XMPP WebSocket (as opposed to BOSH) for the given amount of users.
         // mobileXmppWsThreshold: 10, // enable XMPP WebSockets on mobile for 10% of the users
 
@@ -224,9 +220,29 @@ var config = {
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
 
+    // speakerStats: {
+    //     // Specifies whether the speaker stats is enable or not.
+    //     disabled: false,
+
+    //     // Specifies whether there will be a search field in speaker stats or not.
+    //     disableSearch: false,
+
+    //     // Specifies whether participants in speaker stats should be ordered or not, and with what priority.
+    //     // 'role', <- Moderators on top.
+    //     // 'name', <- Alphabetically by name.
+    //     // 'hasLeft', <- The ones that have left in the bottom.
+    //     order: [
+    //         'role',
+    //         'name',
+    //         'hasLeft',
+    //     ],
+    // },
+
+    // DEPRECATED. Please use speakerStats.disableSearch instead.
     // Specifies whether there will be a search field in speaker stats or not
     // disableSpeakerStatsSearch: false,
 
+    // DEPRECATED. Please use speakerStats.order .
     // Specifies whether participants in speaker stats should be ordered or not, and with what priority
     // speakerStatsOrder: [
     //  'role', <- Moderators on top
@@ -1487,6 +1503,8 @@ var config = {
     //     displayMode: 'all',
     //     // How long the GIF should be displayed on the tile (in milliseconds).
     //     tileTime: 5000,
+    //     // Limit results by rating: g, pg, pg-13, r. Default value: g.
+    //     rating: 'pg',
     // },
 
     // Logging

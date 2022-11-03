@@ -5,7 +5,7 @@ import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
-import { Button } from '../../../base/ui/components/web';
+import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 
 // @ts-ignore
@@ -14,7 +14,7 @@ import KeyboardAvoider from './KeyboardAvoider';
 /**
  * The type of the React {@code Component} props of {@DisplayNameForm}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Invoked to set the local participant display name.
@@ -30,20 +30,20 @@ interface Props extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@DisplayNameForm}.
  */
-type State = {
+interface IState {
 
     /**
      * User provided display name when the input text is provided in the view.
      */
     displayName: string;
-};
+}
 
 /**
  * React Component for requesting the local participant to set a display name.
  *
  * @augments Component
  */
-class DisplayNameForm extends Component<Props, State> {
+class DisplayNameForm extends Component<IProps, IState> {
     state = {
         displayName: ''
     };
@@ -54,7 +54,7 @@ class DisplayNameForm extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.

@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { batch } from 'react-redux';
 
-// @ts-ignore
+// @ts-expect-error
 import UIEvents from '../../../../service/UI/UIEvents';
 import { IStore } from '../../app/types';
 import { approveParticipant } from '../../av-moderation/actions';

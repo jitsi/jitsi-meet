@@ -17,7 +17,7 @@ import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoo
 import { AVATAR_SIZE } from '../../../../constants';
 
 
-type Props = {
+interface IProps {
 
     /**
      * Room and participant jid reference.
@@ -47,7 +47,7 @@ type Props = {
      * Callback for making a selection in the menu.
      */
     onSelect: (force?: any) => void;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -69,7 +69,7 @@ export const RoomParticipantContextMenu = ({
     onEnter,
     onLeave,
     onSelect
-}: Props) => {
+}: IProps) => {
     const { classes: styles } = useStyles();
     const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);

@@ -8,18 +8,18 @@ import {
 
 import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
 import BaseTheme from '../BaseTheme.native';
-import { ButtonProps } from '../types';
+import { IButtonProps } from '../types';
 
 import styles from './buttonStyles';
 
-export interface IButtonProps extends ButtonProps {
+export interface IProps extends IButtonProps {
     color?: string;
     contentStyle?: Object | undefined;
     labelStyle?: Object | undefined;
     style?: Object | undefined;
 }
 
-const Button: React.FC<IButtonProps> = ({
+const Button: React.FC<IProps> = ({
     accessibilityLabel,
     color: buttonColor,
     contentStyle,
@@ -30,7 +30,7 @@ const Button: React.FC<IButtonProps> = ({
     onClick: onPress,
     style,
     type
-}: IButtonProps) => {
+}: IProps) => {
     const { t } = useTranslation();
     const { CONTAINED } = BUTTON_MODES;
     const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;

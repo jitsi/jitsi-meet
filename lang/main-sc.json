@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Perunu messàgiu ancora in sa riunione. Cumintza una tzarrada inoghe!",
         "privateNotice": "Messàgiu privadu a {{recipient}}",
+        "sendButton": "Imbia",
         "title": "Tzarrada",
         "titleWithPolls": "Tzarrada",
         "you": "tue"
@@ -300,7 +301,7 @@
         "veryGood": "Bona meda"
     },
     "helpView": {
-        "header": "Tzentru de agiudu"
+        "title": "Tzentru de agiudu"
     },
     "incomingCall": {
         "answer": "Risponde",
@@ -399,6 +400,7 @@
         "signedInAs": "Autenticatzione cun:",
         "start": "Avia sa trasmissione in direta",
         "streamIdHelp": "It'est custu?",
+        "title": "Trasmissione in direta",
         "unavailableTitle": "Sa trasmissione in direta no est a disponimentu",
         "youtubeTerms": "Cunditziones de servìtziu de YouTube"
     },
@@ -517,6 +519,7 @@
         "serviceName": "Servìtziu de registratzione",
         "signIn": "Identìfica·ti",
         "signOut": "Essi",
+        "title": "Registrende",
         "unavailable": "{{serviceName}} no est a disponimentu. Semus traballende pro acontzare su problema. Torra·bi a proare a pustis.",
         "unavailableTitle": "Sa registratzione no est a disponimentu"
     },

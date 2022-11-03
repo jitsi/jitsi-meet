@@ -1,25 +1,29 @@
 /* eslint-disable lines-around-comment */
-import { IState, IStore } from '../../app/types';
+
+import { IReduxState, IStore } from '../../app/types';
 // @ts-ignore
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
-// @ts-ignore
-import { setAudioOnly } from '../audio-only';
+import { setAudioOnly } from '../audio-only/actions';
 import JitsiMeetJS from '../lib-jitsi-meet';
 
 import { destroyLocalDesktopTrackIfExists, replaceLocalTrack } from './actions.any';
-// @ts-ignore
 import { getLocalVideoTrack, isLocalVideoTrackDesktop } from './functions';
 /* eslint-enable lines-around-comment */
 
 export * from './actions.any';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /**
  * Signals that the local participant is ending screensharing or beginning the screensharing flow.
  *
  * @param {boolean} enabled - The state to toggle screen sharing to.
+ * @param {boolean} _ignore1 - Ignored.
+ * @param {boolean} _ignore2 - Ignored.
+ * @param {Object} _ignore3 - Ignored.
  * @returns {Function}
  */
-export function toggleScreensharing(enabled: boolean): Function {
+export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignore2?: boolean, _ignore3?: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
@@ -36,6 +40,8 @@ export function toggleScreensharing(enabled: boolean): Function {
     };
 }
 
+/* eslint-enable @typescript-eslint/no-unused-vars */
+
 /**
  * Creates desktop track and replaces the local one.
  *
@@ -44,7 +50,7 @@ export function toggleScreensharing(enabled: boolean): Function {
  * @param {Object} state - The redux state.
  * @returns {void}
  */
-function _startScreenSharing(dispatch: Function, state: IState) {
+function _startScreenSharing(dispatch: Function, state: IReduxState) {
     setPictureInPictureEnabled(false);
 
     JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })

@@ -1,4 +1,6 @@
 import { NativeModules } from 'react-native';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { format } from 'util';
 
 // Some code adapted from https://github.com/houserater/react-native-lumberjack

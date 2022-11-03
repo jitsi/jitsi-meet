@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 import { isLocalParticipantModerator } from '../../../../../base/participants';
 import { equals } from '../../../../../base/redux';
-import useContextMenu from '../../../../../base/ui/hooks/useContextMenu';
+import useContextMenu from '../../../../../base/ui/hooks/useContextMenu.web';
 import {
     getBreakoutRooms,
     getBreakoutRoomsConfig,

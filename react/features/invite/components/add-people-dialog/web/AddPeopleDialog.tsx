@@ -4,15 +4,13 @@ import { WithTranslation } from 'react-i18next';
 
 import { createInviteDialogEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
-import { IState } from '../../../../app/types';
+import { IReduxState } from '../../../../app/types';
 import { getInviteURL } from '../../../../base/connection/functions';
 import { translate } from '../../../../base/i18n/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions.any';
-// @ts-ignore
-import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { isVpaasMeeting } from '../../../../jaas/functions';
 // @ts-ignore
 import { getActiveSession } from '../../../../recording';
@@ -29,19 +27,17 @@ import {
     // @ts-ignore
 } from '../../../functions';
 
-// @ts-ignore
 import CopyMeetingLinkSection from './CopyMeetingLinkSection';
 import DialInLimit from './DialInLimit';
 // @ts-ignore
 import DialInSection from './DialInSection';
-// @ts-ignore
 import InviteByEmailSection from './InviteByEmailSection';
 // @ts-ignore
 import InviteContactsSection from './InviteContactsSection';
 // @ts-ignore
 import LiveStreamSection from './LiveStreamSection';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The object representing the dialIn feature.
@@ -57,11 +53,6 @@ interface Props extends WithTranslation {
      * Whether or not email sharing features should be visible.
      */
     _emailSharingVisible: boolean;
-
-    /**
-     * Whether or not embed meeting should be visible.
-     */
-    _embedMeetingVisible: boolean;
 
     /**
      * The meeting invitation text.
@@ -122,7 +113,6 @@ interface Props extends WithTranslation {
  */
 function AddPeopleDialog({
     _dialIn,
-    _embedMeetingVisible,
     _dialInVisible,
     _urlSharingVisible,
     _emailSharingVisible,
@@ -135,7 +125,8 @@ function AddPeopleDialog({
     _liveStreamViewURL,
     _phoneNumber,
     t,
-    updateNumbers }: Props) {
+    updateNumbers
+}: IProps) {
 
     /**
      * Updates the dial-in numbers.
@@ -181,7 +172,6 @@ function AddPeopleDialog({
                             inviteTextiOS = { _invitationTextiOS } />
                         : null
                 }
-                { _embedMeetingVisible && <EmbedMeetingTrigger /> }
                 <div className = 'invite-more-dialog separator' />
                 {
                     _liveStreamViewURL
@@ -207,9 +197,9 @@ function AddPeopleDialog({
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The properties explicitly passed to the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const currentLiveStreamingSession
         = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
     const { iAmRecorder, inviteAppName } = state['features/base/config'];
@@ -221,7 +211,6 @@ function mapStateToProps(state: IState, ownProps: Partial<Props>) {
 
     return {
         _dialIn: dialIn,
-        _embedMeetingVisible: !isVpaasMeeting(state) && isSharingEnabled(sharingFeatures.embed),
         _dialInVisible: isSharingEnabled(sharingFeatures.dialIn),
         _urlSharingVisible: isDynamicBrandingDataLoaded(state) && isSharingEnabled(sharingFeatures.url),
         _emailSharingVisible: isSharingEnabled(sharingFeatures.email),
@@ -244,7 +233,7 @@ function mapStateToProps(state: IState, ownProps: Partial<Props>) {
  * Maps dispatching of some action to React component props.
  *
  * @param {Function} dispatch - Redux action dispatcher.
- * @returns {Props}
+ * @returns {IProps}
  */
 const mapDispatchToProps = {
     updateNumbers: () => updateDialInNumbers()

@@ -14,7 +14,7 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { DisplayNameLabel } from '../../../display-name';
-import { BrandingImageBackground } from '../../../dynamic-branding';
+import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,

@@ -4,11 +4,13 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch } from 'react-redux';
 
-// @ts-ignore
+// @ts-expect-error
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
+// @ts-ignore
+import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/functions';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import {
     getMultipleVideoSendingSupportFeatureFlag,
     getToolbarButtons,
@@ -49,7 +51,6 @@ import { NoiseSuppressionButton } from '../../../noise-suppression/components';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
-    // @ts-ignore
 } from '../../../participants-pane/actions';
 // @ts-ignore
 import { ParticipantsPaneButton } from '../../../participants-pane/components/web';
@@ -67,12 +68,14 @@ import {
 // @ts-ignore
 import { isSalesforceEnabled } from '../../../salesforce/functions';
 import {
-    ShareAudioButton,
-    isScreenAudioSupported,
-    isScreenVideoShared,
     startScreenShareFlow
-    // @ts-ignore
-} from '../../../screen-share';
+} from '../../../screen-share/actions.web';
+// @ts-ignore
+import ShareAudioButton from '../../../screen-share/components/web/ShareAudioButton';
+import {
+    isScreenAudioSupported,
+    isScreenVideoShared
+} from '../../../screen-share/functions';
 // @ts-ignore
 import SecurityDialogButton from '../../../security/components/security-dialog/web/SecurityDialogButton';
 // @ts-ignore
@@ -81,6 +84,7 @@ import { SettingsButton } from '../../../settings';
 import { SharedVideoButton } from '../../../shared-video/components';
 // @ts-ignore
 import { SpeakerStatsButton } from '../../../speaker-stats/components/web';
+import SpeakerStats from '../../../speaker-stats/components/web/SpeakerStats';
 import {
     ClosedCaptionButton
     // @ts-ignore
@@ -106,7 +110,6 @@ import {
     // @ts-ignore
 } from '../../actions';
 import { NOTIFY_CLICK_MODE, NOT_APPLICABLE, THRESHOLDS } from '../../constants';
-// @ts-ignore
 import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions';
 import { getJwtDisabledButtons } from '../../functions.any';
 // @ts-ignore
@@ -145,7 +148,7 @@ import VideoSettingsButton from './VideoSettingsButton';
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * String showing if the virtual background type is desktop-share.
@@ -241,6 +244,12 @@ interface Props extends WithTranslation {
     _isProfileDisabled: boolean;
 
     /**
+     * Whether or not speaker stats is disable.
+     */
+     _isSpeakerStatsDisabled: boolean;
+
+
+     /**
      * Whether or not the current meeting belongs to a JaaS user.
      */
     _isVpaasMeeting: boolean;
@@ -341,15 +350,14 @@ interface Props extends WithTranslation {
     toolbarButtons: Array<string>;
 }
 
-declare let APP: any;
-
 const styles = () => {
     return {
         contextMenu: {
             position: 'relative' as const,
             right: 'auto',
             maxHeight: 'inherit',
-            margin: 0
+            margin: 0,
+            marginBottom: '8px'
         },
 
         hangupMenu: {
@@ -359,7 +367,8 @@ const styles = () => {
             flexDirection: 'column' as const,
             rowGap: '8px',
             margin: 0,
-            padding: '16px'
+            padding: '16px',
+            marginBottom: '8px'
         }
     };
 };
@@ -369,14 +378,14 @@ const styles = () => {
  *
  * @augments Component
  */
-class Toolbox extends Component<Props> {
+class Toolbox extends Component<IProps> {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
-     * @param {Props} props - The read-only React {@code Component} props with
+     * @param {IProps} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -399,6 +408,7 @@ class Toolbox extends Component<Props> {
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
+        this._onShortcutSpeakerStats = this._onShortcutSpeakerStats.bind(this);
         this._onEscKey = this._onEscKey.bind(this);
     }
 
@@ -409,7 +419,8 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons, t, dispatch, _reactionsEnabled, _gifsEnabled } = this.props;
+        const { _toolbarButtons, t, dispatch, _reactionsEnabled, _gifsEnabled, _isSpeakerStatsDisabled } = this.props;
+
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
@@ -445,6 +456,11 @@ class Toolbox extends Component<Props> {
                 character: 'W',
                 exec: this._onShortcutToggleTileView,
                 helpDescription: 'toolbar.tileViewToggle'
+            },
+            !_isSpeakerStatsDisabled && isToolbarButtonEnabled('stats', _toolbarButtons) && {
+                character: 'T',
+                exec: this._onShortcutSpeakerStats,
+                helpDescription: 'keyboardShortcuts.showSpeakerStats'
             }
         ];
 
@@ -507,7 +523,7 @@ class Toolbox extends Component<Props> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         const { _dialog, _visible, dispatch } = this.props;
 
 
@@ -698,9 +714,10 @@ class Toolbox extends Component<Props> {
     _getAllButtons() {
         const {
             _feedbackConfigured,
+            _hasSalesforce,
             _isIosMobile,
             _isMobile,
-            _hasSalesforce,
+            _isSpeakerStatsDisabled,
             _multiStreamModeEnabled,
             _screenSharing,
             _whiteboardEnabled
@@ -864,7 +881,7 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
-        const speakerStats = {
+        const speakerStats = !_isSpeakerStatsDisabled && {
             key: 'stats',
             Content: SpeakerStatsButton,
             group: 3
@@ -1204,6 +1221,34 @@ class Toolbox extends Component<Props> {
         this._doToggleScreenshare();
     }
 
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling speaker stats.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onShortcutSpeakerStats() {
+        sendAnalytics(createShortcutEvent(
+            'speaker.stats'
+        ));
+
+        this._doToggleSpekearStats();
+    }
+
+    /**
+     * Dispatches an action to toggle speakerStats.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleSpekearStats() {
+        const { dispatch } = this.props;
+
+        dispatch(toggleDialog(SpeakerStats, {
+            conference: APP.conference
+        }));
+    }
 
     /**
      * Toggle the toolbar visibility when tabbing into it.
@@ -1478,9 +1523,10 @@ class Toolbox extends Component<Props> {
  * @private
  * @returns {{}}
  */
-function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
+function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
+
     const {
         buttonsWithNotifyClick,
         callStatsID,
@@ -1516,6 +1562,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _isProfileDisabled: Boolean(disableProfile),
         _isIosMobile: isIosMobileBrowser(),
         _isMobile: isMobileBrowser(),
+        _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
         _isVpaasMeeting: isVpaasMeeting(state),
         _jwtDisabledButons: getJwtDisabledButtons(state),
         _hasSalesforce: isSalesforceEnabled(state),

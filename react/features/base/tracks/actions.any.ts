@@ -7,9 +7,7 @@ import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
 import { getMultipleVideoSendingSupportFeatureFlag, getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { createLocalTrack } from '../lib-jitsi-meet/functions';
+import { createLocalTrack } from '../lib-jitsi-meet/functions.any';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
@@ -43,7 +41,7 @@ import {
     getTrackByJitsiTrack
 } from './functions';
 import logger from './logger';
-import { TrackOptions } from './types';
+import { ITrackOptions } from './types';
 
 /**
  * Add a given local track to the conference.
@@ -133,7 +131,7 @@ export function createDesiredLocalTracks(...desiredTypes: any) {
  * @param {Object} [options] - For info @see JitsiMeetJS.createLocalTracks.
  * @returns {Function}
  */
-export function createLocalTracksA(options: TrackOptions = {}) {
+export function createLocalTracksA(options: ITrackOptions = {}) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const devices
             = options.devices || [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ];
@@ -229,7 +227,7 @@ export function createLocalTracksA(options: TrackOptions = {}) {
  * @param {JitsiLocalTrack|null} [track] - The local track that needs to be destroyed.
  * @returns {Function}
  */
-export function destroyLocalTracks(track = null) {
+export function destroyLocalTracks(track: any = null) {
     if (track) {
         return (dispatch: IStore['dispatch']) => {
             dispatch(_disposeAndRemoveTracks([ track ]));

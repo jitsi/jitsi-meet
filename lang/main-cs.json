@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "V setkání zatím nejsou žádné zprávy. Tady můžete začít konverzaci!",
         "privateNotice": "Soukromá zpráva pro {{recipient}}",
+        "sendButton": "Odeslat",
         "smileysPanel": "Panel emoji",
         "tabs": {
             "chat": "Chat",
@@ -435,7 +436,7 @@
         "search": "Prohledat GIPHY"
     },
     "helpView": {
-        "header": "Centrum pomoci"
+        "title": "Centrum pomoci"
     },
     "incomingCall": {
         "answer": "Odpovědět",
@@ -551,6 +552,7 @@
         "signedInAs": "Nyní jste přihlášen(a) jako:",
         "start": "Spustit živý přenos",
         "streamIdHelp": "Co je tohle?",
+        "title": "Živý přenos",
         "unavailableTitle": "Živý přenos není dostupný",
         "youtubeTerms": "Podmínky používání YouTube"
     },
@@ -592,7 +594,7 @@
         "passwordField": "Zadejte heslo setkání",
         "passwordJoinButton": "Vstoupit",
         "reject": "Odmítnout",
-        "rejectAll": "",
+        "title": "Předsálí",
         "toggleLabel": "Zapnout předsálí"
     },
     "localRecording": {
@@ -922,7 +924,7 @@
         "sessionAlreadyActive": "",
         "signIn": "Přihlásit se",
         "signOut": "Odhlásit se",
-        "surfaceError": "",
+        "title": "Nahrávání",
         "unavailable": "Jejda! Služba {{serviceName}} není dostupná. Problém se snažíme vyřešit. Zkuste to prosím později.",
         "unavailableTitle": "Nahrávání nedostupné",
         "uploadToCloud": ""

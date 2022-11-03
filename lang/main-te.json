@@ -74,6 +74,7 @@
         },
         "noMessagesMessage": "ఈ సమావేశంలో ఇంకా సందేశాలేమీ లేవు. ఇక్కడ ఒక సంభాషణను మొదలుపెట్టండి!",
         "privateNotice": "{{recipient}}‌కి అంతరంగిక సందేశం",
+        "sendButton": "పంపించు",
         "title": "సంభాషణ",
         "titleWithPolls": "సంభాషణ",
         "you": "మీరు"
@@ -348,7 +349,7 @@
         "veryGood": "చాలా బాగుందిా"
     },
     "helpView": {
-        "header": "సహాయ కేంద్రం"
+        "title": "సహాయ కేంద్రం"
     },
     "incomingCall": {
         "answer": "బదులివ్వు",
@@ -449,6 +450,7 @@
         "signedInAs": "మీరు ప్రస్తుతం ఇలా ప్రవేశించివున్నారు:",
         "start": "ఒక లైవ్ స్ట్రీమ్ మొదలుపెట్టండి",
         "streamIdHelp": "ఇది ఏమిటి?",
+        "title": "తాజా స్ట్రీమింగ్",
         "unavailableTitle": "లైవ్ స్ట్రీమింగ్ అందుబాటులో లేదు",
         "youtubeTerms": "యూట్యూబ్ సేవా నియమాలు"
     },
@@ -484,6 +486,7 @@
         "passwordField": "సమావేశం సంకేతపదం ఇవ్వండి",
         "passwordJoinButton": "చేరు",
         "reject": "నిరాకరించు",
+        "title": "Lobby",
         "toggleLabel": "Enable lobby"
     },
     "localRecording": {
@@ -680,6 +683,7 @@
         "serviceName": "రికార్డింగు సేవ",
         "signIn": "Sign in",
         "signOut": "Sign out",
+        "title": "రికార్డింగు",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "రికార్డింగు అందుబాటులో లేదు"
     },

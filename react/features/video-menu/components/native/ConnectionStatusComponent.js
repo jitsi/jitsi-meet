@@ -3,7 +3,6 @@ import { Text, View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
@@ -11,7 +10,6 @@ import { IconArrowDownLarge, IconArrowUpLarge } from '../../../base/icons';
 import { getParticipantDisplayName } from '../../../base/participants';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { getSourceNameByParticipantId } from '../../../base/tracks';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
 
 import styles from './styles';
@@ -57,17 +55,7 @@ export type Props = {
     /**
      * Theme used for styles.
      */
-    theme: Object,
-
-    /**
-     * The source name of the track.
-     */
-     _sourceName: string,
-
-    /**
-     * Whether source name signaling is enabled.
-     */
-    _sourceNameSignalingEnabled: boolean
+    theme: Object
 }
 
 /**
@@ -209,13 +197,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * returns {void}
      */
     componentDidMount() {
-        statsEmitter.subscribeToClientStats(
-            this.props.participantID, this._onStatsUpdated);
-
-        if (this.props._sourceNameSignalingEnabled) {
-            statsEmitter.subscribeToClientStats(
-                this.props._sourceName, this._onStatsUpdated);
-        }
+        statsEmitter.subscribeToClientStats(this.props.participantID, this._onStatsUpdated);
     }
 
     /**
@@ -230,15 +212,6 @@ class ConnectionStatusComponent extends Component<Props, State> {
                 prevProps.participantID, this._onStatsUpdated);
             statsEmitter.subscribeToClientStats(
                 this.props.participantID, this._onStatsUpdated);
-        }
-
-        if (this.props._sourceNameSignalingEnabled) {
-            if (prevProps._sourceName !== this.props._sourceName) {
-                statsEmitter.unsubscribeToClientStats(
-                    prevProps._sourceName, this._onStatsUpdated);
-                statsEmitter.subscribeToClientStats(
-                    this.props._sourceName, this._onStatsUpdated);
-            }
         }
     }
 
@@ -294,24 +267,18 @@ class ConnectionStatusComponent extends Component<Props, State> {
      */
     _extractResolutionString(stats) {
         const { framerate, resolution } = stats;
-        let frameRateString, resolutionString;
 
-        if (this.props._sourceNameSignalingEnabled) {
-            resolutionString = resolution ? `${resolution.width}x${resolution.height}` : null;
-            frameRateString = framerate || null;
-        } else {
-            resolutionString = Object.keys(resolution || {})
-                .map(ssrc => {
-                    const { width, height } = resolution[ssrc];
+        const resolutionString = Object.keys(resolution || {})
+            .map(ssrc => {
+                const { width, height } = resolution[ssrc];
 
-                    return `${width}x${height}`;
-                })
-                .join(', ') || null;
+                return `${width}x${height}`;
+            })
+            .join(', ') || null;
 
-            frameRateString = Object.keys(framerate || {})
-                .map(ssrc => framerate[ssrc])
-                .join(', ') || null;
-        }
+        const frameRateString = Object.keys(framerate || {})
+            .map(ssrc => framerate[ssrc])
+            .join(', ') || null;
 
         return resolutionString && frameRateString ? `${resolutionString}@${frameRateString}fps` : undefined;
     }
@@ -361,20 +328,19 @@ class ConnectionStatusComponent extends Component<Props, State> {
 
         let codecString;
 
-        if (this.props._sourceNameSignalingEnabled) {
-            if (codec) {
-                codecString = `${codec.audio}, ${codec.video}`;
+        if (codec) {
+            const audioCodecs = Object.values(codec)
+                .map(c => c.audio)
+                .filter(Boolean);
+            const videoCodecs = Object.values(codec)
+                .map(c => c.video)
+                .filter(Boolean);
+
+            if (audioCodecs.length || videoCodecs.length) {
+                // Use a Set to eliminate duplicates.
+                codecString = Array.from(new Set([ ...audioCodecs, ...videoCodecs ])).join(', ');
             }
-        } else {
-            // Only report one codec, in case there are multiple for a user.
-            Object.keys(codec || {})
-                .forEach(ssrc => {
-                    const { audio, video } = codec[ssrc];
-
-                    codecString = `${audio}, ${video}`;
-                });
         }
-
 
         return codecString;
     }
@@ -403,13 +369,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @returns {boolean}
      */
     _onCancel() {
-        statsEmitter.unsubscribeToClientStats(
-            this.props.participantID, this._onStatsUpdated);
-
-        if (this.props._sourceNameSignalingEnabled) {
-            statsEmitter.unsubscribeToClientStats(
-                this.props._sourceName, this._onStatsUpdated);
-        }
+        statsEmitter.unsubscribeToClientStats(this.props.participantID, this._onStatsUpdated);
 
         this.props.dispatch(hideSheet());
     }
@@ -450,9 +410,7 @@ function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
 
     return {
-        _participantDisplayName: getParticipantDisplayName(state, participantID),
-        _sourceNameSignalingEnabled: getSourceNameSignalingFeatureFlag(state),
-        _sourceName: getSourceNameByParticipantId(state, ownProps.participantId)
+        _participantDisplayName: getParticipantDisplayName(state, participantID)
     };
 }
 

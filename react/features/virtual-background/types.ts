@@ -1,6 +1,6 @@
 import { IVirtualBackground } from './reducer';
 
-export interface VirtualBackgroundOptions extends IVirtualBackground {
+export interface IVirtualBackgroundOptions extends IVirtualBackground {
     enabled: boolean;
     url?: string;
 }

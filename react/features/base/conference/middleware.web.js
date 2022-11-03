@@ -2,7 +2,7 @@
 import {
     setPrejoinPageVisibility,
     setSkipPrejoinOnReload
-} from '../../prejoin';
+} from '../../prejoin/actions.web';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 

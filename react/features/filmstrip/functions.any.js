@@ -17,15 +17,14 @@ import { isFilmstripScrollVisible } from './functions';
 export function updateRemoteParticipants(store: Object, participantId: ?number) {
     const state = store.getState();
     let reorderedParticipants = [];
-
     const { sortedRemoteVirtualScreenshareParticipants } = state['features/base/participants'];
 
-    if (!isReorderingEnabled(state) && !sortedRemoteVirtualScreenshareParticipants.size) {
+    if (!isFilmstripScrollVisible(state) && !sortedRemoteVirtualScreenshareParticipants.size) {
         if (participantId) {
             const { remoteParticipants } = state['features/filmstrip'];
 
             reorderedParticipants = [ ...remoteParticipants, participantId ];
-            store.dispatch(setRemoteParticipants(reorderedParticipants));
+            store.dispatch(setRemoteParticipants(Array.from(new Set(reorderedParticipants))));
         }
 
         return;
@@ -92,7 +91,7 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
         ];
     }
 
-    store.dispatch(setRemoteParticipants(reorderedParticipants));
+    store.dispatch(setRemoteParticipants(Array.from(new Set(reorderedParticipants))));
 }
 
 /**
@@ -113,18 +112,4 @@ export function updateRemoteParticipantsOnLeave(store: Object, participantId: ?s
 
     reorderedParticipants.delete(participantId)
         && store.dispatch(setRemoteParticipants(Array.from(reorderedParticipants)));
-}
-
-/**
- * Returns true if thumbnail reordering is enabled and false otherwise.
- * Note: The function will return false if all participants are displayed on the screen.
- *
- * @param {Object} state - The redux state.
- * @returns {boolean} - True if thumbnail reordering is enabled and false otherwise.
- */
-export function isReorderingEnabled(state) {
-    const { testing = {} } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
-
-    return enableThumbnailReordering && isFilmstripScrollVisible(state);
 }

@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 import { AnyAction } from 'redux';
 
-import { IState, IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
@@ -21,7 +21,7 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { addGif } from '../gifs/actions';
 import { GIF_PREFIX } from '../gifs/constants';
-import { getGifDisplayMode, isGifMessage } from '../gifs/functions';
+import { getGifDisplayMode, isGifMessage } from '../gifs/function.any';
 import { showMessageNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
@@ -366,7 +366,7 @@ export function handleLobbyMessageReceived(message: string, participantId: strin
  * @param {string} id - The knocking participant id.
  * @returns {string}
  */
-function getLobbyChatDisplayName(state: IState, id: string) {
+function getLobbyChatDisplayName(state: IReduxState, id: string) {
     const { knockingParticipants } = state['features/lobby'];
     const { lobbyMessageRecipient } = state['features/chat'];
 
@@ -401,7 +401,6 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
-    const { iAmRecorder } = state['features/base/config'];
     const { soundsIncomingMessage: soundEnabled, userSelectedNotifications } = state['features/base/settings'];
 
     if (soundEnabled && shouldPlaySound && !isChatOpen) {
@@ -454,10 +453,6 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
             privateMessage,
             ts: timestamp
         });
-
-        if (!iAmRecorder) {
-            dispatch(showToolbox(4000));
-        }
     }
 }
 
@@ -508,7 +503,7 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipientID:
  * @param {Object} action - The action being dispatched now.
  * @returns {string?}
  */
-function _shouldSendPrivateMessageTo(state: IState, action: AnyAction) {
+function _shouldSendPrivateMessageTo(state: IReduxState, action: AnyAction) {
     if (action.ignorePrivacy) {
         // Shortcut: this is only true, if we already displayed the notice, so no need to show it again.
         return undefined;

@@ -1,4 +1,4 @@
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 
 /**
  * Selector for retrieving the disabled sounds array.
@@ -6,6 +6,6 @@ import { IState } from '../../app/types';
  * @param {Object} state - The Redux state.
  * @returns {Array<string>} - The disabled sound id's array.
  */
-export function getDisabledSounds(state: IState) {
+export function getDisabledSounds(state: IReduxState) {
     return state['features/base/config'].disabledSounds || [];
 }

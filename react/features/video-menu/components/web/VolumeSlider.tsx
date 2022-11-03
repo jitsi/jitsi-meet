@@ -12,7 +12,7 @@ import { VOLUME_SLIDER_SCALE } from '../../constants';
 /**
  * The type of the React {@code Component} props of {@link VolumeSlider}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * An object containing the CSS classes.
@@ -35,14 +35,14 @@ interface Props extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link VolumeSlider}.
  */
-type State = {
+interface IState {
 
     /**
      * The volume of the participant's audio element. The value will
      * be represented by a slider.
      */
     volumeLevel: number;
-};
+}
 
 const styles = (theme: Theme) => {
     return {
@@ -88,14 +88,14 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class VolumeSlider extends Component<Props, State> {
+class VolumeSlider extends Component<IProps, IState> {
     /**
      * Initializes a new {@code VolumeSlider} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {

@@ -1,13 +1,12 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
 import React, { ReactNode, useCallback } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
-type Props = {
+interface IProps {
 
     /**
      * Icon to display in the options section.
@@ -38,11 +37,6 @@ type Props = {
      * Text css class of the button.
      */
     className?: string;
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: any;
 
     /**
      * If the button is disabled or not.
@@ -84,16 +78,9 @@ type Props = {
      * The type of th button: primary, secondary, text.
      */
     type: string;
-};
+}
 
-/**
- * Creates the styles for the component.
- *
- * @param {Object} theme - The current UI theme.
- *
- * @returns {Object}
- */
-const styles = (theme: Theme) => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         actionButton: {
             ...withPixelLineHeight(theme.typography.bodyLongBold),
@@ -174,7 +161,7 @@ const styles = (theme: Theme) => {
             }
         }
     };
-};
+});
 
 /**
  * Button used for pre meeting actions.
@@ -183,7 +170,6 @@ const styles = (theme: Theme) => {
  */
 function ActionButton({
     children,
-    classes,
     className = '',
     disabled,
     hasOptions,
@@ -197,7 +183,8 @@ function ActionButton({
     ariaPressed,
     ariaLabel,
     ariaDropDownLabel
-}: Props) {
+}: IProps) {
+    const { classes, cx } = useStyles();
 
     const onKeyPressHandler = useCallback(e => {
         if (onClick && !disabled && (e.key === ' ' || e.key === 'Enter')) {
@@ -214,7 +201,7 @@ function ActionButton({
         }
     }, [ onOptionsClick, disabled ]);
 
-    const containerClasses = clsx(
+    const containerClasses = cx(
         classes.actionButton,
         className && className,
         type,
@@ -233,25 +220,25 @@ function ActionButton({
             tabIndex = { 0 } >
             {children}
             { hasOptions
-                  && <div
-                      aria-disabled = { disabled }
-                      aria-haspopup = 'true'
-                      aria-label = { ariaDropDownLabel }
-                      aria-pressed = { ariaPressed }
-                      className = { classes.options }
-                      data-testid = 'prejoin.joinOptions'
-                      onClick = { disabled ? undefined : onOptionsClick }
-                      onKeyPress = { onOptionsKeyPressHandler }
-                      role = { role }
-                      tabIndex = { tabIndex }>
-                      <Icon
-                          className = 'icon'
-                          size = { 14 }
-                          src = { OptionsIcon } />
-                  </div>
+                && <div
+                    aria-disabled = { disabled }
+                    aria-haspopup = 'true'
+                    aria-label = { ariaDropDownLabel }
+                    aria-pressed = { ariaPressed }
+                    className = { classes.options }
+                    data-testid = 'prejoin.joinOptions'
+                    onClick = { disabled ? undefined : onOptionsClick }
+                    onKeyPress = { onOptionsKeyPressHandler }
+                    role = { role }
+                    tabIndex = { tabIndex }>
+                    <Icon
+                        className = 'icon'
+                        size = { 14 }
+                        src = { OptionsIcon } />
+                </div>
             }
         </div>
     );
 }
 
-export default withStyles(styles)(ActionButton);
+export default ActionButton;

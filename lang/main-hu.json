@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "A találkozón még nincsenek üzenetek. Itt kezdhet beszélgetést!",
         "privateNotice": "Privát üzenet a felhasználónak: {{recipient}}",
+        "sendButton": "Küldés",
         "title": "Csevegés",
         "titleWithPolls": "Csevegés",
         "you": "neked"
@@ -301,7 +302,7 @@
         "veryGood": "Nagyon jó"
     },
     "helpView": {
-        "header": "Súgó"
+        "title": "Súgó"
     },
     "incomingCall": {
         "answer": "Válasz",
@@ -400,6 +401,7 @@
         "signedInAs": "Jelenleg bejelentkezve mint:",
         "start": "Élő közvetítés kezdése",
         "streamIdHelp": "Mi ez?",
+        "title": "Élő közvetítés",
         "unavailableTitle": "Élő közvetítés elérhetetlen",
         "youtubeTerms": "YouTube szolgáltatási feltételek"
     },
@@ -518,6 +520,7 @@
         "serviceName": "Felvétel szolgáltatás",
         "signIn": "Belépés",
         "signOut": "Kilépés",
+        "title": "Felvétel",
         "unavailable": "Hoppá! A {{serviceName}} szolgáltatás jelenleg nem elérhető. Dolgozunk a hiba elhárításán. Próbálja meg később.",
         "unavailableTitle": "Felvétel nem elérhető"
     },

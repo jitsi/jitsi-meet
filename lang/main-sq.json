@@ -95,6 +95,7 @@
         },
         "noMessagesMessage": "Te takimi s’ka ende mesazhe. Nisni një bisedë këtu!",
         "privateNotice": "Mesazh privat për {{recipient}}",
+        "sendButton": "Dërgoje",
         "smileysPanel": "Panel emoji-sh",
         "tabs": {
             "chat": "Fjalosje",
@@ -408,7 +409,7 @@
         "veryGood": "Shumë i Mirë"
     },
     "helpView": {
-        "header": "Qendër ndihme"
+        "title": "Qendër ndihme"
     },
     "incomingCall": {
         "answer": "Përgjigjuni",
@@ -519,6 +520,7 @@
         "signedInAs": "Aktualisht jeni i futur si:",
         "start": "Nisni një transmetim të drejtpërdrejtë",
         "streamIdHelp": "Ç’është?",
+        "title": "Transmetim i Drejtpërdrejtë",
         "unavailableTitle": "Transmetim i Drejtpërdrejtë jo i passhëm",
         "youtubeTerms": "Kushte shërbimi YouTube"
     },
@@ -557,6 +559,7 @@
         "passwordJoinButton": "Hyni",
         "reject": "Hidhe poshtë",
         "rejectAll": "Hidhi poshtë të tërë",
+        "title": "Holl",
         "toggleLabel": "Aktivizoni hollin"
     },
     "localRecording": {
@@ -686,13 +689,13 @@
             "videoModeration": "Nis videon e vet"
         },
         "close": "Mbylle",
-        "header": "Pjesëmarrës",
         "headings": {
             "lobby": "Holli ({{count}})",
             "participantsList": "Pjesëmarrës në takim ({{count}})",
             "waitingLobby": "Duke pritur në holl ({{count}})"
         },
-        "search": "Kërkoni te pjesëmarrësit"
+        "search": "Kërkoni te pjesëmarrësit",
+        "title": "Pjesëmarrës"
     },
     "passwordDigitsOnly": "Deri në {{number}} shifra",
     "passwordSetRemotely": "Caktuar nga një tjetër pjesëmarrës",
@@ -800,7 +803,7 @@
         "ringing": "Po i bihet ziles…"
     },
     "privacyView": {
-        "header": "Privatësi"
+        "title": "Privatësi"
     },
     "profile": {
         "avatar": "avatar",
@@ -843,6 +846,7 @@
         "sessionAlreadyActive": "Ky sesion po regjistrohet ose transmetohet drejtpërsëdrejti tashmë.",
         "signIn": "Hyni",
         "signOut": "Dilni",
+        "title": "Regjistrim",
         "unavailable": "Hëm! {{serviceName}} s’është i passhëm aktualisht. Po punojmë për të zgjidhur problemin. Ju lutemi, riprovoni më vonë.",
         "unavailableTitle": "Regjistrim jo i passhëm",
         "uploadToCloud": "Ngarkojeni te reja"
@@ -853,8 +857,8 @@
     "security": {
         "about": "Takimit tuaj mund t’i shtoni një $t(lockRoomPassword). Pjesëmarrësve do t’u duhet të japin $t(lockRoomPassword) përpara se të lejohen të marrin pjesë në takim.",
         "aboutReadOnly": "Pjesëmarrësit moderatorë mund t’i shtojnë takimit një $t(lockRoomPassword). Pjesëmarrësve do t’u duhet të japin $t(lockRoomPassword) përpara se të lejohen të marrin pjesë në takim.",
-        "header": "Mundësi Sigurie",
-        "insecureRoomNameWarning": "Emri i dhomës s’është pa rrezik. Pjesëmarrës të padëshiruar munden të marrin pjesë në konferencën tuaj. Shihni mundësinë e bërjes të sigurt të takimit tuaj, duke përdorur butonin e sigurisë."
+        "insecureRoomNameWarning": "Emri i dhomës s’është pa rrezik. Pjesëmarrës të padëshiruar munden të marrin pjesë në konferencën tuaj. Shihni mundësinë e bërjes të sigurt të takimit tuaj, duke përdorur butonin e sigurisë.",
+        "title": "Mundësi Sigurie"
     },
     "settings": {
         "calendar": {
@@ -950,7 +954,7 @@
         "title": "Thirrja juaj video u ndërpre, ngaqë kompjuteri u kalua në dremitje."
     },
     "termsView": {
-        "header": "Terma"
+        "title": "Terma"
     },
     "toolbar": {
         "Settings": "Rregullime",

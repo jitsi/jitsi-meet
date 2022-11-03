@@ -34,7 +34,7 @@ const TitleIcon = ({ appearance }: { appearance?: 'danger' | 'warning'; }) => {
     );
 };
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
     appearance?: 'danger' | 'warning';
     classes: any;
     heading: string;
@@ -84,9 +84,9 @@ const styles = (theme: Theme) => {
  * A default header for modal-dialog components.
  *
  * @class ModalHeader
- * @augments {React.Component<Props>}
+ * @augments {React.Component<IProps>}
  */
-class ModalHeader extends React.Component<Props> {
+class ModalHeader extends React.Component<IProps> {
     static defaultProps = {
         isHeadingMultiline: true
     };
@@ -97,7 +97,7 @@ class ModalHeader extends React.Component<Props> {
      * @param {*} props - The read-only properties with which the new instance
      * is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.

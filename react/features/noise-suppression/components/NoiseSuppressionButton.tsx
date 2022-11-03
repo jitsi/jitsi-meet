@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import {
     IconNoiseSuppressionOff,
@@ -70,7 +70,7 @@ class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: IState): Object {
+function _mapStateToProps(state: IReduxState): Object {
     return {
         _isNoiseSuppressionEnabled: isNoiseSuppressionEnabled(state)
     };

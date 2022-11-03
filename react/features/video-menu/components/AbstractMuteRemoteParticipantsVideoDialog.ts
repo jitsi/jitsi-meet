@@ -1,6 +1,6 @@
 import { Component } from 'react';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { rejectParticipantVideo } from '../../av-moderation/actions';
 import { isEnabledFromState } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
@@ -75,11 +75,11 @@ export default class AbstractMuteRemoteParticipantsVideoDialog<P extends Props =
  * Maps (parts of) the redux state to the associated
  * {@code AbstractDialogContainer}'s props.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @private
  * @returns {Object}
  */
-export function abstractMapStateToProps(state: IState) {
+export function abstractMapStateToProps(state: IReduxState) {
     return {
         isVideoModerationOn: isEnabledFromState(MEDIA_TYPE.VIDEO, state)
     };

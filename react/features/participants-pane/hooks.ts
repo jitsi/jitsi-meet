@@ -6,7 +6,7 @@ import { handleLobbyChatInitialized } from '../chat/actions.any';
 // @ts-ignore
 import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/actions';
 
-interface DrawerParticipant {
+interface IDrawerParticipant {
     displayName?: string;
     participantID: string;
 }
@@ -18,7 +18,7 @@ interface DrawerParticipant {
  * @param {Function} closeDrawer - Callback for closing the drawer.
  * @returns {Array<Function>}
  */
-export function useLobbyActions(participant?: DrawerParticipant | null, closeDrawer?: Function) {
+export function useLobbyActions(participant?: IDrawerParticipant | null, closeDrawer?: Function) {
     const dispatch = useDispatch();
 
     return [
@@ -45,10 +45,10 @@ export function useLobbyActions(participant?: DrawerParticipant | null, closeDra
  * @returns {Array<any>}
  */
 export function useParticipantDrawer(): [
-    DrawerParticipant | null,
+    IDrawerParticipant | null,
     () => void,
-    (p: DrawerParticipant | null) => void ] {
-    const [ drawerParticipant, openDrawerForParticipant ] = useState<DrawerParticipant | null>(null);
+    (p: IDrawerParticipant | null) => void ] {
+    const [ drawerParticipant, openDrawerForParticipant ] = useState<IDrawerParticipant | null>(null);
     const closeDrawer = useCallback(() => {
         openDrawerForParticipant(null);
     }, []);

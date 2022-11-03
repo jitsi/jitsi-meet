@@ -3,11 +3,11 @@ import { WithTranslation } from 'react-i18next';
 
 import { createRemoteVideoMenuButtonEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { grantModerator } from '../../base/participants/actions';
 import { getParticipantById } from '../../base/participants/functions';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * The Redux dispatch function.
@@ -29,13 +29,13 @@ interface Props extends WithTranslation {
  * Abstract dialog to confirm granting moderator to a participant.
  */
 export default class AbstractGrantModeratorDialog
-    extends Component<Props> {
+    extends Component<IProps> {
     /**
      * Initializes a new {@code AbstractGrantModeratorDialog} instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onSubmit = this._onSubmit.bind(this);
@@ -65,11 +65,11 @@ export default class AbstractGrantModeratorDialog
 /**
  * Maps (parts of) the Redux state to the associated {@code AbstractMuteEveryoneDialog}'s props.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @param {Object} ownProps - The properties explicitly passed to the component.
- * @returns {Props}
+ * @returns {IProps}
  */
-export function abstractMapStateToProps(state: IState, ownProps: Props) {
+export function abstractMapStateToProps(state: IReduxState, ownProps: IProps) {
 
     return {
         participantName: getParticipantById(state, ownProps.participantID)?.name

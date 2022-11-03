@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
+        "sendButton": "Send",
         "smileysPanel": "Emoji panel",
         "tabs": {
             "chat": "Chat",
@@ -555,7 +556,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
-        "title": "Live stream",
+        "title": "Live Stream",
         "unavailableTitle": "Live Streaming unavailable",
         "youtubeTerms": "YouTube terms of services"
     },
@@ -1225,6 +1226,8 @@
         "labelToolTip": "The meeting is being transcribed",
         "off": "Transcribing stopped",
         "pending": "Preparing to transcribe the meeting...",
+        "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
+        "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
         "subtitles": "Subtitles",

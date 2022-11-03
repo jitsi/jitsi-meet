@@ -3,7 +3,6 @@ import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from '
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { getComputedOuterHeight } from '../../../../participants-pane/functions';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../../toolbox/components/web';
@@ -11,7 +10,31 @@ import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
-type Props = {
+/**
+ * Get a style property from a style declaration as a float.
+ *
+ * @param {CSSStyleDeclaration} styles - Style declaration.
+ * @param {string} name - Property name.
+ * @returns {number} Float value.
+ */
+const getFloatStyleProperty = (styles: CSSStyleDeclaration, name: string) =>
+    parseFloat(styles.getPropertyValue(name));
+
+/**
+* Gets the outer height of an element, including margins.
+*
+* @param {Element} element - Target element.
+* @returns {number} Computed height.
+*/
+const getComputedOuterHeight = (element: HTMLElement) => {
+    const computedStyle = getComputedStyle(element);
+
+    return element.offsetHeight
+        + getFloatStyleProperty(computedStyle, 'margin-top')
+        + getFloatStyleProperty(computedStyle, 'margin-bottom');
+};
+
+interface IProps {
 
     /**
      * Accessibility label for menu container.
@@ -77,7 +100,7 @@ type Props = {
      * Callback for the mouse leaving the component.
      */
     onMouseLeave?: (e?: React.MouseEvent) => void;
-};
+}
 
 const MAX_HEIGHT = 400;
 
@@ -133,7 +156,7 @@ const ContextMenu = ({
     onDrawerClose,
     onMouseEnter,
     onMouseLeave
-}: Props) => {
+}: IProps) => {
     const [ isHidden, setIsHidden ] = useState(true);
     const containerRef = useRef<HTMLDivElement | null>(null);
     const { classes: styles, cx } = useStyles();

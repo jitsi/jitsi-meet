@@ -14,7 +14,7 @@ import {
  */
 const subscribers: any = {};
 
-interface Stats {
+interface IStats {
     codec?: Object;
     framerate?: Object;
     resolution?: Object;
@@ -34,10 +34,10 @@ const statsEmitter = {
      */
     startListeningForStats(conference: IJitsiConference) {
         conference.on(JitsiConnectionQualityEvents.LOCAL_STATS_UPDATED,
-            (stats: Stats) => this._onStatsUpdated(conference.myUserId(), stats));
+            (stats: IStats) => this._onStatsUpdated(conference.myUserId(), stats));
 
         conference.on(JitsiConnectionQualityEvents.REMOTE_STATS_UPDATED,
-            (id: string, stats: Stats) => this._emitStatsUpdate(id, stats));
+            (id: string, stats: IStats) => this._emitStatsUpdate(id, stats));
     },
 
     /**
@@ -94,7 +94,7 @@ const statsEmitter = {
      * @param {Object} stats - New connection stats for the user.
      * @returns {void}
      */
-    _emitStatsUpdate(id: string, stats: Stats = {}) {
+    _emitStatsUpdate(id: string, stats: IStats = {}) {
         const callbacks = subscribers[id] || [];
 
         callbacks.forEach((callback: Function) => {
@@ -112,7 +112,7 @@ const statsEmitter = {
      * by the library.
      * @returns {void}
      */
-    _onStatsUpdated(localUserId: string, stats: Stats) {
+    _onStatsUpdated(localUserId: string, stats: IStats) {
         const allUserFramerates = stats.framerate || {};
         const allUserResolutions = stats.resolution || {};
         const allUserCodecs = stats.codec || {};
@@ -138,7 +138,7 @@ const statsEmitter = {
         _.union(framerateUserIds, resolutionUserIds, codecUserIds)
             .filter(id => id !== localUserId)
             .forEach(id => {
-                const remoteUserStats: Stats = {};
+                const remoteUserStats: IStats = {};
 
                 const framerate = allUserFramerates[id as keyof typeof allUserFramerates];
 

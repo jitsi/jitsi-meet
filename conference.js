@@ -62,12 +62,14 @@ import {
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
-    getDefaultDeviceId,
     notifyCameraError,
     notifyMicError,
-    setAudioOutputDeviceId,
     updateDeviceList
-} from './react/features/base/devices';
+} from './react/features/base/devices/actions.web';
+import {
+    getDefaultDeviceId,
+    setAudioOutputDeviceId
+} from './react/features/base/devices/functions.web';
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents,
@@ -147,12 +149,8 @@ import {
 } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
-import {
-    initPrejoin,
-    isPrejoinPageVisible,
-    makePrecallTest,
-    setJoiningInProgress
-} from './react/features/prejoin';
+import { initPrejoin, makePrecallTest, setJoiningInProgress } from './react/features/prejoin/actions';
+import { isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { isScreenAudioShared, setScreenAudioShareState } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';

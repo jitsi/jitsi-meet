@@ -4,27 +4,22 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { getMultipleVideoSupportFeatureFlag } from '../../../base/config/functions.any';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
-// @ts-ignore
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
 import { STATS_POPOVER_POSITION, THUMBNAIL_TYPE } from '../../constants';
 // @ts-ignore
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
-// @ts-ignore
 import PinnedIndicator from './PinnedIndicator';
-// @ts-ignore
 import RaisedHandIndicator from './RaisedHandIndicator';
 // @ts-ignore
 import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';
 
-declare let interfaceConfig: any;
-
-type Props = {
+interface IProps {
 
     /**
      * Whether to hide the connection indicator.
@@ -70,7 +65,7 @@ type Props = {
      * The type of thumbnail.
      */
     thumbnailType: string;
-};
+}
 
 const useStyles = makeStyles()(() => {
     return {
@@ -94,20 +89,20 @@ const ThumbnailTopIndicators = ({
     popoverVisible,
     showPopover,
     thumbnailType
-}: Props) => {
+}: IProps) => {
     const { classes: styles, cx } = useStyles();
 
     const _isMobile = isMobileBrowser();
     const { NORMAL = 16 } = interfaceConfig.INDICATOR_FONT_SIZES || {};
     const _indicatorIconSize = NORMAL;
     const _connectionIndicatorAutoHideEnabled = Boolean(
-        useSelector((state: IState) => state['features/base/config'].connectionIndicators?.autoHide) ?? true);
+        useSelector((state: IReduxState) => state['features/base/config'].connectionIndicators?.autoHide) ?? true);
     const _connectionIndicatorDisabled = _isMobile || disableConnectionIndicator
-        || Boolean(useSelector((state: IState) => state['features/base/config'].connectionIndicators?.disabled));
+        || Boolean(useSelector((state: IReduxState) => state['features/base/config'].connectionIndicators?.disabled));
     const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
     const isVirtualScreenshareParticipant = useSelector(
-        (state: IState) => isScreenShareParticipantById(state, participantId)
+        (state: IReduxState) => isScreenShareParticipantById(state, participantId)
     );
 
     if (_isMultiStreamEnabled && isVirtualScreenshareParticipant) {

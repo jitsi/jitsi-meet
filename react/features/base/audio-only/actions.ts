@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import UIEvents from '../../../../service/UI/UIEvents';
 import { createAudioOnlyChangedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
@@ -7,8 +7,6 @@ import { IStore } from '../../app/types';
 import { SET_AUDIO_ONLY } from './actionTypes';
 import logger from './logger';
 
-
-declare let APP: any;
 
 /**
  * Sets the audio-only flag for the current JitsiConference.

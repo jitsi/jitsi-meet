@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { IReduxState } from '../../../app/types';
 import {
     requestDisableAudioModeration,
     requestDisableVideoModeration,
@@ -67,7 +68,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-type Props = {
+interface IProps {
 
     /**
      * Whether the menu is open.
@@ -83,11 +84,11 @@ type Props = {
      * Callback for the mouse leaving this item.
      */
     onMouseLeave?: (e?: React.MouseEvent) => void;
-};
+}
 
-export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {
+export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProps) => {
     const dispatch = useDispatch();
-    const isModerationSupported = useSelector(isAvModerationSupported);
+    const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
     const allModerators = useSelector(isEveryoneModerator);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
     const participantCount = useSelector(getParticipantCount);

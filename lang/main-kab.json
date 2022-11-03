@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "Ulac iznan akka tura deg temlilit. Bdu adiwenni da!",
         "privateNotice": "Izen uslig i {{recipient}}",
+        "sendButton": "Azen",
         "smileysPanel": "Afeggag n Emoji",
         "tabs": {
             "chat": "Asqerdec",
@@ -384,7 +385,7 @@
         "veryGood": "Yelha maḍi"
     },
     "helpView": {
-        "header": "Agens n tallalt"
+        "title": "Agens n tallalt"
     },
     "incomingCall": {
         "answer": "Tiririt",
@@ -531,6 +532,7 @@
         "passwordJoinButton": "Semlil",
         "reject": "Agi",
         "rejectAll": "Agi akk",
+        "title": "Taxxamt n uraǧu",
         "toggleLabel": "Rmed Lobby"
     },
     "localRecording": {
@@ -641,12 +643,12 @@
             "videoModeration": "Bdan tavidyut-nsen"
         },
         "close": "Mdel",
-        "header": "Imttekkiyen",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Imttekkiyen n temlilit ({{count}})",
             "waitingLobby": "Araǧu deg lobby ({{count}})"
-        }
+        },
+        "title": "Imttekkiyen"
     },
     "passwordDigitsOnly": "Alamma d {{number}} yizwilen",
     "passwordSetRemotely": "Yettusbadu sɣur yimttekki-nniḍen",
@@ -790,6 +792,7 @@
         "serviceName": "Ameẓlu n usekles",
         "signIn": "Qqen",
         "signOut": "Ffeɣ",
+        "title": "Asekles",
         "unavailable": "Suref-aɣ! {{serviceName}} akka tura ulac-it. Aql-aɣ nxeddem ad nefru ugur. Ma ulac aɣilif ɛreḍ tikkelt-nniḍen ticki.",
         "unavailableTitle": "Ulac asekles",
         "uploadToCloud": "Sali ɣer usigna"

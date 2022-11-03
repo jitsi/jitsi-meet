@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "Bileran oraindik mezurik ez dago. Hasi elkarrizketa hemen!",
         "privateNotice": "Mezu pribatua {{recipient}}(e)ri",
+        "sendButton": "Bidali",
         "smileysPanel": "Emoji panela",
         "title": "Txata",
         "titleWithPolls": "Txata",
@@ -353,7 +354,7 @@
         "veryGood": "Oso ona"
     },
     "helpView": {
-        "header": "Laguntza gunea"
+        "title": "Laguntza gunea"
     },
     "incomingCall": {
         "answer": "Erantzun",
@@ -457,6 +458,7 @@
         "signedInAs": "Honela hasi duzu saioa:",
         "start": "Hasi zuzeneko transmisioa",
         "streamIdHelp": "Zer da hau?",
+        "title": "Zuzeneko Erreprodukzioa",
         "unavailableTitle": "Zuzeneko transmisioa ez dago erabilgarri",
         "youtubeTerms": "YouTuberen erabilpen baldintzak"
     },
@@ -493,6 +495,7 @@
         "passwordField": "Idatzi bileraren pasahitza",
         "passwordJoinButton": "Sartu",
         "reject": "Baztertu",
+        "title": "Itxaron-gela",
         "toggleLabel": "Itxaron-gela aktibatu"
     },
     "localRecording": {
@@ -693,6 +696,7 @@
         "serviceName": "Grabazio-zerbitzua",
         "signIn": "Sartu",
         "signOut": "Itxi saioa",
+        "title": "Grabatzen",
         "unavailable": "Atx! {{serviceName}} ez dago eskuragarri. Arazoa konpontzeko lanean gabiltza. Saiatu berriz beranduago.",
         "unavailableTitle": "Grabazioa ez dago eskuragarri"
     },

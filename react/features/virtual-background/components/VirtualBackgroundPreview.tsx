@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 // eslint-disable-next-line lines-around-comment
@@ -24,7 +24,7 @@ const videoClassName = 'video-preview-video';
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
  */
-export type Props = WithTranslation & {
+export interface IProps extends WithTranslation {
 
     /**
      * The deviceId of the camera device currently being used.
@@ -50,12 +50,12 @@ export type Props = WithTranslation & {
      * Represents the virtual background set options.
      */
     options: any;
-};
+}
 
 /**
  * The type of the React {@code Component} state of {@link VirtualBackgroundPreview}.
  */
-type State = {
+interface IState {
 
     /**
      * Activate the selected device camera only.
@@ -71,7 +71,7 @@ type State = {
      * Flag that indicates if the local track was loaded.
      */
     localTrackLoaded: boolean;
-};
+}
 
 /**
  * Creates the styles for the component.
@@ -127,7 +127,7 @@ const styles = (theme: Theme) => {
  *
  * @augments PureComponent
  */
-class VirtualBackgroundPreview extends PureComponent<Props, State> {
+class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
     _componentWasUnmounted: boolean;
 
     /**
@@ -136,7 +136,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -290,7 +290,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    async componentDidUpdate(prevProps: Props) {
+    async componentDidUpdate(prevProps: IProps) {
         if (!equals(this.props._currentCameraDeviceId, prevProps._currentCameraDeviceId)) {
             this._setTracks();
         }
@@ -324,7 +324,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
  * @private
  * @returns {{Props}}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _currentCameraDeviceId: getCurrentCameraDeviceId(state)
     };

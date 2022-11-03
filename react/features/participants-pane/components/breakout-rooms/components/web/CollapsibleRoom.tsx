@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../../../app/types';
+import { IReduxState } from '../../../../../app/types';
 import ListItem from '../../../../../base/components/participants-pane-list/ListItem';
 import Icon from '../../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
@@ -16,7 +16,7 @@ import { participantMatchesSearch } from '../../../../functions';
 import ParticipantActionEllipsis from '../../../web/ParticipantActionEllipsis';
 import ParticipantItem from '../../../web/ParticipantItem';
 
-type Props = {
+interface IProps {
 
     /**
      * Type of trigger for the breakout room actions.
@@ -78,7 +78,7 @@ type Props = {
      * Toggles the room participant context menu.
      */
     toggleParticipantMenu: Function;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -118,7 +118,7 @@ export const CollapsibleRoom = ({
     room,
     searchString,
     toggleParticipantMenu
-}: Props) => {
+}: IProps) => {
     const { t } = useTranslation();
     const { classes: styles, cx } = useStyles();
     const [ collapsed, setCollapsed ] = useState(false);
@@ -128,7 +128,7 @@ export const CollapsibleRoom = ({
     const raiseMenu = useCallback(target => {
         onRaiseMenu(target);
     }, [ onRaiseMenu ]);
-    const { defaultRemoteDisplayName } = useSelector((state: IState) => state['features/base/config']);
+    const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const moderator = useSelector(isLocalParticipantModerator);
 

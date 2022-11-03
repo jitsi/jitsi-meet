@@ -12,11 +12,7 @@ import {
     UPDATE_CONFIG
 } from './actionTypes';
 import { IConfig } from './configType';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { _cleanupConfig } from './functions';
-
-declare let interfaceConfig: any;
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -52,11 +48,14 @@ const INITIAL_RN_STATE: IConfig = {
     disableAudioLevels: true,
 
     p2p: {
-        preferredCodec: 'VP8'
+        preferredCodec: 'h264'
     },
 
     videoQuality: {
-        preferredCodec: 'VP8'
+        // FIXME: Mobile codecs should probably be configurable separately, rather
+        // than requiring this override here...
+        enforcePreferredCodec: true,
+        preferredCodec: 'vp8'
     }
 };
 
@@ -447,6 +446,25 @@ function _translateLegacyConfig(oldValue: IConfig) {
         newValue.liveStreaming = {
             ...newValue.liveStreaming,
             helpLink: interfaceConfig.LIVE_STREAMING_HELP_LINK
+        };
+    }
+
+    newValue.speakerStats = newValue.speakerStats || {};
+
+    if (oldValue.disableSpeakerStatsSearch !== undefined
+        && newValue.speakerStats.disableSearch === undefined
+    ) {
+        newValue.speakerStats = {
+            ...newValue.speakerStats,
+            disableSearch: oldValue.disableSpeakerStatsSearch
+        };
+    }
+
+    if (oldValue.speakerStatsOrder !== undefined
+         && newValue.speakerStats.order === undefined) {
+        newValue.speakerStats = {
+            ...newValue.speakerStats,
+            order: oldValue.speakerStatsOrder
         };
     }
 

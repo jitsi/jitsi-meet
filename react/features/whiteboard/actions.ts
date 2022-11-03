@@ -3,7 +3,7 @@ import {
     SETUP_WHITEBOARD,
     SET_WHITEBOARD_OPEN
 } from './actionTypes';
-import { WhiteboardAction } from './reducer';
+import { IWhiteboardAction } from './reducer';
 
 /**
  * Configures the whiteboard collaboration details.
@@ -16,7 +16,7 @@ import { WhiteboardAction } from './reducer';
  */
 export const setupWhiteboard = ({ collabDetails }: {
     collabDetails: { roomId: string; roomKey: string; };
-}): WhiteboardAction => {
+}): IWhiteboardAction => {
     return {
         type: SETUP_WHITEBOARD,
         collabDetails
@@ -31,7 +31,7 @@ export const setupWhiteboard = ({ collabDetails }: {
  *     type: RESET_WHITEBOARD
  * }}
  */
-export const resetWhiteboard = (): WhiteboardAction => {
+export const resetWhiteboard = (): IWhiteboardAction => {
     return { type: RESET_WHITEBOARD };
 };
 
@@ -44,7 +44,7 @@ export const resetWhiteboard = (): WhiteboardAction => {
  *      isOpen
  * }}
  */
-export const setWhiteboardOpen = (isOpen: boolean): WhiteboardAction => {
+export const setWhiteboardOpen = (isOpen: boolean): IWhiteboardAction => {
     return {
         type: SET_WHITEBOARD_OPEN,
         isOpen

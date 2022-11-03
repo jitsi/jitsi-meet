@@ -2,11 +2,18 @@ import _ from 'lodash';
 
 import { IStateful } from '../base/app/types';
 import { getCurrentConference } from '../base/conference/functions';
-import { getParticipantById, getParticipantCount, isLocalParticipantModerator } from '../base/participants/functions';
+import { IJitsiConference } from '../base/conference/reducer';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    getParticipantCount,
+    isLocalParticipantModerator
+} from '../base/participants/functions';
+import { IJitsiParticipant } from '../base/participants/types';
 import { toState } from '../base/redux/functions';
 
 import { FEATURE_KEY } from './constants';
-import { IRoom, IRooms } from './types';
+import { IRoom, IRoomInfo, IRoomInfoParticipant, IRooms, IRoomsInfo } from './types';
 
 /**
  * Returns the rooms object for breakout rooms.
@@ -30,9 +37,16 @@ export const getMainRoom = (stateful: IStateful) => {
     return _.find(rooms, room => Boolean(room.isMainRoom));
 };
 
+/**
+ * Returns the rooms info.
+ *
+ * @param {IStateful} stateful - The redux store, the redux.
+
+* @returns {IRoomsInfo} The rooms info.
+ */
 export const getRoomsInfo = (stateful: IStateful) => {
     const breakoutRooms = getBreakoutRooms(stateful);
-    const conference = getCurrentConference(stateful);
+    const conference: IJitsiConference = getCurrentConference(stateful);
 
     const initialRoomsInfo = {
         rooms: []
@@ -40,27 +54,45 @@ export const getRoomsInfo = (stateful: IStateful) => {
 
     // only main roomn
     if (!breakoutRooms || Object.keys(breakoutRooms).length === 0) {
+        // filter out hidden participants
+        const conferenceParticipants = conference?.getParticipants()
+            .filter((participant: IJitsiParticipant) => !participant.isHidden());
+
+        const localParticipant = getLocalParticipant(stateful);
+        let localParticipantInfo;
+
+        if (localParticipant) {
+            localParticipantInfo = {
+                role: localParticipant.role,
+                displayName: localParticipant.name,
+                avatarUrl: localParticipant.loadableAvatarUrl,
+                id: localParticipant.id
+            };
+        }
+
         return {
             ...initialRoomsInfo,
             rooms: [ {
                 isMainRoom: true,
                 id: conference?.room?.roomjid,
                 jid: conference?.room?.myroomjid,
-                participants: conference?.participants && Object.keys(conference.participants).length
-                    ? Object.keys(conference.participants).map(participantId => {
-                        const participantItem = conference?.participants[participantId];
-                        const storeParticipant = getParticipantById(stateful, participantItem._id);
+                participants: conferenceParticipants?.length > 0
+                    ? [
+                        localParticipantInfo,
+                        ...conferenceParticipants.map((participantItem: IJitsiParticipant) => {
+                            const storeParticipant = getParticipantById(stateful, participantItem.getId());
 
-                        return {
-                            jid: participantItem._jid,
-                            role: participantItem._role,
-                            displayName: participantItem._displayName,
-                            avatarUrl: storeParticipant?.loadableAvatarUrl,
-                            id: participantItem._id
-                        };
-                    }) : []
-            } ]
-        };
+                            return {
+                                jid: participantItem.getJid(),
+                                role: participantItem.getRole(),
+                                displayName: participantItem.getDisplayName(),
+                                avatarUrl: storeParticipant?.loadableAvatarUrl,
+                                id: participantItem.getId()
+                            } as IRoomInfoParticipant;
+                        }) ]
+                    : [ localParticipantInfo ]
+            } as IRoomInfo ]
+        } as IRoomsInfo;
     }
 
     return {
@@ -86,11 +118,11 @@ export const getRoomsInfo = (stateful: IStateful) => {
                             avatarUrl: storeParticipant?.loadableAvatarUrl,
                             id: storeParticipant ? storeParticipant.id
                                 : participantLongId
-                        };
+                        } as IRoomInfoParticipant;
                     }) : []
-            };
+            } as IRoomInfo;
         })
-    };
+    } as IRoomsInfo;
 };
 
 /**

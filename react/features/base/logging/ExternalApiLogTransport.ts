@@ -1,5 +1,3 @@
-declare let APP: any;
-
 /**
  * Constructs a log transport object for use with external API.
  *

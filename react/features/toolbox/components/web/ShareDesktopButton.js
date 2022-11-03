@@ -5,7 +5,7 @@ import { IconShareDesktop } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { isScreenVideoShared } from '../../../screen-share';
+import { isScreenVideoShared } from '../../../screen-share/functions';
 import { isDesktopShareButtonDisabled } from '../../functions';
 
 type Props = AbstractButtonProps & {

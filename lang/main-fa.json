@@ -93,6 +93,7 @@
         },
         "noMessagesMessage": "هیچ گفتگویی در جلسه وجود ندارد، گفتگو را شما آعاز کنید!",
         "privateNotice": "پیام خصوصی به {{recipient}}",
+        "sendButton": "ارسال",
         "smileysPanel": "پنل ایموجی",
         "tabs": {
             "chat": "چت",
@@ -422,7 +423,7 @@
         "search": "جستجو GIPHY"
     },
     "helpView": {
-        "header": "مرکز راهنما"
+        "title": "مرکز راهنما"
     },
     "incomingCall": {
         "answer": "پاسخ دادن",
@@ -534,6 +535,7 @@
         "signedInAs": "شما وارد شده‌اید با:",
         "start": "شروع پخش زنده",
         "streamIdHelp": "پخش زنده چیست؟",
+        "title": "پخش زنده",
         "unavailableTitle": "پخش زنده در دسترس نیست",
         "youtubeTerms": "شرایط خدمات یوتیوب"
     },
@@ -575,6 +577,7 @@
         "passwordJoinButton": "پیوستن",
         "reject": "رد کردن",
         "rejectAll": "همه رد کردن",
+        "title": "لابی",
         "toggleLabel": "فعال کردن حالت لابی"
     },
     "localRecording": {
@@ -710,13 +713,13 @@
             "videoModeration": "ویدیوی آنها را شروع کنید"
         },
         "close": "بستن",
-        "header": "شركت كنندگان",
         "headings": {
             "lobby": "لابی",
             "participantsList": "شرکت کنندگان در جلسه ({{count}})",
             "waitingLobby": "در لابی ({{count}})"
         },
-        "search": "جستجوی شرکت کنندگان"
+        "search": "جستجوی شرکت کنندگان",
+        "title": "شركت كنندگان"
     },
     "passwordDigitsOnly": "حداکثر {{number}} عدد",
     "passwordSetRemotely": "توسط یک شرکت‌کننده دیگر تنظیم شده است",
@@ -824,7 +827,7 @@
         "ringing": "در حال زنگ زدن"
     },
     "privacyView": {
-        "header": "حریم خصوصی"
+        "title": "حریم خصوصی"
     },
     "profile": {
         "avatar": "آواتار",
@@ -885,6 +888,7 @@
         "sessionAlreadyActive": "این جلسه قبلاً در حال ضبط یا پخش زنده است.",
         "signIn": "ورود",
         "signOut": "خروج",
+        "title": "در حال ضبط",
         "unavailable": "متاسفانه {{serviceName}} در دسترس نیست، ما در تلاش برای حل مشکل پیش آمده هستیم، مجددا تلاش نمایید",
         "unavailableTitle": "امکان ضبط وجود ندارد",
         "uploadToCloud": "آپلود در فضای ابری"
@@ -895,8 +899,8 @@
     "security": {
         "about": "شما می‌توانید با تنظیم رمز عبور برای جلسه، شرکت کنندگان را مجبور کنید در هنگام ورود به جلسه آن را وارد کنند تا از ورود افراد ناشناس به جلسه جلوگیری شود",
         "aboutReadOnly": "مدیر جلسه می‌تواند برای آن $t(lockRoomPassword) تعیین کند و شرکت‌کنندگان باید در ورود به جلسه $t(lockRoomPassword) را وارد کنند تا بتوانند در جلسه وارد شوند",
-        "header": "گزینه های امنیت",
-        "insecureRoomNameWarning": "برای این جلسه رمز عبور تعریف نشده است و هر شرکت کننده‌ای می‌تواند به آن وارد شود"
+        "insecureRoomNameWarning": "برای این جلسه رمز عبور تعریف نشده است و هر شرکت کننده‌ای می‌تواند به آن وارد شود",
+        "title": "گزینه های امنیت"
     },
     "settings": {
         "calendar": {
@@ -992,7 +996,7 @@
         "title": "ارتباط تصویری شما به دلیل خاموش شدن رایانه قطع شد"
     },
     "termsView": {
-        "header": "شرایط"
+        "title": "شرایط"
     },
     "toolbar": {
         "Settings": "تنظیمات",

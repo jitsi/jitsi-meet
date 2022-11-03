@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createPollEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { IState } from '../../app/types';
-import { getLocalParticipant, getParticipantById } from '../../base/participants/functions';
+import { IReduxState } from '../../app/types';
+import { getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { registerVote, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
-import { Poll } from '../types';
+import { IPoll } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -25,7 +25,7 @@ type InputProps = {
 export type AbstractProps = {
     checkBoxStates: boolean[];
     creatorName: string;
-    poll: Poll;
+    poll: IPoll;
     setCheckbox: Function;
     skipAnswer: () => void;
     skipChangeVote: () => void;
@@ -44,11 +44,9 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     const { pollId } = props;
 
-    const conference: any = useSelector((state: IState) => state['features/base/conference'].conference);
+    const conference: any = useSelector((state: IReduxState) => state['features/base/conference'].conference);
 
-    const poll: Poll = useSelector((state: IState) => state['features/polls'].polls[pollId]);
-
-    const { id: localId } = useSelector(getLocalParticipant) ?? { id: '' };
+    const poll: IPoll = useSelector((state: IReduxState) => state['features/polls'].polls[pollId]);
 
     const [ checkBoxStates, setCheckBoxState ] = useState(() => {
         if (poll.lastVote !== null) {
@@ -57,7 +55,8 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
         return new Array(poll.answers.length).fill(false);
     });
-    const participant = useBoundSelector(getParticipantById, poll.senderId);
+
+    const participantName = useBoundSelector(getParticipantDisplayName, poll.senderId);
 
     const setCheckbox = useCallback((index, state) => {
         const newCheckBoxStates = [ ...checkBoxStates ];
@@ -69,15 +68,10 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     const dispatch = useDispatch();
 
-    const localParticipant = useBoundSelector(getParticipantById, localId);
-    const localName: string = localParticipant.name ? localParticipant.name : 'Fellow Jitster';
-
     const submitAnswer = useCallback(() => {
         conference.sendMessage({
             type: COMMAND_ANSWER_POLL,
             pollId,
-            voterId: localId,
-            voterName: localName,
             answers: checkBoxStates
         });
 
@@ -85,7 +79,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
         dispatch(registerVote(pollId, checkBoxStates));
 
         return false;
-    }, [ pollId, localId, localName, checkBoxStates, conference ]);
+    }, [ pollId, checkBoxStates, conference ]);
 
     const skipAnswer = useCallback(() => {
         dispatch(registerVote(pollId, null));
@@ -101,7 +95,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     return (<Component
         checkBoxStates = { checkBoxStates }
-        creatorName = { participant ? participant.name : '' }
+        creatorName = { participantName }
         poll = { poll }
         setCheckbox = { setCheckbox }
         skipAnswer = { skipAnswer }

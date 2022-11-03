@@ -2,7 +2,7 @@
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-ignore
+// @ts-expect-error
 import UIEvents from '../../../../../service/UI/UIEvents';
 import { createProfilePanelButtonEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -11,12 +11,10 @@ import { AbstractDialogTab } from '../../../base/dialog';
 // @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';
-import { Button } from '../../../base/ui/components/web';
+import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 // @ts-ignore
 import { openLogoutDialog } from '../../actions';
-
-declare let APP: any;
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.

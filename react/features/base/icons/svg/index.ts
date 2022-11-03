@@ -51,7 +51,7 @@ export { default as IconDownload } from './download.svg';
 export { default as IconDragHandle } from './drag-handle.svg';
 export { default as IconE2EE } from './e2ee.svg';
 export { default as IconEdit } from './edit.svg';
-export { default as IconEmail } from './envelope.svg';
+export { default as IconEnvelope } from './envelope.svg';
 export { default as IconEventNote } from './event_note.svg';
 export { default as IconExclamation } from './exclamation.svg';
 export { default as IconExclamationSolid } from './exclamation-solid.svg';
@@ -93,7 +93,7 @@ export { default as IconNoiseSuppressionOff } from './noise-suppression-off.svg'
 export { default as IconNoiseSuppressionOn } from './noise-suppression-on.svg';
 export { default as IconNotificationJoin } from './navigate_next.svg';
 export { default as IconOpenInNew } from './open_in_new.svg';
-export { default as IconOutlook } from './office365.svg';
+export { default as IconOffice365 } from './office365.svg';
 export { default as IconParticipants } from './participants.svg';
 export { default as IconPhone } from './phone.svg';
 export { default as IconPin } from './enlarge.svg';

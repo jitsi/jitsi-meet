@@ -1,12 +1,9 @@
 // @flow
-import React from 'react';
+import React, { Component } from 'react';
 import { Animated, Text } from 'react-native';
 
 import Icon from '../../../icons/components/Icon';
 import { type StyleType, combineStyles } from '../../../styles';
-import AbstractLabel, {
-    type Props as AbstractProps
-} from '../AbstractLabel';
 
 import styles from './styles';
 
@@ -20,7 +17,12 @@ const STATUS_IN_PROGRESS = 'in_progress';
  */
 const STATUS_OFF = 'off';
 
-type Props = AbstractProps & {
+type Props = {
+
+    /**
+     * An SVG icon to be rendered as the content of the label.
+     */
+    icon?: Function,
 
     /**
      * Color for the icon.
@@ -40,9 +42,15 @@ type Props = AbstractProps & {
     style?: ?StyleType,
 
     /**
+     * String or component that will be rendered as the label itself.
+     */
+    text?: string,
+
+    /**
      * Custom styles for the text.
      */
     textStyle?: ?StyleType
+
 };
 
 type State = {
@@ -58,7 +66,7 @@ type State = {
  * Renders a circular indicator to be used for status icons, such as recording
  * on, audio-only conference, video quality and similar.
  */
-export default class Label extends AbstractLabel<Props, State> {
+export default class Label extends Component<Props, State> {
     /**
      * A reference to the started animation of this label.
      */

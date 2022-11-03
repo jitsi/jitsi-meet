@@ -3,7 +3,7 @@ import React from 'react';
 import LocalVideoMenuTriggerButton from '../../../video-menu/components/web/LocalVideoMenuTriggerButton';
 import RemoteVideoMenuTriggerButton from '../../../video-menu/components/web/RemoteVideoMenuTriggerButton';
 
-type Props = {
+interface IProps {
 
     /**
      * Hide popover callback.
@@ -39,7 +39,7 @@ type Props = {
      * Whether or not the component is visible.
      */
     visible: boolean;
-};
+}
 
 // eslint-disable-next-line no-confusing-arrow
 const VideoMenuTriggerButton = ({
@@ -50,7 +50,7 @@ const VideoMenuTriggerButton = ({
     showPopover,
     thumbnailType,
     visible
-}: Props) => local
+}: IProps) => local
     ? (
         <span id = 'localvideomenu'>
             <LocalVideoMenuTriggerButton

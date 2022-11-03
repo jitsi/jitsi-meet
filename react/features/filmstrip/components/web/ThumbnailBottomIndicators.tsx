@@ -4,23 +4,20 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import {
     getMultipleVideoSupportFeatureFlag,
     isDisplayNameVisible,
     isNameReadOnly
 } from '../../../base/config/functions.any';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
-// @ts-ignore
 import DisplayName from '../../../display-name/components/web/DisplayName';
 import { THUMBNAIL_TYPE } from '../../constants';
 
 // @ts-ignore
 import StatusIndicators from './StatusIndicators';
 
-declare let interfaceConfig: any;
-
-type Props = {
+interface IProps {
 
     /**
      * Class name for indicators container.
@@ -46,7 +43,7 @@ type Props = {
      * The type of thumbnail.
      */
     thumbnailType: string;
-};
+}
 
 const useStyles = makeStyles()(() => {
     return {
@@ -73,14 +70,14 @@ const ThumbnailBottomIndicators = ({
     participantId,
     showStatusIndicators = true,
     thumbnailType
-}: Props) => {
+}: IProps) => {
     const { classes: styles } = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
     const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const _showDisplayName = useSelector(isDisplayNameVisible);
     const isVirtualScreenshareParticipant = useSelector(
-        (state: IState) => isScreenShareParticipantById(state, participantId)
+        (state: IReduxState) => isScreenShareParticipantById(state, participantId)
     );
 
     return (<div className = { className }>

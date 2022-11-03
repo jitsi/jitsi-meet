@@ -4,7 +4,7 @@ import { Config, FaceResult, Human } from '@vladmandic/human';
 import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
 import { DetectInput, DetectOutput, FaceBox, InitInput } from './types';
 
-export interface FaceLandmarksHelper {
+export interface IFaceLandmarksHelper {
     detect: ({ image, threshold }: DetectInput) => Promise<DetectOutput>;
     getDetectionInProgress: () => boolean;
     getDetections: (image: ImageBitmap | ImageData) => Promise<Array<FaceResult>>;
@@ -17,7 +17,7 @@ export interface FaceLandmarksHelper {
 /**
  * Helper class for human library.
  */
-export class HumanHelper implements FaceLandmarksHelper {
+export class HumanHelper implements IFaceLandmarksHelper {
     protected human: Human | undefined;
     protected faceDetectionTypes: string[];
     protected baseUrl: string;
