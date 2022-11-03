@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "Aktualnie brak wiadomości w tym spotkaniu. Rozpocznij konwersację!",
         "privateNotice": "Prywatna wiadomość do {{recipient}}",
+        "sendButton": "Wyślij",
         "smileysPanel": "Panel emoji",
         "tabs": {
             "chat": "Chat",

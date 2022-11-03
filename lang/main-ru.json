@@ -103,6 +103,7 @@
         },
         "noMessagesMessage": "В конференции пока нет никаких сообщений. Начните разговор!",
         "privateNotice": "Личное сообщение пользователю {{recipient}}",
+        "sendButton": "Отправить",
         "smileysPanel": "Emoji панель",
         "tabs": {
             "chat": "Чат",

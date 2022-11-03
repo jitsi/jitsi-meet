@@ -93,6 +93,7 @@
         },
         "noMessagesMessage": "Er zijn nog geen berichten in de vergadering. Begin hier een gesprek!",
         "privateNotice": "Privébericht aan {{recipient}}",
+        "sendButton": "Verzenden",
         "smileysPanel": "Smiley paneel",
         "tabs": {
             "chat": "Gesprek",

@@ -74,6 +74,7 @@
         },
         "noMessagesMessage": "अभी तक मीटिंग में कोई संदेश नहीं आया है। वार्तालाप प्रारंभ करें!",
         "privateNotice": "{{recipient}} के लिए निजी संदेश",
+        "sendButton": "भेजें",
         "title": "चैट",
         "titleWithPolls": "चैट",
         "you": "आप"

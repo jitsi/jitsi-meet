@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "A találkozón még nincsenek üzenetek. Itt kezdhet beszélgetést!",
         "privateNotice": "Privát üzenet a felhasználónak: {{recipient}}",
+        "sendButton": "Küldés",
         "title": "Csevegés",
         "titleWithPolls": "Csevegés",
         "you": "neked"

@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "",
         "privateNotice": "",
+        "sendButton": "Send",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": ""

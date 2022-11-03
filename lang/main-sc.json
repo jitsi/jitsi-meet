@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Perunu messàgiu ancora in sa riunione. Cumintza una tzarrada inoghe!",
         "privateNotice": "Messàgiu privadu a {{recipient}}",
+        "sendButton": "Imbia",
         "title": "Tzarrada",
         "titleWithPolls": "Tzarrada",
         "you": "tue"

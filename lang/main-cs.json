@@ -72,6 +72,7 @@
         },
         "noMessagesMessage": "V setkání zatím nejsou žádné zprávy. Tady můžete začít konverzaci!",
         "privateNotice": "Soukromá zpráva pro {{recipient}}",
+        "sendButton": "Odeslat",
         "title": "Zprávy",
         "titleWithPolls": "Zprávy",
         "you": "vy"

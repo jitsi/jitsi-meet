@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "아직 회의에 메시지가 없습니다. 여기서 대화를 시작하세요!",
         "privateNotice": "{{recipient}}에게 보내는 비공개 메시지",
+        "sendButton": "전송",
         "title": "채팅",
         "titleWithPolls": "채팅",
         "you": "당신"

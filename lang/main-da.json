@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Der er ikke nogen beskeder i mødet endnu. Skriv noget!",
         "privateNotice": "Privat besked til {{recipient}}",
+        "sendButton": "Send",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "Dig"

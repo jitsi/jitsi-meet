@@ -95,6 +95,7 @@
         },
         "noMessagesMessage": "I a pas cap de messatge dins la conferéncia pel moment. Començat una conversacion aquí !",
         "privateNotice": "Messatge privat per {{recipient}}",
+        "sendButton": "Mandar",
         "smileysPanel": "Panèl d’Emoji",
         "tabs": {
             "chat": "Messatjariá",

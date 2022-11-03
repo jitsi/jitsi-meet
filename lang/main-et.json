@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Kirjavahetust pole veel alustatud. Alusta kirjavahetust siin!",
         "privateNotice": "Privaatsõnum kasutajale {{recipient}}",
+        "sendButton": "Saada",
         "title": "Kõne",
         "titleWithPolls": "Kõne",
         "you": "you"

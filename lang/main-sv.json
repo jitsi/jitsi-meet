@@ -80,6 +80,7 @@
         },
         "noMessagesMessage": "Det finns ännu inga meddelanden i mötet. Påbörja en konversation!",
         "privateNotice": "Privat meddelande till {{recipient}}",
+        "sendButton": "Skicka",
         "smileysPanel": "Emoji panel",
         "tabs": {
             "chat": "Chat",

@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "Não há mensagens na reunião ainda. Inicie uma conversa aqui!",
         "privateNotice": "Mensagem privada para {{recipient}}",
+        "sendButton": "Enviar",
         "smileysPanel": "Painel de Emojis",
         "tabs": {
             "chat": "Conversa",

@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "Encara no hi ha cap missatge en aquesta reunió. Comenceu una conversa aquí!",
         "privateNotice": "Missatge privat per a {{recipient}}",
+        "sendButton": "Envia",
         "smileysPanel": "Tauler d'emojis",
         "tabs": {
             "chat": "Xat",

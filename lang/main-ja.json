@@ -95,6 +95,7 @@
         },
         "noMessagesMessage": "このミーティングにはまだメッセージがありません。会話を開始してください!",
         "privateNotice": "{{recipient}} へのプライベートメッセージ",
+        "sendButton": "送信",
         "smileysPanel": "絵文字パネル",
         "tabs": {
             "chat": "チャット",
@@ -711,7 +712,7 @@
             "pollQuestion": "投票の質問",
             "questionPlaceholder": "質問を入力してください",
             "removeOption": "選択肢の削除",
-            "send": "作成"
+            "send": "送信"
         },
         "notification": {
             "description": "投票するには投票タブを開いてください",

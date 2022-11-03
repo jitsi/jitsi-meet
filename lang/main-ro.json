@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "",
         "privateNotice": "",
+        "sendButton": "Trimiteți",
         "title": "Apel video",
         "titleWithPolls": "Apel video",
         "you": ""

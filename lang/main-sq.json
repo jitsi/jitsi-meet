@@ -95,6 +95,7 @@
         },
         "noMessagesMessage": "Te takimi s’ka ende mesazhe. Nisni një bisedë këtu!",
         "privateNotice": "Mesazh privat për {{recipient}}",
+        "sendButton": "Dërgoje",
         "smileysPanel": "Panel emoji-sh",
         "tabs": {
             "chat": "Fjalosje",

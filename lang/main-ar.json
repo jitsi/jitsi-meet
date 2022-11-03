@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "لا يوجد أي رسالة في المُلتقى بعد. ابدأ محادثة هنا.",
         "privateNotice": "أرسل رسالة خاصة إلى {{recipient}}",
+        "sendButton": "أرسل",
         "smileysPanel": "واجهة الإيموجي",
         "tabs": {
             "chat": "دردشة",

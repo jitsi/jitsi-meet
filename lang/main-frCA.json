@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
         "privateNotice": "Message privé à {{recipient}}",
+        "sendButton": "Envoyer",
         "title": "Clavardage",
         "titleWithPolls": "Clavardage",
         "you": "vous"
@@ -333,7 +334,7 @@
         "searchCallOnlyPlaceholder": "Entrer le numéro de téléphone",
         "searchPeopleOnlyPlaceholder": "Rechercher des participants",
         "searchPlaceholder": "Participant ou numéro de téléphone",
-        "send": "Envoyer…"
+        "send": "Envoyer"
     },
     "keyboardShortcuts": {
         "focusLocal": "Focaliser sur votre vidéo",

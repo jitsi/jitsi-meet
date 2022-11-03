@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Sapulcē pagaidām nav nevienas ziņas. Uzsāciet saraksti!",
         "privateNotice": "Privāta ziņa/paziņojums lietotājam {{recipient}}",
+        "sendButton": "Nosūtīt",
         "title": "Tērzēšana",
         "titleWithPolls": "Tērzēšana",
         "you": "mans vārds"

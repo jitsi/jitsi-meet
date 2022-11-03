@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "V sestanku še ni sporočilo. Tukaj začnite pogovor!",
         "privateNotice": "Zasebno sporočilo za uporabnika {{recipient}}",
+        "sendButton": "Pošlji",
         "smileysPanel": "Čustvenčki",
         "tabs": {
             "chat": "Klepet",

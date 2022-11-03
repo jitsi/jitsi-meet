@@ -81,6 +81,7 @@
         },
         "noMessagesMessage": "Toplantıda henüz mesaj yok. Burada bir konuşma başlatın!",
         "privateNotice": "{{recipient}} için özel mesaj",
+        "sendButton": "Gönder",
         "smileysPanel": "Emoji paneli",
         "tabs": {
             "chat": "Sohbet",

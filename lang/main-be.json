@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "У канферэнцыі пакуль няма ніякіх паведамленняў. Пачніце размову!",
         "privateNotice": "Асабістае паведамленне карыстальнiку {{recipient}}",
+        "sendButton": "Даслаць",
         "title": "Чат",
         "titleWithPolls": "Чат",
         "you": "Вы"

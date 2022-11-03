@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "Njejsu hišće powěsće w tutej konferency. Započće z rozmołwu tule!",
         "privateNotice": "priwatna powěsć na {{recipient}}",
+        "sendButton": "pósłać",
         "smileysPanel": "wuběr emojijow",
         "tabs": {
             "chat": "chatować",

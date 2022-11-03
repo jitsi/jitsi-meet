@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
+        "sendButton": "Kirim",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "you"
@@ -351,7 +352,7 @@
         "searchCallOnlyPlaceholder": "Enter phone number",
         "searchPeopleOnlyPlaceholder": "Search for participants",
         "searchPlaceholder": "Participant or phone number",
-        "send": "Send"
+        "send": "Kirim"
     },
     "keyboardShortcuts": {
         "focusLocal": "Focus on your video",

@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Энэ хуралд ямар ч зурвас байхгүй. Эндээс зурвасаа эхлүүл!",
         "privateNotice": "Хувийн зурвас {{recipient}}",
+        "sendButton": "Илгээх",
         "title": "Чат",
         "titleWithPolls": "Чат",
         "you": "чи"

@@ -93,6 +93,7 @@
         },
         "noMessagesMessage": "هیچ گفتگویی در جلسه وجود ندارد، گفتگو را شما آعاز کنید!",
         "privateNotice": "پیام خصوصی به {{recipient}}",
+        "sendButton": "ارسال",
         "smileysPanel": "پنل ایموجی",
         "tabs": {
             "chat": "چت",

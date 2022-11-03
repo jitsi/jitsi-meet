@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Aínda non hai mensaxes na reunión. Comece unha conversación aquí!",
         "privateNotice": "Mensaxe privada para {{recipient}}",
+        "sendButton": "Enviar",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "vostede"

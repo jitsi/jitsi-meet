@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "אין עדיין הודעות בפגישה. התחל שיחה כאן!",
         "privateNotice": "הודעה פרטית אל {{recipient}}",
+        "sendButton": "שלח",
         "title": "צ'אט",
         "titleWithPolls": "צ'אט",
         "you": "אתה"

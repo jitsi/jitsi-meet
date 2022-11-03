@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Það eru ennþá engin skilaboð á fundinum. Byrjaðu umræðuna hér!",
         "privateNotice": "Einkaskilaboð til {{recipient}}",
+        "sendButton": "Senda",
         "title": "Spjall",
         "titleWithPolls": "Spjall",
         "you": "þú"

@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "अद्याप मीटिंगमध्ये कोणतेही संदेश नाहीत. येथे संभाषण सुरू करा!",
         "privateNotice": "यांना खाजगी संदेश{{recipient}}",
+        "sendButton": "पाठवा",
         "title": "गप्पा",
         "titleWithPolls": "गप्पा",
         "you": "आपण"

@@ -72,6 +72,7 @@
         },
         "noMessagesMessage": "V tejto konferencii ešte nie je žiadna správa. Začnite tu vašu diskusiu!",
         "privateNotice": "Súkromná správa pre {{recipient}}",
+        "sendButton": "Poslať",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "Vy"

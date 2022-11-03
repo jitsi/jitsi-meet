@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Susitikime dar nėra pranešimų. Pradėkite pokalbį čia!",
         "privateNotice": "Asmeninis pranešimas {{gavėjui}}",
+        "sendButton": "Siųsti",
         "title": "Pokalbis",
         "titleWithPolls": "Pokalbis",
         "you": "Jūs"

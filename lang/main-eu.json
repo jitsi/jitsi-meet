@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "Bileran oraindik mezurik ez dago. Hasi elkarrizketa hemen!",
         "privateNotice": "Mezu pribatua {{recipient}}(e)ri",
+        "sendButton": "Bidali",
         "smileysPanel": "Emoji panela",
         "title": "Txata",
         "titleWithPolls": "Txata",
