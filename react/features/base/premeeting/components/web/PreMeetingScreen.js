@@ -161,11 +161,11 @@ class PreMeetingScreen extends PureComponent<Props> {
                             <h1 className = 'title'>
                                 { title }
                             </h1>
-                            { _roomName && (
+                            {/* { _roomName && (
                                 <span className = { classes.subtitle }>
                                     {_roomName}
                                 </span>
-                            )}
+                            )} */}
                             { children }
                             { _buttons.length && <Toolbox toolbarButtons = { _buttons } /> }
                             { skipPrejoinButton }
