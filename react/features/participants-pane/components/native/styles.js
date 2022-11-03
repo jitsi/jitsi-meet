@@ -1,4 +1,3 @@
-import { MD_ITEM_HEIGHT } from '../../../base/dialog/components/native/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
