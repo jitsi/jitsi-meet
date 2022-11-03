@@ -5,7 +5,7 @@ import { shouldComponentUpdate } from 'react-window';
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { shouldHideSelfView } from '../../../base/settings/functions.any';
+import { getHideSelfView } from '../../../base/settings/functions.any';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { FILMSTRIP_TYPE, TILE_ASPECT_RATIO, TILE_HORIZONTAL_MARGIN } from '../../constants';
 import { getActiveParticipantsIds, showGridInVerticalView } from '../../functions';
@@ -153,7 +153,7 @@ function _mapStateToProps(state, ownProps) {
     const _currentLayout = getCurrentLayout(state);
     const { remoteParticipants: remote } = state['features/filmstrip'];
     const activeParticipants = getActiveParticipantsIds(state);
-    const disableSelfView = shouldHideSelfView(state);
+    const disableSelfView = getHideSelfView(state);
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     const filmstripType = ownProps.data?.filmstripType;

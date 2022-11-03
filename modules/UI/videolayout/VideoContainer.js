@@ -6,7 +6,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
+import { getParticipantCount } from '../../../react/features/base/participants';
+import { getHideSelfView } from '../../../react/features/base/settings/functions.any';
 import { isTestModeEnabled } from '../../../react/features/base/testing';
+import { isLocalCameraTrackMuted } from '../../../react/features/base/tracks';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip';
 import { LargeVideoBackground, ORIENTATION, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
 import { setLargeVideoDimensions } from '../../../react/features/large-video/actions.any';
@@ -558,10 +561,35 @@ export class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar(show) {
-        this.$avatar.css('visibility', show ? 'visible' : 'hidden');
+        const state = APP.store.getState();
+        const aloneInTheMeeting = getParticipantCount(state) === 1;
+
+        const visibility = aloneInTheMeeting
+            ? this.setAvatarVisibility(state)
+            : show ? 'visible' : 'hidden';
+
+        this.$avatar.css('visibility', visibility);
         this.avatarDisplayed = show;
 
         APP.API.notifyLargeVideoVisibilityChanged(show);
+    }
+
+    /**
+     * Set Avatar Visibility.
+     * @param {object} state - App state.
+     */
+    setAvatarVisibility(state) {
+        const hideSelfView = getHideSelfView(state);
+        let visibility = 'hidden';
+
+        if (!hideSelfView) {
+            const tracks = state['features/base/tracks'];
+            const isVideoMuted = isLocalCameraTrackMuted(tracks);
+
+            visibility = isVideoMuted ? 'visible' : 'hidden';
+        }
+
+        return visibility;
     }
 
     /**
@@ -575,7 +603,13 @@ export class VideoContainer extends LargeContainer {
      */
     show() {
         return new Promise(resolve => {
-            this.$wrapperParent.css('visibility', 'visible').fadeTo(
+            const state = APP.store.getState();
+            const aloneInTheMeeting = getParticipantCount(state) === 1;
+            const hideSelfView = getHideSelfView(state);
+
+            const visibility = aloneInTheMeeting && hideSelfView ? 'hidden' : 'visible';
+
+            this.$wrapperParent.css('visibility', visibility).fadeTo(
                 FADE_DURATION_MS,
                 1,
                 () => {

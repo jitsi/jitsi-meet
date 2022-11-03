@@ -4,7 +4,7 @@ import { isMobileBrowser } from '../base/environment/utils';
 import { getParticipantCountWithFake, pinParticipant } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
 import { clientResized } from '../base/responsive-ui';
-import { shouldHideSelfView } from '../base/settings';
+import { getHideSelfView } from '../base/settings/functions.any';
 import { setFilmstripVisible } from '../filmstrip/actions';
 import { selectParticipantInLargeVideo } from '../large-video/actions.any';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
@@ -39,7 +39,7 @@ StateListenerRegistry.register(
     /* selector */ state => {
         return {
             numberOfParticipants: getParticipantCountWithFake(state),
-            disableSelfView: shouldHideSelfView(state),
+            disableSelfView: getHideSelfView(state),
             localScreenShare: state['features/base/participants'].localScreenShare
         };
     },

@@ -9,7 +9,7 @@ import {
 import { Platform } from '../base/react';
 import { toState } from '../base/redux';
 import { ASPECT_RATIO_NARROW } from '../base/responsive-ui/constants';
-import { shouldHideSelfView } from '../base/settings/functions.any';
+import { getHideSelfView } from '../base/settings/functions.any';
 import conferenceStyles from '../conference/components/native/styles';
 import { shouldDisplayTileView } from '../video-layout';
 
@@ -89,7 +89,7 @@ export function getActiveParticipantsIds() {
  */
 export function getTileViewParticipantCount(stateful: Object | Function) {
     const state = toState(stateful);
-    const disableSelfView = shouldHideSelfView(state);
+    const disableSelfView = getHideSelfView(state);
     const localParticipant = getLocalParticipant(state);
     const participantCount = getParticipantCountWithFake(state) - (disableSelfView && localParticipant ? 1 : 0);
 
@@ -137,7 +137,7 @@ export function isFilmstripScrollVisible(state) {
 
     const { aspectRatio, clientWidth, clientHeight, safeAreaInsets = {} } = state['features/base/responsive-ui'];
     const isNarrowAspectRatio = aspectRatio === ASPECT_RATIO_NARROW;
-    const disableSelfView = shouldHideSelfView(state);
+    const disableSelfView = getHideSelfView(state);
     const localParticipant = Boolean(getLocalParticipant(state));
     const localParticipantVisible = localParticipant && !disableSelfView;
     const participantCount
