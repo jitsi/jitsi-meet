@@ -56,11 +56,12 @@ export default {
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginLeft: BaseTheme.spacing[3]
+        marginLeft: BaseTheme.spacing[3],
+        width: '100%'
     },
 
     customInput: {
-        width: 296
+        width: 280
     },
 
     messageBubble: {
@@ -93,7 +94,7 @@ export default {
     },
 
     sendButton: {
-        marginRight: BaseTheme.spacing[3]
+        marginRight: BaseTheme.spacing[5]
     },
 
     /**
