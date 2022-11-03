@@ -89,7 +89,7 @@
     "chat": {
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
-        "fieldPlaceHolder": "Type your message here",
+        "fieldPlaceHolder": "Aa",
         "lobbyChatMessageTo": "Lobby chat message to {{recipient}}",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
