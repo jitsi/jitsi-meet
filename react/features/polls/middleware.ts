@@ -37,39 +37,20 @@ const parsePollData = (pollData: IPollData): IPoll | null => {
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
-    const { id, senderId, senderName, question, answers } = pollData;
+    const { id, senderId, question, answers } = pollData;
 
-    if (typeof id !== 'string' || typeof senderId !== 'string' || typeof senderName !== 'string'
+    if (typeof id !== 'string' || typeof senderId !== 'string'
         || typeof question !== 'string' || !(answers instanceof Array)) {
         return null;
-    }
-
-    const answersParsed = [];
-
-    for (const answer of answers) {
-        const voters = new Map();
-
-        for (const [ voterId, voter ] of Object.entries(answer.voters)) {
-            if (typeof voter !== 'string') {
-                return null;
-            }
-            voters.set(voterId, voter);
-        }
-
-        answersParsed.push({
-            name: answer.name,
-            voters
-        });
     }
 
     return {
         changingVote: false,
         senderId,
-        senderName,
         question,
         showResults: true,
         lastVote: null,
-        answers: answersParsed
+        answers
     };
 };
 
@@ -81,9 +62,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { conference } = action;
 
         conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (_: any, data: any) => _handleReceivePollsMessage(data, dispatch));
+            (user: any, data: any) => {
+                data.type === COMMAND_NEW_POLL ? data.senderId = user._id : data.voterId = user._id;
+                _handleReceivePollsMessage(data, dispatch);
+            });
         conference.on(JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
-            (_: any, data: any) => _handleReceivePollsMessage(data, dispatch));
+            (id: any, data: any) => {
+                data.type === COMMAND_NEW_POLL ? data.senderId = id : data.voterId = id;
+                _handleReceivePollsMessage(data, dispatch);
+            });
 
         break;
     }
@@ -118,19 +105,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch']) {
     switch (data.type) {
     case COMMAND_NEW_POLL: {
-        const { question, answers, pollId, senderId, senderName } = data;
+        const { question, answers, pollId, senderId } = data;
 
         const poll = {
             changingVote: false,
             senderId,
-            senderName,
             showResults: false,
             lastVote: null,
             question,
             answers: answers.map((answer: IAnswer) => {
                 return {
                     name: answer,
-                    voters: new Map()
+                    voters: []
                 };
             })
         };
@@ -146,11 +132,10 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch']) {
     }
 
     case COMMAND_ANSWER_POLL: {
-        const { pollId, answers, voterId, voterName } = data;
+        const { pollId, answers, voterId } = data;
 
         const receivedAnswer: IAnswer = {
             voterId,
-            voterName,
             pollId,
             answers
         };
