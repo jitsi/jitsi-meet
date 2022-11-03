@@ -1,13 +1,14 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, SafeAreaView, ScrollView, Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { IconSearch } from '../../../base/icons';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
+import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { CONTENT_HEIGHT_OFFSET, LIST_HEIGHT_OFFSET, NOTES_LINES, NOTES_MAX_LENGTH } from '../../constants';
@@ -165,16 +166,16 @@ const SalesforceLinkDialog = () => {
                 selectedRecord
                 && <View style = { styles.footer }>
                     <Button
-                        children = { t('dialog.Cancel') }
-                        mode = 'contained'
+                        labelKey = 'dialog.Cancel'
                         /* eslint-disable-next-line react/jsx-no-bind */
-                        onPress = { () => setSelectedRecord(null) }
-                        style = { styles.cancelButton } />
+                        onClick = { () => setSelectedRecord(null) }
+                        style = { styles.cancelButton }
+                        type = { BUTTON_TYPES.SECONDARY } />
                     <Button
-                        children = { t('dialog.linkMeeting') }
-                        mode = 'contained'
-                        onPress = { handlePress }
-                        style = { styles.linkButton } />
+                        labelKey = 'dialog.linkMeeting'
+                        onClick = { handlePress }
+                        style = { styles.linkButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
                 </View>
             }
         </JitsiScreen>

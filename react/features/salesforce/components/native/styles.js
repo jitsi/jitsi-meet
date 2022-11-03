@@ -101,11 +101,9 @@ export default {
         textAlignVertical: 'top'
     },
     cancelButton: {
-        backgroundColor: BaseTheme.palette.action02,
         margin: BaseTheme.spacing[2]
     },
     linkButton: {
-        backgroundColor: BaseTheme.palette.action01,
         marginBottom: BaseTheme.spacing[2],
         marginHorizontal: BaseTheme.spacing[2]
     },
