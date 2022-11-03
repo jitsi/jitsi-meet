@@ -6,7 +6,7 @@ export default {
         flex: 1
     },
 
-    clearableInput: {
+    customContainer: {
         marginHorizontal: BaseTheme.spacing[3],
         marginVertical: BaseTheme.spacing[2]
     },

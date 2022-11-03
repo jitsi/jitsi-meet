@@ -47,7 +47,7 @@ const GifsMenu = () => {
             style = { styles.container }>
             <Input
                 clearable = { true }
-                customStyles = {{ container: styles.clearableInput }}
+                customStyles = {{ container: styles.customContainer }}
                 onChange = { setSearchQuery }
                 placeholder = { t('giphy.search') }
                 value = { searchQuery } />
