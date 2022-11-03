@@ -2,14 +2,14 @@ import {
     SHOW_SOUNDS_NOTIFICATION,
     TOGGLE_REACTIONS_VISIBLE
 } from './actionTypes';
-import { ReactionsAction } from './reducer';
+import { IReactionsAction } from './reducer';
 
 /**
  * Toggles the visibility of the reactions menu.
  *
  * @returns {void}
  */
-export function toggleReactionsMenuVisibility(): ReactionsAction {
+export function toggleReactionsMenuVisibility(): IReactionsAction {
     return {
         type: TOGGLE_REACTIONS_VISIBLE
     };
@@ -20,7 +20,7 @@ export function toggleReactionsMenuVisibility(): ReactionsAction {
  *
  * @returns {void}
  */
-export function displayReactionSoundsNotification(): ReactionsAction {
+export function displayReactionSoundsNotification(): IReactionsAction {
     return {
         type: SHOW_SOUNDS_NOTIFICATION
     };

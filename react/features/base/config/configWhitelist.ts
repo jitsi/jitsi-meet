@@ -210,6 +210,7 @@ export default [
     'resolution',
     'salesforceUrl',
     'screenshotCapture',
+    'speakerStats',
     'startAudioMuted',
     'startAudioOnly',
     'startLastN',

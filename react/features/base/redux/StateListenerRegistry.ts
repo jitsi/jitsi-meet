@@ -1,6 +1,6 @@
 import { Store } from 'redux';
 
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 
 import { equals } from './functions';
 import logger from './logger';
@@ -26,7 +26,7 @@ type Listener
  * The type selector supported for registration with
  * {@link StateListenerRegistry} in association with a {@link Listener}.
  *
- * @param {IState} state - The redux state from which the {@code Selector} is to
+ * @param {IReduxState} state - The redux state from which the {@code Selector} is to
  * derive data.
  * @param {any} prevSelection - The value previously derived from the redux
  * store/state by the {@code Selector}. Provided in case the {@code Selector}
@@ -36,7 +36,7 @@ type Listener
  * {@code prevSelection}. The associated {@code Listener} will only be invoked
  * if the returned value is other than {@code prevSelection}.
  */
-type Selector = (state: IState, prevSelection: any) => any;
+type Selector = (state: IReduxState, prevSelection: any) => any;
 
 /**
  * Options that can be passed to the register method.

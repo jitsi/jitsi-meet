@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
+import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { updateSettings } from '../../../base/settings';
-import { Button } from '../../../base/ui/components/web';
+import { updateSettings } from '../../../base/settings/actions';
+import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 
 // @ts-ignore
@@ -16,12 +14,12 @@ import KeyboardAvoider from './KeyboardAvoider';
 /**
  * The type of the React {@code Component} props of {@DisplayNameForm}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Invoked to set the local participant display name.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 
     /**
      * Whether the polls feature is enabled or not.
@@ -32,20 +30,20 @@ interface Props extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@DisplayNameForm}.
  */
-type State = {
+interface IState {
 
     /**
      * User provided display name when the input text is provided in the view.
      */
     displayName: string;
-};
+}
 
 /**
  * React Component for requesting the local participant to set a display name.
  *
  * @augments Component
  */
-class DisplayNameForm extends Component<Props, State> {
+class DisplayNameForm extends Component<IProps, IState> {
     state = {
         displayName: ''
     };
@@ -56,7 +54,7 @@ class DisplayNameForm extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.

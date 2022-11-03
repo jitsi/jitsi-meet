@@ -1,10 +1,6 @@
-/* eslint-disable lines-around-comment */
-import { Dispatch } from 'redux';
-
-// @ts-ignore
-import { getLocalJitsiAudioTrack } from '../base/tracks';
-// @ts-ignore
-import { showErrorNotification } from '../notifications';
+import { IStore } from '../app/types';
+import { getLocalJitsiAudioTrack } from '../base/tracks/functions';
+import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
@@ -34,7 +30,7 @@ export function setNoiseSuppressionEnabledState(enabled: boolean): any {
  * @returns {Function}
  */
 export function toggleNoiseSuppression(): any {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (isNoiseSuppressionEnabled(getState())) {
             dispatch(setNoiseSuppressionEnabled(false));
         } else {
@@ -51,7 +47,7 @@ export function toggleNoiseSuppression(): any {
  * @returns {Function}
  */
 export function setNoiseSuppressionEnabled(enabled: boolean): any {
-    return async (dispatch: Dispatch, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
         const localAudio = getLocalJitsiAudioTrack(state);
@@ -82,6 +78,7 @@ export function setNoiseSuppressionEnabled(enabled: boolean): any {
                 error
             );
 
+            // @ts-ignore
             dispatch(showErrorNotification({
                 titleKey: 'notify.noiseSuppressionFailedTitle'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));

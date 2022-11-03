@@ -93,6 +93,7 @@
         },
         "noMessagesMessage": "Er zijn nog geen berichten in de vergadering. Begin hier een gesprek!",
         "privateNotice": "Privébericht aan {{recipient}}",
+        "sendButton": "Verzenden",
         "smileysPanel": "Smiley paneel",
         "tabs": {
             "chat": "Gesprek",
@@ -375,7 +376,7 @@
         "veryGood": "Zeer Goed"
     },
     "helpView": {
-        "header": "Helpcentrum"
+        "title": "Helpcentrum"
     },
     "incomingCall": {
         "answer": "Beantwoorden",
@@ -480,6 +481,7 @@
         "signedInAs": "U bent momenteel aangemeld als:",
         "start": "Een livestream starten",
         "streamIdHelp": "Wat is dit?",
+        "title": "Livestream",
         "unavailableTitle": "Livestreamen niet beschikbaar",
         "youtubeTerms": "Servicevoorwaarden YouTube"
     },
@@ -519,6 +521,7 @@
         "passwordJoinButton": "Deelnemen",
         "reject": "Afwijzen",
         "rejectAll": "Allen afwijzen",
+        "title": "Lobby",
         "toggleLabel": "Lobby inschakelen"
     },
     "localRecording": {
@@ -639,13 +642,13 @@
             "videoModeration": "Hun camera aan te zetten"
         },
         "close": "Sluiten",
-        "header": "Deelnemers",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Deelnemers aan vergadering ({{count}})",
             "waitingLobby": "In de lobby aan het wachten ({{count}})"
         },
-        "search": "Zoek deelnemers"
+        "search": "Zoek deelnemers",
+        "title": "Deelnemers"
     },
     "passwordDigitsOnly": "Maximaal {{number}} cijfers",
     "passwordSetRemotely": "ingesteld door een andere deelnemer",
@@ -739,7 +742,7 @@
         "ringing": "Gaat over..."
     },
     "privacyView": {
-        "header": "Privacy"
+        "title": "Privacy"
     },
     "profile": {
         "setDisplayNameLabel": "Uw weergavenaam instellen",
@@ -774,6 +777,7 @@
         "serviceName": "Opnameservice",
         "signIn": "Aanmelden",
         "signOut": "Afmelden",
+        "title": "Opnemen",
         "unavailable": "Oeps! {{serviceName}} is momenteel niet beschikbaar. Er wordt aan een oplossing gewerkt. Probeer het later opnieuw.",
         "unavailableTitle": "Opname niet beschikbaar"
     },
@@ -785,7 +789,7 @@
         "about": "U kunt een $t(lockRoomPassword) toevoegen aan uw vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "aboutReadOnly": "Moderators kunnen een $t(lockRoomPassword) toevoegen aan de vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "insecureRoomNameWarning": "De naam van de ruimte is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. Overweeg uw vergadering te beveiligen via de beveiligingsknop.",
-        "securityOptions": "Beveiligingsopties"
+        "title": "Beveiligingsopties"
     },
     "settings": {
         "calendar": {

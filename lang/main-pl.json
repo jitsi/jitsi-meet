@@ -83,7 +83,7 @@
         },
         "labels": {
             "buttonLabel": "Tryb samochodowy",
-            "title": "Bezpieczny tryb jazdy",
+            "title": "Tryb samochodowy",
             "videoStopped": "Twój film jest zatrzymany"
         }
     },
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "Aktualnie brak wiadomości w tym spotkaniu. Rozpocznij konwersację!",
         "privateNotice": "Prywatna wiadomość do {{recipient}}",
+        "sendButton": "Wyślij",
         "smileysPanel": "Panel emoji",
         "tabs": {
             "chat": "Chat",
@@ -435,7 +436,7 @@
         "search": "Szukaj GIPHY"
     },
     "helpView": {
-        "header": "Centrum pomocy"
+        "title": "Centrum pomocy"
     },
     "incomingCall": {
         "answer": "Odbierz",
@@ -547,6 +548,7 @@
         "signedInAs": "Jesteś obecnie zalogowany jako:",
         "start": "Rozpocznij transmisję na żywo",
         "streamIdHelp": "Co to jest?",
+        "title": "Transmisja na żywo",
         "unavailableTitle": "Transmisja na żywo jest niedostępna",
         "youtubeTerms": "Warunki użytkowania YouTube"
     },
@@ -589,6 +591,7 @@
         "passwordJoinButton": "Dołącz",
         "reject": "Odrzuć",
         "rejectAll": "Odrzuć wszystkich",
+        "title": "Lobby",
         "toggleLabel": "Włącz / Wyłącz lobby"
     },
     "localRecording": {
@@ -731,13 +734,13 @@
             "videoModeration": "Włącz kamerę"
         },
         "close": "Zamknij",
-        "header": "Uczestnicy",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Obecnych ({{count}})",
             "waitingLobby": "Oczekujących ({{count}})"
         },
-        "search": "Wyszukaj uczestników"
+        "search": "Wyszukaj uczestników",
+        "title": "Uczestnicy"
     },
     "passwordDigitsOnly": "Do {{number}} cyfr",
     "passwordSetRemotely": "Ustawione przez innego uczestnika",
@@ -847,7 +850,7 @@
         "ringing": "Dzwonek..."
     },
     "privacyView": {
-        "header": "Prywatność"
+        "title": "Prywatność"
     },
     "profile": {
         "avatar": "awatar",
@@ -919,6 +922,7 @@
         "signIn": "Zaloguj się",
         "signOut": "Wyloguj się",
         "surfaceError": "Proszę wybrać aktualną zakładkę.",
+        "title": "Nagrywanie",
         "unavailable": "Ups! {{serviceName}} w tej chwili niedostępny. Próbujemy rozwiązać ten problem. Spróbuj ponownie później.",
         "unavailableTitle": "Nagrywanie niedostępne",
         "uploadToCloud": "Prześlij do chmury"
@@ -930,8 +934,8 @@
     "security": {
         "about": "Możesz dodać $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) przed dołączeniem do spotkania.",
         "aboutReadOnly": "Uczestnicy posiadający uprawnienia do moderacji mogą ustawić $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) zanim zostaną dołączeni do spotkania.",
-        "header": "Opcje zabezpieczeń",
-        "insecureRoomNameWarning": "Nazwa pokoju nie jest bezpieczna. Niepowołaniu uczestnicy mogą dołączyć do spotkania. Proszę rozważyć ustawienie hasła spotkania używając przycisku Opcje zabezpieczeń."
+        "insecureRoomNameWarning": "Nazwa pokoju nie jest bezpieczna. Niepowołaniu uczestnicy mogą dołączyć do spotkania. Proszę rozważyć ustawienie hasła spotkania używając przycisku Opcje zabezpieczeń.",
+        "title": "Opcje zabezpieczeń"
     },
     "settings": {
         "buttonLabel": "Ustawienia",
@@ -1036,7 +1040,7 @@
         "title": "Twoja rozmowa wideo została przerwana, ponieważ komputer zasnął."
     },
     "termsView": {
-        "header": "Warunki"
+        "title": "Warunki"
     },
     "toggleTopPanelLabel": "Przełącz górny panel",
     "toolbar": {

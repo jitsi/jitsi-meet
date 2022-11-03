@@ -6,28 +6,22 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
-// @ts-ignore
+import { IReduxState } from '../../../app/types';
 import { rejectParticipantAudio } from '../../../av-moderation/actions';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
-// @ts-ignore
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
-import useContextMenu from '../../../base/ui/hooks/useContextMenu';
+import useContextMenu from '../../../base/ui/hooks/useContextMenu.web';
 import { normalizeAccents } from '../../../base/util/strings.web';
-// @ts-ignore
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
-// @ts-ignore
-import { showOverflowDrawer } from '../../../toolbox/functions';
+import { showOverflowDrawer } from '../../../toolbox/functions.web';
 // @ts-ignore
 import { muteRemote } from '../../../video-menu/actions.any';
-// @ts-ignore
 import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
-// @ts-ignore
 import { useParticipantDrawer } from '../../hooks';
 
 import { InviteButton } from './InviteButton';
@@ -59,7 +53,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-type Props = {
+interface IProps {
     currentRoom?: { name: string; };
     overflowDrawer?: boolean;
     participantsCount?: number;
@@ -67,7 +61,7 @@ type Props = {
     setSearchString: (newValue: string) => void;
     showInviteButton?: boolean;
     sortedParticipantIds?: Array<string>;
-};
+}
 
 /**
  * Renders the MeetingParticipantList component.
@@ -87,7 +81,7 @@ function MeetingParticipants({
     setSearchString,
     showInviteButton,
     sortedParticipantIds = []
-}: Props) {
+}: IProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
@@ -164,9 +158,9 @@ function MeetingParticipants({
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState): Object {
+function _mapStateToProps(state: IReduxState): Object {
     let sortedParticipantIds: any = getSortedParticipantIds(state);
 
     // Filter out the virtual screenshare participants since we do not want them to be displayed as separate

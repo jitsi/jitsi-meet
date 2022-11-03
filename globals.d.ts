@@ -9,6 +9,11 @@ declare global {
         UI: any;
         API: any;
         conference: any;
+        debugLogs: any;
+        keyboardshortcut: {
+            registerShortcut: Function;
+            unregisterShortcut: Function;
+        }
     };
     const interfaceConfig: any;
 
@@ -16,7 +21,10 @@ declare global {
         config: IConfig;
         JITSI_MEET_LITE_SDK?: boolean;
         interfaceConfig?: any;
+        JitsiMeetJS?: any;
     }
 
     const config: IConfig;
+
+    const JitsiMeetJS: any;
 }

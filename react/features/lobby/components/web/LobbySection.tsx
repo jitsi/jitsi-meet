@@ -1,18 +1,17 @@
-/* eslint-disable lines-around-comment */
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import Switch from '../../../base/ui/components/web/Switch';
-// @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { toggleLobbyMode } from '../../actions';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * True if lobby is currently enabled in the conference.
@@ -30,24 +29,24 @@ interface Props extends WithTranslation {
     dispatch: Function;
 }
 
-type State = {
+interface IState {
 
     /**
      * True if the lobby switch is toggled on.
      */
     lobbyEnabled: boolean;
-};
+}
 
 /**
  * Implements a security feature section to control lobby mode.
  */
-class LobbySection extends PureComponent<Props, State> {
+class LobbySection extends PureComponent<IProps, IState> {
     /**
      * Instantiates a new component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -62,7 +61,7 @@ class LobbySection extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, state: State) {
+    static getDerivedStateFromProps(props: IProps, state: IState) {
         if (props._lobbyEnabled !== state.lobbyEnabled) {
 
             return {
@@ -128,9 +127,9 @@ class LobbySection extends PureComponent<Props, State> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-function mapStateToProps(state: IState): Partial<Props> {
+function mapStateToProps(state: IReduxState): Partial<IProps> {
     const { conference } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
 

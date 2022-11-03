@@ -63,7 +63,7 @@ export function escapeRegexp(s: string) {
  * @param {Object} w - Window object to use instead of the built in one.
  * @returns {string}
  */
-export function getBaseUrl(w: Window = window) {
+export function getBaseUrl(w: typeof window = window) {
     const doc = w.document;
     const base = doc.querySelector('base');
 
@@ -84,19 +84,14 @@ export function getBaseUrl(w: Window = window) {
  * NOTE: After React-ifying everything this should be the only global.
  */
 export function getJitsiMeetGlobalNS() {
-    // @ts-ignore
     if (!window.JitsiMeetJS) {
-        // @ts-ignore
         window.JitsiMeetJS = {};
     }
 
-    // @ts-ignore
     if (!window.JitsiMeetJS.app) {
-        // @ts-ignore
         window.JitsiMeetJS.app = {};
     }
 
-    // @ts-ignore
     return window.JitsiMeetJS.app;
 }
 

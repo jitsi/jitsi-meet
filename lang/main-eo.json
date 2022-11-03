@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Ankoraŭ ne estas mesaĝoj en la kunveno. Komencu konversation ĉi tie!",
         "privateNotice": "Privata mesaĝo al {{recipient}}",
+        "sendButton": "Sendi",
         "title": "Babilejo",
         "titleWithPolls": "Babilejo",
         "you": "vi"
@@ -307,7 +308,7 @@
         "veryGood": "Tre bona"
     },
     "helpView": {
-        "header": "Helpejo"
+        "title": "Helpejo"
     },
     "incomingCall": {
         "answer": "Respondi",
@@ -406,6 +407,7 @@
         "signedInAs": "Vi nun estas ensalutinta kiel:",
         "start": "Komenci tujan elsendfluon",
         "streamIdHelp": "Kio estas tio?",
+        "title": "Tuja elsendfluo",
         "unavailableTitle": "Tuja elsendfluo ne disponeblas",
         "youtubeTerms": "Uzkondiĉoj de YouTube"
     },
@@ -528,6 +530,7 @@
         "serviceName": "Registra servo",
         "signIn": "Ensaluti",
         "signOut": "Elsaluti",
+        "title": "Registrado",
         "unavailable": "Oj! La {{serviceName}} estas nun nedisponebla. Ni laboras por solvi la aferon. Bonvolu reprovi poste.",
         "unavailableTitle": "Registrado ne disponeblas"
     },

@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
@@ -24,7 +23,7 @@ import {
     isRemoteScreenshareParticipant,
     isScreenShareParticipant
 } from './functions';
-import { LocalParticipant, Participant } from './types';
+import { ILocalParticipant, IParticipant } from './types';
 
 /**
  * Participant object.
@@ -82,13 +81,13 @@ const DEFAULT_STATE = {
 export interface IParticipantsState {
     dominantSpeaker?: string;
     everyoneIsModerator: boolean;
-    fakeParticipants: Map<string, Participant>;
-    local?: LocalParticipant;
-    localScreenShare?: Participant;
+    fakeParticipants: Map<string, IParticipant>;
+    local?: ILocalParticipant;
+    localScreenShare?: IParticipant;
     overwrittenNameList: { [id: string]: string; };
     pinnedParticipant?: string;
     raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
-    remote: Map<string, Participant>;
+    remote: Map<string, IParticipant>;
     sortedRemoteParticipants: Map<string, string>;
     sortedRemoteScreenshares: Map<string, string>;
     sortedRemoteVirtualScreenshareParticipants: Map<string, string>;
@@ -99,12 +98,12 @@ export interface IParticipantsState {
  * Listen for actions which add, remove, or update the set of participants in
  * the conference.
  *
- * @param {Participant[]} state - List of participants to be modified.
+ * @param {IParticipant[]} state - List of participants to be modified.
  * @param {Object} action - Action object.
  * @param {string} action.type - Type of action.
- * @param {Participant} action.participant - Information about participant to be
+ * @param {IParticipant} action.participant - Information about participant to be
  * added/removed/modified.
- * @returns {Participant[]}
+ * @returns {IParticipant[]}
  */
 ReducerRegistry.register<IParticipantsState>('features/base/participants',
 (state = DEFAULT_STATE, action): IParticipantsState => {
@@ -201,7 +200,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             id = LOCAL_PARTICIPANT_DEFAULT_ID;
         }
 
-        let newParticipant: Participant | null = null;
+        let newParticipant: IParticipant | null = null;
 
         if (state.remote.has(id)) {
             newParticipant = _participant(state.remote.get(id), action);
@@ -311,6 +310,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
 
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
         }
+
         // Exclude the screenshare participant from the fake participant count to avoid duplicates.
         if (fakeParticipant && !isScreenShareParticipant(participant)) {
             state.fakeParticipants.set(id, participant);
@@ -402,6 +402,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
 
         // Keep the remote screen share list sorted alphabetically.
         sortedSharesList.length && sortedSharesList.sort((a, b) => a[1].localeCompare(b[1]));
+
         // @ts-ignore
         state.sortedRemoteScreenshares = new Map(sortedSharesList);
 
@@ -461,16 +462,17 @@ function _isEveryoneModerator(state: IParticipantsState) {
 /**
  * Reducer function for a single participant.
  *
- * @param {Participant|undefined} state - Participant to be modified.
+ * @param {IParticipant|undefined} state - Participant to be modified.
  * @param {Object} action - Action object.
  * @param {string} action.type - Type of action.
- * @param {Participant} action.participant - Information about participant to be
+ * @param {IParticipant} action.participant - Information about participant to be
  * added/modified.
  * @param {JitsiConference} action.conference - Conference instance.
  * @private
- * @returns {Participant}
+ * @returns {IParticipant}
  */
-function _participant(state: Participant | LocalParticipant = { id: '' }, action: any): Participant | LocalParticipant {
+function _participant(state: IParticipant | ILocalParticipant = { id: '' },
+        action: any): IParticipant | ILocalParticipant {
     switch (action.type) {
     case SET_LOADABLE_AVATAR_URL:
     case PARTICIPANT_UPDATED: {
@@ -506,7 +508,7 @@ function _participant(state: Participant | LocalParticipant = { id: '' }, action
  * base/participants after the reduction of the specified
  * {@code action}.
  */
-function _participantJoined({ participant }: { participant: Participant; }) {
+function _participantJoined({ participant }: { participant: IParticipant; }) {
     const {
         avatarURL,
         botType,
@@ -571,18 +573,18 @@ function _updateParticipantProperty(state: IParticipantsState, id: string, prope
         remote.set(id, set(remote.get(id) ?? {
             id: '',
             name: ''
-        }, property as keyof Participant, value));
+        }, property as keyof IParticipant, value));
 
         return true;
     } else if (local?.id === id || local?.id === 'local') {
         // The local participant's ID can chance from something to "local" when
         // not in a conference.
-        state.local = set(local, property as keyof LocalParticipant, value);
+        state.local = set(local, property as keyof ILocalParticipant, value);
 
         return true;
 
     } else if (localScreenShare?.id === id) {
-        state.localScreenShare = set(localScreenShare, property as keyof Participant, value);
+        state.localScreenShare = set(localScreenShare, property as keyof IParticipant, value);
 
         return true;
     }

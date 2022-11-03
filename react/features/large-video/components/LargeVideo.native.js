@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 import { getSourceNameSignalingFeatureFlag } from '../../base/config/functions.any';
 import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
 import ParticipantView from '../../base/participants/components/ParticipantView.native';
-import { getParticipantById } from '../../base/participants/functions';
+import { getParticipantById, isLocalScreenshareParticipant } from '../../base/participants/functions';
 import { connect } from '../../base/redux';
 import {
     getVideoTrackByParticipant,
@@ -259,7 +259,9 @@ function _mapStateToProps(state) {
     const videoTrack = getVideoTrackByParticipant(state, participant);
     let disableVideo = false;
 
-    if (participant?.local) {
+    if (isLocalScreenshareParticipant(participant)) {
+        disableVideo = true;
+    } else if (participant?.local) {
         disableVideo = isLocalVideoTrackDesktop(state);
     }
 

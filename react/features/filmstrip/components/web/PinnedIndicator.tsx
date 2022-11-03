@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { IconPinParticipant } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
@@ -13,7 +13,7 @@ import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../fu
 /**
  * The type of the React {@code Component} props of {@link PinnedIndicator}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The font-size for the icon.
@@ -30,7 +30,7 @@ type Props = {
      * From which side of the indicator the tooltip should appear from.
      */
     tooltipPosition: string;
-};
+}
 
 const useStyles = makeStyles()(() => {
     return {
@@ -54,9 +54,9 @@ const PinnedIndicator = ({
     iconSize,
     participantId,
     tooltipPosition
-}: Props) => {
+}: IProps) => {
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
-    const pinned = useSelector((state: IState) => getParticipantById(state, participantId))?.pinned;
+    const pinned = useSelector((state: IReduxState) => getParticipantById(state, participantId))?.pinned;
     const activePinnedParticipants: Array<{ participantId: string; pinned: boolean; }>
         = useSelector(getPinnedActiveParticipants);
     const isPinned = activePinnedParticipants.find(p => p.participantId === participantId);

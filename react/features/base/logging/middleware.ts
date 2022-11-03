@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import Logger from '@jitsi/logger';
 
@@ -19,8 +18,6 @@ import JitsiMeetInMemoryLogStorage from './JitsiMeetInMemoryLogStorage';
 import JitsiMeetLogStorage from './JitsiMeetLogStorage';
 import { SET_LOGGING_CONFIG } from './actionTypes';
 import { setLogCollector, setLoggingConfig } from './actions';
-
-declare let APP: any;
 
 /**
  * The Redux middleware of the feature base/logging.

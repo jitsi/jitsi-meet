@@ -4,7 +4,7 @@ import { set } from '../base/redux/functions';
 import { SET_NOISY_AUDIO_INPUT_NOTIFICATION_UID } from './actionTypes';
 
 export interface INoiseDetectionState {
-    noisyAudioInputNotificationUid?: number;
+    noisyAudioInputNotificationUid?: string;
 }
 
 /**

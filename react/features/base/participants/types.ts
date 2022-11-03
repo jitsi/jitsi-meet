@@ -6,7 +6,7 @@ export enum FakeParticipant {
     Whiteboard = 'Whiteboard'
 }
 
-export interface Participant {
+export interface IParticipant {
     avatarURL?: string;
     botType?: string;
     conference?: Object;
@@ -39,7 +39,7 @@ export interface Participant {
     supportsRemoteControl?: boolean;
 }
 
-export interface LocalParticipant extends Participant {
+export interface ILocalParticipant extends IParticipant {
     audioOutputDeviceId?: string;
     cameraDeviceId?: string;
     jwtId?: string;
@@ -51,5 +51,9 @@ export interface LocalParticipant extends Participant {
 }
 
 export interface IJitsiParticipant {
+    getDisplayName: () => string;
     getId: () => string;
+    getJid: () => string;
+    getRole: () => string;
+    isHidden: () => boolean;
 }

@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "V sestanku še ni sporočilo. Tukaj začnite pogovor!",
         "privateNotice": "Zasebno sporočilo za uporabnika {{recipient}}",
+        "sendButton": "Pošlji",
         "smileysPanel": "Čustvenčki",
         "tabs": {
             "chat": "Klepet",
@@ -384,7 +385,7 @@
         "veryGood": "Zelo dobro"
     },
     "helpView": {
-        "header": "Center za pomoč"
+        "title": "Center za pomoč"
     },
     "incomingCall": {
         "answer": "Odgovori",
@@ -493,6 +494,7 @@
         "signedInAs": "Trenutno ste prijavljeni kot:",
         "start": "Začni prenos v živo",
         "streamIdHelp": "Kaj je to?",
+        "title": "Prenos v živo",
         "unavailableTitle": "Prenos v živo ni na voljo",
         "youtubeTerms": "Pogoji uporabe YouTube"
     },
@@ -531,6 +533,7 @@
         "passwordJoinButton": "Pridruži se",
         "reject": "Zavrni",
         "rejectAll": "Zavrni vse",
+        "title": "Predsoba",
         "toggleLabel": "Omogoči predsobo"
     },
     "localRecording": {
@@ -641,12 +644,12 @@
             "videoModeration": "Vklopi njihov video"
         },
         "close": "Zapri",
-        "header": "Udeleženci",
         "headings": {
             "lobby": "Predsoba ({{count}})",
             "participantsList": "Seznam udeležencev ({{count}})",
             "waitingLobby": "Čakajoči v predsobi ({{count}})"
-        }
+        },
+        "title": "Udeleženci"
     },
     "passwordDigitsOnly": "Do {{number}} številk",
     "passwordSetRemotely": "nastavljeno s strani drugega uporabnika",
@@ -790,6 +793,7 @@
         "serviceName": "Storitev snemanja",
         "signIn": "Prijava",
         "signOut": "Odjava",
+        "title": "Snemanje",
         "unavailable": "Ups! {{ServiceName}} trenutno ni na voljo. Delamo na tem, da težavo odpravimo. Prosimo, poskusite kasneje.",
         "unavailableTitle": "Snemanje ni mogoče",
         "uploadToCloud": "Naloži v oblak"

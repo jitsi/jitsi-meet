@@ -1,6 +1,6 @@
 /* eslint-disable no-bitwise */
 
-interface RnnoiseModule extends EmscriptenModule {
+interface IRnnoiseModule extends EmscriptenModule {
     _rnnoise_create: () => number;
     _rnnoise_destroy: (context: number) => void;
     _rnnoise_process_frame: (context: number, input: number, output: number) => number;
@@ -45,7 +45,7 @@ export default class RnnoiseProcessor {
     /**
      * WASM interface through which calls to rnnoise are made.
      */
-    private _wasmInterface: RnnoiseModule;
+    private _wasmInterface: IRnnoiseModule;
 
     /**
      * WASM dynamic memory buffer used as input for rnnoise processing method.
@@ -63,7 +63,7 @@ export default class RnnoiseProcessor {
      * @class
      * @param {Object} wasmInterface - WebAssembly module interface that exposes rnnoise functionality.
      */
-    constructor(wasmInterface: RnnoiseModule) {
+    constructor(wasmInterface: IRnnoiseModule) {
         // Considering that we deal with dynamic allocated memory employ exception safety strong guarantee
         // i.e. in case of exception there are no side effects.
         try {

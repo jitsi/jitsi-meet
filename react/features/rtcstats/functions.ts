@@ -1,24 +1,15 @@
-/* eslint-disable import/order */
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { getAmplitudeIdentity } from '../analytics/functions';
-import {
-    getAnalyticsRoomName,
-    getConferenceOptions
-
-    // @ts-ignore
-} from '../base/conference';
-
-// @ts-ignore
-import { getLocalParticipant } from '../base/participants';
-
+import { IStore } from '../app/types';
+import { IStateful } from '../base/app/types';
+import { getAnalyticsRoomName, getConferenceOptions } from '../base/conference/functions';
+import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
 import RTCStats from './RTCStats';
 import logger from './logger';
-import { IStateful } from '../base/app/types';
-import { IStore } from '../app/types';
 
 /**
  * Checks whether rtcstats is enabled or not.

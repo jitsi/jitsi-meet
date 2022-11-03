@@ -8,7 +8,10 @@ import { translate } from '../../../base/i18n';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById, isScreenShareParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { getSourceNameByParticipantId, getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
+import {
+    getTrackByMediaTypeAndParticipant,
+    getVirtualScreenshareParticipantTrack
+} from '../../../base/tracks/functions';
 import { ConnectionStatsTable } from '../../../connection-stats';
 import { saveLogs } from '../../actions';
 import {
@@ -67,7 +70,7 @@ type Props = AbstractProps & {
     /**
      * The audio SSRC of this client.
      */
-     _audioSsrc: number,
+    _audioSsrc: number,
 
     /**
      * The current condition of the user's connection, matching one of the
@@ -86,12 +89,6 @@ type Props = AbstractProps & {
      * stats table.
      */
     _enableSaveLogs: boolean,
-
-    /**
-     * Whether or not the displays stats are for screen share. This prop is behind the sourceNameSignaling feature
-     * flag.
-     */
-    _isVirtualScreenshareParticipant: Boolean,
 
     /**
      * Whether or not the displays stats are for local video.
@@ -131,17 +128,7 @@ type Props = AbstractProps & {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-
-    /**
-     * The source name of the track.
-     */
-    _sourceName: string,
-
-    /**
-     * Whether source name signaling is enabled.
-     */
-    _sourceNameSignalingEnabled: boolean
+    t: Function
 };
 
 /**
@@ -224,7 +211,6 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 resolution = { resolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
-                sourceNameSignalingEnabled = { this.props._sourceNameSignalingEnabled }
                 transport = { transport }
                 videoSsrc = { this.props._videoSsrc } />
         );
@@ -334,19 +320,26 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const conference = state['features/base/conference'].conference;
     const participant
         = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
-    const firstVideoTrack = getTrackByMediaTypeAndParticipant(
-        state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
 
+    const tracks = state['features/base/tracks'];
+    const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantId);
+    let videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+
+    if (sourceNameSignalingEnabled && isScreenShareParticipant(participant)) {
+        videoTrack = getVirtualScreenshareParticipantTrack(tracks, participant?.id);
+    }
+
     const _isConnectionStatusInactive = sourceNameSignalingEnabled
-        ? isTrackStreamingStatusInactive(firstVideoTrack)
+        ? isTrackStreamingStatusInactive(videoTrack)
         : isParticipantConnectionStatusInactive(participant);
 
     const _isConnectionStatusInterrupted = sourceNameSignalingEnabled
-        ? isTrackStreamingStatusInterrupted(firstVideoTrack)
+        ? isTrackStreamingStatusInterrupted(videoTrack)
         : isParticipantConnectionStatusInterrupted(participant);
 
-    const props = {
+    return {
+        _audioSsrc: audioTrack ? conference?.getSsrcByTrack(audioTrack.jitsiTrack) : undefined,
         _connectionStatus: participant?.connectionStatus,
         _enableSaveLogs: state['features/base/config'].enableSaveLogs,
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
@@ -355,21 +348,8 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && isScreenShareParticipant(participant),
         _isLocalVideo: participant?.local,
         _region: participant?.region,
-        _sourceName: getSourceNameByParticipantId(state, participantId),
-        _sourceNameSignalingEnabled: sourceNameSignalingEnabled
+        _videoSsrc: videoTrack ? conference?.getSsrcByTrack(videoTrack.jitsiTrack) : undefined
     };
-
-    if (conference) {
-        const firstAudioTrack = getTrackByMediaTypeAndParticipant(
-            state['features/base/tracks'], MEDIA_TYPE.AUDIO, participantId);
-
-        return {
-            ...props,
-            _audioSsrc: firstAudioTrack ? conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
-            _videoSsrc: firstVideoTrack ? conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
-        };
-    }
-
-    return props;
 }
+
 export default translate(connect(_mapStateToProps, _mapDispatchToProps)(ConnectionIndicatorContent));

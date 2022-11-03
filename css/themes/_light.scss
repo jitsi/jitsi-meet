@@ -6,8 +6,6 @@ $baseLight: #FFFFFF;
 /**
 * Controls
 */
-$controlBackground: $baseLight;
-$controlColor: #333333;
 $sliderTrackBackground: #474747;
 $sliderThumbBackground: #3572b0;
 
@@ -60,42 +58,21 @@ $readOnlyInputColor: #a7a7a7;
 $defaultDarkSelectionColor: #ccc;
 $buttonFontWeight: 400;
 $labelFontWeight: 400;
-$hintFontSize: em(13, 14);
 $linkFontColor: #3572b0;
 $linkHoverFontColor: darken(#3572b0, 10%);
-$dropdownColor: #333;
 $errorColor: #c61600;
 
-// Feedback colors
-$feedbackCancelFontColor: #333;
 
 // Popover colors
 $popoverFontColor: #ffffff !important;
 $popupSliderColor: #0376da;
 
 // Toolbar
-$secondaryToolbarBg: rgba(0, 0, 0, 0.5);
-// TOFIX: Once moved to react rename to match the side panel class name.
-$sideToolbarContainerBg: rgba(0, 0, 0, 0.75);
 $toolbarBackground: rgba(0, 0, 0, 0.5);
 $toolbarBadgeBackground: #165ECC;
 $toolbarBadgeColor: #FFFFFF;
-$toolbarButtonColor: #FFFFFF;
-$toolbarSelectBackground: rgba(0, 0, 0, .6);
-$toolbarTitleColor: #FFFFFF;
-$toolbarToggleBackground: #12499C;
-
 
 /**
  * Forms
  */
-//dropdown
-$selectFontColor: $controlColor;
-$selectBg: $controlBackground;
-$selectActiveBg: darken($controlBackground, 5%);
-$selectActiveItemBg: darken($controlBackground, 20%);
-
-/**
- * TODO: Replace by themed component.
- */
-$videoQualityActive: #57A0ff;
+$selectBg: $baseLight;

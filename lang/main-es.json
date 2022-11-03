@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "No hay mensajes en la reunión. ¡Inicie una conversación!",
         "privateNotice": "Mensaje privado para {{recipient}}",
+        "sendButton": "Enviar",
         "smileysPanel": "Panel de Emojis",
         "tabs": {
             "chat": "Chat",
@@ -384,7 +385,7 @@
         "veryGood": "Muy buena"
     },
     "helpView": {
-        "header": "Centro de ayuda"
+        "title": "Centro de ayuda"
     },
     "incomingCall": {
         "answer": "Contestar",
@@ -493,6 +494,7 @@
         "signedInAs": "Actualmente, la sesión está iniciada como:",
         "start": "Iniciar una transmisión en vivo",
         "streamIdHelp": "¿Qué es esto?",
+        "title": "Transmisión en vivo",
         "unavailableTitle": "Transmisión en vivo no disponible",
         "youtubeTerms": "Términos de servicios de YouTube"
     },
@@ -531,6 +533,7 @@
         "passwordJoinButton": "Entrar",
         "reject": "Rechazar",
         "rejectAll": "Rechazar todo",
+        "title": "Sala de espera",
         "toggleLabel": "Activar sala de espera"
     },
     "localRecording": {
@@ -641,12 +644,12 @@
             "videoModeration": "Iniciar su vídeo"
         },
         "close": "Cerrar",
-        "header": "Participantes",
         "headings": {
             "lobby": "Vestíbulo ({{count}})",
             "participantsList": "Participantes en la reunión ({{count}})",
             "waitingLobby": "Esperando en el vestíbulo ({{count}})"
-        }
+        },
+        "title": "Participantes"
     },
     "passwordDigitsOnly": "Hasta {{number}} cifras",
     "passwordSetRemotely": "Definida por otro participante",
@@ -790,6 +793,7 @@
         "serviceName": "Servicio de grabación",
         "signIn": "Iniciar sesión",
         "signOut": "Cerrar sesión",
+        "title": "Grabando",
         "unavailable": "¡Uy! {{serviceName}} actualmente no está disponible. Estamos trabajando para resolver el problema. Vuelve a intentarlo más tarde.",
         "unavailableTitle": "Grabación no disponible",
         "uploadToCloud": "Subir a la nube"

@@ -1,5 +1,3 @@
-declare let APP: any;
-
 import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
 import i18next from 'i18next';
 import I18nextXHRBackend from 'i18next-xhr-backend';
@@ -10,8 +8,6 @@ import MAIN_RESOURCES from '../../../../lang/main.json';
 import TRANSLATION_LANGUAGES_RESOURCES from '../../../../lang/translation-languages.json';
 
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import languageDetector from './languageDetector';
 
 /**

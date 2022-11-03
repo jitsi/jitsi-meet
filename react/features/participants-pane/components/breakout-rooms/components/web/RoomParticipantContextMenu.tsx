@@ -10,16 +10,14 @@ import { Avatar } from '../../../../../base/avatar';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
-// @ts-ignore
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 // @ts-ignore
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
 import { AVATAR_SIZE } from '../../../../constants';
 
 
-type Props = {
+interface IProps {
 
     /**
      * Room and participant jid reference.
@@ -49,7 +47,7 @@ type Props = {
      * Callback for making a selection in the menu.
      */
     onSelect: (force?: any) => void;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -71,7 +69,7 @@ export const RoomParticipantContextMenu = ({
     onEnter,
     onLeave,
     onSelect
-}: Props) => {
+}: IProps) => {
     const { classes: styles } = useStyles();
     const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);

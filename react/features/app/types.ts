@@ -9,7 +9,7 @@ import { IAudioOnlyState } from '../base/audio-only/reducer';
 import { IConferenceState } from '../base/conference/reducer';
 import { IConfigState } from '../base/config/reducer';
 import { IConnectionState } from '../base/connection/reducer';
-import { IDevicesState } from '../base/devices/reducer';
+import { IDevicesState } from '../base/devices/types';
 import { IDialogState } from '../base/dialog/reducer';
 import { IFlagsState } from '../base/flags/reducer';
 import { IJwtState } from '../base/jwt/reducer';
@@ -78,11 +78,11 @@ import { IVirtualBackground } from '../virtual-background/reducer';
 import { IWhiteboardState } from '../whiteboard/reducer';
 
 export interface IStore {
-    dispatch: ThunkDispatch<IState, void, AnyAction>;
-    getState: () => IState;
+    dispatch: ThunkDispatch<IReduxState, void, AnyAction>;
+    getState: () => IReduxState;
 }
 
-export interface IState {
+export interface IReduxState {
     'features/analytics': IAnalyticsState;
     'features/authentication': IAuthenticationState;
     'features/av-moderation': IAVModerationState;

@@ -2,7 +2,7 @@ import { GestureResponderEvent } from 'react-native';
 
 import { BUTTON_TYPES } from '../constants';
 
-export interface ButtonProps {
+export interface IButtonProps {
 
     /**
      * Label used for accessibility.
@@ -40,7 +40,7 @@ export interface ButtonProps {
     type?: BUTTON_TYPES;
 }
 
-export interface InputProps {
+export interface IInputProps {
 
     /**
      * Whether the input is be clearable. (show clear button).
@@ -70,7 +70,7 @@ export interface InputProps {
     /**
      * Change callback.
      */
-    onChange: (value: string) => void;
+    onChange?: (value: string) => void;
 
     /**
      * The input placeholder text.
@@ -83,7 +83,7 @@ export interface InputProps {
     value: string | number;
 }
 
-export interface SwitchProps {
+export interface ISwitchProps {
 
     /**
      * Whether or not the toggle is on.

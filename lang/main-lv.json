@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Sapulcē pagaidām nav nevienas ziņas. Uzsāciet saraksti!",
         "privateNotice": "Privāta ziņa/paziņojums lietotājam {{recipient}}",
+        "sendButton": "Nosūtīt",
         "title": "Tērzēšana",
         "titleWithPolls": "Tērzēšana",
         "you": "mans vārds"
@@ -230,7 +231,7 @@
         "passwordRequired": "Nepieciešams $t(lockRoomPasswordUppercase)",
         "popupError": "Jūsu pārlūks bloķē šīs vietnes uznirstošos logus. Lūdzu, atļaujiet uznirstošos logus pārlūka drošības iestatījumos un mēģiniet vēlreiz.",
         "popupErrorTitle": "Uznirstošais logs tika bloķēts",
-        "recording": "Ieraksts...",
+        "recording": "Ieraksts",
         "recordingDisabledForGuestTooltip": "Viesi nevar ierakstīt",
         "recordingDisabledTooltip": "Nav iespējams sākt ierakstu",
         "rejoinNow": "Pieslēgties no jauna",
@@ -388,6 +389,7 @@
         "signedInAs": "Pašlaik esat sistēmā ierakstījies kā:",
         "start": "Sākt tiešraidi",
         "streamIdHelp": "Kas tas?",
+        "title": "Tiešraide",
         "unavailableTitle": "Tiešraide nav pieejama"
     },
     "localRecording": {
@@ -501,6 +503,7 @@
         "serviceName": "Ieraksta pakalpojums",
         "signIn": "Ierakstīties",
         "signOut": "Izrakstīties",
+        "title": "Ieraksts",
         "unavailable": "Pakalpojums {{serviceName}} pašreiz nepieejams. Tiek strādāts pie šīs ķibeles novēršanas. Lūdzu, vēlāk mēģiniet vēlreiz.",
         "unavailableTitle": "Ieraksts nav iespējams"
     },

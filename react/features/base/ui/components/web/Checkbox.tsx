@@ -7,7 +7,7 @@ import Icon from '../../../icons/components/Icon';
 import { IconCheckMark } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
-interface CheckboxProps {
+interface ICheckboxProps {
 
     /**
      * Whether the input is checked or not.
@@ -149,7 +149,7 @@ const Checkbox = ({
     label,
     name,
     onChange
-}: CheckboxProps) => {
+}: ICheckboxProps) => {
     const { classes: styles, cx, theme } = useStyles();
     const isMobile = isMobileBrowser();
 

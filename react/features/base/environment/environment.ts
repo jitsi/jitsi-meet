@@ -25,8 +25,6 @@ const browserNameToCheck = {
     safari: browser.isSafari.bind(browser)
 };
 
-declare let interfaceConfig: any;
-
 /**
  * Returns whether or not jitsi is optimized and targeted for the  provided
  * browser name.

@@ -1,10 +1,9 @@
 /* eslint-disable lines-around-comment */
+
 import logger from '../logger';
 
 import AbstractHandler, { IEvent } from './AbstractHandler';
-// @ts-ignore
 import { fixDeviceID } from './amplitude/fixDeviceID';
-// @ts-ignore
 import amplitude from './amplitude/lib';
 
 /**
@@ -13,6 +12,7 @@ import amplitude from './amplitude/lib';
 export default class AmplitudeHandler extends AbstractHandler {
     _deviceId: string;
     _userId: Object;
+
     /**
      * Creates new instance of the Amplitude analytics handler.
      *
@@ -33,9 +33,11 @@ export default class AmplitudeHandler extends AbstractHandler {
         };
 
         if (navigator.product === 'ReactNative') {
-            amplitude.getInstance().init(amplitudeAPPKey);
+            amplitude.getInstance().init(amplitudeAPPKey); // @ts-ignore
             fixDeviceID(amplitude.getInstance()).then(() => {
                 amplitude.getInstance().getDeviceId()
+
+                // @ts-ignore
                     .then((deviceId: string) => {
                         this._deviceId = deviceId;
                     });
@@ -46,6 +48,7 @@ export default class AmplitudeHandler extends AbstractHandler {
                 onError
             };
 
+            // @ts-ignore
             amplitude.getInstance().init(amplitudeAPPKey, undefined, amplitudeOptions);
             fixDeviceID(amplitude.getInstance());
         }
@@ -62,7 +65,7 @@ export default class AmplitudeHandler extends AbstractHandler {
      * @param {Object} userProps - The user portperties.
      * @returns {void}
      */
-    setUserProperties(userProps: Object) {
+    setUserProperties(userProps: any) {
         if (this._enabled) {
             amplitude.getInstance().setUserProperties(userProps);
         }
@@ -81,7 +84,8 @@ export default class AmplitudeHandler extends AbstractHandler {
             return;
         }
 
-        amplitude.getInstance().logEvent(this._extractName(event), event);
+        // @ts-ignore
+        amplitude.getInstance().logEvent(this._extractName(event) ?? '', event);
     }
 
     /**
@@ -99,7 +103,9 @@ export default class AmplitudeHandler extends AbstractHandler {
 
         return {
             sessionId: amplitude.getInstance().getSessionId(),
+            // @ts-ignore
             deviceId: amplitude.getInstance().options.deviceId,
+            // @ts-ignore
             userId: amplitude.getInstance().options.userId
         };
     }

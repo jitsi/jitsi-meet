@@ -62,12 +62,14 @@ import {
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
-    getDefaultDeviceId,
     notifyCameraError,
     notifyMicError,
-    setAudioOutputDeviceId,
     updateDeviceList
-} from './react/features/base/devices';
+} from './react/features/base/devices/actions.web';
+import {
+    getDefaultDeviceId,
+    setAudioOutputDeviceId
+} from './react/features/base/devices/functions.web';
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents,
@@ -127,6 +129,7 @@ import {
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
+    toggleScreensharing as toggleScreensharingA,
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
@@ -146,12 +149,8 @@ import {
 } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
-import {
-    initPrejoin,
-    isPrejoinPageVisible,
-    makePrecallTest,
-    setJoiningInProgress
-} from './react/features/prejoin';
+import { initPrejoin, makePrecallTest, setJoiningInProgress } from './react/features/prejoin/actions';
+import { isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { isScreenAudioShared, setScreenAudioShareState } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
@@ -1733,6 +1732,8 @@ export default {
      * is not specified and starts the procedure for obtaining new screen
      * sharing/video track otherwise.
      *
+     * NOTE: this is currently ONLY used in the non-multi-stream case.
+     *
      * @param {boolean} [toggle] - If true - new screen sharing track will be
      * obtained. If false - new video track will be obtain. If not specified -
      * toggles between screen sharing and camera video.
@@ -2657,12 +2658,6 @@ export default {
                 APP.UI.updateLargeVideo(displayedUserId, true);
             }
         });
-
-        APP.UI.addListener(
-            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly, ignoreDidHaveVideo }) => {
-                this.toggleScreenSharing(enabled, { audioOnly }, ignoreDidHaveVideo);
-            }
-        );
     },
 
     /**
@@ -3216,7 +3211,7 @@ export default {
                         return;
                     }
 
-                    this.toggleScreenSharing(undefined, { desktopStream });
+                    APP.store.dispatch(toggleScreensharingA(undefined, false, false, { desktopStream }));
                 }
             });
         }

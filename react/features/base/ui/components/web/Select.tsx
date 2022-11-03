@@ -7,7 +7,7 @@ import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
-interface SelectProps {
+interface ISelectProps {
 
     /**
      * Helper text to be displayed below the select.
@@ -144,7 +144,7 @@ const Select = ({
     label,
     onChange,
     options,
-    value }: SelectProps) => {
+    value }: ISelectProps) => {
     const { classes, cx, theme } = useStyles();
     const isMobile = isMobileBrowser();
 

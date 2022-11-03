@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 
 import { createReactionMenuEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState, IStore } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { raiseHand } from '../../../base/participants/actions';
@@ -16,7 +16,6 @@ import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/f
 import GifsMenu from '../../../gifs/components/web/GifsMenu';
 // @ts-ignore
 import GifsMenuButton from '../../../gifs/components/web/GifsMenuButton';
-// @ts-ignore
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
 // @ts-ignore
 import { dockToolbox } from '../../../toolbox/actions.web';
@@ -27,7 +26,7 @@ import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 // @ts-ignore
 import ReactionButton from './ReactionButton';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Docks the toolbox.
@@ -95,14 +94,14 @@ const styles = (theme: Theme) => {
  *
  * @returns {ReactElement}
  */
-class ReactionsMenu extends Component<Props> {
+class ReactionsMenu extends Component<IProps> {
     /**
      * Initializes a new {@code ReactionsMenu} instance.
      *
-     * @param {Props} props - The read-only React {@code Component} props with
+     * @param {IProps} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
@@ -236,7 +235,7 @@ class ReactionsMenu extends Component<Props> {
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
 
     return {

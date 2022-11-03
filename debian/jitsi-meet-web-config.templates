@@ -23,8 +23,8 @@ _Description: Full local server path to the SSL certificate file:
 
 Template: jitsi-meet/jvb-hostname
 Type: string
-_Description: The hostname of the current installation:
- The value for the hostname that is set in Jitsi Videobridge installation.
+_Description: The domain of the current installation (e.g. meet.jitsi.com):
+ The value of the domain that is set in the Jitsi Videobridge installation.
 
 Template: jitsi-videobridge/jvb-hostname
 Type: string
@@ -33,8 +33,8 @@ _Description: Hostname:
 
 Template: jitsi-meet/jaas-choice
 Type: boolean
-_Description: Interested in adding telephony to your Jitsi meetings?
- You can easily add dialing in support to your meetings. You need to give us the permission to create a free JaaS (Jitsi as a Service) account for you.
+_Description: Add telephony to your Jitsi meetings?
+ You can easily add dial-in support to your meetings. To allow this we would need your permission to create a free JaaS (Jitsi as a Service) account for you.
 
 Template: jitsi-meet/email
 Type: string

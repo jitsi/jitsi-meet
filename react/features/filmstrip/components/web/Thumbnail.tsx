@@ -8,11 +8,13 @@ import { connect } from 'react-redux';
 
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
-// @ts-ignore
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../../../base/config';
+import {
+    getMultipleVideoSupportFeatureFlag,
+    getSourceNameSignalingFeatureFlag
+} from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 // @ts-ignore
@@ -27,23 +29,18 @@ import {
     isScreenShareParticipant,
     isWhiteboardParticipant
 } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/types';
+import { IParticipant } from '../../../base/participants/types';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
-// @ts-ignore
-import { isTestModeEnabled } from '../../../base/testing';
+import { isTestModeEnabled } from '../../../base/testing/functions';
+import { trackStreamingStatusChanged, updateLastTrackVideoMediaEvent } from '../../../base/tracks/actions';
 import {
     getLocalAudioTrack,
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
-    getVirtualScreenshareParticipantTrack,
-    trackStreamingStatusChanged,
-    updateLastTrackVideoMediaEvent
-    // @ts-ignore
-} from '../../../base/tracks';
+    getVirtualScreenshareParticipantTrack
+} from '../../../base/tracks/functions';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
-// @ts-ignore
 import { hideGif, showGif } from '../../../gifs/actions';
-// @ts-ignore
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 // @ts-ignore
 import { PresenceLabel } from '../../../presence-status';
@@ -78,12 +75,10 @@ import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 // @ts-ignore
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
 
-declare let interfaceConfig: any;
-
 /**
  * The type of the React {@code Component} state of {@link Thumbnail}.
  */
-export type State = {
+export interface IState {
 
     /**
      * Indicates that the canplay event has been received.
@@ -104,12 +99,12 @@ export type State = {
      * Whether popover is visible or not.
      */
     popoverVisible: boolean;
-};
+}
 
 /**
  * The type of the React {@code Component} props of {@link Thumbnail}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * The audio track related to the participant.
@@ -201,7 +196,7 @@ export type Props = {
     /**
      * An object with information about the participant related to the thumbnail.
      */
-    _participant: Participant;
+    _participant: IParticipant;
 
     /**
      * Whether or not the participant has the hand raised.
@@ -280,7 +275,7 @@ export type Props = {
      * there is empty space.
      */
     width?: number;
-};
+}
 
 const defaultStyles = (theme: Theme) => {
     return {
@@ -366,7 +361,6 @@ const defaultStyles = (theme: Theme) => {
             position: 'absolute' as const,
             width: '100%',
             height: '100%',
-            zIndex: 11,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -388,7 +382,7 @@ const defaultStyles = (theme: Theme) => {
  *
  * @augments Component
  */
-class Thumbnail extends Component<Props, State> {
+class Thumbnail extends Component<IProps, IState> {
     /**
      * The long touch setTimeout handler.
      */
@@ -406,7 +400,7 @@ class Thumbnail extends Component<Props, State> {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         const state = {
@@ -491,7 +485,7 @@ class Thumbnail extends Component<Props, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: Props, prevState: State) {
+    componentDidUpdate(prevProps: IProps, prevState: IState) {
         if (prevState.displayMode !== this.state.displayMode) {
             this._onDisplayModeChanged();
         }
@@ -571,7 +565,7 @@ class Thumbnail extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, prevState: State) {
+    static getDerivedStateFromProps(props: IProps, prevState: IState) {
         if (!props._videoTrack && prevState.canPlayEventReceived) {
             const newState = {
                 ...prevState,
@@ -1172,13 +1166,13 @@ class Thumbnail extends Component<Props, State> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState, ownProps: any): Object {
+function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     const { participantID, filmstripType = FILMSTRIP_TYPE.MAIN } = ownProps;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
-    const id = participant?.id;
+    const id = participant?.id ?? '';
     const isLocal = participant?.local ?? true;
     const multipleVideoSupportEnabled = getMultipleVideoSupportFeatureFlag(state);
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);

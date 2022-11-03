@@ -24,7 +24,7 @@ const DEFAULT_STATE = {
 
 export interface IInviteState {
     calleeInfoVisible?: boolean;
-    conferenceID?: string;
+    conferenceID?: string | number;
     error?: Error;
     initialCalleeInfo?: Object;
     numbers?: string;

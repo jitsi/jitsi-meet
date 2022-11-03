@@ -62,7 +62,7 @@ export interface ITranscribingState {
     isDialing: boolean;
     isTerminating: boolean;
     isTranscribing: boolean;
-    pendingNotificationUid?: number;
+    pendingNotificationUid?: string;
     potentialTranscriberJIDs: string[];
     transcriberJID?: string | null;
 }

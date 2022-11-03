@@ -1,5 +1,3 @@
-declare let JitsiMeetJS: any;
-
 /**
  * Loads a script from a specific URL. The script will be interpreted upon load.
  *

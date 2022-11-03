@@ -5,7 +5,7 @@ import { IStore } from '../../../app/types';
 import { removeReaction } from '../../actions.any';
 import { REACTIONS } from '../../constants';
 
-type Props = {
+interface IProps {
 
     /**
      * Index of the reaction in the queue.
@@ -26,15 +26,15 @@ type Props = {
      * Id of the reaction.
      */
     uid: string;
-};
+}
 
-type State = {
+interface IState {
 
     /**
      * Index of CSS animation. Number between 0-20.
      */
     index: number;
-};
+}
 
 
 /**
@@ -42,14 +42,14 @@ type State = {
  *
  * @returns {ReactElement}
  */
-class ReactionEmoji extends Component<Props, State> {
+class ReactionEmoji extends Component<IProps, IState> {
     /**
      * Initializes a new {@code ReactionEmoji} instance.
      *
-     * @param {Props} props - The read-only React {@code Component} props with
+     * @param {IProps} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {

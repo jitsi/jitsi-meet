@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Það eru ennþá engin skilaboð á fundinum. Byrjaðu umræðuna hér!",
         "privateNotice": "Einkaskilaboð til {{recipient}}",
+        "sendButton": "Senda",
         "title": "Spjall",
         "titleWithPolls": "Spjall",
         "you": "þú"
@@ -300,7 +301,7 @@
         "veryGood": "Mjög góð"
     },
     "helpView": {
-        "header": "Hjálparmiðstöð"
+        "title": "Hjálparmiðstöð"
     },
     "incomingCall": {
         "answer": "Svara",
@@ -399,6 +400,7 @@
         "signedInAs": "Þú ert núna skráð/ur inn sem:",
         "start": "Hefja beint streymi",
         "streamIdHelp": "Hvað er þetta?",
+        "title": "Beint streymi",
         "unavailableTitle": "Beint streymi er ekki tiltækt",
         "youtubeTerms": "Þjónustuskilmálar YouTube"
     },
@@ -517,6 +519,7 @@
         "serviceName": "Upptökuþjónusta",
         "signIn": "Skrá inn",
         "signOut": "Skrá út",
+        "title": "Upptaka",
         "unavailable": "Úbbs! {{serviceName}} er upptekið í augnablikinu. Við erum að vinna í þessu vandamáli. Reyndu aftur síðar.",
         "unavailableTitle": "Upptaka er ekki tiltæk"
     },

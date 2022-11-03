@@ -1,28 +1,25 @@
-/* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
 
 import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { IState } from '../../app/types';
-// @ts-ignore
-import { setAudioOnly } from '../../base/audio-only';
+import { IReduxState, IStore } from '../../app/types';
+import { setAudioOnly } from '../../base/audio-only/actions';
 import { translate } from '../../base/i18n/functions';
-// @ts-ignore
-import { getLastNForQualityLevel, setLastN } from '../../base/lastn';
+import { setLastN } from '../../base/lastn/actions';
+import { getLastNForQualityLevel } from '../../base/lastn/functions';
 import { connect } from '../../base/redux/functions';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { setPreferredVideoQuality } from '../actions';
 import { DEFAULT_LAST_N, VIDEO_QUALITY_LEVELS } from '../constants';
-// @ts-ignore
 import logger from '../logger';
 
-import Slider from './Slider';
+import Slider from './Slider.web';
 
 const {
     ULTRA,
@@ -50,7 +47,7 @@ const createEvent = function(quality: string) {
 /**
  * The type of the React {@code Component} props of {@link VideoQualitySlider}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether or not the conference is in audio only mode.
@@ -60,7 +57,7 @@ interface Props extends WithTranslation {
     /**
      * The channelLastN value configured for the conference.
      */
-    _channelLastN: Number;
+    _channelLastN: number;
 
     /**
      * Whether or not the conference is in peer to peer mode.
@@ -71,7 +68,7 @@ interface Props extends WithTranslation {
      * The currently configured maximum quality resolution to be sent and
      * received from the remote participants.
      */
-    _sendrecvVideoQuality: Number;
+    _sendrecvVideoQuality: number;
 
     /**
      * An object containing the CSS classes.
@@ -81,7 +78,7 @@ interface Props extends WithTranslation {
     /**
      * Invoked to request toggling of audio only mode.
      */
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
 }
 
 /**
@@ -121,7 +118,7 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class VideoQualitySlider extends Component<Props> {
+class VideoQualitySlider extends Component<IProps> {
     _sliderOptions: Array<Object>;
 
     /**
@@ -130,7 +127,7 @@ class VideoQualitySlider extends Component<Props> {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -311,8 +308,10 @@ class VideoQualitySlider extends Component<Props> {
         const {
             // @ts-ignore
             audioOnly,
+
             // @ts-ignore
             onSelect,
+
             // @ts-ignore
             videoQuality
         } = this._sliderOptions[event.target.value as keyof typeof this._sliderOptions];
@@ -359,9 +358,9 @@ class VideoQualitySlider extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const { p2p } = state['features/base/conference'];
     const { preferredVideoQuality } = state['features/video-quality'];

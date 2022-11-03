@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -10,12 +8,10 @@ import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconPlusCircle } from '../../base/icons/svg';
 import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
-// @ts-ignore
 import { resizeImage } from '../functions';
-// @ts-ignore
 import logger from '../logger';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Callback used to set the 'loading' state of the parent component.
@@ -56,7 +52,6 @@ const useStyles = makeStyles()((theme: Theme) => {
             fontSize: '14px',
             fontWeight: '600',
             lineHeight: '20px',
-            marginLeft: '-10px',
             marginTop: theme.spacing(3),
             marginBottom: theme.spacing(2),
             color: '#669aec',
@@ -79,7 +74,7 @@ function UploadImageButton({
     showLabel,
     storedImages,
     t
-}: Props) {
+}: IProps) {
     const { classes } = useStyles();
     const uploadImageButton = useRef<HTMLInputElement>(null);
     const uploadImageKeyPress = useCallback(e => {

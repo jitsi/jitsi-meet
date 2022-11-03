@@ -2,14 +2,12 @@ import { IStore } from '../../app/types';
 import { configureInitialDevices } from '../devices/actions';
 import { getBackendSafeRoomName } from '../util/uri';
 
-declare const APP: any;
-
 export {
     connectionDisconnected,
     connectionEstablished,
     connectionFailed,
     setLocationURL
-} from './actions.native';
+} from './actions.any';
 import logger from './logger';
 
 export * from './actions.any';

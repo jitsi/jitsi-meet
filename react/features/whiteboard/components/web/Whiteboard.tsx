@@ -1,35 +1,30 @@
-/* eslint-disable import/order */
 /* eslint-disable lines-around-comment */
-
 import { ExcalidrawApp } from '@jitsi/excalidraw';
+import clsx from 'clsx';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import clsx from 'clsx';
 
-// @ts-ignore
+// @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
+import { IReduxState } from '../../../app/types';
+import { getLocalParticipant } from '../../../base/participants/functions';
 // @ts-ignore
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
-// @ts-ignore
 import { getToolboxHeight } from '../../../toolbox/functions.web';
+// @ts-ignore
+import { shouldDisplayTileView } from '../../../video-layout/functions.any';
+import { WHITEBOARD_UI_OPTIONS } from '../../constants';
 import {
     getCollabDetails,
     getCollabServerUrl,
     isWhiteboardOpen,
     isWhiteboardVisible
 } from '../../functions';
-// @ts-ignore
-import { shouldDisplayTileView } from '../../../video-layout/functions.any';
-import { getLocalParticipant } from '../../../base/participants/functions';
-import { WHITEBOARD_UI_OPTIONS } from '../../constants';
-import { IState } from '../../../app/types';
 
 /**
  * Space taken by meeting elements like the subject and the watermark.
  */
 const HEIGHT_OFFSET = 80;
-
-declare const interfaceConfig: any;
 
 interface IDimensions {
 
@@ -52,12 +47,12 @@ const Whiteboard: () => JSX.Element = () => {
     const isOpen = useSelector(isWhiteboardOpen);
     const isVisible = useSelector(isWhiteboardVisible);
     const isInTileView = useSelector(shouldDisplayTileView);
-    const { clientHeight, clientWidth } = useSelector((state: IState) => state['features/base/responsive-ui']);
-    const { visible: filmstripVisible, isResizing } = useSelector((state: IState) => state['features/filmstrip']);
+    const { clientHeight, clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const { visible: filmstripVisible, isResizing } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const filmstripWidth: number = useSelector(getVerticalViewMaxWidth);
     const collabDetails = useSelector(getCollabDetails);
     const collabServerUrl = useSelector(getCollabServerUrl);
-    const { defaultRemoteDisplayName } = useSelector((state: IState) => state['features/base/config']);
+    const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const localParticipantName = useSelector(getLocalParticipant)?.name || defaultRemoteDisplayName || 'Fellow Jitster';
 
     useEffect(() => {

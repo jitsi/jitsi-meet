@@ -1,18 +1,17 @@
-/* eslint-disable lines-around-comment */
-import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { translate } from '../../../base/i18n/functions';
+import Popover from '../../../base/popover/components/Popover.web';
 
 import HangupToggleButton from './HangupToggleButton';
 
 /**
  * The type of the React {@code Component} props of {@link HangupMenuButton}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * ID of the menu that is controlled by this button.
@@ -40,14 +39,14 @@ interface Props extends WithTranslation {
  *
  * @augments Component
  */
-class HangupMenuButton extends Component<Props> {
+class HangupMenuButton extends Component<IProps> {
     /**
      * Initializes a new {@code HangupMenuButton} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -82,17 +81,18 @@ class HangupMenuButton extends Component<Props> {
 
         return (
             <div className = 'toolbox-button-wth-dialog context-menu'>
-                <InlineDialog
+                <Popover
                     content = { children }
-                    isOpen = { isOpen }
-                    onClose = { this._onCloseDialog }
-                    placement = 'top-end'>
+                    onPopoverClose = { this._onCloseDialog }
+                    position = 'top'
+                    trigger = 'click'
+                    visible = { isOpen }>
                     <HangupToggleButton
                         customClass = 'hangup-menu-button'
                         handleClick = { this._toggleDialogVisibility }
                         isOpen = { isOpen }
                         onKeyDown = { this._onEscClick } />
-                </InlineDialog>
+                </Popover>
             </div>
         );
     }

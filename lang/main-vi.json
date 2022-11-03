@@ -56,6 +56,7 @@
             "title": "Nhập tên của bạn để tán gẫu",
             "titleWithPolls": "Nhập tên của bạn để tán gẫu"
         },
+        "sendButton": "Gửi",
         "title": "Tán gẫu",
         "titleWithPolls": "Tán gẫu",
         "you": "bạn"
@@ -387,6 +388,7 @@
         "signedInAs": "Bạn đang đăng nhập theo:",
         "start": "Bắt đầu phát trực tuyến",
         "streamIdHelp": "Đây là gì?",
+        "title": "Phát trực tuyến",
         "unavailableTitle": "Không Live Stream được"
     },
     "localRecording": {
@@ -515,6 +517,7 @@
         "serviceName": "Dịch vụ ghi hình",
         "signIn": "Đăng nhập",
         "signOut": "Đăng xuất",
+        "title": "Đang ghi âm",
         "unavailable": "Rất tiếc! Dịch vụ {{serviceName}} đang không sẵn sàng. Chúng tôi đang xử lý vấn đề này. Vui lòng thử lại sau.",
         "unavailableTitle": "Ghi hình không hoạt động."
     },

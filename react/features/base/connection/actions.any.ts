@@ -1,13 +1,136 @@
 import _ from 'lodash';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import {
     appendURLParam,
     getBackendSafeRoomName,
     parseURIString
 } from '../util/uri';
 
+import {
+    CONNECTION_DISCONNECTED,
+    CONNECTION_ESTABLISHED,
+    CONNECTION_FAILED,
+    SET_LOCATION_URL
+} from './actionTypes';
 import logger from './logger';
+
+/**
+ * The error structure passed to the {@link connectionFailed} action.
+ *
+ * Note there was an intention to make the error resemble an Error instance (to
+ * the extent that jitsi-meet needs it).
+ */
+export type ConnectionFailedError = {
+
+    /**
+     * The invalid credentials that were used to authenticate and the
+     * authentication failed.
+     */
+    credentials?: {
+
+        /**
+         * The XMPP user's ID.
+         */
+        jid: string;
+
+        /**
+         * The XMPP user's password.
+         */
+        password: string;
+    };
+
+    /**
+     * The details about the connection failed event.
+     */
+    details?: Object;
+
+    /**
+     * Error message.
+     */
+    message?: string;
+
+    /**
+     * One of {@link JitsiConnectionError} constants (defined in
+     * lib-jitsi-meet).
+     */
+    name: string;
+
+    /**
+     * Indicates whether this event is recoverable or not.
+     */
+    recoverable?: boolean;
+};
+
+/**
+ * Create an action for when the signaling connection has been lost.
+ *
+ * @param {JitsiConnection} connection - The {@code JitsiConnection} which
+ * disconnected.
+ * @private
+ * @returns {{
+ *     type: CONNECTION_DISCONNECTED,
+ *     connection: JitsiConnection
+ * }}
+ */
+export function connectionDisconnected(connection: Object) {
+    return {
+        type: CONNECTION_DISCONNECTED,
+        connection
+    };
+}
+
+/**
+ * Create an action for when the signaling connection has been established.
+ *
+ * @param {JitsiConnection} connection - The {@code JitsiConnection} which was
+ * established.
+ * @param {number} timeEstablished - The time at which the
+ * {@code JitsiConnection} which was established.
+ * @public
+ * @returns {{
+ *     type: CONNECTION_ESTABLISHED,
+ *     connection: JitsiConnection,
+ *     timeEstablished: number
+ * }}
+ */
+export function connectionEstablished(
+        connection: Object, timeEstablished: number) {
+    return {
+        type: CONNECTION_ESTABLISHED,
+        connection,
+        timeEstablished
+    };
+}
+
+/**
+ * Create an action for when the signaling connection could not be created.
+ *
+ * @param {JitsiConnection} connection - The {@code JitsiConnection} which
+ * failed.
+ * @param {ConnectionFailedError} error - Error.
+ * @public
+ * @returns {{
+ *     type: CONNECTION_FAILED,
+ *     connection: JitsiConnection,
+ *     error: ConnectionFailedError
+ * }}
+ */
+export function connectionFailed(
+        connection: Object,
+        error: ConnectionFailedError) {
+    const { credentials } = error;
+
+    if (credentials && !Object.keys(credentials).length) {
+        error.credentials = undefined;
+    }
+
+    return {
+        type: CONNECTION_FAILED,
+        connection,
+        error
+    };
+}
 
 /**
  * Constructs options to be passed to the constructor of {@code JitsiConnection}
@@ -17,7 +140,7 @@ import logger from './logger';
  * @returns {Object} The options to be passed to the constructor of
  * {@code JitsiConnection}.
  */
-export function constructOptions(state: IState) {
+export function constructOptions(state: IReduxState) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
     const options = _.cloneDeep(state['features/base/config']);
@@ -69,4 +192,21 @@ export function constructOptions(state: IState) {
     }
 
     return options;
+}
+
+/**
+ * Sets the location URL of the application, connection, conference, etc.
+ *
+ * @param {URL} [locationURL] - The location URL of the application,
+ * connection, conference, etc.
+ * @returns {{
+ *     type: SET_LOCATION_URL,
+ *     locationURL: URL
+ * }}
+ */
+export function setLocationURL(locationURL?: URL) {
+    return {
+        type: SET_LOCATION_URL,
+        locationURL
+    };
 }

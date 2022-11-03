@@ -9,9 +9,8 @@ import { makeStyles } from 'tss-react/mui';
 
 import { createGifSentEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import Input from '../../../base/ui/components/web/Input';
-// @ts-ignore
 import { sendMessage } from '../../../chat/actions.any';
 import { SCROLL_SIZE } from '../../../filmstrip/constants';
 import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
@@ -19,12 +18,14 @@ import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
-// @ts-ignore
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
-// @ts-ignore
 import { setGifDrawerVisibility } from '../../actions';
-// @ts-ignore
-import { formatGifUrlMessage, getGifAPIKey, getGifUrl } from '../../functions';
+import {
+    formatGifUrlMessage,
+    getGifAPIKey,
+    getGifRating,
+    getGifUrl
+} from '../../function.any';
 
 const OVERFLOW_DRAWER_PADDING = 16;
 
@@ -91,13 +92,14 @@ function GifsMenu() {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const overflowDrawer: boolean = useSelector(showOverflowDrawer);
-    const { clientWidth } = useSelector((state: IState) => state['features/base/responsive-ui']);
+    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const rating = useSelector(getGifRating);
 
     const fetchGifs = useCallback(async (offset = 0) => {
         const options: TrendingOptions = {
-            rating: 'pg-13',
             limit: 20,
-            offset
+            offset,
+            rating
         };
 
         if (!searchKey) {

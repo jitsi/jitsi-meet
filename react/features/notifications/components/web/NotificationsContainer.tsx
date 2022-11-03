@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { FlagGroupContext } from '@atlaskit/flag/flag-group';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import { Theme } from '@mui/material';
@@ -8,18 +7,16 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import { hideNotification } from '../../actions';
-// @ts-ignore
 import { areThereNotifications } from '../../functions';
 
 // @ts-ignore
 import Notification from './Notification';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Whether we are a SIP gateway or not.
@@ -125,7 +122,7 @@ const useStyles = (theme: Theme) => {
  *
  * @augments {Component}
  */
-class NotificationsContainer extends Component<Props> {
+class NotificationsContainer extends Component<IProps> {
     _api: Object;
     _timeouts: Map<string, number>;
 
@@ -134,7 +131,7 @@ class NotificationsContainer extends Component<Props> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._timeouts = new Map();
@@ -238,9 +235,9 @@ class NotificationsContainer extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     const { notifications } = state['features/notifications'];
     const { iAmSipGateway } = state['features/base/config'];
     const { isOpen: isChatOpen } = state['features/chat'];

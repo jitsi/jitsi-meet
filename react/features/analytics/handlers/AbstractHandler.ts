@@ -9,7 +9,7 @@ export interface IEvent {
     type?: string;
 }
 
-interface Options {
+interface IOptions {
     amplitudeAPPKey?: string;
     blackListedEvents?: string[];
     envType?: string;
@@ -38,7 +38,7 @@ export default class AbstractHandler {
      *
      * @param {Object} options - Optional parameters.
      */
-    constructor(options: Options = {}) {
+    constructor(options: IOptions = {}) {
         this._enabled = false;
         this._whiteListedEvents = options.whiteListedEvents;
 

@@ -16,9 +16,7 @@ import { admitMultiple } from '../../../lobby/actions.web';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
-// @ts-ignore
-import { showOverflowDrawer } from '../../../toolbox/functions';
-// @ts-ignore
+import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 
 // @ts-ignore

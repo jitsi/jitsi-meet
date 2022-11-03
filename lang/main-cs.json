@@ -72,6 +72,7 @@
         },
         "noMessagesMessage": "V setkání zatím nejsou žádné zprávy. Tady můžete začít konverzaci!",
         "privateNotice": "Soukromá zpráva pro {{recipient}}",
+        "sendButton": "Odeslat",
         "title": "Zprávy",
         "titleWithPolls": "Zprávy",
         "you": "vy"
@@ -350,7 +351,7 @@
         "veryGood": "Velmi dobrá"
     },
     "helpView": {
-        "header": "Centrum pomoci"
+        "title": "Centrum pomoci"
     },
     "incomingCall": {
         "answer": "Odpovědět",
@@ -451,6 +452,7 @@
         "signedInAs": "Nyní jste přihlášen(a) jako:",
         "start": "Spustit živý přenos",
         "streamIdHelp": "Co je tohle?",
+        "title": "Živý přenos",
         "unavailableTitle": "Živý přenos není dostupný",
         "youtubeTerms": "Podmínky používání YouTube"
     },
@@ -485,6 +487,7 @@
         "passwordField": "Zadejte heslo setkání",
         "passwordJoinButton": "Vstoupit",
         "reject": "Odmítnout",
+        "title": "Předsálí",
         "toggleLabel": "Zapnout předsálí"
     },
     "localRecording": {
@@ -666,6 +669,7 @@
         "serviceName": "Nahrávací služba",
         "signIn": "Přihlásit se",
         "signOut": "Odhlásit se",
+        "title": "Nahrávání",
         "unavailable": "Jejda! Služba {{serviceName}} není dostupná. Problém se snažíme vyřešit. Zkuste to prosím později.",
         "unavailableTitle": "Nahrávání nedostupné"
     },

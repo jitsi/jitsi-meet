@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "",
         "privateNotice": "",
+        "sendButton": "Trimiteți",
         "title": "Apel video",
         "titleWithPolls": "Apel video",
         "you": ""
@@ -400,6 +401,7 @@
         "signedInAs": "Sunteți conectat ca:",
         "start": "Începeți o transmitere live",
         "streamIdHelp": "Ce înseamnă acest lucru?",
+        "title": "Transmitere live",
         "unavailableTitle": "Transmitere live indisponibilă",
         "youtubeTerms": "Termeni și condiții Youtube"
     },
@@ -515,6 +517,7 @@
         "serviceName": "Serviciu înregistrare",
         "signIn": "Conectare",
         "signOut": "Deconectare",
+        "title": "Înregistrare",
         "unavailable": "Oops! Serviciul {{serviceName}} este indisponibil momentan. Se lucrează la remedierea acestei probleme. Vă rugam să încercați mai tărziu.",
         "unavailableTitle": "Înregistrare indisponibilă"
     },

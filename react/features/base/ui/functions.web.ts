@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { adaptV4Theme, createTheme } from '@mui/material/styles';
 
-import { Palette as Palette1, Typography } from '../ui/types';
+import { ITypography, IPalette as Palette1 } from '../ui/types';
 
 import { createColorTokens } from './utils';
 
@@ -9,7 +10,7 @@ declare module '@mui/material/styles' {
     interface Palette extends Palette1 {}
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface TypographyVariants extends Typography {}
+    interface TypographyVariants extends ITypography {}
 }
 
 interface ThemeProps {
@@ -44,3 +45,17 @@ export function createWebTheme({ font, colors, colorMap, shape, spacing, typogra
     }));
 }
 
+/**
+ * Find the first styled ancestor component of an element.
+ *
+ * @param {HTMLElement|null} target - Element to look up.
+ * @param {string} cssClass - Styled component reference.
+ * @returns {HTMLElement|null} Ancestor.
+ */
+export const findAncestorByClass = (target: HTMLElement | null, cssClass: string): HTMLElement | null => {
+    if (!target || target.classList.contains(cssClass)) {
+        return target;
+    }
+
+    return findAncestorByClass(target.parentElement, cssClass);
+};

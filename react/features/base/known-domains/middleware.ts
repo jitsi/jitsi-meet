@@ -1,4 +1,3 @@
-// @ts-ignore
 import { getDefaultURL } from '../../app/functions';
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT } from '../app/actionTypes';

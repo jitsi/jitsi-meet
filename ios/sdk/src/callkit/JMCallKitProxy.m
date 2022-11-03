@@ -253,7 +253,7 @@ static CXProviderConfiguration *_providerConfiguration = nil;
     // XXX keep track of muted actions to avoid "ping-pong"ing. See
     // JMCallKitEmitter for details on the CXSetMutedCallAction handling.
     for (CXAction *action in transaction.actions) {
-        if ([CXAction isKindOfClass:[CXSetMutedCallAction class]]) {
+        if ([action isKindOfClass:[CXSetMutedCallAction class]]) {
             [self.emitter addMuteAction:action.UUID];
         }
     }

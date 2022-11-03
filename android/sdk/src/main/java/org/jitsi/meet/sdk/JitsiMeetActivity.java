@@ -31,7 +31,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.modules.core.PermissionListener;
 
-import org.wonday.orientation.OrientationActivityLifecycle;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
@@ -104,7 +103,6 @@ public class JitsiMeetActivity extends AppCompatActivity
         this.jitsiView = findViewById(R.id.jitsiView);
 
         registerForBroadcastMessages();
-        registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
 
         if (!extraInitialize()) {
             initialize();

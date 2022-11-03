@@ -1,4 +1,4 @@
-export interface Answer {
+export interface IAnswer {
 
     /**
      * An array of boolean: true if the answer was chosen by the responder, else false.
@@ -16,18 +16,18 @@ export interface Answer {
     voterId: string;
 
     /**
-     * Name of the voter.
+     * Name of the voter for this answer.
      */
-    voterName: string;
+    voterName?: string;
 }
 
-export interface Poll {
+export interface IPoll {
 
     /**
      * An array of answers:
      * the name of the answer name and a map of ids and names of voters voting for this option.
      */
-    answers: Array<{ name: string; voters: Map<string, string>; }>;
+    answers: Array<{ name: string; voters: Array<string>; }>;
 
     /**
      * Whether the poll vote is being edited/changed.
@@ -51,17 +51,11 @@ export interface Poll {
     senderId: string;
 
     /**
-     * Name of the sender of this poll
-     * Store poll sender name in case they exit the call.
-     */
-    senderName: string;
-
-    /**
      * Whether the results should be shown instead of the answer form.
      */
     showResults: boolean;
 }
 
-export interface PollData extends Poll {
+export interface IPollData extends IPoll {
     id: string;
 }

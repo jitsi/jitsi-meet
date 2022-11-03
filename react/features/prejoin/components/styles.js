@@ -2,15 +2,9 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 const SECONDARY_COLOR = BaseTheme.palette.border04;
 
-const preJoinText = {
-    ...BaseTheme.typography.heading5,
-    color: BaseTheme.palette.text01,
-    textAlign: 'center'
-};
-
 export default {
-    prejoinButton: {
-        marginTop: BaseTheme.spacing[3]
+    joinButton: {
+        marginVertical: BaseTheme.spacing[3]
     },
 
     buttonStylesBorderless: {
@@ -21,7 +15,7 @@ export default {
         style: {
             flexDirection: 'row',
             justifyContent: 'center',
-            marginHorizontal: BaseTheme.spacing[3],
+            margin: BaseTheme.spacing[3],
             height: 24,
             width: 24
         },
@@ -38,47 +32,45 @@ export default {
     },
 
     largeVideoContainer: {
-        minHeight: '50%'
+        minHeight: '60%'
     },
 
     largeVideoContainerWide: {
         height: '100%',
         marginRight: 'auto',
         position: 'absolute',
-        width: '50%'
+        width: '60%'
     },
 
     contentContainer: {
         alignSelf: 'center',
         display: 'flex',
         justifyContent: 'center',
-        minHeight: '50%',
-        paddingHorizontal: BaseTheme.spacing[3],
+        minHeight: '40%',
+        padding: BaseTheme.spacing[3],
         width: 400
     },
 
     contentContainerWide: {
-        alignItems: 'center',
+        alignSelf: 'center',
         height: '100%',
         justifyContent: 'center',
-        left: '50%',
-        paddingHorizontal: BaseTheme.spacing[3],
+        left: '60%',
+        padding: BaseTheme.spacing[3],
         position: 'absolute',
-        width: '50%'
+        width: '40%'
     },
 
     toolboxContainer: {
         alignSelf: 'center',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: BaseTheme.spacing[3]
+        justifyContent: 'center'
     },
 
     toolboxContainerWide: {
         flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: BaseTheme.spacing[3]
+        justifyContent: 'center'
     },
 
     formWrapper: {
@@ -94,15 +86,23 @@ export default {
         borderWidth: 2,
         color: BaseTheme.palette.text06,
         height: BaseTheme.spacing[7],
-        marginTop: BaseTheme.spacing[3],
         textAlign: 'center'
     },
 
-    preJoinTitle: {
-        ...preJoinText
+    preJoinRoomName: {
+        ...BaseTheme.typography.heading5,
+        color: BaseTheme.palette.text01,
+        textAlign: 'center'
     },
 
-    preJoinRoomName: {
-        ...preJoinText
+    displayRoomNameBackdrop: {
+        alignSelf: 'center',
+        backgroundColor: BaseTheme.palette.ui16,
+        bottom: BaseTheme.spacing[3],
+        borderRadius: 4,
+        margin: BaseTheme.spacing[3],
+        paddingHorizontal: BaseTheme.spacing[3],
+        paddingVertical: BaseTheme.spacing[1],
+        position: 'absolute'
     }
 };

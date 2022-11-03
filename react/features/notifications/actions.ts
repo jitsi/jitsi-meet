@@ -19,6 +19,7 @@ import {
     SILENT_JOIN_THRESHOLD,
     SILENT_LEFT_THRESHOLD
 } from './constants';
+import { INotificationProps } from './types';
 
 /**
  * Function that returns notification timeout value based on notification timeout type.
@@ -89,23 +90,6 @@ export function setNotificationsEnabled(enabled: boolean) {
     };
 }
 
-interface INotificationProps {
-    appearance?: string;
-    concatText?: boolean;
-    customActionHandler?: Function[];
-    customActionNameKey?: string[];
-    description?: string;
-    descriptionKey?: string;
-    icon?: string;
-    sticky?: boolean;
-    title?: string;
-    titleArguments?: {
-        [key: string]: string;
-    };
-    titleKey?: string;
-    uid?: string;
-}
-
 /**
  * Queues an error notification for display.
  *
@@ -144,7 +128,7 @@ export function showNotification(props: INotificationProps = {}, type?: string) 
                 type: SHOW_NOTIFICATION,
                 props,
                 timeout: getNotificationTimeout(type, notificationTimeouts),
-                uid: props.uid || window.Date.now().toString()
+                uid: props.uid || Date.now().toString()
             });
         }
     };

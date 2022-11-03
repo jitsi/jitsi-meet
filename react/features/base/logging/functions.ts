@@ -2,7 +2,6 @@
 import Logger, { getLogger as _getLogger } from '@jitsi/logger';
 import _ from 'lodash';
 
-// @ts-ignore
 import LogTransport from './LogTransport';
 
 /**

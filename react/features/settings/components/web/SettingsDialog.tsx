@@ -3,11 +3,11 @@ import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
+import { getAvailableDevices } from '../../../base/devices/actions';
 // @ts-ignore
-import { getAvailableDevices } from '../../../base/devices';
-// @ts-ignore
-import { DialogWithTabs, hideDialog } from '../../../base/dialog';
+import { DialogWithTabs } from '../../../base/dialog';
+import { hideDialog } from '../../../base/dialog/actions';
 import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 // @ts-ignore
@@ -41,13 +41,11 @@ import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
 import SoundsTab from './SoundsTab';
 
-declare let interfaceConfig: any;
-
 /**
  * The type of the React {@code Component} props of
  * {@link ConnectedSettingsDialog}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Information about the tabs to be rendered.
@@ -79,7 +77,7 @@ type Props = {
      * welcome page or not.
      */
     isDisplayedOnWelcomePage: boolean;
-};
+}
 
 /**
  * Creates the styles for the component.
@@ -222,14 +220,14 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class SettingsDialog extends Component<Props> {
+class SettingsDialog extends Component<IProps> {
     /**
      * Initializes a new {@code ConnectedSettingsDialog} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code ConnectedSettingsDialog} instance with.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -295,7 +293,7 @@ class SettingsDialog extends Component<Props> {
  *     tabs: Array<Object>
  * }}
  */
-function _mapStateToProps(state: IState, ownProps: any) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { classes, isDisplayedOnWelcomePage } = ownProps;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 

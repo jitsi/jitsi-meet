@@ -5,20 +5,18 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { IReduxState } from '../../../app/types';
 import {
     requestDisableAudioModeration,
     requestDisableVideoModeration,
     requestEnableAudioModeration,
     requestEnableVideoModeration
-    // @ts-ignore
 } from '../../../av-moderation/actions';
 import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
-    // @ts-ignore
 } from '../../../av-moderation/functions';
-// @ts-ignore
-import { openDialog } from '../../../base/dialog';
+import { openDialog } from '../../../base/dialog/actions';
 import {
     IconCheck,
     IconHorizontalPoints,
@@ -31,7 +29,6 @@ import {
 } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
-// @ts-ignore
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import {
     openSettingsDialog,
@@ -71,7 +68,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-type Props = {
+interface IProps {
 
     /**
      * Whether the menu is open.
@@ -87,11 +84,11 @@ type Props = {
      * Callback for the mouse leaving this item.
      */
     onMouseLeave?: (e?: React.MouseEvent) => void;
-};
+}
 
-export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {
+export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProps) => {
     const dispatch = useDispatch();
-    const isModerationSupported = useSelector(isAvModerationSupported);
+    const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
     const allModerators = useSelector(isEveryoneModerator);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
     const participantCount = useSelector(getParticipantCount);

@@ -1,4 +1,3 @@
-import { MediaType } from '../media/constants';
 import { PARTICIPANT_ID_CHANGED } from '../participants/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
@@ -14,48 +13,7 @@ import {
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_WILL_CREATE
 } from './actionTypes';
-
-export interface ITrack {
-    isReceivingData: boolean;
-    jitsiTrack: any;
-    lastMediaEvent?: string;
-    local: boolean;
-    mediaType: MediaType;
-    mirror: boolean;
-    muted: boolean;
-    noDataFromSourceNotificationInfo?: {
-        timeout?: number;
-        uid?: string;
-    };
-    participantId: string;
-    streamingStatus?: string;
-    videoStarted: boolean;
-    videoType?: string | null;
-}
-
-/**
- * Track type.
- *
- * @typedef {object} Track
- * @property {JitsiLocalTrack|JitsiRemoteTrack} jitsiTrack - The associated
- * {@code JitsiTrack} instance. Optional for local tracks if those are still
- * being created (ie {@code getUserMedia} is still in progress).
- * @property {Promise} [gumProcess] - If a local track is still being created,
- * it will have no {@code JitsiTrack}, but a {@code gumProcess} set to a
- * {@code Promise} with and extra {@code cancel()}.
- * @property {boolean} local=false - If the track is local.
- * @property {MEDIA_TYPE} mediaType=false - The media type of the track.
- * @property {boolean} mirror=false - The indicator which determines whether the
- * display/rendering of the track should be mirrored. It only makes sense in the
- * context of video (at least at the time of this writing).
- * @property {boolean} muted=false - If the track is muted.
- * @property {(string|undefined)} participantId - The ID of the participant whom
- * the track belongs to.
- * @property {boolean} videoStarted=false - If the video track has already
- * started to play.
- * @property {(VIDEO_TYPE|undefined)} videoType - The type of video track if
- * any.
- */
+import { ITrack } from './types';
 
 /**
  * Reducer function for a single track.

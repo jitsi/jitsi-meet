@@ -3,7 +3,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 
-type Props = {
+interface IProps {
 
     /**
      * The component(s) that need to be scrollable on mobile.
@@ -20,7 +20,7 @@ type Props = {
      */
     isModal: boolean;
 
-};
+}
 
 const useStyles = makeStyles()(() => {
     return {
@@ -40,7 +40,7 @@ const useStyles = makeStyles()(() => {
  *
  * @returns {ReactElement}
  */
-function TouchmoveHack({ children, isModal, flex }: Props) {
+function TouchmoveHack({ children, isModal, flex }: IProps) {
     if (!isModal || !isMobileBrowser()) {
         return children;
     }

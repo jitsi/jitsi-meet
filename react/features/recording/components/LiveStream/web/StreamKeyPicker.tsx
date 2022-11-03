@@ -8,7 +8,7 @@ import { YOUTUBE_LIVE_DASHBOARD_URL } from '../constants';
 /**
  * The type of the React {@code Component} props of {@link StreamKeyPicker}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Broadcasts available for selection. Each broadcast item should be an
@@ -38,7 +38,7 @@ interface Props extends WithTranslation {
  *
  * @augments Component
  */
-class StreamKeyPicker extends PureComponent<Props> {
+class StreamKeyPicker extends PureComponent<IProps> {
     /**
      * Default values for {@code StreamKeyForm} component's properties.
      *
@@ -58,10 +58,10 @@ class StreamKeyPicker extends PureComponent<Props> {
     /**
      * Initializes a new {@code StreamKeyPicker} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code StreamKeyPicker} instance with.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

@@ -2,12 +2,12 @@
 import React from 'react';
 
 import { IconEventNote, IconRestore, IconSettings } from '../base/icons/svg';
-// @ts-ignore
 import BaseTheme from '../base/ui/components/BaseTheme';
 
 // @ts-ignore
 import TabIcon from './components/TabIcon';
 
+// @ts-ignore
 export const INACTIVE_TAB_COLOR = BaseTheme.palette.tab01Disabled;
 
 export const tabBarOptions = {
@@ -16,7 +16,7 @@ export const tabBarOptions = {
     tabBarLabelStyle: {
         fontSize: 12
     },
-    tabBarStyle: {
+    tabBarStyle: { // @ts-ignore
         backgroundColor: BaseTheme.palette.screen01Header
     }
 };

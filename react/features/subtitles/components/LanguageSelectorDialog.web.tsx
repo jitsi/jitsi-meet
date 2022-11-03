@@ -1,33 +1,63 @@
 /* eslint-disable lines-around-comment */
+import { Theme } from '@mui/material';
+import i18next from 'i18next';
 import React, { useCallback, useEffect, useState } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../app/types';
-// @ts-ignore
-import { Dialog } from '../../base/dialog';
+import { IReduxState } from '../../app/types';
 // @ts-ignore
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
+import { translate, translateToHTML } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
+import Dialog from '../../base/ui/components/web/Dialog';
+// @ts-ignore
+import { openSettingsDialog } from '../../settings/actions';
+import { SETTINGS_TABS } from '../../settings/constants';
 // @ts-ignore
 import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage } from '../actions';
 
-import LanguageList from './LanguageList';
+import LanguageList from './LanguageList.web';
 
-interface ILanguageSelectorDialogProps {
+
+interface ILanguageSelectorDialogProps extends WithTranslation {
     _language: string;
     _translationLanguages: Array<string>;
     _translationLanguagesHead: Array<string>;
-    t: Function;
 }
+
+const useStyles = makeStyles()((theme: Theme) => {
+    return {
+        paragraphWrapper: {
+            fontSize: 14,
+            margin: '10px 0px',
+            color: theme.palette.text01
+        },
+        spanWrapper: {
+            fontWeight: 700,
+            cursor: 'pointer',
+            color: theme.palette.link01,
+            '&:hover': {
+                backgroundColor: theme.palette.ui04,
+                color: theme.palette.link01Hover
+            }
+        }
+    };
+});
 
 /**
  * Component that renders the subtitle language selector dialog.
  *
  * @returns {React$Element<any>}
  */
-const LanguageSelectorDialog = ({ _language, _translationLanguages, _translationLanguagesHead }:
-                                    ILanguageSelectorDialogProps) => {
-
+const LanguageSelectorDialog = ({
+    t,
+    _language,
+    _translationLanguages,
+    _translationLanguagesHead
+}: ILanguageSelectorDialogProps) => {
+    const { classes: styles } = useStyles();
     const dispatch = useDispatch();
     const off = 'transcribing.subtitlesOff';
     const [ language, setLanguage ] = useState(off);
@@ -63,12 +93,24 @@ const LanguageSelectorDialog = ({ _language, _translationLanguages, _translation
         dispatch(toggleLanguageSelectorDialog());
     }, [ _language ]);
 
+    const onSourceLanguageClick = useCallback(() => {
+        dispatch(openSettingsDialog(SETTINGS_TABS.MORE, false));
+    }, []);
+
     return (
         <Dialog
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = 'transcribing.subtitles'
-            width = { 'small' }>
+            cancel = {{ hidden: true }}
+            ok = {{ hidden: true }}
+            titleKey = 'transcribing.subtitles'>
+            <p className = { styles.paragraphWrapper } >
+                {
+                    translateToHTML(t, 'transcribing.sourceLanguageDesc', {
+                        'sourceLanguage': t(`languages:${i18next.language}`).toLowerCase()
+                    })
+                }<span
+                    className = { styles.spanWrapper }
+                    onClick = { onSourceLanguageClick }>{t('transcribing.sourceLanguageHere')}.</span>
+            </p>
             <LanguageList
                 items = { listItems }
                 onLanguageSelected = { onLanguageSelected }
@@ -85,7 +127,7 @@ const LanguageSelectorDialog = ({ _language, _translationLanguages, _translation
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const { _language } = state['features/subtitles'];
     const { transcription } = state['features/base/config'];
@@ -101,4 +143,4 @@ function mapStateToProps(state: IState) {
     };
 }
 
-export default connect(mapStateToProps)(LanguageSelectorDialog);
+export default translate(connect(mapStateToProps)(LanguageSelectorDialog));

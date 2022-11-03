@@ -1,5 +1,4 @@
-// @ts-ignore
-import { getAppProp } from '../app';
+import { getAppProp } from '../app/functions';
 import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
 

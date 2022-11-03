@@ -2,17 +2,13 @@ import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getParticipantById } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { editMessage } from '../chat';
+import { editMessage } from '../chat/actions.any';
 import { MESSAGE_TYPE_REMOTE } from '../chat/constants';
 
 import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
 import { moveToRoom } from './actions';
 import logger from './logger';
 import { IRooms } from './types';
-
-declare const APP: any;
 
 /**
  * Registers a change handler for state['features/base/conference'].conference to
