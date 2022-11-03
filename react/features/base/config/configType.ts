@@ -494,7 +494,6 @@ export interface IConfig {
         };
         persist?: boolean;
         preferredCodec?: string;
-        resizeDesktopForPresenter?: boolean;
     };
     webhookProxyUrl?: string;
     webrtcIceTcpDisable?: boolean;

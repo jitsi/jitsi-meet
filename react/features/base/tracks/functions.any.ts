@@ -156,18 +156,6 @@ export function getLocalVideoTrack(tracks: ITrack[]) {
 }
 
 /**
- * Returns the media type of the local video, presenter or video.
- *
- * @param {ITrack[]} tracks - List of all tracks.
- * @returns {MEDIA_TYPE}
- */
-export function getLocalVideoType(tracks: ITrack[]) {
-    const presenterTrack = getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
-
-    return presenterTrack ? MEDIA_TYPE.PRESENTER : MEDIA_TYPE.VIDEO;
-}
-
-/**
  * Returns the stored local video track.
  *
  * @param {IReduxState} state - The redux state.
@@ -310,20 +298,7 @@ export function getTracksByMediaType(tracks: ITrack[], mediaType: MediaType) {
  * @returns {ITrack[]}
  */
 export function isLocalCameraTrackMuted(tracks: ITrack[]) {
-    const presenterTrack = getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
-    const videoTrack = getLocalTrack(tracks, MEDIA_TYPE.VIDEO);
-
-    // Make sure we check the mute status of only camera tracks, i.e.,
-    // presenter track when it exists, camera track when the presenter
-    // track doesn't exist.
-    if (presenterTrack) {
-        return isLocalTrackMuted(tracks, MEDIA_TYPE.PRESENTER);
-    } else if (videoTrack) {
-        return videoTrack.videoType === 'camera'
-            ? isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO) : true;
-    }
-
-    return true;
+    return isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
 }
 
 /**

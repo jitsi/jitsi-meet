@@ -194,8 +194,6 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
     dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
     if (getMultipleVideoSendingSupportFeatureFlag(state)) {
         dispatch(setScreenshareMuted(audioOnly, MEDIA_TYPE.SCREENSHARE, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
-    } else if (navigator.product !== 'ReactNative') {
-        dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.PRESENTER, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
     }
 
     return next(action);
@@ -300,8 +298,7 @@ function _setRoom({ dispatch, getState }, next, action) {
  */
 function _syncTrackMutedState({ getState }, track) {
     const state = getState()['features/base/media'];
-    const mediaType = track.mediaType === MEDIA_TYPE.PRESENTER
-        ? MEDIA_TYPE.VIDEO : track.mediaType;
+    const mediaType = track.mediaType;
     const muted = Boolean(state[mediaType].muted);
 
     // XXX If muted state of track when it was added is different from our media
@@ -310,8 +307,8 @@ function _syncTrackMutedState({ getState }, track) {
     // not yet in redux state and JitsiTrackEvents.TRACK_MUTE_CHANGED may be
     // fired before track gets to state.
     if (track.muted !== muted) {
-        sendAnalytics(createSyncTrackStateEvent(track.mediaType, muted));
-        logger.log(`Sync ${track.mediaType} track muted state to ${muted ? 'muted' : 'unmuted'}`);
+        sendAnalytics(createSyncTrackStateEvent(mediaType, muted));
+        logger.log(`Sync ${mediaType} track muted state to ${muted ? 'muted' : 'unmuted'}`);
 
         track.muted = muted;
         setTrackMuted(track.jitsiTrack, muted, state);

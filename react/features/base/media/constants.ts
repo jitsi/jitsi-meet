@@ -8,7 +8,7 @@ export const CAMERA_FACING_MODE = {
     USER: 'user'
 };
 
-export type MediaType = 'audio' | 'video' | 'presenter' | 'screenshare';
+export type MediaType = 'audio' | 'video' | 'screenshare';
 
 /**
  * The set of media types.
@@ -17,7 +17,6 @@ export type MediaType = 'audio' | 'video' | 'presenter' | 'screenshare';
  */
 export const MEDIA_TYPE: { [key: string]: MediaType; } = {
     AUDIO: 'audio',
-    PRESENTER: 'presenter',
     SCREENSHARE: 'screenshare',
     VIDEO: 'video'
 };

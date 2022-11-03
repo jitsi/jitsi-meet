@@ -2,7 +2,6 @@
 
 import $ from 'jquery';
 
-import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functions.any';
 import { openDialog } from '../base/dialog';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import {
@@ -11,7 +10,7 @@ import {
     getVirtualScreenshareParticipantByOwnerId,
     pinParticipant
 } from '../base/participants';
-import { getLocalDesktopTrack, getLocalVideoTrack, toggleScreensharing } from '../base/tracks';
+import { getLocalDesktopTrack, toggleScreensharing } from '../base/tracks';
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 import { isScreenVideoShared } from '../screen-share/functions';
 
@@ -511,9 +510,7 @@ export function sendStartRequest() {
     return (dispatch: Function, getState: Function) => {
         const state = getState();
         const tracks = state['features/base/tracks'];
-        const track = getMultipleVideoSendingSupportFeatureFlag(state)
-            ? getLocalDesktopTrack(tracks)
-            : getLocalVideoTrack(tracks);
+        const track = getLocalDesktopTrack(tracks);
         const { sourceId } = track?.jitsiTrack || {};
         const { transport } = state['features/remote-control'].receiver;
 
@@ -547,29 +544,19 @@ export function grant(participantId: string) {
         let promise;
         const state = getState();
         const tracks = state['features/base/tracks'];
-        const isMultiStreamSupportEnabled = getMultipleVideoSendingSupportFeatureFlag(state);
-        const track = isMultiStreamSupportEnabled ? getLocalDesktopTrack(tracks) : getLocalVideoTrack(tracks);
+        const track = getLocalDesktopTrack(tracks);
         const isScreenSharing = isScreenVideoShared(state);
         const { sourceType } = track?.jitsiTrack || {};
 
         if (isScreenSharing && sourceType === 'screen') {
             promise = dispatch(sendStartRequest());
-        } else if (isMultiStreamSupportEnabled) {
+        } else {
             promise = dispatch(toggleScreensharing(
                 true,
                 false,
-                true,
                 { desktopSharingSources: [ 'screen' ] }
             ))
             .then(() => dispatch(sendStartRequest()));
-        } else {
-            // FIXME: Use action here once toggleScreenSharing is moved to redux.
-            promise = APP.conference.toggleScreenSharing(
-                true,
-                {
-                    desktopSharingSources: [ 'screen' ]
-                })
-                .then(() => dispatch(sendStartRequest()));
         }
 
         const { conference } = state['features/base/conference'];
