@@ -83,7 +83,7 @@
         },
         "labels": {
             "buttonLabel": "Mode cotxe",
-            "title": "Mode conducció segura",
+            "title": "Mode cotxe",
             "videoStopped": "El vídeo està aturat"
         }
     },
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "Encara no hi ha cap missatge en aquesta reunió. Comenceu una conversa aquí!",
         "privateNotice": "Missatge privat per a {{recipient}}",
+        "sendButton": "Envia",
         "smileysPanel": "Tauler d'emojis",
         "tabs": {
             "chat": "Xat",
@@ -433,7 +434,7 @@
         "search": "Cerca a GIPHY"
     },
     "helpView": {
-        "header": "Centre d'ajuda"
+        "title": "Centre d'ajuda"
     },
     "incomingCall": {
         "answer": "Resposta",
@@ -545,6 +546,7 @@
         "signedInAs": "Teniu sessió iniciada com a:",
         "start": "Inicia la transmissió en directe",
         "streamIdHelp": "Què és això?",
+        "title": "Transmissió en directe",
         "unavailableTitle": "La transmissió en directe no és disponible",
         "youtubeTerms": "Condicions de servei de YouTube"
     },
@@ -587,6 +589,7 @@
         "passwordJoinButton": "Entra",
         "reject": "Rebuja",
         "rejectAll": "Rebutja-ho tot",
+        "title": "Sala d'espera",
         "toggleLabel": "Activa la sala d'espera"
     },
     "localRecording": {
@@ -723,13 +726,13 @@
             "videoModeration": "Activa'n el vídeo"
         },
         "close": "Tanca",
-        "header": "Participants",
         "headings": {
             "lobby": "Sala d'espera ({{count}})",
             "participantsList": "Participants de la reunió: ({{count}})",
             "waitingLobby": "A la sala d'espera ({{count}})"
         },
-        "search": "Cerca participants"
+        "search": "Cerca participants",
+        "title": "Participants"
     },
     "passwordDigitsOnly": "Fins a {{number}} dígits",
     "passwordSetRemotely": "Establerta per un altre participant",
@@ -838,7 +841,7 @@
         "ringing": "Està sonat..."
     },
     "privacyView": {
-        "header": "Privadesa"
+        "title": "Privadesa"
     },
     "profile": {
         "avatar": "avatar",
@@ -899,6 +902,7 @@
         "sessionAlreadyActive": "Aquesta sessió ja s'està enregistrant o emetent en directe.",
         "signIn": "Inicia la sessió",
         "signOut": "Tanca la sessió",
+        "title": "Enregistrament",
         "unavailable": "Vaja! El servei  {{serviceName}} ara mateix no és disponible. Treballem per a resoldre el problema. Torneu-ho a intentar més tard.",
         "unavailableTitle": "L'enregistrament no és disponible",
         "uploadToCloud": "Puja al núvol"
@@ -910,8 +914,8 @@
     "security": {
         "about": "Podeu afegir un $t(lockRoomPassword) a la reunió. Els participants hauran de proporcionar la $t(lockRoomPassword) abans de poder unir-s'hi.",
         "aboutReadOnly": "Els moderadors poden afegir una $t(lockRoomPassword) a la reunió. Caldrà que els participants proporcionin la $t(lockRoomPassword) abans per a ser autoritzats a entrar en la reunió.",
-        "header": "Opcions de seguretat",
-        "insecureRoomNameWarning": "El nom de la sala no és segur. Podrien unir-s'hi participants no desitjats. Considereu d'augmentar la seguretat de la reunió usant el botó dev seguretat."
+        "insecureRoomNameWarning": "El nom de la sala no és segur. Podrien unir-s'hi participants no desitjats. Considereu d'augmentar la seguretat de la reunió usant el botó dev seguretat.",
+        "title": "Opcions de seguretat"
     },
     "settings": {
         "calendar": {
@@ -1007,7 +1011,7 @@
         "title": "La videotrucada s'ha interromput perquè l'ordinador ha entrat en mode repòs."
     },
     "termsView": {
-        "header": "Condicions"
+        "title": "Condicions"
     },
     "toolbar": {
         "Settings": "Configuració",

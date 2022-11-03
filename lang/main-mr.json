@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "अद्याप मीटिंगमध्ये कोणतेही संदेश नाहीत. येथे संभाषण सुरू करा!",
         "privateNotice": "यांना खाजगी संदेश{{recipient}}",
+        "sendButton": "पाठवा",
         "title": "गप्पा",
         "titleWithPolls": "गप्पा",
         "you": "आपण"
@@ -305,7 +306,7 @@
         "veryGood": "खुप छान"
     },
     "helpView": {
-        "header": "मदत केंद्र"
+        "title": "मदत केंद्र"
     },
     "incomingCall": {
         "answer": "उत्तर",
@@ -404,6 +405,7 @@
         "signedInAs": "आपण सध्या म्हणून साइन इन केले आहे:",
         "start": "थेट प्रवाह सुरू करा",
         "streamIdHelp": "हे काय आहे?",
+        "title": "थेट प्रसारण",
         "unavailableTitle": "थेट प्रवाह अनुपलब्ध",
         "youtubeTerms": "YouTube सेवा अटी"
     },
@@ -553,6 +555,7 @@
         "serviceName": "रेकॉर्डिंग सेवा",
         "signIn": "साइन इन करा",
         "signOut": "साइन आउट करा",
+        "title": "मुद्रित करणे",
         "unavailable": " अरेरे! {{serviceName}} currently सध्या अनुपलब्ध आहे. आम्ही या समस्येचे निराकरण करण्याचे काम करीत आहोत. कृपया पुन्हा प्रयत्न करा.",
         "unavailableTitle": "रेकॉर्डिंग अनुपलब्ध"
     },

@@ -69,6 +69,7 @@
         },
         "noMessagesMessage": "Все още няма съобщения в срещата. Започнете разговор тук!",
         "privateNotice": "Лично съобщение до {{recipient}}",
+        "sendButton": "Изпрати",
         "title": "Текстови съобщения",
         "titleWithPolls": "Текстови съобщения",
         "you": "вие"
@@ -315,7 +316,7 @@
         "veryGood": "Много добро"
     },
     "helpView": {
-        "header": "Място за помощ"
+        "title": "Място за помощ"
     },
     "incomingCall": {
         "answer": "Вдигни",
@@ -414,6 +415,7 @@
         "signedInAs": "В момента сте влезли като:",
         "start": "Започни излъчване на живо",
         "streamIdHelp": "Какво е това?",
+        "title": "Излъчване на живо",
         "unavailableTitle": "Излъчването на живо е недостъпно",
         "youtubeTerms": "Условия за ползване на YouTube"
     },
@@ -449,6 +451,7 @@
         "passwordField": "Въведи парола за срещата",
         "passwordJoinButton": "Влез",
         "reject": "Откажи",
+        "title": "Лоби",
         "toggleLabel": "Включи лоби"
     },
     "localRecording": {
@@ -566,6 +569,7 @@
         "serviceName": "Записваща услуга",
         "signIn": "Влизане",
         "signOut": "Излизане",
+        "title": "Запис",
         "unavailable": "Упс! В момента {{serviceName}} е недостъпна. В момента се опитваме да решим проблема. Моля, опитайте отново малко по-късно.",
         "unavailableTitle": "Записът е невъзможен"
     },

@@ -95,6 +95,7 @@
         },
         "noMessagesMessage": "I a pas cap de messatge dins la conferéncia pel moment. Començat una conversacion aquí !",
         "privateNotice": "Messatge privat per {{recipient}}",
+        "sendButton": "Mandar",
         "smileysPanel": "Panèl d’Emoji",
         "tabs": {
             "chat": "Messatjariá",
@@ -407,7 +408,7 @@
         "veryGood": "Fòrça bona"
     },
     "helpView": {
-        "header": "Centre d’ajuda"
+        "title": "Centre d’ajuda"
     },
     "incomingCall": {
         "answer": "Uèi",
@@ -518,6 +519,7 @@
         "signedInAs": "Sètz connectat coma :",
         "start": "Aviar una difusion en dirècte",
         "streamIdHelp": "Qu’es aquò ?",
+        "title": "Difusion en dirècte",
         "unavailableTitle": "Difusion en dirècte indisponibla",
         "youtubeTerms": "Condicions d’utilizacion de YouTube"
     },
@@ -556,6 +558,7 @@
         "passwordJoinButton": "Rejónher",
         "reject": "Regetar",
         "rejectAll": "Tot regetar",
+        "title": "Sala d'espèra",
         "toggleLabel": "Activar la sala d'espèra"
     },
     "localRecording": {
@@ -685,13 +688,13 @@
             "videoModeration": "Aviar lor vidèo"
         },
         "close": "Tancar",
-        "header": "Participants",
         "headings": {
             "lobby": "Sala d’espèra ({{count}})",
             "participantsList": "Participants de la conferéncia ({{count}})",
             "waitingLobby": "Dins la sala d'espèra ({{count}})"
         },
-        "search": "Cercar participants"
+        "search": "Cercar participants",
+        "title": "Participants"
     },
     "passwordDigitsOnly": "Fins a {{number}} chifras",
     "passwordSetRemotely": "causit per qualqu'un mai",
@@ -799,7 +802,7 @@
         "ringing": "A sonar…"
     },
     "privacyView": {
-        "header": "Confidencialitat"
+        "title": "Confidencialitat"
     },
     "profile": {
         "avatar": "avatar",
@@ -842,6 +845,7 @@
         "sessionAlreadyActive": "Aquesta session es ja en cors d’enregistrament o en difusion en dirèct.",
         "signIn": "Connexion",
         "signOut": "Se desconnectar",
+        "title": "Enregistrament",
         "unavailable": "Ops ! Lo {{serviceName}} es pas disponible pel moment. Sèm a reglar aqueste problèma. Mercés de tornar ensajar mai tard.",
         "unavailableTitle": "Enregistrament indisponible",
         "uploadToCloud": "Enviar al cloud"
@@ -948,7 +952,7 @@
         "title": "Vòstra conferéncia vidèo es estada arrestada perque vòstre ordenador se botèt en velha."
     },
     "termsView": {
-        "header": "Acòrds"
+        "title": "Acòrds"
     },
     "toolbar": {
         "Settings": "Paramètres",

@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "אין עדיין הודעות בפגישה. התחל שיחה כאן!",
         "privateNotice": "הודעה פרטית אל {{recipient}}",
+        "sendButton": "שלח",
         "title": "צ'אט",
         "titleWithPolls": "צ'אט",
         "you": "אתה"
@@ -300,7 +301,7 @@
         "veryGood": "מעולה"
     },
     "helpView": {
-        "header": "מרכז העזרה"
+        "title": "מרכז העזרה"
     },
     "incomingCall": {
         "answer": "תשובה",
@@ -399,6 +400,7 @@
         "signedInAs": "אתה מחובר כעת כ:",
         "start": "התחל שידור חי",
         "streamIdHelp": "מה זה?",
+        "title": "שידור חי",
         "unavailableTitle": "שידור חי לא זמין",
         "youtubeTerms": "תנאי השירות של יוטיוב"
     },
@@ -521,6 +523,7 @@
         "serviceName": "שירותי הקלטה",
         "signIn": "התחבר",
         "signOut": "התנתק",
+        "title": "מקליט",
         "unavailable": "אופס! {{ServiceName}} אינו זמין כרגע. אנו עובדים על פיתרון הבעיה. אנא נסה שוב מאוחר יותר.",
         "unavailableTitle": "הקלטה אינה זמינה"
     },

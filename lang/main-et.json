@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Kirjavahetust pole veel alustatud. Alusta kirjavahetust siin!",
         "privateNotice": "Privaatsõnum kasutajale {{recipient}}",
+        "sendButton": "Saada",
         "title": "Kõne",
         "titleWithPolls": "Kõne",
         "you": "you"
@@ -394,6 +395,7 @@
         "signedInAs": "Oled sisse logitud kasutajana:",
         "start": "Alusta otseülekannet.",
         "streamIdHelp": "Mis see on?",
+        "title": "Otseülekanne",
         "unavailableTitle": "Otseülekanne pole kättesaadav."
     },
     "localRecording": {
@@ -511,6 +513,7 @@
         "serviceName": "Salvestamise teenus",
         "signIn": "Logi sisse",
         "signOut": "Logi välja",
+        "title": "Salvetamine",
         "unavailable": "Oih! {{serviceName}} ei ole hetkel kättesaadav! Proovi hiljem uuesti.",
         "unavailableTitle": "Salvestamine ei ole võimalik."
     },

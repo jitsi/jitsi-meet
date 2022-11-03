@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "Njejsu hišće powěsće w tutej konferency. Započće z rozmołwu tule!",
         "privateNotice": "priwatna powěsć na {{recipient}}",
+        "sendButton": "pósłać",
         "smileysPanel": "wuběr emojijow",
         "tabs": {
             "chat": "chatować",
@@ -433,7 +434,7 @@
         "search": "GIPHY přepytać"
     },
     "helpView": {
-        "header": "pomoc"
+        "title": "pomoc"
     },
     "incomingCall": {
         "answer": "wotmołwić",
@@ -545,6 +546,7 @@
         "signedInAs": "Wy sće přizjewjeny jako:",
         "start": "live-stream startować",
         "streamIdHelp": "Što to je?",
+        "title": "live-stream",
         "unavailableTitle": "live-streaming njeje wužiwajomny",
         "youtubeTerms": "wuměnjenja wužiwanja na YouTube"
     },
@@ -587,6 +589,7 @@
         "passwordJoinButton": "přistupić",
         "reject": "wotpokazać",
         "rejectAll": "wšitko wotpokazać",
+        "title": "lobby",
         "toggleLabel": "lobby aktiwěrować"
     },
     "localRecording": {
@@ -725,13 +728,13 @@
             "videoModeration": "kameru zaspinyć"
         },
         "close": "začinić",
-        "header": "přitomni",
         "headings": {
             "lobby": "lobby ({{count}})",
             "participantsList": "přitomni ({{count}})",
             "waitingLobby": "w lobbyji ({{count}})"
         },
-        "search": "přitomnych pytać"
+        "search": "přitomnych pytać",
+        "title": "přitomni"
     },
     "passwordDigitsOnly": "hač do {{number}} cyfrow",
     "passwordSetRemotely": "wot druheho wobdźělnika postajene",
@@ -840,7 +843,7 @@
         "ringing": "zwoni …"
     },
     "privacyView": {
-        "header": "datowy škit"
+        "title": "datowy škit"
     },
     "profile": {
         "avatar": "wobraz wužiwarja/awatar",
@@ -904,6 +907,7 @@
         "signIn": "přizjewić",
         "signOut": "wotzjewić",
         "surfaceError": "prošu aktualny tab wužiwać",
+        "title": "nahrawanje",
         "unavailable": "Ow! {{serviceName}} tuchwilu wužiwajomny njeje. Dźěłamy na rozrisanju problema. Prošu pozdźišo znowa spytać .",
         "unavailableTitle": "nahrawanje njeje wužiwajomne",
         "uploadToCloud": "do cloud přenošować"
@@ -915,8 +919,8 @@
     "security": {
         "about": "Móžeće Wašu konferencu z hesłom škitać. Wobdźělnicy dyrbja tute zapodać, prjedy hač smědźa so na konferency wobdźělić.",
         "aboutReadOnly": " Moderatorojo móža konferencu z hesłom škitać. Wobdźělnicy dyrbja tute zapodać, prjedy hač smědźa so wobdźělić.",
-        "header": "opcije wěstoty",
-        "insecureRoomNameWarning": "Mjeno ruma je njewěste. Njewitani wobdźělnicy móhli Wašej konferency přistupić."
+        "insecureRoomNameWarning": "Mjeno ruma je njewěste. Njewitani wobdźělnicy móhli Wašej konferency přistupić.",
+        "title": "opcije wěstoty"
     },
     "settings": {
         "calendar": {
@@ -1013,7 +1017,7 @@
         "title": "Konferenca bu přetorhnjena, dokelž bu standby-modus aktiwěrowany."
     },
     "termsView": {
-        "header": "wuměnjenja za wužiwanje"
+        "title": "wuměnjenja za wužiwanje"
     },
     "toolbar": {
         "Settings": "nastajenja",

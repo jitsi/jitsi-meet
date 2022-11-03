@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
+        "sendButton": "Kirim",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "you"
@@ -300,7 +301,7 @@
         "veryGood": "Very Good"
     },
     "helpView": {
-        "header": "Help centre"
+        "title": "Help centre"
     },
     "incomingCall": {
         "answer": "Answer",
@@ -351,7 +352,7 @@
         "searchCallOnlyPlaceholder": "Enter phone number",
         "searchPeopleOnlyPlaceholder": "Search for participants",
         "searchPlaceholder": "Participant or phone number",
-        "send": "Send"
+        "send": "Kirim"
     },
     "keyboardShortcuts": {
         "focusLocal": "Focus on your video",
@@ -399,6 +400,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
+        "title": "Live Stream",
         "unavailableTitle": "Live Streaming unavailable",
         "youtubeTerms": "YouTube terms of services"
     },
@@ -521,6 +523,7 @@
         "serviceName": "Recording service",
         "signIn": "Sign in",
         "signOut": "Sign out",
+        "title": "Recording",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable"
     },

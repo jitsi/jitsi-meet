@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Der er ikke nogen beskeder i mødet endnu. Skriv noget!",
         "privateNotice": "Privat besked til {{recipient}}",
+        "sendButton": "Send",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "Dig"
@@ -395,6 +396,7 @@
         "signedInAs": "Du er pt. logget ind som:",
         "start": "Start en livestream",
         "streamIdHelp": "Hvad er dette?",
+        "title": "Livestream",
         "unavailableTitle": "Livestreaming er ikke tilgængelig"
     },
     "localRecording": {
@@ -508,6 +510,7 @@
         "serviceName": "Optagelsesservice",
         "signIn": "Log ind",
         "signOut": "Log ud",
+        "title": "Optager",
         "unavailable": "Optagelsesservice {{serviceName}} er ikke tilgængelig. Der arbejdes på at løse problemet, forsøg igen senere.",
         "unavailableTitle": "Optagelse ikke tilgængelig"
     },

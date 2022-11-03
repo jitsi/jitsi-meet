@@ -438,7 +438,7 @@
         "search": "Traži GIPHY"
     },
     "helpView": {
-        "header": "Centar pomoći"
+        "title": "Centar pomoći"
     },
     "incomingCall": {
         "answer": "Odgovori",
@@ -743,13 +743,13 @@
             "videoModeration": "Pokrenu vlastiti video"
         },
         "close": "Zatvori",
-        "header": "Sudionici",
         "headings": {
             "lobby": "Predvorje ({{count}})",
             "participantsList": "Sudionici sastanka ({{count}})",
             "waitingLobby": "Čekaju u predvorju ({{count}})"
         },
-        "search": "Traži sudionike"
+        "search": "Traži sudionike",
+        "title": "Sudionici"
     },
     "passwordDigitsOnly": "Do {{number}} znamenke/i",
     "passwordSetRemotely": "Postavljena od jednog drugog sudionika",
@@ -859,7 +859,7 @@
         "ringing": "Zvoni …"
     },
     "privacyView": {
-        "header": "Privatnost"
+        "title": "Privatnost"
     },
     "profile": {
         "avatar": "avatar",
@@ -943,8 +943,8 @@
     "security": {
         "about": "Možeš dodati $t(lockRoomPassword) svom sastanku. Sudionici će morati upisati $t(lockRoomPassword) prije nego što im se omogući pridruživanje sastanku.",
         "aboutReadOnly": "Moderatori mogu dodati $t(lockRoomPassword) sastanku. Sudionici će morati upisati $t(lockRoomPassword) prije nego što im se omogući pridruživanje sastanku.",
-        "header": "Sigurnosne opcije",
-        "insecureRoomNameWarning": "Ime sobe nije sigurno. Neželjeni sudionici mogu se pridružiti tvojoj konferenciji. Osiguraj sastanak pomoću sigurnosne tipke."
+        "insecureRoomNameWarning": "Ime sobe nije sigurno. Neželjeni sudionici mogu se pridružiti tvojoj konferenciji. Osiguraj sastanak pomoću sigurnosne tipke.",
+        "title": "Sigurnosne opcije"
     },
     "settings": {
         "buttonLabel": "Postavke",
@@ -1050,7 +1050,7 @@
         "title": "Tvoj je videopoziv prekinut jer je tvoje računalo prešlo u stanje mirovanja."
     },
     "termsView": {
-        "header": "Uvjeti"
+        "title": "Uvjeti"
     },
     "toggleTopPanelLabel": "Uključi/Isključi gornju ploču",
     "toolbar": {

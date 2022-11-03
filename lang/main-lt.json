@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Susitikime dar nėra pranešimų. Pradėkite pokalbį čia!",
         "privateNotice": "Asmeninis pranešimas {{gavėjui}}",
+        "sendButton": "Siųsti",
         "title": "Pokalbis",
         "titleWithPolls": "Pokalbis",
         "you": "Jūs"
@@ -394,6 +395,7 @@
         "signedInAs": "Jūs šiuo metu prisijungęs(-usi) kaip :",
         "start": "Pradėti tiesioginę transliaciją",
         "streamIdHelp": "Kas tai?",
+        "title": "Tiesioginis srautas",
         "unavailableTitle": "Tiesioginė transliacija negalima"
     },
     "localRecording": {
@@ -511,6 +513,7 @@
         "serviceName": "Įrašymo tarnyba",
         "signIn": "Prisijungti",
         "signOut": "Atsijungti",
+        "title": "Įrašoma",
         "unavailable": "Oi! {{serviceName}} šiuo metu nėra pasiekiamas. Mes dirbame, kad išspręsti šią problemą. Pabandykite dar kartą vėliau.",
         "unavailableTitle": "Įrašas negalimas"
     },

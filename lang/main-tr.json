@@ -81,6 +81,7 @@
         },
         "noMessagesMessage": "Toplantıda henüz mesaj yok. Burada bir konuşma başlatın!",
         "privateNotice": "{{recipient}} için özel mesaj",
+        "sendButton": "Gönder",
         "smileysPanel": "Emoji paneli",
         "tabs": {
             "chat": "Sohbet",
@@ -408,7 +409,7 @@
         "veryGood": "Çok iyi"
     },
     "helpView": {
-        "header": "Yardım Merkezi"
+        "title": "Yardım Merkezi"
     },
     "incomingCall": {
         "answer": "Cevapla",
@@ -518,6 +519,7 @@
         "signedInAs": "Şu anda oturum açmış durumdasınız:",
         "start": "Bir canlı akış başlat",
         "streamIdHelp": "Bu nedir?",
+        "title": "Canlı akış",
         "unavailableTitle": "Canlı Akış kullanılamıyor",
         "youtubeTerms": "YouTube hizmet şartları"
     },
@@ -559,6 +561,7 @@
         "passwordJoinButton": "Katıl",
         "reject": "Reddet",
         "rejectAll": "Hepsini reddet",
+        "title": "Lobi",
         "toggleLabel": "Lobiyi etkinleştir"
     },
     "localRecording": {
@@ -675,13 +678,13 @@
             "videoModeration": "Videolarını başlat"
         },
         "close": "Kapat",
-        "header": "Katılımcılar",
         "headings": {
             "lobby": "Lobi ({{count}})",
             "participantsList": "Toplantı Katılımcıları ({{count}})",
             "waitingLobby": "Lobide bekleyen ({{count}})"
         },
-        "search": "Katılımcıları ara"
+        "search": "Katılımcıları ara",
+        "title": "Katılımcılar"
     },
     "passwordDigitsOnly": "{{number}} rakama kadar",
     "passwordSetRemotely": "başka katılımcı tarafından ayarlandı",
@@ -825,6 +828,7 @@
         "serviceName": "Kayıt hizmeti",
         "signIn": "Giriş yap",
         "signOut": "Çıkış yap",
+        "title": "Kaydediliyor",
         "unavailable": "Ah! {{serviceName}} şu anda kullanılamıyor. Sorunu çözmek için çalışıyoruz. Lütfen daha sonra tekrar deneyin.",
         "unavailableTitle": "Kayıt yapılamıyor",
         "uploadToCloud": "Buluta yükle"

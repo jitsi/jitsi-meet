@@ -82,7 +82,7 @@
         },
         "labels": {
             "buttonLabel": "وضع السيارة",
-            "title": "وضع القيادة الآمنة",
+            "title": "وضع السيارة",
             "videoStopped": "تم إيقاف الفيديو الخاص بك"
         }
     },
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "لا يوجد أي رسالة في المُلتقى بعد. ابدأ محادثة هنا.",
         "privateNotice": "أرسل رسالة خاصة إلى {{recipient}}",
+        "sendButton": "أرسل",
         "smileysPanel": "واجهة الإيموجي",
         "tabs": {
             "chat": "دردشة",
@@ -435,7 +436,7 @@
         "search": "ابحث في GIPHY"
     },
     "helpView": {
-        "header": "مركز المساعدة"
+        "title": "مركز المساعدة"
     },
     "incomingCall": {
         "answer": "أجب",
@@ -551,6 +552,7 @@
         "signedInAs": "أنت مسجل حاليًا بصفة:",
         "start": "ابدأبثًّا حيًّا",
         "streamIdHelp": "ما هذا؟",
+        "title": "البث المباشر الحي",
         "unavailableTitle": "خدمة البث الحي غير متوفرة",
         "youtubeTerms": "شروط خدمة يوتيوب"
     },
@@ -593,6 +595,7 @@
         "passwordJoinButton": "انضم",
         "reject": "رفض",
         "rejectAll": "رفض الكل",
+        "title": "غرفة الانتظار",
         "toggleLabel": "فعِّل غرفة الانتظار"
     },
     "localRecording": {
@@ -735,13 +738,13 @@
             "videoModeration": "ابدأ الفيديو الخاص بهم"
         },
         "close": "غلق",
-        "header": "مشاركون",
         "headings": {
             "lobby": "الردهة ({{count}})",
             "participantsList": "المشاركون في المُلتقى({{count}})",
             "waitingLobby": "منتظرون في الردهة ({{count}})"
         },
-        "search": "بحث"
+        "search": "بحث",
+        "title": "مشاركون"
     },
     "passwordDigitsOnly": "حتى {{number}} عدد",
     "passwordSetRemotely": "ضبطها مشارك آخر",
@@ -851,7 +854,7 @@
         "ringing": "يرن..."
     },
     "privacyView": {
-        "header": "خصوصية"
+        "title": "خصوصية"
     },
     "profile": {
         "avatar": "avatar",
@@ -923,6 +926,7 @@
         "signIn": "دخول",
         "signOut": "خروج",
         "surfaceError": "الرجاء تحديد علامة التبويب الحالية.",
+        "title": "قيد التسجيل",
         "unavailable": "عجبًا! {{serviceName}} غير متاحة حاليًا. نعمل على حل المشكلة. حاول مرة أخرى لاحقًا.",
         "unavailableTitle": "التسجيل غير متاح",
         "uploadToCloud": "تحميل إلى السحابة"
@@ -934,8 +938,8 @@
     "security": {
         "about": "يمكنك إضافة $t(lockRoomPassword) إلى المُلتقى. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى المُلتقى.",
         "aboutReadOnly": "المشاركون بصفة رئيس الجلسة يمكنهم إضافة $t(lockRoomPassword) إلى المُلتقى. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى المُلتقى.",
-        "header": "خيارات الأمان",
-        "insecureRoomNameWarning": "اسم الغرفة غير آمن، فقد ينضم عبره مشاركون غرباء إلى المُلتقى. ننصحك بتأمين المُلتقى عبر  وسائل الحماية التي يوفرها زر الحماية."
+        "insecureRoomNameWarning": "اسم الغرفة غير آمن، فقد ينضم عبره مشاركون غرباء إلى المُلتقى. ننصحك بتأمين المُلتقى عبر  وسائل الحماية التي يوفرها زر الحماية.",
+        "title": "خيارات الأمان"
     },
     "settings": {
         "buttonLabel": "إعدادات",
@@ -1040,7 +1044,7 @@
         "title": "قُطِع اتصال الفيديو لدخول هذا الحاسوب في وضع النوم."
     },
     "termsView": {
-        "header": "مصطلحات"
+        "title": "مصطلحات"
     },
     "toggleTopPanelLabel": "تبديل اللوحة العلوية",
     "toolbar": {
