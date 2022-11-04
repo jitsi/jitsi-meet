@@ -64,7 +64,7 @@ class PictureInPictureButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state): Object {
     const flag = Boolean(getFeatureFlag(state, PIP_ENABLED));
-    let enabled = flag && !isLocalVideoTrackDesktop(state);
+    let enabled = flag //&& !isLocalVideoTrackDesktop(state);
 
     // Override flag for Android, since it might be unsupported.
     if (Platform.OS === 'android' && !NativeModules.PictureInPicture.SUPPORTED) {
