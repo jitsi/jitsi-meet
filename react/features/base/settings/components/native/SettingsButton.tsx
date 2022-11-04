@@ -9,9 +9,12 @@ import { navigate }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 // @ts-ignore
 import { screen } from '../../../../mobile/navigation/routes';
+// @ts-ignore
 import { SETTINGS_ENABLED, getFeatureFlag } from '../../../flags';
+// @ts-ignore
 import { translate } from '../../../i18n';
 import { IconSettings } from '../../../icons/svg';
+// @ts-ignore
 import { connect } from '../../../redux';
 
 /**
