@@ -23,14 +23,26 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2681BB562C7A0B42CFBA6719 /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6152FF9E9F7B0E86F70A21D /* libPods-JitsiMeet.a */; };
+		4E46D952290FF39E00761DEF /* LockScreenMuteAudioWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46D951290FF39E00761DEF /* LockScreenMuteAudioWidget.swift */; };
+		4E46D954290FF55600761DEF /* LockScreenLeaveMeetingWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46D953290FF55600761DEF /* LockScreenLeaveMeetingWidget.swift */; };
+		4E6920B828FD84D700645D9E /* DarwinNotificationsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6920B728FD84D700645D9E /* DarwinNotificationsObserver.swift */; };
+		4E6A3E17291024B900E6B0B5 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6A3E16291024B900E6B0B5 /* Provider.swift */; };
 		4E90F9402632D1AB001102D4 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90F93F2632D1AB001102D4 /* Atomic.swift */; };
+		4EA73DA3290C1D6C00A16FF8 /* MeetingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA73DA2290C1D6C00A16FF8 /* MeetingState.swift */; };
 		4EB06024260E026600F524C5 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EC49B8625BED71300E76218 /* ReplayKit.framework */; };
 		4EB06027260E026600F524C5 /* SampleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB06026260E026600F524C5 /* SampleHandler.swift */; };
 		4EB0602B260E026600F524C5 /* JitsiMeetBroadcastExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4EB06023260E026600F524C5 /* JitsiMeetBroadcastExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4EB0603C260E09D000F524C5 /* SocketConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB06039260E09D000F524C5 /* SocketConnection.swift */; };
 		4EB0603D260E09D000F524C5 /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB0603A260E09D000F524C5 /* DarwinNotificationCenter.swift */; };
 		4EB0603E260E09D000F524C5 /* SampleUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB0603B260E09D000F524C5 /* SampleUploader.swift */; };
+		4EBB458A28FFFD4100855769 /* RoutesHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 4EBB458928FFFD4100855769 /* RoutesHandler.m */; };
+		4EBB458E2902E85B00855769 /* WidgetKitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBB458D2902E85B00855769 /* WidgetKitHelper.swift */; };
+		4ECA496628FD590000085365 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ECA496528FD590000085365 /* WidgetKit.framework */; };
+		4ECA496828FD590000085365 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ECA496728FD590000085365 /* SwiftUI.framework */; };
+		4ECA496B28FD590000085365 /* Widgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECA496A28FD590000085365 /* Widgets.swift */; };
+		4ECA496D28FD590000085365 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4ECA496C28FD590000085365 /* Assets.xcassets */; };
+		4ECA497128FD590000085365 /* WidgetsExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4ECA496428FD590000085365 /* WidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C2116A7673E01A1CCD5DC1F4 /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BF9FEBA4DEAB800AD735681 /* libPods-JitsiMeet.a */; };
 		DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */; };
 		DEA9F289258A6EA800D4CD74 /* JitsiMeetSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEA9F288258A6EA800D4CD74 /* JitsiMeetSDK.framework */; };
 		DEA9F28A258A6EA800D4CD74 /* JitsiMeetSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DEA9F288258A6EA800D4CD74 /* JitsiMeetSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -63,6 +75,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4EB06022260E026600F524C5;
 			remoteInfo = "JitsiMeetBroadcast Extension";
+		};
+		4ECA496F28FD590000085365 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4ECA496328FD590000085365;
+			remoteInfo = WidgetsExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -108,6 +127,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				4ECA497128FD590000085365 /* WidgetsExtension.appex in Embed App Extensions */,
 				4EB0602B260E026600F524C5 /* JitsiMeetBroadcastExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
@@ -134,6 +154,7 @@
 		0BEA5C3A1F7B8F73000D0AB4 /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
 		0BEA5C3C1F7B8F73000D0AB4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0BEA5C3E1F7B8F73000D0AB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0BF9FEBA4DEAB800AD735681 /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* jitsi-meet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "jitsi-meet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -141,8 +162,12 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		3E0F4ED943C0B12BE77F6B45 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
+		4E46D951290FF39E00761DEF /* LockScreenMuteAudioWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenMuteAudioWidget.swift; sourceTree = "<group>"; };
+		4E46D953290FF55600761DEF /* LockScreenLeaveMeetingWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenLeaveMeetingWidget.swift; sourceTree = "<group>"; };
+		4E6920B728FD84D700645D9E /* DarwinNotificationsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationsObserver.swift; sourceTree = "<group>"; };
+		4E6A3E16291024B900E6B0B5 /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
 		4E90F93F2632D1AB001102D4 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
+		4EA73DA2290C1D6C00A16FF8 /* MeetingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingState.swift; sourceTree = "<group>"; };
 		4EB06023260E026600F524C5 /* JitsiMeetBroadcastExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = JitsiMeetBroadcastExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EB06026260E026600F524C5 /* SampleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleHandler.swift; sourceTree = "<group>"; };
 		4EB06028260E026600F524C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -150,10 +175,21 @@
 		4EB06039260E09D000F524C5 /* SocketConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketConnection.swift; sourceTree = "<group>"; };
 		4EB0603A260E09D000F524C5 /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
 		4EB0603B260E09D000F524C5 /* SampleUploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleUploader.swift; sourceTree = "<group>"; };
+		4EBB458828FFFD4100855769 /* RoutesHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoutesHandler.h; sourceTree = "<group>"; };
+		4EBB458928FFFD4100855769 /* RoutesHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RoutesHandler.m; sourceTree = "<group>"; };
+		4EBB458B2902A94700855769 /* WidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetsExtension.entitlements; sourceTree = "<group>"; };
+		4EBB458C2902E85B00855769 /* JitsiMeet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeet-Bridging-Header.h"; sourceTree = "<group>"; };
+		4EBB458D2902E85B00855769 /* WidgetKitHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKitHelper.swift; sourceTree = "<group>"; };
 		4EC49B8625BED71300E76218 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
-		756FCE06C08D9B947653C98A /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
+		4ECA496428FD590000085365 /* WidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4ECA496528FD590000085365 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		4ECA496728FD590000085365 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4ECA496A28FD590000085365 /* Widgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets.swift; sourceTree = "<group>"; };
+		4ECA496C28FD590000085365 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4ECA496E28FD590000085365 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7052390E12D7319D36D8E4CA /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
+		8CAA3C5A38E868335D1C1EC1 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
-		D6152FF9E9F7B0E86F70A21D /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE050388256E904600DEE3A5 /* WebRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WebRTC.xcframework; path = "../../node_modules/react-native-webrtc/apple/WebRTC.xcframework"; sourceTree = "<group>"; };
 		DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FIRUtilities.m; sourceTree = "<group>"; };
 		DE4C456021DE1E4E00EA0709 /* FIRUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FIRUtilities.h; sourceTree = "<group>"; };
@@ -180,7 +216,7 @@
 				DED016F128ECBC9D009D5E8D /* WebRTC.xcframework in Frameworks */,
 				DEA9F289258A6EA800D4CD74 /* JitsiMeetSDK.framework in Frameworks */,
 				FD572B9827EDF32300A800FB /* GiphyUISDK.xcframework in Frameworks */,
-				2681BB562C7A0B42CFBA6719 /* libPods-JitsiMeet.a in Frameworks */,
+				C2116A7673E01A1CCD5DC1F4 /* libPods-JitsiMeet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,6 +235,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4ECA496128FD590000085365 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4ECA496828FD590000085365 /* SwiftUI.framework in Frameworks */,
+				4ECA496628FD590000085365 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -213,7 +258,9 @@
 				DEFDBBDB25656E3B00344B23 /* WebRTC.xcframework */,
 				0BD6B4361EF82A6B00D1F4CD /* WebRTC.framework */,
 				4EC49B8625BED71300E76218 /* ReplayKit.framework */,
-				D6152FF9E9F7B0E86F70A21D /* libPods-JitsiMeet.a */,
+				4ECA496528FD590000085365 /* WidgetKit.framework */,
+				4ECA496728FD590000085365 /* SwiftUI.framework */,
+				0BF9FEBA4DEAB800AD735681 /* libPods-JitsiMeet.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -261,6 +308,10 @@
 				0BBD021F212EB69D00CCB19F /* Types.h */,
 				0B412F1D1EDEE6E800B1A0A6 /* ViewController.h */,
 				0B412F1E1EDEE6E800B1A0A6 /* ViewController.m */,
+				4EBB458828FFFD4100855769 /* RoutesHandler.h */,
+				4EBB458928FFFD4100855769 /* RoutesHandler.m */,
+				4EBB458D2902E85B00855769 /* WidgetKitHelper.swift */,
+				4EBB458C2902E85B00855769 /* JitsiMeet-Bridging-Header.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -282,9 +333,25 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 		};
+		4ECA496928FD590000085365 /* Widgets Extension */ = {
+			isa = PBXGroup;
+			children = (
+				4ECA496A28FD590000085365 /* Widgets.swift */,
+				4E46D951290FF39E00761DEF /* LockScreenMuteAudioWidget.swift */,
+				4E46D953290FF55600761DEF /* LockScreenLeaveMeetingWidget.swift */,
+				4E6A3E16291024B900E6B0B5 /* Provider.swift */,
+				4EA73DA2290C1D6C00A16FF8 /* MeetingState.swift */,
+				4E6920B728FD84D700645D9E /* DarwinNotificationsObserver.swift */,
+				4ECA496C28FD590000085365 /* Assets.xcassets */,
+				4ECA496E28FD590000085365 /* Info.plist */,
+			);
+			path = "Widgets Extension";
+			sourceTree = "<group>";
+		};
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				4EBB458B2902A94700855769 /* WidgetsExtension.entitlements */,
 				B3B083EB1D4955FF0069CEE7 /* app.entitlements */,
 				0B26BE711EC5BC4D00EEFB41 /* Frameworks */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -292,11 +359,12 @@
 				0BEA5C261F7B8F73000D0AB4 /* Watch app */,
 				0BEA5C351F7B8F73000D0AB4 /* WatchKit extension */,
 				4EB06025260E026600F524C5 /* JitsiMeetBroadcast Extension */,
-				CDD71F5E1157E9F283DF92A8 /* Pods */,
+				4ECA496928FD590000085365 /* Widgets Extension */,
+				BD4E28FA984EA7018FD927DF /* Pods */,
 			);
-			indentWidth = 2;
+			indentWidth = 4;
 			sourceTree = "<group>";
-			tabWidth = 2;
+			tabWidth = 4;
 		};
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
@@ -305,15 +373,16 @@
 				0BEA5C251F7B8F73000D0AB4 /* JitsiMeetCompanion.app */,
 				0BEA5C311F7B8F73000D0AB4 /* JitsiMeetCompanion Extension.appex */,
 				4EB06023260E026600F524C5 /* JitsiMeetBroadcastExtension.appex */,
+				4ECA496428FD590000085365 /* WidgetsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CDD71F5E1157E9F283DF92A8 /* Pods */ = {
+		BD4E28FA984EA7018FD927DF /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				756FCE06C08D9B947653C98A /* Pods-JitsiMeet.debug.xcconfig */,
-				3E0F4ED943C0B12BE77F6B45 /* Pods-JitsiMeet.release.xcconfig */,
+				7052390E12D7319D36D8E4CA /* Pods-JitsiMeet.debug.xcconfig */,
+				8CAA3C5A38E868335D1C1EC1 /* Pods-JitsiMeet.release.xcconfig */,
 			);
 			name = Pods;
 			path = ../Pods;
@@ -361,7 +430,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "JitsiMeet" */;
 			buildPhases = (
-				69BC5020DBE393B56BD76636 /* [CP] Check Pods Manifest.lock */,
+				58E2CB346F2C2A873294F481 /* [CP] Check Pods Manifest.lock */,
 				0BBA83C41EC9F7600075A103 /* Run React packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
@@ -380,6 +449,7 @@
 			dependencies = (
 				0BEA5C401F7B8F73000D0AB4 /* PBXTargetDependency */,
 				4EB0602A260E026600F524C5 /* PBXTargetDependency */,
+				4ECA497028FD590000085365 /* PBXTargetDependency */,
 			);
 			name = JitsiMeet;
 			productName = "Jitsi Meet";
@@ -403,15 +473,32 @@
 			productReference = 4EB06023260E026600F524C5 /* JitsiMeetBroadcastExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		4ECA496328FD590000085365 /* WidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4ECA497428FD590100085365 /* Build configuration list for PBXNativeTarget "WidgetsExtension" */;
+			buildPhases = (
+				4ECA496028FD590000085365 /* Sources */,
+				4ECA496128FD590000085365 /* Frameworks */,
+				4ECA496228FD590000085365 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WidgetsExtension;
+			productName = WidgetsExtension;
+			productReference = 4ECA496428FD590000085365 /* WidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1240;
+				LastSwiftUpdateCheck = 1400;
 				LastUpgradeCheck = 1020;
-				ORGANIZATIONNAME = Facebook;
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					0BEA5C241F7B8F73000D0AB4 = {
 						CreatedOnToolsVersion = 9.0;
@@ -424,6 +511,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 1400;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
 								enabled = 1;
@@ -435,6 +523,9 @@
 					};
 					4EB06022260E026600F524C5 = {
 						CreatedOnToolsVersion = 12.4;
+					};
+					4ECA496328FD590000085365 = {
+						CreatedOnToolsVersion = 14.0.1;
 					};
 				};
 			};
@@ -455,6 +546,7 @@
 				0BEA5C241F7B8F73000D0AB4 /* JitsiMeetCompanion */,
 				0BEA5C301F7B8F73000D0AB4 /* JitsiMeetCompanion Extension */,
 				4EB06022260E026600F524C5 /* JitsiMeetBroadcastExtension */,
+				4ECA496328FD590000085365 /* WidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -491,6 +583,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4ECA496228FD590000085365 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4ECA496D28FD590000085365 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,7 +643,7 @@
 			shellPath = /bin/sh;
 			shellScript = "if test \"$PRODUCT_BUNDLE_IDENTIFIER\" = \"com.atlassian.JitsiMeet.ios\"; then\n    ENTITLEMENTS_PLIST=\"$PROJECT_DIR/app.entitlements\"\n    \n    /usr/libexec/PlistBuddy -c \"Add :com.apple.developer.avfoundation.multitasking-camera-access bool 1\" $ENTITLEMENTS_PLIST\nfi\n";
 		};
-		69BC5020DBE393B56BD76636 /* [CP] Check Pods Manifest.lock */ = {
+		58E2CB346F2C2A873294F481 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -642,8 +742,10 @@
 			files = (
 				0B412F1F1EDEE6E800B1A0A6 /* ViewController.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				4EBB458E2902E85B00855769 /* WidgetKitHelper.swift in Sources */,
 				DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				4EBB458A28FFFD4100855769 /* RoutesHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -656,6 +758,19 @@
 				4EB0603D260E09D000F524C5 /* DarwinNotificationCenter.swift in Sources */,
 				4EB06027260E026600F524C5 /* SampleHandler.swift in Sources */,
 				4E90F9402632D1AB001102D4 /* Atomic.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4ECA496028FD590000085365 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4ECA496B28FD590000085365 /* Widgets.swift in Sources */,
+				4E6920B828FD84D700645D9E /* DarwinNotificationsObserver.swift in Sources */,
+				4E46D954290FF55600761DEF /* LockScreenLeaveMeetingWidget.swift in Sources */,
+				4EA73DA3290C1D6C00A16FF8 /* MeetingState.swift in Sources */,
+				4E6A3E17291024B900E6B0B5 /* Provider.swift in Sources */,
+				4E46D952290FF39E00761DEF /* LockScreenMuteAudioWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -676,6 +791,11 @@
 			isa = PBXTargetDependency;
 			target = 4EB06022260E026600F524C5 /* JitsiMeetBroadcastExtension */;
 			targetProxy = 4EB06029260E026600F524C5 /* PBXContainerItemProxy */;
+		};
+		4ECA497028FD590000085365 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4ECA496328FD590000085365 /* WidgetsExtension */;
+			targetProxy = 4ECA496F28FD590000085365 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -845,11 +965,12 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 756FCE06C08D9B947653C98A /* Pods-JitsiMeet.debug.xcconfig */;
+			baseConfigurationReference = 7052390E12D7319D36D8E4CA /* Pods-JitsiMeet.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDebug;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -871,16 +992,20 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet;
 				PRODUCT_NAME = "jitsi-meet";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "src/JitsiMeet-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3E0F4ED943C0B12BE77F6B45 /* Pods-JitsiMeet.release.xcconfig */;
+			baseConfigurationReference = 8CAA3C5A38E868335D1C1EC1 /* Pods-JitsiMeet.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconRelease;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -901,6 +1026,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet;
 				PRODUCT_NAME = "jitsi-meet";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "src/JitsiMeet-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -967,6 +1094,91 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet.broadcast.extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4ECA497228FD590100085365 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = WidgetsExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = FC967L3QRG;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Widgets Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Widgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Facebook. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet.widgets.extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4ECA497328FD590100085365 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = WidgetsExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = FC967L3QRG;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Widgets Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Widgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Facebook. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet.widgets.extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1122,6 +1334,15 @@
 			buildConfigurations = (
 				4EB0602D260E026700F524C5 /* Debug */,
 				4EB0602E260E026700F524C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4ECA497428FD590100085365 /* Build configuration list for PBXNativeTarget "WidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4ECA497228FD590100085365 /* Debug */,
+				4ECA497328FD590100085365 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -21,8 +21,16 @@
 @import JitsiMeetSDK;
 
 #import "Types.h"
+#import "RoutesHandler.h"
 #import "ViewController.h"
+#import "jitsi_meet-Swift.h"
 
+@interface ViewController() <RouteObserving>
+
+@property (nonatomic, nonnull, copy) void (^didRouteCallback)(NSString *);
+@property (nonatomic, assign) BOOL audioMuted;
+
+@end
 
 @implementation ViewController
 
@@ -33,6 +41,8 @@
     view.delegate = self;
 
     [view join:[[JitsiMeet sharedInstance] getInitialConferenceOptions]];
+
+    [self registerRouteObserver];
 }
 
 // JitsiMeetViewDelegate
@@ -53,6 +63,10 @@
 
 - (void)conferenceJoined:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_JOINED" withData:data];
+    
+    self.audioMuted = [[data objectForKey:@"isAudioMuted"] boolValue];
+    
+    [self refreshWidgetState:self.audioMuted];
 
     // Register a NSUserActivity for this conference so it can be invoked as a
     // Siri shortcut.
@@ -82,6 +96,12 @@
 
 - (void)conferenceTerminated:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_TERMINATED" withData:data];
+    
+    NSURL *sharedContainer = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.org.jitsi.meet.appgroup"];
+    NSURL *widgetStateFileURL = [sharedContainer URLByAppendingPathComponent:@"widgetState"];
+    [[NSFileManager defaultManager] removeItemAtURL:widgetStateFileURL error:nil];
+    
+    [WidgetKitHelper reloadAllWidgets];
 }
 
 - (void)conferenceWillJoin:(NSDictionary *)data {
@@ -107,7 +127,16 @@
 }
 
 - (void)audioMutedChanged:(NSDictionary *)data {
-  NSLog(@"%@%@", @"Audio muted changed: ", data[@"muted"]);
+    NSLog(@"%@%@", @"Audio muted changed: ", data[@"muted"]);
+//    CFNotificationCenterRef notificationCenter = CFNotificationCenterGetDarwinNotifyCenter();
+//    CFNotificationCenterPostNotification(notificationCenter,
+//                                         (__bridge CFStringRef)@"iOS_MeetingMutedChanged",
+//                                         NULL,
+//                                         NULL,
+//                                         true);
+    
+    self.audioMuted = [[data objectForKey:@"muted"] boolValue];
+    [self refreshWidgetState:self.audioMuted];
 }
 
 - (void)endpointTextMessageReceived:(NSDictionary *)data {
@@ -132,9 +161,40 @@
 
 #pragma mark - Helpers
 
+- (void)registerRouteObserver {
+    __weak typeof(self) weakSelf = self;
+    __weak JitsiMeetView *view = (JitsiMeetView *)self.view;
+    self.didRouteCallback = ^(NSString *route) {
+        if ([route isEqual:@"meet/toggleAudioMute"]) {
+            weakSelf.audioMuted = !weakSelf.audioMuted;
+            [view setAudioMuted:weakSelf.audioMuted];
+        } else if ([route isEqualToString:@"meet/leaveMeeting"]) {
+            [weakSelf terminate];
+        }
+    };
+    
+    [[RoutesHandler sharedInstance] registerObserver:self forRoute:@"meet/toggleAudioMute"];
+    [[RoutesHandler sharedInstance] registerObserver:self forRoute:@"meet/leaveMeeting"];
+}
+
 - (void)terminate {
     JitsiMeetView *view = (JitsiMeetView *) self.view;
     [view leave];
+}
+
+- (void)refreshWidgetState:(BOOL)audioMuted {
+//    let sharedContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Constants.appGroupIdentifier)
+//    return sharedContainer?.appendingPathComponent("rtc_SSFD").path ?? ""
+    
+    NSURL *sharedContainer = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.org.jitsi.meet.appgroup"];
+    NSURL *widgetStateFileURL = [sharedContainer URLByAppendingPathComponent:@"widgetState"];
+    
+    NSDictionary *meetingState = @{@"audioMuted": @(audioMuted)};
+    if (![meetingState writeToURL:widgetStateFileURL atomically:true]) {
+        NSLog(@"error saving state file");
+    }
+    
+    [WidgetKitHelper reloadAllWidgets];
 }
 
 @end
