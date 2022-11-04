@@ -7,8 +7,8 @@ import { translate } from '../../../base/i18n';
 import { IconMenuDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions';
 import { enterPictureInPicture } from '../actions';
+//import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions';
 
 type Props = AbstractButtonProps & {
 
