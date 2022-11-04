@@ -1,13 +1,14 @@
 // @flow
 
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 
-import { translate } from '../../../base/i18n';
-import { isLocalParticipantModerator } from '../../../base/participants';
-import { Switch } from '../../../base/react';
-import { connect } from '../../../base/redux';
-import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
-import { toggleLobbyMode } from '../../actions';
+import {translate} from '../../../base/i18n';
+import {isLocalParticipantModerator} from '../../../base/participants';
+import {Switch} from '../../../base/react';
+import {connect} from '../../../base/redux';
+import {isInBreakoutRoom} from '../../../breakout-rooms/functions';
+import {toggleLobbyMode} from '../../actions';
+import {jitsiLocalStorage} from "@jitsi/js-utils";
 
 type Props = {
 
@@ -51,10 +52,12 @@ class LobbySection extends PureComponent<Props, State> {
      */
     constructor(props: Props) {
         super(props);
-
+        const tokUserType = jitsiLocalStorage.getItem('tokType');
+        console.log('tokUserType : ', tokUserType);
         this.state = {
-            lobbyEnabled: props._lobbyEnabled
+            lobbyEnabled: tokUserType !== "HOST" ? !props._lobbyEnabled : props._lobbyEnabled
         };
+        this.props.dispatch(toggleLobbyMode(this.state.lobbyEnabled));
 
         this._onToggleLobby = this._onToggleLobby.bind(this);
     }
@@ -81,7 +84,7 @@ class LobbySection extends PureComponent<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { _visible, t } = this.props;
+        const {_visible, t} = this.props;
 
         if (!_visible) {
             return null;
@@ -89,23 +92,23 @@ class LobbySection extends PureComponent<Props, State> {
 
         return (
             <>
-                <div id = 'lobby-section'>
+                <div id='lobby-section'>
                     <p
-                        className = 'description'
-                        role = 'banner'>
-                        { t('lobby.enableDialogText') }
+                        className='description'
+                        role='banner'>
+                        {t('lobby.enableDialogText')}
                     </p>
-                    <div className = 'control-row'>
-                        <label htmlFor = 'lobby-section-switch'>
-                            { t('lobby.toggleLabel') }
+                    <div className='control-row'>
+                        <label htmlFor='lobby-section-switch'>
+                            {t('lobby.toggleLabel')}
                         </label>
                         <Switch
-                            id = 'lobby-section-switch'
-                            onValueChange = { this._onToggleLobby }
-                            value = { this.state.lobbyEnabled } />
+                            id='lobby-section-switch'
+                            onValueChange={this._onToggleLobby}
+                            value={this.state.lobbyEnabled}/>
                     </div>
                 </div>
-                <div className = 'separator-line' />
+                <div className='separator-line'/>
             </>
         );
     }
@@ -119,6 +122,9 @@ class LobbySection extends PureComponent<Props, State> {
      */
     _onToggleLobby() {
         const newValue = !this.state.lobbyEnabled;
+
+        console.log('111111111111111111111 newValue', newValue);
+
 
         this.setState({
             lobbyEnabled: newValue
@@ -135,8 +141,8 @@ class LobbySection extends PureComponent<Props, State> {
  * @returns {Props}
  */
 function mapStateToProps(state: Object): $Shape<Props> {
-    const { conference } = state['features/base/conference'];
-    const { hideLobbyButton } = state['features/base/config'];
+    const {conference} = state['features/base/conference'];
+    const {hideLobbyButton} = state['features/base/config'];
 
     return {
         _lobbyEnabled: state['features/lobby'].lobbyEnabled,
