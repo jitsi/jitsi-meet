@@ -6,6 +6,11 @@ export default {
         marginVertical: BaseTheme.spacing[3]
     },
 
+    joinLowBandwidthLabel: {
+        color: BaseTheme.palette.text01,
+        textAlign: 'center'
+    },
+
     buttonStylesBorderless: {
         iconStyle: {
             color: BaseTheme.palette.icon01,
@@ -30,8 +35,12 @@ export default {
         flexDirection: 'row'
     },
 
-    largeVideoContainer: {
-        minHeight: '60%'
+    largeVideoContainerKeyboardHidden: {
+        height: '60%'
+    },
+
+    largeVideoContainerKeyboardShown: {
+        height: '45%'
     },
 
     largeVideoContainerWide: {
@@ -43,10 +52,10 @@ export default {
 
     contentContainer: {
         alignSelf: 'center',
+        bottom: 0,
         display: 'flex',
         justifyContent: 'center',
-        minHeight: '40%',
-        padding: BaseTheme.spacing[3],
+        position: 'static',
         width: 400
     },
 
@@ -62,9 +71,15 @@ export default {
 
     toolboxContainer: {
         alignSelf: 'center',
+        backgroundColor: BaseTheme.palette.ui01,
+        borderRadius: BaseTheme.shape.borderRadius,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center'
+        height: 60,
+        justifyContent: 'space-between',
+        marginVertical: BaseTheme.spacing[3],
+        paddingHorizontal: BaseTheme.spacing[2],
+        width: 148
     },
 
     toolboxContainerWide: {
@@ -75,7 +90,7 @@ export default {
     formWrapper: {
         alignSelf: 'stretch',
         justifyContent: 'center',
-        marginHorizontal: BaseTheme.spacing[3]
+        marginHorizontal: BaseTheme.spacing[4]
     },
 
     customInput: {
@@ -92,7 +107,6 @@ export default {
         alignSelf: 'center',
         backgroundColor: BaseTheme.palette.ui16,
         borderRadius: BaseTheme.shape.borderRadius,
-        margin: BaseTheme.spacing[3],
         paddingHorizontal: BaseTheme.spacing[3],
         paddingVertical: BaseTheme.spacing[1]
     }
