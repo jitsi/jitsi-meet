@@ -725,6 +725,7 @@
             "videoModeration": "Разрешить видео"
         },
         "close": "Закрыть",
+        "header": "Участники",
         "headings": {
             "lobby": "Лобби ({{count}})",
             "participantsList": "Список участников ({{count}})",
@@ -917,6 +918,7 @@
         "title": "Настройки безопасности"
     },
     "settings": {
+        "buttonLabel": "Настройки",
         "calendar": {
             "about": "Интеграция с календарем {{appName}} используется для безопасного доступа к вашему календарю и синхронизации запланированных мероприятий.",
             "disconnect": "Отключиться",
@@ -970,11 +972,16 @@
         "displayName": "Отображаемое имя",
         "email": "Email",
         "header": "Настройки",
+        "help": "Помощь",
+        "links": "Ссылки",
+        "privacy": "Конфиденциальность",
         "profileSection": "Профиль",
         "serverURL": "Адрес сервера",
         "showAdvanced": "Показать дополнительные настройки",
+        "startCarModeInLowBandwidthMode": "Включать упрощенный режим на ограниченном канале",
         "startWithAudioMuted": "Начать с отключенным звуком",
         "startWithVideoMuted": "Начать с отключенным видео",
+        "terms": "Условия",
         "version": "Версия"
     },
     "share": {
