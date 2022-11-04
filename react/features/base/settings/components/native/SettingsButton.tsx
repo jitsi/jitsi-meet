@@ -1,9 +1,9 @@
 /* eslint-disable lines-around-comment */
 
-import { SETTINGS_ENABLED, getFeatureFlag } from '../../../../base/flags';
-import { translate } from '../../../../base/i18n';
-import { IconSettings } from '../../../../base/icons/svg';
-import { connect } from '../../../../base/redux';
+import { SETTINGS_ENABLED, getFeatureFlag } from '../../../flags';
+import { translate } from '../../../i18n';
+import { IconSettings } from '../../../icons/svg';
+import { connect } from '../../../redux';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
 // @ts-ignore
