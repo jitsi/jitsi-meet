@@ -210,6 +210,12 @@ export const SECURITY_OPTIONS_ENABLED = 'security-options.enabled';
 export const SERVER_URL_CHANGE_ENABLED = 'server-url-change.enabled';
 
 /**
+ * Flag indicating if settings should be enabled.
+ * Default: enabled (true).
+ */
+export const SETTINGS_ENABLED = 'settings.enabled';
+
+/**
  * Flag indicating if tile view feature should be enabled.
  * Default: enabled.
  */

@@ -1,5 +1,8 @@
 /* eslint-disable lines-around-comment */
-import { translate } from '../../../../base/i18n/functions';
+
+import { SETTINGS_ENABLED, getFeatureFlag } from '../../../../base/flags';
+import { translate } from '../../../../base/i18n';
+import { connect } from '../../../../base/redux';
 import { IconSettings } from '../../../../base/icons/svg';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
@@ -29,5 +32,20 @@ class SettingsButton extends AbstractButton<AbstractButtonProps, any, any> {
     }
 }
 
+
+/**
+ * Maps part of the redux state to the component's props.
+ *
+ * @param {Object} state - The redux store/state.
+ * @returns {Object}
+ */
+function _mapStateToProps(state: Object) {
+    const enabled = getFeatureFlag(state, SETTINGS_ENABLED, true);
+
+    return {
+        visible: enabled
+    };
+}
+
 // @ts-ignore
-export default translate(SettingsButton);
+export default translate(connect(_mapStateToProps)(SettingsButton));
