@@ -9,7 +9,6 @@ import { navigate }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 // @ts-ignore
 import { screen } from '../../../../mobile/navigation/routes';
-
 import { SETTINGS_ENABLED, getFeatureFlag } from '../../../flags';
 import { translate } from '../../../i18n';
 import { IconSettings } from '../../../icons/svg';
