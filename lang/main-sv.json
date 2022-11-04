@@ -556,11 +556,7 @@
         "signedInAs": "Du är nu inloggad som:",
         "start": "Starta en livesändning",
         "streamIdHelp": "Vad är det här?",
-<<<<<<< HEAD
         "title": "Direktsändning",
-=======
-        "title": "Livesändning",
->>>>>>> fcb1845e2a6d7778dacd29f5c75e3d48c52b9c47
         "unavailableTitle": "Livesändning otillgänglig",
         "youtubeTerms": "Tjänstevillkor för YouTube"
     },
@@ -603,11 +599,7 @@
         "passwordJoinButton": "Anslut",
         "reject": "Avvisa",
         "rejectAll": "Avvisa alla",
-<<<<<<< HEAD
         "title": "Lobby",
-=======
-        "title": "Väntrum",
->>>>>>> fcb1845e2a6d7778dacd29f5c75e3d48c52b9c47
         "toggleLabel": "Aktivera väntrum"
     },
     "localRecording": {
@@ -756,10 +748,7 @@
             "participantsList": "Mötesdeltagare ({{count}})",
             "waitingLobby": "Väntar i väntrum ({{count}})"
         },
-<<<<<<< HEAD
         "search": "Sök efter deltagare",
-=======
->>>>>>> fcb1845e2a6d7778dacd29f5c75e3d48c52b9c47
         "title": "Deltagare"
     },
     "passwordDigitsOnly": "Ange max {{number}} siffror",
@@ -941,10 +930,7 @@
         "sessionAlreadyActive": "Den här sessionen spelas redan in eller livestreamas.",
         "signIn": "Logga in",
         "signOut": "Logga ut",
-<<<<<<< HEAD
         "surfaceError": "Välj aktuell flik.",
-=======
->>>>>>> fcb1845e2a6d7778dacd29f5c75e3d48c52b9c47
         "title": "Inspelning",
         "unavailable": "{{serviceName}} är inte tillgänglig. Vi försöker åtgärda felet. Försök igen senare.",
         "unavailableTitle": "Inspelning kan inte göras",
@@ -1356,7 +1342,7 @@
         "go": "KÖR",
         "goSmall": "BÖRJA",
         "headerSubtitle": "Säkra möten med hög kvalitet",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Jitsi meet",
         "info": "Info",
         "jitsiOnMobile": "Jitsi på mobilen - ladda ner våra appar och starta ett möte var som helst",
         "join": "Gå med",
