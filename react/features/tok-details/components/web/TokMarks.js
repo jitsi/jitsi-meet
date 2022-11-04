@@ -94,17 +94,11 @@ class TokMarks extends AbstractCaptions<Props> {
     render() {
         return (
             <div className={`invite-more-container${true ? '' : ' elevated'}`}>
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start'
-                }}>
+                <div>
                     <div style={{
                         borderRadius: '40%',
                         margin: '10px'
                     }}
-                         className="invite-more-button"
                          onClick={() => {
                              this.notifyUser()
                          }}>
