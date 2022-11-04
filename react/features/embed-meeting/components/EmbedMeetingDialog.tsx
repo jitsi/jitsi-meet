@@ -7,6 +7,7 @@ import CopyButton from '../../base/buttons/CopyButton.web';
 import { getInviteURL } from '../../base/connection/functions';
 import { translate } from '../../base/i18n/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
+import Input from '../../base/ui/components/web/Input';
 
 interface IProps extends WithTranslation {
 
@@ -37,10 +38,10 @@ function EmbedMeeting({ t, url }: IProps) {
             ok = {{ hidden: true }}
             titleKey = { 'embedMeeting.title' }>
             <div className = 'embed-meeting-dialog'>
-                <textarea
-                    aria-label = { t('dialog.embedMeeting') }
-                    className = 'embed-meeting-code'
+                <Input
+                    accessibilityLabel = { t('dialog.embedMeeting') }
                     readOnly = { true }
+                    textarea = { true }
                     value = { getEmbedCode() } />
                 <CopyButton
                     aria-label = { t('addPeople.copyLink') }

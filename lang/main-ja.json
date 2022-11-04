@@ -95,6 +95,7 @@
         },
         "noMessagesMessage": "このミーティングにはまだメッセージがありません。会話を開始してください!",
         "privateNotice": "{{recipient}} へのプライベートメッセージ",
+        "sendButton": "送信",
         "smileysPanel": "絵文字パネル",
         "tabs": {
             "chat": "チャット",
@@ -408,7 +409,7 @@
         "veryGood": "とても良い"
     },
     "helpView": {
-        "header": "ヘルプセンター"
+        "title": "ヘルプセンター"
     },
     "incomingCall": {
         "answer": "応答",
@@ -519,6 +520,7 @@
         "signedInAs": "あなたは現在次の名前でログインしています:",
         "start": "ライブ配信を開始する",
         "streamIdHelp": "これは何ですか?",
+        "title": "ライブ配信",
         "unavailableTitle": "ライブ配信は利用できません",
         "youtubeTerms": "YouTube サービス利用規約"
     },
@@ -557,6 +559,7 @@
         "passwordJoinButton": "参加",
         "reject": "却下",
         "rejectAll": "全員却下",
+        "title": "ロビー",
         "toggleLabel": "ロビーを有効"
     },
     "localRecording": {
@@ -686,13 +689,13 @@
             "videoModeration": "ビデオを開始"
         },
         "close": "閉じる",
-        "header": "参加者",
         "headings": {
             "lobby": "ロビー ({{count}})",
             "participantsList": "ミーティング参加者 ({{count}})",
             "waitingLobby": "ロビーで待機中 ({{count}})"
         },
-        "search": "参加者を検索"
+        "search": "参加者を検索",
+        "title": "参加者"
     },
     "passwordDigitsOnly": "最大 {{number}} 桁まで",
     "passwordSetRemotely": "他の参加者によりセット",
@@ -711,7 +714,7 @@
             "pollQuestion": "投票の質問",
             "questionPlaceholder": "質問を入力してください",
             "removeOption": "選択肢の削除",
-            "send": "作成"
+            "send": "送信"
         },
         "notification": {
             "description": "投票するには投票タブを開いてください",
@@ -800,7 +803,7 @@
         "ringing": "呼び出し中..."
     },
     "privacyView": {
-        "header": "プライバシー"
+        "title": "プライバシー"
     },
     "profile": {
         "avatar": "アバター",
@@ -843,6 +846,7 @@
         "sessionAlreadyActive": "このセッションはすでに録画またはライブ配信されています。",
         "signIn": "サインイン",
         "signOut": "サインアウト",
+        "title": "録画",
         "unavailable": "おっと! {{serviceName}} は現在使用できません。私たちはこの問題の解決に取り組んでいます。後でもう一度お試しください。",
         "unavailableTitle": "録画できません",
         "uploadToCloud": "クラウドへアップロード"
@@ -853,8 +857,8 @@
     "security": {
         "about": "このミーティングに、$t(lockRoomPassword) を追加できます。参加者は $t(lockRoomPassword) を入力してこのミーティングへの参加が許可される必要があります。",
         "aboutReadOnly": "モデレータの参加者は、このミーティングに $t(lockRoomPassword) を追加できます。参加者は $t(lockRoomPassword) を入力してこのミーティングへの参加が許可される必要があります。",
-        "header": "セキュリティオプション",
-        "insecureRoomNameWarning": "このルーム名は安全ではありません。不要な参加者がミーティングに参加するかもしれません。セキュリティボタンを利用してミーティングの安全確保を検討しましょう。"
+        "insecureRoomNameWarning": "このルーム名は安全ではありません。不要な参加者がミーティングに参加するかもしれません。セキュリティボタンを利用してミーティングの安全確保を検討しましょう。",
+        "title": "セキュリティオプション"
     },
     "settings": {
         "calendar": {
@@ -949,7 +953,7 @@
         "title": "このコンピューターがスリープ状態になったため、ビデオ通話が中断されました。"
     },
     "termsView": {
-        "header": "利用規約"
+        "title": "利用規約"
     },
     "toolbar": {
         "Settings": "設定",

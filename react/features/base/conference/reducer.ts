@@ -48,7 +48,11 @@ export interface IJitsiConference {
     enableAVModeration: Function;
     end: Function;
     getBreakoutRooms: Function;
+    getLocalParticipantProperty: Function;
     getLocalTracks: Function;
+    getMeetingUniqueId: Function;
+    getParticipantById: Function;
+    getParticipants: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
     isCallstatsEnabled: Function;
@@ -65,7 +69,9 @@ export interface IJitsiConference {
     on: Function;
     removeTrack: Function;
     replaceTrack: Function;
+    room: IJitsiConferenceRoom;
     sendCommand: Function;
+    sendCommandOnce: Function;
     sendEndpointMessage: Function;
     sendFeedback: Function;
     sendLobbyMessage: Function;
@@ -73,6 +79,8 @@ export interface IJitsiConference {
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setLocalParticipantProperty: Function;
+    setReceiverConstraints: Function;
+    setSenderVideoConstraint: Function;
     setSubject: Function;
 }
 
@@ -103,6 +111,11 @@ export interface IConferenceState {
     startReactionsMuted?: boolean;
     startVideoMutedPolicy?: boolean;
     subject?: string;
+}
+
+export interface IJitsiConferenceRoom {
+    myroomjid: string;
+    roomjid: string;
 }
 
 /**

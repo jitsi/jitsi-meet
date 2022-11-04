@@ -58,8 +58,8 @@ interface IProps extends WithTranslation {
      */
     codec: {
         [key: string]: {
-            audio: string;
-            video: string;
+            audio: string | undefined;
+            video: string | undefined;
         };
     };
 
@@ -84,7 +84,9 @@ interface IProps extends WithTranslation {
      *     [ ssrc ]: Number
      * }}.
      */
-    framerate: Object;
+    framerate: {
+        [ssrc: string]: number;
+    };
 
     /**
      * Whether or not the statistics are for local video.
@@ -157,11 +159,6 @@ interface IProps extends WithTranslation {
      * displayed. Will not display even if true for remote participants.
      */
     shouldShowMore: boolean;
-
-    /**
-     * Whether source name signaling is enabled.
-     */
-    sourceNameSignalingEnabled: boolean;
 
     /**
      * Statistics related to transports.
@@ -326,7 +323,8 @@ class ConnectionStatsTable extends Component<IProps> {
                 <tbody>
                     { isLocalVideo ? this._renderBandwidth() : null }
                     { isLocalVideo ? this._renderTransport() : null }
-                    { isLocalVideo ? this._renderRegion() : null }
+                    { this._renderRegion() }
+                    { isLocalVideo ? this._renderBridgeCount() : null }
                     { this._renderAudioSsrc() }
                     { this._renderVideoSsrc() }
                     { this._renderParticipantId() }
@@ -465,28 +463,17 @@ class ConnectionStatsTable extends Component<IProps> {
      * @returns {ReactElement}
      */
     _renderCodecs() {
-        const { codec, t, sourceNameSignalingEnabled } = this.props;
+        const { audioSsrc, codec, t, videoSsrc } = this.props;
 
-        if (!codec) {
-            return;
-        }
+        let codecString = 'N/A';
 
-        let codecString;
+        if (codec) {
+            const audioCodec = codec[audioSsrc]?.audio;
+            const videoCodec = codec[videoSsrc]?.video;
 
-        if (sourceNameSignalingEnabled) {
-            codecString = `${codec.audio}, ${codec.video}`;
-        } else {
-            // Only report one codec, in case there are multiple for a user.
-            Object.keys(codec || {})
-                .forEach(ssrc => {
-                    const { audio, video } = codec[ssrc];
-
-                    codecString = `${audio}, ${video}`;
-                });
-        }
-
-        if (!codecString) {
-            codecString = 'N/A';
+            if (audioCodec || videoCodec) {
+                codecString = [ audioCodec, videoCodec ].filter(Boolean).join(', ');
+            }
         }
 
         return (
@@ -583,16 +570,11 @@ class ConnectionStatsTable extends Component<IProps> {
      * @returns {ReactElement}
      */
     _renderFrameRate() {
-        const { framerate, t, sourceNameSignalingEnabled } = this.props;
+        const { framerate, t, videoSsrc } = this.props;
+        let frameRateString = 'N/A';
 
-        let frameRateString;
-
-        if (sourceNameSignalingEnabled) {
-            frameRateString = framerate || 'N/A';
-        } else {
-            frameRateString = Object.keys(framerate || {})
-                .map(ssrc => framerate[ssrc as keyof typeof framerate])
-                .join(', ') || 'N/A';
+        if (framerate) {
+            frameRateString = String(framerate[videoSsrc] ?? 'N/A');
         }
 
         return (
@@ -655,25 +637,21 @@ class ConnectionStatsTable extends Component<IProps> {
      * @returns {ReactElement}
      */
     _renderResolution() {
-        const { resolution, maxEnabledResolution, t, sourceNameSignalingEnabled } = this.props;
-        let resolutionString;
+        const { resolution, maxEnabledResolution, t, videoSsrc } = this.props;
+        let resolutionString = 'N/A';
 
-        if (sourceNameSignalingEnabled) {
-            resolutionString = resolution ? `${resolution.width}x${resolution.height}` : 'N/A';
-        } else {
-            resolutionString = Object.keys(resolution || {})
-                .map(ssrc => {
-                    const { width, height } = resolution[ssrc];
+        if (resolution && videoSsrc) {
+            const { width, height } = resolution[videoSsrc] ?? { };
 
-                    return `${width}x${height}`;
-                })
-                .join(', ') || 'N/A';
-        }
+            if (width && height) {
+                resolutionString = `${width}x${height}`;
 
-        if (maxEnabledResolution && maxEnabledResolution < 720) {
-            const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
+                if (maxEnabledResolution && maxEnabledResolution < 720) {
+                    const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
 
-            resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
+                    resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
+                }
+            }
         }
 
         return (
@@ -739,19 +717,15 @@ class ConnectionStatsTable extends Component<IProps> {
      * @returns {ReactElement}
      */
     _renderStatistics() {
-        const isRemoteVideo = !this.props.isLocalVideo;
-
         return (
             <table>
                 <tbody>
                     { this._renderConnectionSummary() }
                     { this._renderBitrate() }
                     { this._renderPacketLoss() }
-                    { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
                     { this._renderCodecs() }
-                    { isRemoteVideo ? null : this._renderBridgeCount() }
                 </tbody>
             </table>
         );

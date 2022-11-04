@@ -706,7 +706,7 @@ export function overwriteParticipantsNames(participantList: IParticipant[]) {
  *     recording: boolean
  * }}
  */
-export function updateLocalRecordingStatus(recording: boolean, onlySelf: boolean) {
+export function updateLocalRecordingStatus(recording: boolean, onlySelf?: boolean) {
     return {
         type: SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
         recording,

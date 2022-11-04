@@ -18,7 +18,6 @@ import {
 } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import {
-    getSourceNameByParticipantId,
     getTrackByMediaTypeAndParticipant,
     getVirtualScreenshareParticipantTrack
 } from '../../../base/tracks/functions';
@@ -147,13 +146,13 @@ type Props = AbstractProps & WithTranslation & {
     statsPopoverPosition: string;
 };
 
-type State = AbstractState & {
+interface IState extends AbstractState {
 
     /**
      * Whether popover is ivisible or not.
      */
     popoverVisible: boolean;
-};
+}
 
 const styles = (theme: Theme) => {
     return {
@@ -207,7 +206,7 @@ const styles = (theme: Theme) => {
  *
  * @augments {Component}
  */
-class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
+class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
     /**
      * Initializes a new {@code ConnectionIndicator} instance.
      *
@@ -416,15 +415,15 @@ export function _mapStateToProps(state: IReduxState, ownProps: Props) {
 
     return {
         _connectionIndicatorInactiveDisabled:
-        Boolean(state['features/base/config'].connectionIndicators?.inactiveDisabled),
+            Boolean(state['features/base/config'].connectionIndicators?.inactiveDisabled),
+        _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && isScreenShareParticipant(participant),
         _popoverDisabled: state['features/base/config'].connectionIndicators?.disableDetails,
         _videoTrack: firstVideoTrack,
         _isConnectionStatusInactive,
-        _isConnectionStatusInterrupted,
-        _sourceName: getSourceNameByParticipantId(state, participantId),
-        _sourceNameSignalingEnabled: sourceNameSignalingEnabled
+        _isConnectionStatusInterrupted
     };
 }
+
 export default translate(connect(_mapStateToProps)(
     // @ts-ignore
     withStyles(styles)(ConnectionIndicator)));

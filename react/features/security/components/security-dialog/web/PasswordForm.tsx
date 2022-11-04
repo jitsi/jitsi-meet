@@ -46,26 +46,26 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link PasswordForm}.
  */
-type State = {
+interface IState {
 
     /**
      * The value of the password being entered by the local participant.
      */
     enteredPassword: string;
-};
+}
 
 /**
  * React {@code Component} for displaying and editing the conference password.
  *
  * @augments Component
  */
-class PasswordForm extends Component<IProps, State> {
+class PasswordForm extends Component<IProps, IState> {
     /**
      * Implements React's {@link Component#getDerivedStateFromProps()}.
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: IProps, state: State) {
+    static getDerivedStateFromProps(props: IProps, state: IState) {
         return {
             enteredPassword: props.editEnabled ? state.enteredPassword : ''
         };

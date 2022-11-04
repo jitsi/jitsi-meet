@@ -11,7 +11,7 @@ import { getContextMenuStyle } from '../functions.web';
 /**
  * The type of the React {@code Component} props of {@link Popover}.
  */
-type Props = {
+interface IProps {
 
     /**
      * A child React Element to use as the trigger for showing the dialog.
@@ -48,7 +48,7 @@ type Props = {
     /**
      * Callback to invoke when the popover has opened.
      */
-    onPopoverOpen: Function;
+    onPopoverOpen?: Function;
 
     /**
      * Whether to display the Popover as a drawer.
@@ -56,8 +56,7 @@ type Props = {
     overflowDrawer?: boolean;
 
     /**
-     * From which side of the dialog trigger the dialog should display. The
-     * value will be passed to {@code InlineDialog}.
+     * Where should the popover content be placed.
      */
     position: string;
 
@@ -70,12 +69,12 @@ type Props = {
      * Whether the popover is visible or not.
      */
     visible: boolean;
-};
+}
 
 /**
  * The type of the React {@code Component} state of {@link Popover}.
  */
-type State = {
+interface IState {
 
     /**
      * The style to apply to the context menu in order to position it correctly.
@@ -86,15 +85,15 @@ type State = {
         position: string;
         top?: string;
     } | null;
-};
+}
 
 /**
- * Implements a React {@code Component} for showing an {@code InlineDialog} on
+ * Implements a React {@code Component} for showing an {@code Popover} on
  * mouseenter of the trigger and contents, and hiding the dialog on mouseleave.
  *
  * @augments Component
  */
-class Popover extends Component<Props, State> {
+class Popover extends Component<IProps, IState> {
     /**
      * Default values for {@code Popover} component's properties.
      *
@@ -119,7 +118,7 @@ class Popover extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -273,7 +272,7 @@ class Popover extends Component<Props, State> {
     }
 
     /**
-     * Stops displaying the {@code InlineDialog}.
+     * Stops displaying the {@code Popover}.
      *
      * @private
      * @returns {void}
@@ -289,7 +288,7 @@ class Popover extends Component<Props, State> {
     }
 
     /**
-     * Displays the {@code InlineDialog} and calls any registered onPopoverOpen
+     * Displays the {@code Popover} and calls any registered onPopoverOpen
      * callbacks.
      *
      * @param {Object} event - The mouse event or the keypress event to intercept.
@@ -300,7 +299,7 @@ class Popover extends Component<Props, State> {
         event?.stopPropagation();
 
         if (!this.props.disablePopover) {
-            this.props.onPopoverOpen();
+            this.props.onPopoverOpen?.();
         }
     }
 
@@ -377,7 +376,7 @@ class Popover extends Component<Props, State> {
     }
 
     /**
-     * Renders the React Element to be displayed in the {@code InlineDialog}.
+     * Renders the React Element to be displayed in the {@code Popover}.
      * Also adds padding to support moving the mouse from the trigger to the
      * dialog to prevent mouseleave events.
      *
@@ -410,7 +409,7 @@ class Popover extends Component<Props, State> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
     return {

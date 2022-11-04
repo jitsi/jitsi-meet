@@ -19,9 +19,7 @@ import RaisedHandIndicator from './RaisedHandIndicator';
 import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';
 
-declare let interfaceConfig: any;
-
-type Props = {
+interface IProps {
 
     /**
      * Whether to hide the connection indicator.
@@ -67,7 +65,7 @@ type Props = {
      * The type of thumbnail.
      */
     thumbnailType: string;
-};
+}
 
 const useStyles = makeStyles()(() => {
     return {
@@ -91,7 +89,7 @@ const ThumbnailTopIndicators = ({
     popoverVisible,
     showPopover,
     thumbnailType
-}: Props) => {
+}: IProps) => {
     const { classes: styles, cx } = useStyles();
 
     const _isMobile = isMobileBrowser();

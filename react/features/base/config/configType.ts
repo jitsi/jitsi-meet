@@ -312,6 +312,7 @@ export interface IConfig {
     giphy?: {
         displayMode?: 'all' | 'tile' | 'chat';
         enabled?: boolean;
+        rating?: 'g' | 'pg' | 'pg-13' | 'r';
         sdkKey?: string;
         tileTime?: number;
     };
@@ -432,7 +433,7 @@ export interface IConfig {
         disableSearch?: boolean;
         disabled?: boolean;
         order?: Array<'role' | 'name' | 'hasLeft'>;
-     };
+    };
     speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
     startAudioMuted?: number;
     startAudioOnly?: boolean;
@@ -491,6 +492,7 @@ export interface IConfig {
         minHeightForQualityLvl?: {
             [key: number]: string;
         };
+        persist?: boolean;
         preferredCodec?: string;
         resizeDesktopForPresenter?: boolean;
     };

@@ -9,7 +9,7 @@ import { sendAnalytics } from '../../../../../analytics/functions';
 import Button from '../../../../../base/ui/components/web/Button';
 import { moveToRoom } from '../../../../../breakout-rooms/actions';
 
-type Props = {
+interface IProps {
 
     /**
      * The room to join.
@@ -18,7 +18,7 @@ type Props = {
         id: string;
         jid: string;
     };
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -28,7 +28,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-const JoinActionButton = ({ room }: Props) => {
+const JoinActionButton = ({ room }: IProps) => {
     const { classes: styles } = useStyles();
     const { t } = useTranslation();
     const dispatch = useDispatch();

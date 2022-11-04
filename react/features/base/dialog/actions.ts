@@ -22,7 +22,7 @@ import { isDialogOpen } from './functions';
  *     component: (React.Component | undefined)
  * }}
  */
-export function hideDialog(component?: ComponentType) {
+export function hideDialog(component?: ComponentType<any>) {
     return {
         type: HIDE_DIALOG,
         component
@@ -54,7 +54,7 @@ export function hideSheet() {
  *     componentProps: (Object | undefined)
  * }}
  */
-export function openDialog(component: ComponentType, componentProps?: Object) {
+export function openDialog(component: ComponentType<any>, componentProps?: Object) {
     return {
         type: OPEN_DIALOG,
         component,
@@ -92,7 +92,7 @@ export function openSheet(component: ComponentType, componentProps?: Object) {
  * specified {@code component}.
  * @returns {Function}
  */
-export function toggleDialog(component: ComponentType, componentProps?: Object) {
+export function toggleDialog(component: ComponentType<any>, componentProps?: Object) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (isDialogOpen(getState, component)) {
             dispatch(hideDialog(component));

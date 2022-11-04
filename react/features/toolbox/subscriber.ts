@@ -3,8 +3,6 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { isAudioMuteButtonDisabled } from './functions.any';
 
-declare let APP: any;
-
 /**
  * Notifies when audio availability changes.
  */

@@ -30,12 +30,13 @@ import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { isSupportedBrowser } from '../../react/features/base/environment';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../../react/features/base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media';
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     getLocalParticipant,
     getParticipantById,
     getScreenshareParticipantIds,
+    getVirtualScreenshareParticipantByOwnerId,
     grantModerator,
     hasRaisedHand,
     isLocalParticipantModerator,
@@ -95,8 +96,8 @@ import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/part
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
-import { isScreenAudioSupported } from '../../react/features/screen-share';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
+import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
 import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
@@ -235,13 +236,27 @@ function initCommands() {
                 ));
             }
         },
-        'pin-participant': id => {
+        'pin-participant': (id, videoType) => {
             logger.debug('Pin participant command received');
+
+            const state = APP.store.getState();
+            const participant = videoType === VIDEO_TYPE.DESKTOP
+                ? getVirtualScreenshareParticipantByOwnerId(state, id) : getParticipantById(state, id);
+
+            if (!participant) {
+                logger.warn('Trying to pin a non-existing participant with pin-participant command.');
+
+                return;
+            }
+
             sendAnalytics(createApiEvent('participant.pinned'));
+
+            const participantId = participant.id;
+
             if (isStageFilmstripAvailable(APP.store.getState())) {
-                APP.store.dispatch(addStageParticipant(id, true));
+                APP.store.dispatch(addStageParticipant(participantId, true));
             } else {
-                APP.store.dispatch(pinParticipant(id));
+                APP.store.dispatch(pinParticipant(participantId));
             }
         },
         'proxy-connection-event': event => {
@@ -285,10 +300,29 @@ function initCommands() {
 
             APP.store.dispatch(setFollowMe(value));
         },
-        'set-large-video-participant': participantId => {
+        'set-large-video-participant': (participantId, videoType) => {
             logger.debug('Set large video participant command received');
+
+            if (!participantId) {
+                sendAnalytics(createApiEvent('largevideo.participant.set'));
+                APP.store.dispatch(selectParticipantInLargeVideo());
+
+                return;
+            }
+
+            const state = APP.store.getState();
+            const participant = videoType === VIDEO_TYPE.DESKTOP
+                ? getVirtualScreenshareParticipantByOwnerId(state, participantId)
+                : getParticipantById(state, participantId);
+
+            if (!participant) {
+                logger.warn('Trying to select a non-existing participant with set-large-video-participant command.');
+
+                return;
+            }
+
             sendAnalytics(createApiEvent('largevideo.participant.set'));
-            APP.store.dispatch(selectParticipantInLargeVideo(participantId));
+            APP.store.dispatch(selectParticipantInLargeVideo(participant.id));
         },
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));

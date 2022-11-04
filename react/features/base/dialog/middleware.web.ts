@@ -21,8 +21,8 @@ import StopRecordingDialog from '../../recording/components/Recording/web/StopRe
 // @ts-ignore
 import RemoteControlAuthorizationDialog from '../../remote-control/components/RemoteControlAuthorizationDialog';
 import SalesforceLinkDialog from '../../salesforce/components/web/SalesforceLinkDialog';
-import ShareAudioDialog from '../../screen-share/components/ShareAudioDialog';
-import ShareScreenWarningDialog from '../../screen-share/components/ShareScreenWarningDialog';
+import ShareAudioDialog from '../../screen-share/components/web/ShareAudioDialog';
+import ShareScreenWarningDialog from '../../screen-share/components/web/ShareScreenWarningDialog';
 import SecurityDialog from '../../security/components/security-dialog/web/SecurityDialog';
 import LogoutDialog from '../../settings/components/web/LogoutDialog';
 import SharedVideoDialog from '../../shared-video/components/web/SharedVideoDialog';

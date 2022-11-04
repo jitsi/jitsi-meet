@@ -21,6 +21,8 @@ const useStyles = makeStyles()((theme: Theme) => {
             width: '100%',
             height: '100%',
             position: 'fixed',
+            color: theme.palette.text01,
+            ...withPixelLineHeight(theme.typography.bodyLongRegular),
             top: 0,
             left: 0,
             display: 'flex',
@@ -226,13 +228,13 @@ const Dialog = ({
     const dispatch = useDispatch();
 
     const onClose = useCallback(() => {
-        onCancel?.();
         dispatch(hideDialog());
+        onCancel?.();
     }, [ onCancel ]);
 
     const submit = useCallback(() => {
-        onSubmit?.();
         dispatch(hideDialog());
+        onSubmit?.();
     }, [ onSubmit ]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent) => {

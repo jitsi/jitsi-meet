@@ -34,16 +34,17 @@ const useStyles = makeStyles()((theme: Theme) => {
             '& .shortcuts-list__item': {
                 display: 'flex',
                 justifyContent: 'space-between',
-                marginBottom: theme.spacing(2),
-                ...withPixelLineHeight(theme.typography.labelRegular),
+                alignItems: 'center',
+                padding: `${theme.spacing(1)} 0`,
+                ...withPixelLineHeight(theme.typography.bodyShortRegular),
                 color: theme.palette.text01
             },
 
             '& .item-action': {
                 backgroundColor: theme.palette.ui04,
-                fontWeight: 'bold',
-                padding: '1px 4px',
-                borderRadius: '4px'
+                ...withPixelLineHeight(theme.typography.labelBold),
+                padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
+                borderRadius: `${Number(theme.shape.borderRadius) / 2}px`
             }
         }
     };

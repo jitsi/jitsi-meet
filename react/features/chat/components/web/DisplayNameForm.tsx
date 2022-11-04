@@ -5,7 +5,7 @@ import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
-import { Button } from '../../../base/ui/components/web';
+import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 
 // @ts-ignore
@@ -30,20 +30,20 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@DisplayNameForm}.
  */
-type State = {
+interface IState {
 
     /**
      * User provided display name when the input text is provided in the view.
      */
     displayName: string;
-};
+}
 
 /**
  * React Component for requesting the local participant to set a display name.
  *
  * @augments Component
  */
-class DisplayNameForm extends Component<IProps, State> {
+class DisplayNameForm extends Component<IProps, IState> {
     state = {
         displayName: ''
     };

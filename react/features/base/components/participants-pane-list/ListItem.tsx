@@ -7,7 +7,7 @@ import { isMobileBrowser } from '../../environment/utils';
 import { withPixelLineHeight } from '../../styles/functions.web';
 import participantsPaneTheme from '../themes/participantsPaneTheme.json';
 
-type Props = {
+interface IProps {
 
     /**
      * List item actions.
@@ -74,7 +74,7 @@ type Props = {
      */
     trigger: string;
 
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -188,7 +188,7 @@ const ListItem = ({
     testId,
     textChildren,
     trigger
-}: Props) => {
+}: IProps) => {
     const { classes: styles, cx } = useStyles();
     const _isMobile = isMobileBrowser();
     let timeoutHandler: number;

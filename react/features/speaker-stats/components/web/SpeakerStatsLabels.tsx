@@ -25,15 +25,15 @@ const useStyles = makeStyles()((theme: Theme) => {
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsLabels}.
  */
-type Props = {
+interface IProps {
 
     /**
      * True if the face expressions detection is not disabled.
      */
     showFaceExpressions: boolean;
-};
+}
 
-const SpeakerStatsLabels = (props: Props) => {
+const SpeakerStatsLabels = (props: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyles();
     const nameTimeClass = `name-time${

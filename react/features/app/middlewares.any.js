@@ -1,5 +1,3 @@
-// @flow
-
 import '../analytics/middleware';
 import '../av-moderation/middleware';
 import '../base/conference/middleware';
@@ -12,7 +10,6 @@ import '../base/logging/middleware';
 import '../base/media/middleware';
 import '../base/net-info/middleware';
 import '../base/participants/middleware';
-import '../base/redux/middleware';
 import '../base/responsive-ui/middleware';
 import '../base/settings/middleware';
 import '../base/sounds/middleware';
@@ -46,7 +43,6 @@ import '../room-lock/middleware';
 import '../rtcstats/middleware';
 import '../speaker-stats/middleware';
 import '../subtitles/middleware';
-import '../toolbox/middleware';
 import '../transcribing/middleware';
 import '../video-layout/middleware';
 import '../video-quality/middleware';

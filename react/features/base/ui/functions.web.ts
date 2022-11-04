@@ -45,3 +45,17 @@ export function createWebTheme({ font, colors, colorMap, shape, spacing, typogra
     }));
 }
 
+/**
+ * Find the first styled ancestor component of an element.
+ *
+ * @param {HTMLElement|null} target - Element to look up.
+ * @param {string} cssClass - Styled component reference.
+ * @returns {HTMLElement|null} Ancestor.
+ */
+export const findAncestorByClass = (target: HTMLElement | null, cssClass: string): HTMLElement | null => {
+    if (!target || target.classList.contains(cssClass)) {
+        return target;
+    }
+
+    return findAncestorByClass(target.parentElement, cssClass);
+};

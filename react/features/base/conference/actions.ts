@@ -785,10 +785,13 @@ export function setStartReactionsMuted(muted: boolean, updateBackend = false) {
  * @returns {Function}
  */
 export function setPassword(
-        conference: IJitsiConference,
-        method: Function,
+        conference: IJitsiConference | undefined,
+        method: Function | undefined,
         password: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        if (!conference) {
+            return;
+        }
         switch (method) {
         case conference.join: {
             let state = getState()['features/base/conference'];

@@ -68,12 +68,14 @@ import {
 // @ts-ignore
 import { isSalesforceEnabled } from '../../../salesforce/functions';
 import {
-    ShareAudioButton,
-    isScreenAudioSupported,
-    isScreenVideoShared,
     startScreenShareFlow
-    // @ts-ignore
-} from '../../../screen-share';
+} from '../../../screen-share/actions.web';
+// @ts-ignore
+import ShareAudioButton from '../../../screen-share/components/web/ShareAudioButton';
+import {
+    isScreenAudioSupported,
+    isScreenVideoShared
+} from '../../../screen-share/functions';
 // @ts-ignore
 import SecurityDialogButton from '../../../security/components/security-dialog/web/SecurityDialogButton';
 // @ts-ignore
@@ -348,8 +350,6 @@ interface IProps extends WithTranslation {
     toolbarButtons: Array<string>;
 }
 
-declare let APP: any;
-
 const styles = () => {
     return {
         contextMenu: {
@@ -367,7 +367,8 @@ const styles = () => {
             flexDirection: 'column' as const,
             rowGap: '8px',
             margin: 0,
-            padding: '16px'
+            padding: '16px',
+            marginBottom: '8px'
         }
     };
 };

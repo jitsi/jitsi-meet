@@ -26,10 +26,10 @@ export type Props = AbstractProps & WithTranslation & {
     title: string;
 };
 
-type State = {
+interface IState {
     audioModerationEnabled: boolean;
     content: string;
-};
+}
 
 /**
  *
@@ -38,7 +38,8 @@ type State = {
  *
  * @augments AbstractMuteRemoteParticipantDialog
  */
-export default class AbstractMuteEveryoneDialog<P extends Props> extends AbstractMuteRemoteParticipantDialog<P, State> {
+export default class AbstractMuteEveryoneDialog<P extends Props> extends
+    AbstractMuteRemoteParticipantDialog<P, IState> {
     static defaultProps = {
         exclude: [],
         muteLocal: false

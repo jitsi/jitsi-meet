@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "",
         "privateNotice": "",
+        "sendButton": "Send",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": ""
@@ -401,6 +402,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
+        "title": "Live Stream",
         "unavailableTitle": "Live Streaming unavailable",
         "youtubeTerms": "YouTube terms of services"
     },
@@ -516,6 +518,7 @@
         "serviceName": "Recording service",
         "signIn": "Sign in",
         "signOut": "Sign out",
+        "title": "Recording",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable"
     },

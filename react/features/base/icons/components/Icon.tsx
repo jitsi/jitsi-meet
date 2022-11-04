@@ -6,7 +6,7 @@ import { Container } from '../../react/base';
 // @ts-ignore
 import { styleTypeToObject } from '../../styles';
 
-type Props = {
+interface IProps {
 
     /**
      * The id of the element this button icon controls.
@@ -102,7 +102,7 @@ type Props = {
      * TabIndex  for the Icon.
      */
     tabIndex?: number;
-};
+}
 
 export const DEFAULT_COLOR = navigator.product === 'ReactNative' ? 'white' : undefined;
 export const DEFAULT_SIZE = navigator.product === 'ReactNative' ? 36 : 22;
@@ -110,10 +110,10 @@ export const DEFAULT_SIZE = navigator.product === 'ReactNative' ? 36 : 22;
 /**
  * Implements an Icon component that takes a loaded SVG file as prop and renders it as an icon.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {ReactElement}
  */
-export default function Icon(props: Props) {
+export default function Icon(props: IProps) {
     const {
         className,
         color,
@@ -135,7 +135,7 @@ export default function Icon(props: Props) {
         onKeyPress,
         onKeyDown,
         ...rest
-    }: Props = props;
+    }: IProps = props;
 
     const {
         color: styleColor,

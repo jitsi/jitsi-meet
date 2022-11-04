@@ -25,21 +25,6 @@ import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { MEDIA_STATE, QUICK_ACTION_BUTTON, REDUCER_KEY } from './constants';
 
 /**
- * Find the first styled ancestor component of an element.
- *
- * @param {HTMLElement|null} target - Element to look up.
- * @param {string} cssClass - Styled component reference.
- * @returns {HTMLElement|null} Ancestor.
- */
-export const findAncestorByClass = (target: HTMLElement | null, cssClass: string): HTMLElement | null => {
-    if (!target || target.classList.contains(cssClass)) {
-        return target;
-    }
-
-    return findAncestorByClass(target.parentElement, cssClass);
-};
-
-/**
  * Checks if a participant is force muted.
  *
  * @param {IParticipant|undefined} participant - The participant.
@@ -109,31 +94,6 @@ export function getParticipantVideoMediaState(participant: IParticipant, muted: 
 
     return MEDIA_STATE.UNMUTED;
 }
-
-
-/**
- * Get a style property from a style declaration as a float.
- *
- * @param {CSSStyleDeclaration} styles - Style declaration.
- * @param {string} name - Property name.
- * @returns {number} Float value.
- */
-export const getFloatStyleProperty = (styles: CSSStyleDeclaration, name: string) =>
-    parseFloat(styles.getPropertyValue(name));
-
-/**
- * Gets the outer height of an element, including margins.
- *
- * @param {Element} element - Target element.
- * @returns {number} Computed height.
- */
-export const getComputedOuterHeight = (element: HTMLElement) => {
-    const computedStyle = getComputedStyle(element);
-
-    return element.offsetHeight
-    + getFloatStyleProperty(computedStyle, 'margin-top')
-    + getFloatStyleProperty(computedStyle, 'margin-bottom');
-};
 
 /**
  * Returns this feature's root state.

@@ -1,9 +1,6 @@
 import { IReduxState, IStore } from '../../app/types';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
-
-declare let APP: any;
-
 /**
  * Notifies when the local audio mute state changes.
  */

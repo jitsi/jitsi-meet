@@ -16,6 +16,7 @@
     },
     "exclude": [
         "node_modules",
+        "react/features/analytics/handlers/GoogleAnalyticsHandler.ts",
         "react/features/base/components/participants-pane-list",
         "react/features/connection-stats",
         "react/features/desktop-picker",
@@ -23,6 +24,8 @@
         "react/features/embed-meeting",
         "react/features/face-landmarks",
         "react/features/feedback",
+        "react/features/no-audio-signal",
+        "react/features/noise-suppression",
         "react/features/screen-share",
         "react/features/stream-effects/noise-suppression",
         "react/features/stream-effects/rnnoise",

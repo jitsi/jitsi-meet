@@ -70,7 +70,7 @@ export interface IInputProps {
     /**
      * Change callback.
      */
-    onChange: (value: string) => void;
+    onChange?: (value: string) => void;
 
     /**
      * The input placeholder text.

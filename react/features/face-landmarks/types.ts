@@ -1,4 +1,6 @@
 export type DetectInput = {
+
+    // @ts-ignore
     image: ImageBitmap | ImageData;
     threshold: number;
 };

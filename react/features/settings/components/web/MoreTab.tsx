@@ -4,7 +4,7 @@ import { WithTranslation } from 'react-i18next';
 // @ts-expect-error
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import AbstractDialogTab, {
-    Props as AbstractDialogTabProps
+    IProps as AbstractDialogTabProps
 } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
 import Checkbox from '../../../base/ui/components/web/Checkbox';

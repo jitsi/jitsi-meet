@@ -9,7 +9,7 @@ import { IAudioOnlyState } from '../base/audio-only/reducer';
 import { IConferenceState } from '../base/conference/reducer';
 import { IConfigState } from '../base/config/reducer';
 import { IConnectionState } from '../base/connection/reducer';
-import { IDevicesState } from '../base/devices/reducer';
+import { IDevicesState } from '../base/devices/types';
 import { IDialogState } from '../base/dialog/reducer';
 import { IFlagsState } from '../base/flags/reducer';
 import { IJwtState } from '../base/jwt/reducer';

@@ -13,12 +13,12 @@ import { isLocalParticipantModerator } from '../../../base/participants/function
 import Button from '../../../base/ui/components/web/Button';
 import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { findAncestorByClass } from '../../../base/ui/functions.web';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
 import {
-    findAncestorByClass,
     getParticipantsPaneOpen,
     isMoreActionsVisible,
     isMuteAllVisible

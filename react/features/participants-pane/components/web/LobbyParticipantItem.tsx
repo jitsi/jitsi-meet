@@ -19,7 +19,7 @@ import { useLobbyActions } from '../../hooks';
 
 import ParticipantItem from './ParticipantItem';
 
-type Props = {
+interface IProps {
 
     /**
      * Callback used to open a drawer with admit/reject actions.
@@ -35,7 +35,7 @@ type Props = {
      * Participant reference.
      */
     participant: IParticipant;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -59,7 +59,7 @@ export const LobbyParticipantItem = ({
     overflowDrawer,
     participant: p,
     openDrawerForParticipant
-}: Props) => {
+}: IProps) => {
     const { id } = p;
     const [ admit, reject, chat ] = useLobbyActions({ participantID: id });
     const { t } = useTranslation();

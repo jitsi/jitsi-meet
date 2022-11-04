@@ -6,12 +6,12 @@ import {
     Container,
     Image,
     LoadingIndicator,
-    Switch,
     Text
     // @ts-ignore
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux/functions';
 import Button from '../../../../base/ui/components/web/Button';
+import Switch from '../../../../base/ui/components/web/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants';
 import { RECORDING_TYPES } from '../../../constants';
 // @ts-ignore
@@ -25,8 +25,7 @@ import {
     ICON_CLOUD,
     ICON_INFO,
     ICON_USERS,
-    LOCAL_RECORDING,
-    TRACK_COLOR
+    LOCAL_RECORDING
     // @ts-ignore
 } from '../styles.web';
 
@@ -76,11 +75,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
             = integrationsEnabled || _localRecordingAvailable
                 ? (
                     <Switch
+                        checked = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE }
                         className = 'recording-switch'
                         disabled = { isValidating }
-                        onValueChange = { this._onRecordingServiceSwitchChange }
-                        trackColor = {{ false: TRACK_COLOR }}
-                        value = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE } />
+                        onChange = { this._onRecordingServiceSwitchChange } />
                 ) : null;
 
         const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
@@ -141,11 +139,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                     { t('recording.fileSharingdescription') }
                 </Text>
                 <Switch
+                    checked = { sharingSetting }
                     className = 'recording-switch'
                     disabled = { isValidating }
-                    onValueChange = { onSharingSettingChanged }
-                    trackColor = {{ false: TRACK_COLOR }}
-                    value = { sharingSetting } />
+                    onChange = { onSharingSettingChanged } />
             </Container>
         );
     }
@@ -282,12 +279,11 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
         if (fileRecordingsServiceEnabled || _localRecordingAvailable) {
             switchContent = (
                 <Switch
+                    checked = { selectedRecordingService
+                        === RECORDING_TYPES.DROPBOX }
                     className = 'recording-switch'
                     disabled = { isValidating }
-                    onValueChange = { this._onDropboxSwitchChange }
-                    trackColor = {{ false: TRACK_COLOR }}
-                    value = { selectedRecordingService
-                        === RECORDING_TYPES.DROPBOX } />
+                    onChange = { this._onDropboxSwitchChange } />
             );
         }
 
@@ -351,12 +347,11 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                             { t('recording.saveLocalRecording') }
                         </Text>
                         <Switch
+                            checked = { selectedRecordingService
+                                === RECORDING_TYPES.LOCAL }
                             className = 'recording-switch'
                             disabled = { isValidating }
-                            onValueChange = { this._onLocalRecordingSwitchChange }
-                            trackColor = {{ false: TRACK_COLOR }}
-                            value = { selectedRecordingService
-                                === RECORDING_TYPES.LOCAL } />
+                            onChange = { this._onLocalRecordingSwitchChange } />
                     </Container>
                 </Container>
                 {selectedRecordingService === RECORDING_TYPES.LOCAL && (
@@ -373,11 +368,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                                         {t('recording.onlyRecordSelf')}
                                     </Text>
                                     <Switch
+                                        checked = { localRecordingOnlySelf }
                                         className = 'recording-switch'
                                         disabled = { isValidating }
-                                        onValueChange = { onLocalRecordingSelfChange }
-                                        trackColor = {{ false: TRACK_COLOR }}
-                                        value = { localRecordingOnlySelf } />
+                                        onChange = { onLocalRecordingSelfChange } />
                                 </Container>
                             </Container>
                         )}

@@ -7,7 +7,7 @@ import { App } from './features/app/components';
 import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
 import { getJitsiMeetGlobalNS } from './features/base/util';
-import PrejoinApp from './features/prejoin/components/PrejoinApp';
+import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
 
 const logger = getLogger('index.web');
 const OS = Platform.OS;

@@ -9,6 +9,11 @@ declare global {
         UI: any;
         API: any;
         conference: any;
+        debugLogs: any;
+        keyboardshortcut: {
+            registerShortcut: Function;
+            unregisterShortcut: Function;
+        }
     };
     const interfaceConfig: any;
 

@@ -157,6 +157,19 @@ export function appNavigate(uri?: string) {
 }
 
 /**
+ * Check if the welcome page is enabled and redirects to it.
+ * If requested show a thank you dialog before that.
+ * If we have a close page enabled, redirect to it without
+ * showing any other dialog.
+ *
+ * @param {Object} options - Ignored.
+ * @returns {Function}
+ */
+export function maybeRedirectToWelcomePage(options: any) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    // Dummy.
+}
+
+/**
  * Reloads the page.
  *
  * @protected

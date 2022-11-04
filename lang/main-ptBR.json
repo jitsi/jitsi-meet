@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "Não há mensagens na reunião ainda. Inicie uma conversa aqui!",
         "privateNotice": "Mensagem privada para {{recipient}}",
+        "sendButton": "Enviar",
         "smileysPanel": "Painel de Emojis",
         "tabs": {
             "chat": "Conversa",
@@ -384,7 +385,7 @@
         "veryGood": "Muito boa"
     },
     "helpView": {
-        "header": "Centro de ajuda"
+        "title": "Centro de ajuda"
     },
     "incomingCall": {
         "answer": "Responder",
@@ -493,6 +494,7 @@
         "signedInAs": "Você está conectado como:",
         "start": "Iniciar uma transmissão ao vivo",
         "streamIdHelp": "O que é isso?",
+        "title": "Transmissão ao vivo",
         "unavailableTitle": "Transmissão ao vivo indisponível",
         "youtubeTerms": "Termos de serviços do YouTube"
     },
@@ -531,6 +533,7 @@
         "passwordJoinButton": "Solicitar",
         "reject": "Rejeitar",
         "rejectAll": "Rejeitar todos",
+        "title": "Sala de espera",
         "toggleLabel": "Habilitar sala de espera"
     },
     "localRecording": {
@@ -641,12 +644,12 @@
             "videoModeration": "Ativarem seus vídeos"
         },
         "close": "Fechar",
-        "header": "Participantes",
         "headings": {
             "lobby": "Sala de espera ({{count}})",
             "participantsList": "Participantes da reunião ({{count}})",
             "waitingLobby": "Aguardando na sala de espera ({{count}})"
-        }
+        },
+        "title": "Participantes"
     },
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "passwordSetRemotely": "Definido por outro participante",
@@ -790,6 +793,7 @@
         "serviceName": "Serviço de gravação",
         "signIn": "Entrar",
         "signOut": "Sair",
+        "title": "Gravando",
         "unavailable": "Oops! O {{serviceName}} está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
         "unavailableTitle": "Gravação indisponível",
         "uploadToCloud": "Enviar para a nuvem"

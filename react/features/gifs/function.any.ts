@@ -1,6 +1,6 @@
 import { IReduxState } from '../app/types';
 
-import { GIF_PREFIX } from './constants';
+import { GIF_DEFAULT_RATING, GIF_PREFIX } from './constants';
 import { IGif } from './reducer';
 
 /**
@@ -86,4 +86,16 @@ export function getGifDisplayMode(state: IReduxState) {
     const { giphy } = state['features/base/config'];
 
     return giphy?.displayMode || 'all';
+}
+
+/**
+ * Get the GIF audience rating.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {string}
+ */
+export function getGifRating(state: IReduxState) {
+    const { giphy } = state['features/base/config'];
+
+    return giphy?.rating || GIF_DEFAULT_RATING;
 }

@@ -49,7 +49,7 @@ import {
     // @ts-ignore
 } from './';
 
-type Props = {
+interface IProps {
 
     /**
      * Class name for the context menu.
@@ -104,7 +104,7 @@ type Props = {
      * Whether or not the menu is displayed in the thumbnail remote video menu.
      */
     thumbnailMenu?: boolean;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -131,7 +131,7 @@ const ParticipantContextMenu = ({
     participant,
     remoteControlState,
     thumbnailMenu
-}: Props) => {
+}: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { classes: styles } = useStyles();

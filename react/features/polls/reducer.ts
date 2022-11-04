@@ -83,21 +83,30 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
         // if the poll exists, we update it with the incoming answer
         const newAnswers = state.polls[pollId].answers
             .map(_answer => {
+                // checking if the voters is an array for supporting old structure model
+                const answerVoters = _answer.voters
+                    ? _answer.voters.length
+                        ? [ ..._answer.voters ] : Object.keys(_answer.voters) : [];
+
                 return {
                     name: _answer.name,
-                    voters: new Map(_answer.voters)
+                    voters: answerVoters
                 };
             });
 
+
         for (let i = 0; i < newAnswers.length; i++) {
-            // if the answer was chosen, we add the sender to the set of voters of this answer
-            const voters = newAnswers[i].voters;
+            // if the answer was chosen, we add the senderId to the array of voters of this answer
+            const voters = newAnswers[i].voters as any;
+
+            const index = voters.indexOf(answer.voterId);
 
             if (answer.answers[i]) {
-                voters.set(answer.voterId, answer.voterName);
-
-            } else {
-                voters.delete(answer.voterId);
+                if (index === -1) {
+                    voters.push(answer.voterId);
+                }
+            } else if (index > -1) {
+                voters.splice(index, 1);
             }
         }
 

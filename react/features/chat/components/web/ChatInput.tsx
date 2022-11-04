@@ -37,7 +37,7 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link ChatInput}.
  */
-type State = {
+interface IState {
 
     /**
      * User provided nickname when the input text is provided in the view.
@@ -48,14 +48,14 @@ type State = {
      * Whether or not the smiley selector is visible.
      */
     showSmileysPanel: boolean;
-};
+}
 
 /**
  * Implements a React Component for drafting and submitting a chat message.
  *
  * @augments Component
  */
-class ChatInput extends Component<IProps, State> {
+class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     state = {

@@ -1,13 +1,13 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-type Props = {
+interface IProps {
 
     /**
      * URL of the GIF.
      */
     url: string;
-};
+}
 
 const useStyles = makeStyles()(() => {
     return {
@@ -27,7 +27,7 @@ const useStyles = makeStyles()(() => {
     };
 });
 
-const GifMessage = ({ url }: Props) => {
+const GifMessage = ({ url }: IProps) => {
     const { classes: styles } = useStyles();
 
     return (<div className = { styles.container }>

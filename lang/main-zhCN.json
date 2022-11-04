@@ -82,7 +82,7 @@
         },
         "labels": {
             "buttonLabel": "驾驶模式",
-            "title": "安全驾驶模式",
+            "title": "驾驶模式",
             "videoStopped": "你的视频已停止"
         }
     },
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "会议中还没有消息，在这里开始谈话吧！",
         "privateNotice": "与{{recipient}}的私聊",
+        "sendButton": "发送",
         "smileysPanel": "表情符号面板",
         "tabs": {
             "chat": "聊天",
@@ -270,6 +271,7 @@
         "gracefulShutdown": "我们目前正在维护中，请稍后再试。",
         "grantModeratorDialog": "你确定要授予{{participantName}}主持人权限吗？",
         "grantModeratorTitle": "授予主持人权限",
+        "hide": "隐藏",
         "hideShareAudioHelper": "不要再显示",
         "incorrectPassword": "错误的用户名或者密码",
         "incorrectRoomLockPassword": "密码错误",
@@ -387,6 +389,7 @@
         "shareYourScreenDisabled": "共享屏幕已禁用。",
         "sharedVideoDialogError": "错误：网址无效",
         "sharedVideoLinkPlaceholder": "YouTube或视频链接",
+        "show": "显示",
         "start": "开始",
         "startLiveStreaming": "开始直播",
         "startRecording": "开始录制",
@@ -435,7 +438,7 @@
         "search": "搜索GIPHY"
     },
     "helpView": {
-        "header": "帮助中心"
+        "title": "帮助中心"
     },
     "incomingCall": {
         "answer": "接听",
@@ -553,6 +556,7 @@
         "signedInAs": "你当前登录为：",
         "start": "开始直播",
         "streamIdHelp": "这是什么？",
+        "title": "直播",
         "unavailableTitle": "直播不可用",
         "youtubeTerms": "YouTube服务条款"
     },
@@ -595,6 +599,7 @@
         "passwordJoinButton": "加入",
         "reject": "拒绝",
         "rejectAll": "拒绝全部",
+        "title": "大厅",
         "toggleLabel": "开启大厅模式"
     },
     "localRecording": {
@@ -621,6 +626,7 @@
         "no": "否",
         "participant": "参会者",
         "participantStats": "参会者状态",
+        "selectTabTitle": "🎥请选择此标签页进行录制",
         "sessionToken": "会话Token",
         "start": "开始录制",
         "stop": "停止录制",
@@ -737,13 +743,13 @@
             "videoModeration": "开启视频"
         },
         "close": "关闭",
-        "header": "参会者",
         "headings": {
             "lobby": "大厅（({{count}}人）",
             "participantsList": "会议参会者（{{count}}人）",
             "waitingLobby": "在大厅等待（{{count}}人）"
         },
-        "search": "搜索参会者"
+        "search": "搜索参会者",
+        "title": "参会者"
     },
     "passwordDigitsOnly": "最多{{number}}位数字",
     "passwordSetRemotely": "由其他参会者设置",
@@ -853,7 +859,7 @@
         "ringing": "响铃中……"
     },
     "privacyView": {
-        "header": "隐私"
+        "title": "隐私"
     },
     "profile": {
         "avatar": "头像",
@@ -925,6 +931,7 @@
         "signIn": "登录",
         "signOut": "注销",
         "surfaceError": "请选择当前标签页",
+        "title": "录制中",
         "unavailable": "{{serviceName}}目前无法使用，我们正在努力解决这个问题，请稍后再试。",
         "unavailableTitle": "录制不可用",
         "uploadToCloud": "上传至云端"
@@ -936,8 +943,8 @@
     "security": {
         "about": "你可以为会议添加一个$t(lockRoomPassword)，参会者需要输入$t(lockRoomPassword)才能加入会议。",
         "aboutReadOnly": "主持人可以为会议添加一个$t(lockRoomPassword))，参会者需要输入$t(lockRoomPassword)才能加入会议。",
-        "header": "安全选项",
-        "insecureRoomNameWarning": "会议室名称过于简单，任何人都可以加入此会议，请考虑使用安全选项以确保你的会议安全。"
+        "insecureRoomNameWarning": "会议室名称过于简单，任何人都可以加入此会议，请考虑使用安全选项以确保你的会议安全。",
+        "title": "安全选项"
     },
     "settings": {
         "buttonLabel": "设置",
@@ -953,7 +960,7 @@
         "desktopShareWarning": "你需要重新启动共享屏幕以使新设置生效。",
         "devices": "设备",
         "followMe": "所有人跟随",
-        "framesPerSecond": "帧率",
+        "framesPerSecond": "帧",
         "incomingMessage": "新消息",
         "language": "语言",
         "loggedIn": "以{{name}}登录",
@@ -1004,6 +1011,7 @@
         "profileSection": "简介",
         "serverURL": "服务器网址",
         "showAdvanced": "显示高级设置",
+        "startCarModeInLowBandwidthMode": "同时开启驾驶模式和省流模式",
         "startWithAudioMuted": "关闭音频并启动",
         "startWithVideoMuted": "关闭视频并启动",
         "terms": "条款",
@@ -1042,7 +1050,7 @@
         "title": "由于你的电脑进入休眠模式，视频通话已经中断。"
     },
     "termsView": {
-        "header": "条款"
+        "title": "条款"
     },
     "toggleTopPanelLabel": "打开/关闭顶部面板",
     "toolbar": {
@@ -1218,6 +1226,8 @@
         "labelToolTip": "会议正在转录中",
         "off": "转录已停止",
         "pending": "准备转录会议中……",
+        "sourceLanguageDesc": "当前会议语言设置为<b>{{sourceLanguage}}</b><br/>你可以在这里",
+        "sourceLanguageHere": "更改",
         "start": "开启显示字幕",
         "stop": "停止显示字幕",
         "subtitles": "字幕",
@@ -1337,12 +1347,12 @@
         "jitsiOnMobile": "手机版Jitsi – 下载我们的APP，随时随地都能开始会议",
         "join": "创建/加入",
         "logo": {
-            "calendar": "日历logo",
+            "calendar": "日历图标",
             "desktopPreviewThumbnail": "桌面预览缩略图",
-            "googleLogo": "谷歌logo",
-            "logoDeepLinking": "Jitsi meet logo",
-            "microsoftLogo": "微软logo",
-            "policyLogo": "政策logo"
+            "googleLogo": "谷歌图标",
+            "logoDeepLinking": "Jitsi Meet图标",
+            "microsoftLogo": "微软图标",
+            "policyLogo": "政策图标"
         },
         "mobileDownLoadLinkAndroid": "从Google Play下载安卓版手机APP",
         "mobileDownLoadLinkFDroid": "从F-Droid下载安卓版手机APP",
@@ -1353,7 +1363,7 @@
         "recentListDelete": "删除",
         "recentListEmpty": "近期会议为空，与你的团队参会者聊天后，历史会议记录会出现在这里。",
         "reducedUIText": "欢迎使用{{app}}！",
-        "roomNameAllowedChars": "会议室名称不应包含以下任何字符：? & : ' \" % #",
+        "roomNameAllowedChars": "会议室名称不应包含以下字符：? & : ' \" % #",
         "roomname": "请输入会议室名称",
         "roomnameHint": "输入你想加入的会议室的名称或网址，你也可以使用不同的名称创建会议室，其他人只需输入相同的名称即可加入。",
         "sendFeedback": "发送反馈",

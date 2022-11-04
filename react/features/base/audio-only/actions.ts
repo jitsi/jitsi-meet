@@ -8,8 +8,6 @@ import { SET_AUDIO_ONLY } from './actionTypes';
 import logger from './logger';
 
 
-declare let APP: any;
-
 /**
  * Sets the audio-only flag for the current JitsiConference.
  *

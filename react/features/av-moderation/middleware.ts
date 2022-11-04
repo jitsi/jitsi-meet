@@ -18,8 +18,6 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { muteLocal } from '../video-menu/actions.any';
 
 import {
@@ -59,8 +57,6 @@ import {
     isParticipantPending
 } from './functions';
 import { ASKED_TO_UNMUTE_FILE } from './sounds';
-
-declare const APP: any;
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { type } = action;

@@ -39,13 +39,13 @@ type Props = AbstractProps & {
 /**
  * The type of the React {@code Component} state of {@link HighlightButton}.
  */
-type State = {
+interface IState {
 
     /**
      * Whether the notification which prompts for starting recording is open is not.
      */
     isNotificationOpen: boolean;
-};
+}
 
 /**
  * Creates the styles for the component.
@@ -94,7 +94,7 @@ const styles = (theme: Theme) => {
  * React {@code Component} responsible for displaying an action that
  * allows users to highlight a meeting moment.
  */
-export class HighlightButton extends AbstractHighlightButton<Props, State> {
+export class HighlightButton extends AbstractHighlightButton<Props, IState> {
     /**
      * Initializes a new HighlightButton instance.
      *

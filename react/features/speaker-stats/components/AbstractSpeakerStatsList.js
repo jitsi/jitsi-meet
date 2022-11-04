@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getLocalParticipant } from '../../base/participants';
-import { initUpdateStats } from '../actions.any';
+import { initUpdateStats } from '../actions';
 import {
     SPEAKER_STATS_RELOAD_INTERVAL
 } from '../constants';

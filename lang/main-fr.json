@@ -93,6 +93,7 @@
         },
         "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
         "privateNotice": "Message privé à {{recipient}}",
+        "sendButton": "Envoyer",
         "smileysPanel": "Panneaux des Émojis",
         "tabs": {
             "chat": "Chat",
@@ -422,7 +423,7 @@
         "search": "Rechercher dans GIPHY"
     },
     "helpView": {
-        "header": "Centre d'aide"
+        "title": "Centre d'aide"
     },
     "incomingCall": {
         "answer": "Répondre",
@@ -534,6 +535,7 @@
         "signedInAs": "Vous êtes connecté en tant que :",
         "start": "Démarrer la diffusion en direct",
         "streamIdHelp": "Qu'est-ce que c'est ?",
+        "title": "Diffusion en direct",
         "unavailableTitle": "La diffusion est indisponible",
         "youtubeTerms": "Conditions d'utilisation de YouTube"
     },
@@ -576,6 +578,7 @@
         "passwordJoinButton": "Rejoindre",
         "reject": "Refuser",
         "rejectAll": "Refuser tout",
+        "title": "Salle d'attente",
         "toggleLabel": "Activer la salle d'attente"
     },
     "localRecording": {
@@ -712,13 +715,13 @@
             "videoModeration": "Démarrer leur vidéo"
         },
         "close": "Fermer",
-        "header": "Participants",
         "headings": {
             "lobby": "Salle d'attente ({{count}})",
             "participantsList": "Participants de la réunion ({{count}})",
             "waitingLobby": "Dans la salle d'attente ({{count}})"
         },
-        "search": "Rechercher des participants"
+        "search": "Rechercher des participants",
+        "title": "Participants"
     },
     "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
     "passwordSetRemotely": "défini par un autre participant",
@@ -827,7 +830,7 @@
         "ringing": "Appel en cours ..."
     },
     "privacyView": {
-        "header": "Confidentialité"
+        "title": "Confidentialité"
     },
     "profile": {
         "avatar": "avatar",
@@ -888,6 +891,7 @@
         "sessionAlreadyActive": "Cette session est déjà en cours d'enregistrement ou de diffusion.",
         "signIn": "Se connecter",
         "signOut": "Se déconnecter",
+        "title": "Enregistrement",
         "unavailable": "Oups ! Le {{serviceName}} est actuellement indisponible. Nous tentons de résoudre le problème. Veuillez réessayer plus tard.",
         "unavailableTitle": "Enregistrement indisponible",
         "uploadToCloud": "Envoyer vers le cloud"
@@ -898,8 +902,8 @@
     "security": {
         "about": "Vous pouvez ajouter un mot de passe à votre réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
         "aboutReadOnly": "Les modérateurs peuvent ajouter un mot de passe à la réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
-        "header": "Options de sécurité",
-        "insecureRoomNameWarning": "Le nom de la salle est peu sûr. Des participants non désirés peuvent rejoindre votre réunion. Pensez à sécuriser votre réunion en cliquant sur le bouton de sécurité."
+        "insecureRoomNameWarning": "Le nom de la salle est peu sûr. Des participants non désirés peuvent rejoindre votre réunion. Pensez à sécuriser votre réunion en cliquant sur le bouton de sécurité.",
+        "title": "Options de sécurité"
     },
     "settings": {
         "calendar": {
@@ -995,7 +999,7 @@
         "title": "Votre visioconférence s'est interrompue parce que votre ordinateur s'est mis en veille."
     },
     "termsView": {
-        "header": "Conditions d'utilisation"
+        "title": "Conditions d'utilisation"
     },
     "toolbar": {
         "Settings": "Paramètres",

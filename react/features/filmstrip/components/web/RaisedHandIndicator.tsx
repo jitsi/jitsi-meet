@@ -12,7 +12,7 @@ import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
 /**
  * The type of the React {@code Component} props of {@link RaisedHandIndicator}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The font-size for the icon.
@@ -29,7 +29,7 @@ type Props = {
      * From which side of the indicator the tooltip should appear from.
      */
     tooltipPosition: string;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
@@ -53,7 +53,7 @@ const RaisedHandIndicator = ({
     iconSize,
     participantId,
     tooltipPosition
-}: Props) => {
+}: IProps) => {
     const participant: IParticipant | undefined = useSelector((state: IReduxState) =>
         getParticipantById(state, participantId));
     const _raisedHand = hasRaisedHand(participant);

@@ -2,7 +2,7 @@ import { Theme } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-type Props = {
+interface IProps {
 
     /**
      * The 'aria-label' text.
@@ -33,7 +33,7 @@ type Props = {
      * The current value where the knob is positioned.
      */
     value: number;
-};
+}
 
 const useStyles = makeStyles()((theme: Theme) => {
     // keep the same height for all elements:
@@ -138,7 +138,7 @@ const useStyles = makeStyles()((theme: Theme) => {
  *
  *  @returns {ReactElement}
  */
-function Slider({ ariaLabel, max, min, onChange, step, value }: Props) {
+function Slider({ ariaLabel, max, min, onChange, step, value }: IProps) {
     const { classes, cx } = useStyles();
     const knobs = [ ...Array(Math.floor((max - min) / step) + 1) ];
 

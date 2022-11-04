@@ -9,13 +9,13 @@ import AbstractDisplayNamePrompt, { IProps } from '../AbstractDisplayNamePrompt'
 /**
  * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
  */
-type State = {
+interface IState {
 
     /**
      * The name to show in the display name text field.
      */
     displayName: string;
-};
+}
 
 /**
  * Implements a React {@code Component} for displaying a dialog with an field
@@ -23,7 +23,7 @@ type State = {
  *
  * @augments Component
  */
-class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
+class DisplayNamePrompt extends AbstractDisplayNamePrompt<IState> {
     /**
      * Initializes a new {@code DisplayNamePrompt} instance.
      *
