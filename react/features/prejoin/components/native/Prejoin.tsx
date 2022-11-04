@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { useIsFocused } from '@react-navigation/native';
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,33 +17,24 @@ import { IReduxState } from '../../../app/types';
 import { setAudioOnly } from '../../../base/audio-only/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { connect } from '../../../base/connection/actions.native';
-// @ts-ignore
-import { IconCloseLarge } from '../../../base/icons/svg';
-// @ts-ignore
+import { IconClose } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { getFieldValue } from '../../../base/react/functions';
+import { getFieldValue } from '../../../base/react';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { updateSettings } from '../../../base/settings/actions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
-// @ts-ignore
-import { LargeVideo } from '../../../large-video/components';
-// @ts-ignore
+import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
-// @ts-ignore
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
-// @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
-// @ts-ignore
 import AudioMuteButton from '../../../toolbox/components/AudioMuteButton';
-// @ts-ignore
 import VideoMuteButton from '../../../toolbox/components/VideoMuteButton';
 import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
-// @ts-ignore
 import styles from '../styles';
 
 
@@ -102,7 +91,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         return (
             <HeaderNavigationButton
                 onPress = { goBack }
-                src = { IconCloseLarge } />
+                src = { IconClose } />
         );
     }, []);
 
@@ -162,6 +151,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             <View style = { contentContainerStyles }>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <Input
+                        autoFocus = { true }
                         customStyles = {{ input: styles.customInput }}
                         onChange = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
