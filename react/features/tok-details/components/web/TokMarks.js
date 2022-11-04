@@ -1,7 +1,5 @@
 import React from 'react';
-import {NewModal6, NewModal7} from "../../../Modal";
 import {Icon, IconBookmark, IconTicket} from "../../../base/icons";
-import {openDialog} from "../../../base/dialog";
 import {
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
@@ -12,6 +10,17 @@ import type {AbstractButtonProps} from "../../../base/toolbox/components";
 import {getLocalizedDurationFormatter, translate} from "../../../base/i18n";
 import {connect} from "../../../base/redux";
 import {getConferenceTimestamp} from "../../../base/conference";
+import {
+    sendTranscriptText,
+    toggleRequestingSubtitles
+} from "../../../subtitles";
+import {
+    AbstractCaptions
+} from "../../../subtitles/components/AbstractCaptions";
+import type {Dispatch} from "redux";
+import type {
+    AbstractCaptionsProps
+} from "../../../subtitles/components/AbstractCaptions";
 
 export type Props = AbstractButtonProps & {
 
@@ -26,10 +35,6 @@ export type Props = AbstractButtonProps & {
     url: string,
 
     /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function,
-    /**
      * Value of current conference time.
      */
     timerValue: string,
@@ -37,61 +42,91 @@ export type Props = AbstractButtonProps & {
      * The UTC timestamp representing the time when first participant joined.
      */
     _startTimestamp: ?number,
-};
+    /**
+     * Whether the subtitles container is lifted above the invite box.
+     */
+    _isLifted: boolean, /**
+     * The redux {@code dispatch} function.
+     */
+    dispatch: Dispatch<any>, _transcript: $ObjMap,
+    _sendTranscriptText: string,
 
-const TokMarks = (props: Props) => {
-    let notify = true;
-    let tokMarkStartTime = 0;
-    let tokMarkEndTime = 0;
+} & AbstractCaptionsProps;
+
+let notify = true;
+let tokMarkStartTime = 0;
+let tokMarkEndTime = 0;
 
 
-    const notifyUser = () => {
+class TokMarks extends AbstractCaptions<Props> {
+
+    constructor() {
+        super();
+        this.notifyUser = this.notifyUser.bind(this);
+    }
+
+    notifyUser() {
         if (notify) {
-            tokMarkStartTime = getLocalizedDurationFormatter(new Date().getTime()-props._startTimestamp);
-            console.log('ClickTImer22',getLocalizedDurationFormatter(new Date().getTime()-props._startTimestamp));
-            props.dispatch(showNotification({
+            tokMarkStartTime = getLocalizedDurationFormatter(new Date().getTime() - this.props._startTimestamp);
+            this.props.dispatch(toggleRequestingSubtitles());
+            console.log('ClickTImer22', getLocalizedDurationFormatter(new Date().getTime() - this.props._startTimestamp));
+            this.props.dispatch(showNotification({
                 titleKey: 'Tok mark has been started',
                 uid: SALESFORCE_LINK_NOTIFICATION_ID,
                 appearance: NOTIFICATION_TYPE.NORMAL
             }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
             notify = false;
         } else {
-            tokMarkEndTime = getLocalizedDurationFormatter(new Date().getTime()-props._startTimestamp);
-            console.log('ClickTImer66',getLocalizedDurationFormatter(new Date().getTime()-props._startTimestamp));
-            props.dispatch(showNotification({
+            tokMarkEndTime = getLocalizedDurationFormatter(new Date().getTime() - this.props._startTimestamp);
+            this.props.dispatch(toggleRequestingSubtitles());
+            console.log('ClickTImer66', getLocalizedDurationFormatter(new Date().getTime() - this.props._startTimestamp));
+            console.log('_transcriptMessages11', this.props._sendTranscriptText);
+            this.props.dispatch(showNotification({
                 titleKey: 'Tok mark has been ended',
                 uid: SALESFORCE_LINK_NOTIFICATION_ID,
                 appearance: NOTIFICATION_TYPE.NORMAL
             }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
             notify = true;
+            this.props.dispatch(sendTranscriptText(''));
         }
     }
-    return (
-        <div className={`invite-more-container${true ? '' : ' elevated'}`}>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                justifyContent: 'flex-start'
-            }}>
+
+    render() {
+        return (
+            <div className={`invite-more-container${true ? '' : ' elevated'}`}>
                 <div style={{
-                    borderRadius: '40%',
-                    margin: '10px'
-                }}
-                     className="invite-more-button"
-                     onClick={() => {
-                         notifyUser()
-                     }}>
-                    <Icon src={IconBookmark}/>
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-start'
+                }}>
+                    <div style={{
+                        borderRadius: '40%',
+                        margin: '10px'
+                    }}
+                         className="invite-more-button"
+                         onClick={() => {
+                             this.notifyUser()
+                         }}>
+                        <Icon src={IconBookmark}/>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
-};
-export function _mapStateToProps(state: Object) {
+        );
+    }
+}
 
+
+function _mapStateToProps(state: Object) {
+    const {
+        _sendTranscriptText
+    } = state['features/subtitles'];
     return {
-        _startTimestamp: getConferenceTimestamp(state)
+        _startTimestamp: getConferenceTimestamp(state),
+        _sendTranscriptText: _sendTranscriptText
     };
 }
+
 export default translate(connect(_mapStateToProps)(TokMarks));
+
+

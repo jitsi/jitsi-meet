@@ -31,6 +31,7 @@ import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
+import {toggleRequestingSubtitles} from "../../../subtitles";
 
 declare var APP: Object;
 declare var interfaceConfig: Object;

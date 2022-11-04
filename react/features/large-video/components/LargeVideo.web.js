@@ -12,6 +12,7 @@ import { getVerticalViewMaxWidth } from '../../filmstrip/functions.web';
 import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
 import { setTileView } from '../../video-layout/actions';
+import TokMarks from "../../tok-details/components/web/TokMarks";
 
 declare var interfaceConfig: Object;
 

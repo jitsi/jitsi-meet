@@ -17,32 +17,75 @@ export type Props = {
     /**
      * Display  translated count..
      */
-    _sendTranscriptCount: Array<string>
+    _sendTranscriptCount: Array<string>,
+    /**
+     * The participant's current display name which should be shown.
+     */
+    _nameToDisplay: string,
 }
 const Tok = (props: Props) => {
     const [open, setOpen] = useState(false);
     const focusOPenRef = useRef();
-
-    let tokMarksList = [
+    const tokList = [
         {
-            "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/103",
-            "duration": "00:58",
-            "name": "Skullcandy",
+            "product": "Ear Buds",
+            "duration": "10:40",
+            "children": [
+                {
+                    "subProduct": "Skullcandy",
+                    "count": "10",
+                    "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/103"
+                },
+                {
+                    "subProduct": "Boat EarBuds",
+                    "count": "12",
+                    "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/110"
+                }]
         },
         {
-            "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/107",
-            "duration": "00:59",
-            "name": "Tripole",
+            "product": "Watches",
+            "duration": "05:29",
+            "children": [
+                {
+                    "subProduct": "Rollex",
+                    "count": "4",
+                    "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/112"
+                },
+                {
+                    "subProduct": "Rollexs",
+                    "count": "5",
+                    "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/117"
+                }]
         },
         {
-            "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/112",
-            "duration": "00:31",
-            "name": "Rollex",
+            "product": "Mobiles",
+            "duration": "06:30",
+            "children": [
+                {
+                    "subProduct": "Apple iphone 12",
+                    "count": "12",
+                    "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/106"
+                },
+                {
+                    "subProduct": "Nord ce 2",
+                    "count": "15",
+                    "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/102"
+                }]
         },
         {
-            "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/129",
-            "duration": "01:15",
-            "name": "Realme 10 R",
+            "product": "Laptops",
+            "duration": "08:10",
+            "children": [
+                {
+                    "subProduct": "New Dell Inspiron 15 3505",
+                    "count": "8",
+                    "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/126"
+                },
+                {
+                    "subProduct": "Dell Latitude 7490",
+                    "count": "6",
+                    "url": "http://custommeet3.centralus.cloudapp.azure.com/#/ProductDetailsPage/127"
+                }]
         }
     ]
     const tokBytesTrigger = () => {
@@ -75,6 +118,30 @@ const Tok = (props: Props) => {
                 </div>
             </div>
         );
+    }
+
+    function trigger(product, duration) {
+        return (
+            <div className='collapseHeader'>
+                <div className='transcriptHead'>
+                    <div className="iconUrl">
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                            width: '30%'
+                        }}>
+                            <IconSlowMotion
+                                width={'20px'}
+                                height={'20px'}/>
+                            <p className='tokMarkP'>{product}</p>
+                        </div>
+                        <p style={{width:'30%'}}>Show Products</p>
+                        <p>{duration}</p>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     useEffect(() => {
@@ -147,37 +214,41 @@ const Tok = (props: Props) => {
                     <div style={{marginTop: '10px'}}></div>
                     <Collapsible trigger={tokMarkTrigger()} open={true}>
                         <div className="collapseHeader">
-                            {tokMarksList.map((value, index) => {
+                            {tokList.map((value, index) => {
                                 return (
-                                    <div className="transcriptHead" key={index}
-                                         onClick={() => {
-                                             if (isMobileBrowser()) {
-                                                 if (window.flutter_inappwebview) {
-                                                     console.log('beforeTokMarkUrl');
-                                                     const args = value.url;
-                                                     console.log('beforeTokMarkUrl', args);
-                                                     window.flutter_inappwebview.callHandler('handleTokMarkUrls', args);
-                                                 } else {
-                                                     console.log('InAppWebViewNotLoaded');
-                                                 }
-                                             } else {
-                                                 window.open(value.url);
-                                             }
-                                         }}>
-                                        <div
-                                            className="transcriptMarks">
-                                            <div className="tokMarkDiv">
-                                                <IconSlowMotion
-                                                    width={'20px'}
-                                                    height={'20px'}/>
-                                                <p className="tokMarkP">
-                                                    {value.name}</p>
-                                            </div>
-                                            <div>
-                                                <p>{value.duration}</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <Collapsible
+                                        trigger={trigger(value.product, value.duration)}>  {
+                                        value.children.map((childrenValue, index) => {
+                                            return (
+                                                <div className='transcriptHead'  onClick={() => {
+                                                    if (isMobileBrowser()) {
+                                                        if (window.flutter_inappwebview) {
+                                                            console.log('beforeTokUrl');
+                                                            const args = `${childrenValue.url}`;
+                                                            console.log('afterTokUrl', args);
+                                                            window.flutter_inappwebview.callHandler('handleTokMarkUrls', args);
+                                                            console.log('TokUrl', args);
+                                                        } else {
+                                                            console.log('InAppWebViewNotLoaded');
+                                                        }
+                                                    } else {
+                                                        window.open(childrenValue.url);
+                                                    }
+                                                }}>
+                                                    <div
+                                                        className="transcriptMarks">
+                                                        <div
+                                                            className="tokMarkDiv">
+                                                            <p className="tokMarkSubProduct">
+                                                                {childrenValue.subProduct}</p>
+                                                        </div>
+                                                            <p>count : {childrenValue.count}</p>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                    </Collapsible>
                                 )
                             })}
                         </div>

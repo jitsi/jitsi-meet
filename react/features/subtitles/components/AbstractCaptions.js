@@ -1,6 +1,7 @@
 // @flow
 
 import {Component} from 'react';
+import {sendTranscriptText} from "../actions";
 
 /**
  * {@code AbstractCaptions} Properties.
@@ -17,7 +18,10 @@ export type AbstractCaptionsProps = {
      * Mapped by id just to have the keys for convenience during the rendering
      * process.
      */
-    _transcripts: ?Map<string, string>
+    _transcripts: ?Map<string, string>,
+    _transcriptsWithOutName: ?Map<string, string>,
+    _sendTranscriptText: string,
+    _transcriptMessages: string,
 };
 
 /**
@@ -44,9 +48,14 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
         }
 
         const paragraphs = [];
-
-        for (const [id, text] of _transcripts) {
-            paragraphs.push(this._renderParagraph(id, text));
+/*        console.log('_transcripts',_transcripts.keys, _transcripts.values);
+          for (const [id, text] of _transcripts) {
+              paragraphs.push(this._renderParagraph(id, text));
+          }*/
+        for (let i = 0; i < [..._transcripts].length; i++) {
+            let currentTranscript = [..._transcripts][i];
+            let currentTranscriptWithOutName = [...this.props._transcriptsWithOutName][i];
+            paragraphs.push(this._renderParagraph(currentTranscript[0], currentTranscript[1], currentTranscriptWithOutName[1]));
         }
         return this._renderSubtitlesContainer(paragraphs);
     }
@@ -62,7 +71,7 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
      * @protected
      * @returns {React$Element} - The React element which displays the text.
      */
-    _renderParagraph: (id: string, text: string) => React$Element<*>;
+    _renderParagraph: (id: string, text: string, textWithOutName: string) => React$Element<*>;
 
     /**
      * Renders the subtitles container.
@@ -109,6 +118,27 @@ function _constructTranscripts(state: Object): Map<string, string> {
     return transcripts;
 }
 
+function getTranscriptsWithOutName(state) {
+    const {_transcriptMessages} = state['features/subtitles'];
+    let transcriptMessageWithoutName = new Map();
+    for (const [id, transcriptMessage] of _transcriptMessages) {
+        if (transcriptMessage) {
+            let text = '';
+
+            if (transcriptMessage.final) {
+                text += transcriptMessage.final;
+            } else {
+                const stable = transcriptMessage.stable || '';
+                const unstable = transcriptMessage.unstable || '';
+
+                text += stable + unstable;
+            }
+            transcriptMessageWithoutName.set(id, text);
+        }
+    }
+    return transcriptMessageWithoutName;
+}
+
 /**
  * Maps the transcriptionSubtitles in the redux state to the associated props of
  * {@code AbstractCaptions}.
@@ -123,11 +153,13 @@ function _constructTranscripts(state: Object): Map<string, string> {
 export function _abstractMapStateToProps(state: Object) {
     const {_requestingSubtitles} = state['features/subtitles'];
     const transcripts = _constructTranscripts(state);
+    const _transcriptsWithOutName = getTranscriptsWithOutName(state);
 
     return {
         _requestingSubtitles,
 
         // avoid rerenders by setting to props new empty Map instances.
-        _transcripts: transcripts.size === 0 ? undefined : transcripts
+        _transcripts: transcripts.size === 0 ? undefined : transcripts,
+        _transcriptsWithOutName:_transcriptsWithOutName
     };
 }

@@ -2,20 +2,24 @@
 
 import React from 'react';
 
-import { getLocalParticipant } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { getLargeVideoParticipant } from '../../large-video/functions';
-import { isLayoutTileView } from '../../video-layout';
+import {getLocalParticipant} from '../../base/participants';
+import {connect} from '../../base/redux';
+import {getLargeVideoParticipant} from '../../large-video/functions';
+import {isLayoutTileView} from '../../video-layout';
 
 import {
     _abstractMapStateToProps,
     AbstractCaptions,
     type AbstractCaptionsProps
 } from './AbstractCaptions';
-import { isMobileBrowser } from '../../base/environment/utils';
-import { showTranscriptData, showTranscriptionBite } from '../actions';
-import { translate } from '../../base/i18n';
-import type { Dispatch } from 'redux';
+import {isMobileBrowser} from '../../base/environment/utils';
+import {
+    sendTranscriptText,
+    showTranscriptData,
+    showTranscriptionBite
+} from '../actions';
+import {translate} from '../../base/i18n';
+import type {Dispatch} from 'redux';
 
 export type Props = {
 
@@ -25,7 +29,8 @@ export type Props = {
     _isLifted: boolean, /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<any>, _transcript: $ObjMap
+    dispatch: Dispatch<any>,
+    _transcript: $ObjMap,
 } & AbstractCaptionsProps;
 
 /**
@@ -67,11 +72,11 @@ class Captions extends AbstractCaptions<Props> {
             try {
                 if (isMobileBrowser()) {
                     if (window.flutter_inappwebview) {
-                        let structuredArgs = args.replaceAll('Fellow Jitser:', '');
-                        window.flutter_inappwebview.callHandler('handleTranscriptArgs', structuredArgs)
+                        this.props.dispatch(sendTranscriptText(args));
+                        window.flutter_inappwebview.callHandler('handleTranscriptArgs', args)
                             .then((e) => {
                                 transcriptJSonData = JSON.stringify(e);
-                                const { transcriptBite } = JSON.parse(transcriptJSonData);
+                                const {transcriptBite} = JSON.parse(transcriptJSonData);
                                 console.log('transcriptBite', transcriptBite);
                                 for (let i = 0; i < transcriptBite.length; i++) {
                                     allData.push(`${transcriptBite[i]['bite']} ${transcriptBite[i]['count']}`);
@@ -97,9 +102,10 @@ class Captions extends AbstractCaptions<Props> {
                         console.log('InAppWebViewNotLoaded');
                     }
                 } else {
-                    let structuredWebArgs = args.replaceAll('Fellow Jitser:', '');
+                    this.props.dispatch(sendTranscriptText(textStore));
+                    console.log('structuredWebArgs', args);
                     window.opener.postMessage(JSON.stringify({
-                        'polytok': structuredWebArgs
+                        'polytok': args
                     }), 'https://custommeet4.centralus.cloudapp.azure.com/');
                     window.addEventListener('message', (event) => {
                         stringData = JSON.stringify(event.data);
@@ -135,8 +141,8 @@ class Captions extends AbstractCaptions<Props> {
     }
 
 
-    _renderParagraph(id: string, text: string): React$Element<*> {
-        textStore = textStore + text;
+    _renderParagraph(id: string, text: string, textWithOutName: string): React$Element<*> {
+        textStore = textStore + textWithOutName;
         return (<p key={id}>
             <span>{text}</span>
         </p>);

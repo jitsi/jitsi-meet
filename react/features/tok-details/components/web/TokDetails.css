@@ -5,6 +5,11 @@
     width: 100%;
     justify-content: space-around;
 }
+.dropdownTranscriptHead{
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-around;
+}
 
 .collapseHeader {
     margin-top: 4px;
@@ -45,10 +50,20 @@
 .tokMarkDiv {
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 80%;
 }
 
 .tokMarkP {
     padding-left: 10px;
+    display: inline;
+}
+.tokMarkSubProduct {
+    padding-left: 10px;
+    display: inline;
+    text-decoration: underline;
+    color: #0a57eb;
 }
 
 .tokMarkIcon {

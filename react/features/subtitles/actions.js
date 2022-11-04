@@ -4,12 +4,12 @@ import {
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
     SEND_TRANSCRIPT_BITE,
-    SEND_TRANSCRIPT_MESSAGE,
+    SEND_TRANSCRIPT_MESSAGE, SEND_TRANSCRIPT_TEXT,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
-import { Dispatch } from 'react';
+import {Dispatch} from 'react';
 
 /**
  * Signals that a participant sent an endpoint message on the data channel.
@@ -59,7 +59,7 @@ export function removeTranscriptMessage(transcriptMessageID: string) {
  * }}
  */
 export function updateTranscriptMessage(transcriptMessageID: string,
-    newTranscriptMessage: Object) {
+                                        newTranscriptMessage: Object) {
     return {
         type: UPDATE_TRANSCRIPT_MESSAGE,
         transcriptMessageID,
@@ -130,6 +130,15 @@ export function showTranscriptionBite(bite) {
             data: bite
         });
     };
+}
 
+export function sendTranscriptText(text) {
+    console.log('texttttt', text);
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        dispatch({
+            type: SEND_TRANSCRIPT_TEXT,
+            data: text
+        })
+    }
 }
 

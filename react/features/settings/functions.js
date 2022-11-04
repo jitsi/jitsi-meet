@@ -234,7 +234,7 @@ export function getProfileTabProps(stateful: Object | Function) {
 export function getSoundsTabProps(stateful: Object | Function) {
     const state = toState(stateful);
     const {
-        soundsIncomingMessage,
+        // soundsIncomingMessage,
         soundsParticipantJoined,
         soundsParticipantLeft,
         soundsTalkWhileMuted,
@@ -244,7 +244,7 @@ export function getSoundsTabProps(stateful: Object | Function) {
     const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
 
     return {
-        soundsIncomingMessage,
+        // soundsIncomingMessage,
         soundsParticipantJoined,
         soundsParticipantLeft,
         soundsTalkWhileMuted,
