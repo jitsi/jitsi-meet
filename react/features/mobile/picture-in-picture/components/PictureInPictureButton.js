@@ -2,15 +2,13 @@
 
 import { NativeModules, Platform } from 'react-native';
 
-import { PIP_ENABLED, PIP_AT_TRANSLATION_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { PIP_AT_TRANSLATION_ENABLED, PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconMenuDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { enterPictureInPicture } from '../actions';
 import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions';
-
-// import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions';
+import { enterPictureInPicture } from '../actions';
 
 type Props = AbstractButtonProps & {
 
