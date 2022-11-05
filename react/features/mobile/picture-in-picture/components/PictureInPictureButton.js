@@ -2,12 +2,13 @@
 
 import { NativeModules, Platform } from 'react-native';
 
-import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { PIP_ENABLED, PIP_AT_TRANSLATION_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconMenuDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { enterPictureInPicture } from '../actions';
+import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions';
 
 // import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions';
 
@@ -64,8 +65,10 @@ class PictureInPictureButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
-    const flag = Boolean(getFeatureFlag(state, PIP_ENABLED));
-    let enabled = flag; // && !isLocalVideoTrackDesktop(state);
+    const pinEnabled = Boolean(getFeatureFlag(state, PIP_ENABLED));
+    const pinAtTranslationEnabled = getFeatureFlag(state, PIP_AT_TRANSLATION_ENABLED, false);
+
+    let enabled = pinEnabled && (!isLocalVideoTrackDesktop(state) || pinAtTranslationEnabled);
 
     // Override flag for Android, since it might be unsupported.
     if (Platform.OS === 'android' && !NativeModules.PictureInPicture.SUPPORTED) {
