@@ -1,8 +1,14 @@
+/* eslint-disable lines-around-comment */
+
 import { IReduxState } from '../../../../app/types';
+// @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
 import { navigate }
+// @ts-ignore
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+// @ts-ignore
 import { screen } from '../../../../mobile/navigation/routes';
+// @ts-ignore
 import { SETTINGS_ENABLED, getFeatureFlag } from '../../../flags';
 import { translate } from '../../../i18n/functions';
 import { IconSettings } from '../../../icons/svg';
