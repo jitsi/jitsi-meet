@@ -1,8 +1,8 @@
 /* eslint-disable react-native/no-color-literals */
-// @flow
 
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
+import { Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -23,15 +23,38 @@ const PollsPane = (props: AbstractProps) => {
     const navigation = useNavigation();
     const nbUnreadPolls = useSelector(getUnreadPollCount);
 
-    const nrUnreadPolls = !isPollsScreenFocused && nbUnreadPolls > 0
-        ? `(${nbUnreadPolls})`
-        : '';
+    const activePollsNr = !isPollsScreenFocused && nbUnreadPolls > 0;
+
+    let activePollsElement;
+
+    const tabBarLabel = () => {
+        if (activePollsNr) {
+            activePollsElement = (
+                <View style = { chatStyles.unreadPollsCounterCircle }>
+                    <Text style = { chatStyles.unreadPollsCounter }>
+                        { nbUnreadPolls }
+                    </Text>
+                </View>
+            );
+        } else {
+            activePollsElement = null;
+        }
+
+        return (
+            <View style = { chatStyles.unreadPollsCounterContainer }>
+                <Text style = { chatStyles.unreadPollsCounterDescription }>
+                    { t('chat.tabs.polls') }
+                </Text>
+                { activePollsElement }
+            </View>
+        );
+    };
 
     useEffect(() => {
         navigation.setOptions({
-            tabBarLabel: `${t('chat.tabs.polls')} ${nrUnreadPolls}`
+            tabBarLabel
         });
-    }, [ nrUnreadPolls ]);
+    }, [ activePollsNr ]);
 
     return (
         <JitsiScreen

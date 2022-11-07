@@ -1,6 +1,4 @@
-// @flow
-
-import React, { Component } from 'react';
+import React, { Component, ReactElement } from 'react';
 import { FlatList } from 'react-native';
 
 import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../../constants';
@@ -60,7 +58,7 @@ export default class ChatMessageGroup extends Component<Props> {
         return `key_${index}`;
     }
 
-    _renderMessage: Object => React$Element<*>;
+    _renderMessage: Object => ReactElement;
 
     /**
      * Renders a single chat message.

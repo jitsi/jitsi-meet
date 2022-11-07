@@ -1,5 +1,3 @@
-// @flow
-
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconChatUnread, IconMessage } from '../../../base/icons';
@@ -11,7 +9,6 @@ import {
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { getUnreadCount } from '../../functions';
-
 
 type Props = AbstractButtonProps & {
 

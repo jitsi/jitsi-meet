@@ -1,7 +1,6 @@
-// @flow
-
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect } from 'react';
+import { Text, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -16,7 +15,6 @@ import ChatInputBar from './ChatInputBar';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 import styles from './styles';
-
 
 type Props = AbstractProps & {
 
@@ -68,20 +66,39 @@ class Chat extends AbstractChat<Props> {
 }
 
 export default translate(connect(_mapStateToProps)(props => {
-    const {
-        _nbUnreadMessages,
-        navigation,
-        t
-    } = props;
+    const { _nbUnreadMessages, navigation, t } = props;
     const isChatScreenFocused = useIsFocused();
 
-    const nrUnreadMessages
-        = !isChatScreenFocused && _nbUnreadMessages > 0
-            ? `(${_nbUnreadMessages})` : '';
+    const nrUnreadMessages = !isChatScreenFocused && _nbUnreadMessages > 0;
+
+    let nrUnreadMessagesElement;
+
+    const tabBarLabel = () => {
+        if (nrUnreadMessages) {
+            nrUnreadMessagesElement = (
+                <View style = { styles.unreadMessagesCounterCircle }>
+                    <Text style = { styles.unreadMessagesCounter }>
+                        { _nbUnreadMessages }
+                    </Text>
+                </View>
+            );
+        } else {
+            nrUnreadMessagesElement = null;
+        }
+
+        return (
+            <View style = { styles.unreadMessagesCounterContainer }>
+                <Text style = { styles.unreadMessagesCounterDescription }>
+                    { t('chat.tabs.chat') }
+                </Text>
+                { nrUnreadMessagesElement }
+            </View>
+        );
+    };
 
     useEffect(() => {
         navigation.setOptions({
-            tabBarLabel: `${t('chat.tabs.chat')} ${nrUnreadMessages}`
+            tabBarLabel
         });
 
         return () => props.dispatch(closeChat());

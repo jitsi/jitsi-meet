@@ -1,5 +1,3 @@
-// @flow
-
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconMessage, IconReply } from '../../../base/icons';
@@ -9,7 +7,6 @@ import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/
 import { handleLobbyChatInitialized, openChat } from '../../../chat/actions';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-
 
 export type Props = AbstractButtonProps & {
 
@@ -103,7 +100,7 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
  * @param {Props} ownProps - The own props of the component.
  * @returns {Props}
  */
-export function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
+export function _mapStateToProps(state: Object, ownProps: Props) {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
     const { disablePolls } = state['features/base/config'];
     const { visible = enabled, isLobbyMessage, participantID } = ownProps;

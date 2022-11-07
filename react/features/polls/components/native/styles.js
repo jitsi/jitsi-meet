@@ -149,7 +149,7 @@ export const chatStyles = createStyleSheet({
 
     pollCreateButton: {
         flex: 1,
-        marginHorizontal: BaseTheme.spacing[2]
+        marginHorizontal: BaseTheme.spacing[1]
     },
 
     pollSendLabel: {
@@ -191,7 +191,8 @@ export const chatStyles = createStyleSheet({
     },
 
     pollCreateAddButton: {
-        margin: BaseTheme.spacing[2]
+        marginHorizontal: BaseTheme.spacing[1],
+        marginVertical: BaseTheme.spacing[2]
     },
 
     toggleText: {
@@ -200,7 +201,7 @@ export const chatStyles = createStyleSheet({
     },
 
     createPollButton: {
-        marginHorizontal: BaseTheme.spacing[4],
+        marginHorizontal: BaseTheme.spacing[3],
         marginVertical: '8%'
     },
 
@@ -218,5 +219,28 @@ export const chatStyles = createStyleSheet({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginHorizontal: BaseTheme.spacing[2]
+    },
+
+    unreadPollsCounterContainer: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+
+    unreadPollsCounterDescription: {
+        color: BaseTheme.palette.text01
+    },
+
+    unreadPollsCounterCircle: {
+        backgroundColor: BaseTheme.palette.warning01,
+        borderRadius: BaseTheme.spacing[3] / 2,
+        height: BaseTheme.spacing[3],
+        justifyContent: 'center',
+        marginLeft: BaseTheme.spacing[2],
+        width: BaseTheme.spacing[3]
+    },
+
+    unreadPollsCounter: {
+        alignSelf: 'center',
+        color: BaseTheme.palette.text04
     }
 });

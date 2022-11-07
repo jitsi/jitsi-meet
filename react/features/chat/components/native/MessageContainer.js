@@ -1,12 +1,8 @@
-// @flow
-
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { FlatList, Text, View } from 'react-native';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import AbstractMessageContainer, { type Props as AbstractProps }
     from '../AbstractMessageContainer';
 
@@ -14,11 +10,6 @@ import ChatMessageGroup from './ChatMessageGroup';
 import styles from './styles';
 
 type Props = AbstractProps & {
-
-    /**
-     * The color-schemed stylesheet of the feature.
-     */
-    _styles: StyleType,
 
     /**
      * Function to be used to translate i18n labels.
@@ -82,7 +73,7 @@ class MessageContainer extends AbstractMessageContainer<Props> {
         return `key_${index}`;
     }
 
-    _renderListEmptyComponent: () => React$Element<any>;
+    _renderListEmptyComponent: () => ReactElement;
 
     /**
      * Renders a message when there are no messages in the chat yet.
@@ -90,18 +81,18 @@ class MessageContainer extends AbstractMessageContainer<Props> {
      * @returns {React$Element<any>}
      */
     _renderListEmptyComponent() {
-        const { _styles, t } = this.props;
+        const { t } = this.props;
 
         return (
             <View style = { styles.emptyComponentWrapper }>
-                <Text style = { _styles.emptyComponentText }>
+                <Text style = { styles.emptyComponentText }>
                     { t('chat.noMessagesMessage') }
                 </Text>
             </View>
         );
     }
 
-    _renderMessageGroup: Object => React$Element<any>;
+    _renderMessageGroup: Object => ReactElement;
 
     /**
      * Renders a single chat message.
@@ -114,16 +105,4 @@ class MessageContainer extends AbstractMessageContainer<Props> {
     }
 }
 
-/**
- * Maps part of the redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @returns {Props}
- */
-function _mapStateToProps(state) {
-    return {
-        _styles: ColorSchemeRegistry.get(state, 'Chat')
-    };
-}
-
-export default translate(connect(_mapStateToProps)(MessageContainer));
+export default translate(connect()(MessageContainer));
