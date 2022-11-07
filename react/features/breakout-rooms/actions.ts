@@ -17,7 +17,6 @@ import { getRemoteParticipants } from '../base/participants/functions';
 import { createDesiredLocalTracks } from '../base/tracks/actions';
 import {
     getLocalTracks,
-    isLocalCameraTrackMuted,
     isLocalTrackMuted
 } from '../base/tracks/functions';
 import { clearNotifications, showNotification } from '../notifications/actions';
@@ -225,7 +224,7 @@ export function moveToRoom(roomId?: string) {
         } else {
             const localTracks = getLocalTracks(getState()['features/base/tracks']);
             const isAudioMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.AUDIO);
-            const isVideoMuted = isLocalCameraTrackMuted(localTracks);
+            const isVideoMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.VIDEO);
 
             try {
                 // all places we fire notifyConferenceLeft we pass the room name from APP.conference

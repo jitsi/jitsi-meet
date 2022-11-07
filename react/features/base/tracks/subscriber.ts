@@ -1,9 +1,10 @@
 import _ from 'lodash';
 
+import { MEDIA_TYPE } from '../media/constants';
 import { getScreenshareParticipantIds } from '../participants/functions';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
-import { isLocalCameraTrackMuted } from './functions';
+import { isLocalTrackMuted } from './functions';
 
 /**
  * Notifies when the list of currently sharing participants changes.
@@ -26,7 +27,7 @@ StateListenerRegistry.register(
  * Notifies when the local video mute state changes.
  */
 StateListenerRegistry.register(
-    /* selector */ state => isLocalCameraTrackMuted(state['features/base/tracks']),
+    /* selector */ state => isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO),
     /* listener */ (muted, store, previousMuted) => {
         if (typeof APP !== 'object') {
             return;

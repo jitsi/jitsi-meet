@@ -117,7 +117,6 @@ import {
     getLocalJitsiVideoTrack,
     getLocalTracks,
     getLocalVideoTrack,
-    isLocalCameraTrackMuted,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
@@ -873,8 +872,7 @@ export default {
     isLocalVideoMuted() {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
-            ? isLocalCameraTrackMuted(
-                APP.store.getState()['features/base/tracks'])
+            ? isLocalTrackMuted(APP.store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO)
             : isVideoMutedByUser(APP.store);
     },
 

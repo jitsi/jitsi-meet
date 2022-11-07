@@ -8,10 +8,11 @@ import {
 } from '../../analytics';
 import { VIDEO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
+import { MEDIA_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { AbstractButton, AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { isLocalCameraTrackMuted } from '../../base/tracks';
+import { isLocalTrackMuted } from '../../base/tracks';
 import { handleToggleVideoMuted } from '../actions.any';
 import { isVideoMuteButtonDisabled } from '../functions';
 
@@ -163,7 +164,7 @@ function _mapStateToProps(state): Object {
 
     return {
         _videoDisabled: isVideoMuteButtonDisabled(state),
-        _videoMuted: isLocalCameraTrackMuted(tracks),
+        _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO),
         visible: enabledFlag
     };
 }
