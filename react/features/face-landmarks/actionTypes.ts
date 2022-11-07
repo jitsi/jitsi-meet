@@ -49,12 +49,3 @@ export const UPDATE_FACE_COORDINATES = 'UPDATE_FACE_COORDINATES';
  * }
  */
  export const NEW_FACE_COORDINATES = 'NEW_FACE_COORDINATES';
-
- /**
-  * Redux action type dispatched in order to signal that the face landmarks detection stopped.
-  * {
-  *      type: FACE_LANDMARK_DETECTION_STOPPED,
-  *      timestamp: number,
-  * }
-*/
-export const FACE_LANDMARK_DETECTION_STOPPED = 'FACE_LANDMARK_DETECTION_STOPPED';
