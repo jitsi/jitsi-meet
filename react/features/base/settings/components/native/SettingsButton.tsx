@@ -1,21 +1,12 @@
-/* eslint-disable lines-around-comment */
-
-
-// @ts-ignore
+import { IReduxState } from '../../../../app/types';
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
-// @ts-ignore
 import { navigate }
-// @ts-ignore
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-// @ts-ignore
 import { screen } from '../../../../mobile/navigation/routes';
-// @ts-ignore
 import { SETTINGS_ENABLED, getFeatureFlag } from '../../../flags';
-// @ts-ignore
-import { translate } from '../../../i18n';
+import { translate } from '../../../i18n/functions';
 import { IconSettings } from '../../../icons/svg';
-// @ts-ignore
-import { connect } from '../../../redux';
+import { connect } from '../../../redux/functions';
 
 /**
  * Implements an {@link AbstractButton} to open the carmode.
@@ -40,10 +31,10 @@ class SettingsButton extends AbstractButton<AbstractButtonProps, any, any> {
 /**
  * Maps part of the redux state to the component's props.
  *
- * @param {Object} state - The redux store/state.
+ * @param {IReduxState} state - The Redux state.
  * @returns {Object}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: IReduxState) {
     const enabled = getFeatureFlag(state, SETTINGS_ENABLED, true);
 
     return {
