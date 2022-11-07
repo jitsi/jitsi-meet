@@ -35,12 +35,9 @@ export default {
         flexDirection: 'row'
     },
 
-    largeVideoContainerKeyboardHidden: {
-        height: '60%'
-    },
-
-    largeVideoContainerKeyboardShown: {
-        height: '45%'
+    largeVideoContainer: {
+        height: 426,
+        width: 390
     },
 
     largeVideoContainerWide: {
@@ -52,11 +49,14 @@ export default {
 
     contentContainer: {
         alignSelf: 'center',
+        backgroundColor: BaseTheme.palette.uiBackground,
         bottom: 0,
         display: 'flex',
+        height: 284,
         justifyContent: 'center',
-        position: 'static',
-        width: 400
+        position: 'absolute',
+        width: 390,
+        zIndex: 1
     },
 
     contentContainerWide: {
@@ -90,7 +90,7 @@ export default {
     formWrapper: {
         alignSelf: 'stretch',
         justifyContent: 'center',
-        marginHorizontal: BaseTheme.spacing[4]
+        marginHorizontal: BaseTheme.spacing[3]
     },
 
     customInput: {
@@ -105,9 +105,14 @@ export default {
 
     displayRoomNameBackdrop: {
         alignSelf: 'center',
-        backgroundColor: BaseTheme.palette.ui16,
+        backgroundColor: BaseTheme.palette.uiBackground,
         borderRadius: BaseTheme.shape.borderRadius,
+        marginTop: BaseTheme.spacing[3],
+        opacity: 0.7,
         paddingHorizontal: BaseTheme.spacing[3],
-        paddingVertical: BaseTheme.spacing[1]
+        paddingVertical: BaseTheme.spacing[1],
+        position: 'absolute',
+        width: 243,
+        zIndex: 1
     }
 };

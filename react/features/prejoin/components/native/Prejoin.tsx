@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import {
     BackHandler,
-    Keyboard,
     Platform,
     StyleProp,
     Text,
@@ -43,7 +42,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const dispatch = useDispatch();
     const isFocused = useIsFocused();
     const { t } = useTranslation();
-    const [ keyboardStatus, setKeyboardStatus ] = useState(undefined);
     const aspectRatio = useSelector(
         (state: IReduxState) => state['features/base/responsive-ui']?.aspectRatio
     );
@@ -101,20 +99,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const joinButtonDisabled = isJoining || (!displayName && isDisplayNameMandatory);
 
     useEffect(() => {
-        const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-            setKeyboardStatus('shown');
-        });
-        const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-            setKeyboardStatus('hidden');
-        });
-
-        return () => {
-            showSubscription.remove();
-            hideSubscription.remove();
-        };
-    }, []);
-
-    useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', goBack);
 
         return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
@@ -136,9 +120,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     if (aspectRatio === ASPECT_RATIO_NARROW) {
         contentWrapperStyles = styles.contentWrapper;
         contentContainerStyles = styles.contentContainer;
-        largeVideoContainerStyles = keyboardStatus === 'hidden'
-            ? styles.largeVideoContainerKeyboardHidden
-            : styles.largeVideoContainerKeyboardShown;
+        largeVideoContainerStyles = styles.largeVideoContainer;
         toolboxContainerStyles = styles.toolboxContainer;
     } else {
         contentWrapperStyles = styles.contentWrapperWide;
@@ -175,7 +157,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 </View>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <Input
-                        autoFocus = { true }
                         customStyles = {{ input: styles.customInput }}
                         onChange = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
