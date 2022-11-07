@@ -2099,8 +2099,7 @@ export default {
 
                 createLocalTracksF({
                     devices: [ 'video' ],
-                    cameraDeviceId,
-                    micDeviceId: null
+                    cameraDeviceId
                 })
                 .then(([ stream ]) => {
                     // if we are in audio only mode or video was muted before
@@ -2149,7 +2148,6 @@ export default {
                 sendAnalytics(createDeviceChangedEvent('audio', 'input'));
                 createLocalTracksF({
                     devices: [ 'audio' ],
-                    cameraDeviceId: null,
                     micDeviceId: selectedDeviceId
                 })
                 .then(([ stream ]) => {
