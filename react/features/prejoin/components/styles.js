@@ -36,8 +36,7 @@ export default {
     },
 
     largeVideoContainer: {
-        height: 426,
-        width: 390
+        height: '60%'
     },
 
     largeVideoContainerWide: {
