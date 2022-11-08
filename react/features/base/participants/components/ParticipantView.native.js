@@ -2,14 +2,11 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
 import {
-    isParticipantConnectionStatusActive,
-    isParticipantConnectionStatusInactive,
     isTrackStreamingStatusActive,
     isTrackStreamingStatusInactive
 } from '../../../connection-indicator/functions';
 import { SharedVideo } from '../../../shared-video/components/native';
 import Avatar from '../../avatar/components/Avatar';
-import { getSourceNameSignalingFeatureFlag } from '../../config/functions.any';
 import { translate } from '../../i18n/functions';
 import VideoTrack from '../../media/components/native/VideoTrack';
 import { shouldRenderVideoTrack } from '../../media/functions';
@@ -231,8 +228,7 @@ function _mapStateToProps(state, ownProps) {
     const videoTrack = getVideoTrackByParticipant(state, participant);
 
     return {
-        _isConnectionInactive: getSourceNameSignalingFeatureFlag(state)
-            ? isTrackStreamingStatusInactive(videoTrack) : isParticipantConnectionStatusInactive(participant),
+        _isConnectionInactive: isTrackStreamingStatusInactive(videoTrack),
         _isSharedVideoParticipant: isSharedVideoParticipant(participant),
         _participantName: getParticipantDisplayName(state, participantId),
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
@@ -268,13 +264,7 @@ function shouldRenderParticipantVideo(stateful, id) {
     }
 
     /* Then check if the participant connection or track streaming status is active. */
-    if (getSourceNameSignalingFeatureFlag(state)) {
-        // Note that this will work only if a listener is registered for the track's TrackStreamingStatus.
-        // The associated TrackStreamingStatusImpl instance is not created or disposed when there are zero listeners.
-        if (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack)) {
-            return false;
-        }
-    } else if (!isParticipantConnectionStatusActive(participant)) {
+    if (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack)) {
         return false;
     }
 

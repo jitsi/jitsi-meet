@@ -19,11 +19,10 @@ export * from './actions.any';
  *
  * @param {boolean} enabled - The state to toggle screen sharing to.
  * @param {boolean} _ignore1 - Ignored.
- * @param {boolean} _ignore2 - Ignored.
- * @param {Object} _ignore3 - Ignored.
+ * @param {any} _ignore2 - Ignored.
  * @returns {Function}
  */
-export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignore2?: boolean, _ignore3?: any) {
+export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignore2?: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 

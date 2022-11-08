@@ -3,7 +3,6 @@
 import React from 'react';
 import type { Dispatch } from 'redux';
 
-import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { translate } from '../../../base/i18n';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById, isScreenShareParticipant } from '../../../base/participants';
@@ -15,8 +14,6 @@ import {
 import { ConnectionStatsTable } from '../../../connection-stats';
 import { saveLogs } from '../../actions';
 import {
-    isParticipantConnectionStatusInactive,
-    isParticipantConnectionStatusInterrupted,
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
 } from '../../functions';
@@ -71,12 +68,6 @@ type Props = AbstractProps & {
      * The audio SSRC of this client.
      */
     _audioSsrc: number,
-
-    /**
-     * The current condition of the user's connection, matching one of the
-     * enumerated values in the library.
-     */
-    _connectionStatus: string,
 
     /**
      * Whether or not should display the "Show More" link in the local video
@@ -320,32 +311,24 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const conference = state['features/base/conference'].conference;
     const participant
         = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
-    const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
-
     const tracks = state['features/base/tracks'];
     const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantId);
     let videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
 
-    if (sourceNameSignalingEnabled && isScreenShareParticipant(participant)) {
+    if (isScreenShareParticipant(participant)) {
         videoTrack = getVirtualScreenshareParticipantTrack(tracks, participant?.id);
     }
 
-    const _isConnectionStatusInactive = sourceNameSignalingEnabled
-        ? isTrackStreamingStatusInactive(videoTrack)
-        : isParticipantConnectionStatusInactive(participant);
-
-    const _isConnectionStatusInterrupted = sourceNameSignalingEnabled
-        ? isTrackStreamingStatusInterrupted(videoTrack)
-        : isParticipantConnectionStatusInterrupted(participant);
+    const _isConnectionStatusInactive = isTrackStreamingStatusInactive(videoTrack);
+    const _isConnectionStatusInterrupted = isTrackStreamingStatusInterrupted(videoTrack);
 
     return {
         _audioSsrc: audioTrack ? conference?.getSsrcByTrack(audioTrack.jitsiTrack) : undefined,
-        _connectionStatus: participant?.connectionStatus,
         _enableSaveLogs: state['features/base/config'].enableSaveLogs,
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
         _isConnectionStatusInactive,
         _isConnectionStatusInterrupted,
-        _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && isScreenShareParticipant(participant),
+        _isVirtualScreenshareParticipant: isScreenShareParticipant(participant),
         _isLocalVideo: participant?.local,
         _region: participant?.region,
         _videoSsrc: videoTrack ? conference?.getSsrcByTrack(videoTrack.jitsiTrack) : undefined

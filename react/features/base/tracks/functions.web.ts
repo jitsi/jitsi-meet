@@ -3,7 +3,6 @@ import { IStateful } from '../app/types';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { setAudioMuted } from '../media/actions';
-import { MEDIA_TYPE } from '../media/constants';
 import { toState } from '../redux/functions';
 import {
     getUserSelectedCameraDeviceId,
@@ -93,47 +92,6 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
                 return Promise.reject(err);
             });
         }));
-}
-
-/**
- * Creates a local video track for presenter. The constraints are computed based
- * on the height of the desktop that is being shared.
- *
- * @param {Object} options - The options with which the local presenter track
- * is to be created.
- * @param {string|null} [options.cameraDeviceId] - Camera device id or
- * {@code undefined} to use app's settings.
- * @param {number} desktopHeight - The height of the desktop that is being
- * shared.
- * @returns {Promise<JitsiLocalTrack>}
- */
-export async function createLocalPresenterTrack(options: ITrackOptions, desktopHeight: number) {
-    const { cameraDeviceId } = options;
-
-    // compute the constraints of the camera track based on the resolution
-    // of the desktop screen that is being shared.
-    const cameraHeights = [ 180, 270, 360, 540, 720 ];
-    const proportion = 5;
-    const result = cameraHeights.find(
-            height => (desktopHeight / proportion) < height);
-    const constraints = {
-        video: {
-            aspectRatio: 4 / 3,
-            height: {
-                ideal: result
-            }
-        }
-    };
-    const [ videoTrack ] = await JitsiMeetJS.createLocalTracks(
-        {
-            cameraDeviceId,
-            constraints,
-            devices: [ 'video' ]
-        });
-
-    videoTrack.type = MEDIA_TYPE.PRESENTER;
-
-    return videoTrack;
 }
 
 /**

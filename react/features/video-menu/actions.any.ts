@@ -47,7 +47,7 @@ export function muteLocal(enable: boolean, mediaType: MediaType, stopScreenShari
         }
 
         if (enable && stopScreenSharing) {
-            dispatch(toggleScreensharing(false, false, true));
+            dispatch(toggleScreensharing(false, false));
         }
 
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));

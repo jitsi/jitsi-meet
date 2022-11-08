@@ -2,12 +2,10 @@
 // @ts-expect-error
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
 import { IReduxState, IStore } from '../../app/types';
-import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { isModerationNotificationDisplayed } from '../../notifications/functions';
 // @ts-ignore
 import { stopReceiver } from '../../remote-control/actions';
 // @ts-ignore
@@ -19,7 +17,6 @@ import { isScreenshotCaptureEnabled, toggleScreenshotCaptureSummary } from '../.
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { setAudioOnly } from '../audio-only/actions';
 import { getCurrentConference } from '../conference/functions';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { setScreenshareMuted } from '../media/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
@@ -43,41 +40,28 @@ export * from './actions.any';
  *
  * @param {boolean} enabled - The state to toggle screen sharing to.
  * @param {boolean} audioOnly - Only share system audio.
- * @param {boolean} ignoreDidHaveVideo - Whether or not to ignore if video was on when sharing started.
  * @param {Object} shareOptions - The options to be passed for capturing screenshare.
  * @returns {Function}
  */
 export function toggleScreensharing(
         enabled?: boolean,
         audioOnly = false,
-        ignoreDidHaveVideo = false,
         shareOptions: IShareOptions = {}) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // check for A/V Moderation when trying to start screen sharing
-        if ((enabled || enabled === undefined)
-            && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, getState())) {
-            if (!isModerationNotificationDisplayed(MEDIA_TYPE.PRESENTER, getState())) {
-                dispatch(showModeratedNotification(MEDIA_TYPE.PRESENTER));
-            }
+        if ((enabled || enabled === undefined) && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, getState())) {
 
             return Promise.reject();
         }
 
-        if (getMultipleVideoSendingSupportFeatureFlag(getState())) {
-            return _toggleScreenSharing({
-                enabled,
-                audioOnly,
-                shareOptions
-            }, {
-                dispatch,
-                getState
-            });
-        }
-
-        return APP.conference.toggleScreenSharing(enabled, {
+        return _toggleScreenSharing({
+            enabled,
             audioOnly,
-            desktopStream: shareOptions?.desktopStream
-        }, ignoreDidHaveVideo);
+            shareOptions
+        }, {
+            dispatch,
+            getState
+        });
     };
 }
 

@@ -1,7 +1,6 @@
 import { IStore } from '../../app/types';
 import { hideNotification } from '../../notifications/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { getAvailableDevices } from '../devices/actions.web';
 import { setScreenshareMuted } from '../media/actions';
 import {
@@ -69,8 +68,7 @@ MiddlewareRegistry.register(store => next => action => {
         const muted = action.wasMuted;
         const isVideoTrack = jitsiTrack.getType() !== MEDIA_TYPE.AUDIO;
 
-        if (isVideoTrack && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP
-                && getMultipleVideoSendingSupportFeatureFlag(store.getState())) {
+        if (isVideoTrack && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
             store.dispatch(setScreenshareMuted(!muted));
         } else if (isVideoTrack) {
             APP.conference.setVideoMuteStatus();
@@ -84,8 +82,7 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_STOPPED: {
         const { jitsiTrack } = action.track;
 
-        if (getMultipleVideoSendingSupportFeatureFlag(store.getState())
-                && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
+        if (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
             store.dispatch(toggleScreensharing(false));
         }
         break;
@@ -108,15 +105,9 @@ MiddlewareRegistry.register(store => next => action => {
         const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
 
         if (isVideoTrack) {
-            // Do not change the video mute state for local presenter tracks.
-            if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
-                APP.conference.mutePresenter(muted);
-            } else if (jitsiTrack.isLocal() && !(jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP)) {
+            if (jitsiTrack.isLocal() && !(jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP)) {
                 APP.conference.setVideoMuteStatus();
-            } else if (jitsiTrack.isLocal() && muted && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
-                !getMultipleVideoSendingSupportFeatureFlag(state)
-                    && store.dispatch(toggleScreensharing(false, false, true));
-            } else {
+            } else if (!jitsiTrack.isLocal()) {
                 APP.UI.setVideoMuted(participantID);
             }
         } else if (jitsiTrack.isLocal()) {

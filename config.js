@@ -79,15 +79,6 @@ var config = {
         // This is useful when the client runs on a host with limited resources.
         // noAutoPlayVideo: false,
 
-        // Enable / disable 500 Kbps bitrate cap on desktop tracks. When enabled,
-        // simulcast is turned off for the desktop share. If presenter is turned
-        // on while screensharing is in progress, the max bitrate is automatically
-        // adjusted to 2.5 Mbps. This takes a value between 0 and 1 which determines
-        // the probability for this to be enabled. This setting has been deprecated.
-        // desktopSharingFrameRate.max now determines whether simulcast will be enabled
-        // or disabled for the screenshare.
-        // capScreenshareBitrate: 1, // 0 to disable - deprecated.
-
         // Whether to use fake constraints (height: 99999, width: 99999) when calling getDisplayMedia on
         // Chromium based browsers. This is intended as a workaround for
         // https://bugs.chromium.org/p/chromium/issues/detail?id=1056311
@@ -97,20 +88,6 @@ var config = {
         // This takes a value between 0 and 100 which determines the probability for
         // the callstats to be enabled.
         // callStatsThreshold: 5, // enable callstats for 5% of the users.
-    },
-
-    // Feature Flags.
-    flags: {
-        // Enables source names in the signaling.
-        // sourceNameSignaling: false,
-
-        // Enables sending multiple video streams, i.e., camera and desktop tracks can be shared in the conference
-        // separately as two different streams instead of one composite stream.
-        // sendMultipleVideoStreams: false,
-
-        // Signal that this client supports receiving multiple video streams. Without this flag jicofo will enable
-        // multi-stream backward compatibility.
-        // receiveMultipleVideoStreams: true,
     },
 
     // Disables moderator indicators.
@@ -523,9 +500,6 @@ var config = {
     //        720: 'high',
     //    },
     //
-    //    // Provides a way to resize the desktop track to 720p (if it is greater than 720p) before creating a canvas
-    //    // for the presenter mode (camera picture-in-picture mode with screenshare).
-    //    resizeDesktopForPresenter: false,
     // },
 
     // Notification timeouts

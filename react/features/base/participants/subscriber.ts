@@ -3,8 +3,7 @@ import _ from 'lodash';
 import { IStore } from '../../app/types';
 import { getCurrentConference } from '../conference/functions';
 import {
-    getMultipleVideoSendingSupportFeatureFlag,
-    getMultipleVideoSupportFeatureFlag
+    getMultipleVideoSendingSupportFeatureFlag
 } from '../config/functions.any';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
@@ -24,11 +23,6 @@ StateListenerRegistry.register(
  */
 function _updateScreenshareParticipants({ getState, dispatch }: IStore) {
     const state = getState();
-
-    if (!getMultipleVideoSupportFeatureFlag(state)) {
-        return;
-    }
-
     const conference = getCurrentConference(state);
     const tracks = state['features/base/tracks'];
     const { sortedRemoteVirtualScreenshareParticipants, localScreenShare } = state['features/base/participants'];

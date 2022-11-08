@@ -512,7 +512,6 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
     const {
         avatarURL,
         botType,
-        connectionStatus,
         dominantSpeaker,
         email,
         fakeParticipant,
@@ -542,7 +541,6 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         avatarURL,
         botType,
         conference,
-        connectionStatus,
         dominantSpeaker: dominantSpeaker || false,
         email,
         fakeParticipant,

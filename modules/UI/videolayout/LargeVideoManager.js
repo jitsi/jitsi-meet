@@ -10,10 +10,6 @@ import { Provider } from 'react-redux';
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
 import { Avatar } from '../../../react/features/base/avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
-import {
-    getMultipleVideoSupportFeatureFlag,
-    getSourceNameSignalingFeatureFlag
-} from '../../../react/features/base/config';
 import { i18next } from '../../../react/features/base/i18n';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
@@ -29,9 +25,6 @@ import {
 } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
-    isParticipantConnectionStatusActive,
-    isParticipantConnectionStatusInactive,
-    isParticipantConnectionStatusInterrupted,
     isTrackStreamingStatusActive,
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
@@ -161,19 +154,16 @@ export default class LargeVideoManager {
      * @returns {void}
      */
     destroy() {
-        this.videoContainer.removeResizeListener(
-            this._onVideoResolutionUpdate);
+        this.videoContainer.removeResizeListener(this._onVideoResolutionUpdate);
 
-        if (getSourceNameSignalingFeatureFlag(APP.store.getState())) {
-            // Remove track streaming status listener.
-            // TODO: when this class is converted to a function react component,
-            // use a custom hook to update a local track streaming status.
-            if (this.videoTrack && !this.videoTrack.local) {
-                this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged);
-                APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
-                    this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
-            }
+        // Remove track streaming status listener.
+        // TODO: when this class is converted to a function react component,
+        // use a custom hook to update a local track streaming status.
+        if (this.videoTrack && !this.videoTrack.local) {
+            this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                this.handleTrackStreamingStatusChanged);
+            APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
+                this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
         }
 
         this.removePresenceLabel();
@@ -263,48 +253,39 @@ export default class LargeVideoManager {
             const isVideoMuted = !stream || stream.isMuted();
             const state = APP.store.getState();
             const participant = getParticipantById(state, id);
-            const connectionStatus = participant?.connectionStatus;
+            const videoTrack = getVideoTrackByParticipant(state, participant);
 
-            let isVideoRenderable;
-
-            if (getSourceNameSignalingFeatureFlag(state)) {
-                const videoTrack = getVideoTrackByParticipant(state, participant);
-
-                // Remove track streaming status listener from the old track and add it to the new track,
-                // in order to stop updating track streaming status for the old track and start it for the new track.
-                // TODO: when this class is converted to a function react component,
-                // use a custom hook to update a local track streaming status.
-                if (this.videoTrack?.jitsiTrack?.getSourceName() !== videoTrack?.jitsiTrack?.getSourceName()) {
-                    if (this.videoTrack && !this.videoTrack.local) {
-                        this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                            this.handleTrackStreamingStatusChanged);
-                        APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
-                            this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
-                    }
-
-                    this.videoTrack = videoTrack;
-
-                    if (this.videoTrack && !this.videoTrack.local) {
-                        this.videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                            this.handleTrackStreamingStatusChanged);
-                        APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
-                            this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
-                    }
+            // Remove track streaming status listener from the old track and add it to the new track,
+            // in order to stop updating track streaming status for the old track and start it for the new track.
+            // TODO: when this class is converted to a function react component,
+            // use a custom hook to update a local track streaming status.
+            if (this.videoTrack?.jitsiTrack?.getSourceName() !== videoTrack?.jitsiTrack?.getSourceName()) {
+                if (this.videoTrack && !this.videoTrack.local) {
+                    this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                        this.handleTrackStreamingStatusChanged);
+                    APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
+                        this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
                 }
-                const streamingStatusActive = isTrackStreamingStatusActive(videoTrack);
 
-                isVideoRenderable = !isVideoMuted
-                    && (APP.conference.isLocalId(id)
-                        || isLocalScreenshareParticipant(participant)
-                        || streamingStatusActive
-                    );
-                this.videoTrack?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP
-                    && logger.debug(`Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${isVideoMuted},`
-                    + ` streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${isVideoRenderable}`);
-            } else {
-                isVideoRenderable = !isVideoMuted
-                    && (APP.conference.isLocalId(id) || isParticipantConnectionStatusActive(participant));
+                this.videoTrack = videoTrack;
+
+                if (this.videoTrack && !this.videoTrack.local) {
+                    this.videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                        this.handleTrackStreamingStatusChanged);
+                    APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
+                        this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
+                }
             }
+            const streamingStatusActive = isTrackStreamingStatusActive(videoTrack);
+            const isVideoRenderable = !isVideoMuted
+                && (APP.conference.isLocalId(id)
+                    || isLocalScreenshareParticipant(participant)
+                    || streamingStatusActive
+                );
+
+            this.videoTrack?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP
+                && logger.debug(`Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${isVideoMuted},`
+                + ` streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${isVideoRenderable}`);
 
             const isAudioOnly = APP.conference.isAudioOnly();
 
@@ -312,9 +293,7 @@ export default class LargeVideoManager {
             // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior
             // consistent and an avatar is displayed on the original participant thumbnail as long as screenshare is in
             // progress.
-            const legacyScreenshare = getMultipleVideoSupportFeatureFlag(state)
-                                        && videoType === VIDEO_TYPE.DESKTOP
-                                        && !isScreenShareParticipant(participant);
+            const legacyScreenshare = videoType === VIDEO_TYPE.DESKTOP && !isScreenShareParticipant(participant);
 
             const showAvatar
                 = isVideoContainer
@@ -345,7 +324,6 @@ export default class LargeVideoManager {
                         // send the event
                         sendAnalytics(createScreenSharingIssueEvent({
                             source: 'large-video',
-                            connectionStatus,
                             isVideoMuted,
                             isAudioOnly,
                             isVideoContainer,
@@ -366,15 +344,7 @@ export default class LargeVideoManager {
                 this.updateLargeVideoAudioLevel(0);
             }
 
-            let messageKey;
-
-            if (getSourceNameSignalingFeatureFlag(state)) {
-                const videoTrack = getVideoTrackByParticipant(state, participant);
-
-                messageKey = isTrackStreamingStatusInactive(videoTrack) ? 'connection.LOW_BANDWIDTH' : null;
-            } else {
-                messageKey = isParticipantConnectionStatusInactive(participant) ? 'connection.LOW_BANDWIDTH' : null;
-            }
+            const messageKey = isTrackStreamingStatusInactive(videoTrack) ? 'connection.LOW_BANDWIDTH' : null;
 
             // Do not show connection status message in the audio only mode,
             // because it's based on the video playback status.
@@ -620,20 +590,11 @@ export default class LargeVideoManager {
         if (typeof show !== 'boolean') {
             const participant = getParticipantById(APP.store.getState(), this.id);
             const state = APP.store.getState();
+            const videoTrack = getVideoTrackByParticipant(state, participant);
 
-            if (getSourceNameSignalingFeatureFlag(state)) {
-                const videoTrack = getVideoTrackByParticipant(state, participant);
-
-                // eslint-disable-next-line no-param-reassign
-                show = !APP.conference.isLocalId(this.id)
-                    && (isTrackStreamingStatusInterrupted(videoTrack)
-                        || isTrackStreamingStatusInactive(videoTrack));
-            } else {
-                // eslint-disable-next-line no-param-reassign
-                show = !APP.conference.isLocalId(this.id)
-                    && (isParticipantConnectionStatusInterrupted(participant)
-                        || isParticipantConnectionStatusInactive(participant));
-            }
+            // eslint-disable-next-line no-param-reassign
+            show = !APP.conference.isLocalId(this.id)
+                && (isTrackStreamingStatusInterrupted(videoTrack) || isTrackStreamingStatusInactive(videoTrack));
         }
 
         if (show) {

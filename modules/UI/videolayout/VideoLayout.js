@@ -2,17 +2,15 @@
 
 import Logger from '@jitsi/logger';
 
-import { getMultipleVideoSupportFeatureFlag } from '../../../react/features/base/config';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantById,
     getPinnedParticipant,
-    isScreenShareParticipant,
     isScreenShareParticipantById
 } from '../../../react/features/base/participants';
 import {
     getTrackByMediaTypeAndParticipant,
-    getVirtualScreenshareParticipantTrack
+    getVideoTrackByParticipant
 } from '../../../react/features/base/tracks';
 
 import LargeVideoManager from './LargeVideoManager';
@@ -98,7 +96,7 @@ const VideoLayout = {
             return VIDEO_TYPE.CAMERA;
         }
 
-        if (getMultipleVideoSupportFeatureFlag(state) && isScreenShare) {
+        if (isScreenShare) {
             return VIDEO_TYPE.DESKTOP;
         }
 
@@ -111,23 +109,6 @@ const VideoLayout = {
         const { id } = getPinnedParticipant(APP.store.getState()) || {};
 
         return id || null;
-    },
-
-    /**
-     * Shows/hides warning about a user's connectivity issues.
-     *
-     * @param {string} id - The ID of the remote participant(MUC nickname).
-     * @returns {void}
-     */
-    onParticipantConnectionStatusChanged(id) {
-        if (APP.conference.isLocalId(id)) {
-
-            return;
-        }
-
-        // We have to trigger full large video update to transition from
-        // avatar to video on connectivity restored.
-        this._updateLargeVideoIfDisplayed(id, true);
     },
 
     /**
@@ -189,16 +170,7 @@ const VideoLayout = {
         const isOnLarge = this.isCurrentlyOnLarge(id);
         const state = APP.store.getState();
         const participant = getParticipantById(state, id);
-        const tracks = state['features/base/tracks'];
-
-        let videoTrack;
-
-        if (getMultipleVideoSupportFeatureFlag(state) && isScreenShareParticipant(participant)) {
-            videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
-        } else {
-            videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
-        }
-
+        const videoTrack = getVideoTrackByParticipant(state, participant);
         const videoStream = videoTrack?.jitsiTrack;
 
         if (videoStream && forceStreamToReattach) {

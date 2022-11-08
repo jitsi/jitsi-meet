@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { shouldComponentUpdate } from 'react-window';
 
-import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
@@ -154,7 +153,6 @@ function _mapStateToProps(state, ownProps) {
     const { remoteParticipants: remote } = state['features/filmstrip'];
     const activeParticipants = getActiveParticipantsIds(state);
     const disableSelfView = shouldHideSelfView(state);
-    const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     const filmstripType = ownProps.data?.filmstripType;
     const stageFilmstrip = filmstripType === FILMSTRIP_TYPE.STAGE;
@@ -189,7 +187,7 @@ function _mapStateToProps(state, ownProps) {
         if (stageFilmstrip) {
             // We use the length of activeParticipants in stage filmstrip which includes local participants.
             participantsLength = remoteParticipantsLength;
-        } else if (sourceNameSignalingEnabled) {
+        } else {
             // We need to include the local screenshare participant in tile view.
             participantsLength = remoteParticipantsLength
 
@@ -198,8 +196,6 @@ function _mapStateToProps(state, ownProps) {
 
             // Removes iAmRecorder from the total participants count.
             - (iAmRecorder ? 1 : 0);
-        } else {
-            participantsLength = remoteParticipantsLength + (iAmRecorder ? 0 : 1) - (disableSelfView ? 1 : 0);
         }
 
         if (rowIndex === rows - 1) { // center the last row
@@ -246,15 +242,9 @@ function _mapStateToProps(state, ownProps) {
 
         // Local screen share is inserted at index 1 after the local camera.
         const localScreenShareIndex = disableSelfView ? remoteParticipantsLength : 1;
-
-        let remoteIndex;
-
-        if (sourceNameSignalingEnabled) {
-            remoteIndex = !iAmRecorder && !disableSelfView
-                ? index - localParticipantsLength : index;
-        } else {
-            remoteIndex = !iAmRecorder && !disableSelfView ? index - 1 : index;
-        }
+        const remoteIndex = !iAmRecorder && !disableSelfView
+            ? index - localParticipantsLength
+            : index;
 
         if (!iAmRecorder && index === localIndex) {
             return {
@@ -266,7 +256,7 @@ function _mapStateToProps(state, ownProps) {
             };
         }
 
-        if (sourceNameSignalingEnabled && !iAmRecorder && localScreenShare && index === localScreenShareIndex) {
+        if (!iAmRecorder && localScreenShare && index === localScreenShareIndex) {
             return {
                 _disableSelfView: disableSelfView,
                 _filmstripType: filmstripType,

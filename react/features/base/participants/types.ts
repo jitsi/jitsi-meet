@@ -10,7 +10,6 @@ export interface IParticipant {
     avatarURL?: string;
     botType?: string;
     conference?: Object;
-    connectionStatus?: string;
     displayName?: string;
     dominantSpeaker?: boolean;
     e2eeEnabled?: boolean;

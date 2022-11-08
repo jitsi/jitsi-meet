@@ -2,9 +2,10 @@
 
 import { translate } from '../../../base/i18n';
 import { IconCameraRefresh } from '../../../base/icons';
+import { MEDIA_TYPE } from '../../../base/media';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { isLocalCameraTrackMuted, isToggleCameraEnabled, toggleCamera } from '../../../base/tracks';
+import { isLocalTrackMuted, isToggleCameraEnabled, toggleCamera } from '../../../base/tracks';
 
 /**
  * The type of the React {@code Component} props of {@link ToggleCameraButton}.
@@ -69,7 +70,7 @@ function mapStateToProps(state): Object {
 
     return {
         _audioOnly: Boolean(audioOnly),
-        _videoMuted: isLocalCameraTrackMuted(tracks),
+        _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO),
         visible: isToggleCameraEnabled(state)
     };
 }

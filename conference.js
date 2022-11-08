@@ -27,7 +27,6 @@ import {
 } from './react/features/app/actions';
 import { showModeratedNotification } from './react/features/av-moderation/actions';
 import { shouldShowModeratedNotification } from './react/features/av-moderation/functions';
-import { setAudioOnly } from './react/features/base/audio-only';
 import {
     AVATAR_URL_COMMAND,
     CONFERENCE_LEAVE_REASONS,
@@ -77,7 +76,6 @@ import {
     JitsiConnectionEvents,
     JitsiE2ePingEvents,
     JitsiMediaDevicesEvents,
-    JitsiParticipantConnectionStatus,
     JitsiTrackErrors,
     JitsiTrackEvents,
     browser
@@ -101,9 +99,7 @@ import {
     getNormalizedDisplayName,
     getVirtualScreenshareParticipantByOwnerId,
     localParticipantAudioLevelChanged,
-    localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
-    participantConnectionStatusChanged,
     participantKicked,
     participantMutedUs,
     participantPresenceChanged,
@@ -112,20 +108,15 @@ import {
     screenshareParticipantDisplayNameChanged,
     updateRemoteParticipantFeatures
 } from './react/features/base/participants';
-import {
-    getUserSelectedCameraDeviceId,
-    updateSettings
-} from './react/features/base/settings';
+import { updateSettings } from './react/features/base/settings';
 import {
     addLocalTrack,
-    createLocalPresenterTrack,
     createLocalTracksF,
     destroyLocalTracks,
     getLocalJitsiAudioTrack,
     getLocalJitsiVideoTrack,
     getLocalTracks,
     getLocalVideoTrack,
-    isLocalCameraTrackMuted,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
@@ -154,9 +145,7 @@ import { isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { isScreenAudioShared, setScreenAudioShareState } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
-import { isScreenshotCaptureEnabled } from './react/features/screenshot-capture/functions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
-import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { endpointMessageReceived } from './react/features/subtitles';
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
@@ -187,15 +176,6 @@ let _connectionPromise;
  * _onConnectionPromiseCreated will be called once the _connectionPromise is created.
  */
 let _onConnectionPromiseCreated;
-
-/**
- * This promise is used for chaining mutePresenterVideo calls in order to avoid  calling GUM multiple times if it takes
- * a while to finish.
- *
- * @type {Promise<void>}
- * @private
- */
-let _prevMutePresenterVideo = Promise.resolve();
 
 /*
  * Logic to open a desktop picker put on the window global for
@@ -481,12 +461,6 @@ export default {
     isSharingScreen: false,
 
     /**
-     * The local presenter video track (if any).
-     * @type {JitsiLocalTrack|null}
-     */
-    localPresenterVideo: null,
-
-    /**
      * Returns an object containing a promise which resolves with the created tracks &
      * the errors resulting from that process.
      *
@@ -530,22 +504,10 @@ export default {
             firePermissionPromptIsShownEvent: true
         };
 
-        // FIXME is there any simpler way to rewrite this spaghetti below ?
-        if (options.startScreenSharing) {
-            // This option has been deprecated since it is no longer supported as per the w3c spec.
-            // https://w3c.github.io/mediacapture-screen-share/#dom-mediadevices-getdisplaymedia. If the user has not
-            // interacted with the webpage before the getDisplayMedia call, the promise will be rejected by the
-            // browser. This has already been implemented in Firefox and Safari and will be implemented in Chrome soon.
-            // https://bugs.chromium.org/p/chromium/issues/detail?id=1198918
-            // Please note that Spot uses the same config option to use an external video input device label as
-            // screenshare and calls getUserMedia instead of getDisplayMedia for capturing the media. Therefore it
-            // needs to be supported here if _desktopSharingSourceDevice is provided.
-            const errMessage = new Error('startScreenSharing config option is no longer supported for web browsers');
-            const desktopPromise = config._desktopSharingSourceDevice
-                ? this._createDesktopTrack()
-                : Promise.reject(errMessage);
-
-            tryCreateLocalTracks = desktopPromise
+        // Spot uses the _desktopSharingSourceDevice config option to use an external video input device label as
+        // screenshare and calls getUserMedia instead of getDisplayMedia for capturing the media.
+        if (options.startScreenSharing && config._desktopSharingSourceDevice) {
+            tryCreateLocalTracks = this._createDesktopTrack()
                 .then(([ desktopStream ]) => {
                     if (!requestedAudio) {
                         return [ desktopStream ];
@@ -910,8 +872,7 @@ export default {
     isLocalVideoMuted() {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
-            ? isLocalCameraTrackMuted(
-                APP.store.getState()['features/base/tracks'])
+            ? isLocalTrackMuted(APP.store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO)
             : isVideoMutedByUser(APP.store);
     },
 
@@ -1032,36 +993,6 @@ export default {
     },
 
     /**
-     * Simulates toolbar button click for presenter video mute. Used by
-     * shortcuts and API.
-     * @param mute true for mute and false for unmute.
-     * @param {boolean} [showUI] when set to false will not display any error
-     * dialogs in case of media permissions error.
-     */
-    async mutePresenter(mute, showUI = true) {
-        const maybeShowErrorDialog = error => {
-            showUI && APP.store.dispatch(notifyCameraError(error));
-        };
-        const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
-
-        if (mute) {
-            try {
-                await localVideo.setEffect(undefined);
-            } catch (err) {
-                logger.error('Failed to remove the presenter effect', err);
-                maybeShowErrorDialog(err);
-            }
-        } else {
-            try {
-                await localVideo.setEffect(await this._createPresenterStreamEffect());
-            } catch (err) {
-                logger.error('Failed to apply the presenter effect', err);
-                maybeShowErrorDialog(err);
-            }
-        }
-    },
-
-    /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param mute true for mute and false for unmute.
      * @param {boolean} [showUI] when set to false will not display any error
@@ -1069,8 +1000,6 @@ export default {
      */
     muteVideo(mute, showUI = true) {
         if (this.videoSwitchInProgress) {
-            // Turning the camera on while the screen sharing mode is being turned off is causing issues around
-            // the presenter mode handling. It should be okay for the user to click the button again once that's done.
             console.warn('muteVideo - unable to perform operations while video switch is in progress');
 
             return;
@@ -1079,13 +1008,6 @@ export default {
         if (!mute
                 && isUserInteractionRequiredForUnmute(APP.store.getState())) {
             logger.error('Unmuting video requires user interaction');
-
-            return;
-        }
-
-        if (this.isSharingScreen) {
-            // Chain _mutePresenterVideo calls
-            _prevMutePresenterVideo = _prevMutePresenterVideo.then(() => this._mutePresenterVideo(mute));
 
             return;
         }
@@ -1401,8 +1323,6 @@ export default {
         // Restore initial state.
         this._localTracksInitialized = false;
         this.isSharingScreen = false;
-        this.localPresenterVideo = null;
-
         this.roomName = roomName;
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
@@ -1535,33 +1455,6 @@ export default {
     },
 
     /**
-     * Sets `this.isSharingScreen` depending on provided video stream.
-     * In case new screen sharing status is not equal previous one
-     * it updates desktop sharing buttons in UI
-     * and notifies external application.
-     *
-     * @param {JitsiLocalTrack} [newStream] new stream to use or null
-     * @private
-     * @returns {void}
-     */
-    _setSharingScreen(newStream) {
-        const wasSharingScreen = this.isSharingScreen;
-
-        this.isSharingScreen = newStream && newStream.videoType === 'desktop';
-
-        if (wasSharingScreen !== this.isSharingScreen) {
-            const details = {};
-
-            if (this.isSharingScreen) {
-                details.sourceType = newStream.sourceType;
-            }
-
-            APP.API.notifyScreenSharingStatusChanged(
-                this.isSharingScreen, details);
-        }
-    },
-
-    /**
      * Start using provided audio stream.
      * Stops previous audio stream.
      * @param {JitsiLocalTrack} newTrack - new track to use or null
@@ -1640,35 +1533,6 @@ export default {
         const tracks = APP.store.getState()['features/base/tracks'];
         const duration = getLocalVideoTrack(tracks)?.jitsiTrack.getDuration() ?? 0;
 
-        // It can happen that presenter GUM is in progress while screensharing is being turned off. Here it needs to
-        // wait for that GUM to be resolved in order to prevent leaking the presenter track(this.localPresenterVideo
-        // will be null when SS is being turned off, but it will initialize once GUM resolves).
-        let promise = _prevMutePresenterVideo = _prevMutePresenterVideo.then(() => {
-            // mute the presenter track if it exists.
-            if (this.localPresenterVideo) {
-                return (
-                    this.localPresenterVideo.dispose().then(() => {
-                        APP.store.dispatch(trackRemoved(this.localPresenterVideo));
-                        this.localPresenterVideo = null;
-                    })
-                    .then(() => {
-
-                        // This is needed only for setting the correct muted state in features/base/media.
-                        // NOTE: It is important to be executed after we have disposed and removed the presenter track.
-                        // This way all the side effects won't be executed and we won't start additional O/A cycle for
-                        // replacing the track with video with the one without video. This O/A cycle is not needed since
-                        // we are trying to destroy all tracks. Also due to the current async nature of muting the
-                        // presenter, the final removal of the screen sharing track (see the code at the end of the
-                        // function) can be executed between the removal of the stream with video and adding the
-                        // original screen sharing stream to the peer connection. This will lead to a failure to remove
-                        // the screen sharing track, compromising the screen sharing state in jitsi-meet and the user
-                        // won't be able to turn off the screen sharing.
-                        APP.store.dispatch(setVideoMuted(true, MEDIA_TYPE.PRESENTER));
-                    })
-                );
-            }
-        });
-
         // If system audio was also shared stop the AudioMixerEffect and dispose of the desktop audio track.
         if (this._mixerEffect) {
             const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
@@ -1687,9 +1551,10 @@ export default {
         }
 
         APP.store.dispatch(setScreenAudioShareState(false));
+        let promise;
 
         if (didHaveVideo && !ignoreDidHaveVideo) {
-            promise = promise.then(() => createLocalTracksF({ devices: [ 'video' ] }))
+            promise = createLocalTracksF({ devices: [ 'video' ] })
                 .then(([ stream ]) => {
                     logger.debug(`_turnScreenSharingOff using ${stream} for useVideoStream`);
 
@@ -1705,11 +1570,7 @@ export default {
                     );
                 });
         } else {
-            promise = promise.then(() => {
-                logger.debug('_turnScreenSharingOff using null for useVideoStream');
-
-                return this.useVideoStream(null);
-            });
+            promise = this.useVideoStream(null);
         }
 
         return promise.then(
@@ -1725,56 +1586,6 @@ export default {
 
                 throw error;
             });
-    },
-
-    /**
-     * Toggles between screen sharing and camera video if the toggle parameter
-     * is not specified and starts the procedure for obtaining new screen
-     * sharing/video track otherwise.
-     *
-     * NOTE: this is currently ONLY used in the non-multi-stream case.
-     *
-     * @param {boolean} [toggle] - If true - new screen sharing track will be
-     * obtained. If false - new video track will be obtain. If not specified -
-     * toggles between screen sharing and camera video.
-     * @param {Object} [options] - Screen sharing options that will be passed to
-     * createLocalTracks.
-     * @param {boolean} [options.audioOnly] - Whether or not audioOnly is enabled.
-     * @param {Array<string>} [options.desktopSharingSources] - Array with the
-     * sources that have to be displayed in the desktop picker window ('screen',
-     * 'window', etc.).
-     * @param {Object} [options.desktopStream] - An existing desktop stream to
-     * use instead of creating a new desktop stream.
-     * @param {boolean} ignoreDidHaveVideo - if true ignore if video was on when sharing started.
-     * @return {Promise.<T>}
-     */
-    async toggleScreenSharing(toggle = !this._untoggleScreenSharing, options = {}, ignoreDidHaveVideo) {
-        logger.debug(`toggleScreenSharing: ${toggle}`);
-        if (this.videoSwitchInProgress) {
-            return Promise.reject(`toggleScreenSharing: ${toggle} aborted - video switch in progress.`);
-        }
-        if (!JitsiMeetJS.isDesktopSharingEnabled()) {
-            return Promise.reject('Cannot toggle screen sharing: not supported.');
-        }
-
-        if (toggle) {
-            try {
-                await this._switchToScreenSharing(options);
-                if (this.isAudioOnly()) {
-                    APP.store.dispatch(setAudioOnly(false));
-                }
-
-                return;
-            } catch (err) {
-                logger.error('Failed to switch to screensharing', err);
-
-                return;
-            }
-        }
-
-        return this._untoggleScreenSharing
-            ? this._untoggleScreenSharing(ignoreDidHaveVideo)
-            : Promise.resolve();
     },
 
     /**
@@ -1847,228 +1658,6 @@ export default {
         }, error => {
             throw error;
         });
-    },
-
-    /**
-     * Creates a new instance of presenter effect. A new video track is created
-     * using the new set of constraints that are calculated based on
-     * the height of the desktop that is being currently shared.
-     *
-     * @param {number} height - The height of the desktop stream that is being
-     * currently shared.
-     * @param {string} cameraDeviceId - The device id of the camera to be used.
-     * @return {Promise<JitsiStreamPresenterEffect>} - A promise resolved with
-     * {@link JitsiStreamPresenterEffect} if it succeeds.
-     */
-    async _createPresenterStreamEffect(height = null, cameraDeviceId = null) {
-        if (!this.localPresenterVideo) {
-            const camera = cameraDeviceId ?? getUserSelectedCameraDeviceId(APP.store.getState());
-
-            try {
-                this.localPresenterVideo = await createLocalPresenterTrack({ cameraDeviceId: camera }, height);
-            } catch (err) {
-                logger.error('Failed to create a camera track for presenter', err);
-
-                return;
-            }
-            APP.store.dispatch(trackAdded(this.localPresenterVideo));
-        }
-        try {
-            const effect = await createPresenterEffect(this.localPresenterVideo.stream);
-
-            return effect;
-        } catch (err) {
-            logger.error('Failed to create the presenter effect', err);
-        }
-    },
-
-    /**
-     * Tries to turn the presenter video track on or off. If a presenter track
-     * doesn't exist, a new video track is created.
-     *
-     * @param mute - true for mute and false for unmute.
-     *
-     * @private
-     */
-    async _mutePresenterVideo(mute) {
-        const maybeShowErrorDialog = error => {
-            APP.store.dispatch(notifyCameraError(error));
-        };
-
-        // Check for NO-OP
-        if (mute && (!this.localPresenterVideo || this.localPresenterVideo.isMuted())) {
-
-            return;
-        } else if (!mute && this.localPresenterVideo && !this.localPresenterVideo.isMuted()) {
-
-            return;
-        }
-
-        // Create a new presenter track and apply the presenter effect.
-        if (!this.localPresenterVideo && !mute) {
-            const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
-            const { height, width } = localVideo.track.getSettings() ?? localVideo.track.getConstraints();
-            const isPortrait = height >= width;
-            const DESKTOP_STREAM_CAP = 720;
-
-            const highResolutionTrack
-                = (isPortrait && width > DESKTOP_STREAM_CAP) || (!isPortrait && height > DESKTOP_STREAM_CAP);
-
-            // Resizing the desktop track for presenter is causing blurriness of the desktop share on chrome.
-            // Disable resizing by default, enable it only when config.js setting is enabled.
-            const resizeDesktopStream = highResolutionTrack && config.videoQuality?.resizeDesktopForPresenter;
-
-            if (resizeDesktopStream) {
-                let desktopResizeConstraints = {};
-
-                if (height && width) {
-                    const advancedConstraints = [ { aspectRatio: (width / height).toPrecision(4) } ];
-                    const constraint = isPortrait ? { width: DESKTOP_STREAM_CAP } : { height: DESKTOP_STREAM_CAP };
-
-                    advancedConstraints.push(constraint);
-                    desktopResizeConstraints.advanced = advancedConstraints;
-                } else {
-                    desktopResizeConstraints = {
-                        width: 1280,
-                        height: 720
-                    };
-                }
-
-                // Apply the constraints on the desktop track.
-                try {
-                    await localVideo.track.applyConstraints(desktopResizeConstraints);
-                } catch (err) {
-                    logger.error('Failed to apply constraints on the desktop stream for presenter mode', err);
-
-                    return;
-                }
-            }
-            const trackHeight = resizeDesktopStream
-                ? localVideo.track.getSettings().height ?? DESKTOP_STREAM_CAP
-                : height;
-            let effect;
-
-            try {
-                effect = await this._createPresenterStreamEffect(trackHeight);
-            } catch (err) {
-                logger.error('Failed to unmute Presenter Video', err);
-                maybeShowErrorDialog(err);
-
-                return;
-            }
-
-            // Replace the desktop track on the peerconnection.
-            try {
-                await localVideo.setEffect(effect);
-                APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
-                this.setVideoMuteStatus();
-            } catch (err) {
-                logger.error('Failed to apply the Presenter effect', err);
-            }
-        } else {
-            APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
-        }
-    },
-
-    /**
-     * Tries to switch to the screensharing mode by disposing camera stream and
-     * replacing it with a desktop one.
-     *
-     * @param {Object} [options] - Screen sharing options that will be passed to
-     * createLocalTracks.
-     *
-     * @return {Promise} - A Promise resolved if the operation succeeds or
-     * rejected with some unknown type of error in case it fails. Promise will
-     * be rejected immediately if {@link videoSwitchInProgress} is true.
-     *
-     * @private
-     */
-    _switchToScreenSharing(options = {}) {
-        if (this.videoSwitchInProgress) {
-            return Promise.reject('Switch in progress.');
-        }
-
-        this.videoSwitchInProgress = true;
-
-        return this._createDesktopTrack(options)
-            .then(async streams => {
-                let desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
-
-                this._desktopAudioStream = streams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
-
-                const { audioOnly = false } = options;
-
-                // If we're in audio only mode dispose of the video track otherwise the screensharing state will be
-                // inconsistent.
-                if (audioOnly) {
-                    desktopVideoStream.dispose();
-                    desktopVideoStream = undefined;
-
-                    if (!this._desktopAudioStream) {
-                        return Promise.reject(AUDIO_ONLY_SCREEN_SHARE_NO_TRACK);
-                    }
-                }
-
-                if (desktopVideoStream) {
-                    logger.debug(`_switchToScreenSharing is using ${desktopVideoStream} for useVideoStream`);
-                    await this.useVideoStream(desktopVideoStream);
-                }
-
-                if (this._desktopAudioStream) {
-                    // Noise suppression doesn't work with desktop audio because we can't chain
-                    // track effects yet, disable it first.
-                    // We need to to wait for the effect to clear first or it might interfere with the audio mixer.
-                    await APP.store.dispatch(setNoiseSuppressionEnabled(false));
-
-                    const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
-
-                    // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
-                    // api.
-                    if (localAudio) {
-                        this._mixerEffect = new AudioMixerEffect(this._desktopAudioStream);
-                        logger.debug(`_switchToScreenSharing is mixing ${this._desktopAudioStream} and ${localAudio}`
-                        + ' as a single audio stream');
-                        await localAudio.setEffect(this._mixerEffect);
-                    } else {
-                        // If no local stream is present ( i.e. no input audio devices) we use the screen share audio
-                        // stream as we would use a regular stream.
-                        logger.debug(`_switchToScreenSharing is using ${this._desktopAudioStream} for replacing it as`
-                        + ' the only audio track on the conference');
-                        await room.replaceTrack(null, this._desktopAudioStream);
-                    }
-                    APP.store.dispatch(setScreenAudioShareState(true));
-                }
-            })
-            .then(() => {
-                this.videoSwitchInProgress = false;
-                if (isScreenshotCaptureEnabled(APP.store.getState(), false, true)) {
-                    APP.store.dispatch(toggleScreenshotCaptureSummary(true));
-                }
-                sendAnalytics(createScreenSharingEvent('started'));
-                logger.log('Screen sharing started');
-            })
-            .catch(error => {
-                this.videoSwitchInProgress = false;
-
-                // Pawel: With this call I'm trying to preserve the original
-                // behaviour although it is not clear why would we "untoggle"
-                // on failure. I suppose it was to restore video in case there
-                // was some problem during "this.useVideoStream(desktopStream)".
-                // It's important to note that the handler will not be available
-                // if we fail early on trying to get desktop media (which makes
-                // sense, because the camera video is still being used, so
-                // nothing to "untoggle").
-                if (this._untoggleScreenSharing) {
-                    this._untoggleScreenSharing();
-                }
-
-                // FIXME the code inside of _handleScreenSharingError is
-                // asynchronous, but does not return a Promise and is not part
-                // of the current Promise chain.
-                this._handleScreenSharingError(error);
-
-                return Promise.reject(error);
-            });
     },
 
     /**
@@ -2276,11 +1865,6 @@ export default {
                 APP.store.dispatch(p2pStatusChanged(p2p)));
 
         room.on(
-            JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
-            (id, connectionStatus) => APP.store.dispatch(
-                participantConnectionStatusChanged(id, connectionStatus)));
-
-        room.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             (dominant, previous, silence) => {
                 APP.store.dispatch(dominantSpeakerChanged(dominant, previous, Boolean(silence), room));
@@ -2289,16 +1873,6 @@ export default {
         room.on(
             JitsiConferenceEvents.CONFERENCE_CREATED_TIMESTAMP,
             conferenceTimestamp => APP.store.dispatch(conferenceTimestampChanged(conferenceTimestamp)));
-
-        room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
-            APP.store.dispatch(localParticipantConnectionStatusChanged(
-                JitsiParticipantConnectionStatus.INTERRUPTED));
-        });
-
-        room.on(JitsiConferenceEvents.CONNECTION_RESTORED, () => {
-            APP.store.dispatch(localParticipantConnectionStatusChanged(
-                JitsiParticipantConnectionStatus.ACTIVE));
-        });
 
         room.on(
             JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
@@ -2519,77 +2093,38 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             cameraDeviceId => {
-                const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
                 const videoWasMuted = this.isLocalVideoMuted();
 
                 sendAnalytics(createDeviceChangedEvent('video', 'input'));
 
-                // If both screenshare and video are in progress, restart the
-                // presenter mode with the new camera device.
-                if (this.isSharingScreen && !videoWasMuted) {
-                    const { height } = localVideo.track.getSettings();
+                createLocalTracksF({
+                    devices: [ 'video' ],
+                    cameraDeviceId
+                })
+                .then(([ stream ]) => {
+                    // if we are in audio only mode or video was muted before
+                    // changing device, then mute
+                    if (this.isAudioOnly() || videoWasMuted) {
+                        return stream.mute()
+                            .then(() => stream);
+                    }
 
-                    // dispose the existing presenter track and create a new
-                    // camera track.
-                    // FIXME JitsiLocalTrack.dispose is async and should be waited for
-                    this.localPresenterVideo && this.localPresenterVideo.dispose();
-                    this.localPresenterVideo = null;
+                    return stream;
+                })
+                .then(stream => {
+                    logger.info(`Switching the local video device to ${cameraDeviceId}.`);
 
-                    return this._createPresenterStreamEffect(height, cameraDeviceId)
-                        .then(effect => localVideo.setEffect(effect))
-                        .then(() => {
-                            this.setVideoMuteStatus();
-                            logger.log('Switched local video device while screen sharing and the video is unmuted');
-                            this._updateVideoDeviceId();
-                        })
-                        .catch(err => APP.store.dispatch(notifyCameraError(err)));
-
-                // If screenshare is in progress but video is muted, update the default device
-                // id for video, dispose the existing presenter track and create a new effect
-                // that can be applied on un-mute.
-                } else if (this.isSharingScreen && videoWasMuted) {
-                    logger.log('Switched local video device: while screen sharing and the video is muted');
-                    const { height } = localVideo.track.getSettings();
-
+                    return this.useVideoStream(stream);
+                })
+                .then(() => {
+                    logger.info(`Switched local video device to ${cameraDeviceId}.`);
                     this._updateVideoDeviceId();
+                })
+                .catch(error => {
+                    logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
 
-                    // FIXME JitsiLocalTrack.dispose is async and should be waited for
-                    this.localPresenterVideo && this.localPresenterVideo.dispose();
-                    this.localPresenterVideo = null;
-                    this._createPresenterStreamEffect(height, cameraDeviceId);
-
-                // if there is only video, switch to the new camera stream.
-                } else {
-                    createLocalTracksF({
-                        devices: [ 'video' ],
-                        cameraDeviceId,
-                        micDeviceId: null
-                    })
-                    .then(([ stream ]) => {
-                        // if we are in audio only mode or video was muted before
-                        // changing device, then mute
-                        if (this.isAudioOnly() || videoWasMuted) {
-                            return stream.mute()
-                                .then(() => stream);
-                        }
-
-                        return stream;
-                    })
-                    .then(stream => {
-                        logger.info(`Switching the local video device to ${cameraDeviceId}.`);
-
-                        return this.useVideoStream(stream);
-                    })
-                    .then(() => {
-                        logger.info(`Switched local video device to ${cameraDeviceId}.`);
-                        this._updateVideoDeviceId();
-                    })
-                    .catch(error => {
-                        logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
-
-                        return APP.store.dispatch(notifyCameraError(error));
-                    });
-                }
+                    return APP.store.dispatch(notifyCameraError(error));
+                });
             }
         );
 
@@ -2613,7 +2148,6 @@ export default {
                 sendAnalytics(createDeviceChangedEvent('audio', 'input'));
                 createLocalTracksF({
                     devices: [ 'audio' ],
-                    cameraDeviceId: null,
                     micDeviceId: selectedDeviceId
                 })
                 .then(([ stream ]) => {
@@ -2754,13 +2288,6 @@ export default {
         if (localVideo && localVideo.videoType === 'camera') {
             APP.store.dispatch(updateSettings({
                 cameraDeviceId: localVideo.getDeviceId()
-            }));
-        }
-
-        // If screenshare is in progress, get the device id from the presenter track.
-        if (this.localPresenterVideo) {
-            APP.store.dispatch(updateSettings({
-                cameraDeviceId: this.localPresenterVideo.getDeviceId()
             }));
         }
     },
@@ -3211,7 +2738,7 @@ export default {
                         return;
                     }
 
-                    APP.store.dispatch(toggleScreensharingA(undefined, false, false, { desktopStream }));
+                    APP.store.dispatch(toggleScreensharingA(undefined, false, { desktopStream }));
                 }
             });
         }

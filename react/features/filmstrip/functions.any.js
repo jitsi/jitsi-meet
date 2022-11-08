@@ -1,6 +1,3 @@
-// @flow
-
-import { getMultipleVideoSupportFeatureFlag } from '../base/config';
 import { getActiveSpeakersToBeDisplayed, getVirtualScreenshareParticipantOwnerId } from '../base/participants';
 
 import { setRemoteParticipants } from './actions';
@@ -32,29 +29,20 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
 
     const {
         fakeParticipants,
-        sortedRemoteParticipants,
-        sortedRemoteScreenshares
+        sortedRemoteParticipants
     } = state['features/base/participants'];
     const remoteParticipants = new Map(sortedRemoteParticipants);
-    const screenShares = new Map(sortedRemoteScreenshares);
     const screenShareParticipants = sortedRemoteVirtualScreenshareParticipants
         ? [ ...sortedRemoteVirtualScreenshareParticipants.keys() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
     const speakers = getActiveSpeakersToBeDisplayed(state);
 
-    if (getMultipleVideoSupportFeatureFlag(state)) {
-        for (const screenshare of screenShareParticipants) {
-            const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
+    for (const screenshare of screenShareParticipants) {
+        const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
 
-            remoteParticipants.delete(ownerId);
-            remoteParticipants.delete(screenshare);
-            speakers.delete(ownerId);
-        }
-    } else {
-        for (const screenshare of screenShares.keys()) {
-            remoteParticipants.delete(screenshare);
-            speakers.delete(screenshare);
-        }
+        remoteParticipants.delete(ownerId);
+        remoteParticipants.delete(screenshare);
+        speakers.delete(ownerId);
     }
 
     for (const sharedVideo of sharedVideos) {
@@ -64,32 +52,22 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
         remoteParticipants.delete(speaker);
     }
 
-    if (getMultipleVideoSupportFeatureFlag(state)) {
-        // Always update the order of the thumnails.
-        const participantsWithScreenShare = screenShareParticipants.reduce((acc, screenshare) => {
-            const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
+    // Always update the order of the thumnails.
+    const participantsWithScreenShare = screenShareParticipants.reduce((acc, screenshare) => {
+        const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
 
-            acc.push(ownerId);
-            acc.push(screenshare);
+        acc.push(ownerId);
+        acc.push(screenshare);
 
-            return acc;
-        }, []);
+        return acc;
+    }, []);
 
-        reorderedParticipants = [
-            ...participantsWithScreenShare,
-            ...sharedVideos,
-            ...Array.from(speakers.keys()),
-            ...Array.from(remoteParticipants.keys())
-        ];
-    } else {
-        // Always update the order of the thumnails.
-        reorderedParticipants = [
-            ...Array.from(screenShares.keys()),
-            ...sharedVideos,
-            ...Array.from(speakers.keys()),
-            ...Array.from(remoteParticipants.keys())
-        ];
-    }
+    reorderedParticipants = [
+        ...participantsWithScreenShare,
+        ...sharedVideos,
+        ...Array.from(speakers.keys()),
+        ...Array.from(remoteParticipants.keys())
+    ];
 
     store.dispatch(setRemoteParticipants(Array.from(new Set(reorderedParticipants))));
 }

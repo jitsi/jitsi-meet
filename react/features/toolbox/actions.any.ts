@@ -5,8 +5,7 @@ import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import { setAudioOnly } from '../base/audio-only/actions';
 import { setVideoMuted } from '../base/media/actions';
-import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
-import { getLocalVideoType } from '../base/tracks/functions';
+import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 
 import {
     SET_TOOLBOX_ENABLED,
@@ -88,18 +87,16 @@ export function handleToggleVideoMuted(muted: boolean, showUI: boolean, ensureTr
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { enabled: audioOnly } = state['features/base/audio-only'];
-        const tracks = state['features/base/tracks'];
 
         sendAnalytics(createToolbarEvent(VIDEO_MUTE, { enable: muted }));
         if (audioOnly) {
             dispatch(setAudioOnly(false));
         }
-        const mediaType = getLocalVideoType(tracks);
 
         dispatch(
             setVideoMuted(
                 muted,
-                mediaType,
+                MEDIA_TYPE.VIDEO,
                 VIDEO_MUTISM_AUTHORITY.USER,
                 ensureTrack));
 

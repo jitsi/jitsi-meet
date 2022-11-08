@@ -2,7 +2,6 @@
 
 import type { Dispatch } from 'redux';
 
-import { getMultipleVideoSupportFeatureFlag } from '../base/config';
 import { MEDIA_TYPE } from '../base/media';
 import {
     getDominantSpeakerParticipant,
@@ -163,14 +162,10 @@ function _electParticipantInLargeVideo(state) {
     participant = getDominantSpeakerParticipant(state);
     if (participant && !participant.local) {
         // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
-        // auto pin latest screenshare is disabled.
-        if (getMultipleVideoSupportFeatureFlag(state)) {
-            const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
+        // auto_pin_latest_screen_share setting is disabled.
+        const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
 
-            return screenshareParticipant?.id ?? participant.id;
-        }
-
-        return participant.id;
+        return screenshareParticipant?.id ?? participant.id;
     }
 
     // In case this is the local participant.

@@ -8,7 +8,6 @@ import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
-import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import i18next from '../i18n/i18next';
 import { VIDEO_TYPE } from '../media/constants';
 import { toState } from '../redux/functions';
@@ -71,7 +70,6 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
     const {
         dominantSpeaker,
         fakeParticipants,
-        sortedRemoteScreenshares,
         sortedRemoteVirtualScreenshareParticipants,
         speakersList
     } = state['features/base/participants'];
@@ -98,19 +96,12 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
     }
 
     // Remove screenshares from the count.
-    if (getMultipleVideoSupportFeatureFlag(state)) {
-        if (sortedRemoteVirtualScreenshareParticipants) {
-            availableSlotsForActiveSpeakers -= sortedRemoteVirtualScreenshareParticipants.size * 2;
-            for (const screenshare of Array.from(sortedRemoteVirtualScreenshareParticipants.keys())) {
-                const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare as string);
+    if (sortedRemoteVirtualScreenshareParticipants) {
+        availableSlotsForActiveSpeakers -= sortedRemoteVirtualScreenshareParticipants.size * 2;
+        for (const screenshare of Array.from(sortedRemoteVirtualScreenshareParticipants.keys())) {
+            const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare as string);
 
-                activeSpeakers.delete(ownerId);
-            }
-        }
-    } else if (sortedRemoteScreenshares) {
-        availableSlotsForActiveSpeakers -= sortedRemoteScreenshares.size;
-        for (const id of Array.from(sortedRemoteScreenshares.keys())) {
-            activeSpeakers.delete(id);
+            activeSpeakers.delete(ownerId);
         }
     }
 
@@ -193,14 +184,9 @@ export function getLocalScreenShareParticipant(stateful: IStateful) {
  */
 export function getVirtualScreenshareParticipantByOwnerId(stateful: IStateful, id: string) {
     const state = toState(stateful);
+    const track = getScreenShareTrack(state['features/base/tracks'], id);
 
-    if (getMultipleVideoSupportFeatureFlag(state)) {
-        const track = getScreenShareTrack(state['features/base/tracks'], id);
-
-        return getParticipantById(stateful, track?.jitsiTrack.getSourceName());
-    }
-
-    return;
+    return getParticipantById(stateful, track?.jitsiTrack.getSourceName());
 }
 
 /**
@@ -269,12 +255,7 @@ export function getParticipantCount(stateful: IStateful) {
         sortedRemoteVirtualScreenshareParticipants
     } = state['features/base/participants'];
 
-    if (getMultipleVideoSupportFeatureFlag(state)) {
-        return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size + (local ? 1 : 0);
-    }
-
-    return remote.size - fakeParticipants.size + (local ? 1 : 0);
-
+    return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size + (local ? 1 : 0);
 }
 
 /**
@@ -385,11 +366,7 @@ export function getRemoteParticipantCount(stateful: IStateful) {
     const state = toState(stateful);
     const participantsState = state['features/base/participants'];
 
-    if (getMultipleVideoSupportFeatureFlag(state)) {
-        return participantsState.remote.size - participantsState.sortedRemoteVirtualScreenshareParticipants.size;
-    }
-
-    return participantsState.remote.size;
+    return participantsState.remote.size - participantsState.sortedRemoteVirtualScreenshareParticipants.size;
 }
 
 /**
@@ -405,11 +382,7 @@ export function getParticipantCountWithFake(stateful: IStateful) {
     const state = toState(stateful);
     const { local, localScreenShare, remote } = state['features/base/participants'];
 
-    if (getMultipleVideoSupportFeatureFlag(state)) {
-        return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
-    }
-
-    return remote.size + (local ? 1 : 0);
+    return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
 }
 
 /**
