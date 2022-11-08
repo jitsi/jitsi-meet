@@ -40,12 +40,11 @@ const PollCreate = (props: AbstractProps) => {
             return;
         }
         answerInputs.current[i] = input;
-    },
-        [ answerInputs ]
-    );
+    }, [ answerInputs ]);
 
     useEffect(() => {
         answerInputs.current = answerInputs.current.slice(0, answers.length);
+
     }, [ answers ]);
 
     /*
