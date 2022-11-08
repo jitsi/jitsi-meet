@@ -25,6 +25,7 @@ const ChatAndPolls = () => {
     const clientWidth = useSelector(getClientWidth);
 
     return (
+        // @ts-ignore
         <ChatTab.Navigator
             backBehavior = 'none'
             initialLayout = {{
