@@ -32,7 +32,8 @@ export default {
         borderWidth: 2,
         color: BaseTheme.palette.text01,
         paddingHorizontal: BaseTheme.spacing[3],
-        height: BaseTheme.spacing[7]
+        height: BaseTheme.spacing[7],
+        lineHeight: 20
     },
 
     inputDisabled: {
@@ -49,6 +50,11 @@ export default {
 
     iconInput: {
         paddingLeft: BaseTheme.spacing[6]
+    },
+
+    inputMultiline: {
+        height: BaseTheme.spacing[10],
+        paddingTop: BaseTheme.spacing[2]
     },
 
     clearableInput: {

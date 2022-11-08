@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment  */
+
 import React, { forwardRef, useCallback, useState } from 'react';
 import {
     KeyboardTypeOptions,
@@ -21,7 +23,7 @@ import { IInputProps } from '../types';
 import styles from './inputStyles';
 
 interface IProps extends IInputProps {
-    accessibilityLabel?: string | undefined;
+    accessibilityLabel?: any;
     autoCapitalize?: string | undefined;
     autoFocus?: boolean;
     blurOnSubmit?: boolean | undefined;
@@ -38,7 +40,7 @@ interface IProps extends IInputProps {
     onSubmitEditing?: (value: string) => void;
     returnKeyType?: ReturnKeyTypeOptions | undefined;
     secureTextEntry?: boolean | undefined;
-    textContentType?: string;
+    textContentType?: any;
 }
 
 interface ICustomStyles {
@@ -46,7 +48,7 @@ interface ICustomStyles {
     input?: Object;
 }
 
-const Input = forwardRef(({
+const Input = forwardRef<TextInput, IInputProps>(({
     accessibilityLabel,
     autoCapitalize,
     autoFocus,
@@ -113,6 +115,7 @@ const Input = forwardRef(({
                 style = { styles.icon } />}
             <TextInput
                 accessibilityLabel = { accessibilityLabel }
+                // @ts-ignore
                 autoCapitalize = { autoCapitalize }
                 autoComplete = { 'off' }
                 autoCorrect = { false }
@@ -135,16 +138,18 @@ const Input = forwardRef(({
                 returnKeyType = { returnKeyType }
                 secureTextEntry = { secureTextEntry }
                 spellCheck = { false }
-                style = { [ styles.input,
-                    disabled && styles.inputDisabled,
+                style = { [
+                    styles.input,
                     clearable && styles.clearableInput,
-                    icon && styles.iconInput,
-                    focused && styles.inputFocused,
+                    customStyles?.input,
+                    disabled && styles.inputDisabled,
                     error && styles.inputError,
-                    customStyles?.input
+                    focused && styles.inputFocused,
+                    icon && styles.iconInput,
+                    multiline && styles.inputMultiline
                 ] }
                 textContentType = { textContentType }
-                value = { value } />
+                value = { `${value}` } />
             { clearable && !disabled && value !== '' && (
                 <TouchableOpacity
                     onPress = { clearInput }
