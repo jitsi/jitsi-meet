@@ -458,6 +458,7 @@ export interface IConfig {
     tileView?: {
         numberOfVisibleTiles?: number;
     };
+    tokenAuthUrl?: string;
     toolbarButtons?: Array<ToolbarButtons>;
     toolbarConfig?: {
         alwaysVisible?: boolean;

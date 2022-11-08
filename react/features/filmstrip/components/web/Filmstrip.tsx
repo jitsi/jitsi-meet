@@ -16,7 +16,7 @@ import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
 import { IParticipant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
-import { shouldHideSelfView } from '../../../base/settings/functions.any';
+import { shouldHideSelfView } from '../../../base/settings/functions.web';
 // @ts-ignore
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';

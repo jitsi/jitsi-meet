@@ -1,13 +1,7 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import { getParticipantDisplayName } from '../base/participants';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    NOTIFICATION_TYPE,
-    showNotification
-} from '../notifications';
+import { IStore } from '../app/types';
+import { getParticipantDisplayName } from '../base/participants/functions';
+import { showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 
 /**
  * Notify that we've been kicked out of the conference.
@@ -17,9 +11,9 @@ import {
  * @param {?Function} _ - Used only in native code.
  * @returns {Function}
  */
-export function notifyKickedOut(participant: Object, _: ?Function) { // eslint-disable-line no-unused-vars
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        if (!participant || (participant.isReplaced && participant.isReplaced())) {
+export function notifyKickedOut(participant: any, _?: Function) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        if (!participant || participant?.isReplaced()) {
             return;
         }
 

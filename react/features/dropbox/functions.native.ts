@@ -1,18 +1,21 @@
-// @flow
-
 import { NativeModules } from 'react-native';
 
-const { Dropbox } = NativeModules;
-
+import { IReduxState } from '../app/types';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { setPictureInPictureEnabled } from '../mobile/picture-in-picture/functions';
+
+const { Dropbox } = NativeModules;
 
 /**
  * Action to authorize the Jitsi Recording app in dropbox.
  *
+ * @param {any} _appKey - Used on web.
+ * @param {any} _redirectURI - Used on web.
  * @returns {Promise<Object>} - The promise will be resolved with the dropbox
  * access token or rejected with an error.
  */
-export async function _authorizeDropbox(): Promise<Object> {
+export async function _authorizeDropbox(_appKey?: any, _redirectURI?: any): Promise<any> {
     setPictureInPictureEnabled(false);
 
     try {
@@ -35,10 +38,11 @@ export function getNewAccessToken() {
  * Returns the display name for the current dropbox account.
  *
  * @param {string} token - The dropbox access token.
+ * @param {any} _appKey - Used on web.
  * @returns {Promise<string>} - The promise will be resolved with the display
  * name or rejected with an error.
  */
-export function getDisplayName(token: string) {
+export function getDisplayName(token: string, _appKey?: any) {
     return Dropbox.getDisplayName(token);
 }
 
@@ -46,12 +50,13 @@ export function getDisplayName(token: string) {
  * Returns information about the space usage for the current dropbox account.
  *
  * @param {string} token - The dropbox access token.
+ * @param {any} _appKey - Used on web.
  * @returns {Promise<{ used: number, allocated: number}>} - The promise will be
  * resolved with the object with information about the space usage (the used
  * space and the allocated space) for the current dropbox account or rejected
  * with an error.
  */
-export function getSpaceUsage(token: string) {
+export function getSpaceUsage(token: string, _appKey?: any) {
     return Dropbox.getSpaceUsage(token);
 }
 
@@ -62,8 +67,9 @@ export function getSpaceUsage(token: string) {
  * @param {Object} state - The redux state.
  * @returns {boolean}
  */
-export function isEnabled(state: Object) {
+export function isEnabled(state: IReduxState) {
     const { dropbox = {} } = state['features/base/config'];
 
+    // @ts-ignore
     return Boolean(Dropbox?.ENABLED && typeof dropbox.appKey === 'string');
 }

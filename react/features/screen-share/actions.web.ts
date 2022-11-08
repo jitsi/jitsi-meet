@@ -1,8 +1,8 @@
 import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
-import { shouldHideShareAudioHelper } from '../base/settings/functions';
-import { toggleScreensharing } from '../base/tracks/actions';
+import { shouldHideShareAudioHelper } from '../base/settings/functions.web';
+import { toggleScreensharing } from '../base/tracks/actions.web';
 
 import {
     SET_SCREENSHARE_TRACKS,

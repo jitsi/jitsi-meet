@@ -16,12 +16,13 @@ import {
 } from '../filmstrip/functions';
 import { LAYOUTS } from '../video-layout/constants';
 import {
+    getCurrentLayout,
     getVideoQualityForLargeVideo,
     getVideoQualityForResizableFilmstripThumbnails,
+    getVideoQualityForScreenSharingFilmstrip,
     getVideoQualityForStageThumbnails,
     shouldDisplayTileView
 } from '../video-layout/functions';
-import { getCurrentLayout, getVideoQualityForScreenSharingFilmstrip } from '../video-layout/functions.any';
 
 import {
     setMaxReceiverVideoQualityForLargeVideo,

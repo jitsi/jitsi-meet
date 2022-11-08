@@ -1,17 +1,18 @@
-// @flow
 import { appNavigate } from '../app/actions';
-import {
-    CONFERENCE_JOINED,
-    KICKED_OUT,
-    conferenceLeft,
-    getCurrentConference
-} from '../base/conference';
-import { hideDialog, isDialogOpen } from '../base/dialog';
-import { pinParticipant } from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { SET_REDUCED_UI } from '../base/responsive-ui';
+import { IStore } from '../app/types';
+import { CONFERENCE_JOINED, KICKED_OUT } from '../base/conference/actionTypes';
+import { conferenceLeft } from '../base/conference/actions';
+import { getCurrentConference } from '../base/conference/functions';
+import { hideDialog } from '../base/dialog/actions';
+import { isDialogOpen } from '../base/dialog/functions';
+import { pinParticipant } from '../base/participants/actions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { FeedbackDialog } from '../feedback';
-import { setFilmstripEnabled } from '../filmstrip';
+import { setFilmstripEnabled } from '../filmstrip/actions';
 import { showSalesforceNotification } from '../salesforce/actions';
 import { setToolboxEnabled } from '../toolbox/actions';
 
@@ -90,7 +91,7 @@ StateListenerRegistry.register(
  * @private
  * @returns {void}
  */
-function _setReducedUI({ dispatch, getState }) {
+function _setReducedUI({ dispatch, getState }: IStore) {
     const { reducedUI } = getState()['features/base/responsive-ui'];
 
     dispatch(setToolboxEnabled(!reducedUI));
@@ -106,7 +107,7 @@ function _setReducedUI({ dispatch, getState }) {
  * @private
  * @returns {void}
  */
-function _conferenceJoined({ dispatch, getState }) {
+function _conferenceJoined({ dispatch, getState }: IStore) {
     _setReducedUI({
         dispatch,
         getState

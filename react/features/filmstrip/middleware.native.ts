@@ -1,12 +1,10 @@
-// @flow
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { CLIENT_RESIZED, SAFE_AREA_INSETS_CHANGED, SET_ASPECT_RATIO } from '../base/responsive-ui/actionTypes';
 
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
-import { CLIENT_RESIZED, SAFE_AREA_INSETS_CHANGED, SET_ASPECT_RATIO } from '../base/responsive-ui';
-
-import { setTileViewDimensions } from './actions';
-import { updateRemoteParticipants, updateRemoteParticipantsOnLeave } from './functions';
-import './subscriber';
+import { setTileViewDimensions } from './actions.native';
+import { updateRemoteParticipants, updateRemoteParticipantsOnLeave } from './functions.native';
+import './subscriber.native';
 
 /**
  * The middleware of the feature Filmstrip.

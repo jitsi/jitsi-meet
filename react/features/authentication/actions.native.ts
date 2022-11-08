@@ -1,11 +1,8 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
 import { appNavigate } from '../app/actions';
+import { IStore } from '../app/types';
 import { conferenceLeft } from '../base/conference/actions';
 import { connectionFailed } from '../base/connection/actions.native';
-import { set } from '../base/redux';
+import { set } from '../base/redux/functions';
 
 import { CANCEL_LOGIN } from './actionTypes';
 import { stopWaitForOwner } from './actions.any';
@@ -20,7 +17,7 @@ export * from './actions.any';
  * }}
  */
 export function cancelLogin() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         dispatch({ type: CANCEL_LOGIN });
 
         // XXX The error associated with CONNECTION_FAILED was marked as
@@ -36,8 +33,8 @@ export function cancelLogin() {
         passwordRequired
             && dispatch(
                 connectionFailed(
-                    passwordRequired,
-                    set(error, 'recoverable', false)));
+                    passwordRequired, // @ts-ignore
+                    set(error, 'recoverable', false) as any));
     };
 }
 
@@ -47,7 +44,7 @@ export function cancelLogin() {
  * @returns {Function}
  */
 export function cancelWaitForOwner() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         dispatch(stopWaitForOwner());
 
         // XXX The error associated with CONFERENCE_FAILED was marked as

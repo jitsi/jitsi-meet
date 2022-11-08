@@ -57,7 +57,7 @@ const PinnedIndicator = ({
 }: IProps) => {
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
     const pinned = useSelector((state: IReduxState) => getParticipantById(state, participantId))?.pinned;
-    const activePinnedParticipants: Array<{ participantId: string; pinned: boolean; }>
+    const activePinnedParticipants: Array<{ participantId: string; pinned?: boolean; }>
         = useSelector(getPinnedActiveParticipants);
     const isPinned = activePinnedParticipants.find(p => p.participantId === participantId);
     const { classes: styles } = useStyles();

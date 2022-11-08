@@ -1,4 +1,3 @@
-// @flow
 import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
 import { _authorizeDropbox } from './functions';
 import logger from './logger';

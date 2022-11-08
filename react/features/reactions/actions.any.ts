@@ -4,7 +4,8 @@ import {
     FLUSH_REACTION_BUFFER,
     PUSH_REACTIONS,
     SEND_REACTIONS,
-    SET_REACTION_QUEUE
+    SET_REACTION_QUEUE,
+    SHOW_SOUNDS_NOTIFICATION
 } from './actionTypes';
 import { IReactionEmojiProps } from './constants';
 import { IReactionsAction } from './reducer';
@@ -96,5 +97,16 @@ export function pushReactions(reactions: Array<string>): IReactionsAction {
     return {
         type: PUSH_REACTIONS,
         reactions
+    };
+}
+
+/**
+ * Displays the disable sounds notification.
+ *
+ * @returns {void}
+ */
+export function displayReactionSoundsNotification(): IReactionsAction {
+    return {
+        type: SHOW_SOUNDS_NOTIFICATION
     };
 }

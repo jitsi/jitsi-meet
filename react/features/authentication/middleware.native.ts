@@ -1,20 +1,18 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import { appNavigate } from '../app/actions';
+import { appNavigate } from '../app/actions.native';
+import { IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
-} from '../base/conference';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection';
-import { hideDialog, isDialogOpen } from '../base/dialog';
+} from '../base/conference/actionTypes';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
+import { hideDialog } from '../base/dialog/actions';
+import { isDialogOpen } from '../base/dialog/functions';
 import {
     JitsiConferenceErrors,
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
-import { MiddlewareRegistry } from '../base/redux';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
     CANCEL_LOGIN,
@@ -26,7 +24,7 @@ import {
     openLoginDialog,
     openWaitForOwnerDialog,
     stopWaitForOwner,
-    waitForOwner } from './actions.native';
+    waitForOwner } from './actions.native'; // @ts-ignore
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**
@@ -44,7 +42,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { dispatch, getState } = store;
         const { thenableWithCancel } = getState()['features/authentication'];
 
-        thenableWithCancel && thenableWithCancel.cancel();
+        thenableWithCancel?.cancel();
 
         // The LoginDialog can be opened on top of "wait for owner". The app
         // should navigate only if LoginDialog was open without the
@@ -142,7 +140,7 @@ MiddlewareRegistry.register(store => next => action => {
     case WAIT_FOR_OWNER: {
         _clearExistingWaitForOwnerTimeout(store);
 
-        const { handler, timeoutMs } = action;
+        const { handler, timeoutMs }: { handler: () => void; timeoutMs: number; } = action;
 
         action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
 
@@ -165,7 +163,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _clearExistingWaitForOwnerTimeout(
-        { getState }: { getState: Function }) {
+        { getState }: IStore) {
     const { waitForOwnerTimeoutID } = getState()['features/authentication'];
 
     waitForOwnerTimeoutID && clearTimeout(waitForOwnerTimeoutID);
@@ -177,7 +175,7 @@ function _clearExistingWaitForOwnerTimeout(
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _hideLoginDialog({ dispatch }: { dispatch: Dispatch<any> }) {
+function _hideLoginDialog({ dispatch }: IStore) {
     dispatch(hideDialog(LoginDialog));
 }
 
@@ -187,6 +185,6 @@ function _hideLoginDialog({ dispatch }: { dispatch: Dispatch<any> }) {
  * @param {Object} store - The redux store.
  * @returns {boolean}
  */
-function _isWaitingForOwner({ getState }: { getState: Function }) {
+function _isWaitingForOwner({ getState }: IStore) {
     return Boolean(getState()['features/authentication'].waitForOwnerTimeoutID);
 }

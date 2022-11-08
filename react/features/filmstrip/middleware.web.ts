@@ -1,25 +1,24 @@
-// @flow
-
 import { batch } from 'react-redux';
 
+// @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
-    PARTICIPANT_LEFT,
+    PARTICIPANT_LEFT
+} from '../base/participants/actionTypes';
+import {
     getDominantSpeakerParticipant,
     getLocalParticipant,
     getLocalScreenShareParticipant,
     isScreenShareParticipant
-} from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
-import { CLIENT_RESIZED } from '../base/responsive-ui';
-import { SETTINGS_UPDATED } from '../base/settings';
-import {
-    LAYOUTS,
-    getCurrentLayout,
-    setTileView
-} from '../video-layout';
+} from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { CLIENT_RESIZED } from '../base/responsive-ui/actionTypes';
+import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
+import { setTileView } from '../video-layout/actions.web';
+import { LAYOUTS } from '../video-layout/constants';
+import { getCurrentLayout } from '../video-layout/functions.web';
 
 import {
     ADD_STAGE_PARTICIPANT,
@@ -54,7 +53,7 @@ import {
     updateRemoteParticipants,
     updateRemoteParticipantsOnLeave
 } from './functions.web';
-import './subscriber';
+import './subscriber.web';
 
 /**
  * Map of timers.
@@ -87,19 +86,19 @@ MiddlewareRegistry.register(store => next => action => {
             const { clientWidth, clientHeight } = action;
             let height, width;
 
-            if (filmstripWidth.current > clientWidth - MIN_STAGE_VIEW_WIDTH) {
+            if ((filmstripWidth.current ?? 0) > clientWidth - MIN_STAGE_VIEW_WIDTH) {
                 width = Math.max(clientWidth - MIN_STAGE_VIEW_WIDTH, DEFAULT_FILMSTRIP_WIDTH);
             } else {
-                width = Math.min(clientWidth - MIN_STAGE_VIEW_WIDTH, filmstripWidth.userSet);
+                width = Math.min(clientWidth - MIN_STAGE_VIEW_WIDTH, filmstripWidth.userSet ?? 0);
             }
             if (width !== filmstripWidth.current) {
                 store.dispatch(setFilmstripWidth(width));
             }
 
-            if (topPanelHeight.current > clientHeight - MIN_STAGE_VIEW_HEIGHT) {
+            if ((topPanelHeight.current ?? 0) > clientHeight - MIN_STAGE_VIEW_HEIGHT) {
                 height = Math.max(clientHeight - MIN_STAGE_VIEW_HEIGHT, TOP_FILMSTRIP_HEIGHT);
             } else {
-                height = Math.min(clientHeight - MIN_STAGE_VIEW_HEIGHT, topPanelHeight.userSet);
+                height = Math.min(clientHeight - MIN_STAGE_VIEW_HEIGHT, topPanelHeight.userSet ?? 0);
             }
             if (height !== topPanelHeight.current) {
                 store.dispatch(setFilmstripHeight(height));
@@ -127,8 +126,8 @@ MiddlewareRegistry.register(store => next => action => {
             const localScreenShare = getLocalScreenShareParticipant(state);
             const activeParticipantsIds = getActiveParticipantsIds(state);
 
-            if (activeParticipantsIds.find(id => id === local.id)) {
-                store.dispatch(removeStageParticipant(local.id));
+            if (activeParticipantsIds.find(id => id === local?.id)) {
+                store.dispatch(removeStageParticipant(local?.id ?? ''));
             }
 
             if (localScreenShare) {
@@ -181,7 +180,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             clearTimeout(tid);
             timers.delete(participantId);
-        } else if (activeParticipants.length < maxStageParticipants) {
+        } else if (activeParticipants.length < (maxStageParticipants ?? 0)) {
             queue = [ ...activeParticipants, {
                 participantId,
                 pinned
@@ -252,7 +251,7 @@ MiddlewareRegistry.register(store => next => action => {
         const currentLayout = getCurrentLayout(state);
         const dominantSpeaker = getDominantSpeakerParticipant(state);
 
-        if (dominantSpeaker?.id === id || id === local.id || currentLayout === LAYOUTS.TILE_VIEW) {
+        if (dominantSpeaker?.id === id || id === local?.id || currentLayout === LAYOUTS.TILE_VIEW) {
             break;
         }
 

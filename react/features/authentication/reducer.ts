@@ -12,7 +12,9 @@ import {
 export interface IAuthenticationState {
     error?: Object | undefined;
     progress?: number | undefined;
-    thenableWithCancel?: Object | undefined;
+    thenableWithCancel?: {
+        cancel: Function;
+    };
     waitForOwnerTimeoutID?: number;
 }
 

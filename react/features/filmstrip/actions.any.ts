@@ -1,5 +1,3 @@
-// @flow
-
 import {
     SET_FILMSTRIP_ENABLED,
     SET_FILMSTRIP_VISIBLE,

@@ -1,9 +1,9 @@
-// @flow
-
 import {
     PageReloadOverlay,
     SuspendedOverlay,
     UserMediaPermissionsOverlay
+
+    // @ts-ignore
 } from './components/web';
 
 /**

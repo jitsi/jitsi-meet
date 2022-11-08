@@ -1,10 +1,8 @@
-// @flow
-
 import { getCurrentConference } from '../base/conference/functions';
-import { StateListenerRegistry } from '../base/redux';
-import { shouldDisplayTileView } from '../video-layout';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { shouldDisplayTileView } from '../video-layout/functions.native';
 
-import { setRemoteParticipants, setTileViewDimensions } from './actions';
+import { setRemoteParticipants, setTileViewDimensions } from './actions.native';
 import { getTileViewParticipantCount } from './functions.native';
 import './subscriber.any';
 

@@ -1,12 +1,9 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import {
-    AlertDialog,
-    openDialog
-} from '../base/dialog';
-import { getParticipantDisplayName } from '../base/participants';
+import { IStore } from '../app/types';
+import { openDialog } from '../base/dialog/actions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { AlertDialog } from '../base/dialog/components/native';
+import { getParticipantDisplayName } from '../base/participants/functions';
 
 /**
  * Notify that we've been kicked out of the conference.
@@ -16,10 +13,10 @@ import { getParticipantDisplayName } from '../base/participants';
  * @param {?Function} submit - The function to execute after submiting the dialog.
  * @returns {Function}
  */
-export function notifyKickedOut(participant: Object, submit: ?Function) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        if (!participant || (participant.isReplaced && participant.isReplaced())) {
-            submit && submit();
+export function notifyKickedOut(participant: any, submit?: Function) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        if (!participant || participant?.isReplaced?.()) {
+            submit?.();
 
             return;
         }

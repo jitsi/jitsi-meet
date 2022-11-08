@@ -1,6 +1,5 @@
-// @flow
-
-import { toState } from '../base/redux';
+import { IStateful } from '../base/app/types';
+import { toState } from '../base/redux/functions';
 
 export * from './functions.any';
 
@@ -14,7 +13,7 @@ export * from './functions.any';
  * features/base/config.
  * @returns {boolean}.
  */
-export function getDisablePolls(stateful: Object) {
+export function getDisablePolls(stateful: IStateful) {
     const state = toState(stateful)['features/base/config'];
 
     return state.disablePolls;

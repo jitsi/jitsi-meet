@@ -1,14 +1,12 @@
-// @flow
-import type { Dispatch } from 'redux';
-
+import { IStore } from '../app/types';
+import { pinParticipant } from '../base/participants/actions';
 import {
     getLocalParticipant,
     getParticipantById,
-    getRemoteParticipantCount,
-    pinParticipant
-} from '../base/participants';
-import { shouldHideSelfView } from '../base/settings/functions.any';
-import { getMaxColumnCount } from '../video-layout';
+    getRemoteParticipantCount
+} from '../base/participants/functions';
+import { shouldHideSelfView } from '../base/settings/functions.web';
+import { getMaxColumnCount } from '../video-layout/functions.web';
 
 import {
     ADD_STAGE_PARTICIPANT,
@@ -54,10 +52,9 @@ import {
     getNumberOfPartipantsForTileView,
     getVerticalViewMaxWidth,
     isFilmstripResizable,
-    isStageFilmstripTopPanel,
-    showGridInVerticalView
-} from './functions';
-import { isStageFilmstripAvailable } from './functions.web';
+    isStageFilmstripAvailable,
+    isStageFilmstripTopPanel
+    , showGridInVerticalView } from './functions.web';
 
 export * from './actions.any';
 
@@ -71,7 +68,7 @@ export * from './actions.any';
  *  width: number,
  * }}
  */
-export function resizeFilmStrip(width) {
+export function resizeFilmStrip(width: number) {
     return {
         type: RESIZE_FILMSTRIP,
         width
@@ -84,7 +81,7 @@ export function resizeFilmStrip(width) {
  * @returns {Function}
  */
 export function setTileViewDimensions() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
         const {
@@ -111,11 +108,12 @@ export function setTileViewDimensions() {
                 numberOfParticipants,
                 desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
-        const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
+        const thumbnailsTotalHeight = (rows ?? 1) * (TILE_VERTICAL_MARGIN + (height ?? 0));
         const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
         const hasScroll = availableHeight < thumbnailsTotalHeight;
         const filmstripWidth
-            = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN, columns * (TILE_HORIZONTAL_MARGIN + width))
+            = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN,
+                (columns ?? 1) * (TILE_HORIZONTAL_MARGIN + (width ?? 0)))
                 + (hasScroll ? SCROLL_SIZE : 0);
         const filmstripHeight = Math.min(availableHeight, thumbnailsTotalHeight);
 
@@ -144,7 +142,7 @@ export function setTileViewDimensions() {
  * @returns {Function}
  */
 export function setVerticalViewDimensions() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
         const { width: filmstripWidth } = state['features/filmstrip'];
@@ -155,7 +153,7 @@ export function setVerticalViewDimensions() {
         const { localScreenShare } = state['features/base/participants'];
 
         let gridView = {};
-        let thumbnails = {};
+        let thumbnails: any = {};
         let filmstripDimensions = {};
         let hasScroll = false;
         let remoteVideosContainerWidth;
@@ -177,7 +175,7 @@ export function setVerticalViewDimensions() {
                 columns,
                 rows
             } = calculateResponsiveTileViewDimensions({
-                clientWidth: filmstripWidth.current,
+                clientWidth: filmstripWidth.current ?? 0,
                 clientHeight,
                 disableTileEnlargement: false,
                 maxColumns,
@@ -185,10 +183,11 @@ export function setVerticalViewDimensions() {
                 numberOfParticipants,
                 desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
-            const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
+            const thumbnailsTotalHeight = (rows ?? 1) * (TILE_VERTICAL_MARGIN + (height ?? 0));
 
             hasScroll = clientHeight < thumbnailsTotalHeight;
-            const widthOfFilmstrip = (columns * (TILE_HORIZONTAL_MARGIN + width)) + (hasScroll ? SCROLL_SIZE : 0);
+            const widthOfFilmstrip = ((columns ?? 1) * (TILE_HORIZONTAL_MARGIN + (width ?? 0)))
+                + (hasScroll ? SCROLL_SIZE : 0);
             const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
 
             gridView = {
@@ -208,7 +207,8 @@ export function setVerticalViewDimensions() {
                 width: widthOfFilmstrip
             };
         } else {
-            thumbnails = calculateThumbnailSizeForVerticalView(clientWidth, filmstripWidth.current, resizableFilmstrip);
+            thumbnails = calculateThumbnailSizeForVerticalView(clientWidth, filmstripWidth.current ?? 0,
+                resizableFilmstrip);
 
             remoteVideosContainerWidth
                 = thumbnails?.local?.width + TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN + SCROLL_SIZE;
@@ -252,7 +252,7 @@ export function setVerticalViewDimensions() {
  * @returns {Function}
  */
 export function setHorizontalViewDimensions() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
         const disableSelfView = shouldHideSelfView(state);
@@ -286,7 +286,7 @@ export function setHorizontalViewDimensions() {
  * @returns {Function}
  */
 export function setStageFilmstripViewDimensions() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
         const {
@@ -316,13 +316,14 @@ export function setStageFilmstripViewDimensions() {
             maxColumns,
             noHorizontalContainerMargin: verticalWidth > 0,
             numberOfParticipants,
-            numberOfVisibleTiles,
+            desiredNumberOfVisibleTiles: numberOfVisibleTiles,
             minTileHeight: topPanel ? TILE_MIN_HEIGHT_SMALL : null
         });
-        const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
+        const thumbnailsTotalHeight = (rows ?? 1) * (TILE_VERTICAL_MARGIN + (height ?? 0));
         const hasScroll = clientHeight < thumbnailsTotalHeight;
         const filmstripWidth
-            = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN, columns * (TILE_HORIZONTAL_MARGIN + width))
+            = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN,
+                (columns ?? 1) * (TILE_HORIZONTAL_MARGIN + (width ?? 0)))
             + (hasScroll ? SCROLL_SIZE : 0);
         const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
 
@@ -352,9 +353,9 @@ export function setStageFilmstripViewDimensions() {
  * @returns {Function}
  */
 export function clickOnVideo(n: number) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { id: localId } = getLocalParticipant(state);
+        const { id: localId } = getLocalParticipant(state) ?? {};
 
         // Use the list that correctly represents the current order of the participants as visible in the UI.
         const { remoteParticipants } = state['features/filmstrip'];
@@ -363,10 +364,10 @@ export function clickOnVideo(n: number) {
         if (participants.length - 1 < n) {
             return;
         }
-        const { id, pinned } = getParticipantById(state, participants[n]);
+        const { id, pinned } = getParticipantById(state, participants[n] ?? '') ?? {};
 
         if (isStageFilmstripAvailable(state)) {
-            dispatch(togglePinStageParticipant(id));
+            dispatch(togglePinStageParticipant(id ?? ''));
         } else {
             dispatch(pinParticipant(pinned ? null : id));
         }
@@ -476,7 +477,7 @@ export function setUserIsResizing(resizing: boolean) {
  * @param {boolean?} pinned - Whether the participant is pinned or not.
  * @returns {Object}
  */
-export function addStageParticipant(participantId, pinned = false) {
+export function addStageParticipant(participantId: string, pinned = false) {
     return {
         type: ADD_STAGE_PARTICIPANT,
         participantId,
@@ -490,7 +491,7 @@ export function addStageParticipant(participantId, pinned = false) {
  * @param {string} participantId - The Id of the participant to be removed.
  * @returns {Object}
  */
-export function removeStageParticipant(participantId) {
+export function removeStageParticipant(participantId: string) {
     return {
         type: REMOVE_STAGE_PARTICIPANT,
         participantId
@@ -503,7 +504,7 @@ export function removeStageParticipant(participantId) {
  * @param {Array<Object>} queue - The new list.
  * @returns {Object}
  */
-export function setStageParticipants(queue) {
+export function setStageParticipants(queue: Object[]) {
     return {
         type: SET_STAGE_PARTICIPANTS,
         queue
@@ -516,7 +517,7 @@ export function setStageParticipants(queue) {
  * @param {string} participantId - The id of the participant to be toggled.
  * @returns {Object}
  */
-export function togglePinStageParticipant(participantId) {
+export function togglePinStageParticipant(participantId: string) {
     return {
         type: TOGGLE_PIN_STAGE_PARTICIPANT,
         participantId
@@ -540,7 +541,7 @@ export function clearStageParticipants() {
  * @returns {Object}
  */
 export function setScreensharingTileDimensions() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
         const { visible, topPanelHeight, topPanelVisible } = state['features/filmstrip'];
@@ -569,7 +570,7 @@ export function setScreensharingTileDimensions() {
  * @param {boolean} visible - Whether it should be visible or not.
  * @returns {Object}
  */
-export function setTopPanelVisible(visible) {
+export function setTopPanelVisible(visible: boolean) {
     return {
         type: SET_TOP_PANEL_VISIBILITY,
         visible
@@ -582,7 +583,7 @@ export function setTopPanelVisible(visible) {
  * @param {string|undefined} participantId - The id of the participant to be set.
  * @returns {Object}
  */
-export function setScreenshareFilmstripParticipant(participantId) {
+export function setScreenshareFilmstripParticipant(participantId?: string) {
     return {
         type: SET_SCREENSHARE_FILMSTRIP_PARTICIPANT,
         participantId

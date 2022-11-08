@@ -1,6 +1,6 @@
 import { IReduxState } from '../app/types';
 import { getRoomName } from '../base/conference/functions';
-import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions.web';
+import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { isAudioMuted, isVideoMutedByUser } from '../base/media/functions';
 
 /**

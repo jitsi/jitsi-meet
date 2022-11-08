@@ -1,17 +1,17 @@
-// @flow
-
-import { maybeRedirectToWelcomePage } from '../app/actions';
+import { maybeRedirectToWelcomePage } from '../app/actions.web';
+import { IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
-} from '../base/conference';
-import { CONNECTION_ESTABLISHED } from '../base/connection';
-import { hideDialog, isDialogOpen } from '../base/dialog';
+} from '../base/conference/actionTypes';
+import { CONNECTION_ESTABLISHED } from '../base/connection/actionTypes';
+import { hideDialog } from '../base/dialog/actions';
+import { isDialogOpen } from '../base/dialog/functions';
 import {
     JitsiConferenceErrors
 } from '../base/lib-jitsi-meet';
-import { MiddlewareRegistry } from '../base/redux';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
     CANCEL_LOGIN,
@@ -24,6 +24,8 @@ import {
     openWaitForOwnerDialog,
     stopWaitForOwner
 } from './actions.web';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**
@@ -113,7 +115,7 @@ MiddlewareRegistry.register(store => next => action => {
     case WAIT_FOR_OWNER: {
         _clearExistingWaitForOwnerTimeout(store);
 
-        const { handler, timeoutMs } = action;
+        const { handler, timeoutMs }: { handler: () => void; timeoutMs: number; } = action;
 
         action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
 
@@ -134,7 +136,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _clearExistingWaitForOwnerTimeout(
-        { getState }: { getState: Function }) {
+        { getState }: IStore) {
     const { waitForOwnerTimeoutID } = getState()['features/authentication'];
 
     waitForOwnerTimeoutID && clearTimeout(waitForOwnerTimeoutID);
@@ -146,6 +148,6 @@ function _clearExistingWaitForOwnerTimeout(
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _isWaitingForOwner({ getState }: { getState: Function }) {
+function _isWaitingForOwner({ getState }: IStore) {
     return getState()['features/authentication'].waitForOwnerTimeoutID;
 }

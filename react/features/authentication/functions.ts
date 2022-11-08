@@ -1,6 +1,5 @@
-// @flow
-
-import JitsiMeetJS from '../../../react/features/base/lib-jitsi-meet';
+import { IConfig } from '../base/config/configType';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
 
 
 /**
@@ -9,7 +8,7 @@ import JitsiMeetJS from '../../../react/features/base/lib-jitsi-meet';
  * @param {Object} config - Configuration state object from store.
  * @returns {boolean}
  */
-export const isTokenAuthEnabled = (config: Object) =>
+export const isTokenAuthEnabled = (config: IConfig) =>
     typeof config.tokenAuthUrl === 'string'
     && config.tokenAuthUrl.length;
 
@@ -20,6 +19,6 @@ export const isTokenAuthEnabled = (config: Object) =>
  * @param {Object} config - Configuration state object from store.
  * @returns {string}
  */
-export const getTokenAuthUrl = (config: Object) =>
+export const getTokenAuthUrl = (config: IConfig) =>
     JitsiMeetJS.util.AuthUtil.getTokenAuthUrl.bind(null,
-         config.tokenAuthUrl);
+        config.tokenAuthUrl);

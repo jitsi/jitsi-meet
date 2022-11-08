@@ -1,18 +1,22 @@
-// @flow
-
-import { FILMSTRIP_ENABLED, getFeatureFlag } from '../base/flags';
+import { IReduxState } from '../app/types';
+import { IStateful } from '../base/app/types';
+import { FILMSTRIP_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import {
     getLocalParticipant,
     getParticipantCountWithFake,
     getPinnedParticipant
-} from '../base/participants';
-import { Platform } from '../base/react';
-import { toState } from '../base/redux';
+} from '../base/participants/functions';
+import Platform from '../base/react/Platform.native';
+import { toState } from '../base/redux/functions';
 import { ASPECT_RATIO_NARROW } from '../base/responsive-ui/constants';
-import { shouldHideSelfView } from '../base/settings/functions.any';
+import { shouldHideSelfView } from '../base/settings/functions.native';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import conferenceStyles from '../conference/components/native/styles';
-import { shouldDisplayTileView } from '../video-layout';
+import { shouldDisplayTileView } from '../video-layout/functions.native';
 
+// @ts-ignore
 import { styles } from './components';
 
 export * from './functions.any';
@@ -27,7 +31,7 @@ export * from './functions.any';
  * resolved to a Redux state object with the toState function.
  * @returns {boolean}
  */
-export function isFilmstripVisible(stateful: Object | Function) {
+export function isFilmstripVisible(stateful: IStateful) {
     const state = toState(stateful);
 
     const enabled = getFeatureFlag(state, FILMSTRIP_ENABLED, true);
@@ -47,7 +51,7 @@ export function isFilmstripVisible(stateful: Object | Function) {
  * @returns {boolean} - If remote video thumbnails should be displayed/visible
  * in the filmstrip, then {@code true}; otherwise, {@code false}.
  */
-export function shouldRemoteVideosBeVisible(state: Object) {
+export function shouldRemoteVideosBeVisible(state: IReduxState) {
     if (state['features/invite'].calleeInfoVisible) {
         return false;
     }
@@ -74,9 +78,10 @@ export function shouldRemoteVideosBeVisible(state: Object) {
 /**
  * Not implemented on mobile.
  *
+ * @param {any} _state - Used on web.
  * @returns {Array<string>}
  */
-export function getActiveParticipantsIds() {
+export function getActiveParticipantsIds(_state: any) {
     return [];
 }
 
@@ -87,7 +92,7 @@ export function getActiveParticipantsIds() {
  * resolved to a Redux state object with the toState function.
  * @returns {number} - The number of participants displayed in tile view.
  */
-export function getTileViewParticipantCount(stateful: Object | Function) {
+export function getTileViewParticipantCount(stateful: IStateful) {
     const state = toState(stateful);
     const disableSelfView = shouldHideSelfView(state);
     const localParticipant = getLocalParticipant(state);
@@ -104,7 +109,7 @@ export function getTileViewParticipantCount(stateful: Object | Function) {
  * @returns {number} - The number of columns to be rendered in tile view.
  * @private
  */
-export function getColumnCount(stateful: Object | Function) {
+export function getColumnCount(stateful: IStateful) {
     const state = toState(stateful);
     const participantCount = getTileViewParticipantCount(state);
     const { aspectRatio } = state['features/base/responsive-ui'];
@@ -130,7 +135,7 @@ export function getColumnCount(stateful: Object | Function) {
  * @param {Object} state - The redux state.
  * @returns {boolean} - True if the scroll is displayed and false otherwise.
  */
-export function isFilmstripScrollVisible(state) {
+export function isFilmstripScrollVisible(state: IReduxState) {
     if (shouldDisplayTileView(state)) {
         return state['features/filmstrip']?.tileViewDimensions?.hasScroll;
     }
@@ -162,28 +167,31 @@ export function isFilmstripScrollVisible(state) {
 /**
  * Whether the stage filmstrip is available or not.
  *
- * @param {Object} state - Redux state.
+ * @param {any} _state - Used on web.
+ * @param {any} _count - Used on web.
  * @returns {boolean}
  */
-export function isStageFilmstripAvailable() {
+export function isStageFilmstripAvailable(_state: any, _count?: any) {
     return false;
 }
 
 /**
  * Whether the stage filmstrip is enabled.
  *
+ * @param {any} _state - Used on web.
  * @returns {boolean}
  */
-export function isStageFilmstripEnabled() {
+export function isStageFilmstripEnabled(_state: any) {
     return false;
 }
 
 /**
  * Whether or not the top panel is enabled.
  *
+ * @param {any} _state - Used on web.
  * @returns {boolean}
  */
-export function isTopPanelEnabled() {
+export function isTopPanelEnabled(_state: any) {
     return false;
 
 }
@@ -200,6 +208,17 @@ export function getFilmstripDimensions({
     clientHeight,
     insets = {},
     localParticipantVisible = true
+}: {
+    aspectRatio: Symbol;
+    clientHeight: number;
+    clientWidth: number;
+    insets: {
+        bottom?: number;
+        left?: number;
+        right?: number;
+        top?: number;
+    };
+    localParticipantVisible?: boolean;
 }) {
     const { height, width, margin } = styles.thumbnail;
     const conferenceBorder = conferenceStyles.conference.borderWidth || 0;
@@ -254,9 +273,10 @@ export function shouldDisplayLocalThumbnailSeparately() {
 /**
  * Not implemented on mobile.
  *
+ * @param {any} _state - Used on web.
  * @returns {undefined}
  */
-export function getScreenshareFilmstripParticipantId() {
+export function getScreenshareFilmstripParticipantId(_state: any) {
     return undefined;
 }
 

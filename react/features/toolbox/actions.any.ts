@@ -22,7 +22,7 @@ import {
  *     enabled: boolean
  * }}
  */
-export function setToolboxEnabled(enabled: boolean): Object {
+export function setToolboxEnabled(enabled: boolean) {
     return {
         type: SET_TOOLBOX_ENABLED,
         enabled

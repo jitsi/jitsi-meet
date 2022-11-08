@@ -1,6 +1,4 @@
-// @flow
-
-import { StateListenerRegistry } from '../base/redux';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { isFilmstripScrollVisible, updateRemoteParticipants } from './functions';
 

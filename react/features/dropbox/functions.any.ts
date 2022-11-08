@@ -1,4 +1,3 @@
-// @flow
 export * from './functions';
 
 import { getDisplayName, getSpaceUsage } from './functions';
@@ -12,12 +11,12 @@ type DropboxUserData = {
     /**
      * The available space left in MB into the user's Dropbox account.
      */
-    spaceLeft: number,
+    spaceLeft: number;
 
     /**
      * The display name of the user in Dropbox.
      */
-    userName: string
+    userName: string;
 };
 
 /**
@@ -30,7 +29,7 @@ type DropboxUserData = {
 export function getDropboxData(
         token: string,
         appKey: string
-): Promise<?DropboxUserData> {
+): Promise<DropboxUserData | undefined> {
     return Promise.all(
         [ getDisplayName(token, appKey), getSpaceUsage(token, appKey) ]
     ).then(([ userName, space ]) => {

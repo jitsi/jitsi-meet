@@ -1,12 +1,12 @@
-// @flow
-
+// @ts-ignore
 import conferenceStyles from '../conference/components/native/styles';
 
 import { SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { styles } from './components';
 import { SQUARE_TILE_ASPECT_RATIO, TILE_MARGIN } from './constants';
-import { getColumnCount } from './functions';
-import { getTileViewParticipantCount } from './functions.native';
+import { getColumnCount, getTileViewParticipantCount } from './functions.native';
 
 export * from './actions.any';
 

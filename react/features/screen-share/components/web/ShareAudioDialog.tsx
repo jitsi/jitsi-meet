@@ -5,8 +5,8 @@ import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
-import { shouldHideShareAudioHelper } from '../../../base/settings/functions.any';
-import { toggleScreensharing } from '../../../base/tracks/actions';
+import { shouldHideShareAudioHelper } from '../../../base/settings/functions.web';
+import { toggleScreensharing } from '../../../base/tracks/actions.web';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import Dialog from '../../../base/ui/components/web/Dialog';
 

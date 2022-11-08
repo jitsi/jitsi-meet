@@ -1,6 +1,8 @@
-import { isSuboptimalBrowser } from '../base/environment';
-import { translateToHTML } from '../base/i18n';
-import { NOTIFICATION_TIMEOUT_TYPE, showWarningNotification } from '../notifications';
+import { IStore } from '../app/types';
+import { isSuboptimalBrowser } from '../base/environment/environment';
+import { translateToHTML } from '../base/i18n/functions';
+import { showWarningNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 export * from './functions.any';
 
@@ -11,7 +13,7 @@ export * from './functions.any';
  * @param {Function} t - The translation function.
  * @returns {void}
  */
-export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
+export function maybeShowSuboptimalExperienceNotification(dispatch: IStore['dispatch'], t: Function) {
     if (isSuboptimalBrowser()) {
         dispatch(
             showWarningNotification(

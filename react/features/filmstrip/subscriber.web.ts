@@ -1,18 +1,19 @@
-// @flow
-
 import { isMobileBrowser } from '../base/environment/utils';
-import { getParticipantCountWithFake, pinParticipant } from '../base/participants';
-import { StateListenerRegistry } from '../base/redux';
-import { clientResized } from '../base/responsive-ui';
-import { shouldHideSelfView } from '../base/settings';
-import { setFilmstripVisible } from '../filmstrip/actions';
+import { pinParticipant } from '../base/participants/actions';
+import { getParticipantCountWithFake } from '../base/participants/functions';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { clientResized } from '../base/responsive-ui/actions';
+import { shouldHideSelfView } from '../base/settings/functions.web';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { selectParticipantInLargeVideo } from '../large-video/actions.any';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
-import { LAYOUTS, getCurrentLayout, shouldDisplayTileView } from '../video-layout';
+import { LAYOUTS } from '../video-layout/constants';
+import { getCurrentLayout, shouldDisplayTileView } from '../video-layout/functions.web';
 
-import {
-    clearStageParticipants,
+import { clearStageParticipants,
+    setFilmstripVisible,
     setHorizontalViewDimensions,
     setScreenshareFilmstripParticipant,
     setScreensharingTileDimensions,

@@ -1,6 +1,6 @@
-// @flow
-
 import { Dropbox, DropboxAuth } from 'dropbox';
+
+import { IReduxState } from '../app/types';
 
 /**
  * Executes the oauth flow.
@@ -13,8 +13,8 @@ function authorize(authUrl: string): Promise<string> {
 
     return new Promise(resolve => {
         // eslint-disable-next-line prefer-const
-        let popup;
-        const handleAuth = ({ data }) => {
+        let popup: any;
+        const handleAuth = ({ data }: { data: { type: string; url: string; windowName: string; }; }) => {
             if (data && data.type === 'dropbox-login' && data.windowName === windowName) {
                 if (popup) {
                     popup.close();
@@ -49,18 +49,20 @@ function getTokenExpiresAtTimestamp(expiresIn: number) {
 export function _authorizeDropbox(
         appKey: string,
         redirectURI: string
-): Promise<Object> {
+): Promise<any> {
     const dropbox = new DropboxAuth({ clientId: appKey });
 
     return dropbox.getAuthenticationUrl(redirectURI, undefined, 'code', 'offline', undefined, undefined, true)
+
+        // @ts-ignore
         .then(authorize)
         .then(returnUrl => {
             const params = new URLSearchParams(new URL(returnUrl).search);
             const code = params.get('code');
 
-            return dropbox.getAccessTokenFromCode(redirectURI, code);
+            return dropbox.getAccessTokenFromCode(redirectURI, code ?? '');
         })
-        .then(resp => {
+        .then((resp: any) => {
             return {
                 token: resp.result.access_token,
                 rToken: resp.result.refresh_token,
@@ -82,7 +84,7 @@ export function getNewAccessToken(appKey: string, rToken: string) {
 
     dropbox.setRefreshToken(rToken);
 
-    return dropbox.refreshAccessToken()
+    return dropbox.refreshAccessToken() // @ts-ignore
         .then(() => {
             return {
                 token: dropbox.getAccessToken(),
@@ -125,6 +127,8 @@ export function getSpaceUsage(token: string, appKey: string) {
 
     return dropboxAPI.usersGetSpaceUsage().then(space => {
         const { allocation, used } = space.result;
+
+        // @ts-ignore
         const { allocated } = allocation;
 
         return {
@@ -141,8 +145,9 @@ export function getSpaceUsage(token: string, appKey: string) {
  * @param {Object} state - The redux state.
  * @returns {boolean}
  */
-export function isEnabled(state: Object) {
+export function isEnabled(state: IReduxState) {
     const { dropbox = {} } = state['features/base/config'];
 
+    // @ts-ignore
     return typeof dropbox.appKey === 'string';
 }

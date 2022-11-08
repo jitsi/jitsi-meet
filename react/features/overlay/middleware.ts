@@ -1,36 +1,33 @@
-// @flow
-
+import { IStore } from '../app/types';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../base/lib-jitsi-meet/functions';
-import { StateListenerRegistry } from '../base/redux';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { setFatalError } from './actions';
-
-declare var APP: Object;
 
 /**
  * Error type. Basically like Error, but augmented with a recoverable property.
  */
-type ErrorType = {|
+type ErrorType = {
 
     /**
      * Error message.
      */
-    message?: string,
+    message?: string;
 
     /**
      * Error name.
      */
-    name: string,
+    name: string;
 
     /**
      * Indicates whether this event is recoverable or not.
      */
-    recoverable?: boolean
-|};
+    recoverable?: boolean;
+};
 
 /**
  * List of errors that are not fatal (or handled differently) so then the overlays won't kick in.
@@ -54,7 +51,7 @@ const ERROR_TYPES = {
  * @param {Object|string} error - The error to process.
  * @returns {void}
  */
-const getErrorExtraInfo = (getState, error) => {
+const getErrorExtraInfo = (getState: IStore['getState'], error: ErrorType) => {
     const state = getState();
     const { error: conferenceError } = state['features/base/conference'];
     const { error: configError } = state['features/base/config'];
@@ -62,7 +59,7 @@ const getErrorExtraInfo = (getState, error) => {
 
     if (error === conferenceError) {
         return {
-            type: ERROR_TYPES.CONFERENCE,
+            type: ERROR_TYPES.CONFERENCE, // @ts-ignore
             isFatal: isFatalJitsiConferenceError(error.name || error)
         };
     }
@@ -76,7 +73,7 @@ const getErrorExtraInfo = (getState, error) => {
 
     if (error === connectionError) {
         return {
-            type: ERROR_TYPES.CONNECTION,
+            type: ERROR_TYPES.CONNECTION, // @ts-ignore
             isFatal: isFatalJitsiConnectionError(error.name || error)
         };
     }
