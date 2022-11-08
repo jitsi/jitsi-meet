@@ -2,7 +2,7 @@
 
 import { NativeModules, Platform } from 'react-native';
 
-import { PIP_WHILE_SCREEN_SHARING_ENABLED, PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { PIP_ENABLED, PIP_WHILE_SCREEN_SHARING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconMenuDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
