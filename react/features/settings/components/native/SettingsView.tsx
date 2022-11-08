@@ -12,13 +12,9 @@ import {
     Text,
     View
 } from 'react-native';
-import {
-    Divider,
-    TextInput
-} from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 
-// @ts-ignore
-import { getDefaultURL } from '../../../app/functions';
+import { getDefaultURL } from '../../../app/functions.native';
 import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
@@ -28,21 +24,20 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
-import BaseThemeNative from '../../../base/ui/components/BaseTheme.native';
+import Input from '../../../base/ui/components/native/Input';
 import Switch from '../../../base/ui/components/native/Switch';
 // @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
 // @ts-ignore
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
-// @ts-ignore
-import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions';
+import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions.native';
 
 // @ts-ignore
 import FormRow from './FormRow';
 // @ts-ignore
 import FormSectionAccordion from './FormSectionAccordion';
 // @ts-ignore
-import styles, { PLACEHOLDER_COLOR, PLACEHOLDER_TEXT_COLOR } from './styles';
+import styles from './styles';
 
 /**
  * Application information module.
@@ -205,9 +200,9 @@ class SettingsView extends Component<IProps, IState> {
             disableCrashReporting,
             disableP2P,
             disableSelfView,
-            displayName,
-            email,
-            serverURL,
+            displayName: displayName || '',
+            email: email || '',
+            serverURL: serverURL || '',
             startCarMode,
             startWithAudioMuted,
             startWithVideoMuted
@@ -275,16 +270,6 @@ class SettingsView extends Component<IProps, IState> {
             t
         } = this.props;
 
-        const textInputTheme = {
-            colors: {
-                background: BaseThemeNative.palette.ui01,
-                placeholder: BaseThemeNative.palette.text01,
-                primary: PLACEHOLDER_COLOR,
-                underlineColor: 'transparent',
-                text: BaseThemeNative.palette.text01
-            }
-        };
-
         return (
             <JitsiScreen
                 disableForcedKeyboardDismiss = { true }
@@ -298,51 +283,39 @@ class SettingsView extends Component<IProps, IState> {
                     </View>
                     <FormSectionAccordion
                         label = 'settingsView.profileSection'>
-                        <TextInput
-                            autoCorrect = { false }
+                        <Input
+                            // @ts-ignore
+                            customStyles = {{ container: styles.customContainer }}
                             label = { t('settingsView.displayName') }
-                            mode = 'outlined'
-                            onChangeText = { this._onChangeDisplayName }
+                            onChange = { this._onChangeDisplayName }
                             placeholder = { t('settingsView.displayNamePlaceholderText') }
-                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
-                            spellCheck = { false }
-                            style = { styles.textInputContainer }
                             textContentType = { 'name' } // iOS only
-                            theme = { textInputTheme }
                             value = { displayName } />
                         <Divider style = { styles.fieldSeparator } />
-                        <TextInput
+                        <Input
+                            // @ts-ignore
                             autoCapitalize = 'none'
-                            autoCorrect = { false }
+                            customStyles = {{ container: styles.customContainer }}
                             keyboardType = { 'email-address' }
                             label = { t('settingsView.email') }
-                            mode = 'outlined'
-                            onChangeText = { this._onChangeEmail }
-                            placeholder = 'email@example.com'
-                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
-                            spellCheck = { false }
-                            style = { styles.textInputContainer }
+                            onChange = { this._onChangeEmail }
+                            placeholder = { t('settingsView.emailPlaceholderText') }
                             textContentType = { 'emailAddress' } // iOS only
-                            theme = { textInputTheme }
                             value = { email } />
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         label = 'settingsView.conferenceSection'>
-                        <TextInput
+                        <Input
+                            // @ts-ignore
                             autoCapitalize = 'none'
-                            autoCorrect = { false }
+                            customStyles = {{ container: styles.customContainer }}
                             editable = { this.props._serverURLChangeEnabled }
                             keyboardType = { 'url' }
                             label = { t('settingsView.serverURL') }
-                            mode = 'outlined'
                             onBlur = { this._onBlurServerURL }
-                            onChangeText = { this._onChangeServerURL }
+                            onChange = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
-                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
-                            spellCheck = { false }
-                            style = { styles.textInputContainer }
                             textContentType = { 'URL' } // iOS only
-                            theme = { textInputTheme }
                             value = { serverURL } />
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startCarModeInLowBandwidthMode'>

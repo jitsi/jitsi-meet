@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createGifSentEvent, sendAnalytics } from '../../../analytics';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import Input from '../../../base/ui/components/native/Input';
 import { sendMessage } from '../../../chat/actions.any';
 import { goBack } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import ClearableInput from '../../../participants-pane/components/native/ClearableInput';
 import { formatGifUrlMessage, getGifRating, getGifUrl } from '../../functions';
 
 import GifsMenuFooter from './GifsMenuFooter';
@@ -45,8 +45,9 @@ const GifsMenu = () => {
         <JitsiScreen
             footerComponent = { GifsMenuFooter }
             style = { styles.container }>
-            <ClearableInput
-                customStyles = { styles.clearableInput }
+            <Input
+                clearable = { true }
+                customStyles = {{ container: styles.customContainer }}
                 onChange = { setSearchQuery }
                 placeholder = { t('giphy.search') }
                 value = { searchQuery } />

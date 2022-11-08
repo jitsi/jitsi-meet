@@ -98,7 +98,10 @@ export default {
     },
 
     formSectionTitleText: {
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.text01,
+        fontSize: 14,
+        opacity: 0.6,
+        textAlign: 'center'
     },
 
     section: {
@@ -133,9 +136,7 @@ export default {
     /**
      * Text input container style.
      */
-    textInputContainer: {
-        flex: 1,
-        height: BaseTheme.spacing[7],
+    customContainer: {
         marginBottom: BaseTheme.spacing[3],
         marginHorizontal: BaseTheme.spacing[3],
         marginTop: BaseTheme.spacing[2]

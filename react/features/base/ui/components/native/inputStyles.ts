@@ -10,7 +10,7 @@ export default {
         ...BaseTheme.typography.bodyShortRegularLarge,
         lineHeight: 0,
         color: BaseTheme.palette.text01,
-        marginBottom: 8
+        marginBottom: BaseTheme.spacing[2]
     },
 
     fieldContainer: {
@@ -20,8 +20,8 @@ export default {
     icon: {
         position: 'absolute',
         zIndex: 1,
-        top: 13,
-        left: 16
+        top: 14,
+        left: 14
     },
 
     input: {
@@ -32,7 +32,8 @@ export default {
         borderWidth: 2,
         color: BaseTheme.palette.text01,
         paddingHorizontal: BaseTheme.spacing[3],
-        height: 48
+        height: BaseTheme.spacing[7],
+        lineHeight: 20
     },
 
     inputDisabled: {
@@ -51,6 +52,11 @@ export default {
         paddingLeft: BaseTheme.spacing[6]
     },
 
+    inputMultiline: {
+        height: BaseTheme.spacing[10],
+        paddingTop: BaseTheme.spacing[2]
+    },
+
     clearableInput: {
         paddingRight: BaseTheme.spacing[6]
     },
@@ -60,9 +66,9 @@ export default {
         borderWidth: 0,
         position: 'absolute',
         right: 0,
-        top: 13,
-        width: 40,
-        height: 48
+        top: 14,
+        width: BaseTheme.spacing[6],
+        height: BaseTheme.spacing[7]
     },
 
     clearIcon: {

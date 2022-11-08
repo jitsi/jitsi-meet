@@ -73,11 +73,11 @@ const SECTION_LIST_STYLES = {
 
     listSection: {
         alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        backgroundColor: BaseTheme.palette.ui02,
         flex: 1,
         flexDirection: 'row',
-        paddingVertical: 5,
-        paddingHorizontal: 10
+        paddingVertical: BaseTheme.spacing[1],
+        paddingHorizontal: BaseTheme.spacing[2]
     },
 
     listSectionText: {
@@ -164,5 +164,10 @@ export default {
     iconButtonContainerSecondary: {
         ...iconButtonContainer,
         backgroundColor: BaseTheme.palette.action02
+    },
+
+    iconButtonContainerDisabled: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.disabled01
     }
 };

@@ -9,11 +9,6 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 export const ACTIVE_OPACITY = 0.3;
 
 /**
- * Color for the key input field placeholder.
- */
-export const PLACEHOLDER_COLOR = BaseTheme.palette.text03;
-
-/**
  * Underlay of the TouchableHighlight.
  */
 export const TOUCHABLE_UNDERLAY = BaseTheme.palette.action03Focus;

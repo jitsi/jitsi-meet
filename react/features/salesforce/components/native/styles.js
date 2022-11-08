@@ -9,12 +9,11 @@ export default {
         backgroundColor: BaseTheme.palette.ui01
     },
     recordsSearchContainer: {
-        paddingHorizontal: BaseTheme.spacing[3],
-        paddingTop: BaseTheme.spacing[3],
-        backgroundColor: BaseTheme.palette.ui01,
         alignSelf: 'stretch',
-        position: 'relative',
-        marginTop: BaseTheme.spacing[3]
+        backgroundColor: BaseTheme.palette.ui01,
+        paddingHorizontal: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[2],
+        position: 'relative'
     },
     searchIcon: {
         color: BaseTheme.palette.text03,
@@ -31,17 +30,6 @@ export default {
         margin: 0,
         paddingBottom: 8,
         paddingTop: 16
-    },
-    recordsSearch: {
-        backgroundColor: BaseTheme.palette.field01,
-        borderColor: BaseTheme.palette.ui05,
-        borderRadius: BaseTheme.shape.borderRadius,
-        borderWidth: 1,
-        color: BaseTheme.palette.text01,
-        paddingLeft: 44,
-        paddingRight: 16,
-        paddingVertical: 10,
-        width: '100%'
     },
     recordsSpinner: {
         alignItems: 'center',
@@ -107,16 +95,15 @@ export default {
         color: BaseTheme.palette.field02,
         lineHeight: 18,
         marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: BaseTheme.spacing[2],
         overflow: 'hidden',
         padding: BaseTheme.spacing[2],
         textAlignVertical: 'top'
     },
     cancelButton: {
-        backgroundColor: BaseTheme.palette.action02,
         margin: BaseTheme.spacing[2]
     },
     linkButton: {
-        backgroundColor: BaseTheme.palette.action01,
         marginBottom: BaseTheme.spacing[2],
         marginHorizontal: BaseTheme.spacing[2]
     },

@@ -1,15 +1,14 @@
-// @flow
-
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
-import { Button, withTheme } from 'react-native-paper';
+import { Platform, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { Icon, IconSearch } from '../../../base/icons';
+import { IconSearch } from '../../../base/icons';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import Button from '../../../base/ui/components/native/Button';
+import Input from '../../../base/ui/components/native/Input';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { CONTENT_HEIGHT_OFFSET, LIST_HEIGHT_OFFSET, NOTES_LINES, NOTES_MAX_LENGTH } from '../../constants';
@@ -67,22 +66,21 @@ const SalesforceLinkDialog = () => {
                 style = { [ styles.selectedRecord, { height: clientHeight - CONTENT_HEIGHT_OFFSET } ] }>
                 <View style = { styles.recordInfo }>
                     <RecordItem { ...selectedRecord } />
-                    {selectedRecordOwner && <RecordItem { ...selectedRecordOwner } />}
-                    {hasDetailsErrors && renderDetailsErrors()}
+                    { selectedRecordOwner && <RecordItem { ...selectedRecordOwner } /> }
+                    { hasDetailsErrors && renderDetailsErrors() }
                 </View>
                 <Text style = { styles.addNote }>
                     {t('dialog.addOptionalNote')}
                 </Text>
-                <TextInput
+                <Input
+                    customStyles = {{ container: styles.notes }}
                     maxLength = { NOTES_MAX_LENGTH }
                     minHeight = { Platform.OS === 'ios' && NOTES_LINES ? 20 * NOTES_LINES : null }
                     multiline = { true }
                     numberOfLines = { Platform.OS === 'ios' ? null : NOTES_LINES }
                     /* eslint-disable-next-line react/jsx-no-bind */
-                    onChangeText = { value => setNotes(value) }
+                    onChange = { value => setNotes(value) }
                     placeholder = { t('dialog.addMeetingNote') }
-                    placeholderTextColor = { BaseTheme.palette.text03 }
-                    style = { styles.notes }
                     value = { notes } />
             </ScrollView>
         </SafeAreaView>
@@ -90,17 +88,12 @@ const SalesforceLinkDialog = () => {
 
     const renderRecordsSearch = () => (
         <View style = { styles.recordsSearchContainer }>
-            <Icon
-                color = { BaseTheme.palette.icon03 }
-                src = { IconSearch }
-                style = { styles.searchIcon } />
-            <TextInput
+            <Input
+                icon = { IconSearch }
                 maxLength = { NOTES_MAX_LENGTH }
                 /* eslint-disable-next-line react/jsx-no-bind */
-                onChangeText = { value => setSearchTerm(value) }
+                onChange = { value => setSearchTerm(value) }
                 placeholder = { t('dialog.searchInSalesforce') }
-                placeholderTextColor = { BaseTheme.palette.text03 }
-                style = { styles.recordsSearch }
                 value = { searchTerm } />
             {(!isLoading && !hasRecordsErrors) && (
                 <Text style = { styles.resultLabel }>
@@ -173,20 +166,20 @@ const SalesforceLinkDialog = () => {
                 selectedRecord
                 && <View style = { styles.footer }>
                     <Button
-                        children = { t('dialog.Cancel') }
-                        mode = 'contained'
+                        labelKey = 'dialog.Cancel'
                         /* eslint-disable-next-line react/jsx-no-bind */
-                        onPress = { () => setSelectedRecord(null) }
-                        style = { styles.cancelButton } />
+                        onClick = { () => setSelectedRecord(null) }
+                        style = { styles.cancelButton }
+                        type = { BUTTON_TYPES.SECONDARY } />
                     <Button
-                        children = { t('dialog.linkMeeting') }
-                        mode = 'contained'
-                        onPress = { handlePress }
-                        style = { styles.linkButton } />
+                        labelKey = 'dialog.linkMeeting'
+                        onClick = { handlePress }
+                        style = { styles.linkButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
                 </View>
             }
         </JitsiScreen>
     );
 };
 
-export default withTheme(SalesforceLinkDialog);
+export default SalesforceLinkDialog;

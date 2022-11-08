@@ -1,11 +1,9 @@
-// @flow
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, Platform, Text, TextInput, View } from 'react-native';
+import { FlatList, Platform, Text, View } from 'react-native';
 import { Divider, TouchableRipple } from 'react-native-paper';
 
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
+import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants';
 import styles
     from '../../../settings/components/native/styles';
@@ -42,12 +40,11 @@ const PollCreate = (props: AbstractProps) => {
             return;
         }
         answerInputs.current[i] = input;
-    },
-        [ answerInputs ]
-    );
+    }, [ answerInputs ]);
 
     useEffect(() => {
         answerInputs.current = answerInputs.current.slice(0, answers.length);
+
     }, [ answers ]);
 
     /*
@@ -105,22 +102,16 @@ const PollCreate = (props: AbstractProps) => {
         (
             <View
                 style = { dialogStyles.optionContainer }>
-                <Text style = { dialogStyles.optionFieldLabel }>
-                    { t('polls.create.pollOption', { index: index + 1 }) }
-                </Text>
-                <TextInput
+                <Input
                     blurOnSubmit = { false }
+                    label = { t('polls.create.pollOption', { index: index + 1 }) }
                     maxLength = { CHAR_LIMIT }
                     multiline = { true }
-                    onChangeText = { text => setAnswer(index, text) }
+                    onChange = { text => setAnswer(index, text) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }
-                    placeholderTextColor = { BaseTheme.palette.text03 }
                     ref = { input => registerFieldRef(index, input) }
-                    selectionColor = { BaseTheme.palette.action01 }
-                    style = { dialogStyles.field }
                     value = { answers[index] } />
-
                 {
                     answers.length > 2
                     && createRemoveOptionButton(() => removeAnswer(index))
@@ -133,20 +124,16 @@ const PollCreate = (props: AbstractProps) => {
     return (
         <View style = { chatStyles.pollCreateContainer }>
             <View style = { chatStyles.pollCreateSubContainer }>
-                <Text style = { chatStyles.questionFieldLabel }>
-                    { t('polls.create.pollQuestion') }
-                </Text>
-                <TextInput
+                <Input
                     autoFocus = { true }
                     blurOnSubmit = { false }
+                    customStyles = {{ container: dialogStyles.customContainer }}
+                    label = { t('polls.create.pollQuestion') }
                     maxLength = { CHAR_LIMIT }
                     multiline = { true }
-                    onChangeText = { setQuestion }
+                    onChange = { setQuestion }
                     onSubmitEditing = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
-                    placeholderTextColor = { BaseTheme.palette.text03 }
-                    selectionColor = { BaseTheme.palette.action01 }
-                    style = { dialogStyles.questionField }
                     value = { question } />
                 <Divider style = { styles.fieldSeparator } />
                 <FlatList

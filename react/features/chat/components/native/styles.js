@@ -54,17 +54,14 @@ export default {
 
     inputBar: {
         alignItems: 'center',
-        borderTopColor: 'rgb(209, 219, 231)',
-        borderTopWidth: 1,
         flexDirection: 'row',
-        paddingBottom: '4%',
-        paddingHorizontal: BaseTheme.spacing[3]
+        justifyContent: 'space-between',
+        marginLeft: BaseTheme.spacing[3],
+        width: '100%'
     },
 
-    inputField: {
-        color: BaseTheme.palette.text01,
-        flex: 1,
-        height: 48
+    customInput: {
+        width: 280
     },
 
     messageBubble: {
@@ -96,9 +93,8 @@ export default {
         flexDirection: 'row'
     },
 
-    sendButtonIcon: {
-        color: BaseTheme.palette.icon01,
-        fontSize: 22
+    sendButton: {
+        marginRight: BaseTheme.spacing[5]
     },
 
     /**

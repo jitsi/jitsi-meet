@@ -1,14 +1,11 @@
-// @flow
-
 import _ from 'lodash';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import {
     ActivityIndicator,
     FlatList,
     TouchableOpacity,
     View
 } from 'react-native';
-import { withTheme } from 'react-native-paper';
 
 import { AlertDialog, openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
@@ -21,14 +18,12 @@ import {
     IconShare
 } from '../../../../base/icons';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
-import {
-    AvatarListItem,
-    type Item
-} from '../../../../base/react';
+import { AvatarListItem, type Item } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
+import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
+import Input from '../../../../base/ui/components/native/Input';
 import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
-import ClearableInput from '../../../../participants-pane/components/native/ClearableInput';
 import { beginShareRoom } from '../../../../share-room';
 import { INVITE_TYPES } from '../../../constants';
 import AbstractAddPeopleDialog, {
@@ -37,10 +32,7 @@ import AbstractAddPeopleDialog, {
     _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractAddPeopleDialog';
 
-import styles, {
-    AVATAR_SIZE,
-    DARK_GREY
-} from './styles';
+import styles, { AVATAR_SIZE } from './styles';
 
 type Props = AbstractProps & {
 
@@ -109,6 +101,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     /**
      * TimeoutID to delay the search for the time the user is probably typing.
      */
+
+    /* eslint-disable-next-line no-undef */
     searchTimeout: TimeoutID;
 
     /**
@@ -131,6 +125,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._onShareMeeting = this._onShareMeeting.bind(this);
         this._onTypeQuery = this._onTypeQuery.bind(this);
         this._renderShareMeetingButton = this._renderShareMeetingButton.bind(this);
+        this._renderIcon = this._renderIcon.bind(this);
     }
 
     /**
@@ -189,8 +184,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             _dialOutEnabled
         } = this.props;
         const { inviteItems, selectableItems } = this.state;
-        const { theme } = this.props;
-        const { palette } = theme;
 
         let placeholderKey = 'searchPlaceholder';
 
@@ -204,26 +197,13 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             <JitsiScreen
                 footerComponent = { this._renderShareMeetingButton }
                 style = { styles.addPeopleContainer }>
-                <ClearableInput
+                <Input
                     autoFocus = { false }
-                    customStyles = {{
-                        wrapper: styles.searchFieldWrapper,
-                        input: styles.searchField,
-                        clearButton: styles.clearButton,
-                        clearIcon: styles.clearIcon
-                    }}
+                    clearable = { true }
+                    customStyles = {{ container: styles.customContainer }}
+                    icon = { this._renderIcon }
                     onChange = { this._onTypeQuery }
                     placeholder = { this.props.t(`inviteDialog.${placeholderKey}`) }
-                    placeholderColor = { palette.text04 }
-                    prefixComponent = { <View style = { styles.searchIconWrapper }>
-                        {this.state.searchInprogress
-                            ? <ActivityIndicator
-                                color = { DARK_GREY }
-                                size = 'small' />
-                            : <Icon
-                                src = { IconSearch }
-                                style = { styles.searchIcon } />}
-                    </View> }
                     value = { this.state.fieldValue } />
                 { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
                     <FlatList
@@ -424,7 +404,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
 
     _query: (string) => Promise<Array<Object>>;
 
-    _renderInvitedItem: Object => React$Element<any> | null;
+    _renderInvitedItem: Object => ReactElement | null;
 
     /**
      * Renders a single item in the invited {@code FlatList}.
@@ -434,7 +414,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @param {number} index - The index of the currently rendered item.
      * @returns {?React$Element<any>}
      */
-    _renderInvitedItem(flatListItem, index): React$Element<any> | null {
+    _renderInvitedItem(flatListItem, index): ReactElement | null {
         const { item } = flatListItem;
         const renderableItem = this._getRenderableItem(flatListItem);
 
@@ -461,7 +441,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderItem: Object => React$Element<any> | null;
+    _renderItem: Object => ReactElement | null;
 
     /**
      * Renders a single item in the search result {@code FlatList}.
@@ -471,7 +451,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @param {number} index - The index of the currently rendered item.
      * @returns {?React$Element<*>}
      */
-    _renderItem(flatListItem, index): React$Element<any> | null {
+    _renderItem(flatListItem, index): ReactElement | null {
         const { item } = flatListItem;
         const { inviteItems } = this.state;
         let selected = false;
@@ -516,7 +496,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderSeparator: () => React$Element<*> | null;
+    _renderSeparator: () => ReactElement | null;
 
     /**
      * Renders the item separator.
@@ -529,7 +509,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderShareMeetingButton: () => React$Element<any>;
+    _renderShareMeetingButton: () => ReactElement;
 
     /**
      * Renders a button to share the meeting info.
@@ -551,6 +531,30 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         style = { styles.shareIcon } />
                 </TouchableOpacity>
             </View>
+        );
+    }
+
+    _renderIcon: () => ReactElement;
+
+    /**
+     * Renders an icon.
+     *
+     * @returns {React#Element<*>}
+     */
+    _renderIcon() {
+
+        if (this.state.searchInprogress) {
+            return (
+                <ActivityIndicator
+                    color = { BaseTheme.palette.icon01 }
+                    size = 'small' />
+            );
+        }
+
+        return (
+            <Icon
+                src = { IconSearch }
+                style = { styles.searchIcon } />
         );
     }
 
@@ -586,4 +590,4 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(withTheme(AddPeopleDialog)));
+export default translate(connect(_mapStateToProps)(AddPeopleDialog));

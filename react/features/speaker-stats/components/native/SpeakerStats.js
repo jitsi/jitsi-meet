@@ -1,11 +1,8 @@
-// @flow
-
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { escapeRegexp } from '../../../base/util';
-import { initSearch, resetSearchCriteria } from '../../actions';
+import { resetSearchCriteria } from '../../actions';
 
 
 import SpeakerStatsList from './SpeakerStatsList';
@@ -19,17 +16,15 @@ import style from './styles';
  */
 const SpeakerStats = () => {
     const dispatch = useDispatch();
-    const onSearch = useCallback((criteria = '') => {
-        dispatch(initSearch(escapeRegexp(criteria)));
-    }
-    , [ dispatch ]);
 
-    useEffect(() => () => dispatch(resetSearchCriteria()), []);
+    useEffect(() => {
+        dispatch(resetSearchCriteria());
+    }, []);
 
     return (
         <JitsiScreen
             style = { style.speakerStatsContainer }>
-            <SpeakerStatsSearch onSearch = { onSearch } />
+            <SpeakerStatsSearch />
             <SpeakerStatsList />
         </JitsiScreen>
     );

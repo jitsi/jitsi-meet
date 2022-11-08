@@ -6,15 +6,9 @@ export default {
         flex: 1
     },
 
-    clearableInput: {
-        wrapper: {
-            marginBottom: BaseTheme.spacing[3],
-            marginTop: BaseTheme.spacing[3]
-        },
-
-        input: {
-            textAlign: 'left'
-        }
+    customContainer: {
+        marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: BaseTheme.spacing[2]
     },
 
     grid: {

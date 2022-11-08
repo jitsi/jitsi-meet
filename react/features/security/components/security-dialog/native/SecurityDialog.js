@@ -10,7 +10,6 @@ import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
-import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import Button from '../../../../base/ui/components/native/Button';
 import Input from '../../../../base/ui/components/native/Input';
 import Switch from '../../../../base/ui/components/native/Switch';
@@ -352,10 +351,9 @@ class SecurityDialog extends PureComponent<Props, State> {
                         accessibilityLabel = { t('info.addPassword') }
                         autoFocus = { true }
                         clearable = { true }
-                        customStyles = {{ container: styles.passwordInput }}
+                        customStyles = {{ container: styles.customContainer }}
                         onChange = { this._onChangeText }
                         placeholder = { t('dialog.password') }
-                        placeholderTextColor = { BaseTheme.palette.text03 }
                         value = { passwordInputValue }
                         { ...textInputProps } />
                 );

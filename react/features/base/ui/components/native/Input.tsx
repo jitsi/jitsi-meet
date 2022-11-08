@@ -1,10 +1,15 @@
-import React, { useCallback, useState } from 'react';
+/* eslint-disable lines-around-comment  */
+
+import React, { forwardRef, useCallback, useState } from 'react';
 import {
-    NativeSyntheticEvent,
+    KeyboardTypeOptions,
+    NativeSyntheticEvent, ReturnKeyTypeOptions,
     StyleProp,
     Text,
     TextInput,
     TextInputChangeEventData,
+    TextInputFocusEventData, TextInputKeyPressEventData,
+    TextInputSubmitEditingEventData,
     TouchableOpacity,
     View,
     ViewStyle
@@ -18,11 +23,24 @@ import { IInputProps } from '../types';
 import styles from './inputStyles';
 
 interface IProps extends IInputProps {
-
-    /**
-     * Custom styles to be applied to the component.
-     */
+    accessibilityLabel?: any;
+    autoCapitalize?: string | undefined;
+    autoFocus?: boolean;
+    blurOnSubmit?: boolean | undefined;
     customStyles?: ICustomStyles;
+    editable?: boolean | undefined;
+    keyboardType?: KeyboardTypeOptions;
+    maxLength?: number | undefined;
+    minHeight?: number | string | undefined;
+    multiline?: boolean | undefined;
+    numberOfLines?: number | undefined;
+    onBlur?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
+    onFocus?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
+    onKeyPress?: ((e: NativeSyntheticEvent<TextInputKeyPressEventData>) => void) | undefined;
+    onSubmitEditing?: (value: string) => void;
+    returnKeyType?: ReturnKeyTypeOptions | undefined;
+    secureTextEntry?: boolean | undefined;
+    textContentType?: any;
 }
 
 interface ICustomStyles {
@@ -30,17 +48,33 @@ interface ICustomStyles {
     input?: Object;
 }
 
-const Input = ({
+const Input = forwardRef<TextInput, IInputProps>(({
+    accessibilityLabel,
+    autoCapitalize,
+    autoFocus,
+    blurOnSubmit,
     clearable,
     customStyles,
     disabled,
     error,
     icon,
+    keyboardType,
     label,
+    maxLength,
+    minHeight,
+    multiline,
+    numberOfLines,
+    onBlur,
     onChange,
+    onFocus,
+    onKeyPress,
+    onSubmitEditing,
     placeholder,
+    returnKeyType,
+    secureTextEntry,
+    textContentType,
     value
-}: IProps) => {
+}: IProps, ref) => {
     const [ focused, setFocused ] = useState(false);
     const handleChange = useCallback((e: NativeSyntheticEvent<TextInputChangeEventData>) => {
         const { nativeEvent: { text } } = e;
@@ -52,38 +86,71 @@ const Input = ({
         onChange?.('');
     }, []);
 
-    const blur = useCallback(() => {
+    const handleBlur = useCallback((e: NativeSyntheticEvent<TextInputFocusEventData>) => {
         setFocused(false);
+        onBlur?.(e);
     }, []);
 
-    const focus = useCallback(() => {
+    const handleFocus = useCallback((e: NativeSyntheticEvent<TextInputFocusEventData>) => {
         setFocused(true);
+        onFocus?.(e);
+    }, []);
+
+    const handleKeyPress = useCallback((e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+        onKeyPress?.(e);
+    }, []);
+
+    const handleSubmitEditing = useCallback((e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
+        const { nativeEvent: { text } } = e;
+
+        onSubmitEditing?.(text);
     }, []);
 
     return (<View style = { [ styles.inputContainer, customStyles?.container ] }>
-        {label && <Text style = { styles.label }>{label}</Text>}
+        {label && <Text style = { styles.label }>{ label }</Text>}
         <View style = { styles.fieldContainer as StyleProp<ViewStyle> }>
             {icon && <Icon
                 size = { 22 }
                 src = { icon }
                 style = { styles.icon } />}
             <TextInput
+                accessibilityLabel = { accessibilityLabel }
+                // @ts-ignore
+                autoCapitalize = { autoCapitalize }
+                autoComplete = { 'off' }
+                autoCorrect = { false }
+                autoFocus = { autoFocus }
+                blurOnSubmit = { blurOnSubmit }
                 editable = { !disabled }
-                onBlur = { blur }
+                keyboardType = { keyboardType }
+                maxLength = { maxLength }
+                minHeight = { minHeight }
+                multiline = { multiline }
+                numberOfLines = { numberOfLines }
+                onBlur = { handleBlur }
                 onChange = { handleChange }
-                onFocus = { focus }
+                onFocus = { handleFocus }
+                onKeyPress = { handleKeyPress }
+                onSubmitEditing = { handleSubmitEditing }
                 placeholder = { placeholder }
                 placeholderTextColor = { BaseTheme.palette.text02 }
-                style = { [ styles.input,
-                    disabled && styles.inputDisabled,
+                ref = { ref }
+                returnKeyType = { returnKeyType }
+                secureTextEntry = { secureTextEntry }
+                spellCheck = { false }
+                style = { [
+                    styles.input,
                     clearable && styles.clearableInput,
-                    icon && styles.iconInput,
-                    focused && styles.inputFocused,
+                    customStyles?.input,
+                    disabled && styles.inputDisabled,
                     error && styles.inputError,
-                    customStyles?.input
+                    focused && styles.inputFocused,
+                    icon && styles.iconInput,
+                    multiline && styles.inputMultiline
                 ] }
-                value = { `${value}` } />
-            {clearable && !disabled && value !== '' && (
+                textContentType = { textContentType }
+                value = { typeof value === 'number' ? `${value}` : value } />
+            { clearable && !disabled && value !== '' && (
                 <TouchableOpacity
                     onPress = { clearInput }
                     style = { styles.clearButton as StyleProp<ViewStyle> }>
@@ -95,6 +162,6 @@ const Input = ({
             )}
         </View>
     </View>);
-};
+});
 
 export default Input;
