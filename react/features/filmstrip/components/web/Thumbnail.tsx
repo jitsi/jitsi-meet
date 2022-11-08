@@ -12,6 +12,7 @@ import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import { isMobileBrowser } from '../../../base/environment/utils';
+import { IconScreenshare } from '../../../base/icons/svg';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 // @ts-ignore
 import { VideoTrack } from '../../../base/media';
@@ -34,6 +35,7 @@ import {
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant
 } from '../../../base/tracks/functions';
+import BaseThemeWeb from '../../../base/ui/components/BaseTheme.web';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
@@ -45,6 +47,7 @@ import { LAYOUTS } from '../../../video-layout/constants';
 // @ts-ignore
 import { togglePinStageParticipant } from '../../actions';
 import {
+    DISPLAY_AVATAR,
     DISPLAY_MODE_TO_CLASS_NAME,
     DISPLAY_VIDEO,
     FILMSTRIP_TYPE,
@@ -105,6 +108,11 @@ export interface IProps {
      * The audio track related to the participant.
      */
     _audioTrack?: Object;
+
+     /**
+     * The current layout.
+     */
+    _currentLayout: string;
 
     /**
      * Indicates whether the local video flip feature is disabled or not.
@@ -197,6 +205,16 @@ export interface IProps {
      * Whether or not the participant has the hand raised.
      */
     _raisedHand: boolean;
+
+    /**
+     * Whether or not to display virtual screen share placeholder.
+     */
+    _shouldDisplayVirtualScreenSharePlaceholder: boolean;
+
+    /**
+     * Whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: boolean;
 
     /**
      * Whether or not the current layout is stage filmstrip layout.
@@ -828,16 +846,30 @@ class Thumbnail extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderAvatar(styles: Object) {
-        const { _participant } = this.props;
+        const { _shouldDisplayVirtualScreenSharePlaceholder, _participant } = this.props;
         const { id } = _participant;
+
+        let url;
+        let avatarBackgroundColor;
+        let ignoreInitials;
+
+        // prepare props for virtual screen share placeholder.
+        if (_shouldDisplayVirtualScreenSharePlaceholder) {
+            url = IconScreenshare;
+            avatarBackgroundColor = BaseThemeWeb.palette.support08;
+            ignoreInitials = true;
+        }
 
         return (
             <div
                 className = 'avatar-container'
                 style = { styles }>
                 <Avatar
+                    avatarBackgroundColor = { avatarBackgroundColor }
                     className = 'userAvatar'
-                    participantId = { id } />
+                    ignoreInitials = { ignoreInitials }
+                    participantId = { id }
+                    url = { url } />
             </div>
         );
     }
@@ -854,11 +886,15 @@ class Thumbnail extends Component<IProps, IState> {
             _isDominantSpeakerDisabled,
             _participant,
             _raisedHand,
+            _shouldDisplayVirtualScreenSharePlaceholder,
             _thumbnailType,
             classes
         } = this.props;
 
-        className += ` ${DISPLAY_MODE_TO_CLASS_NAME[displayMode]}`;
+        const displayModeToClassName = _shouldDisplayVirtualScreenSharePlaceholder
+            ? DISPLAY_MODE_TO_CLASS_NAME[DISPLAY_AVATAR] : DISPLAY_MODE_TO_CLASS_NAME[displayMode];
+
+        className += ` ${displayModeToClassName}`;
 
         if (_raisedHand) {
             className += ` ${classes.raisedHand}`;
@@ -964,6 +1000,7 @@ class Thumbnail extends Component<IProps, IState> {
             _isScreenSharing,
             _isTestModeEnabled,
             _localFlipX,
+            _shouldDisplayVirtualScreenSharePlaceholder,
             _participant,
             _thumbnailType,
             _videoTrack,
@@ -986,7 +1023,7 @@ class Thumbnail extends Component<IProps, IState> {
                 containerClassName = `${containerClassName} self-view-mobile-portrait`;
             }
         } else {
-            if (_videoTrack && _isTestModeEnabled) {
+            if (!_shouldDisplayVirtualScreenSharePlaceholder && _videoTrack && _isTestModeEnabled) {
                 VIDEO_TEST_EVENTS.forEach(attribute => {
                     videoEventListeners[attribute] = this._onTestingEvent;
                 });
@@ -994,7 +1031,7 @@ class Thumbnail extends Component<IProps, IState> {
             videoEventListeners.onCanPlay = this._onCanPlay;
         }
 
-        const video = _videoTrack && <VideoTrack
+        const video = !_shouldDisplayVirtualScreenSharePlaceholder && _videoTrack && <VideoTrack
             className = { local ? videoTrackClassName : '' }
             eventHandlers = { videoEventListeners }
             id = { local ? 'localVideo_container' : `remoteVideo_${videoTrackId || ''}` }
@@ -1112,7 +1149,13 @@ class Thumbnail extends Component<IProps, IState> {
 
         if (_isVirtualScreenshareParticipant) {
             const { isHovered } = this.state;
-            const { _videoTrack, _isMobile, classes, _thumbnailType } = this.props;
+            const { _videoTrack, _isMobile, classes, _thumbnailType,
+                _shouldDisplayVirtualScreenSharePlaceholder
+            } = this.props;
+
+            if (_shouldDisplayVirtualScreenSharePlaceholder) {
+                return this._renderParticipant();
+            }
 
             if (_isTestModeEnabled) {
                 VIDEO_TEST_EVENTS.forEach(attribute => {
@@ -1167,6 +1210,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         ? getLocalAudioTrack(tracks)
         : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
     const _currentLayout = getCurrentLayout(state);
+    const _shouldDisplayVirtualScreenSharePlaceholder
+        = _isVirtualScreenshareParticipant && _currentLayout !== LAYOUTS.TILE_VIEW;
     let size: any = {};
     let _isMobilePortrait = false;
     const {
@@ -1287,6 +1332,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _raisedHand: hasRaisedHand(participant),
         _stageFilmstripLayout: isStageFilmstripAvailable(state),
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
+        _shouldDisplayVirtualScreenSharePlaceholder,
         _thumbnailType: tileType,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,

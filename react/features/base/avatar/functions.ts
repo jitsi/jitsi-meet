@@ -77,5 +77,5 @@ export function getInitials(s?: string) {
  * @returns {void}
  */
 export function isCORSAvatarURL(url: string, corsURLs: Array<string> = []): boolean {
-    return corsURLs.some(pattern => url.startsWith(pattern));
+    return typeof url === 'string' && corsURLs.some(pattern => url.startsWith(pattern));
 }
