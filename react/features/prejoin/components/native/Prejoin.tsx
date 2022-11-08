@@ -167,6 +167,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 </View>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <Input
+                        // @ts-ignore
                         customStyles = {{ input: styles.customInput }}
                         onChange = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
