@@ -89,7 +89,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         return true;
     }, [ dispatch ]);
 
-    const headerLeft = useCallback(() => {
+    const headerLeft = () => {
         if (Platform.OS === 'ios') {
             return (
                 <HeaderNavigationButton
@@ -103,9 +103,9 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 onPress = { goBack }
                 src = { IconCloseLarge } />
         );
-    }, []);
+    };
 
-    const { PRIMARY, SECONDARY } = BUTTON_TYPES;
+    const { PRIMARY, TERTIARY } = BUTTON_TYPES;
     const joinButtonDisabled = isJoining || (!displayName && isDisplayNameMandatory);
 
     useEffect(() => {
@@ -148,21 +148,26 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             {
                 isFocused
                 && <View style = { largeVideoContainerStyles }>
-                    <LargeVideo />
-                    <View style = { styles.displayRoomNameBackdrop }>
+                    <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
                         <Text
                             numberOfLines = { 1 }
                             style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
                             { roomName }
                         </Text>
                     </View>
+                    <LargeVideo />
                 </View>
             }
             <View style = { contentContainerStyles }>
+                <View style = { toolboxContainerStyles }>
+                    <AudioMuteButton
+                        styles = { styles.buttonStylesBorderless } />
+                    <VideoMuteButton
+                        styles = { styles.buttonStylesBorderless } />
+                </View>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <Input
                         // @ts-ignore
-                        autoFocus = { true }
                         customStyles = {{ input: styles.customInput }}
                         onChange = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
@@ -178,14 +183,9 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
                         disabled = { joinButtonDisabled }
                         labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
+                        labelStyle = { styles.joinLowBandwidthLabel }
                         onClick = { onJoinLowBandwidth }
-                        type = { SECONDARY } />
-                </View>
-                <View style = { toolboxContainerStyles }>
-                    <AudioMuteButton
-                        styles = { styles.buttonStylesBorderless } />
-                    <VideoMuteButton
-                        styles = { styles.buttonStylesBorderless } />
+                        type = { TERTIARY } />
                 </View>
             </View>
         </JitsiScreen>

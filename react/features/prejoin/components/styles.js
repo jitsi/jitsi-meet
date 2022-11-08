@@ -1,10 +1,14 @@
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
-const SECONDARY_COLOR = BaseTheme.palette.border04;
 
 export default {
     joinButton: {
         marginVertical: BaseTheme.spacing[3]
+    },
+
+    joinLowBandwidthLabel: {
+        color: BaseTheme.palette.text01,
+        textAlign: 'center'
     },
 
     buttonStylesBorderless: {
@@ -32,7 +36,7 @@ export default {
     },
 
     largeVideoContainer: {
-        minHeight: '60%'
+        height: '60%'
     },
 
     largeVideoContainerWide: {
@@ -44,11 +48,14 @@ export default {
 
     contentContainer: {
         alignSelf: 'center',
+        backgroundColor: BaseTheme.palette.uiBackground,
+        bottom: 0,
         display: 'flex',
+        height: 284,
         justifyContent: 'center',
-        minHeight: '40%',
-        padding: BaseTheme.spacing[3],
-        width: 400
+        position: 'absolute',
+        width: 390,
+        zIndex: 1
     },
 
     contentContainerWide: {
@@ -63,9 +70,15 @@ export default {
 
     toolboxContainer: {
         alignSelf: 'center',
+        backgroundColor: BaseTheme.palette.ui01,
+        borderRadius: BaseTheme.shape.borderRadius,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center'
+        height: 60,
+        justifyContent: 'space-between',
+        marginVertical: BaseTheme.spacing[3],
+        paddingHorizontal: BaseTheme.spacing[2],
+        width: 148
     },
 
     toolboxContainerWide: {
@@ -83,16 +96,6 @@ export default {
         textAlign: 'center'
     },
 
-    field: {
-        backgroundColor: BaseTheme.palette.field02,
-        borderColor: SECONDARY_COLOR,
-        borderRadius: BaseTheme.shape.borderRadius,
-        borderWidth: 2,
-        color: BaseTheme.palette.text06,
-        height: BaseTheme.spacing[7],
-        textAlign: 'center'
-    },
-
     preJoinRoomName: {
         ...BaseTheme.typography.heading5,
         color: BaseTheme.palette.text01,
@@ -101,12 +104,14 @@ export default {
 
     displayRoomNameBackdrop: {
         alignSelf: 'center',
-        backgroundColor: BaseTheme.palette.ui16,
-        bottom: BaseTheme.spacing[3],
-        borderRadius: 4,
-        margin: BaseTheme.spacing[3],
+        backgroundColor: BaseTheme.palette.uiBackground,
+        borderRadius: BaseTheme.shape.borderRadius,
+        marginTop: BaseTheme.spacing[3],
+        opacity: 0.7,
         paddingHorizontal: BaseTheme.spacing[3],
         paddingVertical: BaseTheme.spacing[1],
-        position: 'absolute'
+        position: 'absolute',
+        width: 243,
+        zIndex: 1
     }
 };
