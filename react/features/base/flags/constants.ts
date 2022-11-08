@@ -161,10 +161,10 @@ export const OVERFLOW_MENU_ENABLED = 'overflow-menu.enabled';
 export const PIP_ENABLED = 'pip.enabled';
 
 /**
- * Flag indicating if Picture-in-Picture button should be shown while translation.
+ * Flag indicating if Picture-in-Picture button should be shown while screen sharing.
  * Default: disabled (false).
  */
-export const PIP_AT_TRANSLATION_ENABLED = 'pip-at-translation.enabled';
+export const PIP_AT_SCREEN_SHARING_ENABLED = 'pip-at-screen-sharing.enabled';
 
 /**
  * Flag indicating if the prejoin page should be enabled.

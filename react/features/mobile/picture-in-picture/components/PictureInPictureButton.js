@@ -2,7 +2,7 @@
 
 import { NativeModules, Platform } from 'react-native';
 
-import { PIP_AT_TRANSLATION_ENABLED, PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { PIP_AT_SCREEN_SHARING_ENABLED, PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconMenuDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -63,10 +63,10 @@ class PictureInPictureButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
-    const pinEnabled = Boolean(getFeatureFlag(state, PIP_ENABLED));
-    const pinAtTranslationEnabled = getFeatureFlag(state, PIP_AT_TRANSLATION_ENABLED, false);
+    const pipEnabled = Boolean(getFeatureFlag(state, PIP_ENABLED));
+    const pipAtScreenSharingEnabled = getFeatureFlag(state, PIP_AT_SCREEN_SHARING_ENABLED, false);
 
-    let enabled = pinEnabled && (!isLocalVideoTrackDesktop(state) || pinAtTranslationEnabled);
+    let enabled = pipEnabled && (!isLocalVideoTrackDesktop(state) || pipAtScreenSharingEnabled);
 
     // Override flag for Android, since it might be unsupported.
     if (Platform.OS === 'android' && !NativeModules.PictureInPicture.SUPPORTED) {
