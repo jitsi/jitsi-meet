@@ -121,21 +121,12 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             const { videoType, jitsiTrack, muted } = action?.track || { };
             const { ssrc, isLocal, videoType: trackVideoType, conference } = jitsiTrack || { };
 
-            if (trackVideoType === 'camera' && conference) {
-                if (muted && isLocal()) {
-                    RTCStats.sendFaceLandmarksData({
-                        duration: 0,
-                        faceLandmarks: 'camera-off',
-                        timestamp: Date.now()
-                    });
-                }
-                if (!muted && isLocal()) {
-                    RTCStats.sendFaceLandmarksData({
-                        duration: 0,
-                        faceLandmarks: 'camera-on',
-                        timestamp: Date.now()
-                    });
-                }
+            if (trackVideoType === 'camera' && conference && isLocal()) {
+                RTCStats.sendFaceLandmarksData({
+                    duration: 0,
+                    faceLandmarks: muted ? 'camera-off' : 'camera-on',
+                    timestamp: Date.now()
+                });
             }
 
             // if the videoType of the remote track has changed we expect to find it in track.videoType. grep for
