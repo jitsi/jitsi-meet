@@ -19,18 +19,24 @@ import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n/functions';
+// @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
 import Input from '../../../base/ui/components/native/Input';
 import Switch from '../../../base/ui/components/native/Switch';
+// @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
+// @ts-ignore
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
 import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions.native';
 
+// @ts-ignore
 import FormRow from './FormRow';
+// @ts-ignore
 import FormSectionAccordion from './FormSectionAccordion';
+// @ts-ignore
 import styles from './styles';
 
 /**
@@ -264,7 +270,6 @@ class SettingsView extends Component<IProps, IState> {
             t
         } = this.props;
 
-        // @ts-ignore
         return (
             <JitsiScreen
                 disableForcedKeyboardDismiss = { true }
@@ -279,6 +284,7 @@ class SettingsView extends Component<IProps, IState> {
                     <FormSectionAccordion
                         label = 'settingsView.profileSection'>
                         <Input
+                            // @ts-ignore
                             customStyles = {{ container: styles.customContainer }}
                             label = { t('settingsView.displayName') }
                             onChange = { this._onChangeDisplayName }
@@ -287,6 +293,7 @@ class SettingsView extends Component<IProps, IState> {
                             value = { displayName } />
                         <Divider style = { styles.fieldSeparator } />
                         <Input
+                            // @ts-ignore
                             autoCapitalize = 'none'
                             customStyles = {{ container: styles.customContainer }}
                             keyboardType = { 'email-address' }
@@ -299,6 +306,7 @@ class SettingsView extends Component<IProps, IState> {
                     <FormSectionAccordion
                         label = 'settingsView.conferenceSection'>
                         <Input
+                            // @ts-ignore
                             autoCapitalize = 'none'
                             customStyles = {{ container: styles.customContainer }}
                             editable = { this.props._serverURLChangeEnabled }
@@ -313,6 +321,7 @@ class SettingsView extends Component<IProps, IState> {
                         <FormRow label = 'settingsView.startCarModeInLowBandwidthMode'>
                             <Switch
                                 checked = { startCarMode }
+                                // @ts-ignore
                                 onChange = { this._onStartCarmodeInLowBandwidthMode } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -320,18 +329,21 @@ class SettingsView extends Component<IProps, IState> {
                             label = 'settingsView.startWithAudioMuted'>
                             <Switch
                                 checked = { startWithAudioMuted }
+                                // @ts-ignore
                                 onChange = { this._onStartAudioMutedChange } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startWithVideoMuted'>
                             <Switch
                                 checked = { startWithVideoMuted }
+                                // @ts-ignore
                                 onChange = { this._onStartVideoMutedChange } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'videothumbnail.hideSelfView'>
                             <Switch
                                 checked = { disableSelfView }
+                                // @ts-ignore
                                 onChange = { this._onDisableSelfView } />
                         </FormRow>
                     </FormSectionAccordion>
@@ -339,18 +351,21 @@ class SettingsView extends Component<IProps, IState> {
                         label = 'settingsView.links'>
                         <Link
                             style = { styles.sectionLink }
+                            // @ts-ignore
                             to = {{ screen: screen.settings.links.help }}>
                             { t('settingsView.help') }
                         </Link>
                         <Divider style = { styles.fieldSeparator } />
                         <Link
                             style = { styles.sectionLink }
+                            // @ts-ignore
                             to = {{ screen: screen.settings.links.terms }}>
                             { t('settingsView.terms') }
                         </Link>
                         <Divider style = { styles.fieldSeparator } />
                         <Link
                             style = { styles.sectionLink }
+                            // @ts-ignore
                             to = {{ screen: screen.settings.links.privacy }}>
                             { t('settingsView.privacy') }
                         </Link>
@@ -372,6 +387,7 @@ class SettingsView extends Component<IProps, IState> {
                                     label = 'settingsView.disableCallIntegration'>
                                     <Switch
                                         checked = { disableCallIntegration }
+                                        // @ts-ignore
                                         onChange = { this._onDisableCallIntegration } />
                                 </FormRow>
                                 <Divider style = { styles.fieldSeparator } />
@@ -381,6 +397,7 @@ class SettingsView extends Component<IProps, IState> {
                             label = 'settingsView.disableP2P'>
                             <Switch
                                 checked = { disableP2P }
+                                // @ts-ignore
                                 onChange = { this._onDisableP2P } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -390,6 +407,7 @@ class SettingsView extends Component<IProps, IState> {
                                 label = 'settingsView.disableCrashReporting'>
                                 <Switch
                                     checked = { disableCrashReporting }
+                                    // @ts-ignore
                                     onChange = { this._onDisableCrashReporting } />
                             </FormRow>
                         )}
