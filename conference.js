@@ -2738,7 +2738,7 @@ export default {
                         return;
                     }
 
-                    APP.store.dispatch(toggleScreensharingA(undefined, false, false, { desktopStream }));
+                    APP.store.dispatch(toggleScreensharingA(undefined, false, { desktopStream }));
                 }
             });
         }

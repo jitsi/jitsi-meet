@@ -30,6 +30,7 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { isTestModeEnabled } from '../../../base/testing/functions';
 import { trackStreamingStatusChanged, updateLastTrackVideoMediaEvent } from '../../../base/tracks/actions';
 import {
+    getLocalAudioTrack,
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant
 } from '../../../base/tracks/functions';
@@ -1161,7 +1162,9 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     const _isVirtualScreenshareParticipant = isScreenShareParticipant(participant);
     const tracks = state['features/base/tracks'];
     const _videoTrack = getVideoTrackByParticipant(state, participant);
-    const _audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
+    const _audioTrack = isLocal
+        ? getLocalAudioTrack(tracks)
+        : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
     const _currentLayout = getCurrentLayout(state);
     let size: any = {};
     let _isMobilePortrait = false;

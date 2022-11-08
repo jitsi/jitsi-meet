@@ -107,7 +107,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (isVideoTrack) {
             if (jitsiTrack.isLocal() && !(jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP)) {
                 APP.conference.setVideoMuteStatus();
-            } else if (!jitsiTrack.isLocal() && muted) {
+            } else if (!jitsiTrack.isLocal()) {
                 APP.UI.setVideoMuted(participantID);
             }
         } else if (jitsiTrack.isLocal()) {
