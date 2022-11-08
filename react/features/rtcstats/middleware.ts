@@ -14,7 +14,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks/actionTypes';
 import { getCurrentRoomId, isInBreakoutRoom } from '../breakout-rooms/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
-import { ADD_FACE_EXPRESSION, FACE_LANDMARK_DETECTION_STOPPED } from '../face-landmarks/actionTypes';
+import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
 import {
@@ -118,8 +118,16 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     }
     case TRACK_UPDATED: {
         if (canSendRtcstatsData(state)) {
-            const { videoType, jitsiTrack } = action?.track || { };
-            const { ssrc } = jitsiTrack || { };
+            const { videoType, jitsiTrack, muted } = action?.track || { };
+            const { ssrc, isLocal, videoType: trackVideoType, conference } = jitsiTrack || { };
+
+            if (trackVideoType === 'camera' && conference && isLocal()) {
+                RTCStats.sendFaceLandmarksData({
+                    duration: 0,
+                    faceLandmarks: muted ? 'camera-off' : 'camera-on',
+                    timestamp: Date.now()
+                });
+            }
 
             // if the videoType of the remote track has changed we expect to find it in track.videoType. grep for
             // trackVideoTypeChanged.
@@ -157,18 +165,16 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         break;
     }
     case ADD_FACE_EXPRESSION:
-    case FACE_LANDMARK_DETECTION_STOPPED: {
         if (canSendFaceLandmarksRtcstatsData(state)) {
             const { duration, faceExpression, timestamp } = action;
 
             RTCStats.sendFaceLandmarksData({
-                duration: duration ?? 0,
-                faceLandmarks: faceExpression ?? 'detection-off',
+                duration,
+                faceLandmarks: faceExpression,
                 timestamp
             });
         }
         break;
-    }
     case CONFERENCE_TIMESTAMP_CHANGED: {
         if (canSendRtcstatsData(state)) {
             const { conferenceTimestamp } = action;

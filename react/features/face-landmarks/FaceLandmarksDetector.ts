@@ -7,7 +7,6 @@ import { getBaseUrl } from '../base/util/helpers';
 import {
     addFaceExpression,
     clearFaceExpressionBuffer,
-    faceLandmarkDetectionStopped,
     newFaceBox
 } from './actions';
 import {
@@ -249,7 +248,6 @@ class FaceLandmarksDetector {
         this.detectionInterval = null;
         this.imageCapture = null;
         this.recognitionActive = false;
-        dispatch(faceLandmarkDetectionStopped(Date.now()));
         logger.log('Stop face detection');
     }
 
