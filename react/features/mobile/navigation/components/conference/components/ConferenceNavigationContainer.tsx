@@ -1,4 +1,5 @@
 /* eslint-disable lines-around-comment */
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
@@ -6,9 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 // @ts-ignore
-import { Chat, ChatAndPolls } from '../../../../../chat';
+import { Chat } from '../../../../../chat';
 // @ts-ignore
 import Conference from '../../../../../conference/components/native/Conference';
+// @ts-ignore
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 // @ts-ignore
 import { getDisablePolls } from '../../../../../conference/functions';
@@ -55,12 +57,12 @@ import {
     speakerStatsScreenOptions
     // @ts-ignore
 } from '../../../screenOptions';
-import LobbyNavigationContainer
 // @ts-ignore
-    from '../../lobby/components/LobbyNavigationContainer';
-import SettingsNavigationContainer
+import ChatAndPollsNavigator from '../../chat/components/ChatAndPollsNavigator';
 // @ts-ignore
-    from '../../settings/components/SettingsNavigationContainer';
+import LobbyNavigationContainer from '../../lobby/components/LobbyNavigationContainer';
+// @ts-ignore
+import SettingsNavigationContainer from '../../settings/components/SettingsNavigationContainer';
 import {
     conferenceNavigationRef
     // @ts-ignore
@@ -80,7 +82,7 @@ const ConferenceNavigationContainer = () => {
         chatScreenName = screen.conference.chat;
         chatTitleString = 'chat.title';
     } else {
-        ChatScreen = ChatAndPolls;
+        ChatScreen = ChatAndPollsNavigator;
         chatScreenName = screen.conference.chatandpolls.main;
         chatTitleString = 'chat.titleWithPolls';
     }
