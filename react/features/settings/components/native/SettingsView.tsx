@@ -200,9 +200,9 @@ class SettingsView extends Component<IProps, IState> {
             disableCrashReporting,
             disableP2P,
             disableSelfView,
-            displayName,
-            email,
-            serverURL,
+            displayName: displayName || '',
+            email: email || '',
+            serverURL: serverURL || '',
             startCarMode,
             startWithAudioMuted,
             startWithVideoMuted

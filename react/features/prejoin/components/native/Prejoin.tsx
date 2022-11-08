@@ -19,7 +19,7 @@ import { IReduxState } from '../../../app/types';
 import { setAudioOnly } from '../../../base/audio-only/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { connect } from '../../../base/connection/actions.native';
-import { IconClose } from '../../../base/icons/svg';
+import { IconCloseLarge } from '../../../base/icons/svg';
 // @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -101,7 +101,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         return (
             <HeaderNavigationButton
                 onPress = { goBack }
-                src = { IconClose } />
+                src = { IconCloseLarge } />
         );
     }, []);
 

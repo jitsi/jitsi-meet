@@ -149,7 +149,7 @@ const Input = forwardRef<TextInput, IInputProps>(({
                     multiline && styles.inputMultiline
                 ] }
                 textContentType = { textContentType }
-                value = { `${value}` } />
+                value = { typeof value === 'number' ? `${value}` : value } />
             { clearable && !disabled && value !== '' && (
                 <TouchableOpacity
                     onPress = { clearInput }
