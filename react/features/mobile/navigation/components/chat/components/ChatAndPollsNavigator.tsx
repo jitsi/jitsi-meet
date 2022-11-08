@@ -1,17 +1,22 @@
-// @flow
+/* eslint-disable lines-around-comment */
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { Chat } from '../..';
 import {
     getClientHeight,
     getClientWidth
-} from '../../../base/modal/components/functions.native';
-import { screen } from '../../../mobile/navigation/routes';
-import { chatTabBarOptions } from '../../../mobile/navigation/screenOptions';
-import { PollsPane } from '../../../polls/components';
+    // @ts-ignore
+} from '../../../../../base/modal/components/functions';
+// @ts-ignore
+import { Chat } from '../../../../../chat';
+// @ts-ignore
+import { PollsPane } from '../../../../../polls/components';
+// @ts-ignore
+import { screen } from '../../../routes';
+// @ts-ignore
+import { chatTabBarOptions } from '../../../screenOptions';
 
 const ChatTab = createMaterialTopTabNavigator();
 
@@ -20,6 +25,7 @@ const ChatAndPolls = () => {
     const clientWidth = useSelector(getClientWidth);
 
     return (
+        // @ts-ignore
         <ChatTab.Navigator
             backBehavior = 'none'
             initialLayout = {{
