@@ -8,7 +8,7 @@ import {
 } from '../../../analytics';
 import { RAISE_HAND_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconRaisedHand } from '../../../base/icons';
+import { IconRaiseHand } from '../../../base/icons';
 import {
     getLocalParticipant,
     hasRaisedHand,
@@ -43,7 +43,7 @@ type Props = AbstractButtonProps & {
  */
 class RaiseHandButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
-    icon = IconRaisedHand;
+    icon = IconRaiseHand;
     label = 'toolbar.raiseYourHand';
     toggledLabel = 'toolbar.lowerYourHand';
 

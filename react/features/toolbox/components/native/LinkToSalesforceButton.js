@@ -2,7 +2,7 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconSalesforce } from '../../../base/icons';
+import { IconCloudUpload } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { navigate }
@@ -15,7 +15,7 @@ import { isSalesforceEnabled } from '../../../salesforce/functions';
  */
 class LinkToSalesforceButton extends AbstractButton<AbstractButtonProps, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.linkToSalesforce';
-    icon = IconSalesforce;
+    icon = IconCloudUpload;
     label = 'toolbar.linkToSalesforce';
 
     /**

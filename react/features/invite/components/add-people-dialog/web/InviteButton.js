@@ -2,7 +2,7 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../../../analytics';
 import { translate } from '../../../../base/i18n';
-import { IconAddPeople } from '../../../../base/icons';
+import { IconAddUser } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
 import { beginAddPeople } from '../../../actions.any';
@@ -23,7 +23,7 @@ type Props = AbstractButtonProps & {
  */
 class InviteButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.invite';
-    icon = IconAddPeople;
+    icon = IconAddUser;
     label = 'toolbar.invite';
     tooltip = 'toolbar.invite';
 

@@ -5,7 +5,7 @@ import { FlatList } from 'react-native';
 
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconInviteMore } from '../../../base/icons';
+import { Icon, IconAddUser } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import Button from '../../../base/ui/components/native/Button';
@@ -139,7 +139,7 @@ class MeetingParticipantList extends PureComponent<Props> {
         return (
             <Icon
                 size = { 20 }
-                src = { IconInviteMore } />
+                src = { IconAddUser } />
         );
     }
 

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { IconPinParticipant } from '../../../base/icons/svg';
+import { IconPin } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
 // eslint-disable-next-line lines-around-comment
@@ -71,7 +71,7 @@ const PinnedIndicator = ({
             className = { styles.pinnedIndicator }
             id = { `pin-indicator-${participantId}` }>
             <BaseIndicator
-                icon = { IconPinParticipant }
+                icon = { IconPin }
                 iconSize = { `${iconSize}px` }
                 tooltipKey = 'pinnedParticipant'
                 tooltipPosition = { tooltipPosition } />

@@ -6,7 +6,7 @@ import { ScreenCapturePickerView } from 'react-native-webrtc';
 
 import { IOS_SCREENSHARING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconShareDesktop } from '../../../base/icons';
+import { IconScreenshare } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isLocalVideoTrackDesktop } from '../../../base/tracks';
@@ -46,7 +46,7 @@ class ScreenSharingIosButton extends AbstractButton<Props, *> {
     _setNativeComponent: Function;
 
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
-    icon = IconShareDesktop;
+    icon = IconScreenshare;
     label = 'toolbar.startScreenSharing';
     toggledLabel = 'toolbar.stopScreenSharing';
 

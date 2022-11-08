@@ -2,7 +2,7 @@ import type { Dispatch } from 'redux';
 
 import { openSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { IconVolumeEmpty } from '../../../base/icons';
+import { IconVolumeUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
@@ -21,7 +21,7 @@ type Props = AbstractButtonProps & {
  */
 class AudioDeviceToggleButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.audioRoute';
-    icon = IconVolumeEmpty;
+    icon = IconVolumeUp;
     label = 'toolbar.accessibilityLabel.audioRoute';
 
     /**

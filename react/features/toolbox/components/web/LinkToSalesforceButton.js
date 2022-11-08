@@ -3,7 +3,7 @@
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { IconSalesforce } from '../../../base/icons';
+import { IconCloudUpload } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { SalesforceLinkDialog } from '../../../salesforce/components';
@@ -24,7 +24,7 @@ import { SalesforceLinkDialog } from '../../../salesforce/components';
  */
 class LinkToSalesforce extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.linkToSalesforce';
-    icon = IconSalesforce;
+    icon = IconCloudUpload;
     label = 'toolbar.linkToSalesforce';
     tooltip = 'toolbar.linkToSalesforce';
 

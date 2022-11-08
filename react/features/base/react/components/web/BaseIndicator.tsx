@@ -64,8 +64,6 @@ interface IProps extends WithTranslation {
 const useStyles = makeStyles()(() => {
     return {
         indicator: {
-            width: '20px',
-            height: '20px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'

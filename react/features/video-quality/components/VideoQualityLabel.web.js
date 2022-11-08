@@ -4,8 +4,9 @@ import React from 'react';
 
 import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { IconGauge } from '../../base/icons';
+import { IconPerformance } from '../../base/icons';
 import { Label } from '../../base/label';
+import { COLORS } from '../../base/label/constants';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { shouldDisplayTileView } from '../../video-layout';
@@ -72,7 +73,7 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
             tooltipKey = 'videoStatus.labelTooltipAudioOnly';
         } else {
             className = 'current-video-quality';
-            icon = IconGauge;
+            icon = IconPerformance;
             tooltipKey = 'videoStatus.performanceSettings';
         }
 
@@ -84,7 +85,9 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
                 position = { 'bottom' }>
                 <Label
                     className = { className }
+                    color = { COLORS.white }
                     icon = { icon }
+                    iconColor = '#fff'
                     id = 'videoResolutionLabel'
                     // eslint-disable-next-line react/jsx-no-bind
                     onClick = { onClick }

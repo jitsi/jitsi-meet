@@ -1,7 +1,7 @@
 import { openSheet } from '../../../base/dialog';
 import { OVERFLOW_MENU_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconHorizontalPoints } from '../../../base/icons';
+import { IconDotsHorizontal } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
@@ -23,7 +23,7 @@ type Props = AbstractButtonProps & {
  */
 class OverflowMenuButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';
-    icon = IconHorizontalPoints;
+    icon = IconDotsHorizontal;
     label = 'toolbar.moreActions';
 
     /**

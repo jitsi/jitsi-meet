@@ -9,7 +9,7 @@ import {
     PREJOIN_PAGE_ENABLED,
     getFeatureFlag
 } from '../../base/flags';
-import { IconClose } from '../../base/icons';
+import { IconCloseLarge } from '../../base/icons';
 import { toState } from '../../base/redux';
 import { cancelKnocking } from '../../lobby/actions.native';
 
@@ -36,7 +36,7 @@ export function screenHeaderCloseButton(goBack: Function) {
     return (
         <HeaderNavigationButton
             onPress = { goBack }
-            src = { IconClose } />
+            src = { IconCloseLarge } />
     );
 }
 
@@ -77,7 +77,7 @@ export function lobbyScreenHeaderCloseButton() {
     return (
         <HeaderNavigationButton
             onPress = { goBack }
-            src = { IconClose } />
+            src = { IconCloseLarge } />
     );
 }
 

@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconCheckSolid, IconExclamationTriangle } from '../../../../base/icons/svg';
+import { IconCheck, IconExclamationTriangle } from '../../../../base/icons/svg';
 import { connect } from '../../../../base/redux/functions';
 import {
     getDeviceStatusText,
@@ -70,7 +70,7 @@ const iconMap = {
         className: 'device-icon--warning'
     },
     ok: {
-        src: IconCheckSolid,
+        src: IconCheck,
         className: 'device-icon--ok'
     }
 };

@@ -14,9 +14,9 @@ import { AlertDialog, openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import {
     Icon,
-    IconCancelSelection,
     IconCheck,
-    IconPhone,
+    IconCloseCircle,
+    IconPhoneRinging,
     IconSearch,
     IconShare
 } from '../../../../base/icons';
@@ -265,7 +265,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         switch (item.type) {
         case INVITE_TYPES.PHONE:
             return {
-                avatar: IconPhone,
+                avatar: IconPhoneRinging,
                 key: item.number,
                 title: item.number
             };
@@ -454,7 +454,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         linesStyle = { styles.itemLinesStyle }
                         titleStyle = { styles.itemText } />
                     <Icon
-                        src = { IconCancelSelection }
+                        src = { IconCloseCircle }
                         style = { styles.unselectIcon } />
                 </View>
             </TouchableOpacity>

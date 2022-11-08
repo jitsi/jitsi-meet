@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { IconPresentation } from '../../base/icons';
+import { IconConnection } from '../../base/icons';
 import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 
@@ -20,7 +20,7 @@ type Props = AbstractButtonProps & {
  */
 class AbstractSpeakerStatsButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.speakerStats';
-    icon = IconPresentation;
+    icon = IconConnection;
     label = 'toolbar.speakerStats';
     tooltip = 'toolbar.speakerStats';
 }

@@ -3,7 +3,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { IconRaisedHand } from '../../../base/icons';
+import { IconRaiseHand } from '../../../base/icons';
 import { Label } from '../../../base/label';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
 
@@ -15,7 +15,7 @@ const RaisedHandsCountLabel = () => {
 
     return raisedHandsCount > 0 && (
         <Label
-            icon = { IconRaisedHand }
+            icon = { IconRaiseHand }
             iconColor = { BaseTheme.palette.uiBackground }
             style = { styles.raisedHandsCountLabel }
             text = { raisedHandsCount }

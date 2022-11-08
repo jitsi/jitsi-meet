@@ -5,7 +5,7 @@ import { Text, TouchableHighlight, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-import { Icon, IconCancelSelection } from '../../../base/icons';
+import { Icon, IconCloseCircle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { type StyleType } from '../../../base/styles';
 import {
@@ -114,7 +114,7 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
                     <TouchableHighlight
                         onPress = { this._onResetLobbyMessageRecipient }>
                         <Icon
-                            src = { IconCancelSelection }
+                            src = { IconCloseCircle }
                             style = { _styles.messageRecipientCancelIcon } />
                     </TouchableHighlight>
                 </View>
@@ -136,7 +136,7 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
                     onPress = { this._onResetPrivateMessageRecipient }
                     underlayColor = { 'transparent' }>
                     <Icon
-                        src = { IconCancelSelection }
+                        src = { IconCloseCircle }
                         style = { _styles.messageRecipientCancelIcon } />
                 </TouchableHighlight>
             </View>

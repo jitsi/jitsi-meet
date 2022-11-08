@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
-import { Icon, IconConnectionActive, IconConnectionInactive } from '../../../base/icons';
+import { Icon, IconConnection, IconConnectionInactive } from '../../../base/icons';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { trackStreamingStatusChanged } from '../../../base/tracks';
 
@@ -24,7 +24,7 @@ type Props = {
     /**
      * Disable/enable inactive indicator.
      */
-     connectionIndicatorInactiveDisabled: boolean,
+    connectionIndicatorInactiveDisabled: boolean,
 
     /**
      * JitsiTrack instance.
@@ -106,7 +106,7 @@ export const ConnectionIndicatorIcon = ({
             <Icon
                 className = { clsx(classes.icon, colorClass) }
                 size = { 12 }
-                src = { IconConnectionActive } />
+                src = { IconConnection } />
         </span>
     );
 };

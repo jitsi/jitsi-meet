@@ -15,7 +15,7 @@ import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../i18n/functions';
-import { IconClose } from '../../../icons/svg';
+import { IconCloseLarge } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import Button from '../../../ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../ui/constants';
@@ -159,7 +159,7 @@ class ModalHeader extends React.Component<IProps> {
                 {
                     !hideCloseIconButton && <Button
                         accessibilityLabel = { t('dialog.close') }
-                        icon = { IconClose }
+                        icon = { IconCloseLarge }
                         id = 'modal-header-close-button'
                         onClick = { onClose }
                         size = 'large'

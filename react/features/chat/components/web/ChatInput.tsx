@@ -4,7 +4,7 @@ import { WithTranslation } from 'react-i18next';
 import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { IconPlane, IconSmile } from '../../../base/icons/svg';
+import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
@@ -117,7 +117,7 @@ class ChatInput extends Component<IProps, IState> {
                     <Input
                         autoFocus = { true }
                         className = 'chat-input'
-                        icon = { this.props._areSmileysDisabled ? undefined : IconSmile }
+                        icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
                         iconClick = { this._toggleSmileysPanel }
                         maxRows = { 5 }
                         onChange = { this._onMessageChange }
@@ -129,7 +129,7 @@ class ChatInput extends Component<IProps, IState> {
                     <Button
                         accessibilityLabel = { this.props.t('chat.sendButton') }
                         disabled = { !this.state.message.trim() }
-                        icon = { IconPlane }
+                        icon = { IconSend }
                         onClick = { this._onSubmitMessage }
                         size = { isMobileBrowser() ? 'large' : 'medium' } />
                 </div>

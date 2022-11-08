@@ -246,10 +246,10 @@ interface IProps extends WithTranslation {
     /**
      * Whether or not speaker stats is disable.
      */
-     _isSpeakerStatsDisabled: boolean;
+    _isSpeakerStatsDisabled: boolean;
 
 
-     /**
+    /**
      * Whether or not the current meeting belongs to a JaaS user.
      */
     _isVpaasMeeting: boolean;

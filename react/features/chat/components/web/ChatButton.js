@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconChat } from '../../../base/icons';
+import { IconMessage } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
@@ -17,7 +17,7 @@ type Props = AbstractButtonProps & {
     /**
      * Whether or not the chat feature is currently displayed.
      */
-     _chatOpen: boolean,
+    _chatOpen: boolean,
 };
 
 /**
@@ -25,7 +25,7 @@ type Props = AbstractButtonProps & {
  */
 class ChatButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.chat';
-    icon = IconChat;
+    icon = IconMessage;
     label = 'toolbar.openChat';
     toggledLabel = 'toolbar.closeChat';
 

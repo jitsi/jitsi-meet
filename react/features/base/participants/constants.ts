@@ -1,4 +1,4 @@
-import { IconPhone, IconShowWhiteboard } from '../icons/svg';
+import { IconPhoneRinging, IconWhiteboard } from '../icons/svg';
 
 /**
  * The relative path to the default/stock avatar (image) file used on both
@@ -25,7 +25,7 @@ export const DISCO_REMOTE_CONTROL_FEATURE = 'http://jitsi.org/meet/remotecontrol
  *
  * @type {string}
  */
-export const JIGASI_PARTICIPANT_ICON = IconPhone;
+export const JIGASI_PARTICIPANT_ICON = IconPhoneRinging;
 
 /**
  * The local participant might not have real ID until she joins a conference,
@@ -79,4 +79,4 @@ export const LOWER_HAND_AUDIO_LEVEL = 0.2;
 /**
  * Icon URL for the whiteboard participant.
  */
-export const WHITEBOARD_PARTICIPANT_ICON = IconShowWhiteboard;
+export const WHITEBOARD_PARTICIPANT_ICON = IconWhiteboard;

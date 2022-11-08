@@ -1,7 +1,7 @@
 // @flow
 
 import { translate } from '../../../base/i18n';
-import { IconExitFullScreen, IconFullScreen } from '../../../base/icons';
+import { IconEnterFullscreen, IconExitFullscreen } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
@@ -26,10 +26,10 @@ class FullscreenButton extends AbstractButton<Props, *> {
      */
     get icon() {
         if (this._isToggled()) {
-            return IconExitFullScreen;
+            return IconExitFullscreen;
         }
 
-        return IconFullScreen;
+        return IconEnterFullscreen;
     }
 
     /**

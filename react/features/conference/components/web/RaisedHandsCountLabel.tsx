@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { IconRaisedHand } from '../../../base/icons/svg';
+import { IconRaiseHand } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
@@ -37,8 +37,8 @@ const RaisedHandsCountLabel = () => {
         position = { 'bottom' }>
         <Label
             className = { styles.label }
-            icon = { IconRaisedHand }
-            iconColor = { theme.palette.uiBackground }
+            icon = { IconRaiseHand }
+            iconColor = { theme.palette.icon04 }
             id = 'raisedHandsCountLabel'
             onClick = { onClick }
             text = { `${raisedHandsCount}` } />

@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconCloseCircle } from '../../../base/icons';
+import { IconUserDeleted } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import AbstractKickButton, {
@@ -45,7 +45,7 @@ class KickButton extends AbstractKickButton {
             <ContextMenuItem
                 accessibilityLabel = { t('videothumbnail.kick') }
                 className = 'kicklink'
-                icon = { IconCloseCircle }
+                icon = { IconUserDeleted }
                 id = { `ejectlink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick }

@@ -9,7 +9,7 @@ import { hideSheet } from '../../../../../base/dialog/actions';
 import BottomSheet from '../../../../../base/dialog/components/native/BottomSheet';
 import {
     Icon,
-    IconClose,
+    IconCloseLarge,
     IconRingGroup
 } from '../../../../../base/icons';
 import { isLocalParticipantModerator } from '../../../../../base/participants';
@@ -70,7 +70,7 @@ const BreakoutRoomContextMenu = ({ room }: Props) => {
                         style = { styles.contextMenuItem }>
                         <Icon
                             size = { 24 }
-                            src = { IconClose } />
+                            src = { IconCloseLarge } />
                         <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.close')}</Text>
                     </TouchableOpacity>
                     : <TouchableOpacity
@@ -78,7 +78,7 @@ const BreakoutRoomContextMenu = ({ room }: Props) => {
                         style = { styles.contextMenuItem }>
                         <Icon
                             size = { 24 }
-                            src = { IconClose } />
+                            src = { IconCloseLarge } />
                         <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.remove')}</Text>
                     </TouchableOpacity>
                 )

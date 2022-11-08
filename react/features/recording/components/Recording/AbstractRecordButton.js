@@ -4,7 +4,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-import { IconToggleRecording } from '../../../base/icons';
+import { IconRecord, IconStop } from '../../../base/icons';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -50,9 +50,10 @@ export type Props = AbstractButtonProps & {
  */
 export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.recording';
-    icon = IconToggleRecording;
+    icon = IconRecord;
     label = 'dialog.startRecording';
     toggledLabel = 'dialog.stopRecording';
+    toggledIcon = IconStop;
 
     /**
      * Returns the tooltip that should be displayed when the button is disabled.

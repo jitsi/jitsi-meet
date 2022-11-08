@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconCancelSelection } from '../../../base/icons';
+import { Icon, IconCloseCircle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMessageRecipient, {
     type Props,
@@ -40,7 +40,7 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
     _onKeyPress(e) {
         if (
             (this.props._onRemovePrivateMessageRecipient || this.props._onHideLobbyChatRecipient)
-                     && (e.key === ' ' || e.key === 'Enter')
+                && (e.key === ' ' || e.key === 'Enter')
         ) {
             e.preventDefault();
             if (this.props._isLobbyChatActive && this.props._onHideLobbyChatRecipient) {
@@ -84,7 +84,7 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
                     role = 'button'
                     tabIndex = { 0 }>
                     <Icon
-                        src = { IconCancelSelection } />
+                        src = { IconCloseCircle } />
                 </div>
             </div>
         );

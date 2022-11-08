@@ -4,8 +4,8 @@ import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import {
-    IconShareAudio,
-    IconStopAudioShare
+    IconVolumeOff,
+    IconVolumeUp
 } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
@@ -34,10 +34,10 @@ type Props = AbstractButtonProps & {
  */
 class ShareAudioButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareaudio';
-    icon = IconShareAudio;
+    icon = IconVolumeUp;
     label = 'toolbar.shareaudio';
     tooltip = 'toolbar.shareaudio';
-    toggledIcon = IconStopAudioShare;
+    toggledIcon = IconVolumeOff;
     toggledLabel = 'toolbar.stopAudioSharing';
 
     /**

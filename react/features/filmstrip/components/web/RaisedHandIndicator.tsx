@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { IconRaisedHand } from '../../../base/icons/svg';
+import { IconRaiseHand } from '../../../base/icons/svg';
 import { getParticipantById, hasRaisedHand } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
@@ -66,7 +66,7 @@ const RaisedHandIndicator = ({
     return (
         <div className = { styles.raisedHandIndicator }>
             <BaseIndicator
-                icon = { IconRaisedHand }
+                icon = { IconRaiseHand }
                 iconColor = { theme.palette.uiBackground }
                 iconSize = { `${iconSize}px` }
                 tooltipKey = 'raisedHand'

@@ -1,6 +1,8 @@
 /* eslint-disable lines-around-comment */
 
 import { IReduxState } from '../../../../app/types';
+import { translate } from '../../../../base/i18n/functions';
+import { IconGear } from '../../../../base/icons/svg';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
 import { navigate }
@@ -10,8 +12,6 @@ import { navigate }
 import { screen } from '../../../../mobile/navigation/routes';
 // @ts-ignore
 import { SETTINGS_ENABLED, getFeatureFlag } from '../../../flags';
-import { translate } from '../../../i18n/functions';
-import { IconSettings } from '../../../icons/svg';
 import { connect } from '../../../redux/functions';
 
 /**
@@ -19,7 +19,7 @@ import { connect } from '../../../redux/functions';
  */
 class SettingsButton extends AbstractButton<AbstractButtonProps, any, any> {
     accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
-    icon = IconSettings;
+    icon = IconGear;
     label = 'settings.buttonLabel';
 
     /**

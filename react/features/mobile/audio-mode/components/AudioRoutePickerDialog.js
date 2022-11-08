@@ -7,11 +7,11 @@ import { bottomSheetStyles } from '../../../base/dialog/components/native/styles
 import { translate } from '../../../base/i18n';
 import {
     Icon,
+    IconBluetooth,
     IconCar,
-    IconDeviceBluetooth,
-    IconDeviceEarpiece,
     IconDeviceHeadphone,
-    IconDeviceSpeaker
+    IconPhoneRinging,
+    IconVolumeUp
 } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
@@ -115,7 +115,7 @@ type State = {
  */
 const deviceInfoMap = {
     BLUETOOTH: {
-        icon: IconDeviceBluetooth,
+        icon: IconBluetooth,
         text: 'audioDevices.bluetooth',
         type: 'BLUETOOTH'
     },
@@ -125,7 +125,7 @@ const deviceInfoMap = {
         type: 'CAR'
     },
     EARPIECE: {
-        icon: IconDeviceEarpiece,
+        icon: IconPhoneRinging,
         text: 'audioDevices.phone',
         type: 'EARPIECE'
     },
@@ -135,7 +135,7 @@ const deviceInfoMap = {
         type: 'HEADPHONES'
     },
     SPEAKER: {
-        icon: IconDeviceSpeaker,
+        icon: IconVolumeUp,
         text: 'audioDevices.speaker',
         type: 'SPEAKER'
     }

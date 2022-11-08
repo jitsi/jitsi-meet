@@ -211,7 +211,7 @@ const Button = React.forwardRef<any, any>(({
             title = { accessibilityLabel }
             type = { isSubmit ? 'submit' : 'button' }>
             {icon && <Icon
-                size = { 20 }
+                size = { 24 }
                 src = { icon } />}
             {(labelKey || label) && <span className = { icon ? styles.textWithIcon : '' }>
                 {labelKey ? t(labelKey) : label}

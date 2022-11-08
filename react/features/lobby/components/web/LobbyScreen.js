@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose } from '../../../base/icons';
+import { Icon, IconCloseLarge } from '../../../base/icons';
 import { InputField, PreMeetingScreen } from '../../../base/premeeting';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -152,7 +152,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                         ariaLabel = { t('toolbar.closeChat') }
                         onClick = { this._onToggleChat }
                         role = 'button'
-                        src = { IconClose } />
+                        src = { IconCloseLarge } />
                 </div>
                 <MessageContainer
                     messages = { _lobbyChatMessages }

@@ -3,7 +3,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { IconConnectionActive } from '../../../base/icons';
+import { IconConnection } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import indicatorStyles from '../../../filmstrip/components/native/styles';
@@ -57,7 +57,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                     backgroundColor: CONNECTOR_INDICATOR_COLORS[signalLevel]
                 }}>
                 <BaseIndicator
-                    icon = { IconConnectionActive }
+                    icon = { IconConnection }
                     iconStyle = { this.props.iconStyle || iconStyle } />
             </View>
         );

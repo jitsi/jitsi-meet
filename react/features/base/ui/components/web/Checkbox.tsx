@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
-import { IconCheckMark } from '../../../icons/svg';
+import { IconCheck } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface ICheckboxProps {
@@ -166,7 +166,7 @@ const Checkbox = ({
                     className = 'checkmark'
                     color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
                     size = { 18 }
-                    src = { IconCheckMark } />
+                    src = { IconCheck } />
             </label>
             <label>{label}</label>
         </div>

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Avatar } from '../../../base/avatar';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
-    Icon, IconClose
+    Icon, IconCloseLarge
 } from '../../../base/icons';
 import { setKnockingParticipantApproval } from '../../../lobby/actions.native';
 import { getKnockingParticipantsById } from '../../../lobby/functions';
@@ -56,7 +56,7 @@ const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => {
                 style = { styles.contextMenuItem }>
                 <Icon
                     size = { 24 }
-                    src = { IconClose } />
+                    src = { IconCloseLarge } />
                 <Text style = { styles.contextMenuItemText }>{ t('lobby.reject') }</Text>
             </TouchableOpacity>
         </BottomSheet>

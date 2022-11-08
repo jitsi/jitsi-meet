@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { Avatar } from '../../../base/avatar';
 import { isNameReadOnly } from '../../../base/config';
 import { translate } from '../../../base/i18n';
-import { IconArrowDown, IconArrowUp, IconPhone, IconVolumeOff } from '../../../base/icons';
+import { IconArrowDown, IconArrowUp, IconPhoneRinging, IconVolumeOff } from '../../../base/icons';
 import { isVideoMutedByUser } from '../../../base/media';
 import { getLocalParticipant } from '../../../base/participants';
 import { ActionButton, InputField, PreMeetingScreen } from '../../../base/premeeting';
@@ -314,7 +314,7 @@ class Prejoin extends Component<Props, State> {
         const byPhone = {
             key: 'by-phone',
             dataTestId: 'prejoin.joinByPhone',
-            icon: IconPhone,
+            icon: IconPhoneRinging,
             label: t('prejoin.joinAudioByPhone'),
             onButtonClick: this._showDialog,
             onKeyPressed: this._showDialogKeyPress

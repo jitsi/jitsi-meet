@@ -13,7 +13,7 @@ import { getSourceNameSignalingFeatureFlag, getToolbarButtons } from '../../../b
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
-import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg';
+import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
 import { IParticipant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
@@ -835,7 +835,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             _topPanelFilmstrip,
             _topPanelVisible
         } = this.props;
-        const icon = (_topPanelFilmstrip ? _topPanelVisible : _mainFilmstripVisible) ? IconMenuDown : IconMenuUp;
+        const icon = (_topPanelFilmstrip ? _topPanelVisible : _mainFilmstripVisible) ? IconArrowDown : IconArrowUp;
         const actions = isMobileBrowser()
             ? { onTouchStart: this._onToggleButtonTouch }
             : { onClick: this._onToolbarToggleFilmstrip };

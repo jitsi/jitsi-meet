@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
-import { IconMicrophoneEmpty, IconMicrophoneEmptySlash } from '../base/icons';
+import { IconMic, IconMicSlash } from '../base/icons';
 import type { Props } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
@@ -31,8 +31,8 @@ type State = {
  * Stateless "mute/unmute audio" button for the Always-on-Top windows.
  */
 export default class AudioMuteButton extends Component<Props, State> {
-    icon = IconMicrophoneEmpty;
-    toggledIcon = IconMicrophoneEmptySlash;
+    icon = IconMic;
+    toggledIcon = IconMicSlash;
     accessibilityLabel = 'Audio mute';
 
     /**

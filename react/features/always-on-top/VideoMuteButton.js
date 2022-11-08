@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
-import { IconCameraEmpty, IconCameraEmptyDisabled } from '../base/icons';
+import { IconVideo, IconVideoOff } from '../base/icons';
 import type { Props } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
@@ -31,8 +31,8 @@ type State = {
  */
 export default class VideoMuteButton extends Component<Props, State> {
 
-    icon = IconCameraEmpty;
-    toggledIcon = IconCameraEmptyDisabled;
+    icon = IconVideo;
+    toggledIcon = IconVideoOff;
     accessibilityLabel = 'Video mute';
 
     /**

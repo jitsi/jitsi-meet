@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Platform, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconChatSend } from '../../../base/icons';
+import { Icon, IconSend } from '../../../base/icons';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import styles from './styles';
@@ -91,7 +91,7 @@ class ChatInputBar extends Component<Props, State> {
                 {
                     this.state.showSend && <TouchableOpacity onPress = { this._onSubmit }>
                         <Icon
-                            src = { IconChatSend }
+                            src = { IconSend }
                             style = { styles.sendButtonIcon } />
                     </TouchableOpacity>
                 }

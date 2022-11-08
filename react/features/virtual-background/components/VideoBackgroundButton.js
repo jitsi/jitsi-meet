@@ -2,7 +2,7 @@
 
 import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { IconVirtualBackground } from '../../base/icons';
+import { IconImage } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
@@ -31,7 +31,7 @@ type Props = AbstractButtonProps & {
  */
 class VideoBackgroundButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.selectBackground';
-    icon = IconVirtualBackground;
+    icon = IconImage;
     label = 'toolbar.selectBackground';
     tooltip = 'toolbar.selectBackground';
 

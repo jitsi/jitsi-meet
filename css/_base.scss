@@ -182,3 +182,8 @@ form {
     background: rgba(0, 0, 0, .5);
     border-radius: 4px;
 }
+
+/* Necessary for the new icons to work properly. */
+.jitsi-icon svg path {
+    fill: inherit !important;
+}

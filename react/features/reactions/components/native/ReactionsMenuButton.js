@@ -5,7 +5,7 @@ import { type Dispatch } from 'redux';
 import { isDialogOpen, openDialog } from '../../../base/dialog';
 import { RAISE_HAND_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconRaisedHand } from '../../../base/icons';
+import { IconRaiseHand } from '../../../base/icons';
 import {
     getLocalParticipant, hasRaisedHand
 } from '../../../base/participants';
@@ -40,7 +40,7 @@ type Props = AbstractButtonProps & {
  */
 class ReactionsMenuButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.reactionsMenu';
-    icon = IconRaisedHand;
+    icon = IconRaiseHand;
     label = 'toolbar.openReactionsMenu';
     toggledLabel = 'toolbar.closeReactionsMenu';
 

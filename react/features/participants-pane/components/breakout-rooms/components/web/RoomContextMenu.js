@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
 import {
-    IconClose,
+    IconCloseLarge,
     IconRingGroup
 } from '../../../../../base/icons';
 import { isLocalParticipantModerator } from '../../../../../base/participants';
@@ -79,7 +79,7 @@ export const RoomContextMenu = ({
         } : null,
         !room?.isMainRoom && isLocalModerator ? {
             accessibilityLabel: isRoomEmpty ? t('breakoutRooms.actions.remove') : t('breakoutRooms.actions.close'),
-            icon: IconClose,
+            icon: IconCloseLarge,
             id: isRoomEmpty ? `remove-room-${room?.id}` : `close-room-${room?.id}`,
             onClick: isRoomEmpty ? onRemoveBreakoutRoom : onCloseBreakoutRoom,
             text: isRoomEmpty ? t('breakoutRooms.actions.remove') : t('breakoutRooms.actions.close')

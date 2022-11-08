@@ -1,7 +1,7 @@
 // @flow
 
 import { translate } from '../../base/i18n';
-import { IconInfo } from '../../base/icons';
+import { IconInfoCircle } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
@@ -30,7 +30,7 @@ export type Props = AbstractButtonProps & {
  */
 class ShowDialInInfoButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'welcomepage.info';
-    icon = IconInfo;
+    icon = IconInfoCircle;
     label = 'welcomepage.info';
 
     /**
