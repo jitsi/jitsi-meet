@@ -7,7 +7,7 @@ import { ITrack } from '../base/tracks/types';
  * @param {Object} videoTrack - Track reference.
  * @returns {boolean} - Is streaming status active.
  */
-export function isTrackStreamingStatusActive(videoTrack: ITrack) {
+export function isTrackStreamingStatusActive(videoTrack?: ITrack) {
     const streamingStatus = videoTrack?.streamingStatus;
 
     return streamingStatus === JitsiTrackStreamingStatus.ACTIVE;

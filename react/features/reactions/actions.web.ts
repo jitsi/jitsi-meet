@@ -3,6 +3,8 @@ import {
 } from './actionTypes';
 import { IReactionsAction } from './reducer';
 
+export * from './actions.any';
+
 /**
  * Toggles the visibility of the reactions menu.
  *

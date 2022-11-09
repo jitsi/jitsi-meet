@@ -2,7 +2,7 @@ import { IReduxState } from '../app/types';
 
 import { getOverlays } from './overlays';
 
-/** ./overlays.native
+/**
  * Returns the overlay to be currently rendered.
  *
  * @param {IReduxState} state - The Redux state.

@@ -1,7 +1,7 @@
-// @flow
-
+import { IReduxState } from '../app/types';
+import { IStateful } from '../base/app/types';
 import { isMobileBrowser } from '../base/environment/utils';
-import { MEDIA_TYPE } from '../base/media';
+import { MEDIA_TYPE } from '../base/media/constants';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -9,9 +9,9 @@ import {
     getParticipantCountWithFake,
     getPinnedParticipant,
     isScreenShareParticipant
-} from '../base/participants';
-import { toState } from '../base/redux';
-import { shouldHideSelfView } from '../base/settings/functions.any';
+} from '../base/participants/functions';
+import { toState } from '../base/redux/functions';
+import { shouldHideSelfView } from '../base/settings/functions.web';
 import {
     getVideoTrackByParticipant,
     isLocalTrackMuted,
@@ -19,11 +19,8 @@ import {
 } from '../base/tracks/functions';
 import { isTrackStreamingStatusActive } from '../connection-indicator/functions';
 import { isSharingStatus } from '../shared-video/functions';
-import {
-    LAYOUTS,
-    getCurrentLayout,
-    getNotResponsiveTileViewGridDimensions
-} from '../video-layout';
+import { LAYOUTS } from '../video-layout/constants';
+import { getCurrentLayout, getNotResponsiveTileViewGridDimensions } from '../video-layout/functions.web';
 
 import {
     ASPECT_RATIO_BREAKPOINT,
@@ -51,8 +48,6 @@ import {
 
 export * from './functions.any';
 
-declare var interfaceConfig: Object;
-
 /**
  * Returns true if the filmstrip on mobile is visible, false otherwise.
  *
@@ -60,11 +55,11 @@ declare var interfaceConfig: Object;
  * function lies here only for the sake of consistency and to avoid flow errors
  * on import.
  *
- * @param {Object | Function} stateful - The Object or Function that can be
+ * @param {IStateful} stateful - The Object or Function that can be
  * resolved to a Redux state object with the toState function.
  * @returns {boolean}
  */
-export function isFilmstripVisible(stateful: Object | Function) {
+export function isFilmstripVisible(stateful: IStateful) {
     return toState(stateful)['features/filmstrip'].visible;
 }
 
@@ -72,11 +67,11 @@ export function isFilmstripVisible(stateful: Object | Function) {
  * Determines whether the remote video thumbnails should be displayed/visible in
  * the filmstrip.
  *
- * @param {Object} state - The full redux state.
+ * @param {IReduxState} state - The full redux state.
  * @returns {boolean} - If remote video thumbnails should be displayed/visible
  * in the filmstrip, then {@code true}; otherwise, {@code false}.
  */
-export function shouldRemoteVideosBeVisible(state: Object) {
+export function shouldRemoteVideosBeVisible(state: IReduxState) {
     if (state['features/invite'].calleeInfoVisible) {
         return false;
     }
@@ -107,13 +102,13 @@ export function shouldRemoteVideosBeVisible(state: Object) {
 /**
  * Checks whether there is a playable video stream available for the user associated with the passed ID.
  *
- * @param {Object | Function} stateful - The Object or Function that can be
+ * @param {IStateful} stateful - The Object or Function that can be
  * resolved to a Redux state object with the toState function.
  * @param {string} id - The id of the participant.
  * @returns {boolean} <tt>true</tt> if there is a playable video stream available
  * or <tt>false</tt> otherwise.
  */
-export function isVideoPlayable(stateful: Object | Function, id: String) {
+export function isVideoPlayable(stateful: IStateful, id: string) {
     const state = toState(stateful);
     const tracks = state['features/base/tracks'];
     const participant = id ? getParticipantById(state, id) : getLocalParticipant(state);
@@ -142,7 +137,7 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
  * @param {number} clientHeight - The height of the app window.
  * @returns {{local: {height, width}, remote: {height, width}}}
  */
-export function calculateThumbnailSizeForHorizontalView(clientHeight: number = 0) {
+export function calculateThumbnailSizeForHorizontalView(clientHeight = 0) {
     const topBottomMargin = 15;
     const availableHeight = Math.min(clientHeight,
         (interfaceConfig.FILM_STRIP_MAX_HEIGHT || DEFAULT_FILMSTRIP_WIDTH) + topBottomMargin);
@@ -168,8 +163,7 @@ export function calculateThumbnailSizeForHorizontalView(clientHeight: number = 0
  * @param {boolean} isResizable - Whether the filmstrip is resizable or not.
  * @returns {{local: {height, width}, remote: {height, width}}}
  */
-export function calculateThumbnailSizeForVerticalView(clientWidth: number = 0,
-        filmstripWidth: number = 0, isResizable = false) {
+export function calculateThumbnailSizeForVerticalView(clientWidth = 0, filmstripWidth = 0, isResizable = false) {
     const availableWidth = Math.min(
         Math.max(clientWidth - VERTICAL_VIEW_HORIZONTAL_MARGIN, 0),
         (isResizable ? filmstripWidth : interfaceConfig.FILM_STRIP_MAX_HEIGHT) || DEFAULT_FILMSTRIP_WIDTH);
@@ -195,7 +189,7 @@ export function calculateThumbnailSizeForVerticalView(clientWidth: number = 0,
  * @param {number} clientWidth - The width of the window.
  * @returns {number} The minimum height of a thumbnail.
  */
-export function getThumbnailMinHeight(clientWidth) {
+export function getThumbnailMinHeight(clientWidth: number) {
     return clientWidth < ASPECT_RATIO_BREAKPOINT ? TILE_MIN_HEIGHT_SMALL : TILE_MIN_HEIGHT_LARGE;
 }
 
@@ -207,7 +201,8 @@ export function getThumbnailMinHeight(clientWidth) {
  * @param {number} clientWidth - The width of the window.
  * @returns {number} The default aspect ratio for a tile.
  */
-export function getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnlargement, clientWidth) {
+export function getTileDefaultAspectRatio(disableResponsiveTiles: boolean,
+        disableTileEnlargement: boolean, clientWidth: number) {
     if (!disableResponsiveTiles && disableTileEnlargement && clientWidth < ASPECT_RATIO_BREAKPOINT) {
         return SQUARE_TILE_ASPECT_RATIO;
     }
@@ -221,7 +216,7 @@ export function getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnl
  * @param {Object} state - The redux store state.
  * @returns {number} The number of participants that will be displayed in tile view.
  */
-export function getNumberOfPartipantsForTileView(state) {
+export function getNumberOfPartipantsForTileView(state: IReduxState) {
     const { iAmRecorder } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
     const { localScreenShare } = state['features/base/participants'];
@@ -240,7 +235,7 @@ export function getNumberOfPartipantsForTileView(state) {
  * @param {Object} state - The redux store state.
  * @returns {Object} - The dimensions.
  */
-export function calculateNonResponsiveTileViewDimensions(state) {
+export function calculateNonResponsiveTileViewDimensions(state: IReduxState) {
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { disableTileEnlargement } = state['features/base/config'];
     const { columns: c, minVisibleRows, rows: r } = getNotResponsiveTileViewGridDimensions(state);
@@ -292,16 +287,35 @@ export function calculateResponsiveTileViewDimensions({
     numberOfParticipants,
     desiredNumberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES,
     minTileHeight
+}: {
+    clientHeight: number;
+    clientWidth: number;
+    desiredNumberOfVisibleTiles: number;
+    disableTileEnlargement?: boolean;
+    maxColumns: number;
+    minTileHeight?: number | null;
+    noHorizontalContainerMargin?: boolean;
+    numberOfParticipants: number;
 }) {
     let height, width;
     let columns, rows;
-    let dimensions = {
+
+    interface IDimensions {
+        columns?: number;
+        height?: number;
+        maxArea: number;
+        numberOfVisibleParticipants?: number;
+        rows?: number;
+        width?: number;
+    }
+
+    let dimensions: IDimensions = {
         maxArea: 0
     };
-    let minHeightEnforcedDimensions = {
+    let minHeightEnforcedDimensions: IDimensions = {
         maxArea: 0
     };
-    let zeroVisibleRowsDimensions = {
+    let zeroVisibleRowsDimensions: IDimensions = {
         maxArea: 0
     };
 
@@ -411,7 +425,16 @@ export function calculateThumbnailSizeForTileView({
     disableTileEnlargement = false,
     noHorizontalContainerMargin = false,
     minTileHeight
-}: Object) {
+}: {
+    clientHeight: number;
+    clientWidth: number;
+    columns: number;
+    disableResponsiveTiles: boolean;
+    disableTileEnlargement?: boolean;
+    minTileHeight?: number | null;
+    minVisibleRows: number;
+    noHorizontalContainerMargin?: boolean;
+}) {
     const aspectRatio = getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnlargement, clientWidth);
     const minHeight = minTileHeight || getThumbnailMinHeight(clientWidth);
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN)
@@ -501,7 +524,7 @@ export function getVerticalFilmstripVisibleAreaWidth() {
  * the thumbnail.
  * @returns {number} - One of <tt>DISPLAY_VIDEO</tt> or <tt>DISPLAY_AVATAR</tt>.
 */
-export function computeDisplayModeFromInput(input: Object) {
+export function computeDisplayModeFromInput(input: any) {
     const {
         filmstripType,
         isActiveParticipant,
@@ -550,7 +573,7 @@ export function computeDisplayModeFromInput(input: Object) {
  * @param {Object} state - The Thumbnail component's state.
  * @returns {Object}
 */
-export function getDisplayModeInput(props: Object, state: Object) {
+export function getDisplayModeInput(props: any, state: { canPlayEventReceived: boolean; }) {
     const {
         _currentLayout,
         _isActiveParticipant,
@@ -600,7 +623,7 @@ export function getIndicatorsTooltipPosition(thumbnailType: string) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-export function isFilmstripResizable(state: Object) {
+export function isFilmstripResizable(state: IReduxState) {
     const { filmstrip } = state['features/base/config'];
     const _currentLayout = getCurrentLayout(state);
 
@@ -614,7 +637,7 @@ export function isFilmstripResizable(state: Object) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-export function showGridInVerticalView(state) {
+export function showGridInVerticalView(state: IReduxState) {
     const resizableFilmstrip = isFilmstripResizable(state);
     const { width } = state['features/filmstrip'];
 
@@ -627,7 +650,7 @@ export function showGridInVerticalView(state) {
  * @param {Object} state - Redux state.
  * @returns {number}
  */
-export function getVerticalViewMaxWidth(state) {
+export function getVerticalViewMaxWidth(state: IReduxState) {
     const { width } = state['features/filmstrip'];
     const _resizableFilmstrip = isFilmstripResizable(state);
     const _verticalViewGrid = showGridInVerticalView(state);
@@ -649,13 +672,13 @@ export function getVerticalViewMaxWidth(state) {
  * @param {Object} state - The redux state.
  * @returns {boolean} - True if the scroll is displayed and false otherwise.
  */
-export function isFilmstripScrollVisible(state) {
+export function isFilmstripScrollVisible(state: IReduxState) {
     const _currentLayout = getCurrentLayout(state);
     let hasScroll = false;
 
     switch (_currentLayout) {
     case LAYOUTS.TILE_VIEW:
-        ({ hasScroll = false } = state['features/filmstrip'].tileViewDimensions);
+        ({ hasScroll = false } = state['features/filmstrip'].tileViewDimensions ?? {});
         break;
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
     case LAYOUTS.STAGE_FILMSTRIP_VIEW: {
@@ -677,7 +700,7 @@ export function isFilmstripScrollVisible(state) {
  * @param {Object} state - Redux state.
  * @returns {Array<string>}
  */
-export function getActiveParticipantsIds(state) {
+export function getActiveParticipantsIds(state: IReduxState) {
     const { activeParticipants } = state['features/filmstrip'];
 
     return activeParticipants.map(p => p.participantId);
@@ -689,7 +712,7 @@ export function getActiveParticipantsIds(state) {
  * @param {Object} state - Redux state.
  * @returns {Array<Object>}
  */
-export function getPinnedActiveParticipants(state) {
+export function getPinnedActiveParticipants(state: IReduxState) {
     const { activeParticipants } = state['features/filmstrip'];
 
     return activeParticipants.filter(p => p.pinned);
@@ -703,10 +726,10 @@ export function getPinnedActiveParticipants(state) {
  * to be displayed.
  * @returns {boolean}
  */
-export function isStageFilmstripAvailable(state, minParticipantCount = 0) {
+export function isStageFilmstripAvailable(state: IReduxState, minParticipantCount = 0) {
     const { activeParticipants } = state['features/filmstrip'];
     const { remoteScreenShares } = state['features/video-layout'];
-    const sharedVideo = isSharingStatus(state['features/shared-video']?.status);
+    const sharedVideo = isSharingStatus(state['features/shared-video']?.status ?? '');
 
     return isStageFilmstripEnabled(state) && !sharedVideo
         && activeParticipants.length >= minParticipantCount
@@ -721,7 +744,7 @@ export function isStageFilmstripAvailable(state, minParticipantCount = 0) {
  * to be displayed.
  * @returns {boolean}
  */
-export function isStageFilmstripTopPanel(state, minParticipantCount = 0) {
+export function isStageFilmstripTopPanel(state: IReduxState, minParticipantCount = 0) {
     const { remoteScreenShares } = state['features/video-layout'];
 
     return isTopPanelEnabled(state)
@@ -734,7 +757,7 @@ export function isStageFilmstripTopPanel(state, minParticipantCount = 0) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-export function isStageFilmstripEnabled(state) {
+export function isStageFilmstripEnabled(state: IReduxState) {
     const { filmstrip } = state['features/base/config'];
 
     return !filmstrip?.disableStageFilmstrip && interfaceConfig.VERTICAL_FILMSTRIP;
@@ -747,7 +770,7 @@ export function isStageFilmstripEnabled(state) {
  * @param {string} filmstripType - The current filmstrip type.
  * @returns {string}
  */
-export function getThumbnailTypeFromLayout(currentLayout, filmstripType) {
+export function getThumbnailTypeFromLayout(currentLayout: string, filmstripType: string) {
     switch (currentLayout) {
     case LAYOUTS.TILE_VIEW:
         return THUMBNAIL_TYPE.TILE;
@@ -770,7 +793,7 @@ export function getThumbnailTypeFromLayout(currentLayout, filmstripType) {
  * @param {Object} state - Redux state.
  * @returns {string} - The participant id.
  */
-export function getScreenshareFilmstripParticipantId(state) {
+export function getScreenshareFilmstripParticipantId(state: IReduxState) {
     const { screenshareFilmstripParticipantId } = state['features/filmstrip'];
     const screenshares = state['features/video-layout'].remoteScreenShares;
     let id = screenshares.find(sId => sId === screenshareFilmstripParticipantId);
@@ -788,7 +811,7 @@ export function getScreenshareFilmstripParticipantId(state) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-export function isTopPanelEnabled(state) {
+export function isTopPanelEnabled(state: IReduxState) {
     const { filmstrip } = state['features/base/config'];
     const participantsCount = getParticipantCount(state);
 

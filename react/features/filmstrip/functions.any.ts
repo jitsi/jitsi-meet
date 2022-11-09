@@ -1,4 +1,8 @@
-import { getActiveSpeakersToBeDisplayed, getVirtualScreenshareParticipantOwnerId } from '../base/participants';
+import { IStore } from '../app/types';
+import {
+    getActiveSpeakersToBeDisplayed,
+    getVirtualScreenshareParticipantOwnerId
+} from '../base/participants/functions';
 
 import { setRemoteParticipants } from './actions';
 import { isFilmstripScrollVisible } from './functions';
@@ -11,7 +15,7 @@ import { isFilmstripScrollVisible } from './functions';
  * @returns {void}
  * @private
  */
-export function updateRemoteParticipants(store: Object, participantId: ?number) {
+export function updateRemoteParticipants(store: IStore, participantId?: string) {
     const state = store.getState();
     let reorderedParticipants = [];
     const { sortedRemoteVirtualScreenshareParticipants } = state['features/base/participants'];
@@ -53,7 +57,7 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
     }
 
     // Always update the order of the thumnails.
-    const participantsWithScreenShare = screenShareParticipants.reduce((acc, screenshare) => {
+    const participantsWithScreenShare = screenShareParticipants.reduce<string[]>((acc, screenshare) => {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
 
         acc.push(ownerId);
@@ -80,7 +84,7 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
  * @returns {void}
  * @private
  */
-export function updateRemoteParticipantsOnLeave(store: Object, participantId: ?string = null) {
+export function updateRemoteParticipantsOnLeave(store: IStore, participantId: string | null = null) {
     if (!participantId) {
         return;
     }

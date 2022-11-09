@@ -2,8 +2,8 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { equals } from '../base/redux/functions';
 import { isFollowMeActive } from '../follow-me/functions';
 
-import { virtualScreenshareParticipantsUpdated } from './actions.web';
-import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions.web';
+import { virtualScreenshareParticipantsUpdated } from './actions';
+import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].sortedRemoteVirtualScreenshareParticipants,
