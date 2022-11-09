@@ -282,8 +282,14 @@ const Dialog = ({
                                 onClick = { onClose } />
                         )}
                     </div>
-                    <div className = { classes.content }>{children}</div>
-                    <div className = { classes.footer }>
+                    <div
+                        className = { classes.content }
+                        data-autofocus-inside = 'true'>
+                        {children}
+                    </div>
+                    <div
+                        className = { classes.footer }
+                        data-autofocus-inside = 'true'>
                         {!back.hidden && <Button
                             accessibilityLabel = { t(back.translationKey ?? '') }
                             labelKey = { back.translationKey }
