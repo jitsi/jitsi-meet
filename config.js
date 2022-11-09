@@ -731,6 +731,7 @@ var config = {
     //    'toggle-camera',
     //    'undock-iframe',
     //    'videoquality',
+    //    'whiteboard',
     // ],
 
     // Holds values related to toolbar visibility control.
@@ -803,6 +804,7 @@ var config = {
     //         key: 'add-passcode',
     //         preventExecution: false
     //     },
+    //     'whiteboard',
     // ],
 
     // List of pre meeting screens buttons to hide. The values must be one or more of the 5 allowed buttons:
