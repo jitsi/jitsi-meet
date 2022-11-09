@@ -82,7 +82,7 @@ platform :ios do
         export_xcargs: "-allowProvisioningUpdates"
     )
 
-    # Upload the build to TestFlight (but don't distribute it)
+    # Upload the build to TestFlight
     upload_to_testflight(
       beta_app_description: ENV["JITSI_CHANGELOG"],
       beta_app_feedback_email: ENV["JITSI_REVIEW_EMAIL"],
@@ -102,24 +102,10 @@ platform :ios do
       uses_non_exempt_encryption: false
     )
 
+    upload_symbols_to_crashlytics
+
     # Cleanup
     clean_build_artifacts
     reset_git_repo(skip_clean: true)
-  end
-
-  lane :refresh_dsyms do
-    # Connect to Apple Store Connect
-    app_store_connect_api_key(
-      key_id: ENV["ASC_KEY_ID"],
-      issuer_id: ENV["ASC_ISSUER_ID"],
-      key_content: ENV["ASC_KEY_CONTENT"],
-      duration: 1200,
-      in_house: false
-    )
-
-    # Upload dSYMs to Crashlytics
-    download_dsyms(min_version: ENV["DSYMS_MIN_VERSION"])  # Download dSYM files from iTC
-    upload_symbols_to_crashlytics                          # Upload them to Crashlytics
-    clean_build_artifacts                                  # Delete the local dSYM files
   end
 end
