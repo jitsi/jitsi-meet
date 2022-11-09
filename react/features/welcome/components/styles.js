@@ -41,19 +41,20 @@ export default {
      * Join button style.
      */
     button: {
-        backgroundColor: BaseTheme.palette.screen01Header,
-        borderColor: BaseTheme.palette.screen01Header,
-        borderRadius: 4,
+        backgroundColor: BaseTheme.palette.action01,
+        borderColor: BaseTheme.palette.action01,
+        borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
-        height: 30,
+        height: BaseTheme.spacing[7],
         justifyContent: 'center',
-        paddingHorizontal: 20
+        paddingHorizontal: BaseTheme.spacing[4]
     },
 
-    /**
-     * Join button text style.
-     */
-    buttonText: {
+    joinButtonLabel: {
+        textTransform: 'uppercase'
+    },
+
+    joinButtonText: {
         alignSelf: 'center',
         color: BaseTheme.palette.text01,
         fontSize: 14
@@ -85,6 +86,7 @@ export default {
      * The text of the hint box.
      */
     hintText: {
+        color: BaseTheme.palette.text01,
         textAlign: 'center'
     },
 
@@ -111,13 +113,11 @@ export default {
     },
 
     messageContainer: {
-        backgroundColor: BaseTheme.palette.ui12,
-        borderColor: BaseTheme.palette.field02,
-        borderRadius: 4,
-        borderWidth: 1,
-        marginVertical: 5,
-        paddingHorizontal: BoxModel.padding,
-        paddingVertical: 2 * BoxModel.padding
+        backgroundColor: BaseTheme.palette.ui03,
+        borderRadius: BaseTheme.shape.borderRadius,
+        marginVertical: BaseTheme.spacing[1],
+        paddingHorizontal: BaseTheme.spacing[2],
+        paddingVertical: 2 * BaseTheme.spacing[2]
     },
 
     roomNameInputContainer: {
@@ -191,7 +191,7 @@ export default {
     insecureRoomNameWarningContainer: {
         alignItems: 'center',
         flexDirection: 'row',
-        paddingHorizontal: 5
+        paddingHorizontal: BaseTheme.spacing[1]
     },
 
     insecureRoomNameWarningIcon: {
@@ -215,8 +215,9 @@ export default {
     },
 
     customInput: {
-        fontSize: 24,
-        lineHeight: 32,
+        fontSize: 32,
+        letterSpacing: 0,
+        lineHeight: BaseTheme.spacing[6],
         textAlign: 'center'
     },
 

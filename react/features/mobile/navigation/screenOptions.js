@@ -51,7 +51,7 @@ export const welcomeScreenOptions = {
     gestureEnabled: false,
     headerShown: true,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
+        backgroundColor: BaseTheme.palette.screen02Header
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
