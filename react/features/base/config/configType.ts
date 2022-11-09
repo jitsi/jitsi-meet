@@ -304,8 +304,6 @@ export interface IConfig {
     };
     firefox_fake_device?: string;
     flags?: {
-        sendMultipleVideoStreams?: boolean;
-        sourceNameSignaling?: boolean;
     };
     focusUserJid?: string;
     gatherStats?: boolean;

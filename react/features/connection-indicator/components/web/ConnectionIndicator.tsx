@@ -89,16 +89,6 @@ type Props = AbstractProps & WithTranslation & {
     _popoverDisabled: boolean;
 
     /**
-     * The source name of the track.
-     */
-    _sourceName: string;
-
-    /**
-     * Whether source name signaling is enabled.
-     */
-    _sourceNameSignalingEnabled: boolean;
-
-    /**
      * Whether or not the component should ignore setting a visibility class for
      * hiding the component when the connection quality is not strong.
      */
