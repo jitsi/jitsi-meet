@@ -1039,13 +1039,19 @@ class Thumbnail extends Component<IProps, IState> {
             style = { styles.video }
             videoTrack = { _videoTrack } />;
 
+        let containerParticipantId = local
+            ? `localVideoContainer${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`
+            : `participant_${id}${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`;
+
+        // keep simple container id when placeholder share screen is displayed.
+        if (_shouldDisplayVirtualScreenSharePlaceholder) {
+            containerParticipantId = `participant_${id}`;
+        }
+
         return (
             <span
                 className = { containerClassName }
-                id = { local
-                    ? `localVideoContainer${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`
-                    : `participant_${id}${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`
-                }
+                id = { containerParticipantId }
                 { ...(_isMobile
                     ? {
                         onTouchEnd: this._onTouchEnd,
