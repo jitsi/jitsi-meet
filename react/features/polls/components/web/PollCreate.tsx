@@ -8,7 +8,7 @@ import { IconBurger } from '../../../base/icons/svg';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
 import Button from '../../../base/ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 // @ts-ignore
 import AbstractPollCreate from '../AbstractPollCreate';

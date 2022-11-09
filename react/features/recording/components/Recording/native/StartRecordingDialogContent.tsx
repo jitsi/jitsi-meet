@@ -9,7 +9,7 @@ import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux/functions';
 import Button from '../../../../base/ui/components/native/Button';
 import Switch from '../../../../base/ui/components/native/Switch';
-import { BUTTON_TYPES } from '../../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import { RECORDING_TYPES } from '../../../constants';
 // @ts-ignore
 import { getRecordingDurationEstimation } from '../../../functions';

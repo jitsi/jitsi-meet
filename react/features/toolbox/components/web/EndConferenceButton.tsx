@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { endConference } from '../../../base/conference/actions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 
 /**

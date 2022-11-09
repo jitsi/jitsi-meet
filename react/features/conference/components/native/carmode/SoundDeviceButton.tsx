@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { openSheet } from '../../../../base/dialog/actions';
 import Button from '../../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 // @ts-ignore
 import AudioRoutePickerDialog from '../../../../mobile/audio-mode/components/AudioRoutePickerDialog';
 

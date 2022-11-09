@@ -6,7 +6,7 @@ import { ScrollView, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { admitMultiple } from '../../../lobby/actions.native';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 

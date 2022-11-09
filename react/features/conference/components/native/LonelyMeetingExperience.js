@@ -7,7 +7,7 @@ import { Icon, IconAddUser } from '../../../base/icons';
 import { getParticipantCountWithFake } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import Button from '../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 

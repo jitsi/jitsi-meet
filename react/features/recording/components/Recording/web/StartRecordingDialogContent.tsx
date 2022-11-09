@@ -12,7 +12,7 @@ import {
 import { connect } from '../../../../base/redux/functions';
 import Button from '../../../../base/ui/components/web/Button';
 import Switch from '../../../../base/ui/components/web/Switch';
-import { BUTTON_TYPES } from '../../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../../base/ui/constants.web';
 import { RECORDING_TYPES } from '../../../constants';
 // @ts-ignore
 import { getRecordingDurationEstimation } from '../../../functions';

@@ -18,7 +18,7 @@ import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { moveToRoom } from '../../../breakout-rooms/actions';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 
