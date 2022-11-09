@@ -110,10 +110,12 @@ export const chatStyles = createStyleSheet({
 
     noPollContent: {
         alignItems: 'center',
-        flex: 1,
-        flexDirection: 'column',
         justifyContent: 'center',
-        paddingTop: '4%'
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        top: '25%'
     },
 
     noPollText: {

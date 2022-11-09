@@ -4,7 +4,7 @@ import { FlatList, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { Icon, IconChatUnread } from '../../../base/icons';
+import { Icon, IconMessage } from '../../../base/icons';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 
@@ -41,7 +41,7 @@ const PollsList = () => {
                     <Icon
                         color = { BaseTheme.palette.icon03 }
                         size = { 160 }
-                        src = { IconChatUnread } />
+                        src = { IconMessage } />
                     <Text style = { chatStyles.noPollText } >
                         {
                             t('polls.results.empty')

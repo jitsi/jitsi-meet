@@ -30,6 +30,7 @@ export const navigationStyles = {
     },
 
     unreadCounterContainer: {
+        alignItems: 'center',
         display: 'flex',
         flexDirection: 'row'
     },
@@ -41,11 +42,11 @@ export const navigationStyles = {
 
     unreadCounterCircle: {
         backgroundColor: BaseTheme.palette.warning01,
-        borderRadius: BaseTheme.spacing[3] / 2,
-        height: BaseTheme.spacing[3],
+        borderRadius: BaseTheme.spacing[4] / 2,
+        height: BaseTheme.spacing[4],
         justifyContent: 'center',
         marginLeft: BaseTheme.spacing[2],
-        width: BaseTheme.spacing[3]
+        width: BaseTheme.spacing[4]
     },
 
     unreadCounter: {
