@@ -220,6 +220,16 @@ const LocalRecordingManager: ILocalRecordingManager = {
                 });
             }
 
+            const localAudioTrack = getLocalTrack(tracks, MEDIA_TYPE.AUDIO)?.jitsiTrack?.track;
+
+            if (!localAudioTrack) {
+                APP.conference.muteAudio(false);
+                setTimeout(() => APP.conference.muteAudio(true), 100);
+                await new Promise(resolve => {
+                    setTimeout(resolve, 100);
+                });
+            }
+
             const currentTitle = document.title;
 
             document.title = i18next.t('localRecording.selectTabTitle');
@@ -244,9 +254,10 @@ const LocalRecordingManager: ILocalRecordingManager = {
             }
 
             this.initializeAudioMixer();
-            this.mixAudioStream(gdmStream);
 
-            tracks.forEach((track: any) => {
+            const allTracks = getTrackState(getState());
+
+            allTracks.forEach((track: any) => {
                 if (track.mediaType === MEDIA_TYPE.AUDIO) {
                     const audioTrack = track?.jitsiTrack?.track;
 
