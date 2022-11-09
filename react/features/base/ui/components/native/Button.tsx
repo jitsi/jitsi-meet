@@ -6,7 +6,7 @@ import {
     TouchableRipple
 } from 'react-native-paper';
 
-import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
+import { BUTTON_MODES, BUTTON_TYPES } from '../../constants.native';
 import BaseTheme from '../BaseTheme.native';
 import { IButtonProps } from '../types';
 

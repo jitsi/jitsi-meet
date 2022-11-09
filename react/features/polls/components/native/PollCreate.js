@@ -4,7 +4,7 @@ import { Divider, TouchableRipple } from 'react-native-paper';
 
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import styles
     from '../../../settings/components/native/styles';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';

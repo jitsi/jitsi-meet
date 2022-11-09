@@ -10,7 +10,7 @@ import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants
 import { connect } from '../../../base/redux';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { hasRaisedHand } from '../../../base/participants';
 import Button from '../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { approveKnockingParticipant } from '../../../lobby/actions.native';
 import { showContextMenuReject } from '../../actions.native';
 import { MEDIA_STATE } from '../../constants';

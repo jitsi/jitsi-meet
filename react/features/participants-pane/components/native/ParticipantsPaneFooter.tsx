@@ -7,7 +7,7 @@ import { openDialog, openSheet } from '../../../base/dialog/actions';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 // @ts-ignore
 import MuteEveryoneDialog from '../../../video-menu/components/native/MuteEveryoneDialog';
 import { isMoreActionsVisible, isMuteAllVisible } from '../../functions';

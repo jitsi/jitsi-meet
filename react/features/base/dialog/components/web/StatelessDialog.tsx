@@ -7,7 +7,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../i18n/functions';
 import Button from '../../../ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../ui/constants';
+import { BUTTON_TYPES } from '../../../ui/constants.web';
 import type { DialogProps } from '../../constants';
 
 import ModalHeader from './ModalHeader';

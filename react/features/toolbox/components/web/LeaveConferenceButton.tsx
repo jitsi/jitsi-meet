@@ -6,7 +6,7 @@ import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { leaveConference } from '../../../base/conference/actions';
 import Button from '../../../base/ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 
 /**
  * Button to leave the conference.

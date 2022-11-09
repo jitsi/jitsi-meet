@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
-import { BUTTON_TYPES } from '../../constants';
+import { BUTTON_TYPES } from '../../constants.web';
 import { IButtonProps } from '../types';
 
 interface IProps extends IButtonProps {

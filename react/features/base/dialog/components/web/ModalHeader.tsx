@@ -18,7 +18,7 @@ import { translate } from '../../../i18n/functions';
 import { IconCloseLarge } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import Button from '../../../ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../ui/constants';
+import { BUTTON_TYPES } from '../../../ui/constants.web';
 
 const TitleIcon = ({ appearance }: { appearance?: 'danger' | 'warning'; }) => {
     if (!appearance) {

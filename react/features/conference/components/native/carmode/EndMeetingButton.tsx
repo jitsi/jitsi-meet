@@ -4,10 +4,9 @@ import { useDispatch } from 'react-redux';
 
 import { createToolbarEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
-// @ts-ignore
-import { appNavigate } from '../../../../app/actions';
+import { appNavigate } from '../../../../app/actions.native';
 import Button from '../../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 
 import EndMeetingIcon from './EndMeetingIcon';
 // @ts-ignore

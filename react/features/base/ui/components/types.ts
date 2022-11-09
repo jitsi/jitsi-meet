@@ -1,6 +1,6 @@
 import { GestureResponderEvent } from 'react-native';
 
-import { BUTTON_TYPES } from '../constants';
+import { BUTTON_TYPES } from '../constants.any';
 
 export interface IButtonProps {
 

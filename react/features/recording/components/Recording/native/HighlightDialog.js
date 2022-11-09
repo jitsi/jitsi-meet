@@ -5,7 +5,7 @@ import { batch, useDispatch } from 'react-redux';
 
 import { BottomSheet, hideSheet } from '../../../../base/dialog';
 import Button from '../../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import { highlightMeetingMoment } from '../../../actions.any';
 import styles from '../styles.native';
 

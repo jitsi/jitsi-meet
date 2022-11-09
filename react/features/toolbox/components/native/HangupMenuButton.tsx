@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { openSheet } from '../../../base/dialog/actions';
 import { IconHangup } from '../../../base/icons/svg';
 import IconButton from '../../../base/ui/components/native/IconButton';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 
 import HangupMenu from './HangupMenu';
 
