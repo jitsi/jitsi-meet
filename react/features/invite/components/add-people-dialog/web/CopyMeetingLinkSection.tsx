@@ -37,7 +37,8 @@ function CopyMeetingLinkSection({ url }: IProps) {
         <>
             <label
                 className = { classes.label }
-                htmlFor = { 'copy-button-id' }>{t('addPeople.shareLink')}</label>
+                htmlFor = { 'copy-button-id' }
+                id = 'copy-button-label'>{t('addPeople.shareLink')}</label>
             <CopyButton
                 aria-label = { t('addPeople.copyLink') }
                 className = 'invite-more-dialog-conference-url'
