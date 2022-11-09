@@ -71,7 +71,8 @@ export default {
             color: BaseTheme.palette.icon01,
             fontSize: 22,
             padding: BaseTheme.spacing[2]
-        }
+        },
+        underlayColor: 'transparent'
     },
 
     /**
@@ -120,7 +121,6 @@ export default {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginLeft: BaseTheme.spacing[3],
-        marginVertical: '8%',
         width: '100%'
     },
 
@@ -248,28 +248,5 @@ export default {
         ...BaseTheme.typography.bodyShortRegular,
         color: BaseTheme.palette.text01,
         flex: 1
-    },
-
-    unreadMessagesCounterContainer: {
-        display: 'flex',
-        flexDirection: 'row'
-    },
-
-    unreadMessagesCounterDescription: {
-        color: BaseTheme.palette.text01
-    },
-
-    unreadMessagesCounterCircle: {
-        backgroundColor: BaseTheme.palette.warning01,
-        borderRadius: BaseTheme.spacing[3] / 2,
-        height: BaseTheme.spacing[3],
-        justifyContent: 'center',
-        marginLeft: BaseTheme.spacing[2],
-        width: BaseTheme.spacing[3]
-    },
-
-    unreadMessagesCounter: {
-        alignSelf: 'center',
-        color: BaseTheme.palette.text04
     }
 };

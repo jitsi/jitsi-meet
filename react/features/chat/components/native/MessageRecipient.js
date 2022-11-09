@@ -110,7 +110,7 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
                     <TouchableHighlight
                         onPress = { this._onResetLobbyMessageRecipient }>
                         <Icon
-                            src = { IconClose }
+                            src = { IconCloseLarge }
                             style = { styles.messageRecipientCancelIcon } />
                     </TouchableHighlight>
                 </View>

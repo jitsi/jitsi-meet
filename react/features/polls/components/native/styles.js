@@ -202,7 +202,7 @@ export const chatStyles = createStyleSheet({
 
     createPollButton: {
         marginHorizontal: BaseTheme.spacing[3],
-        marginVertical: '8%'
+        marginVertical: 34
     },
 
     pollPane: {
