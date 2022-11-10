@@ -1,7 +1,5 @@
-// @flow
-
 import { useHeaderHeight } from '@react-navigation/elements';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import {
     Keyboard,
     KeyboardAvoidingView,
@@ -15,9 +13,14 @@ import { StyleType } from '../../styles';
 type Props = {
 
     /**
+     * Adds bottom padding.
+     */
+    addBottomPadding?: boolean,
+
+    /**
      * The children component(s) of the Modal, to be rendered.
      */
-    children: React$Node,
+    children: ReactElement,
 
     /**
      * Additional style to be appended to the KeyboardAvoidingView content container.
@@ -47,6 +50,7 @@ type Props = {
 
 const JitsiKeyboardAvoidingView = (
         {
+            addBottomPadding = true,
             children,
             contentContainerStyle,
             hasTabNavigator,
@@ -67,7 +71,9 @@ const JitsiKeyboardAvoidingView = (
 
     const tabNavigatorPadding
         = hasTabNavigator ? headerHeight : 0;
-    const noNotchDevicePadding = bottomPadding || 10;
+    const extraBottomPadding
+        = addBottomPadding ? bottomPadding : 0;
+    const noNotchDevicePadding = extraBottomPadding || 10;
     const iosVerticalOffset
         = headerHeight + noNotchDevicePadding + tabNavigatorPadding;
     const androidVerticalOffset = hasBottomTextInput

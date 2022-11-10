@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,6 +9,11 @@ import styles from './styles';
 
 
 type Props = {
+
+    /**
+     * Adds bottom padding.
+     */
+    addBottomPadding: boolean,
 
     /**
      * Additional style to be appended to the KeyboardAvoidingView content container.
@@ -53,6 +57,7 @@ type Props = {
 }
 
 const JitsiScreen = ({
+    addBottomPadding,
     contentContainerStyle,
     children,
     footerComponent,
@@ -64,6 +69,7 @@ const JitsiScreen = ({
 }: Props) => {
     const renderContent = () => (
         <JitsiKeyboardAvoidingView
+            addBottomPadding = { addBottomPadding }
             contentContainerStyle = { contentContainerStyle }
             disableForcedKeyboardDismiss = { disableForcedKeyboardDismiss }
             hasBottomTextInput = { hasBottomTextInput }
