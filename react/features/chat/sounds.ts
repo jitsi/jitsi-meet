@@ -4,4 +4,4 @@
  *
  * @type {string}
  */
-export const INCOMING_MSG_SOUND_FILE = 'incomingMessage.wav';
+export const INCOMING_MSG_SOUND_FILE = 'incomingMessage.mp3';
