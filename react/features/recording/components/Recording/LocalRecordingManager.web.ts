@@ -219,6 +219,17 @@ const LocalRecordingManager: ILocalRecordingManager = {
                     permittedOrigins: [ '*' ]
                 });
             }
+            const localAudioTrack = getLocalTrack(tracks, MEDIA_TYPE.AUDIO)?.jitsiTrack?.track;
+
+            // Starting chrome 107, the recorder does not record any data if the audio stream has no tracks
+            // To fix this we create a track for the local user(muted track)
+            if (!localAudioTrack) {
+                APP.conference.muteAudio(false);
+                setTimeout(() => APP.conference.muteAudio(true), 100);
+                await new Promise(resolve => {
+                    setTimeout(resolve, 100);
+                });
+            }
 
             const currentTitle = document.title;
 
@@ -244,9 +255,10 @@ const LocalRecordingManager: ILocalRecordingManager = {
             }
 
             this.initializeAudioMixer();
-            this.mixAudioStream(gdmStream);
 
-            tracks.forEach((track: any) => {
+            const allTracks = getTrackState(getState());
+
+            allTracks.forEach((track: any) => {
                 if (track.mediaType === MEDIA_TYPE.AUDIO) {
                     const audioTrack = track?.jitsiTrack?.track;
 
