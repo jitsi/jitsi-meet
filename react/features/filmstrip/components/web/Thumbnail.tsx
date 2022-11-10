@@ -212,11 +212,6 @@ export interface IProps {
     _shouldDisplayVirtualScreenSharePlaceholder: boolean;
 
     /**
-     * Whether source name signaling is enabled.
-     */
-    _sourceNameSignalingEnabled: boolean;
-
-    /**
      * Whether or not the current layout is stage filmstrip layout.
      */
     _stageFilmstripLayout: boolean;
