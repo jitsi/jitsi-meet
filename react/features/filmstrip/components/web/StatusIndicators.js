@@ -14,6 +14,7 @@ import {
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../../../base/tracks';
+import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
@@ -102,9 +103,11 @@ function _mapStateToProps(state, ownProps) {
     // Only the local participant won't have id for the time when the conference is not yet joined.
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const tracks = state['features/base/tracks'];
+    const currentLayout = getCurrentLayout(state);
 
     let isAudioMuted = true;
     let isScreenSharing = false;
+    let showScreenShareIndicator = false;
 
     if (participant?.local) {
         isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
@@ -113,6 +116,7 @@ function _mapStateToProps(state, ownProps) {
         const track = getVideoTrackByParticipant(state, participant);
 
         isScreenSharing = track?.videoType === 'desktop';
+        showScreenShareIndicator = isScreenSharing && screenshare && currentLayout === LAYOUTS.TILE_VIEW;
         isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);
     }
 
@@ -122,7 +126,7 @@ function _mapStateToProps(state, ownProps) {
         _showAudioMutedIndicator: isAudioMuted && audio,
         _showModeratorIndicator:
             !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR && moderator,
-        _showScreenShareIndicator: isScreenSharing && screenshare
+        _showScreenShareIndicator: showScreenShareIndicator
     };
 }
 
