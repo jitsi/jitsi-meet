@@ -35,7 +35,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     return {
         raisedHandIndicator: {
             backgroundColor: theme.palette.warning02,
-            padding: '2px',
+            padding: '4px',
             zIndex: 3,
             display: 'inline-block',
             borderRadius: '4px',

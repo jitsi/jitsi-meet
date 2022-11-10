@@ -36,7 +36,7 @@ const useStyles = makeStyles()(() => {
     return {
         pinnedIndicator: {
             backgroundColor: 'rgba(0, 0, 0, .7)',
-            padding: '2px',
+            padding: '4px',
             zIndex: 3,
             display: 'inline-block',
             borderRadius: '4px',
