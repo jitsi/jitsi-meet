@@ -1,5 +1,3 @@
-
-// const assert = require('assert');
 const wdio = require('webdriverio');
 
 const {
@@ -44,6 +42,7 @@ const closeScreenBtn = {
 async function main() {
     const client = wdio.remote(options);
     const driver = await client;
+    await delay(5000);
 
     const inputSelector = getSelector(driver, enterRoomNameInput);
     const joinRoomBtnSelector = getSelector(driver, joinBtn);

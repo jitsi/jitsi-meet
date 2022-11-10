@@ -5,14 +5,15 @@ const appiumVersion = '1.22.3';
 module.exports = {
 
     IOS: {
-        'appium:app': path.join(process.cwd(), 'ios/build/JitsiMeet.xcarchive/Products/Applications/jitsi-meet.app'),
+        'appium:app': path.join(process.cwd(), 'JitsiMeet.xcarchive/Products/Applications/jitsi-meet.app'),
         'appium:appiumVersion': appiumVersion,
         'appium:automationName': 'XCUITest',
+        'appium:bundleId': 'org.jitsi.meet',
         'appium:newCommandTimeout': 240,
         platformName: 'iOS',
-        'appium:platformVersion': process.env.PLATFORM_VERSION || 12,
-        'appium:udid': process.env.DEVICE_ID,
-        'appium:xcodeOrgId': process.env.ORG_ID,
+        'appium:platformVersion': process.env.PLATFORM_VERSION || 15.6,
+        'appium:udid': '00008110-001819C63A32801E',
+        'appium:xcodeOrgId': 'AJT772J42H',
         'appium:xcodeSigningId': 'iPhone Developer'
     },
 

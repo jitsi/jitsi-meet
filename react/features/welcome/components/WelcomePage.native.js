@@ -351,6 +351,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                             onSubmitEditing = { this._onJoin }
                             placeholder = { this.state.roomPlaceholder }
                             returnKeyType = { 'go' }
+                            testID ={ 'search' }
                             value = { this.state.room } />
                         {
                             this._renderInsecureRoomNameWarning()

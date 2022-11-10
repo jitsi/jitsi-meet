@@ -1,8 +1,7 @@
 #!/bin/bash
 
 BASE_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[1]}" || echo "${BASH_SOURCE[1]}")")" && pwd)
-BUILD_DIR=$BASE_DIR/ios/build
-ARCHIVE_DIR=$BUILD_DIR/JitsiMeet.xcarchive
+ARCHIVE_DIR=$BASE_DIR/JitsiMeet.xcarchive
 APP_DIR=$ARCHIVE_DIR/Products/Applications/jitsi-meet.app
 
 
@@ -27,6 +26,6 @@ echo "Exporting archive..."
 xcodebuild -exportArchive \
      -archivePath $ARCHIVE_DIR  \
      -exportOptionsPlist $BASE_DIR/ios/app/src/Info.plist \
-     -exportPath $BUILD_DIR \
+     -exportPath $BASE_DIR \
 
 echo "Done"
