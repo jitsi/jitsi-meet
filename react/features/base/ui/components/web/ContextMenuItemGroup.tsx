@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -18,7 +17,7 @@ interface IProps {
     children?: ReactNode;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         contextMenuItemGroup: {
             '&:not(:empty)': {

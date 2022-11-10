@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -39,8 +38,7 @@ interface IProps extends WithTranslation {
     storedImages: Array<Image>;
 }
 
-// @ts-ignore
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         addBackground: {
             marginRight: theme.spacing(2)
@@ -50,7 +48,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         label: {
             fontSize: '14px',
-            fontWeight: '600',
+            fontWeight: 600,
             lineHeight: '20px',
             marginTop: theme.spacing(3),
             marginBottom: theme.spacing(2),

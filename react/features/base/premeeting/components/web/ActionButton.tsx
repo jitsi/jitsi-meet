@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { ReactNode, useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -80,7 +79,7 @@ interface IProps {
     type: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         actionButton: {
             ...withPixelLineHeight(theme.typography.bodyLongBold),

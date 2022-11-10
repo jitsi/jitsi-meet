@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,7 +31,7 @@ import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
 
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             boxSizing: 'border-box' as const,

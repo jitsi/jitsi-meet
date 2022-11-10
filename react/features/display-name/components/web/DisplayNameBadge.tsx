@@ -1,8 +1,7 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     const { text01 } = theme.palette;
 
     return {

@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -45,7 +44,7 @@ interface IProps {
 
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         label: {
             ...withPixelLineHeight(theme.typography.labelRegular),

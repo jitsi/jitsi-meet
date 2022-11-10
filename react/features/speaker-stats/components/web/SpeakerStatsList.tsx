@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -11,7 +10,7 @@ import abstractSpeakerStatsList from '../AbstractSpeakerStatsList';
 // @ts-ignore
 import SpeakerStatsItem from './SpeakerStatsItem';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         list: {
             marginTop: theme.spacing(3),

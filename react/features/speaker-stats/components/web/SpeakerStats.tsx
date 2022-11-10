@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -18,7 +17,7 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         speakerStats: {
             '& .row': {

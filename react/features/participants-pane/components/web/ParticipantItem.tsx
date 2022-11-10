@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { ReactElement, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -97,7 +96,7 @@ interface IProps extends WithTranslation {
     youText?: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         nameContainer: {
             display: 'flex',

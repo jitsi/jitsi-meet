@@ -1,6 +1,5 @@
 /* eslint-disable lines-around-comment */
 import Spinner from '@atlaskit/spinner';
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -17,7 +16,7 @@ import { useSalesforceLinkDialog } from '../../useSalesforceLinkDialog';
 
 import { RecordItem } from './RecordItem';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             minHeight: '450px',

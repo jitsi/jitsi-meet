@@ -1,6 +1,6 @@
 import { FlagGroupContext } from '@atlaskit/flag/flag-group';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import { Theme } from '@mui/material';
+import { Theme } from '@mui/material/styles';
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';

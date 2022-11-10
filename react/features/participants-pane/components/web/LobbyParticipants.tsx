@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,7 +21,7 @@ import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 // @ts-ignore
 import LobbyParticipantItems from './LobbyParticipantItems';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         drawerActions: {
             listStyleType: 'none',

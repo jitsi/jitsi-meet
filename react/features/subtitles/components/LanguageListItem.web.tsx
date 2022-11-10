@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -25,7 +24,7 @@ interface ILanguageListItemProps extends WithTranslation {
     selected?: boolean;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         itemContainer: {
             display: 'flex',

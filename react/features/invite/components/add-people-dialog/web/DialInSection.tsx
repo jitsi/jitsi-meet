@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -21,7 +20,7 @@ interface IProps {
     phoneNumber: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             '& .info-label': {

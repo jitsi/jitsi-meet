@@ -1,6 +1,5 @@
 /* eslint-disable lines-around-comment */
 
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,7 +29,7 @@ import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
 // @ts-ignore
 import MeetingParticipantItems from './MeetingParticipantItems';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         heading: {
             color: theme.palette.text02,

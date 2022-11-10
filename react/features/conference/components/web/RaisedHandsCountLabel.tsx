@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +11,7 @@ import Label from '../../../base/label/components/web/Label';
 import { Tooltip } from '../../../base/tooltip';
 import { open as openParticipantsPane } from '../../../participants-pane/actions';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         label: {
             backgroundColor: theme.palette.warning02,

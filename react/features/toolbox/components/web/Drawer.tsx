@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { ReactElement, useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -28,7 +27,7 @@ interface IProps {
     onClose: Function;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         drawer: {
             backgroundColor: theme.palette.ui01,

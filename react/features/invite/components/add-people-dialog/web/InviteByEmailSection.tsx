@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -35,7 +34,7 @@ interface IProps {
     inviteTextiOS: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             marginTop: theme.spacing(4)

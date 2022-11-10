@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -46,7 +45,7 @@ interface IProps {
     participantName: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         button: {
             marginRight: theme.spacing(2)

@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -104,7 +103,7 @@ interface IProps {
 
 const MAX_HEIGHT = 400;
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         contextMenu: {
             backgroundColor: theme.palette.ui01,

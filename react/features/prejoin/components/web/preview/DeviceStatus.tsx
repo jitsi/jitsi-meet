@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -27,7 +26,7 @@ export interface IProps extends WithTranslation {
     deviceStatusType?: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         deviceStatus: {
             alignItems: 'center',

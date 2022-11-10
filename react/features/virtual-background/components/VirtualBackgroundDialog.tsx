@@ -4,7 +4,6 @@ import Spinner from '@atlaskit/spinner';
 import Bourne from '@hapi/bourne';
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
-import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -112,7 +111,7 @@ function _mapStateToProps(state: IReduxState): Object {
 
 const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackground));
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         dialogContainer: {
             width: 'auto'

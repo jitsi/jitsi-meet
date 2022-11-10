@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { ReactElement, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -80,7 +79,7 @@ interface IProps {
     toggleParticipantMenu: Function;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             boxShadow: 'none'

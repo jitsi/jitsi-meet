@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -12,7 +11,7 @@ interface IProps {
     onClick: () => void;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         button: {
             padding: '2px',

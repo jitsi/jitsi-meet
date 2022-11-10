@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -25,7 +24,7 @@ interface IProps extends WithTranslation {
     connectionType?: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         connectionStatus: {
             borderRadius: '6px',

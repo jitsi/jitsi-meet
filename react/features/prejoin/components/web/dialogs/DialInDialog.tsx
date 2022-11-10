@@ -1,6 +1,5 @@
 /* eslint-disable lines-around-comment */
 
-import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -47,7 +46,7 @@ interface IProps extends WithTranslation {
     passCode: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         dialInDialog: {
             textAlign: 'center',
