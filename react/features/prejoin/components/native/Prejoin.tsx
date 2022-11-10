@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment  */
 
 import { useIsFocused } from '@react-navigation/native';
+// @ts-ignore
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -139,9 +140,9 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         toolboxContainerStyles = styles.toolboxContainerWide;
     }
 
-
     return (
         <JitsiScreen
+            addBottomPadding = { false }
             safeAreaInsets = { [ 'left' ] }
             style = { contentWrapperStyles }>
             <BrandingImageBackground />
@@ -161,8 +162,10 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             <View style = { contentContainerStyles }>
                 <View style = { toolboxContainerStyles }>
                     <AudioMuteButton
+                        // @ts-ignore
                         styles = { styles.buttonStylesBorderless } />
                     <VideoMuteButton
+                        // @ts-ignore
                         styles = { styles.buttonStylesBorderless } />
                 </View>
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
