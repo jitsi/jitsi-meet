@@ -219,9 +219,10 @@ const LocalRecordingManager: ILocalRecordingManager = {
                     permittedOrigins: [ '*' ]
                 });
             }
-
             const localAudioTrack = getLocalTrack(tracks, MEDIA_TYPE.AUDIO)?.jitsiTrack?.track;
 
+            // Starting chrome 107, the recorder does not record any data if the audio stream has no tracks
+            // To fix this we create a track for the local user(muted track)
             if (!localAudioTrack) {
                 APP.conference.muteAudio(false);
                 setTimeout(() => APP.conference.muteAudio(true), 100);
