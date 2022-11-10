@@ -117,7 +117,12 @@ const styles = () => {
     return {
         triggerButton: {
             padding: '3px !important',
-            borderRadius: '4px'
+            borderRadius: '4px',
+
+            '& svg': {
+                width: '20px',
+                height: '20px'
+            }
         },
 
         contextMenu: {
