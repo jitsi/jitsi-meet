@@ -637,7 +637,7 @@ class ConnectionStatsTable extends Component<IProps> {
      * @returns {ReactElement}
      */
     _renderResolution() {
-        const { resolution, maxEnabledResolution, t, videoSsrc } = this.props;
+        const { isVirtualScreenshareParticipant, maxEnabledResolution, resolution, t, videoSsrc } = this.props;
         let resolutionString = 'N/A';
 
         if (resolution && videoSsrc) {
@@ -646,7 +646,7 @@ class ConnectionStatsTable extends Component<IProps> {
             if (width && height) {
                 resolutionString = `${width}x${height}`;
 
-                if (maxEnabledResolution && maxEnabledResolution < 720) {
+                if (maxEnabledResolution && maxEnabledResolution < 720 && !isVirtualScreenshareParticipant) {
                     const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
 
                     resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
