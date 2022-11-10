@@ -377,7 +377,7 @@ export function conferenceJoinInProgress(conference: IJitsiConference) {
  *     conference: JitsiConference
  * }}
  */
-export function conferenceLeft(conference: IJitsiConference) {
+export function conferenceLeft(conference: Partial<IJitsiConference>) {
     return {
         type: CONFERENCE_LEFT,
         conference

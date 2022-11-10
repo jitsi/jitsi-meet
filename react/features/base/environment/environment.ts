@@ -1,5 +1,5 @@
 import JitsiMeetJS from '../lib-jitsi-meet';
-import Platform from '../react/Platform.web';
+import Platform from '../react/Platform';
 
 import { isMobileBrowser } from './utils';
 

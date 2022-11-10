@@ -15,26 +15,6 @@ export function _cleanupConfig(config: IConfig) { // eslint-disable-line @typesc
 }
 
 /**
- * Returns the dial out url.
- *
- * @param {Object} state - The state of the app.
- * @returns {string}
- */
-export function getDialOutStatusUrl(state: IReduxState): string | undefined {
-    return state['features/base/config'].guestDialOutStatusUrl;
-}
-
-/**
- * Returns the dial out status url.
- *
- * @param {Object} state - The state of the app.
- * @returns {string}
- */
-export function getDialOutUrl(state: IReduxState): string | undefined {
-    return state['features/base/config'].guestDialOutUrl;
-}
-
-/**
  * Returns the replaceParticipant config.
  *
  * @param {Object} state - The state of the app.

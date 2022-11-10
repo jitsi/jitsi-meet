@@ -1,6 +1,6 @@
 import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
-import { getPropertyValue } from '../settings/functions.any';
+import { getPropertyValue } from '../settings/functions';
 
 import { VIDEO_MUTISM_AUTHORITY } from './constants';
 

@@ -7,7 +7,7 @@ import {
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { getPinnedActiveParticipants, isStageFilmstripEnabled } from '../filmstrip/functions.web';
+import { getPinnedActiveParticipants, isStageFilmstripEnabled } from '../filmstrip/functions';
 import { shouldDisplayTileView } from '../video-layout/functions';
 
 import { FOLLOW_ME_COMMAND } from './constants';

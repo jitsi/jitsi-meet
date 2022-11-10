@@ -26,7 +26,7 @@ export * from './functions.any';
  * @returns {number}
  */
 export function getMaxColumnCount(state: IReduxState, options: {
-    disableResponsiveTiles?: boolean; disableTileEnlargement?: boolean; width?: number; } = {}) {
+    disableResponsiveTiles?: boolean; disableTileEnlargement?: boolean; width?: number | null; } = {}) {
     if (typeof interfaceConfig === 'undefined') {
         return DEFAULT_MAX_COLUMNS;
     }

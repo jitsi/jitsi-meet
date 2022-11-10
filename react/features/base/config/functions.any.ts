@@ -286,3 +286,23 @@ export function setConfigFromURLParams(
 }
 
 /* eslint-enable max-params */
+
+/**
+ * Returns the dial out url.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutStatusUrl(state: IReduxState) {
+    return state['features/base/config'].guestDialOutStatusUrl;
+}
+
+/**
+ * Returns the dial out status url.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutUrl(state: IReduxState) {
+    return state['features/base/config'].guestDialOutUrl;
+}

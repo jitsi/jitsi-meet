@@ -2,7 +2,7 @@ import { NativeModules } from 'react-native';
 
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
-import { getServerURL } from '../base/settings/functions';
+import { getServerURL } from '../base/settings/functions.native';
 
 export * from './functions.any';
 

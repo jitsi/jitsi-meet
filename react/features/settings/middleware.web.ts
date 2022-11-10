@@ -1,6 +1,6 @@
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
-import { getHideSelfView } from '../base/settings/functions';
+import { getHideSelfView } from '../base/settings/functions.web';
 import { showNotification } from '../notifications/actions';
 import { DISABLE_SELF_VIEW_NOTIFICATION_ID, NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
