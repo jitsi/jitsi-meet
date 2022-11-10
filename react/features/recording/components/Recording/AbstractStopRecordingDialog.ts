@@ -1,13 +1,11 @@
-// @flow
-
 import { Component } from 'react';
 
-import {
-    createRecordingDialogEvent,
-    sendAnalytics
-} from '../../../analytics';
+import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState } from '../../../app/types';
+import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { setVideoMuted } from '../../../base/media';
+import { setVideoMuted } from '../../../base/media/actions';
 import { stopLocalVideoRecording } from '../../actions';
 import { getActiveSession } from '../../functions';
 
@@ -17,38 +15,38 @@ import LocalRecordingManager from './LocalRecordingManager';
  * The type of the React {@code Component} props of
  * {@link AbstractStopRecordingDialog}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * The {@code JitsiConference} for the current conference.
      */
-    _conference: Object,
+    _conference: IJitsiConference;
 
     /**
      * The redux representation of the recording session to be stopped.
      */
-    _fileRecordingSession: Object,
+    _fileRecordingSession: Object;
 
     /**
      * Whether the recording is a local recording or not.
      */
-    _localRecording: boolean,
+    _localRecording: boolean;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * The user trying to stop the video while local recording is running.
      */
-    localRecordingVideoStop?: boolean,
+    localRecordingVideoStop?: boolean;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
-};
+    t: Function;
+}
 
 /**
  * Abstract React Component for getting confirmation to stop a file recording
@@ -56,7 +54,7 @@ export type Props = {
  *
  * @augments Component
  */
-export default class AbstractStopRecordingDialog<P: Props>
+export default class AbstractStopRecordingDialog<P extends IProps>
     extends Component<P> {
     /**
      * Initializes a new {@code AbstrStopRecordingDialog} instance.
@@ -70,8 +68,6 @@ export default class AbstractStopRecordingDialog<P: Props>
         this._onSubmit = this._onSubmit.bind(this);
         this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
     }
-
-    _onSubmit: () => boolean;
 
     /**
      * Stops the recording session.
@@ -90,7 +86,7 @@ export default class AbstractStopRecordingDialog<P: Props>
         } else {
             const { _fileRecordingSession } = this.props;
 
-            if (_fileRecordingSession) {
+            if (_fileRecordingSession) { // @ts-ignore
                 this.props._conference.stopRecording(_fileRecordingSession.id);
                 this._toggleScreenshotCapture();
             }
@@ -98,8 +94,6 @@ export default class AbstractStopRecordingDialog<P: Props>
 
         return true;
     }
-
-    _toggleScreenshotCapture: () => void;
 
     /**
      * Toggles screenshot capture feature.
@@ -122,7 +116,7 @@ export default class AbstractStopRecordingDialog<P: Props>
  *     _fileRecordingSession: Object
  * }}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     return {
         _conference: state['features/base/conference'].conference,
         _fileRecordingSession:

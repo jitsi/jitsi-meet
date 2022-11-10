@@ -1,17 +1,17 @@
-// @flow
-
-import { getMeetingRegion, getRecordingSharingUrl } from '../base/config';
+import { IStore } from '../app/types';
+import { getMeetingRegion, getRecordingSharingUrl } from '../base/config/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import { getLocalParticipant, getParticipantDisplayName } from '../base/participants';
+import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
 import { copyText } from '../base/util/copyText';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
 import {
-    NOTIFICATION_TIMEOUT_TYPE,
     hideNotification,
     showErrorNotification,
     showNotification,
     showWarningNotification
-} from '../notifications';
+} from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import { INotificationProps } from '../notifications/types';
 
 import {
     CLEAR_RECORDING_SESSIONS,
@@ -30,8 +30,6 @@ import {
     sendMeetingHighlight
 } from './functions';
 import logger from './logger';
-
-declare var APP: Object;
 
 /**
  * Clears the data of every recording sessions.
@@ -70,7 +68,7 @@ export function setHighlightMomentButtonState(disabled: boolean) {
  * @returns {Function}
  */
 export function hidePendingRecordingNotification(streamType: string) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { pendingNotificationUids } = getState()['features/recording'];
         const pendingNotificationUid = pendingNotificationUids[streamType];
 
@@ -108,7 +106,7 @@ export function setLiveStreamKey(streamKey: string) {
  * @returns {Function}
  */
 export function showPendingRecordingNotification(streamType: string) {
-    return async (dispatch: Function) => {
+    return async (dispatch: IStore['dispatch']) => {
         const isLiveStreaming
             = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
         const dialogProps = isLiveStreaming ? {
@@ -209,13 +207,13 @@ export function showStoppedRecordingNotification(streamType: string, participant
  */
 export function showStartedRecordingNotification(
         mode: string,
-        initiator: Object | string,
+        initiator: { getId: Function; } | string,
         sessionId: string) {
     return async (dispatch: Function, getState: Function) => {
         const state = getState();
         const initiatorId = getResourceId(initiator);
         const participantName = getParticipantDisplayName(state, initiatorId);
-        let dialogProps = {
+        let dialogProps: INotificationProps = {
             descriptionKey: participantName ? 'liveStreaming.onBy' : 'liveStreaming.on',
             descriptionArguments: { name: participantName },
             titleKey: 'dialog.liveStreaming'
@@ -223,7 +221,7 @@ export function showStartedRecordingNotification(
 
         if (mode !== JitsiMeetJS.constants.recording.mode.STREAM) {
             const recordingSharingUrl = getRecordingSharingUrl(state);
-            const iAmRecordingInitiator = getLocalParticipant(state).id === initiatorId;
+            const iAmRecordingInitiator = getLocalParticipant(state)?.id === initiatorId;
 
             dialogProps = {
                 customActionHandler: undefined,
@@ -278,7 +276,7 @@ export function showStartedRecordingNotification(
  *     sessionData: Object
  * }}
  */
-export function updateRecordingSessionData(session: Object) {
+export function updateRecordingSessionData(session: any) {
     const status = session.getStatus();
     const timestamp
         = status === JitsiRecordingConstants.status.ON
@@ -327,7 +325,7 @@ export function setSelectedRecordingService(selectedRecordingService: string) {
  *     uid: number
  * }}
  */
-function _setPendingRecordingNotificationUid(uid: ?number, streamType: string) {
+function _setPendingRecordingNotificationUid(uid: string | undefined, streamType: string) {
     return {
         type: SET_PENDING_RECORDING_NOTIFICATION_UID,
         streamType,
@@ -341,7 +339,7 @@ function _setPendingRecordingNotificationUid(uid: ?number, streamType: string) {
  * @param {boolean} onlySelf - Whether to only record the local streams.
  * @returns {Object}
  */
-export function startLocalVideoRecording(onlySelf) {
+export function startLocalVideoRecording(onlySelf: boolean) {
     return {
         type: START_LOCAL_RECORDING,
         onlySelf

@@ -1,11 +1,7 @@
-// @flow
-
-import { getLocalParticipant } from '../base/participants';
-import { StateListenerRegistry } from '../base/redux';
-import { appendSuffix } from '../display-name';
-import { shouldDisplayTileView } from '../video-layout';
-
-declare var APP: Object;
+import { getLocalParticipant } from '../base/participants/functions';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { appendSuffix } from '../display-name/functions';
+import { shouldDisplayTileView } from '../video-layout/functions';
 
 /**
  * StateListenerRegistry provides a reliable way of detecting changes to

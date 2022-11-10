@@ -58,6 +58,7 @@ export interface IJitsiConference {
     isCallstatsEnabled: Function;
     isEndConferenceSupported: Function;
     isLobbySupported: Function;
+    isSIPCallingSupported: Function;
     isStartAudioMuted: Function;
     isStartVideoMuted: Function;
     join: Function;

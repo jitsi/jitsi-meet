@@ -1,27 +1,27 @@
-/* @flow */
-
-
-import {
-    createRecordingEvent,
-    sendAnalytics
-} from '../analytics';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_JOIN_IN_PROGRESS, getCurrentConference } from '../base/conference';
+import { createRecordingEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
+import { IStore } from '../app/types';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
+import { getCurrentConference } from '../base/conference/functions';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
 } from '../base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../base/media';
-import { getParticipantDisplayName, updateLocalRecordingStatus } from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { updateLocalRecordingStatus } from '../base/participants/actions';
+import { getParticipantDisplayName } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import {
     playSound,
     registerSound,
     stopSound,
     unregisterSound
-} from '../base/sounds';
-import { TRACK_ADDED } from '../base/tracks';
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showNotification } from '../notifications';
+} from '../base/sounds/actions';
+import { TRACK_ADDED } from '../base/tracks/actionTypes';
+import { showErrorNotification, showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
@@ -53,9 +53,6 @@ import {
     RECORDING_OFF_SOUND_FILE,
     RECORDING_ON_SOUND_FILE
 } from './sounds';
-
-declare var APP: Object;
-declare var interfaceConfig: Object;
 
 /**
  * StateListenerRegistry provides a reliable way to detect the leaving of a
@@ -119,7 +116,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
 
         conference.on(
             JitsiConferenceEvents.RECORDER_STATE_CHANGED,
-            recorderSession => {
+            (recorderSession: any) => {
                 if (recorderSession) {
                     recorderSession.getID() && dispatch(updateRecordingSessionData(recorderSession));
                     recorderSession.getError() && _showRecordingErrorNotification(recorderSession, dispatch);
@@ -156,7 +153,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             if (typeof APP !== 'undefined') {
                 APP.API.notifyRecordingStatusChanged(true, 'local');
             }
-        } catch (err) {
+        } catch (err: any) {
             logger.error('Capture failed', err);
 
             let descriptionKey = 'recording.error';
@@ -213,16 +210,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
 
         const updatedSessionData
             = getSessionById(getState(), action.sessionData.id);
-        const { initiator, mode, terminator } = updatedSessionData;
+        const { initiator, mode = '', terminator } = updatedSessionData ?? {};
         const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
 
-        if (updatedSessionData.status === PENDING
+        if (updatedSessionData?.status === PENDING
             && (!oldSessionData || oldSessionData.status !== PENDING)) {
             dispatch(showPendingRecordingNotification(mode));
-        } else if (updatedSessionData.status !== PENDING) {
+        } else if (updatedSessionData?.status !== PENDING) {
             dispatch(hidePendingRecordingNotification(mode));
 
-            if (updatedSessionData.status === ON) {
+            if (updatedSessionData?.status === ON) {
 
                 // We receive 2 updates of the session status ON. The first one is from jibri when it joins.
                 // The second one is from jicofo which will deliever the initiator value. Since the start
@@ -256,7 +253,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                         APP.API.notifyRecordingStatusChanged(true, mode);
                     }
                 }
-            } else if (updatedSessionData.status === OFF
+            } else if (updatedSessionData?.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
                 if (terminator) {
                     dispatch(
@@ -266,7 +263,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
 
                 let duration = 0, soundOff, soundOn;
 
-                if (oldSessionData && oldSessionData.timestamp) {
+                if (oldSessionData?.timestamp) {
                     duration
                         = (Date.now() / 1000) - oldSessionData.timestamp;
                 }
@@ -319,7 +316,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
  * @param {Dispatch} dispatch - The Redux Dispatch function.
  * @returns {void}
  */
-function _showRecordingErrorNotification(recorderSession, dispatch) {
+function _showRecordingErrorNotification(recorderSession: any, dispatch: IStore['dispatch']) {
     const mode = recorderSession.getMode();
     const error = recorderSession.getError();
     const isStreamMode = mode === JitsiMeetJS.constants.recording.mode.STREAM;

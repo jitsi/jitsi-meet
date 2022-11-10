@@ -27,6 +27,7 @@ interface IWindow {
     clearTimeout: typeof clearTimeout;
     setImmediate: typeof setImmediate;
     clearImmediate: typeof clearImmediate;
+    addEventListener: Function;
 }
 
 interface INavigator {
