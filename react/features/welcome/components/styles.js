@@ -5,8 +5,6 @@ import { StyleSheet } from 'react-native';
 import { BoxModel } from '../../base/styles';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
-export const PLACEHOLDER_TEXT_COLOR = BaseTheme.palette.text01;
-
 export const AVATAR_SIZE = 104;
 
 /**
