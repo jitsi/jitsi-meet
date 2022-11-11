@@ -86,6 +86,16 @@ export function getActiveParticipantsIds(_state: any) {
 }
 
 /**
+ * Not implemented on mobile.
+ *
+ * @param {any} _state - Redux state.
+ * @returns {Array<Object>}
+ */
+export function getPinnedActiveParticipants(_state: any) {
+    return [];
+}
+
+/**
  * Returns the number of participants displayed in tile view.
  *
  * @param {Object | Function} stateful - The Object or Function that can be
