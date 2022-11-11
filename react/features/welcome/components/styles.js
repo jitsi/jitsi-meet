@@ -215,9 +215,8 @@ export default {
     },
 
     customInput: {
-        fontSize: 32,
+        fontSize: 18,
         letterSpacing: 0,
-        lineHeight: BaseTheme.spacing[6],
         textAlign: 'center'
     },
 
