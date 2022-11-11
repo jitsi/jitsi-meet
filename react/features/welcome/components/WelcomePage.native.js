@@ -4,7 +4,6 @@ import { Animated, SafeAreaView, TouchableHighlight, View } from 'react-native';
 import { getName } from '../../app/functions';
 import { translate } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
-import JitsiStatusBar from '../../base/modal/components/JitsiStatusBar';
 import { LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
@@ -373,7 +372,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
     _renderFullUI() {
         return (
             <>
-                <JitsiStatusBar />
                 { this._renderRoomNameInput() }
                 <View style = { styles.welcomePage }>
                     <WelcomePageTabs
