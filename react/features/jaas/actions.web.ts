@@ -1,8 +1,7 @@
-// @flow
+import { IStore } from '../app/types';
+import { openDialog } from '../base/dialog/actions';
 
-import { openDialog } from '../base/dialog';
-
-import { PremiumFeatureDialog } from './components';
+import PremiumFeatureDialog from './components/web/PremiumFeatureDialog';
 import { isFeatureDisabled } from './functions';
 
 /**
@@ -13,7 +12,7 @@ import { isFeatureDisabled } from './functions';
  * @returns {Function}
  */
 export function maybeShowPremiumFeatureDialog(feature: string) {
-    return function(dispatch: Function, getState: Function) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         if (isFeatureDisabled(getState(), feature)) {
             dispatch(openDialog(PremiumFeatureDialog));
 

@@ -1,4 +1,4 @@
-// @flow
+import { IStore } from '../app/types';
 
 import { SET_DETAILS } from './actionTypes';
 import { getVpaasTenant, sendGetDetailsRequest } from './functions';
@@ -10,7 +10,7 @@ import logger from './logger';
  * @param {Object} details - The customer details object.
  * @returns {Object}
  */
-function setCustomerDetails(details) {
+function setCustomerDetails(details: Object) {
     return {
         type: SET_DETAILS,
         payload: details
@@ -23,7 +23,7 @@ function setCustomerDetails(details) {
  * @returns {Function}
  */
 export function getCustomerDetails() {
-    return async function(dispatch: Function, getState: Function) {
+    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const state = getState();
         const baseUrl = state['features/base/config'].jaasActuatorUrl || 'https://api-vo-pilot.jitsi.net/jaas-actuator';
         const appId = getVpaasTenant(state);

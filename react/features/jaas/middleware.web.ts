@@ -1,10 +1,10 @@
-import { redirectToStaticPage } from '../app/actions';
+import { redirectToStaticPage } from '../app/actions.web';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
 } from '../base/lib-jitsi-meet';
-import { MiddlewareRegistry } from '../base/redux';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { SET_DETAILS } from './actionTypes';
 import { STATUSES } from './constants';
@@ -27,7 +27,7 @@ MiddlewareRegistry.register(store => next => async action => {
         }
 
         conference.on(
-            JitsiConferenceEvents.CONFERENCE_ERROR, (errorType, errorMsg) => {
+            JitsiConferenceEvents.CONFERENCE_ERROR, (errorType: string, errorMsg: string) => {
                 errorType === JitsiConferenceErrors.SETTINGS_ERROR && logger.error(errorMsg);
             });
         break;

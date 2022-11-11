@@ -1,7 +1,10 @@
-import { openSheet } from '../base/dialog';
+import { IStore } from '../app/types';
+import { openSheet } from '../base/dialog/actions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
+import { showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
+// @ts-ignore
 import HighlightDialog from './components/Recording/native/HighlightDialog';
 
 export * from './actions.any';
@@ -12,7 +15,7 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function openHighlightDialog() {
-    return (dispatch: Function) => {
+    return (dispatch: IStore['dispatch']) => {
         dispatch(openSheet(HighlightDialog));
     };
 }
@@ -26,7 +29,7 @@ export function openHighlightDialog() {
  * @returns {showNotification}
  */
 export function showRecordingLimitNotification(streamType: string) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const isLiveStreaming = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
         let descriptionKey, titleKey;
 

@@ -1,11 +1,14 @@
-// @flow
-
+import { IReduxState } from '../app/types';
 import { isMobileBrowser } from '../base/environment/utils';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
-import { getLocalParticipant, getRemoteParticipants, isLocalParticipantModerator } from '../base/participants';
+import {
+    getLocalParticipant,
+    getRemoteParticipants,
+    isLocalParticipantModerator
+} from '../base/participants/functions';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
-import { isEnabled as isDropboxEnabled } from '../dropbox';
+import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
@@ -20,7 +23,7 @@ import logger from './logger';
  * @param {string} mode - Find an active recording session of the given mode.
  * @returns {Object|undefined}
  */
-export function getActiveSession(state: Object, mode: string) {
+export function getActiveSession(state: IReduxState, mode: string) {
     const { sessionDatas } = state['features/recording'];
     const { status: statusConstants } = JitsiRecordingConstants;
 
@@ -37,7 +40,7 @@ export function getActiveSession(state: Object, mode: string) {
  * @param {number} size - The size in MB of the recorded video.
  * @returns {number} - The estimated duration in minutes.
  */
-export function getRecordingDurationEstimation(size: ?number) {
+export function getRecordingDurationEstimation(size?: number | null) {
     return Math.floor((size || 0) / 10);
 }
 
@@ -49,7 +52,7 @@ export function getRecordingDurationEstimation(size: ?number) {
  * @param {string} id - The ID of the recording session to find.
  * @returns {Object|undefined}
  */
-export function getSessionById(state: Object, id: string) {
+export function getSessionById(state: IReduxState, id: string) {
     return state['features/recording'].sessionDatas.find(
         sessionData => sessionData.id === id);
 }
@@ -81,7 +84,7 @@ export async function getRecordingLink(url: string, recordingSessionId: string, 
  * @param {Object} state - The redux state to search in.
  * @returns {string}
  */
-export function isSavingRecordingOnDropbox(state: Object) {
+export function isSavingRecordingOnDropbox(state: IReduxState) {
     return isDropboxEnabled(state)
         && state['features/recording'].selectedRecordingService === RECORDING_TYPES.DROPBOX;
 }
@@ -92,7 +95,7 @@ export function isSavingRecordingOnDropbox(state: Object) {
  * @param {Object} state - The redux state to search in.
  * @returns {string}
  */
-export function isHighlightMeetingMomentDisabled(state: Object) {
+export function isHighlightMeetingMomentDisabled(state: IReduxState) {
     return state['features/recording'].disableHighlightMeetingMoment;
 }
 
@@ -105,7 +108,7 @@ export function isHighlightMeetingMomentDisabled(state: Object) {
  * @param {string} mode - The recording mode to get status for.
  * @returns {string|undefined}
  */
-export function getSessionStatusToShow(state: Object, mode: string): ?string {
+export function getSessionStatusToShow(state: IReduxState, mode: string): string | undefined {
     const recordingSessions = state['features/recording'].sessionDatas;
     let status;
 
@@ -149,7 +152,7 @@ export function supportsLocalRecording() {
  *    visible: boolean
  * }}
  */
-export function getRecordButtonProps(state: Object): ?string {
+export function getRecordButtonProps(state: IReduxState) {
     let visible;
 
     // a button can be disabled/enabled if enableFeaturesBasedOnToken
@@ -197,7 +200,7 @@ export function getRecordButtonProps(state: Object): ?string {
  * @param {Object | string} recorder - A participant or it's resource.
  * @returns {string|undefined}
  */
-export function getResourceId(recorder: string | Object) {
+export function getResourceId(recorder: string | { getId: Function; }) {
     if (recorder) {
         return typeof recorder === 'string'
             ? recorder
@@ -211,12 +214,12 @@ export function getResourceId(recorder: string | Object) {
  * @param  {Object} state - Redux state.
  * @returns {boolean} - True if sent, false otherwise.
  */
-export async function sendMeetingHighlight(state: Object) {
+export async function sendMeetingHighlight(state: IReduxState) {
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
     const { connection } = state['features/base/connection'];
-    const jid = connection.getJid();
+    const jid = connection?.getJid();
     const localParticipant = getLocalParticipant(state);
 
     const headers = {
@@ -226,10 +229,10 @@ export async function sendMeetingHighlight(state: Object) {
 
     const reqBody = {
         meetingFqn: extractFqnFromPath(state),
-        sessionId: conference.getMeetingUniqueId(),
+        sessionId: conference?.getMeetingUniqueId(),
         submitted: Date.now(),
-        participantId: localParticipant.jwtId,
-        participantName: localParticipant.name,
+        participantId: localParticipant?.jwtId,
+        participantName: localParticipant?.name,
         participantJid: jid
     };
 
@@ -259,7 +262,7 @@ export async function sendMeetingHighlight(state: Object) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-function isRemoteParticipantRecordingLocally(state) {
+function isRemoteParticipantRecordingLocally(state: IReduxState) {
     const participants = getRemoteParticipants(state);
 
     // eslint-disable-next-line prefer-const

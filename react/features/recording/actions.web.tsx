@@ -1,10 +1,10 @@
-// @flow
-
 import React from 'react';
 
 import JitsiMeetJS from '../base/lib-jitsi-meet';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
+import { showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
+// @ts-ignore
 import { RecordingLimitNotificationDescription } from './components';
 
 export * from './actions.any';

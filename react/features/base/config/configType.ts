@@ -342,6 +342,7 @@ export interface IConfig {
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
     inviteAppName?: string | null;
+    jaasActuatorUrl?: string;
     jaasFeedbackMetadataURL?: string;
     jaasTokenUrl?: string;
     lastNLimits?: {
@@ -391,6 +392,7 @@ export interface IConfig {
         hideMuteAllButton?: boolean;
     };
     pcStatsInterval?: number;
+    peopleSearchUrl?: string;
     preferH264?: boolean;
     preferredTranscribeLanguage?: string;
     prejoinConfig?: {
@@ -427,6 +429,7 @@ export interface IConfig {
         mode?: 'always' | 'recording';
     };
     serviceUrl?: string;
+    sipInviteUrl?: string;
     speakerStats?: {
         disableSearch?: boolean;
         disabled?: boolean;

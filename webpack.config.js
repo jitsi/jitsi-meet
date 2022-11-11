@@ -217,6 +217,7 @@ function getConfig(options = {}) {
             extensions: [
                 '.web.js',
                 '.web.ts',
+                '.web.tsx',
 
                 // Typescript:
                 '.tsx',

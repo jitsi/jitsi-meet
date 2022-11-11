@@ -1,6 +1,8 @@
-import { createVpaasConferenceJoinedEvent, sendAnalytics } from '../analytics';
+import { createVpaasConferenceJoinedEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
+import { IReduxState } from '../app/types';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
-import { MiddlewareRegistry } from '../base/redux';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { getVpaasTenant, isVpaasMeeting } from './functions';
 
@@ -29,7 +31,7 @@ MiddlewareRegistry.register(store => next => async action => {
  * @param {Store} state - The app state.
  * @returns {Function}
  */
-function _maybeTrackVpaasConferenceJoin(state) {
+function _maybeTrackVpaasConferenceJoin(state: IReduxState) {
     if (isVpaasMeeting(state)) {
         sendAnalytics(createVpaasConferenceJoinedEvent(
             getVpaasTenant(state)));
