@@ -67,6 +67,7 @@ export const conferenceScreenOptions = fullScreenOptions;
  * Tab bar options for chat screen.
  */
 export const chatTabBarOptions = {
+    swipeEnabled: false,
     tabBarIndicatorStyle: {
         backgroundColor: BaseTheme.palette.link01Active
     },

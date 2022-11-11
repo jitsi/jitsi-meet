@@ -5,6 +5,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../../../app/types';
 import {
     getClientHeight,
     getClientWidth
@@ -27,6 +28,10 @@ const ChatAndPolls = () => {
     const clientHeight = useSelector(getClientHeight);
     const clientWidth = useSelector(getClientWidth);
     const dispatch = useDispatch();
+    const { isPollsTabFocused } = useSelector((state: IReduxState) => state['features/chat']);
+    const initialRouteName = isPollsTabFocused
+        ? screen.conference.chatandpolls.tab.polls
+        : screen.conference.chatandpolls.tab.chat;
 
     return (
         // @ts-ignore
@@ -36,6 +41,7 @@ const ChatAndPolls = () => {
                 height: clientHeight,
                 width: clientWidth
             }}
+            initialRouteName = { initialRouteName }
             screenOptions = { chatTabBarOptions }>
             <ChatTab.Screen
                 component = { Chat }

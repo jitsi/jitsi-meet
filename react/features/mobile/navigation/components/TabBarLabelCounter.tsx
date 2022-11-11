@@ -7,30 +7,35 @@ import { navigationStyles } from './styles';
 
 interface ITabBarLabelCounterProps {
     activeUnreadNr: boolean;
+    isFocused: boolean;
+    label: string;
     nbUnread?: number;
-    t: Function;
 }
 
-export const TabBarLabelCounter = ({ activeUnreadNr, nbUnread, t }: ITabBarLabelCounterProps) => (
-    <View
-        style = {
-        navigationStyles.unreadCounterContainer as StyleProp<TextStyle> }>
-        <Text
-            style = { navigationStyles.unreadCounterDescription }>
-            { t && t }
-        </Text>
-        {
-            activeUnreadNr && (
-                <View
-                    style = {
-                    navigationStyles.unreadCounterCircle as StyleProp<TextStyle> }>
-                    <Text
-                        style = {
-                        navigationStyles.unreadCounter as StyleProp<TextStyle> }>
-                        { nbUnread }
-                    </Text>
-                </View>
-            )
-        }
-    </View>
-);
+export const TabBarLabelCounter = ({ activeUnreadNr, isFocused, label, nbUnread }: ITabBarLabelCounterProps) => {
+    const labelStyles = isFocused
+        ? navigationStyles.unreadCounterDescriptionFocused
+        : navigationStyles.unreadCounterDescription;
+
+    return (
+        <View
+            style = {
+                navigationStyles.unreadCounterContainer as StyleProp<TextStyle> }>
+            <Text
+                style = { labelStyles }>
+                { label && label }
+            </Text>
+            {
+                activeUnreadNr && (
+                    <View
+                        style = { navigationStyles.unreadCounterCircle as StyleProp<TextStyle> }>
+                        <Text
+                            style = { navigationStyles.unreadCounter as StyleProp<TextStyle> }>
+                            { nbUnread }
+                        </Text>
+                    </View>
+                )
+            }
+        </View>
+    );
+};

@@ -4,6 +4,11 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const TEXT_COLOR = BaseTheme.palette.text01;
 
+const unreadCounterDescription = {
+    ...BaseTheme.typography.bodyShortBoldLarge,
+    color: BaseTheme.palette.text03
+};
+
 /**
  * Styles of the navigation feature.
  */
@@ -36,7 +41,11 @@ export const navigationStyles = {
     },
 
     unreadCounterDescription: {
-        ...BaseTheme.typography.bodyShortBold,
+        ...unreadCounterDescription
+    },
+
+    unreadCounterDescriptionFocused: {
+        ...unreadCounterDescription,
         color: BaseTheme.palette.text01
     },
 

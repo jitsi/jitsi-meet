@@ -27,17 +27,17 @@ const PollsPane = (props: AbstractProps) => {
         const activeUnreadPollsNr = !isPollsTabFocused && nbUnreadPolls > 0;
 
         navigation.setOptions({
-
             // eslint-disable-next-line react/no-multi-comp
             tabBarLabel: () => (
                 <TabBarLabelCounter
                     activeUnreadNr = { activeUnreadPollsNr }
-                    nbUnread = { nbUnreadPolls }
-                    t = { t('chat.tabs.polls') } />
+                    isFocused = { isPollsTabFocused }
+                    label = { t('chat.tabs.polls') }
+                    nbUnread = { nbUnreadPolls } />
             )
         });
 
-    }, [ nbUnreadPolls ]);
+    }, [ isPollsTabFocused, nbUnreadPolls ]);
 
     return (
         <JitsiScreen
