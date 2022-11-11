@@ -209,7 +209,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
  */
 export function mapStateToProps(state: Object) {
     return {
-        _autoHideTimeout: state['features/base/config'].connectionIndicators.autoHideTimeout ?? defaultAutoHideTimeout
+        _autoHideTimeout: state['features/base/config'].connectionIndicators?.autoHideTimeout ?? defaultAutoHideTimeout
     };
 }
 
