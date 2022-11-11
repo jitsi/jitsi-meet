@@ -54,10 +54,6 @@ const useStyles = makeStyles()(() => {
             '&>div': {
                 display: 'flex',
                 overflow: 'hidden'
-            },
-
-            '&:first-child': {
-                marginLeft: '6px'
             }
         }
     };
