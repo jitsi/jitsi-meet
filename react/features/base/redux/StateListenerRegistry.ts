@@ -136,6 +136,10 @@ class StateListenerRegistry {
      * @returns {void}
      */
     register(selector: Selector, listener: Listener, options?: RegistrationOptions) {
+        if (typeof selector !== 'function' || typeof listener !== 'function') {
+            throw new Error('Invalid selector or listener!');
+        }
+
         this._selectorListeners.add({
             listener,
             selector,
