@@ -2,7 +2,7 @@
 
 import React, { Component, Fragment } from 'react';
 
-import { statsEmitter } from '../../../connection-indicator';
+import statsEmitter from '../../../connection-indicator/statsEmitter';
 import { getLocalParticipant } from '../../participants';
 import { connect } from '../../redux';
 import { isTestModeEnabled } from '../functions';

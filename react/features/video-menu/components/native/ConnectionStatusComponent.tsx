@@ -1,17 +1,34 @@
-import React, { Component } from 'react';
+/* eslint-disable lines-around-comment */
+
+import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
-import { Avatar } from '../../../base/avatar';
-import { BottomSheet, hideSheet } from '../../../base/dialog';
+import { IReduxState } from '../../../app/types';
+// @ts-ignore
+import Avatar from '../../../base/avatar/components/Avatar';
+import { hideSheet } from '../../../base/dialog/actions';
+// @ts-ignore
+import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
+// @ts-ignore
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
-import { translate } from '../../../base/i18n';
-import { IconArrowDownLarge, IconArrowUpLarge } from '../../../base/icons';
-import { getParticipantDisplayName } from '../../../base/participants';
-import { BaseIndicator } from '../../../base/react';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import { IconArrowDownLarge, IconArrowUpLarge } from '../../../base/icons/svg';
+import { MEDIA_TYPE } from '../../../base/media/constants';
+import { getParticipantDisplayName } from '../../../base/participants/functions';
+// @ts-ignore
+import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
+import { connect } from '../../../base/redux/functions';
+import {
+    getTrackByMediaTypeAndParticipant
+} from '../../../base/tracks/functions.native';
+import {
+    isTrackStreamingStatusInactive,
+    isTrackStreamingStatusInterrupted
+} from '../../../connection-indicator/functions';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
 
+// @ts-ignore
 import styles from './styles';
 
 /**
@@ -20,62 +37,87 @@ import styles from './styles';
 const AVATAR_SIZE = 25;
 
 const CONNECTION_QUALITY = [
-    'Low',
-    'Medium',
-    'Good'
+
+    // Full (3 bars)
+    {
+        msg: 'connectionindicator.quality.good',
+        percent: 30 // INDICATOR_DISPLAY_THRESHOLD
+    },
+
+    // 2 bars.
+    {
+        msg: 'connectionindicator.quality.nonoptimal',
+        percent: 10
+    },
+
+    // 1 bar.
+    {
+        msg: 'connectionindicator.quality.poor',
+        percent: 0
+    }
 ];
 
-export type Props = {
+type IProps = {
 
     /**
-     * The Redux dispatch function.
+     * Whether this participant's connection is inactive.
      */
-    dispatch: Function,
+    _isConnectionStatusInactive: boolean;
 
     /**
-     * The ID of the participant that this button is supposed to pin.
+     * Whether this participant's connection is interrupted.
      */
-    participantID: string,
+    _isConnectionStatusInterrupted: boolean;
 
     /**
      * True if the menu is currently open, false otherwise.
      */
-    _isOpen: boolean,
+    _isOpen: boolean;
 
     /**
      * Display name of the participant retrieved from Redux.
      */
-    _participantDisplayName: string,
+    _participantDisplayName: string;
+
+    /**
+     * The Redux dispatch function.
+     */
+    dispatch: Function;
+
+    /**
+     * The ID of the participant that this button is supposed to pin.
+     */
+    participantID: string;
 
     /**
      * The function to be used to translate i18n labels.
      */
-    t: Function,
+    t: Function;
 
     /**
      * Theme used for styles.
      */
-    theme: Object
-}
+    theme: any;
+};
 
 /**
  * The type of the React {@code Component} state of {@link ConnectionStatusComponent}.
  */
-type State = {
-    resolutionString: string,
-    downloadString: string,
-    uploadString: string,
-    packetLostDownloadString: string,
-    packetLostUploadString: string,
-    serverRegionString: string,
-    codecString: string,
-    connectionString: string
+type IState = {
+    codecString: string;
+    connectionString: string;
+    downloadString: string;
+    packetLostDownloadString: string;
+    packetLostUploadString: string;
+    resolutionString: string;
+    serverRegionString: string;
+    uploadString: string;
 };
 
 /**
  * Class to implement a popup menu that show the connection statistics.
  */
-class ConnectionStatusComponent extends Component<Props, State> {
+class ConnectionStatusComponent extends PureComponent<IProps, IState> {
 
     /**
      * Constructor of the component.
@@ -85,7 +127,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
@@ -121,15 +163,15 @@ class ConnectionStatusComponent extends Component<Props, State> {
                 <View style = { styles.statsWrapper }>
                     <View style = { styles.statsInfoCell }>
                         <Text style = { styles.statsTitleText }>
-                            { `${t('connectionindicator.status')} ` }
+                            { t('connectionindicator.status') }
                         </Text>
                         <Text style = { styles.statsInfoText }>
-                            { this.state.connectionString }
+                            { t(this.state.connectionString) }
                         </Text>
                     </View>
                     <View style = { styles.statsInfoCell }>
                         <Text style = { styles.statsTitleText }>
-                            { `${t('connectionindicator.bitrate')}` }
+                            { t('connectionindicator.bitrate') }
                         </Text>
                         <BaseIndicator
                             icon = { IconArrowDownLarge }
@@ -150,7 +192,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                     </View>
                     <View style = { styles.statsInfoCell }>
                         <Text style = { styles.statsTitleText }>
-                            { `${t('connectionindicator.packetloss')}` }
+                            { t('connectionindicator.packetloss') }
                         </Text>
                         <BaseIndicator
                             icon = { IconArrowDownLarge }
@@ -171,7 +213,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                     </View>
                     <View style = { styles.statsInfoCell }>
                         <Text style = { styles.statsTitleText }>
-                            { `${t('connectionindicator.resolution')} ` }
+                            { t('connectionindicator.resolution') }
                         </Text>
                         <Text style = { styles.statsInfoText }>
                             { this.state.resolutionString }
@@ -179,7 +221,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                     </View>
                     <View style = { styles.statsInfoCell }>
                         <Text style = { styles.statsTitleText }>
-                            { `${t('connectionindicator.codecs')}` }
+                            { t('connectionindicator.codecs') }
                         </Text>
                         <Text style = { styles.statsInfoText }>
                             { this.state.codecString }
@@ -206,7 +248,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         if (prevProps.participantID !== this.props.participantID) {
             statsEmitter.unsubscribeToClientStats(
                 prevProps.participantID, this._onStatsUpdated);
@@ -214,8 +256,6 @@ class ConnectionStatusComponent extends Component<Props, State> {
                 this.props.participantID, this._onStatsUpdated);
         }
     }
-
-    _onStatsUpdated: Object => void;
 
     /**
      * Callback invoked when new connection stats associated with the passed in
@@ -239,9 +279,8 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @private
      * @returns {State}
      */
-    _buildState(stats) {
+    _buildState(stats: any) {
         const { download: downloadBitrate, upload: uploadBitrate } = this._extractBitrate(stats) ?? {};
-
         const { download: downloadPacketLost, upload: uploadPacketLost } = this._extractPacketLost(stats) ?? {};
 
         return {
@@ -254,7 +293,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                 ? this.state.packetLostUploadString : `${uploadPacketLost}%`,
             serverRegionString: this._extractServer(stats) ?? this.state.serverRegionString,
             codecString: this._extractCodecs(stats) ?? this.state.codecString,
-            connectionString: this._extractConnection(stats) ?? this.state.connectionString
+            connectionString: this._extractConnection(stats)
         };
     }
 
@@ -265,7 +304,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @private
      * @returns {string}
      */
-    _extractResolutionString(stats) {
+    _extractResolutionString(stats: any) {
         const { framerate, resolution } = stats;
 
         const resolutionString = Object.keys(resolution || {})
@@ -290,7 +329,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @private
      * @returns {{ download, upload }}
      */
-    _extractBitrate(stats) {
+    _extractBitrate(stats: any) {
         return stats.bitrate;
     }
 
@@ -301,7 +340,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @private
      * @returns {{ download, upload }}
      */
-    _extractPacketLost(stats) {
+    _extractPacketLost(stats: any) {
         return stats.packetLoss;
     }
 
@@ -312,7 +351,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @private
      * @returns {string}
      */
-    _extractServer(stats) {
+    _extractServer(stats: any) {
         return stats.serverRegion;
     }
 
@@ -323,17 +362,17 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @private
      * @returns {string}
      */
-    _extractCodecs(stats) {
+    _extractCodecs(stats: any) {
         const { codec } = stats;
 
         let codecString;
 
         if (codec) {
             const audioCodecs = Object.values(codec)
-                .map(c => c.audio)
+                .map((c: any) => c.audio)
                 .filter(Boolean);
             const videoCodecs = Object.values(codec)
-                .map(c => c.video)
+                .map((c: any) => c.video)
                 .filter(Boolean);
 
             if (audioCodecs.length || videoCodecs.length) {
@@ -352,14 +391,39 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @private
      * @returns {string}
      */
-    _extractConnection(stats) {
+    _extractConnection(stats: any) {
         const { connectionQuality } = stats;
+        const {
+            _isConnectionStatusInactive,
+            _isConnectionStatusInterrupted
+        } = this.props;
 
-        if (connectionQuality) {
-            const signalLevel = Math.floor(connectionQuality / 33.4);
-
-            return CONNECTION_QUALITY[signalLevel];
+        if (_isConnectionStatusInactive) {
+            return 'connectionindicator.quality.inactive';
+        } else if (_isConnectionStatusInterrupted) {
+            return 'connectionindicator.quality.lost';
+        } else if (typeof connectionQuality === 'undefined') {
+            return 'connectionindicator.quality.good';
         }
+
+        const qualityConfig = this._getQualityConfig(connectionQuality);
+
+        return qualityConfig.msg;
+    }
+
+    /**
+     * Get the quality configuration from CONNECTION_QUALITY which has a percentage
+     * that matches or exceeds the passed in percentage. The implementation
+     * assumes CONNECTION_QUALITY is already sorted by highest to lowest
+     * percentage.
+     *
+     * @param {number} percent - The connection percentage, out of 100, to find
+     * the closest matching configuration for.
+     * @private
+     * @returns {Object}
+     */
+    _getQualityConfig(percent: number): any {
+        return CONNECTION_QUALITY.find(x => percent >= x.percent) || {};
     }
 
     /**
@@ -406,12 +470,19 @@ class ConnectionStatusComponent extends Component<Props, State> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { participantID } = ownProps;
+    const tracks = state['features/base/tracks'];
+    const _videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
+    const _isConnectionStatusInactive = isTrackStreamingStatusInactive(_videoTrack);
+    const _isConnectionStatusInterrupted = isTrackStreamingStatusInterrupted(_videoTrack);
 
     return {
+        _isConnectionStatusInactive,
+        _isConnectionStatusInterrupted,
         _participantDisplayName: getParticipantDisplayName(state, participantID)
     };
 }
 
+// @ts-ignore
 export default translate(connect(_mapStateToProps)(withTheme(ConnectionStatusComponent)));

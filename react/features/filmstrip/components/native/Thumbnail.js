@@ -25,7 +25,7 @@ import {
     getVideoTrackByParticipant,
     trackStreamingStatusChanged
 } from '../../../base/tracks';
-import { ConnectionIndicator } from '../../../connection-indicator';
+import ConnectionIndicator from '../../../connection-indicator/components/native/ConnectionIndicator';
 import { DisplayNameLabel } from '../../../display-name';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 import {
@@ -190,6 +190,8 @@ class Thumbnail extends PureComponent<Props> {
         if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(_participantId));
         }
+
+        // TODO: add support for getting info about the virtual screen shares.
 
         if (!_fakeParticipant) {
             dispatch(showContextMenuDetails(_participantId, _local));

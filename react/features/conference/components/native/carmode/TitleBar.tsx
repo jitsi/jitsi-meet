@@ -1,4 +1,5 @@
 /* eslint-disable lines-around-comment */
+
 import React from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { useSelector } from 'react-redux';
@@ -57,7 +58,9 @@ const TitleBar = (props: IProps): JSX.Element => {
                     <VideoQualityLabel />
                 </View>
                 <ConnectionIndicator
+                    // @ts-ignore
                     iconStyle = { styles.connectionIndicatorIcon }
+                    // @ts-ignore
                     participantId = { localParticipantId } />
                 <View style = { styles.headerLabels as StyleProp<ViewStyle> }>
                     <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />

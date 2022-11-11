@@ -27,7 +27,8 @@ import {
 import AbstractConnectionIndicator, {
     type Props as AbstractProps,
     type State as AbstractState,
-    INDICATOR_DISPLAY_THRESHOLD
+    INDICATOR_DISPLAY_THRESHOLD,
+    mapStateToProps as _abstractMapStateToProps
     // @ts-ignore
 } from '../AbstractConnectionIndicator';
 
@@ -386,6 +387,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: Props) {
     const _isConnectionStatusInterrupted = isTrackStreamingStatusInterrupted(_videoTrack);
 
     return {
+        ..._abstractMapStateToProps(state),
         _connectionIndicatorInactiveDisabled:
             Boolean(state['features/base/config'].connectionIndicators?.inactiveDisabled),
         _isVirtualScreenshareParticipant: isScreenShareParticipant(participant),
