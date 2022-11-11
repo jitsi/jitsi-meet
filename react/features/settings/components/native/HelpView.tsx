@@ -5,8 +5,6 @@ import React, { PureComponent } from 'react';
 import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';
-// @ts-ignore
-import JitsiStatusBar from '../../../base/modal/components/JitsiStatusBar';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { renderArrowBackButton }
@@ -65,12 +63,9 @@ class HelpView extends PureComponent<IProps> {
      */
     render() {
         return (
-            <>
-                <JitsiStatusBar />
-                <JitsiScreenWebView
-                    source = { this.props._url }
-                    style = { styles.screenContainer } />
-            </>
+            <JitsiScreenWebView
+                source = { this.props._url }
+                style = { styles.screenContainer } />
         );
     }
 }

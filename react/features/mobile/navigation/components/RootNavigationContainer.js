@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
+import { StatusBar } from 'react-native';
 
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
@@ -56,6 +57,11 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
             onReady = { onReady }
             ref = { rootNavigationRef }
             theme = { navigationContainerTheme }>
+            <StatusBar
+                animated = { true }
+                backgroundColor = 'transparent'
+                barStyle = { 'light-content' }
+                translucent = { true } />
             <RootStack.Navigator
                 initialRouteName = { initialRouteName }>
                 {

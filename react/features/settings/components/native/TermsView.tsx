@@ -5,8 +5,6 @@ import React, { useEffect } from 'react';
 // @ts-ignore
 import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';
 // @ts-ignore
-import JitsiStatusBar from '../../../base/modal/components/JitsiStatusBar';
-// @ts-ignore
 import { renderArrowBackButton }
 // @ts-ignore
     from '../../../mobile/navigation/components/welcome/functions';
@@ -41,12 +39,9 @@ const TermsView = ({ navigation }: IProps) => {
     });
 
     return (
-        <>
-            <JitsiStatusBar />
-            <JitsiScreenWebView
-                source = { TERMS_URL }
-                style = { styles.screenContainer } />
-        </>
+        <JitsiScreenWebView
+            source = { TERMS_URL }
+            style = { styles.screenContainer } />
     );
 };
 
