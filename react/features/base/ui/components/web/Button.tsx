@@ -143,7 +143,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         iconButton: {
-            padding: '10px'
+            padding: theme.spacing(2)
         },
 
         textWithIcon: {
@@ -166,7 +166,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
 
             '&.iconButton': {
-                padding: '14px'
+                padding: '12px'
             }
         },
 
