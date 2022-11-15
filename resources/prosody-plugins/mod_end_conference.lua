@@ -13,14 +13,16 @@ local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_an
 
 local END_CONFERENCE_REASON = 'The meeting has been terminated';
 
-local end_conference_component = module:get_option_string('end_conference_component', 'endconference.'..module.host);
-if end_conference_component == nil then
-    module:log('error', 'No end_conference_component specified.');
-    return;
+-- Since this file serves as both the host module and the component, we rely on the assumption that
+-- end_conference_component var would only be define for the host and not in the end_conference component
+local end_conference_component = module:get_option_string('end_conference_component');
+if end_conference_component then
+    -- Advertise end conference so client can pick up the address and use it
+    module:add_identity('component', 'end_conference', end_conference_component);
+    return;  -- nothing left to do if called as host module
 end
 
--- Advertise end conference so client can pick up the address and use it
-module:add_identity('component', 'end_conference', end_conference_component);
+-- What follows is logic for the end_conference component
 
 module:depends("jitsi_session");
 
