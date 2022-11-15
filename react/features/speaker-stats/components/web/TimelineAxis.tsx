@@ -1,7 +1,7 @@
 import React, { MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { addToOffset, addToOffsetLeft, addToOffsetRight, setTimelinePanning } from '../../actions.any';
 import { MIN_HANDLER_WIDTH } from '../../constants';
 import { getCurrentDuration, getTimelineBoundaries } from '../../functions';
@@ -9,9 +9,9 @@ import { getCurrentDuration, getTimelineBoundaries } from '../../functions';
 import TimeElapsed from './TimeElapsed';
 
 const TimelineAxis = () => {
-    const currentDuration = useSelector((state: IState) => getCurrentDuration(state)) ?? 0;
-    const { left, right } = useSelector((state: IState) => getTimelineBoundaries(state));
-    const { timelinePanning } = useSelector((state: IState) => state['features/speaker-stats']);
+    const currentDuration = useSelector((state: IReduxState) => getCurrentDuration(state)) ?? 0;
+    const { left, right } = useSelector((state: IReduxState) => getTimelineBoundaries(state));
+    const { timelinePanning } = useSelector((state: IReduxState) => state['features/speaker-stats']);
     const dispatch = useDispatch();
     const axisRef = useRef<HTMLDivElement>(null);
 

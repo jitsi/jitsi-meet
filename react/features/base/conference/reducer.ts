@@ -1,5 +1,5 @@
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock/constants';
-import { SpeakerStats } from '../../speaker-stats/reducer';
+import { ISpeakerStats } from '../../speaker-stats/reducer';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection/actionTypes';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import ReducerRegistry from '../redux/ReducerRegistry';
@@ -54,7 +54,7 @@ export interface IJitsiConference {
     getMeetingUniqueId: Function;
     getParticipantById: Function;
     getParticipants: Function;
-    getSpeakerStats: () => SpeakerStats;
+    getSpeakerStats: () => ISpeakerStats;
     grantOwner: Function;
     isAVModerationSupported: Function;
     isCallstatsEnabled: Function;

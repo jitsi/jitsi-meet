@@ -39,7 +39,7 @@ const INITIAL_STATE = {
     }
 };
 
-export interface Speaker {
+export interface ISpeaker {
     addFaceLandmarks: (faceLandmarks: FaceLandmarks) => void;
     displayName?: string;
     getDisplayName: () => string;
@@ -57,8 +57,8 @@ export interface Speaker {
     setFaceLandmarks: (faceLandmarks: FaceLandmarks[]) => void;
 }
 
-export interface SpeakerStats {
-    [key: string]: Speaker;
+export interface ISpeakerStats {
+    [key: string]: ISpeaker;
 }
 
 export interface ISpeakerStatsState {
@@ -69,7 +69,7 @@ export interface ISpeakerStatsState {
     pendingReorder: boolean;
     showFaceExpressions: boolean;
     sortedSpeakerStatsIds: Array<string>;
-    stats: SpeakerStats;
+    stats: ISpeakerStats;
     timelineBoundary: number | null;
     timelinePanning: {
         active: boolean;

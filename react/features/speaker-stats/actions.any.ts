@@ -17,7 +17,7 @@ import {
 } from './actionTypes';
 import { MINIMUM_INTERVAL } from './constants';
 import { getCurrentDuration, getTimelineBoundaries } from './functions';
-import { SpeakerStats } from './reducer';
+import { ISpeakerStats } from './reducer';
 
 /**
  * Starts a search by criteria.
@@ -38,7 +38,7 @@ export function initSearch(criteria: string | null) {
  * @param {Function} getSpeakerStats - Function to get the speaker stats.
  * @returns {Object}
  */
-export function initUpdateStats(getSpeakerStats: () => SpeakerStats) {
+export function initUpdateStats(getSpeakerStats: () => ISpeakerStats) {
     return {
         type: INIT_UPDATE_STATS,
         getSpeakerStats

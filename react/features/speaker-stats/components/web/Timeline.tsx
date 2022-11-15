@@ -1,7 +1,7 @@
 import React, { MouseEvent, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { getConferenceTimestamp } from '../../../base/conference/functions';
 import { FaceLandmarks } from '../../../face-landmarks/types';
 import { addToOffset, setTimelinePanning } from '../../actions.any';
@@ -13,9 +13,9 @@ type Props = {
 };
 
 const Timeline = ({ faceLandmarks }: Props) => {
-    const startTimestamp = useSelector((state: IState) => getConferenceTimestamp(state)) ?? 0;
-    const { left, right } = useSelector((state: IState) => getTimelineBoundaries(state));
-    const { timelinePanning } = useSelector((state: IState) => state['features/speaker-stats']);
+    const startTimestamp = useSelector((state: IReduxState) => getConferenceTimestamp(state)) ?? 0;
+    const { left, right } = useSelector((state: IReduxState) => getTimelineBoundaries(state));
+    const { timelinePanning } = useSelector((state: IReduxState) => state['features/speaker-stats']);
     const dispatch = useDispatch();
     const containerRef = useRef<HTMLDivElement>(null);
     const intervalDuration = right - left;

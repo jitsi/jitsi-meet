@@ -1,18 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
-// @ts-ignore
-import { translate } from '../../../base/i18n';
 import { createLocalizedTime } from '../timeFunctions';
 
 /**
  * The type of the React {@code Component} props of {@link TimeElapsed}.
  */
 type Props = {
-
-    /**
-     * The function to translate human-readable text.
-     */
-    t: Function;
 
     /**
      * The milliseconds to be converted into a human-readable format.
@@ -27,23 +21,16 @@ type Props = {
  *
  * @augments Component
  */
-class TimeElapsed extends Component<Props> {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const { time, t } = this.props;
-        const timeElapsed = createLocalizedTime(time, t);
 
-        return (
-            <div>
-                { timeElapsed }
-            </div>
-        );
-    }
-}
+const TimeElapsed = ({ time }: Props) => {
+    const { t } = useTranslation();
+    const timeElapsed = createLocalizedTime(time, t);
 
-export default translate(TimeElapsed);
+    return (
+        <div>
+            { timeElapsed }
+        </div>
+    );
+};
+
+export default TimeElapsed;

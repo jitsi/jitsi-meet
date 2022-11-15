@@ -7,7 +7,7 @@ import { getParticipantById } from '../base/participants/functions';
 import { FaceLandmarks } from '../face-landmarks/types';
 
 import { THRESHOLD_FIXED_AXIS } from './constants';
-import { Speaker, SpeakerStats } from './reducer';
+import { ISpeaker, ISpeakerStats } from './reducer';
 
 /**
  * Checks if the speaker stats search is disabled.
@@ -81,7 +81,7 @@ export function getPendingReorder(state: IReduxState) {
  * @returns {string[] | undefined} - Ordered speaker stats ids.
  * @public
  */
-export function getSortedSpeakerStatsIds(state: IReduxState, stats: SpeakerStats) {
+export function getSortedSpeakerStatsIds(state: IReduxState, stats: ISpeakerStats) {
     const orderConfig = getSpeakerStatsOrder(state);
 
     if (orderConfig) {
@@ -96,11 +96,11 @@ export function getSortedSpeakerStatsIds(state: IReduxState, stats: SpeakerStats
      *
      * Compares the order of two participants in the speaker stats list.
      *
-     * @param {Speaker} currentParticipant - The first participant for comparison.
-     * @param {Speaker} nextParticipant - The second participant for comparison.
+     * @param {ISpeaker} currentParticipant - The first participant for comparison.
+     * @param {ISpeaker} nextParticipant - The second participant for comparison.
      * @returns {number} - The sort order of the two participants.
      */
-    function compareFn(currentParticipant: Speaker, nextParticipant: Speaker) {
+    function compareFn(currentParticipant: ISpeaker, nextParticipant: ISpeaker) {
         if (orderConfig.includes('hasLeft')) {
             if (nextParticipant.hasLeft() && !currentParticipant.hasLeft()) {
                 return -1;
@@ -142,12 +142,12 @@ export function getSortedSpeakerStatsIds(state: IReduxState, stats: SpeakerStats
  * Enhance speaker stats to include data needed for ordering.
  *
  * @param {IState} state - The redux state.
- * @param {SpeakerStats} stats - Speaker stats.
+ * @param {ISpeakerStats} stats - Speaker stats.
  * @param {Array<string>} orderConfig - Ordering configuration.
- * @returns {SpeakerStats} - Enhanced speaker stats.
+ * @returns {ISpeakerStats} - Enhanced speaker stats.
  * @public
  */
-function getEnhancedStatsForOrdering(state: IReduxState, stats: SpeakerStats, orderConfig: Array<string>) {
+function getEnhancedStatsForOrdering(state: IReduxState, stats: ISpeakerStats, orderConfig: Array<string>) {
     if (!orderConfig) {
         return stats;
     }
@@ -169,12 +169,12 @@ function getEnhancedStatsForOrdering(state: IReduxState, stats: SpeakerStats, or
  * Filter stats by search criteria.
  *
  * @param {IState} state - The redux state.
- * @param {SpeakerStats | undefined} stats - The unfiltered stats.
+ * @param {ISpeakerStats | undefined} stats - The unfiltered stats.
  *
- * @returns {SpeakerStats} - Filtered speaker stats.
+ * @returns {ISpeakerStats} - Filtered speaker stats.
  * @public
  */
-export function filterBySearchCriteria(state: IReduxState, stats?: SpeakerStats) {
+export function filterBySearchCriteria(state: IReduxState, stats?: ISpeakerStats) {
     const filteredStats = _.cloneDeep(stats ?? getSpeakerStats(state));
     const criteria = getSearchCriteria(state);
 
@@ -197,12 +197,12 @@ export function filterBySearchCriteria(state: IReduxState, stats?: SpeakerStats)
  * Reset the hidden speaker stats.
  *
  * @param {IState} state - The redux state.
- * @param {SpeakerStats | undefined} stats - The unfiltered stats.
+ * @param {ISpeakerStats | undefined} stats - The unfiltered stats.
  *
  * @returns {Object} - Speaker stats.
  * @public
  */
-export function resetHiddenStats(state: IReduxState, stats?: SpeakerStats) {
+export function resetHiddenStats(state: IReduxState, stats?: ISpeakerStats) {
     const resetStats = _.cloneDeep(stats ?? getSpeakerStats(state));
 
     for (const id in resetStats) {
