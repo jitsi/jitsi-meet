@@ -28,6 +28,8 @@
     "@atlaskit/tooltip": "17.1.2",
     "@emotion/react": "11.10.0",
     "@emotion/styled": "11.10.0",
+    "@giphy/js-analytics": "4.0.7",
+    "@giphy/js-brand": "2.0.4",    
     "@giphy/js-fetch-api": "4.1.2",
     "@giphy/react-components": "5.6.0",
     "@giphy/react-native-sdk": "1.7.0",
@@ -186,7 +188,7 @@
     "unorm": "1.6.0",
     "webpack": "5.57.1",
     "webpack-bundle-analyzer": "4.4.2",
-    "webpack-cli": "4.9.0",
+    "webpack-cli": "4.10.0",
     "webpack-dev-server": "4.7.3"
   },
   "engines": {
