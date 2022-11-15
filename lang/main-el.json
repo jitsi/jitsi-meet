@@ -71,7 +71,7 @@
             "titleWithPolls": "Εισάγετε ένα ψευδώνυμο για τη χρήση της συνομιλίας"
         },
         "noMessagesMessage": "Δεν υπάρχουν μηνύματα στη συνάντηση ακόμα. Ξεκινήστε μια συζήτηση εδώ!",
-        "privateNotice": "Ιδιωτικό μηνύμα στον / στην {recipient}}",
+        "privateNotice": "Ιδιωτικό μηνύμα στον / στην {{recipient}}",
         "sendButton": "Στείλτε",
         "title": "Συνομιλία",
         "titleWithPolls": "Συνομιλία",
@@ -517,7 +517,7 @@
         "oldElectronClientDescription3": " τώρα!",
         "passwordRemovedRemotely": "Το $t(lockRoomPasswordUppercase) αφαιρέθηκε από έναν άλλον συμμετέχοντα",
         "passwordSetRemotely": "Το $t(lockRoomPasswordUppercase) ορίστηκε από άλλον συμμετέχοντα",
-        "raisedHand": "Ο/Η {{name}} θα ήθελε να μιλήσει.",
+        "raisedHand": "Ο/Η {{participantDisplayName}} θα ήθελε να μιλήσει.",
         "somebody": "Κάποιος",
         "startSilentDescription": "Ξαναμπείτε στη συνάντηση για να ενεργοποιήσετε τον ήχο",
         "startSilentTitle": "Μπήκες χωρίς συσκευή εξόδου ήχου!",
