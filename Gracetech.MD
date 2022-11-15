@@ -2,6 +2,7 @@
 
 ## Installation
 If you're using Windows, please use WSL
--   rm package-lock.json
 -   sudo npm i patch-package -g
 -   npm install
+-   npm start
+-   open https://127.0.0.1:8080/
