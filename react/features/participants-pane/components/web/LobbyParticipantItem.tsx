@@ -1,6 +1,5 @@
 // eslint-disable-next-line lines-around-comment
 
-import { Theme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -39,7 +38,7 @@ interface IProps {
     participant: IParticipant;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         button: {
             marginRight: theme.spacing(2)

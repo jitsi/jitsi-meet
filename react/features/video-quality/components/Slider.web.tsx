@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -35,7 +34,7 @@ interface IProps {
     value: number;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     // keep the same height for all elements:
     // input, input track & fake track(div)
     const height = 6;

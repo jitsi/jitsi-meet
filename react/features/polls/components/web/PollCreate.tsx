@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -15,7 +14,7 @@ import AbstractPollCreate from '../AbstractPollCreate';
 // @ts-ignore
 import type { AbstractProps } from '../AbstractPollCreate';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         buttonMargin: {
             marginRight: theme.spacing(2)

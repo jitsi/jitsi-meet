@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { makeStyles } from 'tss-react/mui';
@@ -26,7 +25,7 @@ interface IProps extends IInputProps {
     type?: 'text' | 'email' | 'number' | 'password';
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         inputContainer: {
             display: 'flex',

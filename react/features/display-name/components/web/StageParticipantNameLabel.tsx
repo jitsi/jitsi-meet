@@ -1,6 +1,5 @@
 /* eslint-disable lines-around-comment */
 
-import { Theme } from '@mui/material';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -22,7 +21,7 @@ import { isLayoutTileView } from '../../../video-layout';
 
 import DisplayNameBadge from './DisplayNameBadge';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         badgeContainer: {
             ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),

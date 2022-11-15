@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -11,7 +10,7 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         speakerStatsSearchContainer: {
             position: 'relative'

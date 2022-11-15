@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import i18next from 'i18next';
 import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -27,7 +26,7 @@ interface ILanguageSelectorDialogProps extends WithTranslation {
     _translationLanguagesHead: Array<string>;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         paragraphWrapper: {
             fontSize: 14,

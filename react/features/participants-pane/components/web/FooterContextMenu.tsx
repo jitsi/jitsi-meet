@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,7 +38,7 @@ import { SETTINGS_TABS } from '../../../settings/constants';
 // @ts-ignore
 import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         contextMenu: {
             bottom: 'auto',

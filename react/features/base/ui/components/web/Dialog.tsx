@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback, useContext, useEffect } from 'react';
 import FocusLock from 'react-focus-lock';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +14,7 @@ import ClickableIcon from './ClickableIcon';
 import { DialogTransitionContext } from './DialogTransition';
 
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             width: '100%',

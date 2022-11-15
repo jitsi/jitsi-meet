@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -71,7 +70,7 @@ export interface IProps {
     textClassName?: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         contextMenuItem: {
             alignItems: 'center',

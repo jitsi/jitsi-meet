@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -85,7 +84,7 @@ interface IProps {
     videoTrack?: Object;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         subtitle: {
             ...withPixelLineHeight(theme.typography.heading5),

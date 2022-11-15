@@ -132,7 +132,7 @@
     "resemblejs": "4.0.0",
     "seamless-scroll-polyfill": "2.1.8",
     "styled-components": "3.4.9",
-    "tss-react": "4.0.0",
+    "tss-react": "4.4.4",
     "util": "0.12.1",
     "uuid": "8.3.2",
     "wasm-check": "2.0.1",

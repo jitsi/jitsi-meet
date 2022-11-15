@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-no-bind */
-import { Theme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -8,7 +7,7 @@ import { IconCheck, IconCopy } from '../icons/svg';
 import { withPixelLineHeight } from '../styles/functions.web';
 import { copyText } from '../util/copyText.web';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         copyButton: {
             ...withPixelLineHeight(theme.typography.bodyShortBold),

@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -76,7 +75,7 @@ interface IProps {
 
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             alignItems: 'center',

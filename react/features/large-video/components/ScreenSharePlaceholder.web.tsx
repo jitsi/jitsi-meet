@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useStore } from 'react-redux';
@@ -9,7 +8,7 @@ import { translate } from '../../base/i18n/functions';
 // @ts-ignore
 import { setSeeWhatIsBeingShared } from '../actions.web';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         overlayContainer: {
             width: '100%',

@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -15,7 +14,7 @@ interface IProps extends ISwitchProps {
     id?: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             position: 'relative',
