@@ -25,8 +25,6 @@ import {
     VideoTypeData
 } from './types';
 
-declare const APP: any;
-
 /**
  * Filter out RTCPeerConnection that are created by callstats.io.
  *
@@ -222,7 +220,7 @@ class RTCStats {
 
                 logger.info(`${connectionType} PeerConnection failed, previously connected: ${wasConnected}`);
 
-                APP.API.notifyPeerConnectionFailure(isP2P, wasConnected);
+                APP?.API?.notifyPeerConnectionFailure(isP2P, wasConnected);
             }
 
             break;
