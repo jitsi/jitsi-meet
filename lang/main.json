@@ -649,6 +649,8 @@
         "connectedOneMember": "{{name}} joined the meeting",
         "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
+        "dataChannelClosed": "Video quality impaired",
+        "dataChannelClosedDescription": "The bridge channel has been disconnected and thus video quality is limited to its lowest setting.",
         "disconnected": "disconnected",
         "displayNotifications": "Display notifications for",
         "focus": "Conference focus",

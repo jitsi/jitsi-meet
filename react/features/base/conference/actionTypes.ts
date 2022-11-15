@@ -139,6 +139,18 @@ export const CONFERENCE_WILL_LEAVE = 'CONFERENCE_WILL_LEAVE';
 export const DATA_CHANNEL_OPENED = 'DATA_CHANNEL_OPENED';
 
 /**
+ * The type of (redux) action which signals that the data channel with the
+ * bridge has been closed.
+ *
+ * {
+ *     type: DATA_CHANNEL_CLOSED,
+ *     code: number,
+ *     reason: string
+ * }
+ */
+export const DATA_CHANNEL_CLOSED = 'DATA_CHANNEL_CLOSED';
+
+/**
  * The type of action which signals that the user has been kicked out from
  * the conference.
  *

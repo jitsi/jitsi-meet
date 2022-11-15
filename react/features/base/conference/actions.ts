@@ -41,6 +41,7 @@ import {
     CONFERENCE_UNIQUE_ID_SET,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
+    DATA_CHANNEL_CLOSED,
     DATA_CHANNEL_OPENED,
     E2E_RTT_CHANGED,
     KICKED_OUT,
@@ -578,6 +579,26 @@ export function checkIfCanJoin() {
 export function dataChannelOpened() {
     return {
         type: DATA_CHANNEL_OPENED
+    };
+}
+
+/**
+ * Signals the data channel with the bridge was abruptly closed.
+ *
+ * @param {number} code - Close code.
+ * @param {string} reason - Close reason.
+ *
+ * @returns {{
+ *     type: DATA_CHANNEL_CLOSED,
+ *     code: number,
+ *     reason: string
+ * }}
+ */
+export function dataChannelClosed(code: number, reason: string) {
+    return {
+        type: DATA_CHANNEL_CLOSED,
+        code,
+        reason
     };
 }
 
