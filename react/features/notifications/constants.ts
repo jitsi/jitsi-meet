@@ -61,6 +61,13 @@ export const NOTIFICATION_ICON = {
  *
  * @type {string}
  */
+export const DATA_CHANNEL_CLOSED_NOTIFICATION_ID = 'DATA_CHANNEL_CLOSED_NOTIFICATION_ID';
+
+/**
+ * The identifier of the disable self view notification.
+ *
+ * @type {string}
+ */
 export const DISABLE_SELF_VIEW_NOTIFICATION_ID = 'DISABLE_SELF_VIEW_NOTIFICATION_ID';
 
 /**

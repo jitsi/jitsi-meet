@@ -3,6 +3,7 @@ import { getJitsiMeetTransport } from '../../../modules/transport';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
+    DATA_CHANNEL_CLOSED,
     DATA_CHANNEL_OPENED,
     KICKED_OUT
 } from '../base/conference/actionTypes';
@@ -123,6 +124,10 @@ MiddlewareRegistry.register(store => next => action => {
         );
         break;
     }
+
+    case DATA_CHANNEL_CLOSED:
+        APP.API.notifyDataChannelClosed(action.code, action.reason);
+        break;
 
     case DATA_CHANNEL_OPENED:
         APP.API.notifyDataChannelOpened();

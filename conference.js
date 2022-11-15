@@ -44,6 +44,7 @@ import {
     conferenceUniqueIdSet,
     conferenceWillJoin,
     conferenceWillLeave,
+    dataChannelClosed,
     dataChannelOpened,
     e2eRttChanged,
     getConferenceOptions,
@@ -134,9 +135,11 @@ import {
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
 import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
 import {
+    DATA_CHANNEL_CLOSED_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE,
     isModerationNotificationDisplayed,
-    showNotification
+    showNotification,
+    showWarningNotification
 } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
@@ -2067,6 +2070,17 @@ export default {
         room.on(
             JitsiConferenceEvents.DATA_CHANNEL_OPENED, () => {
                 APP.store.dispatch(dataChannelOpened());
+            }
+        );
+
+        room.on(
+            JitsiConferenceEvents.DATA_CHANNEL_CLOSED, ev => {
+                APP.store.dispatch(dataChannelClosed(ev.code, ev.reason));
+                APP.store.dispatch(showWarningNotification({
+                    descriptionKey: 'notify.dataChannelClosedDescription',
+                    titleKey: 'notify.dataChannelClosed',
+                    uid: DATA_CHANNEL_CLOSED_NOTIFICATION_ID
+                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
             }
         );
 
