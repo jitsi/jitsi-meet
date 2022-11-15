@@ -214,7 +214,7 @@ class RTCStats {
 
             // We only report PC related connection issues. If the rtcstats websocket is not connected at this point
             // it usually means that none of our services can be reached i.e. there's problem with the internet
-            // connection and not necessarily with reaching the JVB ( due to a firewall or other reasons ).
+            // connection and not necessarily with reaching the JVB (due to a firewall or other reasons).
             if (state === PC_STATE_FAILED && this.trace.isConnected()) {
                 const connectionType = isP2P ? 'P2P' : 'JVB';
                 const wasConnected = this.connStateEvents.some((connectionEvent: { isP2P: any; state: string; }) =>
