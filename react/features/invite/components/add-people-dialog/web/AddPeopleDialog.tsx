@@ -183,7 +183,7 @@ function AddPeopleDialog({
                         && <DialInSection phoneNumber = { _phoneNumber } />
                 }
                 {
-                    !_dialInVisible && _isVpaasMeeting && <DialInLimit />
+                    !_phoneNumber && _dialInVisible && _isVpaasMeeting && <DialInLimit />
                 }
             </div>
         </Dialog>
