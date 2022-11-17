@@ -69,7 +69,8 @@ const HeaderNavigationButton
                         <TouchableRipple
                             disabled = { disabled }
                             onPress = { onPress }
-                            rippleColor = { 'transparent' }>
+                            rippleColor = { 'transparent' }
+                            testID = 'close-screen-btn-id' >
                             <Text
                                 style = {
                                     twoActions
