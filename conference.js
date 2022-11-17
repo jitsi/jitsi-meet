@@ -137,6 +137,7 @@ import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/a
 import {
     DATA_CHANNEL_CLOSED_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE,
+    hideNotification,
     isModerationNotificationDisplayed,
     showNotification,
     showWarningNotification
@@ -2070,6 +2071,7 @@ export default {
         room.on(
             JitsiConferenceEvents.DATA_CHANNEL_OPENED, () => {
                 APP.store.dispatch(dataChannelOpened());
+                APP.store.dispatch(hideNotification(DATA_CHANNEL_CLOSED_NOTIFICATION_ID));
             }
         );
 
