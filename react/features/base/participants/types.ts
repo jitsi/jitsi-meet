@@ -1,5 +1,4 @@
 export enum FakeParticipant {
-    Jigasi = 'Jigasi',
     LocalScreenShare = 'LocalScreenShare',
     RemoteScreenShare = 'RemoteScreenShare',
     SharedVideo = 'SharedVideo',
@@ -22,6 +21,7 @@ export interface IParticipant {
     };
     getId?: Function;
     id: string;
+    isJigasi?: boolean;
     isReplaced?: boolean;
     isReplacing?: number;
     jwtId?: string;
