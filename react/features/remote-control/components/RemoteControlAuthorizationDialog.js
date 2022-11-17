@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 
-import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux';
@@ -138,7 +137,6 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
     _onSubmit() {
         const { dispatch, participantId } = this.props;
 
-        dispatch(hideDialog());
         dispatch(grant(participantId));
 
         return false;

@@ -191,6 +191,7 @@ interface IDialogProps {
     children?: React.ReactNode;
     className?: string;
     description?: string;
+    disableAutoHideOnSubmit?: boolean;
     disableBackdropClose?: boolean;
     disableEnter?: boolean;
     hideCloseButton?: boolean;
@@ -212,6 +213,7 @@ const Dialog = ({
     children,
     className,
     description,
+    disableAutoHideOnSubmit = false,
     disableBackdropClose,
     hideCloseButton,
     disableEnter,
@@ -233,7 +235,7 @@ const Dialog = ({
     }, [ onCancel ]);
 
     const submit = useCallback(() => {
-        dispatch(hideDialog());
+        !disableAutoHideOnSubmit && dispatch(hideDialog());
         onSubmit?.();
     }, [ onSubmit ]);
 
