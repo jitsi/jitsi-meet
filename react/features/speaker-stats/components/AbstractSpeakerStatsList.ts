@@ -83,7 +83,11 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
             updateStats();
         }, SPEAKER_STATS_RELOAD_INTERVAL);
 
-        return () => clearInterval(reloadInterval.current);
+        return () => {
+            if (reloadInterval.current) {
+                clearInterval(reloadInterval.current);
+            }
+        };
     }, [ faceLandmarks ]);
 
     const localSpeakerStats = Object.keys(speakerStats).length === 0 ? getSpeakerStats() : speakerStats;
