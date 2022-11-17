@@ -1,10 +1,9 @@
-// @flow
-
 import React from 'react';
 
 import { appNavigate, reloadNow } from '../../../app/actions';
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../base/redux';
 import { setFatalError, setPageReloadOverlayCanceled } from '../../actions';
 import AbstractPageReloadOverlay, {
@@ -12,7 +11,7 @@ import AbstractPageReloadOverlay, {
     abstractMapStateToProps
 } from '../AbstractPageReloadOverlay';
 
-import OverlayFrame from './OverlayFrame';
+import styles from './styles';
 
 
 /**
@@ -79,7 +78,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
         const { message, timeLeft, title } = this.state;
 
         return (
-            <OverlayFrame>
+            <JitsiScreen style = { styles.pageReloadScreenContainer }>
                 <ConfirmDialog
                     cancelLabel = 'dialog.Cancel'
                     confirmLabel = 'dialog.rejoinNow'
@@ -87,7 +86,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
                     onCancel = { this._onCancel }
                     onSubmit = { this._onReloadNow }
                     title = { title } />
-            </OverlayFrame>
+            </JitsiScreen>
         );
     }
 }

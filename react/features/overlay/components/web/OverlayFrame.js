@@ -1,8 +1,4 @@
-// @flow
-
 import React, { Component } from 'react';
-
-declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} props of {@link OverlayFrame}.

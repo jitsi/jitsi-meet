@@ -1,5 +1,3 @@
-// @flow
-
 import { StyleSheet } from 'react-native';
 
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
@@ -19,6 +17,11 @@ export default {
     },
 
     safeContainer: {
+        flex: 1
+    },
+
+    pageReloadScreenContainer: {
+        backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1
     }
 };

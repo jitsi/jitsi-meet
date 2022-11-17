@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { StatusBar } from 'react-native';
 
+import { IReduxState } from '../../../app/types';
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
@@ -16,6 +17,7 @@ import {
     connectingScreenOptions,
     dialInSummaryScreenOptions,
     navigationContainerTheme,
+    pageReloadScreenOptions,
     preJoinScreenOptions,
     welcomeScreenOptions
 } from '../screenOptions';
@@ -23,6 +25,8 @@ import {
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
+import PageReloadOverlay from '../../../overlay/components/native/PageReloadOverlay';
+import { useSelector } from 'react-redux';
 
 const RootStack = createStackNavigator();
 
@@ -50,6 +54,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
             ready: true
         });
     }, [ dispatch ]);
+    const { fatalError } = useSelector((state: IReduxState) => state['features/overlay']);
 
     return (
         <NavigationContainer
@@ -89,6 +94,13 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }
                     options = { conferenceNavigationContainerScreenOptions } />
+                {
+                    Boolean(fatalError)
+                    && <RootStack.Screen
+                        component = { PageReloadOverlay }
+                        name = { screen.pageReload }
+                        options = { pageReloadScreenOptions } />
+                }
             </RootStack.Navigator>
         </NavigationContainer>
     );
