@@ -1028,7 +1028,7 @@
     "speakerStats": {
         "angry": "Angry",
         "disgusted": "Disgusted",
-        "showEmotions": "Show emotions",
+        "displayEmotions": "Display emotions",
         "fearful": "Fearful",
         "happy": "Happy",
         "hours": "{{count}}h",

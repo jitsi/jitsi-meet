@@ -57,8 +57,8 @@ const useStyles = makeStyles()(theme => {
                         display: 'flex',
                         width: '100%',
                         '& .search-container': {
-                            width: 178,
-                            marginRight: theme.spacing(4)
+                            width: 175,
+                            marginRight: theme.spacing(3)
                         },
                         '& .search-container-full-width': {
                             width: '100%'
