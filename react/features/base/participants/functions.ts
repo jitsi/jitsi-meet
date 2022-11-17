@@ -32,7 +32,7 @@ const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant: IParticipant) => {
-        return isJigasiParticipant(participant) ? JIGASI_PARTICIPANT_ICON : null;
+        return participant?.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
     },
     (participant: IParticipant) => {
         return isWhiteboardParticipant(participant) ? WHITEBOARD_PARTICIPANT_ICON : null;
@@ -279,16 +279,6 @@ export function getVirtualScreenshareParticipantOwnerId(id: string) {
  */
 export function getFakeParticipants(stateful: IStateful) {
     return toState(stateful)['features/base/participants'].fakeParticipants;
-}
-
-/**
- * Returns whether the fake participant is Jigasi.
- *
- * @param {IParticipant|undefined} participant - The participant entity.
- * @returns {boolean} - True if it's a Jigasi participant.
- */
-function isJigasiParticipant(participant?: IParticipant): boolean {
-    return participant?.fakeParticipant === FakeParticipant.Jigasi;
 }
 
 /**

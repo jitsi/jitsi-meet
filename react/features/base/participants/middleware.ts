@@ -80,7 +80,7 @@ import {
 } from './functions';
 import logger from './logger';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
-import { FakeParticipant, IJitsiParticipant } from './types';
+import { IJitsiParticipant } from './types';
 
 import './subscriber';
 
@@ -438,7 +438,7 @@ StateListenerRegistry.register(
                     store.dispatch(participantUpdated({
                         conference,
                         id: participant.getId(),
-                        fakeParticipant: value ? FakeParticipant.Jigasi : undefined
+                        isJigasi: value
                     })),
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 'features_screen-sharing': (participant: IJitsiParticipant, value: string) =>
