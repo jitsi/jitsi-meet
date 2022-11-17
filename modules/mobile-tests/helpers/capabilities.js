@@ -10,7 +10,7 @@ module.exports = {
         automationName: 'XCUITest',
         bundleId: 'org.jitsi.meet',
 
-        //deviceName is mandatory
+        // deviceName is mandatory
         deviceName: process.env.DEVICE_NAME || 'Calin',
         newCommandTimeout: 240,
         platformName: 'iOS',
