@@ -110,10 +110,12 @@ export const chatStyles = createStyleSheet({
 
     noPollContent: {
         alignItems: 'center',
-        flex: 1,
-        flexDirection: 'column',
         justifyContent: 'center',
-        paddingTop: '4%'
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        top: '25%'
     },
 
     noPollText: {
@@ -149,7 +151,7 @@ export const chatStyles = createStyleSheet({
 
     pollCreateButton: {
         flex: 1,
-        marginHorizontal: BaseTheme.spacing[2]
+        marginHorizontal: BaseTheme.spacing[1]
     },
 
     pollSendLabel: {
@@ -191,7 +193,8 @@ export const chatStyles = createStyleSheet({
     },
 
     pollCreateAddButton: {
-        margin: BaseTheme.spacing[2]
+        marginHorizontal: BaseTheme.spacing[1],
+        marginVertical: BaseTheme.spacing[2]
     },
 
     toggleText: {
@@ -200,8 +203,8 @@ export const chatStyles = createStyleSheet({
     },
 
     createPollButton: {
-        marginHorizontal: BaseTheme.spacing[4],
-        marginVertical: '8%'
+        marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: 34
     },
 
     pollPane: {
@@ -218,5 +221,28 @@ export const chatStyles = createStyleSheet({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginHorizontal: BaseTheme.spacing[2]
+    },
+
+    unreadPollsCounterContainer: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+
+    unreadPollsCounterDescription: {
+        color: BaseTheme.palette.text01
+    },
+
+    unreadPollsCounterCircle: {
+        backgroundColor: BaseTheme.palette.warning01,
+        borderRadius: BaseTheme.spacing[3] / 2,
+        height: BaseTheme.spacing[3],
+        justifyContent: 'center',
+        marginLeft: BaseTheme.spacing[2],
+        width: BaseTheme.spacing[3]
+    },
+
+    unreadPollsCounter: {
+        alignSelf: 'center',
+        color: BaseTheme.palette.text04
     }
 });

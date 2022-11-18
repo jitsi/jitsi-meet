@@ -1,5 +1,3 @@
-// @flow
-
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconChatUnread, IconMessage } from '../../../base/icons';
@@ -10,8 +8,8 @@ import {
 } from '../../../base/toolbox/components';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import { getUnreadPollCount } from '../../../polls/functions';
 import { getUnreadCount } from '../../functions';
-
 
 type Props = AbstractButtonProps & {
 
@@ -72,7 +70,9 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _isPollsDisabled: disablePolls,
-        _unreadMessageCount: getUnreadCount(state),
+
+        // The toggled icon should also be available for new polls
+        _unreadMessageCount: getUnreadCount(state) || getUnreadPollCount(state),
         visible
     };
 }

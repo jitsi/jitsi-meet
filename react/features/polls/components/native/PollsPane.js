@@ -1,14 +1,14 @@
 /* eslint-disable react-native/no-color-literals */
-// @flow
 
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { getUnreadPollCount } from '../../functions';
+import { TabBarLabelCounter }
+    from '../../../mobile/navigation/components/TabBarLabelCounter';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
 
@@ -19,19 +19,25 @@ import { chatStyles } from './styles';
 
 const PollsPane = (props: AbstractProps) => {
     const { createMode, onCreate, setCreateMode, t } = props;
-    const isPollsScreenFocused = useIsFocused();
     const navigation = useNavigation();
-    const nbUnreadPolls = useSelector(getUnreadPollCount);
-
-    const nrUnreadPolls = !isPollsScreenFocused && nbUnreadPolls > 0
-        ? `(${nbUnreadPolls})`
-        : '';
+    const { isPollsTabFocused } = useSelector(state => state['features/chat']);
+    const { nbUnreadPolls } = useSelector(state => state['features/polls']);
 
     useEffect(() => {
+        const activeUnreadPollsNr = !isPollsTabFocused && nbUnreadPolls > 0;
+
         navigation.setOptions({
-            tabBarLabel: `${t('chat.tabs.polls')} ${nrUnreadPolls}`
+            // eslint-disable-next-line react/no-multi-comp
+            tabBarLabel: () => (
+                <TabBarLabelCounter
+                    activeUnreadNr = { activeUnreadPollsNr }
+                    isFocused = { isPollsTabFocused }
+                    label = { t('chat.tabs.polls') }
+                    nbUnread = { nbUnreadPolls } />
+            )
         });
-    }, [ nrUnreadPolls ]);
+
+    }, [ isPollsTabFocused, nbUnreadPolls ]);
 
     return (
         <JitsiScreen

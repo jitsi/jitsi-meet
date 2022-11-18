@@ -1,4 +1,4 @@
-// @flow
+/* eslint-disable react/no-multi-comp */
 
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect } from 'react';
@@ -6,7 +6,8 @@ import React, { useEffect } from 'react';
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../base/redux';
-import { closeChat } from '../../actions.any';
+import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
+import { closeChat } from '../../actions.native';
 import AbstractChat, {
     type Props as AbstractProps,
     _mapStateToProps
@@ -17,13 +18,7 @@ import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 import styles from './styles';
 
-
 type Props = AbstractProps & {
-
-    /**
-     * Is this screen focused or not(React Navigation).
-     */
-    isChatScreenFocused: boolean,
 
     /**
      * Default prop for navigating between screen components(React Navigation).
@@ -41,7 +36,6 @@ type Props = AbstractProps & {
  * the mobile client.
  */
 class Chat extends AbstractChat<Props> {
-
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -49,7 +43,7 @@ class Chat extends AbstractChat<Props> {
      */
     render() {
         const { _messages, route } = this.props;
-        const privateMessageRecipient = route.params?.privateMessageRecipient;
+        const privateMessageRecipient = route?.params?.privateMessageRecipient;
 
         return (
             <JitsiScreen
@@ -68,28 +62,26 @@ class Chat extends AbstractChat<Props> {
 }
 
 export default translate(connect(_mapStateToProps)(props => {
-    const {
-        _nbUnreadMessages,
-        navigation,
-        t
-    } = props;
-    const isChatScreenFocused = useIsFocused();
+    const { _nbUnreadMessages, dispatch, navigation, t } = props;
+    const unreadMessagesNr = _nbUnreadMessages > 0;
 
-    const nrUnreadMessages
-        = !isChatScreenFocused && _nbUnreadMessages > 0
-            ? `(${_nbUnreadMessages})` : '';
+    const isFocused = useIsFocused();
 
     useEffect(() => {
-        navigation.setOptions({
-            tabBarLabel: `${t('chat.tabs.chat')} ${nrUnreadMessages}`
+        navigation?.setOptions({
+            tabBarLabel: () => (
+                <TabBarLabelCounter
+                    activeUnreadNr = { unreadMessagesNr }
+                    isFocused = { isFocused }
+                    label = { t('chat.tabs.chat') }
+                    nbUnread = { _nbUnreadMessages } />
+            )
         });
 
-        return () => props.dispatch(closeChat());
-    }, [ nrUnreadMessages ]);
+        return () => isFocused && dispatch(closeChat());
+    }, [ isFocused, _nbUnreadMessages ]);
 
     return (
-        <Chat
-            { ...props }
-            isChatScreenFocused = { isChatScreenFocused } />
+        <Chat { ...props } />
     );
 }));
