@@ -9,10 +9,8 @@ export const AVATAR_SIZE = 50;
 const indicatorContainer = {
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: BaseTheme.shape.borderRadius,
-    height: 32,
     margin: 2,
-    padding: 2,
-    width: 32
+    padding: 2
 };
 
 /**
@@ -122,10 +120,12 @@ export default {
     indicatorContainer: {
         ...indicatorContainer,
         flexShrink: 1,
+        height: 32,
         justifyContent: 'center',
         marginBottom: BaseTheme.spacing[0],
         marginHorizontal: BaseTheme.spacing[1],
-        marginTop: BaseTheme.spacing[2]
+        marginTop: BaseTheme.spacing[2],
+        width: 32
     },
 
     /**
