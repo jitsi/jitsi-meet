@@ -78,6 +78,11 @@ type Props = {
     participantId: string,
 
     /**
+     * Whether or not to display a tint background over tile.
+     */
+    shouldDisplayTintBackground: boolean,
+
+    /**
      * An object with the styles for thumbnail.
      */
     styles: Object,
@@ -107,6 +112,7 @@ const VirtualScreenshareParticipant = ({
     onTouchMove,
     onTouchStart,
     participantId,
+    shouldDisplayTintBackground,
     styles,
     videoTrack,
     thumbnailType
@@ -150,6 +156,7 @@ const VirtualScreenshareParticipant = ({
                     participantId = { participantId }
                     thumbnailType = { thumbnailType } />
             </div>
+            {shouldDisplayTintBackground && <div className = { classes.tintBackground } />}
             <div
                 className = { clsx(classes.indicatorsContainer,
                         classes.indicatorsBottomContainer,
