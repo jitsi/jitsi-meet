@@ -55,10 +55,7 @@ import {
     p2pStatusChanged,
     sendLocalParticipant
 } from './react/features/base/conference';
-import {
-    getMultipleVideoSendingSupportFeatureFlag,
-    getReplaceParticipant
-} from './react/features/base/config/functions';
+import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
@@ -1422,30 +1419,13 @@ export default {
                     return;
                 }
 
-                // In the multi-stream mode, add the track to the conference if there is no existing track, replace it
-                // otherwise.
-                if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-                    const trackAction = oldTrack
-                        ? replaceLocalTrack(oldTrack, newTrack, room)
-                        : addLocalTrack(newTrack);
+                // Add the track to the conference if there is no existing track, replace it otherwise.
+                const trackAction = oldTrack
+                    ? replaceLocalTrack(oldTrack, newTrack, room)
+                    : addLocalTrack(newTrack);
 
-                    APP.store.dispatch(trackAction)
-                        .then(() => {
-                            this.setVideoMuteStatus();
-                        })
-                        .then(resolve)
-                        .catch(error => {
-                            logger.error(`useVideoStream failed: ${error}`);
-                            reject(error);
-                        })
-                        .then(onFinish);
-
-                    return;
-                }
-                APP.store.dispatch(
-                    replaceLocalTrack(oldTrack, newTrack, room))
+                APP.store.dispatch(trackAction)
                     .then(() => {
-                        this._setSharingScreen(newTrack);
                         this.setVideoMuteStatus();
                     })
                     .then(resolve)
