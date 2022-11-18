@@ -1451,6 +1451,22 @@ class API {
     }
 
     /**
+     * Notify external application that the data channel has been closed.
+     *
+     * @param {number} code - The close code.
+     * @param {string} reason - The close reason.
+     *
+     * @returns {void}
+     */
+    notifyDataChannelClosed(code: number, reason: string) {
+        this._sendEvent({
+            name: 'data-channel-closed',
+            code,
+            reason
+        });
+    }
+
+    /**
      * Notify external application that the data channel has been opened.
      *
      * @returns {void}
