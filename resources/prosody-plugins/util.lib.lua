@@ -1,6 +1,7 @@
 local jid = require "util.jid";
 local timer = require "util.timer";
 local http = require "net.http";
+local cache = require "util.cache";
 
 local http_timeout = 30;
 local have_async, async = pcall(require, "util.async");
@@ -25,18 +26,24 @@ local target_subdomain_pattern = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..
 -- table to store all incoming iqs without roomname in it, like discoinfo to the muc component
 local roomless_iqs = {};
 
+local split_subdomain_cache = cache.new(1000);
+local extract_subdomain_cache = cache.new(1000);
+local internal_room_jid_rewrite = cache.new(1000);
+local hc_room_cache = cache.new(10);
+
 -- Utility function to split room JID to include room name and subdomain
 -- (e.g. from room1@conference.foo.example.com/res returns (room1, example.com, res, foo))
 local function room_jid_split_subdomain(room_jid)
-    local node, host, resource = jid.split(room_jid);
-
-    -- optimization, skip matching if there is no subdomain or it is not the muc component address at all
-    if host == muc_domain or not starts_with(host, muc_domain_prefix) then
-        return node, host, resource;
+    local ret = split_subdomain_cache:get(room_jid);
+    if ret then
+        return unpack(ret);
     end
 
+    local node, host, resource = jid.split(room_jid);
+
     local target_subdomain = host and host:match(target_subdomain_pattern);
-    return node, host, resource, target_subdomain
+    split_subdomain_cache:set(room_jid, {node, host, resource, target_subdomain});
+    return node, host, resource, target_subdomain;
 end
 
 --- Utility function to check and convert a room JID from
@@ -69,6 +76,11 @@ end
 
 -- Utility function to check and convert a room JID from real [foo]room1@muc.example.com to virtual room1@muc.foo.example.com
 local function internal_room_jid_match_rewrite(room_jid, stanza)
+    local ret = internal_room_jid_rewrite:get(room_jid);
+    if ret then
+        return ret;
+    end
+
     local node, host, resource = jid.split(room_jid);
     if host ~= muc_domain or not node then
         -- module:log("debug", "No need to rewrite %s (not from the MUC host)", room_jid);
@@ -79,17 +91,21 @@ local function internal_room_jid_match_rewrite(room_jid, stanza)
             return result;
         end
 
+        internal_room_jid_rewrite:set(room_jid, room_jid);
         return room_jid;
     end
 
     local target_subdomain, target_node = extract_subdomain(node);
     if not (target_node and target_subdomain) then
         -- module:log("debug", "Not rewriting... unexpected node format: %s", node);
+        internal_room_jid_rewrite:set(room_jid, room_jid);
         return room_jid;
     end
 
     -- Ok, rewrite room_jid address to pretty format
-    return jid.join(target_node, muc_domain_prefix..".".. target_subdomain.."."..muc_domain_base, resource);
+    ret = jid.join(target_node, muc_domain_prefix..".".. target_subdomain.."."..muc_domain_base, resource);
+    internal_room_jid_rewrite:set(room_jid, ret);
+    return ret;
 end
 
 --- Finds and returns room by its jid
@@ -242,12 +258,14 @@ end
 --- Extracts the subdomain and room name from internal jid node [foo]room1
 -- @return subdomain(optional, if extracted or nil), the room name
 function extract_subdomain(room_node)
-    -- optimization, skip matching if there is no subdomain, no [subdomain] part in the beginning of the node
-    if not starts_with(room_node, '[') then
-        return nil,room_node;
+    local ret = extract_subdomain_cache:get(room_node);
+    if ret then
+        return ret;
     end
 
-    return room_node:match("^%[([^%]]+)%](.+)$");
+    local ret = room_node:match("^%[([^%]]+)%](.+)$");
+    extract_subdomain_cache:set(room_node, ret);
+    return ret;
 end
 
 function starts_with(str, start)
@@ -260,11 +278,17 @@ end
 
 -- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
 function is_healthcheck_room(room_jid)
-    if starts_with(room_jid, "__jicofo-health-check") then
-        return true;
+    local ret = hc_room_cache:get(room_jid);
+    if ret then
+        return ret;
     end
-
-    return false;
+    if starts_with(room_jid, "__jicofo-health-check") then
+        ret = true;
+    else
+        ret = false;
+    end
+    hc_room_cache:set(room_jid, ret);
+    return ret;
 end
 
 --- Utility function to make an http get request and
