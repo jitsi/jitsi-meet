@@ -71,8 +71,7 @@ export default {
     },
 
     qualityLabelContainer: {
-        borderBottomLeftRadius: 3,
-        borderTopLeftRadius: 3,
+        borderRadius: BaseTheme.shape.borderRadius,
         flexShrink: 1,
         paddingHorizontal: 2,
         justifyContent: 'center',

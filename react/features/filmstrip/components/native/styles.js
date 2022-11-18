@@ -1,5 +1,3 @@
-// @flow
-
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { SMALL_THUMBNAIL_SIZE } from '../../constants';
 
@@ -10,7 +8,7 @@ export const AVATAR_SIZE = 50;
 
 const indicatorContainer = {
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    borderRadius: 4,
+    borderRadius: BaseTheme.shape.borderRadius,
     margin: 2,
     padding: 2
 };
@@ -119,7 +117,16 @@ export default {
         width: SMALL_THUMBNAIL_SIZE
     },
 
-    indicatorContainer,
+    indicatorContainer: {
+        ...indicatorContainer,
+        flexShrink: 1,
+        height: 32,
+        justifyContent: 'center',
+        marginBottom: BaseTheme.spacing[0],
+        marginHorizontal: BaseTheme.spacing[1],
+        marginTop: 6,
+        width: 32
+    },
 
     /**
      * The thumbnails indicator container.
