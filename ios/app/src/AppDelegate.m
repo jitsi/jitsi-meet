@@ -17,6 +17,7 @@
 
 #import "AppDelegate.h"
 #import "FIRUtilities.h"
+#import "RoutesHandler.h"
 #import "Types.h"
 #import "ViewController.h"
 
@@ -69,7 +70,7 @@
 -    (BOOL)application:(UIApplication *)application
   continueUserActivity:(NSUserActivity *)userActivity
     restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler {
-
+    
     if ([FIRUtilities appContainsRealServiceInfoPlist]) {
         // 1. Attempt to handle Universal Links through Firebase in order to support
         //    its Dynamic Links (which we utilize for the purposes of deferred deep
@@ -106,6 +107,10 @@
     // https://github.com/firebase/firebase-ios-sdk/issues/233
     if ([[url absoluteString] containsString:@"google/link/?dismiss=1&is_weak_match=1"]) {
         return NO;
+    }
+    
+    if ([[RoutesHandler sharedInstance] routeURL:url]) {
+        return YES;
     }
 
     NSURL *openUrl = url;

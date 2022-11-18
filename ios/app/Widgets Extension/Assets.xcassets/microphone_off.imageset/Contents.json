@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "microphone_off_button.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
