@@ -1,6 +1,5 @@
-// @flow
-
 import { ColorPalette, createStyleSheet } from '../../base/styles';
+import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 export const AUD_LABEL_COLOR = ColorPalette.green;
 
@@ -13,6 +12,8 @@ export default createStyleSheet({
      * Style for the audio-only indicator.
      */
     indicatorAudioOnly: {
-        backgroundColor: AUD_LABEL_COLOR
+        backgroundColor: AUD_LABEL_COLOR,
+        borderRadius: BaseTheme.shape.borderRadius,
+        height: 32
     }
 });
