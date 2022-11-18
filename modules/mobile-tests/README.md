@@ -39,6 +39,13 @@ will be added to ./modules/mobile-tests/helpers/capabilities.js.
     * Open terminal and run 'adb devices'.
     * If your physical testing device is plugged in your USB, the previous command will return its ID.
 
+## Build Archive for iOS
+
+* Before running tests, you need to generate a release archive.
+* Inside ios/scripts you will find release-archive.sh.
+* Run that script and it will export an JitsiMeet.xcarchive that will contain an .app file.
+* The path to that .app file will be added to 'app' property inside capabilities file.
+
 ## Running tests
 
 * First npm i and make sure that the port is not occupied - sudo launchctl remove com.mcafee.agent.macmn
