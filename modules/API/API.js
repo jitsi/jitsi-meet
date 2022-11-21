@@ -1937,6 +1937,27 @@ class API {
     }
 
     /**
+     * Notify the external application that a PeerConnection lost connectivity. This event is fired only if
+     * a PC `failed` but connectivity to the rtcstats server is still maintained signaling that there is a
+     * problem establishing a link between the app and the JVB server or the remote peer in case of P2P.
+     * Will only fire if rtcstats is enabled.
+     *
+     * @param {boolean} isP2P - Type of PC.
+     * @param {boolean} wasConnected - Was this connection previously connected. If it was it could mean
+     * that connectivity was disrupted, if not it most likely means that the app could not reach
+     * the JVB server, or the other peer in case of P2P.
+     *
+     * @returns {void}
+     */
+    notifyPeerConnectionFailure(isP2P, wasConnected) {
+        this._sendEvent({
+            name: 'peer-connection-failure',
+            isP2P,
+            wasConnected
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}

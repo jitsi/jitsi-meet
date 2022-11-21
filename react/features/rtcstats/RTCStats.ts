@@ -1,8 +1,17 @@
 // @ts-ignore
+import { PC_CON_STATE_CHANGE,
+    PC_STATE_CONNECTED,
+    PC_STATE_FAILED
+
+    // @ts-ignore
+} from '@jitsi/rtcstats/events';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import traceInit from '@jitsi/rtcstats/trace-ws';
+
 
 import { createRTCStatsTraceCloseEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
@@ -39,6 +48,7 @@ function connectionFilter(config: any) {
 class RTCStats {
     trace: any;
     initialized = false;
+    connStateEvents: any = [];
 
     /**
      * Initialize the rtcstats components. First off we initialize the trace, which is a wrapped websocket
@@ -71,7 +81,8 @@ class RTCStats {
             connectionFilter,
             pollInterval,
             useLegacy,
-            sendSdp
+            sendSdp,
+            eventCallback: this.handleRtcstatsEvent.bind(this)
         };
 
         this.trace = traceInit(traceOptions);
@@ -183,6 +194,40 @@ class RTCStats {
      */
     close() {
         this.trace?.close();
+    }
+
+    /**
+     * RTCStats client can notify the APP of any PeerConnection related event that occurs.
+     *
+     * @param {Object} event - Rtcstats event.
+     * @returns {void}
+     */
+    handleRtcstatsEvent(event: any) {
+        switch (event.type) {
+        case PC_CON_STATE_CHANGE: {
+            const { body: { isP2P, state } = { state: null,
+                isP2P: null } } = event;
+
+            this.connStateEvents.push(event.body);
+
+            // We only report PC related connection issues. If the rtcstats websocket is not connected at this point
+            // it usually means that none of our services can be reached i.e. there's problem with the internet
+            // connection and not necessarily with reaching the JVB (due to a firewall or other reasons).
+            if (state === PC_STATE_FAILED && this.trace.isConnected()) {
+                const connectionType = isP2P ? 'P2P' : 'JVB';
+                const wasConnected = this.connStateEvents.some((connectionEvent: { isP2P: any; state: string; }) =>
+                    (connectionEvent.isP2P === isP2P) && (connectionEvent.state === PC_STATE_CONNECTED));
+
+                logger.info(`${connectionType} PeerConnection failed, previously connected: ${wasConnected}`);
+
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyPeerConnectionFailure(isP2P, wasConnected);
+                }
+            }
+
+            break;
+        }
+        }
     }
 
     /**
