@@ -109,7 +109,6 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
 
         return next(action);
     }
-
     case NEW_FACE_COORDINATES: {
         const state = getState();
         const { faceBox } = action;

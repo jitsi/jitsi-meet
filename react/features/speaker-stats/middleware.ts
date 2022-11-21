@@ -22,6 +22,7 @@ import {
     updateSortedSpeakerStatsIds,
     updateStats
 } from './actions.any';
+import { CLEAR_TIME_BOUNDARY_THRESHOLD } from './constants';
 import {
     filterBySearchCriteria,
     getCurrentDuration,
@@ -79,7 +80,7 @@ MiddlewareRegistry.register(({ dispatch, getState }: IStore) => (next: Function)
         const { right } = getTimelineBoundaries(state);
         const currentDuration = getCurrentDuration(state) ?? 0;
 
-        if (Math.abs((right + action.value) - currentDuration) < 1000) {
+        if (Math.abs((right + action.value) - currentDuration) < CLEAR_TIME_BOUNDARY_THRESHOLD) {
             dispatch(clearTimelineBoundary());
         } else if (!timelineBoundary) {
             dispatch(setTimelineBoundary(currentDuration ?? 0));

@@ -1,4 +1,4 @@
-import React, { MouseEvent, useEffect, useRef, useState } from 'react';
+import React, { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -18,27 +18,26 @@ const TimelineAxis = () => {
     const [ dragLeft, setDragLeft ] = useState(false);
     const [ dragRight, setDragRight ] = useState(false);
 
-    const getPointOnAxis = (event: MouseEvent) => {
+    const getPointOnAxis = useCallback((event: MouseEvent) => {
         const axisRect = event.currentTarget.getBoundingClientRect();
         const eventOffsetX = event.pageX - axisRect.left;
 
         return (eventOffsetX * currentDuration) / axisRect.width;
-    };
+    }, [ currentDuration ]);
 
-    const startResizeHandlerLeft = (event: MouseEvent) => {
+    const startResizeHandlerLeft = useCallback((event: MouseEvent) => {
         if (!timelinePanning.active && !dragRight) {
             setDragLeft(true);
         }
         event.preventDefault();
         event.stopPropagation();
-    };
+    }, [ dragRight, timelinePanning, setDragLeft ]);
 
     const stopResizeLeft = () => {
         setDragLeft(false);
-
     };
 
-    const resizeHandlerLeft = (event: MouseEvent) => {
+    const resizeHandlerLeft = useCallback((event: MouseEvent) => {
         if (dragLeft) {
             const point = getPointOnAxis(event);
 
@@ -47,22 +46,20 @@ const TimelineAxis = () => {
 
                 dispatch(addToOffsetLeft(value));
             }
-
         }
-    };
+    }, [ dragLeft, getPointOnAxis, dispatch, addToOffsetLeft ]);
 
-    const startResizeHandlerRight = (event: MouseEvent) => {
+    const startResizeHandlerRight = useCallback((event: MouseEvent) => {
         if (!timelinePanning.active && !dragRight) {
             setDragRight(true);
         }
         event.preventDefault();
         event.stopPropagation();
-    };
+    }, [ timelinePanning, dragRight ]);
 
-    const stopResizeRight = () => {
+    const stopResizeRight = useCallback(() => {
         setDragRight(false);
-
-    };
+    }, [ setDragRight ]);
 
     const resizeHandlerRight = (event: MouseEvent) => {
         if (dragRight) {
@@ -73,11 +70,10 @@ const TimelineAxis = () => {
 
                 dispatch(addToOffsetRight(value));
             }
-
         }
     };
 
-    const startMoveHandler = (event: MouseEvent) => {
+    const startMoveHandler = useCallback((event: MouseEvent) => {
         if (!dragLeft && !dragRight) {
             const point = getPointOnAxis(event);
 
@@ -90,15 +86,14 @@ const TimelineAxis = () => {
         }
         event.preventDefault();
         event.stopPropagation();
-    };
+    }, [ dragLeft, dragRight, getPointOnAxis, dispatch, setTimelinePanning ]);
 
     const stopMoveHandler = () => {
         dispatch(setTimelinePanning({ ...timelinePanning,
             active: false }));
-
     };
 
-    const moveHandler = (event: MouseEvent) => {
+    const moveHandler = useCallback((event: MouseEvent) => {
         const { active, x } = timelinePanning;
 
         if (active) {
@@ -108,21 +103,21 @@ const TimelineAxis = () => {
             dispatch(setTimelinePanning({ ...timelinePanning,
                 x: point }));
         }
-    };
+    }, [ timelinePanning, getPointOnAxis, dispatch, addToOffset, setTimelinePanning ]);
 
-    const handleOnMouseMove = (event: MouseEvent) => {
+    const handleOnMouseMove = useCallback((event: MouseEvent) => {
         resizeHandlerLeft(event);
         resizeHandlerRight(event);
         moveHandler(event);
-    };
+    }, [ resizeHandlerLeft, resizeHandlerRight ]);
 
-    const handleOnMouseUp = () => {
+    const handleOnMouseUp = useCallback(() => {
         stopResizeLeft();
         stopResizeRight();
         stopMoveHandler();
-    };
+    }, [ stopResizeLeft, stopResizeRight, stopMoveHandler ]);
 
-    const getHandlerStyle = () => {
+    const getHandlerStyle = useCallback(() => {
         let marginLeft = 100 / (currentDuration / left);
         let width = 100 / (currentDuration / (right - left));
 
@@ -150,7 +145,7 @@ const TimelineAxis = () => {
             marginLeft: `${marginLeft > 0 ? marginLeft : 0}%`,
             width: `${width}%`
         };
-    };
+    }, [ currentDuration, left, right, axisRef ]);
 
     useEffect(() => {
         window.addEventListener('mouseup', handleOnMouseUp);
@@ -161,7 +156,6 @@ const TimelineAxis = () => {
     return (
         <div
             className = 'axis-container'
-            // eslint-disable-next-line react/jsx-no-bind
             onMouseMove = { handleOnMouseMove }
             ref = { axisRef }>
             <div
@@ -174,18 +168,15 @@ const TimelineAxis = () => {
                 </div>
                 <div
                     className = 'handler'
-                    // eslint-disable-next-line react/jsx-no-bind
                     onMouseDown = { startMoveHandler }
                     style = { getHandlerStyle() } >
                     <div
                         className = 'resize'
                         id = 'left'
-                        // eslint-disable-next-line react/jsx-no-bind
                         onMouseDown = { startResizeHandlerLeft } />
                     <div
                         className = 'resize'
                         id = 'right'
-                        // eslint-disable-next-line react/jsx-no-bind
                         onMouseDown = { startResizeHandlerRight } />
                 </div>
             </div>

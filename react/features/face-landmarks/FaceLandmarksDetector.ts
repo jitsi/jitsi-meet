@@ -109,23 +109,20 @@ class FaceLandmarksDetector {
             const { faceExpression, faceBox, faceCount } = data;
             const messageTimestamp = Date.now();
 
+            // if the number of faces detected is different from 1 we do not take into consideration that detection
             if (faceCount !== 1) {
                 if (this.noDetectionCount === 0) {
                     this.noDetectionStartTimestamp = messageTimestamp;
                 }
                 this.noDetectionCount++;
 
-                if (this.noDetectionCount === NO_FACE_DETECTION_THRESHOLD) {
-
-
-                    if (this.noDetectionStartTimestamp) {
-                        this.addFaceLandmarks(
+                if (this.noDetectionCount === NO_FACE_DETECTION_THRESHOLD && this.noDetectionStartTimestamp) {
+                    this.addFaceLandmarks(
                             dispatch,
                             this.noDetectionStartTimestamp,
                             NO_DETECTION,
                             addToBuffer
-                        );
-                    }
+                    );
                 }
 
                 return;

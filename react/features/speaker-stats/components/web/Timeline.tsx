@@ -1,4 +1,4 @@
-import React, { MouseEvent, useEffect, useRef } from 'react';
+import React, { MouseEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -18,9 +18,9 @@ const Timeline = ({ faceLandmarks }: Props) => {
     const { timelinePanning } = useSelector((state: IReduxState) => state['features/speaker-stats']);
     const dispatch = useDispatch();
     const containerRef = useRef<HTMLDivElement>(null);
-    const intervalDuration = right - left;
+    const intervalDuration = useMemo(() => right - left, [ left, right ]);
 
-    const getSegments = () => {
+    const getSegments = useCallback(() => {
         const segments = faceLandmarks?.filter(landmarks => {
             const timeStart = getFaceLandmarksStart(landmarks, startTimestamp);
             const timeEnd = getFaceLandmarksEnd(landmarks, startTimestamp);
@@ -60,21 +60,21 @@ const Timeline = ({ faceLandmarks }: Props) => {
             leftCut,
             rightCut
         };
-    };
+    }, [ faceLandmarks, left, right, startTimestamp ]);
 
     const { segments, leftCut, rightCut } = getSegments();
 
-    const getStyle = (duration: number, faceExpression: string) => {
+    const getStyle = useCallback((duration: number, faceExpression: string) => {
         return {
             width: `${100 / (intervalDuration / duration)}%`,
-            backgroundColor: TIMELINE_COLORS[faceExpression] ?? '#FFFFFF00'
+            backgroundColor: TIMELINE_COLORS[faceExpression] ?? TIMELINE_COLORS['no-detection']
         };
-    };
+    }, [ intervalDuration ]);
 
 
-    const getStartStyle = () => {
+    const getStartStyle = useCallback(() => {
         let startDuration = 0;
-        let color = '#FFFFFF00';
+        let color = TIMELINE_COLORS['no-detection'];
 
         if (leftCut) {
             const { faceExpression } = leftCut;
@@ -91,11 +91,11 @@ const Timeline = ({ faceLandmarks }: Props) => {
             width: `${100 / (intervalDuration / startDuration)}%`,
             backgroundColor: color
         };
-    };
+    }, [ leftCut, rightCut, startTimestamp, left ]);
 
-    const getEndStyle = () => {
+    const getEndStyle = useCallback(() => {
         let endDuration = 0;
-        let color = '#FFFFFF00';
+        let color = TIMELINE_COLORS['no-detection'];
 
         if (rightCut) {
             const { faceExpression } = rightCut;
@@ -112,27 +112,30 @@ const Timeline = ({ faceLandmarks }: Props) => {
             width: `${100 / (intervalDuration / endDuration)}%`,
             backgroundColor: color
         };
-    };
+    }, [ leftCut, rightCut, startTimestamp, right ]);
 
-    const getOneSegmentStyle = (faceExpression?: string) => {
+    const getOneSegmentStyle = useCallback((faceExpression?: string) => {
         return {
             width: '100%',
-            backgroundColor: faceExpression ? TIMELINE_COLORS[faceExpression] : '#FFFFFF00',
+            backgroundColor: faceExpression ? TIMELINE_COLORS[faceExpression] : TIMELINE_COLORS['no-detection'],
             borderRadius: 0
         };
-    };
+    }, []);
 
-    const handleOnWheel = (event: WheelEvent) => {
+    const handleOnWheel = useCallback((event: WheelEvent) => {
+        // check if horizontal scroll
         if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) {
             const value = event.deltaX * SCROLL_RATE;
 
             dispatch(addToOffset(value));
             event.preventDefault();
         }
-    };
+    }, [ dispatch, addToOffset ]);
 
-    const hideStartAndEndSegments = () => leftCut && rightCut
-                    && leftCut.faceExpression === rightCut.faceExpression && !segments.length;
+    const hideStartAndEndSegments = useCallback(() => leftCut && rightCut
+                    && leftCut.faceExpression === rightCut.faceExpression
+                    && !segments.length,
+    [ leftCut, rightCut, segments ]);
 
     useEffect(() => {
         containerRef.current?.addEventListener('wheel', handleOnWheel, { passive: false });
@@ -140,15 +143,15 @@ const Timeline = ({ faceLandmarks }: Props) => {
         return () => containerRef.current?.removeEventListener('wheel', handleOnWheel);
     }, []);
 
-    const getPointOnTimeline = (event: MouseEvent) => {
+    const getPointOnTimeline = useCallback((event: MouseEvent) => {
         const axisRect = event.currentTarget.getBoundingClientRect();
         const eventOffsetX = event.pageX - axisRect.left;
 
         return (eventOffsetX * right) / axisRect.width;
-    };
+    }, [ right ]);
 
 
-    const handleOnMouseMove = (event: MouseEvent) => {
+    const handleOnMouseMove = useCallback((event: MouseEvent) => {
         const { active, x } = timelinePanning;
 
         if (active) {
@@ -158,9 +161,9 @@ const Timeline = ({ faceLandmarks }: Props) => {
             dispatch(setTimelinePanning({ ...timelinePanning,
                 x: point }));
         }
-    };
+    }, [ timelinePanning, dispatch, addToOffset, setTimelinePanning, getPointOnTimeline ]);
 
-    const handleOnMouseDown = (event: MouseEvent) => {
+    const handleOnMouseDown = useCallback((event: MouseEvent) => {
         const point = getPointOnTimeline(event);
 
         dispatch(setTimelinePanning(
@@ -172,20 +175,18 @@ const Timeline = ({ faceLandmarks }: Props) => {
 
         event.preventDefault();
         event.stopPropagation();
-    };
+    }, [ getPointOnTimeline, dispatch, setTimelinePanning ]);
 
     return (
         <div
             className = 'timeline-container'
-            // eslint-disable-next-line react/jsx-no-bind
             onMouseDown = { handleOnMouseDown }
-            // eslint-disable-next-line react/jsx-no-bind
             onMouseMove = { handleOnMouseMove }
             ref = { containerRef }>
             <div
                 className = 'timeline'>
                 {!hideStartAndEndSegments() && <div
-                    area-label = 'start'
+                    aria-label = 'start'
                     style = { getStartStyle() } />}
                 {hideStartAndEndSegments() && <div
                     style = { getOneSegmentStyle(leftCut?.faceExpression) } />}

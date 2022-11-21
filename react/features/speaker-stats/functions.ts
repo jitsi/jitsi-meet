@@ -218,12 +218,12 @@ export function resetHiddenStats(state: IReduxState, stats?: ISpeakerStats) {
  * Gets the current duration of the conference.
  *
  * @param {IState} state - The redux state.
- * @returns {number | undefined} - The duration in milliseconds or undefined.
+ * @returns {number | null} - The duration in milliseconds or null.
  */
 export function getCurrentDuration(state: IReduxState) {
     const startTimestamp = getConferenceTimestamp(state);
 
-    return startTimestamp ? Date.now() - startTimestamp : undefined;
+    return startTimestamp ? Date.now() - startTimestamp : null;
 }
 
 /**

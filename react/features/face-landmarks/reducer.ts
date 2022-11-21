@@ -28,7 +28,7 @@ ReducerRegistry.register<IFaceLandmarksState>('features/face-landmarks',
 (state = defaultState, action): IFaceLandmarksState => {
     switch (action.type) {
     case ADD_FACE_LANDMARKS: {
-        const { faceLandmarks, addToBuffer } = action;
+        const { addToBuffer, faceLandmarks }: { addToBuffer: boolean; faceLandmarks: FaceLandmarks; } = action;
 
         return {
             ...state,

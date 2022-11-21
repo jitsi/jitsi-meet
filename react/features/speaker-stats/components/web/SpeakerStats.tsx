@@ -167,6 +167,37 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
+const EMOTIONS_LEGEND = [
+    {
+        translationKey: 'speakerStats.neutral',
+        icon: IconEmotionsNeutral
+    },
+    {
+        translationKey: 'speakerStats.happy',
+        icon: IconEmotionsHappy
+    },
+    {
+        translationKey: 'speakerStats.surprised',
+        icon: IconEmotionsSurprised
+    },
+    {
+        translationKey: 'speakerStats.sad',
+        icon: IconEmotionsSad
+    },
+    {
+        translationKey: 'speakerStats.fearful',
+        icon: IconEmotionsFearful
+    },
+    {
+        translationKey: 'speakerStats.angry',
+        icon: IconEmotionsAngry
+    },
+    {
+        translationKey: 'speakerStats.disgusted',
+        icon: IconEmotionsDisgusted
+    }
+];
+
 const SpeakerStats = () => {
     const { faceLandmarks } = useSelector((state: IReduxState) => state['features/base/config']);
     const { showFaceExpressions } = useSelector((state: IReduxState) => state['features/speaker-stats']);
@@ -224,55 +255,18 @@ const SpeakerStats = () => {
                             }
                         </div>
                         { showFaceExpressions && <div className = 'emotions-icons'>
-                            <Tooltip
-                                content = { t('speakerStats.neutral') }
-                                position = { 'top' }>
-                                <Icon
-                                    size = { 20 }
-                                    src = { IconEmotionsNeutral } />
-                            </Tooltip>
-                            <Tooltip
-                                content = { t('speakerStats.happy') }
-                                position = { 'top' }>
-                                <Icon
-                                    size = { 20 }
-                                    src = { IconEmotionsHappy } />
-                            </Tooltip>
-                            <Tooltip
-                                content = { t('speakerStats.surprised') }
-                                position = { 'top' }>
-                                <Icon
-                                    size = { 20 }
-                                    src = { IconEmotionsSurprised } />
-                            </Tooltip>
-                            <Tooltip
-                                content = { t('speakerStats.sad') }
-                                position = { 'top' }>
-                                <Icon
-                                    size = { 20 }
-                                    src = { IconEmotionsSad } />
-                            </Tooltip>
-                            <Tooltip
-                                content = { t('speakerStats.fearful') }
-                                position = { 'top' }>
-                                <Icon
-                                    size = { 20 }
-                                    src = { IconEmotionsFearful } />
-                            </Tooltip>
-                            <Tooltip
-                                content = { t('speakerStats.angry') }
-                                position = { 'top' }>
-                                <Icon
-                                    size = { 20 }
-                                    src = { IconEmotionsAngry } />
-                            </Tooltip>
-                            <Tooltip
-                                content = { t('speakerStats.disgusted') }
-                                position = { 'top' }>
-                                <Icon
-                                    size = { 20 }
-                                    src = { IconEmotionsDisgusted } />
-                            </Tooltip>
+                            {
+                                EMOTIONS_LEGEND.map(emotion => (
+                                    <Tooltip
+                                        content = { t(emotion.translationKey) }
+                                        key = { emotion.translationKey }
+                                        position = { 'top' }>
+                                        <Icon
+                                            size = { 20 }
+                                            src = { emotion.icon } />
+                                    </Tooltip>
+                                ))
+                            }
                         </div>}
                     </div>
                     { displayLabels && (

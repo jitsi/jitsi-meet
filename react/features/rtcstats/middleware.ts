@@ -24,6 +24,7 @@ import {
     isRtcstatsEnabled
 } from './functions';
 import logger from './logger';
+import { FaceLandmarks } from '../face-landmarks/types';
 
 /**
  * Middleware which intercepts lib-jitsi-meet initialization and conference join in order init the
@@ -166,7 +167,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     }
     case ADD_FACE_LANDMARKS: {
         if (canSendFaceLandmarksRtcstatsData(state)) {
-            const { faceLandmarks: { duration, faceExpression, timestamp } } = action;
+            const { duration, faceExpression, timestamp } = action.faceLandmarks as FaceLandmarks;
             const durationSeconds = Math.round(duration / 1000);
 
             RTCStats.sendFaceLandmarksData({

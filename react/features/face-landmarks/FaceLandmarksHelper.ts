@@ -149,10 +149,12 @@ export class HumanHelper implements IFaceLandmarksHelper {
             return;
         }
 
-        if (detections[0].emotion) {
+        const detection = detections[0];
+
+        if (detection.emotion) {
             return {
-                expression: FACE_EXPRESSIONS_NAMING_MAPPING[detections[0].emotion[0].emotion],
-                score: detections[0].emotion[0].score
+                expression: FACE_EXPRESSIONS_NAMING_MAPPING[detection.emotion[0].emotion],
+                score: detection.emotion[0].score
             };
         }
     }

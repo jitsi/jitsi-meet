@@ -1,4 +1,5 @@
 import { IReduxState } from '../app/types';
+import { IJitsiConference } from '../base/conference/reducer';
 import { getLocalParticipant } from '../base/participants/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
@@ -53,7 +54,7 @@ export function sendFaceBoxToParticipants(
  * @param  {FaceLandmarks} faceLandmarks - Face landmarks to be sent.
  * @returns {void}
  */
-export function sendFaceExpressionToServer(conference: any, faceLandmarks: FaceLandmarks): void {
+export function sendFaceExpressionToServer(conference: IJitsiConference, faceLandmarks: FaceLandmarks): void {
     try {
         conference.sendFaceLandmarks(faceLandmarks);
     } catch (err) {

@@ -74,12 +74,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
     [ dispatch, initUpdateStats, getSpeakerStats ]);
 
     useEffect(() => {
-        if (reloadInterval.current) {
-            clearInterval(reloadInterval.current);
-        }
-
-        // @ts-ignore
-        reloadInterval.current = setInterval(() => {
+        reloadInterval.current = window.setInterval(() => {
             updateStats();
         }, SPEAKER_STATS_RELOAD_INTERVAL);
 

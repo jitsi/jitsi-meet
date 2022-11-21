@@ -8,7 +8,6 @@ import {
     INIT_SEARCH,
     INIT_UPDATE_STATS,
     RESET_SEARCH_CRITERIA,
-    SET_OFFSET,
     SET_PANNING,
     SET_TIMELINE_BOUNDARY,
     TOGGLE_FACE_EXPRESSIONS,
@@ -22,10 +21,10 @@ import { ISpeakerStats } from './reducer';
 /**
  * Starts a search by criteria.
  *
- * @param {string | null} criteria - The search criteria.
+ * @param {string} criteria - The search criteria.
  * @returns {Object}
  */
-export function initSearch(criteria: string | null) {
+export function initSearch(criteria: string) {
     return {
         type: INIT_SEARCH,
         criteria
@@ -137,19 +136,6 @@ export function addToOffset(value: number) {
                 value: currentDuration - right
             });
         }
-    };
-}
-
-/**
- * Sets the value of the offset for the timeline.
- *
- * @param {number} value - The new value for the offset.
- * @returns {Object}
- */
-export function setOffset(value: number) {
-    return {
-        type: SET_OFFSET,
-        value
     };
 }
 

@@ -82,6 +82,8 @@ const SpeakerStatsItem = (props: Props) => {
                                 initials = { getInitials(props.displayName) } />
                         ) : (
                             <Avatar
+
+                                // @ts-ignore
                                 className = 'userAvatar'
                                 participantId = { props.participantId } />
                         )

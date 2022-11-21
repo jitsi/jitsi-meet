@@ -24,3 +24,5 @@ export const TIMELINE_COLORS: {
     disgusted: '#65B16B',
     'no-detection': '#FFFFFF00'
 };
+
+export const CLEAR_TIME_BOUNDARY_THRESHOLD = 1000;

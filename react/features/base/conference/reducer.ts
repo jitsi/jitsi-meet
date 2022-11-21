@@ -1,3 +1,4 @@
+import { FaceLandmarks } from '../../face-landmarks/types';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock/constants';
 import { ISpeakerStats } from '../../speaker-stats/reducer';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection/actionTypes';
@@ -76,6 +77,7 @@ export interface IJitsiConference {
     sendCommand: Function;
     sendCommandOnce: Function;
     sendEndpointMessage: Function;
+    sendFaceLandmarks: (faceLandmarks: FaceLandmarks) => void;
     sendFeedback: Function;
     sendLobbyMessage: Function;
     sessionId: string;

@@ -10,7 +10,6 @@ import {
     INIT_REORDER_STATS,
     INIT_SEARCH,
     RESET_SEARCH_CRITERIA,
-    SET_OFFSET,
     SET_PANNING,
     SET_TIMELINE_BOUNDARY,
     TOGGLE_FACE_EXPRESSIONS,
@@ -101,13 +100,6 @@ ReducerRegistry.register<ISpeakerStatsState>('features/speaker-stats',
             ...state,
             offsetLeft: state.offsetLeft + action.value,
             offsetRight: state.offsetRight + action.value
-        };
-    }
-    case SET_OFFSET: {
-        return {
-            ...state,
-            offsetLeft: action.value,
-            offsetRight: action.value
         };
     }
     case ADD_TO_OFFSET_RIGHT: {

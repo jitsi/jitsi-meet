@@ -27,9 +27,9 @@ const TimeElapsed = ({ time }: Props) => {
     const timeElapsed = createLocalizedTime(time, t);
 
     return (
-        <div>
+        <span>
             { timeElapsed }
-        </div>
+        </span>
     );
 };
 
