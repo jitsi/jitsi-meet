@@ -220,7 +220,9 @@ class RTCStats {
 
                 logger.info(`${connectionType} PeerConnection failed, previously connected: ${wasConnected}`);
 
-                APP?.API?.notifyPeerConnectionFailure(isP2P, wasConnected);
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyPeerConnectionFailure(isP2P, wasConnected);
+                }
             }
 
             break;
