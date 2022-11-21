@@ -79,7 +79,7 @@ class ChatInputBar extends Component<Props, State> {
                 ] }>
                 <Input
                     blurOnSubmit = { false }
-                    customStyles = {{ input: styles.customInput }}
+                    customStyles = {{ container: styles.customInputContainer }}
                     multiline = { false }
                     onBlur = { this._onFocused(false) }
                     onChange = { this._onChangeText }

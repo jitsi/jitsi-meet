@@ -66,14 +66,13 @@ const TitleBar = (props: IProps): JSX.Element => {
                     <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
                     <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
                 </View>
-
                 {
                     props._meetingNameEnabled
                     && <View style = { styles.roomNameView as StyleProp<ViewStyle> }>
                         <Text
                             numberOfLines = { 1 }
                             style = { styles.roomName }>
-                            {props._meetingName}
+                            { props._meetingName }
                         </Text>
                     </View>
                 }

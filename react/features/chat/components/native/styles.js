@@ -124,8 +124,8 @@ export default {
         width: '100%'
     },
 
-    customInput: {
-        width: 272
+    customInputContainer: {
+        width: '75%'
     },
 
     messageBubble: {

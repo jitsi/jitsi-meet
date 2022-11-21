@@ -3,13 +3,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 export default {
     joinButton: {
-        marginTop: BaseTheme.spacing[3]
-    },
-
-    joinLowBandwidthLabel: {
-        color: BaseTheme.palette.text01,
-        marginTop: BaseTheme.spacing[3],
-        textAlign: 'center'
+        marginVertical: BaseTheme.spacing[3]
     },
 
     buttonStylesBorderless: {

@@ -100,7 +100,6 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                         icon = { this._renderAddPeopleIcon }
                         labelKey = 'lonelyMeetingExperience.button'
                         onClick = { this._onPress }
-                        style = { styles.lonelyButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 ) }
             </View>
