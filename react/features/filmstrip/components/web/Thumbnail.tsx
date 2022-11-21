@@ -199,6 +199,11 @@ export interface IProps {
     _raisedHand: boolean;
 
     /**
+     * Whether or not to display a tint background over tile.
+     */
+    _shouldDisplayTintBackground: boolean;
+
+    /**
      * Whether or not the current layout is stage filmstrip layout.
      */
     _stageFilmstripLayout: boolean;
@@ -360,6 +365,15 @@ const defaultStyles = (theme: Theme) => {
                 objectFit: 'contain',
                 flexGrow: '1'
             }
+        },
+
+        tintBackground: {
+            position: 'absolute' as const,
+            zIndex: 1,
+            width: '100%',
+            height: '100%',
+            backgroundColor: `${theme.palette.uiBackground}`,
+            opacity: 0.8
         }
     };
 };
@@ -965,6 +979,7 @@ class Thumbnail extends Component<IProps, IState> {
             _isTestModeEnabled,
             _localFlipX,
             _participant,
+            _shouldDisplayTintBackground,
             _thumbnailType,
             _videoTrack,
             classes,
@@ -1043,6 +1058,7 @@ class Thumbnail extends Component<IProps, IState> {
                         showPopover = { this._showPopover }
                         thumbnailType = { _thumbnailType } />
                 </div>
+                {_shouldDisplayTintBackground && <div className = { classes.tintBackground } />}
                 <div
                     className = { clsx(classes.indicatorsContainer,
                         classes.indicatorsBottomContainer,
@@ -1090,7 +1106,12 @@ class Thumbnail extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     render() {
-        const { _participant, _isTestModeEnabled, _isVirtualScreenshareParticipant } = this.props;
+        const {
+            _isTestModeEnabled,
+            _isVirtualScreenshareParticipant,
+            _participant,
+            _shouldDisplayTintBackground
+        } = this.props;
         const videoEventListeners: any = {};
 
         if (!_participant) {
@@ -1136,6 +1157,7 @@ class Thumbnail extends Component<IProps, IState> {
                     onTouchMove = { this._onTouchMove }
                     onTouchStart = { this._onTouchStart }
                     participantId = { _participant.id }
+                    shouldDisplayTintBackground = { _shouldDisplayTintBackground }
                     styles = { this._getStyles() }
                     thumbnailType = { _thumbnailType }
                     videoTrack = { _videoTrack } />
@@ -1264,6 +1286,11 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     const { gifUrl: gifSrc } = getGifForParticipant(state, id ?? '');
     const mode = getGifDisplayMode(state);
     const participantId = isLocal ? getLocalParticipant(state)?.id : participantID;
+    const isActiveParticipant = activeParticipants.find((pId: string) => pId === participantId);
+    const participantCurrentlyOnLargeVideo = state['features/large-video']?.participantId === id;
+    const shouldDisplayTintBackground
+        = _currentLayout !== LAYOUTS.TILE_VIEW && filmstripType === FILMSTRIP_TYPE.MAIN
+        && (isActiveParticipant || participantCurrentlyOnLargeVideo);
 
     return {
         _audioTrack,
@@ -1271,10 +1298,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
         _disableTileEnlargement: Boolean(disableTileEnlargement),
-        _isActiveParticipant: activeParticipants.find((pId: string) => pId === participantId),
+        _isActiveParticipant: isActiveParticipant,
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
-        _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,
+        _isCurrentlyOnLargeVideo: participantCurrentlyOnLargeVideo,
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
         _isMobile,
         _isMobilePortrait,
@@ -1287,6 +1314,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _raisedHand: hasRaisedHand(participant),
         _stageFilmstripLayout: isStageFilmstripAvailable(state),
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
+        _shouldDisplayTintBackground: shouldDisplayTintBackground,
         _thumbnailType: tileType,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
