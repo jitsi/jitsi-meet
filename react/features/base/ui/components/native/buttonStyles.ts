@@ -23,13 +23,13 @@ export default {
         ...buttonLabel
     },
 
-    buttonContent: {
-        height: BUTTON_HEIGHT
-    },
-
     buttonLabelDisabled: {
         ...buttonLabel,
         color: BaseTheme.palette.text03
+    },
+
+    buttonContent: {
+        height: BUTTON_HEIGHT
     },
 
     buttonDisabled: {
@@ -54,6 +54,13 @@ export default {
 
     buttonLabelTertiary: {
         ...buttonLabel,
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.text01,
+        textAlign: 'center'
+    },
+
+    buttonLabelTertiaryDisabled: {
+        ...buttonLabel,
+        color: BaseTheme.palette.text03,
+        textAlign: 'center'
     }
 };

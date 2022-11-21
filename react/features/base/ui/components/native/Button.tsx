@@ -66,6 +66,9 @@ const Button: React.FC<IProps> = ({
     }
 
     if (type === TERTIARY) {
+        buttonLabelStyles
+            = disabled ? styles.buttonLabelTertiaryDisabled : styles.buttonLabelTertiary;
+
         return (
             <TouchableRipple
                 accessibilityLabel = { accessibilityLabel }
