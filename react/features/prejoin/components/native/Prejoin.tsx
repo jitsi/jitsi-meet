@@ -181,6 +181,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         accessibilityLabel = 'prejoin.joinMeeting'
                         disabled = { joinButtonDisabled }
                         labelKey = 'prejoin.joinMeeting'
+                        // @ts-ignore
                         onClick = { !isJoining && onJoin }
                         style = { styles.joinButton }
                         type = { PRIMARY } />
