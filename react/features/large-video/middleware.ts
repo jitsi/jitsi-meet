@@ -1,19 +1,16 @@
-// @flow
-
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    PIN_PARTICIPANT,
-    getDominantSpeakerParticipant,
-    getLocalParticipant
-} from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
-import { isTestModeEnabled } from '../base/testing';
+    PIN_PARTICIPANT
+} from '../base/participants/actionTypes';
+import { getDominantSpeakerParticipant, getLocalParticipant } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { isTestModeEnabled } from '../base/testing/functions';
 import {
     TRACK_ADDED,
     TRACK_REMOVED
-} from '../base/tracks';
+} from '../base/tracks/actionTypes';
 import { TOGGLE_DOCUMENT_EDITING } from '../etherpad/actionTypes';
 
 import { selectParticipantInLargeVideo } from './actions';

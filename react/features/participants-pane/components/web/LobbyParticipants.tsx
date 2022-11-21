@@ -9,9 +9,7 @@ import { Avatar } from '../../../base/avatar';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheck, IconCloseLarge } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
-// @ts-ignore
 import { admitMultiple } from '../../../lobby/actions.web';
-// @ts-ignore
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
@@ -72,7 +70,7 @@ const useStyles = makeStyles()(theme => {
  */
 export default function LobbyParticipants() {
     const lobbyEnabled = useSelector(getLobbyEnabled);
-    const participants: Array<Object> = useSelector(getKnockingParticipants);
+    const participants = useSelector(getKnockingParticipants);
     const { t } = useTranslation();
     const { classes } = useStyles();
     const dispatch = useDispatch();

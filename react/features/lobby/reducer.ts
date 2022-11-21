@@ -21,7 +21,7 @@ const DEFAULT_STATE = {
     passwordJoinFailed: false
 };
 
-interface IKnockingParticipant extends IParticipant {
+export interface IKnockingParticipant extends IParticipant {
     chattingWithModerator?: string;
 }
 

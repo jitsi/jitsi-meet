@@ -1,10 +1,8 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
+// @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
-import { MEDIA_TYPE } from '../base/media';
-import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
+import { IStore } from '../app/types';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { getTrackByMediaTypeAndParticipant } from '../base/tracks/functions.web';
 
 import { SET_SEE_WHAT_IS_BEING_SHARED, UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT } from './actionTypes';
 
@@ -16,7 +14,7 @@ export * from './actions.any';
 * @returns {Function}
 */
 export function captureLargeVideoScreenshot() {
-    return (dispatch: Dispatch<any>, getState: Function): Promise<string> => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const largeVideo = state['features/large-video'];
         const promise = Promise.resolve();
@@ -28,7 +26,7 @@ export function captureLargeVideoScreenshot() {
         const participantTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideo.participantId);
 
         // Participants that join the call video muted do not have a jitsiTrack attached.
-        if (!(participantTrack && participantTrack.jitsiTrack)) {
+        if (!participantTrack?.jitsiTrack) {
             return promise;
         }
         const videoStream = participantTrack.jitsiTrack.getOriginalStream();
@@ -39,7 +37,7 @@ export function captureLargeVideoScreenshot() {
 
         // Get the video element for the large video, cast HTMLElement to HTMLVideoElement to make flow happy.
         /* eslint-disable-next-line no-extra-parens*/
-        const videoElement = ((document.getElementById('largeVideo'): any): HTMLVideoElement);
+        const videoElement = (document.getElementById('largeVideo') as any);
 
         if (!videoElement) {
             return promise;
@@ -54,11 +52,11 @@ export function captureLargeVideoScreenshot() {
         canvasElement.style.display = 'none';
         canvasElement.height = parseInt(height, 10);
         canvasElement.width = parseInt(width, 10);
-        ctx.drawImage(videoElement, 0, 0);
+        ctx?.drawImage(videoElement, 0, 0);
         const dataURL = canvasElement.toDataURL('image/png', 1.0);
 
         // Cleanup.
-        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        ctx?.clearRect(0, 0, canvasElement.width, canvasElement.height);
         canvasElement.remove();
 
         return Promise.resolve(dataURL);
@@ -73,7 +71,7 @@ export function captureLargeVideoScreenshot() {
  * @returns {Function}
  */
 export function resizeLargeVideo(width: number, height: number) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const largeVideo = state['features/large-video'];
 

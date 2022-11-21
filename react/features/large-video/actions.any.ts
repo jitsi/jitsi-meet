@@ -1,8 +1,5 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import { MEDIA_TYPE } from '../base/media';
+import { IReduxState, IStore } from '../app/types';
+import { MEDIA_TYPE } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
     getLocalParticipant,
@@ -10,9 +7,10 @@ import {
     getPinnedParticipant,
     getRemoteParticipants,
     getVirtualScreenshareParticipantByOwnerId
-} from '../base/participants';
+} from '../base/participants/functions';
+import { ITrack } from '../base/tracks/types';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
-import { getAutoPinSetting } from '../video-layout';
+import { getAutoPinSetting } from '../video-layout/functions';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -30,8 +28,8 @@ import {
  * displayed on the large video.
  * @returns {Function}
  */
-export function selectParticipantInLargeVideo(participant: ?string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function selectParticipantInLargeVideo(participant?: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
         if (isStageFilmstripAvailable(state, 2)) {
@@ -48,7 +46,7 @@ export function selectParticipantInLargeVideo(participant: ?string) {
         const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
         let latestScreenshareParticipantId;
 
-        if (remoteScreenShares && remoteScreenShares.length) {
+        if (remoteScreenShares?.length) {
             latestScreenshareParticipantId = remoteScreenShares[remoteScreenShares.length - 1];
         }
 
@@ -94,7 +92,7 @@ export function updateKnownLargeVideoResolution(resolution: number) {
  *     width: number
  * }}
  */
-export function setLargeVideoDimensions(height, width) {
+export function setLargeVideoDimensions(height: number, width: number) {
     return {
         type: SET_LARGE_VIDEO_DIMENSIONS,
         height,
@@ -109,7 +107,7 @@ export function setLargeVideoDimensions(height, width) {
  * @private
  * @returns {(Track|undefined)}
  */
-function _electLastVisibleRemoteVideo(tracks) {
+function _electLastVisibleRemoteVideo(tracks: ITrack[]) {
     // First we try to get most recent remote video track.
     for (let i = tracks.length - 1; i >= 0; --i) {
         const track = tracks[i];
@@ -129,7 +127,7 @@ function _electLastVisibleRemoteVideo(tracks) {
  * @private
  * @returns {(string|undefined)}
  */
-function _electParticipantInLargeVideo(state) {
+function _electParticipantInLargeVideo(state: IReduxState) {
     // If a participant is pinned, they will be shown in the LargeVideo (regardless of whether they are local or
     // remote) when the filmstrip on stage is disabled.
     let participant = getPinnedParticipant(state);
