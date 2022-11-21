@@ -6,6 +6,7 @@ import Icon from '../../../icons/components/Icon';
 
 interface IProps {
     accessibilityLabel: string;
+    className?: string;
     icon: Function;
     id?: string;
     onClick: () => void;
@@ -40,14 +41,14 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const ClickableIcon = ({ accessibilityLabel, icon, id, onClick }: IProps) => {
+const ClickableIcon = ({ accessibilityLabel, className, icon, id, onClick }: IProps) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
 
     return (
         <button
             aria-label = { accessibilityLabel }
-            className = { cx(styles.button, isMobile && 'is-mobile') }
+            className = { cx(styles.button, isMobile && 'is-mobile', className) }
             id = { id }
             onClick = { onClick }>
             <Icon
