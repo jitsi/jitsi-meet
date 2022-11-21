@@ -1,5 +1,3 @@
-// @flow
-
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
@@ -11,7 +9,7 @@ const BUTTON_SIZE = 48;
  * The style of toolbar buttons.
  */
 const toolbarButton = {
-    borderRadius: 3,
+    borderRadius: BaseTheme.shape.borderRadius,
     borderWidth: 0,
     flex: 0,
     flexDirection: 'row',
