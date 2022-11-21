@@ -260,12 +260,12 @@ end
 function extract_subdomain(room_node)
     local ret = extract_subdomain_cache:get(room_node);
     if ret then
-        return ret;
+        return unpack(ret);
     end
 
-    local ret = room_node:match("^%[([^%]]+)%](.+)$");
-    extract_subdomain_cache:set(room_node, ret);
-    return ret;
+    local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$");
+    extract_subdomain_cache:set(room_node, {subdomain, room_name});
+    return subdomain, room_name;
 end
 
 function starts_with(str, start)
