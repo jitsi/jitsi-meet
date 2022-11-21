@@ -84,10 +84,6 @@ export default {
         underlayColor: 'transparent'
     },
 
-    lonelyButton: {
-        borderRadius: BaseTheme.spacing[4]
-    },
-
     lonelyMeetingContainer: {
         alignSelf: 'stretch',
         alignItems: 'center',
@@ -210,7 +206,9 @@ export default {
     },
 
     insecureRoomNameLabel: {
-        backgroundColor: INSECURE_ROOM_NAME_LABEL_COLOR
+        backgroundColor: INSECURE_ROOM_NAME_LABEL_COLOR,
+        borderRadius: BaseTheme.shape.borderRadius,
+        height: 32
     },
 
     raisedHandsCountLabel: {
