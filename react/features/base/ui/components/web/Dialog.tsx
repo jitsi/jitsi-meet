@@ -67,7 +67,7 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             height: 'auto',
             minHeight: '200px',
-            maxHeight: '660px',
+            maxHeight: '760px',
             marginTop: '64px',
             animation: `${keyframes`
                 0% {
@@ -135,6 +135,12 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'space-between'
+        },
+
+        closeIcon: {
+            '&:focus': {
+                boxShadow: 'none'
+            }
         },
 
         title: {
@@ -278,6 +284,7 @@ const Dialog = ({
                         {!hideCloseButton && (
                             <ClickableIcon
                                 accessibilityLabel = { t('dialog.close') }
+                                className = { classes.closeIcon }
                                 icon = { IconCloseLarge }
                                 id = 'modal-header-close-button'
                                 onClick = { onClose } />
