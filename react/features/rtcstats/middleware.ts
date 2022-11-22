@@ -15,6 +15,7 @@ import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks/actionTypes';
 import { getCurrentRoomId, isInBreakoutRoom } from '../breakout-rooms/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { ADD_FACE_LANDMARKS } from '../face-landmarks/actionTypes';
+import { FaceLandmarks } from '../face-landmarks/types';
 
 import RTCStats from './RTCStats';
 import {
@@ -24,7 +25,6 @@ import {
     isRtcstatsEnabled
 } from './functions';
 import logger from './logger';
-import { FaceLandmarks } from '../face-landmarks/types';
 
 /**
  * Middleware which intercepts lib-jitsi-meet initialization and conference join in order init the
