@@ -4,7 +4,6 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
 
 const TITLE_BAR_BUTTON_SIZE = 24;
-const HEADER_ACTION_BUTTON_SIZE = 17;
 
 
 /**
@@ -33,29 +32,6 @@ export default {
 
     displayNameContainer: {
         margin: 10
-    },
-
-    headerNavigationButton: {
-        height: BaseTheme.spacing[6],
-        marginTop: 20,
-        width: BaseTheme.spacing[6]
-    },
-
-    headerNavigationIcon: {
-        marginLeft: 12
-    },
-
-    headerNavigationText: {
-        color: BaseTheme.palette.text01,
-        marginLeft: BaseTheme.spacing[3],
-        fontSize: HEADER_ACTION_BUTTON_SIZE
-    },
-
-    headerNavigationTextBold: {
-        ...BaseTheme.typography.labelButton,
-        color: BaseTheme.palette.text01,
-        marginRight: BaseTheme.spacing[3],
-        fontSize: HEADER_ACTION_BUTTON_SIZE
     },
 
     /**
@@ -212,12 +188,11 @@ export default {
     },
 
     raisedHandsCountLabel: {
+        alignItems: 'center',
         backgroundColor: BaseTheme.palette.warning02,
         flexDirection: 'row',
-        alignItems: 'center',
         marginLeft: BaseTheme.spacing[0],
-        marginBottom: BaseTheme.spacing[0],
-        marginRight: BaseTheme.spacing[1]
+        marginBottom: BaseTheme.spacing[0]
     },
 
     raisedHandsCountLabelText: {

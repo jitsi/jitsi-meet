@@ -74,7 +74,7 @@ const Button: React.FC<IProps> = ({
                 accessibilityLabel = { accessibilityLabel }
                 disabled = { disabled }
                 onPress = { onPress }
-                rippleColor = 'transparent'
+                rippleColor = { BaseTheme.palette.action03Active }
                 style = { [
                     buttonStyles,
                     style

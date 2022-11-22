@@ -1,11 +1,11 @@
-// @flow
-
 import React from 'react';
 import { Text, TouchableRipple } from 'react-native-paper';
 
 import { Icon } from '../../../base/icons';
 import type { StyleType } from '../../../base/styles';
-import styles from '../../../conference/components/native/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+
+import { navigationStyles } from './styles';
 
 type Props = {
 
@@ -55,25 +55,25 @@ const HeaderNavigationButton
                     src ? (
                         <TouchableRipple
                             onPress = { onPress }
-                            rippleColor = { 'transparent' }
                             style = { [
                                 buttonStyle,
-                                styles.headerNavigationButton ] } >
+                                navigationStyles.headerNavigationButtonIcon ] } >
                             <Icon
+                                color = { BaseTheme.palette.link01Active }
                                 size = { 24 }
                                 src = { src }
-                                style = { styles.headerNavigationIcon } />
+                                style = { navigationStyles.headerNavigationIcon } />
                         </TouchableRipple>
                     ) : (
                         <TouchableRipple
                             disabled = { disabled }
                             onPress = { onPress }
-                            rippleColor = { 'transparent' }>
+                            style = { navigationStyles.headerNavigationButtonText } >
                             <Text
                                 style = {
                                     twoActions
-                                        ? styles.headerNavigationTextBold
-                                        : styles.headerNavigationText
+                                        ? navigationStyles.headerNavigationTextBold
+                                        : navigationStyles.headerNavigationText
                                 }>
                                 { label }
                             </Text>

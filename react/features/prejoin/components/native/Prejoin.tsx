@@ -143,7 +143,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     return (
         <JitsiScreen
             addBottomPadding = { false }
-            safeAreaInsets = { [ 'left', 'right' ] }
+            safeAreaInsets = { [ 'right' ] }
             style = { contentWrapperStyles }>
             <BrandingImageBackground />
             {
@@ -172,7 +172,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
                     <Input
                         // @ts-ignore
-                        autoFocus = { true }
                         customStyles = {{ input: styles.customInput }}
                         onChange = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
@@ -190,6 +189,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         disabled = { joinButtonDisabled }
                         labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
                         onClick = { onJoinLowBandwidth }
+                        style = { styles.joinButton }
                         type = { TERTIARY } />
                 </View>
             </View>

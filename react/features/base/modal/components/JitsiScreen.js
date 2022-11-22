@@ -60,10 +60,10 @@ const JitsiScreen = ({
     addBottomPadding,
     contentContainerStyle,
     children,
+    disableForcedKeyboardDismiss = false,
     footerComponent,
     hasTabNavigator = false,
     hasBottomTextInput = false,
-    disableForcedKeyboardDismiss = false,
     safeAreaInsets = [ 'left', 'right' ],
     style
 }: Props) => {
