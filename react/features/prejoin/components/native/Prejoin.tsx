@@ -126,18 +126,15 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     let contentWrapperStyles;
     let contentContainerStyles;
     let largeVideoContainerStyles;
-    let toolboxContainerStyles;
 
     if (aspectRatio === ASPECT_RATIO_NARROW) {
         contentWrapperStyles = styles.contentWrapper;
         contentContainerStyles = styles.contentContainer;
         largeVideoContainerStyles = styles.largeVideoContainer;
-        toolboxContainerStyles = styles.toolboxContainer;
     } else {
         contentWrapperStyles = styles.contentWrapperWide;
         contentContainerStyles = styles.contentContainerWide;
         largeVideoContainerStyles = styles.largeVideoContainerWide;
-        toolboxContainerStyles = styles.toolboxContainerWide;
     }
 
     return (
@@ -161,7 +158,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 </View>
             }
             <View style = { contentContainerStyles }>
-                <View style = { toolboxContainerStyles }>
+                <View style = { styles.toolboxContainer }>
                     <AudioMuteButton
                         // @ts-ignore
                         styles = { styles.buttonStylesBorderless } />
