@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
+import Platform from '../react/Platform';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { equals } from '../redux/functions';
 
@@ -48,6 +49,8 @@ const INITIAL_RN_STATE: IConfig = {
     disableAudioLevels: true,
 
     p2p: {
+        // Temporarily disable P2P on Android while we sort out some (codec?) issues.
+        ...(Platform.OS === 'android' ? { enabled: false } : {}), // eslint-disable-line no-extra-parens
         preferredCodec: 'h264'
     },
 
