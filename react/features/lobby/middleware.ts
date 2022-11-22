@@ -44,8 +44,8 @@ import {
 import { updateLobbyParticipantOnLeave } from './actions.any';
 import { KNOCKING_PARTICIPANT_SOUND_ID } from './constants';
 import { getKnockingParticipants, showLobbyChatButton } from './functions';
-import { IKnockingParticipant } from './reducer';
 import { KNOCKING_PARTICIPANT_FILE } from './sounds';
+import { IKnockingParticipant } from './types';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -297,6 +297,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
 
         // In case of wrong password we need to be in the right state if in the meantime someone allows us to join
         if (nonFirstFailure) {
+            // @ts-ignore
             dispatch(conferenceWillJoin(membersOnly));
         }
 

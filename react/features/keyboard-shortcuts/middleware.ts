@@ -8,8 +8,7 @@ import { OPEN_KEYBOARD_SHORTCUTS_DIALOG } from './actionTypes';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register(_store => next => action => {
     switch (action.type) {
     case OPEN_KEYBOARD_SHORTCUTS_DIALOG:
         if (typeof APP === 'object') {

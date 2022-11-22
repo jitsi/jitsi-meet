@@ -21,7 +21,7 @@ import {
 } from './actionTypes';
 import { LOBBY_CHAT_INITIALIZED, MODERATOR_IN_CHAT_WITH_LEFT } from './constants';
 import { getKnockingParticipants, getLobbyEnabled } from './functions';
-import { IKnockingParticipant } from './reducer';
+import { IKnockingParticipant } from './types';
 
 /**
  * Tries to join with a preset password.
@@ -207,10 +207,12 @@ export function startKnocking() {
         const { membersOnly } = state['features/base/conference'];
         const localParticipant = getLocalParticipant(state);
 
+        // @ts-ignore
         dispatch(conferenceWillJoin(membersOnly));
 
         // We need to update the conference object with the current display name, if approved
         // we want to send that display name, it was not updated in case when pre-join is disabled
+        // @ts-ignore
         sendLocalParticipant(state, membersOnly);
 
         membersOnly?.joinLobby(localParticipant?.name, localParticipant?.email);

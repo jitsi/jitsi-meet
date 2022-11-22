@@ -467,7 +467,7 @@ export function _conferenceWillJoin(conference: IJitsiConference) {
  *     conference: JitsiConference
  * }}
  */
-export function conferenceWillJoin(conference?: IJitsiConference) {
+export function conferenceWillJoin(conference: IJitsiConference) {
     return {
         type: CONFERENCE_WILL_JOIN,
         conference

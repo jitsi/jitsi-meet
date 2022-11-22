@@ -1,7 +1,8 @@
 import { IReduxState } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 
-import { IKnockingParticipant } from './reducer';
+import { IKnockingParticipant } from './types';
+
 
 /**
 * Selector to return lobby enable state.
