@@ -197,7 +197,7 @@ const Timeline = ({ faceLandmarks }: Props) => {
                         style = { getStyle(duration, faceExpression) } />)) }
 
                 {!hideStartAndEndSegments() && <div
-                    area-label = 'end'
+                    aria-label = 'end'
                     style = { getEndStyle() } />}
             </div>
         </div>
