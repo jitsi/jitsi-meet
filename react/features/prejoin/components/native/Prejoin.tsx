@@ -189,6 +189,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         disabled = { joinButtonDisabled }
                         labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
                         onClick = { onJoinLowBandwidth }
+                        style = { styles.joinButton }
                         type = { TERTIARY } />
                 </View>
             </View>

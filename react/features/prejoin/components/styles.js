@@ -3,7 +3,8 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 export default {
     joinButton: {
-        marginVertical: BaseTheme.spacing[3]
+        marginTop: BaseTheme.spacing[3],
+        width: 304
     },
 
     buttonStylesBorderless: {
@@ -38,11 +39,11 @@ export default {
         height: '100%',
         marginRight: 'auto',
         position: 'absolute',
-        width: '60%'
+        width: '50%'
     },
 
     contentContainer: {
-        alignSelf: 'center',
+        alignItems: 'center',
         backgroundColor: BaseTheme.palette.uiBackground,
         bottom: 0,
         display: 'flex',
@@ -54,17 +55,17 @@ export default {
     },
 
     contentContainerWide: {
-        alignSelf: 'center',
+        alignItems: 'center',
         height: '100%',
         justifyContent: 'center',
-        left: '60%',
+        left: '50%',
         padding: BaseTheme.spacing[3],
         position: 'absolute',
-        width: '40%'
+        width: '50%'
     },
 
     toolboxContainer: {
-        alignSelf: 'center',
+        alignItems: 'center',
         backgroundColor: BaseTheme.palette.ui01,
         borderRadius: BaseTheme.shape.borderRadius,
         display: 'flex',
@@ -82,13 +83,13 @@ export default {
     },
 
     formWrapper: {
-        alignSelf: 'stretch',
-        justifyContent: 'center',
-        marginHorizontal: BaseTheme.spacing[3]
+        alignItems: 'center',
+        justifyContent: 'center'
     },
 
     customInput: {
-        textAlign: 'center'
+        textAlign: 'center',
+        width: 304
     },
 
     preJoinRoomName: {
