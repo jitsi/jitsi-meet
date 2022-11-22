@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 import type { Node } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -121,7 +119,7 @@ function ParticipantItem({
                 {
                     !isKnockingParticipant
                     && <>
-                        {raisedHand && <RaisedHandIndicator />}
+                        { raisedHand && <RaisedHandIndicator /> }
                         <View style = { styles.participantStatesContainer }>
                             <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMediaState]}</View>
                             <View>{AudioStateIcons[audioMediaState]}</View>

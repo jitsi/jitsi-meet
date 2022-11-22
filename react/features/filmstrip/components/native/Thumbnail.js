@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { Image, View } from 'react-native';
 import type { Dispatch } from 'redux';
@@ -226,11 +224,11 @@ class Thumbnail extends PureComponent<Props> {
                 ] }>
                 { !_isVirtualScreenshare && <ConnectionIndicator participantId = { participantId } /> }
                 { !_isVirtualScreenshare && <RaisedHandIndicator participantId = { participantId } /> }
-                {tileView && isScreenShare && (
+                { tileView && isScreenShare && (
                     <View style = { styles.indicatorContainer }>
                         <ScreenShareIndicator />
                     </View>
-                )}
+                ) }
             </View>);
             indicators.push(<Container
                 key = 'bottom-indicators'
@@ -369,7 +367,7 @@ class Thumbnail extends PureComponent<Props> {
                     _renderDominantSpeakerIndicator && !_isVirtualScreenshare ? styles.thumbnailDominantSpeaker : null
                 ] }
                 touchFeedback = { false }>
-                {_gifSrc ? <Image
+                { _gifSrc ? <Image
                     source = {{ uri: _gifSrc }}
                     style = { styles.thumbnailGif } />
                     : <>

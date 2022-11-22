@@ -212,12 +212,11 @@ export default {
     },
 
     raisedHandsCountLabel: {
+        alignItems: 'center',
         backgroundColor: BaseTheme.palette.warning02,
         flexDirection: 'row',
-        alignItems: 'center',
         marginLeft: BaseTheme.spacing[0],
-        marginBottom: BaseTheme.spacing[0],
-        marginRight: BaseTheme.spacing[1]
+        marginBottom: BaseTheme.spacing[0]
     },
 
     raisedHandsCountLabelText: {
