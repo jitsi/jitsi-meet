@@ -2,10 +2,8 @@ import React from 'react';
 import { Text, TouchableRipple } from 'react-native-paper';
 
 import { Icon } from '../../../base/icons';
-import type { StyleType } from '../../../base/styles';
 
 import { navigationStyles } from './styles';
-import BaseThemeNative from "../../../base/ui/components/BaseTheme.native";
 
 type Props = {
 
