@@ -60,7 +60,7 @@
     "@types/w3c-image-capture": "1.0.6",
     "@vladmandic/human": "2.6.5",
     "@vladmandic/human-models": "2.5.9",
-    "@xmldom/xmldom": "0.7.6",
+    "@xmldom/xmldom": "0.7.9",
     "amplitude-js": "8.2.1",
     "base64-js": "1.3.1",
     "bc-css-flags": "3.0.0",
