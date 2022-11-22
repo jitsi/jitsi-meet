@@ -42,10 +42,10 @@ public class WebRTCVideoDecoderFactory implements VideoDecoderFactory {
     public VideoCodecInfo[] getSupportedCodecs() {
         List<VideoCodecInfo> codecs = new ArrayList<>();
 
+        codecs.add(H264Utils.DEFAULT_H264_BASELINE_PROFILE_CODEC);
         codecs.add(new VideoCodecInfo(VideoCodecMimeType.VP8.name(), new HashMap<>()));
         codecs.add(new VideoCodecInfo(VideoCodecMimeType.VP9.name(), new HashMap<>()));
         codecs.add(new VideoCodecInfo(VideoCodecMimeType.AV1.name(), new HashMap<>()));
-        codecs.add(H264Utils.DEFAULT_H264_BASELINE_PROFILE_CODEC);
 
         return codecs.toArray(new VideoCodecInfo[codecs.size()]);
     }
