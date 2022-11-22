@@ -46,10 +46,10 @@ export default {
         backgroundColor: BaseTheme.palette.uiBackground,
         bottom: 0,
         display: 'flex',
-        height: 284,
+        height: 316,
         justifyContent: 'center',
         position: 'absolute',
-        width: 390,
+        width: '100%',
         zIndex: 1
     },
 
