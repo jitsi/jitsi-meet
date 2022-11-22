@@ -129,8 +129,8 @@ export default {
     },
 
     roomTimer: {
-        color: BaseTheme.palette.text01,
         ...BaseTheme.typography.bodyShortBold,
+        color: BaseTheme.palette.text01,
         paddingHorizontal: 8,
         paddingVertical: 6,
         textAlign: 'center'
@@ -138,8 +138,9 @@ export default {
 
     roomTimerView: {
         backgroundColor: BaseTheme.palette.ui03,
-        borderRadius: 3,
+        borderRadius: BaseTheme.shape.borderRadius,
         justifyContent: 'center',
+        minHeight: 32,
         minWidth: 50
     },
 
@@ -190,6 +191,7 @@ export default {
     raisedHandsCountLabel: {
         alignItems: 'center',
         backgroundColor: BaseTheme.palette.warning02,
+        borderRadius: BaseTheme.shape.borderRadius,
         flexDirection: 'row',
         marginLeft: BaseTheme.spacing[0],
         marginBottom: BaseTheme.spacing[0]

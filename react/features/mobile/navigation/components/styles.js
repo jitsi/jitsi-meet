@@ -7,12 +7,12 @@ export const TEXT_COLOR = BaseTheme.palette.text01;
 const HEADER_ACTION_BUTTON_SIZE = 17;
 
 const headerNavigationButton = {
-    alignContent: 'center',
-    height: '100%',
-    justifyItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center'
 };
 
 const headerNavigationText = {
+    ...BaseTheme.typography.bodyShortBoldLarge,
     color: BaseTheme.palette.link01,
     fontSize: HEADER_ACTION_BUTTON_SIZE
 };
@@ -49,29 +49,26 @@ export const navigationStyles = {
 
     headerNavigationButtonIcon: {
         ...headerNavigationButton,
-        paddingTop: 18,
-        width: BaseTheme.spacing[7]
+        height: BaseTheme.spacing[5],
+        paddingLeft: BaseTheme.spacing[3],
+        width: BaseTheme.spacing[5]
     },
 
     headerNavigationButtonText: {
         ...headerNavigationButton,
-        paddingTop: 10,
-        width: BaseTheme.spacing[10]
-    },
-
-    headerNavigationIcon: {
-        marginLeft: 12
+        height: BaseTheme.spacing[9],
+        width: BaseTheme.spacing[9]
     },
 
     headerNavigationText: {
         ...headerNavigationText,
-        marginLeft: BaseTheme.spacing[3]
+        marginLeft: BaseTheme.spacing[2]
     },
 
     headerNavigationTextBold: {
         ...headerNavigationText,
-        ...BaseTheme.typography.labelButton,
-        marginRight: BaseTheme.spacing[3]
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        marginRight: BaseTheme.spacing[1]
     },
 
     unreadCounterContainer: {

@@ -2,6 +2,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 
 export default {
+
     joinButton: {
         marginTop: BaseTheme.spacing[3],
         width: 352
@@ -75,11 +76,6 @@ export default {
         marginBottom: BaseTheme.spacing[3],
         paddingHorizontal: BaseTheme.spacing[2],
         width: 148
-    },
-
-    toolboxContainerWide: {
-        flexDirection: 'row',
-        justifyContent: 'center'
     },
 
     formWrapper: {

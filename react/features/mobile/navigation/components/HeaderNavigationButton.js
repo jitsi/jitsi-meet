@@ -2,17 +2,10 @@ import React from 'react';
 import { Text, TouchableRipple } from 'react-native-paper';
 
 import { Icon } from '../../../base/icons';
-import type { StyleType } from '../../../base/styles';
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import { navigationStyles } from './styles';
 
 type Props = {
-
-    /**
-     * Style of the header button .
-     */
-    buttonStyle?: StyleType,
 
     /**
      * Is the button disabled?
@@ -42,7 +35,6 @@ type Props = {
 
 const HeaderNavigationButton
     = ({
-        buttonStyle,
         disabled,
         label,
         onPress,
@@ -55,14 +47,10 @@ const HeaderNavigationButton
                     src ? (
                         <TouchableRipple
                             onPress = { onPress }
-                            style = { [
-                                buttonStyle,
-                                navigationStyles.headerNavigationButtonIcon ] } >
+                            style = { navigationStyles.headerNavigationButtonIcon } >
                             <Icon
-                                color = { BaseTheme.palette.link01Active }
                                 size = { 24 }
-                                src = { src }
-                                style = { navigationStyles.headerNavigationIcon } />
+                                src = { src } />
                         </TouchableRipple>
                     ) : (
                         <TouchableRipple
