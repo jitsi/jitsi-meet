@@ -23,6 +23,8 @@ interface IWindow {
     onerror: (event: string, source: any, lineno: any, colno: any, e: Error) => void;
     onunhandledrejection: (event: any) => void;
 
+    setInterval: typeof setInterval;
+    clearInterval: typeof clearInterval;
     setTimeout: typeof setTimeout;
     clearTimeout: typeof clearTimeout;
     setImmediate: typeof setImmediate;

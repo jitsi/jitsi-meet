@@ -1,40 +1,27 @@
 import { IReduxState } from '../app/types';
+import { IJitsiConference } from '../base/conference/reducer';
 import { getLocalParticipant } from '../base/participants/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
-import { DETECT_FACE, FACE_BOX_EVENT_TYPE, SEND_IMAGE_INTERVAL_MS } from './constants';
+import { FACE_BOX_EVENT_TYPE, FACE_LANDMARKS_EVENT_TYPE, SEND_IMAGE_INTERVAL_MS } from './constants';
 import logger from './logger';
-import { FaceBox } from './types';
-
-let canvas: HTMLCanvasElement;
-let context: CanvasRenderingContext2D | null;
-
-if (typeof OffscreenCanvas === 'undefined') {
-    canvas = document.createElement('canvas');
-    context = canvas.getContext('2d');
-}
+import { FaceBox, FaceLandmarks } from './types';
 
 /**
- * Sends the face expression with its duration to all the other participants.
+ * Sends the face landmarks to other participants via the data channel.
  *
  * @param {any} conference - The current conference.
- * @param  {string} faceExpression - Face expression to be sent.
- * @param {number} duration - The duration of the face expression in seconds.
+ * @param  {FaceLandmarks} faceLandmarks - Face landmarks to be sent.
  * @returns {void}
  */
-export function sendFaceExpressionToParticipants(
-        conference: any,
-        faceExpression: string,
-        duration: number
-): void {
+export function sendFaceExpressionToParticipants(conference: any, faceLandmarks: FaceLandmarks): void {
     try {
         conference.sendEndpointMessage('', {
-            type: 'face_landmark',
-            faceExpression,
-            duration
+            type: FACE_LANDMARKS_EVENT_TYPE,
+            faceLandmarks
         });
     } catch (err) {
-        logger.warn('Could not broadcast the face expression to the other participants', err);
+        logger.warn('Could not broadcast the face landmarks to the other participants', err);
     }
 
 }
@@ -61,30 +48,22 @@ export function sendFaceBoxToParticipants(
 }
 
 /**
- * Sends the face expression with its duration to xmpp server.
+ * Sends the face landmarks to prosody.
  *
  * @param {any} conference - The current conference.
- * @param  {string} faceExpression - Face expression to be sent.
- * @param {number} duration - The duration of the face expression in seconds.
+ * @param  {FaceLandmarks} faceLandmarks - Face landmarks to be sent.
  * @returns {void}
  */
-export function sendFaceExpressionToServer(
-        conference: any,
-        faceExpression: string,
-        duration: number
-): void {
+export function sendFaceExpressionToServer(conference: IJitsiConference, faceLandmarks: FaceLandmarks): void {
     try {
-        conference.sendFaceLandmarks({
-            faceExpression,
-            duration
-        });
+        conference.sendFaceLandmarks(faceLandmarks);
     } catch (err) {
-        logger.warn('Could not send the face expression to xmpp server', err);
+        logger.warn('Could not send the face landmarks to prosody', err);
     }
 }
 
 /**
- * Sends face expression to backend.
+ * Sends face landmarks to backend.
  *
  * @param  {Object} state - Redux state.
  * @returns {boolean} - True if sent, false otherwise.
@@ -96,9 +75,9 @@ export async function sendFaceExpressionsWebhook(state: IReduxState) {
     const { connection } = state['features/base/connection'];
     const jid = connection?.getJid();
     const localParticipant = getLocalParticipant(state);
-    const { faceExpressionsBuffer } = state['features/face-landmarks'];
+    const { faceLandmarksBuffer } = state['features/face-landmarks'];
 
-    if (faceExpressionsBuffer.length === 0) {
+    if (faceLandmarksBuffer.length === 0) {
         return false;
     }
 
@@ -111,7 +90,7 @@ export async function sendFaceExpressionsWebhook(state: IReduxState) {
         meetingFqn: extractFqnFromPath(),
         sessionId: conference?.sessionId,
         submitted: Date.now(),
-        emotions: faceExpressionsBuffer,
+        emotions: faceLandmarksBuffer,
         participantId: localParticipant?.jwtId,
         participantName: localParticipant?.name,
         participantJid: jid
@@ -137,55 +116,6 @@ export async function sendFaceExpressionsWebhook(state: IReduxState) {
     return false;
 }
 
-
-/**
- * Sends the image data a canvas from the track in the image capture to the face recognition worker.
- *
- * @param {Worker} worker - Face recognition worker.
- * @param {Object} imageCapture - Image capture that contains the current track.
- * @param {number} threshold - Movement threshold as percentage for sharing face coordinates.
- * @returns {Promise<boolean>} - True if sent, false otherwise.
- */
-export async function sendDataToWorker(
-        worker: Worker,
-        imageCapture: ImageCapture,
-        threshold = 10
-): Promise<boolean> {
-    if (imageCapture === null || imageCapture === undefined) {
-        return false;
-    }
-
-    let imageBitmap;
-    let image;
-
-    try {
-        imageBitmap = await imageCapture.grabFrame();
-    } catch (err) {
-        logger.warn(err);
-
-        return false;
-    }
-
-    if (typeof OffscreenCanvas === 'undefined') {
-        canvas.width = imageBitmap.width;
-        canvas.height = imageBitmap.height;
-        context?.drawImage(imageBitmap, 0, 0);
-
-        image = context?.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
-    } else {
-        image = imageBitmap;
-    }
-
-    worker.postMessage({
-        type: DETECT_FACE,
-        image,
-        threshold
-    });
-
-    imageBitmap.close();
-
-    return true;
-}
 
 /**
  * Gets face box for a participant id.
@@ -229,15 +159,4 @@ export function getDetectionInterval(state: IReduxState) {
     const { faceLandmarks } = state['features/base/config'];
 
     return Math.max(faceLandmarks?.captureInterval || SEND_IMAGE_INTERVAL_MS);
-}
-
-/**
- * Returns the duration in seconds of a face expression.
- *
- * @param {IReduxState} state - The redux state.
- * @param {number} faceExpressionCount - The number of consecutive face expressions.
- * @returns {number} - Duration of face expression in seconds.
- */
-export function getFaceExpressionDuration(state: IReduxState, faceExpressionCount: number) {
-    return faceExpressionCount * (getDetectionInterval(state) / 1000);
 }

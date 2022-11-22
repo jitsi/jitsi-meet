@@ -14,7 +14,8 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks/actionTypes';
 import { getCurrentRoomId, isInBreakoutRoom } from '../breakout-rooms/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
-import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
+import { ADD_FACE_LANDMARKS } from '../face-landmarks/actionTypes';
+import { FaceLandmarks } from '../face-landmarks/types';
 
 import RTCStats from './RTCStats';
 import {
@@ -164,17 +165,19 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         }
         break;
     }
-    case ADD_FACE_EXPRESSION:
+    case ADD_FACE_LANDMARKS: {
         if (canSendFaceLandmarksRtcstatsData(state)) {
-            const { duration, faceExpression, timestamp } = action;
+            const { duration, faceExpression, timestamp } = action.faceLandmarks as FaceLandmarks;
+            const durationSeconds = Math.round(duration / 1000);
 
             RTCStats.sendFaceLandmarksData({
-                duration,
+                duration: durationSeconds,
                 faceLandmarks: faceExpression,
                 timestamp
             });
         }
         break;
+    }
     case CONFERENCE_TIMESTAMP_CHANGED: {
         if (canSendRtcstatsData(state)) {
             const { conferenceTimestamp } = action;

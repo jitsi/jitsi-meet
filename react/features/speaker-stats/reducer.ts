@@ -1,11 +1,17 @@
 import _ from 'lodash';
 
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { FaceLandmarks } from '../face-landmarks/types';
 
 import {
+    ADD_TO_OFFSET,
+    ADD_TO_OFFSET_LEFT,
+    ADD_TO_OFFSET_RIGHT,
     INIT_REORDER_STATS,
     INIT_SEARCH,
     RESET_SEARCH_CRITERIA,
+    SET_PANNING,
+    SET_TIMELINE_BOUNDARY,
     TOGGLE_FACE_EXPRESSIONS,
     UPDATE_SORTED_SPEAKER_STATS_IDS,
     UPDATE_STATS
@@ -22,16 +28,52 @@ const INITIAL_STATE = {
     pendingReorder: true,
     criteria: null,
     showFaceExpressions: false,
-    sortedSpeakerStatsIds: []
+    sortedSpeakerStatsIds: [],
+    timelineBoundary: null,
+    offsetLeft: 0,
+    offsetRight: 0,
+    timelinePanning: {
+        active: false,
+        x: 0
+    }
 };
+
+export interface ISpeaker {
+    addFaceLandmarks: (faceLandmarks: FaceLandmarks) => void;
+    displayName?: string;
+    getDisplayName: () => string;
+    getFaceLandmarks: () => FaceLandmarks[];
+    getTotalDominantSpeakerTime: () => number;
+    getUserId: () => string;
+    hasLeft: () => boolean;
+    hidden?: boolean;
+    isDominantSpeaker: () => boolean;
+    isLocalStats: () => boolean;
+    isModerator?: boolean;
+    markAsHasLeft: () => boolean;
+    setDisplayName: (newName: string) => void;
+    setDominantSpeaker: (isNowDominantSpeaker: boolean, silence: boolean) => void;
+    setFaceLandmarks: (faceLandmarks: FaceLandmarks[]) => void;
+}
+
+export interface ISpeakerStats {
+    [key: string]: ISpeaker;
+}
 
 export interface ISpeakerStatsState {
     criteria: string | null;
     isOpen: boolean;
+    offsetLeft: number;
+    offsetRight: number;
     pendingReorder: boolean;
     showFaceExpressions: boolean;
     sortedSpeakerStatsIds: Array<string>;
-    stats: Object;
+    stats: ISpeakerStats;
+    timelineBoundary: number | null;
+    timelinePanning: {
+        active: boolean;
+        x: number;
+    };
 }
 
 ReducerRegistry.register<ISpeakerStatsState>('features/speaker-stats',
@@ -51,6 +93,37 @@ ReducerRegistry.register<ISpeakerStatsState>('features/speaker-stats',
         return {
             ...state,
             showFaceExpressions: !state.showFaceExpressions
+        };
+    }
+    case ADD_TO_OFFSET: {
+        return {
+            ...state,
+            offsetLeft: state.offsetLeft + action.value,
+            offsetRight: state.offsetRight + action.value
+        };
+    }
+    case ADD_TO_OFFSET_RIGHT: {
+        return {
+            ...state,
+            offsetRight: state.offsetRight + action.value
+        };
+    }
+    case ADD_TO_OFFSET_LEFT: {
+        return {
+            ...state,
+            offsetLeft: state.offsetLeft + action.value
+        };
+    }
+    case SET_TIMELINE_BOUNDARY: {
+        return {
+            ...state,
+            timelineBoundary: action.boundary
+        };
+    }
+    case SET_PANNING: {
+        return {
+            ...state,
+            timelinePanning: action.panning
         };
     }
     }

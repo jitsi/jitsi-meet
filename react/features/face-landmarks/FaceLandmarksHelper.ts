@@ -2,7 +2,7 @@ import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
 import { Config, FaceResult, Human } from '@vladmandic/human';
 
 import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
-import { DetectInput, DetectOutput, FaceBox, InitInput } from './types';
+import { DetectInput, DetectOutput, FaceBox, FaceExpression, InitInput } from './types';
 
 export interface IFaceLandmarksHelper {
     detect: ({ image, threshold }: DetectInput) => Promise<DetectOutput>;
@@ -10,7 +10,7 @@ export interface IFaceLandmarksHelper {
     getDetections: (image: ImageBitmap | ImageData) => Promise<Array<FaceResult>>;
     getFaceBox: (detections: Array<FaceResult>, threshold: number) => FaceBox | undefined;
     getFaceCount: (detections: Array<FaceResult>) => number;
-    getFaceExpression: (detections: Array<FaceResult>) => string | undefined;
+    getFaceExpression: (detections: Array<FaceResult>) => FaceExpression | undefined;
     init: () => Promise<void>;
 }
 
@@ -144,13 +144,18 @@ export class HumanHelper implements IFaceLandmarksHelper {
      * @param {Array<FaceResult>} detections - The array with the detections.
      * @returns {string | undefined}
      */
-    getFaceExpression(detections: Array<FaceResult>): string | undefined {
+    getFaceExpression(detections: Array<FaceResult>): FaceExpression | undefined {
         if (this.getFaceCount(detections) !== 1) {
             return;
         }
 
-        if (detections[0].emotion) {
-            return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0].emotion[0].emotion];
+        const detection = detections[0];
+
+        if (detection.emotion) {
+            return {
+                expression: FACE_EXPRESSIONS_NAMING_MAPPING[detection.emotion[0].emotion],
+                score: detection.emotion[0].score
+            };
         }
     }
 

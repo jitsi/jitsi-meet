@@ -1,4 +1,6 @@
+import { FaceLandmarks } from '../../face-landmarks/types';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock/constants';
+import { ISpeakerStats } from '../../speaker-stats/reducer';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection/actionTypes';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import ReducerRegistry from '../redux/ReducerRegistry';
@@ -53,6 +55,7 @@ export interface IJitsiConference {
     getMeetingUniqueId: Function;
     getParticipantById: Function;
     getParticipants: Function;
+    getSpeakerStats: () => ISpeakerStats;
     grantOwner: Function;
     isAVModerationSupported: Function;
     isCallstatsEnabled: Function;
@@ -74,6 +77,7 @@ export interface IJitsiConference {
     sendCommand: Function;
     sendCommandOnce: Function;
     sendEndpointMessage: Function;
+    sendFaceLandmarks: (faceLandmarks: FaceLandmarks) => void;
     sendFeedback: Function;
     sendLobbyMessage: Function;
     sessionId: string;

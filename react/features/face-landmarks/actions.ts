@@ -3,56 +3,35 @@ import './createImageBitmap';
 import { AnyAction } from 'redux';
 
 import {
-    ADD_FACE_EXPRESSION,
-    ADD_TO_FACE_EXPRESSIONS_BUFFER,
-    CLEAR_FACE_EXPRESSIONS_BUFFER,
+    ADD_FACE_LANDMARKS,
+    CLEAR_FACE_LANDMARKS_BUFFER,
     NEW_FACE_COORDINATES
 } from './actionTypes';
-import { FaceBox } from './types';
+import { FaceBox, FaceLandmarks } from './types';
 
 /**
- * Adds a new face expression and its duration.
+ * Adds new face landmarks to the timeline.
  *
- * @param  {string} faceExpression - Face expression to be added.
- * @param  {number} duration - Duration in seconds of the face expression.
- * @param  {number} timestamp - Duration in seconds of the face expression.
+ * @param {FaceLandmarks} faceLandmarks - The new face landmarks to timeline.
+ * @param {boolean} addToBuffer - If true adds the face landmarks to a buffer in the reducer for webhook.
  * @returns {AnyAction}
  */
-export function addFaceExpression(faceExpression: string, duration: number, timestamp: number): AnyAction {
+export function addFaceLandmarks(faceLandmarks: FaceLandmarks, addToBuffer: boolean): AnyAction {
     return {
-        type: ADD_FACE_EXPRESSION,
-        faceExpression,
-        duration,
-        timestamp
+        type: ADD_FACE_LANDMARKS,
+        faceLandmarks,
+        addToBuffer
     };
 }
 
 /**
- * Adds a face expression with its timestamp to the face expression buffer.
+ * Clears the face landmarks array in the state.
  *
- * @param {Object} faceExpression - Object containing face expression string and its timestamp.
  * @returns {AnyAction}
  */
-export function addToFaceExpressionsBuffer(
-        faceExpression: {
-            emotion: string;
-            timestamp: number;
-        }
-): AnyAction {
+export function clearFaceExpressionBuffer(): AnyAction {
     return {
-        type: ADD_TO_FACE_EXPRESSIONS_BUFFER,
-        faceExpression
-    };
-}
-
-/**
- * Clears the face expressions array in the state.
- *
- * @returns {Object}
- */
-export function clearFaceExpressionBuffer() {
-    return {
-        type: CLEAR_FACE_EXPRESSIONS_BUFFER
+        type: CLEAR_FACE_LANDMARKS_BUFFER
     };
 }
 

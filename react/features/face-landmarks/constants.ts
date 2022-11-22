@@ -38,6 +38,11 @@ export const INIT_WORKER = 'INIT_WORKER';
 export const FACE_BOX_EVENT_TYPE = 'face-box';
 
 /**
+ * Type of event sent on the data channel.
+ */
+export const FACE_LANDMARKS_EVENT_TYPE = 'face-landmarks';
+
+/**
  * Milliseconds interval value for sending new image data to the worker.
  */
 export const SEND_IMAGE_INTERVAL_MS = 1000;
@@ -64,4 +69,15 @@ export const FACE_DETECTION_SCORE_THRESHOLD = 0.75;
 /**
  * Threshold for stopping detection after a certain number of consecutive errors have occurred.
  */
-export const FACE_LANDMARK_DETECTION_ERROR_THRESHOLD = 4;
+export const FACE_LANDMARKS_DETECTION_ERROR_THRESHOLD = 4;
+
+/**
+ * Threshold for number of consecutive detections with no face,
+ * so that when achieved there will be dispatched an action.
+ */
+export const NO_FACE_DETECTION_THRESHOLD = 5;
+
+/**
+ * Constant type used for signaling that no valid face detection is found.
+ */
+export const NO_DETECTION = 'no-detection';

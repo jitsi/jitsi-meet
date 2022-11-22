@@ -1,8 +1,13 @@
 import _ from 'lodash';
 
 import { IReduxState } from '../app/types';
+import { getConferenceTimestamp } from '../base/conference/functions';
 import { PARTICIPANT_ROLE } from '../base/participants/constants';
 import { getParticipantById } from '../base/participants/functions';
+import { FaceLandmarks } from '../face-landmarks/types';
+
+import { THRESHOLD_FIXED_AXIS } from './constants';
+import { ISpeaker, ISpeakerStats } from './reducer';
 
 /**
  * Checks if the speaker stats search is disabled.
@@ -71,12 +76,12 @@ export function getPendingReorder(state: IReduxState) {
 /**
  * Get sorted speaker stats ids based on a configuration setting.
  *
- * @param {IReduxState} state - The redux state.
- * @param {Object} stats - The current speaker stats.
- * @returns {Object} - Ordered speaker stats ids.
+ * @param {IState} state - The redux state.
+ * @param {IState} stats - The current speaker stats.
+ * @returns {string[] | undefined} - Ordered speaker stats ids.
  * @public
  */
-export function getSortedSpeakerStatsIds(state: IReduxState, stats: Object) {
+export function getSortedSpeakerStatsIds(state: IReduxState, stats: ISpeakerStats) {
     const orderConfig = getSpeakerStatsOrder(state);
 
     if (orderConfig) {
@@ -91,11 +96,11 @@ export function getSortedSpeakerStatsIds(state: IReduxState, stats: Object) {
      *
      * Compares the order of two participants in the speaker stats list.
      *
-     * @param {Object} currentParticipant - The first participant for comparison.
-     * @param {Object} nextParticipant - The second participant for comparison.
+     * @param {ISpeaker} currentParticipant - The first participant for comparison.
+     * @param {ISpeaker} nextParticipant - The second participant for comparison.
      * @returns {number} - The sort order of the two participants.
      */
-    function compareFn(currentParticipant: any, nextParticipant: any) {
+    function compareFn(currentParticipant: ISpeaker, nextParticipant: ISpeaker) {
         if (orderConfig.includes('hasLeft')) {
             if (nextParticipant.hasLeft() && !currentParticipant.hasLeft()) {
                 return -1;
@@ -104,7 +109,7 @@ export function getSortedSpeakerStatsIds(state: IReduxState, stats: Object) {
             }
         }
 
-        let result;
+        let result = 0;
 
         for (const sortCriteria of orderConfig) {
             switch (sortCriteria) {
@@ -136,13 +141,13 @@ export function getSortedSpeakerStatsIds(state: IReduxState, stats: Object) {
 /**
  * Enhance speaker stats to include data needed for ordering.
  *
- * @param {IReduxState} state - The redux state.
- * @param {Object} stats - Speaker stats.
+ * @param {IState} state - The redux state.
+ * @param {ISpeakerStats} stats - Speaker stats.
  * @param {Array<string>} orderConfig - Ordering configuration.
- * @returns {Object} - Enhanced speaker stats.
+ * @returns {ISpeakerStats} - Enhanced speaker stats.
  * @public
  */
-function getEnhancedStatsForOrdering(state: IReduxState, stats: any, orderConfig?: string[]) {
+function getEnhancedStatsForOrdering(state: IReduxState, stats: ISpeakerStats, orderConfig: Array<string>) {
     if (!orderConfig) {
         return stats;
     }
@@ -163,14 +168,14 @@ function getEnhancedStatsForOrdering(state: IReduxState, stats: any, orderConfig
 /**
  * Filter stats by search criteria.
  *
- * @param {IReduxState} state - The redux state.
- * @param {Object | undefined} stats - The unfiltered stats.
+ * @param {IState} state - The redux state.
+ * @param {ISpeakerStats | undefined} stats - The unfiltered stats.
  *
- * @returns {Object} - Filtered speaker stats.
+ * @returns {ISpeakerStats} - Filtered speaker stats.
  * @public
  */
-export function filterBySearchCriteria(state: IReduxState, stats?: Object) {
-    const filteredStats: any = _.cloneDeep(stats ?? getSpeakerStats(state));
+export function filterBySearchCriteria(state: IReduxState, stats?: ISpeakerStats) {
+    const filteredStats = _.cloneDeep(stats ?? getSpeakerStats(state));
     const criteria = getSearchCriteria(state);
 
     if (criteria !== null) {
@@ -191,14 +196,14 @@ export function filterBySearchCriteria(state: IReduxState, stats?: Object) {
 /**
  * Reset the hidden speaker stats.
  *
- * @param {IReduxState} state - The redux state.
- * @param {Object | undefined} stats - The unfiltered stats.
+ * @param {IState} state - The redux state.
+ * @param {ISpeakerStats | undefined} stats - The unfiltered stats.
  *
  * @returns {Object} - Speaker stats.
  * @public
  */
-export function resetHiddenStats(state: IReduxState, stats?: Object) {
-    const resetStats: any = _.cloneDeep(stats ?? getSpeakerStats(state));
+export function resetHiddenStats(state: IReduxState, stats?: ISpeakerStats) {
+    const resetStats = _.cloneDeep(stats ?? getSpeakerStats(state));
 
     for (const id in resetStats) {
         if (resetStats[id].hidden) {
@@ -207,4 +212,63 @@ export function resetHiddenStats(state: IReduxState, stats?: Object) {
     }
 
     return resetStats;
+}
+
+/**
+ * Gets the current duration of the conference.
+ *
+ * @param {IState} state - The redux state.
+ * @returns {number | null} - The duration in milliseconds or null.
+ */
+export function getCurrentDuration(state: IReduxState) {
+    const startTimestamp = getConferenceTimestamp(state);
+
+    return startTimestamp ? Date.now() - startTimestamp : null;
+}
+
+/**
+ * Gets the boundaries of the emotion timeline.
+ *
+ * @param {IState} state - The redux state.
+ * @returns {Object} - The left and right boundaries.
+ */
+export function getTimelineBoundaries(state: IReduxState) {
+    const { timelineBoundary, offsetLeft, offsetRight } = state['features/speaker-stats'];
+    const currentDuration = getCurrentDuration(state) ?? 0;
+    const rightBoundary = timelineBoundary ? timelineBoundary : currentDuration;
+    let leftOffset = 0;
+
+    if (rightBoundary > THRESHOLD_FIXED_AXIS) {
+        leftOffset = rightBoundary - THRESHOLD_FIXED_AXIS;
+    }
+
+    const left = offsetLeft + leftOffset;
+    const right = rightBoundary + offsetRight;
+
+    return {
+        left,
+        right
+    };
+}
+
+/**
+ * Returns the conference start time of the face landmarks.
+ *
+ * @param {FaceLandmarks} faceLandmarks - The face landmarks.
+ * @param {number} startTimestamp - The start timestamp of the conference.
+ * @returns {number}
+ */
+export function getFaceLandmarksStart(faceLandmarks: FaceLandmarks, startTimestamp: number) {
+    return faceLandmarks.timestamp - startTimestamp;
+}
+
+/**
+ * Returns the conference end time of the face landmarks.
+ *
+ * @param {FaceLandmarks} faceLandmarks - The face landmarks.
+ * @param {number} startTimestamp - The start timestamp of the conference.
+ * @returns {number}
+ */
+export function getFaceLandmarksEnd(faceLandmarks: FaceLandmarks, startTimestamp: number) {
+    return getFaceLandmarksStart(faceLandmarks, startTimestamp) + faceLandmarks.duration;
 }

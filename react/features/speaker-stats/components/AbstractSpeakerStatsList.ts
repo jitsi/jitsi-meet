@@ -1,11 +1,10 @@
-// @flow
-
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getLocalParticipant } from '../../base/participants';
-import { initUpdateStats } from '../actions';
+import { IReduxState } from '../../app/types';
+import { getLocalParticipant } from '../../base/participants/functions';
+import { initUpdateStats } from '../actions.any';
 import {
     SPEAKER_STATS_RELOAD_INTERVAL
 } from '../constants';
@@ -17,21 +16,22 @@ import {
  * @param {Object} itemStyles - Styles for the speaker stats item.
  * @returns {Function}
  */
-const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Object): Function[] => {
+const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const conference = useSelector(state => state['features/base/conference'].conference);
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
     const {
         stats: speakerStats,
         showFaceExpressions,
         sortedSpeakerStatsIds
-    } = useSelector(state => state['features/speaker-stats']);
+    } = useSelector((state: IReduxState) => state['features/speaker-stats']);
     const localParticipant = useSelector(getLocalParticipant);
     const { defaultRemoteDisplayName } = useSelector(
-        state => state['features/base/config']) || {};
-    const { faceLandmarks } = useSelector(state => state['features/base/config']) || {};
-    const { faceExpressions } = useSelector(state => state['features/face-landmarks']) || {};
-    const reloadInterval = useRef(null);
+        (state: IReduxState) => state['features/base/config']) || {};
+    const { faceLandmarks: faceLandmarksConfig } = useSelector((state: IReduxState) =>
+        state['features/base/config']) || {};
+    const { faceLandmarks } = useSelector((state: IReduxState) => state['features/face-landmarks']) || {};
+    const reloadInterval = useRef<number>();
 
     /**
      * Update the internal state with the latest speaker stats.
@@ -40,7 +40,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
      * @private
      */
     const getSpeakerStats = useCallback(() => {
-        const stats = conference.getSpeakerStats();
+        const stats = conference?.getSpeakerStats();
 
         for (const userId in stats) {
             if (stats[userId]) {
@@ -48,40 +48,42 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
                     const meString = t('me');
 
                     stats[userId].setDisplayName(
-                        localParticipant.name
+                        localParticipant?.name
                             ? `${localParticipant.name} (${meString})`
                             : meString
                     );
-                    if (faceLandmarks?.enableDisplayFaceExpressions) {
-                        stats[userId].setFaceExpressions(faceExpressions);
+
+                    if (faceLandmarksConfig?.enableDisplayFaceExpressions) {
+                        stats[userId].setFaceLandmarks(faceLandmarks);
                     }
                 }
 
                 if (!stats[userId].getDisplayName()) {
                     stats[userId].setDisplayName(
-                        conference.getParticipantById(userId)?.name
+                        conference?.getParticipantById(userId)?.name
                     );
                 }
             }
         }
 
-        return stats;
-    }, [ faceExpressions ]);
+        return stats ?? {};
+    }, [ faceLandmarks ]);
 
     const updateStats = useCallback(
         () => dispatch(initUpdateStats(getSpeakerStats)),
     [ dispatch, initUpdateStats, getSpeakerStats ]);
 
     useEffect(() => {
-        if (reloadInterval.current) {
-            clearInterval(reloadInterval.current);
-        }
-        reloadInterval.current = setInterval(() => {
+        reloadInterval.current = window.setInterval(() => {
             updateStats();
         }, SPEAKER_STATS_RELOAD_INTERVAL);
 
-        return () => clearInterval(reloadInterval.current);
-    }, [ faceExpressions ]);
+        return () => {
+            if (reloadInterval.current) {
+                clearInterval(reloadInterval.current);
+            }
+        };
+    }, [ faceLandmarks ]);
 
     const localSpeakerStats = Object.keys(speakerStats).length === 0 ? getSpeakerStats() : speakerStats;
     const localSortedSpeakerStatsIds
@@ -91,22 +93,17 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
 
     return userIds.map(userId => {
         const statsModel = localSpeakerStats[userId];
-        const props = {};
-
-        props.isDominantSpeaker = statsModel.isDominantSpeaker();
-        props.dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
-        props.participantId = userId;
-        props.hasLeft = statsModel.hasLeft();
-        if (showFaceExpressions) {
-            props.faceExpressions = statsModel.getFaceExpressions();
-        }
-        props.hidden = statsModel.hidden;
-        props.showFaceExpressions = showFaceExpressions;
-        props.displayName = statsModel.getDisplayName() || defaultRemoteDisplayName;
-        if (itemStyles) {
-            props.styles = itemStyles;
-        }
-        props.t = t;
+        const props = {
+            isDominantSpeaker: statsModel.isDominantSpeaker(),
+            dominantSpeakerTime: statsModel.getTotalDominantSpeakerTime(),
+            participantId: userId,
+            hasLeft: statsModel.hasLeft(),
+            faceLandmarks: showFaceExpressions ? statsModel.getFaceLandmarks() : undefined,
+            hidden: statsModel.hidden,
+            showFaceExpressions,
+            displayName: statsModel.getDisplayName() || defaultRemoteDisplayName,
+            t
+        };
 
         return speakerStatsItem(props);
     });

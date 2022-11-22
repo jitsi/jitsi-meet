@@ -5,20 +5,21 @@ import { getLocalVideoTrack } from '../base/tracks/functions';
 import { getBaseUrl } from '../base/util/helpers';
 
 import {
-    addFaceExpression,
+    addFaceLandmarks,
     clearFaceExpressionBuffer,
     newFaceBox
 } from './actions';
 import {
     DETECTION_TYPES,
     DETECT_FACE,
-    FACE_LANDMARK_DETECTION_ERROR_THRESHOLD,
+    FACE_LANDMARKS_DETECTION_ERROR_THRESHOLD,
     INIT_WORKER,
+    NO_DETECTION,
+    NO_FACE_DETECTION_THRESHOLD,
     WEBHOOK_SEND_TIME_INTERVAL
 } from './constants';
 import {
     getDetectionInterval,
-    getFaceExpressionDuration,
     sendFaceExpressionsWebhook
 } from './functions';
 import logger from './logger';
@@ -33,13 +34,14 @@ class FaceLandmarksDetector {
     private worker: Worker | null = null;
     private lastFaceExpression: string | null = null;
     private lastFaceExpressionTimestamp: number | null = null;
-    private duplicateConsecutiveExpressions = 0;
     private webhookSendInterval: number | null = null;
     private detectionInterval: number | null = null;
     private recognitionActive = false;
     private canvas?: HTMLCanvasElement;
     private context?: CanvasRenderingContext2D | null;
     private errorCount = 0;
+    private noDetectionCount = 0;
+    private noDetectionStartTimestamp: number | null = null;
 
     /**
      * Constructor for class, checks if the environment supports OffscreenCanvas.
@@ -97,27 +99,48 @@ class FaceLandmarksDetector {
 
         // @ts-ignore
         const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
+        const state = getState();
+        const addToBuffer = Boolean(state['features/base/config'].webhookProxyUrl);
 
         // @ts-ignore
         workerUrl = window.URL.createObjectURL(workerBlob);
-        this.worker = new Worker(workerUrl, { name: 'Face Recognition Worker' });
+        this.worker = new Worker(workerUrl, { name: 'Face Landmarks Worker' });
         this.worker.onmessage = ({ data }: MessageEvent<any>) => {
-            const { faceExpression, faceBox } = data;
+            const { faceExpression, faceBox, faceCount } = data;
+            const messageTimestamp = Date.now();
 
-            if (faceExpression) {
-                if (faceExpression === this.lastFaceExpression) {
-                    this.duplicateConsecutiveExpressions++;
-                } else {
-                    if (this.lastFaceExpression && this.lastFaceExpressionTimestamp) {
-                        dispatch(addFaceExpression(
-                            this.lastFaceExpression,
-                            getFaceExpressionDuration(getState(), this.duplicateConsecutiveExpressions + 1),
-                            this.lastFaceExpressionTimestamp
-                        ));
-                    }
-                    this.lastFaceExpression = faceExpression;
-                    this.lastFaceExpressionTimestamp = Date.now();
-                    this.duplicateConsecutiveExpressions = 0;
+            // if the number of faces detected is different from 1 we do not take into consideration that detection
+            if (faceCount !== 1) {
+                if (this.noDetectionCount === 0) {
+                    this.noDetectionStartTimestamp = messageTimestamp;
+                }
+                this.noDetectionCount++;
+
+                if (this.noDetectionCount === NO_FACE_DETECTION_THRESHOLD && this.noDetectionStartTimestamp) {
+                    this.addFaceLandmarks(
+                            dispatch,
+                            this.noDetectionStartTimestamp,
+                            NO_DETECTION,
+                            addToBuffer
+                    );
+                }
+
+                return;
+            } else if (this.noDetectionCount > 0) {
+                this.noDetectionCount = 0;
+                this.noDetectionStartTimestamp = null;
+            }
+
+            if (faceExpression?.expression) {
+                const { expression } = faceExpression;
+
+                if (expression !== this.lastFaceExpression) {
+                    this.addFaceLandmarks(
+                        dispatch,
+                        messageTimestamp,
+                        expression,
+                        addToBuffer
+                    );
                 }
             }
 
@@ -128,7 +151,7 @@ class FaceLandmarksDetector {
             APP.API.notifyFaceLandmarkDetected(faceBox, faceExpression);
         };
 
-        const { faceLandmarks } = getState()['features/base/config'];
+        const { faceLandmarks } = state['features/base/config'];
         const detectionTypes = [
             faceLandmarks?.enableFaceCentering && DETECTION_TYPES.FACE_BOX,
             faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS
@@ -162,7 +185,7 @@ class FaceLandmarksDetector {
         }
 
         if (this.recognitionActive) {
-            logger.log('Face detection already active.');
+            logger.log('Face landmarks detection already active.');
 
             return;
         }
@@ -179,7 +202,7 @@ class FaceLandmarksDetector {
 
         this.imageCapture = new ImageCapture(firstVideoTrack);
         this.recognitionActive = true;
-        logger.log('Start face detection');
+        logger.log('Start face landmarks detection');
 
         const { faceLandmarks } = state['features/base/config'];
 
@@ -191,7 +214,7 @@ class FaceLandmarksDetector {
                 ).then(status => {
                     if (status) {
                         this.errorCount = 0;
-                    } else if (++this.errorCount > FACE_LANDMARK_DETECTION_ERROR_THRESHOLD) {
+                    } else if (++this.errorCount > FACE_LANDMARKS_DETECTION_ERROR_THRESHOLD) {
                         /* this prevents the detection from stopping immediately after occurring an error
                          * sometimes due to the small detection interval when starting the detection some errors
                          * might occur due to the track not being ready
@@ -228,18 +251,11 @@ class FaceLandmarksDetector {
         if (!this.recognitionActive || !this.isInitialized()) {
             return;
         }
+        const stopTimestamp = Date.now();
+        const addToBuffer = Boolean(getState()['features/base/config'].webhookProxyUrl);
 
         if (this.lastFaceExpression && this.lastFaceExpressionTimestamp) {
-            dispatch(
-                addFaceExpression(
-                    this.lastFaceExpression,
-                    getFaceExpressionDuration(getState(), this.duplicateConsecutiveExpressions + 1),
-                    this.lastFaceExpressionTimestamp
-                )
-            );
-            this.duplicateConsecutiveExpressions = 0;
-            this.lastFaceExpression = null;
-            this.lastFaceExpressionTimestamp = null;
+            this.addFaceLandmarks(dispatch, stopTimestamp, null, addToBuffer);
         }
 
         this.webhookSendInterval && window.clearInterval(this.webhookSendInterval);
@@ -248,7 +264,36 @@ class FaceLandmarksDetector {
         this.detectionInterval = null;
         this.imageCapture = null;
         this.recognitionActive = false;
-        logger.log('Stop face detection');
+        logger.log('Stop face landmarks detection');
+    }
+
+    /**
+     * Dispatches the action for adding new face landmarks and changes the state of the class.
+     *
+     * @param {IStore.dispatch} dispatch - The redux dispatch function.
+     * @param {number} endTimestamp - The timestamp when the face landmarks ended.
+     * @param {string} newFaceExpression - The new face expression.
+     * @param {boolean} addToBuffer - Flag for adding the face landmarks to the buffer.
+     * @returns {void}
+     */
+    private addFaceLandmarks(
+            dispatch: IStore['dispatch'],
+            endTimestamp: number,
+            newFaceExpression: string | null,
+            addToBuffer = false) {
+        if (this.lastFaceExpression && this.lastFaceExpressionTimestamp) {
+            dispatch(addFaceLandmarks(
+                {
+                    duration: endTimestamp - this.lastFaceExpressionTimestamp,
+                    faceExpression: this.lastFaceExpression,
+                    timestamp: this.lastFaceExpressionTimestamp
+                },
+                addToBuffer
+            ));
+        }
+
+        this.lastFaceExpression = newFaceExpression;
+        this.lastFaceExpressionTimestamp = endTimestamp;
     }
 
     /**

@@ -12,10 +12,9 @@ onmessage = async function({ data }: MessageEvent<any>) {
 
         const detections = await helper.detect(data);
 
-        if (detections && (detections.faceBox || detections.faceExpression || detections.faceCount)) {
+        if (detections) {
             self.postMessage(detections);
         }
-
         break;
     }
 

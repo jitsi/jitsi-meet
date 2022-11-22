@@ -11,18 +11,15 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from '../base/tracks/actionTypes';
 
 import FaceLandmarksDetector from './FaceLandmarksDetector';
-import { ADD_FACE_EXPRESSION, NEW_FACE_COORDINATES, UPDATE_FACE_COORDINATES } from './actionTypes';
-import {
-    addToFaceExpressionsBuffer
-} from './actions';
+import { ADD_FACE_LANDMARKS, NEW_FACE_COORDINATES, UPDATE_FACE_COORDINATES } from './actionTypes';
 import { FACE_BOX_EVENT_TYPE } from './constants';
 import { sendFaceBoxToParticipants, sendFaceExpressionToParticipants, sendFaceExpressionToServer } from './functions';
 
 
 MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
     const { dispatch, getState } = store;
-    const { faceLandmarks } = getState()['features/base/config'];
-    const isEnabled = faceLandmarks?.enableFaceCentering || faceLandmarks?.enableFaceExpressionsDetection;
+    const { faceLandmarks: faceLandmarksConfig } = getState()['features/base/config'];
+    const isEnabled = faceLandmarksConfig?.enableFaceCentering || faceLandmarksConfig?.enableFaceExpressionsDetection;
 
     if (action.type === CONFERENCE_JOINED) {
         if (isEnabled) {
@@ -99,19 +96,16 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
 
         return next(action);
     }
-    case ADD_FACE_EXPRESSION: {
+    case ADD_FACE_LANDMARKS: {
         const state = getState();
-        const { faceExpression, duration, timestamp } = action;
+        const { faceLandmarks } = action;
         const conference = getCurrentConference(state);
 
         if (getParticipantCount(state) > 1) {
-            sendFaceExpressionToParticipants(conference, faceExpression, duration);
+            sendFaceExpressionToParticipants(conference, faceLandmarks);
         }
-        sendFaceExpressionToServer(conference, faceExpression, duration);
-        dispatch(addToFaceExpressionsBuffer({
-            emotion: faceExpression,
-            timestamp
-        }));
+
+        sendFaceExpressionToServer(conference, faceLandmarks);
 
         return next(action);
     }

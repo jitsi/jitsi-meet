@@ -2,21 +2,18 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Tooltip } from '../../../base/tooltip';
-import { FACE_EXPRESSIONS_EMOJIS } from '../../../face-landmarks/constants';
+import TimelineAxis from './TimelineAxis';
 
 const useStyles = makeStyles()(theme => {
     return {
         labels: {
             padding: '22px 0 7px 0',
-            height: 20
-        },
-        emojis: {
-            paddingLeft: 27,
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+            height: 20,
+            '& .avatar-placeholder': {
+                width: '32px',
+                marginRight: theme.spacing(3)
+
+            }
         }
     };
 });
@@ -36,12 +33,12 @@ const SpeakerStatsLabels = (props: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyles();
     const nameTimeClass = `name-time${
-        props.showFaceExpressions ? ' name-time_expressions-on' : ''
+        props.showFaceExpressions ? ' expressions-on' : ''
     }`;
 
     return (
         <div className = { `row ${classes.labels}` }>
-            <div className = 'avatar' />
+            <div className = 'avatar-placeholder' />
 
             <div className = { nameTimeClass }>
                 <div>
@@ -51,27 +48,7 @@ const SpeakerStatsLabels = (props: IProps) => {
                     { t('speakerStats.speakerTime') }
                 </div>
             </div>
-            {
-                props.showFaceExpressions
-                && <div className = { `expressions ${classes.emojis}` }>
-                    {Object.keys(FACE_EXPRESSIONS_EMOJIS).map(
-                        expression => (
-                            <div
-                                className = 'expression'
-                                key = { expression }>
-                                <Tooltip
-                                    content = { t(`speakerStats.${expression}`) }
-                                    position = { 'top' } >
-                                    <div>
-                                        {FACE_EXPRESSIONS_EMOJIS[expression as keyof typeof FACE_EXPRESSIONS_EMOJIS]}
-                                    </div>
-
-                                </Tooltip>
-                            </div>
-                        )
-                    )}
-                </div>
-            }
+            {props.showFaceExpressions && <TimelineAxis />}
         </div>
     );
 };
