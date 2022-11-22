@@ -53,9 +53,9 @@ const JitsiKeyboardAvoidingView = (
             addBottomPadding = true,
             children,
             contentContainerStyle,
+            disableForcedKeyboardDismiss,
             hasTabNavigator,
             hasBottomTextInput,
-            disableForcedKeyboardDismiss,
             style
         }: Props) => {
     const headerHeight = useHeaderHeight();
