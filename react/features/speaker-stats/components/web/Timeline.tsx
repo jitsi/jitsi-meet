@@ -91,7 +91,7 @@ const Timeline = ({ faceLandmarks }: Props) => {
             width: `${100 / (intervalDuration / startDuration)}%`,
             backgroundColor: color
         };
-    }, [ leftCut, rightCut, startTimestamp, left ]);
+    }, [ leftCut, rightCut, startTimestamp, left, intervalDuration, segments ]);
 
     const getEndStyle = useCallback(() => {
         let endDuration = 0;
@@ -112,7 +112,7 @@ const Timeline = ({ faceLandmarks }: Props) => {
             width: `${100 / (intervalDuration / endDuration)}%`,
             backgroundColor: color
         };
-    }, [ leftCut, rightCut, startTimestamp, right ]);
+    }, [ leftCut, rightCut, startTimestamp, right, intervalDuration, segments ]);
 
     const getOneSegmentStyle = useCallback((faceExpression?: string) => {
         return {
@@ -192,7 +192,7 @@ const Timeline = ({ faceLandmarks }: Props) => {
                     style = { getOneSegmentStyle(leftCut?.faceExpression) } />}
                 {segments?.map(({ duration, timestamp, faceExpression }) =>
                     (<div
-                        area-label = { faceExpression }
+                        aria-label = { faceExpression }
                         key = { timestamp }
                         style = { getStyle(duration, faceExpression) } />)) }
 
