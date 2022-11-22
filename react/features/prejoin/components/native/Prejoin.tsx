@@ -143,7 +143,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     return (
         <JitsiScreen
             addBottomPadding = { false }
-            safeAreaInsets = { [ 'left', 'right' ] }
+            safeAreaInsets = { [ 'right' ] }
             style = { contentWrapperStyles }>
             <BrandingImageBackground />
             {

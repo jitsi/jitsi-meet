@@ -4,7 +4,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 export default {
     joinButton: {
         marginTop: BaseTheme.spacing[3],
-        width: 304
+        width: 352
     },
 
     buttonStylesBorderless: {
@@ -89,7 +89,7 @@ export default {
 
     customInput: {
         textAlign: 'center',
-        width: 304
+        width: 352
     },
 
     preJoinRoomName: {
