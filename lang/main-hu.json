@@ -1090,7 +1090,7 @@
         "join": "LÉTREHOZ /HOZZÁAD",
         "privacy": "Adatvédelem",
         "recentList": "Legutóbbi",
-        "recentListDelete": "Törlés",
+        "recentListDelete": "Lista törlés",
         "recentListEmpty": "A legutóbbi lista jelenleg üres. Csevegjen a csapattal és minden előző értekezlet itt lesz megtalálható.",
         "reducedUIText": "Üdvözlet a {{app}} programban!",
         "roomNameAllowedChars": "Az értekezlet neve nem tartalmazhatja a következő karaktereket: ?, &, :, ', \", %, #.",
