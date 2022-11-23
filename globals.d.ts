@@ -13,6 +13,7 @@ declare global {
         keyboardshortcut: {
             registerShortcut: Function;
             unregisterShortcut: Function;
+            openDialog: Function;
         }
     };
     const interfaceConfig: any;

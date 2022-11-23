@@ -454,18 +454,18 @@ export function sendLocalParticipant(
         name
     } = getLocalParticipant(stateful) ?? {};
 
-    avatarURL && conference.sendCommand(AVATAR_URL_COMMAND, {
+    avatarURL && conference?.sendCommand(AVATAR_URL_COMMAND, {
         value: avatarURL
     });
-    email && conference.sendCommand(EMAIL_COMMAND, {
+    email && conference?.sendCommand(EMAIL_COMMAND, {
         value: email
     });
 
     if (features && features['screen-sharing'] === 'true') {
-        conference.setLocalParticipantProperty('features_screen-sharing', true);
+        conference?.setLocalParticipantProperty('features_screen-sharing', true);
     }
 
-    conference.setDisplayName(name);
+    conference?.setDisplayName(name);
 }
 
 /**

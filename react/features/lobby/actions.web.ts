@@ -1,12 +1,7 @@
-// @flow
-
-import { type Dispatch } from 'redux';
-
-import { maybeRedirectToWelcomePage } from '../app/actions';
+import { maybeRedirectToWelcomePage } from '../app/actions.web';
+import { IStore } from '../app/types';
 
 export * from './actions.any';
-
-declare var APP: Object;
 
 /**
  * Cancels the ongoing knocking and abandons the join flow.
@@ -14,7 +9,7 @@ declare var APP: Object;
  * @returns {Function}
  */
 export function cancelKnocking() {
-    return async (dispatch: Dispatch<any>) => {
+    return async (dispatch: IStore['dispatch']) => {
         // when we are redirecting the library should handle any
         // unload and clean of the connection.
         APP.API.notifyReadyToClose();

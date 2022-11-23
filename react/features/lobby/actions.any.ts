@@ -1,19 +1,13 @@
-// @flow
-
-import { type Dispatch } from 'redux';
-
-import {
-    conferenceWillJoin,
-    getCurrentConference,
-    sendLocalParticipant,
-    setPassword
-} from '../base/conference';
-import { getLocalParticipant } from '../base/participants';
+import { IStore } from '../app/types';
+import { conferenceWillJoin, setPassword } from '../base/conference/actions';
+import { getCurrentConference, sendLocalParticipant } from '../base/conference/functions';
+import { getLocalParticipant } from '../base/participants/functions';
+import { IParticipant } from '../base/participants/types';
 import { onLobbyChatInitialized, removeLobbyChatParticipant, sendMessage } from '../chat/actions.any';
 import { LOBBY_CHAT_MESSAGE } from '../chat/constants';
 import { handleLobbyMessageReceived } from '../chat/middleware';
-import { LOBBY_NOTIFICATION_ID, hideNotification } from '../notifications';
-import { showNotification } from '../notifications/actions';
+import { hideNotification, showNotification } from '../notifications/actions';
+import { LOBBY_NOTIFICATION_ID } from '../notifications/constants';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
@@ -27,6 +21,7 @@ import {
 } from './actionTypes';
 import { LOBBY_CHAT_INITIALIZED, MODERATOR_IN_CHAT_WITH_LEFT } from './constants';
 import { getKnockingParticipants, getLobbyEnabled } from './functions';
+import { IKnockingParticipant } from './types';
 
 /**
  * Tries to join with a preset password.
@@ -35,7 +30,7 @@ import { getKnockingParticipants, getLobbyEnabled } from './functions';
  * @returns {Function}
  */
 export function joinWithPassword(password: string) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
         dispatch(setPassword(conference, conference.join, password));
@@ -67,7 +62,7 @@ export function knockingParticipantLeft(id: string) {
  *     type: KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED
  * }}
  */
-export function participantIsKnockingOrUpdated(participant: Object) {
+export function participantIsKnockingOrUpdated(participant: IKnockingParticipant | Object) {
     return {
         participant,
         type: KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED
@@ -82,7 +77,7 @@ export function participantIsKnockingOrUpdated(participant: Object) {
  * @returns {Function}
  */
 export function answerKnockingParticipant(id: string, approved: boolean) {
-    return async (dispatch: Dispatch<any>) => {
+    return async (dispatch: IStore['dispatch']) => {
         dispatch(setKnockingParticipantApproval(id, approved));
         dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
     };
@@ -96,7 +91,7 @@ export function answerKnockingParticipant(id: string, approved: boolean) {
  * @returns {Function}
  */
 export function setKnockingParticipantApproval(id: string, approved: boolean) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
         if (conference) {
@@ -115,8 +110,8 @@ export function setKnockingParticipantApproval(id: string, approved: boolean) {
  * @param {Array<Object>} participants - A list of knocking participants.
  * @returns {void}
  */
-export function admitMultiple(participants: Array<Object>) {
-    return (dispatch: Function, getState: Function) => {
+export function admitMultiple(participants: Array<IKnockingParticipant>) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
         participants.forEach(p => {
@@ -132,10 +127,10 @@ export function admitMultiple(participants: Array<Object>) {
  * @returns {Function}
  */
 export function approveKnockingParticipant(id: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
-        conference && conference.lobbyApproveAccess(id);
+        conference?.lobbyApproveAccess(id);
     };
 }
 
@@ -146,10 +141,10 @@ export function approveKnockingParticipant(id: string) {
  * @returns {Function}
  */
 export function rejectKnockingParticipant(id: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
-        conference && conference.lobbyDenyAccess(id);
+        conference?.lobbyDenyAccess(id);
     };
 }
 
@@ -207,18 +202,20 @@ export function setPasswordJoinFailed(failed: boolean) {
  * @returns {Function}
  */
 export function startKnocking() {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { membersOnly } = state['features/base/conference'];
         const localParticipant = getLocalParticipant(state);
 
+        // @ts-ignore
         dispatch(conferenceWillJoin(membersOnly));
 
         // We need to update the conference object with the current display name, if approved
         // we want to send that display name, it was not updated in case when pre-join is disabled
+        // @ts-ignore
         sendLocalParticipant(state, membersOnly);
 
-        membersOnly.joinLobby(localParticipant.name, localParticipant.email);
+        membersOnly?.joinLobby(localParticipant?.name, localParticipant?.email);
         dispatch(setLobbyMessageListener());
         dispatch(setKnockingState(true));
     };
@@ -231,7 +228,7 @@ export function startKnocking() {
  * @returns {Function}
  */
 export function toggleLobbyMode(enabled: boolean) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
         if (enabled) {
@@ -275,8 +272,8 @@ export function hideLobbyScreen() {
  *
  * @returns {Promise<void>}
  */
-export function handleLobbyChatInitialized(payload: Object) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+export function handleLobbyChatInitialized(payload: { attendee: IParticipant; moderator: IParticipant; }) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const conference = getCurrentConference(state);
 
@@ -296,8 +293,8 @@ export function handleLobbyChatInitialized(payload: Object) {
             dispatch(showNotification({
                 titleKey: 'lobby.lobbyChatStartedNotification',
                 titleArguments: {
-                    moderator: payload.moderator.name,
-                    attendee: payload.attendee.name
+                    moderator: payload.moderator.name ?? '',
+                    attendee: payload.attendee.name ?? ''
                 }
             }));
         }
@@ -312,7 +309,7 @@ export function handleLobbyChatInitialized(payload: Object) {
  * @returns {Promise<void>}
  */
 export function onSendMessage(message: string) {
-    return async (dispatch: Dispatch<any>) => {
+    return async (dispatch: IStore['dispatch']) => {
         dispatch(sendMessage(message));
     };
 }
@@ -325,7 +322,7 @@ export function onSendMessage(message: string) {
  * @returns {Promise<void>}
  */
 export function sendLobbyChatMessage(message: Object) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
         conference.sendLobbyMessage(message);
@@ -338,7 +335,7 @@ export function sendLobbyChatMessage(message: Object) {
  * @returns {Function}
  */
 export function maybeSetLobbyChatMessageListener() {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const lobbyEnabled = getLobbyEnabled(state);
 
@@ -355,7 +352,7 @@ export function maybeSetLobbyChatMessageListener() {
  * @returns {Function}
  */
 export function updateLobbyParticipantOnLeave(participantId: string) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { knocking, knockingParticipants } = state['features/lobby'];
         const { lobbyMessageRecipient } = state['features/chat'];
@@ -370,7 +367,7 @@ export function updateLobbyParticipantOnLeave(participantId: string) {
             const participantToNotify = knockingParticipants.find(p => p.chattingWithModerator === participantId);
 
             if (participantToNotify) {
-                conference.sendLobbyMessage({
+                conference?.sendLobbyMessage({
                     type: MODERATOR_IN_CHAT_WITH_LEFT,
                     moderatorId: participantToNotify.chattingWithModerator
                 }, participantToNotify.id);
@@ -389,7 +386,7 @@ export function updateLobbyParticipantOnLeave(participantId: string) {
  * @returns {Function}
  */
 export function setLobbyMessageListener() {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const conference = getCurrentConference(state);
         const { enableLobbyChat = true } = state['features/base/config'];
@@ -398,7 +395,7 @@ export function setLobbyMessageListener() {
             return;
         }
 
-        conference.addLobbyMessageListener((message: Object, participantId: string) => {
+        conference.addLobbyMessageListener((message: any, participantId: string) => {
             if (message.type === LOBBY_CHAT_MESSAGE) {
                 return dispatch(handleLobbyMessageReceived(message.message, participantId));
             }

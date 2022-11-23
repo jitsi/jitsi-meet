@@ -1,5 +1,4 @@
 import { CONFERENCE_JOINED, CONFERENCE_LEFT, SET_PASSWORD } from '../base/conference/actionTypes';
-import { IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -12,6 +11,7 @@ import {
     SET_LOBBY_VISIBILITY,
     SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
+import { IKnockingParticipant } from './types';
 
 const DEFAULT_STATE = {
     knocking: false,
@@ -20,10 +20,6 @@ const DEFAULT_STATE = {
     lobbyVisible: false,
     passwordJoinFailed: false
 };
-
-interface IKnockingParticipant extends IParticipant {
-    chattingWithModerator?: string;
-}
 
 export interface ILobbyState {
     knocking: boolean;

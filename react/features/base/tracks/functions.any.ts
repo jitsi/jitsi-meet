@@ -214,7 +214,7 @@ export function getVideoTrackByParticipant(
 export function getTrackByMediaTypeAndParticipant(
         tracks: ITrack[],
         mediaType: MediaType,
-        participantId: string) {
+        participantId?: string) {
     return tracks.find(
         t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
     );

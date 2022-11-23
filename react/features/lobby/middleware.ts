@@ -1,39 +1,41 @@
-// @flow
-
 import i18n from 'i18next';
 import { batch } from 'react-redux';
+import { AnyAction } from 'redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import {
-    CONFERENCE_FAILED,
-    CONFERENCE_JOINED,
-    conferenceWillJoin
-} from '../base/conference';
+import { IStore } from '../app/types';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { conferenceWillJoin } from '../base/conference/actions';
 import { JitsiConferenceErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { isTestModeEnabled } from '../base/testing';
+import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import { isTestModeEnabled } from '../base/testing/functions';
 import { handleLobbyChatInitialized, removeLobbyChatParticipant } from '../chat/actions.any';
-import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/actions';
+import {
+    hideNotification,
+    showNotification
+} from '../notifications/actions';
 import {
     LOBBY_NOTIFICATION_ID,
     NOTIFICATION_ICON,
     NOTIFICATION_TIMEOUT_TYPE,
-    NOTIFICATION_TYPE,
-    hideNotification,
-    showNotification
-} from '../notifications';
+    NOTIFICATION_TYPE
+} from '../notifications/constants';
+import { INotificationProps } from '../notifications/types';
 import { open as openParticipantsPane } from '../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { shouldAutoKnock } from '../prejoin/functions';
 
 import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED, KNOCKING_PARTICIPANT_LEFT } from './actionTypes';
 import {
+    approveKnockingParticipant,
     hideLobbyScreen,
     knockingParticipantLeft,
     openLobbyScreen,
     participantIsKnockingOrUpdated,
+    rejectKnockingParticipant,
     setLobbyMessageListener,
     setLobbyModeEnabled,
     setPasswordJoinFailed,
@@ -43,8 +45,7 @@ import { updateLobbyParticipantOnLeave } from './actions.any';
 import { KNOCKING_PARTICIPANT_SOUND_ID } from './constants';
 import { getKnockingParticipants, showLobbyChatButton } from './functions';
 import { KNOCKING_PARTICIPANT_FILE } from './sounds';
-
-declare var APP: Object;
+import { IKnockingParticipant } from './types';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -88,14 +89,14 @@ StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
     (conference, { dispatch, getState }, previousConference) => {
         if (conference && !previousConference) {
-            conference.on(JitsiConferenceEvents.MEMBERS_ONLY_CHANGED, enabled => {
+            conference.on(JitsiConferenceEvents.MEMBERS_ONLY_CHANGED, (enabled: boolean) => {
                 dispatch(setLobbyModeEnabled(enabled));
                 if (enabled) {
                     dispatch(setLobbyMessageListener());
                 }
             });
 
-            conference.on(JitsiConferenceEvents.LOBBY_USER_JOINED, (id, name) => {
+            conference.on(JitsiConferenceEvents.LOBBY_USER_JOINED, (id: string, name: string) => {
                 const { soundsParticipantKnocking } = getState()['features/base/settings'];
 
                 batch(() => {
@@ -180,7 +181,7 @@ StateListenerRegistry.register(
                 });
             });
 
-            conference.on(JitsiConferenceEvents.LOBBY_USER_UPDATED, (id, participant) => {
+            conference.on(JitsiConferenceEvents.LOBBY_USER_UPDATED, (id: string, participant: IKnockingParticipant) => {
                 dispatch(
                     participantIsKnockingOrUpdated({
                         ...participant,
@@ -189,7 +190,7 @@ StateListenerRegistry.register(
                 );
             });
 
-            conference.on(JitsiConferenceEvents.LOBBY_USER_LEFT, id => {
+            conference.on(JitsiConferenceEvents.LOBBY_USER_LEFT, (id: string) => {
                 batch(() => {
                     dispatch(knockingParticipantLeft(id));
                     dispatch(removeLobbyChatParticipant());
@@ -197,7 +198,7 @@ StateListenerRegistry.register(
                 });
             });
 
-            conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, (origin, sender) =>
+            conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, (origin: any, sender: any) =>
                 _maybeSendLobbyNotification(origin, sender, {
                     dispatch,
                     getState
@@ -213,7 +214,7 @@ StateListenerRegistry.register(
  * @param {Object} store - The Redux store.
  * @returns {void}
  */
-function _handleLobbyNotification(store) {
+function _handleLobbyNotification(store: IStore) {
     const { dispatch, getState } = store;
     const knockingParticipants = getKnockingParticipants(getState());
 
@@ -275,7 +276,7 @@ function _handleLobbyNotification(store) {
  * @param {Object} action - The Redux action.
  * @returns {Object}
  */
-function _conferenceFailed({ dispatch, getState }, next, action) {
+function _conferenceFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { error } = action;
     const state = getState();
     const { membersOnly } = state['features/base/conference'];
@@ -296,6 +297,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
 
         // In case of wrong password we need to be in the right state if in the meantime someone allows us to join
         if (nonFirstFailure) {
+            // @ts-ignore
             dispatch(conferenceWillJoin(membersOnly));
         }
 
@@ -328,7 +330,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
  * @param {Object} action - The Redux action.
  * @returns {Object}
  */
-function _conferenceJoined({ dispatch }, next, action) {
+function _conferenceJoined({ dispatch }: IStore, next: Function, action: AnyAction) {
     dispatch(hideLobbyScreen());
 
     return next(action);
@@ -341,13 +343,13 @@ function _conferenceJoined({ dispatch }, next, action) {
  * @param {Object} participant - The knocking participant.
  * @returns {void}
  */
-function _findLoadableAvatarForKnockingParticipant(store, { id }) {
+function _findLoadableAvatarForKnockingParticipant(store: IStore, { id }: { id: string; }) {
     const { dispatch, getState } = store;
     const updatedParticipant = getState()['features/lobby'].knockingParticipants.find(p => p.id === id);
     const { disableThirdPartyRequests } = getState()['features/base/config'];
 
     if (!disableThirdPartyRequests && updatedParticipant && !updatedParticipant.loadableAvatarUrl) {
-        getFirstLoadableAvatarUrl(updatedParticipant, store).then(result => {
+        getFirstLoadableAvatarUrl(updatedParticipant, store).then((result: { isUsingCORS: boolean; src: string; }) => {
             if (result) {
                 const { isUsingCORS, src } = result;
 
@@ -372,12 +374,12 @@ function _findLoadableAvatarForKnockingParticipant(store, { id }) {
  * @param {Object} store - The Redux store.
  * @returns {void}
  */
-function _maybeSendLobbyNotification(origin, message, { dispatch, getState }) {
+function _maybeSendLobbyNotification(origin: any, message: any, { dispatch, getState }: IStore) {
     if (!origin?._id || message?.type !== 'lobby-notify') {
         return;
     }
 
-    const notificationProps: any = {
+    const notificationProps: INotificationProps = {
         descriptionArguments: {
             originParticipantName: getParticipantDisplayName(getState, origin._id),
             targetParticipantName: message.name

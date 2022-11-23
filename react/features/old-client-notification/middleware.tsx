@@ -1,15 +1,15 @@
-// @flow
-
 import React from 'react';
+import { AnyAction } from 'redux';
 
-import { APP_WILL_MOUNT } from '../base/app';
-import { MiddlewareRegistry } from '../base/redux';
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../notifications';
+import { IStore } from '../app/types';
+import { APP_WILL_MOUNT } from '../base/app/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { showErrorNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
+// @ts-ignore
 import { OldElectronAPPNotificationDescription } from './components';
 import { isOldJitsiMeetElectronApp } from './functions';
-
-declare var interfaceConfig: Object;
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -29,7 +29,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The new state that is the result of the reduction of the specified {@code action}.
  */
-function _appWillMount(store, next, action) {
+function _appWillMount(store: IStore, next: Function, action: AnyAction) {
     if (isOldJitsiMeetElectronApp()) {
         const { dispatch } = store;
 

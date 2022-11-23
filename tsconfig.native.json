@@ -26,6 +26,7 @@
         "react/features/feedback",
         "react/features/no-audio-signal",
         "react/features/noise-suppression",
+        "react/features/old-client-notification",
         "react/features/screen-share",
         "react/features/stream-effects/noise-suppression",
         "react/features/stream-effects/rnnoise",

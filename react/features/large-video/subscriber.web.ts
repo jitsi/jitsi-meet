@@ -1,8 +1,7 @@
-// @flow
-
+// @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
-import { StateListenerRegistry } from '../base/redux';
-import { getVideoTrackByParticipant } from '../base/tracks';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { getVideoTrackByParticipant } from '../base/tracks/functions.web';
 
 import { getLargeVideoParticipant } from './functions';
 
@@ -29,7 +28,7 @@ StateListenerRegistry.register(
             streamingStatus: videoTrack?.streamingStatus
         };
     },
-    /* listener */ ({ participantId, streamingStatus }, previousState = {}) => {
+    /* listener */ ({ participantId, streamingStatus }, previousState: any = {}) => {
         if (streamingStatus !== previousState.streamingStatus) {
             VideoLayout.updateLargeVideo(participantId, true);
         }

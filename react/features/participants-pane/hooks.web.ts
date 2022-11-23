@@ -2,9 +2,7 @@ import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { handleLobbyChatInitialized } from '../chat/actions.any';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/actions';
+import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/actions.web';
 
 interface IDrawerParticipant {
     displayName?: string;
@@ -24,12 +22,12 @@ export function useLobbyActions(participant?: IDrawerParticipant | null, closeDr
     return [
         useCallback(e => {
             e.stopPropagation();
-            dispatch(approveKnockingParticipant(participant?.participantID));
+            dispatch(approveKnockingParticipant(participant?.participantID ?? ''));
             closeDrawer?.();
         }, [ dispatch, closeDrawer ]),
 
         useCallback(() => {
-            dispatch(rejectKnockingParticipant(participant?.participantID));
+            dispatch(rejectKnockingParticipant(participant?.participantID ?? ''));
             closeDrawer?.();
         }, [ dispatch, closeDrawer ]),
 

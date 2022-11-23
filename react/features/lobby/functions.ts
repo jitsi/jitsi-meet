@@ -1,44 +1,46 @@
-// @flow
+import { IReduxState } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
 
-import { getCurrentConference } from '../base/conference';
+import { IKnockingParticipant } from './types';
+
 
 /**
 * Selector to return lobby enable state.
 *
-* @param {any} state - State object.
+* @param {IReduxState} state - State object.
 * @returns {boolean}
 */
-export function getLobbyEnabled(state: any) {
+export function getLobbyEnabled(state: IReduxState) {
     return state['features/lobby'].lobbyEnabled;
 }
 
 /**
 * Selector to return a list of knocking participants.
 *
-* @param {any} state - State object.
+* @param {IReduxState} state - State object.
 * @returns {Array<Object>}
 */
-export function getKnockingParticipants(state: any) {
+export function getKnockingParticipants(state: IReduxState) {
     return state['features/lobby'].knockingParticipants;
 }
 
 /**
  * Selector to return lobby visibility.
  *
- * @param {any} state - State object.
+ * @param {IReduxState} state - State object.
  * @returns {any}
  */
-export function getIsLobbyVisible(state: any) {
+export function getIsLobbyVisible(state: IReduxState) {
     return state['features/lobby'].lobbyVisible;
 }
 
 /**
  * Selector to return array with knocking participant ids.
  *
- * @param {any} state - State object.
+ * @param {IReduxState} state - State object.
  * @returns {Array}
  */
-export function getKnockingParticipantsById(state: any) {
+export function getKnockingParticipantsById(state: IReduxState) {
     return getKnockingParticipants(state).map(participant => participant.id);
 }
 
@@ -50,9 +52,9 @@ export function getKnockingParticipantsById(state: any) {
  * @returns {Function}
  */
 export function showLobbyChatButton(
-        participant: Object
+        participant: IKnockingParticipant
 ) {
-    return function(state: Object) {
+    return function(state: IReduxState) {
 
         const { enableLobbyChat = true } = state['features/base/config'];
         const { lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
