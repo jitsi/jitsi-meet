@@ -969,6 +969,7 @@
         "stopvideoblur": "Háttér elhomályosításának letiltása",
         "talkWhileMutedPopup": "Úgy tűnik beszélni szeretne, de le van némítva.",
         "tileViewToggle": "Mozaikos nézet átváltása",
+        "toggleCamera": "Kamera átváltása",
         "videoSettings": "Videóbeállítások",
         "videomute": "Kamera indítása / leállítása"
     },
