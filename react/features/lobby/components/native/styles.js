@@ -53,7 +53,7 @@ export default {
 
     knockingParticipantList: {
         alignSelf: 'stretch',
-        backgroundColor: 'rgba(22, 38, 55, 0.8)',
+        backgroundColor: BaseTheme.palette.ui01,
         flexDirection: 'column',
         paddingHorizontal: BaseTheme.spacing[2]
     },

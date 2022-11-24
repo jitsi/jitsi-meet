@@ -5,10 +5,17 @@ import { TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
+import { AudioStateIcons, MEDIA_STATE, type MediaState, VideoStateIcons } from '../../constants';
 
+import { RaisedHandIndicator } from './RaisedHandIndicator';
 import styles from './styles';
 
 type Props = {
+
+    /**
+     * Media state for audio.
+     */
+    audioMediaState?: MediaState,
 
     /**
      * React children.
@@ -24,6 +31,11 @@ type Props = {
      * The name of the participant. Used for showing lobby names.
      */
     displayName: string,
+
+    /**
+     * Is the participant waiting?
+     */
+    isKnockingParticipant: boolean,
 
     /**
      * Whether or not the user is a moderator.
@@ -48,7 +60,12 @@ type Props = {
     /**
      * True if the participant have raised hand.
      */
-    raisedHand?: boolean
+    raisedHand?: boolean,
+
+    /**
+     * Media state for video.
+     */
+    videoMediaState?: MediaState
 }
 
 /**
@@ -60,11 +77,14 @@ function ParticipantItem({
     children,
     displayName,
     disableModeratorIndicator,
+    isKnockingParticipant = false,
     isModerator,
     local,
     onPress,
     participantID,
-    raisedHand
+    raisedHand,
+    audioMediaState = MEDIA_STATE.NONE,
+    videoMediaState = MEDIA_STATE.NONE
 }: Props) {
 
     const { t } = useTranslation();
@@ -92,11 +112,20 @@ function ParticipantItem({
                             { local && ` (${t('chat.you')})` }
                         </Text>
                     </View>
-                    {
-                        isModerator && !disableModeratorIndicator
-                        && <Text style = { styles.moderatorLabel }>{t('videothumbnail.moderator')}</Text>
+                    { isModerator && !disableModeratorIndicator
+                        && <Text style = { styles.moderatorLabel }>{ t('videothumbnail.moderator') }</Text>
                     }
                 </View>
+                {
+                    !isKnockingParticipant
+                    && <>
+                        { raisedHand && <RaisedHandIndicator /> }
+                        <View style = { styles.participantStatesContainer }>
+                            <View style = { styles.participantStateVideo }>{ VideoStateIcons[videoMediaState] }</View>
+                            <View>{ AudioStateIcons[audioMediaState] }</View>
+                        </View>
+                    </>
+                }
             </TouchableOpacity>
             { !local && children }
         </View>
