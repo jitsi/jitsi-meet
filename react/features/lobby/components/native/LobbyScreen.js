@@ -16,6 +16,7 @@ import { LargeVideo } from '../../../large-video/components';
 import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import { preJoinStyles } from '../../../prejoin/components/native/styles';
 import AudioMuteButton from '../../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/VideoMuteButton';
 import AbstractLobbyScreen, {
@@ -48,32 +49,39 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     render() {
-        const { _aspectRatio } = this.props;
+        const { _aspectRatio, _roomName } = this.props;
         let contentWrapperStyles;
         let contentContainerStyles;
         let largeVideoContainerStyles;
 
         if (_aspectRatio === ASPECT_RATIO_NARROW) {
-            contentWrapperStyles = styles.contentWrapper;
-            largeVideoContainerStyles = styles.largeVideoContainer;
+            contentWrapperStyles = preJoinStyles.contentWrapper;
+            largeVideoContainerStyles = preJoinStyles.largeVideoContainer;
             contentContainerStyles = styles.contentContainer;
         } else {
-            contentWrapperStyles = styles.contentWrapperWide;
-            largeVideoContainerStyles = styles.largeVideoContainerWide;
-            contentContainerStyles = styles.contentContainerWide;
+            contentWrapperStyles = preJoinStyles.contentWrapperWide;
+            largeVideoContainerStyles = preJoinStyles.largeVideoContainerWide;
+            contentContainerStyles = preJoinStyles.contentContainerWide;
         }
 
         return (
             <JitsiScreen
-                safeAreaInsets = { [ 'left' ] }
+                safeAreaInsets = { [ 'right' ] }
                 style = { contentWrapperStyles }>
                 <BrandingImageBackground />
                 <View style = { largeVideoContainerStyles }>
+                    <View style = { preJoinStyles.displayRoomNameBackdrop }>
+                        <Text
+                            numberOfLines = { 1 }
+                            style = { preJoinStyles.preJoinRoomName }>
+                            { _roomName }
+                        </Text>
+                    </View>
                     <LargeVideo />
                 </View>
                 <View style = { contentContainerStyles }>
-                    { this._renderContent() }
                     { this._renderToolbarButtons() }
+                    { this._renderContent() }
                 </View>
             </JitsiScreen>
         );
@@ -122,14 +130,9 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      */
     _renderJoining() {
         return (
-            <View>
+            <View style = { styles.lobbyWaitingFragmentContainer }>
                 <Text style = { styles.lobbyTitle }>
                     { this.props.t('lobby.joiningTitle') }
-                </Text>
-                <Text
-                    numberOfLines = { 1 }
-                    style = { styles.lobbyRoomName }>
-                    { this.props._roomName }
                 </Text>
                 <LoadingIndicator
                     color = { BaseTheme.palette.icon01 }
@@ -153,7 +156,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
         return (
             <Input
-                customStyles = {{ input: styles.customInput }}
+                customStyles = {{ input: preJoinStyles.customInput }}
                 onChange = { this._onChangeDisplayName }
                 placeholder = { t('lobby.nameField') }
                 value = { displayName } />
@@ -178,19 +181,15 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { _passwordJoinFailed, t } = this.props;
 
         return (
-            <View style = { styles.formWrapper }>
-                <Input
-                    autoCapitalize = 'none'
-                    autoCompleteType = 'off'
-                    customStyles = {{ input: styles.customInput }}
-                    onChange = { this._onChangePassword }
-                    placeholder = { t('lobby.passwordField') }
-                    secureTextEntry = { true }
-                    value = { this.state.password } />
-                { _passwordJoinFailed && <Text style = { styles.fieldError }>
-                    { t('lobby.invalidPassword') }
-                </Text> }
-            </View>
+            <Input
+                autoCapitalize = 'none'
+                autoCompleteType = 'off'
+                customStyles = {{ input: styles.customInput }}
+                error = { _passwordJoinFailed }
+                onChange = { this._onChangePassword }
+                placeholder = { t('lobby.passwordField') }
+                secureTextEntry = { true }
+                value = { this.state.password } />
         );
     }
 
@@ -201,20 +200,20 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      */
     _renderPasswordJoinButtons() {
         return (
-            <View style = { styles.passwordJoinButtonsWrapper }>
+            <View style = { styles.passwordJoinButtons }>
+                <Button
+                    accessibilityLabel = 'lobby.passwordJoinButton'
+                    disabled = { !this.state.password }
+                    labelKey = { 'lobby.passwordJoinButton' }
+                    onClick = { this._onJoinWithPassword }
+                    style = { preJoinStyles.joinButton }
+                    type = { BUTTON_TYPES.PRIMARY } />
                 <Button
                     accessibilityLabel = 'lobby.backToKnockModeButton'
                     labelKey = 'lobby.backToKnockModeButton'
                     onClick = { this._onSwitchToKnockMode }
-                    style = { styles.lobbyButton }
-                    type = { BUTTON_TYPES.PRIMARY } />
-                <Button
-                    accessibilityLabel = 'lobby.passwordJoinButton'
-                    disabled = { !this.state.password }
-                    labelKey = 'lobby.passwordJoinButton'
-                    onClick = { this._onJoinWithPassword }
-                    style = { styles.lobbyButton }
-                    type = { BUTTON_TYPES.PRIMARY } />
+                    style = { preJoinStyles.joinButton }
+                    type = { BUTTON_TYPES.TERTIARY } />
             </View>
         );
     }
@@ -225,21 +224,12 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     _renderToolbarButtons() {
-        const { _aspectRatio } = this.props;
-        let toolboxContainerStyles;
-
-        if (_aspectRatio === ASPECT_RATIO_NARROW) {
-            toolboxContainerStyles = styles.toolboxContainer;
-        } else {
-            toolboxContainerStyles = styles.toolboxContainerWide;
-        }
-
         return (
-            <View style = { toolboxContainerStyles }>
+            <View style = { preJoinStyles.toolboxContainer }>
                 <AudioMuteButton
-                    styles = { styles.buttonStylesBorderless } />
+                    styles = { preJoinStyles.buttonStylesBorderless } />
                 <VideoMuteButton
-                    styles = { styles.buttonStylesBorderless } />
+                    styles = { preJoinStyles.buttonStylesBorderless } />
             </View>
         );
     }
@@ -254,14 +244,14 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { displayName } = this.state;
 
         return (
-            <View style = { styles.standardButtonWrapper }>
+            <View style = { styles.formWrapper }>
                 {
                     _knocking && _isLobbyChatActive
                     && <Button
                         accessibilityLabel = 'toolbar.openChat'
                         labelKey = 'toolbar.openChat'
                         onClick = { this._onNavigateToLobbyChat }
-                        style = { styles.openChatButton }
+                        style = { preJoinStyles.joinButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
                 {
@@ -271,7 +261,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                         disabled = { !displayName }
                         labelKey = 'lobby.knockButton'
                         onClick = { this._onAskToJoin }
-                        style = { styles.lobbyButton }
+                        style = { preJoinStyles.joinButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
                 {
@@ -280,7 +270,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                         accessibilityLabel = 'lobby.enterPasswordButton'
                         labelKey = 'lobby.enterPasswordButton'
                         onClick = { this._onSwitchToPasswordMode }
-                        style = { styles.enterPasswordButton }
+                        style = { preJoinStyles.joinButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
             </View>

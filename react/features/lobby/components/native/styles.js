@@ -1,31 +1,7 @@
-// @flow
-
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-const SECONDARY_COLOR = BaseTheme.palette.border04;
-
-const lobbyText = {
-    ...BaseTheme.typography.heading5,
-    color: BaseTheme.palette.text01,
-    textAlign: 'center'
-};
 
 export default {
-
-    buttonStylesBorderless: {
-        iconStyle: {
-            color: BaseTheme.palette.icon01,
-            fontSize: 24
-        },
-        style: {
-            flexDirection: 'row',
-            justifyContent: 'center',
-            marginHorizontal: BaseTheme.spacing[3],
-            height: 24,
-            width: 24
-        },
-        underlayColor: 'transparent'
-    },
 
     lobbyChatWrapper: {
         backgroundColor: BaseTheme.palette.ui01,
@@ -35,118 +11,32 @@ export default {
         height: '100%'
     },
 
-    lobbyChatHeader: {
-        flexDirection: 'row',
-        padding: 20
-    },
-
-    lobbyChatTitle: {
-        color: BaseTheme.palette.text01,
-        fontSize: 20,
-        fontWeight: 'bold',
-        flexShrink: 1
-    },
-
-    lobbyChatCloseButton: {
-        fontSize: 24,
-        marginLeft: BaseTheme.spacing[3],
-        marginTop: BaseTheme.spacing[1],
-        color: BaseTheme.palette.icon01
-    },
-
-    contentWrapper: {
-        flex: 1
-    },
-
-    contentWrapperWide: {
-        flex: 1,
-        flexDirection: 'row'
-    },
-
-    largeVideoContainer: {
-        minHeight: '50%'
-    },
-
-    largeVideoContainerWide: {
-        height: '100%',
-        marginRight: 'auto',
-        position: 'absolute',
-        width: '50%'
+    passwordJoinButtons: {
+        top: 40
     },
 
     contentContainer: {
-        alignSelf: 'center',
-        display: 'flex',
-        justifyContent: 'center',
-        minHeight: '50%',
-        paddingHorizontal: BaseTheme.spacing[3],
-        width: 400
-    },
-
-    contentContainerWide: {
         alignItems: 'center',
-        height: '100%',
+        backgroundColor: BaseTheme.palette.uiBackground,
+        bottom: 0,
+        display: 'flex',
+        height: 388,
         justifyContent: 'center',
-        left: '50%',
-        paddingHorizontal: BaseTheme.spacing[3],
         position: 'absolute',
-        width: '50%'
-    },
-
-    toolboxContainer: {
-        alignItems: 'center',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: BaseTheme.spacing[3]
-    },
-
-    toolboxContainerWide: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: BaseTheme.spacing[3]
-    },
-
-    displayNameText: {
-        fontWeight: 'bold',
-        marginVertical: 10
-    },
-
-    editButton: {
-        alignSelf: 'flex-end',
-        paddingHorizontal: 10
-    },
-
-    editIcon: {
-        color: 'black',
-        fontSize: 16
+        width: '100%',
+        zIndex: 1
     },
 
     formWrapper: {
-        alignSelf: 'stretch',
-        justifyContent: 'center',
-        marginTop: 38
+        alignItems: 'center',
+        justifyContent: 'center'
     },
 
     customInput: {
-        marginHorizontal: BaseTheme.spacing[3],
-        textAlign: 'center'
-    },
-
-    fieldError: {
-        color: BaseTheme.palette.warning03,
-        marginLeft: BaseTheme.spacing[3],
-        fontSize: 16
-    },
-
-    fieldLabel: {
-        ...BaseTheme.typography.heading6,
-        color: BaseTheme.palette.text01,
-        textAlign: 'center'
-    },
-
-    standardButtonWrapper: {
-        alignSelf: 'stretch'
+        position: 'relative',
+        textAlign: 'center',
+        top: BaseTheme.spacing[6],
+        width: 352
     },
 
     joiningMessage: {
@@ -155,38 +45,8 @@ export default {
         textAlign: 'center'
     },
 
-    passwordJoinButtonsWrapper: {
-        alignItems: 'stretch',
-        alignSelf: 'stretch',
-        marginHorizontal: BaseTheme.spacing[3]
-    },
-
     loadingIndicator: {
         marginBottom: BaseTheme.spacing[3]
-    },
-
-    participantBox: {
-        alignItems: 'center',
-        alignSelf: 'stretch',
-        borderColor: SECONDARY_COLOR,
-        borderRadius: 4,
-        borderWidth: 1,
-        marginVertical: 18,
-        paddingVertical: 12
-    },
-
-    lobbyButton: {
-        marginTop: BaseTheme.spacing[3]
-    },
-
-    openChatButton: {
-        marginHorizontal: BaseTheme.spacing[3],
-        marginTop: BaseTheme.spacing[3]
-    },
-
-    enterPasswordButton: {
-        marginHorizontal: BaseTheme.spacing[3],
-        marginTop: BaseTheme.spacing[3]
     },
 
     // KnockingParticipantList
@@ -228,11 +88,13 @@ export default {
     },
 
     lobbyTitle: {
-        ...lobbyText
+        ...BaseTheme.typography.heading5,
+        color: BaseTheme.palette.text01,
+        marginBottom: BaseTheme.spacing[3],
+        textAlign: 'center'
     },
 
-    lobbyRoomName: {
-        ...lobbyText,
-        marginBottom: BaseTheme.spacing[2]
+    lobbyWaitingFragmentContainer: {
+        height: 260
     }
 };
