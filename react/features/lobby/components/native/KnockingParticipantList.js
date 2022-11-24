@@ -15,6 +15,8 @@ import { HIDDEN_EMAILS } from '../../constants';
 import { getKnockingParticipants, getLobbyEnabled, showLobbyChatButton } from '../../functions';
 
 import styles from './styles';
+import Button from "../../../base/ui/components/native/Button";
+import {BUTTON_TYPES} from "../../../base/ui/constants.any";
 
 /**
  * Props type of the component.
@@ -101,38 +103,23 @@ class KnockingParticipantList extends PureComponent<Props> {
                                 </Text>
                             ) }
                         </View>
-                        <TouchableOpacity
-                            onPress = { this._onRespondToParticipant(p.id, true) }
-                            style = { [
-                                styles.knockingParticipantListButton,
-                                styles.knockingParticipantListPrimaryButton
-                            ] }>
-                            <Text style = { styles.knockingParticipantListText }>
-                                { t('lobby.allow') }
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress = { this._onRespondToParticipant(p.id, false) }
-                            style = { [
-                                styles.knockingParticipantListButton,
-                                styles.knockingParticipantListSecondaryButton
-                            ] }>
-                            <Text style = { styles.knockingParticipantListText }>
-                                { t('lobby.reject') }
-                            </Text>
-                        </TouchableOpacity>
+                        <Button
+                            labelKey = { 'lobby.allow' }
+                            onClick = { this._onRespondToParticipant(p.id, true) }
+                            style = { styles.lobbyButton }
+                            type = { BUTTON_TYPES.PRIMARY } />
                         {_showChatButton(p) ? (
-                            <TouchableOpacity
-                                onPress = { this._onInitializeLobbyChat(p.id) }
-                                style = { [
-                                    styles.knockingParticipantListButton,
-                                    styles.knockingParticipantListSecondaryButton
-                                ] }>
-                                <Text style = { styles.knockingParticipantListText }>
-                                    { t('lobby.chat') }
-                                </Text>
-                            </TouchableOpacity>
+                            <Button
+                                labelKey = { 'lobby.chat' }
+                                onClick = { this._onInitializeLobbyChat(p.id) }
+                                style = { styles.lobbyButton }
+                                type = { BUTTON_TYPES.SECONDARY } />
                         ) : null}
+                        <Button
+                            labelKey = { 'lobby.reject' }
+                            onClick = { this._onRespondToParticipant(p.id, false) }
+                            style = { styles.lobbyButton }
+                            type = { BUTTON_TYPES.DESTRUCTIVE } />
                     </View>
                 )) }
             </ScrollView>

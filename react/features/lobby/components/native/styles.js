@@ -54,37 +54,28 @@ export default {
     knockingParticipantList: {
         alignSelf: 'stretch',
         backgroundColor: 'rgba(22, 38, 55, 0.8)',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        paddingHorizontal: BaseTheme.spacing[2]
     },
 
-    knockingParticipantListButton: {
-        borderRadius: 4,
-        marginHorizontal: 3,
-        paddingHorizontal: 10,
-        paddingVertical: 5
-    },
 
     knockingParticipantListDetails: {
         flex: 1,
-        marginLeft: 10
+        marginLeft: BaseTheme.spacing[2]
     },
 
     knockingParticipantListEntry: {
         alignItems: 'center',
         flexDirection: 'row',
-        padding: 10
-    },
-
-    knockingParticipantListPrimaryButton: {
-        backgroundColor: 'rgb(3, 118, 218)'
-    },
-
-    knockingParticipantListSecondaryButton: {
-        backgroundColor: 'transparent'
+        padding: BaseTheme.spacing[2]
     },
 
     knockingParticipantListText: {
         color: 'white'
+    },
+
+    lobbyButton: {
+        marginLeft: BaseTheme.spacing[3]
     },
 
     lobbyTitle: {
