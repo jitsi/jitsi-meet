@@ -1,8 +1,6 @@
-// @flow
-
 import md5 from 'js-md5';
 
-import { APP_LINK_SCHEME, parseURIString } from '../base/util';
+import { APP_LINK_SCHEME, parseURIString } from '../base/util/uri';
 
 import { setCalendarEvents } from './actions';
 import { MAX_LIST_LENGTH } from './constants';
@@ -16,7 +14,8 @@ const ALLDAY_EVENT_LENGTH = 23 * 60 * 60 * 1000;
  * @param {Object} entry - The calendar entry.
  * @returns {boolean}
  */
-function _isDisplayableCalendarEntry(entry) {
+function _isDisplayableCalendarEntry(entry: { allDay: boolean; attendees: Object[];
+    endDate: number; startDate: number; }) {
     // Entries are displayable if:
     //   - Ends in the future (future or ongoing events)
     //   - Is not an all day event and there is only one attendee (these events
@@ -45,7 +44,8 @@ export function _updateCalendarEntries(events: Array<Object>) {
         return;
     }
 
-    // eslint-disable-next-line no-invalid-this
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-invalid-this
     const { dispatch, getState } = this;
     const knownDomains = getState()['features/base/known-domains'];
     const entryMap = new Map();
@@ -106,7 +106,7 @@ export function _updateCalendarEntries(events: Array<Object>) {
  * @param {string} negativePattern - The negative pattern.
  * @returns {string}
  */
-function _checkPattern(str, positivePattern, negativePattern) {
+function _checkPattern(str: string, positivePattern: string, negativePattern: string) {
     const positiveRegExp = new RegExp(positivePattern, 'gi');
     let positiveMatch = positiveRegExp.exec(str);
 
@@ -129,7 +129,7 @@ function _checkPattern(str, positivePattern, negativePattern) {
  * @private
  * @returns {CalendarEntry}
  */
-function _parseCalendarEntry(event, knownDomains) {
+function _parseCalendarEntry(event: any, knownDomains: string[]) {
     if (event) {
         const url = _getURLFromEvent(event, knownDomains);
         const startDate = Date.parse(event.startDate);
@@ -170,7 +170,8 @@ function _parseCalendarEntry(event, knownDomains) {
  * @private
  * @returns {string}
  */
-function _getURLFromEvent(event, knownDomains) {
+function _getURLFromEvent(event: { description: string; location: string; notes: string; title: string;
+    url: string; }, knownDomains: string[]) {
     const linkTerminatorPattern = '[^\\s<>$]';
     const urlRegExp
         = `http(s)?://(${knownDomains.join('|')})/${linkTerminatorPattern}+`;

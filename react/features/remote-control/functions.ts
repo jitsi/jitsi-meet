@@ -1,6 +1,9 @@
-// @flow
+import React from 'react';
 
+// @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+import { IReduxState, IStore } from '../app/types';
+import { IJitsiConference } from '../base/conference/reducer';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 
 import { enableReceiver, stopReceiver } from './actions';
@@ -14,7 +17,7 @@ import logger from './logger';
  * @param {*} state - The redux state.
  * @returns {boolean} - True if the remote control is enabled and false otherwise.
  */
-export function isRemoteControlEnabled(state: Object) {
+export function isRemoteControlEnabled(state: IReduxState) {
     return !state['features/base/config'].disableRemoteControl && JitsiMeetJS.isDesktopSharingEnabled();
 }
 
@@ -27,8 +30,8 @@ export function isRemoteControlEnabled(state: Object) {
  * @returns {boolean} - True if the message was sent successfully and false otherwise.
  */
 export function sendRemoteControlEndpointMessage(
-        conference: Object,
-        to: ?string,
+        conference: IJitsiConference | undefined,
+        to: string | undefined,
         event: Object) {
     if (!to) {
         logger.warn('Remote control: Skip sending remote control event. Params:', to);
@@ -37,7 +40,7 @@ export function sendRemoteControlEndpointMessage(
     }
 
     try {
-        conference.sendEndpointMessage(to, {
+        conference?.sendEndpointMessage(to, {
             name: REMOTE_CONTROL_MESSAGE_NAME,
             ...event
         });
@@ -59,7 +62,7 @@ export function sendRemoteControlEndpointMessage(
 * @param {Store} store - The redux store.
 * @returns {void}
 */
-export function onRemoteControlAPIEvent(event: Object, { getState, dispatch }: Object) {
+export function onRemoteControlAPIEvent(event: { type: string; }, { getState, dispatch }: IStore) {
     switch (event.type) {
     case EVENTS.supported:
         logger.log('Remote Control supported.');
@@ -93,7 +96,7 @@ export function getRemoteConrolEventCaptureArea() {
  * @param {KeyboardEvent} event - The event.
  * @returns {KEYS} The key that is pressed or undefined.
  */
-export function getKey(event: Object) {
+export function getKey(event: React.KeyboardEvent) {
     return keyboardEventToKey(event);
 }
 
@@ -103,7 +106,7 @@ export function getKey(event: Object) {
  * @param {KeyboardEvent} event - The event.
  * @returns {Array} With possible values: "shift", "control", "alt", "command".
  */
-export function getModifiers(event: Object) {
+export function getModifiers(event: React.KeyboardEvent) {
     const modifiers = [];
 
     if (event.shiftKey) {

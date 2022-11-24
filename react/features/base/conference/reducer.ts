@@ -71,6 +71,7 @@ export interface IJitsiConference {
     muteParticipant: Function;
     myLobbyUserId: Function;
     myUserId: Function;
+    off: Function;
     on: Function;
     removeTrack: Function;
     replaceTrack: Function;

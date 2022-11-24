@@ -1,9 +1,11 @@
-// @flow
-
+// @ts-expect-error
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
-import type { Dispatch } from 'redux';
 
-import { createCalendarConnectedEvent, sendAnalytics } from '../analytics';
+import { createCalendarConnectedEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
+import { IStore } from '../app/types';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { loadGoogleAPI } from '../google-api';
 
 import {
@@ -14,8 +16,8 @@ import {
     SET_CALENDAR_PROFILE_EMAIL,
     SET_LOADING_CALENDAR_EVENTS
 } from './actionTypes';
-import { refreshCalendar, setCalendarEvents } from './actions';
-import { _getCalendarIntegration, isCalendarEnabled } from './functions';
+import { refreshCalendar, setCalendarEvents } from './actions.web';
+import { _getCalendarIntegration, isCalendarEnabled } from './functions.web';
 import logger from './logger';
 
 export * from './actions.any';
@@ -26,8 +28,8 @@ export * from './actions.any';
  *
  * @returns {Function}
  */
-export function bootstrapCalendarIntegration(): Function {
-    return (dispatch, getState) => {
+export function bootstrapCalendarIntegration() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
         if (!isCalendarEnabled(state)) {
@@ -63,7 +65,7 @@ export function bootstrapCalendarIntegration(): Function {
                 }
 
                 return dispatch(integrationToLoad._isSignedIn())
-                    .then(signedIn => {
+                    .then((signedIn: boolean) => {
                         if (signedIn) {
                             dispatch(setIntegrationReady(integrationType));
                             dispatch(updateProfile(integrationType));
@@ -114,7 +116,7 @@ export function openUpdateCalendarEventDialog(
  *     msAuthState: Object
  * }}
  */
-export function setCalendarAPIAuthState(newState: ?Object) {
+export function setCalendarAPIAuthState(newState?: Object) {
     return {
         type: SET_CALENDAR_AUTH_STATE,
         msAuthState: newState
@@ -130,7 +132,7 @@ export function setCalendarAPIAuthState(newState: ?Object) {
  *     error: Object
  * }}
  */
-export function setCalendarError(error: ?Object) {
+export function setCalendarError(error?: Object) {
     return {
         type: SET_CALENDAR_ERROR,
         error
@@ -146,7 +148,7 @@ export function setCalendarError(error: ?Object) {
  *     email: string
  * }}
  */
-export function setCalendarProfileEmail(newEmail: ?string) {
+export function setCalendarProfileEmail(newEmail?: string) {
     return {
         type: SET_CALENDAR_PROFILE_EMAIL,
         email: newEmail
@@ -196,8 +198,8 @@ export function setIntegrationReady(integrationType: string) {
  * signed into.
  * @returns {Function}
  */
-export function signIn(calendarType: string): Function {
-    return (dispatch: Dispatch<any>) => {
+export function signIn(calendarType: string) {
+    return (dispatch: IStore['dispatch']) => {
         const integration = _getCalendarIntegration(calendarType);
 
         if (!integration) {
@@ -210,7 +212,7 @@ export function signIn(calendarType: string): Function {
             .then(() => dispatch(updateProfile(calendarType)))
             .then(() => dispatch(refreshCalendar()))
             .then(() => sendAnalytics(createCalendarConnectedEvent()))
-            .catch(error => {
+            .catch((error: any) => {
                 logger.error(
                     'Error occurred while signing into calendar integration',
                     error);
@@ -228,10 +230,10 @@ export function signIn(calendarType: string): Function {
  * @param {string} calendarId - The id of the calendar to use.
  * @returns {Function}
  */
-export function updateCalendarEvent(id: string, calendarId: string): Function {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function updateCalendarEvent(id: string, calendarId: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
 
-        const { integrationType } = getState()['features/calendar-sync'];
+        const { integrationType = '' } = getState()['features/calendar-sync'];
         const integration = _getCalendarIntegration(integrationType);
 
         if (!integration) {
@@ -240,7 +242,7 @@ export function updateCalendarEvent(id: string, calendarId: string): Function {
 
         const { locationURL } = getState()['features/base/connection'];
         const newRoomName = generateRoomWithoutSeparator();
-        let href = locationURL.href;
+        let href = locationURL?.href ?? '';
 
         href.endsWith('/') || (href += '/');
 
@@ -275,8 +277,8 @@ export function updateCalendarEvent(id: string, calendarId: string): Function {
  * should be updated.
  * @returns {Function}
  */
-export function updateProfile(calendarType: string): Function {
-    return (dispatch: Dispatch<any>) => {
+export function updateProfile(calendarType: string) {
+    return (dispatch: IStore['dispatch']) => {
         const integration = _getCalendarIntegration(calendarType);
 
         if (!integration) {
@@ -284,7 +286,7 @@ export function updateProfile(calendarType: string): Function {
         }
 
         return dispatch(integration.getCurrentEmail())
-            .then(email => {
+            .then((email: string) => {
                 dispatch(setCalendarProfileEmail(email));
             });
     };

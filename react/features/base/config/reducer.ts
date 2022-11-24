@@ -77,6 +77,7 @@ export interface IConfigState extends IConfig {
     analysis?: {
         obfuscateRoomName?: boolean;
     };
+    disableRemoteControl?: boolean;
     error?: Error;
 }
 

@@ -1,5 +1,4 @@
-// @flow
-
+// @ts-expect-error
 import { Transport } from '../../../modules/transport';
 
 import {
@@ -30,7 +29,7 @@ export function suspendDetected() {
  *      type: string
  *  }}
  */
-export function setTransport(transport: ?Transport) {
+export function setTransport(transport?: Transport) {
     return {
         type: SET_TRANSPORT,
         transport

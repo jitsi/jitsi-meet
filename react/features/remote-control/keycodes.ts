@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
  * Enumerates the supported keys.
  * NOTE: The maps represents physical keys on the keyboard, not chars.
@@ -145,6 +147,7 @@ const keyCodeToKey = {
  * Generate codes for digit keys (0-9).
  */
 for (let i = 0; i < 10; i++) {
+    // @ts-ignore
     keyCodeToKey[i + 48] = `${i}`;
 }
 
@@ -154,7 +157,7 @@ for (let i = 0; i < 10; i++) {
 for (let i = 0; i < 26; i++) {
     const keyCode = i + 65;
 
-    keyCodeToKey[keyCode] = String.fromCharCode(keyCode).toLowerCase();
+    keyCodeToKey[keyCode as keyof typeof keyCodeToKey] = String.fromCharCode(keyCode).toLowerCase();
 }
 
 /**
@@ -163,6 +166,6 @@ for (let i = 0; i < 26; i++) {
  * @param {KeyboardEvent} event - The event.
  * @returns {KEYS} - The key on the keyboard.
  */
-export function keyboardEventToKey(event) {
-    return keyCodeToKey[event.which];
+export function keyboardEventToKey(event: React.KeyboardEvent) {
+    return keyCodeToKey[event.which as keyof typeof keyCodeToKey];
 }

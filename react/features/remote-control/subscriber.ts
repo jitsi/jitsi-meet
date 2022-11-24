@@ -1,12 +1,10 @@
-// @flow
-
 import {
     getParticipantById,
     getVirtualScreenshareParticipantByOwnerId,
     getVirtualScreenshareParticipantOwnerId,
     isScreenShareParticipant
-} from '../base/participants';
-import { StateListenerRegistry } from '../base/redux';
+} from '../base/participants/functions';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { pause, resume } from './actions';
 
@@ -15,7 +13,7 @@ import { pause, resume } from './actions';
  */
 StateListenerRegistry.register(
     /* selector */ state => {
-        const { participantId } = state['features/large-video'];
+        const { participantId = '' } = state['features/large-video'];
         const { controller } = state['features/remote-control'];
         const { controlled } = controller;
 

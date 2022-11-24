@@ -1,10 +1,10 @@
-// @flow
+// @ts-expect-error
 import { PostMessageTransportBackend, Transport } from '@jitsi/js-utils/transport';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_JOINED } from '../base/conference';
-import { PARTICIPANT_LEFT } from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
     clearRequest, setReceiverTransport, setRemoteControlActive, stopController, stopReceiver
@@ -51,7 +51,7 @@ MiddlewareRegistry.register(store => next => async action => {
         if (transport) {
             // We expect here that even if we receive the supported event earlier
             // it will be cached and we'll receive it.
-            transport.on('event', event => {
+            transport.on('event', (event: { name: string; type: string; }) => {
                 if (event.name === REMOTE_CONTROL_MESSAGE_NAME) {
                     onRemoteControlAPIEvent(event, store);
 
