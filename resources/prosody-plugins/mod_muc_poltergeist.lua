@@ -1,5 +1,6 @@
 local bare = require "util.jid".bare;
 local get_room_by_name_and_subdomain = module:require "util".get_room_by_name_and_subdomain;
+local get_room_from_session = module:require "util".get_room_from_session;
 local jid = require "util.jid";
 local neturl = require "net.url";
 local parse = neturl.parseQuery;
@@ -92,9 +93,7 @@ end
 prosody.events.add_handler("pre-jitsi-authentication", function(session)
 
     if (session.jitsi_meet_context_user) then
-        local room = get_room_by_name_and_subdomain(
-            session.jitsi_web_query_room,
-            session.jitsi_web_query_prefix);
+        local room = get_room_from_session(session);
 
         if (not room) then
             return nil;

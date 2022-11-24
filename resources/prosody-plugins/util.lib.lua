@@ -1,3 +1,4 @@
+local urlencode = require "util.http".urldecode;
 local jid = require "util.jid";
 local timer = require "util.timer";
 local http = require "net.http";
@@ -110,6 +111,20 @@ function get_room_from_jid(room_jid)
             return
         end
     end
+end
+
+-- Returns the room if available.
+-- @param s the current session.
+-- @return returns room if found or nil
+function get_room_from_session(s)
+    if not s or not s.jitsi_web_query_room then
+        return nil;
+    end
+
+    local room_name = urldecode(s.jitsi_web_query_room);
+    local subdomain = urldecode(s.jitsi_web_query_prefix);
+
+    return get_room_by_name_and_subdomain(room_name, subdomain);
 end
 
 -- Returns the room if available, work and in multidomain mode
@@ -362,6 +377,7 @@ return {
     is_feature_allowed = is_feature_allowed;
     is_healthcheck_room = is_healthcheck_room;
     get_room_from_jid = get_room_from_jid;
+    get_room_from_session = get_room_from_session;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
     async_handler_wrapper = async_handler_wrapper;
     presence_check_status = presence_check_status;

@@ -9,7 +9,7 @@
 -- Component "endconference.jitmeet.example.com" "end_conference"
 --     muc_component = muc.jitmeet.example.com
 --
-local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_and_subdomain;
+local get_room_from_session = module:require 'util'.get_room_from_session;
 
 local END_CONFERENCE_REASON = 'The meeting has been terminated';
 
@@ -51,7 +51,7 @@ function on_message(event)
 
     if moderation_command then
         -- get room name with tenant and find room
-        local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+        local room = get_room_from_session(session);
 
         if not room then
             module:log('warn', 'No room found found for %s/%s',

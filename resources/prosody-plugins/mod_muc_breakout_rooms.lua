@@ -31,6 +31,7 @@ local st = require 'util.stanza';
 local uuid_gen = require 'util.uuid'.generate;
 
 local util = module:require 'util';
+local get_room_from_session = util.get_room_from_session;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_healthcheck_room = util.is_healthcheck_room;
 
@@ -253,7 +254,7 @@ function on_message(event)
     end
 
     -- get room name with tenant and find room
-    local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+    local room = get_room_from_session(session);
 
     if not room then
         module:log('warn', 'No room found found for %s/%s',

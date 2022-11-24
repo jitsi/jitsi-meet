@@ -1,4 +1,4 @@
-local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_and_subdomain;
+local get_room_from_session = module:require 'util'.get_room_from_session;
 local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
 local internal_room_jid_match_rewrite = module:require "util".internal_room_jid_match_rewrite;
 local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
@@ -129,7 +129,7 @@ function on_message(event)
 
     if moderation_command then
         -- get room name with tenant and find room
-        local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+        local room = get_room_from_session(session);
 
         if not room then
             module:log('warn', 'No room found found for %s/%s',
