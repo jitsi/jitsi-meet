@@ -8,7 +8,7 @@ import { participantJoined, participantLeft, pinParticipant } from '../base/part
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-// @ts-ignore
+import { getCurrentRoomId } from '../breakout-rooms/functions';
 import { addStageParticipant } from '../filmstrip/actions.web';
 // @ts-ignore
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
@@ -56,8 +56,13 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
         const existingCollabDetails = getCollabDetails(state);
 
         if (!existingCollabDetails) {
-            const collabDetails = await generateCollaborationLinkData();
+            const collabLinkData = await generateCollaborationLinkData();
             const collabServerUrl = getCollabServerUrl(state);
+            const roomId = getCurrentRoomId(state);
+            const collabDetails = {
+                roomId,
+                roomKey: collabLinkData.roomKey
+            };
 
             focusWhiteboard(store);
             dispatch(setupWhiteboard({ collabDetails }));
