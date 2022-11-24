@@ -1,17 +1,15 @@
-// @flow
-
 import React, { useCallback } from 'react';
+import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { hasRaisedHand } from '../../../base/participants';
+import { Avatar } from '../../../base/avatar';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { approveKnockingParticipant } from '../../../lobby/actions.native';
-import { showContextMenuReject } from '../../actions.native';
-import { MEDIA_STATE } from '../../constants';
+import { setKnockingParticipantApproval } from '../../../lobby/actions.native';
+import { HIDDEN_EMAILS } from '../../../lobby/constants';
 
-import ParticipantItem from './ParticipantItem';
 import styles from './styles';
+
 
 type Props = {
 
@@ -23,26 +21,39 @@ type Props = {
 
 export const LobbyParticipantItem = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
-    const admit = useCallback(() => dispatch(approveKnockingParticipant(p.id), [ dispatch ]));
-    const openContextMenuReject = useCallback(() => dispatch(showContextMenuReject(p), [ dispatch ]));
+    const admit = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, true), [ dispatch ]));
+    const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false), [ dispatch ]));
 
     return (
-        <ParticipantItem
-            audioMediaState = { MEDIA_STATE.NONE }
-            displayName = { p.name }
-            isKnockingParticipant = { true }
-            local = { p.local }
-            onPress = { openContextMenuReject }
-            participant = { p }
-            participantID = { p.id }
-            raisedHand = { hasRaisedHand(p) }
-            videoMediaState = { MEDIA_STATE.NONE }>
-            <Button
-                accessibilityLabel = 'lobby.admit'
-                labelKey = 'lobby.admit'
-                onClick = { admit }
-                style = { styles.participantActionsButtonAdmit }
-                type = { BUTTON_TYPES.PRIMARY } />
-        </ParticipantItem>
+        <View style = { styles.lobbyParticipantContainer }>
+            <Avatar
+                displayName = { p.name }
+                size = { 32 }
+                url = { p.loadableAvatarUrl } />
+            <View style = { styles.lobbyParticipantListDetails }>
+                <Text style = { styles.lobbyParticipantListText }>
+                    { p.name }
+                </Text>
+                { p.email && !HIDDEN_EMAILS.includes(p.email) && (
+                    <Text style = { styles.lobbyParticipantListText }>
+                        { p.email }
+                    </Text>
+                ) }
+            </View>
+            <View style = { styles.lobbyButtonsContainer }>
+                <Button
+                    accessibilityLabel = 'lobby.reject'
+                    labelKey = 'lobby.reject'
+                    onClick = { reject }
+                    style = { styles.lobbyButton }
+                    type = { BUTTON_TYPES.DESTRUCTIVE } />
+                <Button
+                    accessibilityLabel = 'lobby.admit'
+                    labelKey = 'lobby.admit'
+                    onClick = { admit }
+                    style = { styles.lobbyButton }
+                    type = { BUTTON_TYPES.PRIMARY } />
+            </View>
+        </View>
     );
 };

@@ -58,6 +58,12 @@ export default {
     participantActionsButtonAdmit: {
         marginRight: BaseTheme.spacing[3],
         position: 'absolute',
+        right: 88
+    },
+
+    participantActionsButtonReject: {
+        marginRight: BaseTheme.spacing[3],
+        position: 'absolute',
         right: 0
     },
 
@@ -146,6 +152,32 @@ export default {
 
     lobbyListContent: {
         height: '16%'
+    },
+
+    lobbyParticipantContainer: {
+        alignItems: 'center',
+        borderBottomColor: BaseTheme.palette.field01Hover,
+        borderBottomWidth: 2,
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        padding: BaseTheme.spacing[3]
+    },
+
+    lobbyParticipantListDetails: {
+        marginRight: 'auto',
+        paddingLeft: BaseTheme.spacing[2]
+    },
+
+    lobbyParticipantListText: {
+        color: BaseTheme.palette.text01
+    },
+
+    lobbyButtonsContainer: {
+        flexDirection: 'row'
+    },
+
+    lobbyButton: {
+        marginLeft: 16
     },
 
     lobbyListDescription: {

@@ -462,7 +462,7 @@ class Conference extends AbstractConference<Props, State> {
                         {/* eslint-disable-next-line react/jsx-no-bind */}
                         <AlwaysOnLabels createOnPress = { this._createOnPress } />
                     </View>
-                    {this._renderNotificationsContainer()}
+                    { this._renderNotificationsContainer() }
                     <KnockingParticipantList />
                 </SafeAreaView>
 
