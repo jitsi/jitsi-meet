@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import Button from '../../../base/ui/components/native/Button';
@@ -24,7 +23,7 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
     const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false), [ dispatch ]));
 
     return (
-        <View style = { styles.participantItemContainer }>
+        <>
             <ParticipantItem
                 displayName = { p.name }
                 isKnockingParticipant = { true }
@@ -42,6 +41,6 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
                 onClick = { admit }
                 style = { styles.lobbyButtonAdmit }
                 type = { BUTTON_TYPES.PRIMARY } />
-        </View>
+        </>
     );
 };

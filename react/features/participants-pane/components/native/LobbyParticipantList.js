@@ -32,8 +32,8 @@ const LobbyParticipantList = () => {
     const title = (
         <View style = { styles.lobbyListDetails } >
             <Text style = { styles.lobbyListDescription }>
-                {t('participantsPane.headings.waitingLobby',
-                        { count: participants.length })}
+                { t('participantsPane.headings.waitingLobby',
+                        { count: participants.length }) }
             </Text>
             {
                 participants.length > 1 && (
