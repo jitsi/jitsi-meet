@@ -131,16 +131,16 @@ export default {
     roomTimer: {
         ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text01,
-        paddingHorizontal: 8,
-        paddingVertical: 6,
         textAlign: 'center'
     },
 
     roomTimerView: {
         backgroundColor: BaseTheme.palette.ui03,
         borderRadius: BaseTheme.shape.borderRadius,
+        height: 32,
         justifyContent: 'center',
-        minHeight: 32,
+        paddingHorizontal: BaseTheme.spacing[2],
+        paddingVertical: BaseTheme.spacing[1],
         minWidth: 50
     },
 
