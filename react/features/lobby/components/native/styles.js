@@ -67,7 +67,8 @@ export default {
     knockingParticipantListEntry: {
         alignItems: 'center',
         flexDirection: 'row',
-        padding: BaseTheme.spacing[2]
+        paddingHorizontal: BaseTheme.spacing[1],
+        paddingVertical: BaseTheme.spacing[2]
     },
 
     knockingParticipantListText: {

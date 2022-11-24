@@ -1,12 +1,12 @@
-// @flow
-
 import React, { PureComponent } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { handleLobbyChatInitialized } from '../../../chat/actions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
@@ -15,8 +15,6 @@ import { HIDDEN_EMAILS } from '../../constants';
 import { getKnockingParticipants, getLobbyEnabled, showLobbyChatButton } from '../../functions';
 
 import styles from './styles';
-import Button from "../../../base/ui/components/native/Button";
-import {BUTTON_TYPES} from "../../../base/ui/constants.any";
 
 /**
  * Props type of the component.
@@ -46,12 +44,7 @@ export type Props = {
     /**
      * The Redux Dispatch function.
      */
-    dispatch: Function,
-
-    /**
-     * Function to be used to translate i18n labels.
-     */
-    t: Function
+    dispatch: Function
 };
 
 /**
@@ -76,7 +69,7 @@ class KnockingParticipantList extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _participants, _visible, _showChatButton, t } = this.props;
+        const { _participants, _visible, _showChatButton } = this.props;
 
         if (!_visible) {
             return null;
@@ -91,7 +84,7 @@ class KnockingParticipantList extends PureComponent<Props> {
                         style = { styles.knockingParticipantListEntry }>
                         <Avatar
                             displayName = { p.name }
-                            size = { 48 }
+                            size = { 32 }
                             url = { p.loadableAvatarUrl } />
                         <View style = { styles.knockingParticipantListDetails }>
                             <Text style = { styles.knockingParticipantListText }>
@@ -108,13 +101,16 @@ class KnockingParticipantList extends PureComponent<Props> {
                             onClick = { this._onRespondToParticipant(p.id, true) }
                             style = { styles.lobbyButton }
                             type = { BUTTON_TYPES.PRIMARY } />
-                        {_showChatButton(p) ? (
-                            <Button
-                                labelKey = { 'lobby.chat' }
-                                onClick = { this._onInitializeLobbyChat(p.id) }
-                                style = { styles.lobbyButton }
-                                type = { BUTTON_TYPES.SECONDARY } />
-                        ) : null}
+                        {
+                            _showChatButton(p)
+                                ? (
+                                    <Button
+                                        labelKey = { 'lobby.chat' }
+                                        onClick = { this._onInitializeLobbyChat(p.id) }
+                                        style = { styles.lobbyButton }
+                                        type = { BUTTON_TYPES.SECONDARY } />
+                                ) : null
+                        }
                         <Button
                             labelKey = { 'lobby.reject' }
                             onClick = { this._onRespondToParticipant(p.id, false) }
@@ -155,6 +151,7 @@ class KnockingParticipantList extends PureComponent<Props> {
             if (this.props._isPollsDisabled) {
                 return navigate(screen.conference.chat);
             }
+
             navigate(screen.conference.chatandpolls.main);
         };
     }
