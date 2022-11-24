@@ -1,9 +1,9 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
 // @ts-ignore
 import { AbstractDialogTab } from '../../../base/dialog';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';

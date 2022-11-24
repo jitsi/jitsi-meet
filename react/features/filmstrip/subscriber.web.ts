@@ -4,8 +4,6 @@ import { getParticipantCountWithFake } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { clientResized } from '../base/responsive-ui/actions';
 import { shouldHideSelfView } from '../base/settings/functions.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { selectParticipantInLargeVideo } from '../large-video/actions.any';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';

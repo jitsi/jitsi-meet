@@ -1,6 +1,5 @@
-/* eslint-disable lines-around-comment */
-
 import { IReduxState, IStore } from '../../app/types';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
 import { setAudioOnly } from '../audio-only/actions';
@@ -8,7 +7,6 @@ import JitsiMeetJS from '../lib-jitsi-meet';
 
 import { destroyLocalDesktopTrackIfExists, replaceLocalTrack } from './actions.any';
 import { getLocalVideoTrack, isLocalVideoTrackDesktop } from './functions';
-/* eslint-enable lines-around-comment */
 
 export * from './actions.any';
 

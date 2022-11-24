@@ -47,6 +47,7 @@ import {
 } from './constants';
 import { getUnreadCount } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
+/* eslint-enable lines-around-comment */
 
 /**
  * Timeout for when to show the privacy notice after a private message was received.

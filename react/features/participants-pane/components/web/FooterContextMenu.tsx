@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,14 +28,10 @@ import {
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
-import {
-    openSettingsDialog,
-    shouldShowModeratorSettings
-    // @ts-ignore
-} from '../../../settings';
+import { openSettingsDialog } from '../../../settings/actions';
 import { SETTINGS_TABS } from '../../../settings/constants';
-// @ts-ignore
-import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
+import { shouldShowModeratorSettings } from '../../../settings/functions.web';
+import MuteEveryonesVideoDialog from '../../../video-menu/components/web/MuteEveryonesVideoDialog';
 
 const useStyles = makeStyles()(theme => {
     return {

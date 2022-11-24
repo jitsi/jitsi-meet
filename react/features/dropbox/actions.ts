@@ -43,7 +43,7 @@ export function authorizeDropbox() {
  *     expireDate: number
  * }}
  */
-export function updateDropboxToken(token: string, rToken: string, expireDate: number) {
+export function updateDropboxToken(token?: string, rToken?: string, expireDate?: number) {
     return {
         type: UPDATE_DROPBOX_TOKEN,
         token,

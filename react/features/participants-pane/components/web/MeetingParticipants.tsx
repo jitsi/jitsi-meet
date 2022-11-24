@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,8 +17,7 @@ import useContextMenu from '../../../base/ui/hooks/useContextMenu.web';
 import { normalizeAccents } from '../../../base/util/strings.web';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
-// @ts-ignore
-import { muteRemote } from '../../../video-menu/actions.any';
+import { muteRemote } from '../../../video-menu/actions.web';
 import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
 

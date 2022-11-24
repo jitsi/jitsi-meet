@@ -6,8 +6,6 @@ import { IReduxState } from '../../../app/types';
 import { IconPin } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../functions.web';
 
 /**

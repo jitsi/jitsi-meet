@@ -5,8 +5,6 @@ import { requestDisableVideoModeration, requestEnableVideoModeration } from '../
 import { isEnabledFromState, isSupported } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { muteAllParticipants } from '../actions';
 
 import AbstractMuteRemoteParticipantsVideoDialog, {

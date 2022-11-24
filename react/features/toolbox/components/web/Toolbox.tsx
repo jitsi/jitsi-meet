@@ -6,7 +6,6 @@ import { batch } from 'react-redux';
 
 // @ts-expect-error
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
-// @ts-ignore
 import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/functions';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -65,7 +64,6 @@ import {
     RecordButton
     // @ts-ignore
 } from '../../../recording';
-// @ts-ignore
 import { isSalesforceEnabled } from '../../../salesforce/functions';
 import {
     startScreenShareFlow
@@ -107,7 +105,6 @@ import {
     setOverflowMenuVisible,
     setToolbarHovered,
     showToolbox
-    // @ts-ignore
 } from '../../actions';
 import { NOTIFY_CLICK_MODE, NOT_APPLICABLE, THRESHOLDS } from '../../constants';
 import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions';

@@ -1,11 +1,10 @@
-/* eslint-disable lines-around-comment */
 import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconWhiteboard, IconWhiteboardHide } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-// @ts-ignore
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
 import { setWhiteboardOpen } from '../../actions';
 import { isWhiteboardVisible } from '../../functions';

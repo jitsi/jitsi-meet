@@ -1,8 +1,6 @@
 import { Component } from 'react';
 
 import { MEDIA_TYPE } from '../../base/media/constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { muteRemote } from '../actions';
 
 /**

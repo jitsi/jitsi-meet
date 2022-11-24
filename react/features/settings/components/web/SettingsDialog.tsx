@@ -23,7 +23,6 @@ import {
     submitMoreTab,
     submitProfileTab,
     submitSoundsTab
-    // @ts-ignore
 } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import {
@@ -31,7 +30,6 @@ import {
     getMoreTabProps,
     getProfileTabProps,
     getSoundsTabProps
-    // @ts-ignore
 } from '../../functions';
 
 // @ts-ignore

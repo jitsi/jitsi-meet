@@ -19,9 +19,7 @@ import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuIte
 // @ts-ignore
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
-// @ts-ignore
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
-// @ts-ignore
 import { renderConnectionStatus } from '../../actions.web';
 
 // @ts-ignore

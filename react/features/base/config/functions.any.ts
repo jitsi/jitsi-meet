@@ -1,6 +1,6 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import Bourne from '@hapi/bourne';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';

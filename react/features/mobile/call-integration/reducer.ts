@@ -1,9 +1,9 @@
-/* eslint-disable lines-around-comment */
 import ReducerRegistry from '../../base/redux/ReducerRegistry';
 import { set } from '../../base/redux/functions';
 
 // @ts-ignore
 import CallKit from './CallKit';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import ConnectionService from './ConnectionService';
 import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';

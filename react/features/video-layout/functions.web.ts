@@ -8,8 +8,6 @@ import {
     getNumberOfPartipantsForTileView,
     getThumbnailMinHeight,
     getTileDefaultAspectRatio
-
-    // @ts-ignore
 } from '../filmstrip/functions.web';
 
 export * from './functions.any';

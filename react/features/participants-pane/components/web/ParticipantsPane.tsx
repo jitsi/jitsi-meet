@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,8 +13,7 @@ import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { findAncestorByClass } from '../../../base/ui/functions.web';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
-// @ts-ignore
-import { MuteEveryoneDialog } from '../../../video-menu/components/';
+import MuteEveryoneDialog from '../../../video-menu/components/web/MuteEveryoneDialog';
 import { close } from '../../actions.web';
 import {
     getParticipantsPaneOpen,
@@ -23,6 +21,7 @@ import {
     isMuteAllVisible
 } from '../../functions';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 

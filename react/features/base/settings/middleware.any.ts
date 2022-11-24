@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import _ from 'lodash';
 import { AnyAction } from 'redux';
 

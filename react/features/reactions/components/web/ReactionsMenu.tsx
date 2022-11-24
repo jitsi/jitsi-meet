@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
 import { ClassNameMap, withStyles } from '@mui/styles';
 import clsx from 'clsx';
@@ -14,10 +13,10 @@ import { translate } from '../../../base/i18n/functions';
 import { raiseHand } from '../../../base/participants/actions';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import GifsMenu from '../../../gifs/components/web/GifsMenu';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import GifsMenuButton from '../../../gifs/components/web/GifsMenuButton';
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
-// @ts-ignore
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';

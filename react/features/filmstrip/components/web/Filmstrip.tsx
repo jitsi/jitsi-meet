@@ -17,12 +17,10 @@ import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
 import { IParticipant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
 import { shouldHideSelfView } from '../../../base/settings/functions.web';
-// @ts-ignore
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
-// @ts-ignore
-import { getCurrentLayout } from '../../../video-layout';
 import { LAYOUTS } from '../../../video-layout/constants';
+import { getCurrentLayout } from '../../../video-layout/functions.web';
 import {
     setFilmstripVisible,
     setTopPanelVisible,
@@ -30,7 +28,6 @@ import {
     setUserFilmstripWidth,
     setUserIsResizing,
     setVisibleRemoteParticipants
-    // @ts-ignore
 } from '../../actions';
 import {
     ASPECT_RATIO_BREAKPOINT,
@@ -46,7 +43,6 @@ import {
     getVerticalViewMaxWidth,
     isStageFilmstripTopPanel,
     shouldRemoteVideosBeVisible
-    // @ts-ignore
 } from '../../functions';
 
 // @ts-ignore

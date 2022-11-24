@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { generateCollaborationLinkData } from '@jitsi/excalidraw';
 
 import { IStore } from '../app/types';
@@ -10,7 +9,6 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { getCurrentRoomId } from '../breakout-rooms/functions';
 import { addStageParticipant } from '../filmstrip/actions.web';
-// @ts-ignore
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
 
 import { RESET_WHITEBOARD, SET_WHITEBOARD_OPEN } from './actionTypes';

@@ -2,8 +2,6 @@ import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { IStore } from '../../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { extractYoutubeIdOrURL } from '../functions';
 
 /**

@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { v4 as uuidv4 } from 'uuid';
 
 import { IStore } from '../app/types';
@@ -17,6 +16,7 @@ import {
     getLocalVideoTrack
 } from '../base/tracks/functions';
 import { openURLInBrowser } from '../base/util/openURLInBrowser';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { showErrorNotification } from '../notifications/actions';

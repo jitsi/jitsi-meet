@@ -2,8 +2,6 @@ import { setVideoMuted } from '../base/media/actions';
 import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { CLIENT_RESIZED } from '../base/responsive-ui/actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { setLargeVideoDimensions } from '../large-video/actions.any';
 
 import { SET_CAR_MODE } from './actionTypes';
