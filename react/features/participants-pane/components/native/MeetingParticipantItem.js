@@ -1,6 +1,5 @@
-// @flow
-
 import React, { PureComponent } from 'react';
+import { View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import {
@@ -21,6 +20,7 @@ import type { MediaState } from '../../constants';
 import { getParticipantAudioMediaState, getParticipantVideoMediaState } from '../../functions';
 
 import ParticipantItem from './ParticipantItem';
+import styles from './styles';
 
 
 type Props = {
@@ -148,16 +148,18 @@ class MeetingParticipantItem extends PureComponent<Props> {
         } = this.props;
 
         return (
-            <ParticipantItem
-                audioMediaState = { _audioMediaState }
-                disableModeratorIndicator = { _disableModeratorIndicator }
-                displayName = { _displayName }
-                isModerator = { _isModerator }
-                local = { _local }
-                onPress = { this._onPress }
-                participantID = { _participantID }
-                raisedHand = { _raisedHand }
-                videoMediaState = { _videoMediaState } />
+            <View style = { styles.participantItemContainer }>
+                <ParticipantItem
+                    audioMediaState = { _audioMediaState }
+                    disableModeratorIndicator = { _disableModeratorIndicator }
+                    displayName = { _displayName }
+                    isModerator = { _isModerator }
+                    local = { _local }
+                    onPress = { this._onPress }
+                    participantID = { _participantID }
+                    raisedHand = { _raisedHand }
+                    videoMediaState = { _videoMediaState } />
+            </View>
         );
     }
 }
@@ -201,5 +203,3 @@ function mapStateToProps(state, ownProps): Object {
 
 
 export default translate(connect(mapStateToProps)(MeetingParticipantItem));
-
-

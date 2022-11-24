@@ -75,8 +75,6 @@ export default {
 
     participantContainer: {
         alignItems: 'center',
-        borderBottomColor: BaseTheme.palette.field01Hover,
-        borderBottomWidth: 2,
         display: 'flex',
         flexDirection: 'row',
         height: BaseTheme.spacing[9],
@@ -152,6 +150,11 @@ export default {
 
     lobbyListContent: {
         height: '16%'
+    },
+
+    participantItemContainer: {
+        borderBottomColor: BaseTheme.palette.field01Hover,
+        borderBottomWidth: 2
     },
 
     lobbyButtonAdmit: {
