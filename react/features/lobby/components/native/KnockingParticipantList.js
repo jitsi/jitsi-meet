@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
-import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -10,11 +9,13 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { handleLobbyChatInitialized } from '../../../chat/actions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import ParticipantItem
+    from '../../../participants-pane/components/native/ParticipantItem';
 import { setKnockingParticipantApproval } from '../../actions';
-import { HIDDEN_EMAILS } from '../../constants';
 import { getKnockingParticipants, getLobbyEnabled, showLobbyChatButton } from '../../functions';
 
 import styles from './styles';
+
 
 /**
  * Props type of the component.
@@ -82,24 +83,15 @@ class KnockingParticipantList extends PureComponent<Props> {
                     <View
                         key = { p.id }
                         style = { styles.knockingParticipantListEntry }>
-                        <Avatar
+                        <ParticipantItem
                             displayName = { p.name }
-                            size = { 32 }
-                            url = { p.loadableAvatarUrl } />
-                        <View style = { styles.knockingParticipantListDetails }>
-                            <Text style = { styles.knockingParticipantListText }>
-                                { p.name }
-                            </Text>
-                            { p.email && !HIDDEN_EMAILS.includes(p.email) && (
-                                <Text style = { styles.knockingParticipantListText }>
-                                    { p.email }
-                                </Text>
-                            ) }
-                        </View>
+                            isKnockingParticipant = { true }
+                            key = { p.id }
+                            participantID = { p.id } />
                         <Button
-                            labelKey = { 'lobby.allow' }
+                            labelKey = { 'lobby.admit' }
                             onClick = { this._onRespondToParticipant(p.id, true) }
-                            style = { styles.lobbyButton }
+                            style = { styles.lobbyButtonAdmit }
                             type = { BUTTON_TYPES.PRIMARY } />
                         {
                             _showChatButton(p)
@@ -107,14 +99,14 @@ class KnockingParticipantList extends PureComponent<Props> {
                                     <Button
                                         labelKey = { 'lobby.chat' }
                                         onClick = { this._onInitializeLobbyChat(p.id) }
-                                        style = { styles.lobbyButton }
+                                        style = { styles.lobbyButtonChat }
                                         type = { BUTTON_TYPES.SECONDARY } />
                                 ) : null
                         }
                         <Button
                             labelKey = { 'lobby.reject' }
                             onClick = { this._onRespondToParticipant(p.id, false) }
-                            style = { styles.lobbyButton }
+                            style = { styles.lobbyButtonReject }
                             type = { BUTTON_TYPES.DESTRUCTIVE } />
                     </View>
                 )) }

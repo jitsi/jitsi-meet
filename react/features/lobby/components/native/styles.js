@@ -52,10 +52,7 @@ export default {
     // KnockingParticipantList
 
     knockingParticipantList: {
-        alignSelf: 'stretch',
-        backgroundColor: BaseTheme.palette.ui01,
-        flexDirection: 'column',
-        paddingHorizontal: BaseTheme.spacing[2]
+        backgroundColor: BaseTheme.palette.ui01
     },
 
 
@@ -67,7 +64,6 @@ export default {
     knockingParticipantListEntry: {
         alignItems: 'center',
         flexDirection: 'row',
-        paddingHorizontal: BaseTheme.spacing[1],
         paddingVertical: BaseTheme.spacing[2]
     },
 
@@ -75,8 +71,19 @@ export default {
         color: 'white'
     },
 
-    lobbyButton: {
-        marginLeft: BaseTheme.spacing[3]
+    lobbyButtonAdmit: {
+        position: 'absolute',
+        right: 176
+    },
+
+    lobbyButtonChat: {
+        position: 'absolute',
+        right: 96
+    },
+
+    lobbyButtonReject: {
+        position: 'absolute',
+        right: 8
     },
 
     lobbyTitle: {
