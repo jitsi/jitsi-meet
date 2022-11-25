@@ -46,7 +46,7 @@ public class PiPViewCoordinator {
         }
     }
 
-    public let initialPositionInSuperView: Position = .lowerRightCorner
+    public var initialPositionInSuperView: Position = .lowerRightCorner
 
     // Unused. Remove on the next major release.
     @available(*, deprecated, message: "The PiP window size is now fixed to 150px.")
