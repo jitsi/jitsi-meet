@@ -23,12 +23,12 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
     const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false), [ dispatch ]));
 
     return (
-        <>
-            <ParticipantItem
-                displayName = { p.name }
-                isKnockingParticipant = { true }
-                key = { p.id }
-                participantID = { p.id } />
+        <ParticipantItem
+            displayName = { p.name }
+            isKnockingParticipant = { true }
+            key = { p.id }
+            participant = { p }
+            participantID = { p.id } >
             <Button
                 accessibilityLabel = 'lobby.reject'
                 labelKey = 'lobby.reject'
@@ -41,6 +41,6 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
                 onClick = { admit }
                 style = { styles.lobbyButtonAdmit }
                 type = { BUTTON_TYPES.PRIMARY } />
-        </>
+        </ParticipantItem>
     );
 };

@@ -92,7 +92,6 @@ function ParticipantItem({
     return (
         <View style = { styles.participantContainer } >
             <TouchableOpacity
-                disabled = { !onPress }
                 onPress = { onPress }
                 style = { styles.participantContent }>
                 <Avatar

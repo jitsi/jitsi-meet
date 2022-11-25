@@ -151,7 +151,7 @@ export default {
     },
 
     lobbyListContent: {
-        height: '16%'
+        height: '24%'
     },
 
     lobbyButtonAdmit: {
@@ -186,11 +186,11 @@ export default {
     },
 
     meetingListContainer: {
-        height: '58%'
+        height: '56%'
     },
 
     meetingListFullContainer: {
-        height: '82%'
+        height: '80%'
     },
 
     meetingListDescription: {
@@ -199,7 +199,7 @@ export default {
     },
 
     collapsibleRoomContainer: {
-        height: '30%'
+        height: '32%'
     },
 
     participantsPaneContainer: {
