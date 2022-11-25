@@ -1,17 +1,17 @@
 import React, { PureComponent } from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 
-import { translate } from '../../../base/i18n';
-import { isLocalParticipantModerator } from '../../../base/participants';
+import { translate } from '../../../base/i18n/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { handleLobbyChatInitialized } from '../../../chat/actions.any';
+import { handleLobbyChatInitialized } from '../../../chat/actions.native';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import ParticipantItem
     from '../../../participants-pane/components/native/ParticipantItem';
-import { setKnockingParticipantApproval } from '../../actions';
+import { setKnockingParticipantApproval } from '../../actions.native';
 import { getKnockingParticipants, getLobbyEnabled, showLobbyChatButton } from '../../functions';
 
 import styles from './styles';
@@ -77,8 +77,7 @@ class KnockingParticipantList extends PureComponent<Props> {
         }
 
         return (
-            <ScrollView
-                style = { styles.knockingParticipantList }>
+            <>
                 { _participants.map(p => (
                     <View
                         key = { p.id }
@@ -87,30 +86,31 @@ class KnockingParticipantList extends PureComponent<Props> {
                             displayName = { p.name }
                             isKnockingParticipant = { true }
                             key = { p.id }
-                            participantID = { p.id } />
-                        <Button
-                            labelKey = { 'lobby.admit' }
-                            onClick = { this._onRespondToParticipant(p.id, true) }
-                            style = { styles.lobbyButtonAdmit }
-                            type = { BUTTON_TYPES.PRIMARY } />
-                        {
-                            _showChatButton(p)
-                                ? (
-                                    <Button
-                                        labelKey = { 'lobby.chat' }
-                                        onClick = { this._onInitializeLobbyChat(p.id) }
-                                        style = { styles.lobbyButtonChat }
-                                        type = { BUTTON_TYPES.SECONDARY } />
-                                ) : null
-                        }
-                        <Button
-                            labelKey = { 'lobby.reject' }
-                            onClick = { this._onRespondToParticipant(p.id, false) }
-                            style = { styles.lobbyButtonReject }
-                            type = { BUTTON_TYPES.DESTRUCTIVE } />
+                            participantID = { p.id }>
+                            <Button
+                                labelKey = { 'lobby.admit' }
+                                onClick = { this._onRespondToParticipant(p.id, true) }
+                                style = { styles.lobbyButtonAdmit }
+                                type = { BUTTON_TYPES.PRIMARY } />
+                            {
+                                _showChatButton(p)
+                                    ? (
+                                        <Button
+                                            labelKey = { 'lobby.chat' }
+                                            onClick = { this._onInitializeLobbyChat(p.id) }
+                                            style = { styles.lobbyButtonChat }
+                                            type = { BUTTON_TYPES.SECONDARY } />
+                                    ) : null
+                            }
+                            <Button
+                                labelKey = { 'lobby.reject' }
+                                onClick = { this._onRespondToParticipant(p.id, false) }
+                                style = { styles.lobbyButtonReject }
+                                type = { BUTTON_TYPES.DESTRUCTIVE } />
+                        </ParticipantItem>
                     </View>
                 )) }
-            </ScrollView>
+            </>
         );
     }
 

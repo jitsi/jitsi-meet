@@ -63,6 +63,7 @@ export default {
 
     knockingParticipantListEntry: {
         alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui01,
         flexDirection: 'row'
     },
 
@@ -72,17 +73,20 @@ export default {
 
     lobbyButtonAdmit: {
         position: 'absolute',
-        right: 176
+        right: 184,
+        top: 6
     },
 
     lobbyButtonChat: {
         position: 'absolute',
-        right: 96
+        right: 104,
+        top: 6
     },
 
     lobbyButtonReject: {
         position: 'absolute',
-        right: 8
+        right: 16,
+        top: 6
     },
 
     lobbyTitle: {
