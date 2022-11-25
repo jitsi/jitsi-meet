@@ -2,16 +2,23 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { StatusBar } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { connect } from '../../../base/redux';
-import { DialInSummary } from '../../../invite';
+import { connect } from '../../../base/redux/functions';
+// @ts-ignore
+import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
+// @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
+// @ts-ignore
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
+// @ts-ignore
 import { rootNavigationRef } from '../rootNavigationContainerRef';
+// @ts-ignore
 import { screen } from '../routes';
+// @ts-ignore
 import {
     conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
@@ -20,13 +27,15 @@ import {
     pageReloadScreenOptions,
     preJoinScreenOptions,
     welcomeScreenOptions
+    // @ts-ignore
 } from '../screenOptions';
 
+// @ts-ignore
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
+// @ts-ignore
 import PageReloadOverlay from '../../../overlay/components/native/PageReloadOverlay';
-import { useSelector } from 'react-redux';
 
 const RootStack = createStackNavigator();
 
@@ -112,7 +121,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function mapStateToProps(state: Object) {
+function mapStateToProps(state: IReduxState) {
     return {
         isWelcomePageAvailable: isWelcomePageEnabled(state)
     };

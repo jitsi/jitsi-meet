@@ -1,12 +1,13 @@
-// @flow
-
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView, Text, View } from 'react-native';
 
+// @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { LoadingIndicator } from '../../../base/react';
+// @ts-ignore
+import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 
+// @ts-ignore
 import { TEXT_COLOR, navigationStyles } from './styles';
 
 const ConnectingPage = () => {
