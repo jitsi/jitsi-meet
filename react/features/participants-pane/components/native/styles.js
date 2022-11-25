@@ -75,8 +75,6 @@ export default {
 
     participantContainer: {
         alignItems: 'center',
-        borderBottomColor: BaseTheme.palette.field01Hover,
-        borderBottomWidth: 2,
         display: 'flex',
         flexDirection: 'row',
         height: BaseTheme.spacing[9],
@@ -87,6 +85,8 @@ export default {
 
     participantContent: {
         alignItems: 'center',
+        borderBottomColor: BaseTheme.palette.field01Hover,
+        borderBottomWidth: 2.4,
         display: 'flex',
         flexDirection: 'row',
         height: '100%',

@@ -27,7 +27,6 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             displayName = { p.name }
             isKnockingParticipant = { true }
             key = { p.id }
-            participant = { p }
             participantID = { p.id } >
             <Button
                 accessibilityLabel = 'lobby.reject'
