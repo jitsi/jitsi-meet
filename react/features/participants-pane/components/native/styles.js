@@ -58,6 +58,12 @@ export default {
     participantActionsButtonAdmit: {
         marginRight: BaseTheme.spacing[3],
         position: 'absolute',
+        right: 88
+    },
+
+    participantActionsButtonReject: {
+        marginRight: BaseTheme.spacing[3],
+        position: 'absolute',
         right: 0
     },
 
@@ -69,8 +75,6 @@ export default {
 
     participantContainer: {
         alignItems: 'center',
-        borderBottomColor: BaseTheme.palette.field01Hover,
-        borderBottomWidth: 2,
         display: 'flex',
         flexDirection: 'row',
         height: BaseTheme.spacing[9],
@@ -81,6 +85,8 @@ export default {
 
     participantContent: {
         alignItems: 'center',
+        borderBottomColor: BaseTheme.palette.field01Hover,
+        borderBottomWidth: 2.4,
         display: 'flex',
         flexDirection: 'row',
         height: '100%',
@@ -145,7 +151,17 @@ export default {
     },
 
     lobbyListContent: {
-        height: '16%'
+        height: '24%'
+    },
+
+    lobbyButtonAdmit: {
+        position: 'absolute',
+        right: 16
+    },
+
+    lobbyButtonReject: {
+        position: 'absolute',
+        right: 104
     },
 
     lobbyListDescription: {
@@ -170,11 +186,11 @@ export default {
     },
 
     meetingListContainer: {
-        height: '58%'
+        height: '56%'
     },
 
     meetingListFullContainer: {
-        height: '82%'
+        height: '80%'
     },
 
     meetingListDescription: {
@@ -183,7 +199,7 @@ export default {
     },
 
     collapsibleRoomContainer: {
-        height: '30%'
+        height: '32%'
     },
 
     participantsPaneContainer: {

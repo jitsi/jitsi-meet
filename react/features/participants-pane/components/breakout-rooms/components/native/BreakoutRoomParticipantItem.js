@@ -33,7 +33,6 @@ const BreakoutRoomParticipantItem = ({ item, room }: Props) => {
     return (
         <ParticipantItem
             displayName = { item.displayName || defaultRemoteDisplayName }
-            isKnockingParticipant = { false }
             isModerator = { isParticipantModerator(item) }
             key = { item.jid }
             onPress = { onPress }

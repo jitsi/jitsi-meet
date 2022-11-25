@@ -10,8 +10,7 @@ import {
     StyleProp,
     Text,
     TextStyle,
-    View,
-    ViewStyle
+    View
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -45,8 +44,9 @@ import AudioMuteButton from '../../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/VideoMuteButton';
 import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
+
 // @ts-ignore
-import styles from '../styles';
+import { preJoinStyles as styles } from './styles';
 
 
 const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
@@ -166,29 +166,27 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         // @ts-ignore
                         styles = { styles.buttonStylesBorderless } />
                 </View>
-                <View style = { styles.formWrapper as StyleProp<ViewStyle> }>
-                    <Input
-                        // @ts-ignore
-                        customStyles = {{ input: styles.customInput }}
-                        onChange = { onChangeDisplayName }
-                        placeholder = { t('dialog.enterDisplayName') }
-                        value = { displayName } />
-                    <Button
-                        accessibilityLabel = 'prejoin.joinMeeting'
-                        disabled = { joinButtonDisabled }
-                        labelKey = 'prejoin.joinMeeting'
-                        // @ts-ignore
-                        onClick = { !isJoining && onJoin }
-                        style = { styles.joinButton }
-                        type = { PRIMARY } />
-                    <Button
-                        accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
-                        disabled = { joinButtonDisabled }
-                        labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
-                        onClick = { onJoinLowBandwidth }
-                        style = { styles.joinButton }
-                        type = { TERTIARY } />
-                </View>
+                <Input
+                    // @ts-ignore
+                    customStyles = {{ input: styles.customInput }}
+                    onChange = { onChangeDisplayName }
+                    placeholder = { t('dialog.enterDisplayName') }
+                    value = { displayName } />
+                <Button
+                    accessibilityLabel = 'prejoin.joinMeeting'
+                    disabled = { joinButtonDisabled }
+                    labelKey = 'prejoin.joinMeeting'
+                    // @ts-ignore
+                    onClick = { !isJoining && onJoin }
+                    style = { styles.joinButton }
+                    type = { PRIMARY } />
+                <Button
+                    accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
+                    disabled = { joinButtonDisabled }
+                    labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
+                    onClick = { onJoinLowBandwidth }
+                    style = { styles.joinButton }
+                    type = { TERTIARY } />
             </View>
         </JitsiScreen>
     );

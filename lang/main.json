@@ -563,7 +563,6 @@
     "lobby": {
         "admit": "Admit",
         "admitAll": "Admit all",
-        "allow": "Allow",
         "backToKnockModeButton": "Ask to join",
         "chat": "Chat",
         "dialogTitle": "Lobby mode",

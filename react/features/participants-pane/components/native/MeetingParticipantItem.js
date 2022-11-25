@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 
 import { translate } from '../../../base/i18n';
@@ -152,7 +150,6 @@ class MeetingParticipantItem extends PureComponent<Props> {
                 audioMediaState = { _audioMediaState }
                 disableModeratorIndicator = { _disableModeratorIndicator }
                 displayName = { _displayName }
-                isKnockingParticipant = { false }
                 isModerator = { _isModerator }
                 local = { _local }
                 onPress = { this._onPress }
@@ -202,5 +199,3 @@ function mapStateToProps(state, ownProps): Object {
 
 
 export default translate(connect(mapStateToProps)(MeetingParticipantItem));
-
-

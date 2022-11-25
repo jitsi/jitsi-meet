@@ -1,7 +1,7 @@
-import BaseTheme from '../../base/ui/components/BaseTheme.native';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 
-export default {
+export const preJoinStyles = {
 
     joinButton: {
         marginTop: BaseTheme.spacing[3],
@@ -76,11 +76,6 @@ export default {
         marginBottom: BaseTheme.spacing[3],
         paddingHorizontal: BaseTheme.spacing[2],
         width: 148
-    },
-
-    formWrapper: {
-        alignItems: 'center',
-        justifyContent: 'center'
     },
 
     customInput: {

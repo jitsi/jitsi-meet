@@ -1,20 +1,21 @@
-// @flow
-
 import React, { PureComponent } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 
-import { Avatar } from '../../../base/avatar';
-import { translate } from '../../../base/i18n';
-import { isLocalParticipantModerator } from '../../../base/participants';
+import { translate } from '../../../base/i18n/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
-import { handleLobbyChatInitialized } from '../../../chat/actions.any';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import { handleLobbyChatInitialized } from '../../../chat/actions.native';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-import { setKnockingParticipantApproval } from '../../actions';
-import { HIDDEN_EMAILS } from '../../constants';
+import ParticipantItem
+    from '../../../participants-pane/components/native/ParticipantItem';
+import { setKnockingParticipantApproval } from '../../actions.native';
 import { getKnockingParticipants, getLobbyEnabled, showLobbyChatButton } from '../../functions';
 
 import styles from './styles';
+
 
 /**
  * Props type of the component.
@@ -44,12 +45,7 @@ export type Props = {
     /**
      * The Redux Dispatch function.
      */
-    dispatch: Function,
-
-    /**
-     * Function to be used to translate i18n labels.
-     */
-    t: Function
+    dispatch: Function
 };
 
 /**
@@ -74,68 +70,47 @@ class KnockingParticipantList extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _participants, _visible, _showChatButton, t } = this.props;
+        const { _participants, _visible, _showChatButton } = this.props;
 
         if (!_visible) {
             return null;
         }
 
         return (
-            <ScrollView
-                style = { styles.knockingParticipantList }>
+            <>
                 { _participants.map(p => (
                     <View
                         key = { p.id }
                         style = { styles.knockingParticipantListEntry }>
-                        <Avatar
+                        <ParticipantItem
                             displayName = { p.name }
-                            size = { 48 }
-                            url = { p.loadableAvatarUrl } />
-                        <View style = { styles.knockingParticipantListDetails }>
-                            <Text style = { styles.knockingParticipantListText }>
-                                { p.name }
-                            </Text>
-                            { p.email && !HIDDEN_EMAILS.includes(p.email) && (
-                                <Text style = { styles.knockingParticipantListText }>
-                                    { p.email }
-                                </Text>
-                            ) }
-                        </View>
-                        <TouchableOpacity
-                            onPress = { this._onRespondToParticipant(p.id, true) }
-                            style = { [
-                                styles.knockingParticipantListButton,
-                                styles.knockingParticipantListPrimaryButton
-                            ] }>
-                            <Text style = { styles.knockingParticipantListText }>
-                                { t('lobby.allow') }
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress = { this._onRespondToParticipant(p.id, false) }
-                            style = { [
-                                styles.knockingParticipantListButton,
-                                styles.knockingParticipantListSecondaryButton
-                            ] }>
-                            <Text style = { styles.knockingParticipantListText }>
-                                { t('lobby.reject') }
-                            </Text>
-                        </TouchableOpacity>
-                        {_showChatButton(p) ? (
-                            <TouchableOpacity
-                                onPress = { this._onInitializeLobbyChat(p.id) }
-                                style = { [
-                                    styles.knockingParticipantListButton,
-                                    styles.knockingParticipantListSecondaryButton
-                                ] }>
-                                <Text style = { styles.knockingParticipantListText }>
-                                    { t('lobby.chat') }
-                                </Text>
-                            </TouchableOpacity>
-                        ) : null}
+                            isKnockingParticipant = { true }
+                            key = { p.id }
+                            participantID = { p.id }>
+                            <Button
+                                labelKey = { 'lobby.admit' }
+                                onClick = { this._onRespondToParticipant(p.id, true) }
+                                style = { styles.lobbyButtonAdmit }
+                                type = { BUTTON_TYPES.PRIMARY } />
+                            {
+                                _showChatButton(p)
+                                    ? (
+                                        <Button
+                                            labelKey = { 'lobby.chat' }
+                                            onClick = { this._onInitializeLobbyChat(p.id) }
+                                            style = { styles.lobbyButtonChat }
+                                            type = { BUTTON_TYPES.SECONDARY } />
+                                    ) : null
+                            }
+                            <Button
+                                labelKey = { 'lobby.reject' }
+                                onClick = { this._onRespondToParticipant(p.id, false) }
+                                style = { styles.lobbyButtonReject }
+                                type = { BUTTON_TYPES.DESTRUCTIVE } />
+                        </ParticipantItem>
                     </View>
                 )) }
-            </ScrollView>
+            </>
         );
     }
 
@@ -168,6 +143,7 @@ class KnockingParticipantList extends PureComponent<Props> {
             if (this.props._isPollsDisabled) {
                 return navigate(screen.conference.chat);
             }
+
             navigate(screen.conference.chatandpolls.main);
         };
     }
