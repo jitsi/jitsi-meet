@@ -77,6 +77,13 @@ end
 
 -- Utility function to check and convert a room JID from real [foo]room1@muc.example.com to virtual room1@muc.foo.example.com
 local function internal_room_jid_match_rewrite(room_jid, stanza)
+    -- first check for roomless_iqs
+    if (stanza and stanza.attr and stanza.attr.id and roomless_iqs[stanza.attr.id]) then
+        local result = roomless_iqs[stanza.attr.id];
+        roomless_iqs[stanza.attr.id] = nil;
+        return result;
+    end
+
     local ret = internal_room_jid_cache:get(room_jid);
     if ret then
         return ret;
@@ -85,13 +92,6 @@ local function internal_room_jid_match_rewrite(room_jid, stanza)
     local node, host, resource = jid.split(room_jid);
     if host ~= muc_domain or not node then
         -- module:log("debug", "No need to rewrite %s (not from the MUC host)", room_jid);
-
-        if (stanza and stanza.attr and stanza.attr.id and roomless_iqs[stanza.attr.id]) then
-            local result = roomless_iqs[stanza.attr.id];
-            roomless_iqs[stanza.attr.id] = nil;
-            return result;
-        end
-
         internal_room_jid_cache:set(room_jid, room_jid);
         return room_jid;
     end
