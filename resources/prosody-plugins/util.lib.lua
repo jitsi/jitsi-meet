@@ -29,7 +29,6 @@ local roomless_iqs = {};
 local split_subdomain_cache = cache.new(1000);
 local extract_subdomain_cache = cache.new(1000);
 local internal_room_jid_cache = cache.new(1000);
-local hc_room_cache = cache.new(10);
 
 -- Utility function to split room JID to include room name and subdomain
 -- (e.g. from room1@conference.foo.example.com/res returns (room1, example.com, res, foo))
@@ -280,17 +279,7 @@ end
 
 -- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
 function is_healthcheck_room(room_jid)
-    local ret = hc_room_cache:get(room_jid);
-    if ret then
-        return ret;
-    end
-    if starts_with(room_jid, "__jicofo-health-check") then
-        ret = true;
-    else
-        ret = false;
-    end
-    hc_room_cache:set(room_jid, ret);
-    return ret;
+    return starts_with(room_jid, "__jicofo-health-check");
 end
 
 --- Utility function to make an http get request and
