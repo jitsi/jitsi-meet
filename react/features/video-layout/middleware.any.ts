@@ -8,8 +8,6 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { TRACK_REMOVED } from '../base/tracks/actionTypes';
 import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad/actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
 

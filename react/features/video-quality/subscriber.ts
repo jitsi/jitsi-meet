@@ -11,8 +11,6 @@ import {
     getActiveParticipantsIds,
     getScreenshareFilmstripParticipantId,
     isTopPanelEnabled
-
-    // @ts-ignore
 } from '../filmstrip/functions';
 import { LAYOUTS } from '../video-layout/constants';
 import {

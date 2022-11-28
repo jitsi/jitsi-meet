@@ -1,5 +1,3 @@
-// eslint-disable-next-line lines-around-comment
-
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -12,8 +10,6 @@ import Button from '../../../base/ui/components/web/Button';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { showLobbyChatButton } from '../../../lobby/functions';
 import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
 import { useLobbyActions } from '../../hooks';

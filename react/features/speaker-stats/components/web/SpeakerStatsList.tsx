@@ -1,9 +1,9 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { MOBILE_BREAKPOINT } from '../../constants';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import abstractSpeakerStatsList from '../AbstractSpeakerStatsList';
 

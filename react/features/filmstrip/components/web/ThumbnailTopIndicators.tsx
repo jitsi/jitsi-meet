@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -9,11 +7,11 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
 import { STATS_POPOVER_POSITION, THUMBNAIL_TYPE } from '../../constants';
-// @ts-ignore
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
 import PinnedIndicator from './PinnedIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';

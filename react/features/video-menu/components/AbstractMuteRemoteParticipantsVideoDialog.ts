@@ -4,8 +4,6 @@ import { IReduxState } from '../../app/types';
 import { rejectParticipantVideo } from '../../av-moderation/actions';
 import { isEnabledFromState } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { muteRemote } from '../actions';
 
 /**

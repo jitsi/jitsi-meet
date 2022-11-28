@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -8,6 +7,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';

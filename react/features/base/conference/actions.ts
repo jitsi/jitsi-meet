@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions';
@@ -111,6 +110,7 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (...args: any[]) => {
             dispatch(conferenceTimestampChanged(0));
+
             // @ts-ignore
             dispatch(conferenceLeft(conference, ...args));
         });

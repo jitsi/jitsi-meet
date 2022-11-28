@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import logger from '../logger';
 
 import AbstractHandler, { IEvent } from './AbstractHandler';
@@ -103,8 +101,10 @@ export default class AmplitudeHandler extends AbstractHandler {
 
         return {
             sessionId: amplitude.getInstance().getSessionId(),
+
             // @ts-ignore
             deviceId: amplitude.getInstance().options.deviceId,
+
             // @ts-ignore
             userId: amplitude.getInstance().options.userId
         };

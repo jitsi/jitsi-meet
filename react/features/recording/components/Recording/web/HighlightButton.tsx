@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React from 'react';
@@ -11,14 +10,15 @@ import { IconHighlight } from '../../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../../base/jwt/constants';
 import Label from '../../../../base/label/components/web/Label';
 import { connect } from '../../../../base/redux/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Tooltip } from '../../../../base/tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
-// @ts-ignore
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
 import AbstractHighlightButton, {
     type Props as AbstractProps,
     _abstractMapStateToProps
+
     // @ts-ignore
 } from '../AbstractHighlightButton';
 
@@ -193,6 +193,7 @@ export class HighlightButton extends AbstractHighlightButton<Props, IState> {
             _visible,
             classes,
             t
+
             // @ts-ignore
         } = this.props;
 

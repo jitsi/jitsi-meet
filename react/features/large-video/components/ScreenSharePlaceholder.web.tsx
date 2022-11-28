@@ -4,8 +4,6 @@ import { useStore } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../base/i18n/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { setSeeWhatIsBeingShared } from '../actions.web';
 
 const useStyles = makeStyles()(theme => {

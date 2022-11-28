@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import {
@@ -9,9 +8,9 @@ import { connect } from '../../base/redux/functions';
 import {
     AbstractButton,
     type AbstractButtonProps
+
     // @ts-ignore
 } from '../../base/toolbox/components';
-// @ts-ignore
 import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { toggleNoiseSuppression } from '../actions';
 import { isNoiseSuppressionEnabled } from '../functions';

@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { isNameReadOnly } from '../base/config/functions';
@@ -12,10 +11,8 @@ import {
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions';
 import { parseStandardURIString } from '../base/util/uri';
-// @ts-ignore
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
-// @ts-ignore
-import { isFollowMeActive } from '../follow-me';
+import { isFollowMeActive } from '../follow-me/functions';
 import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
 

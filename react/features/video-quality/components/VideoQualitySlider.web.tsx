@@ -13,8 +13,6 @@ import { setLastN } from '../../base/lastn/actions';
 import { getLastNForQualityLevel } from '../../base/lastn/functions';
 import { connect } from '../../base/redux/functions';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { setPreferredVideoQuality } from '../actions';
 import { DEFAULT_LAST_N, VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';

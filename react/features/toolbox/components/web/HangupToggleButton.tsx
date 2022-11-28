@@ -1,7 +1,7 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import { translate } from '../../../base/i18n';
 import { IconCloseLarge, IconHangup } from '../../../base/icons/svg';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 

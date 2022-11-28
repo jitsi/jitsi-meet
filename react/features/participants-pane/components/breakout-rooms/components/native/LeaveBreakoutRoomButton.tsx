@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 

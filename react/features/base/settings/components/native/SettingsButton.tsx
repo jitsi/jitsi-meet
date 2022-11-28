@@ -10,8 +10,8 @@ import { navigate }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 // @ts-ignore
 import { screen } from '../../../../mobile/navigation/routes';
-// @ts-ignore
-import { SETTINGS_ENABLED, getFeatureFlag } from '../../../flags';
+import { SETTINGS_ENABLED } from '../../../flags/constants';
+import { getFeatureFlag } from '../../../flags/functions';
 import { connect } from '../../../redux/functions';
 
 /**

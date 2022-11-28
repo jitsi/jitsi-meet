@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { ExcalidrawApp } from '@jitsi/excalidraw';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useRef } from 'react';
@@ -8,10 +7,8 @@ import { useSelector } from 'react-redux';
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { IReduxState } from '../../../app/types';
 import { getLocalParticipant } from '../../../base/participants/functions';
-// @ts-ignore
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
-// @ts-ignore
 import { shouldDisplayTileView } from '../../../video-layout/functions.any';
 import { WHITEBOARD_UI_OPTIONS } from '../../constants';
 import {
@@ -121,6 +118,7 @@ const Whiteboard: () => JSX.Element = () => {
                             collabServerUrl = { collabServerUrl }
                             excalidraw = {{
                                 isCollaborating: true,
+
                                 // @ts-ignore
                                 ref: excalidrawRef,
                                 theme: 'light',

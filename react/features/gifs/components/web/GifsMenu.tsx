@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { GiphyFetch, TrendingOptions } from '@giphy/js-fetch-api';
 import { Grid } from '@giphy/react-components';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -13,8 +12,8 @@ import Input from '../../../base/ui/components/web/Input';
 import { sendMessage } from '../../../chat/actions.any';
 import { SCROLL_SIZE } from '../../../filmstrip/constants';
 import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
-// @ts-ignore
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';

@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 
 import { IconCalendar, IconGear, IconRestore } from '../base/icons/svg';

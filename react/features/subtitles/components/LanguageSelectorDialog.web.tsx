@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import i18next from 'i18next';
 import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -6,15 +5,14 @@ import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../app/types';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { translate, translateToHTML } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
-// @ts-ignore
 import { openSettingsDialog } from '../../settings/actions';
 import { SETTINGS_TABS } from '../../settings/constants';
-// @ts-ignore
 import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage } from '../actions';
 
 import LanguageList from './LanguageList.web';
@@ -62,6 +60,7 @@ const LanguageSelectorDialog = ({
     const [ language, setLanguage ] = useState(off);
 
     const languagesHead = _translationLanguagesHead.map((lang: string) => `translation-languages:${lang}`);
+
     // The off and the head languages are always on the top of the list. But once you are selecting
     // a language from the translationLanguages, that language is moved under the fixedItems list,
     // until a new languages is selected. FixedItems keep their positions.

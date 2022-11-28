@@ -39,10 +39,8 @@ import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 // @ts-ignore
 import { PresenceLabel } from '../../../presence-status';
-// @ts-ignore
-import { getCurrentLayout } from '../../../video-layout';
 import { LAYOUTS } from '../../../video-layout/constants';
-// @ts-ignore
+import { getCurrentLayout } from '../../../video-layout/functions.web';
 import { togglePinStageParticipant } from '../../actions';
 import {
     DISPLAY_MODE_TO_CLASS_NAME,
@@ -60,7 +58,6 @@ import {
     isStageFilmstripAvailable,
     isVideoPlayable,
     showGridInVerticalView
-    // @ts-ignore
 } from '../../functions';
 
 // @ts-ignore
@@ -1188,7 +1185,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     const _audioTrack = isLocal
         ? getLocalAudioTrack(tracks)
         : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
-    const _currentLayout = getCurrentLayout(state);
+    const _currentLayout = getCurrentLayout(state) ?? '';
     let size: any = {};
     let _isMobilePortrait = false;
     const {

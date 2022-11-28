@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import Tabs from '@atlaskit/tabs';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -8,6 +7,7 @@ import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { obtainDesktopSources } from '../functions';
 

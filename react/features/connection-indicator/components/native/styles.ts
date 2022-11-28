@@ -1,6 +1,5 @@
-/* eslint-disable lines-around-comment */
-
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { INDICATOR_DISPLAY_THRESHOLD } from '../AbstractConnectionIndicator';
 

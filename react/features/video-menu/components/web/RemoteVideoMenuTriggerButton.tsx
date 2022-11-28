@@ -17,7 +17,6 @@ import ConnectionIndicatorContent from
 // @ts-ignore
     '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
-// @ts-ignore
 import { renderConnectionStatus } from '../../actions.web';
 
 import FakeParticipantContextMenu from './FakeParticipantContextMenu';

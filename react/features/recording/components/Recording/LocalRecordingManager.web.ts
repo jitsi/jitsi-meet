@@ -7,8 +7,6 @@ import { getRoomName } from '../../../base/conference/functions';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getLocalTrack, getTrackState } from '../../../base/tracks/functions';
 import { inIframe } from '../../../base/util/iframeUtils';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { stopLocalVideoRecording } from '../../actions.any';
 
 interface ISelfRecording {

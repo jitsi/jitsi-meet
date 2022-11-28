@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import Spinner from '@atlaskit/spinner';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -102,6 +101,7 @@ const useStyles = makeStyles()(theme => {
             border: '1px solid',
             borderColor: theme.palette.ui05,
             backgroundColor: theme.palette.field01,
+
             // @ts-ignore
             color: theme.palette.field02,
             borderRadius: theme.shape.borderRadius,
@@ -151,6 +151,7 @@ function SalesforceLinkDialog() {
     const renderSpinner = () => (
         <div className = { classes.spinner }>
             <Spinner
+
                 // @ts-ignore
                 isCompleting = { false }
                 size = 'medium' />

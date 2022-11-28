@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
@@ -29,11 +27,13 @@ import AbstractConnectionIndicator, {
     type State as AbstractState,
     INDICATOR_DISPLAY_THRESHOLD,
     mapStateToProps as _abstractMapStateToProps
+
     // @ts-ignore
 } from '../AbstractConnectionIndicator';
 
 // @ts-ignore
 import ConnectionIndicatorContent from './ConnectionIndicatorContent';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { ConnectionIndicatorIcon } from './ConnectionIndicatorIcon';
 
@@ -228,6 +228,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
             <Popover
                 className = { clsx(classes.container, visibilityClass) }
                 content = { <ConnectionIndicatorContent
+
                     // @ts-ignore
                     inheritedStats = { this.state.stats }
                     participantId = { participantId } /> }
@@ -236,6 +237,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
                 onPopoverClose = { this._onHidePopover }
                 onPopoverOpen = { this._onShowPopover }
                 position = { statsPopoverPosition }
+
                 // @ts-ignore
                 visible = { this.state.popoverVisible }>
                 { this._renderIndicator() }
@@ -259,6 +261,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
             _isConnectionStatusInactive,
             _isConnectionStatusInterrupted,
             _connectionIndicatorInactiveDisabled
+
             // @ts-ignore
         } = this.props;
 
@@ -305,6 +308,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
 
         // @ts-ignore
         return this.state.showIndicator
+
             // @ts-ignore
             || this.props.alwaysVisible
             || _isConnectionStatusInterrupted
@@ -348,6 +352,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
             _videoTrack,
             classes,
             iconSize
+
             // @ts-ignore
         } = this.props;
 
@@ -399,5 +404,6 @@ export function _mapStateToProps(state: IReduxState, ownProps: Props) {
 }
 
 export default translate(connect(_mapStateToProps)(
+
     // @ts-ignore
     withStyles(styles)(ConnectionIndicator)));

@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-// @ts-ignore
 import React from 'react';
 
 import Button from '../../../base/ui/components/web/Button';

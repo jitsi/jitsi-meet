@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -12,11 +10,9 @@ import {
     isWhiteboardParticipant
 } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
-// @ts-ignore
 import { getLargeVideoParticipant } from '../../../large-video/functions';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
-// @ts-ignore
-import { isLayoutTileView } from '../../../video-layout';
+import { isLayoutTileView } from '../../../video-layout/functions.web';
 
 import DisplayNameBadge from './DisplayNameBadge';
 

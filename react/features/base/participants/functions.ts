@@ -1,9 +1,7 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { IReduxState, IStore } from '../../app/types';
-// @ts-ignore
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
@@ -20,6 +18,7 @@ import {
     PARTICIPANT_ROLE,
     WHITEBOARD_PARTICIPANT_ICON
 } from './constants';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { preloadImage } from './preloadImage';
 import { FakeParticipant, IParticipant } from './types';

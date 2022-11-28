@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +16,6 @@ import { IconMic, IconMicSlash } from '../../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../../base/media/constants';
 import { isLocalTrackMuted } from '../../../../base/tracks/functions';
 import { isAudioMuteButtonDisabled } from '../../../../toolbox/functions.any';
-// @ts-ignore
 import { muteLocal } from '../../../../video-menu/actions';
 
 // @ts-ignore

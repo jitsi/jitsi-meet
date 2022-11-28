@@ -1,8 +1,8 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 
 // @ts-ignore
 import { Container } from '../../react/base';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { styleTypeToObject } from '../../styles';
 

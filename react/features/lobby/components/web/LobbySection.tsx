@@ -7,8 +7,6 @@ import { isLocalParticipantModerator } from '../../../base/participants/function
 import { connect } from '../../../base/redux/functions';
 import Switch from '../../../base/ui/components/web/Switch';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { toggleLobbyMode } from '../../actions';
 
 interface IProps extends WithTranslation {
