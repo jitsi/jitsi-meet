@@ -22,20 +22,29 @@ if release_number_config then
     module:add_identity("server", "release", release_number_config);
 end
 
+-- we cache the query as server identities will not change dynamically, amd use its clone every time
+local query_cache;
+
 -- this is after xmpp-bind, the moment a client has resource and can be contacted
 module:hook("resource-bind", function (event)
     local session = event.session;
 
-    -- disco info data / all identity and features
-    local query = st.stanza("query", { xmlns = "http://jabber.org/protocol/disco#info" });
-    local done = {};
-    for _,identity in ipairs(module:get_host_items("identity")) do
-        local identity_s = identity.category.."\0"..identity.type;
-        if not done[identity_s] then
-            query:tag("identity", identity):up();
-            done[identity_s] = true;
+    if query_cache == nil then
+        -- disco info data / all identity and features
+        local query = st.stanza("query", { xmlns = "http://jabber.org/protocol/disco#info" });
+        local done = {};
+        for _,identity in ipairs(module:get_host_items("identity")) do
+            local identity_s = identity.category.."\0"..identity.type;
+            if not done[identity_s] then
+                query:tag("identity", identity):up();
+                done[identity_s] = true;
+            end
         end
+
+        query_cache = query;
     end
+
+    local query = st.clone(query_cache);
 
     -- check whether room has lobby enabled and display name is required for those trying to join
     local lobby_muc_component_config = module:get_option_string('lobby_muc');

@@ -273,9 +273,7 @@ end
 --         and was not successful
 function Util:verify_room(session, room_address)
     if self.allowEmptyToken and session.auth_token == nil then
-        module:log(
-            "debug",
-            "Skipped room token verification - empty tokens are allowed");
+        --module:log("debug", "Skipped room token verification - empty tokens are allowed");
         return true;
     end
 
