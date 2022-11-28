@@ -16,6 +16,7 @@ import { ConnectionFailedError } from './actions.any';
 export interface IConnectionState {
     connecting?: any;
     connection?: {
+        addFeature: Function;
         disconnect: Function;
         getJid: () => string;
         getLogs: () => Object;

@@ -1,15 +1,17 @@
-// @flow
-
 import { NativeModules, Platform } from 'react-native';
 import RNCalendarEvents from 'react-native-calendar-events';
-import type { Store } from 'redux';
 
-import { CALENDAR_ENABLED, getFeatureFlag } from '../base/flags';
+import { IReduxState, IStore } from '../app/types';
+import { IStateful } from '../base/app/types';
+import { CALENDAR_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { getShareInfoText } from '../invite';
 
-import { setCalendarAuthorization } from './actions';
+import { setCalendarAuthorization } from './actions.native';
 import { FETCH_END_DAYS, FETCH_START_DAYS } from './constants';
-import { _updateCalendarEntries } from './functions';
+import { _updateCalendarEntries } from './functions.native';
 import logger from './logger';
 
 export * from './functions.any';
@@ -23,10 +25,10 @@ export * from './functions.any';
  * @returns {Promise<*>}
  */
 export function addLinkToCalendarEntry(
-        state: Object, id: string, link: string): Promise<any> {
+        state: IReduxState, id: string, link: string): Promise<any> {
     return new Promise((resolve, reject) => {
-        getShareInfoText(state, link, true).then(shareInfoText => {
-            RNCalendarEvents.findEventById(id).then(event => {
+        getShareInfoText(state, link, true).then((shareInfoText: string) => {
+            RNCalendarEvents.findEventById(id).then((event: any) => {
                 const updateText
                     = event.description
                         ? `${event.description}\n\n${shareInfoText}`
@@ -43,6 +45,7 @@ export function addLinkToCalendarEntry(
                     })
                 };
 
+                // @ts-ignore
                 RNCalendarEvents.saveEvent(event.title, updateObject)
                 .then(resolve, reject);
             }, reject);
@@ -61,7 +64,7 @@ export function addLinkToCalendarEntry(
  * @returns {boolean} If the app has enabled the calendar feature, {@code true};
  * otherwise, {@code false}.
  */
-export function isCalendarEnabled(stateful: Function | Object) {
+export function isCalendarEnabled(stateful: IStateful) {
     const flag = getFeatureFlag(stateful, CALENDAR_ENABLED);
 
     if (typeof flag !== 'undefined') {
@@ -85,9 +88,9 @@ export function isCalendarEnabled(stateful: Function | Object) {
  * @returns {void}
  */
 export function _fetchCalendarEntries(
-        store: Store<*, *>,
+        store: IStore,
         maybePromptForPermission: boolean,
-        forcePermission: ?boolean) {
+        forcePermission?: boolean) {
     const { dispatch, getState } = store;
     const promptForPermission
         = (maybePromptForPermission
@@ -104,6 +107,8 @@ export function _fetchCalendarEntries(
                 endDate.setDate(endDate.getDate() + FETCH_END_DAYS);
 
                 RNCalendarEvents.fetchAllEvents(
+
+                    // @ts-ignore
                     startDate.getTime(),
                     endDate.getTime(),
                     [])
@@ -126,7 +131,7 @@ export function _fetchCalendarEntries(
  * @private
  * @returns {Promise}
  */
-function _ensureCalendarAccess(promptForPermission, dispatch) {
+function _ensureCalendarAccess(promptForPermission: boolean | undefined, dispatch: IStore['dispatch']) {
     return new Promise((resolve, reject) => {
         RNCalendarEvents.checkPermissions()
             .then(status => {

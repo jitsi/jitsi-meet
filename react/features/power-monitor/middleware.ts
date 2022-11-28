@@ -1,24 +1,17 @@
-// @flow
-
-
-import {
-    PostMessageTransportBackend,
-    Transport
-} from '../../../modules/transport';
+// @ts-expect-error
+import { PostMessageTransportBackend, Transport } from '../../../modules/transport';
 import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
-} from '../base/conference';
-import { MiddlewareRegistry } from '../base/redux';
-import { destroyLocalTracks } from '../base/tracks';
+} from '../base/conference/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { destroyLocalTracks } from '../base/tracks/actions';
 
 import { SUSPEND_DETECTED } from './actionTypes';
 import {
     setTransport,
     suspendDetected
 } from './actions';
-
-declare var APP: Object;
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -34,7 +27,7 @@ MiddlewareRegistry.register(store => next => action => {
             })
         });
 
-        transport.on('event', event => {
+        transport.on('event', (event: { event: string; name: string; }) => {
             if (event && event.name === 'power-monitor' && event.event === 'suspend') {
 
                 dispatch(suspendDetected());

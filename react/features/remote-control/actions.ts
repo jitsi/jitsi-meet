@@ -1,17 +1,20 @@
-// @flow
-
+// @ts-ignore
 import $ from 'jquery';
+import React from 'react';
 
-import { openDialog } from '../base/dialog';
+import { IStore } from '../app/types';
+import { openDialog } from '../base/dialog/actions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { pinParticipant } from '../base/participants/actions';
 import {
     getParticipantDisplayName,
     getPinnedParticipant,
-    getVirtualScreenshareParticipantByOwnerId,
-    pinParticipant
-} from '../base/participants';
-import { getLocalDesktopTrack, toggleScreensharing } from '../base/tracks';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
+    getVirtualScreenshareParticipantByOwnerId
+} from '../base/participants/functions';
+import { toggleScreensharing } from '../base/tracks/actions';
+import { getLocalDesktopTrack } from '../base/tracks/functions';
+import { showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { isScreenVideoShared } from '../screen-share/functions';
 
 import {
@@ -23,6 +26,8 @@ import {
     SET_RECEIVER_TRANSPORT,
     SET_REQUESTED_PARTICIPANT
 } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { RemoteControlAuthorizationDialog } from './components';
 import {
     DISCO_REMOTE_CONTROL_FEATURE,
@@ -43,9 +48,8 @@ import logger from './logger';
 /**
  * Listeners.
  */
-let permissionsReplyListener, receiverEndpointMessageListener, stopListener;
-
-declare var APP: Object;
+let permissionsReplyListener: Function | undefined,
+    receiverEndpointMessageListener: Function, stopListener: Function | undefined;
 
 /**
  * Signals that the remote control authorization dialog should be displayed.
@@ -72,7 +76,7 @@ export function openRemoteControlAuthorizationDialog(participantId: string) {
  * @returns {Function}
  */
 export function setRemoteControlActive(active: boolean) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { active: oldActive } = state['features/remote-control'];
         const { conference } = state['features/base/conference'];
@@ -82,7 +86,7 @@ export function setRemoteControlActive(active: boolean) {
                 type: REMOTE_CONTROL_ACTIVE,
                 active
             });
-            conference.setLocalParticipantProperty('remoteControlSessionStatus', active);
+            conference?.setLocalParticipantProperty('remoteControlSessionStatus', active);
         }
     };
 }
@@ -95,7 +99,7 @@ export function setRemoteControlActive(active: boolean) {
  * @returns {Function}
  */
 export function requestRemoteControl(userId: string) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const enabled = isRemoteControlEnabled(state);
 
@@ -110,11 +114,11 @@ export function requestRemoteControl(userId: string) {
         const { conference } = state['features/base/conference'];
 
 
-        permissionsReplyListener = (participant, event) => {
+        permissionsReplyListener = (participant: any, event: any) => {
             dispatch(processPermissionRequestReply(participant.getId(), event));
         };
 
-        conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, permissionsReplyListener);
+        conference?.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, permissionsReplyListener);
 
         dispatch({
             type: SET_REQUESTED_PARTICIPANT,
@@ -140,8 +144,8 @@ export function requestRemoteControl(userId: string) {
  * @param {EndpointMessage} event - The permission request event.
  * @returns {Function}
  */
-export function processPermissionRequestReply(participantId: string, event: Object) {
-    return (dispatch: Function, getState: Function) => {
+export function processPermissionRequestReply(participantId: string, event: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { action, name, type } = event;
         const { requestedParticipant } = state['features/remote-control'].controller;
@@ -162,11 +166,11 @@ export function processPermissionRequestReply(participantId: string, event: Obje
 
                 const { conference } = state['features/base/conference'];
 
-                stopListener = (participant, stopEvent) => {
+                stopListener = (participant: any, stopEvent: { name: string; type: string; }) => {
                     dispatch(handleRemoteControlStoppedEvent(participant.getId(), stopEvent));
                 };
 
-                conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, stopListener);
+                conference?.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, stopListener);
 
                 dispatch(resume());
 
@@ -206,7 +210,9 @@ export function processPermissionRequestReply(participantId: string, event: Obje
                 const virtualScreenshareParticipantId = getVirtualScreenshareParticipantByOwnerId(state, participantId);
                 const pinnedId = pinnedParticipant?.id;
 
+                // @ts-ignore
                 if (virtualScreenshareParticipantId && pinnedId !== virtualScreenshareParticipantId) {
+                    // @ts-ignore
                     dispatch(pinParticipant(virtualScreenshareParticipantId));
                 } else if (!virtualScreenshareParticipantId && pinnedId !== participantId) {
                     dispatch(pinParticipant(participantId));
@@ -226,7 +232,7 @@ export function processPermissionRequestReply(participantId: string, event: Obje
  * @property {string} type - The function process only events with name REMOTE_CONTROL_MESSAGE_NAME.
  * @returns {void}
  */
-export function handleRemoteControlStoppedEvent(participantId: Object, event: Object) {
+export function handleRemoteControlStoppedEvent(participantId: Object, event: { name: string; type: string; }) {
     return (dispatch: Function, getState: Function) => {
         const state = getState();
         const { name, type } = event;
@@ -246,8 +252,8 @@ export function handleRemoteControlStoppedEvent(participantId: Object, event: Ob
  * @param {boolean} notifyRemoteParty - If true a endpoint message to the controlled participant will be sent.
  * @returns {void}
  */
-export function stopController(notifyRemoteParty: boolean = false) {
-    return (dispatch: Function, getState: Function) => {
+export function stopController(notifyRemoteParty = false) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { controlled } = state['features/remote-control'].controller;
 
@@ -265,7 +271,7 @@ export function stopController(notifyRemoteParty: boolean = false) {
 
         logger.log('Stopping remote control controller.');
 
-        conference.off(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, stopListener);
+        conference?.off(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, stopListener);
         stopListener = undefined;
 
         dispatch(pause());
@@ -289,7 +295,7 @@ export function stopController(notifyRemoteParty: boolean = false) {
  * @returns {Function}
  */
 export function clearRequest() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { conference } = getState()['features/base/conference'];
 
         dispatch({
@@ -297,7 +303,7 @@ export function clearRequest() {
             requestedParticipant: undefined
         });
 
-        conference.off(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, permissionsReplyListener);
+        conference?.off(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, permissionsReplyListener);
         permissionsReplyListener = undefined;
     };
 }
@@ -313,7 +319,7 @@ export function clearRequest() {
  *      transport: Transport
  * }}
  */
-export function setReceiverTransport(transport: Object) {
+export function setReceiverTransport(transport?: Object) {
     return {
         type: SET_RECEIVER_TRANSPORT,
         transport
@@ -326,7 +332,7 @@ export function setReceiverTransport(transport: Object) {
  * @returns {Function}
  */
 export function enableReceiver() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { enabled } = state['features/remote-control'].receiver;
 
@@ -349,7 +355,8 @@ export function enableReceiver() {
         });
 
         connection.addFeature(DISCO_REMOTE_CONTROL_FEATURE, true);
-        receiverEndpointMessageListener = (participant, message) => {
+        receiverEndpointMessageListener = (participant: any, message: {
+            action: string; name: string; type: string; }) => {
             dispatch(endpointMessageReceived(participant.getId(), message));
         };
         conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, receiverEndpointMessageListener);
@@ -401,7 +408,7 @@ export function disableReceiver() {
  * @param {boolean} [dontNotifyRemoteParty] - If true a endpoint message to the controller participant will be sent.
  * @returns {Function}
  */
-export function stopReceiver(dontNotifyLocalParty: boolean = false, dontNotifyRemoteParty: boolean = false) {
+export function stopReceiver(dontNotifyLocalParty = false, dontNotifyRemoteParty = false) {
     return (dispatch: Function, getState: Function) => {
         const state = getState();
         const { receiver } = state['features/remote-control'];
@@ -450,8 +457,9 @@ export function stopReceiver(dontNotifyLocalParty: boolean = false, dontNotifyRe
  * name REMOTE_CONTROL_MESSAGE_NAME.
  * @returns {Function}
  */
-export function endpointMessageReceived(participantId: string, message: Object) {
-    return (dispatch: Function, getState: Function) => {
+export function endpointMessageReceived(participantId: string, message: {
+    action: string; name: string; type: string; }) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { action, name, type } = message;
 
         if (name !== REMOTE_CONTROL_MESSAGE_NAME) {
@@ -472,7 +480,7 @@ export function endpointMessageReceived(participantId: string, message: Object) 
                 if (type === EVENTS.stop) {
                     dispatch(stopReceiver(false, true));
                 } else { // forward the message
-                    transport.sendEvent(message);
+                    transport?.sendEvent(message);
                 }
             } // else ignore
         } else {
@@ -489,7 +497,7 @@ export function endpointMessageReceived(participantId: string, message: Object) 
  * @returns {Function}
  */
 export function deny(participantId: string) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { conference } = state['features/base/conference'];
 
@@ -507,7 +515,7 @@ export function deny(participantId: string) {
  * @returns {Function}
  */
 export function sendStartRequest() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const tracks = state['features/base/tracks'];
         const track = getLocalDesktopTrack(tracks);
@@ -518,7 +526,7 @@ export function sendStartRequest() {
             return Promise.reject(new Error('Cannot identify screen for the remote control session'));
         }
 
-        return transport.sendRequest({
+        return transport?.sendRequest({
             name: REMOTE_CONTROL_MESSAGE_NAME,
             type: REQUESTS.start,
             sourceId
@@ -534,7 +542,7 @@ export function sendStartRequest() {
  * @returns {Function}
  */
 export function grant(participantId: string) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         dispatch({
             type: SET_CONTROLLER,
             controller: participantId
@@ -555,7 +563,7 @@ export function grant(participantId: string) {
                 true,
                 false,
                 { desktopSharingSources: [ 'screen' ] }
-            ))
+            )) // @ts-ignore
             .then(() => dispatch(sendStartRequest()));
         }
 
@@ -566,7 +574,7 @@ export function grant(participantId: string) {
                 type: EVENTS.permissions,
                 action: PERMISSIONS_ACTIONS.grant
             }))
-            .catch(error => {
+            .catch((error: any) => {
                 logger.error(error);
 
                 sendRemoteControlEndpointMessage(conference, participantId, {
@@ -591,14 +599,16 @@ export function grant(participantId: string) {
  * @param {Event} event - The mouse event.
  * @returns {Function}
  */
-export function mouseClicked(type: string, event: Object) {
-    return (dispatch: Function, getState: Function) => {
+export function mouseClicked(type: string, event: React.MouseEvent) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { conference } = state['features/base/conference'];
         const { controller } = state['features/remote-control'];
 
         sendRemoteControlEndpointMessage(conference, controller.controlled, {
             type,
+
+            // @ts-ignore
             button: event.which
         });
     };
@@ -610,8 +620,8 @@ export function mouseClicked(type: string, event: Object) {
  * @param {Event} event - The mouse event.
  * @returns {Function}
  */
-export function mouseMoved(event: Object) {
-    return (dispatch: Function, getState: Function) => {
+export function mouseMoved(event: React.MouseEvent) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const area = getRemoteConrolEventCaptureArea();
 
         if (!area) {
@@ -637,8 +647,8 @@ export function mouseMoved(event: Object) {
  * @param {Event} event - The mouse event.
  * @returns {Function}
  */
-export function mouseScrolled(event: Object) {
-    return (dispatch: Function, getState: Function) => {
+export function mouseScrolled(event: { deltaX: number; deltaY: number; }) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { conference } = state['features/base/conference'];
         const { controller } = state['features/remote-control'];
@@ -658,8 +668,8 @@ export function mouseScrolled(event: Object) {
  * @param {Event} event - The key event.
  * @returns {Function}
  */
-export function keyPressed(type: string, event: Object) {
-    return (dispatch: Function, getState: Function) => {
+export function keyPressed(type: string, event: React.KeyboardEvent) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { conference } = state['features/base/conference'];
         const { controller } = state['features/remote-control'];
@@ -680,7 +690,7 @@ export function keyPressed(type: string, event: Object) {
 * @returns {Function}
 */
 export function resume() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const area = getRemoteConrolEventCaptureArea();
         const state = getState();
         const { controller } = state['features/remote-control'];
@@ -695,22 +705,22 @@ export function resume() {
         // FIXME: Once the keyboard shortcuts are using react/redux.
         APP.keyboardshortcut.enable(false);
 
-        area.mousemove(event => {
+        area.mousemove((event: React.MouseEvent) => {
             dispatch(mouseMoved(event));
         });
-        area.mousedown(event => dispatch(mouseClicked(EVENTS.mousedown, event)));
-        area.mouseup(event => dispatch(mouseClicked(EVENTS.mouseup, event)));
-        area.dblclick(event => dispatch(mouseClicked(EVENTS.mousedblclick, event)));
+        area.mousedown((event: React.MouseEvent) => dispatch(mouseClicked(EVENTS.mousedown, event)));
+        area.mouseup((event: React.MouseEvent) => dispatch(mouseClicked(EVENTS.mouseup, event)));
+        area.dblclick((event: React.MouseEvent) => dispatch(mouseClicked(EVENTS.mousedblclick, event)));
         area.contextmenu(() => false);
-        area[0].onwheel = event => {
+        area[0].onwheel = (event: any) => {
             event.preventDefault();
             event.stopPropagation();
             dispatch(mouseScrolled(event));
 
             return false;
         };
-        $(window).keydown(event => dispatch(keyPressed(EVENTS.keydown, event)));
-        $(window).keyup(event => dispatch(keyPressed(EVENTS.keyup, event)));
+        $(window).keydown((event: React.KeyboardEvent) => dispatch(keyPressed(EVENTS.keydown, event)));
+        $(window).keyup((event: React.KeyboardEvent) => dispatch(keyPressed(EVENTS.keyup, event)));
 
         dispatch({
             type: CAPTURE_EVENTS,
@@ -730,7 +740,7 @@ export function resume() {
  * @returns {Function}
  */
 export function pause() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { controller } = state['features/remote-control'];
         const { controlled, isCapturingEvents } = controller;

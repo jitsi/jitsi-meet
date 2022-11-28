@@ -1,5 +1,3 @@
-// @flow
-
 import {
     REFRESH_CALENDAR,
     SET_CALENDAR_AUTHORIZATION,
@@ -19,8 +17,7 @@ import {
  *     isInteractive: boolean
  * }}
  */
-export function refreshCalendar(
-        forcePermission: boolean = false, isInteractive: boolean = true) {
+export function refreshCalendar(forcePermission = false, isInteractive = true) {
     return {
         type: REFRESH_CALENDAR,
         forcePermission,
@@ -39,7 +36,7 @@ export function refreshCalendar(
  *     authorization: ?string
  * }}
  */
-export function setCalendarAuthorization(authorization: ?string) {
+export function setCalendarAuthorization(authorization?: string) {
     return {
         type: SET_CALENDAR_AUTHORIZATION,
         authorization

@@ -316,6 +316,7 @@ export interface IConfig {
         sdkKey?: string;
         tileTime?: number;
     };
+    googleApiApplicationClientID?: string;
     gravatar?: {
         baseUrl?: string;
         disabled?: boolean;
@@ -366,6 +367,7 @@ export interface IConfig {
     localSubject?: string;
     locationURL?: URL;
     maxFullResolutionParticipants?: number;
+    microsoftApiApplicationClientID?: string;
     moderatedRoomServiceUrl?: string;
     mouseMoveCallbackInterval?: number;
     noticeMessage?: string;

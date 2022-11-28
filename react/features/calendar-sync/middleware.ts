@@ -1,8 +1,8 @@
-// @flow
-
-import { SET_CONFIG } from '../base/config';
-import { ADD_KNOWN_DOMAINS } from '../base/known-domains';
-import { MiddlewareRegistry, equals } from '../base/redux';
+import { IStore } from '../app/types';
+import { SET_CONFIG } from '../base/config/actionTypes';
+import { ADD_KNOWN_DOMAINS } from '../base/known-domains/actionTypes';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { equals } from '../base/redux/functions';
 import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
 
 import { REFRESH_CALENDAR } from './actionTypes';
@@ -70,7 +70,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _maybeClearAccessStatus(store, { appState }) {
+function _maybeClearAccessStatus(store: IStore, { appState }: { appState: string; }) {
     appState === 'background'
         && store.dispatch(setCalendarAuthorization(undefined));
 }
