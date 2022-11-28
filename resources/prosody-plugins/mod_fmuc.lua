@@ -25,12 +25,11 @@ local function get_focus_occupant(room)
     if focus_occupant then
         return focus_occupant;
     end
-    if not focus_occupant then
-        for _, n_occupant in room:each_occupant() do
-            if jid.node(n_occupant.jid) == 'focus' then
-                room._data.focus_occupant = n_occupant;
-                return n_occupant;
-            end
+
+    for _, n_occupant in room:each_occupant() do
+        if jid.node(n_occupant.jid) == 'focus' then
+            room._data.focus_occupant = n_occupant;
+            return n_occupant;
         end
     end
 
@@ -83,6 +82,11 @@ module:hook('muc-occupant-left', function (event)
             local visitors_count = 0;
 
             for _, o in room:each_occupant() do
+                -- if there are visitor and main participant there is no point continue
+                if main_count > 0 and visitors_count > 0 then
+                    return;
+                end
+
                 if o.role == 'visitor' then
                     visitors_count = visitors_count + 1;
                 else
