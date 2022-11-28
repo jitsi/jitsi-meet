@@ -41,23 +41,21 @@ export function isCalendarEnabled(stateful: IStateful) {
     return Boolean(enableCalendarIntegration && (googleApiApplicationClientID || microsoftApiApplicationClientID));
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Reads the user's calendar and updates the stored entries if need be.
  *
  * @param {Object} store - The redux store.
- * @param {boolean} maybePromptForPermission - Flag to tell the app if it should
+ * @param {boolean} _maybePromptForPermission - Flag to tell the app if it should
  * prompt for a calendar permission if it wasn't granted yet.
- * @param {boolean|undefined} forcePermission - Whether to force to re-ask for
+ * @param {boolean|undefined} _forcePermission - Whether to force to re-ask for
  * the permission or not.
  * @private
  * @returns {void}
  */
 export function _fetchCalendarEntries(
         store: IStore,
-        maybePromptForPermission: boolean,
-        forcePermission?: boolean) {
-    /* eslint-enable @typescript-eslint/no-unused-vars */
+        _maybePromptForPermission: boolean,
+        _forcePermission?: boolean) {
     const { dispatch, getState } = store;
 
     const { integrationType = '' } = getState()['features/calendar-sync'];
