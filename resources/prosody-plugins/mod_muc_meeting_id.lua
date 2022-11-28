@@ -38,3 +38,11 @@ end);
 module:hook("muc-config-form", function(event)
     table.insert(event.form, getMeetingIdConfig(event.room));
 end, 90-3);
+
+-- disabled few options for room config, to not mess with visitor logic
+module:hook("muc-config-submitted/muc#roomconfig_moderatedroom", function()
+    return true;
+end, 99);
+module:hook("muc-config-submitted/muc#roomconfig_presencebroadcast", function()
+    return true;
+end, 99);
