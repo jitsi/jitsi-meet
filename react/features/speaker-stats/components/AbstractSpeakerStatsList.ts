@@ -30,7 +30,8 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
         (state: IReduxState) => state['features/base/config']) || {};
     const { faceLandmarks: faceLandmarksConfig } = useSelector((state: IReduxState) =>
         state['features/base/config']) || {};
-    const { faceLandmarks } = useSelector((state: IReduxState) => state['features/face-landmarks']) || {};
+    const { faceLandmarks } = useSelector((state: IReduxState) => state['features/face-landmarks'])
+        || { faceLandmarks: [] };
     const reloadInterval = useRef<number>();
 
     /**
