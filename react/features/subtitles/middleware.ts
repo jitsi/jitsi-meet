@@ -1,4 +1,3 @@
-import i18next from 'i18next';
 import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
