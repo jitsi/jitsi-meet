@@ -27,7 +27,7 @@ endif
 all: compile deploy clean
 
 compile:
-	NODE_OPTIONS='--openssl-legacy-provider --max-old-space-size=8192' \
+	NODE_OPTIONS=--max-old-space-size=8192 \
 	$(WEBPACK)
 
 clean:
