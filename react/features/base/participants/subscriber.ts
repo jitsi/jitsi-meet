@@ -46,7 +46,7 @@ function _updateScreenshareParticipants({ getState, dispatch }: IStore) {
 
     if (getMultipleVideoSendingSupportFeatureFlag(state)) {
         if (!localScreenShare && newLocalSceenshareSourceName) {
-            dispatch(createVirtualScreenshareParticipant(newLocalSceenshareSourceName, true));
+            dispatch(createVirtualScreenshareParticipant(newLocalSceenshareSourceName, true, conference));
         }
 
         if (localScreenShare && !newLocalSceenshareSourceName) {
@@ -68,7 +68,7 @@ function _updateScreenshareParticipants({ getState, dispatch }: IStore) {
     }
 
     if (addedScreenshareSourceNames.length) {
-        addedScreenshareSourceNames.forEach(id => dispatch(createVirtualScreenshareParticipant(id, false)));
-
+        addedScreenshareSourceNames.forEach(id => dispatch(
+            createVirtualScreenshareParticipant(id, false, conference)));
     }
 }
