@@ -332,7 +332,7 @@ export function replaceLocalTrack(oldTrack: any, newTrack: any, conference?: IJi
  * @param {JitsiLocalTrack|null} newTrack - The track to use instead.
  * @returns {Function}
  */
-function replaceStoredTracks(oldTrack: any, newTrack: any) {
+export function replaceStoredTracks(oldTrack: any, newTrack: any) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // We call dispose after doing the replace because dispose will
         // try and do a new o/a after the track removes itself. Doing it

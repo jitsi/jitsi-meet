@@ -122,6 +122,7 @@ import {
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
+import { replaceStoredTracks } from './react/features/base/tracks/actions.any';
 import { TrackOperationType } from './react/features/base/tracks/types';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker';
@@ -2041,31 +2042,39 @@ export default {
             }
         );
         room.on(JitsiConferenceEvents.STARTED_MUTED, () => {
-            const trackOperation = APP.store.dispatch(executeTrackOperation(TrackOperationType.AudioVideo, () => {
-                const audioMuted = room.isStartAudioMuted();
-                const videoMuted = room.isStartVideoMuted();
-                const localTracks = getLocalTracks(APP.store.getState()['features/base/tracks']);
-                const promises = [];
+            const { getState, dispatch } = APP.store;
+            const audioMuted = room.isStartAudioMuted();
+            const videoMuted = room.isStartVideoMuted();
+            const promises = [];
+            const localTracks = getLocalTracks(getState()['features/base/tracks']);
 
-                APP.store.dispatch(setAudioMuted(audioMuted));
-                APP.store.dispatch(setVideoMuted(videoMuted));
+            promises.push(dispatch(executeTrackOperation(TrackOperationType.Audio,
+                () => dispatch(setAudioMuted(audioMuted)))));
+            promises.push(dispatch(executeTrackOperation(TrackOperationType.Video,
+                () => dispatch(setVideoMuted(videoMuted)))));
 
-                // Remove the tracks from the peerconnection.
-                for (const track of localTracks) {
-                    // Always add the track on Safari because of a known issue where audio playout doesn't happen
-                    // if the user joins audio and video muted, i.e., if there is no local media capture.
-                    if (audioMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.AUDIO && !browser.isWebKitBased()) {
-                        promises.push(this.useAudioStream(null));
-                    }
-                    if (videoMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.VIDEO) {
-                        promises.push(this.useVideoStream(null));
-                    }
+            // Remove the tracks from redux that won't be added to the peerconnection and will be removed by LJM. We
+            // could rely on the TRACK_REMOVED event from LJM which will be cleaner but we currently use TRACK_REMOVED
+            // only for remote tracks and that's why here we follow this logic.
+            for (const track of localTracks) {
+                const jitsiTrack = track.jitsiTrack;
+                const type = jitsiTrack?.getType();
+
+                // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
+                // if the user joins audio and video muted, i.e., if there is no local media capture.
+                if ((audioMuted && type === MEDIA_TYPE.AUDIO && !browser.isWebKitBased())
+                    || (videoMuted && type === MEDIA_TYPE.VIDEO)) {
+                    promises.push(dispatch(executeTrackOperation(
+                        type === MEDIA_TYPE.AUDIO ? TrackOperationType.Audio : TrackOperationType.Video,
+                        () => {
+                            console.error('replace stored track track');
+
+                            return dispatch(replaceStoredTracks(jitsiTrack, null));
+                        })));
                 }
+            }
 
-                return Promise.allSettled(promises);
-            }));
-
-            trackOperation
+            Promise.allSettled([ ...promises ])
                 .then(() => {
                     APP.store.dispatch(showNotification({
                         titleKey: 'notify.mutedTitle',

@@ -22,7 +22,7 @@ import { toState } from '../redux/functions';
 import {
     destroyLocalTracks,
     executeTrackOperation,
-    replaceLocalTrack,
+    replaceStoredTracks,
     trackAdded,
     trackRemoved
 } from '../tracks/actions';
@@ -139,15 +139,14 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
     conference.on(
         JitsiConferenceEvents.STARTED_MUTED,
         () => {
-            const audioMuted = Boolean(conference.isStartAudioMuted());
-            const videoMuted = Boolean(conference.isStartVideoMuted());
-            const localTracks = getLocalTracks(state['features/base/tracks']);
-
-            sendAnalytics(createStartMutedConfigurationEvent('remote', audioMuted, videoMuted));
-            logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${videoMuted ? 'video' : ''}`);
-
             dispatch(executeTrackOperation(TrackOperationType.AudioVideo, () => {
                 const promises = [];
+                const audioMuted = Boolean(conference.isStartAudioMuted());
+                const videoMuted = Boolean(conference.isStartVideoMuted());
+                const localTracks = getLocalTracks(state['features/base/tracks']);
+
+                sendAnalytics(createStartMutedConfigurationEvent('remote', audioMuted, videoMuted));
+                logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${videoMuted ? 'video' : ''}`);
 
                 // XXX Jicofo tells lib-jitsi-meet to start with audio and/or video
                 // muted i.e. Jicofo expresses an intent. Lib-jitsi-meet has turned
@@ -170,7 +169,7 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
                     if ((audioMuted && trackType === MEDIA_TYPE.AUDIO && navigator.product !== 'ReactNative')
                             || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
                         promises.push(
-                            dispatch(replaceLocalTrack(track.jitsiTrack, null, conference))
+                            dispatch(replaceStoredTracks(track.jitsiTrack, null))
                             .catch(e => logger.error(`replaceLocalTrack failed: ${e}`)));
                     }
                 }
