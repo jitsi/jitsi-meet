@@ -5,5 +5,11 @@
     "ghcr.io/devcontainers/features/node:1": {
       "version": "16"
     }
-  }
+  },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb" 
+  },
+  "postCreateCommand": "bash -i -c 'nvm use && npm install'"
 }
