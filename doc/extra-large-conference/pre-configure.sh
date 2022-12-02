@@ -49,8 +49,3 @@ do
   service prosody-v${i} restart
 done
 service jicofo restart
-
-# Now let's add the visitor nodes to jicofo
-
-
-
