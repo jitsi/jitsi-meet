@@ -225,15 +225,21 @@ async function _toggleScreenSharing(
             await dispatch(setNoiseSuppressionEnabled(false));
 
             dispatch(executeTrackOperation(TrackOperationType.Audio,
-                () => _maybeApplyAudioMixerEffect(desktopAudioTrack, state)));
-            dispatch(setScreenshareAudioTrack(desktopAudioTrack));
+                () => {
+                    const result = _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
 
-            // Handle the case where screen share was stopped from the browsers 'screen share in progress' window.
-            if (audioOnly) {
-                desktopAudioTrack?.on(
-                    JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                    () => dispatch(toggleScreensharing(undefined, true)));
-            }
+                    dispatch(setScreenshareAudioTrack(desktopAudioTrack));
+
+                    // Handle the case where screen share was stopped from the browsers 'screen share in progress'
+                    // window.
+                    if (audioOnly) {
+                        desktopAudioTrack?.on(
+                            JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+                            () => dispatch(toggleScreensharing(undefined, true)));
+                    }
+
+                    return result;
+                }));
         }
 
         // Disable audio-only or best performance mode if the user starts screensharing. This doesn't apply to
@@ -326,7 +332,7 @@ export function executeTrackOperation(type: TrackOperationType, operation: () =>
             const promise = Promise.allSettled([
                 audioTrackOperationsPromise,
                 videoTrackOperationsPromise
-            ]).then(operation, operation);
+            ]).then(operation);
 
             dispatch({
                 type: SET_TRACK_OPERATIONS_PROMISE,
@@ -352,9 +358,8 @@ export function executeTrackOperation(type: TrackOperationType, operation: () =>
  */
 export function toggleCamera() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
-        dispatch(executeTrackOperation(TrackOperationType.Video,
+        dispatch(executeTrackOperation(TrackOperationType.Video, () =>
 
-            // eslint-disable-next-line valid-jsdoc
             /**
              * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
              * but it seems to not trigger the re-rendering of the local video on Chrome;
@@ -362,7 +367,7 @@ export function toggleCamera() {
              * method defined in conference.js that manually takes care of updating the local
              * video as well.
              */
-            () => APP.conference.useVideoStream(null).then(() => {
+            APP.conference.useVideoStream(null).then(() => {
                 const state = getState();
                 const tracks = state['features/base/tracks'];
                 const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;

@@ -271,8 +271,7 @@ function _setRoom({ dispatch, getState }, next, action) {
  * @returns {void}
  */
 function _syncTrackMutedState({ dispatch, getState }, track) {
-    const mediaType = track.mediaType === MEDIA_TYPE.PRESENTER
-        ? MEDIA_TYPE.VIDEO : track.mediaType;
+    const mediaType = track.mediaType;
     const trackOpType = mediaType === MEDIA_TYPE.AUDIO ? TrackOperationType.Audio : TrackOperationType.Video;
 
     dispatch(executeTrackOperation(trackOpType, () => {

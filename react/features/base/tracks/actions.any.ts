@@ -140,6 +140,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
             dispatch,
             getState
         };
+        const promises: Promise<any>[] = [];
 
         // The following executes on React Native only at the time of this
         // writing. The effort to port Web's createInitialLocalTracksAndConnect
@@ -218,8 +219,13 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                 }
             });
 
-            return gumProcess;
+            promises.push(gumProcess.catch(() => {
+                // ignore the error in the result promises so that the Promise.all resolves after all promises are
+                // settled.
+            }));
         }
+
+        return Promise.all(promises);
     };
 }
 
@@ -826,7 +832,7 @@ export function updateLastTrackVideoMediaEvent(track: any, name: string): {
  *
  * @param {Object} options - Parameters of the function.
  * @private
- * @returns {void}
+ * @returns {Promise}
  */
 export function setMuted({ ensureTrack, authority, mediaType, muted }: {
     authority?: number; ensureTrack: boolean; mediaType: MediaType; muted: boolean; }) {
