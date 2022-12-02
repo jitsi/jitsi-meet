@@ -1,10 +1,8 @@
--- Using version https://hg.prosody.im/prosody-modules/file/f4a9e804c457/mod_s2soutinjection with small modification on line 22
+-- Using version https://hg.prosody.im/prosody-modules/file/4fb922aa0ace/mod_s2soutinjection/mod_s2soutinjection.lua
 local st = require"util.stanza";
-local new_ip = require"util.ip".new_ip;
 local new_outgoing = require"core.s2smanager".new_outgoing;
 local bounce_sendq = module:depends"s2s".route_to_new_session.bounce_sendq;
 local initialize_filters = require "util.filters".initialize;
-local st = require "util.stanza";
 
 local portmanager = require "core.portmanager";
 
@@ -18,9 +16,7 @@ local injected = module:get_option("s2s_connect_overrides");
 
 -- The proxy_listener handles connection while still connecting to the proxy,
 -- then it hands them over to the normal listener (in mod_s2s)
-local proxy_listener = {
---	default_port = port,
-	default_mode = "*a", default_interface = "*" };
+local proxy_listener = { default_port = nil, default_mode = "*a", default_interface = "*" };
 
 function proxy_listener.onconnect(conn)
 	local session = sessions[conn];
@@ -28,7 +24,7 @@ function proxy_listener.onconnect(conn)
 	-- Now the real s2s listener can take over the connection.
 	local listener = portmanager.get_service("s2s").listener;
 
-	local w, log = conn.send, session.log;
+	local log = session.log;
 
 	local filter = initialize_filters(session);
 
@@ -74,13 +70,13 @@ module:hook("route/remote", function(event)
 	local from_host, to_host, stanza = event.from_host, event.to_host, event.stanza;
 	local inject = injected and injected[to_host];
 	if not inject then return end
-	log("debug", "opening a new outgoing connection for this stanza");
+	module:log("debug", "opening a new outgoing connection for this stanza");
 	local host_session = new_outgoing(from_host, to_host);
 
 	-- Store in buffer
 	host_session.bounce_sendq = bounce_sendq;
 	host_session.sendq = { {tostring(stanza), stanza.attr.type ~= "error" and stanza.attr.type ~= "result" and st.reply(stanza)} };
-	log("debug", "stanza [%s] queued until connection complete", tostring(stanza.name));
+	host_session.log("debug", "stanza [%s] queued until connection complete", tostring(stanza.name));
 
 	local host, port = inject[1] or inject, tonumber(inject[2]) or 5269;
 
@@ -91,3 +87,4 @@ module:hook("route/remote", function(event)
 	host_session.conn = conn;
 	return true;
 end, -2);
+
