@@ -13,14 +13,12 @@ TODO:
 
 # Low-latency conference streaming to very large audiences
 
-To have a low-latency conference with a very large audience, we need to spread
-out the media and signaling load beyond what can be handled by a typical Jitsi
-installation.
-To support a call with 10k participants, we need around 50 bridges on decent
-vms (8+ cores).
-The main participants of a conference with a very large audience will share a
-main prosody like with normal conferences, additional prosody vms are needed to
-support signaling to the audience.
+To have a low-latency conference with a very large audience, the media and
+signaling load must be spread  beyond what can be handled by a typical Jitsi
+installation. A call with 10k participants requires around 50 bridges on decent
+vms (8+ cores). The main participants of a conference with a very large
+audience will share a main prosody, like with normal conferences, and
+additional prosody vms are needed to support signaling to the audience.
 
 In the example configuration we use a 16 core machine. Eight of the cores are
 used for the main prosody and other services (nginx, jicofo, etc) and the other
@@ -30,7 +28,7 @@ prosodies".
 We consider 2000 participants per visitor node a safe value. So eight visitor
 prosodies will be enough for one 10k participants meeting.
 
-![diagram of a central prosody connected to several visitor prosodies](/imgs/visitors-prosody.svg)
+![diagram of a central prosody connected to several visitor prosodies](./imgs/visitors-prosody.svg)
 
 # Configuration
 Use the `pre-configure.sh` script to configure your system, passing it the
