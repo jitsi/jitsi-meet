@@ -1,29 +1,49 @@
-WARNING:This is still Work In Progress
-The current implementation can diverge a lot. Currently only the participants after a configured threshold will be just viewers (visitors) and there is no promotion mechanism to become a main participant.
-TODO: merge messaging between visitor nodes and main conference. Polls. Raise hand to be promoted to enter the main conference. Make sure it works with tenants.
+WARNING: This is still a Work In Progress
+
+The final implementation may diverge. Currently, only the participants after a
+configured threshold will be just viewers (visitors) and there is no promotion
+mechanism to become a main participant.
+
+TODO:
+* Merge messaging between visitor nodes and main conference
+* Polls
+* Raise hand to be promoted to enter the main conference
+* Make sure it works with tenants.
+
 
 # Low-latency conference streaming to very large audiences
 
-To be able to have a low-latency conference with a large audience we need to take care of the media and signaling.
-For a call with 10k participants you will need around 50 bridges on decent vms (8cores).
-For the signaling part the main participants that share their video and audio are using the main prosody as every other conference.
-But to accommodate the large audience we need several other prosodies which will be used by the participants and jicofo to invite them with the media session information.
+To have a low-latency conference with a very large audience, we need to spread
+out the media and signaling load beyond what can be handled by a typical Jitsi
+installation.
+To support a call with 10k participants, we need around 50 bridges on decent
+vms (8+ cores).
+The main participants of a conference with a very large audience will share a
+main prosody like with normal conferences, additional prosody vms are needed to
+support signaling to the audience.
 
-For the example configuration we will use a 16 Core machine, so we can leave 8 of them for the main prosody and the rest (nginx, jicofo ...) and to run 8 additional prosodies for visitors.
-We consider 2000 participants per visitor node a safe value. So 8 will be enough for one 10k participants meeting.
+In the example configuration we use a 16 core machine. Eight of the cores are
+used for the main prosody and other services (nginx, jicofo, etc) and the other
+eight cores are used to run prosody services for visitors, i.e., "visitor
+prosodies".
 
-<img src="imgs/visitors-prosody.svg" width="500" />
+We consider 2000 participants per visitor node a safe value. So eight visitor
+prosodies will be enough for one 10k participants meeting.
 
-You can use the script pre-configure.sh to configure your system. Pass as only parameters the number of visitor prosodies to pre-configure.
+![diagram of a central prosody connected to several visitor prosodies](/imgs/visitors-prosody.svg)
+
+# Configuration
+Use the `pre-configure.sh` script to configure your system, passing it the
+number of visitor prosodies to set up.
 `./pre-configure.sh 8`
 
-The script will add for every one of them:
-- create folders in /etc/
-- add a systemd unit file in /lib/systemd/system/
-- create a user for jicofo
-- add its config to jicofo.conf
+The script will add for each visitor prosody:
+- folders in `/etc/`
+- a systemd unit file in `/lib/systemd/system/`
+- a user for jicofo
+- a config entry in jicofo.conf
 
-And configuration for the main prosody is a manual process.
+Setting up configuration for the main prosody is a manual process:
 - Add to the enabled modules list in the general part (e.g. [here](https://github.com/bjc/prosody/blob/76bf6d511f851c7cde8a81257afaaae0fb7a4160/prosody.cfg.lua.dist#L33)):
 ```
       "s2s_bidi";
@@ -55,8 +75,12 @@ s2s_whitelist = {
 - Make sure s2s is not in modules_disabled
 - Enable `"xxl_conference";` module under the main virtual host (e.g. [here](https://github.com/jitsi/jitsi-meet/blob/f42772ec5bcc87ff6de17423d36df9bcad6e770d/doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example#L57))
 
-After configuring you can set the maximum number of main participants, before redirecting to visitors.
-hocon -f /etc/jitsi/jicofo/jicofo.conf set "jicofo.visitors.max-participants" 3
-Now restart prosody(service prosody restart) and jicofo(service jicofo restart).
+After configuring you can set the maximum number of main participants, before
+redirecting to visitors.
+```hocon -f /etc/jitsi/jicofo/jicofo.conf set "jicofo.visitors.max-participants" 3```
+Now restart prosody and jicofo
+```service prosody restart
+service jicofo restart```
 
-Now after the main 3 participants joining, the rest will be visitors using the visitor nodes.
+Now after the main 3 participants join, the rest will be visitors using the
+visitor nodes.
