@@ -6,6 +6,7 @@ import { MEDIA_TYPE } from '../../../base/media';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isLocalTrackMuted, isToggleCameraEnabled, toggleCamera } from '../../../base/tracks';
+import { setOverflowMenuVisible } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link ToggleCameraButton}.
@@ -45,6 +46,7 @@ class ToggleCameraButton extends AbstractButton<Props, any> {
         const { dispatch } = this.props;
 
         dispatch(toggleCamera());
+        dispatch(setOverflowMenuVisible(false));
     }
 
     /**
