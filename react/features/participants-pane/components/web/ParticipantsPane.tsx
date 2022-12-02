@@ -14,7 +14,7 @@ import Button from '../../../base/ui/components/web/Button';
 import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { findAncestorByClass } from '../../../base/ui/functions.web';
-import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
+import { isAddBreakoutRoomButtonVisible, isAutoAssignParticipantsVisible } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions.web';
@@ -24,6 +24,7 @@ import {
     isMuteAllVisible
 } from '../../functions';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
+import { AutoAssignButton } from '../breakout-rooms/components/web/AutoAssignButton';
 // @ts-ignore
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
@@ -101,6 +102,7 @@ const ParticipantsPane = () => {
         .conference?.getBreakoutRooms()?.isSupported();
     const showAddRoomButton = useSelector(isAddBreakoutRoomButtonVisible);
     const showFooter = useSelector(isLocalParticipantModerator);
+    const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
     const showMuteAllButton = useSelector(isMuteAllVisible);
     const showMoreActionsButton = useSelector(isMoreActionsVisible);
     const dispatch = useDispatch();
@@ -163,6 +165,7 @@ const ParticipantsPane = () => {
                 </div>
                 {showFooter && (
                     <div className = { classes.footer }>
+                        {showAutoAssign && <AutoAssignButton />}
                         {showMuteAllButton && (
                             <Button
                                 accessibilityLabel = { t('participantsPane.actions.muteAll') }
