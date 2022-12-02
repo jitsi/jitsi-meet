@@ -28,7 +28,7 @@ prosodies".
 We consider 2000 participants per visitor node a safe value. So eight visitor
 prosodies will be enough for one 10k participants meeting.
 
-![diagram of a central prosody connected to several visitor prosodies](./imgs/visitors-prosody.svg)
+<img src="imgs/visitors-prosody.svg" alt="diagram of a central prosody connected to several visitor prosodies" width="500" style="background-color:white;"/>
 
 # Configuration
 Use the `pre-configure.sh` script to configure your system, passing it the
