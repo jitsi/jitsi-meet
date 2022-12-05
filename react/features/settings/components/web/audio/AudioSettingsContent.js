@@ -106,7 +106,6 @@ class AudioSettingsContent extends Component<Props, State> {
 
         this._onMicrophoneEntryClick = this._onMicrophoneEntryClick.bind(this);
         this._onSpeakerEntryClick = this._onSpeakerEntryClick.bind(this);
-        this._onEscClick = this._onEscClick.bind(this);
         this._audioContentRef = React.createRef();
 
         this.state = {
@@ -119,21 +118,6 @@ class AudioSettingsContent extends Component<Props, State> {
                 };
             })
         };
-    }
-    _onEscClick: (KeyboardEvent) => void;
-
-    /**
-     * Click handler for the speaker entries.
-     *
-     * @param {KeyboardEvent} event - Esc key click to close the popup.
-     * @returns {void}
-     */
-    _onEscClick(event) {
-        if (event.key === 'Escape') {
-            event.preventDefault();
-            event.stopPropagation();
-            this._audioContentRef.current.style.display = 'none';
-        }
     }
 
     _onMicrophoneEntryClick: (string) => void;
@@ -304,7 +288,6 @@ class AudioSettingsContent extends Component<Props, State> {
                     aria-labelledby = 'audio-settings-button'
                     className = 'audio-preview-content'
                     id = 'audio-settings-dialog'
-                    onKeyDown = { this._onEscClick }
                     ref = { this._audioContentRef }
                     role = 'menu'
                     tabIndex = { -1 }>

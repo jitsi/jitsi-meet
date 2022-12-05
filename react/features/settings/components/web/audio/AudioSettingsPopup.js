@@ -76,6 +76,7 @@ function AudioSettingsPopup({
                     outputDevices = { outputDevices }
                     setAudioInputDevice = { setAudioInputDevice }
                     setAudioOutputDevice = { setAudioOutputDevice } /> }
+                focusTrap = { true }
                 onPopoverClose = { onClose }
                 position = { popupPlacement }
                 trigger = 'click'

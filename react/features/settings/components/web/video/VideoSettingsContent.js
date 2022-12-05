@@ -70,7 +70,6 @@ class VideoSettingsContent extends Component<Props, State> {
      */
     constructor(props) {
         super(props);
-        this._onEscClick = this._onEscClick.bind(this);
         this._videoContentRef = React.createRef();
 
         this.state = {
@@ -78,21 +77,6 @@ class VideoSettingsContent extends Component<Props, State> {
                 jitsiTrack: null
             })
         };
-    }
-    _onEscClick: (KeyboardEvent) => void;
-
-    /**
-     * Click handler for the video entries.
-     *
-     * @param {KeyboardEvent} event - Esc key click to close the popup.
-     * @returns {void}
-     */
-    _onEscClick(event) {
-        if (event.key === 'Escape') {
-            event.preventDefault();
-            event.stopPropagation();
-            this._videoContentRef.current.style.display = 'none';
-        }
     }
 
     /**
@@ -249,7 +233,6 @@ class VideoSettingsContent extends Component<Props, State> {
                 aria-labelledby = 'video-settings-button'
                 className = 'video-preview-container'
                 id = 'video-settings-dialog'
-                onKeyDown = { this._onEscClick }
                 ref = { this._videoContentRef }
                 role = 'radiogroup'
                 tabIndex = '-1'>

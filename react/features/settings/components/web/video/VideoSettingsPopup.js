@@ -63,6 +63,7 @@ function VideoSettingsPopup({
                     setVideoInputDevice = { setVideoInputDevice }
                     toggleVideoSettings = { onClose }
                     videoDeviceIds = { videoDeviceIds } /> }
+                focusTrap = { true }
                 onPopoverClose = { onClose }
                 position = { popupPlacement }
                 trigger = 'click'

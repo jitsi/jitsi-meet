@@ -1,4 +1,5 @@
 import React, { Component, ReactNode } from 'react';
+import ReactFocusLock from 'react-focus-lock';
 
 import { IReduxState } from '../../../app/types';
 // eslint-disable-next-line lines-around-comment
@@ -33,6 +34,11 @@ interface IProps {
      * Whether displaying of the popover should be prevented.
      */
     disablePopover?: boolean;
+
+    /**
+     * Whether to use trap keyboard focus in the popover when its visible or not.
+     */
+    focusTrap: boolean;
 
     /**
      * An id attribute to apply to the root of the {@code Popover}
@@ -222,7 +228,11 @@ class Popover extends Component<IProps, IState> {
                         getRef = { this._setContextMenuRef }
                         setSize = { this._setContextMenuStyle }
                         style = { this.state.contextMenuStyle }>
-                        {this._renderContent()}
+                        {this.props.focusTrap && this.props.trigger === 'click' ? (
+                            <ReactFocusLock returnFocus = { true }>
+                                {this._renderContent()}
+                            </ReactFocusLock>
+                        ) : this._renderContent()}
                     </DialogPortal>
                 )}
                 { children }
