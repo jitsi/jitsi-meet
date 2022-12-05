@@ -5,7 +5,7 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { IconCloseCircle } from '../../../base/icons';
+import { IconCheck } from '../../../base/icons';
 import { translate } from '../../../base/i18n/functions';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 
@@ -81,7 +81,7 @@ class VerifyParticipantButton extends Component<IProps> {
             <ContextMenuItem
                 accessibilityLabel = { t('videothumbnail.verify') }
                 className = 'verifylink'
-                icon = { IconCloseCircle }
+                icon = { IconCheck }
                 id = { `verifylink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick }

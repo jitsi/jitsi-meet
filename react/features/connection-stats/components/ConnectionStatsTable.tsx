@@ -486,6 +486,25 @@ class ConnectionStatsTable extends Component<IProps> {
         );
     }
 
+    _renderE2EEVerified() {
+        const { e2eeVerified, t } = this.props;
+
+        console.log("XXX e2eeVerified", e2eeVerified);
+       
+        if (e2eeVerified === undefined) {
+            return;
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.e2eeVerified') }</span>
+                </td>
+                <td>{ e2eeVerified.toString() }</td>
+            </tr>
+        );
+    }
+
 
     /**
      * Creates a table row as a ReactElement for displaying a summary message
@@ -726,6 +745,7 @@ class ConnectionStatsTable extends Component<IProps> {
                     { this._renderResolution() }
                     { this._renderFrameRate() }
                     { this._renderCodecs() }
+                    { this._renderE2EEVerified() }
                 </tbody>
             </table>
         );

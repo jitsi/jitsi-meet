@@ -189,6 +189,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 codec = { codec }
                 connectionSummary = { this._getConnectionStatusTip() }
                 disableShowMoreStats = { this.props._disableShowMoreStats }
+                e2eeVerified = { this.props._isE2EEVerified }
                 enableSaveLogs = { this.props._enableSaveLogs }
                 framerate = { framerate }
                 isLocalVideo = { this.props._isLocalVideo }
@@ -328,6 +329,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
         _isConnectionStatusInactive,
         _isConnectionStatusInterrupted,
+        _isE2EEVerified: participant?.e2eeVerified,
         _isVirtualScreenshareParticipant: isScreenShareParticipant(participant),
         _isLocalVideo: participant?.local,
         _region: participant?.region,

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import { IState, IStore } from "../../app/types";
-import { hideDialog } from '../../base/dialog/actions';
 import { getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
@@ -34,7 +33,8 @@ export class ParticipantVerificationDialog extends Component<Props> {
     }
 
     render() {
-        const { decimal, emoji } =  this.props.sas
+        const { emoji } =  this.props.sas
+        const participantName = this.props.participant.name;
         return (
             <Dialog
                 cancel = {{ translationKey: 'dialog.verifyParticipantDismiss' }}
@@ -42,6 +42,9 @@ export class ParticipantVerificationDialog extends Component<Props> {
                 onCancel = { this._onDismissed }
                 onSubmit = { this._onConfirmed }
                 titleKey = 'dialog.verifyParticipantTitle'>
+                <div>
+                    { participantName }
+                </div>
                 <div>
                     { emoji }
                 </div>
