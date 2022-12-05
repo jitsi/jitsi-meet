@@ -4,7 +4,7 @@ import { IState, IStore } from "../../app/types";
 import { hideDialog } from '../../base/dialog/actions';
 import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
-import { channelVerified } from '../actions';
+import { participantVerified } from '../actions';
 
 
 interface Props {
@@ -48,12 +48,12 @@ export class ChannelVerificationDialog extends Component<Props> {
     }
 
     _onDismissed() {
-        this.props.dispatch(channelVerified(false, this.props.pId));
+        this.props.dispatch(participantVerified(false, this.props.pId));
         return true;
     }
     
     _onConfirmed() {
-        this.props.dispatch(channelVerified(true, this.props.pId));
+        this.props.dispatch(participantVerified(true, this.props.pId));
         return true;
     }
 }

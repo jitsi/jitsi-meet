@@ -67,7 +67,7 @@ export function isMaxModeThresholdReached(stateful: IStateful) {
  export function displayVerification(state: IReduxState, pId: string) {
     const { conference } = state['features/base/conference'];
     const participant = getParticipantById(state, pId);
-    
-    return Boolean(conference.isE2EEEnabled() && participant.sasVerified === undefined);
+
+    return Boolean(conference.isE2EEEnabled() && participant.e2eeVericationAvailable && participant.e2eeVerified === undefined);
 };
 

@@ -1,5 +1,5 @@
 import {
-    CHANNEL_VERIFIED,
+    PARTICIPANT_VERIFIED,
     SET_EVERYONE_ENABLED_E2EE,
     SET_EVERYONE_SUPPORT_E2EE,
     SET_MAX_MODE,
@@ -90,9 +90,9 @@ export function startVerification(pId: string) {
     };
 }
 
-export function channelVerified(isVerified: boolean, pId: string) {
+export function participantVerified(isVerified: boolean, pId: string) {
     return {
-        type: CHANNEL_VERIFIED,
+        type: PARTICIPANT_VERIFIED,
         isVerified,
         pId
     };

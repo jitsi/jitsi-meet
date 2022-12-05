@@ -17,7 +17,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 
-import { CHANNEL_VERIFIED, SET_MEDIA_ENCRYPTION_KEY, START_VERIFICATION, TOGGLE_E2EE } from './actionTypes';
+import { PARTICIPANT_VERIFIED, SET_MEDIA_ENCRYPTION_KEY, START_VERIFICATION, TOGGLE_E2EE } from './actionTypes';
 import { setE2EEMaxMode, setEveryoneEnabledE2EE, setEveryoneSupportE2EE, toggleE2EE } from './actions';
 import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID, MAX_MODE } from './constants';
 import { isMaxModeReached, isMaxModeThresholdReached } from './functions';
@@ -243,9 +243,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
 
-    case CHANNEL_VERIFIED: {
+    case PARTICIPANT_VERIFIED: {
+        console.log("XXX PARTICIPANT_VERIFIED");
         const { isVerified, pId } = action;
-        conference?.markParticipantChannelVerified(isVerified, pId);
+        conference?.markParticipantVerified(pId, isVerified);
         break;
     }
 
@@ -269,13 +270,24 @@ StateListenerRegistry.register(
             dispatch(toggleE2EE(false));
         }
 
-        conference.on(JitsiConferenceEvents.E2EE_SAS_READY, (pId, sas) => {
+        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, (pId) => {
+            console.log("XXX E2EE_VERIFICATION_AVAILABLE");
+            dispatch(participantUpdated({
+                e2eeVericationAvailable: true,
+                id: pId,
+                local: true
+            }));
+         });
+
+        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId, sas) => {
            dispatch(openDialog(ChannelVerificationDialog, { pId, sas }));
         });
 
-        conference.on(JitsiConferenceEvents.E2EE_SAS_COMPLETED, (pId, success) => {
+        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED, (pId, success, message) => {
+            console.log("XXX E2EE_VERIFICATION_COMPLETED1", message);
+            console.log("XXX E2EE_VERIFICATION_COMPLETED2", success);
             dispatch(participantUpdated({
-                sasVerified: success,
+                e2eeVerified: success,
                 id: pId,
                 local: true
             }));
