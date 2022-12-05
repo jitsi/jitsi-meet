@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import Icon from '../../../base/icons/components/Icon';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
 import Button from '../../../base/ui/components/web/Button';
@@ -174,7 +173,7 @@ const PollCreate = ({
             <ol className = 'poll-answer-field-list'>
                 {answers.map((answer: any, i: number) =>
                     (<li
-                        className = { `poll-answer-field` }
+                        className = 'poll-answer-field'
                         key = { i }>
                         <span className = 'poll-create-label'>
                             { t('polls.create.pollOption', { index: i + 1 })}
