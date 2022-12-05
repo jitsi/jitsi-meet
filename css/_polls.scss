@@ -121,13 +121,6 @@ ol.poll-result-list {
     display: flex;
 }
 
-.poll-dragged {
-    opacity: 0.5;
-    * {
-        cursor: grabbing !important;
-    }
-}
-
 .poll-question {
     font-size: 16px;
     font-weight: 600;
