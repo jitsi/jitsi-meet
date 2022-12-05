@@ -25,7 +25,7 @@ import logger from './logger';
 import { E2EE_OFF_SOUND_FILE, E2EE_ON_SOUND_FILE } from './sounds';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { openDialog } from '../base/dialog/actions';
-import ChannelVerificationDialog from './components/ChannelVerificationDialog';
+import ParticipantVerificationDialog from './components/ParticipantVerificationDialog';
 
 /**
  * Middleware that captures actions related to E2EE.
@@ -280,7 +280,7 @@ StateListenerRegistry.register(
          });
 
         conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId, sas) => {
-           dispatch(openDialog(ChannelVerificationDialog, { pId, sas }));
+           dispatch(openDialog(ParticipantVerificationDialog, { pId, sas }));
         });
 
         conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED, (pId, success, message) => {

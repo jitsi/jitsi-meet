@@ -4,7 +4,7 @@ import WaitForOwnerDialog from '../../authentication/components/web/WaitForOwner
 import ChatPrivacyDialog from '../../chat/components/web/ChatPrivacyDialog';
 import DesktopPicker from '../../desktop-picker/components/DesktopPicker';
 import DisplayNamePrompt from '../../display-name/components/web/DisplayNamePrompt';
-import ChannelVerificationDialog from '../../e2ee/components/ChannelVerificationDialog';
+import ParticipantVerificationDialog from '../../e2ee/components/ParticipantVerificationDialog';
 import EmbedMeetingDialog from '../../embed-meeting/components/EmbedMeetingDialog';
 // @ts-ignore
 import FeedbackDialog from '../../feedback/components/FeedbackDialog.web';
@@ -44,7 +44,7 @@ import { OPEN_DIALOG } from './actionTypes';
 // ! IMPORTANT - This whole middleware is only needed for the transition from from @atlaskit dialog to our component.
 // ! It should be removed when the transition is over.
 
-const NEW_DIALOG_LIST = [ ChannelVerificationDialog, KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNamePrompt, EmbedMeetingDialog,
+const NEW_DIALOG_LIST = [ ParticipantVerificationDialog, KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNamePrompt, EmbedMeetingDialog,
     FeedbackDialog, AddPeopleDialog, PremiumFeatureDialog, StartLiveStreamDialog, StopLiveStreamDialog,
     StartRecordingDialog, StopRecordingDialog, ShareAudioDialog, ShareScreenWarningDialog, SecurityDialog,
     SharedVideoDialog, SpeakerStats, LanguageSelectorDialog, MuteEveryoneDialog, MuteEveryonesVideoDialog,

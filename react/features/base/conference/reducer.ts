@@ -68,7 +68,6 @@ export interface IJitsiConference {
     joinLobby: Function;
     kickParticipant: Function;
     lock: Function;
-    markParticipantChannelVerified: Function;
     muteParticipant: Function;
     myLobbyUserId: Function;
     myUserId: Function;

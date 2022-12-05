@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { IState, IStore } from "../../app/types";
 import { hideDialog } from '../../base/dialog/actions';
+import { getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 import { participantVerified } from '../actions';
@@ -11,6 +12,7 @@ interface Props {
     dispatch: IStore['dispatch'];
     sas: object;
     pId: string;
+    participant: object,
     decimal: string;
     emoji: string;
 }
@@ -18,7 +20,7 @@ interface Props {
 /**
  * Class for the dialog displayed for E2EE sas verification.
  */
-export class ChannelVerificationDialog extends Component<Props> {
+export class ParticipantVerificationDialog extends Component<Props> {
     /**
      * Instantiates a new instance.
      *
@@ -35,11 +37,11 @@ export class ChannelVerificationDialog extends Component<Props> {
         const { decimal, emoji } =  this.props.sas
         return (
             <Dialog
-                cancel = {{ translationKey: 'dialog.verifyChannelDismiss' }}
-                ok = {{ translationKey: 'dialog.verifyChannelConfirm' }}
+                cancel = {{ translationKey: 'dialog.verifyParticipantDismiss' }}
+                ok = {{ translationKey: 'dialog.verifyParticipantConfirm' }}
                 onCancel = { this._onDismissed }
                 onSubmit = { this._onConfirmed }
-                titleKey = 'dialog.verifyChannelTitle'>
+                titleKey = 'dialog.verifyParticipantTitle'>
                 <div>
                     { emoji }
                 </div>
@@ -66,10 +68,15 @@ export class ChannelVerificationDialog extends Component<Props> {
  * @returns {Props}
  */
 export function _mapStateToProps(state: IState, ownProps: Props) {
+    const participant = getParticipantById(state, ownProps.pId);
+
+    console.log("XXX participant", participant);
+
     return {
         sas: ownProps.sas,
-        pId: ownProps.pId
+        pId: ownProps.pId,
+        participant: participant
     };
 }
 
-export default connect(_mapStateToProps)(ChannelVerificationDialog);
+export default connect(_mapStateToProps)(ParticipantVerificationDialog);
