@@ -83,6 +83,15 @@ export function setMediaEncryptionKey(keyInfo: Object) {
     };
 }
 
+/**
+ * Dispatches an action to start participant e2ee verficiation process.
+ *
+ * @param {string} pId - The participant id.
+ * @returns {{
+ *     type: START_VERIFICATION,
+ *     pId: string
+ * }}
+ */
 export function startVerification(pId: string) {
     return {
         type: START_VERIFICATION,
@@ -90,10 +99,21 @@ export function startVerification(pId: string) {
     };
 }
 
-export function participantVerified(isVerified: boolean, pId: string) {
+/**
+ * Dispatches an action to set participant e2ee verification status.
+ *
+ * @param {string} pId - The participant id.
+ * @param {boolean} isVerified - The verifcation status.
+ * @returns {{
+ *     type: PARTICIPANT_VERIFIED,
+ *     pId: string,
+ *     isVerified: boolean
+ * }}
+ */
+export function participantVerified(pId: string, isVerified: boolean) {
     return {
         type: PARTICIPANT_VERIFIED,
-        isVerified,
-        pId
+        pId,
+        isVerified
     };
 }

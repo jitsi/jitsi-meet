@@ -5,10 +5,9 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { IconCheck } from '../../../base/icons';
 import { translate } from '../../../base/i18n/functions';
+import { IconCheck } from '../../../base/icons';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-
 import { startVerification } from '../../../e2ee/actions';
 
 /**
@@ -19,17 +18,17 @@ interface IProps extends WithTranslation {
     /**
      * The redux {@code dispatch} function.
      */
-     dispatch: Function,
+     dispatch: Function;
 
      /**
       * The ID of the participant that this button is supposed to verified.
       */
-     participantID: string,
- 
+     participantID: string;
+
      /**
       * The function to be used to translate i18n labels.
       */
-     t: Function
+     t: Function;
 }
 
 const styles = () => {
@@ -62,19 +61,19 @@ class VerifyParticipantButton extends Component<IProps> {
      *
      * @inheritdoc
      */
-     constructor(props: Props) {
+    constructor(props: Props) {
         super(props);
 
         this._handleClick = this._handleClick.bind(this);
     }
 
-     /**
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
-      render() {
+    render() {
         const { participantID, t } = this.props;
 
         return (
@@ -95,7 +94,7 @@ class VerifyParticipantButton extends Component<IProps> {
      * @private
      * @returns {void}
      */
-     _handleClick() {
+    _handleClick() {
         const { dispatch, participantID } = this.props;
 
         dispatch(startVerification(participantID));

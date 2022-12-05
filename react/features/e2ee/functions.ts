@@ -1,9 +1,8 @@
-import { co } from 'react-emoji-render/data/aliases';
+import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { getParticipantById, getParticipantCount } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
-import { IReduxState } from '../app/types';
 
 import { MAX_MODE_LIMIT, MAX_MODE_THRESHOLD } from './constants';
 
@@ -62,12 +61,15 @@ export function isMaxModeThresholdReached(stateful: IStateful) {
 /**
  * Returns whether e2ee is enabled by the backend.
  *
+ * @param {Object} state - The redux state.
+ * @param {string} pId - The participant id.
  * @returns {boolean}
  */
- export function displayVerification(state: IReduxState, pId: string) {
+export function displayVerification(state: IReduxState, pId: string) {
     const { conference } = state['features/base/conference'];
     const participant = getParticipantById(state, pId);
 
-    return Boolean(conference.isE2EEEnabled() && participant.e2eeVericationAvailable && participant.e2eeVerified === undefined);
-};
-
+    return Boolean(conference.isE2EEEnabled()
+        && participant.e2eeVericationAvailable
+        && participant.e2eeVerified === undefined);
+}

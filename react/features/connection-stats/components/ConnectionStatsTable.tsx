@@ -486,11 +486,15 @@ class ConnectionStatsTable extends Component<IProps> {
         );
     }
 
+    /**
+     * Creates a a table row as a ReactElement for displaying e2ee verication status, if present.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
     _renderE2EEVerified() {
         const { e2eeVerified, t } = this.props;
 
-        console.log("XXX e2eeVerified", e2eeVerified);
-       
         if (e2eeVerified === undefined) {
             return;
         }

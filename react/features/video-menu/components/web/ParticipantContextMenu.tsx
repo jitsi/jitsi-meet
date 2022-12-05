@@ -18,6 +18,7 @@ import { isParticipantAudioMuted } from '../../../base/tracks/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
+import { displayVerification } from '../../../e2ee/functions';
 import { setVolume } from '../../../filmstrip/actions.web';
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { isForceMuted } from '../../../participants-pane/functions';
@@ -29,6 +30,7 @@ import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 // @ts-ignore
 import SendToRoomButton from './SendToRoomButton';
+import VerifyParticipantButton from './VerifyParticipantButton';
 
 import {
     AskToUnmuteButton,
@@ -45,8 +47,6 @@ import {
     VolumeSlider
     // @ts-ignore
 } from './';
-import VerifyParticipantButton from './VerifyParticipantButton';
-import { displayVerification } from '../../../e2ee/functions';
 
 interface IProps {
 
