@@ -2,8 +2,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import Icon from '../../../base/icons/components/Icon';
-import { IconBurger } from '../../../base/icons/svg';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
 import Button from '../../../base/ui/components/web/Button';
@@ -26,7 +24,6 @@ const PollCreate = ({
     addAnswer,
     answers,
     isSubmitDisabled,
-    moveAnswer,
     onSubmit,
     question,
     removeAnswer,
@@ -142,37 +139,6 @@ const PollCreate = ({
         }
     }, [ answers, addAnswer, removeAnswer, requestFocus ]);
 
-    const [ grabbing, setGrabbing ] = useState(null);
-
-    const interchangeHeights = (i: number, j: number) => {
-        const h = answerInputs.current[i].scrollHeight;
-
-        answerInputs.current[i].style.height = `${answerInputs.current[j].scrollHeight}px`;
-        answerInputs.current[j].style.height = `${h}px`;
-    };
-
-    const onGrab = useCallback((i, ev) => {
-        if (ev.button !== 0) {
-            return;
-        }
-        setGrabbing(i);
-        window.addEventListener('mouseup', () => {
-            setGrabbing(_grabbing => {
-                requestFocus(_grabbing);
-
-                return null;
-            });
-        }, { once: true });
-    }, []);
-
-    const onMouseOver = useCallback(i => {
-        if (grabbing !== null && grabbing !== i) {
-            interchangeHeights(i, grabbing);
-            moveAnswer(grabbing, i);
-            setGrabbing(i);
-        }
-    }, []);
-
     const autogrow = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
         const el = ev.target;
 
@@ -207,9 +173,8 @@ const PollCreate = ({
             <ol className = 'poll-answer-field-list'>
                 {answers.map((answer: any, i: number) =>
                     (<li
-                        className = { `poll-answer-field${grabbing === i ? ' poll-dragged' : ''}` }
-                        key = { i }
-                        onMouseOver = { () => onMouseOver(i) }>
+                        className = 'poll-answer-field'
+                        key = { i }>
                         <span className = 'poll-create-label'>
                             { t('polls.create.pollOption', { index: i + 1 })}
                         </span>
@@ -225,13 +190,6 @@ const PollCreate = ({
                                 required = { true }
                                 rows = { 1 }
                                 value = { answer } />
-                            <button
-                                className = 'poll-drag-handle'
-                                onMouseDown = { ev => onGrab(i, ev) }
-                                tabIndex = { -1 }
-                                type = 'button'>
-                                <Icon src = { IconBurger } />
-                            </button>
                         </div>
 
                         { answers.length > 2

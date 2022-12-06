@@ -59,6 +59,7 @@ export interface IJitsiConference {
     grantOwner: Function;
     isAVModerationSupported: Function;
     isCallstatsEnabled: Function;
+    isE2EEEnabled: Function;
     isEndConferenceSupported: Function;
     isLobbySupported: Function;
     isSIPCallingSupported: Function;
@@ -89,6 +90,7 @@ export interface IJitsiConference {
     setReceiverConstraints: Function;
     setSenderVideoConstraint: Function;
     setSubject: Function;
+    startVerification: Function;
 }
 
 export interface IConferenceState {

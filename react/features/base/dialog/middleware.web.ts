@@ -4,6 +4,7 @@ import WaitForOwnerDialog from '../../authentication/components/web/WaitForOwner
 import ChatPrivacyDialog from '../../chat/components/web/ChatPrivacyDialog';
 import DesktopPicker from '../../desktop-picker/components/DesktopPicker';
 import DisplayNamePrompt from '../../display-name/components/web/DisplayNamePrompt';
+import ParticipantVerificationDialog from '../../e2ee/components/ParticipantVerificationDialog';
 import EmbedMeetingDialog from '../../embed-meeting/components/EmbedMeetingDialog';
 // @ts-ignore
 import FeedbackDialog from '../../feedback/components/FeedbackDialog.web';
@@ -49,7 +50,7 @@ const NEW_DIALOG_LIST = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNam
     SharedVideoDialog, SpeakerStats, LanguageSelectorDialog, MuteEveryoneDialog, MuteEveryonesVideoDialog,
     GrantModeratorDialog, KickRemoteParticipantDialog, MuteRemoteParticipantsVideoDialog, VideoQualityDialog,
     VirtualBackgroundDialog, LoginDialog, WaitForOwnerDialog, DesktopPicker, RemoteControlAuthorizationDialog,
-    LogoutDialog, SalesforceLinkDialog ];
+    LogoutDialog, SalesforceLinkDialog, ParticipantVerificationDialog ];
 
 // This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
 const isNewDialog = (component: any) => NEW_DIALOG_LIST.some(comp => comp === component);

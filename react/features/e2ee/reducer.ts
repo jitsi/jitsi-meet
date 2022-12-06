@@ -20,6 +20,10 @@ export interface IE2EEState {
     maxMode: string;
 }
 
+export interface ISas {
+    emoji: Array<string>;
+}
+
 /**
  * Reduces the Redux actions of the feature features/e2ee.
  */

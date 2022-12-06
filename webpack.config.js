@@ -266,7 +266,7 @@ function getDevServerConfig() {
                 }
             }
         },
-        server: 'https',
+        server: process.env.CODESPACES ? 'http' : 'https',
         static: {
             directory: process.cwd()
         }
