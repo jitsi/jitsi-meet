@@ -274,8 +274,7 @@ StateListenerRegistry.register(
         conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, pId => {
             dispatch(participantUpdated({
                 e2eeVericationAvailable: true,
-                id: pId,
-                local: true
+                id: pId
             }));
         });
 
@@ -286,12 +285,11 @@ StateListenerRegistry.register(
 
         conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED, (pId, success, message) => {
             if (message) {
-                logger.warning('E2EE_VERIFICATION_COMPLETED warning', message);
+                logger.warn('E2EE_VERIFICATION_COMPLETED warning', message);
             }
             dispatch(participantUpdated({
                 e2eeVerified: success,
-                id: pId,
-                local: true
+                id: pId
             }));
         });
     });
