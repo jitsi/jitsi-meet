@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 
@@ -26,7 +25,7 @@ interface IProps {
  *
  * @returns {Object}
  */
- const styles = (theme: Theme) => {
+const styles = () => {
     return {
         container: {
             display: 'flex',
@@ -34,16 +33,16 @@ interface IProps {
             margin: '16px'
         },
         row: {
-               alignSelf: 'center',
-               display: 'flex',
+            alignSelf: 'center',
+            display: 'flex'
         },
         item: {
-                textAlign: 'center',
-                margin: '16px'
-        },   
+            textAlign: 'center',
+            margin: '16px'
+        },
         emoji: {
-                fontSize: '40px',
-                margin: '12px'
+            fontSize: '40px',
+            margin: '12px'
         }
     };
 };
@@ -76,7 +75,7 @@ export class ParticipantVerificationDialog extends Component<IProps> {
         const participantName = this.props.participant.name;
 
         const { classes, t } = this.props;
-        
+
         return (
             <Dialog
                 cancel = {{ translationKey: 'dialog.verifyParticipantDismiss' }}
@@ -85,26 +84,30 @@ export class ParticipantVerificationDialog extends Component<IProps> {
                 onSubmit = { this._onConfirmed }
                 titleKey = 'dialog.verifyParticipantTitle'>
                 <div>
-                   { t('dialog.verifyParticipantQuestion', { participantName }) }
+                    { t('dialog.verifyParticipantQuestion', { participantName }) }
                 </div>
 
                 <div className = { classes.container }>
 
-                <div className = {classes.row}>
-                    {emoji.slice(0,4).map(e =>
-                        <div className = { classes.item }>
-                            <div className={ classes.emoji }>{ e[0] }</div>
-                            <div>{ e[1].charAt(0).toUpperCase()+e[1].slice(1) }</div>      
-                        </div>)}
-                </div>
+                    <div className = { classes.row }>
+                        {emoji.slice(0, 4).map(e =>
+                            (<div
+                                className = { classes.item }
+                                key = { e }>
+                                <div className = { classes.emoji }>{ e[0] }</div>
+                                <div>{ e[1].charAt(0).toUpperCase() + e[1].slice(1) }</div>
+                            </div>))}
+                    </div>
 
-                <div className = {classes.row}>
-                    {emoji.slice(4,7).map(e => 
-                            <div className = { classes.item }>
-                                <div className={ classes.emoji }>{ e[0] } </div>
-                                <div>{ e[1].charAt(0).toUpperCase()+e[1].slice(1) }</div>
-                            </div>)}
-                </div>
+                    <div className = { classes.row }>
+                        {emoji.slice(4, 7).map(e =>
+                            (<div
+                                className = { classes.item }
+                                key = { e }>
+                                <div className = { classes.emoji }>{ e[0] } </div>
+                                <div>{ e[1].charAt(0).toUpperCase() + e[1].slice(1) }</div>
+                            </div>))}
+                    </div>
 
                 </div>
 
