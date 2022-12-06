@@ -90,8 +90,8 @@ export class ParticipantVerificationDialog extends Component<IProps> {
                 </div>
 
                 <div className = { classes.container }>
-
                     <div className = { classes.row }>
+                        {/* @ts-ignore */}
                         {emoji.slice(0, 4).map((e: Array<string>) =>
                             (<div
                                 className = { classes.item }
@@ -102,6 +102,7 @@ export class ParticipantVerificationDialog extends Component<IProps> {
                     </div>
 
                     <div className = { classes.row }>
+                        {/* @ts-ignore */}
                         {emoji.slice(4, 7).map((e: Array<string>) =>
                             (<div
                                 className = { classes.item }
