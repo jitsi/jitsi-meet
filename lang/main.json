@@ -411,7 +411,7 @@
         "userPassword": "User password",
         "verifyParticipantConfirm": "They match",
         "verifyParticipantDismiss": "They do not match",
-        "verifyParticipantQuestion": "[EXPERIMENTAL]Ask participant {{participantName}} if they see the same content, in the same order.",
+        "verifyParticipantQuestion": "EXPERIMENTAL: Ask participant {{participantName}} if they see the same content, in the same order.",
         "verifyParticipantTitle": "User verification",
         "videoLink": "Video link",
         "viewUpgradeOptions": "View upgrade options",
