@@ -1,6 +1,9 @@
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 
 import { IState, IStore } from '../../app/types';
+import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
@@ -15,6 +18,36 @@ interface IProps {
     participant: object;
     sas: object;
 }
+
+/**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+ const styles = (theme: Theme) => {
+    return {
+        container: {
+            display: 'flex',
+            flexDirection: 'column',
+            margin: '16px'
+        },
+        row: {
+               alignSelf: 'center',
+               display: 'flex',
+        },
+        item: {
+                textAlign: 'center',
+                margin: '16px'
+        },   
+        emoji: {
+                fontSize: '40px',
+                margin: '12px'
+        }
+    };
+};
+
 
 /**
  * Class for the dialog displayed for E2EE sas verification.
@@ -42,6 +75,8 @@ export class ParticipantVerificationDialog extends Component<IProps> {
         const { emoji } = this.props.sas;
         const participantName = this.props.participant.name;
 
+        const { classes, t } = this.props;
+        
         return (
             <Dialog
                 cancel = {{ translationKey: 'dialog.verifyParticipantDismiss' }}
@@ -50,11 +85,29 @@ export class ParticipantVerificationDialog extends Component<IProps> {
                 onSubmit = { this._onConfirmed }
                 titleKey = 'dialog.verifyParticipantTitle'>
                 <div>
-                    { participantName }
+                   { t('dialog.verifyParticipantQuestion', { participantName }) }
                 </div>
-                <div>
-                    { emoji }
+
+                <div className = { classes.container }>
+
+                <div className = {classes.row}>
+                    {emoji.slice(0,4).map(e =>
+                        <div className = { classes.item }>
+                            <div className={ classes.emoji }>{ e[0] }</div>
+                            <div>{ e[1].charAt(0).toUpperCase()+e[1].slice(1) }</div>      
+                        </div>)}
                 </div>
+
+                <div className = {classes.row}>
+                    {emoji.slice(4,7).map(e => 
+                            <div className = { classes.item }>
+                                <div className={ classes.emoji }>{ e[0] } </div>
+                                <div>{ e[1].charAt(0).toUpperCase()+e[1].slice(1) }</div>
+                            </div>)}
+                </div>
+
+                </div>
+
             </Dialog>
         );
     }
@@ -101,4 +154,5 @@ export function _mapStateToProps(state: IState, ownProps: IProps) {
     };
 }
 
-export default connect(_mapStateToProps)(ParticipantVerificationDialog);
+export default translate(connect(_mapStateToProps)(
+    withStyles(styles)(ParticipantVerificationDialog)));

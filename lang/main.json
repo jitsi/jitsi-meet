@@ -415,8 +415,9 @@
         "viewUpgradeOptionsTitle": "You discovered a premium feature!",
         "verifyParticipantConfirm": "They match",
         "verifyParticipantDismiss": "They do not match",
-        "verifyParticipantTitle": "Check the emojis",
-        "yourEntireScreen": "Your entire screen"
+        "verifyParticipantTitle": "User verification",
+        "yourEntireScreen": "Your entire screen",
+        "verifyParticipantQuestion": " Ask participant {{participantName}} if they see the same content, in the same order."
     },
     "documentSharing": {
         "title": "Shared Document"

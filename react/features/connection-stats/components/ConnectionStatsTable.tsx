@@ -499,12 +499,14 @@ class ConnectionStatsTable extends Component<IProps> {
             return;
         }
 
+       const status = e2eeVerified ? '\u{2705}' : '\u{274C}'; 
+
         return (
             <tr>
                 <td>
                     <span>{ t('connectionindicator.e2eeVerified') }</span>
                 </td>
-                <td>{ e2eeVerified.toString() }</td>
+                <td>{ status }</td>
             </tr>
         );
     }
