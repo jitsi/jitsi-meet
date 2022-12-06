@@ -4,6 +4,8 @@ import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
+import { openDialog } from '../base/dialog/actions';
+import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { participantUpdated } from '../base/participants/actions';
 import {
@@ -17,12 +19,14 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 
-import { SET_MEDIA_ENCRYPTION_KEY, TOGGLE_E2EE } from './actionTypes';
+import { PARTICIPANT_VERIFIED, SET_MEDIA_ENCRYPTION_KEY, START_VERIFICATION, TOGGLE_E2EE } from './actionTypes';
 import { setE2EEMaxMode, setEveryoneEnabledE2EE, setEveryoneSupportE2EE, toggleE2EE } from './actions';
+import ParticipantVerificationDialog from './components/ParticipantVerificationDialog';
 import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID, MAX_MODE } from './constants';
 import { isMaxModeReached, isMaxModeThresholdReached } from './functions';
 import logger from './logger';
 import { E2EE_OFF_SOUND_FILE, E2EE_ON_SOUND_FILE } from './sounds';
+
 
 /**
  * Middleware that captures actions related to E2EE.
@@ -239,6 +243,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         break;
     }
+
+    case PARTICIPANT_VERIFIED: {
+        const { isVerified, pId } = action;
+
+        conference?.markParticipantVerified(pId, isVerified);
+        break;
+    }
+
+    case START_VERIFICATION: {
+        conference?.startVerification(action.pId);
+        break;
+    }
     }
 
     return next(action);
@@ -254,6 +270,29 @@ StateListenerRegistry.register(
         if (previousConference) {
             dispatch(toggleE2EE(false));
         }
+
+        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, (pId: string) => {
+            dispatch(participantUpdated({
+                e2eeVerificationAvailable: true,
+                id: pId
+            }));
+        });
+
+        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId: string, sas: object) => {
+            dispatch(openDialog(ParticipantVerificationDialog, { pId,
+                sas }));
+        });
+
+        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED,
+            (pId: string, success: boolean, message: string) => {
+                if (message) {
+                    logger.warn('E2EE_VERIFICATION_COMPLETED warning', message);
+                }
+                dispatch(participantUpdated({
+                    e2eeVerified: success,
+                    id: pId
+                }));
+            });
     });
 
 /**

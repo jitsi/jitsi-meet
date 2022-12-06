@@ -74,6 +74,11 @@ interface IProps extends WithTranslation {
     disableShowMoreStats: boolean;
 
     /**
+     * Whether or not the participant was verified.
+     */
+    e2eeVerified: boolean;
+
+    /**
      * Whether or not should display the "Save Logs" link.
      */
     enableSaveLogs: boolean;
@@ -486,6 +491,31 @@ class ConnectionStatsTable extends Component<IProps> {
         );
     }
 
+    /**
+     * Creates a a table row as a ReactElement for displaying e2ee verication status, if present.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderE2EEVerified() {
+        const { e2eeVerified, t } = this.props;
+
+        if (e2eeVerified === undefined) {
+            return;
+        }
+
+        const status = e2eeVerified ? '\u{2705}' : '\u{274C}';
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.e2eeVerified') }</span>
+                </td>
+                <td>{ status }</td>
+            </tr>
+        );
+    }
+
 
     /**
      * Creates a table row as a ReactElement for displaying a summary message
@@ -726,6 +756,7 @@ class ConnectionStatsTable extends Component<IProps> {
                     { this._renderResolution() }
                     { this._renderFrameRate() }
                     { this._renderCodecs() }
+                    { this._renderE2EEVerified() }
                 </tbody>
             </table>
         );
