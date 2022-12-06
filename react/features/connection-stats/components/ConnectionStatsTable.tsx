@@ -74,6 +74,11 @@ interface IProps extends WithTranslation {
     disableShowMoreStats: boolean;
 
     /**
+     * Whether or not the participant was verified.
+     */
+    e2eeVerified: boolean;
+
+    /**
      * Whether or not should display the "Save Logs" link.
      */
     enableSaveLogs: boolean;

@@ -16,8 +16,6 @@ class ChatPrivacyDialog extends AbstractChatPrivacyDialog {
      * @returns {ReactElement}
      */
     render() {
-        const { emoji } = this.props.sas;
-
         return (
             <Dialog
                 cancel = {{ translationKey: 'dialog.sendPrivateMessageCancel' }}
@@ -26,7 +24,7 @@ class ChatPrivacyDialog extends AbstractChatPrivacyDialog {
                 onSubmit = { this._onSendPrivateMessage }
                 titleKey = 'dialog.sendPrivateMessageTitle'>
                 <div>
-                    { emoji }
+                    { this.props.t('dialog.sendPrivateMessage') }
                 </div>
             </Dialog>
         );

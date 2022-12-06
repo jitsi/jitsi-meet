@@ -69,7 +69,7 @@ export function displayVerification(state: IReduxState, pId: string) {
     const { conference } = state['features/base/conference'];
     const participant = getParticipantById(state, pId);
 
-    return Boolean(conference.isE2EEEnabled()
-        && participant.e2eeVericationAvailable
-        && participant.e2eeVerified === undefined);
+    return Boolean(conference?.isE2EEEnabled()
+        && participant?.e2eeVerificationAvailable
+        && participant?.e2eeVerified === undefined);
 }

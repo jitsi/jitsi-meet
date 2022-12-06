@@ -59,6 +59,7 @@ export interface IJitsiConference {
     grantOwner: Function;
     isAVModerationSupported: Function;
     isCallstatsEnabled: Function;
+    isE2EEEnabled: Function;
     isEndConferenceSupported: Function;
     isLobbySupported: Function;
     isSIPCallingSupported: Function;

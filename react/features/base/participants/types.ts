@@ -13,6 +13,8 @@ export interface IParticipant {
     dominantSpeaker?: boolean;
     e2eeEnabled?: boolean;
     e2eeSupported?: boolean;
+    e2eeVerificationAvailable?: boolean;
+    e2eeVerified?: boolean;
     email?: string;
     fakeParticipant?: FakeParticipant;
     features?: {

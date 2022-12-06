@@ -271,27 +271,28 @@ StateListenerRegistry.register(
             dispatch(toggleE2EE(false));
         }
 
-        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, pId => {
+        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, (pId: string) => {
             dispatch(participantUpdated({
-                e2eeVericationAvailable: true,
+                e2eeVerificationAvailable: true,
                 id: pId
             }));
         });
 
-        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId, sas) => {
+        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId: string, sas: object) => {
             dispatch(openDialog(ParticipantVerificationDialog, { pId,
                 sas }));
         });
 
-        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED, (pId, success, message) => {
-            if (message) {
-                logger.warn('E2EE_VERIFICATION_COMPLETED warning', message);
-            }
-            dispatch(participantUpdated({
-                e2eeVerified: success,
-                id: pId
-            }));
-        });
+        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED,
+            (pId: string, success: boolean, message: string) => {
+                if (message) {
+                    logger.warn('E2EE_VERIFICATION_COMPLETED warning', message);
+                }
+                dispatch(participantUpdated({
+                    e2eeVerified: success,
+                    id: pId
+                }));
+            });
     });
 
 /**

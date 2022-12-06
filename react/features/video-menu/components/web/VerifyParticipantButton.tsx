@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { IconCheck } from '../../../base/icons';
+import { IconCheck } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { startVerification } from '../../../e2ee/actions';
 
@@ -24,11 +24,6 @@ interface IProps extends WithTranslation {
       * The ID of the participant that this button is supposed to verified.
       */
      participantID: string;
-
-     /**
-      * The function to be used to translate i18n labels.
-      */
-     t: Function;
 }
 
 const styles = () => {
@@ -61,7 +56,7 @@ class VerifyParticipantButton extends Component<IProps> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._handleClick = this._handleClick.bind(this);
