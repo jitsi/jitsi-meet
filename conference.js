@@ -668,6 +668,19 @@ export default {
             });
     },
 
+    /**
+     * Uses the passed promise arguments for tracks and connection in order to initialize and join the conference.
+     * NOTE: The function expects to receive connectionAndTracksPromiseFunction argument which will return a
+     * promise that will be resolved with the JitsiConnection instance and the local tracks or otherwise conP and trackP
+     * arguments which are promises that will be resolved respectively with the JitsiConnection instance and the local
+     * tracks .
+     *
+     * @param {Promise<JitsiConnection>} conP - A promise that will resolve with the JitsiConnection instance.
+     * @param {Promise<JitsiLocalTrack[]>} tracksP - A promise that will resolve with the local tracks.
+     * @param {Function} connectionAndTracksPromiseFunction - A function that returns a promise that will resolve with
+     * an array with the connection and the local tracks.
+     * @returns {Promise} - Returns a Promise that will resolve once we have joined a JitsiConference.
+     */
     async startConference(conP, tracksP, connectionAndTracksPromiseFunction) {
         const promiseCreator = connectionAndTracksPromiseFunction || (() => Promise.resolve([ tracksP, conP ]));
 
