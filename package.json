@@ -33,7 +33,7 @@
     "@giphy/react-native-sdk": "1.7.0",
     "@hapi/bourne": "2.0.0",
     "@jitsi/excalidraw": "https://github.com/jitsi/excalidraw/releases/download/v0.0.12/jitsi-excalidraw-0.0.12.tgz",
-    "@jitsi/js-utils": "2.0.4",
+    "@jitsi/js-utils": "2.0.5",
     "@jitsi/logger": "2.0.0",
     "@jitsi/rnnoise-wasm": "0.1.0",
     "@jitsi/rtcstats": "9.5.0",
