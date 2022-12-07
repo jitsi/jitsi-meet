@@ -27,6 +27,7 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'flex-start',
+            zIndex: 301,
             animation: `${keyframes`
                 0% {
                     opacity: 0.4;

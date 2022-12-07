@@ -3,6 +3,10 @@ import React, { Component, ComponentType } from 'react';
 
 import { IReduxState } from '../../../../app/types';
 import { IReactionEmojiProps } from '../../../../reactions/constants';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { JitsiPortal } from '../../../../toolbox/components/web';
+import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import { connect } from '../../../redux/functions';
 
 import DialogTransition from './DialogTransition';
@@ -23,6 +27,11 @@ interface IProps {
      * Whether the dialog is using the new component.
      */
     _isNewDialog: boolean;
+
+    /**
+     * Whether the overflow drawer should be used.
+     */
+    _overflowDrawer: boolean;
 
     /**
      * Array of reactions to be displayed.
@@ -69,7 +78,9 @@ class DialogContainer extends Component<IProps> {
     render() {
         return this.props._isNewDialog ? (
             <DialogTransition>
-                {this._renderDialogContent()}
+                {this.props._overflowDrawer
+                    ? <JitsiPortal>{this._renderDialogContent()}</JitsiPortal>
+                    : this._renderDialogContent() }
             </DialogTransition>
         ) : (
             <ModalTransition>
@@ -90,11 +101,13 @@ class DialogContainer extends Component<IProps> {
 function mapStateToProps(state: IReduxState) {
     const stateFeaturesBaseDialog = state['features/base/dialog'];
     const { reducedUI } = state['features/base/responsive-ui'];
+    const overflowDrawer = showOverflowDrawer(state);
 
     return {
         _component: stateFeaturesBaseDialog.component,
         _componentProps: stateFeaturesBaseDialog.componentProps,
         _isNewDialog: stateFeaturesBaseDialog.isNewDialog,
+        _overflowDrawer: overflowDrawer,
         _reducedUI: reducedUI
     };
 }
