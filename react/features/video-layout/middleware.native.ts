@@ -1,5 +1,5 @@
 import { setVideoMuted } from '../base/media/actions';
-import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
+import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { CLIENT_RESIZED } from '../base/responsive-ui/actionTypes';
 import { setLargeVideoDimensions } from '../large-video/actions.any';
@@ -19,7 +19,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case SET_CAR_MODE:
-        dispatch(setVideoMuted(action.enabled, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.CAR_MODE));
+        dispatch(setVideoMuted(action.enabled, VIDEO_MUTISM_AUTHORITY.CAR_MODE));
         break;
     case CLIENT_RESIZED: {
         const { clientHeight, clientWidth } = store.getState()['features/base/responsive-ui'];

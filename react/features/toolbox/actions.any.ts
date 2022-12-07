@@ -5,7 +5,7 @@ import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import { setAudioOnly } from '../base/audio-only/actions';
 import { setVideoMuted } from '../base/media/actions';
-import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
+import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 
 import {
     SET_TOOLBOX_ENABLED,
@@ -96,7 +96,6 @@ export function handleToggleVideoMuted(muted: boolean, showUI: boolean, ensureTr
         dispatch(
             setVideoMuted(
                 muted,
-                MEDIA_TYPE.VIDEO,
                 VIDEO_MUTISM_AUTHORITY.USER,
                 ensureTrack));
 
