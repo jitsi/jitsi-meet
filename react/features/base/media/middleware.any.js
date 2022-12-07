@@ -193,7 +193,7 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
     // Make sure we mute both the desktop and video tracks.
     dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
     if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-        dispatch(setScreenshareMuted(audioOnly, MEDIA_TYPE.SCREENSHARE, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
+        dispatch(setScreenshareMuted(audioOnly, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
     }
 
     return next(action);
