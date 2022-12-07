@@ -14,11 +14,11 @@ const useStyles = makeStyles()(theme => {
             padding: '8px 16px'
         },
         limitInfo: {
-            color: theme.palette.field01,
+            color: theme.palette.text.primary,
             ...withPixelLineHeight(theme.typography.bodyShortRegular)
         },
         link: {
-            color: theme.palette.field01,
+            color: `${theme.palette.text.primary} !important`,
             fontWeight: 'bold',
             textDecoration: 'underline'
         }
