@@ -208,6 +208,7 @@ class Popover extends Component<IProps, IState> {
                     { children }
                     <JitsiPortal>
                         <Drawer
+                            headingId = { headingId }
                             isOpen = { visible }
                             onClose = { this._onHideDialog }>
                             { content }
