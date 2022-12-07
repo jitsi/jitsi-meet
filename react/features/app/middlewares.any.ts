@@ -11,6 +11,7 @@ import '../base/media/middleware';
 import '../base/net-info/middleware';
 import '../base/participants/middleware';
 import '../base/responsive-ui/middleware';
+import '../base/redux/middleware';
 import '../base/settings/middleware';
 import '../base/sounds/middleware';
 import '../base/testing/middleware';

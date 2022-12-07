@@ -2,7 +2,6 @@ import '../authentication/middleware';
 import '../base/i18n/middleware';
 import '../base/devices/middleware';
 import '../base/media/middleware';
-import '../base/redux/middleware';
 import '../dynamic-branding/middleware';
 import '../e2ee/middleware';
 import '../external-api/middleware';

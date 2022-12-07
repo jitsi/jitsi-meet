@@ -141,7 +141,7 @@ react/features/sample/
 ```
 
 The middleware must be imported in `react/features/app/` specifically
-in `middlewares.any`, `middlewares.native.js` or `middlewares.web.js` where appropriate.
+in `middlewares.any.ts`, `middlewares.native.ts` or `middlewares.web.ts` where appropriate.
 Likewise for the reducer.
 
 An `index.js` file must not be provided for exporting actions, action types and
