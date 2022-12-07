@@ -71,6 +71,11 @@ export const navigationStyles = {
         marginRight: BaseTheme.spacing[1]
     },
 
+    pageReloadScreenContainer: {
+        backgroundColor: BaseTheme.palette.uiBackground,
+        flex: 1
+    },
+
     unreadCounterContainer: {
         alignItems: 'center',
         display: 'flex',

@@ -1,4 +1,4 @@
 // @flow
 
 export { default as OverlayContainer } from './OverlayContainer';
-export * from './_';
+export * from './_.web';

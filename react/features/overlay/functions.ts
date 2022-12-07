@@ -1,6 +1,6 @@
 import { IReduxState } from '../app/types';
 
-import { getOverlays } from './overlays.web';
+import { getOverlays } from './overlays';
 
 /**
  * Returns the overlay to be currently rendered.

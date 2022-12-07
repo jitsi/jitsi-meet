@@ -1,17 +1,17 @@
 import React from 'react';
 
 import { appNavigate, reloadNow } from '../../../app/actions';
-import { ConfirmDialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
+import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
+import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { connect } from '../../../base/redux';
-import { setFatalError, setPageReloadOverlayCanceled } from '../../actions';
+import { connect } from '../../../base/redux/functions';
+import { setFatalError, setPageReloadOverlayCanceled } from '../../../overlay/actions';
 import AbstractPageReloadOverlay, {
     type Props,
     abstractMapStateToProps
-} from '../AbstractPageReloadOverlay';
+} from '../../../overlay/components/AbstractPageReloadOverlay';
 
-import styles from './styles';
+import { navigationStyles } from './styles';
 
 
 /**
@@ -78,7 +78,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
         const { message, timeLeft, title } = this.state;
 
         return (
-            <JitsiScreen style = { styles.pageReloadScreenContainer }>
+            <JitsiScreen style = { navigationStyles.pageReloadScreenContainer }>
                 <ConfirmDialog
                     cancelLabel = 'dialog.Cancel'
                     confirmLabel = 'dialog.rejoinNow'
