@@ -1044,7 +1044,7 @@ export default {
                     showUI && APP.store.dispatch(notifyCameraError(error));
                 };
 
-            this.isCreatingLocalTrack = true;
+                this.isCreatingLocalTrack = true;
 
                 // Try to create local video if there wasn't any.
                 // This handles the case when user joined with no video
@@ -1437,32 +1437,28 @@ export default {
 
         logger.debug(`useVideoStream: ${newTrack}`);
 
-        return new Promise((resolve, reject) => {
-            const oldTrack = getLocalJitsiVideoTrack(state) ?? null;
+        const oldTrack = getLocalJitsiVideoTrack(state) ?? null;
 
-            logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
+        logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
 
-            if (oldTrack === newTrack) {
-                resolve();
+        if (oldTrack === newTrack) {
+            return Promise.resolve();
+        }
 
-                return;
-            }
+        // Add the track to the conference if there is no existing track, replace it otherwise.
+        const trackAction = oldTrack
+            ? replaceLocalTrack(oldTrack, newTrack, room)
+            : addLocalTrack(newTrack);
 
-            // Add the track to the conference if there is no existing track, replace it otherwise.
-            const trackAction = oldTrack
-                ? replaceLocalTrack(oldTrack, newTrack, room)
-                : addLocalTrack(newTrack);
+        return APP.store.dispatch(trackAction)
+            .then(() => {
+                this.setVideoMuteStatus();
+            })
+            .catch(error => {
+                logger.error(`useVideoStream failed: ${error}`);
 
-            APP.store.dispatch(trackAction)
-                .then(() => {
-                    this.setVideoMuteStatus();
-                })
-                .then(resolve)
-                .catch(error => {
-                    logger.error(`useVideoStream failed: ${error}`);
-                    reject(error);
-                });
-        });
+                return Promise.reject(error);
+            });
     },
 
     /**
@@ -1472,23 +1468,18 @@ export default {
      * @returns {Promise}
      */
     useAudioStream(newTrack) {
-        return new Promise((resolve, reject) => {
-            const oldTrack = getLocalJitsiAudioTrack(APP.store.getState());
+        const oldTrack = getLocalJitsiAudioTrack(APP.store.getState());
 
-            if (oldTrack === newTrack) {
-                resolve();
+        if (oldTrack === newTrack) {
+            Promise.resolve();
 
-                return;
-            }
+            return;
+        }
 
-            APP.store.dispatch(
-            replaceLocalTrack(oldTrack, newTrack, room))
-                .then(() => {
-                    this.setAudioMuteStatus(this.isLocalAudioMuted());
-                })
-                .then(resolve)
-                .catch(reject);
-        });
+        APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack, room))
+            .then(() => {
+                this.setAudioMuteStatus(this.isLocalAudioMuted());
+            });
     },
 
     /**
