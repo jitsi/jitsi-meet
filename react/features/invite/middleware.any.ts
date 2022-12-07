@@ -1,27 +1,28 @@
-// @flow
+import { AnyAction } from 'redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import {
-    CONFERENCE_JOINED
-} from '../base/conference';
+import { IStore } from '../app/types';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import {
     PARTICIPANT_JOINED,
-    PARTICIPANT_JOINED_SOUND_ID,
     PARTICIPANT_LEFT,
-    PARTICIPANT_UPDATED,
+    PARTICIPANT_UPDATED
+} from '../base/participants/actionTypes';
+import { pinParticipant } from '../base/participants/actions';
+import { PARTICIPANT_JOINED_SOUND_ID } from '../base/participants/constants';
+import {
     getLocalParticipant,
     getParticipantCount,
     getParticipantPresenceStatus,
-    getRemoteParticipants,
-    pinParticipant
-} from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
+    getRemoteParticipants
+} from '../base/participants/functions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import {
     playSound,
     registerSound,
     stopSound,
     unregisterSound
-} from '../base/sounds';
+} from '../base/sounds/actions';
 import {
     CALLING,
     CONNECTED_USER,
@@ -29,7 +30,7 @@ import {
     INVITED,
     REJECTED,
     RINGING
-} from '../presence-status';
+} from '../presence-status/constants';
 
 import {
     SET_CALLEE_INFO_VISIBLE,
@@ -48,8 +49,6 @@ import {
 } from './constants';
 import logger from './logger';
 import { sounds } from './sounds';
-
-declare var interfaceConfig: Object;
 
 /**
  * Maps the presence status with the ID of the sound that will be played when
@@ -84,7 +83,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     if (action.type === SET_CALLEE_INFO_VISIBLE) {
         if (action.calleeInfoVisible) {
-            dispatch(pinParticipant(getLocalParticipant(state).id));
+            dispatch(pinParticipant(getLocalParticipant(state)?.id));
         } else {
             // unpin participant
             dispatch(pinParticipant());
@@ -124,10 +123,10 @@ MiddlewareRegistry.register(store => next => action => {
 
         const oldSoundId
             = oldParticipantPresence
-                && statusToRingtone[oldParticipantPresence];
+            && statusToRingtone[oldParticipantPresence as keyof typeof statusToRingtone];
         const newSoundId
             = newParticipantPresence
-                && statusToRingtone[newParticipantPresence];
+            && statusToRingtone[newParticipantPresence as keyof typeof statusToRingtone];
 
 
         if (oldSoundId === newSoundId) {
@@ -159,10 +158,10 @@ MiddlewareRegistry.register(store => next => action => {
  * (not poltergeist, shared video, etc.) participants in the call.
  *
  * @param {Object} action - The redux action.
- * @param {ReduxStore} store - The redux store.
+ * @param {IStore} store - The redux store.
  * @returns {void}
  */
-function _maybeHideCalleeInfo(action, store) {
+function _maybeHideCalleeInfo(action: AnyAction, store: IStore) {
     const state = store.getState();
 
     if (!state['features/invite'].calleeInfoVisible) {
@@ -188,10 +187,10 @@ function _maybeHideCalleeInfo(action, store) {
 /**
  * Executes the pending invitation requests if any.
  *
- * @param {ReduxStore} store - The redux store.
+ * @param {IStore} store - The redux store.
  * @returns {void}
  */
-function _onConferenceJoined(store) {
+function _onConferenceJoined(store: IStore) {
     const { dispatch, getState } = store;
 
     const pendingInviteRequests

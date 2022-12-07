@@ -92,7 +92,7 @@ function pollForStatus(
                 return;
             }
 
-            const res = await executeDialOutStatusRequest(getDialOutStatusUrl(state), reqId);
+            const res = await executeDialOutStatusRequest(getDialOutStatusUrl(state) ?? '', reqId);
 
             switch (res) {
             case DIAL_OUT_STATUS.INITIATED:
@@ -153,7 +153,7 @@ export function dialOut(onSuccess: Function, onFail: Function) {
     return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const state = getState();
         const reqId = uuidv4();
-        const url = getDialOutUrl(state);
+        const url = getDialOutUrl(state) ?? '';
         const conferenceUrl = getDialOutConferenceUrl(state);
         const phoneNumber = getFullDialOutNumber(state);
         const countryCode = getDialOutCountry(state).code.toUpperCase();

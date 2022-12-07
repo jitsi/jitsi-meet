@@ -27,12 +27,12 @@ export interface IInviteState {
     conferenceID?: string | number;
     error?: Error;
     initialCalleeInfo?: Object;
-    numbers?: string;
+    numbers?: string[];
     numbersEnabled: boolean;
     numbersFetched: boolean;
     pendingInviteRequests: Array<{
         callback: Function;
-        invitees: Array<Object>;
+        invitees: Array<{ address: string; number: string; type: string; }>;
     }>;
     sipUri?: string;
 }

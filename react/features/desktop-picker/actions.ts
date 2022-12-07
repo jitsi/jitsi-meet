@@ -1,5 +1,6 @@
-import { openDialog } from '../base/dialog';
+import { openDialog } from '../base/dialog/actions';
 
+// @ts-ignore
 import { DesktopPicker } from './components';
 
 /**
@@ -10,7 +11,7 @@ import { DesktopPicker } from './components';
  * a DesktopCapturerSource has been chosen.
  * @returns {Object}
  */
-export function showDesktopPicker(options = {}, onSourceChoose) {
+export function showDesktopPicker(options: { desktopSharingSources?: any; } = {}, onSourceChoose: Function) {
     const { desktopSharingSources } = options;
 
     return openDialog(DesktopPicker, {

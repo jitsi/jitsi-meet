@@ -1,10 +1,11 @@
-// @flow
+import { AnyAction } from 'redux';
 
-import { hideDialog, openDialog } from '../base/dialog';
-import { MiddlewareRegistry } from '../base/redux';
+import { IStore } from '../app/types';
+import { hideDialog, openDialog } from '../base/dialog/actions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { BEGIN_ADD_PEOPLE, HIDE_ADD_PEOPLE_DIALOG } from './actionTypes';
-import { AddPeopleDialog } from './components';
+import AddPeopleDialog from './components/add-people-dialog/web/AddPeopleDialog';
 import './middleware.any';
 
 /**
@@ -37,7 +38,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _beginAddPeople({ dispatch }, next, action) {
+function _beginAddPeople({ dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     dispatch(openDialog(AddPeopleDialog));
@@ -58,7 +59,7 @@ function _beginAddPeople({ dispatch }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _hideAddPeopleDialog({ dispatch }, next, action) {
+function _hideAddPeopleDialog({ dispatch }: IStore, next: Function, action: AnyAction) {
     dispatch(hideDialog(AddPeopleDialog));
 
     return next(action);

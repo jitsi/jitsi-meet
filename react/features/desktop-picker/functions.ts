@@ -1,4 +1,3 @@
-
 import logger from './logger';
 
 /**
@@ -11,8 +10,8 @@ import logger from './logger';
  * return native image object used for the preview image of the source.
  * @returns {Function}
  */
-export function obtainDesktopSources(types, options = {}) {
-    const capturerOptions = {
+export function obtainDesktopSources(types: string[], options: { thumbnailSize?: Object; } = {}) {
+    const capturerOptions: any = {
         types
     };
 
@@ -23,10 +22,10 @@ export function obtainDesktopSources(types, options = {}) {
     return new Promise((resolve, reject) => {
         const { JitsiMeetElectron } = window;
 
-        if (JitsiMeetElectron && JitsiMeetElectron.obtainDesktopStreams) {
+        if (JitsiMeetElectron?.obtainDesktopStreams) {
             JitsiMeetElectron.obtainDesktopStreams(
-                sources => resolve(_separateSourcesByType(sources)),
-                error => {
+                (sources: Array<{ id: string; }>) => resolve(_separateSourcesByType(sources)),
+                (error: Error) => {
                     logger.error(
                         `Error while obtaining desktop sources: ${error}`);
                     reject(error);
@@ -54,8 +53,8 @@ export function obtainDesktopSources(types, options = {}) {
  * @returns {Object} An object with the sources split into separate arrays based
  * on source type.
  */
-function _separateSourcesByType(sources = []) {
-    const sourcesByType = {
+function _separateSourcesByType(sources: Array<{ id: string; }> = []) {
+    const sourcesByType: any = {
         screen: [],
         window: []
     };
