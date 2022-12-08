@@ -68,12 +68,13 @@ export function getGifAPIKey(state: IReduxState) {
 export function isGifEnabled(state: IReduxState) {
     const { disableThirdPartyRequests } = state['features/base/config'];
     const { giphy } = state['features/base/config'];
+    const showGiphyIntegration = state['features/dynamic-branding']?.showGiphyIntegration !== false;
 
     if (navigator.product === 'ReactNative' && window.JITSI_MEET_LITE_SDK) {
         return false;
     }
 
-    return Boolean(!disableThirdPartyRequests && giphy?.enabled && Boolean(giphy?.sdkKey));
+    return showGiphyIntegration && Boolean(!disableThirdPartyRequests && giphy?.enabled && Boolean(giphy?.sdkKey));
 }
 
 /**
