@@ -3,7 +3,8 @@ import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import debounce from 'lodash/debounce';
-import React, { Component } from 'react';
+import React, { Component, createRef, FocusEvent, KeyboardEvent } from 'react';
+import { RefObject } from 'react';
 import { connect } from 'react-redux';
 
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
@@ -388,6 +389,11 @@ class Thumbnail extends Component<IProps, IState> {
     timeoutHandle?: number;
 
     /**
+     * Ref to the container of the thumbnail.
+     */
+    containerRef?: RefObject<HTMLSpanElement>;
+
+    /**
      * Timeout used to detect double tapping.
      * It is active while user has tapped once.
      */
@@ -414,10 +420,12 @@ class Thumbnail extends Component<IProps, IState> {
             displayMode: computeDisplayModeFromInput(getDisplayModeInput(props, state))
         };
         this.timeoutHandle = undefined;
-
+        this.containerRef = createRef<HTMLSpanElement>();
         this._clearDoubleClickTimeout = this._clearDoubleClickTimeout.bind(this);
         this._onCanPlay = this._onCanPlay.bind(this);
         this._onClick = this._onClick.bind(this);
+        this._onFocus = this._onFocus.bind(this);
+        this._onBlur = this._onBlur.bind(this);
         this._onMouseEnter = this._onMouseEnter.bind(this);
         this._onMouseMove = debounce(this._onMouseMove.bind(this), 100, {
             leading: true,
@@ -732,6 +740,36 @@ class Thumbnail extends Component<IProps, IState> {
     }
 
     /**
+     * Keyboard focus handler.
+     *
+     * When navigating with keyboard, make things behave as we
+     * hover with the mouse, to make the UI show up.
+     *
+     * @returns {void}
+     */
+    _onFocus() {
+        this.setState({ isHovered: true });
+    }
+
+    /**
+     * Keyboard blur handler.
+     *
+     * When navigating with keyboard, make things behave as we
+     * hover with the mouse, to make the UI show up.
+     *
+     * @returns {void}
+     */
+    _onBlur() {
+        // we need this timeout trick so that we get the actual document.activeElement value
+        // instead of document.body
+        setTimeout(() => {
+            if (!this.containerRef?.current?.contains(document.activeElement)) {
+                this.setState({ isHovered: false });
+            }
+        }, 0);
+    }
+
+    /**
      * Mouse enter handler.
      *
      * @returns {void}
@@ -1022,6 +1060,8 @@ class Thumbnail extends Component<IProps, IState> {
                     ? `localVideoContainer${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`
                     : `participant_${id}${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`
                 }
+                onBlur = { this._onBlur }
+                onFocus = { this._onFocus }
                 { ...(_isMobile
                     ? {
                         onTouchEnd: this._onTouchEnd,
@@ -1035,6 +1075,7 @@ class Thumbnail extends Component<IProps, IState> {
                         onMouseLeave: this._onMouseLeave
                     }
                 ) }
+                ref = { this.containerRef }
                 style = { styles.thumbnail }>
                 {!_gifSrc && (local
                     ? <span id = 'localVideoWrapper'>{video}</span>
