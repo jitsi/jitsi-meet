@@ -237,15 +237,18 @@ function sendData(command, value) {
 /**
  * Mute or unmute local audio stream if it exists.
  * @param {boolean} muted - if audio stream should be muted or unmuted.
+ *
+ * @returns {Promise}
  */
 function muteLocalAudio(muted) {
-    APP.store.dispatch(setAudioMuted(muted));
+    return APP.store.dispatch(setAudioMuted(muted));
 }
 
 /**
  * Mute or unmute local video stream if it exists.
  * @param {boolean} muted if video stream should be muted or unmuted.
  *
+ * @returns {Promise}
  */
 function muteLocalVideo(muted) {
     return APP.store.dispatch(setVideoMuted(muted));
@@ -769,15 +772,21 @@ export default {
             logger.warn('initial device list initialization failed', error);
         }
 
-        const handleStartAudioMuted = (options, tracks) => {
+        const handleStartAudioMuted = async (options, tracks) => {
             if (options.startWithAudioMuted) {
                 // Always add the track on Safari because of a known issue where audio playout doesn't happen
                 // if the user joins audio and video muted, i.e., if there is no local media capture.
                 if (browser.isWebKitBased()) {
-                    this.muteAudio(true, true);
-                } else {
-                    return tracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+                    try {
+                        await this.muteAudio(true, true);
+                    } catch (error) {
+                        logger.error('Unmute audio failed!');
+                    }
+
+                    return tracks;
                 }
+
+                return tracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
             }
 
             return tracks;
@@ -815,22 +824,26 @@ export default {
 
                     this._displayErrorsForCreateInitialLocalTracks(errors);
 
-                    let localTracks = handleStartAudioMuted(initialOptions, tracks);
+                    return handleStartAudioMuted(initialOptions, tracks)
+                        .then(localTracks => {
+                            let filteredTracks = localTracks;
 
-                    // in case where gum is slow and resolves after the startAudio/VideoMuted coming from jicofo, we
-                    // can be join unmuted even though jicofo had instruct us to mute, so let's respect that before
-                    // passing the tracks
-                    if (!browser.isWebKitBased()) {
-                        if (room?.isStartAudioMuted()) {
-                            localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
-                        }
-                    }
+                            // in case where gum is slow and resolves after the startAudio/VideoMuted coming from
+                            // jicofo, we can be join unmuted even though jicofo had instruct us to mute, so let's
+                            // respect that before passing the tracks
+                            if (!browser.isWebKitBased()) {
+                                if (room?.isStartAudioMuted()) {
+                                    filteredTracks
+                                        = filteredTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+                                }
+                            }
 
-                    if (room?.isStartVideoMuted()) {
-                        localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.VIDEO);
-                    }
+                            if (room?.isStartVideoMuted()) {
+                                filteredTracks = filteredTracks.filter(track => track.getType() !== MEDIA_TYPE.VIDEO);
+                            }
 
-                    return this._setLocalAudioVideoStreams(localTracks);
+                            return this._setLocalAudioVideoStreams(filteredTracks);
+                        });
                 });
             }));
         }
@@ -841,7 +854,8 @@ export default {
             promise.then(() => {
                 this._initDeviceList(true);
             });
-            promise = promise.then(([ tracks, con ]) => [ handleStartAudioMuted(initialOptions, tracks), con ]);
+            promise = promise.then(
+                ([ tracks, con ]) => handleStartAudioMuted(initialOptions, tracks).then(lTracks => [ lTracks, con ]));
 
             return promise;
         };
@@ -929,6 +943,8 @@ export default {
      * @param {boolean} mute true for mute and false for unmute.
      * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
+     *
+     * @returns {Promise}
      */
     muteAudio(mute, showUI = true) {
         const state = APP.store.getState();
@@ -937,7 +953,7 @@ export default {
             && isUserInteractionRequiredForUnmute(state)) {
             logger.error('Unmuting audio requires user interaction');
 
-            return;
+            return Promise.resolve();
         }
 
         // check for A/V Moderation when trying to unmute
@@ -946,7 +962,7 @@ export default {
                 APP.store.dispatch(showModeratedNotification(MEDIA_TYPE.AUDIO));
             }
 
-            return;
+            return Promise.resolve();
         }
 
         APP.store.dispatch(executeTrackOperation(TrackOperationType.Audio, () => {
@@ -1484,12 +1500,10 @@ export default {
         const oldTrack = getLocalJitsiAudioTrack(APP.store.getState());
 
         if (oldTrack === newTrack) {
-            Promise.resolve();
-
-            return;
+            return Promise.resolve();
         }
 
-        APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack, room))
+        return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack, room))
             .then(() => {
                 this.setAudioMuteStatus(this.isLocalAudioMuted());
             });
@@ -2070,11 +2084,7 @@ export default {
                     || (videoMuted && type === MEDIA_TYPE.VIDEO)) {
                     promises.push(dispatch(executeTrackOperation(
                         type === MEDIA_TYPE.AUDIO ? TrackOperationType.Audio : TrackOperationType.Video,
-                        () => {
-                            console.error('replace stored track track');
-
-                            return dispatch(replaceStoredTracks(jitsiTrack, null));
-                        })));
+                        () => dispatch(replaceStoredTracks(jitsiTrack, null)))));
                 }
             }
 
