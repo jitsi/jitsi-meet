@@ -773,9 +773,8 @@
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "Set by another participant",
-    "pinnedParticipant": "The participant is pinned",
     "pinParticipant": "{{participantName}} - Pin",
-    "unpinParticipant": "{{participantName}} - Unpin",
+    "pinnedParticipant": "The participant is pinned",
     "polls": {
         "answer": {
             "skip": "Skip",
@@ -1251,6 +1250,7 @@
         "subtitlesOff": "Off",
         "tr": "TR"
     },
+    "unpinParticipant": "{{participantName}} - Unpin",
     "userMedia": {
         "androidGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
         "chromeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
