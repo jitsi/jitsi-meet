@@ -3,8 +3,8 @@ import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import debounce from 'lodash/debounce';
-import React, { Component, createRef, FocusEvent, KeyboardEvent } from 'react';
-import { RefObject } from 'react';
+import React, { Component, KeyboardEvent, RefObject, createRef } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
@@ -13,6 +13,7 @@ import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
 import { isMobileBrowser } from '../../../base/environment/utils';
+import { translate } from '../../../base/i18n/functions';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 // @ts-ignore
 import { VideoTrack } from '../../../base/media';
@@ -29,6 +30,8 @@ import {
 import { IParticipant } from '../../../base/participants/types';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { isTestModeEnabled } from '../../../base/testing/functions';
+// @ts-ignore
+import { Tooltip } from '../../../base/tooltip';
 import { trackStreamingStatusChanged, updateLastTrackVideoMediaEvent } from '../../../base/tracks/actions';
 import {
     getLocalAudioTrack,
@@ -98,7 +101,7 @@ export interface IState {
 /**
  * The type of the React {@code Component} props of {@link Thumbnail}.
  */
-export interface IProps {
+export interface IProps extends WithTranslation {
 
     /**
      * The audio track related to the participant.
@@ -373,6 +376,22 @@ const defaultStyles = (theme: Theme) => {
             height: '100%',
             backgroundColor: `${theme.palette.uiBackground}`,
             opacity: 0.8
+        },
+
+        keyboardPinButton: {
+            position: 'absolute' as const,
+            zIndex: 10,
+
+            /* this button is only for keyboard/screen reader users,
+            an onClick handler is already set elsewhere for mouse users, so make sure
+            we can't click on it */
+            pointerEvents: 'none' as const,
+
+            // make room for the border to correctly show up
+            left: '3px',
+            right: '3px',
+            bottom: '3px',
+            top: '3px'
         }
     };
 };
@@ -424,6 +443,7 @@ class Thumbnail extends Component<IProps, IState> {
         this._clearDoubleClickTimeout = this._clearDoubleClickTimeout.bind(this);
         this._onCanPlay = this._onCanPlay.bind(this);
         this._onClick = this._onClick.bind(this);
+        this._onTogglePinButtonKeyDown = this._onTogglePinButtonKeyDown.bind(this);
         this._onFocus = this._onFocus.bind(this);
         this._onBlur = this._onBlur.bind(this);
         this._onMouseEnter = this._onMouseEnter.bind(this);
@@ -740,6 +760,18 @@ class Thumbnail extends Component<IProps, IState> {
     }
 
     /**
+     * This is called as a onKeydown handler on the keyboard-only button to toggle pin.
+     *
+     * @param {KeyboardEvent} event - The keydown event.
+     * @returns {void}
+     */
+    _onTogglePinButtonKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            this._onClick();
+        }
+    }
+
+    /**
      * Keyboard focus handler.
      *
      * When navigating with keyboard, make things behave as we
@@ -763,7 +795,12 @@ class Thumbnail extends Component<IProps, IState> {
         // we need this timeout trick so that we get the actual document.activeElement value
         // instead of document.body
         setTimeout(() => {
-            if (!this.containerRef?.current?.contains(document.activeElement)) {
+            // we also explicitly check for popovers, because the thumbnail can show popovers,
+            // and they are not rendered in the thumbnail DOM element
+            if (
+                !this.containerRef?.current?.contains(document.activeElement)
+                && document.activeElement?.closest('.popover') === null
+            ) {
                 this.setState({ isHovered: false });
             }
         }, 0);
@@ -846,21 +883,27 @@ class Thumbnail extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderFakeParticipant() {
-        const { _isMobile, _participant: { avatarURL } } = this.props;
+        const { _isMobile, _participant: { avatarURL, pinned, name } } = this.props;
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
         return (
             <span
+                aria-label = { this.props.t(pinned ? 'unpinParticipant' : 'pinParticipant', {
+                    participantName: name
+                }) }
                 className = { containerClassName }
                 id = 'sharedVideoContainer'
                 onClick = { this._onClick }
+                onKeyDown = { this._onTogglePinButtonKeyDown }
                 { ...(_isMobile ? {} : {
                     onMouseEnter: this._onMouseEnter,
                     onMouseMove: this._onMouseMove,
                     onMouseLeave: this._onMouseLeave
                 }) }
-                style = { styles.thumbnail }>
+                role = 'button'
+                style = { styles.thumbnail }
+                tabIndex = { 0 }>
                 {avatarURL ? (
                     <img
                         className = 'sharedVideoAvatar'
@@ -1019,9 +1062,10 @@ class Thumbnail extends Component<IProps, IState> {
             _thumbnailType,
             _videoTrack,
             classes,
-            filmstripType
+            filmstripType,
+            t
         } = this.props;
-        const { id } = _participant || {};
+        const { id, name, pinned } = _participant || {};
         const { isHovered, popoverVisible } = this.state;
         const styles = this._getStyles();
         let containerClassName = this._getContainerClassName();
@@ -1030,6 +1074,9 @@ class Thumbnail extends Component<IProps, IState> {
         const jitsiVideoTrack = _videoTrack?.jitsiTrack;
         const videoTrackId = jitsiVideoTrack?.getId();
         const videoEventListeners: any = {};
+        const pinButtonLabel = t(pinned ? 'unpinParticipant' : 'pinParticipant', {
+            participantName: name
+        });
 
         if (local) {
             if (_isMobilePortrait) {
@@ -1077,6 +1124,17 @@ class Thumbnail extends Component<IProps, IState> {
                 ) }
                 ref = { this.containerRef }
                 style = { styles.thumbnail }>
+                {/* this "button" is invisible, only here so that
+                keyboard/screen reader users can pin/unpin */}
+                <Tooltip
+                    content = { pinButtonLabel }>
+                    <span
+                        aria-label = { pinButtonLabel }
+                        className = { classes.keyboardPinButton }
+                        onKeyDown = { this._onTogglePinButtonKeyDown }
+                        role = 'button'
+                        tabIndex = { 0 } />
+                </Tooltip>
                 {!_gifSrc && (local
                     ? <span id = 'localVideoWrapper'>{video}</span>
                     : video)}
@@ -1363,4 +1421,4 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     };
 }
 
-export default connect(_mapStateToProps)(withStyles(defaultStyles)(Thumbnail));
+export default connect(_mapStateToProps)(withStyles(defaultStyles)(translate(Thumbnail)));

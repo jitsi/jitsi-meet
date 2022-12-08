@@ -774,6 +774,8 @@
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "Set by another participant",
     "pinnedParticipant": "The participant is pinned",
+    "pinParticipant": "{{participantName}} - Pin",
+    "unpinParticipant": "{{participantName}} - Unpin",
     "polls": {
         "answer": {
             "skip": "Skip",
