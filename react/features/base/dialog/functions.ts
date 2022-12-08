@@ -2,9 +2,7 @@ import { ComponentType } from 'react';
 
 import { IReduxState } from '../../app/types';
 import { IStateful } from '../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { ColorSchemeRegistry } from '../color-scheme';
+import ColorSchemeRegistry from '../color-scheme/ColorSchemeRegistry';
 import { toState } from '../redux/functions';
 
 /**
@@ -28,7 +26,7 @@ export function isAnyDialogOpen(stateful: IStateful) {
  * {@code Dialog} to be checked.
  * @returns {boolean}
  */
-export function isDialogOpen(stateful: IStateful, component: ComponentType) {
+export function isDialogOpen(stateful: IStateful, component: ComponentType<any>) {
     return toState(stateful)['features/base/dialog'].component === component;
 }
 

@@ -5,8 +5,6 @@ import {
     isLocalParticipantModerator
 } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { getPinnedActiveParticipants, isStageFilmstripEnabled } from '../filmstrip/functions';
 import { shouldDisplayTileView } from '../video-layout/functions';
 

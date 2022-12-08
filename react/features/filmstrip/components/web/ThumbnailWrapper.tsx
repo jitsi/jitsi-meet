@@ -1,13 +1,14 @@
-/* @flow */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { shouldComponentUpdate } from 'react-window';
 
-import { getLocalParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
+import { IReduxState } from '../../../app/types';
+import { getLocalParticipant } from '../../../base/participants/functions';
 import { getHideSelfView } from '../../../base/settings/functions.any';
-import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
+import { LAYOUTS } from '../../../video-layout/constants';
+import { getCurrentLayout } from '../../../video-layout/functions.web';
 import { FILMSTRIP_TYPE, TILE_ASPECT_RATIO, TILE_HORIZONTAL_MARGIN } from '../../constants';
-import { getActiveParticipantsIds, showGridInVerticalView } from '../../functions';
+import { getActiveParticipantsIds, showGridInVerticalView } from '../../functions.web';
 
 import Thumbnail from './Thumbnail';
 
@@ -19,53 +20,53 @@ type Props = {
     /**
      * Whether or not to hide the self view.
      */
-    _disableSelfView: boolean,
+    _disableSelfView?: boolean;
 
     /**
      * The type of filmstrip this thumbnail is displayed in.
      */
-    _filmstripType: string,
+    _filmstripType?: string;
 
     /**
      * The horizontal offset in px for the thumbnail. Used to center the thumbnails in the last row in tile view.
      */
-    _horizontalOffset: number,
-
-    /**
-     * The ID of the participant associated with the Thumbnail.
-     */
-    _participantID: ?string,
+    _horizontalOffset?: number;
 
     /**
      * Whether or not the thumbnail is a local screen share.
      */
-    _isLocalScreenShare: boolean,
+    _isLocalScreenShare?: boolean;
+
+    /**
+     * The ID of the participant associated with the Thumbnail.
+     */
+    _participantID?: string;
 
     /**
      * The width of the thumbnail. Used for expanding the width of the thumbnails on last row in case
      * there is empty space.
      */
-    _thumbnailWidth: number,
+    _thumbnailWidth?: number;
 
     /**
      * The index of the column in tile view.
      */
-    columnIndex?: number,
+    columnIndex?: number;
 
     /**
      * The index of the ThumbnailWrapper in stage view.
      */
-    index?: number,
+    index?: number;
 
     /**
      * The index of the row in tile view.
      */
-    rowIndex?: number,
+    rowIndex?: number;
 
     /**
      * The styles coming from react-window.
      */
-    style: Object
+    style: Object;
 };
 
 /**
@@ -73,6 +74,7 @@ type Props = {
  * to the Thumbnail Component's props.
  */
 class ThumbnailWrapper extends Component<Props> {
+    shouldComponentUpdate: (p: any, s: any) => boolean;
 
     /**
      * Creates new ThumbnailWrapper instance.
@@ -84,8 +86,6 @@ class ThumbnailWrapper extends Component<Props> {
 
         this.shouldComponentUpdate = shouldComponentUpdate.bind(this);
     }
-
-    shouldComponentUpdate: Props => boolean;
 
     /**
      * Implements React's {@link Component#render()}.
@@ -148,7 +148,8 @@ class ThumbnailWrapper extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: { columnIndex: number;
+        data: { filmstripType: string; }; index?: number; rowIndex: number; }) {
     const _currentLayout = getCurrentLayout(state);
     const { remoteParticipants: remote } = state['features/filmstrip'];
     const activeParticipants = getActiveParticipantsIds(state);
@@ -159,23 +160,23 @@ function _mapStateToProps(state, ownProps) {
     const sortedActiveParticipants = activeParticipants.sort();
     const remoteParticipants = stageFilmstrip ? sortedActiveParticipants : remote;
     const remoteParticipantsLength = remoteParticipants.length;
-    const localId = getLocalParticipant(state).id;
+    const localId = getLocalParticipant(state)?.id;
 
     if (_currentLayout === LAYOUTS.TILE_VIEW || _verticalViewGrid || stageFilmstrip) {
         const { columnIndex, rowIndex } = ownProps;
         const { tileViewDimensions, stageFilmstripDimensions, verticalViewDimensions } = state['features/filmstrip'];
         const { gridView } = verticalViewDimensions;
-        let gridDimensions = tileViewDimensions.gridDimensions,
-            thumbnailSize = tileViewDimensions.thumbnailSize;
+        let gridDimensions = tileViewDimensions?.gridDimensions,
+            thumbnailSize = tileViewDimensions?.thumbnailSize;
 
         if (stageFilmstrip) {
             gridDimensions = stageFilmstripDimensions.gridDimensions;
             thumbnailSize = stageFilmstripDimensions.thumbnailSize;
         } else if (_verticalViewGrid) {
-            gridDimensions = gridView.gridDimensions;
-            thumbnailSize = gridView.thumbnailSize;
+            gridDimensions = gridView?.gridDimensions;
+            thumbnailSize = gridView?.thumbnailSize;
         }
-        const { columns, rows } = gridDimensions;
+        const { columns = 1, rows = 1 } = gridDimensions ?? {};
         const index = (rowIndex * columns) + columnIndex;
         let horizontalOffset, thumbnailWidth;
         const { iAmRecorder, disableTileEnlargement } = state['features/base/config'];
@@ -202,7 +203,7 @@ function _mapStateToProps(state, ownProps) {
             const partialLastRowParticipantsNumber = participantsLength % columns;
 
             if (partialLastRowParticipantsNumber > 0) {
-                const { width, height } = thumbnailSize;
+                const { width = 1, height = 1 } = thumbnailSize ?? {};
                 const availableWidth = columns * (width + TILE_HORIZONTAL_MARGIN);
                 let widthDifference = 0;
                 let widthToUse = width;

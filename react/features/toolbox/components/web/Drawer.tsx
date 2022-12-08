@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { DRAWER_MAX_HEIGHT } from '../../constants';
@@ -9,7 +9,7 @@ interface IProps {
     /**
      * The component(s) to be displayed within the drawer menu.
      */
-    children: ReactElement;
+    children: ReactNode;
 
     /**
      * Class name for custom styles.
@@ -24,7 +24,7 @@ interface IProps {
     /**
      * Function that hides the drawer.
      */
-    onClose: Function;
+    onClose?: Function;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -68,7 +68,7 @@ function Drawer({
      */
     const handleOutsideClick = useCallback(event => {
         event.stopPropagation();
-        onClose();
+        onClose?.();
     }, [ onClose ]);
 
     return (

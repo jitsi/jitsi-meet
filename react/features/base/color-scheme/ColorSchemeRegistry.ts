@@ -1,7 +1,6 @@
-// @flow
-
-import { toState } from '../redux';
-import { StyleType } from '../styles';
+import { IStateful } from '../app/types';
+import { toState } from '../redux/functions';
+import { StyleType } from '../styles/functions.any';
 
 import defaultScheme from './defaultScheme';
 
@@ -34,13 +33,13 @@ class ColorSchemeRegistry {
     /**
      * Retrieves the color-scheme applied style definition of a component.
      *
-     * @param {Object | Function} stateful - An object or function that can be
+     * @param {IStateful} stateful - An object or function that can be
      * resolved to Redux state using the {@code toState} function.
      * @param {string} componentName - The name of the component whose style we
      * want to retrieve.
      * @returns {StyleType}
      */
-    get(stateful: Object | Function, componentName: string): StyleType {
+    get(stateful: IStateful, componentName: string): StyleType {
         let schemedStyle = this._schemedStyles.get(componentName);
 
         if (!schemedStyle) {
@@ -78,7 +77,7 @@ class ColorSchemeRegistry {
      * Creates a color schemed style object applying the color scheme to every
      * colors in the style object prepared in a special way.
      *
-     * @param {Object | Function} stateful - An object or function that can be
+     * @param {IStateful} stateful - An object or function that can be
      * resolved to Redux state using the {@code toState} function.
      * @param {string} componentName - The name of the component to apply the
      * color scheme to.
@@ -87,10 +86,10 @@ class ColorSchemeRegistry {
      * @returns {StyleType}
      */
     _applyColorScheme(
-            stateful: Object | Function,
+            stateful: IStateful,
             componentName: string,
             style: StyleType): StyleType {
-        let schemedStyle;
+        let schemedStyle: any;
 
         if (Array.isArray(style)) {
             // The style is an array of styles, we apply the same transformation
@@ -116,7 +115,7 @@ class ColorSchemeRegistry {
                     // The value is another style object, we apply the same
                     // transformation recursively.
                     schemedStyle[styleName]
-                        = this._applyColorScheme(
+                        = this._applyColorScheme( // @ts-ignore
                             stateful, componentName, styleValue);
                 } else if (typeof styleValue === 'function') {
                     // The value is a function, which indicates that it's a
@@ -137,7 +136,7 @@ class ColorSchemeRegistry {
     /**
      * Function to get the color value for the provided identifier.
      *
-     * @param {Object | Function} stateful - An object or function that can be
+     * @param {IStateful} stateful - An object or function that can be
      * resolved to Redux state using the {@code toState} function.
      * @param {string} componentName - The name of the component to get the
      * color value for.
@@ -146,7 +145,7 @@ class ColorSchemeRegistry {
      * @returns {string}
      */
     _getColor(
-            stateful: Object | Function,
+            stateful: IStateful,
             componentName: string,
             colorDefinition: string): string {
         const colorScheme = toState(stateful)['features/base/color-scheme'] || {};
@@ -154,7 +153,7 @@ class ColorSchemeRegistry {
         return {
             ...defaultScheme._defaultTheme,
             ...colorScheme._defaultTheme,
-            ...defaultScheme[componentName],
+            ...defaultScheme[componentName as keyof typeof defaultScheme],
             ...colorScheme[componentName]
         }[colorDefinition];
     }

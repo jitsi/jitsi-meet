@@ -1,9 +1,11 @@
-/* @flow */
 import Platform from '../react/Platform';
 
-import { ColorPalette } from './components';
+import { ColorPalette } from './components/styles/ColorPalette';
 
-declare type StyleSheet = Object;
+declare type StyleSheet = {
+    [key: string]: string;
+};
+
 export type StyleType = StyleSheet | Array<StyleSheet>;
 
 /**
@@ -44,7 +46,7 @@ const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
  * @param {Styletype} st - The complex style type.
  * @returns {Object}
  */
-export function styleTypeToObject(st: StyleType): Object {
+export function styleTypeToObject(st: StyleType): { [key: string]: string | number; } {
     if (!st) {
         return {};
     }
@@ -103,12 +105,15 @@ export function combineStyles(a: StyleType, b: StyleType): StyleType {
  */
 export function createStyleSheet(
         styles: StyleSheet, overrides: StyleSheet = {}): StyleSheet {
-    const combinedStyles = {};
+    const combinedStyles: any = {};
 
     for (const k of Object.keys(styles)) {
         combinedStyles[k]
             = _shimStyles({
+                // @ts-ignore
                 ...styles[k],
+
+                // @ts-ignore
                 ...overrides[k]
             });
     }
@@ -126,9 +131,12 @@ export function createStyleSheet(
  * @public
  * @returns {StyleSheet}
  */
-export function fixAndroidViewClipping<T: StyleSheet>(styles: T): T {
+export function fixAndroidViewClipping<T extends StyleSheet>(styles: T): T {
     if (Platform.OS === 'android') {
+        // @ts-ignore
         styles.borderColor = ColorPalette.appBackground;
+
+        // @ts-ignore
         styles.borderWidth = 1;
     }
 
@@ -220,7 +228,7 @@ function _getColorLuminance(c: number): number {
  *     b: number
  * }}
  */
-function _getRGBObjectFormat(color: string): {r: number, g: number, b: number} {
+function _getRGBObjectFormat(color: string): { b: number; g: number; r: number; } {
     let match = color.match(HEX_LONG_COLOR_FORMAT);
 
     if (match) {
@@ -265,7 +273,7 @@ function _getRGBObjectFormat(color: string): {r: number, g: number, b: number} {
  * @private
  * @returns {StyleSheet}
  */
-function _shimStyles<T: StyleSheet>(styles: T): T {
+function _shimStyles<T extends StyleSheet>(styles: T): T {
     // Certain style properties may not be numbers on Web but must be numbers on
     // React Native. For example, height and width may be expressed in percent
     // on Web but React Native will not understand them and we will get errors
@@ -281,6 +289,7 @@ function _shimStyles<T: StyleSheet>(styles: T): T {
             if (Number.isNaN(numberV)) {
                 delete styles[k];
             } else {
+                // @ts-ignore
                 styles[k] = numberV;
             }
         }

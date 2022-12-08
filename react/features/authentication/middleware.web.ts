@@ -24,9 +24,8 @@ import {
     openWaitForOwnerDialog,
     stopWaitForOwner
 } from './actions.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { LoginDialog, WaitForOwnerDialog } from './components';
+import LoginDialog from './components/web/LoginDialog';
+import WaitForOwnerDialog from './components/web/WaitForOwnerDialog';
 
 /**
  * Middleware that captures connection or conference failed errors and controls

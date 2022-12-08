@@ -6,6 +6,7 @@ import AbstractPollsPane, { AbstractProps } from '../AbstractPollsPane';
 
 import PollCreate from './PollCreate';
 import PollsList from './PollsList';
+/* eslint-enable lines-around-comment */
 
 const useStyles = makeStyles()(() => {
     return {

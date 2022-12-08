@@ -12,6 +12,7 @@ import { E2EESection } from '../../../../e2ee/components';
 import { LobbySection } from '../../../../lobby';
 
 import PasswordSection from './PasswordSection';
+/* eslint-enable lines-around-comment */
 
 export interface INotifyClick {
     key: string;

@@ -12,6 +12,7 @@ import Button from '../../../../base/ui/components/web/Button';
 import Label from '../Label';
 // @ts-ignore
 import CountryPicker from '../country-picker/CountryPicker';
+/* eslint-enable lines-around-comment */
 
 interface IProps extends WithTranslation {
 

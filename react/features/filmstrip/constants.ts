@@ -1,5 +1,4 @@
-// @ts-ignore
-import { BoxModel } from '../base/styles';
+import { BoxModel } from '../base/styles/components/styles/BoxModel';
 
 /**
  * The size (height and width) of the small (not tile view) thumbnails.

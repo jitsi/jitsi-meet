@@ -9,7 +9,6 @@ import {
     getUserSelectedMicDeviceId
 } from '../settings/functions.web';
 
-// @ts-ignore
 import loadEffects from './loadEffects';
 import logger from './logger';
 import { ITrackOptions } from './types';

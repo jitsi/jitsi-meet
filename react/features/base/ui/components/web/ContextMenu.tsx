@@ -2,9 +2,8 @@ import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from '
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Drawer, JitsiPortal } from '../../../../toolbox/components/web';
+import Drawer from '../../../../toolbox/components/web/Drawer';
+import JitsiPortal from '../../../../toolbox/components/web/JitsiPortal';
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
 import { withPixelLineHeight } from '../../../styles/functions.web';
@@ -202,7 +201,7 @@ const ContextMenu = ({
     return _overflowDrawer
         ? <JitsiPortal>
             <Drawer
-                isOpen = { isDrawerOpen && _overflowDrawer }
+                isOpen = { Boolean(isDrawerOpen && _overflowDrawer) }
                 onClose = { onDrawerClose }>
                 <div
                     className = { styles.drawer }

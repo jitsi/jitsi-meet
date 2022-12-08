@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -15,15 +14,16 @@ import { startVerification } from '../../../e2ee/actions';
  * {@link VerifyParticipantButton}.
  */
 interface IProps extends WithTranslation {
+
     /**
      * The redux {@code dispatch} function.
      */
-     dispatch: Function;
+    dispatch: Function;
 
-     /**
+    /**
       * The ID of the participant that this button is supposed to verified.
       */
-     participantID: string;
+    participantID: string;
 }
 
 const styles = () => {

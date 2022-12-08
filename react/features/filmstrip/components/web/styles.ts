@@ -1,3 +1,4 @@
+import { Theme } from '@mui/material';
 
 const BACKGROUND_COLOR = 'rgba(51, 51, 51, .5)';
 
@@ -7,17 +8,17 @@ const BACKGROUND_COLOR = 'rgba(51, 51, 51, .5)';
  * @param {Object} theme - The current theme.
  * @returns {Object}
  */
-export const styles = theme => {
+export const styles = (theme: Theme) => {
     return {
         toggleFilmstripContainer: {
             display: 'flex',
-            flexWrap: 'nowrap',
+            flexWrap: 'nowrap' as const,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: BACKGROUND_COLOR,
             width: '32px',
             height: '24px',
-            position: 'absolute',
+            position: 'absolute' as const,
             borderRadius: '4px',
             top: 'calc(-24px - 3px)',
             left: 'calc(50% - 16px)',
@@ -33,7 +34,7 @@ export const styles = theme => {
         toggleFilmstripButton: {
             fontSize: '14px',
             lineHeight: 1.2,
-            textAlign: 'center',
+            textAlign: 'center' as const,
             background: 'transparent',
             height: 'auto',
             width: '100%',
@@ -61,7 +62,7 @@ export const styles = theme => {
         },
 
         toggleTopPanelContainerHidden: {
-            visibility: 'hidden'
+            visibility: 'hidden' as const
         },
 
         filmstrip: {
@@ -83,7 +84,7 @@ export const styles = theme => {
                 },
 
                 '& .dragHandleContainer': {
-                    visibility: 'visible'
+                    visibility: 'visible' as const
                 }
             },
 
@@ -112,8 +113,8 @@ export const styles = theme => {
 
         resizableFilmstripContainer: {
             display: 'flex',
-            position: 'relative',
-            flexDirection: 'row',
+            position: 'relative' as const,
+            flexDirection: 'row' as const,
             alignItems: 'center',
             height: '100%',
             width: '100%',
@@ -133,12 +134,12 @@ export const styles = theme => {
             height: '100%',
             width: '9px',
             backgroundColor: 'transparent',
-            position: 'relative',
+            position: 'relative' as const,
             cursor: 'col-resize',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            visibility: 'hidden',
+            visibility: 'hidden' as const,
 
             '&:hover': {
                 '& .dragHandle': {

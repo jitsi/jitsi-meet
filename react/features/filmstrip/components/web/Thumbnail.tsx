@@ -66,6 +66,7 @@ import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 // @ts-ignore
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
+/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} state of {@link Thumbnail}.
@@ -1218,6 +1219,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         const { local, remote }
             = tileType === THUMBNAIL_TYPE.VERTICAL
                 ? verticalViewDimensions : horizontalViewDimensions;
+
         // @ts-ignore
         const { width, height } = (isLocal ? local : remote) ?? {};
 

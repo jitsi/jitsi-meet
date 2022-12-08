@@ -35,6 +35,7 @@ import InviteByEmailSection from './InviteByEmailSection';
 import InviteContactsSection from './InviteContactsSection';
 // @ts-ignore
 import LiveStreamSection from './LiveStreamSection';
+/* eslint-enable lines-around-comment */
 
 interface IProps extends WithTranslation {
 

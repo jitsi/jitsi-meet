@@ -14,6 +14,7 @@ import { translate } from '../../../base/i18n/functions';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { openLogoutDialog } from '../../actions';
+/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.
@@ -182,6 +183,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
         const {
             authLogin,
             t
+
             // @ts-ignore
         } = this.props;
 
