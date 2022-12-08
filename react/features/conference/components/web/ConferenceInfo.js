@@ -9,6 +9,7 @@ import { connect } from '../../../base/redux';
 import E2EELabel from '../../../e2ee/components/E2EELabel';
 import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
 import RecordingLabel from '../../../recording/components/web/RecordingLabel';
+import { showToolbox } from '../../../toolbox/actions';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import TranscribingLabel from '../../../transcribing/components/TranscribingLabel.web';
 import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.web';
@@ -32,6 +33,11 @@ type Props = {
      * The conference info labels to be shown in the conference header.
      */
     _conferenceInfo: Object,
+
+    /**
+     * Invoked to active other features of the app.
+     */
+    dispatch: Function;
 
     /**
      * Indicates whether the component should be visible or not.
@@ -113,6 +119,21 @@ class ConferenceInfo extends Component<Props> {
 
         this._renderAutoHide = this._renderAutoHide.bind(this);
         this._renderAlwaysVisible = this._renderAlwaysVisible.bind(this);
+        this._onTabIn = this._onTabIn.bind(this);
+    }
+
+    _onTabIn: () => void;
+
+    /**
+     * Callback invoked when the component is focused to show the conference
+     * info if necessary.
+     *
+     * @returns {void}
+     */
+    _onTabIn() {
+        if (this.props._conferenceInfo.autoHide?.length && !this.props._visible) {
+            this.props.dispatch(showToolbox());
+        }
     }
 
     _renderAutoHide: () => void;
@@ -181,7 +202,9 @@ class ConferenceInfo extends Component<Props> {
      */
     render() {
         return (
-            <div className = 'details-container' >
+            <div
+                className = 'details-container'
+                onFocus = { this._onTabIn }>
                 { this._renderAlwaysVisible() }
                 { this._renderAutoHide() }
             </div>
