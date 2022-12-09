@@ -117,7 +117,6 @@ const events = {
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'filmstrip-display-changed': 'filmstripDisplayChanged',
-    'iframe-dock-state-changed': 'iframeDockStateChanged',
     'incoming-message': 'incomingMessage',
     'knocking-participant': 'knockingParticipant',
     'log': 'log',
