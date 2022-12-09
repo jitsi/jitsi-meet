@@ -47,13 +47,14 @@ import {
     dataChannelClosed,
     dataChannelOpened,
     e2eRttChanged,
+    generateVisitorConfig,
     getConferenceOptions,
     kickedOut,
     lockStateChanged,
     nonParticipantMessageReceived,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant, generateVisitorConfig
+    sendLocalParticipant
 } from './react/features/base/conference';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
