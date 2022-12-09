@@ -1067,7 +1067,6 @@
             "chat": "Otvori/Zatvori chat",
             "clap": "Plješći",
             "collapse": "Sklopi",
-            "dock": "Prikvači u glavni prozor",
             "document": "Uključi/Isključi dijeljeni dokument",
             "download": "Preuzmi naše aplikacije",
             "embedMeeting": "Ugradi sastanak",
@@ -1121,7 +1120,6 @@
             "tileView": "Uključi/Isključi pločasti prikaz",
             "toggleCamera": "Uključi/Isključi kameru",
             "toggleFilmstrip": "Uključi/Isključi slike videa",
-            "undock": "Odspoji u zasebni prozor",
             "videoblur": "Uključi/Isključi zamućenje videa",
             "videomute": "Pokreni/Prekini kameru",
             "whiteboard": "Pokaži/Sakrij ploču za prezentacije"
@@ -1140,7 +1138,6 @@
         "closeReactionsMenu": "Zatvori izbornik reakcija",
         "disableNoiseSuppression": "Isključi suzbijanje šumova",
         "disableReactionSounds": "Za ovaj sastanak možeš isključiti zvukove reakcija",
-        "dock": "Prikvači u glavni prozor",
         "documentClose": "Zatvori dijeljeni dokument",
         "documentOpen": "Otvori dijeljeni dokument",
         "download": "Preuzmi naše aplikacije",
@@ -1214,7 +1211,6 @@
         "talkWhileMutedPopup": "Pokušavaš govoriti? Tvoj zvuk je isključen.",
         "tileViewToggle": "Uključi/Isključi pločasti prikaz",
         "toggleCamera": "Uključi/Isključi kameru",
-        "undock": "Odspoji u zasebni prozor",
         "videoSettings": "Videopostavke",
         "videomute": "Pokreni/Prekini kameru"
     },

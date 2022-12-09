@@ -1067,7 +1067,6 @@
             "chat": "Mesajlaşma penceresini aç/kapat",
             "clap": "Alkış",
             "collapse": "Daralt",
-            "dock": "Ana pencerede sabitleyin",
             "document": "Paylaşılan dokümanı aç/kapat",
             "download": "Uygulamalarımızı indirin",
             "embedMeeting": "Toplantıyı yerleştir",
@@ -1121,7 +1120,6 @@
             "tileView": "Döşeme görünümünü aç/kapat",
             "toggleCamera": "Kamerayı değiştir",
             "toggleFilmstrip": "Film şeridini aç/kapat",
-            "undock": "Ayrı pencereye çıkarın",
             "videoblur": "Video bulanıklaştırma aç/kapat",
             "videomute": "Sessiz videoyu aç/kapat",
             "whiteboard": "Beyaztahtayı Göster / Gizle"
@@ -1140,7 +1138,6 @@
         "closeReactionsMenu": "Reaksiyon menüsünü kapat",
         "disableNoiseSuppression": "",
         "disableReactionSounds": "Toplantı için reaksiyon seslerini devre dışı bırak",
-        "dock": "Ana pencerede sabitleyin",
         "documentClose": "Paylaşılan dokümanı kapat",
         "documentOpen": "Paylaşılan dokümanı aç",
         "download": "Uygulamalarımızı indirin",
@@ -1214,7 +1211,6 @@
         "talkWhileMutedPopup": "Bir şey mi dediniz? Mikrofonunuz kapalı.",
         "tileViewToggle": "Döşeme görünümünü aç/kapat",
         "toggleCamera": "Kamerayı değiştir",
-        "undock": "Ayrı pencereye çıkarın",
         "videoSettings": "Video ayarları",
         "videomute": "Kamera başlat / durdur"
     },

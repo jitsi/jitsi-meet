@@ -1033,7 +1033,6 @@
             "chat": "chat-woknješko pokazać/schować",
             "clap": "placać",
             "collapse": "pomjeńšić",
-            "dock": "we hłownej wobrazowce fiksěrować",
             "document": "dźěleny dokument začinić",
             "download": "naše aplikacije downloadować ",
             "embedMeeting": "konferencu integrować",
@@ -1085,7 +1084,6 @@
             "tileView": "kachlicowy napohlad zapnyć/hasnyć",
             "toggleCamera": "kameru měnić",
             "toggleFilmstrip": "miniaturowy napohlad zapnyć/hasnyć ",
-            "undock": "rozwjazać",
             "videoblur": "njejasny widejo zapnyć/hasnyć ",
             "videomute": "„něme šaltowanje wideja zapnyć/hasnyć "
         },
@@ -1102,7 +1100,6 @@
         "closeChat": "chat začinić",
         "closeReactionsMenu": "meni za interakcije začinić",
         "disableReactionSounds": "Móžeće zwuki za interakcije za tutu konferencu deaktiwěrować.",
-        "dock": "fiksěrować",
         "documentClose": "dźěleny dokument začinić",
         "documentOpen": "dźěleny dokument wočinić",
         "download": "naše aplikacije downloadować",
@@ -1172,7 +1169,6 @@
         "talkWhileMutedPopup": "Spytaće Wy rěčeć? Waš mikrofon je němy.",
         "tileViewToggle": " kachlicowy napohlad zapnyć/hasnyć ",
         "toggleCamera": "kameru měnić",
-        "undock": "rozwjazać",
         "videoSettings": "nastajenja za widejo",
         "videomute": "kameru startować/hasnyć"
     },

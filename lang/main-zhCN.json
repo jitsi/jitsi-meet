@@ -1067,7 +1067,6 @@
             "chat": "打开/关闭聊天窗口",
             "clap": "鼓掌",
             "collapse": "收起",
-            "dock": "在主窗口停靠",
             "document": "开启/关闭文件共享",
             "download": "下载应用",
             "embedMeeting": "嵌入会议",
@@ -1121,7 +1120,6 @@
             "tileView": "开启/关闭画廊视图",
             "toggleCamera": "开启/关闭摄像头",
             "toggleFilmstrip": "开启/关闭幻灯片",
-            "undock": "取消停靠到单独的窗口",
             "videoblur": "开启/关闭视频模糊",
             "videomute": "启动/停止摄像头",
             "whiteboard": "显示/隐藏白板"
@@ -1140,7 +1138,6 @@
         "closeReactionsMenu": "关闭反应菜单",
         "disableNoiseSuppression": "关闭噪音抑制",
         "disableReactionSounds": "你可以禁用此会议的反应声音",
-        "dock": "在主窗口停靠",
         "documentClose": "关闭文件共享",
         "documentOpen": "开启文件共享",
         "download": "下载我们的APP",
@@ -1214,7 +1211,6 @@
         "talkWhileMutedPopup": "你在尝试发言吗? 当前你是静音状态。",
         "tileViewToggle": "画面模式",
         "toggleCamera": "开启/关闭摄像头",
-        "undock": "取消停靠到单独的窗口",
         "videoSettings": "视频设置",
         "videomute": "开启/关闭摄像头"
     },

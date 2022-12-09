@@ -1067,7 +1067,6 @@
             "chat": "Abrir / Fechar chat",
             "clap": "Aplausos",
             "collapse": "Colapsar",
-            "dock": "Ancorar na janela principal",
             "document": "Mudar para documento partilhado",
             "download": "Descarregar as nossas aplicações",
             "embedMeeting": "Reunião incorporada",
@@ -1121,7 +1120,6 @@
             "tileView": "Mudar a vista em quadrícula",
             "toggleCamera": "Mudar a câmara",
             "toggleFilmstrip": "Mudar a película de filme",
-            "undock": "Desancorar numa janela separada",
             "videoblur": "Mudar o desfoque de vídeo",
             "videomute": "Iniciar / Parar câmara",
             "whiteboard": "Mostrar / Esconder quadro branco"
@@ -1140,7 +1138,6 @@
         "closeReactionsMenu": "Fechar menu de reações",
         "disableNoiseSuppression": "Desativar a supressão de ruído",
         "disableReactionSounds": "Pode desactivar os sons de reacção para esta reunião",
-        "dock": "Ancorar na janela principal",
         "documentClose": "Fechar documento partilhado",
         "documentOpen": "Abrir documento partilhado",
         "download": "Descarregar as nossas aplicações",
@@ -1214,7 +1211,6 @@
         "talkWhileMutedPopup": "Está a tentar falar? Está com o microfone desativado.",
         "tileViewToggle": "Mudar para vista em quadrícula",
         "toggleCamera": "Mudar a câmara",
-        "undock": "Desancorar numa janela separada",
         "videoSettings": "Definições de vídeo",
         "videomute": "Iniciar / Parar câmara"
     },

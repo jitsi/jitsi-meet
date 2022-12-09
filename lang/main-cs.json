@@ -1060,7 +1060,6 @@
             "chat": "Přepnout okno zpráv",
             "clap": "Tleskat",
             "collapse": "Zabalit",
-            "dock": "Dokovat v hlavním okně",
             "document": "Přepnout sdílený dokument",
             "download": "Stáhnout naše aplikace",
             "embedMeeting": "Vložit setkání",
@@ -1114,7 +1113,6 @@
             "tileView": "Přepnout dlaždicové zobrazení",
             "toggleCamera": "Přepnout kameru",
             "toggleFilmstrip": "Přepnout video náhledy",
-            "undock": "Oddokovat do samostatného okna",
             "videoblur": "Přepnout rozmazání videa",
             "videomute": "Přepnout ztišení videa"
         },
@@ -1132,7 +1130,6 @@
         "closeReactionsMenu": "Zavrít menu reakcí",
         "disableNoiseSuppression": "Vypnout potlačení šumu",
         "disableReactionSounds": "Vypnout zvuky reakcí",
-        "dock": "Dokovat v hlavním okně",
         "documentClose": "Zavřít sdílený dokument",
         "documentOpen": "Otevřít sdílený dokument",
         "download": "Stáhnout naše aplikace",
@@ -1204,7 +1201,6 @@
         "talkWhileMutedPopup": "Snažíte se mluvit? Máte ztišený mikrofon.",
         "tileViewToggle": "Přepnout dlaždicové zobrazení",
         "toggleCamera": "Přepnout kameru",
-        "undock": "",
         "videoSettings": "",
         "videomute": "Zapnout / Vypnout kameru"
     },
