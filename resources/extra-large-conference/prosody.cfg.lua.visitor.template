@@ -77,8 +77,7 @@ consider_websocket_secure = true;
 consider_bosh_secure = true;
 bosh_max_inactivity = 60;
 
---plugin_paths = { '/usr/share/jitsi-meet/prosody-plugins/' }
-plugin_paths = { '/home/damencho/jitsi-meet/resources/prosody-plugins/' }
+plugin_paths = { '/usr/share/jitsi-meet/prosody-plugins/' }
 
 ----------- Virtual hosts -----------
 VirtualHost 'vX.meet.jitsi'
