@@ -11,6 +11,12 @@ import AbstractRecordButton, {
 
 import { StartRecordingDialog, StopRecordingDialog } from './index';
 
+//Gractech
+import { startLocalVideoRecording } from '../../../actions';
+
+
+//Gracetech
+import { isMobileBrowser } from '../../../../base/environment/utils';
 
 /**
  * Button for opening a dialog where a recording session can be started.
@@ -25,11 +31,21 @@ class RecordingButton extends AbstractRecordButton<Props> {
      * @returns {void}
      */
     _onHandleClick() {
+        //Gracetech -- we don't support recording on mobile devices
+        if (isMobileBrowser()) {
+            alert("Recording feature is only available on desktop through https://idigest.app");
+            return;
+        } 
         const { _isRecordingRunning, dispatch } = this.props;
 
+        /*original code
         dispatch(openDialog(
             _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog
         ));
+        */
+
+        //Gracetech: we skip the startRecordingDialog
+        dispatch(_isRecordingRunning? openDialog(StopRecordingDialog) : startLocalVideoRecording(false));
     }
 }
 
