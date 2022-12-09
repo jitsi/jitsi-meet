@@ -53,7 +53,7 @@ import {
     nonParticipantMessageReceived,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant
+    sendLocalParticipant, generateVisitorConfig
 } from './react/features/base/conference';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
@@ -338,17 +338,7 @@ class ConferenceConnector {
         }
 
         case JitsiConferenceErrors.REDIRECTED: {
-            const [ vnode, focusJid ] = params;
-
-            const config = APP.store.getState()['features/base/config'];
-            const oldDomain = config.hosts.domain;
-
-            config.hosts.domain = `${vnode}.meet.jitsi`;
-            config.hosts.muc = config.hosts.muc.replace(oldDomain, config.hosts.domain);
-            config.hosts.visitorFocus = focusJid;
-
-            config.bosh += `?vnode=${vnode}`;
-            config.websocket += `?vnode=${vnode}`;
+            generateVisitorConfig(APP.store.getState(), params);
 
             connection.disconnect().then(() => {
                 connect(this._conference.roomName).then(con => {

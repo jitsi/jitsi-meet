@@ -253,6 +253,28 @@ export function getConferenceOptions(stateful: IStateful) {
 }
 
 /**
+ * Returns an object aggregating the conference options.
+ *
+ * @param {IStateful} stateful - The redux store state.
+ * @param {Array<string>} params - The received parameters.
+ * @returns {void}
+ */
+export function generateVisitorConfig(stateful: IStateful, params: Array<string>) {
+    const [ vnode, focusJid ] = params;
+
+    const config = toState(stateful)['features/base/config'];
+
+    const oldDomain = config.hosts.domain;
+
+    config.hosts.domain = `${vnode}.meet.jitsi`;
+    config.hosts.muc = config.hosts.muc.replace(oldDomain, config.hosts.domain);
+    config.hosts.visitorFocus = focusJid;
+
+    config.bosh += `?vnode=${vnode}`;
+    config.websocket += `?vnode=${vnode}`;
+}
+
+/**
 * Returns the UTC timestamp when the first participant joined the conference.
 *
 * @param {IStateful} stateful - Reference that can be resolved to Redux
