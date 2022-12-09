@@ -2,7 +2,7 @@ WARNING: This is still a Work In Progress
 
 The final implementation may diverge. Currently, only the participants after a
 configured threshold will be just viewers (visitors) and there is no promotion
-mechanism to become a main participant.
+mechanism to become a main participant yet.
 
 TODO:
 * Merge messaging between visitor nodes and main conference
