@@ -1,6 +1,4 @@
 ---------- Server-wide settings ----------
-component_interface = '0.0.0.0';
-
 s2s_ports = { 52691 };
 c2s_ports = { 52221 }
 http_ports = { 52801 }
