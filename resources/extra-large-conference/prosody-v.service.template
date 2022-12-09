@@ -1,6 +1,6 @@
 [Unit]
 ### see man systemd.unit
-Description=Prosody v1 (visitor v1) JVB XMPP Server
+Description=Prosody vX (visitor vX) JVB XMPP Server
 Documentation=https://prosody.im/doc
 
 Requires=network-online.target
@@ -13,7 +13,7 @@ Type=simple
 
 # Start by executing the main executable
 # Note: -F option requires Prosody 0.11.5 or later
-ExecStart=/usr/bin/prosody --config /etc/prosody-v1/prosody.cfg.lua -F
+ExecStart=/usr/bin/prosody --config /etc/prosody-vX/prosody.cfg.lua -F
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-abnormal
 
@@ -22,11 +22,11 @@ User=prosody
 Group=prosody
 UMask=0027
 
-RuntimeDirectory=prosody-v1
-ConfigurationDirectory=prosody-v1
-StateDirectory=prosody-v1
+RuntimeDirectory=prosody-vX
+ConfigurationDirectory=prosody-vX
+StateDirectory=prosody-vX
 StateDirectoryMode=0750
-LogsDirectory=prosody-v1
+LogsDirectory=prosody-vX
 WorkingDirectory=~
 
 # Set stdin to /dev/null since Prosody does not need it

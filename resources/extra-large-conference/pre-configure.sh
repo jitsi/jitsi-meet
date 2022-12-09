@@ -18,11 +18,11 @@ set -x
 for (( i=1 ; i<=${NUMBER_OF_INSTANCES} ; i++ ));
 do
     cp prosody-v.service.template /lib/systemd/system/prosody-v${i}.service
-    sed -i "s/v1/v${i}/g" /lib/systemd/system/prosody-v${i}.service
+    sed -i "s/vX/v${i}/g" /lib/systemd/system/prosody-v${i}.service
     mkdir /etc/prosody-v${i}
     ln -s /etc/prosody/certs /etc/prosody-v${i}/certs
     cp prosody.cfg.lua.visitor.template /etc/prosody-v${i}/prosody.cfg.lua
-    sed -i "s/v1/v${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
+    sed -i "s/vX/v${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
 done
 
 # Configure jicofo

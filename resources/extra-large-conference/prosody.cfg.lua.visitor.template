@@ -42,7 +42,7 @@ external_services = {
     { type = 'turns', host = 'jitmeet.example.com', port = 5349, transport = 'tcp', secret = true, ttl = 86400, algorithm = 'turn' }
 };
 
-muc_mapper_domain_base = 'v1.meet.jitsi';
+muc_mapper_domain_base = 'vX.meet.jitsi';
 
 -- https://prosody.im/doc/modules/mod_smacks
 smacks_max_unacked_stanzas = 5;
@@ -69,8 +69,8 @@ authentication = 'internal_hashed'
 storage = 'internal'
 log = {
     -- Log files (change 'info' to 'debug' for debug logs):
-    info = '/var/log/prosody-v1/prosody.log';
-    error = '/var/log/prosody-v1/prosody.err';
+    info = '/var/log/prosody-vX/prosody.log';
+    error = '/var/log/prosody-vX/prosody.err';
 }
 
 consider_websocket_secure = true;
@@ -81,7 +81,7 @@ bosh_max_inactivity = 60;
 plugin_paths = { '/home/damencho/jitsi-meet/resources/prosody-plugins/' }
 
 ----------- Virtual hosts -----------
-VirtualHost 'v1.meet.jitsi'
+VirtualHost 'vX.meet.jitsi'
     authentication = 'jitsi-anonymous'
     ssl = {
         key = '/etc/prosody/certs/jitmeet.example.com.key';
@@ -94,7 +94,7 @@ VirtualHost 'v1.meet.jitsi'
       'smacks';
       'jiconop';
     }
-    main_muc = 'conference.v1.meet.jitsi';
+    main_muc = 'conference.vX.meet.jitsi';
 
 VirtualHost 'auth.meet.jitsi'
     modules_enabled = {
@@ -103,7 +103,7 @@ VirtualHost 'auth.meet.jitsi'
     }
     authentication = 'internal_hashed'
 
-Component 'conference.v1.meet.jitsi' 'muc'
+Component 'conference.vX.meet.jitsi' 'muc'
     storage = 'memory'
     muc_room_cache_size = 10000
     restrict_room_creation = true
