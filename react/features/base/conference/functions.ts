@@ -264,6 +264,12 @@ export function generateVisitorConfig(stateful: IStateful, params: Array<string>
 
     const config = toState(stateful)['features/base/config'];
 
+    if (!config || !config.hosts) {
+        logger.warn('Wrong configuration, missing hosts.');
+
+        return;
+    }
+
     const oldDomain = config.hosts.domain;
 
     config.hosts.domain = `${vnode}.meet.jitsi`;
