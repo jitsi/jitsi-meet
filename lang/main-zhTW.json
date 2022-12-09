@@ -1067,7 +1067,6 @@
             "chat": "打開/關閉聊天視窗",
             "clap": "鼓掌",
             "collapse": "收回",
-            "dock": "停靠在主視窗中",
             "document": "啟用/停用分享文檔",
             "download": "下載我們的應用程式",
             "embedMeeting": "嵌入會議",
@@ -1121,7 +1120,6 @@
             "tileView": "啟用/停用畫廊檢視",
             "toggleCamera": "啟用/停用網路攝影機",
             "toggleFilmstrip": "啟用/停用簡報",
-            "undock": "取消停靠到單獨的视窗",
             "videoblur": "啟用/停用畫面模糊",
             "videomute": "啟用/停用網路攝影機",
             "whiteboard": "啟用/停用白板"
@@ -1140,7 +1138,6 @@
         "closeReactionsMenu": "關閉反應選單",
         "disableNoiseSuppression": "停用雜訊抑制",
         "disableReactionSounds": "您可以停用此會議的反應音效",
-        "dock": "停靠在主視窗中",
         "documentClose": "關閉分享檔案欄",
         "documentOpen": "開啟分享檔案欄",
         "download": "下載我們的應用程式",
@@ -1214,7 +1211,6 @@
         "talkWhileMutedPopup": "您要發言嗎？目前您處於靜音。",
         "tileViewToggle": "啟動/停用畫廊檢視",
         "toggleCamera": "啟動/停用網路攝影機",
-        "undock": "取消停靠到單獨的视窗",
         "videoSettings": "視訊設定",
         "videomute": "啟動/停用網路攝影機"
     },

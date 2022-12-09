@@ -1074,7 +1074,6 @@
             "chat": "Open / Close chat",
             "clap": "Clap",
             "collapse": "Collapse",
-            "dock": "Dock in main window",
             "document": "Toggle shared document",
             "download": "Download our apps",
             "embedMeeting": "Embed meeting",
@@ -1128,7 +1127,6 @@
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
-            "undock": "Undock into separate window",
             "videoblur": "Toggle video blur",
             "videomute": "Start / Stop camera",
             "whiteboard": "Show / Hide whiteboard"
@@ -1147,7 +1145,6 @@
         "closeReactionsMenu": "Close reactions menu",
         "disableNoiseSuppression": "Disable noise suppression",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
-        "dock": "Dock in main window",
         "documentClose": "Close shared document",
         "documentOpen": "Open shared document",
         "download": "Download our apps",
@@ -1221,7 +1218,6 @@
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
-        "undock": "Undock into separate window",
         "videoSettings": "Video settings",
         "videomute": "Start / Stop camera"
     },

@@ -1027,7 +1027,6 @@
             "chat": "Obre o tanca el xat",
             "clap": "Picament de mans",
             "collapse": "Col·lapsa",
-            "dock": "Acobla a la finestra principal",
             "document": "Activa o desactiva el document compartit",
             "download": "Baixeu les nostres aplicacions",
             "embedMeeting": "Insereix la reunió",
@@ -1079,7 +1078,6 @@
             "tileView": "Activa o desactiva el mode mosaic",
             "toggleCamera": "Activa o desactiva la càmera",
             "toggleFilmstrip": "Mostra o amaga la cinta",
-            "undock": "Desacobla en una finestra separada",
             "videoblur": "Activa o desactiva el desenfocament del vídeo",
             "videomute": "Activa o desactiva la càmera"
         },
@@ -1096,7 +1094,6 @@
         "closeChat": "Tanca el xat",
         "closeReactionsMenu": "Tanca el menú de reaccions",
         "disableReactionSounds": "Podeu desactivar els sons de reacció per a aquesta reunió",
-        "dock": "Acobla en la finestra principal",
         "documentClose": "Tanca el document compartit",
         "documentOpen": "Obre el document compartit",
         "download": "Baixeu les nostres aplicacions",
@@ -1166,7 +1163,6 @@
         "talkWhileMutedPopup": "Intenteu parlar? Esteu silenciat.",
         "tileViewToggle": "Activa o desactiva el mode mosaic",
         "toggleCamera": "Activa o desactiva la càmera",
-        "undock": "Desacobla en una finestra principal",
         "videoSettings": "Paràmetres de vídeo",
         "videomute": "Inicia o atura la càmera"
     },

@@ -1067,7 +1067,6 @@
             "chat": "Conversazione",
             "clap": "Applaudi",
             "collapse": "Riduci",
-            "dock": "Aggancia alla finestra principale",
             "document": "Documenti condivisi",
             "download": "Scarica le nostre app",
             "embedMeeting": "Incorpora riunione altrove",
@@ -1121,7 +1120,6 @@
             "tileView": "Vedi tutti i partecipanti, o uno solo",
             "toggleCamera": "Cambia videocamera",
             "toggleFilmstrip": "Pellicola",
-            "undock": "Sgancia in una finestra separata",
             "videoblur": "Sfoca video",
             "videomute": "Videocamera",
             "whiteboard": "Usa lavagna"
@@ -1140,7 +1138,6 @@
         "closeReactionsMenu": "Chiudi il menù reazioni",
         "disableNoiseSuppression": "Interrompi riduzione rumore",
         "disableReactionSounds": "Puoi disattivare i suoni delle reaction, in questa riunione",
-        "dock": "Aggancia nella finestra principale",
         "documentClose": "Chiudi documento condiviso",
         "documentOpen": "Apri documento condiviso",
         "download": "Scarica le nostre app",
@@ -1214,7 +1211,6 @@
         "talkWhileMutedPopup": "Stai provando a parlare? Il microfono è disattivato.",
         "tileViewToggle": "Vedi tutti i partecipanti insieme, o uno solo",
         "toggleCamera": "Cambia videocamera",
-        "undock": "Sgancia in una finestra separata",
         "videoSettings": "Impostazioni video",
         "videomute": "Videocamera"
     },

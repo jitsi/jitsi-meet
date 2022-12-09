@@ -1057,7 +1057,6 @@
             "chat": "Przełączanie okna rozmowy",
             "clap": "Klaskanie",
             "collapse": "Zwiń",
-            "dock": "Zadokuj w głównym oknie",
             "document": "Przełączanie wspólnego dokumentu",
             "download": "Pobierz nasze aplikacje",
             "embedMeeting": "Osadź spotkanie",
@@ -1109,7 +1108,6 @@
             "tileView": "Przełącz widok kafelkowy",
             "toggleCamera": "Przełączanie kamery",
             "toggleFilmstrip": "Przełącz filmstrip",
-            "undock": "Oddokuj w osobnym oknie",
             "videoblur": "Przełącz rozmazanie obrazu",
             "videomute": "Przełączanie wyciszonego filmu wideo"
         },
@@ -1127,7 +1125,6 @@
         "closeReactionsMenu": "Zamknij reakcje",
         "disableNoiseSuppression": "Wyłącz tłumienie szumów",
         "disableReactionSounds": "Wyłącz dźwięki reakcji dla tego spotkania",
-        "dock": "Zadokuj w głównym oknie",
         "documentClose": "Zamknij udostępniony dokument",
         "documentOpen": "Otwarty udostępniony dokument",
         "download": "Pobierz nasze aplikacje",
@@ -1197,7 +1194,6 @@
         "talkWhileMutedPopup": "Próbujesz mówić? Jesteś wyciszony.",
         "tileViewToggle": "Przełączanie kafelkowego widoku",
         "toggleCamera": "Przełączanie kamery",
-        "undock": "Oddokuj w osobnym oknie",
         "videoSettings": "Ustawienia video",
         "videomute": "Włącz / Wyłącz kamerę"
     },

@@ -1066,7 +1066,6 @@
             "chat": "Chatfenster öffnen / schließen",
             "clap": "Klatschen",
             "collapse": "Einklappen",
-            "dock": "In Hauptfenster einbinden",
             "document": "Geteiltes Dokument schließen",
             "download": "Unsere Apps herunterladen",
             "embedMeeting": "Konferenz einbetten",
@@ -1120,7 +1119,6 @@
             "tileView": "Kachelansicht ein-/ausschalten",
             "toggleCamera": "Kamera wechseln",
             "toggleFilmstrip": "Miniaturansichten ein-/ausschalten",
-            "undock": "In eigenem Fenster anzeigen",
             "videoblur": "Unscharfer Hintergrund ein-/ausschalten",
             "videomute": "„Video stummschalten“ ein-/ausschalten",
             "whiteboard": "Whiteboard ein-/ausschalten"
@@ -1139,7 +1137,6 @@
         "closeReactionsMenu": "Interaktionsmenü schließen",
         "disableNoiseSuppression": "Rauschunterdrückung deaktivieren",
         "disableReactionSounds": "Sie können die Interaktionstöne für diese Konferenz deaktivieren",
-        "dock": "In Hauptfenster einbinden",
         "documentClose": "Geteiltes Dokument schließen",
         "documentOpen": "Geteiltes Dokument öffnen",
         "download": "Unsere Apps herunterladen",
@@ -1213,7 +1210,6 @@
         "talkWhileMutedPopup": "Versuchen Sie zu sprechen? Ihr Mikrofon ist stummgeschaltet.",
         "tileViewToggle": "Kachelansicht ein-/ausschalten",
         "toggleCamera": "Kamera wechseln",
-        "undock": "In eigenem Fenster anzeigen",
         "videoSettings": "Kameraeinstellungen",
         "videomute": "Kamera starten / stoppen"
     },

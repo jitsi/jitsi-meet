@@ -1067,7 +1067,6 @@
             "chat": "Öppna eller stäng chattfönster",
             "clap": "Klappa",
             "collapse": "Kollaps",
-            "dock": "Docka i huvudfönstret",
             "document": "Öppna eller stäng delat dokument",
             "download": "Ladda ner app",
             "embedMeeting": "Bädda in möte",
@@ -1121,7 +1120,6 @@
             "tileView": "Öppna eller stäng panelvyn",
             "toggleCamera": "Växla kamera",
             "toggleFilmstrip": "Växla filmremsa",
-            "undock": "Lossa till ett separat fönster",
             "videoblur": "Växla videooskärpa",
             "videomute": "Sätt på eller stäng av mikrofonen",
             "whiteboard": "Visa/dölj whiteboardtavlan"
@@ -1140,7 +1138,6 @@
         "closeReactionsMenu": "Stäng meny för reaktioner",
         "disableNoiseSuppression": "Inaktivera brusreducering",
         "disableReactionSounds": "Du kan inaktivera reaktionsljud för det här mötet",
-        "dock": "Docka i huvudfönstret",
         "documentClose": "Stäng delat dokument",
         "documentOpen": "Öppna delat dokument",
         "download": "Ladda ner vår app",
@@ -1214,7 +1211,6 @@
         "talkWhileMutedPopup": "Försöker du tala? Din mikrofon är tystad.",
         "tileViewToggle": "Öppna eller stäng panelvyn",
         "toggleCamera": "Byta kamera",
-        "undock": "Lossa till ett separat fönster",
         "videoSettings": "Video inställningar",
         "videomute": "Aktivera / avaktivera kameran"
     },
