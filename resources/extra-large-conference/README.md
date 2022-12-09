@@ -76,7 +76,7 @@ s2s_whitelist = {
 After configuring you can set the maximum number of main participants, before
 redirecting to visitors.
 ```
-hocon -f /etc/jitsi/jicofo/jicofo.conf set "jicofo.visitors.max-participants" 3
+hocon -f /etc/jitsi/jicofo/jicofo.conf set "jicofo.visitors.max-participants" 30
 ```
 Now restart prosody and jicofo
 ```
@@ -84,5 +84,5 @@ service prosody restart
 service jicofo restart
 ```
 
-Now after the main 3 participants join, the rest will be visitors using the
+Now after the main 30 participants join, the rest will be visitors using the
 visitor nodes.
