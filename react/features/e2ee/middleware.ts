@@ -271,28 +271,30 @@ StateListenerRegistry.register(
             dispatch(toggleE2EE(false));
         }
 
-        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, (pId: string) => {
-            dispatch(participantUpdated({
-                e2eeVerificationAvailable: true,
-                id: pId
-            }));
-        });
-
-        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId: string, sas: object) => {
-            dispatch(openDialog(ParticipantVerificationDialog, { pId,
-                sas }));
-        });
-
-        conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED,
-            (pId: string, success: boolean, message: string) => {
-                if (message) {
-                    logger.warn('E2EE_VERIFICATION_COMPLETED warning', message);
-                }
+        if (conference) {
+            conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, (pId: string) => {
                 dispatch(participantUpdated({
-                    e2eeVerified: success,
+                    e2eeVerificationAvailable: true,
                     id: pId
                 }));
             });
+
+            conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId: string, sas: object) => {
+                dispatch(openDialog(ParticipantVerificationDialog, { pId,
+                    sas }));
+            });
+
+            conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED,
+                (pId: string, success: boolean, message: string) => {
+                    if (message) {
+                        logger.warn('E2EE_VERIFICATION_COMPLETED warning', message);
+                    }
+                    dispatch(participantUpdated({
+                        e2eeVerified: success,
+                        id: pId
+                    }));
+                });
+        }
     });
 
 /**
