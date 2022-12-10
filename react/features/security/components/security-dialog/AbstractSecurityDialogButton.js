@@ -4,10 +4,10 @@ import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import {
-    getFeatureFlag,
     LOBBY_MODE_ENABLED,
     MEETING_PASSWORD_ENABLED,
-    SECURITY_OPTIONS_ENABLED
+    SECURITY_OPTIONS_ENABLED,
+    getFeatureFlag
 } from '../../../base/flags';
 import { IconSecurityOff, IconSecurityOn } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
@@ -92,6 +92,6 @@ export function _mapStateToProps(state: Object) {
 
     return {
         _locked: locked || lobbyEnabled,
-        visible: enabledFlag || (enabledLobbyModeFlag || enabledMeetingPassFlag)
+        visible: enabledFlag && (enabledLobbyModeFlag || enabledMeetingPassFlag)
     };
 }

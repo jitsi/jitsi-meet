@@ -8,9 +8,9 @@ import { getLargeVideoParticipant } from '../../large-video/functions';
 import { isLayoutTileView } from '../../video-layout';
 
 import {
-    _abstractMapStateToProps,
     AbstractCaptions,
-    type AbstractCaptionsProps
+    type AbstractCaptionsProps,
+    _abstractMapStateToProps
 } from './AbstractCaptions';
 
 type Props = {

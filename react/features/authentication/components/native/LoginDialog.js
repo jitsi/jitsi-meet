@@ -1,27 +1,14 @@
-/* @flow */
-
 import React, { Component } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import Dialog from 'react-native-dialog';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { toJid } from '../../../base/connection';
 import { connect } from '../../../base/connection/actions.native';
-import {
-    CustomSubmitDialog,
-    FIELD_UNDERLINE,
-    PLACEHOLDER_COLOR,
-    _abstractMapStateToProps,
-    inputDialog as inputDialogStyle
-} from '../../../base/dialog';
+import { _abstractMapStateToProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
-import type { StyleType } from '../../../base/styles';
 import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.native';
-
-// Register styles.
-import './styles';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -45,11 +32,6 @@ type Props = {
     _connecting: boolean,
 
     /**
-     * The color-schemed stylesheet of the base/dialog feature.
-     */
-    _dialogStyles: StyleType,
-
-    /**
      * The error which occurred during login/authentication.
      */
     _error: Object,
@@ -59,11 +41,6 @@ type Props = {
      * and upgrading the role of the local participant/user.
      */
     _progress: number,
-
-    /**
-     * The color-schemed stylesheet of this feature.
-     */
-    _styles: StyleType,
 
     /**
      * Redux store dispatch method.
@@ -150,42 +127,40 @@ class LoginDialog extends Component<Props, State> {
     render() {
         const {
             _connecting: connecting,
-            _dialogStyles,
-            _styles: styles,
             t
         } = this.props;
 
         return (
-            <CustomSubmitDialog
-                okDisabled = { connecting }
-                onCancel = { this._onCancel }
-                onSubmit = { this._onLogin }>
-                <View style = { styles.loginDialog }>
-                    <TextInput
-                        autoCapitalize = { 'none' }
-                        autoCorrect = { false }
-                        onChangeText = { this._onUsernameChange }
-                        placeholder = { 'user@domain.com' }
-                        placeholderTextColor = { PLACEHOLDER_COLOR }
-                        spellCheck = { false }
-                        style = { _dialogStyles.field }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
-                        value = { this.state.username } />
-                    <TextInput
-                        autoCapitalize = { 'none' }
-                        onChangeText = { this._onPasswordChange }
-                        placeholder = { t('dialog.userPassword') }
-                        placeholderTextColor = { PLACEHOLDER_COLOR }
-                        secureTextEntry = { true }
-                        style = { [
-                            _dialogStyles.field,
-                            inputDialogStyle.bottomField
-                        ] }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
-                        value = { this.state.password } />
+            <Dialog.Container
+                coverScreen = { false }
+                visible = { true }>
+                <Dialog.Title>
+                    { t('dialog.login') }
+                </Dialog.Title>
+                <Dialog.Input
+                    autoCapitalize = { 'none' }
+                    autoCorrect = { false }
+                    onChangeText = { this._onUsernameChange }
+                    placeholder = { 'user@domain.com' }
+                    spellCheck = { false }
+                    value = { this.state.username } />
+                <Dialog.Input
+                    autoCapitalize = { 'none' }
+                    onChangeText = { this._onPasswordChange }
+                    placeholder = { t('dialog.userPassword') }
+                    secureTextEntry = { true }
+                    value = { this.state.password } />
+                <Dialog.Description>
                     { this._renderMessage() }
-                </View>
-            </CustomSubmitDialog>
+                </Dialog.Description>
+                <Dialog.Button
+                    label = { t('dialog.Cancel') }
+                    onPress = { this._onCancel } />
+                <Dialog.Button
+                    disabled = { connecting }
+                    label = { t('dialog.Ok') }
+                    onPress = { this._onLogin } />
+            </Dialog.Container>
         );
     }
 
@@ -200,12 +175,10 @@ class LoginDialog extends Component<Props, State> {
             _connecting: connecting,
             _error: error,
             _progress: progress,
-            _styles: styles,
             t
         } = this.props;
 
         let messageKey;
-        let messageIsError = false;
         const messageOptions = {};
 
         if (progress && progress < 1) {
@@ -226,35 +199,21 @@ class LoginDialog extends Component<Props, State> {
                                 this.props._configHosts)
                         && credentials.password === this.state.password) {
                     messageKey = 'dialog.incorrectPassword';
-                    messageIsError = true;
                 }
             } else if (name) {
                 messageKey = 'dialog.connectErrorWithMsg';
                 messageOptions.msg = `${name} ${error.message}`;
-                messageIsError = true;
             }
         } else if (connecting) {
             messageKey = 'connection.CONNECTING';
         }
 
         if (messageKey) {
-            const message = t(messageKey, messageOptions);
-            const messageStyles = [
-                styles.dialogText,
-                messageIsError ? styles.errorMessage : styles.progressMessage
-            ];
-
-            return (
-                <Text style = { messageStyles }>
-                    { message }
-                </Text>
-            );
+            return t(messageKey, messageOptions);
         }
 
         return null;
     }
-
-    _onUsernameChange: (string) => void;
 
     /**
      * Called when user edits the username.
@@ -269,8 +228,6 @@ class LoginDialog extends Component<Props, State> {
         });
     }
 
-    _onPasswordChange: (string) => void;
-
     /**
      * Called when user edits the password.
      *
@@ -284,8 +241,6 @@ class LoginDialog extends Component<Props, State> {
         });
     }
 
-    _onCancel: () => void;
-
     /**
      * Notifies this LoginDialog that it has been dismissed by cancel.
      *
@@ -295,8 +250,6 @@ class LoginDialog extends Component<Props, State> {
     _onCancel() {
         this.props.dispatch(cancelLogin());
     }
-
-    _onLogin: () => void;
 
     /**
      * Notifies this LoginDialog that the login button (OK) has been pressed by
@@ -350,8 +303,7 @@ function _mapStateToProps(state) {
         _configHosts: configHosts,
         _connecting: Boolean(connecting) || Boolean(thenableWithCancel),
         _error: connectionError || authenticateAndUpgradeRoleError,
-        _progress: progress,
-        _styles: ColorSchemeRegistry.get(state, 'LoginDialog')
+        _progress: progress
     };
 }
 

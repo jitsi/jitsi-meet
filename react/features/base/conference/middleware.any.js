@@ -9,19 +9,19 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { reloadNow } from '../../app/actions';
+import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name';
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showWarningNotification } from '../../notifications';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { validateJwt } from '../jwt';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
-import { MEDIA_TYPE } from '../media';
 import {
-    getLocalParticipant,
-    getParticipantById,
-    getPinnedParticipant,
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    getLocalParticipant,
+    getParticipantById,
+    getPinnedParticipant
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
@@ -42,7 +42,7 @@ import {
     setLocalSubject,
     setSubject
 } from './actions';
-import { TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
+import { CONFERENCE_LEAVE_REASONS, TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
 import {
     _addLocalTracksToConference,
     _removeLocalTracksFromConference,
@@ -128,13 +128,13 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
         const [ reason ] = error.params;
 
-        dispatch(showErrorNotification({
+        dispatch(showWarningNotification({
             description: reason,
             titleKey: 'dialog.sessTerminated'
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
         if (TRIGGER_READY_TO_CLOSE_REASONS.includes(reason)) {
-            if (typeof APP === undefined) {
+            if (typeof APP === 'undefined') {
                 dispatch(readyToClose());
             } else {
                 APP.API.notifyReadyToClose();
@@ -173,7 +173,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     if (typeof APP === 'undefined') {
         !error.recoverable
         && conference
-        && conference.leave().catch(reason => {
+        && conference.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).catch(reason => {
             // Even though we don't care too much about the failure, it may be
             // good to know that it happen, so log it (on the info level).
             logger.info('JitsiConference.leave() rejected with:', reason);
@@ -210,7 +210,12 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     const result = next(action);
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
-    const { requireDisplayName, disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
+    const {
+        disableBeforeUnloadHandlers = false,
+        requireDisplayName
+    } = getState()['features/base/config'];
+
+    dispatch(removeLobbyChatParticipant(true));
 
     pendingSubjectChange && dispatch(setSubject(pendingSubjectChange));
 
@@ -541,9 +546,7 @@ function _trackAddedOrRemoved(store, next, action) {
     const track = action.track;
 
     // TODO All track swapping should happen here instead of conference.js.
-    // Since we swap the tracks for the web client in conference.js, ignore
-    // presenter tracks here and do not add/remove them to/from the conference.
-    if (track && track.local && track.mediaType !== MEDIA_TYPE.PRESENTER) {
+    if (track?.local) {
         return (
             _syncConferenceLocalTracksWithState(store, action)
                 .then(() => next(action)));

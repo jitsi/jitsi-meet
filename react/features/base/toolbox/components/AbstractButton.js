@@ -21,6 +21,11 @@ export type Props = {|
     buttonKey?: string,
 
     /**
+     * Whether or not the button is displayed in a context menu.
+     */
+    contextMenu?: boolean,
+
+    /**
      * An extra class name to be added at the end of the element's class name
      * in order to enable custom styling.
      */
@@ -106,6 +111,8 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @abstract
      */
     accessibilityLabel: string;
+
+    labelProps: Object;
 
     /**
      * The icon of this button.
@@ -321,6 +328,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
             elementAfter: this._getElementAfter(),
             icon: this._getIcon(),
             label: this._getLabel(),
+            labelProps: this.labelProps,
             styles: this._getStyles(),
             toggled: this._isToggled(),
             tooltip: this._getTooltip()

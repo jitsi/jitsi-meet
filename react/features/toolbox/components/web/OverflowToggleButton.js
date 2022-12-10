@@ -1,7 +1,7 @@
 // @flow
 
 import { translate } from '../../../base/i18n';
-import { IconHorizontalPoints } from '../../../base/icons';
+import { IconDotsHorizontal } from '../../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 
@@ -18,15 +18,15 @@ type Props = AbstractButtonProps & {
     /**
      * External handler for key down action.
      */
-     onKeyDown: Function,
+    onKeyDown: Function,
 };
 
 /**
- * Implementation of a button for toggleing the overflow menu.
+ * Implementation of a button for toggling the overflow menu.
  */
 class OverflowToggleButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';
-    icon = IconHorizontalPoints;
+    icon = IconDotsHorizontal;
     label = 'toolbar.moreActions';
     toggledLabel = 'toolbar.moreActions';
 

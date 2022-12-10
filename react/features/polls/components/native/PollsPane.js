@@ -1,14 +1,14 @@
 /* eslint-disable react-native/no-color-literals */
-// @flow
 
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { Button, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { BUTTON_MODES } from '../../../chat/constants';
-import { getUnreadPollCount } from '../../functions';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import { TabBarLabelCounter }
+    from '../../../mobile/navigation/components/TabBarLabelCounter';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
 
@@ -19,26 +19,32 @@ import { chatStyles } from './styles';
 
 const PollsPane = (props: AbstractProps) => {
     const { createMode, onCreate, setCreateMode, t } = props;
-    const isPollsScreenFocused = useIsFocused();
     const navigation = useNavigation();
-    const nbUnreadPolls = useSelector(getUnreadPollCount);
-    const { palette } = useTheme();
-
-    const nrUnreadPolls = !isPollsScreenFocused && nbUnreadPolls > 0
-        ? `(${nbUnreadPolls})`
-        : '';
+    const { isPollsTabFocused } = useSelector(state => state['features/chat']);
+    const { nbUnreadPolls } = useSelector(state => state['features/polls']);
 
     useEffect(() => {
+        const activeUnreadPollsNr = !isPollsTabFocused && nbUnreadPolls > 0;
+
         navigation.setOptions({
-            tabBarLabel: `${t('chat.tabs.polls')} ${nrUnreadPolls}`
+            // eslint-disable-next-line react/no-multi-comp
+            tabBarLabel: () => (
+                <TabBarLabelCounter
+                    activeUnreadNr = { activeUnreadPollsNr }
+                    isFocused = { isPollsTabFocused }
+                    label = { t('chat.tabs.polls') }
+                    nbUnread = { nbUnreadPolls } />
+            )
         });
-    }, [ nrUnreadPolls ]);
+
+    }, [ isPollsTabFocused, nbUnreadPolls ]);
 
     return (
         <JitsiScreen
-            contentContainerStyle = { chatStyles.PollPane }
+            contentContainerStyle = { chatStyles.pollPane }
+            disableForcedKeyboardDismiss = { !createMode }
             hasTabNavigator = { true }
-            style = { chatStyles.PollPaneContainer }>
+            style = { chatStyles.pollPaneContainer }>
             {
                 createMode
                     ? <PollCreate setCreateMode = { setCreateMode } />
@@ -47,12 +53,11 @@ const PollsPane = (props: AbstractProps) => {
             }
             {
                 !createMode && <Button
-                    color = { palette.screen01Header }
-                    mode = { BUTTON_MODES.CONTAINED }
-                    onPress = { onCreate }
-                    style = { chatStyles.createPollButton } >
-                    {t('polls.create.create')}
-                </Button>
+                    accessibilityLabel = 'polls.create.create'
+                    labelKey = 'polls.create.create'
+                    onClick = { onCreate }
+                    style = { chatStyles.createPollButton }
+                    type = { BUTTON_TYPES.PRIMARY } />
             }
         </JitsiScreen>
     );

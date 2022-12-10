@@ -4,15 +4,16 @@ import React from 'react';
 
 import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { IconGauge } from '../../base/icons';
+import { IconPerformance } from '../../base/icons';
 import { Label } from '../../base/label';
+import { COLORS } from '../../base/label/constants';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { shouldDisplayTileView } from '../../video-layout';
 
 import AbstractVideoQualityLabel, {
-    _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _abstractMapStateToProps
 } from './AbstractVideoQualityLabel';
 import VideoQualityDialog from './VideoQualityDialog.web';
 
@@ -64,7 +65,7 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
             return null;
         }
 
-        let className, icon, labelContent, onClick, tooltipKey;
+        let className, icon, labelContent, tooltipKey;
 
         if (_audioOnly) {
             className = 'audio-only';
@@ -72,11 +73,11 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
             tooltipKey = 'videoStatus.labelTooltipAudioOnly';
         } else {
             className = 'current-video-quality';
-            icon = IconGauge;
-            onClick = () => dispatch(openDialog(VideoQualityDialog));
+            icon = IconPerformance;
             tooltipKey = 'videoStatus.performanceSettings';
         }
 
+        const onClick = () => dispatch(openDialog(VideoQualityDialog));
 
         return (
             <Tooltip
@@ -84,8 +85,11 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
                 position = { 'bottom' }>
                 <Label
                     className = { className }
+                    color = { COLORS.white }
                     icon = { icon }
+                    iconColor = '#fff'
                     id = 'videoResolutionLabel'
+                    // eslint-disable-next-line react/jsx-no-bind
                     onClick = { onClick }
                     text = { labelContent } />
             </Tooltip>

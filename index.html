@@ -13,6 +13,7 @@
     <link rel="manifest" id="manifest-placeholder">
 
     <script>
+        window.EXCALIDRAW_ASSET_PATH = 'libs/';
         // Dynamically generate the manifest location URL. It must be served from the document origin, and we may have
         // the base pointing to the CDN. This way we can generate a full URL which will bypass the base.
         document.querySelector('#manifest-placeholder').setAttribute('href', window.location.origin + '/manifest.json');
@@ -54,7 +55,7 @@
         // redirected to a page that is known to have no newer js syntax.
         if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
             var roomName = encodeURIComponent(window.location.pathname);
-            window.location.href = "static/recommendedBrowsers.html" + "?room=" + roomName;
+            window.location.pathname = 'static/recommendedBrowsers.html';
         }
 
         window.indexLoadedTime = window.performance.now();
@@ -67,7 +68,6 @@
             "utils.js",
             "do_external_connect.js",
             "interface_config.js",
-            "logging_config.js",
             "lib-jitsi-meet.min.js",
             "app.bundle.min.js",
             "all.css"
@@ -185,7 +185,6 @@
     <!--#include virtual="connection_optimization/connection_optimization.html" -->
     <script src="libs/do_external_connect.min.js?v=1"></script>
     <script><!--#include virtual="/interface_config.js" --></script>
-    <script><!--#include virtual="/logging_config.js" --></script>
     <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
     <!--#include virtual="title.html" -->

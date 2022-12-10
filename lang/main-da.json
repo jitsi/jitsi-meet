@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Der er ikke nogen beskeder i mødet endnu. Skriv noget!",
         "privateNotice": "Privat besked til {{recipient}}",
+        "sendButton": "Send",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "Dig"
@@ -90,7 +91,6 @@
         "bitrate": "Bitrate:",
         "bridgeCount": "Server antal: ",
         "connectedTo": "Forbundet til:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Frame rate:",
         "less": "Vis mindre",
         "localaddress": "Lokal adresse:",
@@ -156,8 +156,7 @@
         "Remove": "Fjern",
         "Share": "Del",
         "Submit": "Gem",
-        "WaitForHostMsg": "Mødet <b>{{room}}</b> er ikke startet endnu. Hvis du er værten, log venligst ind. Ellers vent på at værten kommer",
-        "WaitForHostMsgWOk": "Mødet <b>{{room}}</b> er ikke startet endnu. Hvis du er værten, tryk venligst på OK for at logge ind. Ellers vent på at værten kommer.",
+        "WaitForHostMsg": "Mødet er ikke startet endnu. Hvis du er værten, log venligst ind. Ellers vent på at værten kommer",
         "WaitingForHost": "Venter på vært …",
         "Yes": "Ja",
         "accessibilityLabel": {
@@ -397,6 +396,7 @@
         "signedInAs": "Du er pt. logget ind som:",
         "start": "Start en livestream",
         "streamIdHelp": "Hvad er dette?",
+        "title": "Livestream",
         "unavailableTitle": "Livestreaming er ikke tilgængelig"
     },
     "localRecording": {
@@ -510,6 +510,7 @@
         "serviceName": "Optagelsesservice",
         "signIn": "Log ind",
         "signOut": "Log ud",
+        "title": "Optager",
         "unavailable": "Optagelsesservice {{serviceName}} er ikke tilgængelig. Der arbejdes på at løse problemet, forsøg igen senere.",
         "unavailableTitle": "Optagelse ikke tilgængelig"
     },

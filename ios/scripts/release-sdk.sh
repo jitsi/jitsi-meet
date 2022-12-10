@@ -35,8 +35,6 @@ xcodebuild archive \
     -sdk iphonesimulator \
     -destination='generic/platform=iOS Simulator' \
     -archivePath ios/sdk/out/ios-simulator \
-    VALID_ARCHS=x86_64 \
-    ENABLE_BITCODE=NO \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild archive \
@@ -46,8 +44,6 @@ xcodebuild archive \
     -sdk iphoneos \
     -destination='generic/platform=iOS' \
     -archivePath ios/sdk/out/ios-device \
-    VALID_ARCHS=arm64 \
-    ENABLE_BITCODE=NO \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild -create-xcframework \
@@ -63,7 +59,6 @@ pushd ${RELEASE_REPO}
 
 # Put the new files in the repo
 cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework Frameworks/
-cp -a ${PROJECT_REPO}/node_modules/react-native-webrtc/apple/WebRTC.xcframework Frameworks/
 
 # Add all files to git
 if [[ $DO_GIT_TAG == 1 ]]; then

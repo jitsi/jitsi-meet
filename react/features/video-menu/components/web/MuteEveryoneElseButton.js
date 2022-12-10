@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
-import { IconMuteEveryoneElse } from '../../../base/icons';
+import { IconMicSlash } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import AbstractMuteEveryoneElseButton, {
     type Props
 } from '../AbstractMuteEveryoneElseButton';
@@ -39,7 +39,7 @@ class MuteEveryoneElseButton extends AbstractMuteEveryoneElseButton {
         return (
             <ContextMenuItem
                 accessibilityLabel = { t('toolbar.accessibilityLabel.muteEveryoneElse') }
-                icon = { IconMuteEveryoneElse }
+                icon = { IconMicSlash }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick }
                 text = { t('videothumbnail.domuteOthers') } />

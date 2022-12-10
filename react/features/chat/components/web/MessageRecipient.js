@@ -3,12 +3,12 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconCancelSelection } from '../../../base/icons';
+import { Icon, IconCloseCircle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMessageRecipient, {
+    type Props,
     _mapDispatchToProps,
-    _mapStateToProps,
-    type Props
+    _mapStateToProps
 } from '../AbstractMessageRecipient';
 
 /**
@@ -38,9 +38,16 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
      * @returns {void}
      */
     _onKeyPress(e) {
-        if (this.props._onRemovePrivateMessageRecipient && (e.key === ' ' || e.key === 'Enter')) {
+        if (
+            (this.props._onRemovePrivateMessageRecipient || this.props._onHideLobbyChatRecipient)
+                && (e.key === ' ' || e.key === 'Enter')
+        ) {
             e.preventDefault();
-            this.props._onRemovePrivateMessageRecipient();
+            if (this.props._isLobbyChatActive && this.props._onHideLobbyChatRecipient) {
+                this.props._onHideLobbyChatRecipient();
+            } else if (this.props._onRemovePrivateMessageRecipient) {
+                this.props._onRemovePrivateMessageRecipient();
+            }
         }
     }
 
@@ -50,9 +57,10 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
      * @inheritdoc
      */
     render() {
-        const { _privateMessageRecipient } = this.props;
+        const { _privateMessageRecipient, _isLobbyChatActive,
+            _lobbyMessageRecipient, _visible } = this.props;
 
-        if (!_privateMessageRecipient) {
+        if ((!_privateMessageRecipient && !_isLobbyChatActive) || !_visible) {
             return null;
         }
 
@@ -60,21 +68,23 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
 
         return (
             <div
+                className = { _isLobbyChatActive ? 'lobby-chat-recipient' : '' }
                 id = 'chat-recipient'
                 role = 'alert'>
                 <span>
-                    { t('chat.messageTo', {
-                        recipient: _privateMessageRecipient
+                    { t(_isLobbyChatActive ? 'chat.lobbyChatMessageTo' : 'chat.messageTo', {
+                        recipient: _isLobbyChatActive ? _lobbyMessageRecipient : _privateMessageRecipient
                     }) }
                 </span>
                 <div
                     aria-label = { t('dialog.close') }
-                    onClick = { this.props._onRemovePrivateMessageRecipient }
+                    onClick = { _isLobbyChatActive
+                        ? this.props._onHideLobbyChatRecipient : this.props._onRemovePrivateMessageRecipient }
                     onKeyPress = { this._onKeyPress }
                     role = 'button'
                     tabIndex = { 0 }>
                     <Icon
-                        src = { IconCancelSelection } />
+                        src = { IconCloseCircle } />
                 </div>
             </div>
         );

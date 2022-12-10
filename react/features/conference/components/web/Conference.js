@@ -11,17 +11,18 @@ import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
 import { setColorAlpha } from '../../../base/util';
 import { Chat } from '../../../chat';
-import { Filmstrip } from '../../../filmstrip';
+import { MainFilmstrip, ScreenshareFilmstrip, StageFilmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { LobbyScreen } from '../../../lobby';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { ParticipantsPane } from '../../../participants-pane/components/web';
-import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
+import Prejoin from '../../../prejoin/components/web/Prejoin';
+import { isPrejoinPageVisible } from '../../../prejoin/functions';
 import { toggleToolboxVisible } from '../../../toolbox/actions.any';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { JitsiPortal, Toolbox } from '../../../toolbox/components/web';
-import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
+import { LAYOUT_CLASSNAMES, getCurrentLayout } from '../../../video-layout';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 import {
     AbstractConference,
@@ -47,19 +48,6 @@ const FULL_SCREEN_EVENTS = [
     'mozfullscreenchange',
     'fullscreenchange'
 ];
-
-/**
- * The CSS class to apply to the root element of the conference so CSS can
- * modify the app layout.
- *
- * @private
- * @type {Object}
- */
-const LAYOUT_CLASSNAMES = {
-    [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'horizontal-filmstrip',
-    [LAYOUTS.TILE_VIEW]: 'tile-view',
-    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'vertical-filmstrip'
-};
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -95,7 +83,7 @@ type Props = AbstractProps & {
     /**
      * If lobby page is visible or not.
      */
-     _showLobby: boolean,
+    _showLobby: boolean,
 
     /**
      * If prejoin page is visible or not.
@@ -222,24 +210,29 @@ class Conference extends AbstractConference<Props, *> {
                 id = 'layout_wrapper'
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
-                onMouseMove = { this._onMouseMove } >
+                onMouseMove = { this._onMouseMove }
+                ref = { this._setBackground }>
+                <Chat />
                 <div
                     className = { _layoutClassName }
                     id = 'videoconference_page'
-                    onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }
-                    ref = { this._setBackground }>
+                    onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
                     <ConferenceInfo />
-
                     <Notice />
                     <div
                         id = 'videospace'
                         onTouchStart = { this._onVidespaceTouchStart }>
                         <LargeVideo />
-                        <Filmstrip />
+                        {
+                            _showPrejoin || _showLobby || (<>
+                                <StageFilmstrip />
+                                <ScreenshareFilmstrip />
+                                <MainFilmstrip />
+                            </>)
+                        }
                     </div>
 
                     { _showPrejoin || _showLobby || <Toolbox /> }
-                    <Chat />
 
                     {_notificationsVisible && (_overflowDrawer
                         ? <JitsiPortal className = 'notification-portal'>

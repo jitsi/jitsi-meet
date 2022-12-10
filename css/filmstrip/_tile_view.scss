@@ -2,12 +2,9 @@
  * CSS styles that are specific to the filmstrip that shows the thumbnail tiles.
  */
 .tile-view {
-
     .remote-videos {
         align-items: center;
         box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
         overscroll-behavior: contain;
     }
 
@@ -42,17 +39,6 @@
         top: 0;
         width: 100%;
 
-        @media (min-width: 581px) {
-            &.shift-right {
-                margin-left: $sidebarWidth;
-                width: calc(100% - #{$sidebarWidth});
-
-                .remote-videos {
-                    width: calc(100vw - #{$sidebarWidth});
-                }
-            }
-        }
-
         &.collapse {
             #remoteVideos {
                 height: calc(100% - #{$newToolbarSizeMobile}) !important;
@@ -74,6 +60,10 @@
         display: block;
     }
 
+    .filmstrip__videos.has-scroll {
+        padding-left: 7px;
+    }
+
     .remote-videos {
         box-sizing: border-box;
 
@@ -91,7 +81,6 @@
             margin-top: auto;
             margin-bottom: auto;
             justify-content: center;
-            position: absolute;
 
             .videocontainer {
                 border: 0;

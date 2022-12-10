@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
-import { Icon, IconVolumeEmpty } from '../../../base/icons';
+import { Icon, IconVolumeUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { setVolume } from '../../../participants-pane/actions.native';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
@@ -102,7 +102,7 @@ class VolumeSlider extends PureComponent<Props, State> {
             <View style = { styles.volumeSliderContainer } >
                 <Icon
                     size = { 24 }
-                    src = { IconVolumeEmpty } />
+                    src = { IconVolumeUp } />
                 <Slider
                     maximumTrackTintColor = { palette.field02 }
                     maximumValue = { VOLUME_SLIDER_SCALE }

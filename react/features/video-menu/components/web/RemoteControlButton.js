@@ -6,9 +6,9 @@ import {
     createRemoteVideoMenuButtonEvent,
     sendAnalytics
 } from '../../../analytics';
-import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { IconRemoteControlStart, IconRemoteControlStop } from '../../../base/icons';
+import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 
 // TODO: Move these enums into the store after further reactification of the
 // non-react RemoteVideo component.

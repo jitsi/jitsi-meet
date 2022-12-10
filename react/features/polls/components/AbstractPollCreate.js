@@ -5,8 +5,7 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { sendAnalytics, createPollEvent } from '../../analytics';
-import { getParticipantDisplayName } from '../../base/participants';
+import { createPollEvent, sendAnalytics } from '../../analytics';
 import { COMMAND_NEW_POLL } from '../constants';
 
 /**
@@ -49,10 +48,9 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
     const [ answers, setAnswers ] = useState([ '', '' ]);
 
     const setAnswer = useCallback((i, answer) => {
-        const newAnswers = [ ...answers ];
+        answers[i] = answer;
 
-        newAnswers[i] = answer;
-        setAnswers(newAnswers);
+        setAnswers([ ...answers ]);
     });
 
     const addAnswer = useCallback((i: ?number) => {
@@ -85,8 +83,6 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
     });
 
     const conference = useSelector(state => state['features/base/conference'].conference);
-    const myId = conference.myUserId();
-    const myName = useSelector(state => getParticipantDisplayName(state, myId));
 
     const onSubmit = useCallback(ev => {
         if (ev) {
@@ -102,8 +98,6 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
         conference.sendMessage({
             type: COMMAND_NEW_POLL,
             pollId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
-            senderId: myId,
-            senderName: myName,
             question,
             answers: filteredAnswers
         });

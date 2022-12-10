@@ -1,20 +1,20 @@
-// @flow
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { Button } from 'react-native-paper';
+import { FlatList, Platform, Text, View } from 'react-native';
+import { Divider, TouchableRipple } from 'react-native-paper';
 
-import { Icon, IconClose } from '../../../base/icons';
-import { BUTTON_MODES } from '../../../chat/constants';
-import { CHAR_LIMIT } from '../../constants';
+import Button from '../../../base/ui/components/native/Button';
+import Input from '../../../base/ui/components/native/Input';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import styles
+    from '../../../settings/components/native/styles';
+import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate from '../AbstractPollCreate';
 import type { AbstractProps } from '../AbstractPollCreate';
 
 import { chatStyles, dialogStyles } from './styles';
 
+
 const PollCreate = (props: AbstractProps) => {
-
-
     const {
         addAnswer,
         answers,
@@ -32,7 +32,7 @@ const PollCreate = (props: AbstractProps) => {
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
-     * This array is maintained by registerfieldRef and the useEffect below.
+     * This array is maintained by registerFieldRef and the useEffect below.
      */
     const answerInputs = useRef([]);
     const registerFieldRef = useCallback((i, input) => {
@@ -40,12 +40,11 @@ const PollCreate = (props: AbstractProps) => {
             return;
         }
         answerInputs.current[i] = input;
-    },
-        [ answerInputs ]
-    );
+    }, [ answerInputs ]);
 
     useEffect(() => {
         answerInputs.current = answerInputs.current.slice(0, answers.length);
+
     }, [ answers ]);
 
     /*
@@ -53,6 +52,7 @@ const PollCreate = (props: AbstractProps) => {
      * about whether a newly created input field has been rendered yet or not.
      */
     const [ lastFocus, requestFocus ] = useState(null);
+    const { PRIMARY, SECONDARY } = BUTTON_TYPES;
 
     useEffect(() => {
         if (lastFocus === null) {
@@ -84,16 +84,14 @@ const PollCreate = (props: AbstractProps) => {
     }, [ answers, addAnswer, removeAnswer, requestFocus ]);
 
     /* eslint-disable react/no-multi-comp */
-    const createIconButton = (icon, onPress, style) => (
-        <TouchableOpacity
-            activeOpacity = { 0.8 }
+    const createRemoveOptionButton = onPress => (
+        <TouchableRipple
             onPress = { onPress }
-            style = { [ dialogStyles.buttonContainer, style ] }>
-            <Icon
-                size = { 24 }
-                src = { icon }
-                style = { dialogStyles.icon } />
-        </TouchableOpacity>
+            rippleColor = { 'transparent' } >
+            <Text style = { dialogStyles.optionRemoveButtonText }>
+                { t('polls.create.removeOption') }
+            </Text>
+        </TouchableRipple>
     );
 
 
@@ -104,36 +102,40 @@ const PollCreate = (props: AbstractProps) => {
         (
             <View
                 style = { dialogStyles.optionContainer }>
-                <TextInput
+                <Input
                     blurOnSubmit = { false }
+                    label = { t('polls.create.pollOption', { index: index + 1 }) }
                     maxLength = { CHAR_LIMIT }
                     multiline = { true }
-                    onChangeText = { text => setAnswer(index, text) }
+                    onChange = { text => setAnswer(index, text) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }
                     ref = { input => registerFieldRef(index, input) }
-                    style = { dialogStyles.field }
                     value = { answers[index] } />
-
-                {answers.length > 2
-                    && createIconButton(IconClose, () => removeAnswer(index))
+                {
+                    answers.length > 2
+                    && createRemoveOptionButton(() => removeAnswer(index))
                 }
             </View>
         );
+    const buttonRowStyles = Platform.OS === 'android'
+        ? chatStyles.buttonRowAndroid : chatStyles.buttonRowIos;
 
     return (
         <View style = { chatStyles.pollCreateContainer }>
             <View style = { chatStyles.pollCreateSubContainer }>
-                <TextInput
+                <Input
                     autoFocus = { true }
                     blurOnSubmit = { false }
+                    customStyles = {{ container: dialogStyles.customContainer }}
+                    label = { t('polls.create.pollQuestion') }
                     maxLength = { CHAR_LIMIT }
                     multiline = { true }
-                    onChangeText = { setQuestion }
+                    onChange = { setQuestion }
                     onSubmitEditing = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
-                    style = { dialogStyles.question }
                     value = { question } />
+                <Divider style = { styles.fieldSeparator } />
                 <FlatList
                     blurOnSubmit = { true }
                     data = { answers }
@@ -143,40 +145,36 @@ const PollCreate = (props: AbstractProps) => {
                     renderItem = { renderListItem } />
                 <View style = { chatStyles.pollCreateButtonsContainer }>
                     <Button
-                        color = '#3D3D3D'
-                        mode = { BUTTON_MODES.CONTAINED }
-                        onPress = { () => {
+                        accessibilityLabel = 'polls.create.addOption'
+                        disabled = { answers.length >= ANSWERS_LIMIT }
+                        labelKey = 'polls.create.addOption'
+                        onClick = { () => {
                             // adding and answer
                             addAnswer();
                             requestFocus(answers.length);
                         } }
-                        style = { chatStyles.pollCreateAddButton }>
-                        {t('polls.create.addOption')}
-                    </Button>
+                        style = { chatStyles.pollCreateAddButton }
+                        type = { SECONDARY } />
                     <View
-                        style = { chatStyles.buttonRow }>
+                        style = { buttonRowStyles }>
                         <Button
-                            color = '#3D3D3D'
-                            mode = { BUTTON_MODES.CONTAINED }
-                            onPress = { () => setCreateMode(false) }
-                            style = { chatStyles.pollCreateButton } >
-                            {t('polls.create.cancel')}
-                        </Button>
-
+                            accessibilityLabel = 'polls.create.cancel'
+                            labelKey = 'polls.create.cancel'
+                            onClick = { () => setCreateMode(false) }
+                            style = { chatStyles.pollCreateButton }
+                            type = { SECONDARY } />
                         <Button
-                            color = '#17a0db'
+                            accessibilityLabel = 'polls.create.send'
                             disabled = { isSubmitDisabled }
-                            mode = { BUTTON_MODES.CONTAINED }
-                            onPress = { onSubmit }
-                            style = { chatStyles.pollCreateButton } >
-                            {t('polls.create.send')}
-                        </Button>
+                            labelKey = 'polls.create.send'
+                            onClick = { onSubmit }
+                            style = { chatStyles.pollCreateButton }
+                            type = { PRIMARY } />
                     </View>
                 </View>
             </View>
         </View>
     );
-
 };
 
 /*

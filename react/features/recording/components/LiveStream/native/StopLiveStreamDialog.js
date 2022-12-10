@@ -26,7 +26,7 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
     render() {
         return (
             <ConfirmDialog
-                contentKey = 'dialog.stopStreamingWarning'
+                descriptionKey = 'dialog.stopStreamingWarning'
                 onSubmit = { this._onSubmit } />
         );
     }

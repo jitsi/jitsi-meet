@@ -1,13 +1,12 @@
 // @flow
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { getFeatureFlag, HELP_BUTTON_ENABLED } from '../../base/flags';
+import { HELP_BUTTON_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconHelp } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { openURLInBrowser } from '../../base/util';
-import { isVpaasMeeting } from '../../jaas/functions';
 
 type Props = AbstractButtonProps & {
 
@@ -50,7 +49,7 @@ class HelpButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state: Object) {
     const { userDocumentationURL } = state['features/base/config'].deploymentUrls || {};
     const enabled = getFeatureFlag(state, HELP_BUTTON_ENABLED, true);
-    const visible = typeof userDocumentationURL === 'string' && enabled && !isVpaasMeeting(state);
+    const visible = typeof userDocumentationURL === 'string' && enabled;
 
     return {
         _userDocumentationURL: userDocumentationURL,

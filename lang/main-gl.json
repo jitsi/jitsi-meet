@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Aínda non hai mensaxes na reunión. Comece unha conversación aquí!",
         "privateNotice": "Mensaxe privada para {{recipient}}",
+        "sendButton": "Enviar",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "vostede"
@@ -151,8 +152,7 @@
         "Remove": "Retirar",
         "Share": "Compartir",
         "Submit": "Enviar",
-        "WaitForHostMsg": "A sala <b>{{room}}</b> aínda non comezou. Se vostede é o anfitrión, autentíquese. Se non, agarde a que o anfitrión chegue.",
-        "WaitForHostMsgWOk": "A sala <b>{{room}}</b> aínda non comezou. Se vostede é o anfitrión, prema en Aceptar para autenticar. Se non, agarde a que o anfitrión chegue.",
+        "WaitForHostMsg": "A sala aínda non comezou. Se vostede é o anfitrión, autentíquese. Se non, agarde a que o anfitrión chegue.",
         "WaitingForHost": "Agardando polo anfitrión…",
         "Yes": "Si",
         "accessibilityLabel": {
@@ -386,6 +386,7 @@
         "signedInAs": "Está conectado como:",
         "start": "Arrincar unha difusión ao vivo",
         "streamIdHelp": "Que é isto?",
+        "title": "Difusión ao vivo",
         "unavailableTitle": "A difusión ao vivo non está dispoñíbel"
     },
     "localRecording": {
@@ -499,6 +500,7 @@
         "serviceName": "Servizo de gravación",
         "signIn": "Conectarse",
         "signOut": "Desconectarse",
+        "title": "Gravando",
         "unavailable": "Opa! O {{serviceName}} non está dispoñíbel actualmente. Estamos traballando na resolución da incidencia. Ténteo de novo máis adiante.",
         "unavailableTitle": "A gravación non está dispoñíbel"
     },

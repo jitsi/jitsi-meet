@@ -1,16 +1,17 @@
-// @flow
-
 import React from 'react';
 
-import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
+import Dialog from '../../../../base/ui/components/web/Dialog';
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
 import { isScreenshotCaptureEnabled } from '../../../../screenshot-capture/functions';
+import { RECORDING_TYPES } from '../../../constants';
 import AbstractStartRecordingDialog, {
     mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
-import StartRecordingDialogContent from '../StartRecordingDialogContent';
+
+import StartRecordingDialogContent from './StartRecordingDialogContent';
+
 
 /**
  * React Component for getting confirmation to start a file recording session in
@@ -19,6 +20,32 @@ import StartRecordingDialogContent from '../StartRecordingDialogContent';
  * @augments Component
  */
 class StartRecordingDialog extends AbstractStartRecordingDialog {
+
+    isStartRecordingDisabled: () => boolean;
+
+    /**
+     * Disables start recording button.
+     *
+     * @returns {boolean}
+     */
+    isStartRecordingDisabled() {
+        const { isTokenValid, selectedRecordingService } = this.state;
+
+        // Start button is disabled if recording service is only shown;
+        // When validating dropbox token, if that is not enabled, we either always
+        // show the start button or, if just dropbox is enabled, start button
+        // is available when there is token.
+        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
+            return false;
+        } else if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
+            return !isTokenValid;
+        } else if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -28,35 +55,34 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
         const {
             isTokenValid,
             isValidating,
+            localRecordingOnlySelf,
             selectedRecordingService,
             sharingEnabled,
             spaceLeft,
             userName
         } = this.state;
-        const { _fileRecordingsServiceEnabled, _fileRecordingsServiceSharingEnabled, _isDropboxEnabled } = this.props;
-
-        // disable ok button id recording service is shown only, when
-        // validating dropbox token, if that is not enabled we either always
-        // show the ok button or if just dropbox is enabled ok is available
-        // when there is token
-        const isOkDisabled
-            = _fileRecordingsServiceEnabled ? isValidating
-                : _isDropboxEnabled ? !isTokenValid : false;
+        const {
+            _fileRecordingsServiceEnabled,
+            _fileRecordingsServiceSharingEnabled
+        } = this.props;
 
         return (
             <Dialog
-                okDisabled = { isOkDisabled }
-                okKey = 'dialog.startRecording'
+                ok = {{
+                    translationKey: 'dialog.startRecording',
+                    disabled: this.isStartRecordingDisabled()
+                }}
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.startRecording'
-                width = 'small'>
+                titleKey = 'dialog.startRecording'>
                 <StartRecordingDialogContent
                     fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
                     fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
                     integrationsEnabled = { this._areIntegrationsEnabled() }
                     isTokenValid = { isTokenValid }
                     isValidating = { isValidating }
+                    localRecordingOnlySelf = { localRecordingOnlySelf }
                     onChange = { this._onSelectedRecordingServiceChanged }
+                    onLocalRecordingSelfChange = { this._onLocalRecordingSelfChange }
                     onSharingSettingChanged = { this._onSharingSettingChanged }
                     selectedRecordingService = { selectedRecordingService }
                     sharingSetting = { sharingEnabled }
@@ -83,6 +109,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
     _onSubmit: () => boolean;
     _onSelectedRecordingServiceChanged: (string) => void;
     _onSharingSettingChanged: () => void;
+    _onLocalRecordingSelfChange: () => void;
 }
 
 /**

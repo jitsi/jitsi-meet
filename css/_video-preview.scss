@@ -1,13 +1,14 @@
 .video-preview {
     background: none;
     display: inline-block;
-    max-height: 344px;
 
     &-container {
+        max-height: 344px;
         background: $menuBG;
         border-radius: 3px;
         overflow: auto;
         padding: 8px;
+        margin-bottom: 8px;
     }
 
     &-entry {

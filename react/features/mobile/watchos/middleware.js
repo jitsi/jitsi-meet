@@ -1,6 +1,6 @@
 // @flow
 
-import { Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import { updateApplicationContext, watchEvents } from 'react-native-watch-connectivity';
 
 import { appNavigate } from '../../app/actions';
@@ -18,7 +18,8 @@ import { setConferenceTimestamp, setSessionId, setWatchReachable } from './actio
 import { CMD_HANG_UP, CMD_JOIN_CONFERENCE, CMD_SET_MUTED, MAX_RECENT_URLS } from './constants';
 import logger from './logger';
 
-const watchOSEnabled = Platform.OS === 'ios';
+const { AppInfo } = NativeModules;
+const watchOSEnabled = Platform.OS === 'ios' && !AppInfo.isLiteSDK;
 
 // Handles the recent URLs state sent to the watch
 watchOSEnabled && StateListenerRegistry.register(

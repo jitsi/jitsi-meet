@@ -19,7 +19,7 @@ import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks';
-import { ACTION_TRIGGER, type MediaState, MEDIA_STATE } from '../../constants';
+import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
 import {
     getParticipantAudioMediaState,
     getParticipantVideoMediaState,
@@ -87,7 +87,7 @@ type Props = {
      * The participant ID.
      *
      * NOTE: This ID may be different from participantID prop in the case when we pass undefined for the local
-     * participant. In this case the local participant ID will be filled trough _participantID prop.
+     * participant. In this case the local participant ID will be filled through _participantID prop.
      */
     _participantID: string,
 
@@ -115,6 +115,11 @@ type Props = {
      * Is this item highlighted.
      */
     isHighlighted: boolean,
+
+    /**
+     * Whether or not the local participant is in a breakout room.
+     */
+    isInBreakoutRoom: boolean,
 
     /**
      * Callback used to open a confirmation dialog for audio muting.
@@ -189,6 +194,7 @@ function MeetingParticipantItem({
     _videoMediaState,
     askUnmuteText,
     isHighlighted,
+    isInBreakoutRoom,
     muteAudio,
     muteParticipantButtonText,
     onContextMenu,
@@ -245,7 +251,12 @@ function MeetingParticipantItem({
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
-            audioMediaState = { audioMediaState }
+            {
+                ...(_participant?.fakeParticipant ? {} : {
+                    audioMediaState,
+                    videoMediaState: _videoMediaState
+                })
+            }
             disableModeratorIndicator = { _disableModeratorIndicator }
             displayName = { _displayName }
             isHighlighted = { isHighlighted }
@@ -256,25 +267,26 @@ function MeetingParticipantItem({
             overflowDrawer = { overflowDrawer }
             participantID = { _participantID }
             raisedHand = { _raisedHand }
-            videoMediaState = { _videoMediaState }
             youText = { youText }>
 
-            {!overflowDrawer && !_participant?.isFakeParticipant
+            {!overflowDrawer && !_participant?.fakeParticipant
                 && <>
-                    <ParticipantQuickAction
-                        askUnmuteText = { askToUnmuteText }
-                        buttonType = { _quickActionButtonType }
-                        muteAudio = { muteAudio }
-                        muteParticipantButtonText = { muteParticipantButtonText }
-                        participantID = { _participantID }
-                        participantName = { _displayName } />
+                    {!isInBreakoutRoom && (
+                        <ParticipantQuickAction
+                            askUnmuteText = { askToUnmuteText }
+                            buttonType = { _quickActionButtonType }
+                            muteAudio = { muteAudio }
+                            muteParticipantButtonText = { muteParticipantButtonText }
+                            participantID = { _participantID }
+                            participantName = { _displayName } />
+                    )}
                     <ParticipantActionEllipsis
                         accessibilityLabel = { participantActionEllipsisLabel }
                         onClick = { onContextMenu } />
                 </>
             }
 
-            {!overflowDrawer && _localVideoOwner && _participant?.isFakeParticipant && (
+            {!overflowDrawer && (_localVideoOwner || _participant?.fakeParticipant) && (
                 <ParticipantActionEllipsis
                     accessibilityLabel = { participantActionEllipsisLabel }
                     onClick = { onContextMenu } />

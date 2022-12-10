@@ -7,7 +7,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    z-index: $toolbarZ + 1;
+    z-index: $toolbarZ + 2;
 
     .action-btn {
         border-radius: 6px;
@@ -82,7 +82,7 @@
         flex-direction: column;
         flex-shrink: 0;
         height: 100%;
-        margin: 0 110px;
+        margin: 0 30px;
         padding: 24px 0 16px;
         position: relative;
         width: $prejoinDefaultContentWidth;
@@ -101,7 +101,7 @@
                 font-weight: 600;
                 letter-spacing: -0.015;
                 line-height: 36px;
-                margin-bottom: 32px;
+                margin-bottom: 16px;
                 text-align: center;
             }
 
@@ -137,6 +137,7 @@
                 }
 
                 .toolbox-content-items {
+                    @include ltr;
                     background: transparent;
                     box-shadow: none;
                     display: flex;
@@ -154,32 +155,19 @@
         }
     }
 
-    @media (max-width: 1000px) {
+    @media (max-width: 720px) {
         flex-direction: column-reverse;
 
         .content {
             height: auto;
             margin: 0 auto;
         }
-
-        .con-status {
-            margin: 24px auto;
-            position: fixed;
-            top: 0;
-            width: $prejoinDefaultContentWidth;
-        }
     }
 
     // mobile phone landscape
     @media (max-height: 420px) {
-        flex-direction: row;
-
         div.content {
             padding: 16px 16px 0 16px;
-        }
-
-        .con-status {
-            display: none;
         }
     }
 
@@ -198,11 +186,6 @@
             .title {
                 display: none;
             }
-        }
-
-        .con-status {
-            margin: 0;
-            width: 100%;
         }
 
         .device-status-error {

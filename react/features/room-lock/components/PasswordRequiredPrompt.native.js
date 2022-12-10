@@ -92,14 +92,15 @@ class PasswordRequiredPrompt extends Component<Props, State> {
 
         return (
             <InputDialog
-                contentKey = 'dialog.passwordLabel'
+                descriptionKey = 'dialog.passwordLabel'
                 initialValue = { password }
                 messageKey = { password ? 'dialog.incorrectRoomLockPassword' : undefined }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 textInputProps = {{
                     secureTextEntry: true
-                }} />
+                }}
+                titleKey = 'dialog.password' />
         );
     }
 

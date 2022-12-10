@@ -1,5 +1,4 @@
-import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { BoxModel, fixAndroidViewClipping } from '../../../base/styles';
+import { fixAndroidViewClipping } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
@@ -35,16 +34,6 @@ export default {
         margin: 10
     },
 
-    headerNavigationIcon: {
-        marginLeft: 12
-    },
-
-    headerNavigationButton: {
-        height: BaseTheme.spacing[6],
-        marginTop: 20,
-        width: BaseTheme.spacing[6]
-    },
-
     /**
      * View that contains the indicators.
      */
@@ -62,36 +51,24 @@ export default {
         width: BaseTheme.spacing[7]
     },
 
-    inviteButton: {
+    titleBarButton: {
         iconStyle: {
             color: BaseTheme.palette.icon01,
             padding: 12,
             fontSize: TITLE_BAR_BUTTON_SIZE
         },
-        underlayColor: BaseTheme.spacing.underlay01
-    },
-
-    lonelyButton: {
-        alignItems: 'center',
-        borderRadius: 24,
-        flexDirection: 'row',
-        height: BaseTheme.spacing[6],
-        justifyContent: 'space-around',
-        paddingHorizontal: 12
-    },
-
-    lonelyButtonComponents: {
-        marginHorizontal: 6
+        underlayColor: 'transparent'
     },
 
     lonelyMeetingContainer: {
         alignSelf: 'stretch',
         alignItems: 'center',
-        padding: BoxModel.padding * 2
+        padding: BaseTheme.spacing[3]
     },
 
     lonelyMessage: {
-        paddingVertical: 12
+        color: BaseTheme.palette.text01,
+        paddingVertical: BaseTheme.spacing[2]
     },
 
     pipButtonContainer: {
@@ -111,7 +88,7 @@ export default {
             padding: 12,
             fontSize: TITLE_BAR_BUTTON_SIZE
         },
-        underlayColor: BaseTheme.spacing.underlay01
+        underlayColor: 'transparent'
     },
 
     titleBarSafeViewColor: {
@@ -152,17 +129,18 @@ export default {
     },
 
     roomTimer: {
-        color: BaseTheme.palette.text01,
         ...BaseTheme.typography.bodyShortBold,
-        paddingHorizontal: 8,
-        paddingVertical: 6,
+        color: BaseTheme.palette.text01,
         textAlign: 'center'
     },
 
     roomTimerView: {
-        backgroundColor: BaseTheme.palette.action02,
-        borderRadius: 3,
+        backgroundColor: BaseTheme.palette.ui03,
+        borderRadius: BaseTheme.shape.borderRadius,
+        height: 32,
         justifyContent: 'center',
+        paddingHorizontal: BaseTheme.spacing[2],
+        paddingVertical: BaseTheme.spacing[1],
         minWidth: 50
     },
 
@@ -205,16 +183,18 @@ export default {
     },
 
     insecureRoomNameLabel: {
-        backgroundColor: INSECURE_ROOM_NAME_LABEL_COLOR
+        backgroundColor: INSECURE_ROOM_NAME_LABEL_COLOR,
+        borderRadius: BaseTheme.shape.borderRadius,
+        height: 32
     },
 
     raisedHandsCountLabel: {
-        backgroundColor: BaseTheme.palette.warning02,
-        flexDirection: 'row',
         alignItems: 'center',
+        backgroundColor: BaseTheme.palette.warning02,
+        borderRadius: BaseTheme.shape.borderRadius,
+        flexDirection: 'row',
         marginLeft: BaseTheme.spacing[0],
-        marginBottom: BaseTheme.spacing[0],
-        marginRight: BaseTheme.spacing[1]
+        marginBottom: BaseTheme.spacing[0]
     },
 
     raisedHandsCountLabelText: {
@@ -222,13 +202,3 @@ export default {
         paddingLeft: BaseTheme.spacing[2]
     }
 };
-
-ColorSchemeRegistry.register('Conference', {
-    lonelyButton: {
-        backgroundColor: schemeColor('inviteButtonBackground')
-    },
-
-    lonelyMessage: {
-        color: schemeColor('onVideoText')
-    }
-});

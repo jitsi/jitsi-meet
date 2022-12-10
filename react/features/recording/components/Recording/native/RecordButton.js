@@ -2,10 +2,42 @@
 
 import { Platform } from 'react-native';
 
+import { openDialog } from '../../../../base/dialog';
 import { IOS_RECORDING_ENABLED, RECORDING_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
-import AbstractRecordButton, { _mapStateToProps as _abstractMapStateToProps } from '../AbstractRecordButton';
+import { navigate }
+    from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../../mobile/navigation/routes';
+import type { Props } from '../../LiveStream/AbstractStartLiveStreamDialog';
+import AbstractRecordButton,
+{ _mapStateToProps as _abstractMapStateToProps } from '../AbstractRecordButton';
+
+import { StopRecordingDialog } from './index';
+
+
+/**
+ * Button for opening a screen where a recording session can be started.
+ */
+class RecordButton extends AbstractRecordButton<Props> {
+
+    /**
+     * Handles clicking / pressing the button.
+     *
+     * @override
+     * @protected
+     * @returns {void}
+     */
+    _onHandleClick() {
+        const { _isRecordingRunning, dispatch } = this.props;
+
+        if (_isRecordingRunning) {
+            dispatch(openDialog(StopRecordingDialog));
+        } else {
+            navigate(screen.conference.recording);
+        }
+    }
+}
 
 /**
  * Maps (parts of) the redux state to the associated props for this component.
@@ -27,4 +59,4 @@ export function mapStateToProps(state: Object, ownProps: Object) {
     };
 }
 
-export default translate(connect(mapStateToProps)(AbstractRecordButton));
+export default translate(connect(mapStateToProps)(RecordButton));

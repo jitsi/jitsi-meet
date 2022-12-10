@@ -2,7 +2,7 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconSettings } from '../../../base/icons';
+import { IconGear } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { openSettingsDialog } from '../../actions';
@@ -21,7 +21,13 @@ type Props = AbstractButtonProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Indicates whether the device selection dialog is displayed on the
+     * welcome page or not.
+     */
+    isDisplayedOnWelcomePage: boolean
 };
 
 /**
@@ -29,7 +35,7 @@ type Props = AbstractButtonProps & {
  */
 class SettingsButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
-    icon = IconSettings;
+    icon = IconGear;
     label = 'toolbar.Settings';
     tooltip = 'toolbar.Settings';
 
@@ -40,10 +46,10 @@ class SettingsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { defaultTab = SETTINGS_TABS.DEVICES, dispatch } = this.props;
+        const { defaultTab = SETTINGS_TABS.DEVICES, dispatch, isDisplayedOnWelcomePage = false } = this.props;
 
         sendAnalytics(createToolbarEvent('settings'));
-        dispatch(openSettingsDialog(defaultTab));
+        dispatch(openSettingsDialog(defaultTab, isDisplayedOnWelcomePage));
     }
 }
 

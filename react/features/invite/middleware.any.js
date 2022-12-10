@@ -5,14 +5,14 @@ import {
     CONFERENCE_JOINED
 } from '../base/conference';
 import {
-    getLocalParticipant,
-    getParticipantCount,
-    getParticipantPresenceStatus,
-    getRemoteParticipants,
     PARTICIPANT_JOINED,
     PARTICIPANT_JOINED_SOUND_ID,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
+    getLocalParticipant,
+    getParticipantCount,
+    getParticipantPresenceStatus,
+    getRemoteParticipants,
     pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';

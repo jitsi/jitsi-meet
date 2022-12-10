@@ -28,13 +28,19 @@ if [[ "${CURRENT_LJM_DEP}" == "${LATEST_LJM_DEP}" ]]; then
     exit 1
 fi
 
+if [[ ${CURRENT_LJM_DEP} =~ ^.*download/(.*)/lib-jitsi-meet\.tgz$ ]]; then
+  COMMIT_MSG="https://github.com/jitsi/lib-jitsi-meet/compare/${BASH_REMATCH[1]}...${NEW_LJM_RELEASE}"
+else
+  COMMIT_MSG=${GH_LINK}
+fi
+
 pushd ${THIS_DIR}/..
 EPOCH=$(date +%s)
 NEW_BRANCH="update-ljm-${EPOCH}"
 git checkout -b ${NEW_BRANCH}
 npm install ${LATEST_LJM_DEP}
 git add package.json package-lock.json
-git commit -m "chore(deps) lib-jitsi-meet@latest" -m "${GH_LINK}"
+git commit -m "chore(deps) lib-jitsi-meet@latest" -m "${COMMIT_MSG}"
 git push origin ${NEW_BRANCH}
 gh pr create --repo jitsi/jitsi-meet --fill
 popd

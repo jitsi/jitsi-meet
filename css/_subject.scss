@@ -1,7 +1,7 @@
 .subject {
     color: #fff;
     transition: opacity .6s ease-in-out;
-    z-index: $zindex3;
+    z-index: $toolbarZ + 2;
     margin-top: 20px;
     opacity: 0;
 
@@ -12,6 +12,7 @@
     &#autoHide.with-always-on {
         overflow: hidden;
         animation: hideSubject forwards .6s ease-out;
+        margin-left: 4px;
 
         & > .subject-info-container {
             justify-content: flex-start;
@@ -86,10 +87,6 @@
     top: 0;
     height: 48px;
     max-width: calc(100% - 24px);
-}
-
-.shift-right .details-container {
-    margin-left: calc(#{$sidebarWidth} / 2);
 }
 
 @keyframes hideSubject {

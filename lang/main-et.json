@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Kirjavahetust pole veel alustatud. Alusta kirjavahetust siin!",
         "privateNotice": "Privaatsõnum kasutajale {{recipient}}",
+        "sendButton": "Saada",
         "title": "Kõne",
         "titleWithPolls": "Kõne",
         "you": "you"
@@ -90,7 +91,6 @@
         "bitrate": "Andmeedastuskiirus:",
         "bridgeCount": "Serverite arv: ",
         "connectedTo": "Ühendatud:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Ekraani eraldusvõime:",
         "less": "Näita vähem",
         "localaddress": "Lokaalne aadress:",
@@ -155,8 +155,7 @@
         "Remove": "Eemalda",
         "Share": "Jaga",
         "Submit": "Esita",
-        "WaitForHostMsg": "Kõne <b>{{room}}</b> ei ole veel alanud. Autendi ennast, kui oled võõrustaja. Külalisena oota, kuni võõrustaja saabub.",
-        "WaitForHostMsgWOk": "Kõne <b>{{room}}</b> ei ole veel alanud. Kui oled võõrustaja, vajuta OK, et ennast autentida. Külalisena oota, kuni võõrustaja saabub.",
+        "WaitForHostMsg": "Kõne ei ole veel alanud. Autendi ennast, kui oled võõrustaja. Külalisena oota, kuni võõrustaja saabub.",
         "WaitingForHost": "Võõrustaja ootamine…",
         "Yes": "Jah",
         "accessibilityLabel": {
@@ -396,6 +395,7 @@
         "signedInAs": "Oled sisse logitud kasutajana:",
         "start": "Alusta otseülekannet.",
         "streamIdHelp": "Mis see on?",
+        "title": "Otseülekanne",
         "unavailableTitle": "Otseülekanne pole kättesaadav."
     },
     "localRecording": {
@@ -513,6 +513,7 @@
         "serviceName": "Salvestamise teenus",
         "signIn": "Logi sisse",
         "signOut": "Logi välja",
+        "title": "Salvetamine",
         "unavailable": "Oih! {{serviceName}} ei ole hetkel kättesaadav! Proovi hiljem uuesti.",
         "unavailableTitle": "Salvestamine ei ole võimalik."
     },

@@ -1,12 +1,12 @@
 // @flow
 
 import React from 'react';
-import { findNodeHandle, NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform, findNodeHandle } from 'react-native';
 import { ScreenCapturePickerView } from 'react-native-webrtc';
 
-import { getFeatureFlag, IOS_SCREENSHARING_ENABLED } from '../../../base/flags';
+import { IOS_SCREENSHARING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconShareDesktop } from '../../../base/icons';
+import { IconScreenshare } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isLocalVideoTrackDesktop } from '../../../base/tracks';
@@ -46,7 +46,7 @@ class ScreenSharingIosButton extends AbstractButton<Props, *> {
     _setNativeComponent: Function;
 
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
-    icon = IconShareDesktop;
+    icon = IconScreenshare;
     label = 'toolbar.startScreenSharing';
     toggledLabel = 'toolbar.stopScreenSharing';
 
@@ -63,6 +63,23 @@ class ScreenSharingIosButton extends AbstractButton<Props, *> {
 
         // Bind event handlers so they are only bound once per instance.
         this._setNativeComponent = this._setNativeComponent.bind(this);
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {React$Node}
+     */
+    render() {
+        return (
+            <>
+                { super.render() }
+                <ScreenCapturePickerView
+                    ref = { this._setNativeComponent }
+                    style = { styles.screenCapturePickerView } />
+            </>
+        );
     }
 
     /**
@@ -108,21 +125,6 @@ class ScreenSharingIosButton extends AbstractButton<Props, *> {
    */
     _isToggled() {
         return this.props._screensharing;
-    }
-
-    /**
-   * Helper function to be implemented by subclasses, which may return a
-   * new React Element to be appended at the end of the button.
-   *
-   * @protected
-   * @returns {ReactElement|null}
-   */
-    _getElementAfter() {
-        return (
-            <ScreenCapturePickerView
-                ref = { this._setNativeComponent }
-                style = { styles.screenCapturePickerView } />
-        );
     }
 }
 

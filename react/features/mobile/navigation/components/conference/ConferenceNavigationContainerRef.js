@@ -1,8 +1,5 @@
-// @flow
-
 import React from 'react';
 
-// $FlowExpectedError
 export const conferenceNavigationRef = React.createRef();
 
 /**
@@ -12,8 +9,7 @@ export const conferenceNavigationRef = React.createRef();
  * @param {Object} params - Params to pass to the destination route.
  * @returns {Function}
  */
-export function navigate(name: string, params: Object) {
-    // $FlowExpectedError
+export function navigate(name: string, params?: Object) {
     return conferenceNavigationRef.current?.navigate(name, params);
 }
 
@@ -23,7 +19,6 @@ export function navigate(name: string, params: Object) {
  * @returns {Function}
  */
 export function goBack() {
-    // $FlowExpectedError
     return conferenceNavigationRef.current?.goBack();
 }
 
@@ -34,7 +29,6 @@ export function goBack() {
  * @returns {Function}
  */
 export function setParams(params: Object) {
-    // $FlowExpectedError
     return conferenceNavigationRef.current?.setParams(params);
 }
 

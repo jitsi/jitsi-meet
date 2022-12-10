@@ -1,15 +1,15 @@
-// @flow
-
 import clsx from 'clsx';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import Tabs from '../../../base/ui/components/web/Tabs';
 import { PollsPane } from '../../../polls/components';
 import { toggleChat } from '../../actions.web';
+import { CHAT_TABS } from '../../constants';
 import AbstractChat, {
-    _mapStateToProps,
-    type Props
+    type Props,
+    _mapStateToProps
 } from '../AbstractChat';
 
 import ChatHeader from './ChatHeader';
@@ -44,32 +44,10 @@ class Chat extends AbstractChat<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onChatTabKeyDown = this._onChatTabKeyDown.bind(this);
-        this._onChatInputResize = this._onChatInputResize.bind(this);
         this._onEscClick = this._onEscClick.bind(this);
         this._onPollsTabKeyDown = this._onPollsTabKeyDown.bind(this);
         this._onToggleChat = this._onToggleChat.bind(this);
-    }
-
-    /**
-     * Implements {@code Component#componentDidMount}.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this._scrollMessageContainerToBottom(true);
-    }
-
-    /**
-     * Implements {@code Component#componentDidUpdate}.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps) {
-        if (this.props._messages !== prevProps._messages) {
-            this._scrollMessageContainerToBottom(true);
-        } else if (this.props._isOpen && !prevProps._isOpen) {
-            this._scrollMessageContainerToBottom(false);
-        }
+        this._onChangeTab = this._onChangeTab.bind(this);
     }
 
     /**
@@ -96,19 +74,6 @@ class Chat extends AbstractChat<Props> {
                     : this._renderChat() }
             </div> : null
         );
-    }
-
-    _onChatInputResize: () => void;
-
-    /**
-     * Callback invoked when {@code ChatInput} changes height. Preserves
-     * displaying the latest message if it is scrolled to.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onChatInputResize() {
-        this._messageContainerRef.current.maybeUpdateBottomScroll();
     }
 
     _onChatTabKeyDown: (KeyboardEvent) => void;
@@ -172,9 +137,9 @@ class Chat extends AbstractChat<Props> {
         if (_isPollsTabFocused) {
             return (
                 <>
-                    {_isPollsEnabled && this._renderTabs()}
+                    { _isPollsEnabled && this._renderTabs() }
                     <div
-                        aria-labelledby = 'polls-tab'
+                        aria-labelledby = { CHAT_TABS.POLLS }
                         id = 'polls-panel'
                         role = 'tabpanel'>
                         <PollsPane />
@@ -186,20 +151,17 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <>
-                {_isPollsEnabled && this._renderTabs()}
+                { _isPollsEnabled && this._renderTabs() }
                 <div
-                    aria-labelledby = 'chat-tab'
+                    aria-labelledby = { CHAT_TABS.CHAT }
                     className = { clsx('chat-panel', !_isPollsEnabled && 'chat-panel-no-tabs') }
                     id = 'chat-panel'
                     role = 'tabpanel'>
                     <MessageContainer
-                        messages = { this.props._messages }
-                        ref = { this._messageContainerRef } />
+                        messages = { this.props._messages } />
                     <MessageRecipient />
                     <ChatInput
-                        onResize = { this._onChatInputResize }
                         onSend = { this._onSendMessage } />
-                    <KeyboardAvoider />
                 </div>
             </>
         );
@@ -215,71 +177,23 @@ class Chat extends AbstractChat<Props> {
         const { _isPollsEnabled, _isPollsTabFocused, _nbUnreadMessages, _nbUnreadPolls, t } = this.props;
 
         return (
-            <div
-                aria-label = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
-                className = { 'chat-tabs-container' }
-                role = 'tablist'>
-                <div
-                    aria-controls = 'chat-panel'
-                    aria-label = { t('chat.tabs.chat') }
-                    aria-selected = { !_isPollsTabFocused }
-                    className = { `chat-tab ${
-                        _isPollsTabFocused ? '' : 'chat-tab-focus'
-                    }` }
-                    id = 'chat-tab'
-                    onClick = { this._onToggleChatTab }
-                    onKeyDown = { this._onChatTabKeyDown }
-                    role = 'tab'
-                    tabIndex = '0'>
-                    <span
-                        className = { 'chat-tab-title' }>
-                        {t('chat.tabs.chat')}
-                    </span>
-                    {this.props._isPollsTabFocused
-                        && _nbUnreadMessages > 0 && (
-                        <span className = { 'chat-tab-badge' }>
-                            {_nbUnreadMessages}
-                        </span>
-                    )}
-                </div>
-                <div
-                    aria-controls = 'polls-panel'
-                    aria-label = { t('chat.tabs.polls') }
-                    aria-selected = { _isPollsTabFocused }
-                    className = { `chat-tab ${
-                        _isPollsTabFocused ? 'chat-tab-focus' : ''
-                    }` }
-                    id = 'polls-tab'
-                    onClick = { this._onTogglePollsTab }
-                    onKeyDown = { this._onPollsTabKeyDown }
-                    role = 'tab'
-                    tabIndex = '0'>
-                    <span className = { 'chat-tab-title' }>
-                        {t('chat.tabs.polls')}
-                    </span>
-                    {!_isPollsTabFocused
-                        && this.props._nbUnreadPolls > 0 && (
-                        <span className = { 'chat-tab-badge' }>
-                            {_nbUnreadPolls}
-                        </span>
-                    )}
-                </div>
-            </div>
+            <Tabs
+                accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
+                onChange = { this._onChangeTab }
+                selected = { _isPollsTabFocused ? CHAT_TABS.POLLS : CHAT_TABS.CHAT }
+                tabs = { [ {
+                    accessibilityLabel: t('chat.tabs.chat'),
+                    countBadge: _isPollsTabFocused && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
+                    id: CHAT_TABS.CHAT,
+                    label: t('chat.tabs.chat')
+                }, {
+                    accessibilityLabel: t('chat.tabs.polls'),
+                    countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
+                    id: CHAT_TABS.POLLS,
+                    label: t('chat.tabs.polls')
+                }
+                ] } />
         );
-    }
-
-    /**
-     * Scrolls the chat messages so the latest message is visible.
-     *
-     * @param {boolean} withAnimation - Whether or not to show a scrolling
-     * animation.
-     * @private
-     * @returns {void}
-     */
-    _scrollMessageContainerToBottom(withAnimation) {
-        if (this._messageContainerRef.current) {
-            this._messageContainerRef.current.scrollToBottom(withAnimation);
-        }
     }
 
     _onSendMessage: (string) => void;
@@ -296,7 +210,17 @@ class Chat extends AbstractChat<Props> {
     }
     _onTogglePollsTab: () => void;
     _onToggleChatTab: () => void;
+    _onChangeTab: (string) => void;
 
+    /**
+     * Change selected tab.
+     *
+     * @param {string} id - Id of the clicked tab.
+     * @returns {void}
+     */
+    _onChangeTab(id) {
+        id === CHAT_TABS.CHAT ? this._onToggleChatTab() : this._onTogglePollsTab();
+    }
 }
 
 export default translate(connect(_mapStateToProps)(Chat));

@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose } from '../../../base/icons';
+import { Icon, IconCloseLarge } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { toggleChat } from '../../actions.web';
 
@@ -54,7 +54,7 @@ function Header({ onCancel, className, isPollsEnabled, t }: Props) {
                 onClick = { onCancel }
                 onKeyPress = { onKeyPressHandler }
                 role = 'button'
-                src = { IconClose }
+                src = { IconCloseLarge }
                 tabIndex = { 0 } />
         </div>
     );

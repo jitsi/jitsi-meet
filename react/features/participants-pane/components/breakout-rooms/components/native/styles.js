@@ -8,25 +8,15 @@ const baseButton = {
     marginRight: BaseTheme.spacing[3]
 };
 
-const baseLabel = {
-    fontSize: 15,
-    lineHeight: 30,
-    textTransform: 'capitalize'
-};
-
 /**
  * The styles of the native components of the feature {@code breakout rooms}.
  */
 export default {
 
-    addButtonLabel: {
-        ...baseLabel,
-        color: BaseTheme.palette.text01
-    },
-
-    addButton: {
-        ...baseButton,
-        backgroundColor: BaseTheme.palette.ui03
+    button: {
+        marginTop: BaseTheme.spacing[3],
+        marginLeft: BaseTheme.spacing[3],
+        marginRight: BaseTheme.spacing[3]
     },
 
     collapsibleRoom: {
@@ -70,18 +60,13 @@ export default {
         marginLeft: BaseTheme.spacing[2]
     },
 
-    transparentButton: {
-        ...baseButton,
-        backgroundColor: 'transparent'
-    },
-
-    leaveButtonLabel: {
-        ...baseLabel,
-        color: BaseTheme.palette.textError
-    },
-
     autoAssignLabel: {
-        ...baseLabel,
         color: BaseTheme.palette.link01
+    },
+
+    autoAssignButton: {
+        alignSelf: 'center',
+        justifyContent: 'center',
+        marginTop: BaseTheme.spacing[3]
     }
 };

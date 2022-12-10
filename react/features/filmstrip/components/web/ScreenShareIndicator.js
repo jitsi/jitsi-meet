@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { IconShareDesktop } from '../../../base/icons';
+import { IconScreenshare } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 
@@ -23,9 +23,9 @@ type Props = {
 export default function ScreenShareIndicator(props: Props) {
     return (
         <BaseIndicator
-            icon = { IconShareDesktop }
+            icon = { IconScreenshare }
             iconId = 'share-desktop'
-            iconSize = { 15 }
+            iconSize = { 16 }
             tooltipKey = 'videothumbnail.screenSharing'
             tooltipPosition = { props.tooltipPosition } />
     );

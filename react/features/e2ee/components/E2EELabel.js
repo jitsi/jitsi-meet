@@ -9,11 +9,11 @@ import { COLORS } from '../../base/label/constants';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 
-import { _mapStateToProps, type Props } from './AbstractE2EELabel';
+import { type Props, _mapStateToProps } from './AbstractE2EELabel';
 
 
 /**
- * React {@code Component} for displaying a label when everyone has E2EE enabled in a conferene.
+ * React {@code Component} for displaying a label when everyone has E2EE enabled in a conference.
  *
  * @augments Component
  */

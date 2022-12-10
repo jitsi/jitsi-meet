@@ -35,8 +35,8 @@ function provider.delete_user(username)
 end
 
 function provider.get_sasl_handler(session)
-    -- Custom session matching so we can resume sesssion even with randomly
-    -- generrated user IDs.
+    -- Custom session matching so we can resume session even with randomly
+    -- generated user IDs.
     local function get_username(self, message)
         if (session.previd ~= nil) then
             for _, session1 in pairs(sessions) do

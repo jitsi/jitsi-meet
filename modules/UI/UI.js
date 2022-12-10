@@ -1,20 +1,21 @@
-/* global APP, $, config */
+/* global APP, config */
 
 
 const UI = {};
 
 import Logger from '@jitsi/logger';
 import EventEmitter from 'events';
+import $ from 'jquery';
 
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { setColorAlpha } from '../../react/features/base/util';
 import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     joinLeaveNotificationsDisabled,
     setNotificationsEnabled,
-    showNotification,
-    NOTIFICATION_TIMEOUT_TYPE
+    showNotification
 } from '../../react/features/notifications';
 import {
     dockToolbox,
@@ -108,13 +109,13 @@ UI.start = function() {
         $('body').addClass('mobile-browser');
     } else {
         $('body').addClass('desktop-browser');
+    }
 
-        if (config.backgroundAlpha !== undefined) {
-            const backgroundColor = $('body').css('background-color');
-            const alphaColor = setColorAlpha(backgroundColor, config.backgroundAlpha);
+    if (config.backgroundAlpha !== undefined) {
+        const backgroundColor = $('body').css('background-color');
+        const alphaColor = setColorAlpha(backgroundColor, config.backgroundAlpha);
 
-            $('body').css('background-color', alphaColor);
-        }
+        $('body').css('background-color', alphaColor);
     }
 
     if (config.iAmRecorder) {

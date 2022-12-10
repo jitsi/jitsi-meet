@@ -21,8 +21,12 @@ class KickRemoteParticipantDialog extends AbstractKickRemoteParticipantDialog {
     render() {
         return (
             <ConfirmDialog
-                contentKey = 'dialog.kickParticipantDialog'
-                onSubmit = { this._onSubmit } />
+                cancelLabel = 'dialog.Cancel'
+                confirmLabel = 'dialog.kickParticipantButton'
+                descriptionKey = 'dialog.kickParticipantDialog'
+                isConfirmDestructive = { true }
+                onSubmit = { this._onSubmit }
+                title = 'dialog.kickParticipantTitle' />
         );
     }
 

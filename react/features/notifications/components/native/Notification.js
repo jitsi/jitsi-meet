@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose } from '../../../base/icons';
+import { Icon, IconCloseLarge } from '../../../base/icons';
 import { replaceNonUnicodeEmojis } from '../../../chat/functions';
 import AbstractNotification, {
     type Props
@@ -17,7 +17,7 @@ import styles from './styles';
  *
  * @type {number}
  */
-const DEFAULT_MAX_LINES = 1;
+const DEFAULT_MAX_LINES = 2;
 
 /**
  * Implements a React {@link Component} to display a notification.
@@ -32,8 +32,6 @@ class Notification extends AbstractNotification<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { isDismissAllowed } = this.props;
-
         return (
             <View
                 pointerEvents = 'box-none'
@@ -47,14 +45,11 @@ class Notification extends AbstractNotification<Props> {
                         }
                     </View>
                 </View>
-                {
-                    isDismissAllowed
-                    && <TouchableOpacity onPress = { this._onDismissed }>
-                        <Icon
-                            src = { IconClose }
-                            style = { styles.dismissIcon } />
-                    </TouchableOpacity>
-                }
+                <TouchableOpacity onPress = { this._onDismissed }>
+                    <Icon
+                        src = { IconCloseLarge }
+                        style = { styles.dismissIcon } />
+                </TouchableOpacity>
             </View>
         );
     }

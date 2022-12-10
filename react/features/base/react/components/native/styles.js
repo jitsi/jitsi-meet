@@ -1,95 +1,15 @@
 // @flow
 
 import { BoxModel, ColorPalette } from '../../../styles';
+import BaseTheme from '../../../ui/components/BaseTheme.native';
 
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
+const BUTTON_HEIGHT = BaseTheme.spacing[7];
+const BUTTON_WIDTH = BaseTheme.spacing[7];
 
 export const AVATAR_SIZE = 65;
 export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
-
-/**
- * Style classes of the PagedList-based components.
- */
-const PAGED_LIST_STYLES = {
-
-    /**
-     * Outermost container of a page in {@code PagedList}.
-     */
-    pageContainer: {
-        flex: 1
-    },
-
-    /**
-     * Style of the page indicator (Android).
-     */
-    pageIndicator: {
-        alignItems: 'center',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: BoxModel.padding / 2
-    },
-
-    /**
-     * Additional style for the active indicator icon (Android).
-     */
-    pageIndicatorActive: {
-        color: ColorPalette.white
-    },
-
-    /**
-     * Container for the page indicators (Android).
-     */
-    pageIndicatorContainer: {
-        alignItems: 'center',
-        backgroundColor: ColorPalette.blue,
-        flexDirection: 'row',
-        justifyContent: 'space-around'
-    },
-
-    pageIndicatorContent: {
-        alignItems: 'center',
-        flexDirection: 'column',
-        justifyContent: 'center'
-    },
-
-    /**
-     * Icon of the page indicator (Android).
-     */
-    pageIndicatorIcon: {
-        color: ColorPalette.blueHighlight,
-        fontSize: 24
-    },
-
-    /**
-     * Label of the page indicator (Android).
-     */
-    pageIndicatorText: {
-        color: ColorPalette.blueHighlight
-    },
-
-    /**
-     * Top level style of the paged list.
-     */
-    pagedList: {
-        flex: 1
-    },
-
-    /**
-     * The paged list container View.
-     */
-    pagedListContainer: {
-        flex: 1,
-        flexDirection: 'column'
-    },
-
-    /**
-     * Disabled style for the container.
-     */
-    pagedListContainerDisabled: {
-        opacity: 0.2
-    }
-};
 
 const SECTION_LIST_STYLES = {
     /**
@@ -130,7 +50,8 @@ const SECTION_LIST_STYLES = {
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
-        padding: 5
+        marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: BaseTheme.spacing[2]
     },
 
     listItemDetails: {
@@ -152,17 +73,18 @@ const SECTION_LIST_STYLES = {
 
     listSection: {
         alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        backgroundColor: BaseTheme.palette.ui02,
         flex: 1,
         flexDirection: 'row',
-        paddingVertical: 5,
-        paddingHorizontal: 10
+        paddingVertical: BaseTheme.spacing[1],
+        paddingHorizontal: BaseTheme.spacing[2]
     },
 
     listSectionText: {
         color: OVERLAY_FONT_COLOR,
         fontSize: 14,
-        fontWeight: 'normal'
+        fontWeight: 'normal',
+        marginLeft: BaseTheme.spacing[2]
     },
 
     pullToRefresh: {
@@ -214,11 +136,38 @@ export const BASE_INDICATOR = {
     justifyContent: 'center'
 };
 
+const iconButtonContainer = {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    borderRadius: BaseTheme.shape.borderRadius,
+    height: BUTTON_HEIGHT,
+    width: BUTTON_WIDTH
+};
+
 /**
  * The styles of the generic React {@code Component}s implemented by the feature
  * base/react.
  */
 export default {
-    ...PAGED_LIST_STYLES,
-    ...SECTION_LIST_STYLES
+    ...SECTION_LIST_STYLES,
+
+    iconButtonContainer: {
+        ...iconButtonContainer
+    },
+
+    iconButtonContainerPrimary: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.action01
+    },
+
+    iconButtonContainerSecondary: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.action02
+    },
+
+    iconButtonContainerDisabled: {
+        ...iconButtonContainer,
+        backgroundColor: BaseTheme.palette.disabled01
+    }
 };

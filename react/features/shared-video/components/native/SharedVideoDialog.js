@@ -5,7 +5,6 @@ import React from 'react';
 import { InputDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { ColorPalette } from '../../../base/styles';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
@@ -56,15 +55,14 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
 
         return (
             <InputDialog
-                contentKey = 'dialog.shareVideoTitle'
                 messageKey = { error ? 'dialog.sharedVideoDialogError' : undefined }
                 onSubmit = { this._onSubmitValue }
                 textInputProps = {{
                     autoCapitalize: 'none',
                     autoCorrect: false,
-                    placeholder: t('dialog.sharedVideoLinkPlaceholder'),
-                    placeholderTextColor: ColorPalette.lightGrey
-                }} />
+                    placeholder: t('dialog.sharedVideoLinkPlaceholder')
+                }}
+                titleKey = 'dialog.shareVideoTitle' />
         );
     }
 }

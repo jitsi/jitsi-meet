@@ -5,7 +5,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { rejectParticipantAudio } from '../../av-moderation/actions';
-import { IconMicDisabled } from '../../base/icons';
+import { IconMicSlash } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { isRemoteTrackMuted } from '../../base/tracks';
@@ -41,7 +41,7 @@ export type Props = AbstractButtonProps & {
  */
 export default class AbstractMuteButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.remoteMute';
-    icon = IconMicDisabled;
+    icon = IconMicSlash;
     label = 'videothumbnail.domute';
     toggledLabel = 'videothumbnail.muted';
 

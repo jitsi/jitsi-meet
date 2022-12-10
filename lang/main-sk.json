@@ -72,6 +72,7 @@
         },
         "noMessagesMessage": "V tejto konferencii ešte nie je žiadna správa. Začnite tu vašu diskusiu!",
         "privateNotice": "Súkromná správa pre {{recipient}}",
+        "sendButton": "Poslať",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "Vy"
@@ -105,7 +106,6 @@
         "bitrate": "Prenos. rýchlosť:",
         "bridgeCount": "Počet serverov: ",
         "connectedTo": "Spojenie s:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Rýchlosť snímkovania:",
         "less": "Zobraziť menej",
         "localaddress": "Lokálna adresa:",
@@ -174,8 +174,7 @@
         "Remove": "Odstrániť",
         "Share": "Zdieľať",
         "Submit": "OK",
-        "WaitForHostMsg": "Konferencia <b>{{room}}</b> sa ešte nezačala. Autorizujte sa prosím ak ste hostiteľ. V opačnom prípade čakajte na hostiteľa.",
-        "WaitForHostMsgWOk": "Konferencia <b>{{room}}</b> sa ešte nezačala. Ak ste hostiteľ autorizujte sa stlačením Ok. V opačnom prípade čakajte na hostiteľa.",
+        "WaitForHostMsg": "Konferencia sa ešte nezačala. Autorizujte sa prosím ak ste hostiteľ. V opačnom prípade čakajte na hostiteľa.",
         "WaitingForHost": "Čakám na hostiteľa ...",
         "Yes": "Áno",
         "accessibilityLabel": {
@@ -332,7 +331,7 @@
         "veryGood": "Veľmi dobrý"
     },
     "helpView": {
-        "header": "Centrum pomoci"
+        "title": "Centrum pomoci"
     },
     "incomingCall": {
         "answer": "Odpovedať",
@@ -433,6 +432,7 @@
         "signedInAs": "Ste prihlásený ako:",
         "start": "Začať živé vysielanie",
         "streamIdHelp": "Čo je to?",
+        "title": "Živé vysielanie",
         "unavailableTitle": "Živé vysielanie nie je k dispozícií",
         "youtubeTerms": "Podmienky poskytovania služby YouTube"
     },
@@ -467,6 +467,7 @@
         "passwordField": "Zadajte heslo do konferencie",
         "passwordJoinButton": "Vstúpiť",
         "reject": "Odmietnuť",
+        "title": "Čakáreň",
         "toggleLabel": "Zapnúť čakáreň"
     },
     "localRecording": {
@@ -624,6 +625,7 @@
         "serviceName": "Nahrávacia služba",
         "signIn": "Prihlásiť",
         "signOut": "Odhlásiť",
+        "title": "Nahrávanie",
         "unavailable": "Oh! Služba {{serviceName}} nie je dostupná. Pracujeme na riešeni problému. Skúste prosím neskôr.",
         "unavailableTitle": "Nahrávanie nie je dostupné"
     },

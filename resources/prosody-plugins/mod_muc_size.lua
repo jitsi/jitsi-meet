@@ -1,5 +1,5 @@
 -- Prosody IM
--- Copyright (C) 2017 Atlassian
+-- Copyright (C) 2021-present 8x8, Inc.
 --
 
 local jid = require "util.jid";
@@ -76,7 +76,7 @@ end
 --- Handles request for retrieving the room size
 -- @param event the http event, holds the request query
 -- @return GET response, containing a json with participants count,
---         tha value is without counting the focus.
+--         the value is without counting the focus.
 function handle_get_room_size(event)
     if (not event.request.url.query) then
         return { status_code = 400; };

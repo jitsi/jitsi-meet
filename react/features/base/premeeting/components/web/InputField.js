@@ -130,6 +130,7 @@ export default class InputField extends PureComponent<Props, State> {
                 onChange = { this._onChange }
                 onFocus = { this._onFocus }
                 onKeyDown = { this._onKeyDown }
+                onKeyPress = { this._onKeyPress }
                 placeholder = { this.props.placeHolder }
                 readOnly = { this.props.readOnly }
                 type = { this.props.type }
@@ -195,5 +196,15 @@ export default class InputField extends PureComponent<Props, State> {
         const { onSubmit } = this.props;
 
         onSubmit && event.key === 'Enter' && onSubmit();
+    }
+
+    /**
+     * Stop event propagation on key press.
+     *
+     * @param {Event} event - Key press event object.
+     * @returns {void}
+     */
+    _onKeyPress(event) {
+        event.stopPropagation();
     }
 }

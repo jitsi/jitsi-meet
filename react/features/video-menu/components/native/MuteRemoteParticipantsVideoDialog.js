@@ -22,7 +22,7 @@ class MuteRemoteParticipantsVideoDialog extends AbstractMuteRemoteParticipantsVi
     render() {
         return (
             <ConfirmDialog
-                contentKey = { this.props.isVideoModerationOn
+                descriptionKey = { this.props.isVideoModerationOn
                     ? 'dialog.muteParticipantsVideoDialogModerationOn'
                     : 'dialog.muteParticipantsVideoDialog'
                 }

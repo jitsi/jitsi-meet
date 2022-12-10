@@ -3,6 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { getShareInfoText } from '../invite';
+import { getLiveStreaming } from '../recording/components/LiveStream/functions';
 
 import {
     SET_GOOGLE_API_PROFILE,
@@ -36,15 +37,16 @@ export function loadGoogleAPI() {
         googleApi.get()
         .then(() => {
             const {
-                liveStreamingEnabled,
                 enableCalendarIntegration,
                 googleApiApplicationClientID
             } = getState()['features/base/config'];
 
+            const liveStreaming = getLiveStreaming(getState());
+
             if (getState()['features/google-api'].googleAPIState
                     === GOOGLE_API_STATES.NEEDS_LOADING) {
                 return googleApi.initializeClient(
-                    googleApiApplicationClientID, liveStreamingEnabled, enableCalendarIntegration);
+                    googleApiApplicationClientID, liveStreaming.enabled, enableCalendarIntegration);
             }
 
             return Promise.resolve();

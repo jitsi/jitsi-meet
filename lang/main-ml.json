@@ -71,7 +71,8 @@
             "titleWithPolls": "ചാറ്റ് ഉപയോഗിക്കുന്നതിന് ഒരു വിളിപ്പേര് നൽകുക"
         },
         "noMessagesMessage": "മീറ്റിംഗിൽ ഇതുവരെ മെസ്സേജുകളൊന്നുമില്ല. ഇവിടെ ഒരു സംഭാഷണം ആരംഭിക്കുക!",
-        "privateNotice": " {{recipient}}-ലേക്കുള്ള സ്വകാര്യ സന്ദേശം",
+        "privateNotice": "{{recipient}}-ലേക്കുള്ള സ്വകാര്യ സന്ദേശം",
+        "sendButton": "അയയ്ക്കുക",
         "title": "ചാറ്റ്",
         "titleWithPolls": "ചാറ്റ്",
         "you": "നിങ്ങൾ"
@@ -106,7 +107,6 @@
         "bridgeCount": "Server count: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Connected to:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Frame rate:",
         "less": "Show less",
         "localaddress": "Local address:",
@@ -174,8 +174,7 @@
         "Remove": "നീക്കംചെയ്യുക",
         "Share": "പങ്കിടുക",
         "Submit": "സമർപ്പിക്കുക",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHost": "ഹോസ്റ്റിനായി കാത്തിരിക്കുന്നു ...",
         "Yes": "അതെ",
         "accessibilityLabel": {
@@ -330,7 +329,7 @@
         "veryGood": "വളരെ നല്ലത്"
     },
     "helpView": {
-        "header": "സഹായകേന്ദ്രം"
+        "title": "സഹായകേന്ദ്രം"
     },
     "incomingCall": {
         "answer": "കോളിന് മറുപടി നൽകുക",
@@ -431,6 +430,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "ഒരു തത്സമയ സ്ട്രീം ആരംഭിക്കുക",
         "streamIdHelp": "എന്താണിത്?",
+        "title": "തത്സമയ സംപ്രേക്ഷണം",
         "unavailableTitle": "തത്സമയ സ്ട്രീമിംഗ് ലഭ്യമല്ല",
         "youtubeTerms": "യൂട്യൂബ് സേവനങ്ങളുടെ നിബന്ധനകൾ"
     },
@@ -465,6 +465,7 @@
         "passwordField": "മീറ്റിംഗ് പാസ്‌വേഡ് നൽകുക",
         "passwordJoinButton": "ചേരുക",
         "reject": "നിരസിക്കുക",
+        "title": "ലോബി",
         "toggleLabel": "ലോബി പ്രവർത്തനക്ഷമമാക്കുക"
     },
     "localRecording": {
@@ -645,6 +646,7 @@
         "serviceName": "റെക്കോർഡിംഗ് സേവനം ",
         "signIn": "അകത്തുകയറുക",
         "signOut": "പുറത്തിറങ്ങുക",
+        "title": "റെക്കോർഡിംഗ്",
         "unavailable": "ക്ഷമിക്കണം {{serviceName}} നിലവിൽ ലഭ്യമല്ല. പ്രശ്നം പരിഹരിക്കുന്നതിനായി ഞങ്ങൾ പ്രവർത്തിക്കുന്നു. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
         "unavailableTitle": "റെക്കോർഡിംഗ് ലഭ്യമല്ല"
     },

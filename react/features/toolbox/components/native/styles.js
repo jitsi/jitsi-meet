@@ -1,8 +1,5 @@
-// @flow
-
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { BoxModel } from '../../../base/styles';
-import BaseTheme from '../../../base/ui/components/BaseTheme';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUTTON_SIZE = 48;
 
@@ -12,14 +9,14 @@ const BUTTON_SIZE = 48;
  * The style of toolbar buttons.
  */
 const toolbarButton = {
-    borderRadius: 3,
+    borderRadius: BaseTheme.shape.borderRadius,
     borderWidth: 0,
     flex: 0,
     flexDirection: 'row',
     height: BUTTON_SIZE,
     justifyContent: 'center',
     marginHorizontal: 6,
-    marginTop: 6,
+    marginVertical: 6,
     width: BUTTON_SIZE
 };
 
@@ -52,6 +49,11 @@ const reactionButton = {
     marginHorizontal: 0
 };
 
+const gifButton = {
+    ...reactionButton,
+    backgroundColor: '#000'
+};
+
 /**
  * The style of the emoji on the reaction buttons.
  */
@@ -65,7 +67,7 @@ const reactionMenu = {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: BaseTheme.palette.bottomSheet,
-    padding: 16
+    padding: BaseTheme.spacing[3]
 };
 
 /**
@@ -87,22 +89,19 @@ const styles = {
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
         flexDirection: 'row',
-        flexGrow: 0,
-        justifyContent: 'space-between',
-        paddingHorizontal: BoxModel.margin,
-        paddingVertical: 8
+        justifyContent: 'space-between'
     },
 
     /**
      * The style of the root/top-level container of {@link Toolbox}.
      */
     toolboxContainer: {
+        backgroundColor: BaseTheme.palette.uiBackground,
         flexDirection: 'column',
-        flexGrow: 0,
-        width: '100%',
         maxWidth: 580,
         marginLeft: 'auto',
-        marginRight: 'auto'
+        marginRight: 'auto',
+        width: '100%'
     }
 };
 
@@ -125,11 +124,23 @@ ColorSchemeRegistry.register('Toolbox', {
         style: {
             ...toolbarButton,
             backgroundColor: 'transparent'
-        }
+        },
+        underlayColor: 'transparent'
     },
 
     backgroundToggle: {
         backgroundColor: BaseTheme.palette.ui13
+    },
+
+    hangupMenuContainer: {
+        marginHorizontal: BaseTheme.spacing[2],
+        marginVertical: BaseTheme.spacing[2]
+    },
+
+    hangupButton: {
+        flex: 1,
+        marginHorizontal: BaseTheme.spacing[2],
+        marginVertical: BaseTheme.spacing[2]
     },
 
     hangupButtonStyles: {
@@ -160,36 +171,14 @@ ColorSchemeRegistry.register('Toolbox', {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '100%',
-        marginBottom: 16
+        width: '100%'
     },
 
     reactionButton: {
+        gifButton,
         style: reactionButton,
         underlayColor: BaseTheme.palette.ui13,
         emoji: reactionEmoji
-    },
-
-    raiseHandButton: {
-        style: {
-            ...reactionButton,
-            backgroundColor: BaseTheme.palette.ui13,
-            width: '100%',
-            borderRadius: 6
-        },
-        underlayColor: BaseTheme.palette.ui13,
-        emoji: reactionEmoji,
-        text: {
-            color: BaseTheme.palette.text01,
-            fontWeight: '600',
-            marginLeft: 8,
-            lineHeight: 24
-        },
-        container: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }
     },
 
     emojiAnimation: {
@@ -209,6 +198,7 @@ ColorSchemeRegistry.register('Toolbox', {
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton
-        }
+        },
+        underlayColor: 'transparent'
     }
 });

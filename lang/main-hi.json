@@ -74,6 +74,7 @@
         },
         "noMessagesMessage": "अभी तक मीटिंग में कोई संदेश नहीं आया है। वार्तालाप प्रारंभ करें!",
         "privateNotice": "{{recipient}} के लिए निजी संदेश",
+        "sendButton": "भेजें",
         "title": "चैट",
         "titleWithPolls": "चैट",
         "you": "आप"
@@ -109,7 +110,6 @@
         "bridgeCount": "सर्वर गणना: ",
         "codecs": "कोडेक (ए/वी): ",
         "connectedTo": "से जुड़ा हुआ है :",
-        "e2e_rtt": "ई.2ई. आर.टी.टी.:",
         "framerate": "फ्रेम दर:",
         "less": "कम दिखाएं",
         "localaddress": "स्थानीय पता:",
@@ -180,8 +180,7 @@
         "Remove": "निकालें",
         "Share": "Share",
         "Submit": "सबमिट करें",
-        "WaitForHostMsg": "सम्मेलन <b>{{room}}</b> अभी तक शुरू नहीं हुआ है। यदि आप मेजबान हैं तो कृपया प्रमाणित करें। अन्यथा, कृपया मेजबान के आने की प्रतीक्षा करें।",
-        "WaitForHostMsgWOk": "सम्मेलन <b>{{room}}</b> अभी तक शुरू नहीं हुआ है। यदि आप मेजबान हैं तो कृपया प्रमाणित करने के लिए ओके दबाएं। अन्यथा, कृपया मेजबान के आने की प्रतीक्षा करें।",
+        "WaitForHostMsg": "सम्मेलन अभी तक शुरू नहीं हुआ है। यदि आप मेजबान हैं तो कृपया प्रमाणित करें। अन्यथा, कृपया मेजबान के आने की प्रतीक्षा करें।",
         "WaitingForHostTitle": "होस्ट की प्रतीक्षा कर रहा है ...",
         "Yes": "हाँ",
         "accessibilityLabel": {
@@ -349,7 +348,7 @@
         "veryGood": "बहुत अच्छा"
     },
     "helpView": {
-        "header": "सहायता केंद्र"
+        "title": "सहायता केंद्र"
     },
     "incomingCall": {
         "answer": "उत्तर",
@@ -449,6 +448,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
+        "title": "सीधा प्रसारण",
         "unavailableTitle": "Live Streaming unavailable",
         "youtubeTerms": "YouTube terms of services"
     },
@@ -483,6 +483,7 @@
         "passwordField": "मीटिंग पासवर्ड दर्ज करें",
         "passwordJoinButton": "Join",
         "reject": "अस्वीकार",
+        "title": "लॉबी",
         "toggleLabel": "लॉबी सक्षम करें"
     },
     "localRecording": {
@@ -666,6 +667,7 @@
         "serviceName": "Recording service",
         "signIn": "Sign in",
         "signOut": "Sign out",
+        "title": "रिकॉर्डिंग",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable"
     },

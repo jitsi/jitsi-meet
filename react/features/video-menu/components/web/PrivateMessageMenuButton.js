@@ -2,14 +2,14 @@
 
 import React, { Component } from 'react';
 
-import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { IconMessage } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { openChat } from '../../../chat/';
 import {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _mapStateToProps as _abstractMapStateToProps
 } from '../../../chat/components/web/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 

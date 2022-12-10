@@ -1,46 +1,36 @@
-// @flow
-
-import { SET_ROOM } from '../../base/conference/actionTypes';
+import { appNavigate } from '../../app/actions';
+import { CONFERENCE_FAILED } from '../../base/conference/actionTypes';
+import { JitsiConferenceErrors } from '../../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../../base/redux';
-
-import { navigateRoot } from './rootNavigationContainerRef';
-import { screen } from './routes';
 
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case SET_ROOM:
-        return _setRoom(store, next, action);
+
+    case CONFERENCE_FAILED:
+        return _conferenceFailed(store, next, action);
     }
 
     return next(action);
 });
 
-
 /**
- * Notifies the feature base/conference that the action
- * {@code SET_ROOM} is being dispatched within a specific
- *  redux store.
+ * Function to handle the conference failed event and navigate the user to the lobby screen
+ * based on the failure reason.
  *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_ROOM}
- * which is being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
+ * @param {Object} store - The Redux store.
+ * @param {Function} next - The Redux next function.
+ * @param {Object} action - The Redux action.
+ * @returns {Object}
  */
-function _setRoom(store, next, action) {
-    const { room: oldRoom } = store.getState()['features/base/conference'];
-    const result = next(action);
-    const { room: newRoom } = store.getState()['features/base/conference'];
+function _conferenceFailed({ dispatch }, next, action) {
+    const { error } = action;
 
-    if (!oldRoom && newRoom) {
-        navigateRoot(screen.conference.root);
-    } else if (!newRoom) {
-        navigateRoot(screen.root);
+    // We need to cover the case where knocking participant
+    // is rejected from entering the conference
+    if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
+        dispatch(appNavigate(undefined));
     }
 
-    return result;
+    return next(action);
 }

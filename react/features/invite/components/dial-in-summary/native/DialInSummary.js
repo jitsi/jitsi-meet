@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Linking, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { type Dispatch } from 'redux';
@@ -10,13 +10,11 @@ import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
-import { renderArrowBackButton }
-    from '../../../../mobile/navigation/components/welcome/functions';
-import { screen } from '../../../../mobile/navigation/routes';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 
 import DialInSummaryErrorDialog from './DialInSummaryErrorDialog';
 import styles, { INDICATOR_COLOR } from './styles';
+
 
 type Props = {
 
@@ -30,13 +28,18 @@ type Props = {
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
-    route: Object
+    route: Object,
+
+    /**
+     * Translation function.
+     */
+    t: Function
 };
 
 /**
  * Implements a React native component that displays the dial in info page for a specific room.
  */
-class DialInSummary extends Component<Props> {
+class DialInSummary extends PureComponent<Props> {
 
     /**
      * Initializes a new instance.
@@ -59,14 +62,10 @@ class DialInSummary extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const {
-            navigation
-        } = this.props;
+        const { navigation, t } = this.props;
 
         navigation.setOptions({
-            headerLeft: () =>
-                renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main))
+            headerTitle: t('dialIn.screenTitle')
         });
     }
 

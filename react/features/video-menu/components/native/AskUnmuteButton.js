@@ -3,7 +3,7 @@
 import { approveParticipant } from '../../../av-moderation/actions';
 import { isSupported } from '../../../av-moderation/functions';
 import { translate } from '../../../base/i18n';
-import { IconCamera, IconMicrophone } from '../../../base/icons';
+import { IconMic, IconVideo } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -39,7 +39,7 @@ export type Props = AbstractButtonProps & {
  */
 class AskUnmuteButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'participantsPane.actions.askUnmute';
-    icon = IconMicrophone;
+    icon = IconMic;
     label = 'participantsPane.actions.askUnmute';
 
     /**
@@ -66,7 +66,7 @@ class AskUnmuteButton extends AbstractButton<Props, *> {
         const { isAudioForceMuted, isVideoForceMuted } = this.props;
 
         if (!isAudioForceMuted && isVideoForceMuted) {
-            return IconCamera;
+            return IconVideo;
         }
 
         return this.icon;

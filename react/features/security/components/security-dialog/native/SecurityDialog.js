@@ -1,33 +1,22 @@
-// @flow
-
-import Clipboard from '@react-native-community/clipboard';
 import React, { PureComponent } from 'react';
 import {
     Text,
-    TextInput,
     View
 } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
 import type { Dispatch } from 'redux';
 
-import { ColorSchemeRegistry } from '../../../../base/color-scheme';
-import { FIELD_UNDERLINE } from '../../../../base/dialog';
-import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags';
+import { MEETING_PASSWORD_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
-import { IconClose } from '../../../../base/icons';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { isLocalParticipantModerator } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
-import { StyleType } from '../../../../base/styles';
-import BaseTheme from '../../../../base/ui/components/BaseTheme';
+import Button from '../../../../base/ui/components/native/Button';
+import Input from '../../../../base/ui/components/native/Input';
+import Switch from '../../../../base/ui/components/native/Switch';
+import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
+import { copyText } from '../../../../base/util/copyText.native';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
-import LobbyModeSwitch
-    from '../../../../lobby/components/native/LobbyModeSwitch';
-import HeaderNavigationButton
-    from '../../../../mobile/navigation/components/HeaderNavigationButton';
-import { goBack }
-    from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../../../room-lock';
 import {
     endRoomLockRequest,
@@ -55,11 +44,6 @@ type Props = {
      * The JitsiConference which requires a password.
      */
     _conference: Object,
-
-    /**
-     * The color-schemed stylesheet of the feature.
-     */
-    _dialogStyles: StyleType,
 
     /**
      * Whether the local user is the moderator.
@@ -106,11 +90,6 @@ type Props = {
      * Redux store dispatch function.
      */
     dispatch: Dispatch<any>,
-
-    /**
-     * Default prop for navigation between screen components(React Navigation).
-     */
-    navigation: Object,
 
     /**
      * Invoked to obtain translated strings.
@@ -163,26 +142,6 @@ class SecurityDialog extends PureComponent<Props, State> {
     }
 
     /**
-     * Implements React's {@link Component#componentDidMount()}. Invoked
-     * immediately after this component is mounted.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        const { navigation } = this.props;
-
-        navigation.setOptions({
-            headerLeft: () => (
-                <HeaderNavigationButton
-                    onPress = { goBack }
-                    src = { IconClose }
-                    style = { styles.headerCloseButton } />
-            )
-        });
-    }
-
-    /**
      * Implements {@code SecurityDialog.render}.
      *
      * @inheritdoc
@@ -216,16 +175,16 @@ class SecurityDialog extends PureComponent<Props, State> {
         return (
             <View style = { styles.lobbyModeContainer }>
                 <View style = { styles.lobbyModeContent } >
-                    <Text>
+                    <Text style = { styles.lobbyModeText }>
                         { t('lobby.enableDialogText') }
                     </Text>
                     <View style = { styles.lobbyModeSection }>
                         <Text style = { styles.lobbyModeLabel } >
                             { t('lobby.toggleLabel') }
                         </Text>
-                        <LobbyModeSwitch
-                            lobbyEnabled = { _lobbyEnabled }
-                            onToggleLobbyMode = { this._onToggleLobbyMode } />
+                        <Switch
+                            checked = { _lobbyEnabled }
+                            onChange = { this._onToggleLobbyMode } />
                     </View>
                 </View>
             </View>
@@ -257,54 +216,49 @@ class SecurityDialog extends PureComponent<Props, State> {
         if (_locked && showElement) {
             setPasswordControls = (
                 <>
-                    <TouchableRipple
-                        onPress = { this._onCancel }
-                        rippleColor = { BaseTheme.palette.field02 } >
-                        <Text style = { styles.passwordSetupButton }>
-                            { t('dialog.Remove') }
-                        </Text>
-                    </TouchableRipple>
+                    <Button
+                        accessibilityLabel = 'dialog.Remove'
+                        labelKey = 'dialog.Remove'
+                        labelStyle = { styles.passwordSetupButtonLabel }
+                        onClick = { this._onCancel }
+                        type = { BUTTON_TYPES.TERTIARY } />
                     {
                         _password
-                        && <TouchableRipple
-                            onPress = { this._onCopy }
-                            rippleColor = { BaseTheme.palette.field02 } >
-                            <Text style = { styles.passwordSetupButton }>
-                                { t('dialog.copy') }
-                            </Text>
-                        </TouchableRipple>
+                        && <Button
+                            accessibilityLabel = 'dialog.copy'
+                            labelKey = 'dialog.copy'
+                            labelStyle = { styles.passwordSetupButtonLabel }
+                            onClick = { this._onCopy }
+                            type = { BUTTON_TYPES.TERTIARY } />
                     }
                 </>
             );
         } else if (!_lockedConference && showElement) {
             setPasswordControls = (
                 <>
-                    <TouchableRipple
-                        onPress = { this._onCancel }
-                        rippleColor = { BaseTheme.palette.field02 } >
-                        <Text style = { styles.passwordSetupButton }>
-                            { t('dialog.Cancel') }
-                        </Text>
-                    </TouchableRipple>
-                    <TouchableRipple
-                        onPress = { this._onSubmit }
-                        rippleColor = { BaseTheme.palette.field02 } >
-                        <Text style = { styles.passwordSetupButton }>
-                            { t('dialog.add') }
-                        </Text>
-                    </TouchableRipple>
+                    <Button
+                        accessibilityLabel = 'dialog.Cancel'
+                        labelKey = 'dialog.Cancel'
+                        labelStyle = { styles.passwordSetupButtonLabel }
+                        onClick = { this._onCancel }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                    <Button
+                        accessibilityLabel = 'dialog.add'
+                        labelKey = 'dialog.add'
+                        labelStyle = { styles.passwordSetupButtonLabel }
+                        onClick = { this._onSubmit }
+                        type = { BUTTON_TYPES.TERTIARY } />
                 </>
             );
         } else if (!_lockedConference && !showElement) {
             setPasswordControls = (
-                <TouchableRipple
+                <Button
+                    accessibilityLabel = 'info.addPassword'
                     disabled = { !_isModerator }
-                    onPress = { this._onAddPassword }
-                    rippleColor = { BaseTheme.palette.field02 } >
-                    <Text style = { styles.passwordSetupButton }>
-                        { t('info.addPassword') }
-                    </Text>
-                </TouchableRipple>
+                    labelKey = 'info.addPassword'
+                    labelStyle = { styles.passwordSetupButtonLabel }
+                    onClick = { this._onAddPassword }
+                    type = { BUTTON_TYPES.TERTIARY } />
             );
         }
 
@@ -315,13 +269,12 @@ class SecurityDialog extends PureComponent<Props, State> {
                         <Text style = { styles.passwordSetRemotelyText }>
                             { t('passwordSetRemotely') }
                         </Text>
-                        <TouchableRipple
-                            onPress = { this._onCancel }
-                            rippleColor = { BaseTheme.palette.field02 } >
-                            <Text style = { styles.passwordSetupButton }>
-                                { t('dialog.Remove') }
-                            </Text>
-                        </TouchableRipple>
+                        <Button
+                            accessibilityLabel = 'dialog.Remove'
+                            labelKey = 'dialog.Remove'
+                            labelStyle = { styles.passwordSetupButtonLabel }
+                            onClick = { this._onCancel }
+                            type = { BUTTON_TYPES.TERTIARY } />
                     </View>
                 );
             } else {
@@ -330,14 +283,13 @@ class SecurityDialog extends PureComponent<Props, State> {
                         <Text style = { styles.passwordSetRemotelyTextDisabled }>
                             { t('passwordSetRemotely') }
                         </Text>
-                        <TouchableRipple
+                        <Button
+                            accessibilityLabel = 'info.addPassword'
                             disabled = { !_isModerator }
-                            onPress = { this._onAddPassword }
-                            rippleColor = { BaseTheme.palette.field02 } >
-                            <Text style = { styles.passwordSetupButton }>
-                                { t('info.addPassword') }
-                            </Text>
-                        </TouchableRipple>
+                            labelKey = 'info.addPassword'
+                            labelStyle = { styles.passwordSetupButtonLabel }
+                            onClick = { this._onAddPassword }
+                            type = { BUTTON_TYPES.TERTIARY } />
                     </View>
                 );
             }
@@ -346,8 +298,8 @@ class SecurityDialog extends PureComponent<Props, State> {
         return (
             <View
                 style = { styles.passwordContainer } >
-                <Text>
-                    { t('security.about') }
+                <Text style = { styles.passwordContainerText }>
+                    { t(_isModerator ? 'security.about' : 'security.aboutReadOnly') }
                 </Text>
                 <View
                     style = {
@@ -357,7 +309,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                     <View>
                         { this._setRoomPasswordMessage() }
                     </View>
-                    { setPasswordControls }
+                    { _isModerator && setPasswordControls }
                 </View>
             </View>
         );
@@ -395,14 +347,13 @@ class SecurityDialog extends PureComponent<Props, State> {
         if (showElement) {
             if (typeof _locked === 'undefined') {
                 return (
-                    <TextInput
+                    <Input
+                        accessibilityLabel = { t('info.addPassword') }
                         autoFocus = { true }
-                        onChangeText = { this._onChangeText }
-                        placeholder = { t('lobby.passwordField') }
-                        placeholderTextColor = { BaseTheme.palette.text03 }
-                        selectionColor = { BaseTheme.palette.action03Active }
-                        style = { styles.passwordInput }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
+                        clearable = { true }
+                        customStyles = {{ container: styles.customContainer }}
+                        onChange = { this._onChangeText }
+                        placeholder = { t('dialog.password') }
                         value = { passwordInputValue }
                         { ...textInputProps } />
                 );
@@ -414,7 +365,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                                 { t('info.password') }
                             </Text>
                             <Text style = { styles.savedPassword }>
-                                { passwordInputValue }
+                                { _password }
                             </Text>
                         </View>
                     );
@@ -522,7 +473,7 @@ class SecurityDialog extends PureComponent<Props, State> {
     _onCopy() {
         const { passwordInputValue } = this.state;
 
-        Clipboard.setString(passwordInputValue);
+        copyText(passwordInputValue);
     }
 
     _onSubmit: () => void;
@@ -559,7 +510,6 @@ function _mapStateToProps(state: Object): Object {
 
     return {
         _conference: conference,
-        _dialogStyles: ColorSchemeRegistry.get(state, 'Dialog'),
         _isModerator: isLocalParticipantModerator(state),
         _lobbyEnabled: lobbyEnabled,
         _lobbyModeSwitchVisible:

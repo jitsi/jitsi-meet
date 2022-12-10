@@ -39,9 +39,6 @@
     "audioOnly": {
         "audioOnly": "Bande passante faible"
     },
-    "blankPage": {
-        "meetingEnded": "Réunion terminée."
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Ajouter salle annexe",
@@ -83,6 +80,7 @@
         "enter": "Entrez dans le salon",
         "error": "Erreur : votre message n'a pas été envoyé. Raison : {{error}}",
         "fieldPlaceHolder": "Tapez votre message ici",
+        "lobbyChatMessageTo": "Message de salle d'attente à {{recipient}}",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} dit: ",
         "messageAccessibleTitleMe": "Je dis: ",
@@ -95,6 +93,7 @@
         },
         "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
         "privateNotice": "Message privé à {{recipient}}",
+        "sendButton": "Envoyer",
         "smileysPanel": "Panneaux des Émojis",
         "tabs": {
             "chat": "Chat",
@@ -136,7 +135,6 @@
         "bridgeCount": "Nombre de serveurs :",
         "codecs": "Codecs (A/V) :",
         "connectedTo": "Connecté à :",
-        "e2e_rtt": "E2E RTT :",
         "framerate": "Images par seconde :",
         "less": "Cacher les détails",
         "localaddress": "Adresse locale :",
@@ -208,14 +206,15 @@
         "Remove": "Supprimer",
         "Share": "Partager",
         "Submit": "Soumettre",
-        "WaitForHostMsg": "La conférence <b>{{room}}</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre son arrivée.",
-        "WaitForHostMsgWOk": "La conférence <b>{{room}}</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez appuyer sur Ok pour vous authentifier. Sinon, veuillez attendre son arrivée.",
+        "WaitForHostMsg": "La conférence n'a pas encore commencé. Si vous en êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre son arrivée.",
         "WaitingForHostTitle": "En attente de l'hôte ...",
         "Yes": "Oui",
         "accessibilityLabel": {
             "liveStreaming": "Diffusion en direct"
         },
         "add": "Ajouter",
+        "addMeetingNote": "Ajouter une note à cette conférence",
+        "addOptionalNote": "Ajouter une note (optionnel):",
         "allow": "Autoriser",
         "alreadySharedVideoMsg": "Un autre participant est en train de partager sa vidéo. Cette conférence ne permet de partager qu'une seule vidéo à la fois.",
         "alreadySharedVideoTitle": "Une seule vidéo partagée est autorisée à la fois",
@@ -267,6 +266,8 @@
         "kickParticipantDialog": "Êtes-vous sûr(e) de vouloir expulser ce participant ?",
         "kickParticipantTitle": "Expulser ce participant ?",
         "kickTitle": "Oups ! vous avez été expulsé(e) par {{participantDisplayName}}",
+        "linkMeeting": "Relier la conférence",
+        "linkMeetingTitle": "Relier la conférence à Salesforce",
         "liveStreaming": "Direct",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Impossible durant l'enregistrement",
         "liveStreamingDisabledTooltip": "La diffusion en direct est désactivée",
@@ -321,6 +322,7 @@
         "popupError": "Votre navigateur bloque les fenêtres pop-up. Veuillez autoriser les fenêtres pop-up dans les paramètres de votre navigateur.",
         "popupErrorTitle": "Pop-up bloquée",
         "readMore": "plus",
+        "recentlyUsedObjects": "Vos objets récemment utilisés",
         "recording": "Enregistrement",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Impossible durant le direct",
         "recordingDisabledTooltip": "L'enregistrement est désactivé.",
@@ -343,6 +345,12 @@
         "screenSharingFailed": "Houla ! Quelque chose s'est mal passé, nous n'avons pas pu démarrer le partage d'écran !",
         "screenSharingFailedTitle": "Echec du partage d'écran !",
         "screenSharingPermissionDeniedError": "Houla ! Un problème est survenu avec vos autorisations de partage d'écran. Veuillez réessayer.",
+        "searchInSalesforce": "Rechercher dans Salesforce",
+        "searchResults": "Résultats de recherche({{count}})",
+        "searchResultsDetailsError": "Un problème est survenu en récupérant les données du propriétaire.",
+        "searchResultsError": "Un problème est survenu en récupérant des données.",
+        "searchResultsNotFound": "Aucun résultat trouvé.",
+        "searchResultsTryAgain": "Essayer d'utiliser d'autres mots clé.",
         "sendPrivateMessage": "Vous avez récemment reçu un message privé. Aviez-vous l'intention d'y répondre en privé, ou vouliez-vous envoyer votre message au groupe ?",
         "sendPrivateMessageCancel": "Envoyer au groupe",
         "sendPrivateMessageOk": "Envoyer en privé",
@@ -365,7 +373,9 @@
         "shareVideoTitle": "Partager une vidéo",
         "shareYourScreen": "Partager votre écran",
         "shareYourScreenDisabled": "Le partage d'écran est désactivé.",
+        "sharedVideoDialogError": "Erreur: URL invalide",
         "sharedVideoLinkPlaceholder": "lien YouTube ou lien vidéo direct",
+        "start": "Démarrer ",
         "startLiveStreaming": "Démarrer la diffusion en direct",
         "startRecording": "Commencer l'enregistrement",
         "startRemoteControlErrorMessage": "Une erreur est survenue lors de la tentative de démarrage de la session de contrôle à distance !",
@@ -408,8 +418,12 @@
         "veryBad": "Très mauvais",
         "veryGood": "Très bon"
     },
+    "giphy": {
+        "noResults": "Aucun résultat de recherche :(",
+        "search": "Rechercher dans GIPHY"
+    },
     "helpView": {
-        "header": "Centre d'aide"
+        "title": "Centre d'aide"
     },
     "incomingCall": {
         "answer": "Répondre",
@@ -474,6 +488,7 @@
         "focusLocal": "Épingler ma vidéo",
         "focusRemote": "Épingler la vidéo de quelqu'un d'autre",
         "fullScreen": "Activer / Désactiver le mode plein écran",
+        "giphyMenu": "Activer/désactiver le menu GIPHY",
         "keyboardShortcuts": "Raccourcis clavier",
         "localRecording": "Afficher / Masquer les commandes de l'enregistrement local",
         "mute": "Activer / Couper le microphone",
@@ -520,6 +535,7 @@
         "signedInAs": "Vous êtes connecté en tant que :",
         "start": "Démarrer la diffusion en direct",
         "streamIdHelp": "Qu'est-ce que c'est ?",
+        "title": "Diffusion en direct",
         "unavailableTitle": "La diffusion est indisponible",
         "youtubeTerms": "Conditions d'utilisation de YouTube"
     },
@@ -528,6 +544,7 @@
         "admitAll": "Tout accepter",
         "allow": "Autoriser",
         "backToKnockModeButton": "Aucun mot de passe, demander à rejoindre plutôt",
+        "chat": "Chat",
         "dialogTitle": "Mode salle d'attente",
         "disableDialogContent": "Le mode salle d'attente est actuellement activé. Cette fonctionnalité garantit que les participants indésirables ne peuvent pas rejoindre votre réunion. Souhaitez-vous la désactiver ?",
         "disableDialogSubmit": "Désactiver",
@@ -540,6 +557,7 @@
         "errorMissingPassword": "Veuillez saisir le mot de passe de la réunion",
         "invalidPassword": "Mot de passe invalide",
         "joinRejectedMessage": "Votre requête pour rejoindre une réunion a été refusée par un modérateur.",
+        "joinRejectedTitle": "Demande d'accès rejetée.",
         "joinTitle": "Rejoindre une réunion",
         "joinWithPasswordMessage": "Tentative de rejoindre avec mot de passe, patientez s'il vous plait ...",
         "joiningMessage": "Vous allez rejoindre une réunion dès que quelqu'un aura accepté votre demande",
@@ -548,6 +566,8 @@
         "knockButton": "Demander à rejoindre",
         "knockTitle": "Quelqu'un souhaite rejoindre la réunion",
         "knockingParticipantList": "Liste des participants en attente",
+        "lobbyChatStartedNotification": "Un modérateur dialogue en salle d'attente avec {{attendee}}",
+        "lobbyChatStartedTitle": "Un modérateur dialogue en salle d'attente avec vous.",
         "nameField": "Saisissez votre nom",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} a été refusé par {{originParticipantName}}",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} a été accepté par {{originParticipantName}}",
@@ -558,6 +578,7 @@
         "passwordJoinButton": "Rejoindre",
         "reject": "Refuser",
         "rejectAll": "Refuser tout",
+        "title": "Salle d'attente",
         "toggleLabel": "Activer la salle d'attente"
     },
     "localRecording": {
@@ -610,6 +631,7 @@
         "displayNotifications": "Afficher les notifications pour",
         "focus": "Focus de conférence",
         "focusFail": "{{component}} n'est pas disponible - réessayez dans {{ms}} sec",
+        "gifsMenu": "GIPHY",
         "groupTitle": "Notifications",
         "hostAskedUnmute": "Le modérateur souhaite vous donner la parole",
         "invitedOneMember": "{{name}} a été invité(e)",
@@ -619,6 +641,12 @@
         "leftOneMember": "{{name}} a quitté la réunion",
         "leftThreePlusMembers": "{{name}} et beaucoup d'autres ont quitté la réunion",
         "leftTwoMembers": "{{first}} et {{second}} ont quitté la réunion",
+        "linkToSalesforce": "Lien à Salesforce",
+        "linkToSalesforceDescription": "Vous pouvez lier le résumé de la conférence à un objet Salesforce.",
+        "linkToSalesforceError": "Impossible de relier la conférence à Salesforce",
+        "linkToSalesforceKey": "Relier cette conférence",
+        "linkToSalesforceProgress": "Liaison de la conférence à Salesforce...",
+        "linkToSalesforceSuccess": "La conférence a été reliée à Salesforce",
         "me": "Moi",
         "moderationInEffectCSDescription": "Merci de lever la main si vous voulez partager votre écran.",
         "moderationInEffectCSTitle": "Le partage d'écran est interdit par le modérateur",
@@ -687,16 +715,17 @@
             "videoModeration": "Démarrer leur vidéo"
         },
         "close": "Fermer",
-        "header": "Participants",
         "headings": {
             "lobby": "Salle d'attente ({{count}})",
             "participantsList": "Participants de la réunion ({{count}})",
             "waitingLobby": "Dans la salle d'attente ({{count}})"
         },
-        "search": "Rechercher des participants"
+        "search": "Rechercher des participants",
+        "title": "Participants"
     },
     "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
     "passwordSetRemotely": "défini par un autre participant",
+    "pinnedParticipant": "Participant toujours affiché",
     "polls": {
         "answer": {
             "skip": "Passer",
@@ -801,7 +830,7 @@
         "ringing": "Appel en cours ..."
     },
     "privacyView": {
-        "header": "Confidentialité"
+        "title": "Confidentialité"
     },
     "profile": {
         "avatar": "avatar",
@@ -812,6 +841,18 @@
     },
     "raisedHand": "Aimerait prendre la parole",
     "raisedHandsLabel": "Nombre de mains levées",
+    "record": {
+        "already": {
+            "linked": "L'enregistrement est déjà relié à cette session."
+        },
+        "type": {
+            "account": "Compte",
+            "contact": "Contact",
+            "lead": "Piste",
+            "opportunity": "Opportunité",
+            "owner": "Propriétaire"
+        }
+    },
     "recording": {
         "authDropboxText": "Téléchargement vers Dropbox",
         "availableSpace": "Espace disponible : {{spaceLeft}} Mo (approximativement {{duration}} minutes d'enregistrement)",
@@ -826,6 +867,11 @@
         "expandedPending": "Démarrage de l'enregistrement ...",
         "failedToStart": "L'enregistrement n'a pas réussi à démarrer",
         "fileSharingdescription": "Partager l'enregistrement avec les participants de la réunion",
+        "highlight": "Souligner",
+        "highlightMoment": "Souligner un moment",
+        "highlightMomentDisabled": "Vous ne pouvez souligner des moments que pendant une réunion",
+        "highlightMomentSuccess": "Moment souligné",
+        "highlightMomentSucessDescription": "Votre moment souligné sera ajouté au résumé de la réunion.",
         "inProgress": "Enregistrement ou diffusion en cours",
         "limitNotificationDescriptionNative": "En raison d'une forte demande, votre enregistrement sera limité à {{limit}} min. Pour des enregistrements illimités, essayez <3> {{app}} </3>.",
         "limitNotificationDescriptionWeb": "En raison d'une forte demande, votre enregistrement sera limité à {{limit}} min. Pour des enregistrements illimités, essayez <a href={{url}} rel='noopener noreferrer' target='_blank'> {{app}} </a>.",
@@ -840,10 +886,12 @@
         "rec": "REC",
         "serviceDescription": "Votre enregistrement sera enregistré par le service dédié",
         "serviceDescriptionCloud": "Enregistrement Cloud",
+        "serviceDescriptionCloudInfo": "Les conférences enregistrées sont automatiquement supprimées 24h après leur heure d'enregistrement.",
         "serviceName": "Service d'enregistrement",
         "sessionAlreadyActive": "Cette session est déjà en cours d'enregistrement ou de diffusion.",
         "signIn": "Se connecter",
         "signOut": "Se déconnecter",
+        "title": "Enregistrement",
         "unavailable": "Oups ! Le {{serviceName}} est actuellement indisponible. Nous tentons de résoudre le problème. Veuillez réessayer plus tard.",
         "unavailableTitle": "Enregistrement indisponible",
         "uploadToCloud": "Envoyer vers le cloud"
@@ -854,8 +902,8 @@
     "security": {
         "about": "Vous pouvez ajouter un mot de passe à votre réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
         "aboutReadOnly": "Les modérateurs peuvent ajouter un mot de passe à la réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
-        "header": "Options de sécurité",
-        "insecureRoomNameWarning": "Le nom de la salle est peu sûr. Des participants non désirés peuvent rejoindre votre réunion. Pensez à sécuriser votre réunion en cliquant sur le bouton de sécurité."
+        "insecureRoomNameWarning": "Le nom de la salle est peu sûr. Des participants non désirés peuvent rejoindre votre réunion. Pensez à sécuriser votre réunion en cliquant sur le bouton de sécurité.",
+        "title": "Options de sécurité"
     },
     "settings": {
         "calendar": {
@@ -926,6 +974,7 @@
     "speakerStats": {
         "angry": "En colère",
         "disgusted": "Dégoûté",
+        "displayEmotions": "Afficher réactions",
         "fearful": "Effrayé",
         "happy": "Content",
         "hours": "{{count}}h",
@@ -950,7 +999,7 @@
         "title": "Votre visioconférence s'est interrompue parce que votre ordinateur s'est mis en veille."
     },
     "termsView": {
-        "header": "Conditions d'utilisation"
+        "title": "Conditions d'utilisation"
     },
     "toolbar": {
         "Settings": "Paramètres",
@@ -971,6 +1020,7 @@
             "expand": "Développer",
             "feedback": "Laisser des commentaires",
             "fullScreen": "Activer / Désactiver le plein écran",
+            "giphy": "Activer/désactiver le menu GIPHY",
             "grantModerator": "donner des droits de modérateur",
             "hangup": "Quitter la conversation",
             "help": "Aide",
@@ -978,6 +1028,7 @@
             "kick": "Expulser le participant",
             "laugh": "Rire",
             "like": "Approuver",
+            "linkToSalesforce": "Lien à Salesforce",
             "lobbyButton": "Activer / Désactiver le mode salle d'attente",
             "localRecording": "Activer / Désactiver les contrôles d'enregistrement local",
             "lockRoom": "Activer / Désactiver le mot de passe de la réunion",
@@ -1000,6 +1051,7 @@
             "remoteVideoMute": "Couper la caméra du participant",
             "security": "Options de sécurité",
             "selectBackground": "Selectionner un arrière-plan",
+            "selfView": "Afficher votre vidéo",
             "shareRoom": "Inviter quelqu'un",
             "shareYourScreen": "Activer / Désactiver le partage d'écran",
             "shareaudio": "Partager l'audio",
@@ -1038,6 +1090,7 @@
         "exitFullScreen": "Quitter le mode plein écran",
         "exitTileView": "Quitter le mode mosaïque",
         "feedback": "Laisser des commentaires",
+        "giphy": "Activer/désactiver le menu GIPHY",
         "hangup": "Quitter",
         "help": "Aide",
         "invite": "Inviter des participants",
@@ -1045,6 +1098,7 @@
         "laugh": "Rire",
         "leaveBreakoutRoom": "Quitter salle annexe",
         "like": "Approuver",
+        "linkToSalesforce": "Lien à Salesforce",
         "lobbyButtonDisable": "Désactiver le mode salle d'attente / contrôle des participant(e)s",
         "lobbyButtonEnable": "Activer le mode salle d'attente / contrôle des participant(e)s",
         "login": "Connexion",
@@ -1157,16 +1211,19 @@
         "domuteOthers": "Couper le micro de tous les autres",
         "domuteVideo": "Couper la caméra",
         "domuteVideoOfOthers": "Couper la caméra des autres",
-        "flip": "Balancer",
+        "flip": "Miroir",
         "grantModerator": "Donner des droits de modérateur",
         "hideSelfView": "Cacher l'affichage de votre propre vidéo",
         "kick": "Exclure",
         "moderator": "Modérateur",
-        "mute": "Un participant a coupé son micro",
+        "mute": "Le participant a coupé son micro",
         "muted": "Muet",
+        "pinToStage": "Garder affiché",
         "remoteControl": "Démarrer / Arrêter le contrôle à distance",
         "screenSharing": "Cette personne partage son écran",
         "show": "Afficher en premier plan",
+        "showSelfView": "Montrer votre propre vidéo",
+        "unpinFromStage": "Ne plus garder affiché",
         "videoMuted": "Caméra coupée",
         "videomute": "Le participant a arrêté la caméra"
     },

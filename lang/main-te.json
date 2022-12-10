@@ -74,6 +74,7 @@
         },
         "noMessagesMessage": "ఈ సమావేశంలో ఇంకా సందేశాలేమీ లేవు. ఇక్కడ ఒక సంభాషణను మొదలుపెట్టండి!",
         "privateNotice": "{{recipient}}‌కి అంతరంగిక సందేశం",
+        "sendButton": "పంపించు",
         "title": "సంభాషణ",
         "titleWithPolls": "సంభాషణ",
         "you": "మీరు"
@@ -109,7 +110,6 @@
         "bridgeCount": "సేవికల సంఖ్య: ",
         "codecs": "కోడెక్స్ (A/V): ",
         "connectedTo": "దీనికి అనుసంధానమైంది:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "ఫ్రేమ్ రేటు:",
         "less": "తక్కువ చూపించు",
         "localaddress": "స్థానిక చిరునామా:",
@@ -180,8 +180,7 @@
         "Remove": "తీసివేయి",
         "Share": "పంచుకోండి",
         "Submit": "దాఖలుచేయి",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHostTitle": "అతిథేయి కోసం వేచివున్నాం ...",
         "Yes": "అవును",
         "accessibilityLabel": {
@@ -251,7 +250,7 @@
         "micNotSendingData": "మీ కంప్యూటర్ అమరికల లోనికి వెళ్ళి మైకుని అమౌనించండి, దాని ధ్వనిస్థాయిని సర్దుబాటుచేయండి",
         "micNotSendingDataTitle": "మీ కంప్యూటర్ అమరికలు మీ మైకును మౌనించాయి",
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
-        "micTimeoutError": "Could not start audio source. Timeout occured!",
+        "micTimeoutError": "Could not start audio source. Timeout occurred!",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
         "muteEveryoneDialog": "Are you sure you want to mute everyone? You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteEveryoneElseDialog": "Once muted, you won't be able to unmute them, but they can unmute themselves at any time.",
@@ -350,7 +349,7 @@
         "veryGood": "చాలా బాగుందిా"
     },
     "helpView": {
-        "header": "సహాయ కేంద్రం"
+        "title": "సహాయ కేంద్రం"
     },
     "incomingCall": {
         "answer": "బదులివ్వు",
@@ -451,6 +450,7 @@
         "signedInAs": "మీరు ప్రస్తుతం ఇలా ప్రవేశించివున్నారు:",
         "start": "ఒక లైవ్ స్ట్రీమ్ మొదలుపెట్టండి",
         "streamIdHelp": "ఇది ఏమిటి?",
+        "title": "తాజా స్ట్రీమింగ్",
         "unavailableTitle": "లైవ్ స్ట్రీమింగ్ అందుబాటులో లేదు",
         "youtubeTerms": "యూట్యూబ్ సేవా నియమాలు"
     },
@@ -486,6 +486,7 @@
         "passwordField": "సమావేశం సంకేతపదం ఇవ్వండి",
         "passwordJoinButton": "చేరు",
         "reject": "నిరాకరించు",
+        "title": "Lobby",
         "toggleLabel": "Enable lobby"
     },
     "localRecording": {
@@ -682,6 +683,7 @@
         "serviceName": "రికార్డింగు సేవ",
         "signIn": "Sign in",
         "signOut": "Sign out",
+        "title": "రికార్డింగు",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "రికార్డింగు అందుబాటులో లేదు"
     },

@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
         "privateNotice": "Message privé à {{recipient}}",
+        "sendButton": "Envoyer",
         "title": "Clavardage",
         "titleWithPolls": "Clavardage",
         "you": "vous"
@@ -146,8 +147,7 @@
         "Remove": "Supprimer",
         "Share": "Oui",
         "Submit": "Envoyer",
-        "WaitForHostMsg": "La conférence <b>{{room}}</b> n'a pas encore démarré. Si vous êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre que l'hôte arrive.",
-        "WaitForHostMsgWOk": "La conférence <b>{{room}}</b> n'a pas encore démarré. Si vous êtes l'hôte, veuillez appuyer sur OK pour vous authentifier. Sinon, veuillez attendre que l'hôte arrive.",
+        "WaitForHostMsg": "La conférence n'a pas encore démarré. Si vous êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre que l'hôte arrive.",
         "WaitingForHost": "En attente de l'hôte…",
         "Yes": "Oui",
         "accessibilityLabel": {
@@ -334,7 +334,7 @@
         "searchCallOnlyPlaceholder": "Entrer le numéro de téléphone",
         "searchPeopleOnlyPlaceholder": "Rechercher des participants",
         "searchPlaceholder": "Participant ou numéro de téléphone",
-        "send": "Envoyer…"
+        "send": "Envoyer"
     },
     "keyboardShortcuts": {
         "focusLocal": "Focaliser sur votre vidéo",
@@ -381,6 +381,7 @@
         "signedInAs": "Vous êtes actuellement connecté en tant que :",
         "start": "Démarrer une diffusion en direct",
         "streamIdHelp": "Qu'est-ce que c'est?",
+        "title": "Diffusion en direct",
         "unavailableTitle": "Diffusion en direct non disponible"
     },
     "localRecording": {
@@ -494,6 +495,7 @@
         "serviceName": "Service d'enregistrement",
         "signIn": "Se connecter",
         "signOut": "Se déconnecter",
+        "title": "Enregistrement",
         "unavailable": "Oups! Le {{serviceName}} n'est pas disponible pour le moment. Nous nous efforçons de régler le problème. Veuillez réessayer plus tard.",
         "unavailableTitle": "Enregistrement non disponible"
     },

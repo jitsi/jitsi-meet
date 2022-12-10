@@ -12,7 +12,7 @@ import { reloadNow } from '../../app/actions';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
-} from '../../base/lib-jitsi-meet';
+} from '../../base/lib-jitsi-meet/functions';
 import logger from '../logger';
 
 import ReloadButton from './web/ReloadButton';

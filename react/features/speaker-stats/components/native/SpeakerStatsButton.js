@@ -1,7 +1,7 @@
 // @flow
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
-import { getFeatureFlag, SPEAKERSTATS_ENABLED } from '../../../base/flags';
+import { SPEAKERSTATS_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';

@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "아직 회의에 메시지가 없습니다. 여기서 대화를 시작하세요!",
         "privateNotice": "{{recipient}}에게 보내는 비공개 메시지",
+        "sendButton": "전송",
         "title": "채팅",
         "titleWithPolls": "채팅",
         "you": "당신"
@@ -168,8 +169,7 @@
         "Remove": "제거",
         "Share": "공유",
         "Submit": "제출",
-        "WaitForHostMsg": "<b>{{room}}</b> 회의가 시작되지 않았습니다. 호스트인 경우 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",
-        "WaitForHostMsgWOk": "<b>{{room}}</b> 회의가 아직 시작되지 않았습니다. 호스트인 경우 확인을 눌러 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",
+        "WaitForHostMsg": "회의가 시작되지 않았습니다. 호스트인 경우 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",
         "WaitingForHost": "호스트를 기다리는 중입니다…",
         "Yes": "예",
         "accessibilityLabel": {
@@ -325,7 +325,7 @@
         "veryGood": "매우 좋음"
     },
     "helpView": {
-        "header": "지원 센터"
+        "title": "지원 센터"
     },
     "incomingCall": {
         "answer": "응답",
@@ -422,6 +422,7 @@
         "signedInAs": "현재 다음 계정으로 로그인되어 있습니다.",
         "start": "실시간 스트리밍 시작",
         "streamIdHelp": "도움말?",
+        "title": "실시간 스트리밍",
         "unavailableTitle": "실시간 스트리밍을 사용할 수 없음",
         "youtubeTerms": "YouTube 서비스 약관"
     },
@@ -539,6 +540,7 @@
         "serviceName": "녹화 서비스",
         "signIn": "로그인",
         "signOut": "로그아웃",
+        "title": "녹화",
         "unavailable": "죄송합니다. {{serviceName}}은 현재 사용할 수 없습니다. 저희는 문제를 해결하기 위해 노력하고 있습니다. 나중에 다시 시도 해주십시오.",
         "unavailableTitle": "녹화를 사용할 수 없습니다"
     },

@@ -5,16 +5,14 @@ import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import { SharedVideoButton } from '../../../shared-video/components';
-import { hideSharedVideoMenu } from '../../actions.native';
 
 import styles from './styles';
 
@@ -37,11 +35,6 @@ type Props = {
     participantId: string,
 
     /**
-     * The color-schemed stylesheet of the BottomSheet.
-     */
-    _bottomSheetStyles: StyleType,
-
-    /**
      * True if the menu is currently open, false otherwise.
      */
     _isOpen: boolean,
@@ -56,9 +49,6 @@ type Props = {
      */
     _participantDisplayName: string,
 }
-
-// eslint-disable-next-line prefer-const
-let SharedVideoMenu_;
 
 /**
  * Class to implement a popup menu that opens upon long pressing a fake participant thumbnail.
@@ -91,12 +81,11 @@ class SharedVideoMenu extends PureComponent<Props> {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participantId,
-            styles: this.props._bottomSheetStyles.buttons
+            styles: bottomSheetStyles.buttons
         };
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { _isParticipantAvailable }>
                 <Divider style = { styles.divider } />
@@ -105,8 +94,6 @@ class SharedVideoMenu extends PureComponent<Props> {
         );
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Callback to hide the {@code SharedVideoMenu}.
      *
@@ -114,16 +101,8 @@ class SharedVideoMenu extends PureComponent<Props> {
      * @returns {boolean}
      */
     _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideSharedVideoMenu());
-
-            return true;
-        }
-
-        return false;
+        this.props.dispatch(hideSheet());
     }
-
-    _renderMenuHeader: () => React$Element<any>;
 
     /**
      * Function to render the menu's header.
@@ -131,12 +110,12 @@ class SharedVideoMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participantId } = this.props;
+        const { participantId } = this.props;
 
         return (
             <View
                 style = { [
-                    _bottomSheetStyles.sheet,
+                    bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
                     participantId = { participantId }
@@ -162,13 +141,9 @@ function _mapStateToProps(state, ownProps) {
     const isParticipantAvailable = getParticipantById(state, participantId);
 
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _isOpen: isDialogOpen(state, SharedVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
         _participantDisplayName: getParticipantDisplayName(state, participantId)
     };
 }
 
-SharedVideoMenu_ = connect(_mapStateToProps)(SharedVideoMenu);
-
-export default SharedVideoMenu_;
+export default connect(_mapStateToProps)(SharedVideoMenu);

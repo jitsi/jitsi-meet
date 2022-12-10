@@ -3,12 +3,11 @@
 import React, { PureComponent } from 'react';
 import { Divider } from 'react-native-paper';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
+import { BottomSheet, hideSheet } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
+import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import { SharedDocumentButton } from '../../../etherpad';
-import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionMenu } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { LiveStreamButton, RecordButton } from '../../../recording';
@@ -16,26 +15,22 @@ import SecurityDialogButton
     from '../../../security/components/security-dialog/native/SecurityDialogButton';
 import { SharedVideoButton } from '../../../shared-video/components';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
+import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import styles from '../../../video-menu/components/native/styles';
 import { getMovableButtons } from '../../functions.native';
-import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
+import LinkToSalesforceButton from './LinkToSalesforceButton';
+import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
-import ScreenSharingButton from './ScreenSharingButton.js';
-import ToggleCameraButton from './ToggleCameraButton';
+import ScreenSharingButton from './ScreenSharingButton';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
 type Props = {
-
-    /**
-     * The color-schemed stylesheet of the dialog feature.
-     */
-    _bottomSheetStyles: StyleType,
 
     /**
      * True if the overflow menu is currently visible, false otherwise.
@@ -60,7 +55,12 @@ type Props = {
     /**
      * Used for hiding the dialog when the selection was completed.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Whether or not speaker stats is disable.
+     */
+    _isSpeakerStatsDisabled: boolean
 };
 
 type State = {
@@ -70,15 +70,6 @@ type State = {
      */
     scrolledToTop: boolean
 }
-
-/**
- * The exported React {@code Component}. We need it to execute
- * {@link hideDialog}.
- *
- * XXX It does not break our coding style rule to not utilize globals for state,
- * because it is merely another name for {@code export}'s {@code default}.
- */
-let OverflowMenu_; // eslint-disable-line prefer-const
 
 /**
  * Implements a React {@code Component} with some extra actions in addition to
@@ -109,22 +100,26 @@ class OverflowMenu extends PureComponent<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _bottomSheetStyles, _width, _reactionsEnabled } = this.props;
+        const {
+            _isSpeakerStatsDisabled,
+            _reactionsEnabled,
+            _width
+        } = this.props;
         const toolbarButtons = getMovableButtons(_width);
 
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            styles: _bottomSheetStyles.buttons
+            styles: bottomSheetStyles.buttons
         };
 
         const topButtonProps = {
             afterClick: this._onCancel,
             showLabel: true,
             styles: {
-                ..._bottomSheetStyles.buttons,
+                ...bottomSheetStyles.buttons,
                 style: {
-                    ..._bottomSheetStyles.buttons.style,
+                    ...bottomSheetStyles.buttons.style,
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16
                 }
@@ -133,50 +128,39 @@ class OverflowMenu extends PureComponent<Props, State> {
 
         return (
             <BottomSheet
-                onCancel = { this._onCancel }
                 renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : null }>
-                <ParticipantsPaneButton { ...topButtonProps } />
+                <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <SecurityDialogButton { ...buttonProps } />
                 <RecordButton { ...buttonProps } />
                 <LiveStreamButton { ...buttonProps } />
+                <LinkToSalesforceButton { ...buttonProps } />
                 <Divider style = { styles.divider } />
                 <SharedVideoButton { ...buttonProps } />
-                <ScreenSharingButton { ...buttonProps } />
-                <SpeakerStatsButton { ...buttonProps } />
-                {!toolbarButtons.has('togglecamera') && <ToggleCameraButton { ...buttonProps } />}
+                {!toolbarButtons.has('screensharing') && <ScreenSharingButton { ...buttonProps } />}
+                {!_isSpeakerStatsDisabled && <SpeakerStatsButton { ...buttonProps } />}
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
                 <ClosedCaptionButton { ...buttonProps } />
                 <SharedDocumentButton { ...buttonProps } />
-                <HelpButton { ...buttonProps } />
+                <SettingsButton { ...buttonProps } />
             </BottomSheet>
         );
     }
-
-    _onCancel: () => boolean;
 
     /**
      * Hides this {@code OverflowMenu}.
      *
      * @private
-     * @returns {boolean}
+     * @returns {void}
      */
     _onCancel() {
-        if (this.props._isOpen) {
-            this.props.dispatch(hideDialog(OverflowMenu_));
-
-            return true;
-        }
-
-        return false;
+        this.props.dispatch(hideSheet());
     }
-
-    _renderReactionMenu: () => React$Element<any>;
 
     /**
      * Functoin to render the reaction menu as the footer of the bottom sheet.
@@ -199,13 +183,10 @@ class OverflowMenu extends PureComponent<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _isOpen: isDialogOpen(state, OverflowMenu_),
-        _width: state['features/base/responsive-ui'].clientWidth,
-        _reactionsEnabled: isReactionsEnabled(state)
+        _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
+        _reactionsEnabled: isReactionsEnabled(state),
+        _width: state['features/base/responsive-ui'].clientWidth
     };
 }
 
-OverflowMenu_ = connect(_mapStateToProps)(OverflowMenu);
-
-export default OverflowMenu_;
+export default connect(_mapStateToProps)(OverflowMenu);

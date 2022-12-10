@@ -1,8 +1,12 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+
+import { Icon, IconMessage } from '../../../base/icons';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+
 
 import PollItem from './PollItem';
 import { chatStyles } from './styles';
@@ -31,10 +35,20 @@ const PollsList = () => {
 
     return (
         <>
-            {listPolls.length === 0
-            && <Text style = { chatStyles.noPollText } >
-                {t('polls.results.empty')}
-            </Text>}
+            {
+                listPolls.length === 0
+                && <View style = { chatStyles.noPollContent }>
+                    <Icon
+                        color = { BaseTheme.palette.icon03 }
+                        size = { 160 }
+                        src = { IconMessage } />
+                    <Text style = { chatStyles.noPollText } >
+                        {
+                            t('polls.results.empty')
+                        }
+                    </Text>
+                </View>
+            }
             <FlatList
                 data = { listPolls }
                 extraData = { listPolls }

@@ -8,7 +8,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { Icon, IconAdd } from '../../base/icons';
+import { Icon, IconPlus } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { updateCalendarEvent } from '../actions';
@@ -71,7 +71,7 @@ class AddMeetingUrlButton extends Component<Props> {
                     onClick = { this._onClick }
                     onKeyPress = { this._onKeyPress }
                     role = 'button'>
-                    <Icon src = { IconAdd } />
+                    <Icon src = { IconPlus } />
                 </div>
             </Tooltip>
         );

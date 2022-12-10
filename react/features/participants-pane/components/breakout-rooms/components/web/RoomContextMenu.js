@@ -5,12 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
-import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/components';
 import {
-    IconClose,
+    IconCloseLarge,
     IconRingGroup
 } from '../../../../../base/icons';
 import { isLocalParticipantModerator } from '../../../../../base/participants';
+import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
 import { showOverflowDrawer } from '../../../../../toolbox/functions';
 
@@ -78,7 +79,7 @@ export const RoomContextMenu = ({
         } : null,
         !room?.isMainRoom && isLocalModerator ? {
             accessibilityLabel: isRoomEmpty ? t('breakoutRooms.actions.remove') : t('breakoutRooms.actions.close'),
-            icon: IconClose,
+            icon: IconCloseLarge,
             id: isRoomEmpty ? `remove-room-${room?.id}` : `close-room-${room?.id}`,
             onClick: isRoomEmpty ? onRemoveBreakoutRoom : onCloseBreakoutRoom,
             text: isRoomEmpty ? t('breakoutRooms.actions.remove') : t('breakoutRooms.actions.close')

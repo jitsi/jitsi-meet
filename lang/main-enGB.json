@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "",
         "privateNotice": "",
+        "sendButton": "Send",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": ""
@@ -92,7 +93,6 @@
         "bridgeCount": "Server count: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Connected to:",
-        "e2e_rtt": "",
         "framerate": "Frame rate:",
         "less": "Show less",
         "localaddress": "Local address:",
@@ -160,8 +160,7 @@
         "Remove": "Remove",
         "Share": "Share",
         "Submit": "Submit",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHost": "Waiting for the host …",
         "Yes": "Yes",
         "accessibilityLabel": {
@@ -366,7 +365,7 @@
         "mute": "Mute or unmute your microphone",
         "pushToTalk": "Press to transmit",
         "raiseHand": "Raise or lower your hand",
-        "showSpeakerStats": "Show speaker stats",
+        "showSpeakerStats": "Show participants stats",
         "toggleChat": "Open or close the chat",
         "toggleFilmstrip": "Show or hide video thumbnails",
         "toggleScreensharing": "Switch between camera and screen sharing",
@@ -403,6 +402,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
+        "title": "Live Stream",
         "unavailableTitle": "Live Streaming unavailable",
         "youtubeTerms": "YouTube terms of services"
     },
@@ -518,6 +518,7 @@
         "serviceName": "Recording service",
         "signIn": "Sign in",
         "signOut": "Sign out",
+        "title": "Recording",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable"
     },
@@ -578,7 +579,7 @@
         "minutes": "{{count}}m",
         "name": "Name",
         "seconds": "{{count}}s",
-        "speakerStats": "Speaker Stats",
+        "speakerStats": "Participants Stats",
         "speakerTime": "Speaker Time"
     },
     "startupoverlay": {
@@ -625,7 +626,7 @@
             "sharedvideo": "Toggle video sharing",
             "shortcuts": "Toggle shortcuts",
             "show": "Show on stage",
-            "speakerStats": "Toggle speaker statistics",
+            "speakerStats": "Toggle participants statistics",
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
             "videoblur": "",
@@ -661,7 +662,7 @@
         "shareRoom": "Invite someone",
         "sharedvideo": "Share video",
         "shortcuts": "View shortcuts",
-        "speakerStats": "Speaker stats",
+        "speakerStats": "Participants stats",
         "startScreenSharing": "Start screen sharing",
         "startSubtitles": "Start subtitles",
         "startvideoblur": "",

@@ -295,38 +295,10 @@ function _visitNode(node, callback) {
     require('react-native-callstats/csio-polyfill');
     global.callstats = require('react-native-callstats/callstats');
 
-    // XMLHttpRequest
-    if (global.XMLHttpRequest) {
-        const { prototype } = global.XMLHttpRequest;
-
-        // XMLHttpRequest.responseXML
-        //
-        // Required by:
-        // - Strophe
-        if (prototype && !prototype.hasOwnProperty('responseXML')) {
-            Object.defineProperty(prototype, 'responseXML', {
-                get() {
-                    const { responseText } = this;
-
-                    return (
-                        responseText
-                            && new DOMParser().parseFromString(
-                                responseText,
-                                'text/xml'));
-                }
-            });
-        }
-    }
-
     // Timers
     //
     // React Native's timers won't run while the app is in the background, this
-    // is a known limitation. Replace them with a background-friendly
-    // alternative.
-    //
-    // Required by:
-    // - lib-jitsi-meet
-    // - Strophe
+    // is a known limitation. Replace them with a background-friendly alternative.
     if (Platform.OS === 'android') {
         global.clearTimeout = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
         global.clearInterval = BackgroundTimer.clearInterval.bind(BackgroundTimer);

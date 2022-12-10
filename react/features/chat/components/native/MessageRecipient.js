@@ -1,32 +1,36 @@
-// @flow
-
 import React from 'react';
 import { Text, TouchableHighlight, View } from 'react-native';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-import { Icon, IconCancelSelection } from '../../../base/icons';
+import { Icon, IconCloseLarge } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { type StyleType } from '../../../base/styles';
 import {
     setParams
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { setPrivateMessageRecipient } from '../../actions.any';
+import { setLobbyChatActiveState, setPrivateMessageRecipient } from '../../actions.any';
 import AbstractMessageRecipient, {
     type Props as AbstractProps
 } from '../AbstractMessageRecipient';
 
-type Props = AbstractProps & {
+import styles from './styles';
 
-    /**
-     * The color-schemed stylesheet of the feature.
-     */
-    _styles: StyleType,
+
+type Props = AbstractProps & {
 
     /**
      * The Redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+ * Is lobby messaging active.
+ */
+    isLobbyChatActive: boolean,
+
+    /**
+     * The participant string for lobby chat messaging.
+     */
+    lobbyMessageRecipient: Object,
 
     /**
      * The participant object set for private messaging.
@@ -48,6 +52,20 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
         super(props);
 
         this._onResetPrivateMessageRecipient = this._onResetPrivateMessageRecipient.bind(this);
+        this._onResetLobbyMessageRecipient = this._onResetLobbyMessageRecipient.bind(this);
+    }
+
+    _onResetLobbyMessageRecipient: () => void;
+
+    /**
+     * Resets lobby message recipient from state.
+     *
+     * @returns {void}
+     */
+    _onResetLobbyMessageRecipient() {
+        const { dispatch } = this.props;
+
+        dispatch(setLobbyChatActiveState(false));
     }
 
     _onResetPrivateMessageRecipient: () => void;
@@ -74,24 +92,48 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles, privateMessageRecipient, t } = this.props;
+        const {
+            isLobbyChatActive,
+            lobbyMessageRecipient,
+            privateMessageRecipient,
+            t
+        } = this.props;
+
+        if (isLobbyChatActive) {
+            return (
+                <View style = { styles.lobbyMessageRecipientContainer }>
+                    <Text style = { styles.messageRecipientText }>
+                        { t('chat.lobbyChatMessageTo', {
+                            recipient: lobbyMessageRecipient.name
+                        }) }
+                    </Text>
+                    <TouchableHighlight
+                        onPress = { this._onResetLobbyMessageRecipient }>
+                        <Icon
+                            src = { IconCloseLarge }
+                            style = { styles.messageRecipientCancelIcon } />
+                    </TouchableHighlight>
+                </View>
+            );
+        }
 
         if (!privateMessageRecipient) {
             return null;
         }
 
         return (
-            <View style = { _styles.messageRecipientContainer }>
-                <Text style = { _styles.messageRecipientText }>
+            <View style = { styles.messageRecipientContainer }>
+                <Text style = { styles.messageRecipientText }>
                     { t('chat.messageTo', {
                         recipient: privateMessageRecipient.name
                     }) }
                 </Text>
                 <TouchableHighlight
-                    onPress = { this._onResetPrivateMessageRecipient }>
+                    onPress = { this._onResetPrivateMessageRecipient }
+                    underlayColor = { 'transparent' }>
                     <Icon
-                        src = { IconCancelSelection }
-                        style = { _styles.messageRecipientCancelIcon } />
+                        src = { IconCloseLarge }
+                        style = { styles.messageRecipientCancelIcon } />
                 </TouchableHighlight>
             </View>
         );
@@ -105,8 +147,11 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
+
     return {
-        _styles: ColorSchemeRegistry.get(state, 'Chat')
+        isLobbyChatActive,
+        lobbyMessageRecipient
     };
 }
 

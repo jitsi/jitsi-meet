@@ -1,8 +1,10 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { useSelector } from 'react-redux';
 
+import { getLocalParticipant } from '../../../base/participants';
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
@@ -20,13 +22,12 @@ const PollResults = (props: AbstractProps) => {
         answers,
         changeVote,
         haveVoted,
-        showDetails,
         question,
+        showDetails,
         t,
         toggleIsDetailed
     } = props;
 
-    /* eslint-disable react/no-multi-comp */
     /**
      * Render a header summing up answer information.
      *
@@ -41,11 +42,6 @@ const PollResults = (props: AbstractProps) => {
             <View>
                 <Text style = { resultsStyles.answer }>({nbVotes}) {percentage}%</Text>
             </View>
-
-            {/* <Text style = { resultsStyles.answer }>{ answer } - { percentage }%</Text>
-            <Text style = { resultsStyles.answerVoteCount }>
-                { t('polls.answer.vote', { count: nbVotes }) }
-            </Text> */}
         </View>
     );
 
@@ -62,10 +58,17 @@ const PollResults = (props: AbstractProps) => {
             return (
                 <View style = { resultsStyles.answerContainer }>
                     { renderHeader(name, percentage, voterCount) }
+                    <View style = { resultsStyles.barContainer }>
+                        <View style = { [ resultsStyles.bar, { width: `${percentage}%` } ] } />
+                    </View>
                     { voters && voterCount > 0
                     && <View style = { resultsStyles.voters }>
                         {voters.map(({ id, name: voterName }) =>
-                            <Text key = { id }>{ voterName }</Text>
+                            (<Text
+                                key = { id }
+                                style = { resultsStyles.voter }>
+                                { voterName }
+                            </Text>)
                         )}
                     </View>}
                 </View>
@@ -85,13 +88,14 @@ const PollResults = (props: AbstractProps) => {
         );
 
     }, [ showDetails ]);
+    const localParticipant = useSelector(getLocalParticipant);
+
 
     /* eslint-disable react/jsx-no-bind */
     return (
         <View>
-            <View>
-                <Text style = { dialogStyles.question } >{ question }</Text>
-            </View>
+            <Text style = { dialogStyles.questionText } >{ question }</Text>
+            <Text style = { dialogStyles.questionOwnerText } >{ t('polls.by', { name: localParticipant.name }) }</Text>
             <FlatList
                 data = { answers }
                 keyExtractor = { (item, index) => index.toString() }
@@ -100,17 +104,24 @@ const PollResults = (props: AbstractProps) => {
                 <TouchableOpacity onPress = { toggleIsDetailed }>
                     <Text
                         style = { chatStyles.toggleText }>
-                        {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
+                        {
+                            showDetails
+                                ? t('polls.results.hideDetailedResults')
+                                : t('polls.results.showDetailedResults')
+                        }
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress = { changeVote }>
                     <Text
                         style = { chatStyles.toggleText }>
-                        {haveVoted ? t('polls.results.changeVote') : t('polls.results.vote')}
+                        {
+                            haveVoted
+                                ? t('polls.results.changeVote')
+                                : t('polls.results.vote')
+                        }
                     </Text>
                 </TouchableOpacity>
             </View>
-
         </View>
     );
 };

@@ -28,6 +28,7 @@ declare var interfaceConfig: Object;
 const ICON_COLOR = {
     error: colors.error06,
     normal: colors.primary06,
+    success: colors.success05,
     warning: colors.warning05
 };
 
@@ -59,7 +60,7 @@ class Notification extends AbstractNotification<Props> {
                 description = { this._renderDescription() }
                 icon = { this._mapAppearanceToIcon() }
                 id = { uid }
-                testId = { titleKey }
+                testId = { titleKey || this._getDescriptionKey() }
                 title = { title || t(titleKey, titleArguments) } />
         );
     }

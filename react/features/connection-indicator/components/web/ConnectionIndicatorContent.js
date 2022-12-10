@@ -4,17 +4,23 @@ import React from 'react';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
-import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media';
-import { getLocalParticipant, getParticipantById } from '../../../base/participants';
+import { getLocalParticipant, getParticipantById, isScreenShareParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
+import {
+    getTrackByMediaTypeAndParticipant,
+    getVirtualScreenshareParticipantTrack
+} from '../../../base/tracks/functions';
 import { ConnectionStatsTable } from '../../../connection-stats';
 import { saveLogs } from '../../actions';
+import {
+    isTrackStreamingStatusInactive,
+    isTrackStreamingStatusInterrupted
+} from '../../functions';
 import AbstractConnectionIndicator, {
-    INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
-    type State as AbstractState
+    type State as AbstractState,
+    INDICATOR_DISPLAY_THRESHOLD
 } from '../AbstractConnectionIndicator';
 
 /**
@@ -61,13 +67,7 @@ type Props = AbstractProps & {
     /**
      * The audio SSRC of this client.
      */
-     _audioSsrc: number,
-
-    /**
-     * The current condition of the user's connection, matching one of the
-     * enumerated values in the library.
-     */
-    _connectionStatus: string,
+    _audioSsrc: number,
 
     /**
      * Whether or not should display the "Show More" link in the local video
@@ -172,7 +172,6 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
             bitrate,
             bridgeCount,
             codec,
-            e2eRtt,
             framerate,
             maxEnabledResolution,
             packetLoss,
@@ -190,10 +189,11 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 codec = { codec }
                 connectionSummary = { this._getConnectionStatusTip() }
                 disableShowMoreStats = { this.props._disableShowMoreStats }
-                e2eRtt = { e2eRtt }
+                e2eeVerified = { this.props._isE2EEVerified }
                 enableSaveLogs = { this.props._enableSaveLogs }
                 framerate = { framerate }
                 isLocalVideo = { this.props._isLocalVideo }
+                isVirtualScreenshareParticipant = { this.props._isVirtualScreenshareParticipant }
                 maxEnabledResolution = { maxEnabledResolution }
                 onSaveLogs = { this.props._onSaveLogs }
                 onShowMore = { this._onToggleShowMore }
@@ -217,12 +217,14 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
     _getConnectionStatusTip() {
         let tipKey;
 
-        switch (this.props._connectionStatus) {
-        case JitsiParticipantConnectionStatus.INTERRUPTED:
+        const { _isConnectionStatusInactive, _isConnectionStatusInterrupted } = this.props;
+
+        switch (true) {
+        case _isConnectionStatusInterrupted:
             tipKey = 'connectionindicator.quality.lost';
             break;
 
-        case JitsiParticipantConnectionStatus.INACTIVE:
+        case _isConnectionStatusInactive:
             tipKey = 'connectionindicator.quality.inactive';
             break;
 
@@ -310,27 +312,29 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const conference = state['features/base/conference'].conference;
     const participant
         = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
-    const props = {
-        _connectionStatus: participant?.connectionStatus,
-        _enableSaveLogs: state['features/base/config'].enableSaveLogs,
-        _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
-        _isLocalVideo: participant?.local,
-        _region: participant?.region
-    };
+    const tracks = state['features/base/tracks'];
+    const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantId);
+    let videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
 
-    if (conference) {
-        const firstVideoTrack = getTrackByMediaTypeAndParticipant(
-            state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
-        const firstAudioTrack = getTrackByMediaTypeAndParticipant(
-            state['features/base/tracks'], MEDIA_TYPE.AUDIO, participantId);
-
-        return {
-            ...props,
-            _audioSsrc: firstAudioTrack ? conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
-            _videoSsrc: firstVideoTrack ? conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
-        };
+    if (isScreenShareParticipant(participant)) {
+        videoTrack = getVirtualScreenshareParticipantTrack(tracks, participant?.id);
     }
 
-    return props;
+    const _isConnectionStatusInactive = isTrackStreamingStatusInactive(videoTrack);
+    const _isConnectionStatusInterrupted = isTrackStreamingStatusInterrupted(videoTrack);
+
+    return {
+        _audioSsrc: audioTrack ? conference?.getSsrcByTrack(audioTrack.jitsiTrack) : undefined,
+        _enableSaveLogs: state['features/base/config'].enableSaveLogs,
+        _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
+        _isConnectionStatusInactive,
+        _isConnectionStatusInterrupted,
+        _isE2EEVerified: participant?.e2eeVerified,
+        _isVirtualScreenshareParticipant: isScreenShareParticipant(participant),
+        _isLocalVideo: participant?.local,
+        _region: participant?.region,
+        _videoSsrc: videoTrack ? conference?.getSsrcByTrack(videoTrack.jitsiTrack) : undefined
+    };
 }
+
 export default translate(connect(_mapStateToProps, _mapDispatchToProps)(ConnectionIndicatorContent));

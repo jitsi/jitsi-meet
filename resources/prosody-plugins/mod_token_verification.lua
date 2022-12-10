@@ -1,5 +1,5 @@
 -- Token authentication
--- Copyright (C) 2015 Atlassian
+-- Copyright (C) 2021-present 8x8, Inc.
 
 local log = module._log;
 local host = module.host;
@@ -78,7 +78,7 @@ module:hook("muc-room-pre-create", function(event)
     if not verify_user(origin, stanza) then
         return true; -- Returning any value other than nil will halt processing of the event
     end
-end);
+end, 99);
 
 module:hook("muc-occupant-pre-join", function(event)
 	local origin, room, stanza = event.origin, event.room, event.stanza;
@@ -86,7 +86,7 @@ module:hook("muc-occupant-pre-join", function(event)
     if not verify_user(origin, stanza) then
         return true; -- Returning any value other than nil will halt processing of the event
     end
-end);
+end, 99);
 
 for event_name, method in pairs {
     -- Normal room interactions

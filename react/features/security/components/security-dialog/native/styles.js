@@ -8,8 +8,8 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 export default {
 
     securityDialogContainer: {
-        flex: 1,
-        marginTop: BaseTheme.spacing[4]
+        backgroundColor: BaseTheme.palette.ui01,
+        flex: 1
     },
 
     headerCloseButton: {
@@ -18,7 +18,8 @@ export default {
 
     lobbyModeContainer: {
         borderBottomColor: BaseTheme.palette.border01,
-        borderBottomWidth: 1
+        borderBottomWidth: 1,
+        marginTop: BaseTheme.spacing[4]
     },
 
     lobbyModeContent: {
@@ -26,7 +27,12 @@ export default {
         marginBottom: BaseTheme.spacing[4]
     },
 
+    lobbyModeText: {
+        color: BaseTheme.palette.text01
+    },
+
     lobbyModeLabel: {
+        color: BaseTheme.palette.text01,
         fontWeight: 'bold',
         marginTop: BaseTheme.spacing[2]
     },
@@ -43,6 +49,10 @@ export default {
         marginTop: BaseTheme.spacing[4]
     },
 
+    passwordContainerText: {
+        color: BaseTheme.palette.text01
+    },
+
     passwordContainerControls: {
         alignItems: 'center',
         flexDirection: 'row',
@@ -51,33 +61,26 @@ export default {
 
     savedPasswordContainer: {
         flexDirection: 'row',
-        marginTop: 20,
+        marginTop: 14,
         width: 208
     },
 
     savedPasswordLabel: {
+        color: BaseTheme.palette.text01,
         fontWeight: 'bold'
     },
 
     savedPassword: {
-        color: BaseTheme.palette.text06
+        color: BaseTheme.palette.text01
     },
 
-    passwordInput: {
-        borderColor: BaseTheme.palette.action03Active,
-        borderRadius: BaseTheme.spacing[1],
-        borderWidth: 2,
-        height: BaseTheme.spacing[6],
-        marginTop: BaseTheme.spacing[2],
-        paddingLeft: BaseTheme.spacing[1],
+    customContainer: {
         width: 208
     },
 
-    passwordSetupButton: {
-        ...BaseTheme.typography.heading7,
-        color: BaseTheme.palette.screen01Header,
-        marginTop: BaseTheme.spacing[4],
-        textTransform: 'uppercase'
+    passwordSetupButtonLabel: {
+        color: BaseTheme.palette.link01,
+        marginTop: BaseTheme.spacing[3]
     },
 
     passwordSetRemotelyContainer: {
@@ -87,12 +90,12 @@ export default {
     },
 
     passwordSetRemotelyText: {
-        color: BaseTheme.palette.text06,
-        marginTop: 22
+        color: BaseTheme.palette.text01,
+        marginTop: BaseTheme.spacing[3]
     },
 
     passwordSetRemotelyTextDisabled: {
-        color: BaseTheme.palette.text03,
-        marginTop: 22
+        color: BaseTheme.palette.text02,
+        marginTop: BaseTheme.spacing[3]
     }
 };

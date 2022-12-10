@@ -10,19 +10,26 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
-        classpath 'com.google.gms:google-services:4.3.10'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
+        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.google.gms:google-services:4.3.14'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
     }
 }
 
 ext {
-    buildToolsVersion = "30.0.3"
-    compileSdkVersion = 31
+    buildToolsVersion = "31.0.0"
+    compileSdkVersion = 32
     minSdkVersion    = 23
-    targetSdkVersion = 31
+    targetSdkVersion = 32
     supportLibVersion = "28.0.0"
-    ndkVersion = "21.4.7075529"
+
+    if (System.properties['os.arch'] == "aarch64") {
+        // For M1 Users we need to use the NDK 24 which added support for aarch64
+        ndkVersion = "24.0.8215888"
+    } else {
+        // Otherwise we default to the side-by-side NDK version from AGP.
+        ndkVersion = "21.4.7075529"
+    }
 
     // The Maven artifact groupdId of the third-party react-native modules which
     // Jitsi Meet SDK for Android depends on and which are not available in

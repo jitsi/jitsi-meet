@@ -1,10 +1,12 @@
-// @flow
-
 import React, { Component } from 'react';
-import { Platform, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconChatSend } from '../../../base/icons';
+import { IconSend } from '../../../base/icons/svg';
+import IconButton from '../../../base/ui/components/native/IconButton';
+import Input from '../../../base/ui/components/native/Input';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 
 import styles from './styles';
 
@@ -69,30 +71,30 @@ class ChatInputBar extends Component<Props, State> {
      */
     render() {
         return (
-            <View
+            <SafeAreaView
+                edges = { [ 'bottom' ] }
                 style = { [
                     styles.inputBar,
                     this.state.addPadding ? styles.extraBarPadding : null
                 ] }>
-                <TextInput
+                <Input
                     blurOnSubmit = { false }
+                    customStyles = {{ container: styles.customInputContainer }}
                     multiline = { false }
                     onBlur = { this._onFocused(false) }
-                    onChangeText = { this._onChangeText }
+                    onChange = { this._onChangeText }
                     onFocus = { this._onFocused(true) }
                     onSubmitEditing = { this._onSubmit }
                     placeholder = { this.props.t('chat.fieldPlaceHolder') }
                     returnKeyType = 'send'
-                    style = { styles.inputField }
                     value = { this.state.message } />
-                {
-                    this.state.showSend && <TouchableOpacity onPress = { this._onSubmit }>
-                        <Icon
-                            src = { IconChatSend }
-                            style = { styles.sendButtonIcon } />
-                    </TouchableOpacity>
-                }
-            </View>
+                <IconButton
+                    disabled = { !this.state.message }
+                    onPress = { this._onSubmit }
+                    src = { IconSend }
+                    style = { styles.sendButton }
+                    type = { BUTTON_TYPES.PRIMARY } />
+            </SafeAreaView>
         );
     }
 

@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
-import { Icon, IconAdd } from '../../base/icons';
+import { Icon, IconPlus } from '../../base/icons';
 import { Tooltip } from '../../base/tooltip';
 
 /**
@@ -66,7 +66,7 @@ class JoinButton extends Component<Props> {
                     role = 'button'>
                     <Icon
                         size = '14'
-                        src = { IconAdd } />
+                        src = { IconPlus } />
                 </div>
             </Tooltip>
         );

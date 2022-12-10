@@ -1,9 +1,8 @@
-// @flow
 import type { Dispatch } from 'redux';
 
-import { openDialog } from '../../../base/dialog';
+import { openSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { IconVolumeEmpty } from '../../../base/icons';
+import { IconVolumeUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
@@ -22,7 +21,7 @@ type Props = AbstractButtonProps & {
  */
 class AudioDeviceToggleButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.audioRoute';
-    icon = IconVolumeEmpty;
+    icon = IconVolumeUp;
     label = 'toolbar.accessibilityLabel.audioRoute';
 
     /**
@@ -32,7 +31,7 @@ class AudioDeviceToggleButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(openDialog(AudioRoutePickerDialog));
+        this.props.dispatch(openSheet(AudioRoutePickerDialog));
     }
 }
 

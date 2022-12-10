@@ -12,6 +12,11 @@ type Props = {
     askUnmuteText: string,
 
     /**
+     * Whether or not the local participant is in a breakout room.
+     */
+    isInBreakoutRoom: boolean,
+
+    /**
      * Callback for the mouse leaving this item.
      */
     lowerMenu: Function,
@@ -34,7 +39,7 @@ type Props = {
     /**
      * The meeting participants.
      */
-     participantIds: Array<string>,
+    participantIds: Array<string>,
 
     /**
      * Callback used to open an actions drawer for a participant.
@@ -74,6 +79,7 @@ type Props = {
  */
 function MeetingParticipantItems({
     askUnmuteText,
+    isInBreakoutRoom,
     lowerMenu,
     toggleMenu,
     muteAudio,
@@ -90,6 +96,7 @@ function MeetingParticipantItems({
         <MeetingParticipantItem
             askUnmuteText = { askUnmuteText }
             isHighlighted = { raiseContextId === id }
+            isInBreakoutRoom = { isInBreakoutRoom }
             key = { id }
             muteAudio = { muteAudio }
             muteParticipantButtonText = { muteParticipantButtonText }

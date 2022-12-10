@@ -8,12 +8,12 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { getCurrentConference } from '../../base/conference/functions';
+import checkChromeExtensionsInstalled from '../../base/environment/checkChromeExtensionsInstalled';
 import {
-    checkChromeExtensionsInstalled,
     isMobileBrowser
 } from '../../base/environment/utils';
 import { translate } from '../../base/i18n';
-import { Icon, IconClose } from '../../base/icons';
+import { Icon, IconCloseLarge } from '../../base/icons';
 import { browser } from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
 import { isVpaasMeeting } from '../../jaas/functions';
@@ -104,6 +104,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
             shouldShow: false
         };
 
+        this.isEdge = /Edg(e)?/.test(navigator.userAgent);
         this._onClosePressed = this._onClosePressed.bind(this);
         this._onInstallExtensionClick = this._onInstallExtensionClick.bind(this);
         this._shouldNotRender = this._shouldNotRender.bind(this);
@@ -196,8 +197,10 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onInstallExtensionClick() {
+        const { edgeUrl, url } = this.props.bannerCfg;
+
         sendAnalytics(createChromeExtensionBannerEvent(true));
-        window.open(this.props.bannerCfg.url);
+        window.open(this.isEdge && edgeUrl ? edgeUrl : url);
         this.setState({ closePressed: true });
     }
 
@@ -264,7 +267,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
 
             return null;
         }
-        const { t } = this.props;
+        const { bannerCfg, t } = this.props;
         const mainClassNames = this.props.conference
             ? 'chrome-extension-banner chrome-extension-banner__pos_in_meeting'
             : 'chrome-extension-banner';
@@ -291,7 +294,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
                         <Icon
                             className = 'gray'
                             size = { 12 }
-                            src = { IconClose } />
+                            src = { IconCloseLarge } />
                     </div>
                 </div>
                 <div
@@ -306,7 +309,10 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
                         <div
                             className = 'chrome-extension-banner__button-text'
                             id = 'chrome-extension-banner__button-text'>
-                            { t('chromeExtensionBanner.buttonText') }
+                            { t(this.isEdge && bannerCfg.edgeUrl
+                                ? 'chromeExtensionBanner.buttonTextEdge'
+                                : 'chromeExtensionBanner.buttonText')
+                            }
                         </div>
                     </div>
                 </div>

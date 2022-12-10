@@ -19,7 +19,12 @@ type Props = {
     /**
      * The extra styles to be applied to links.
      */
-    linkStyle: StyleType
+    linkStyle: StyleType,
+
+    /**
+     * The extra styles to be applied to text.
+     */
+    style?: StyleType
 };
 
 /**
@@ -46,7 +51,9 @@ export default class Linkify extends Component<Props> {
         return (
             <ReactLinkify
                 componentDecorator = { this._componentDecorator }>
-                <Text selectable = { true }>
+                <Text
+                    selectable = { true }
+                    style = { this.props.style }>
                     { this.props.children }
                 </Text>
             </ReactLinkify>

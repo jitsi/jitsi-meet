@@ -122,7 +122,6 @@
         "bridgeCount": "Contador del servidor: ",
         "codecs": "Codecs (A/V):",
         "connectedTo": "Conectado a:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Fotogramas por segundo:",
         "less": "Mostrar menos",
         "localaddress": "Dirección local:",
@@ -194,8 +193,7 @@
         "Remove": "Eliminar",
         "Share": "Compartir",
         "Submit": "Enviar",
-        "WaitForHostMsg": "La conferencia <b>{{room}}</b> aún no ha comenzado. Si eres el anfitrión, inicia sesión. De lo contrario, espera a que llegue el anfitrión.",
-        "WaitForHostMsgWOk": "La conferencia <b>{{room}}</b> aún no ha comenzado. Si eres el anfitrión, presiona Aceptar para autenticar. De lo contrario, espera a que llegue el anfitrión.",
+        "WaitForHostMsg": "La conferencia aún no ha comenzado. Si eres el anfitrión, inicia sesión. De lo contrario, espera a que llegue el anfitrión.",
         "WaitingForHost": "Esperando al anfitrión…",
         "WaitingForHostTitle": "Esperando al anfitrión...",
         "Yes": "Sí",
@@ -408,7 +406,7 @@
         "veryGood": "Muy buena"
     },
     "helpView": {
-        "header": "Centro de ayuda"
+        "title": "Centro de ayuda"
     },
     "incomingCall": {
         "answer": "Contestar",
@@ -518,6 +516,7 @@
         "signedInAs": "Actualmente, la sesión está iniciada como:",
         "start": "Iniciar una transmisión en vivo",
         "streamIdHelp": "¿Qué es esto?",
+        "title": "Transmisión en vivo",
         "unavailableTitle": "Transmisión en vivo no disponible",
         "youtubeTerms": "Términos de servicios de YouTube"
     },
@@ -556,6 +555,7 @@
         "passwordJoinButton": "Entrar",
         "reject": "Rechazar",
         "rejectAll": "Rechazar todo",
+        "title": "Sala de espera",
         "toggleLabel": "Activar sala de espera"
     },
     "localRecording": {
@@ -667,14 +667,14 @@
             "videoModeration": "Iniciar su vídeo"
         },
         "close": "Cerrar",
-        "header": "Participantes",
         "headings": {
             "lobby": "Vestíbulo ({{count}})",
             "participantsList": "Participantes en la reunión ({{count}})",
             "waitingLobby": "Esperando en el vestíbulo ({{count}})"
-        }
+        },
+        "title": "Participantes"
     },
-    "passwordDigitsOnly": "Hasta {{number]] cifras",
+    "passwordDigitsOnly": "Hasta {{number}} cifras",
     "passwordSetRemotely": "definida por otro participante",
     "polls": {
         "answer": {
@@ -815,6 +815,7 @@
         "serviceName": "Servicio de grabación",
         "signIn": "Iniciar sesión",
         "signOut": "Cerrar sesión",
+        "title": "Grabando",
         "unavailable": "¡Uy! {{serviceName}} actualmente no está disponible. Estamos trabajando para resolver el problema. Vuelve a intentarlo más tarde.",
         "unavailableTitle": "Grabación no disponible",
         "uploadToCloud": "Subir a la nube"

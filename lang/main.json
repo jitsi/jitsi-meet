@@ -11,7 +11,6 @@
         "defaultEmail": "Your Default Email",
         "disabled": "You can't invite people.",
         "failedToAdd": "Failed to add participants",
-        "footerText": "Dialing out is disabled.",
         "googleEmail": "Google Email",
         "inviteMoreHeader": "You are the only one in the meeting",
         "inviteMoreMailSubject": "Join {{appName}} meeting",
@@ -31,6 +30,7 @@
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
+        "car": "Car Audio",
         "headphones": "Headphones",
         "none": "No audio devices available",
         "phone": "Phone",
@@ -38,9 +38,6 @@
     },
     "audioOnly": {
         "audioOnly": "Low bandwidth"
-    },
-    "blankPage": {
-        "meetingEnded": "Meeting ended."
     },
     "breakoutRooms": {
         "actions": {
@@ -79,15 +76,27 @@
         "refresh": "Refresh calendar",
         "today": "Today"
     },
+    "carmode": {
+        "actions": {
+            "selectSoundDevice": "Select sound device"
+        },
+        "labels": {
+            "buttonLabel": "Car mode",
+            "title": "Car mode",
+            "videoStopped": "Your video is stopped"
+        }
+    },
     "chat": {
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
-        "fieldPlaceHolder": "Type your message here",
+        "fieldPlaceHolder": "Aa",
+        "lobbyChatMessageTo": "Lobby chat message to {{recipient}}",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
+        "newMessages": "New messages",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
@@ -95,6 +104,7 @@
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
+        "sendButton": "Send",
         "smileysPanel": "Emoji panel",
         "tabs": {
             "chat": "Chat",
@@ -106,6 +116,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Install Chrome Extension",
+        "buttonTextEdge": "Install Edge Extension",
         "close": "Close",
         "dontShowAgain": "Don’t show me this again",
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
@@ -136,7 +147,7 @@
         "bridgeCount": "Server count: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Connected to:",
-        "e2e_rtt": "E2E RTT:",
+        "e2eeVerified": "E2EE verified:",
         "framerate": "Frame rate:",
         "less": "Show less",
         "localaddress": "Local address:",
@@ -197,6 +208,9 @@
         "selectADevice": "Select a device",
         "testAudio": "Play a test sound"
     },
+    "dialIn": {
+        "screenTitle": "Dial-in summary"
+    },
     "dialOut": {
         "statusMessage": "is now {{status}}"
     },
@@ -208,14 +222,15 @@
         "Remove": "Remove",
         "Share": "Share",
         "Submit": "Submit",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHostTitle": "Waiting for the host ...",
         "Yes": "Yes",
         "accessibilityLabel": {
             "liveStreaming": "Live Stream"
         },
         "add": "Add",
+        "addMeetingNote": "Add a note about this meeting",
+        "addOptionalNote": "Add a note (optional):",
         "allow": "Allow",
         "alreadySharedVideoMsg": "Another participant is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
@@ -252,11 +267,12 @@
         "e2eeWarning": "WARNING: Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.",
         "e2eeWillDisableDueToMaxModeDescription": "WARNING: End-to-End Encryption will be automatically disabled if more participants join the conference.",
         "embedMeeting": "Embed meeting",
-        "enterDisplayName": "Enter your name here",
+        "enterDisplayName": "Enter your name",
         "error": "Error",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "grantModeratorDialog": "Are you sure you want to grant moderator rights to {{participantName}}?",
         "grantModeratorTitle": "Grant moderator rights",
+        "hide": "Hide",
         "hideShareAudioHelper": "Don't show this dialog again",
         "incorrectPassword": "Incorrect username or password",
         "incorrectRoomLockPassword": "Incorrect password",
@@ -267,15 +283,16 @@
         "kickParticipantDialog": "Are you sure you want to kick this participant?",
         "kickParticipantTitle": "Kick this participant?",
         "kickTitle": "Ouch! {{participantDisplayName}} kicked you out of the meeting",
+        "linkMeeting": "Link meeting",
+        "linkMeetingTitle": "Link meeting to Salesforce",
         "liveStreaming": "Live Streaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Not possible while recording is active",
-        "liveStreamingDisabledTooltip": "Start live stream disabled.",
         "localUserControls": "Local user controls",
         "lockMessage": "Failed to lock the conference.",
         "lockRoom": "Add meeting $t(lockRoomPassword)",
         "lockTitle": "Lock failed",
         "login": "Login",
-        "logoutQuestion": "Are you sure you want to logout and stop the conference?",
+        "logoutQuestion": "Are you sure you want to logout and leave the conference?",
         "logoutTitle": "Logout",
         "maxUsersLimitReached": "The limit for maximum number of participants has been reached. The conference is full. Please contact the meeting owner or try again later!",
         "maxUsersLimitReachedTitle": "Maximum participants limit reached",
@@ -284,7 +301,7 @@
         "micNotSendingData": "Go to your computer's settings to unmute your mic and adjust its level",
         "micNotSendingDataTitle": "Your mic is muted by your system settings",
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
-        "micTimeoutError": "Could not start audio source. Timeout occured!",
+        "micTimeoutError": "Could not start audio source. Timeout occurred!",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
         "moderationAudioLabel": "Allow attendees to unmute themselves",
         "moderationVideoLabel": "Allow attendees to start their video",
@@ -321,9 +338,9 @@
         "popupError": "Your browser is blocking pop-up windows from this site. Please enable pop-ups in your browser's security settings and try again.",
         "popupErrorTitle": "Pop-up blocked",
         "readMore": "more",
+        "recentlyUsedObjects": "Your recently used objects",
         "recording": "Recording",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Not possible while a live stream is active",
-        "recordingDisabledTooltip": "Start recording disabled.",
         "rejoinNow": "Rejoin now",
         "remoteControlAllowedMessage": "{{user}} accepted your remote control request!",
         "remoteControlDeniedMessage": "{{user}} rejected your remote control request!",
@@ -343,6 +360,12 @@
         "screenSharingFailed": "Oops! Something went wrong, we weren’t able to start screen sharing!",
         "screenSharingFailedTitle": "Screen sharing failed!",
         "screenSharingPermissionDeniedError": "Oops! Something went wrong with your screen sharing permissions. Please reload and try again.",
+        "searchInSalesforce": "Search in Salesforce",
+        "searchResults": "Search results({{count}})",
+        "searchResultsDetailsError": "Something went wrong while retrieving owner data.",
+        "searchResultsError": "Something went wrong while retrieving data.",
+        "searchResultsNotFound": "No search results found.",
+        "searchResultsTryAgain": "Try using alternative keywords.",
         "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send your message to the group?",
         "sendPrivateMessageCancel": "Send to the group",
         "sendPrivateMessageOk": "Send privately",
@@ -367,6 +390,8 @@
         "shareYourScreenDisabled": "Screen sharing disabled.",
         "sharedVideoDialogError": "Error: Invalid URL",
         "sharedVideoLinkPlaceholder": "YouTube link or direct video link",
+        "show": "Show",
+        "start": "Start ",
         "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
         "startRemoteControlErrorMessage": "An error occurred while trying to start the remote control session!",
@@ -384,6 +409,10 @@
         "user": "User",
         "userIdentifier": "User identifier",
         "userPassword": "User password",
+        "verifyParticipantConfirm": "They match",
+        "verifyParticipantDismiss": "They do not match",
+        "verifyParticipantQuestion": "EXPERIMENTAL: Ask participant {{participantName}} if they see the same content, in the same order.",
+        "verifyParticipantTitle": "User verification",
         "videoLink": "Video link",
         "viewUpgradeOptions": "View upgrade options",
         "viewUpgradeOptionsContent": "To get unlimited access to premium features like recording, transcriptions, RTMP Streaming & more, you'll need to upgrade your plan.",
@@ -409,8 +438,12 @@
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
     },
+    "giphy": {
+        "noResults": "No results found :(",
+        "search": "Search GIPHY"
+    },
     "helpView": {
-        "header": "Help center"
+        "title": "Help center"
     },
     "incomingCall": {
         "answer": "Answer",
@@ -452,9 +485,11 @@
         "noRoom": "No room was specified to dial-in into.",
         "numbers": "Dial-in Numbers",
         "password": "$t(lockRoomPasswordUppercase): ",
+        "reachedLimit": "You have reached the limit of your plan.",
         "sip": "SIP address",
         "title": "Share",
-        "tooltip": "Share link and dial-in info for this meeting"
+        "tooltip": "Share link and dial-in info for this meeting",
+        "upgradeOptions": "Please check the upgrade options on"
     },
     "inlineDialogFailure": {
         "msg": "We stumbled a bit.",
@@ -475,18 +510,23 @@
         "focusLocal": "Focus on your video",
         "focusRemote": "Focus on another person's video",
         "fullScreen": "View or exit full screen",
+        "giphyMenu": "Toggle GIPHY menu",
         "keyboardShortcuts": "Keyboard shortcuts",
         "localRecording": "Show or hide local recording controls",
         "mute": "Mute or unmute your microphone",
         "pushToTalk": "Push to talk",
         "raiseHand": "Raise or lower your hand",
-        "showSpeakerStats": "Show speaker stats",
+        "showSpeakerStats": "Show participants stats",
         "toggleChat": "Open or close the chat",
         "toggleFilmstrip": "Show or hide video thumbnails",
         "toggleParticipantsPane": "Show or hide the participants pane",
         "toggleScreensharing": "Switch between camera and screen sharing",
         "toggleShortcuts": "Show or hide keyboard shortcuts",
         "videoMute": "Start or stop your camera"
+    },
+    "largeVideo": {
+        "screenIsShared": "You are sharing your screen",
+        "showMeWhatImSharing": "Show me what I'm sharing"
     },
     "liveStreaming": {
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
@@ -521,14 +561,15 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
+        "title": "Live Stream",
         "unavailableTitle": "Live Streaming unavailable",
         "youtubeTerms": "YouTube terms of services"
     },
     "lobby": {
         "admit": "Admit",
         "admitAll": "Admit all",
-        "allow": "Allow",
         "backToKnockModeButton": "Ask to join",
+        "chat": "Chat",
         "dialogTitle": "Lobby mode",
         "disableDialogContent": "Lobby mode is currently enabled. This feature ensures that unwanted participants can't join your meeting. Do you want to disable it?",
         "disableDialogSubmit": "Disable",
@@ -541,6 +582,7 @@
         "errorMissingPassword": "Please enter the meeting password",
         "invalidPassword": "Invalid password",
         "joinRejectedMessage": "Your join request was rejected by a moderator.",
+        "joinRejectedTitle": "Join request rejected.",
         "joinTitle": "Join Meeting",
         "joinWithPasswordMessage": "Trying to join with password, please wait...",
         "joiningMessage": "You'll join the meeting as soon as someone accepts your request",
@@ -549,6 +591,8 @@
         "knockButton": "Ask to Join",
         "knockTitle": "Someone wants to join the meeting",
         "knockingParticipantList": "Knocking participant list",
+        "lobbyChatStartedNotification": "{{moderator}} started a lobby chat with {{attendee}}",
+        "lobbyChatStartedTitle": "{{moderator}} has started a lobby chat with you.",
         "nameField": "Enter your name",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} has been rejected to join by {{originParticipantName}}",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} has been allowed to join by {{originParticipantName}}",
@@ -559,6 +603,7 @@
         "passwordJoinButton": "Join",
         "reject": "Reject",
         "rejectAll": "Reject all",
+        "title": "Lobby",
         "toggleLabel": "Enable lobby"
     },
     "localRecording": {
@@ -585,6 +630,7 @@
         "no": "No",
         "participant": "Participant",
         "participantStats": "Participant Stats",
+        "selectTabTitle": "🎥 Please select this tab for recording",
         "sessionToken": "Session Token",
         "start": "Start Recording",
         "stop": "Stop Recording",
@@ -607,10 +653,13 @@
         "connectedOneMember": "{{name}} joined the meeting",
         "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
+        "dataChannelClosed": "Video quality impaired",
+        "dataChannelClosedDescription": "The bridge channel has been disconnected and thus video quality is limited to its lowest setting.",
         "disconnected": "disconnected",
         "displayNotifications": "Display notifications for",
         "focus": "Conference focus",
         "focusFail": "{{component}} not available - retry in {{ms}} sec",
+        "gifsMenu": "GIPHY",
         "groupTitle": "Notifications",
         "hostAskedUnmute": "The moderator would like you to speak",
         "invitedOneMember": "{{name}} has been invited",
@@ -620,6 +669,14 @@
         "leftOneMember": "{{name}} left the meeting",
         "leftThreePlusMembers": "{{name}} and many others left the meeting",
         "leftTwoMembers": "{{first}} and {{second}} left the meeting",
+        "linkToSalesforce": "Link to Salesforce",
+        "linkToSalesforceDescription": "You can link the meeting summary to a Salesforce object.",
+        "linkToSalesforceError": "Failed to link meeting to Salesforce",
+        "linkToSalesforceKey": "Link this meeting",
+        "linkToSalesforceProgress": "Linking meeting to Salesforce...",
+        "linkToSalesforceSuccess": "The meeting was linked to Salesforce",
+        "localRecordingStarted": "{{name}} has started a local recording.",
+        "localRecordingStopped": "{{name}} has stopped a local recording.",
         "me": "Me",
         "moderationInEffectCSDescription": "Please raise hand if you want to share your screen.",
         "moderationInEffectCSTitle": "Screen sharing is blocked by the moderator",
@@ -640,6 +697,10 @@
         "newDeviceAction": "Use",
         "newDeviceAudioTitle": "New audio device detected",
         "newDeviceCameraTitle": "New camera detected",
+        "noiseSuppressionDesktopAudioDescription": "Noise suppression can't be enabled while sharing desktop audio, please disable it and try again.",
+        "noiseSuppressionFailedTitle": "Failed to start noise suppression",
+        "noiseSuppressionNoTrackDescription": "Please unmute your microphone first.",
+        "noiseSuppressionStereoDescription": "Stereo audio noise suppression is not currently supported.",
         "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
@@ -688,16 +749,17 @@
             "videoModeration": "Start their video"
         },
         "close": "Close",
-        "header": "Participants",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})",
             "waitingLobby": "Waiting in lobby ({{count}})"
         },
-        "search": "Search participants"
+        "search": "Search participants",
+        "title": "Participants"
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "Set by another participant",
+    "pinnedParticipant": "The participant is pinned",
     "polls": {
         "answer": {
             "skip": "Skip",
@@ -774,6 +836,7 @@
         "initiated": "Call initiated",
         "joinAudioByPhone": "Join with phone audio",
         "joinMeeting": "Join meeting",
+        "joinMeetingInLowBandwidthMode": "Join in low bandwidth mode",
         "joinWithoutAudio": "Join without audio",
         "keyboardShortcuts": "Enable Keyboard shortcuts",
         "linkCopied": "Link copied to clipboard",
@@ -802,7 +865,7 @@
         "ringing": "Ringing..."
     },
     "privacyView": {
-        "header": "Privacy"
+        "title": "Privacy"
     },
     "profile": {
         "avatar": "avatar",
@@ -813,6 +876,18 @@
     },
     "raisedHand": "Would like to speak",
     "raisedHandsLabel": "Number of raised hands",
+    "record": {
+        "already": {
+            "linked": "The meeting is already linked to this Salesforce object."
+        },
+        "type": {
+            "account": "Account",
+            "contact": "Contact",
+            "lead": "Lead",
+            "opportunity": "Opportunity",
+            "owner": "Owner"
+        }
+    },
     "recording": {
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
@@ -826,39 +901,59 @@
         "expandedOn": "The meeting is currently being recorded.",
         "expandedPending": "Recording is being started...",
         "failedToStart": "Recording failed to start",
-        "fileSharingdescription": "Share recording with meeting participants",
+        "fileSharingdescription": "Share the recording link with the meeting participants",
+        "highlight": "Highlight",
+        "highlightMoment": "Highlight moment",
+        "highlightMomentDisabled": "You can highlight moments when the recording starts",
+        "highlightMomentSuccess": "Moment highlighted",
+        "highlightMomentSucessDescription": "Your highlighted moment will be added to the meeting summary.",
         "inProgress": "Recording or live streaming in progress",
         "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "We have generated a link to your recording.",
         "live": "LIVE",
+        "localRecordingNoNotificationWarning": "The recording will not be announced to other participants. You will need to let them know that the meeting is recorded.",
+        "localRecordingNoVideo": "Video is not being recorded",
+        "localRecordingStartWarning": "Please make sure you stop the recording before exiting the meeting in order to save it.",
+        "localRecordingStartWarningTitle": "Stop the recording to save it",
+        "localRecordingVideoStop": "Stopping your video will also stop the local recording. Are you sure you want to continue?",
+        "localRecordingVideoWarning": "To record your video you must have it on when starting the recording",
+        "localRecordingWarning": "Make sure you select the current tab in order to use the right video and audio. The recording is currently limited to 1GB, which is around 100 minutes.",
         "loggedIn": "Logged in as {{userName}}",
+        "noStreams": "No audio or video stream detected.",
         "off": "Recording stopped",
         "offBy": "{{name}} stopped the recording",
         "on": "Recording started",
         "onBy": "{{name}} started the recording",
+        "onlyRecordSelf": "Record only my audio and video streams",
         "pending": "Preparing to record the meeting...",
         "rec": "REC",
+        "saveLocalRecording": "Save recording file locally (Beta)",
         "serviceDescription": "Your recording will be saved by the recording service",
         "serviceDescriptionCloud": "Cloud recording",
+        "serviceDescriptionCloudInfo": "Recorded meetings are automatically cleared 24h after their recording time.",
         "serviceName": "Recording service",
         "sessionAlreadyActive": "This session is already being recorded or live streamed.",
         "signIn": "Sign in",
         "signOut": "Sign out",
+        "surfaceError": "Please select the current tab.",
+        "title": "Recording",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable",
         "uploadToCloud": "Upload to the cloud"
     },
+    "screenshareDisplayName": "{{name}}'s screen",
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
     },
     "security": {
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
-        "header": "Security Options",
-        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button."
+        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
+        "title": "Security Options"
     },
     "settings": {
+        "buttonLabel": "Settings",
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
             "disconnect": "Disconnect",
@@ -875,12 +970,14 @@
         "incomingMessage": "Incoming message",
         "language": "Language",
         "loggedIn": "Logged in as {{name}}",
+        "maxStageParticipants": "Maximum number of participants who can be pinned to the main stage (EXPERIMENTAL)",
         "microphones": "Microphones",
         "moderator": "Moderator",
         "more": "More",
         "name": "Name",
         "noDevice": "None",
         "participantJoined": "Participant Joined",
+        "participantKnocking": "Participant entered lobby",
         "participantLeft": "Participant Left",
         "playSounds": "Play sound on",
         "reactions": "Meeting reactions",
@@ -910,13 +1007,21 @@
         "disableCrashReportingWarning": "Are you sure you want to disable crash reporting? The setting will be applied after you restart the app.",
         "disableP2P": "Disable Peer-To-Peer mode",
         "displayName": "Display name",
+        "displayNamePlaceholderText": "Eg: John Doe",
         "email": "Email",
+        "emailPlaceholderText": "email@example.com",
+        "goTo": "Go to",
         "header": "Settings",
+        "help": "Help",
+        "links": "Links",
+        "privacy": "Privacy",
         "profileSection": "Profile",
         "serverURL": "Server URL",
         "showAdvanced": "Show advanced settings",
+        "startCarModeInLowBandwidthMode": "Start car mode in low bandwidth mode",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
+        "terms": "Terms",
         "version": "Version"
     },
     "share": {
@@ -937,7 +1042,7 @@
         "sad": "Sad",
         "search": "Search",
         "seconds": "{{count}}s",
-        "speakerStats": "Speaker Stats",
+        "speakerStats": "Participants Stats",
         "speakerTime": "Speaker Time",
         "surprised": "Surprised"
     },
@@ -952,8 +1057,9 @@
         "title": "Your video call was interrupted because this computer went to sleep."
     },
     "termsView": {
-        "header": "Terms"
+        "title": "Terms"
     },
+    "toggleTopPanelLabel": "Toggle top panel",
     "toolbar": {
         "Settings": "Settings",
         "accessibilityLabel": {
@@ -963,6 +1069,7 @@
             "boo": "Boo",
             "breakoutRoom": "Join/leave breakout room",
             "callQuality": "Manage video quality",
+            "carmode": "Car Mode",
             "cc": "Toggle subtitles",
             "chat": "Open / Close chat",
             "clap": "Clap",
@@ -970,16 +1077,20 @@
             "document": "Toggle shared document",
             "download": "Download our apps",
             "embedMeeting": "Embed meeting",
+            "endConference": "End meeting for all",
             "expand": "Expand",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
+            "giphy": "Toggle GIPHY menu",
             "grantModerator": "Grant Moderator Rights",
             "hangup": "Leave the meeting",
             "help": "Help",
             "invite": "Invite people",
             "kick": "Kick participant",
             "laugh": "Laugh",
+            "leaveConference": "Leave meeting",
             "like": "Thumbs Up",
+            "linkToSalesforce": "Link to Salesforce",
             "lobbyButton": "Enable/disable lobby mode",
             "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle meeting password",
@@ -991,6 +1102,7 @@
             "muteEveryoneElse": "Mute everyone else",
             "muteEveryoneElsesVideoStream": "Stop everyone else's video",
             "muteEveryonesVideoStream": "Stop everyone's video",
+            "noiseSuppression": "Noise suppression",
             "participants": "Participants",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",
@@ -1010,13 +1122,14 @@
             "shortcuts": "Toggle shortcuts",
             "show": "Show on stage",
             "silence": "Silence",
-            "speakerStats": "Toggle speaker statistics",
+            "speakerStats": "Toggle participants statistics",
             "surprised": "Surprised",
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
             "videoblur": "Toggle video blur",
-            "videomute": "Start / Stop camera"
+            "videomute": "Start / Stop camera",
+            "whiteboard": "Show / Hide whiteboard"
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable low bandwidth mode",
@@ -1030,24 +1143,30 @@
         "clap": "Clap",
         "closeChat": "Close chat",
         "closeReactionsMenu": "Close reactions menu",
+        "disableNoiseSuppression": "Disable noise suppression",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",
         "documentOpen": "Open shared document",
         "download": "Download our apps",
         "e2ee": "End-to-End Encryption",
         "embedMeeting": "Embed meeting",
+        "endConference": "End meeting for all",
         "enterFullScreen": "View full screen",
         "enterTileView": "Enter tile view",
         "exitFullScreen": "Exit full screen",
         "exitTileView": "Exit tile view",
         "feedback": "Leave feedback",
+        "giphy": "Toggle GIPHY menu",
         "hangup": "Leave the meeting",
         "help": "Help",
+        "hideWhiteboard": "Hide whiteboard",
         "invite": "Invite people",
         "joinBreakoutRoom": "Join breakout room",
         "laugh": "Laugh",
         "leaveBreakoutRoom": "Leave breakout room",
+        "leaveConference": "Leave meeting",
         "like": "Thumbs Up",
+        "linkToSalesforce": "Link to Salesforce",
         "lobbyButtonDisable": "Disable lobby mode",
         "lobbyButtonEnable": "Enable lobby mode",
         "login": "Login",
@@ -1063,6 +1182,7 @@
         "noAudioSignalDialInDesc": "You can also dial-in using:",
         "noAudioSignalDialInLinkDesc": "Dial-in numbers",
         "noAudioSignalTitle": "There is no input coming from your mic!",
+        "noiseSuppression": "Noise suppression",
         "noisyAudioInputDesc": "It sounds like your microphone is making noise, please consider muting or changing the device.",
         "noisyAudioInputTitle": "Your microphone appears to be noisy!",
         "openChat": "Open chat",
@@ -1085,10 +1205,11 @@
         "shareaudio": "Share audio",
         "sharedvideo": "Share video",
         "shortcuts": "View shortcuts",
+        "showWhiteboard": "Show whiteboard",
         "silence": "Silence",
-        "speakerStats": "Speaker stats",
+        "speakerStats": "Participants stats",
         "startScreenSharing": "Start screen sharing",
-        "startSubtitles": "Start subtitles",
+        "startSubtitles": "Subtitles • {{language}}",
         "stopAudioSharing": "Stop audio sharing",
         "stopScreenSharing": "Stop screen sharing",
         "stopSharedVideo": "Stop video",
@@ -1108,8 +1229,12 @@
         "labelToolTip": "The meeting is being transcribed",
         "off": "Transcribing stopped",
         "pending": "Preparing to transcribe the meeting...",
+        "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
+        "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
+        "subtitles": "Subtitles",
+        "subtitlesOff": "Off",
         "tr": "TR"
     },
     "userMedia": {
@@ -1167,10 +1292,13 @@
         "moderator": "Moderator",
         "mute": "Participant is muted",
         "muted": "Muted",
+        "pinToStage": "Pin to stage",
         "remoteControl": "Start / Stop remote control",
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "showSelfView": "Show self view",
+        "unpinFromStage": "Unpin",
+        "verify": "Verify participant",
         "videoMuted": "Camera disabled",
         "videomute": "Participant has stopped the camera"
     },
@@ -1243,6 +1371,7 @@
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
+        "settings": "Settings",
         "startMeeting": "Start meeting",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing"

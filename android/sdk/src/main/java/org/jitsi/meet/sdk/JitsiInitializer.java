@@ -15,14 +15,17 @@
  */
 package org.jitsi.meet.sdk;
 
+import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.startup.Initializer;
 
 import com.facebook.soloader.SoLoader;
+import org.wonday.orientation.OrientationActivityLifecycle;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class JitsiInitializer implements Initializer<Boolean> {
@@ -30,13 +33,22 @@ public class JitsiInitializer implements Initializer<Boolean> {
     @NonNull
     @Override
     public Boolean create(@NonNull Context context) {
+        Log.d(this.getClass().getCanonicalName(), "create");
+
         SoLoader.init(context, /* native exopackage */ false);
+
+        // Register our uncaught exception handler.
+        JitsiMeetUncaughtExceptionHandler.register();
+
+        // Register activity lifecycle handler for the orientation locker module.
+        ((Application) context).registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
+
         return true;
     }
 
     @NonNull
     @Override
     public List<Class<? extends Initializer<?>>> dependencies() {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

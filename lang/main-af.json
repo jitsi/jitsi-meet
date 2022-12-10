@@ -141,7 +141,6 @@
         "Share": "Deel",
         "Submit": "Dien in",
         "WaitForHostMsg": "",
-        "WaitForHostMsgWOk": "",
         "WaitingForHost": "Wag tans vir die gasheer …",
         "Yes": "Ja",
         "accessibilityLabel": {
@@ -365,6 +364,7 @@
         "signedInAs": "U is tans aangemeld as:",
         "start": "Begin ’n regstreekse stroom",
         "streamIdHelp": "Wat’s dié?",
+        "title": "Regstreekse stroom",
         "unavailableTitle": "Regstreekse strome nie beskikbaar nie"
     },
     "localRecording": {
@@ -475,6 +475,7 @@
         "serviceName": "Opneemdiens",
         "signIn": "meld aan",
         "signOut": "Meld af",
+        "title": "Neem tans op",
         "unavailable": "",
         "unavailableTitle": ""
     },

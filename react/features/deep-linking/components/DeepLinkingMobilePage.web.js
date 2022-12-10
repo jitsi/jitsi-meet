@@ -41,6 +41,11 @@ type Props = {
     _room: string,
 
     /**
+     * The page current url.
+     */
+    _url: URL,
+
+    /**
      * Used to dispatch actions from the buttons.
      */
     dispatch: Dispatch<any>,
@@ -90,7 +95,7 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _downloadUrl, _room, t } = this.props;
+        const { _downloadUrl, _room, t, _url } = this.props;
         const { HIDE_DEEP_LINKING_LOGO, NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
@@ -181,7 +186,8 @@ class DeepLinkingMobilePage extends Component<Props> {
                     <DialInSummary
                         className = 'deep-linking-dial-in'
                         clickableNumbers = { true }
-                        room = { _room } />
+                        room = { _room }
+                        url = { _url } />
                 </div>
             </div>
         );
@@ -274,9 +280,12 @@ class DeepLinkingMobilePage extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { locationURL = {} } = state['features/base/connection'];
+
     return {
         _downloadUrl: interfaceConfig[`MOBILE_DOWNLOAD_LINK_${Platform.OS.toUpperCase()}`],
-        _room: decodeURIComponent(state['features/base/conference'].room)
+        _room: decodeURIComponent(state['features/base/conference'].room),
+        _url: locationURL
     };
 }
 

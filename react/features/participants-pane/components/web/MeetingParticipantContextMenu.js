@@ -7,6 +7,7 @@ import {
     getParticipantByIdOrUndefined
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import FakeParticipantContextMenu from '../../../video-menu/components/web/FakeParticipantContextMenu';
 import ParticipantContextMenu from '../../../video-menu/components/web/ParticipantContextMenu';
 
 type Props = {
@@ -90,18 +91,26 @@ class MeetingParticipantContextMenu extends Component<Props> {
             return null;
         }
 
-        return (
-            <ParticipantContextMenu
-                closeDrawer = { closeDrawer }
-                drawerParticipant = { drawerParticipant }
-                localVideoOwner = { _localVideoOwner }
-                offsetTarget = { offsetTarget }
-                onEnter = { onEnter }
-                onLeave = { onLeave }
-                onSelect = { onSelect }
-                participant = { _participant }
-                thumbnailMenu = { false } />
-        );
+        const props = {
+            closeDrawer,
+            drawerParticipant,
+            offsetTarget,
+            onEnter,
+            onLeave,
+            onSelect,
+            participant: _participant,
+            thumbnailMenu: false
+        };
+
+        if (_participant?.fakeParticipant) {
+            return (
+                <FakeParticipantContextMenu
+                    { ...props }
+                    localVideoOwner = { _localVideoOwner } />
+            );
+        }
+
+        return <ParticipantContextMenu { ...props } />;
     }
 }
 

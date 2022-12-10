@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { IconMicrophoneEmptySlash } from '../../../base/icons';
+import { IconMicSlash } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 /**
@@ -23,9 +23,9 @@ type Props = {
  */
 const AudioMutedIndicator = ({ tooltipPosition }: Props) => (
     <BaseIndicator
-        icon = { IconMicrophoneEmptySlash }
+        icon = { IconMicSlash }
         iconId = 'mic-disabled'
-        iconSize = { 15 }
+        iconSize = { 16 }
         id = 'audioMuted'
         tooltipKey = 'videothumbnail.mute'
         tooltipPosition = { tooltipPosition } />

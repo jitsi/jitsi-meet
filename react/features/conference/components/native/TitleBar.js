@@ -4,11 +4,12 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import { getConferenceName, getConferenceTimestamp } from '../../../base/conference/functions';
-import { getFeatureFlag, CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED } from '../../../base/flags';
+import { CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { connect } from '../../../base/redux';
-import InviteButton from '../../../invite/components/add-people-dialog/native/InviteButton';
 import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
+import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
+import ToggleCameraButton from '../../../toolbox/components/native/ToggleCameraButton';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import ConferenceTimer from '../ConferenceTimer';
 
@@ -82,10 +83,13 @@ const TitleBar = (props: Props) => (<>
             <Labels createOnPress = { props._createOnPress } />
         </View>
         <View style = { styles.titleBarButtonContainer }>
-            <AudioDeviceToggleButton styles = { styles.inviteButton } />
+            <ToggleCameraButton styles = { styles.titleBarButton } />
         </View>
         <View style = { styles.titleBarButtonContainer }>
-            <InviteButton styles = { styles.inviteButton } />
+            <AudioDeviceToggleButton styles = { styles.titleBarButton } />
+        </View>
+        <View style = { styles.titleBarButtonContainer }>
+            <ParticipantsPaneButton styles = { styles.titleBarButton } />
         </View>
     </View>}
 </>);

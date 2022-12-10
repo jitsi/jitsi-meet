@@ -1,10 +1,18 @@
-// @flow
-
-import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { BoxModel, ColorPalette } from '../../../base/styles';
+import { BoxModel } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUBBLE_RADIUS = 8;
+
+const recipientContainer = {
+    alignItems: 'center',
+    backgroundColor: BaseTheme.palette.support05,
+    borderRadius: BaseTheme.shape.borderRadius,
+    flexDirection: 'row',
+    height: 48,
+    marginBottom: BaseTheme.spacing[3],
+    marginHorizontal: BaseTheme.spacing[3],
+    padding: BaseTheme.spacing[2]
+};
 
 /**
  * The styles of the feature chat.
@@ -17,15 +25,71 @@ const BUBBLE_RADIUS = 8;
 export default {
 
     /**
+     * Background of the chat screen.
+     */
+    backdrop: {
+        backgroundColor: BaseTheme.palette.ui10,
+        flex: 1
+    },
+
+    emptyComponentText: {
+        color: BaseTheme.palette.text03,
+        textAlign: 'center'
+    },
+
+    lobbyMessageBubble: {
+        backgroundColor: BaseTheme.palette.support06
+    },
+
+    lobbyMsgNotice: {
+        color: BaseTheme.palette.text04,
+        fontSize: 11,
+        marginTop: 6
+    },
+
+    privateNotice: {
+        ...BaseTheme.palette.bodyShortRegular,
+        color: BaseTheme.palette.text02
+    },
+
+    privateMessageBubble: {
+        backgroundColor: BaseTheme.palette.support05
+    },
+
+    remoteMessageBubble: {
+        backgroundColor: BaseTheme.palette.ui02,
+        borderTopLeftRadius: 0
+    },
+
+    replyContainer: {
+        alignSelf: 'stretch',
+        justifyContent: 'center'
+    },
+
+    replyStyles: {
+        iconStyle: {
+            color: BaseTheme.palette.icon01,
+            fontSize: 22,
+            padding: BaseTheme.spacing[2]
+        },
+        underlayColor: 'transparent'
+    },
+
+    /**
      * Wrapper View for the avatar.
      */
     avatarWrapper: {
-        marginRight: 8,
+        marginRight: BaseTheme.spacing[2],
         width: 32
     },
 
     chatLink: {
-        color: ColorPalette.blue
+        color: BaseTheme.palette.link01
+    },
+
+    chatMessage: {
+        ...BaseTheme.typography.bodyShortRegular,
+        color: BaseTheme.palette.text01
     },
 
     /**
@@ -41,7 +105,8 @@ export default {
         alignSelf: 'center',
         flex: 1,
         padding: BoxModel.padding,
-        paddingTop: '8%'
+        paddingTop: '8%',
+        maxWidth: '80%'
     },
 
     /**
@@ -53,16 +118,14 @@ export default {
 
     inputBar: {
         alignItems: 'center',
-        borderTopColor: 'rgb(209, 219, 231)',
-        borderTopWidth: 1,
         flexDirection: 'row',
-        paddingHorizontal: BoxModel.padding
+        justifyContent: 'space-between',
+        marginLeft: BaseTheme.spacing[3],
+        width: '100%'
     },
 
-    inputField: {
-        color: 'rgb(28, 32, 37)',
-        flex: 1,
-        height: 48
+    customInputContainer: {
+        width: '75%'
     },
 
     messageBubble: {
@@ -94,9 +157,8 @@ export default {
         flexDirection: 'row'
     },
 
-    sendButtonIcon: {
-        color: ColorPalette.darkGrey,
-        fontSize: 22
+    sendButton: {
+        marginRight: BaseTheme.spacing[5]
     },
 
     /**
@@ -119,11 +181,12 @@ export default {
      * Text node for the timestamp.
      */
     timeText: {
-        color: 'rgb(164, 184, 209)',
+        color: BaseTheme.palette.text03,
         fontSize: 13
     },
 
     chatContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
         flex: 1
     },
 
@@ -144,80 +207,46 @@ export default {
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0
-    }
-};
-
-ColorSchemeRegistry.register('Chat', {
-    /**
-     * Background of the chat screen.
-     */
-    backdrop: {
-        backgroundColor: schemeColor('background'),
-        flex: 1
     },
 
-    /**
-     * The text node for the display name.
-     */
-    displayName: {
-        color: schemeColor('displayName'),
-        fontSize: 13
+    gifContainer: {
+        maxHeight: 150
     },
 
-    emptyComponentText: {
-        color: BaseTheme.palette.ui05,
-        textAlign: 'center'
+    gifImage: {
+        resizeMode: 'contain',
+        width: 250,
+        height: undefined,
+        flexGrow: 1
+    },
+
+    senderDisplayName: {
+        ...BaseTheme.typography.bodyShortBold,
+        color: BaseTheme.palette.text02
     },
 
     localMessageBubble: {
-        backgroundColor: schemeColor('localMsgBackground'),
+        backgroundColor: BaseTheme.palette.ui04,
         borderTopRightRadius: 0
     },
 
+    lobbyMessageRecipientContainer: {
+        ...recipientContainer,
+        backgroundColor: BaseTheme.palette.support06
+    },
+
     messageRecipientCancelIcon: {
-        color: schemeColor('icon'),
+        color: BaseTheme.palette.icon01,
         fontSize: 18
     },
 
     messageRecipientContainer: {
-        alignItems: 'center',
-        backgroundColor: schemeColor('privateMsgBackground'),
-        flexDirection: 'row',
-        padding: BoxModel.padding
+        ...recipientContainer
     },
 
     messageRecipientText: {
-        color: schemeColor('text'),
+        ...BaseTheme.typography.bodyShortRegular,
+        color: BaseTheme.palette.text01,
         flex: 1
-    },
-
-    privateNotice: {
-        color: schemeColor('privateMsgNotice'),
-        fontSize: 11,
-        marginTop: 6
-    },
-
-    privateMessageBubble: {
-        backgroundColor: schemeColor('privateMsgBackground')
-    },
-
-    remoteMessageBubble: {
-        backgroundColor: schemeColor('remoteMsgBackground'),
-        borderTopLeftRadius: 0
-    },
-
-    replyContainer: {
-        alignSelf: 'stretch',
-        borderLeftColor: schemeColor('replyBorder'),
-        borderLeftWidth: 1,
-        justifyContent: 'center'
-    },
-
-    replyStyles: {
-        iconStyle: {
-            color: schemeColor('replyIcon'),
-            fontSize: 22,
-            padding: 8
-        }
     }
-});
+};

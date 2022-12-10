@@ -9,16 +9,17 @@ import {
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getDropboxData,
-    isEnabled as isDropboxEnabled,
     getNewAccessToken,
+    isEnabled as isDropboxEnabled,
     updateDropboxToken
 } from '../../../dropbox';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notifications';
 import { toggleRequestingSubtitles } from '../../../subtitles';
-import { setSelectedRecordingService } from '../../actions';
+import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
+import { supportsLocalRecording } from '../../functions';
 
-type Props = {
+export type Props = {
 
     /**
      * Requests subtitles when recording is turned on.
@@ -51,6 +52,11 @@ type Props = {
      * If true the dropbox integration is enabled, otherwise - disabled.
      */
     _isDropboxEnabled: boolean,
+
+    /**
+     * Whether or not local recording is enabled.
+     */
+    _localRecordingEnabled: boolean,
 
     /**
      * The dropbox refresh token.
@@ -139,6 +145,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             = this._onSelectedRecordingServiceChanged.bind(this);
         this._onSharingSettingChanged = this._onSharingSettingChanged.bind(this);
         this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
+        this._onLocalRecordingSelfChange = this._onLocalRecordingSelfChange.bind(this);
 
         let selectedRecordingService;
 
@@ -148,7 +155,11 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
                 || !this._areIntegrationsEnabled()) {
             selectedRecordingService = RECORDING_TYPES.JITSI_REC_SERVICE;
         } else if (this._areIntegrationsEnabled()) {
-            selectedRecordingService = RECORDING_TYPES.DROPBOX;
+            if (props._localRecordingEnabled && supportsLocalRecording()) {
+                selectedRecordingService = RECORDING_TYPES.LOCAL;
+            } else {
+                selectedRecordingService = RECORDING_TYPES.DROPBOX;
+            }
         }
 
         this.state = {
@@ -157,7 +168,8 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             userName: undefined,
             sharingEnabled: true,
             spaceLeft: undefined,
-            selectedRecordingService
+            selectedRecordingService,
+            localRecordingOnlySelf: false
         };
     }
 
@@ -208,6 +220,19 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
     _onSharingSettingChanged() {
         this.setState({
             sharingEnabled: !this.state.sharingEnabled
+        });
+    }
+
+    _onLocalRecordingSelfChange: () => void;
+
+    /**
+     * Callback to handle local recording only self setting change.
+     *
+     * @returns {void}
+     */
+    _onLocalRecordingSelfChange() {
+        this.setState({
+            localRecordingOnlySelf: !this.state.localRecordingOnlySelf
         });
     }
 
@@ -293,8 +318,9 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         let appData;
         const attributes = {};
 
-        if (_isDropboxEnabled && this.state.selectedRecordingService === RECORDING_TYPES.DROPBOX) {
-            if (_token) {
+        switch (this.state.selectedRecordingService) {
+        case RECORDING_TYPES.DROPBOX: {
+            if (_isDropboxEnabled && _token) {
                 appData = JSON.stringify({
                     'file_recording_metadata': {
                         'upload_credentials': {
@@ -313,13 +339,22 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
 
                 return;
             }
-        } else {
+            break;
+        }
+        case RECORDING_TYPES.JITSI_REC_SERVICE: {
             appData = JSON.stringify({
                 'file_recording_metadata': {
                     'share': this.state.sharingEnabled
                 }
             });
             attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
+            break;
+        }
+        case RECORDING_TYPES.LOCAL: {
+            dispatch(startLocalVideoRecording(this.state.localRecordingOnlySelf));
+
+            return true;
+        }
         }
 
         sendAnalytics(
@@ -379,19 +414,20 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
  */
 export function mapStateToProps(state: Object) {
     const {
-        autoCaptionOnRecord = false,
-        fileRecordingsServiceEnabled = false,
-        fileRecordingsServiceSharingEnabled = false,
-        dropbox = {}
+        transcription,
+        recordingService,
+        dropbox = {},
+        localRecording
     } = state['features/base/config'];
 
     return {
         _appKey: dropbox.appKey,
-        _autoCaptionOnRecord: autoCaptionOnRecord,
+        _autoCaptionOnRecord: transcription?.autoCaptionOnRecord ?? false,
         _conference: state['features/base/conference'].conference,
-        _fileRecordingsServiceEnabled: fileRecordingsServiceEnabled,
-        _fileRecordingsServiceSharingEnabled: fileRecordingsServiceSharingEnabled,
+        _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
+        _fileRecordingsServiceSharingEnabled: recordingService?.sharingEnabled ?? false,
         _isDropboxEnabled: isDropboxEnabled(state),
+        _localRecordingEnabled: !localRecording?.disable,
         _rToken: state['features/dropbox'].rToken,
         _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token

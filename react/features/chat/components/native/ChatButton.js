@@ -1,7 +1,6 @@
-// @flow
-
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { IconChat, IconChatUnread } from '../../../base/icons';
+import { translate } from '../../../base/i18n';
+import { IconChatUnread, IconMessage } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
@@ -9,8 +8,8 @@ import {
 } from '../../../base/toolbox/components';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import { getUnreadPollCount } from '../../../polls/functions';
 import { getUnreadCount } from '../../functions';
-
 
 type Props = AbstractButtonProps & {
 
@@ -30,7 +29,7 @@ type Props = AbstractButtonProps & {
  */
 class ChatButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.chat';
-    icon = IconChat;
+    icon = IconMessage;
     label = 'toolbar.chat';
     toggledIcon = IconChatUnread;
 
@@ -71,9 +70,11 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _isPollsDisabled: disablePolls,
-        _unreadMessageCount: getUnreadCount(state),
+
+        // The toggled icon should also be available for new polls
+        _unreadMessageCount: getUnreadCount(state) || getUnreadPollCount(state),
         visible
     };
 }
 
-export default connect(_mapStateToProps)(ChatButton);
+export default translate(connect(_mapStateToProps)(ChatButton));

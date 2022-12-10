@@ -1,32 +1,37 @@
 // @flow
 
-import React from 'react';
-import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { BackHandler, NativeModules, SafeAreaView, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appNavigate } from '../../../app/actions';
-import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { FULLSCREEN_ENABLED, PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { DisplayNameLabel } from '../../../display-name';
+import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
-    isFilmstripVisible,
-    TileView
+    TileView,
+    isFilmstripVisible
 } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
+import { startKnocking } from '../../../lobby/actions.any';
 import { KnockingParticipantList } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
-import { BackButtonRegistry } from '../../../mobile/back-button';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { shouldEnableAutoKnock } from '../../../mobile/navigation/functions';
 import { screen } from '../../../mobile/navigation/routes';
-import { Captions } from '../../../subtitles';
+import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture';
+import { Captions } from '../../../subtitles/components';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
 import { isToolboxVisible } from '../../../toolbox/functions';
@@ -35,6 +40,7 @@ import {
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
+import { isConnecting } from '../functions';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
@@ -55,7 +61,17 @@ type Props = AbstractProps & {
     _aspectRatio: Symbol,
 
     /**
-     * Wherther the calendar feature is enabled or not.
+     * Whether the audio only is enabled or not.
+     */
+    _audioOnlyEnabled: boolean,
+
+    /**
+     * Branding styles for conference.
+     */
+    _brandingStyles: Object,
+
+    /**
+     * Whether the calendar feature is enabled or not.
      */
     _calendarEnabled: boolean,
 
@@ -78,6 +94,11 @@ type Props = AbstractProps & {
     _fullscreenEnabled: boolean,
 
     /**
+     * The indicator which determines if the conference type is one to one.
+     */
+    _isOneToOneConference: boolean,
+
+    /**
      * The indicator which determines if the participants pane is open.
      */
     _isParticipantsPaneOpen: boolean,
@@ -86,6 +107,11 @@ type Props = AbstractProps & {
      * The ID of the participant currently on stage (if any).
      */
     _largeVideoParticipantId: string,
+
+    /**
+     * Local participant's display name.
+     */
+    _localParticipantDisplayName: string,
 
     /**
      * Whether Picture-in-Picture is enabled.
@@ -104,9 +130,19 @@ type Props = AbstractProps & {
     _toolboxVisible: boolean,
 
     /**
+     * Indicates if we should auto-knock.
+     */
+    _shouldEnableAutoKnock: boolean,
+
+    /**
      * Indicates whether the lobby screen should be visible.
      */
     _showLobby: boolean,
+
+    /**
+     * Indicates whether the car mode is enabled.
+     */
+    _startCarMode: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -116,7 +152,12 @@ type Props = AbstractProps & {
     /**
     * Object containing the safe area insets.
     */
-    insets: Object
+    insets: Object,
+
+    /**
+     * Default prop for navigating between screen components(React Navigation).
+     */
+    navigation: Object
 };
 
 type State = {
@@ -166,7 +207,17 @@ class Conference extends AbstractConference<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        BackButtonRegistry.addListener(this._onHardwareBackPress);
+        const {
+            _audioOnlyEnabled,
+            _startCarMode,
+            navigation
+        } = this.props;
+
+        BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+
+        if (_audioOnlyEnabled && _startCarMode) {
+            navigation.navigate(screen.conference.carmode);
+        }
     }
 
     /**
@@ -175,10 +226,18 @@ class Conference extends AbstractConference<Props, State> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps) {
-        const { _showLobby } = this.props;
+        const {
+            _shouldEnableAutoKnock,
+            _showLobby,
+            dispatch
+        } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
-            navigate(screen.lobby);
+            navigate(screen.lobby.root);
+
+            if (_shouldEnableAutoKnock) {
+                dispatch(startKnocking());
+            }
         }
 
         if (prevProps._showLobby && !_showLobby) {
@@ -196,7 +255,7 @@ class Conference extends AbstractConference<Props, State> {
      */
     componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
-        BackButtonRegistry.removeListener(this._onHardwareBackPress);
+        BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         clearTimeout(this._expandedLabelTimeout.current);
     }
@@ -208,14 +267,17 @@ class Conference extends AbstractConference<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _fullscreenEnabled } = this.props;
+        const {
+            _brandingStyles
+        } = this.props;
 
         return (
-            <Container style = { styles.conference }>
-                <StatusBar
-                    barStyle = 'light-content'
-                    hidden = { _fullscreenEnabled }
-                    translucent = { _fullscreenEnabled } />
+            <Container
+                style = { [
+                    styles.conference,
+                    _brandingStyles
+                ] }>
+                <BrandingImageBackground />
                 { this._renderContent() }
             </Container>
         );
@@ -316,6 +378,7 @@ class Conference extends AbstractConference<Props, State> {
     _renderContent() {
         const {
             _connecting,
+            _isOneToOneConference,
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
@@ -358,9 +421,15 @@ class Conference extends AbstractConference<Props, State> {
 
                     <Captions onPress = { this._onClick } />
 
-                    { _shouldDisplayTileView || <Container style = { styles.displayNameContainer }>
-                        <DisplayNameLabel participantId = { _largeVideoParticipantId } />
-                    </Container> }
+                    {
+                        _shouldDisplayTileView || (
+                            !_isOneToOneConference
+                            && <Container style = { styles.displayNameContainer }>
+                                <DisplayNameLabel
+                                    participantId = { _largeVideoParticipantId } />
+                            </Container>
+                        )
+                    }
 
                     <LonelyMeetingExperience />
 
@@ -393,7 +462,7 @@ class Conference extends AbstractConference<Props, State> {
                         {/* eslint-disable-next-line react/jsx-no-bind */}
                         <AlwaysOnLabels createOnPress = { this._createOnPress } />
                     </View>
-                    {this._renderNotificationsContainer()}
+                    { this._renderNotificationsContainer() }
                     <KnockingParticipantList />
                 </SafeAreaView>
 
@@ -484,42 +553,52 @@ class Conference extends AbstractConference<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { connecting, connection } = state['features/base/connection'];
-    const {
-        conference,
-        joining,
-        membersOnly,
-        leaving
-    } = state['features/base/conference'];
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
-
-    // XXX There is a window of time between the successful establishment of the
-    // XMPP connection and the subsequent commencement of joining the MUC during
-    // which the app does not appear to be doing anything according to the redux
-    // state. In order to not toggle the _connecting props during the window of
-    // time in question, define _connecting as follows:
-    // - the XMPP connection is connecting, or
-    // - the XMPP connection is connected and the conference is joining, or
-    // - the XMPP connection is connected and we have no conference yet, nor we
-    //   are leaving one.
-    const connecting_
-        = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
+    const { backgroundColor } = state['features/dynamic-branding'];
+    const { startCarMode } = state['features/base/settings'];
+    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
+    const participantCount = getParticipantCount(state);
+    const brandingStyles = backgroundColor ? {
+        backgroundColor
+    } : undefined;
 
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
+        _audioOnlyEnabled: Boolean(audioOnlyEnabled),
+        _brandingStyles: brandingStyles,
         _calendarEnabled: isCalendarEnabled(state),
-        _connecting: Boolean(connecting_),
+        _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
+        _isOneToOneConference: Boolean(participantCount === 2),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
+        _shouldEnableAutoKnock: shouldEnableAutoKnock(state),
         _showLobby: getIsLobbyVisible(state),
+        _startCarMode: startCarMode,
         _toolboxVisible: isToolboxVisible(state)
     };
 }
 
-export default withSafeAreaInsets(connect(_mapStateToProps)(Conference));
+export default withSafeAreaInsets(connect(_mapStateToProps)(props => {
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (isFocused) {
+            setPictureInPictureEnabled(true);
+        } else {
+            setPictureInPictureEnabled(false);
+        }
+
+        // We also need to disable PiP when we are back on the WelcomePage
+        return () => setPictureInPictureEnabled(false);
+    }, [ isFocused ]);
+
+    return (
+        <Conference { ...props } />
+    );
+}));

@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "Não há mensagens na reunião ainda. Inicie uma conversa aqui!",
         "privateNotice": "Mensagem privada para {{recipient}}",
+        "sendButton": "Enviar",
         "smileysPanel": "Painel de Emojis",
         "tabs": {
             "chat": "Conversa",
@@ -114,7 +115,6 @@
         "bridgeCount": "Servidores: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Conectado a:",
-        "e2e_rtt": "E2E RTT:",
         "framerate": "Taxa de quadros:",
         "less": "Mostrar menos",
         "localaddress": "Endereço local:",
@@ -185,8 +185,7 @@
         "Remove": "Remover",
         "Share": "Compartilhar",
         "Submit": "Enviar",
-        "WaitForHostMsg": "A conferência <b>{{room}}</b> ainda não começou. Se você é o anfitrião, faça a autenticação. Do contrário, aguarde a chegada do anfitrião.",
-        "WaitForHostMsgWOk": "A conferência <b>{{room}}</b> ainda não começou. Se você é o anfitrião, pressione OK para autenticar. Do contrário, aguarde a chegada do anfitrião.",
+        "WaitForHostMsg": "A conferência ainda não começou. Se você é o anfitrião, faça a autenticação. Do contrário, aguarde a chegada do anfitrião.",
         "WaitingForHostTitle": "Esperando o anfitrião...",
         "Yes": "Sim",
         "accessibilityLabel": {
@@ -386,7 +385,7 @@
         "veryGood": "Muito boa"
     },
     "helpView": {
-        "header": "Centro de ajuda"
+        "title": "Centro de ajuda"
     },
     "incomingCall": {
         "answer": "Responder",
@@ -495,6 +494,7 @@
         "signedInAs": "Você está conectado como:",
         "start": "Iniciar uma transmissão ao vivo",
         "streamIdHelp": "O que é isso?",
+        "title": "Transmissão ao vivo",
         "unavailableTitle": "Transmissão ao vivo indisponível",
         "youtubeTerms": "Termos de serviços do YouTube"
     },
@@ -533,6 +533,7 @@
         "passwordJoinButton": "Solicitar",
         "reject": "Rejeitar",
         "rejectAll": "Rejeitar todos",
+        "title": "Sala de espera",
         "toggleLabel": "Habilitar sala de espera"
     },
     "localRecording": {
@@ -643,12 +644,12 @@
             "videoModeration": "Ativarem seus vídeos"
         },
         "close": "Fechar",
-        "header": "Participantes",
         "headings": {
             "lobby": "Sala de espera ({{count}})",
             "participantsList": "Participantes da reunião ({{count}})",
             "waitingLobby": "Aguardando na sala de espera ({{count}})"
-        }
+        },
+        "title": "Participantes"
     },
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "passwordSetRemotely": "Definido por outro participante",
@@ -792,6 +793,7 @@
         "serviceName": "Serviço de gravação",
         "signIn": "Entrar",
         "signOut": "Sair",
+        "title": "Gravando",
         "unavailable": "Oops! O {{serviceName}} está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
         "unavailableTitle": "Gravação indisponível",
         "uploadToCloud": "Enviar para a nuvem"

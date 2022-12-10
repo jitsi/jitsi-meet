@@ -30,6 +30,8 @@ local jid_bare = require 'util.jid'.bare;
 local json = require 'util.json';
 local filters = require 'util.filters';
 local st = require 'util.stanza';
+local muc_util = module:require "muc/util";
+local valid_affiliations = muc_util.valid_affiliations;
 local MUC_NS = 'http://jabber.org/protocol/muc';
 local DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
 local DISPLAY_NAME_REQUIRED_FEATURE = 'http://jitsi.org/protocol/lobbyrooms#displayname_required';
@@ -158,6 +160,26 @@ function filter_stanza(stanza)
         elseif stanza.name == 'iq' and stanza:get_child('query', DISCO_INFO_NS) then
             -- allow disco info from the lobby component
             return stanza;
+        elseif stanza.name == 'message' then
+            -- allow messages to or from moderator
+            local lobby_room_jid = jid_bare(stanza.attr.from);
+            local lobby_room = lobby_muc_service.get_room_from_jid(lobby_room_jid);
+            local is_to_moderator = lobby_room:get_affiliation(stanza.attr.to) == 'owner';
+            local from_occupant = lobby_room:get_occupant_by_nick(stanza.attr.from);
+
+            local from_real_jid;
+            if from_occupant then
+                for real_jid in from_occupant:each_session() do
+                    from_real_jid = real_jid;
+                end
+            end
+
+            local is_from_moderator = lobby_room:get_affiliation(from_real_jid) == 'owner';
+
+            if is_to_moderator or is_from_moderator then
+                return stanza;
+            end
+            return nil;
         end
 
         return nil;
@@ -416,8 +438,30 @@ end);
 
 function handle_create_lobby(event)
     local room = event.room;
+
+    -- since this is called by backend rather than triggered by UI, we need to handle a few additional things:
+    --  1. Make sure existing participants are already members or they will get kicked out when set_members_only(true)
+    --  2. Trigger a 104 (config change) status message so UI state is properly updated for existing users
+
+    -- make sure all existing occupants are members
+    for _, occupant in room:each_occupant() do
+        local affiliation = room:get_affiliation(occupant.bare_jid);
+        if valid_affiliations[affiliation or "none"] < valid_affiliations.member then
+            room:set_affiliation(true, occupant.bare_jid, 'member');
+        end
+    end
+    -- Now it is safe to set the room to members only
     room:set_members_only(true);
-    attach_lobby_room(room)
+
+    -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
+    room:broadcast_message(
+        st.message({ type='groupchat', from=room.jid })
+            :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+                :tag('status', { code='104' })
+    );
+
+    -- Attach the lobby room.
+    attach_lobby_room(room);
 end
 
 function handle_destroy_lobby(event)

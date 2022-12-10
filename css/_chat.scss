@@ -1,15 +1,20 @@
 #sideToolbarContainer {
     background-color: $chatBackgroundColor;
-    box-sizing: border-box;
-    color: #FFF;
-    height: 100%;
-    position: absolute;
-    top: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+    transition: width .16s ease-in-out;
     width: $sidebarWidth;
     z-index: $sideToolbarContainerZ;
 
     @media (max-width: 580px) {
-        width: 100%;
+        height: 100vh;
+        height: -webkit-fill-available;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: auto;
     }
 }
 
@@ -17,7 +22,7 @@
     display: flex;
     flex-direction: column;
     // extract header + tabs height
-    height: calc(100% - 102px);
+    height: calc(100% - 119px);
 }
 
 .chat-panel-no-tabs {
@@ -25,12 +30,18 @@
     height: calc(100% - 70px);
 }
 
+#chat-conversation-container {
+    // extract message input height
+    height: calc(100% - 68px);
+    overflow: hidden;
+    position: relative;
+}
+
 #chatconversation {
     box-sizing: border-box;
     flex: 1;
     font-size: 10pt;
-    // extract message input height
-    height: calc(100% - 68px);
+    height: 100%;
     line-height: 20px;
     overflow: auto;
     padding: 16px;
@@ -85,6 +96,10 @@
             fill: white;
         }
     }
+
+    &.lobby-chat-recipient {
+        background-color: $chatLobbyMessageBackgroundColor;
+    }
 }
 
 
@@ -110,63 +125,18 @@
 
 .chat-input-container {
     padding: 0 16px 16px;
-
-    &.populated {
-        #chat-input {
-            .send-button {
-                background: #1B67EC;
-                cursor: pointer;
-                margin-left: 0.3rem;
-
-                @media (hover: hover) and (pointer: fine) {
-                    &:hover {
-                        background: #3D82FB;
-                    }
-                }
-
-                &:active {
-                    background: #0852D4;
-                }
-
-                path {
-                    fill: #fff;
-                }
-            }
-        }
-    }
 }
 
 #chat-input {
-    border: 1px solid $chatInputSeparatorColor;
     display: flex;
+    align-items: flex-end;
     padding: 4px;
-    border-radius: 3px;
-
-    &:focus-within {
-        border: 1px solid #619CF4;
-    }
-
-    * {
-        background-color: transparent;
-    }
+    position: relative;
 }
 
-.send-button-container {
-    display: flex;
-    align-items: center;
-}
-
-.send-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    width: 40px;
-    border-radius: 3px;
-
-    path {
-        fill: $chatInputSeparatorColor;
-    }
+.chat-input {
+    flex: 1;
+    margin-right: 8px;
 }
 
 .smiley-button {
@@ -386,7 +356,9 @@
 
 .smiley-input {
     display: flex;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .smileys-panel {
@@ -394,7 +366,7 @@
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, .6) !important;
     height: auto;
-    display: none;
+    display: flex;
     overflow: hidden;
     position: absolute;
     width: calc(#{$sidebarWidth} - 32px);
@@ -408,11 +380,6 @@
      * of that.
      */
     transition: max-height 0.3s;
-
-    &.show-smileys {
-        display: flex;
-        max-height: 500%;
-    }
 
     #smileysContainer {
         background-color: $chatBackgroundColor;
@@ -455,6 +422,9 @@
             &.privatemessage {
                 background-color: $chatPrivateMessageBackgroundColor;
             }
+            &.lobbymessage {
+                background-color: $chatLobbyMessageBackgroundColor;
+            }
         }
 
         .display-name {
@@ -494,6 +464,10 @@
                 justify-content: center;
                 padding: 5px;
 
+                &.lobbychatmessageactions {
+                    border-left-color: $chatLobbyActionsSeparatorColor;
+                }
+
                 .toolbox-icon {
                     cursor: pointer;
                 }
@@ -510,6 +484,9 @@
 
         &.privatemessage {
             background-color: $chatPrivateMessageBackgroundColor;
+        }
+        &.lobbymessage {
+            background-color: $chatLobbyMessageBackgroundColor;
         }
     }
 }
@@ -553,42 +530,4 @@
     width: 48px;
     background: #36383C;
     border-radius: 3px;
-}
-
-.chat-tabs-container {
-    width: 100%;
-    border-bottom: thin solid #292929;
-    display: flex;
-    justify-content: space-around;
-}
-
-.chat-tab {
-    font-size: 1.2em;
-    padding-bottom: 0.5em;
-    width: 50%;
-    text-align: center;
-    color: #8B8B8B;
-    cursor: pointer;
-}
-
-.chat-tab-focus {
-    border-bottom-style: solid;
-    color: #FFF;
-}
-
-.chat-tab-title {
-    margin-right: 8px;
-}
-
-.chat-tab-badge {
-    background-color: #165ecc;
-    border-radius: 50%;
-    box-sizing: border-box;
-    font-weight: 700;
-    overflow: hidden;
-    text-align: center;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    padding: 0 4px;
-    color: #FFF;
 }

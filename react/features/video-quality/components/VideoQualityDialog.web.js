@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
-import { Dialog } from '../../base/dialog';
+import Dialog from '../../base/ui/components/web/Dialog';
 
-import VideoQualitySlider from './VideoQualitySlider';
+import VideoQualitySlider from './VideoQualitySlider.web';
 
 /**
  * Implements a React {@link Component} which displays the component
@@ -20,10 +20,9 @@ export default class VideoQualityDialog extends Component {
     render() {
         return (
             <Dialog
-                hideCancelButton = { true }
-                submitDisabled = { true }
-                titleKey = 'videoStatus.performanceSettings'
-                width = 'small'>
+                cancel = {{ hidden: true }}
+                ok = {{ hidden: true }}
+                titleKey = 'videoStatus.performanceSettings'>
                 <VideoQualitySlider />
             </Dialog>
         );

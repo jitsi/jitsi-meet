@@ -3,6 +3,7 @@
 import { StyleSheet } from 'react-native';
 
 import { ColorPalette } from '../../../styles';
+import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
 
 const DEFAULT_SIZE = 65;
 
@@ -34,16 +35,16 @@ export default {
 
         switch (status) {
         case 'available':
-            color = 'rgb(110, 176, 5)';
+            color = PRESENCE_AVAILABLE_COLOR;
             break;
         case 'away':
-            color = 'rgb(250, 201, 20)';
+            color = PRESENCE_AWAY_COLOR;
             break;
         case 'busy':
-            color = 'rgb(233, 0, 27)';
+            color = PRESENCE_BUSY_COLOR;
             break;
         case 'idle':
-            color = 'rgb(172, 172, 172)';
+            color = PRESENCE_IDLE_COLOR;
             break;
         }
 

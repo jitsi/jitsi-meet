@@ -1,7 +1,7 @@
 // @flow
 
 import { translate } from '../../../base/i18n';
-import { IconParticipants } from '../../../base/icons';
+import { IconUsers } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
@@ -21,7 +21,7 @@ type Props = AbstractButtonProps & {
  */
 class ParticipantsPaneButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.participants';
-    icon = IconParticipants;
+    icon = IconUsers;
     label = 'toolbar.participants';
     tooltip = 'toolbar.participants';
 

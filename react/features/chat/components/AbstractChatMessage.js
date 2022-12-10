@@ -39,6 +39,11 @@ export type Props = {
     showTimestamp: boolean,
 
     /**
+     * Whether current participant is currently knocking in the lobby room.
+     */
+    knocking: boolean,
+
+    /**
      * Invoked to receive translated strings.
      */
     t: Function

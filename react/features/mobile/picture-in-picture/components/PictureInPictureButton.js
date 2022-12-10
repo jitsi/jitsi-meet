@@ -2,9 +2,9 @@
 
 import { NativeModules, Platform } from 'react-native';
 
-import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { PIP_ENABLED, PIP_WHILE_SCREEN_SHARING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconMenuDown } from '../../../base/icons';
+import { IconArrowDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions';
@@ -28,7 +28,7 @@ type Props = AbstractButtonProps & {
  */
 class PictureInPictureButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.pip';
-    icon = IconMenuDown;
+    icon = IconArrowDown;
     label = 'toolbar.pip';
 
     /**
@@ -63,8 +63,10 @@ class PictureInPictureButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
-    const flag = Boolean(getFeatureFlag(state, PIP_ENABLED));
-    let enabled = flag && !isLocalVideoTrackDesktop(state);
+    const pipEnabled = Boolean(getFeatureFlag(state, PIP_ENABLED));
+    const pipWhileScreenSharingEnabled = getFeatureFlag(state, PIP_WHILE_SCREEN_SHARING_ENABLED, false);
+
+    let enabled = pipEnabled && (!isLocalVideoTrackDesktop(state) || pipWhileScreenSharingEnabled);
 
     // Override flag for Android, since it might be unsupported.
     if (Platform.OS === 'android' && !NativeModules.PictureInPicture.SUPPORTED) {

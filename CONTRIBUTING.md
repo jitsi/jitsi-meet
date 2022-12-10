@@ -3,8 +3,8 @@ We would love to have your help. Before you start working however, please read
 and follow this short guide.
 
 # Reporting Issues
-Provide as much information as possible. Mention the version of Jitsi Meet, 
-Jicofo and JVB you are using, and explain (as detailed as you can) how the 
+Provide as much information as possible. Mention the version of Jitsi Meet,
+Jicofo and JVB you are using, and explain (as detailed as you can) how the
 problem can be reproduced.
 
 # Code contributions
@@ -130,7 +130,7 @@ When adding a new feature, this would be the usual layout.
 
 ```
 react/features/sample/
-├── actionTypes.js
+├── actionTypes.ts
 ├── actions.js
 ├── components
 │   ├── AnotherComponent.js
@@ -141,7 +141,7 @@ react/features/sample/
 ```
 
 The middleware must be imported in `react/features/app/` specifically
-in `middlewares.any`, `middlewares.native.js` or `middlewares.web.js` where appropriate.
+in `middlewares.any.ts`, `middlewares.native.ts` or `middlewares.web.ts` where appropriate.
 Likewise for the reducer.
 
 An `index.js` file must not be provided for exporting actions, action types and

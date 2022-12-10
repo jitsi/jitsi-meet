@@ -147,7 +147,7 @@ export default function ToolboxButtonWithIcon(props: Props) {
                         { ...iconProps }
                         ariaHasPopup = { ariaHasPopup }
                         ariaLabel = { ariaLabel }
-                        size = { 9 }
+                        size = { 16 }
                         src = { icon } />
                 </Tooltip>
             </div>

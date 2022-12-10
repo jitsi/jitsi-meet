@@ -6,8 +6,8 @@ import './createImageBitmap';
 
 import { createScreensharingCaptureTakenEvent, sendAnalytics } from '../analytics';
 import { getCurrentConference } from '../base/conference';
-import { getRemoteParticipants } from '../base/participants';
-import { extractFqnFromPath } from '../dynamic-branding';
+import { getLocalParticipant, getRemoteParticipants } from '../base/participants';
+import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import {
     CLEAR_INTERVAL,
@@ -16,7 +16,6 @@ import {
     POLL_INTERVAL,
     SET_INTERVAL
 } from './constants';
-import { getParticipantJid } from './functions';
 import { processScreenshot } from './processScreenshot';
 import { timerWorkerScript } from './worker';
 
@@ -178,10 +177,8 @@ export default class ScreenshotCaptureSummary {
         const remoteParticipants = getRemoteParticipants(this._state);
         const participants = [];
 
-        remoteParticipants.forEach(p => participants.push(
-            getParticipantJid(this._state, p.id)
-        ));
-
+        participants.push(getLocalParticipant(this._state).id);
+        remoteParticipants.forEach(p => participants.push(p.id));
         this._storedImageData = imageData;
 
         processScreenshot(this._currentCanvas, {

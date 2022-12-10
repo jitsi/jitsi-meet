@@ -1,0 +1,39 @@
+{
+    "include": ["react/features/**/*.ts", "react/features/**/*.tsx", "./custom.d.ts", "./globals.native.d.ts"],
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "target": "ESNext",
+        "jsx": "react-native",
+        "lib": [ "ES2017"],
+        "types": [ "react-native" ],
+        "skipLibCheck": true,
+        "moduleResolution": "Node",
+        "strict": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": false,
+        "resolveJsonModule": true,
+        "moduleSuffixes": [".native", ".ios", ".android", ""]
+    },
+    "exclude": [
+        "node_modules",
+        "react/features/analytics/handlers/GoogleAnalyticsHandler.ts",
+        "react/features/base/components/participants-pane-list",
+        "react/features/connection-stats",
+        "react/features/desktop-picker",
+        "react/features/e2ee",
+        "react/features/embed-meeting",
+        "react/features/face-landmarks",
+        "react/features/feedback",
+        "react/features/no-audio-signal",
+        "react/features/noise-suppression",
+        "react/features/old-client-notification",
+        "react/features/screen-share",
+        "react/features/stream-effects/noise-suppression",
+        "react/features/stream-effects/rnnoise",
+        "react/features/virtual-background",
+        "react/features/whiteboard",
+        "**/web/*",
+        "**/*.web.ts",
+        "**/*.web.tsx"
+    ]
+}

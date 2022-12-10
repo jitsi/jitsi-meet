@@ -6,7 +6,8 @@
 $baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $hangupColor:#DD3849;
 $hangupHoverColor: #F25363;
-$hangupFontSize: 2em;
+$hangupMenuButtonColor:#0056E0;;
+$hangupMenuButtonHoverColor: #246FE5;
 
 /**
  * Size variables.
@@ -28,10 +29,6 @@ $defaultSemiDarkColor: #ACACAC;
 $defaultDarkColor: #2b3d5c;
 $defaultWarningColor: rgb(215, 121, 118);
 $participantsPaneBgColor: #141414;
-$presence-available: rgb(110, 176, 5);
-$presence-away: rgb(250, 201, 20);
-$presence-busy: rgb(233, 0, 27);
-$presence-idle: rgb(172, 172, 172);
 
 /**
  * Toolbar
@@ -47,7 +44,6 @@ $newToolbarSizeMobile: 60px;
 $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
 $toolbarTitleFontSize: 19px;
 $overflowMenuItemColor: #fff;
-$overflowMenuItemBackground: #36383C;
 
 
 /**
@@ -83,12 +79,14 @@ $modalTextColor: #333;
 $chatActionsSeparatorColor: rgb(173, 105, 112);
 $chatBackgroundColor: #131519;
 $chatInputSeparatorColor: #A4B8D1;
+$chatLobbyMessageBackgroundColor: #6A50D3;
+$chatLobbyActionsSeparatorColor: #6A50D3;
 $chatLocalMessageBackgroundColor: #484A4F;
 $chatPrivateMessageBackgroundColor: rgb(153, 69, 77);
 $chatRemoteMessageBackgroundColor:  #242528;
 $sidebarWidth: 315px;
 
- /**
+/**
  * Misc.
  */
 $borderRadius: 4px;
@@ -103,8 +101,6 @@ $zindex0: 0;
 $zindex1: 1;
 $zindex2: 2;
 $zindex3: 3;
-$toolbarBackgroundZ: 4;
-$labelsZ: 5;
 $subtitlesZ: 7;
 $popoverZ: 8;
 $reloadZ: 20;
@@ -113,10 +109,7 @@ $ringingZ: 300;
 $sideToolbarContainerZ: 300;
 $toolbarZ: 250;
 $drawerZ: 351;
-$tooltipsZ: 401;
-$dropdownMaskZ: 900;
 $dropdownZ: 901;
-$centeredVideoLabelZ: 1010;
 $overlayZ: 1016;
 // Place filmstrip videos over toolbar in order
 // to make connection info visible.
@@ -250,7 +243,6 @@ $chromeExtensionBannerRightInMeeeting: 10px;
 /**
 * media type thresholds
 */
-$smallScreen: 700px;
 $verySmallScreen: 500px;
 
 /**
