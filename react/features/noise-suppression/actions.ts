@@ -1,5 +1,7 @@
 import { IStore } from '../app/types';
+import { executeTrackOperation } from '../base/tracks/actions';
 import { getLocalJitsiAudioTrack } from '../base/tracks/functions';
+import { TrackOperationType } from '../base/tracks/types';
 import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
@@ -48,30 +50,32 @@ export function toggleNoiseSuppression(): any {
  */
 export function setNoiseSuppressionEnabled(enabled: boolean): any {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const state = getState();
-
-        const localAudio = getLocalJitsiAudioTrack(state);
-        const noiseSuppressionEnabled = isNoiseSuppressionEnabled(state);
-
         logger.info(`Attempting to set noise suppression enabled state: ${enabled}`);
 
         try {
-            if (enabled && !noiseSuppressionEnabled) {
-                if (!canEnableNoiseSuppression(state, dispatch, localAudio)) {
-                    return;
+            await dispatch(executeTrackOperation(TrackOperationType.Audio, async () => {
+                const state = getState();
+
+                const localAudio = getLocalJitsiAudioTrack(state);
+                const noiseSuppressionEnabled = isNoiseSuppressionEnabled(state);
+
+                if (enabled && !noiseSuppressionEnabled) {
+                    if (!canEnableNoiseSuppression(state, dispatch, localAudio)) {
+                        return;
+                    }
+
+                    await localAudio.setEffect(new NoiseSuppressionEffect());
+                    dispatch(setNoiseSuppressionEnabledState(true));
+                    logger.info('Noise suppression enabled.');
+
+                } else if (!enabled && noiseSuppressionEnabled) {
+                    await localAudio.setEffect(undefined);
+                    dispatch(setNoiseSuppressionEnabledState(false));
+                    logger.info('Noise suppression disabled.');
+                } else {
+                    logger.warn(`Noise suppression enabled state already: ${enabled}`);
                 }
-
-                await localAudio.setEffect(new NoiseSuppressionEffect());
-                dispatch(setNoiseSuppressionEnabledState(true));
-                logger.info('Noise suppression enabled.');
-
-            } else if (!enabled && noiseSuppressionEnabled) {
-                await localAudio.setEffect(undefined);
-                dispatch(setNoiseSuppressionEnabledState(false));
-                logger.info('Noise suppression disabled.');
-            } else {
-                logger.warn(`Noise suppression enabled state already: ${enabled}`);
-            }
+            }));
         } catch (error) {
             logger.error(
                 `Failed to set noise suppression enabled to: ${enabled}`,

@@ -18,9 +18,8 @@ import { connect } from '../../base/redux/functions';
 import { updateSettings } from '../../base/settings/actions';
 // @ts-ignore
 import { Tooltip } from '../../base/tooltip';
-import { getLocalVideoTrack } from '../../base/tracks/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
-import { toggleBackgroundEffect } from '../actions';
+import { toggleBackgroundEffectForTheLocalTrack } from '../actions';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { toDataURL } from '../functions';
 import logger from '../logger';
@@ -35,11 +34,6 @@ interface IProps extends WithTranslation {
      * The list of Images to choose from.
      */
     _images: Array<Image>;
-
-    /**
-     * Returns the jitsi track that will have backgraund effect applied.
-     */
-    _jitsiTrack: Object;
 
     /**
      * The current local flip x status.
@@ -104,7 +98,6 @@ function _mapStateToProps(state: IReduxState): Object {
         _virtualBackground: state['features/virtual-background'],
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
         _showUploadButton: !(hasBrandingImages || state['features/base/config'].disableAddingBackgroundImages),
-        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack,
         _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state)
     };
 }
@@ -272,7 +265,6 @@ const useStyles = makeStyles()(theme => {
  */
 function VirtualBackground({
     _images,
-    _jitsiTrack,
     _localFlipX,
     _selectedThumbnail,
     _showUploadButton,
@@ -422,7 +414,7 @@ function VirtualBackground({
 
     const applyVirtualBackground = useCallback(async () => {
         setLoading(true);
-        await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
+        await dispatch(toggleBackgroundEffectForTheLocalTrack(options));
         await setLoading(false);
 
         // Set x scale to default value.

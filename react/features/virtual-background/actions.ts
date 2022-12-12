@@ -1,4 +1,7 @@
 import { IStore } from '../app/types';
+import { executeTrackOperation } from '../base/tracks/actions';
+import { getLocalJitsiVideoTrack } from '../base/tracks/functions.any';
+import { TrackOperationType } from '../base/tracks/types';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
@@ -34,6 +37,23 @@ export function toggleBackgroundEffect(options: IVirtualBackgroundOptions, jitsi
                 logger.error('Error on apply background effect:', error);
             }
         }
+    };
+}
+
+
+/**
+ * Adds a track operation to enable/disable the virtual background for the local video.
+ *
+ * @param {Object} options - Represents the virtual background set options.
+ * @returns {Function}
+ */
+export function toggleBackgroundEffectForTheLocalTrack(options: IVirtualBackgroundOptions) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+        return dispatch(executeTrackOperation(TrackOperationType.Video, () => {
+            const localVideo = getLocalJitsiVideoTrack(getState());
+
+            return dispatch(toggleBackgroundEffect(options, localVideo));
+        }));
     };
 }
 

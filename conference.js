@@ -1558,45 +1558,48 @@ export default {
         const tracks = APP.store.getState()['features/base/tracks'];
         const duration = getLocalVideoTrack(tracks)?.jitsiTrack.getDuration() ?? 0;
 
-        // If system audio was also shared stop the AudioMixerEffect and dispose of the desktop audio track.
-        if (this._mixerEffect) {
-            const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+        APP.store.dispatch(executeTrackOperation(TrackOperationType.Audio, async () => {
+            // If system audio was also shared stop the AudioMixerEffect and dispose of the desktop audio track.
+            if (this._mixerEffect) {
+                const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
 
-            await localAudio.setEffect(undefined);
-            await this._desktopAudioStream.dispose();
-            this._mixerEffect = undefined;
-            this._desktopAudioStream = undefined;
+                await localAudio.setEffect(undefined);
+                await this._desktopAudioStream.dispose();
+                this._mixerEffect = undefined;
+                this._desktopAudioStream = undefined;
 
-        // In case there was no local audio when screen sharing was started the fact that we set the audio stream to
-        // null will take care of the desktop audio stream cleanup.
-        } else if (this._desktopAudioStream) {
-            await room.replaceTrack(this._desktopAudioStream, null);
-            this._desktopAudioStream.dispose();
-            this._desktopAudioStream = undefined;
-        }
+            // In case there was no local audio when screen sharing was started the fact that we set the audio stream to
+            // null will take care of the desktop audio stream cleanup.
+            } else if (this._desktopAudioStream) {
+                await room.replaceTrack(this._desktopAudioStream, null);
+                this._desktopAudioStream.dispose();
+                this._desktopAudioStream = undefined;
+            }
 
-        APP.store.dispatch(setScreenAudioShareState(false));
-        let promise;
+            APP.store.dispatch(setScreenAudioShareState(false));
+        }));
 
-        if (didHaveVideo && !ignoreDidHaveVideo) {
-            promise = createLocalTracksF({ devices: [ 'video' ] })
-                .then(([ stream ]) => {
-                    logger.debug(`_turnScreenSharingOff using ${stream} for useVideoStream`);
+        const promise = APP.store.dispatch(executeTrackOperation(TrackOperationType.Video, () => {
+            if (didHaveVideo && !ignoreDidHaveVideo) {
+                return createLocalTracksF({ devices: [ 'video' ] })
+                    .then(([ stream ]) => {
+                        logger.debug(`_turnScreenSharingOff using ${stream} for useVideoStream`);
 
-                    return this.useVideoStream(stream);
-                })
-                .catch(error => {
-                    logger.error('failed to switch back to local video', error);
+                        return this.useVideoStream(stream);
+                    })
+                    .catch(error => {
+                        logger.error('failed to switch back to local video', error);
 
-                    return this.useVideoStream(null).then(() =>
+                        return this.useVideoStream(null).then(() =>
 
-                        // Still fail with the original err
-                        Promise.reject(error)
-                    );
-                });
-        } else {
-            promise = this.useVideoStream(null);
-        }
+                            // Still fail with the original err
+                            Promise.reject(error)
+                        );
+                    });
+            }
+
+            return this.useVideoStream(null);
+        }));
 
         return promise.then(
             () => {
