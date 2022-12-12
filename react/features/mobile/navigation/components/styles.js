@@ -27,6 +27,31 @@ const unreadCounterDescription = {
  */
 export const navigationStyles = {
 
+    closeScreenContainer: {
+        backgroundColor: BaseTheme.palette.uiBackground,
+        flex: 1
+    },
+
+    credit: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        height: 56,
+        justifyContent: 'center',
+        marginBottom: BaseTheme.spacing[0],
+        paddingBottom: BaseTheme.spacing[4],
+        width: '100%'
+    },
+
+    creditText: {
+        color: BaseTheme.palette.text01,
+        fontWeight: 'bold'
+    },
+
+    creditImage: {
+
+    },
+
     connectingScreenContainer: {
         backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1

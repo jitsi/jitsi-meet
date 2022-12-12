@@ -179,6 +179,14 @@ export const connectingScreenOptions = {
 };
 
 /**
+ * Screen options for close screen.
+ */
+export const closeScreenOptions = {
+    gestureEnabled: false,
+    headerShown: false
+};
+
+/**
  * Screen options for pre-join screen.
  */
 export const preJoinScreenOptions = {

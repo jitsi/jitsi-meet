@@ -51,6 +51,12 @@ export const CAR_MODE_ENABLED = 'car-mode.enabled';
 export const CLOSE_CAPTIONS_ENABLED = 'close-captions.enabled';
 
 /**
+ * Flag indicating if close captions should be enabled.
+ * Default: enabled (true).
+ */
+export const CLOSE_PAGE_ENABLED = 'close-page.enabled';
+
+/**
  * Flag indicating if conference timer should be enabled.
  * Default: enabled (true).
  */
@@ -255,4 +261,4 @@ export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
  * Flag indicating if the welcome page should be enabled.
  * Default: disabled (false).
  */
-export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
+export const WELCOME_PAGE_ENABLED = 'welcome-page.enabled';

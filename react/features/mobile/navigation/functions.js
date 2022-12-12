@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 
 import { appNavigate } from '../../app/actions';
 import {
+    CLOSE_PAGE_ENABLED,
     PREJOIN_PAGE_ENABLED,
     getFeatureFlag
 } from '../../base/flags';
@@ -38,6 +39,19 @@ export function screenHeaderCloseButton(goBack: Function) {
             onPress = { goBack }
             src = { IconCloseLarge } />
     );
+}
+
+/**
+ * Determines whether the {@code Close page} is enabled by the app itself
+ * (e.g. Programmatically via the Jitsi Meet SDK for Android and iOS).
+ *
+ * @param {Function|Object} stateful - The redux state or {@link getState}
+ * function.
+ * @returns {boolean} If the {@code Close} is enabled by the app, then
+ * {@code true}; otherwise, {@code false}.
+ */
+export function isClosePageEnabled(stateful: Function | Object) {
+    return getFeatureFlag(toState(stateful), CLOSE_PAGE_ENABLED, true);
 }
 
 /**

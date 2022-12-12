@@ -12,6 +12,7 @@ import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
 import {
+    closeScreenOptions,
     conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
     dialInSummaryScreenOptions,
@@ -20,6 +21,7 @@ import {
     welcomeScreenOptions
 } from '../screenOptions';
 
+import ClosePage from './ClosePage';
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
@@ -89,6 +91,10 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }
                     options = { conferenceNavigationContainerScreenOptions } />
+                <RootStack.Screen
+                    component = { ClosePage }
+                    name = { screen.close }
+                    options = { closeScreenOptions } />
             </RootStack.Navigator>
         </NavigationContainer>
     );

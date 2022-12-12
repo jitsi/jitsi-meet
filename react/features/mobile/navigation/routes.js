@@ -44,5 +44,6 @@ export const screen = {
             privacy: 'Privacy',
             terms: 'Terms'
         }
-    }
+    },
+    close: 'Close'
 };
