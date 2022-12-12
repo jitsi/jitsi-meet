@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment */
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView, Text, View } from 'react-native';
@@ -9,6 +11,7 @@ import LoadingIndicator from '../../../base/react/components/native/LoadingIndic
 
 // @ts-ignore
 import { TEXT_COLOR, navigationStyles } from './styles';
+
 
 const ConnectingPage = () => {
     const { t } = useTranslation();

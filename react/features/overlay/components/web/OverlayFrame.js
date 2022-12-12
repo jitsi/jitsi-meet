@@ -8,7 +8,7 @@ type Props = {
     /**
      * The children components to be displayed into the overlay frame.
      */
-    children: React$Node,
+    children: React.Children,
 
     /**
      * Indicates the css style of the overlay. If true, then lighter; darker,

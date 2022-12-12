@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment */
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
@@ -31,10 +33,10 @@ import {
 
 // @ts-ignore
 import ConnectingPage from './ConnectingPage';
-import ConferenceNavigationContainer
-    from './conference/components/ConferenceNavigationContainer';
 // @ts-ignore
 import PageReloadScreen from './PageReloadScreen';
+import ConferenceNavigationContainer
+    from './conference/components/ConferenceNavigationContainer';
 
 const RootStack = createStackNavigator();
 
@@ -44,13 +46,13 @@ type Props = {
     /**
      * Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
     * Is welcome page available?
     */
-    isWelcomePageAvailable: boolean
-}
+    isWelcomePageAvailable: boolean;
+};
 
 
 const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) => {

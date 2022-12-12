@@ -13,6 +13,8 @@ type Props = {
      * The React {@link Component} type of overlay to be rendered by the
      * associated {@code OverlayContainer}.
      */
+
+    /* eslint-disable-next-line no-undef */
     overlay: ?React$ComponentType<*>
 }
 

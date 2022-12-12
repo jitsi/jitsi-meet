@@ -29,7 +29,7 @@ MiddlewareRegistry.register(store => next => action => {
 function _conferenceFailed({ getState, dispatch }, next, action) {
     const { error } = action;
     const state = getState();
-    const isFatalError = Boolean(state['features/overlay'].fatalError)
+    const isFatalError = Boolean(state['features/overlay'].fatalError);
 
     // We need to cover the case where knocking participant
     // is rejected from entering the conference
@@ -38,7 +38,7 @@ function _conferenceFailed({ getState, dispatch }, next, action) {
     }
 
     if (isFatalError) {
-        navigateRoot(screen.pageReload)
+        navigateRoot(screen.pageReload);
     }
 
     return next(action);

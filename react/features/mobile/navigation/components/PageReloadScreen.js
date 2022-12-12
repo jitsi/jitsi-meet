@@ -20,6 +20,8 @@ import { navigationStyles } from './styles';
  * reload.
  */
 class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
+
+    /* eslint-disable-next-line no-undef */
     _interval: IntervalID;
 
     /**
