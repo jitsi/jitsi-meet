@@ -18,7 +18,7 @@ import { RecordItem } from './RecordItem';
 const useStyles = makeStyles()(theme => {
     return {
         container: {
-            minHeight: '450px',
+            height: '450px',
             overflowY: 'auto',
             position: 'relative'
         },
@@ -56,23 +56,38 @@ const useStyles = makeStyles()(theme => {
         spinner: {
             alignItems: 'center',
             display: 'flex',
-            height: 'calc(100% - 100px)',
+            height: 'calc(100% - 70px)',
             justifyContent: 'center',
-            width: '100%'
+            width: '100%',
+
+            '@media (max-width: 448px)': {
+                height: 'auto',
+                marginTop: '24px'
+            }
         },
         noRecords: {
             height: 'calc(100% - 150px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexDirection: 'column'
+            flexDirection: 'column',
+
+            '@media (max-width: 448px)': {
+                height: 'auto',
+                marginTop: '24px'
+            }
         },
         recordsError: {
-            height: 'calc(100% - 80px)',
+            height: 'calc(100% - 42px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexDirection: 'column'
+            flexDirection: 'column',
+
+            '@media (max-width: 448px)': {
+                height: 'auto',
+                marginTop: '24px'
+            }
         },
         recordList: {
             listStyle: 'none',
@@ -145,7 +160,7 @@ function SalesforceLinkDialog() {
 
     const handleSubmit = useCallback(() => {
         dispatch(hideDialog());
-        linkMeeting();
+        selectedRecord && linkMeeting();
     }, [ hideDialog, linkMeeting ]);
 
     const renderSpinner = () => (

@@ -83,7 +83,7 @@ export const useSalesforceLinkDialog = () => {
             }
         };
 
-        fetchRecordDetails();
+        selectedRecord && fetchRecordDetails();
     }, [
         jwt,
         getSessionRecordDetails,
