@@ -21,20 +21,22 @@ const Timeline = ({ faceLandmarks }: Props) => {
     const intervalDuration = useMemo(() => right - left, [ left, right ]);
 
     const getSegments = useCallback(() => {
-        const segments = faceLandmarks?.filter(landmarks => {
-            const timeStart = getFaceLandmarksStart(landmarks, startTimestamp);
-            const timeEnd = getFaceLandmarksEnd(landmarks, startTimestamp);
-
-            if (timeEnd > left && timeStart < right) {
-
-                return true;
-            }
-
-            return false;
-        }) ?? [];
-
+        let segments: FaceLandmarks[] = [];
         let leftCut;
         let rightCut;
+
+        if (faceLandmarks && Array.isArray(faceLandmarks)) {
+            segments = faceLandmarks.filter(landmarks => {
+                const timeStart = getFaceLandmarksStart(landmarks, startTimestamp);
+                const timeEnd = getFaceLandmarksEnd(landmarks, startTimestamp);
+
+                if (timeEnd > left && timeStart < right) {
+                    return true;
+                }
+
+                return false;
+            });
+        }
 
         if (segments.length) {
             const start = getFaceLandmarksStart(segments[0], startTimestamp);
