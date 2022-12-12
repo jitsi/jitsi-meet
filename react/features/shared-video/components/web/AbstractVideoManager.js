@@ -209,10 +209,12 @@ class AbstractVideoManager extends PureComponent<Props> {
     /**
      * Handle video error.
      *
+     * @param {Object|undefined} e - The error returned by the API or none.
      * @returns {void}
      */
-    onError() {
-        logger.error('Error in the video player');
+    onError(e) {
+        logger.error('Error in the video player', e?.data,
+            e?.data ? 'Check error code at https://developers.google.com/youtube/iframe_api_reference#onError' : '');
         this.props._stopSharedVideo();
         this.props._displayWarning();
     }
