@@ -126,7 +126,7 @@
     "react-textarea-autosize": "8.3.0",
     "react-transition-group": "2.4.0",
     "react-window": "1.8.6",
-    "react-youtube": "7.13.1",
+    "react-youtube": "10.1.0",
     "redux": "4.0.4",
     "redux-thunk": "2.4.1",
     "resemblejs": "4.0.0",
