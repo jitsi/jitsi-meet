@@ -429,7 +429,7 @@
         "startSilentTitle": "",
         "suboptimalExperienceDescription": "Valitettavasti {{appName}} ei taida toimia kovin hyvin täällä. Yritämme löytää parannuskeinoja, mutta sillä välin kannattaa käyttää jotain <a href='{{recommendedBrowserPageLink}}' target='_blank'>täysin tuettua selainta</a>.",
         "suboptimalExperienceTitle": "Selainvaroitus",
-        "unmute": ""
+        "unmute": "Poista mykistys"
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "",
@@ -568,6 +568,7 @@
             "raiseHand": "Säädä käden nostoa",
             "recording": "Säädä nauhoitusta",
             "remoteMute": "Mykistä osanottaja",
+            "selectBackground": "Valitse tausta",
             "shareRoom": "Kutsu joku",
             "shareYourScreen": "Säädä näytön jakoa",
             "sharedvideo": "Säädä videon jakoa",
@@ -657,17 +658,21 @@
         "pending": "{{displayName}} on kutsuttu"
     },
     "videoStatus": {
+        "adjustFor": "Muokkaa:",
         "audioOnly": "ÄÄNI",
         "audioOnlyExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
-        "callQuality": "",
+        "bestPerformance": "Paras suorituskyky",
+        "callQuality": "Videon laatu",
         "hd": "HD",
         "highDefinition": "Teräväpiirto",
+        "highestQuality": "Korkein laatu",
         "labelTooiltipNoVideo": "Ei videota",
         "labelTooltipAudioOnly": "Vain ääni -tila käytössä",
         "ld": "LD",
         "lowDefinition": "Alhainen kuvanlaatu",
         "onlyAudioAvailable": "Vain ääni -tila on käytettävissä",
         "onlyAudioSupported": "Tässä selaimessa tuemme vain ääntä.",
+        "performanceSettings": "Suorituskykyasetukset",
         "sd": "SD",
         "standardDefinition": "Vakiopiirto"
     },
@@ -678,8 +683,10 @@
         "moderator": "Valvoja",
         "mute": "",
         "muted": "Mykistetty",
+        "pinToStage": "Kiinnitä ruutuun",
         "remoteControl": "Etäkäyttö",
         "show": "",
+        "unpinFromStage": "Irroita kiinnitys",
         "videomute": ""
     },
     "welcomepage": {
