@@ -15,6 +15,17 @@ upstream jvb1 {
     server 127.0.0.1:9090;
     keepalive 2;
 }
+map $arg_vnode $prosody_node {
+    default prosody;
+    v1 v1;
+    v2 v2;
+    v3 v3;
+    v4 v4;
+    v5 v5;
+    v6 v6;
+    v7 v7;
+    v8 v8;
+}
 server {
     listen 80;
     listen [::]:80;
@@ -95,7 +106,7 @@ server {
 
     # BOSH
     location = /http-bind {
-        proxy_pass http://prosody/http-bind?prefix=$prefix&$args;
+        proxy_pass http://$prosody_node/http-bind?prefix=$prefix&$args;
         proxy_http_version 1.1;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
@@ -104,7 +115,7 @@ server {
 
     # xmpp websockets
     location = /xmpp-websocket {
-        proxy_pass http://prosody/xmpp-websocket?prefix=$prefix&$args;
+        proxy_pass http://$prosody_node/xmpp-websocket?prefix=$prefix&$args;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";

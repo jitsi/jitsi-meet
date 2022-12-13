@@ -7,12 +7,6 @@
 ---    };
 --- Enable in global modules: 's2s_bidi'
 --- Make sure 's2s' is not in modules_disabled
---- TODO: Do we need the /etc/hosts changes? We can drop it for https://modules.prosody.im/mod_s2soutinjection.html
---- In /etc/hosts add:
---- vmmain-ip-address focus.domain.com
---- vmmain-ip-address conference.domain.com
---- vmmain-ip-address domain.com
---- Open port 5269 on the provider side and on the firewall of the machine, so the core node can access this visitor one
 local jid = require 'util.jid';
 local st = require 'util.stanza';
 

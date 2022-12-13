@@ -56,29 +56,23 @@ local visitors_nodes = {};
 --- Jicofo is connected to the room when sending this error
 module:log('info', 'Hook to iq/host');
 module:hook('iq/full', function(event)
-    local session, stanza = event.origin, event.stanza;
+    local stanza = event.stanza;
 
-    if stanza.name ~= 'iq' or stanza.attr.type ~= 'error' or stanza.attr.from ~= focus_component_host then
+    if stanza.name ~= 'iq' or stanza.attr.type ~= 'result' or stanza.attr.from ~= focus_component_host  then
         return;  -- not IQ from jicofo. Ignore this event.
     end
 
-    local error = stanza:get_child('error');
-    if error == nil then
-        return; -- not Conference IQ error. Ignore.
-    end
-
-    local redirect = error:get_child('redirect', 'urn:ietf:params:xml:ns:xmpp-stanzas');
-    local redirect_host = error:get_child_text('url', 'http://jitsi.org/jitmeet');
-
-    if not redirect or not redirect_host then
+    local conference = stanza:get_child('conference', 'http://jitsi.org/protocol/focus');
+    if not conference then
         return;
     end
 
     -- let's send participants if any from the room to the visitors room
     -- TODO fix room name extract, make sure it works wit tenants
-    local main_room = error:get_child_text('main-room', 'http://jitsi.org/jitmeet');
+    local main_room = conference.attr.room;
+    local vnode = conference.attr.vnode;
 
-    if not main_room then
+    if not main_room or not vnode then
         return;
     end
 
@@ -88,7 +82,7 @@ module:hook('iq/full', function(event)
         return;  -- room does not exists. Continue with normal flow
     end
 
-    local conference_service = muc_domain_prefix..'.'..redirect_host;
+    local conference_service = muc_domain_prefix..'.'..vnode..'.meet.jitsi';
 
     if visitors_nodes[room.jid] and
         visitors_nodes[room.jid].nodes and
