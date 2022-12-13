@@ -8,7 +8,7 @@ import { Conference } from '../conference';
 import { getDeepLinkingPage } from '../deep-linking';
 import { UnsupportedDesktopBrowser } from '../unsupported-browser';
 import { BlankPage, WelcomePage } from '../welcome';
-import { isWelcomePageEnabled } from '../welcome/functions';
+import { getCustomLandingPageURL, isWelcomePageEnabled } from '../welcome/functions';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux
@@ -75,7 +75,13 @@ function _getWebWelcomePageRoute(state) {
 
     if (isWelcomePageEnabled(state)) {
         if (isSupportedBrowser()) {
-            route.component = WelcomePage;
+            const customLandingPage = getCustomLandingPageURL(state);
+
+            if (customLandingPage) {
+                route.href = customLandingPage;
+            } else {
+                route.component = WelcomePage;
+            }
         } else {
             route.component = UnsupportedDesktopBrowser;
         }
