@@ -1,14 +1,15 @@
 import React from 'react';
 
 import { appNavigate, reloadNow } from '../../../../app/actions';
-import ConfirmDialog from './ConfirmDialog';
-import { translate } from '../../../i18n/functions';
-import { connect } from '../../../redux/functions';
 import { setFatalError, setPageReloadOverlayCanceled } from '../../../../overlay/actions';
 import AbstractPageReloadOverlay, {
     type Props,
     abstractMapStateToProps
 } from '../../../../overlay/components/AbstractPageReloadOverlay';
+import { translate } from '../../../i18n/functions';
+import { connect } from '../../../redux/functions';
+
+import ConfirmDialog from './ConfirmDialog';
 
 
 /**

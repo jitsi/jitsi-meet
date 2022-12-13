@@ -1,4 +1,10 @@
+/* eslint-disable lines-around-comment */
+
 import { IStore } from '../app/types';
+// @ts-ignore
+import { openDialog } from '../base/dialog/actions';
+// @ts-ignore
+import { PageReloadDialog } from '../base/dialog/components';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     isFatalJitsiConferenceError,
@@ -7,8 +13,6 @@ import {
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { setFatalError } from './actions';
-// @ts-ignore
-import { openDialog, PageReloadDialog } from '../base/dialog';
 
 
 /**
@@ -105,9 +109,10 @@ StateListenerRegistry.register(
                 ...error,
                 ...getErrorExtraInfo(getState, error)
             });
-        } else {
-            dispatch(openDialog(PageReloadDialog));
         }
+
+        dispatch(openDialog(PageReloadDialog));
+
 
         if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
             dispatch(setFatalError(error));

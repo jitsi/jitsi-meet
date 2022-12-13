@@ -1,10 +1,7 @@
-// @flow
-
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import { BaseApp } from '../../base/app';
 import { toURLString } from '../../base/util';
-import { OverlayContainer } from '../../overlay';
 import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';
 
@@ -73,9 +70,9 @@ export class AbstractApp extends BaseApp<Props, *> {
         }
     }
 
-    _createExtraElement: () => ?React$Element<*>;
+    _createExtraElement: () => ?React.ReactElement;
 
-    _createMainElement: (React$Element<*>, Object) => ?React$Element<*>;
+    _createMainElement: (React.ReactElement, Object) => ?React.ReactElement;
 
     /**
      * Gets the default URL to be opened when this {@code App} mounts.

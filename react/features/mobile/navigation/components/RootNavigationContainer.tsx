@@ -25,7 +25,6 @@ import {
     connectingScreenOptions,
     dialInSummaryScreenOptions,
     navigationContainerTheme,
-    pageReloadScreenOptions,
     preJoinScreenOptions,
     welcomeScreenOptions
     // @ts-ignore
