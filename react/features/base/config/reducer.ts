@@ -338,6 +338,13 @@ function _translateLegacyConfig(oldValue: IConfig) {
         });
     }
 
+    newValue.welcomePage = oldValue.welcomePage || {};
+    if (oldValue.hasOwnProperty('enableWelcomePage')
+        && !newValue.welcomePage.hasOwnProperty('disabled')
+    ) {
+        newValue.welcomePage.disabled = !oldValue.enableWelcomePage;
+    }
+
     newValue.prejoinConfig = oldValue.prejoinConfig || {};
     if (oldValue.hasOwnProperty('prejoinPageEnabled')
         && !newValue.prejoinConfig.hasOwnProperty('enabled')

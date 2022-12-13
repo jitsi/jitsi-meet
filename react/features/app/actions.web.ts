@@ -21,6 +21,7 @@ import { isVpaasMeeting } from '../jaas/functions';
 import { clearNotifications, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { setFatalError } from '../overlay/actions';
+import { isWelcomePageEnabled } from '../welcome/functions';
 
 import {
     redirectToStaticPage,
@@ -203,7 +204,7 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
 
         // if Welcome page is enabled redirect to welcome page after 3 sec, if
         // there is a thank you message to be shown, 0.5s otherwise.
-        if (getState()['features/base/config'].enableWelcomePage) {
+        if (isWelcomePageEnabled(getState())) {
             setTimeout(
                 () => {
                     dispatch(redirectWithStoredParams('/'));
