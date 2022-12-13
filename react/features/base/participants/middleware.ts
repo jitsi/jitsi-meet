@@ -249,7 +249,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case RAISE_HAND_UPDATED: {
         const { participant } = action;
-        let queue = getRaiseHandsQueue(store.getState());
+        let queue = [ ...getRaiseHandsQueue(store.getState()) ];
 
         if (participant.raisedHandTimestamp) {
             queue.push({
