@@ -31,10 +31,7 @@ import {
     // @ts-ignore
 } from '../screenOptions';
 
-// @ts-ignore
 import ConnectingPage from './ConnectingPage';
-// @ts-ignore
-import PageReloadScreen from './PageReloadScreen';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
 
@@ -103,10 +100,6 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }
                     options = { conferenceNavigationContainerScreenOptions } />
-                <RootStack.Screen
-                    component = { PageReloadScreen }
-                    name = { screen.pageReload }
-                    options = { pageReloadScreenOptions } />
             </RootStack.Navigator>
         </NavigationContainer>
     );

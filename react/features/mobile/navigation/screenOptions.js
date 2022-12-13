@@ -179,14 +179,6 @@ export const connectingScreenOptions = {
 };
 
 /**
- * Screen options for page reload screen.
- */
-export const pageReloadScreenOptions = {
-    gestureEnabled: false,
-    headerShown: false
-};
-
-/**
  * Screen options for pre-join screen.
  */
 export const preJoinScreenOptions = {

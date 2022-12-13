@@ -73,21 +73,7 @@ export class AbstractApp extends BaseApp<Props, *> {
         }
     }
 
-    /**
-     * Creates an extra {@link ReactElement}s to be added (unconditionally)
-     * alongside the main element.
-     *
-     * @abstract
-     * @protected
-     * @returns {ReactElement}
-     */
-    _createExtraElement() {
-        return (
-            <Fragment>
-                <OverlayContainer />
-            </Fragment>
-        );
-    }
+    _createExtraElement: () => ?React$Element<*>;
 
     _createMainElement: (React$Element<*>, Object) => ?React$Element<*>;
 

@@ -150,6 +150,18 @@ export class App extends AbstractApp {
     }
 
     /**
+     * Creates an extra {@link ReactElement}s to be added (unconditionally)
+     * alongside the main element.
+     *
+     * @returns {ReactElement}
+     * @abstract
+     * @protected
+     */
+    _createExtraElement() {
+        return null;
+    }
+
+    /**
      * Overrides the parent method to inject {@link DimensionsDetector} as
      * the top most component.
      *

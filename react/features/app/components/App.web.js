@@ -13,6 +13,7 @@ import { AbstractApp } from './AbstractApp';
 // Register middlewares and reducers.
 import '../middlewares';
 import '../reducers';
+import { OverlayContainer } from '../../overlay';
 
 /**
  * Root app {@code Component} on Web/React.
@@ -20,6 +21,23 @@ import '../reducers';
  * @augments AbstractApp
  */
 export class App extends AbstractApp {
+
+    /**
+     * Creates an extra {@link ReactElement}s to be added (unconditionally)
+     * alongside the main element.
+     *
+     * @abstract
+     * @protected
+     * @returns {ReactElement}
+     */
+    _createExtraElement() {
+        return (
+            <>
+                <OverlayContainer />
+            </>
+        );
+    }
+
     /**
      * Overrides the parent method to inject {@link AtlasKitThemeProvider} as
      * the top most component.

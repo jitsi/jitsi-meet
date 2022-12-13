@@ -3,9 +3,6 @@ import { CONFERENCE_FAILED } from '../../base/conference/actionTypes';
 import { JitsiConferenceErrors } from '../../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../../base/redux';
 
-import { navigateRoot } from './rootNavigationContainerRef';
-import { screen } from './routes';
-
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -26,19 +23,13 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Object} action - The Redux action.
  * @returns {Object}
  */
-function _conferenceFailed({ getState, dispatch }, next, action) {
+function _conferenceFailed({ dispatch }, next, action) {
     const { error } = action;
-    const state = getState();
-    const isFatalError = Boolean(state['features/overlay'].fatalError);
 
     // We need to cover the case where knocking participant
     // is rejected from entering the conference
     if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
         dispatch(appNavigate(undefined));
-    }
-
-    if (isFatalError) {
-        navigateRoot(screen.pageReload);
     }
 
     return next(action);

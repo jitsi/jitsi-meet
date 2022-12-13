@@ -7,6 +7,9 @@ import {
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { setFatalError } from './actions';
+// @ts-ignore
+import { openDialog, PageReloadDialog } from '../base/dialog';
+
 
 /**
  * Error type. Basically like Error, but augmented with a recoverable property.
@@ -102,6 +105,8 @@ StateListenerRegistry.register(
                 ...error,
                 ...getErrorExtraInfo(getState, error)
             });
+        } else {
+            dispatch(openDialog(PageReloadDialog));
         }
 
         if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {

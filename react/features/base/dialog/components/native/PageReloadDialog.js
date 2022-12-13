@@ -1,17 +1,14 @@
 import React from 'react';
 
-import { appNavigate, reloadNow } from '../../../app/actions';
-import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
-import { translate } from '../../../base/i18n/functions';
-import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { connect } from '../../../base/redux/functions';
-import { setFatalError, setPageReloadOverlayCanceled } from '../../../overlay/actions';
+import { appNavigate, reloadNow } from '../../../../app/actions';
+import ConfirmDialog from './ConfirmDialog';
+import { translate } from '../../../i18n/functions';
+import { connect } from '../../../redux/functions';
+import { setFatalError, setPageReloadOverlayCanceled } from '../../../../overlay/actions';
 import AbstractPageReloadOverlay, {
     type Props,
     abstractMapStateToProps
-} from '../../../overlay/components/AbstractPageReloadOverlay';
-
-import { navigationStyles } from './styles';
+} from '../../../../overlay/components/AbstractPageReloadOverlay';
 
 
 /**
@@ -19,19 +16,19 @@ import { navigationStyles } from './styles';
  * conference is reloaded. Shows a warning message and counts down towards the
  * reload.
  */
-class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
+class PageReloadDialog extends AbstractPageReloadOverlay<Props> {
 
     /* eslint-disable-next-line no-undef */
     _interval: IntervalID;
 
     /**
-     * Initializes a new PageReloadOverlay instance.
+     * Initializes a new PageReloadDialog instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      * @public
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this._onCancel = this._onCancel.bind(this);
@@ -80,17 +77,15 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
         const { message, timeLeft, title } = this.state;
 
         return (
-            <JitsiScreen style = { navigationStyles.pageReloadScreenContainer }>
-                <ConfirmDialog
-                    cancelLabel = 'dialog.Cancel'
-                    confirmLabel = 'dialog.rejoinNow'
-                    descriptionKey = { `${t(message, { seconds: timeLeft })}` }
-                    onCancel = { this._onCancel }
-                    onSubmit = { this._onReloadNow }
-                    title = { title } />
-            </JitsiScreen>
+            <ConfirmDialog
+                cancelLabel = 'dialog.Cancel'
+                confirmLabel = 'dialog.rejoinNow'
+                descriptionKey = { `${t(message, { seconds: timeLeft })}` }
+                onCancel = { this._onCancel }
+                onSubmit = { this._onReloadNow }
+                title = { title } />
         );
     }
 }
 
-export default translate(connect(abstractMapStateToProps)(PageReloadOverlay));
+export default translate(connect(abstractMapStateToProps)(PageReloadDialog));
