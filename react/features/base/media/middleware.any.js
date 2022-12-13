@@ -49,10 +49,6 @@ import {
 } from './constants';
 import { getStartWithAudioMuted, getStartWithVideoMuted } from './functions';
 import logger from './logger';
-import {
-    _AUDIO_INITIAL_MEDIA_STATE,
-    _VIDEO_INITIAL_MEDIA_STATE
-} from './reducer';
 
 /**
  * Implements the entry point of the middleware of the feature base/media.
@@ -222,8 +218,8 @@ function _setRoom({ dispatch, getState }, next, action) {
     const state = getState();
     const { room } = action;
     const roomIsValid = isRoomValid(room);
-    const audioMuted = roomIsValid ? getStartWithAudioMuted(state) : _AUDIO_INITIAL_MEDIA_STATE.muted;
-    const videoMuted = roomIsValid ? getStartWithVideoMuted(state) : _VIDEO_INITIAL_MEDIA_STATE.muted;
+    const audioMuted = getStartWithAudioMuted(state);
+    const videoMuted = getStartWithVideoMuted(state);
 
     sendAnalytics(
         createStartMutedConfigurationEvent('local', audioMuted, videoMuted));
