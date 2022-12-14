@@ -431,6 +431,11 @@
         "suboptimalExperienceTitle": "Selainvaroitus",
         "unmute": "Poista mykistys"
     },
+    "participantsPane": {
+        "actions": {
+            "muteEveryoneElse": "Mykistä kaikki muut"
+        }
+    },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "",
     "poweredby": "tukija:",
@@ -563,6 +568,7 @@
             "moreActions": "Säädä Lisää toimintoja -valikkoa",
             "moreActionsMenu": "Lisää toimintoja -valikko",
             "mute": "Säädä äänen mykistystä",
+            "muteEveryoneElse": "Mykistä kaikki muut",
             "pip": "Säädä Kuva kuvassa (PiP) -tilaa",
             "profile": "Muokkaa profiilia",
             "raiseHand": "Säädä käden nostoa",
@@ -678,14 +684,16 @@
     },
     "videothumbnail": {
         "domute": "Mykistä",
+        "domuteOthers": "Mykistä kaikki muut",
+        "domuteVideoOfOthers": "Estä muiden kamera",
         "flip": "Käännä",
         "kick": "Poista",
         "moderator": "Valvoja",
-        "mute": "",
+        "mute": "Osallistuja on mykistetty",
         "muted": "Mykistetty",
         "pinToStage": "Kiinnitä ruutuun",
         "remoteControl": "Etäkäyttö",
-        "show": "",
+        "show": "Näytä ruudulla",
         "unpinFromStage": "Irroita kiinnitys",
         "videomute": ""
     },
