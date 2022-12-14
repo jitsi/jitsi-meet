@@ -19,6 +19,7 @@ import {
     inviteSipEndpoints
 } from './functions';
 import logger from './logger';
+import { IInvitee } from './types';
 
 /**
  * Creates a (redux) action to signal that a click/tap has been performed on
@@ -61,7 +62,7 @@ export function hideAddPeopleDialog() {
  * of invitees who were not invited (i.e. Invites were not sent to them).
  */
 export function invite(
-        invitees: Array<{ address: string; number: string; type: string; }>,
+        invitees: IInvitee[],
         showCalleeInfo = false) {
     return (
             dispatch: IStore['dispatch'],

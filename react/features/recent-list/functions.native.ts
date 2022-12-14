@@ -7,6 +7,8 @@ import {
 import { NavigateSectionList } from '../base/react';
 import { parseURIString, safeDecodeURIComponent } from '../base/util/uri';
 
+import { IRecentItem } from './types';
+
 /**
  * Creates a displayable list item of a recent list entry.
  *
@@ -16,7 +18,7 @@ import { parseURIString, safeDecodeURIComponent } from '../base/util/uri';
  * @param {Function} t - The translate function.
  * @returns {Object}
  */
-function toDisplayableItem(item: { conference: string; date: number; duration: number; },
+function toDisplayableItem(item: IRecentItem,
         defaultServerURL: string, t: Function) {
     const location = parseURIString(item.conference);
     const baseURL = `${location.protocol}//${location.host}`;
@@ -93,7 +95,7 @@ function _toDateString(itemDate: number, t: Function) {
  * @param {string} defaultServerURL - The default server URL.
  * @returns {Array<Object>}
  */
-export function toDisplayableList(recentList: Array<{ conference: string; date: number; duration: number; }>,
+export function toDisplayableList(recentList: IRecentItem[],
         t: Function, defaultServerURL: string) {
     const { createSection } = NavigateSectionList;
     const todaySection = createSection(t('dateUtils.today'), 'today');

@@ -8,6 +8,7 @@ import {
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
 import logger from './logger';
+import { IInvitee } from './types';
 
 const DEFAULT_STATE = {
     /**
@@ -32,7 +33,7 @@ export interface IInviteState {
     numbersFetched: boolean;
     pendingInviteRequests: Array<{
         callback: Function;
-        invitees: Array<{ address: string; number: string; type: string; }>;
+        invitees: IInvitee[];
     }>;
     sipUri?: string;
 }
