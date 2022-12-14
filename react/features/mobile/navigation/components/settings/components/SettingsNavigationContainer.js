@@ -3,14 +3,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import HelpView from '../../../../../settings/components/native/HelpView';
-import PrivacyView from '../../../../../settings/components/native/PrivacyView';
 import SettingsView
     from '../../../../../settings/components/native/SettingsView';
-import TermsView from '../../../../../settings/components/native/TermsView';
 import { screen } from '../../../routes';
 import {
-    linkScreenOptions,
     navigationContainerTheme,
     settingsScreenOptions,
     welcomeScreenOptions
@@ -61,27 +57,6 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: Props) => {
                     }}>
                     { SettingsScreen }
                 </SettingsStack.Screen>
-                <SettingsStack.Screen
-                    component = { HelpView }
-                    name = { screen.settings.links.help }
-                    options = {{
-                        ...linkScreenOptions,
-                        title: t('helpView.title')
-                    }} />
-                <SettingsStack.Screen
-                    component = { TermsView }
-                    name = { screen.settings.links.terms }
-                    options = {{
-                        ...linkScreenOptions,
-                        title: t('termsView.title')
-                    }} />
-                <SettingsStack.Screen
-                    component = { PrivacyView }
-                    name = { screen.settings.links.privacy }
-                    options = {{
-                        ...linkScreenOptions,
-                        title: t('privacyView.title')
-                    }} />
             </SettingsStack.Navigator>
         </NavigationContainer>
     );
