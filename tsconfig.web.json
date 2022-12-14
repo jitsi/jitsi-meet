@@ -16,6 +16,7 @@
     },
     "exclude": [
         "node_modules",
+        "react/features/share-room",
         "**/mobile/*",
         "**/native/*",
         "**/*.native.ts",

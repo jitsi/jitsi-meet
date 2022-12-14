@@ -1,20 +1,16 @@
-// @flow
+import { AnyAction } from 'redux';
 
-import { APP_WILL_MOUNT } from '../base/app';
-import {
-    CONFERENCE_WILL_LEAVE,
-    JITSI_CONFERENCE_URL_KEY,
-    SET_ROOM
-} from '../base/conference';
-import { addKnownDomains } from '../base/known-domains';
-import { MiddlewareRegistry } from '../base/redux';
-import { parseURIString } from '../base/util';
+import { IStore } from '../app/types';
+import { APP_WILL_MOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_WILL_LEAVE, SET_ROOM } from '../base/conference/actionTypes';
+import { JITSI_CONFERENCE_URL_KEY } from '../base/conference/constants';
+import { addKnownDomains } from '../base/known-domains/actions';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { inIframe } from '../base/util/iframeUtils';
+import { parseURIString } from '../base/util/uri';
 
 import { _storeCurrentConference, _updateConferenceDuration } from './actions';
 import { isRecentListEnabled } from './functions';
-
-declare var APP: Object;
 
 /**
  * Middleware that captures joined rooms so they can be saved into
@@ -53,7 +49,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {*} The result returned by {@code next(action)}.
  */
-function _appWillMount({ dispatch, getState }, next, action) {
+function _appWillMount({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     // It's an opportune time to transfer the feature recent-list's knowledge
@@ -86,7 +82,7 @@ function _appWillMount({ dispatch, getState }, next, action) {
  * @private
  * @returns {*} The result returned by {@code next(action)}.
  */
-function _conferenceWillLeave({ dispatch, getState }, next, action) {
+function _conferenceWillLeave({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { doNotStoreRoom } = getState()['features/base/config'];
 
     if (!doNotStoreRoom && !inIframe()) {
@@ -126,7 +122,7 @@ function _conferenceWillLeave({ dispatch, getState }, next, action) {
  * @private
  * @returns {*} The result returned by {@code next(action)}.
  */
-function _setRoom({ dispatch, getState }, next, action) {
+function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { doNotStoreRoom } = getState()['features/base/config'];
 
     if (!doNotStoreRoom && !inIframe() && action.room) {

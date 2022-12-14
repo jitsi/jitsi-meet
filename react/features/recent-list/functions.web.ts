@@ -1,6 +1,4 @@
-/* global interfaceConfig */
-
-import { parseURIString, safeDecodeURIComponent } from '../base/util';
+import { parseURIString, safeDecodeURIComponent } from '../base/util/uri';
 
 
 /**
@@ -10,7 +8,7 @@ import { parseURIString, safeDecodeURIComponent } from '../base/util';
  * @param {Array<Object>} recentList - The recent list form the redux store.
  * @returns {Array<Object>}
  */
-export function toDisplayableList(recentList) {
+export function toDisplayableList(recentList: Array<{ conference: string; date: Date; duration: number; }>) {
     return (
         [ ...recentList ].reverse()
             .map(item => {

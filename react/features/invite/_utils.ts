@@ -1,12 +1,10 @@
-// @flow
-
 /**
  * Utility class with no dependencies. Used in components that are stripped in separate bundles
  * and requires as less dependencies as possible.
  */
 
 import { getURLWithoutParams } from '../base/connection/utils';
-import { doGetJSON } from '../base/util';
+import { doGetJSON } from '../base/util/httpUtils';
 
 /**
  * Formats the conference pin in readable way for UI to display it.
@@ -49,7 +47,7 @@ export function getDialInConferenceID(
         roomName: string,
         mucURL: string,
         url: URL
-): Promise<Object> {
+): Promise<any> {
     const separator = baseUrl.includes('?') ? '&' : '?';
     const conferenceIDURL
         = `${baseUrl}${separator}conference=${roomName}@${mucURL}&url=${getURLWithoutParams(url).href}`;
@@ -75,7 +73,7 @@ export function getDialInNumbers(
         url: string,
         roomName: string,
         mucURL: string
-): Promise<*> {
+): Promise<any> {
     const separator = url.includes('?') ? '&' : '?';
 
     // when roomName and mucURL are available

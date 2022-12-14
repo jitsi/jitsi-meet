@@ -1,13 +1,14 @@
-// @flow
-
-import { getLocalJitsiDesktopTrack, getLocalJitsiVideoTrack } from '../../features/base/tracks';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config';
+import { IStore } from '../app/types';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functions';
+import { getLocalJitsiDesktopTrack, getLocalJitsiVideoTrack } from '../base/tracks/functions';
 
 import { SET_SCREENSHOT_CAPTURE } from './actionTypes';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { createScreenshotCaptureSummary } from './functions';
 import logger from './logger';
 
-let screenshotSummary;
+let screenshotSummary: any;
 
 /**
  * Marks the on-off state of screenshot captures.
@@ -18,7 +19,7 @@ let screenshotSummary;
     *      payload: enabled
     * }}
 */
-function setScreenshotCapture(enabled) {
+function setScreenshotCapture(enabled: boolean) {
     return {
         type: SET_SCREENSHOT_CAPTURE,
         payload: enabled
@@ -32,7 +33,7 @@ function setScreenshotCapture(enabled) {
 * @returns {Promise}
 */
 export function toggleScreenshotCaptureSummary(enabled: boolean) {
-    return async function(dispatch: (Object) => Object, getState: () => any) {
+    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const state = getState();
 
         if (state['features/screenshot-capture'].capturesEnabled !== enabled) {

@@ -1,9 +1,13 @@
 import {
     getLocalizedDateFormatter,
     getLocalizedDurationFormatter
-} from '../base/i18n';
+} from '../base/i18n/dateUtil';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { NavigateSectionList } from '../base/react';
-import { parseURIString, safeDecodeURIComponent } from '../base/util';
+import { parseURIString, safeDecodeURIComponent } from '../base/util/uri';
+
+import { IRecentItem } from './types';
 
 /**
  * Creates a displayable list item of a recent list entry.
@@ -14,7 +18,8 @@ import { parseURIString, safeDecodeURIComponent } from '../base/util';
  * @param {Function} t - The translate function.
  * @returns {Object}
  */
-function toDisplayableItem(item, defaultServerURL, t) {
+function toDisplayableItem(item: IRecentItem,
+        defaultServerURL: string, t: Function) {
     const location = parseURIString(item.conference);
     const baseURL = `${location.protocol}//${location.host}`;
     const serverName = baseURL === defaultServerURL ? null : location.host;
@@ -43,7 +48,7 @@ function toDisplayableItem(item, defaultServerURL, t) {
  * @param {number} duration - The item's duration.
  * @returns {string}
  */
-function _toDurationString(duration) {
+function _toDurationString(duration: number) {
     if (duration) {
         return getLocalizedDurationFormatter(duration);
     }
@@ -59,7 +64,7 @@ function _toDurationString(duration) {
  * @param {Function} t - The translate function.
  * @returns {string}
  */
-function _toDateString(itemDate, t) {
+function _toDateString(itemDate: number, t: Function) {
     const m = getLocalizedDateFormatter(itemDate);
     const date = new Date(itemDate);
     const dateInMs = date.getTime();
@@ -90,7 +95,8 @@ function _toDateString(itemDate, t) {
  * @param {string} defaultServerURL - The default server URL.
  * @returns {Array<Object>}
  */
-export function toDisplayableList(recentList, t, defaultServerURL) {
+export function toDisplayableList(recentList: IRecentItem[],
+        t: Function, defaultServerURL: string) {
     const { createSection } = NavigateSectionList;
     const todaySection = createSection(t('dateUtils.today'), 'today');
     const yesterdaySection

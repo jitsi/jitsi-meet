@@ -46,6 +46,7 @@ export interface IJitsiConference {
     avModerationApprove: Function;
     avModerationReject: Function;
     createVideoSIPGWSession: Function;
+    dial: Function;
     disableAVModeration: Function;
     enableAVModeration: Function;
     end: Function;
@@ -74,6 +75,7 @@ export interface IJitsiConference {
     myUserId: Function;
     off: Function;
     on: Function;
+    options: any;
     removeTrack: Function;
     replaceTrack: Function;
     room: IJitsiConferenceRoom;

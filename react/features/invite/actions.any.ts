@@ -1,10 +1,7 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import { getInviteURL } from '../base/connection';
-import { getLocalParticipant, getParticipantCount } from '../base/participants';
-import { inviteVideoRooms } from '../videosipgw';
+import { IStore } from '../app/types';
+import { getInviteURL } from '../base/connection/functions';
+import { getLocalParticipant, getParticipantCount } from '../base/participants/functions';
+import { inviteVideoRooms } from '../videosipgw/actions';
 
 import { getDialInConferenceID, getDialInNumbers } from './_utils';
 import {
@@ -22,6 +19,7 @@ import {
     inviteSipEndpoints
 } from './functions';
 import logger from './logger';
+import { IInvitee } from './types';
 
 /**
  * Creates a (redux) action to signal that a click/tap has been performed on
@@ -64,11 +62,11 @@ export function hideAddPeopleDialog() {
  * of invitees who were not invited (i.e. Invites were not sent to them).
  */
 export function invite(
-        invitees: Array<Object>,
-        showCalleeInfo: boolean = false) {
+        invitees: IInvitee[],
+        showCalleeInfo = false) {
     return (
-            dispatch: Dispatch<any>,
-            getState: Function): Promise<Array<Object>> => {
+            dispatch: IStore['dispatch'],
+            getState: IStore['getState']): Promise<Array<Object>> => {
         const state = getState();
         const participantsCount = getParticipantCount(state);
         const { calleeInfoVisible } = state['features/invite'];
@@ -89,12 +87,12 @@ export function invite(
             return new Promise(resolve => {
                 dispatch(addPendingInviteRequest({
                     invitees,
-                    callback: failedInvitees => resolve(failedInvitees)
+                    callback: (failedInvitees: any) => resolve(failedInvitees)
                 }));
             });
         }
 
-        let allInvitePromises = [];
+        let allInvitePromises: Promise<any>[] = [];
         let invitesLeftToSend = [ ...invitees ];
 
         const {
@@ -105,8 +103,8 @@ export function invite(
         const inviteUrl = getInviteURL(state);
         const { sipInviteUrl } = state['features/base/config'];
         const { locationURL } = state['features/base/connection'];
-        const { jwt } = state['features/base/jwt'];
-        const { name: displayName } = getLocalParticipant(state);
+        const { jwt = '' } = state['features/base/jwt'];
+        const { name: displayName } = getLocalParticipant(state) ?? {};
 
         // First create all promises for dialing out.
         const phoneNumbers
@@ -123,7 +121,7 @@ export function invite(
                         = invitesLeftToSend.filter(
                             invitee => invitee !== item);
                 })
-                .catch(error =>
+                .catch((error: Error) =>
                     logger.error('Error inviting phone number:', error));
         });
 
@@ -138,8 +136,8 @@ export function invite(
             // filter all rooms and users from {@link invitesLeftToSend}.
             const peopleInvitePromise
                 = invitePeopleAndChatRooms(
-                    callFlowsEnabled
-                        ? inviteServiceCallFlowsUrl : inviteServiceUrl,
+                    (callFlowsEnabled
+                        ? inviteServiceCallFlowsUrl : inviteServiceUrl) ?? '',
                     inviteUrl,
                     jwt,
                     usersAndRooms)
@@ -173,6 +171,8 @@ export function invite(
 
         conference && inviteSipEndpoints(
             sipEndpoints,
+
+            // @ts-ignore
             locationURL,
             sipInviteUrl,
             jwt,
@@ -196,12 +196,12 @@ export function invite(
  * @returns {Function}
  */
 export function updateDialInNumbers() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
             = state['features/base/config'];
         const { numbersFetched } = state['features/invite'];
-        const mucURL = hosts && hosts.muc;
+        const mucURL = hosts?.muc;
 
         if (numbersFetched || !dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
             // URLs for fetching dial in numbers not defined
@@ -209,10 +209,10 @@ export function updateDialInNumbers() {
         }
 
         const { locationURL = {} } = state['features/base/connection'];
-        const { room } = state['features/base/conference'];
+        const { room = '' } = state['features/base/conference'];
 
         Promise.all([
-            getDialInNumbers(dialInNumbersUrl, room, mucURL),
+            getDialInNumbers(dialInNumbersUrl, room, mucURL), // @ts-ignore
             getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL)
         ])
             .then(([ dialInNumbers, { conference, id, message, sipUri } ]) => {
@@ -251,7 +251,7 @@ export function updateDialInNumbers() {
  */
 export function setCalleeInfoVisible(
         calleeInfoVisible: boolean,
-        initialCalleeInfo: ?Object) {
+        initialCalleeInfo?: Object) {
     return {
         type: SET_CALLEE_INFO_VISIBLE,
         calleeInfoVisible,
@@ -269,7 +269,7 @@ export function setCalleeInfoVisible(
  * }}
  */
 export function addPendingInviteRequest(
-        request: { invitees: Array<Object>, callback: Function }) {
+        request: { callback: Function; invitees: Array<Object>; }) {
     return {
         type: ADD_PENDING_INVITE_REQUEST,
         request

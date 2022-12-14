@@ -1,5 +1,3 @@
-// @flow
-
 import {
     DELETE_RECENT_LIST_ENTRY,
     _STORE_CURRENT_CONFERENCE,

@@ -127,6 +127,7 @@ export interface IConfig {
         preventExecution: boolean;
     }>;
     callDisplayName?: string;
+    callFlowsEnabled?: boolean;
     callStatsConfigParams?: {
         additionalIDs?: {
             customerID?: string;
@@ -344,6 +345,8 @@ export interface IConfig {
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
     inviteAppName?: string | null;
+    inviteServiceCallFlowsUrl?: string;
+    inviteServiceUrl?: string;
     jaasActuatorUrl?: string;
     jaasFeedbackMetadataURL?: string;
     jaasTokenUrl?: string;

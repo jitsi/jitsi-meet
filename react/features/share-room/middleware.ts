@@ -1,10 +1,9 @@
-// @flow
-
 import { Share } from 'react-native';
 
-import { getName } from '../app/functions';
-import { MiddlewareRegistry } from '../base/redux';
-import { getShareInfoText } from '../invite';
+import { getName } from '../app/functions.native';
+import { IStore } from '../app/types';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { getShareInfoText } from '../invite/functions';
 
 import { BEGIN_SHARE_ROOM } from './actionTypes';
 import { endShareRoom } from './actions';
@@ -35,7 +34,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _shareRoom(roomURL: string, { dispatch, getState }) {
+function _shareRoom(roomURL: string, { dispatch, getState }: IStore) {
     getShareInfoText(getState(), roomURL)
         .then(message => {
             const title = `${getName()} Conference`;

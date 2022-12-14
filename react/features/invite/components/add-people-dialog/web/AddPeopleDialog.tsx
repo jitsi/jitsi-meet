@@ -205,7 +205,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
     const hideInviteContacts = iAmRecorder || (!addPeopleEnabled && !dialOutEnabled);
-    const dialIn = state['features/invite'];
+    const dialIn = state['features/invite']; // @ts-ignore
     const phoneNumber = dialIn?.numbers ? _getDefaultPhoneNumber(dialIn.numbers) : undefined;
 
     return {

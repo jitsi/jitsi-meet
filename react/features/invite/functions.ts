@@ -1,20 +1,17 @@
-// @flow
-
-import { getActiveSession } from '../../features/recording/functions';
-import { getRoomName } from '../base/conference';
-import { getInviteURL } from '../base/connection';
+import { IReduxState } from '../app/types';
+import { IStateful } from '../base/app/types';
+import { getRoomName } from '../base/conference/functions';
+import { getInviteURL } from '../base/connection/functions';
 import { isIosMobileBrowser } from '../base/environment/utils';
-import { i18next } from '../base/i18n';
+import i18next from '../base/i18n/i18next';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
-import { toState } from '../base/redux';
-import {
-    appendURLParam,
-    parseURIString,
-    parseURLParams
-} from '../base/util';
+import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
+import { toState } from '../base/redux/functions';
+import { parseURLParams } from '../base/util/parseURLParams';
+import { appendURLParam, parseURIString } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
+import { getActiveSession } from '../recording/functions';
 
 import { getDialInConferenceID, getDialInNumbers } from './_utils';
 import {
@@ -24,8 +21,7 @@ import {
 } from './constants';
 import logger from './logger';
 
-declare var $: Function;
-declare var interfaceConfig: Object;
+declare let $: any;
 
 export const sharingFeatures = {
     email: 'email',
@@ -44,7 +40,7 @@ export const sharingFeatures = {
 export function checkDialNumber(
         dialNumber: string,
         dialOutAuthUrl: string
-): Promise<Object> {
+): Promise<{ allow?: boolean; country?: string; phone?: string; }> {
     const fullUrl = `${dialOutAuthUrl}?phone=${dialNumber}`;
 
     return new Promise((resolve, reject) => {
@@ -61,7 +57,7 @@ export function checkDialNumber(
  * numbers.
  * @returns {string} A string with only numbers.
  */
-export function getDigitsOnly(text: string = ''): string {
+export function getDigitsOnly(text = ''): string {
     return text.replace(/\D/g, '');
 }
 
@@ -71,40 +67,40 @@ export function getDigitsOnly(text: string = ''): string {
 export type GetInviteResultsOptions = {
 
     /**
-     * The endpoint to use for checking phone number validity.
-     */
-    dialOutAuthUrl: string,
-
-    /**
      * Whether or not to search for people.
      */
-    addPeopleEnabled: boolean,
+    addPeopleEnabled: boolean;
+
+    /**
+     * The endpoint to use for checking phone number validity.
+     */
+    dialOutAuthUrl: string;
 
     /**
      * Whether or not to check phone numbers.
      */
-    dialOutEnabled: boolean,
+    dialOutEnabled: boolean;
+
+    /**
+     * The jwt token to pass to the search service.
+     */
+    jwt: string;
 
     /**
      * Array with the query types that will be executed -
      * "conferenceRooms" | "user" | "room".
      */
-    peopleSearchQueryTypes: Array<string>,
+    peopleSearchQueryTypes: Array<string>;
 
     /**
      * The url to query for people.
      */
-    peopleSearchUrl: string,
+    peopleSearchUrl: string;
 
     /**
      * Whether or not to check sip invites.
      */
-    sipInviteEnabled: boolean,
-
-    /**
-     * The jwt token to pass to the search service.
-     */
-    jwt: string
+    sipInviteEnabled: boolean;
 };
 
 /**
@@ -118,8 +114,7 @@ export type GetInviteResultsOptions = {
 export function getInviteResultsForQuery(
         query: string,
         options: GetInviteResultsOptions
-): Promise<*> {
-
+): Promise<any> {
     const text = query.trim();
 
     const {
@@ -183,12 +178,12 @@ export function getInviteResultsForQuery(
             phone: text
         });
     } else {
-        phoneNumberPromise = Promise.resolve({});
+        phoneNumberPromise = Promise.resolve<{ allow?: boolean; country?: string; phone?: string; }>({});
     }
 
     return Promise.all([ peopleSearchPromise, phoneNumberPromise ])
         .then(([ peopleResults, phoneResults ]) => {
-            const results = [
+            const results: any[] = [
                 ...peopleResults
             ];
 
@@ -233,7 +228,7 @@ export function getInviteTextiOS({
     state,
     phoneNumber,
     t
-}: Object) {
+}: { phoneNumber?: string | null; state: IReduxState; t?: Function; }) {
     if (!isIosMobileBrowser()) {
         return '';
     }
@@ -246,23 +241,23 @@ export function getInviteTextiOS({
     const inviteURL = _decodeRoomURI(inviteUrl);
 
     let invite = localParticipantName
-        ? t('info.inviteTextiOSPersonal', { name: localParticipantName })
-        : t('info.inviteURLFirstPartGeneral');
+        ? t?.('info.inviteTextiOSPersonal', { name: localParticipantName })
+        : t?.('info.inviteURLFirstPartGeneral');
 
     invite += ' ';
 
-    invite += t('info.inviteTextiOSInviteUrl', { inviteUrl });
+    invite += t?.('info.inviteTextiOSInviteUrl', { inviteUrl });
     invite += ' ';
 
     if (shouldDisplayDialIn(dialIn) && isSharingEnabled(sharingFeatures.dialIn)) {
-        invite += t('info.inviteTextiOSPhone', {
+        invite += t?.('info.inviteTextiOSPhone', {
             number: phoneNumber,
             conferenceID: dialIn.conferenceID,
             didUrl: getDialInfoPageURL(state)
         });
     }
     invite += ' ';
-    invite += t('info.inviteTextiOSJoinSilent', { silentUrl: `${inviteURL}#config.startSilent=true` });
+    invite += t?.('info.inviteTextiOSJoinSilent', { silentUrl: `${inviteURL}#config.startSilent=true` });
 
     return invite;
 }
@@ -276,27 +271,25 @@ export function getInviteText({
     state,
     phoneNumber,
     t
-}: Object) {
+}: { phoneNumber?: string | null; state: IReduxState; t?: Function; }) {
     const dialIn = state['features/invite'];
     const inviteUrl = getInviteURL(state);
     const currentLiveStreamingSession = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
-    const liveStreamViewURL
-        = currentLiveStreamingSession
-            && currentLiveStreamingSession.liveStreamViewURL;
+    const liveStreamViewURL = currentLiveStreamingSession?.liveStreamViewURL;
     const localParticipant = getLocalParticipant(state);
     const localParticipantName = localParticipant?.name;
 
     const inviteURL = _decodeRoomURI(inviteUrl);
     let invite = localParticipantName
-        ? t('info.inviteURLFirstPartPersonal', { name: localParticipantName })
-        : t('info.inviteURLFirstPartGeneral');
+        ? t?.('info.inviteURLFirstPartPersonal', { name: localParticipantName })
+        : t?.('info.inviteURLFirstPartGeneral');
 
-    invite += t('info.inviteURLSecondPart', {
+    invite += t?.('info.inviteURLSecondPart', {
         url: inviteURL
     });
 
     if (liveStreamViewURL) {
-        const liveStream = t('info.inviteLiveStream', {
+        const liveStream = t?.('info.inviteLiveStream', {
             url: liveStreamViewURL
         });
 
@@ -304,11 +297,11 @@ export function getInviteText({
     }
 
     if (shouldDisplayDialIn(dialIn) && isSharingEnabled(sharingFeatures.dialIn)) {
-        const dial = t('info.invitePhone', {
+        const dial = t?.('info.invitePhone', {
             number: phoneNumber,
             conferenceID: dialIn.conferenceID
         });
-        const moreNumbers = t('info.invitePhoneAlternatives', {
+        const moreNumbers = t?.('info.invitePhoneAlternatives', {
             url: getDialInfoPageURL(state),
             silentUrl: `${inviteURL}#config.startSilent=true`
         });
@@ -328,8 +321,8 @@ export function getInviteText({
  * @returns {Object} An object with keys as user types and values as the number
  * of invites for that type.
  */
-export function getInviteTypeCounts(inviteItems: Array<Object> = []) {
-    const inviteTypeCounts = {};
+export function getInviteTypeCounts(inviteItems: Array<{ type: string; }> = []) {
+    const inviteTypeCounts: any = {};
 
     inviteItems.forEach(({ type }) => {
         if (!inviteTypeCounts[type]) {
@@ -352,51 +345,51 @@ export function getInviteTypeCounts(inviteItems: Array<Object> = []) {
  * items to invite.
  * @returns {Promise} - The promise created by the request.
  */
-export function invitePeopleAndChatRooms( // eslint-disable-line max-params
+export function invitePeopleAndChatRooms(
         inviteServiceUrl: string,
         inviteUrl: string,
         jwt: string,
         inviteItems: Array<Object>
-): Promise<void> {
+): Promise<any> {
 
     if (!inviteItems || inviteItems.length === 0) {
         return Promise.resolve();
     }
 
     return fetch(
-           `${inviteServiceUrl}?token=${jwt}`,
-           {
-               body: JSON.stringify({
-                   'invited': inviteItems,
-                   'url': inviteUrl
-               }),
-               method: 'POST',
-               headers: {
-                   'Content-Type': 'application/json'
-               }
-           }
+        `${inviteServiceUrl}?token=${jwt}`,
+        {
+            body: JSON.stringify({
+                'invited': inviteItems,
+                'url': inviteUrl
+            }),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
     );
 }
 
 /**
  * Determines if adding people is currently enabled.
  *
- * @param {boolean} state - Current state.
+ * @param {IReduxState} state - Current state.
  * @returns {boolean} Indication of whether adding people is currently enabled.
  */
-export function isAddPeopleEnabled(state: Object): boolean {
+export function isAddPeopleEnabled(state: IReduxState): boolean {
     const { peopleSearchUrl } = state['features/base/config'];
 
-    return state['features/base/jwt'].jwt && Boolean(peopleSearchUrl) && !isVpaasMeeting(state);
+    return Boolean(state['features/base/jwt'].jwt && Boolean(peopleSearchUrl) && !isVpaasMeeting(state));
 }
 
 /**
  * Determines if dial out is currently enabled or not.
  *
- * @param {boolean} state - Current state.
+ * @param {IReduxState} state - Current state.
  * @returns {boolean} Indication of whether dial out is currently enabled.
  */
-export function isDialOutEnabled(state: Object): boolean {
+export function isDialOutEnabled(state: IReduxState): boolean {
     const { conference } = state['features/base/conference'];
 
     return isLocalParticipantModerator(state)
@@ -406,10 +399,10 @@ export function isDialOutEnabled(state: Object): boolean {
 /**
  * Determines if inviting sip endpoints is enabled or not.
  *
- * @param {Object} state - Current state.
+ * @param {IReduxState} state - Current state.
  * @returns {boolean} Indication of whether dial out is currently enabled.
  */
-export function isSipInviteEnabled(state: Object): boolean {
+export function isSipInviteEnabled(state: IReduxState): boolean {
     const { sipInviteUrl } = state['features/base/config'];
 
     return isJwtFeatureEnabled(state, 'sip-outbound-call') && Boolean(sipInviteUrl);
@@ -473,7 +466,7 @@ export function searchDirectory( // eslint-disable-line max-params
         jwt: string,
         text: string,
         queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room' ]
-): Promise<Array<Object>> {
+): Promise<Array<{ type: string; }>> {
 
     const query = encodeURIComponent(text);
     const queryTypesString = encodeURIComponent(JSON.stringify(queryTypes));
@@ -502,14 +495,13 @@ export function searchDirectory( // eslint-disable-line max-params
  * Returns descriptive text that can be used to invite participants to a meeting
  * (share via mobile or use it for calendar event description).
  *
- * @param {Object} state - The current state.
+ * @param {IReduxState} state - The current state.
  * @param {string} inviteUrl - The conference/location URL.
  * @param {boolean} useHtml - Whether to return html text.
  * @returns {Promise<string>} A {@code Promise} resolving with a
  * descriptive text that can be used to invite participants to a meeting.
  */
-export function getShareInfoText(
-        state: Object, inviteUrl: string, useHtml: ?boolean): Promise<string> {
+export function getShareInfoText(state: IReduxState, inviteUrl: string, useHtml?: boolean): Promise<string> {
     let roomUrl = _decodeRoomURI(inviteUrl);
     const includeDialInfo = state['features/base/config'] !== undefined;
 
@@ -534,7 +526,7 @@ export function getShareInfoText(
             const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
                 = state['features/base/config'];
             const { locationURL = {} } = state['features/base/connection'];
-            const mucURL = hosts && hosts.muc;
+            const mucURL = hosts?.muc;
 
             if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
                 // URLs for fetching dial in numbers not defined
@@ -542,7 +534,7 @@ export function getShareInfoText(
             }
 
             numbersPromise = Promise.all([
-                getDialInNumbers(dialInNumbersUrl, room, mucURL),
+                getDialInNumbers(dialInNumbersUrl, room, mucURL), // @ts-ignore
                 getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL)
             ]).then(([ numbers, {
                 conference, id, message } ]) => {
@@ -592,16 +584,16 @@ export function getShareInfoText(
 /**
  * Generates the URL for the static dial in info page.
  *
- * @param {Object} state - The state from the Redux store.
+ * @param {IReduxState} state - The state from the Redux store.
  * @param {string?} roomName - The conference name. Optional name, if missing will be extracted from state.
  * @returns {string}
  */
-export function getDialInfoPageURL(state: Object, roomName: ?string) {
+export function getDialInfoPageURL(state: IReduxState, roomName?: string) {
     const { didPageUrl } = state['features/dynamic-branding'];
     const conferenceName = roomName ?? getRoomName(state);
     const { locationURL } = state['features/base/connection'];
-    const { href } = locationURL;
-    const room = _decodeRoomURI(conferenceName);
+    const { href = '' } = locationURL ?? {};
+    const room = _decodeRoomURI(conferenceName ?? '');
 
     const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 
@@ -615,7 +607,7 @@ export function getDialInfoPageURL(state: Object, roomName: ?string) {
  * @returns {string}
  */
 export function getDialInfoPageURLForURIString(
-        uri: ?string) {
+        uri?: string) {
     if (!uri) {
         return undefined;
     }
@@ -637,7 +629,7 @@ export function getDialInfoPageURLForURIString(
  * @param {Object} dialIn - Dial in information.
  * @returns {boolean}
  */
-export function shouldDisplayDialIn(dialIn: Object) {
+export function shouldDisplayDialIn(dialIn: any) {
     const { conferenceID, numbers, numbersEnabled } = dialIn;
     const phoneNumber = _getDefaultPhoneNumber(numbers);
 
@@ -656,7 +648,7 @@ export function shouldDisplayDialIn(dialIn: Object) {
  * @private
  * @returns {boolean}
  */
-export function hasMultipleNumbers(dialInNumbers: ?Object) {
+export function hasMultipleNumbers(dialInNumbers?: { numbers: Object; } | string[]) {
     if (!dialInNumbers) {
         return false;
     }
@@ -682,7 +674,7 @@ export function hasMultipleNumbers(dialInNumbers: ?Object) {
  * @returns {string|null}
  */
 export function _getDefaultPhoneNumber(
-        dialInNumbers: ?Object): ?string {
+        dialInNumbers?: { numbers: any; } | Array<{ default: string; formattedNumber: string; }>): string | null {
 
     if (!dialInNumbers) {
         return null;
@@ -743,22 +735,23 @@ export function _decodeRoomURI(url: string) {
 /**
  * Returns the stored conference id.
  *
- * @param {Object | Function} stateful - The Object or Function that can be
+ * @param {IStateful} stateful - The Object or Function that can be
  * resolved to a Redux state object with the toState function.
  * @returns {string}
  */
-export function getConferenceId(stateful: Object | Function) {
+export function getConferenceId(stateful: IStateful) {
     return toState(stateful)['features/invite'].conferenceID;
 }
 
 /**
  * Returns the default dial in number from the store.
  *
- * @param {Object | Function} stateful - The Object or Function that can be
+ * @param {IStateful} stateful - The Object or Function that can be
  * resolved to a Redux state object with the toState function.
  * @returns {string | null}
  */
-export function getDefaultDialInNumber(stateful: Object | Function) {
+export function getDefaultDialInNumber(stateful: IStateful) {
+    // @ts-ignore
     return _getDefaultPhoneNumber(toState(stateful)['features/invite'].numbers);
 }
 
@@ -831,14 +824,14 @@ export function isSharingEnabled(sharingFeature: string) {
  * @returns {Promise} - The promise created by the request.
  */
 export function inviteSipEndpoints( // eslint-disable-line max-params
-        inviteItems: Array<Object>,
+        inviteItems: Array<{ address: string; }>,
         locationURL: URL,
         sipInviteUrl: string,
         jwt: string,
         roomName: string,
         roomPassword: String,
         displayName: string
-): Promise<void> {
+): Promise<any> {
     if (inviteItems.length === 0) {
         return Promise.resolve();
     }
@@ -851,26 +844,26 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
     });
 
     return fetch(
-       sipInviteUrl,
-       {
-           body: JSON.stringify({
-               callParams: {
-                   callUrlInfo: {
-                       baseUrl,
-                       callName: roomName
-                   },
-                   passcode: roomPassword
-               },
-               sipClientParams: {
-                   displayName,
-                   sipAddress: inviteItems.map(item => item.address)
-               }
-           }),
-           method: 'POST',
-           headers: {
-               'Authorization': `Bearer ${jwt}`,
-               'Content-Type': 'application/json'
-           }
-       }
+        sipInviteUrl,
+        {
+            body: JSON.stringify({
+                callParams: {
+                    callUrlInfo: {
+                        baseUrl,
+                        callName: roomName
+                    },
+                    passcode: roomPassword
+                },
+                sipClientParams: {
+                    displayName,
+                    sipAddress: inviteItems.map(item => item.address)
+                }
+            }),
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            }
+        }
     );
 }
