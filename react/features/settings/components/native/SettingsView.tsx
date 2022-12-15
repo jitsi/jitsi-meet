@@ -30,6 +30,7 @@ import Input from '../../../base/ui/components/native/Input';
 import Switch from '../../../base/ui/components/native/Switch';
 // @ts-ignore
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
+// @ts-ignore
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
 import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions.native';
 
