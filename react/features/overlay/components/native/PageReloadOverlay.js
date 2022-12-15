@@ -1,15 +1,14 @@
 import React from 'react';
 
-import { appNavigate, reloadNow } from '../../../../app/actions';
-import { setFatalError, setPageReloadOverlayCanceled } from '../../../../overlay/actions';
+import { appNavigate, reloadNow } from '../../../app/actions';
+import { ConfirmDialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+import { setFatalError, setPageReloadOverlayCanceled } from '../../actions';
 import AbstractPageReloadOverlay, {
     type Props,
     abstractMapStateToProps
-} from '../../../../overlay/components/AbstractPageReloadOverlay';
-import { translate } from '../../../i18n/functions';
-import { connect } from '../../../redux/functions';
-
-import ConfirmDialog from './ConfirmDialog';
+} from '../AbstractPageReloadOverlay';
 
 
 /**
@@ -17,13 +16,13 @@ import ConfirmDialog from './ConfirmDialog';
  * conference is reloaded. Shows a warning message and counts down towards the
  * reload.
  */
-class PageReloadDialog extends AbstractPageReloadOverlay<Props> {
+class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
 
     /* eslint-disable-next-line no-undef */
     _interval: IntervalID;
 
     /**
-     * Initializes a new PageReloadDialog instance.
+     * Initializes a new PageReloadOverlay instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -89,4 +88,4 @@ class PageReloadDialog extends AbstractPageReloadOverlay<Props> {
     }
 }
 
-export default translate(connect(abstractMapStateToProps)(PageReloadDialog));
+export default translate(connect(abstractMapStateToProps)(PageReloadOverlay));

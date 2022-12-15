@@ -1,5 +1,5 @@
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import GlobalStyles from '../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web';
@@ -31,9 +31,9 @@ export class App extends AbstractApp {
      */
     _createExtraElement() {
         return (
-            <>
+            <Fragment>
                 <OverlayContainer />
-            </>
+            </Fragment>
         );
     }
 

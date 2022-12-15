@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { NativeModules, Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
@@ -158,7 +158,11 @@ export class App extends AbstractApp {
      * @protected
      */
     _createExtraElement() {
-        return null;
+        return (
+            <Fragment>
+                { super._createExtraElement() }
+            </Fragment>
+        );
     }
 
     /**

@@ -5,7 +5,7 @@ export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as DialogContainer } from './DialogContainer';
 export { default as AlertDialog } from './AlertDialog';
 export { default as InputDialog } from './InputDialog';
-export { default as PageReloadDialog } from './PageReloadDialog';
+export { default as PageReloadDialog } from '../../../../overlay/components/native/PageReloadOverlay';
 
 // NOTE: Some dialogs reuse the style of these base classes for consistency
 // and as we're in a /native namespace, it's safe to export the styles.
