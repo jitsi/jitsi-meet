@@ -2,7 +2,8 @@ $sidePanelWidth: 300px;
 
 .prejoin-third-party {
   flex-direction: column-reverse;
-  
+  z-index: auto;
+
   .content {
       height: auto;
       margin: 0 auto;
