@@ -12,7 +12,8 @@ import {
     Text,
     View
 } from 'react-native';
-import { Button, Divider } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
+
 
 import { getDefaultURL } from '../../../app/functions.native';
 import { IReduxState } from '../../../app/types';
@@ -24,9 +25,11 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
+import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import Switch from '../../../base/ui/components/native/Switch';
 // @ts-ignore
+import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
 import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions.native';
 
@@ -370,25 +373,22 @@ class SettingsView extends Component<IProps, IState> {
                     <FormSectionAccordion
                         label = 'settingsView.links'>
                         <Button
-                            mode = 'contained'
-                            onPress = { this._onShowHelpPressed }
-                            style = { styles.sectionLink }>
-                            <Text style = { styles.sectionLinkText }>{ t('settingsView.help') }</Text>
-                        </Button>
+                            accessibilityLabel = 'settingsView.help'
+                            labelKey = 'settingsView.help'
+                            onClick = { this._onShowHelpPressed }
+                            type = { BUTTON_TYPES.TERTIARY } />
                         <Divider style = { styles.fieldSeparator } />
                         <Button
-                            mode = 'contained'
-                            onPress = { this._onShowTermsPressed }
-                            style = { styles.sectionLink }>
-                            <Text style = { styles.sectionLinkText }>{ t('settingsView.terms') }</Text>
-                        </Button>
+                            accessibilityLabel = 'settingsView.terms'
+                            labelKey = 'settingsView.terms'
+                            onClick = { this._onShowTermsPressed }
+                            type = { BUTTON_TYPES.TERTIARY } />
                         <Divider style = { styles.fieldSeparator } />
                         <Button
-                            mode = 'contained'
-                            onPress = { this._onShowPrivacyPressed }
-                            style = { styles.sectionLink }>
-                            <Text style = { styles.sectionLinkText }>{ t('settingsView.privacy') }</Text>
-                        </Button>
+                            accessibilityLabel = 'settingsView.privacy'
+                            labelKey = 'settingsView.privacy'
+                            onClick = { this._onShowPrivacyPressed }
+                            type = { BUTTON_TYPES.TERTIARY } />
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         label = 'settingsView.buildInfoSection'>
