@@ -5,6 +5,7 @@ local log = module._log;
 local host = module.host;
 local st = require "util.stanza";
 local um_is_admin = require "core.usermanager".is_admin;
+local jid_split = require "util.jid".split;
 
 
 local function is_admin(jid)
@@ -39,8 +40,11 @@ log("debug",
 
 -- option to disable room modification (sending muc config form) for guest that do not provide token
 local require_token_for_moderation;
+-- option to not require tokens for certain users and domains
+local token_empty_allow_list;
 local function load_config()
     require_token_for_moderation = module:get_option_boolean("token_verification_require_token_for_moderation");
+    token_empty_allow_list = module:get_option_set("token_verification_empty_allow_list");
 end
 load_config();
 
@@ -56,6 +60,19 @@ local function verify_user(session, stanza)
 		log("debug", "Token not required from admin user: %s", user_jid);
 		return true;
 	end
+
+    -- if token is empty and user matches allow list, skip verification and allow user to join
+    local user, domain, res = jid_split(user_jid);
+    if session.auth_token == nil and user ~= nil and domain ~= nil and token_empty_allow_list then
+        if token_empty_allow_list:contains(domain) then
+            log("debug", "Token not required from user: %s in allowed domain: %s", user_jid, domain);
+            return true;
+        end
+        if token_empty_allow_list:contains(user..'@'..domain) then
+            log("debug", "Token not required from user in allowed list: %s", user_jid);
+            return true;
+        end
+    end
 
     log("debug",
         "Will verify token for user: %s, room: %s ", user_jid, stanza.attr.to);
