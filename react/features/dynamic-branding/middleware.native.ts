@@ -32,10 +32,13 @@ MiddlewareRegistry.register(store => next => action => {
             inviteDomain
         };
 
-        // TODO: implement support for gradients.
-        action.value.avatarBackgrounds = avatarBackgrounds.filter(
-            (color: string) => !color.includes('linear-gradient')
-        );
+        // The backend may send an empty string, make sure we skip that.
+        if (Array.isArray(avatarBackgrounds)) {
+            // TODO: implement support for gradients.
+            action.value.avatarBackgrounds = avatarBackgrounds.filter(
+                (color: string) => !color.includes('linear-gradient')
+            );
+        }
 
         break;
     }
