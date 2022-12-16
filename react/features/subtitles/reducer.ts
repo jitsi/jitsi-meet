@@ -2,7 +2,7 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     REMOVE_TRANSCRIPT_MESSAGE,
-    SET_REQUESTING_SUBTITLES, UPDATE_TRANSCRIPT_MESSAGE, UPDATE_TRANSLATION_LANGUAGE
+    SET_REQUESTING_SUBTITLES, UPDATE_TRANSCRIPT_MESSAGE, UPDATE_TRANSLATION_LANGUAGE, UPDATE_TRANSCRIPTION_LANGUAGE
 } from './actionTypes';
 
 /**
@@ -11,11 +11,13 @@ import {
 const defaultState = {
     _transcriptMessages: new Map(),
     _requestingSubtitles: false,
-    _language: 'transcribing.subtitlesOff'
+    _translationLanguage: 'transcribing.subtitlesOff',
+    _transcriptionLanguage: 'transcribing.subtitlesOff'
 };
 
 export interface ISubtitlesState {
-    _language: string;
+    _translationLanguage: string;
+    _transcriptionLanguage: string;
     _requestingSubtitles: boolean;
     _transcriptMessages: Map<string, Object>;
 }
@@ -34,7 +36,12 @@ ReducerRegistry.register<ISubtitlesState>('features/subtitles', (
     case UPDATE_TRANSLATION_LANGUAGE:
         return {
             ...state,
-            _language: action.value
+            _translationLanguage: action.value
+        };
+    case UPDATE_TRANSCRIPTION_LANGUAGE:
+        return {
+            ...state,
+            _transcriptionLanguage: action.value
         };
     case SET_REQUESTING_SUBTITLES:
         return {

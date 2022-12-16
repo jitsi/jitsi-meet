@@ -47,6 +47,17 @@ export const UPDATE_TRANSCRIPT_MESSAGE = 'UPDATE_TRANSCRIPT_MESSAGE';
 export const UPDATE_TRANSLATION_LANGUAGE = 'UPDATE_TRANSLATION_LANGUAGE';
 
 /**
+ * The type of (redux) action which indicates that a transcript with an
+ * given message_id to be added or updated is received.
+ *
+ * {
+ *      type: UPDATE_TRANSCRIPTION_LANGUAGE,
+ *      value: string,
+ * }
+ */
+ export const UPDATE_TRANSCRIPTION_LANGUAGE = 'UPDATE_TRANSCRIPTION_LANGUAGE';
+ 
+/**
  * The type of (redux) action which indicates that the user pressed the
  * ClosedCaption button, to either enable or disable subtitles based on the
  * current state.

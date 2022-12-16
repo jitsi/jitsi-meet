@@ -9,19 +9,24 @@ import { IReduxState } from '../../app/types';
 // @ts-ignore
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { translate, translateToHTML } from '../../base/i18n/functions';
+import { isLocalParticipantModerator } from '../../base/participants/functions';
 import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 import { openSettingsDialog } from '../../settings/actions';
 import { SETTINGS_TABS } from '../../settings/constants';
-import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage } from '../actions';
+import { setRequestingSubtitles, toggleLanguageSelectorDialog, updateTranslationLanguage, updateTranscriptionLanguage } from '../actions';
+import { REMOVE_AFTER_MS } from '../middleware';
 
 import LanguageList from './LanguageList.web';
 
 
 interface ILanguageSelectorDialogProps extends WithTranslation {
     _language: string;
+    _transcriptionLanguage: string;
     _translationLanguages: Array<string>;
     _translationLanguagesHead: Array<string>;
+    _moderator: boolean;
+    _autoRecognition: boolean;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -51,8 +56,11 @@ const useStyles = makeStyles()(theme => {
 const LanguageSelectorDialog = ({
     t,
     _language,
+    _transcriptionLanguage,
     _translationLanguages,
-    _translationLanguagesHead
+    _translationLanguagesHead,
+    _moderator,
+    _autoRecognition
 }: ILanguageSelectorDialogProps) => {
     const { classes: styles } = useStyles();
     const dispatch = useDispatch();
@@ -82,12 +90,26 @@ const LanguageSelectorDialog = ({
 
     useEffect(() => {
         _language ? setLanguage(_language) : setLanguage(off);
+        if (_autoRecognition) {
+            dispatch(updateTranscriptionLanguage(i18next.language));
+        }
     }, []);
 
     const onLanguageSelected = useCallback((e: string) => {
         setLanguage(e);
-        dispatch(updateTranslationLanguage(e));
-        dispatch(setRequestingSubtitles(e !== off));
+        if (!_autoRecognition && _moderator) {
+            if (e !== _language) {
+                dispatch(setRequestingSubtitles(false));
+                dispatch(updateTranscriptionLanguage(e));
+                dispatch(updateTranslationLanguage(e));
+            }
+            setTimeout(() => {
+                dispatch(setRequestingSubtitles(e !== off));
+            }, REMOVE_AFTER_MS);
+        } else {
+            dispatch(updateTranslationLanguage(e)); 
+            dispatch(setRequestingSubtitles(e !== off)); 
+        }
         dispatch(toggleLanguageSelectorDialog());
     }, [ _language ]);
 
@@ -103,12 +125,14 @@ const LanguageSelectorDialog = ({
             <p className = { styles.paragraphWrapper } >
                 {
                     translateToHTML(t, 'transcribing.sourceLanguageDesc', {
-                        'sourceLanguage': t(`languages:${i18next.language}`).toLowerCase()
+                        'sourceLanguage': t(`languages:${t(_autoRecognition? i18next.language: _transcriptionLanguage)}`).toLowerCase()
                     })
-                }<span
-                    className = { styles.spanWrapper }
-                    onClick = { onSourceLanguageClick }>{t('transcribing.sourceLanguageHere')}.</span>
+                }
+                {_autoRecognition ? <span
+                className = { styles.spanWrapper }
+                onClick = { onSourceLanguageClick }>{t('transcribing.sourceLanguageHere')}.</span>: ""}
             </p>
+
             <LanguageList
                 items = { listItems }
                 onLanguageSelected = { onLanguageSelected }
@@ -127,17 +151,23 @@ const LanguageSelectorDialog = ({
  */
 function mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
-    const { _language } = state['features/subtitles'];
+    const { _translationLanguage, _transcriptionLanguage } = state['features/subtitles'];
     const { transcription } = state['features/base/config'];
 
     const languages = transcription?.translationLanguages ?? TRANSLATION_LANGUAGES;
     const languagesHead = transcription?.translationLanguagesHead ?? TRANSLATION_LANGUAGES_HEAD;
+    const autoRecognition = transcription?.autoRecognition ?? true;
+
+    const _moderator = isLocalParticipantModerator(state);
 
     return {
         _conference: conference,
-        _language,
+        _language: (!autoRecognition && _moderator) ? _transcriptionLanguage : _translationLanguage,
+        _transcriptionLanguage,
         _translationLanguages: languages,
-        _translationLanguagesHead: languagesHead
+        _translationLanguagesHead: languagesHead,
+        _moderator,
+        _autoRecognition: autoRecognition
     };
 }
 

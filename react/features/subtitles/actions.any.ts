@@ -3,6 +3,7 @@ import {
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES,
+    UPDATE_TRANSCRIPTION_LANGUAGE,
     UPDATE_TRANSCRIPT_MESSAGE,
     UPDATE_TRANSLATION_LANGUAGE
 } from './actionTypes';
@@ -105,4 +106,20 @@ export function updateTranslationLanguage(value: string) {
         type: UPDATE_TRANSLATION_LANGUAGE,
         value
     };
+}
+
+/**
+ * Signals that the local user has selected language for the transccription.
+ *
+ * @param {string} transcriptionLanguage - The selected language for transcription.
+ * @returns {{
+*      type: UPDATE_TRANSCRIPTION_LANGUAGE,
+*      value: string
+* }}
+*/
+export function updateTranscriptionLanguage(value: string) {
+   return {
+       type: UPDATE_TRANSCRIPTION_LANGUAGE,
+       value
+   };
 }

@@ -4,7 +4,7 @@ import {
     PARTICIPANT_UPDATED
 } from '../base/participants/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { toggleRequestingSubtitles } from '../subtitles/actions.any';
+import { toggleRequestingSubtitles, updateTranscriptionLanguage } from '../subtitles/actions.any';
 
 import {
     _TRANSCRIBER_JOINED,
@@ -17,6 +17,9 @@ import {
     transcriberJoined,
     transcriberLeft
 } from './actions';
+import { P_NAME_TRANSCRIPTION_LANGUAGE } from '../subtitles/middleware';
+import { BCP47_TO_JITSI_MAP } from './functions';
+import JITSI_TO_BCP47_MAP from './jitsi-bcp47-map.json';
 
 const TRANSCRIBER_DISPLAY_NAME = 'Transcriber';
 
@@ -74,9 +77,20 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const { transcription } = state['features/base/config'];
         const { _requestingSubtitles } = state['features/subtitles'];
+        const { conference } = state['features/base/conference'];
 
         if (!_requestingSubtitles && !transcription?.disableStartForAll) {
             store.dispatch(toggleRequestingSubtitles());
+            if (transcription?.autoRecognition) {
+                conference?.getParticipants().forEach(participant => {
+                    if (participant._role === "moderator") {
+                        store.dispatch(updateTranscriptionLanguage(BCP47_TO_JITSI_MAP(JITSI_TO_BCP47_MAP)[participant._properties?.transcription_language]));
+                        conference?.setLocalParticipantProperty(
+                            P_NAME_TRANSCRIPTION_LANGUAGE,
+                            participant._properties?.transcription_language);
+                    }
+                })
+            }
         }
         break;
     }

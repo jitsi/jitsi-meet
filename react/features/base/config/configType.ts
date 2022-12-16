@@ -479,6 +479,7 @@ export interface IConfig {
         autoCaptionOnRecord?: boolean;
         disableStartForAll?: boolean;
         enabled?: boolean;
+        autoRecognition?: boolean;
         preferredLanguage?: string;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;

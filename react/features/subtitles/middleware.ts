@@ -13,6 +13,8 @@ import {
     updateTranscriptMessage
 } from './actions';
 import logger from './logger';
+import JITSI_TO_BCP47_MAP from '../transcribing/jitsi-bcp47-map.json';
+import { formatTranscriptionLanguage } from '../transcribing/functions';
 
 /**
  * The type of json-message which indicates that json carries a
@@ -30,18 +32,24 @@ const JSON_TYPE_TRANSLATION_RESULT = 'translation-result';
  * The local participant property which is used to set whether the local
  * participant wants to have a transcriber in the room.
  */
-const P_NAME_REQUESTING_TRANSCRIPTION = 'requestingTranscription';
+export const P_NAME_REQUESTING_TRANSCRIPTION = 'requestingTranscription';
+
+/**
+ * The local participant property which is used to store the language
+ * preference for transcription for a participant.
+ */
+export const P_NAME_TRANSCRIPTION_LANGUAGE = 'transcription_language';
 
 /**
  * The local participant property which is used to store the language
  * preference for translation for a participant.
  */
-const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
+export const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
 
 /**
 * Time after which the rendered subtitles will be removed.
 */
-const REMOVE_AFTER_MS = 3000;
+export const REMOVE_AFTER_MS = 3000;
 
 /**
  * Middleware that catches actions related to transcript messages to be rendered
@@ -95,6 +103,12 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
         = state['features/base/conference'].conference
             ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
 
+    const transcriptionLanguage 
+        = state['features/base/conference'].conference
+            ?.getLocalParticipantProperty(P_NAME_TRANSCRIPTION_LANGUAGE);
+    
+    console.log(json.type, json.language, transcriptionLanguage, translationLanguage);
+
     try {
         const transcriptMessageID = json.message_id;
         const participantName = json.participant.name;
@@ -116,7 +130,7 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
                 newTranscriptMessage));
 
         } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
-                && json.language.slice(0, 2) === translationLanguage) {
+                && JITSI_TO_BCP47_MAP[json.language] === transcriptionLanguage) {
             // Displays interim and final results without any translation if
             // translations are disabled.
 
@@ -175,10 +189,10 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
  */
 function _requestingSubtitlesChange({ getState }: IStore) {
     const state = getState();
-    const { _language } = state['features/subtitles'];
+    const { _translationLanguage, _transcriptionLanguage } = state['features/subtitles'];
     const { conference } = state['features/base/conference'];
 
-    const requestingSubtitles = _language !== 'transcribing.subtitlesOff';
+    const requestingSubtitles = _transcriptionLanguage !== 'transcribing.subtitlesOff' && _translationLanguage !== 'transcribing.subtitlesOff' ;
 
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
@@ -187,7 +201,10 @@ function _requestingSubtitlesChange({ getState }: IStore) {
     if (requestingSubtitles) {
         conference?.setLocalParticipantProperty(
             P_NAME_TRANSLATION_LANGUAGE,
-            _language.replace('translation-languages:', ''));
+            _translationLanguage.replace('translation-languages:', ''));
+        conference?.setLocalParticipantProperty(
+            P_NAME_TRANSCRIPTION_LANGUAGE,
+            formatTranscriptionLanguage(_transcriptionLanguage));
     }
 }
 
