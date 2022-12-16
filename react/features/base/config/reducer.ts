@@ -48,16 +48,18 @@ const INITIAL_RN_STATE: IConfig = {
     // fastest to merely disable them.
     disableAudioLevels: true,
 
+    // FIXME: Mobile codecs should probably be configurable separately, rather
+    // than requiring this override here...
+
     p2p: {
         // Temporarily disable P2P on Android while we sort out some (codec?) issues.
         ...(Platform.OS === 'android' ? { enabled: false } : {}), // eslint-disable-line no-extra-parens
+        disabledCodec: 'vp9',
         preferredCodec: 'h264'
     },
 
     videoQuality: {
-        // FIXME: Mobile codecs should probably be configurable separately, rather
-        // than requiring this override here...
-        enforcePreferredCodec: true,
+        disabledCodec: 'vp9',
         preferredCodec: 'vp8'
     }
 };
