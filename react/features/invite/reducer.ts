@@ -26,7 +26,9 @@ const DEFAULT_STATE = {
 export interface IInviteState {
     calleeInfoVisible?: boolean;
     conferenceID?: string | number;
-    error?: Error;
+    error?: {
+        status: number;
+    };
     initialCalleeInfo?: Object;
     numbers?: string[];
     numbersEnabled: boolean;
@@ -73,6 +75,7 @@ ReducerRegistry.register<IInviteState>('features/invite', (state = DEFAULT_STATE
             return {
                 ...state,
                 conferenceID: action.conferenceID,
+                error: undefined,
                 numbers: action.dialInNumbers,
                 sipUri: action.sipUri,
                 numbersEnabled: true,
@@ -88,6 +91,7 @@ ReducerRegistry.register<IInviteState>('features/invite', (state = DEFAULT_STATE
         return {
             ...state,
             conferenceID: action.conferenceID,
+            error: undefined,
             numbers: action.dialInNumbers,
             numbersEnabled,
             numbersFetched: true

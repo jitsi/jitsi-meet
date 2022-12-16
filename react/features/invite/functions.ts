@@ -9,7 +9,11 @@ import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { parseURLParams } from '../base/util/parseURLParams';
-import { appendURLParam, parseURIString } from '../base/util/uri';
+import {
+    StatusCode,
+    appendURLParam,
+    parseURIString
+} from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
 import { getActiveSession } from '../recording/functions';
 
@@ -17,7 +21,8 @@ import { getDialInConferenceID, getDialInNumbers } from './_utils';
 import {
     DIAL_IN_INFO_PAGE_PATH_NAME,
     INVITE_TYPES,
-    SIP_ADDRESS_REGEX
+    SIP_ADDRESS_REGEX,
+    UPGRADE_OPTIONS_TEXT
 } from './constants';
 import logger from './logger';
 
@@ -514,6 +519,7 @@ export function getShareInfoText(state: IReduxState, inviteUrl: string, useHtml?
     if (includeDialInfo) {
         const { room } = parseURIString(inviteUrl);
         let numbersPromise;
+        let hasPaymentError = false;
 
         if (state['features/invite'].numbers
             && state['features/invite'].conferenceID) {
@@ -560,9 +566,19 @@ export function getShareInfoText(state: IReduxState, inviteUrl: string, useHtml?
                     i18next.t('info.dialInConferenceID')} ${
                     conferenceID}#\n\n`;
             })
-            .catch(error =>
-                logger.error('Error fetching numbers or conferenceID', error))
+            .catch(error => {
+                logger.error('Error fetching numbers or conferenceID', error);
+                hasPaymentError = error?.status === StatusCode.PaymentRequired;
+            })
             .then(defaultDialInNumber => {
+                if (hasPaymentError) {
+                    infoText += `${
+                        i18next.t('info.dialInNumber')} ${i18next.t('info.reachedLimit')} ${
+                        i18next.t('info.upgradeOptions')} ${UPGRADE_OPTIONS_TEXT}`;
+
+                    return infoText;
+                }
+
                 let dialInfoPageUrl = getDialInfoPageURL(state, room);
 
                 if (useHtml) {
