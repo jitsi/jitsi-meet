@@ -442,9 +442,6 @@
         "noResults": "Não foram encontrados resultados :(",
         "search": "Procurar no GIPHY"
     },
-    "helpView": {
-        "title": "Centro de ajuda"
-    },
     "incomingCall": {
         "answer": "Responder",
         "audioCallTitle": "Chamada recebida",
@@ -863,9 +860,6 @@
         "invited": "Convidar",
         "rejected": "Rejeitado",
         "ringing": "Tocando..."
-    },
-    "privacyView": {
-        "title": "Privacidade"
     },
     "profile": {
         "avatar": "avatar",
