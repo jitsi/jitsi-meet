@@ -1,11 +1,11 @@
 /* eslint-disable lines-around-comment  */
 
-import { Link } from '@react-navigation/native';
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import {
     Alert,
+    Linking,
     NativeModules,
     Platform,
     ScrollView,
@@ -13,6 +13,7 @@ import {
     View
 } from 'react-native';
 import { Divider } from 'react-native-paper';
+
 
 import { getDefaultURL } from '../../../app/functions.native';
 import { IReduxState } from '../../../app/types';
@@ -24,10 +25,11 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
+import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import Switch from '../../../base/ui/components/native/Switch';
 // @ts-ignore
-import { screen } from '../../../mobile/navigation/routes';
+import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 // @ts-ignore
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
 import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions.native';
@@ -44,6 +46,18 @@ import styles from './styles';
  */
 const { AppInfo } = NativeModules;
 
+/**
+ * The URL at which the terms (of service/use) are available to the user.
+ */
+const TERMS_URL = 'https://jitsi.org/meet/terms';
+
+/**
+ * The URL at which the privacy policy is available to the user.
+ */
+const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+
+
+const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
 
 interface IState {
 
@@ -103,6 +117,13 @@ interface IState {
  * {@link SettingsView}.
  */
 interface IProps extends WithTranslation {
+
+    /**
+     * The URL for when the help link.
+     *
+     * @protected
+     */
+    _helpCentreUrl: string;
 
     /**
      * The ID of the local participant.
@@ -225,6 +246,9 @@ class SettingsView extends Component<IProps, IState> {
         this._onStartVideoMutedChange
             = this._onStartVideoMutedChange.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
+        this._onShowHelpPressed = this._onShowHelpPressed.bind(this);
+        this._onShowPrivacyPressed = this._onShowPrivacyPressed.bind(this);
+        this._onShowTermsPressed = this._onShowTermsPressed.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
     }
 
@@ -349,26 +373,23 @@ class SettingsView extends Component<IProps, IState> {
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         label = 'settingsView.links'>
-                        <Link
-                            style = { styles.sectionLink }
-                            // @ts-ignore
-                            to = {{ screen: screen.settings.links.help }}>
-                            { t('settingsView.help') }
-                        </Link>
+                        <Button
+                            accessibilityLabel = 'settingsView.help'
+                            labelKey = 'settingsView.help'
+                            onClick = { this._onShowHelpPressed }
+                            type = { BUTTON_TYPES.TERTIARY } />
                         <Divider style = { styles.fieldSeparator } />
-                        <Link
-                            style = { styles.sectionLink }
-                            // @ts-ignore
-                            to = {{ screen: screen.settings.links.terms }}>
-                            { t('settingsView.terms') }
-                        </Link>
+                        <Button
+                            accessibilityLabel = 'settingsView.terms'
+                            labelKey = 'settingsView.terms'
+                            onClick = { this._onShowTermsPressed }
+                            type = { BUTTON_TYPES.TERTIARY } />
                         <Divider style = { styles.fieldSeparator } />
-                        <Link
-                            style = { styles.sectionLink }
-                            // @ts-ignore
-                            to = {{ screen: screen.settings.links.privacy }}>
-                            { t('settingsView.privacy') }
-                        </Link>
+                        <Button
+                            accessibilityLabel = 'settingsView.privacy'
+                            labelKey = 'settingsView.privacy'
+                            onClick = { this._onShowPrivacyPressed }
+                            type = { BUTTON_TYPES.TERTIARY } />
                     </FormSectionAccordion>
                     <FormSectionAccordion
                         label = 'settingsView.buildInfoSection'>
@@ -669,6 +690,33 @@ class SettingsView extends Component<IProps, IState> {
     }
 
     /**
+     * Opens the help url into the browser.
+     *
+     * @returns {void}
+     */
+    _onShowHelpPressed() {
+        Linking.openURL(this.props._helpCentreUrl);
+    }
+
+    /**
+     * Opens the privacy url into the browser.
+     *
+     * @returns {void}
+     */
+    _onShowPrivacyPressed() {
+        Linking.openURL(PRIVACY_URL);
+    }
+
+    /**
+     * Opens the terms url into the browser.
+     *
+     * @returns {void}
+     */
+    _onShowTermsPressed() {
+        Linking.openURL(TERMS_URL);
+    }
+
+    /**
      * Shows an alert warning the user about disabling crash reporting.
      *
      * @returns {void}
@@ -732,6 +780,7 @@ function _mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
 
     return {
+        _helpCentreUrl: state['features/base/config'].helpCentreURL || DEFAULT_HELP_CENTRE_URL,
         _localParticipantId: localParticipant?.id,
         _serverURL: getDefaultURL(state),
         _serverURLChangeEnabled: isServerURLChangeEnabled(state),

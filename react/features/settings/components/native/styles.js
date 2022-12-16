@@ -109,23 +109,6 @@ export default {
         fontSize: 14
     },
 
-    sectionLink: {
-        ...BaseTheme.typography.bodyShortBoldLarge,
-        color: BaseTheme.palette.link01,
-        margin: BaseTheme.spacing[3],
-        textAlign: 'center'
-    },
-
-    sectionLinkContainer: {
-        margin: BaseTheme.spacing[3]
-    },
-
-    sectionLinkText: {
-        ...BaseTheme.typography.bodyShortBoldLarge,
-        color: BaseTheme.palette.link01,
-        textAlign: 'center'
-    },
-
     /**
      * Global {@code Text} color for the components.
      */
