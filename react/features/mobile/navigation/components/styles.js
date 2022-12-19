@@ -28,19 +28,17 @@ const unreadCounterDescription = {
 export const navigationStyles = {
 
     closeScreenContainer: {
+        alignItems: 'center',
         backgroundColor: BaseTheme.palette.uiBackground,
-        flex: 1
+        display: 'flex',
+        flex: 1,
+        flexDirection: 'row',
+        padding: BaseTheme.spacing[2]
     },
 
     credit: {
         alignItems: 'center',
-        display: 'flex',
-        flexDirection: 'row',
-        height: 56,
-        justifyContent: 'center',
-        marginBottom: BaseTheme.spacing[0],
-        paddingBottom: BaseTheme.spacing[4],
-        width: '100%'
+        flexDirection: 'row'
     },
 
     creditText: {
@@ -48,8 +46,9 @@ export const navigationStyles = {
         fontWeight: 'bold'
     },
 
-    creditImage: {
-
+    anotherMeetingButton: {
+        alignSelf: 'flex-end',
+        width: 204
     },
 
     connectingScreenContainer: {
