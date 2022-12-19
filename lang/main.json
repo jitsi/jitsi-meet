@@ -1042,6 +1042,7 @@
         "speakerTime": "Speaker Time",
         "surprised": "Surprised"
     },
+    "startAnotherMeeting": "Start another meeting",
     "startupoverlay": {
         "genericTitle": "The meeting needs to use your microphone and camera.",
         "policyText": " ",
