@@ -2,15 +2,15 @@
 
 import _ from 'lodash';
 
-import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { appNavigate } from '../../app/actions';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
-import { AbstractHangupButton } from '../../base/toolbox/components';
-import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { isClosePageEnabled } from '../../mobile/navigation/functions';
-import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
-import { screen } from '../../mobile/navigation/routes';
+import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { appNavigate } from '../../../app/actions';
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
+import { AbstractHangupButton } from '../../../base/toolbox/components';
+import type { AbstractButtonProps } from '../../../base/toolbox/components';
+import { isClosePageEnabled } from '../../../mobile/navigation/functions';
+import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 
 
 /**

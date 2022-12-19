@@ -112,7 +112,7 @@ import { getJwtDisabledButtons } from '../../functions.any';
 // @ts-ignore
 import DownloadButton from '../DownloadButton';
 // @ts-ignore
-import HangupButton from '../HangupButton';
+import HangupButton from '../web/HangupButton';
 // @ts-ignore
 import HelpButton from '../HelpButton';
 
