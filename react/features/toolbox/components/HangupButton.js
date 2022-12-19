@@ -3,16 +3,25 @@
 import _ from 'lodash';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { leaveConference } from '../../base/conference/actions';
+import { appNavigate } from '../../app/actions';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
+import { isClosePageEnabled } from '../../mobile/navigation/functions';
+import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
+import { screen } from '../../mobile/navigation/routes';
+
 
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
  */
 type Props = AbstractButtonProps & {
+
+    /**
+     * Is close page available?
+     */
+    isClosePageAvailable: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -42,8 +51,10 @@ class HangupButton extends AbstractHangupButton<Props, *> {
         super(props);
 
         this._hangup = _.once(() => {
+            const { dispatch } = this.props;
+
             sendAnalytics(createToolbarEvent('hangup'));
-            this.props.dispatch(leaveConference());
+            dispatch(appNavigate(undefined));
         });
     }
 
@@ -55,8 +66,26 @@ class HangupButton extends AbstractHangupButton<Props, *> {
      * @returns {void}
      */
     _doHangup() {
+        const { isClosePageAvailable } = this.props;
+
         this._hangup();
+
+        if (isClosePageAvailable) {
+            navigateRoot(screen.close);
+        }
     }
 }
 
-export default translate(connect()(HangupButton));
+/**
+ * Maps redux state to component props.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {Object}
+ */
+function mapStateToProps(state) {
+    return {
+        isClosePageAvailable: isClosePageEnabled(state)
+    };
+}
+
+export default translate(connect(mapStateToProps)(HangupButton));

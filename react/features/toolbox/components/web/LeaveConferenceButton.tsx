@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { leaveConference } from '../../../base/conference/actions';
+import { disconnect } from '../../../base/connection/actions.web';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 
 import { HangupContextMenuItem } from './HangupContextMenuItem';
@@ -39,7 +39,7 @@ export const LeaveConferenceButton = (props: Props) => {
 
     const onLeaveConference = useCallback(() => {
         sendAnalytics(createToolbarEvent('hangup'));
-        dispatch(leaveConference());
+        dispatch(disconnect());
     }, [ dispatch ]);
 
     return (
