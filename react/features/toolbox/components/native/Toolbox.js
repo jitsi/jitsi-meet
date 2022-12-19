@@ -14,8 +14,8 @@ import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { TileViewButton } from '../../../video-layout';
 import { getMovableButtons, isToolboxVisible } from '../../functions.native';
 import AudioMuteButton from '../AudioMuteButton';
-import HangupButton from '../native/HangupButton';
 import VideoMuteButton from '../VideoMuteButton';
+import HangupButton from '../native/HangupButton';
 
 import HangupMenuButton from './HangupMenuButton';
 import OverflowMenuButton from './OverflowMenuButton';
