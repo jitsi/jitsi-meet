@@ -253,7 +253,7 @@ export function getConferenceOptions(stateful: IStateful) {
 }
 
 /**
- * Override the global config (i.e. window.config) with XMPP configuration required to join as a visitor.
+ * Override the global config (that is, window.config) with XMPP configuration required to join as a visitor.
  *
  * @param {IStateful} stateful - The redux store state.
  * @param {Array<string>} params - The received parameters.
