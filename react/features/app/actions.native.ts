@@ -22,7 +22,7 @@ import {
     toURLString
 } from '../base/util/uri';
 // @ts-ignore
-import { isClosePageEnabled, isPrejoinPageEnabled } from '../mobile/navigation/functions';
+import { isPrejoinPageEnabled } from '../mobile/navigation/functions';
 import {
     goBackToRoot,
     navigateRoot
@@ -151,8 +151,6 @@ export function appNavigate(uri?: string) {
                 dispatch(connect());
                 navigateRoot(screen.conference.root);
             }
-        } else if (isClosePageEnabled(getState())) {
-            navigateRoot(screen.close);
         } else {
             goBackToRoot(getState(), dispatch);
         }
