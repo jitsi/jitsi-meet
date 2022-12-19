@@ -435,6 +435,15 @@ export function trackAdded(track: any) {
             isReceivingData = true;
         }
 
+        if(!track.isLocal()){
+            track.setMute(true);
+            track.getTrack().enabled = false;
+            track.getTrack().stop();
+            console.log("Remote track:", track)
+        } else {
+            console.log("Local track:", track)
+        }
+
         return dispatch({
             type: TRACK_ADDED,
             track: {
@@ -470,6 +479,15 @@ export function trackMutedChanged(track: any): {
     };
     type: 'TRACK_UPDATED';
 } {
+    if(!track.isLocal()){
+        return {
+            type: TRACK_UPDATED,
+            track: {
+                jitsiTrack: track,
+                muted: true
+            }
+        };
+    }
     return {
         type: TRACK_UPDATED,
         track: {
@@ -612,6 +630,11 @@ export function trackStreamingStatusChanged(track: any, streamingStatus: string)
     };
     type: 'TRACK_UPDATED';
 } {
+    if(!track.isLocal()){
+        track.setMute(true);
+        track.getTrack().enabled = false;
+        track.getTrack().stop();
+    }
     return {
         type: TRACK_UPDATED,
         track: {
