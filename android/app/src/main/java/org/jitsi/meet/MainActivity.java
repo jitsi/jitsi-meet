@@ -151,7 +151,7 @@ public class MainActivity extends JitsiMeetActivity {
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
             .setServerURL(buildURL(defaultURL))
-            .setFeatureFlag("welcomepage.enabled", true)
+            .setFeatureFlag("welcome-page.enabled", true)
             .setFeatureFlag("call-integration.enabled", false)
             .setFeatureFlag("resolution", 360)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)

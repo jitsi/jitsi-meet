@@ -34,7 +34,7 @@
     jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
-        [builder setFeatureFlag:@"welcomepage.enabled" withBoolean:YES];
+        [builder setFeatureFlag:@"welcome-page.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"resolution" withValue:@(360)];
         [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
@@ -126,7 +126,7 @@
 
 - (UIInterfaceOrientationMask)application:(UIApplication *)application
   supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-    return [[JitsiMeet sharedInstance] application:application 
+    return [[JitsiMeet sharedInstance] application:application
            supportedInterfaceOrientationsForWindow:window];
 }
 
