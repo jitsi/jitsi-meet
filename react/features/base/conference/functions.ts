@@ -274,7 +274,10 @@ export function generateVisitorConfig(stateful: IStateful, params: Array<string>
 
     config.hosts.domain = `${vnode}.meet.jitsi`;
     config.hosts.muc = config.hosts.muc.replace(oldDomain, config.hosts.domain);
-    config.hosts.visitorFocus = focusJid;
+    config.focusUserJid = focusJid;
+
+    // This flag disables sending the initial conference request
+    config.disableFocus = true;
 
     config.bosh += `?vnode=${vnode}`;
     config.websocket += `?vnode=${vnode}`;
