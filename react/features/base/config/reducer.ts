@@ -12,7 +12,7 @@ import {
     SET_CONFIG,
     UPDATE_CONFIG
 } from './actionTypes';
-import { IConfig } from './configType';
+import { DeeplinkingConfig, DeeplinkingMobileConfig, IConfig, MobileDynamicLink } from './configType';
 import { _cleanupConfig } from './functions';
 
 /**
@@ -291,6 +291,48 @@ function _translateInterfaceConfig(oldValue: IConfig) {
         } else {
             newValue.defaultLogoUrl = 'images/watermark.svg';
         }
+    }
+
+    // if we have `deeplinking` defined, ignore deprecated values. Otherwise, compose the config.
+    if (!oldValue.deeplinking) {
+        const disabled = Boolean(oldValue.disableDeepLinking || typeof interfaceConfig !== 'object');
+        const deeplinking: DeeplinkingConfig = {
+            desktopAppName: '',
+            hideLogo: false,
+            disabled,
+            showImage: false,
+            android: {} as DeeplinkingMobileConfig,
+            ios: {} as DeeplinkingMobileConfig
+        };
+
+        if (typeof interfaceConfig === 'object') {
+            const mobileDynamicLink = interfaceConfig.MOBILE_DYNAMIC_LINK;
+            const dynamicLink: MobileDynamicLink | undefined = mobileDynamicLink ? {
+                apn: mobileDynamicLink.APN,
+                appCode: mobileDynamicLink.APP_CODE,
+                ibi: mobileDynamicLink.IBI,
+                isi: mobileDynamicLink.ISI,
+                customDomain: mobileDynamicLink.CUSTOM_DOMAIN
+            } : undefined;
+
+            deeplinking.desktopAppName = interfaceConfig.NATIVE_APP_NAME;
+            deeplinking.hideLogo = Boolean(interfaceConfig.HIDE_DEEP_LINKING_LOGO);
+            deeplinking.showImage = interfaceConfig.SHOW_DEEP_LINKING_IMAGE;
+            deeplinking.android = {
+                appName: interfaceConfig.NATIVE_APP_NAME,
+                appScheme: interfaceConfig.APP_SCHEME,
+                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_ANDROID,
+                appPackage: interfaceConfig.ANDROID_APP_PACKAGE,
+                dynamicLink
+            };
+            deeplinking.ios = {
+                appName: interfaceConfig.NATIVE_APP_NAME,
+                appScheme: interfaceConfig.APP_SCHEME,
+                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS,
+                dynamicLink
+            };
+        }
+        newValue.deeplinking = deeplinking;
     }
 
     return newValue;

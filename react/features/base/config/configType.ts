@@ -88,6 +88,32 @@ export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'RECORDING_ON_SOUND' |
     'TALK_WHILE_MUTED_SOUND';
 
+
+export type MobileDynamicLink = {
+    apn: string;
+    appCode: string;
+    customDomain?: string;
+    ibi: string;
+    isi: string;
+};
+
+export type DeeplinkingMobileConfig = {
+    appName: string;
+    appPackage?: string;
+    appScheme: string;
+    downloadLink: string;
+    dynamicLink?: MobileDynamicLink;
+};
+
+export type DeeplinkingConfig = {
+    android?: DeeplinkingMobileConfig;
+    desktopAppName: string;
+    disabled: boolean;
+    hideLogo: boolean;
+    ios?: DeeplinkingMobileConfig;
+    showImage: boolean;
+};
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     analytics?: {
@@ -176,6 +202,7 @@ export interface IConfig {
         };
     };
     corsAvatarURLs?: Array<string>;
+    deeplinking?: DeeplinkingConfig;
     defaultLanguage?: string;
     defaultLocalDisplayName?: string;
     defaultLogoUrl?: string;
