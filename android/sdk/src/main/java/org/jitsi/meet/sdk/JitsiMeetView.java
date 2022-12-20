@@ -81,6 +81,8 @@ public class JitsiMeetView extends FrameLayout {
                 result.putBoolean(key, (Boolean)bValue);
             } else if (valueType.contentEquals("String")) {
                 result.putString(key, (String)bValue);
+            } else if (valueType.contentEquals("Integer")) {
+                result.putInt(key, (int)bValue);
             } else if (valueType.contentEquals("Bundle")) {
                 result.putBundle(key, mergeProps((Bundle)aValue, (Bundle)bValue));
             } else {
