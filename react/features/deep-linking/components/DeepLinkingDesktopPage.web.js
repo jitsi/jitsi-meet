@@ -76,7 +76,8 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
      * @returns {ReactElement}
      */
     render() {
-        const { t, _deeplinkingCfg: { desktop: { appName }, hideLogo, showImage } } = this.props;
+        const { t, _deeplinkingCfg: { desktop = {}, hideLogo, showImage } } = this.props;
+        const { appName } = desktop;
         const rightColumnStyle
             = showImage ? null : { width: '100%' };
 
