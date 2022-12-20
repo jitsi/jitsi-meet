@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
-import { DeeplinkingConfig } from '../../base/config/configType';
+import { IDeeplinkingConfig } from '../../base/config/configType';
 import { connect } from '../../base/redux';
 
 
@@ -16,7 +16,7 @@ type Props = {
     /**
      * The deeplinking config.
      */
-    _deeplinkingCfg: DeeplinkingConfig,
+    _deeplinkingCfg: IDeeplinkingConfig,
 };
 
 /**

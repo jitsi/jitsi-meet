@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
-import { DeeplinkingConfig } from '../../base/config/configType';
+import { IDeeplinkingConfig } from '../../base/config/configType';
 import { isSupportedBrowser } from '../../base/environment';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
@@ -26,7 +26,7 @@ type Props = {
     /**
      * The deeplinking config.
      */
-    _deeplinkingCfg: DeeplinkingConfig,
+    _deeplinkingCfg: IDeeplinkingConfig,
 
     /**
      * Used to dispatch actions from the buttons.
