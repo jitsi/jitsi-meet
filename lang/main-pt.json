@@ -712,6 +712,8 @@
         "reactionSoundsForAll": "Desativar sons para todos",
         "screenShareNoAudio": "A caixa de compartilhar áudio não foi marcada no ecrã de seleção da janela.",
         "screenShareNoAudioTitle": "Não foi possível partilhar o áudio do sistema!",
+        "screenSharingAudioOnlyDescription": "Note por favor que ao partilhar o seu ecrã está a afectar o modo \"Melhor desempenho\" e irá utilizar mais largura de banda.",
+        "screenSharingAudioOnlyTitle": "Modo \"Melhor desempenho\"",
         "selfViewTitle": "Pode sempre reexibir a autovisualização a partir das definições",
         "somebody": "Alguém",
         "startSilentDescription": "Volte à reunião para habilitar o áudio",
