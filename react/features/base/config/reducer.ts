@@ -169,8 +169,6 @@ function _setConfig(state: IConfig, { config }: { config: IConfig; }) {
     // eslint-disable-next-line no-param-reassign
     config = _translateLegacyConfig(config);
 
-    _setDeeplinkingDefaults(config.deeplinking as IDeeplinkingConfig);
-
     const { audioQuality } = config;
     const hdAudioOptions = {};
 
@@ -334,6 +332,7 @@ function _translateInterfaceConfig(oldValue: IConfig) {
                 appScheme: interfaceConfig.APP_SCHEME,
                 downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_ANDROID,
                 appPackage: interfaceConfig.ANDROID_APP_PACKAGE,
+                fDroidUrl: interfaceConfig.MOBILE_DOWNLOAD_LINK_F_DROID,
                 dynamicLink
             };
             deeplinking.ios = {
@@ -533,6 +532,8 @@ function _translateLegacyConfig(oldValue: IConfig) {
             order: oldValue.speakerStatsOrder
         };
     }
+
+    _setDeeplinkingDefaults(newValue.deeplinking as IDeeplinkingConfig);
 
     return newValue;
 }

@@ -103,11 +103,6 @@ var interfaceConfig = {
      */
     MOBILE_APP_PROMO: true,
 
-    /**
-     * Specify custom URL for downloading f droid app.
-     */
-    MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/en/packages/org.jitsi.meet/',
-
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
     // unsupported are considered suboptimal. Valid values are:
@@ -229,6 +224,11 @@ var interfaceConfig = {
      * Specify the Android app package name.
      */
     // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
+
+    /**
+     * Specify custom URL for downloading f droid app.
+     */
+    // MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/en/packages/org.jitsi.meet/',
 
     // Connection indicators (
     // CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,

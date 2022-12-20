@@ -222,11 +222,11 @@ class DeepLinkingMobilePage extends Component<Props> {
         }
 
         const {
-            apn = 'org.jitsi.meet',
-            appCode = 'w2atb',
-            customDomain = undefined,
-            ibi = 'com.atlassian.JitsiMeet.ios',
-            isi = '1165103905'
+            apn,
+            appCode,
+            customDomain,
+            ibi,
+            isi
         } = dynamicLink || {};
 
         const domain = customDomain ?? `https://${appCode}.app.goo.gl`;

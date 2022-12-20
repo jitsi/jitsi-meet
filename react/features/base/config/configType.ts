@@ -106,6 +106,7 @@ export interface IDeeplinkingMobileConfig extends IDeeplinkingPlatformConfig {
     appScheme: string;
     downloadLink: string;
     dynamicLink?: IMobileDynamicLink;
+    fDroidUrl?: string;
 }
 
 export interface IDeeplinkingConfig {

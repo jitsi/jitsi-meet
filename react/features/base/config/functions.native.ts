@@ -43,13 +43,13 @@ export function getReplaceParticipant(state: IReduxState): string {
     return getFeatureFlag(state, REPLACE_PARTICIPANT, false);
 }
 
-/* eslint-disable */
 /**
  * Sets the defaults for deeplinking.
  *
- * @param {IDeeplinkingConfig} deeplinking - The deeplinking config.
+ * @param {IDeeplinkingConfig} _deeplinking - The deeplinking config.
  * @returns {void}
  */
-export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
+export function _setDeeplinkingDefaults(_deeplinking: IDeeplinkingConfig) {
+    return;
 }
-/* eslint-enable */
+

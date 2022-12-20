@@ -347,10 +347,12 @@ class WelcomePage extends AbstractWelcomePage {
             t,
             _deeplinkingCfg: {
                 ios: { downloadLink: iosDownloadLink },
-                android: { downloadLink: androidDownloadLink }
+                android: {
+                    fDroidUrl,
+                    downloadLink: androidDownloadLink
+                }
             }
         } = this.props;
-        const { MOBILE_DOWNLOAD_LINK_F_DROID } = interfaceConfig;
 
         return (<footer className = 'welcome-footer'>
             <div className = 'welcome-footer-centered'>
@@ -373,7 +375,7 @@ class WelcomePage extends AbstractWelcomePage {
                         </a>
                         <a
                             className = 'welcome-badge'
-                            href = { MOBILE_DOWNLOAD_LINK_F_DROID }>
+                            href = { fDroidUrl }>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
                                 src = './images/f-droid-badge.png' />

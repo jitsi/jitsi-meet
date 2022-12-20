@@ -1105,7 +1105,7 @@ var config = {
     //     // The desktop deeplinking config.
     //     desktop: {
     //         appName: 'Jitsi Meet'
-    //     }
+    //     },
     //     // If true, any checks to handoff to another application will be prevented
     //     // and instead the app will continue to display in the current browser.
     //     disabled: false,
@@ -1123,7 +1123,6 @@ var config = {
     //         appScheme: 'org.jitsi.meet',
     //         // Custom URL for downloading ios mobile app.
     //         downloadLink: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
-    //         appPackage: undefined,
     //         dynamicLink: {
     //             apn: 'org.jitsi.meet',
     //             appCode: 'w2atb',
@@ -1142,6 +1141,7 @@ var config = {
     //         downloadLink: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
     //         // Android app package name.
     //         appPackage: 'org.jitsi.meet',
+    //         fDroidUrl: 'https://f-droid.org/en/packages/org.jitsi.meet/',
     //         dynamicLink: {
     //             apn: 'org.jitsi.meet',
     //             appCode: 'w2atb',

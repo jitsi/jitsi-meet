@@ -8,10 +8,11 @@ export * from './functions.any';
 /**
  * Removes all analytics related options from the given configuration, in case of a libre build.
  *
- * @param {*} config - The configuration which needs to be cleaned up.
+ * @param {*} _config - The configuration which needs to be cleaned up.
  * @returns {void}
  */
-export function _cleanupConfig(config: IConfig) { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function _cleanupConfig(_config: IConfig) {
+    return;
 }
 
 /**
@@ -92,6 +93,7 @@ export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
     android.downloadLink = android.downloadLink
         || 'https://play.google.com/store/apps/details?id=org.jitsi.meet';
     android.appPackage = android.appPackage || 'org.jitsi.meet';
+    android.fDroidUrl = android.fDroidUrl || 'https://f-droid.org/en/packages/org.jitsi.meet/';
     if (android.dynamicLink) {
         android.dynamicLink.apn = android.dynamicLink.apn || 'org.jitsi.meet';
         android.dynamicLink.appCode = android.dynamicLink.appCode || 'w2atb';
