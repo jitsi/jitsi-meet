@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
+import { IDeeplinkingConfig } from '../../base/config/configType';
 import { isSupportedBrowser } from '../../base/environment';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
@@ -16,13 +17,16 @@ import {
 } from '../actions';
 import { _TNS } from '../constants';
 
-declare var interfaceConfig: Object;
-
 /**
  * The type of the React {@code Component} props of
  * {@link DeepLinkingDesktopPage}.
  */
 type Props = {
+
+    /**
+     * The deeplinking config.
+     */
+    _deeplinkingCfg: IDeeplinkingConfig,
 
     /**
      * Used to dispatch actions from the buttons.
@@ -72,10 +76,10 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
-        const { HIDE_DEEP_LINKING_LOGO, NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
+        const { t, _deeplinkingCfg: { desktop = {}, hideLogo, showImage } } = this.props;
+        const { appName } = desktop;
         const rightColumnStyle
-            = SHOW_DEEP_LINKING_IMAGE ? null : { width: '100%' };
+            = showImage ? null : { width: '100%' };
 
         return (
 
@@ -84,7 +88,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                 <div className = 'deep-linking-desktop'>
                     <div className = 'header'>
                         {
-                            HIDE_DEEP_LINKING_LOGO
+                            hideLogo
                                 ? null
                                 : <img
                                     alt = { t('welcomepage.logo.logoDeepLinking') }
@@ -94,7 +98,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                     </div>
                     <div className = 'content'>
                         {
-                            SHOW_DEEP_LINKING_IMAGE
+                            showImage
                                 ? <div className = 'leftColumn'>
                                     <div className = 'leftColumnContent'>
                                         <div className = 'image' />
@@ -108,7 +112,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                                 <h1 className = 'title'>
                                     {
                                         t(`${_TNS}.title`,
-                                        { app: NATIVE_APP_NAME })
+                                        { app: appName })
                                     }
                                 </h1>
                                 <p className = 'description'>
@@ -117,7 +121,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                                             `${_TNS}.${isSupportedBrowser()
                                                 ? 'description'
                                                 : 'descriptionWithoutWeb'}`,
-                                            { app: NATIVE_APP_NAME }
+                                            { app: appName }
                                         )
                                     }
                                 </p>
@@ -171,4 +175,18 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
     }
 }
 
-export default translate(connect()(DeepLinkingDesktopPage));
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code DeepLinkingDesktopPage} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state) {
+    return {
+        _deeplinkingCfg: state['features/base/config'].deeplinking || {}
+    };
+}
+
+export default translate(connect(_mapStateToProps)(DeepLinkingDesktopPage));

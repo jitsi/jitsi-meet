@@ -81,6 +81,8 @@ export default [
     'brandingRoomAlias',
     'debug',
     'debugAudioLevels',
+    'deeplinking.disabled',
+    'deeplinking.showImage',
     'defaultLocalDisplayName',
     'defaultRemoteDisplayName',
     'deploymentUrls',
