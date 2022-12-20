@@ -1,6 +1,6 @@
 import { IReduxState } from '../../app/types';
 
-import { IConfig, IDeeplinkingConfig } from './configType';
+import { IConfig, IDeeplinkingConfig, IDeeplinkingMobileConfig, IDeeplinkingPlatformConfig } from './configType';
 import { TOOLBAR_BUTTONS } from './constants';
 
 export * from './functions.any';
@@ -68,36 +68,34 @@ export function areAudioLevelsEnabled(state: IReduxState): boolean {
  * @returns {void}
  */
 export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
-    const { desktop, android, ios } = deeplinking;
+    const {
+        desktop = {} as IDeeplinkingPlatformConfig,
+        android = {} as IDeeplinkingMobileConfig,
+        ios = {} as IDeeplinkingMobileConfig
+    } = deeplinking;
 
-    if (desktop) {
-        desktop.appName = desktop.appName || 'Jitsi Meet';
+    desktop.appName = desktop.appName || 'Jitsi Meet';
+
+    ios.appName = ios.appName || 'Jitsi Meet';
+    ios.appScheme = ios.appScheme || 'org.jitsi.meet';
+    ios.downloadLink = ios.downloadLink
+        || 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905';
+    if (ios.dynamicLink) {
+        ios.dynamicLink.apn = ios.dynamicLink.apn || 'org.jitsi.meet';
+        ios.dynamicLink.appCode = ios.dynamicLink.appCode || 'w2atb';
+        ios.dynamicLink.ibi = ios.dynamicLink.ibi || 'com.atlassian.JitsiMeet.ios';
+        ios.dynamicLink.isi = ios.dynamicLink.isi || '1165103905';
     }
 
-    if (ios) {
-        ios.appName = ios.appName || 'Jitsi Meet';
-        ios.appScheme = ios.appScheme || 'org.jitsi.meet';
-        ios.downloadLink = ios.downloadLink
-            || 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905';
-        if (ios.dynamicLink) {
-            ios.dynamicLink.apn = ios.dynamicLink.apn || 'org.jitsi.meet';
-            ios.dynamicLink.appCode = ios.dynamicLink.appCode || 'w2atb';
-            ios.dynamicLink.ibi = ios.dynamicLink.ibi || 'com.atlassian.JitsiMeet.ios';
-            ios.dynamicLink.isi = ios.dynamicLink.isi || '1165103905';
-        }
-    }
-
-    if (android) {
-        android.appName = android.appName || 'Jitsi Meet';
-        android.appScheme = android.appScheme || 'org.jitsi.meet';
-        android.downloadLink = android.downloadLink
-            || 'https://play.google.com/store/apps/details?id=org.jitsi.meet';
-        android.appPackage = android.appPackage || 'org.jitsi.meet';
-        if (android.dynamicLink) {
-            android.dynamicLink.apn = android.dynamicLink.apn || 'org.jitsi.meet';
-            android.dynamicLink.appCode = android.dynamicLink.appCode || 'w2atb';
-            android.dynamicLink.ibi = android.dynamicLink.ibi || 'com.atlassian.JitsiMeet.ios';
-            android.dynamicLink.isi = android.dynamicLink.isi || '1165103905';
-        }
+    android.appName = android.appName || 'Jitsi Meet';
+    android.appScheme = android.appScheme || 'org.jitsi.meet';
+    android.downloadLink = android.downloadLink
+        || 'https://play.google.com/store/apps/details?id=org.jitsi.meet';
+    android.appPackage = android.appPackage || 'org.jitsi.meet';
+    if (android.dynamicLink) {
+        android.dynamicLink.apn = android.dynamicLink.apn || 'org.jitsi.meet';
+        android.dynamicLink.appCode = android.dynamicLink.appCode || 'w2atb';
+        android.dynamicLink.ibi = android.dynamicLink.ibi || 'com.atlassian.JitsiMeet.ios';
+        android.dynamicLink.isi = android.dynamicLink.isi || '1165103905';
     }
 }
