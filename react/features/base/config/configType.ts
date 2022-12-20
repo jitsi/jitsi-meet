@@ -202,6 +202,7 @@ export interface IConfig {
     disableChatSmileys?: boolean;
     disableDeepLinking?: boolean;
     disableFilmstripAutohiding?: boolean;
+    disableFocus?: boolean;
     disableH264?: boolean;
     disableIncomingMessageSound?: boolean;
     disableInitialGUM?: boolean;
