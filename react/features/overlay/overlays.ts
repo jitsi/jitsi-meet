@@ -1,10 +1,9 @@
-import {
-    PageReloadOverlay,
-    SuspendedOverlay,
-    UserMediaPermissionsOverlay
-
-    // @ts-ignore
-} from './components/web';
+// @ts-ignore
+import PageReloadOverlay from './components/web/PageReloadOverlay';
+// @ts-ignore
+import SuspendedOverlay from './components/web/SuspendedOverlay';
+// @ts-ignore
+import UserMediaPermissionsOverlay from './components/web/UserMediaPermissionsOverlay';
 
 /**
  * Returns the list of available platform specific overlays.

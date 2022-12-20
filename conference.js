@@ -141,7 +141,7 @@ import {
     showNotification,
     showWarningNotification
 } from './react/features/notifications';
-import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
+import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay/actions';
 import { suspendDetected } from './react/features/power-monitor';
 import { initPrejoin, makePrecallTest, setJoiningInProgress } from './react/features/prejoin/actions';
 import { isPrejoinPageVisible } from './react/features/prejoin/functions';

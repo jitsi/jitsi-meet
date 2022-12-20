@@ -25,14 +25,3 @@ export const MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED
  * @public
  */
 export const SET_FATAL_ERROR = 'SET_FATAL_ERROR';
-
-/**
- * The type of the Redux action which signals that the overlay was canceled.
- *
- * {
- *     type: export const SET_PAGE_RELOAD_OVERLAY_CANCELED
- * }
- * @public
- */
-export const SET_PAGE_RELOAD_OVERLAY_CANCELED
-    = 'SET_PAGE_RELOAD_OVERLAY_CANCELED';

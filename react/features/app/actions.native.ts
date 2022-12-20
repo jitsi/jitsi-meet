@@ -30,8 +30,6 @@ import {
 // @ts-ignore
 import { screen } from '../mobile/navigation/routes';
 import { clearNotifications } from '../notifications/actions';
-// @ts-ignore
-import { setFatalError } from '../overlay';
 
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
@@ -177,7 +175,6 @@ export function maybeRedirectToWelcomePage(options: any) { // eslint-disable-lin
  */
 export function reloadNow() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        dispatch(setFatalError(undefined));
 
         const state = getState();
         const { locationURL } = state['features/base/connection'];

@@ -7,15 +7,15 @@ import type { Dispatch } from 'redux';
 import {
     createPageReloadScheduledEvent,
     sendAnalytics
-} from '../../analytics';
-import { reloadNow } from '../../app/actions';
+} from '../../../analytics';
+import { reloadNow } from '../../../app/actions';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
-} from '../../base/lib-jitsi-meet/functions';
-import logger from '../logger';
+} from '../../../base/lib-jitsi-meet/functions';
+import logger from '../../logger';
 
-import ReloadButton from './web/ReloadButton';
+import ReloadButton from './ReloadButton';
 
 declare var APP: Object;
 

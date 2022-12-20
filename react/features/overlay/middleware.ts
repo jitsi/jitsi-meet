@@ -1,16 +1,13 @@
 /* eslint-disable lines-around-comment */
+
 import { IStore } from '../app/types';
-import { openDialog } from '../base/dialog/actions';
-import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../base/lib-jitsi-meet/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
-import { setFatalError } from './actions';
-// @ts-ignore
-import { PageReloadOverlay } from './components';
+import { fatalError } from './actions';
 
 
 /**
@@ -37,12 +34,6 @@ type ErrorType = {
 /**
  * List of errors that are not fatal (or handled differently) so then the overlays won't kick in.
  */
-const NON_OVERLAY_ERRORS = [
-    JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
-    JitsiConferenceErrors.CONFERENCE_DESTROYED,
-    JitsiConferenceErrors.CONNECTION_ERROR
-];
-
 const ERROR_TYPES = {
     CONFIG: 'CONFIG',
     CONNECTION: 'CONNECTION',
@@ -107,12 +98,11 @@ StateListenerRegistry.register(
                 ...error,
                 ...getErrorExtraInfo(getState, error)
             });
-        }
-
-        dispatch(openDialog(PageReloadOverlay));
-
-        if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
-            dispatch(setFatalError(error));
+            // @ts-ignore
+            dispatch(fatalError(false))
+        } else {
+            // @ts-ignore
+            dispatch(fatalError(true))
         }
     }
 );

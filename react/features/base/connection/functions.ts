@@ -90,5 +90,5 @@ export function isInviteURLReady(stateOrGetState: IStateful): boolean {
  * {@code user@server.com}).
  */
 export function toJid(id: string, { authdomain, domain }: { authdomain?: string; domain?: string; }): string {
-    return id.indexOf('@') >= 0 ? id : `${id}@${authdomain || domain}`;
+    return id?.indexOf('@') >= 0 ? id : `${id}@${authdomain || domain}`;
 }

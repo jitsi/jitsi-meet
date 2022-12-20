@@ -1,8 +1,10 @@
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
-    SET_FATAL_ERROR,
-    SET_PAGE_RELOAD_OVERLAY_CANCELED
+    SET_FATAL_ERROR
 } from './actionTypes';
+// @ts-ignore
+import { openDialog, PageReloadDialog } from '../base/dialog';
+
 
 /**
  * Signals that the prompt for media permission is visible or not.
@@ -26,37 +28,15 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
 }
 
 /**
- * The action indicates that an unrecoverable error has occurred and the reload
- * screen will be displayed or hidden.
+ * Opens {@link PageReloadDialog}.
  *
- * @param {Object} fatalError - A critical error which was not claimed by any
- * feature for error recovery (the recoverable flag was not set). If
- * {@code undefined} then any fatal error currently stored will be discarded.
- * @returns {{
- *     type: SET_FATAL_ERROR,
- *     fatalError: ?Error
- * }}
+ * @protected
+ * @returns {Action}
  */
-export function setFatalError(fatalError?: Object) {
-    return {
-        type: SET_FATAL_ERROR,
-        fatalError
-    };
-}
+export function fatalError(is?: boolean) {
+    if(is) {
+        openDialog(PageReloadDialog)
+    }
 
-/**
- * The action indicates that the overlay was canceled.
- *
- * @param {Object} error - The error that caused the display of the overlay.
- *
- * @returns {{
-    *     type: SET_PAGE_RELOAD_OVERLAY_CANCELED,
-    *     error: ?Error
-    * }}
-    */
-export function setPageReloadOverlayCanceled(error: Object) {
-    return {
-        type: SET_PAGE_RELOAD_OVERLAY_CANCELED,
-        error
-    };
+    return false;
 }

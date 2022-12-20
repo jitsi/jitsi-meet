@@ -7,7 +7,7 @@ import { connect } from '../../../base/redux';
 import AbstractPageReloadOverlay, {
     type Props,
     abstractMapStateToProps
-} from '../AbstractPageReloadOverlay';
+} from './AbstractPageReloadOverlay';
 
 import OverlayFrame from './OverlayFrame';
 

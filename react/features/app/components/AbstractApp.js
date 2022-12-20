@@ -70,8 +70,6 @@ export class AbstractApp extends BaseApp<Props, *> {
         }
     }
 
-    _createExtraElement: () => ?React.ReactElement;
-
     _createMainElement: (React.ReactElement, Object) => ?React.ReactElement;
 
     /**

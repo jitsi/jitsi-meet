@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { ReactElementType } from 'react-window';
 
-import { connect } from '../../base/redux';
-import { getOverlayToRender } from '../functions';
+import { IReduxState } from '../../../app/types';
+import { connect } from '../../../base/redux/functions';
+import { getOverlayToRender } from '../../functions';
 
 
 /**
@@ -13,9 +15,7 @@ type Props = {
      * The React {@link Component} type of overlay to be rendered by the
      * associated {@code OverlayContainer}.
      */
-
-    /* eslint-disable-next-line no-undef */
-    overlay: ?React$ComponentType<*>
+    overlay: ReactElementType
 }
 
 /**
@@ -47,7 +47,7 @@ class OverlayContainer extends Component<Props> {
  *     overlay: ?Object
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
         /**
          * The React {@link Component} type of overlay to be rendered by the

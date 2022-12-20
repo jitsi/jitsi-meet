@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { NativeModules, Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
@@ -147,22 +147,6 @@ export class App extends AbstractApp {
         if (typeof callIntegrationEnabled !== 'undefined') {
             dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
         }
-    }
-
-    /**
-     * Creates an extra {@link ReactElement}s to be added (unconditionally)
-     * alongside the main element.
-     *
-     * @returns {ReactElement}
-     * @abstract
-     * @protected
-     */
-    _createExtraElement() {
-        return (
-            <Fragment>
-                { super._createExtraElement() }
-            </Fragment>
-        );
     }
 
     /**
