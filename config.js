@@ -1101,7 +1101,11 @@ var config = {
     // deeplinking.[ios/android].dynamicLink check:
     // https://firebase.google.com/docs/dynamic-links/create-manually
     // deeplinking: {
-
+    //
+    //     // The desktop deeplinking config.
+    //     desktop: {
+    //         appName: 'Jitsi Meet'
+    //     }
     //     // If true, any checks to handoff to another application will be prevented
     //     // and instead the app will continue to display in the current browser.
     //     disabled: false,

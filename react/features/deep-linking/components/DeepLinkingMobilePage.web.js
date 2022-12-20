@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
-import { DeeplinkingConfig, DeeplinkingMobileConfig } from '../../base/config/configType';
+import { IDeeplinkingConfig, IDeeplinkingMobileConfig } from '../../base/config/configType';
 import { isSupportedMobileBrowser } from '../../base/environment';
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
@@ -29,12 +29,15 @@ const _SNS = 'deep-linking-mobile';
  */
 type Props = {
 
-    _deeplinkingCfg: DeeplinkingConfig,
+    /**
+     * The deeplinking config.
+     */
+    _deeplinkingCfg: IDeeplinkingConfig,
 
     /**
      * Application mobile deeplinking config.
      */
-    _mobileConfig: DeeplinkingMobileConfig,
+    _mobileConfig: IDeeplinkingMobileConfig,
 
     /**
      * The deeplinking url.
@@ -227,14 +230,13 @@ class DeepLinkingMobilePage extends Component<Props> {
         } = dynamicLink || {};
 
         const domain = customDomain ?? `https://${appCode}.app.goo.gl`;
-        const ius = appScheme || 'org.jitsi.meet';
 
         return `${domain}/?link=${
             encodeURIComponent(window.location.href)}&apn=${
             apn}&ibi=${
             ibi}&isi=${
             isi}&ius=${
-            ius}&efr=1`;
+            appScheme}&efr=1`;
     }
 
     _onDownloadApp: () => void;

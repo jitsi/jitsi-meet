@@ -76,7 +76,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
      * @returns {ReactElement}
      */
     render() {
-        const { t, _deeplinkingCfg: { desktopAppName, hideLogo, showImage } } = this.props;
+        const { t, _deeplinkingCfg: { desktop: { appName }, hideLogo, showImage } } = this.props;
         const rightColumnStyle
             = showImage ? null : { width: '100%' };
 
@@ -111,7 +111,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                                 <h1 className = 'title'>
                                     {
                                         t(`${_TNS}.title`,
-                                        { app: desktopAppName })
+                                        { app: appName })
                                     }
                                 </h1>
                                 <p className = 'description'>
@@ -120,7 +120,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                                             `${_TNS}.${isSupportedBrowser()
                                                 ? 'description'
                                                 : 'descriptionWithoutWeb'}`,
-                                            { app: desktopAppName }
+                                            { app: appName }
                                         )
                                     }
                                 </p>

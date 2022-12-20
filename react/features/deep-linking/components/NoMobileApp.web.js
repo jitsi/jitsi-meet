@@ -43,7 +43,7 @@ class NoMobileApp<P : Props> extends Component<P> {
      */
     render() {
         const ns = 'no-mobile-app';
-        const { desktopAppName } = this.props._deeplinkingCfg;
+        const { desktop: { appName } } = this.props._deeplinkingCfg;
 
         return (
             <div className = { ns }>
@@ -51,7 +51,7 @@ class NoMobileApp<P : Props> extends Component<P> {
                     Video chat isn't available on mobile.
                 </h2>
                 <p className = { `${ns}__description` }>
-                    Please use { desktopAppName } on desktop to
+                    Please use { appName } on desktop to
                     join calls.
                 </p>
             </div>

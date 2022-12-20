@@ -343,12 +343,14 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     _renderFooter() {
-        const { t } = this.props;
         const {
-            MOBILE_DOWNLOAD_LINK_ANDROID,
-            MOBILE_DOWNLOAD_LINK_F_DROID,
-            MOBILE_DOWNLOAD_LINK_IOS
-        } = interfaceConfig;
+            t,
+            _deeplinkingCfg: {
+                ios: { downloadLink: iosDownloadLink },
+                android: { downloadLink: androidDownloadLink }
+            }
+        } = this.props;
+        const { MOBILE_DOWNLOAD_LINK_F_DROID } = interfaceConfig;
 
         return (<footer className = 'welcome-footer'>
             <div className = 'welcome-footer-centered'>
@@ -357,14 +359,14 @@ class WelcomePage extends AbstractWelcomePage {
                         <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
                         <a
                             className = 'welcome-badge'
-                            href = { MOBILE_DOWNLOAD_LINK_IOS }>
+                            href = { iosDownloadLink }>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkIos') }
                                 src = './images/app-store-badge.png' />
                         </a>
                         <a
                             className = 'welcome-badge'
-                            href = { MOBILE_DOWNLOAD_LINK_ANDROID }>
+                            href = { androidDownloadLink }>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
                                 src = './images/google-play-badge.png' />

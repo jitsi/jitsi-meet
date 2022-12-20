@@ -12,8 +12,14 @@ import {
     SET_CONFIG,
     UPDATE_CONFIG
 } from './actionTypes';
-import { DeeplinkingConfig, DeeplinkingMobileConfig, IConfig, MobileDynamicLink } from './configType';
-import { _cleanupConfig } from './functions';
+import {
+    IConfig,
+    IDeeplinkingConfig,
+    IDeeplinkingMobileConfig,
+    IDeeplinkingPlatformConfig,
+    IMobileDynamicLink
+} from './configType';
+import { _cleanupConfig, _setDeeplinkingDefaults } from './functions';
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -163,6 +169,8 @@ function _setConfig(state: IConfig, { config }: { config: IConfig; }) {
     // eslint-disable-next-line no-param-reassign
     config = _translateLegacyConfig(config);
 
+    _setDeeplinkingDefaults(config.deeplinking as IDeeplinkingConfig);
+
     const { audioQuality } = config;
     const hdAudioOptions = {};
 
@@ -295,19 +303,19 @@ function _translateInterfaceConfig(oldValue: IConfig) {
 
     // if we have `deeplinking` defined, ignore deprecated values. Otherwise, compose the config.
     if (!oldValue.deeplinking) {
-        const disabled = Boolean(oldValue.disableDeepLinking || typeof interfaceConfig !== 'object');
-        const deeplinking: DeeplinkingConfig = {
-            desktopAppName: '',
+        const disabled = Boolean(oldValue.disableDeepLinking);
+        const deeplinking: IDeeplinkingConfig = {
+            desktop: {} as IDeeplinkingPlatformConfig,
             hideLogo: false,
             disabled,
             showImage: false,
-            android: {} as DeeplinkingMobileConfig,
-            ios: {} as DeeplinkingMobileConfig
+            android: {} as IDeeplinkingMobileConfig,
+            ios: {} as IDeeplinkingMobileConfig
         };
 
         if (typeof interfaceConfig === 'object') {
             const mobileDynamicLink = interfaceConfig.MOBILE_DYNAMIC_LINK;
-            const dynamicLink: MobileDynamicLink | undefined = mobileDynamicLink ? {
+            const dynamicLink: IMobileDynamicLink | undefined = mobileDynamicLink ? {
                 apn: mobileDynamicLink.APN,
                 appCode: mobileDynamicLink.APP_CODE,
                 ibi: mobileDynamicLink.IBI,
@@ -315,7 +323,10 @@ function _translateInterfaceConfig(oldValue: IConfig) {
                 customDomain: mobileDynamicLink.CUSTOM_DOMAIN
             } : undefined;
 
-            deeplinking.desktopAppName = interfaceConfig.NATIVE_APP_NAME;
+            if (deeplinking.desktop) {
+                deeplinking.desktop.appName = interfaceConfig.NATIVE_APP_NAME;
+            }
+
             deeplinking.hideLogo = Boolean(interfaceConfig.HIDE_DEEP_LINKING_LOGO);
             deeplinking.showImage = interfaceConfig.SHOW_DEEP_LINKING_IMAGE;
             deeplinking.android = {
