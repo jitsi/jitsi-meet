@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
-import Platform from '../react/Platform';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { equals } from '../redux/functions';
 
@@ -52,8 +51,8 @@ const INITIAL_RN_STATE: IConfig = {
     // than requiring this override here...
 
     p2p: {
-        // Temporarily disable P2P on Android while we sort out some (codec?) issues.
-        ...(Platform.OS === 'android' ? { enabled: false } : {}), // eslint-disable-line no-extra-parens
+        // Temporarily disable P2P on mobile while we sort out some (codec?) issues.
+        enabled: false,
         disabledCodec: 'vp9',
         preferredCodec: 'h264'
     },

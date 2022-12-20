@@ -2,7 +2,6 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { getFeatureFlag } from '../flags/functions';
-import Platform from '../react/Platform';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { updateSettings } from '../settings/actions';
 
@@ -53,7 +52,9 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
     const settings = state['features/base/settings'];
     const config: IConfig = {};
 
-    if (Platform.OS !== 'android' && typeof settings.disableP2P !== 'undefined') {
+    // FIXME: P2P is currently temporality disabled on mobile.
+    // eslint-disable-next-line no-constant-condition
+    if (false && typeof settings.disableP2P !== 'undefined') {
         config.p2p = { enabled: !settings.disableP2P };
     }
 
