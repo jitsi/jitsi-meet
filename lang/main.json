@@ -712,6 +712,8 @@
         "reactionSoundsForAll": "Disable sounds for all",
         "screenShareNoAudio": "Share audio box was not checked in the window selection screen.",
         "screenShareNoAudioTitle": "Couldn't share system audio!",
+        "screenSharingAudioOnlyDescription": "Please note that by sharing your screen you're affecting the \"Best performance\" mode and you will use more bandwidth.",
+        "screenSharingAudioOnlyTitle": "\"Best performance\" mode",
         "selfViewTitle": "You can always un-hide the self-view from settings",
         "somebody": "Somebody",
         "startSilentDescription": "Rejoin the meeting to enable audio",

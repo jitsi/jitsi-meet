@@ -14,7 +14,6 @@ import { isAudioOnlySharing, isScreenVideoShared } from '../../screen-share/func
 import { isScreenshotCaptureEnabled, toggleScreenshotCaptureSummary } from '../../screenshot-capture';
 // @ts-ignore
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
-import { setAudioOnly } from '../audio-only/actions';
 import { getCurrentConference } from '../conference/functions';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { setScreenshareMuted } from '../media/actions';
@@ -227,12 +226,15 @@ async function _toggleScreenSharing(
             }
         }
 
-        // Disable audio-only or best performance mode if the user starts screensharing. This doesn't apply to
-        // audio-only screensharing.
+        // Show notification about more bandwidth usage in audio-only mode if the user starts screensharing. This
+        // doesn't apply to audio-only screensharing.
         const { enabled: bestPerformanceMode } = state['features/base/audio-only'];
 
         if (bestPerformanceMode && !audioOnly) {
-            dispatch(setAudioOnly(false));
+            dispatch(showNotification({
+                titleKey: 'notify.screenSharingAudioOnlyTitle',
+                descriptionKey: 'notify.screenSharingAudioOnlyDescription'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         }
     } else {
         const { desktopAudioTrack } = state['features/screen-share'];

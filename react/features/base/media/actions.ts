@@ -17,7 +17,6 @@ import {
 } from './actionTypes';
 import {
     MEDIA_TYPE,
-    type MediaType,
     SCREENSHARE_MUTISM_AUTHORITY,
     VIDEO_MUTISM_AUTHORITY
 } from './constants';
@@ -95,14 +94,12 @@ export function setCameraFacingMode(cameraFacingMode: string) {
  * Action to set the muted state of the local screenshare.
  *
  * @param {boolean} muted - True if the local screenshare is to be enabled or false otherwise.
- * @param {MEDIA_TYPE} mediaType - The type of media.
  * @param {number} authority - The {@link SCREENSHARE_MUTISM_AUTHORITY} which is muting/unmuting the local screenshare.
  * @param {boolean} ensureTrack - True if we want to ensure that a new track is created if missing.
  * @returns {Function}
  */
 export function setScreenshareMuted(
         muted: boolean,
-        mediaType: MediaType = MEDIA_TYPE.SCREENSHARE,
         authority: number = SCREENSHARE_MUTISM_AUTHORITY.USER,
         ensureTrack = false) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
@@ -125,7 +122,6 @@ export function setScreenshareMuted(
         return dispatch({
             type: SET_SCREENSHARE_MUTED,
             authority,
-            mediaType,
             ensureTrack,
             muted: newValue
         });
@@ -154,7 +150,6 @@ export function setVideoAvailable(available: boolean) {
  *
  * @param {boolean} muted - True if the local video is to be muted or false if
  * the local video is to be unmuted.
- * @param {MEDIA_TYPE} mediaType - The type of media.
  * @param {number} authority - The {@link VIDEO_MUTISM_AUTHORITY} which is
  * muting/unmuting the local video.
  * @param {boolean} ensureTrack - True if we want to ensure that a new track is
@@ -163,7 +158,6 @@ export function setVideoAvailable(available: boolean) {
  */
 export function setVideoMuted(
         muted: boolean,
-        mediaType: string = MEDIA_TYPE.VIDEO,
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
         ensureTrack = false) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
@@ -186,7 +180,6 @@ export function setVideoMuted(
         return dispatch({
             type: SET_VIDEO_MUTED,
             authority,
-            mediaType,
             ensureTrack,
             muted: newValue
         });

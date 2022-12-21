@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
+import { IDeeplinkingConfig, IDeeplinkingMobileConfig } from '../../base/config/configType';
 import { isSupportedMobileBrowser } from '../../base/environment';
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
@@ -13,8 +14,6 @@ import { openWebApp } from '../actions';
 import { _TNS } from '../constants';
 import { generateDeepLinkingURL } from '../functions';
 import { renderPromotionalFooter } from '../renderPromotionalFooter';
-
-declare var interfaceConfig: Object;
 
 /**
  * The namespace of the CSS styles of DeepLinkingMobilePage.
@@ -31,9 +30,19 @@ const _SNS = 'deep-linking-mobile';
 type Props = {
 
     /**
-     * Application download URL.
+     * The deeplinking config.
      */
-    _downloadUrl: ?string,
+    _deeplinkingCfg: IDeeplinkingConfig,
+
+    /**
+     * Application mobile deeplinking config.
+     */
+    _mobileConfig: IDeeplinkingMobileConfig,
+
+    /**
+     * The deeplinking url.
+     */
+    _deepLinkingUrl: string,
 
     /**
      * The name of the conference attempting to being joined.
@@ -95,13 +104,19 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _downloadUrl, _room, t, _url } = this.props;
-        const { HIDE_DEEP_LINKING_LOGO, NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
+        const {
+            _deeplinkingCfg: { hideLogo, showImage },
+            _mobileConfig: { downloadLink, appName },
+            _room,
+            t,
+            _url,
+            _deepLinkingUrl
+        } = this.props;
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
 
 
-        const onOpenLinkProperties = _downloadUrl
+        const onOpenLinkProperties = downloadLink
             ? {
                 // When opening a link to the download page, we want to let the
                 // OS itself handle intercepting and opening the appropriate
@@ -121,7 +136,7 @@ class DeepLinkingMobilePage extends Component<Props> {
             <div className = { _SNS }>
                 <div className = 'header'>
                     {
-                        HIDE_DEEP_LINKING_LOGO
+                        hideLogo
                             ? null
                             : <img
                                 alt = { t('welcomepage.logo.logoDeepLinking') }
@@ -131,7 +146,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                 </div>
                 <div className = { `${_SNS}__body` }>
                     {
-                        SHOW_DEEP_LINKING_IMAGE
+                        showImage
                             ? <img
                                 alt = { t('welcomepage.logo.logoDeepLinking') }
                                 className = 'image'
@@ -139,7 +154,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                             : null
                     }
                     <p className = { `${_SNS}__text` }>
-                        { t(`${_TNS}.appNotInstalled`, { app: NATIVE_APP_NAME }) }
+                        { t(`${_TNS}.appNotInstalled`, { app: appName }) }
                     </p>
                     <p className = { `${_SNS}__text` }>
                         { t(`${_TNS}.ifHaveApp`) }
@@ -147,7 +162,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                     <a
                         { ...onOpenLinkProperties }
                         className = { `${_SNS}__href` }
-                        href = { generateDeepLinkingURL() }
+                        href = { _deepLinkingUrl }
                         onClick = { this._onOpenApp }
                         target = '_top'>
                         <button className = { `${_SNS}__button ${_SNS}__button_primary` }>
@@ -200,32 +215,28 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @returns {string} - The URL for downloading the app.
      */
     _generateDownloadURL() {
-        const { _downloadUrl: url } = this.props;
+        const { _mobileConfig: { downloadLink, dynamicLink, appScheme } } = this.props;
 
-        if (url && typeof interfaceConfig.MOBILE_DYNAMIC_LINK === 'undefined') {
-            return url;
+        if (downloadLink && typeof dynamicLink === 'undefined') {
+            return downloadLink;
         }
 
-        // For information about the properties of
-        // interfaceConfig.MOBILE_DYNAMIC_LINK check:
-        // https://firebase.google.com/docs/dynamic-links/create-manually
         const {
-            APN = 'org.jitsi.meet',
-            APP_CODE = 'w2atb',
-            CUSTOM_DOMAIN = undefined,
-            IBI = 'com.atlassian.JitsiMeet.ios',
-            ISI = '1165103905'
-        } = interfaceConfig.MOBILE_DYNAMIC_LINK || {};
+            apn,
+            appCode,
+            customDomain,
+            ibi,
+            isi
+        } = dynamicLink || {};
 
-        const domain = CUSTOM_DOMAIN ?? `https://${APP_CODE}.app.goo.gl`;
-        const IUS = interfaceConfig.APP_SCHEME || 'org.jitsi.meet';
+        const domain = customDomain ?? `https://${appCode}.app.goo.gl`;
 
         return `${domain}/?link=${
             encodeURIComponent(window.location.href)}&apn=${
-            APN}&ibi=${
-            IBI}&isi=${
-            ISI}&ius=${
-            IUS}&efr=1`;
+            apn}&ibi=${
+            ibi}&isi=${
+            isi}&ius=${
+            appScheme}&efr=1`;
     }
 
     _onDownloadApp: () => void;
@@ -281,11 +292,15 @@ class DeepLinkingMobilePage extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const { locationURL = {} } = state['features/base/connection'];
+    const { deeplinking } = state['features/base/config'];
+    const mobileConfig = deeplinking?.[Platform.OS] || {};
 
     return {
-        _downloadUrl: interfaceConfig[`MOBILE_DOWNLOAD_LINK_${Platform.OS.toUpperCase()}`],
+        _deeplinkingCfg: deeplinking || {},
+        _mobileConfig: mobileConfig,
         _room: decodeURIComponent(state['features/base/conference'].room),
-        _url: locationURL
+        _url: locationURL,
+        _deepLinkingUrl: generateDeepLinkingURL(state)
     };
 }
 

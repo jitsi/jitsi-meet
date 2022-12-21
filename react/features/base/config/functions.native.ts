@@ -4,7 +4,7 @@ import { IReduxState } from '../../app/types';
 import { REPLACE_PARTICIPANT } from '../flags/constants';
 import { getFeatureFlag } from '../flags/functions';
 
-import { IConfig } from './configType';
+import { IConfig, IDeeplinkingConfig } from './configType';
 
 export * from './functions.any';
 
@@ -42,3 +42,14 @@ export function _cleanupConfig(config: IConfig) {
 export function getReplaceParticipant(state: IReduxState): string {
     return getFeatureFlag(state, REPLACE_PARTICIPANT, false);
 }
+
+/**
+ * Sets the defaults for deeplinking.
+ *
+ * @param {IDeeplinkingConfig} _deeplinking - The deeplinking config.
+ * @returns {void}
+ */
+export function _setDeeplinkingDefaults(_deeplinking: IDeeplinkingConfig) {
+    return;
+}
+

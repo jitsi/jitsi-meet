@@ -8,10 +8,7 @@ import {
     setScreenshareMuted,
     setVideoMuted
 } from '../media/actions';
-import {
-    MEDIA_TYPE,
-    VIDEO_MUTISM_AUTHORITY
-} from '../media/constants';
+import { VIDEO_MUTISM_AUTHORITY } from '../media/constants';
 
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import { getLocalDesktopTrack, getTrackState, isLocalVideoTrackDesktop } from './functions.native';
@@ -40,7 +37,7 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
             }
         } else {
             dispatch(setScreenshareMuted(true));
-            dispatch(setVideoMuted(false, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
+            dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
             setPictureInPictureEnabled(true);
         }
     };
@@ -73,7 +70,7 @@ async function _startScreenSharing(dispatch: Function, state: IReduxState) {
             dispatch(addLocalTrack(track));
         }
 
-        dispatch(setVideoMuted(true, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
+        dispatch(setVideoMuted(true, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
 
         const { enabled: audioOnly } = state['features/base/audio-only'];
 

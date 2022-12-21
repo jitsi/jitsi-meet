@@ -15,27 +15,31 @@ import { _openDesktopApp } from './openDesktopApp';
 /**
  * Generates a deep linking URL based on the current window URL.
  *
+ * @param {Object} state - Object containing current redux state.
+ *
  * @returns {string} - The generated URL.
  */
-export function generateDeepLinkingURL() {
+export function generateDeepLinkingURL(state) {
     // If the user installed the app while this Component was displayed
     // (e.g. the user clicked the Download the App button), then we would
     // like to open the current URL in the mobile app. The only way to do it
     // appears to be a link with an app-specific scheme, not a Universal
     // Link.
 
-    const appScheme = interfaceConfig.APP_SCHEME || 'org.jitsi.meet';
     const { href } = window.location;
     const regex = new RegExp(URI_PROTOCOL_PATTERN, 'gi');
+
+    const mobileConfig = state['features/base/config'].deeplinking?.[Platform.OS] || {};
+
+    const { appScheme, appPackage } = mobileConfig;
 
     // Android: use an intent link, custom schemes don't work in all browsers.
     // https://developer.chrome.com/multidevice/android/intents
     if (Platform.OS === 'android') {
         // https://meet.jit.si/foo -> meet.jit.si/foo
         const url = href.replace(regex, '').substr(2);
-        const pkg = interfaceConfig.ANDROID_APP_PACKAGE || 'org.jitsi.meet';
 
-        return `intent://${url}#Intent;scheme=${appScheme};package=${pkg};end`;
+        return `intent://${url}#Intent;scheme=${appScheme};package=${appPackage};end`;
     }
 
     // iOS: Replace the protocol part with the app scheme.
@@ -52,12 +56,13 @@ export function generateDeepLinkingURL() {
 export function getDeepLinkingPage(state) {
     const { room } = state['features/base/conference'];
     const { launchInWeb } = state['features/deep-linking'];
-    const appScheme = typeof interfaceConfig !== 'undefined' && interfaceConfig.APP_SCHEME;
+    const deeplinking = state['features/base/config'].deeplinking || {};
+    const { appScheme } = deeplinking?.[Platform.OS] || {};
 
     // Show only if we are about to join a conference.
     if (launchInWeb
             || !room
-            || state['features/base/config'].disableDeepLinking
+            || state['features/base/config'].deeplinking?.disabled
             || (isVpaasMeeting(state) && (!appScheme || appScheme === 'com.8x8.meet'))) {
         return Promise.resolve();
     }

@@ -52,7 +52,7 @@ export function muteLocal(enable: boolean, mediaType: MediaType, stopScreenShari
 
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));
         dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true)
-            : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
+            : setVideoMuted(enable, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
 
         // FIXME: The old conference logic still relies on this event being emitted.
         typeof APP === 'undefined'

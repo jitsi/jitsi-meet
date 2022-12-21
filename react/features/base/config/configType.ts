@@ -88,6 +88,36 @@ export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'RECORDING_ON_SOUND' |
     'TALK_WHILE_MUTED_SOUND';
 
+
+export interface IMobileDynamicLink {
+    apn: string;
+    appCode: string;
+    customDomain?: string;
+    ibi: string;
+    isi: string;
+}
+
+export interface IDeeplinkingPlatformConfig {
+    appName: string;
+}
+
+export interface IDeeplinkingMobileConfig extends IDeeplinkingPlatformConfig {
+    appPackage?: string;
+    appScheme: string;
+    downloadLink: string;
+    dynamicLink?: IMobileDynamicLink;
+    fDroidUrl?: string;
+}
+
+export interface IDeeplinkingConfig {
+    android?: IDeeplinkingMobileConfig;
+    desktop?: IDeeplinkingPlatformConfig;
+    disabled: boolean;
+    hideLogo: boolean;
+    ios?: IDeeplinkingMobileConfig;
+    showImage: boolean;
+}
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     analytics?: {
@@ -176,6 +206,7 @@ export interface IConfig {
         };
     };
     corsAvatarURLs?: Array<string>;
+    deeplinking?: IDeeplinkingConfig;
     defaultLanguage?: string;
     defaultLocalDisplayName?: string;
     defaultLogoUrl?: string;
@@ -203,7 +234,6 @@ export interface IConfig {
     disableDeepLinking?: boolean;
     disableFilmstripAutohiding?: boolean;
     disableFocus?: boolean;
-    disableH264?: boolean;
     disableIncomingMessageSound?: boolean;
     disableInitialGUM?: boolean;
     disableInviteFunctions?: boolean;
@@ -384,12 +414,10 @@ export interface IConfig {
     opusMaxAverageBitrate?: number;
     p2p?: {
         backToP2PDelay?: number;
-        disableH264?: boolean;
         disabledCodec?: string;
         enableUnifiedOnChrome?: boolean;
         enabled?: boolean;
         iceTransportPolicy?: string;
-        preferH264?: boolean;
         preferredCodec?: string;
         stunServers?: Array<{ urls: string; }>;
     };
@@ -400,7 +428,6 @@ export interface IConfig {
     };
     pcStatsInterval?: number;
     peopleSearchUrl?: string;
-    preferH264?: boolean;
     preferredTranscribeLanguage?: string;
     prejoinConfig?: {
         enabled?: boolean;
