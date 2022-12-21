@@ -1,9 +1,9 @@
-import {
-    MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
-    SET_FATAL_ERROR
-} from './actionTypes';
+/* eslint-disable lines-around-comment */
+
 // @ts-ignore
-import { openDialog, PageReloadDialog } from '../base/dialog';
+import { PageReloadDialog, openDialog } from '../base/dialog';
+
+import { MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED } from './actionTypes';
 
 
 /**
@@ -30,12 +30,12 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
 /**
  * Opens {@link PageReloadDialog}.
  *
- * @protected
+ * @param {boolean} isFatal - If the value is true - we open PageReloadDialog.
  * @returns {Action}
  */
-export function fatalError(is?: boolean) {
-    if(is) {
-        openDialog(PageReloadDialog)
+export function fatalError(isFatal?: boolean) {
+    if (isFatal) {
+        openDialog(PageReloadDialog);
     }
 
     return false;

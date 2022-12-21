@@ -5,7 +5,6 @@ import GlobalStyles from '../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web';
 import DialogContainer from '../../base/ui/components/web/DialogContainer';
 import { ChromeExtensionBanner } from '../../chrome-extension-banner';
-
 import OverlayContainer from '../../overlay/components/web/OverlayContainer';
 
 import { AbstractApp } from './AbstractApp';

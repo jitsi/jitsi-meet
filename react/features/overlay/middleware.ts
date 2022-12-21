@@ -1,10 +1,9 @@
 /* eslint-disable lines-around-comment */
 
 import { IStore } from '../app/types';
-import {
-    isFatalJitsiConferenceError,
-    isFatalJitsiConnectionError
-} from '../base/lib-jitsi-meet/functions';
+import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
+import { isFatalJitsiConferenceError, isFatalJitsiConnectionError }
+    from '../base/lib-jitsi-meet/functions.any';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { fatalError } from './actions';
@@ -34,6 +33,12 @@ type ErrorType = {
 /**
  * List of errors that are not fatal (or handled differently) so then the overlays won't kick in.
  */
+const NON_OVERLAY_ERRORS = [
+    JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
+    JitsiConferenceErrors.CONFERENCE_DESTROYED,
+    JitsiConferenceErrors.CONNECTION_ERROR
+];
+
 const ERROR_TYPES = {
     CONFIG: 'CONFIG',
     CONNECTION: 'CONNECTION',
@@ -99,10 +104,16 @@ StateListenerRegistry.register(
                 ...getErrorExtraInfo(getState, error)
             });
             // @ts-ignore
-            dispatch(fatalError(false))
-        } else {
+            dispatch(fatalError(true));
+        }
+
+        // @ts-ignore
+        dispatch(fatalError(false));
+
+
+        if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
             // @ts-ignore
-            dispatch(fatalError(true))
+            dispatch(fatalError(true));
         }
     }
 );

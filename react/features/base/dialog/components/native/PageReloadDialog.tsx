@@ -5,44 +5,44 @@ import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
+
 import { appNavigate, reloadNow } from '../../../../app/actions.native';
 import { IReduxState } from '../../../../app/types';
+import { translate } from '../../../i18n/functions';
+import { getFatalError } from '../../../lib-jitsi-meet/functions.native';
+import { connect } from '../../../redux/functions';
 // @ts-ignore
 import { ConfirmDialog } from '../../index';
-import { translate } from '../../../i18n/functions';
-import { connect } from '../../../redux/functions';
-import logger from "../../../../overlay/logger";
 
 
 /**
  * The type of the React {@code Component} props of
  * {@link PageReloadDialog}.
  */
-interface Props extends WithTranslation  {
+interface IPageReloadDialogProps extends WithTranslation {
     details: Object;
     dispatch: Dispatch<any>;
-    isNetworkFailure: boolean;
+    message: string;
     reason: string;
+    timeLeft: number;
+    timeoutSeconds: number;
+    title: string;
 }
 
 /**
  * The type of the React {@code Component} state of
  * {@link PageReloadDialog}.
  */
-interface State {
-    message: string;
+interface IPageReloadDialogState {
     timeLeft: number;
-    timeoutSeconds: number;
-    title: string;
 }
-
 
 /**
  * Implements a React Component that is shown before the
  * conference is reloaded.
  * Shows a warning message and counts down towards the re-load.
  */
-class PageReloadOverlay extends Component<Props, State> {
+class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDialogState> {
 
     // @ts-ignore
     _interval: IntervalID;
@@ -54,33 +54,12 @@ class PageReloadOverlay extends Component<Props, State> {
      * instance is to be initialized.
      * @public
      */
-    constructor(props: Props) {
+    constructor(props: IPageReloadDialogProps) {
         super(props);
 
-        /**
-         * How long the overlay dialog will be displayed, before the conference
-         * will be reloaded.
-         *
-         * @type {number}
-         */
-        const timeoutSeconds = 10 + randomInt(0, 20);
-
-        let message, title;
-
-        if (this.props.isNetworkFailure) {
-            title = 'dialog.conferenceDisconnectTitle';
-            message = 'dialog.conferenceDisconnectMsg';
-        } else {
-            title = 'dialog.conferenceReloadTitle';
-            message = 'dialog.conferenceReloadMsg';
-        }
-
+        // @ts-ignore
         this.state = {
-            message,
-            timeLeft: timeoutSeconds,
-            // @ts-ignore
-            timeoutSeconds,
-            title
+            timeLeft: props.timeoutSeconds
         };
 
         this._onCancel = this._onCancel.bind(this);
@@ -94,25 +73,19 @@ class PageReloadOverlay extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        if (typeof APP !== 'undefined') {
-            if (APP.conference && APP.conference._room) {
-                APP.conference._room.sendApplicationLog(JSON.stringify({
-                    name: 'page.reload',
-                    label: this.props.reason
-                }));
-            }
-        }
+        const { dispatch } = this.props;
+        const { timeLeft } = this.state;
 
         this._interval
             = setInterval(
             () => {
-                if (this.state.timeLeft === 0) {
+                if (timeLeft === 0) {
                     if (this._interval) {
                         clearInterval(this._interval);
                         this._interval = undefined;
                     }
 
-                    this.props.dispatch(reloadNow());
+                    dispatch(reloadNow());
                 } else {
                     this.setState(prevState => {
                         return {
@@ -169,14 +142,14 @@ class PageReloadOverlay extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
-        const { message, timeLeft, title } = this.state;
+        const { message, t, title } = this.props;
+        const { timeLeft } = this.state;
 
         return (
             <ConfirmDialog
                 cancelLabel = 'dialog.Cancel'
                 confirmLabel = 'dialog.rejoinNow'
-                descriptionKey = { `${ t(message, { seconds: timeLeft }) }` }
+                descriptionKey = { `${t(message, { seconds: timeLeft })}` }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onReloadNow }
                 title = { title } />
@@ -190,33 +163,26 @@ class PageReloadOverlay extends Component<Props, State> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
- *     details: Object,
- *     error: ?Error,
- *     isNetworkFailure: boolean,
- *     reason: string
+ *     message: string,
+ *     reason: string,
+ *     timeoutSeconds: number,
+ *     title: string
  * }}
  */
 function mapStateToProps(state: IReduxState) {
-    const { error: conferenceError } = state['features/base/conference'];
-    const { error: configError } = state['features/base/config'];
-    const { error: connectionError } = state['features/base/connection'];
-
-    let reason;
-
-    if (conferenceError) {
-        reason = `error.conference.${conferenceError.name}`;
-    } else if (configError) {
-        reason = `error.config.${configError.name}`;
-    } else if (connectionError) {
-        reason = `error.connection.${connectionError.name}`;
-    } else {
-        logger.error('No reload reason defined!');
-    }
+    const {
+        message,
+        reason,
+        title
+    } = getFatalError(state);
+    const timeoutSeconds = 10 + randomInt(0, 20);
 
     return {
-        isNetworkFailure: configError || connectionError,
-        reason
+        message,
+        reason,
+        title,
+        timeoutSeconds
     };
 }
 
-export default translate(connect(mapStateToProps)(PageReloadOverlay));
+export default translate(connect(mapStateToProps)(PageReloadDialog));

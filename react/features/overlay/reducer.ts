@@ -1,9 +1,8 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { assign } from '../base/redux/functions';
 
-import {
-    MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
-} from './actionTypes';
+import { MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED } from './actionTypes';
+
 
 export interface IOverlayState {
     browser?: string;

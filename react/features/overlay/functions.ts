@@ -1,7 +1,13 @@
+/* eslint-disable lines-around-comment */
+
 import { IReduxState } from '../app/types';
 
-import { getOverlays } from './overlays';
-
+// @ts-ignore
+import PageReloadOverlay from './components/web/PageReloadOverlay';
+// @ts-ignore
+import SuspendedOverlay from './components/web/SuspendedOverlay';
+// @ts-ignore
+import UserMediaPermissionsOverlay from './components/web/UserMediaPermissionsOverlay';
 /**
  * Returns the overlay to be currently rendered.
  *
@@ -9,7 +15,13 @@ import { getOverlays } from './overlays';
  * @returns {?React$ComponentType<*>}
  */
 export function getOverlayToRender(state: IReduxState) {
-    for (const overlay of getOverlays()) {
+    const overlays = [
+        PageReloadOverlay,
+        SuspendedOverlay,
+        UserMediaPermissionsOverlay
+    ];
+
+    for (const overlay of overlays) {
         // react-i18n / react-redux wrap components and thus we cannot access
         // the wrapped component's static methods directly.
         // @ts-ignore

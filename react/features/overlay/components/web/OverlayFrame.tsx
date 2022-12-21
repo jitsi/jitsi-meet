@@ -8,18 +8,18 @@ type Props = {
     /**
      * The children components to be displayed into the overlay frame.
      */
-    children: ReactChildren,
+    children: ReactChildren;
 
     /**
      * Indicates the css style of the overlay. If true, then lighter; darker,
      * otherwise.
      */
-    isLightOverlay?: boolean,
+    isLightOverlay?: boolean;
 
     /**
      * The style property.
      */
-    style: Object
+    style: Object;
 };
 
 /**

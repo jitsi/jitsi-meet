@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { ReactElementType } from 'react-window';
 
 import { IReduxState } from '../../../app/types';
 import { connect } from '../../../base/redux/functions';
@@ -15,8 +14,8 @@ type Props = {
      * The React {@link Component} type of overlay to be rendered by the
      * associated {@code OverlayContainer}.
      */
-    overlay: ReactElementType
-}
+    overlay: any;
+};
 
 /**
  * Implements a React {@link Component} that will display the correct overlay

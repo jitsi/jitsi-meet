@@ -9,10 +9,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { reloadNow } from '../../../app/actions';
-import {
-    isFatalJitsiConferenceError,
-    isFatalJitsiConnectionError
-} from '../../../base/lib-jitsi-meet/functions';
+import { getFatalError } from '../../../base/lib-jitsi-meet/functions';
 import logger from '../../logger';
 
 import ReloadButton from './ReloadButton';
@@ -101,15 +98,9 @@ export default class AbstractPageReloadOverlay<P: Props>
      * {@code false}, otherwise.
      */
     static needsRender(state: Object) {
-        const conferenceError = state['features/base/conference'].error;
-        const configError = state['features/base/config'].error;
-        const connectionError = state['features/base/connection'].error;
+        const { isFatal } = getFatalError(state);
 
-        return (
-            (connectionError && isFatalJitsiConnectionError(connectionError))
-                || (conferenceError
-                    && isFatalJitsiConferenceError(conferenceError))
-                || configError);
+        return isFatal;
     }
 
     _interval: ?IntervalID;
