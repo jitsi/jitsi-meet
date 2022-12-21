@@ -262,17 +262,6 @@ var config = {
     // applied locally. FIXME: having these 2 options is confusing.
     // startWithVideoMuted: false,
 
-    // If set to true, prefer to use the H.264 video codec (if supported).
-    // Note that it's not recommended to do this because simulcast is not
-    // supported when  using H.264. For 1-to-1 calls this setting is enabled by
-    // default and can be toggled in the p2p section.
-    // This option has been deprecated, use preferredCodec under videoQuality section instead.
-    // preferH264: true,
-
-    // If set to true, disable H.264 video codec by stripping it out of the
-    // SDP.
-    // disableH264: false,
-
     // Desktop sharing
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
@@ -923,17 +912,9 @@ var config = {
         // If not set, the effective value is 'all'.
         // iceTransportPolicy: 'all',
 
-        // If set to true, it will prefer to use H.264 for P2P calls (if H.264
-        // is supported). This setting is deprecated, use preferredCodec instead.
-        // preferH264: true,
-
         // Provides a way to set the video codec preference on the p2p connection. Acceptable
         // codec values are 'VP8', 'VP9' and 'H264'.
         // preferredCodec: 'H264',
-
-        // If set to true, disable H.264 video codec by stripping it out of the
-        // SDP. This setting is deprecated, use disabledCodec instead.
-        // disableH264: false,
 
         // Provides a way to prevent a video codec from being negotiated on the p2p connection.
         // disabledCodec: '',

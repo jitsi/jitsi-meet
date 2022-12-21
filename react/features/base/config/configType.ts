@@ -202,7 +202,6 @@ export interface IConfig {
     disableChatSmileys?: boolean;
     disableDeepLinking?: boolean;
     disableFilmstripAutohiding?: boolean;
-    disableH264?: boolean;
     disableIncomingMessageSound?: boolean;
     disableInitialGUM?: boolean;
     disableInviteFunctions?: boolean;
@@ -383,12 +382,10 @@ export interface IConfig {
     opusMaxAverageBitrate?: number;
     p2p?: {
         backToP2PDelay?: number;
-        disableH264?: boolean;
         disabledCodec?: string;
         enableUnifiedOnChrome?: boolean;
         enabled?: boolean;
         iceTransportPolicy?: string;
-        preferH264?: boolean;
         preferredCodec?: string;
         stunServers?: Array<{ urls: string; }>;
     };
@@ -399,7 +396,6 @@ export interface IConfig {
     };
     pcStatsInterval?: number;
     peopleSearchUrl?: string;
-    preferH264?: boolean;
     preferredTranscribeLanguage?: string;
     prejoinConfig?: {
         enabled?: boolean;
