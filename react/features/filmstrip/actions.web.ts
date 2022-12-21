@@ -3,7 +3,7 @@ import { pinParticipant } from '../base/participants/actions';
 import {
     getLocalParticipant,
     getParticipantById,
-    getRemoteParticipantCount
+    getRemoteParticipantCountWithFake
 } from '../base/participants/functions';
 import { shouldHideSelfView } from '../base/settings/functions.web';
 import { getMaxColumnCount } from '../video-layout/functions.web';
@@ -149,7 +149,7 @@ export function setVerticalViewDimensions() {
         const disableSelfView = shouldHideSelfView(state);
         const resizableFilmstrip = isFilmstripResizable(state);
         const _verticalViewGrid = showGridInVerticalView(state);
-        const numberOfRemoteParticipants = getRemoteParticipantCount(state);
+        const numberOfRemoteParticipants = getRemoteParticipantCountWithFake(state);
         const { localScreenShare } = state['features/base/participants'];
 
         let gridView = {};
@@ -261,7 +261,7 @@ export function setHorizontalViewDimensions() {
             = clientWidth - (disableSelfView ? 0 : thumbnails?.local?.width) - HORIZONTAL_FILMSTRIP_MARGIN;
         const remoteVideosContainerHeight
             = thumbnails?.local?.height + TILE_VERTICAL_MARGIN + STAGE_VIEW_THUMBNAIL_VERTICAL_BORDER + SCROLL_SIZE;
-        const numberOfRemoteParticipants = getRemoteParticipantCount(state);
+        const numberOfRemoteParticipants = getRemoteParticipantCountWithFake(state);
         const hasScroll
             = remoteVideosContainerHeight
                 < (thumbnails?.remote.width + TILE_HORIZONTAL_MARGIN) * numberOfRemoteParticipants;

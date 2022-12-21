@@ -351,11 +351,11 @@ export function isWhiteboardParticipant(participant?: IParticipant): boolean {
  * features/base/participants.
  * @returns {number}
  */
-export function getRemoteParticipantCount(stateful: IStateful) {
+export function getRemoteParticipantCountWithFake(stateful: IStateful) {
     const state = toState(stateful);
     const participantsState = state['features/base/participants'];
 
-    return participantsState.remote.size - participantsState.sortedRemoteVirtualScreenshareParticipants.size;
+    return participantsState.remote.size;
 }
 
 /**
