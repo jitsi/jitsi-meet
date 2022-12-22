@@ -1366,6 +1366,7 @@
         "recentList": "Recente",
         "recentListDelete": "Remover",
         "recentListEmpty": "A sua lista recente está atualmente vazia. Converse com a sua equipa e encontrará aqui todas as suas reuniões recentes.",
+        "recentMeetings": "As suas reuniões recentes",
         "reducedUIText": "Bem-vindo ao {{app}}!",
         "roomNameAllowedChars": "Nome da reunião não deve conter qualquer um destes caracteres: ?. &, :, ', \", %, #.",
         "roomname": "Digite o nome da sala",
@@ -1374,6 +1375,7 @@
         "settings": "Definições",
         "startMeeting": "Iniciar reunião",
         "terms": "Termos",
-        "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas"
+        "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas",
+        "upcomingMeetings": "As suas próximas reuniões"
     }
 }
