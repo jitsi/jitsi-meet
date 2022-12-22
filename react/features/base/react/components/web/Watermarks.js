@@ -39,6 +39,11 @@ type Props = {
     _showJitsiWatermark: boolean,
 
     /**
+     * Whether the watermark should have a `top` and `left` value.
+     */
+    noMargins: boolean;
+
+    /**
      * The default value for the Jitsi logo URL.
      */
     defaultJitsiLogoURL: ?string,
@@ -160,7 +165,9 @@ class Watermarks extends Component<Props, State> {
             _logoUrl,
             _showJitsiWatermark
         } = this.props;
-        const { t } = this.props;
+        const { noMargins, t } = this.props;
+        const className = `watermark ${noMargins ? 'leftwatermarknomargin' : 'leftwatermark'}`;
+
         let reactElement = null;
 
         if (_showJitsiWatermark) {
@@ -172,14 +179,14 @@ class Watermarks extends Component<Props, State> {
             };
 
             reactElement = (<div
-                className = 'watermark leftwatermark'
+                className = { className }
                 style = { style } />);
 
             if (_logoLink) {
                 reactElement = (
                     <a
                         aria-label = { t('jitsiHome', { logo: interfaceConfig.APP_NAME }) }
-                        className = 'watermark leftwatermark'
+                        className = { className }
                         href = { _logoLink }
                         target = '_new'>
                         { reactElement }
