@@ -147,6 +147,7 @@
         "bridgeCount": "Serverzahl: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Verbunden mit:",
+        "e2eeVerified": "E2EE verifiziert:",
         "framerate": "Bildwiederholrate:",
         "less": "Weniger anzeigen",
         "localaddress": "Lokale Adresse:",
@@ -408,6 +409,10 @@
         "user": "Anmeldename",
         "userIdentifier": "Benutzername",
         "userPassword": "Passwort",
+        "verifyParticipantConfirm": "Sie stimmen überein",
+        "verifyParticipantDismiss": "Sie stimmen nicht überein",
+        "verifyParticipantQuestion": "EXPERIMENTELL: Frage Person {{participantName}} ob sie den selben Inhalt in der selben Reihenfolge sieht.",
+        "verifyParticipantTitle": "Personsverifikation",
         "videoLink": "Video-Link",
         "viewUpgradeOptions": "Upgradeoptionen anzeigen",
         "viewUpgradeOptionsContent": "Sie müssen Ihren Tarif erweitern, um Premium-Features wie Aufnahme, Transkription, RTMP-Streaming und mehr zu nutzen.",
@@ -436,9 +441,6 @@
     "giphy": {
         "noResults": "Keine Ergebnisse :(",
         "search": "GIPHY durchsuchen"
-    },
-    "helpView": {
-        "title": "Hilfecenter"
     },
     "incomingCall": {
         "answer": "Antworten",
@@ -563,7 +565,6 @@
     "lobby": {
         "admit": "Zulassen",
         "admitAll": "Alle zulassen",
-        "allow": "Annehmen",
         "backToKnockModeButton": "Kein Passwort, stattdessen Beitritt anfragen",
         "chat": "Chat",
         "dialogTitle": "Lobbymodus",
@@ -649,6 +650,8 @@
         "connectedOneMember": "{{name}} nimmt am Meeting teil",
         "connectedThreePlusMembers": "{{name}} und {{count}} andere Personen nehmen am Meeting teil",
         "connectedTwoMembers": "{{first}} und {{second}} nehmen am Meeting teil",
+        "dataChannelClosed": "Schlechte Videoqualität",
+        "dataChannelClosedDescription": "Die Steuerungsverbindung (Bridge Channel) wurde unterbrochen, daher ist die Videoqulität auf die schlechteste Stufe limitiert.",
         "disconnected": "getrennt",
         "displayNotifications": "Benachrichtigungen anzeigen für",
         "focus": "Konferenzleitung",
@@ -709,6 +712,8 @@
         "reactionSoundsForAll": "Interaktionstöne für alle deaktivieren",
         "screenShareNoAudio": "Die Option \"Audio freigeben\" wurde bei der Auswahl des Fensters nicht ausgewählt.",
         "screenShareNoAudioTitle": "Share audio was not checked",
+        "screenSharingAudioOnlyDescription": "Durch die Bildschirmfreigabe wird der Modus \"Beste Leistung\" beeinflusst und daher mehr Datenrate benötigt.",
+        "screenSharingAudioOnlyTitle": "Modus \"Beste Leistung\"",
         "selfViewTitle": "Sie können die eigene Ansicht immer in den Einstellungen reaktivieren",
         "somebody": "Jemand",
         "startSilentDescription": "Treten Sie dem Meeting noch einmal bei, um Ihr Audio zu aktivieren",
@@ -858,9 +863,6 @@
         "rejected": "Abgelehnt",
         "ringing": "Es klingelt …"
     },
-    "privacyView": {
-        "title": "Datenschutz"
-    },
     "profile": {
         "avatar": "Benutzerbild",
         "setDisplayNameLabel": "Anzeigename festlegen",
@@ -1003,6 +1005,7 @@
         "displayName": "Anzeigename",
         "displayNamePlaceholderText": "z.B. Erika Musterfrau",
         "email": "E-Mail",
+        "emailPlaceholderText": "email@beispiel.de",
         "goTo": "Gehe zu",
         "header": "Einstellungen",
         "help": "Hilfe",
@@ -1011,6 +1014,7 @@
         "profileSection": "Profil",
         "serverURL": "Server-URL",
         "showAdvanced": "Erweiterte Einstellungen anzeigen",
+        "startCarModeInLowBandwidthMode": "Automodus mit Datensparmodus starten",
         "startWithAudioMuted": "Stumm beitreten",
         "startWithVideoMuted": "Ohne Video beitreten",
         "terms": "Nutzungsbedingungen",
@@ -1290,6 +1294,7 @@
         "show": "Im Vordergrund anzeigen",
         "showSelfView": "Eigene Ansicht anzeigen",
         "unpinFromStage": "Lösen",
+        "verify": "Person verifizieren",
         "videoMuted": "Kamera ausgeschaltet",
         "videomute": "Person hat die Kamera angehalten"
     },
@@ -1357,6 +1362,7 @@
         "recentList": "Verlauf",
         "recentListDelete": "Eintrag löschen",
         "recentListEmpty": "Ihr Konferenzverlauf ist derzeit leer. Reden Sie mit Ihrem Team und Ihre vergangenen Konferenzen landen hier.",
+        "recentMeetings": "Ihre letzten Konferenzen",
         "reducedUIText": "Willkommen bei {{app}}!",
         "roomNameAllowedChars": "Der Konferenzname sollte keines der folgenden Zeichen enthalten: ?, &, :, ', \", %, #.",
         "roomname": "Konferenzname eingeben",
@@ -1365,6 +1371,7 @@
         "settings": "Einstellungen",
         "startMeeting": "Meeting starten",
         "terms": "AGB",
-        "title": "Sichere, voll funktionale und komplett kostenlose Videokonferenzen"
+        "title": "Sichere, voll funktionale und komplett kostenlose Videokonferenzen",
+        "upcomingMeetings": "Ihre zukünftigen Konferenzen"
     }
 }
