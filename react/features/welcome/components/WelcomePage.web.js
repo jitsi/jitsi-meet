@@ -346,13 +346,14 @@ class WelcomePage extends AbstractWelcomePage {
         const {
             t,
             _deeplinkingCfg: {
-                ios: { downloadLink: iosDownloadLink },
-                android: {
-                    fDroidUrl,
-                    downloadLink: androidDownloadLink
-                }
+                ios = {},
+                android = {}
             }
         } = this.props;
+
+        const { downloadLink: iosDownloadLink } = ios;
+
+        const { fDroidUrl, downloadLink: androidDownloadLink } = android;
 
         return (<footer className = 'welcome-footer'>
             <div className = 'welcome-footer-centered'>
