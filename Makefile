@@ -24,11 +24,11 @@ else
 	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development
 endif
 
-all: compile deploy clean
+all: compile deploy
 
 compile:
 	NODE_OPTIONS=--max-old-space-size=8192 \
-	$(WEBPACK)
+	$(WEBPACK) --progress
 
 clean:
 	rm -fr $(BUILD_DIR)
