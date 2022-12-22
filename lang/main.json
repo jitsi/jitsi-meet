@@ -1362,6 +1362,7 @@
         "recentList": "Recent",
         "recentListDelete": "Delete entry",
         "recentListEmpty": "Your recent list is currently empty. Chat with your team and you will find all your recent meetings here.",
+        "recentMeetings": "Your recent meetings",
         "reducedUIText": "Welcome to {{app}}!",
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "roomname": "Enter room name",
@@ -1370,6 +1371,7 @@
         "settings": "Settings",
         "startMeeting": "Start meeting",
         "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing"
+        "title": "Secure, fully featured, and completely free video conferencing",
+        "upcomingMeetings": "Your upcoming meetings"
     }
 }

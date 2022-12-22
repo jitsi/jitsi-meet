@@ -184,24 +184,27 @@ class WelcomePage extends AbstractWelcomePage {
             <div
                 className = { `welcome ${contentClassName} ${footerClassName}` }
                 id = 'welcome_page'>
-                <div className = 'welcome-watermark'>
-                    <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
-                </div>
-
                 <div className = 'header'>
-                    <div className = 'welcome-page-settings'>
-                        <SettingsButton
-                            defaultTab = { SETTINGS_TABS.CALENDAR }
-                            isDisplayedOnWelcomePage = { true } />
-                        { showAdditionalToolbarContent
-                            ? <div
-                                className = 'settings-toolbar-content'
-                                ref = { this._setAdditionalToolbarContentRef } />
-                            : null
-                        }
-                    </div>
                     <div className = 'header-image' />
                     <div className = 'header-container'>
+                        <div className = 'header-watermark-container'>
+                            <div className = 'welcome-watermark'>
+                                <Watermarks
+                                    defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL }
+                                    noMargins = { true } />
+                            </div>
+                        </div>
+                        <div className = 'welcome-page-settings'>
+                            <SettingsButton
+                                defaultTab = { SETTINGS_TABS.CALENDAR }
+                                isDisplayedOnWelcomePage = { true } />
+                            { showAdditionalToolbarContent
+                                ? <div
+                                    className = 'settings-toolbar-content'
+                                    ref = { this._setAdditionalToolbarContentRef } />
+                                : null
+                            }
+                        </div>
                         <h1 className = 'header-text-title'>
                             { t('welcomepage.headerTitle') }
                         </h1>
@@ -246,18 +249,16 @@ class WelcomePage extends AbstractWelcomePage {
 
                         { _moderatedRoomServiceUrl && (
                             <div id = 'moderated-meetings'>
-                                <p>
-                                    {
-                                        translateToHTML(
-                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
-                                    }
-                                </p>
+                                {
+                                    translateToHTML(
+                                    t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
+                                }
                             </div>)}
                     </div>
                 </div>
 
                 <div className = 'welcome-cards-container'>
-                    <div className = 'welcome-card-row'>
+                    <div className = 'welcome-card-column'>
                         <div className = 'welcome-tabs welcome-card welcome-card--blue'>
                             { this._renderTabs() }
                         </div>
@@ -404,14 +405,14 @@ class WelcomePage extends AbstractWelcomePage {
 
         if (_calendarEnabled) {
             tabs.push({
-                label: t('welcomepage.calendar'),
+                label: t('welcomepage.upcomingMeetings'),
                 content: <CalendarList />
             });
         }
 
         if (_recentListEnabled) {
             tabs.push({
-                label: t('welcomepage.recentList'),
+                label: t('welcomepage.recentMeetings'),
                 content: <RecentList />
             });
         }
