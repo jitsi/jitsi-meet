@@ -35,7 +35,7 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
  */
 export function fatalError(isFatal?: boolean) {
     if (isFatal) {
-        openDialog(PageReloadDialog);
+        return openDialog(PageReloadDialog);
     }
 
     return false;

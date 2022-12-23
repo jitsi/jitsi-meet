@@ -2,8 +2,11 @@
 
 import { IStore } from '../app/types';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
-import { isFatalJitsiConferenceError, isFatalJitsiConnectionError }
-    from '../base/lib-jitsi-meet/functions.any';
+import {
+    getFatalError,
+    isFatalJitsiConferenceError,
+    isFatalJitsiConnectionError
+} from '../base/lib-jitsi-meet/functions.any';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { fatalError } from './actions';
@@ -94,26 +97,26 @@ StateListenerRegistry.register(
         return configError || connectionError || conferenceError;
     },
     /* listener */ (error: ErrorType, { dispatch, getState }) => {
+        const { isFatal } = getFatalError(getState);
+
         if (!error) {
             return;
         }
 
+        // eslint-disable-next-line no-negated-condition
         if (typeof APP !== 'undefined') {
             APP.API.notifyError({
                 ...error,
                 ...getErrorExtraInfo(getState, error)
             });
+        } else {
             // @ts-ignore
-            dispatch(fatalError(true));
+            dispatch(fatalError(isFatal));
         }
-
-        // @ts-ignore
-        dispatch(fatalError(false));
-
 
         if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
             // @ts-ignore
-            dispatch(fatalError(true));
+            dispatch(fatalError(isFatal));
         }
     }
 );
