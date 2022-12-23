@@ -24,8 +24,6 @@ interface IPageReloadDialogProps extends WithTranslation {
     dispatch: Dispatch<any>;
     message: string;
     reason: string;
-    timeLeft: number;
-    timeoutSeconds: number;
     title: string;
 }
 
@@ -59,7 +57,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
 
         // @ts-ignore
         this.state = {
-            timeLeft: props.timeoutSeconds
+            timeLeft: 10 + randomInt(0, 20)
         };
 
         this._onCancel = this._onCancel.bind(this);
@@ -175,13 +173,11 @@ function mapStateToProps(state: IReduxState) {
         reason,
         title
     } = getFatalError(state);
-    const timeoutSeconds = 10 + randomInt(0, 20);
 
     return {
         message,
         reason,
-        title,
-        timeoutSeconds
+        title
     };
 }
 
