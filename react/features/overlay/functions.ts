@@ -34,13 +34,3 @@ export function getOverlayToRender(state: IReduxState) {
 
     return undefined;
 }
-
-/**
- * Returns the visibility of the media permissions prompt.
- *
- * @param {IReduxState} state - The Redux state.
- * @returns {boolean}
- */
-export function getMediaPermissionPromptVisibility(state: IReduxState) {
-    return state['features/overlay'].isMediaPermissionPromptVisible;
-}
