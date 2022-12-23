@@ -57,9 +57,11 @@ const ERROR_TYPES = {
  */
 const getErrorExtraInfo = (getState: IStore['getState'], error: ErrorType) => {
     const state = getState();
-    const { error: conferenceError } = state['features/base/conference'];
-    const { error: configError } = state['features/base/config'];
-    const { error: connectionError } = state['features/base/connection'];
+    const {
+        conferenceError,
+        configError,
+        connectionError
+    } = getFatalError(state);
 
     if (error === conferenceError) {
         return {
@@ -90,9 +92,11 @@ const getErrorExtraInfo = (getState: IStore['getState'], error: ErrorType) => {
  */
 StateListenerRegistry.register(
     /* selector */ state => {
-        const { error: conferenceError } = state['features/base/conference'];
-        const { error: configError } = state['features/base/config'];
-        const { error: connectionError } = state['features/base/connection'];
+        const {
+            conferenceError,
+            configError,
+            connectionError
+        } = getFatalError(state);
 
         return configError || connectionError || conferenceError;
     },

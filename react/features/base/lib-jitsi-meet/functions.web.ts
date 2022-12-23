@@ -10,5 +10,6 @@ export async function loadConfig(url: string) { // eslint-disable-line @typescri
     // Return "the config.js file" from the global scope - that is how the
     // Web app on both the client and the server was implemented before the
     // React Native app was even conceived.
+    // @ts-ignore
     return window.config;
 }

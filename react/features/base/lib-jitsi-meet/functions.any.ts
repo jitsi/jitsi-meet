@@ -149,6 +149,9 @@ export function getFatalError(stateful: IStateful) {
     }
 
     return {
+        conferenceError,
+        configError,
+        connectionError,
         isFatal,
         message,
         reason,
