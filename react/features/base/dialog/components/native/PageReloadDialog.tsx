@@ -163,7 +163,6 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
  * @returns {{
  *     message: string,
  *     reason: string,
- *     timeoutSeconds: number,
  *     title: string
  * }}
  */
