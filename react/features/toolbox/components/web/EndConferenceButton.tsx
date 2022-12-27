@@ -41,6 +41,9 @@ export const EndConferenceButton = (props: Props) => {
 
     const onEndConference = useCallback(() => {
         dispatch(endConference());
+
+        //Gracetech: close the browser
+        window.close();
     }, [ dispatch ]);
 
     return (<>
