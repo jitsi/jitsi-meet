@@ -1,18 +1,16 @@
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
-import { VIDEO_TYPE } from '../base/media/constants';
 import { PARTICIPANT_LEFT, PIN_PARTICIPANT } from '../base/participants/actionTypes';
 import { pinParticipant } from '../base/participants/actions';
 import { getParticipantById, getPinnedParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { TRACK_REMOVED } from '../base/tracks/actionTypes';
 import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad/actionTypes';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
 
 import { SET_TILE_VIEW } from './actionTypes';
-import { setRemoteParticipantsWithScreenShare, setTileView } from './actions';
+import { setTileView } from './actions';
 import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 
 import './subscriber';
@@ -72,31 +70,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (action.enabled && !stageFilmstrip && getPinnedParticipant(state)) {
             store.dispatch(pinParticipant(null));
         }
-        break;
-    }
-
-    // Update the remoteScreenShares.
-    // Because of the debounce in the subscriber which updates the remoteScreenShares we need to handle
-    // removal of screen shares separately here. Otherwise it is possible to have screen sharing
-    // participant that has already left in the remoteScreenShares array. This can lead to rendering
-    // a thumbnails for already left participants since the remoteScreenShares array is used for
-    // building the ordered list of remote participants.
-    case TRACK_REMOVED: {
-        const { jitsiTrack } = action.track;
-
-        if (jitsiTrack?.isVideoTrack() && jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP) {
-            const participantId = jitsiTrack.getParticipantId();
-            const oldScreenShares = store.getState()['features/video-layout'].remoteScreenShares || [];
-            const newScreenShares = oldScreenShares.filter(id => id !== participantId);
-
-            if (oldScreenShares.length !== newScreenShares.length) { // the participant was removed
-                store.dispatch(setRemoteParticipantsWithScreenShare(newScreenShares));
-
-                updateAutoPinnedParticipant(oldScreenShares, store);
-            }
-
-        }
-
         break;
     }
     }
