@@ -126,13 +126,6 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     componentDidMount() {
-        // Gracetech: 
-        // we don't want this page, and it's the page
-        // that leaving meeting end up to
-        // window.close() only works if the window is launched through
-        // window.open(), which is the case for iDigest, at least for web
-        window.close();
-
         super.componentDidMount();
 
         document.body.classList.add('welcome-page');
@@ -178,16 +171,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @inheritdoc
      * @returns {ReactElement|null}
      */
-    render() {  
-
-        //Gracetech
-        //we don't want this page, but if ended here,
-        //we'll give some instruction to launch meeting from iDigest only          
-        return (
-            <h1 style={{textAlign:'center',marginTop:'40px'}}>
-                You can join meeting from within iDigest
-            </h1>);
-
+    render() {
         const { _moderatedRoomServiceUrl, t } = this.props;
         const { DEFAULT_WELCOME_PAGE_LOGO_URL, DISPLAY_WELCOME_FOOTER } = interfaceConfig;
         const showAdditionalCard = this._shouldShowAdditionalCard();
