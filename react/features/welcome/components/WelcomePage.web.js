@@ -126,6 +126,12 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     componentDidMount() {
+        //Gracetech
+        //We don't want this page.
+        //window.close only works if the window was opened through window.open
+        //which is the case, at least for our web idigest's launch
+        window.close();
+
         super.componentDidMount();
 
         document.body.classList.add('welcome-page');
@@ -172,6 +178,15 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
+        //Gracetech
+        //We don't want this page. But if we do end up here,
+        //give instruction to launch meeting from iDgiest
+        return (
+            <h1 style={{textAlign:'center',marginTop:'40px'}}>
+                You can join meeting from within idigest
+            </h1>
+        );
+
         const { _moderatedRoomServiceUrl, t } = this.props;
         const { DEFAULT_WELCOME_PAGE_LOGO_URL, DISPLAY_WELCOME_FOOTER } = interfaceConfig;
         const showAdditionalCard = this._shouldShowAdditionalCard();
