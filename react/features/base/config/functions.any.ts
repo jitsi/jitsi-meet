@@ -11,7 +11,7 @@ import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
 import CONFIG_WHITELIST from './configWhitelist';
-import { _CONFIG_STORE_PREFIX } from './constants';
+import { FEATURE_FLAGS, _CONFIG_STORE_PREFIX } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
@@ -69,9 +69,8 @@ export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export function getSsrcRewritingFeatureFlag(state: IState) {
-    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING)
-        && getSourceNameSignalingFeatureFlag(state);
+export function getSsrcRewritingFeatureFlag(state: IReduxState) {
+    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING);
 }
 
 /**

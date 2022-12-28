@@ -6,8 +6,9 @@ import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
+import { getCurrentConference } from '../conference/functions';
 import i18next from '../i18n/i18next';
-import { VIDEO_TYPE } from '../media/constants';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
 import { toState } from '../redux/functions';
 import { getScreenShareTrack } from '../tracks/functions';
 import { createDeferred } from '../util/helpers';
@@ -21,7 +22,7 @@ import {
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { preloadImage } from './preloadImage';
-import { FakeParticipant, IParticipant } from './types';
+import { FakeParticipant, IJitsiParticipant, IParticipant, ISourceInfo } from './types';
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
@@ -408,6 +409,29 @@ export function getParticipantDisplayName(stateful: IStateful, id: string): stri
 }
 
 /**
+ * Returns the source names of the screenshare sources in the conference.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
+ * @returns {string[]}
+ */
+export function getRemoteScreensharesBasedOnPresence(stateful: IStateful): string[] {
+    const conference = getCurrentConference(stateful);
+
+    return conference?.getParticipants()?.reduce((screenshares: string[], participant: IJitsiParticipant) => {
+        const videoSources: Map<string, ISourceInfo> = participant.getSources(MEDIA_TYPE.VIDEO);
+        const screenshareSources = Array.from(videoSources ?? new Map())
+            .filter(source => source[1].videoType === VIDEO_TYPE.DESKTOP && !source[1].muted)
+            .map(source => source[0]);
+
+        // eslint-disable-next-line no-param-reassign
+        screenshares = [ ...screenshares, ...screenshareSources ];
+
+        return screenshares;
+    }, []);
+}
+
+/**
  * Returns screenshare participant's display name.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
@@ -432,6 +456,36 @@ export function getScreenshareParticipantIds(stateful: IStateful): Array<string>
     return toState(stateful)['features/base/tracks']
         .filter(track => track.videoType === VIDEO_TYPE.DESKTOP && !track.muted)
         .map(t => t.participantId);
+}
+
+/**
+ * Returns a list source name associated with a given remote participant and for the given media type.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
+ * @param {string} id - The id of the participant whose source names are to be retrieved.
+ * @param {string} mediaType - The type of source, audio or video.
+ * @returns {Array<string>|undefined}
+ */
+export function getSourceNamesByMediaType(
+        stateful: IStateful,
+        id: string,
+        mediaType: string): Array<string> | undefined {
+    const participant: IParticipant | undefined = getParticipantById(stateful, id);
+
+    if (!participant) {
+        return;
+    }
+
+    const sources = participant.sources;
+
+    if (!sources) {
+        return;
+    }
+
+    return Array.from(sources.get(mediaType) ?? new Map())
+        .filter(source => source[1].videoType !== VIDEO_TYPE.DESKTOP || !source[1].muted)
+        .map(s => s[0]);
 }
 
 /**

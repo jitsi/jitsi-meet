@@ -48,8 +48,7 @@ function track(state: ITrack, action: any) {
         if (state.jitsiTrack === t.jitsiTrack) {
             return {
                 ...state,
-                participantId: t.participantId,
-                orphaned: false
+                participantId: t.participantId
             };
         }
         break;

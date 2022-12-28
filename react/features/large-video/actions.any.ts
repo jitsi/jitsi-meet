@@ -1,4 +1,5 @@
 import { IReduxState, IStore } from '../app/types';
+import { getSsrcRewritingFeatureFlag } from '../base/config/functions.any';
 import { MEDIA_TYPE } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
