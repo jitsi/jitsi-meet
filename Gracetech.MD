@@ -1,7 +1,9 @@
 # GraceTech Development
 
 ## Installation
-If you're using Windows, please use WSL
+Ideally please use MacOS to develop.
+
+In case you're using Windows, please use WSL
 -   sudo npm i patch-package -g
 -   npm install
 -   npm start
@@ -30,3 +32,8 @@ run this command before running npm start
 ```
 NODE_OPTIONS='--openssl-legacy-provider --max-old-space-size=8192'
 ```
+
+## Build Release Version
+- npm install
+- make
+- Build is in `libs`
