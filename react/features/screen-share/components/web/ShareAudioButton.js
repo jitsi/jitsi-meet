@@ -15,6 +15,7 @@ import {
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
 import { startAudioScreenShareFlow } from '../../actions.web';
 import { isAudioOnlySharing } from '../../functions';
+import {isLocalParticipantModerator} from '../../../base/participants/functions';
 
 type Props = AbstractButtonProps & {
 
@@ -75,7 +76,8 @@ class ShareAudioButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state: Object): $Shape<Props> {
 
     return {
-        _isAudioOnlySharing: isAudioOnlySharing(state)
+        _isAudioOnlySharing: isAudioOnlySharing(state),
+        visible: isLocalParticipantModerator(state)
     };
 }
 

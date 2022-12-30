@@ -158,8 +158,9 @@ export const shouldRenderInviteButton = (state: IReduxState) => {
     const { disableInviteFunctions } = toState(state)['features/base/config'];
     const flagEnabled = getFeatureFlag(state, INVITE_ENABLED, true);
     const inBreakoutRoom = isInBreakoutRoom(state);
+    const isLocalModerator = isLocalParticipantModerator(state);
 
-    return flagEnabled && !disableInviteFunctions && !inBreakoutRoom;
+    return flagEnabled && !disableInviteFunctions && !inBreakoutRoom && isLocalModerator;
 };
 
 /**

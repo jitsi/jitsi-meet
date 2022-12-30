@@ -44,6 +44,7 @@
             "add": "Add breakout room",
             "autoAssign": "Auto assign to breakout rooms",
             "close": "Close",
+            "closeAll": "Close all rooms",
             "join": "Join",
             "leaveBreakoutRoom": "Leave breakout room",
             "more": "More",

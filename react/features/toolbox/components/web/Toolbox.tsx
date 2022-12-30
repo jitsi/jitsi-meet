@@ -1396,7 +1396,11 @@ class Toolbox extends Component<IProps> {
         } = this.props;
 
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
-        const containerClassName = `toolbox-content${_isMobile ? ' toolbox-content-mobile' : ''}`;
+
+        //Gracetech: the class toolbox-content-mobile already have a @media css 
+        // control for small screen devices, there is no need for isMobile check
+        // for bigger screen, this class has no content
+        const containerClassName = `toolbox-content toolbox-content-mobile`;
 
         const { mainMenuButtons, overflowMenuButtons } = this._getVisibleButtons();
 

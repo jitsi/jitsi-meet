@@ -148,6 +148,9 @@ export function appNavigate(uri?: string) {
  * @returns {Function}
  */
 export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolean; showThankYou?: boolean; } = {}) {
+    //Gracetech --- this is the better place to close the browser window, since it web.ts
+    window.close();
+    
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
 
         const {

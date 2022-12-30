@@ -1981,6 +1981,9 @@ export default {
                 APP.API.notifyReadyToClose();
             }
             APP.store.dispatch(kickedOut(room, participant));
+
+            //Gracetech -- close the browser
+            window.close();
         });
 
         room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {
@@ -2576,6 +2579,9 @@ export default {
                 APP.API.notifyReadyToClose();
             }
             APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
+
+            //Gracetech -- close the window at hangup
+            window.close();
         });
     },
 

@@ -5,6 +5,8 @@ import type { Dispatch } from 'redux';
 import { translate } from '../../../base/i18n';
 import { IconPlay } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import {isLocalParticipantModerator} from '../../../base/participants/functions';
+
 import {
     AbstractButton,
     type AbstractButtonProps
@@ -117,7 +119,9 @@ function _mapStateToProps(state): Object {
 
     return {
         _isDisabled: sharedVideoBtnDisabled,
-        _sharingVideo: isSharingStatus(sharedVideoStatus)
+        _sharingVideo: isSharingStatus(sharedVideoStatus),
+        visible: isLocalParticipantModerator(state)
+
     };
 }
 

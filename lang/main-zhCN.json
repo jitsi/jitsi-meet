@@ -44,6 +44,7 @@
             "add": "添加分组讨论室",
             "autoAssign": "自动分配到分组讨论室",
             "close": "关闭",
+            "closeAll": "Close all rooms",
             "join": "加入",
             "leaveBreakoutRoom": "离开分组讨论室",
             "more": "更多",

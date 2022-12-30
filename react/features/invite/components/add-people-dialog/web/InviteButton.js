@@ -6,6 +6,7 @@ import { IconAddUser } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
 import { beginAddPeople } from '../../../actions.any';
+import {isLocalParticipantModerator} from '../../../../base/participants/functions';
 
 /**
  * The type of the React {@code Component} props of {@link EmbedMeetingButton}.
@@ -41,4 +42,17 @@ class InviteButton extends AbstractButton<Props, *> {
     }
 }
 
-export default translate(connect()(InviteButton));
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state): Object {
+    return {
+        visible: isLocalParticipantModerator(state)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(InviteButton));

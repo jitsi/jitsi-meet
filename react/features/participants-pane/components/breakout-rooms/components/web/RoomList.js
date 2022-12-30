@@ -23,6 +23,8 @@ import RoomActionEllipsis from './RoomActionEllipsis';
 import { RoomContextMenu } from './RoomContextMenu';
 import { RoomParticipantContextMenu } from './RoomParticipantContextMenu';
 
+import { CloseAllRoomsButton } from './CloseAllRoomsButton';
+
 type Props = {
 
     /**
@@ -50,6 +52,7 @@ export const RoomList = ({ searchString }: Props) => {
         <>
             {inBreakoutRoom && <LeaveButton />}
             {showAutoAssign && <AutoAssignButton />}
+            {showAutoAssign && rooms.length > 0 && <CloseAllRoomsButton />}
             <div id = 'breakout-rooms-list'>
                 {rooms.map((room: Object) => (
                     <React.Fragment key = { room.id }>

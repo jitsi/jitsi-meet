@@ -14,6 +14,7 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { findAncestorByClass } from '../../../base/ui/functions.web';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 import MuteEveryoneDialog from '../../../video-menu/components/web/MuteEveryoneDialog';
+
 import { close } from '../../actions.web';
 import {
     getParticipantsPaneOpen,
@@ -99,6 +100,7 @@ const ParticipantsPane = () => {
         .conference?.getBreakoutRooms()?.isSupported();
     const showAddRoomButton = useSelector(isAddBreakoutRoomButtonVisible);
     const showFooter = useSelector(isLocalParticipantModerator);
+    //const showAutoAssign = false; //useSelector(isAutoAssignParticipantsVisible);
     const showMuteAllButton = useSelector(isMuteAllVisible);
     const showMoreActionsButton = useSelector(isMoreActionsVisible);
     const dispatch = useDispatch();
@@ -132,6 +134,9 @@ const ParticipantsPane = () => {
     const onMuteAll = useCallback(() => {
         dispatch(openDialog(MuteEveryoneDialog));
     }, []);
+
+    const muteAllVideo = useCallback(
+        () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);
 
     const onToggleContext = useCallback(() => {
         setContextOpen(open => !open);
@@ -168,6 +173,11 @@ const ParticipantsPane = () => {
                                 onClick = { onMuteAll }
                                 type = { BUTTON_TYPES.SECONDARY } />
                         )}
+                        <Button
+                            accessibilityLabel = { t('participantsPane.actions.stopEveryonesVideo') }
+                            labelKey = { 'participantsPane.actions.stopEveryonesVideo' }
+                            onClick = { muteAllVideo }
+                            type = { BUTTON_TYPES.SECONDARY } />
                         {showMoreActionsButton && (
                             <div className = { classes.footerMoreContainer }>
                                 <Button
