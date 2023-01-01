@@ -82,9 +82,9 @@ function handle_get_room_size(event)
         return { status_code = 400; };
     end
 
-	local params = parse(event.request.url.query);
-	local room_name = params["room"];
-	local domain_name = params["domain"];
+    local params = parse(event.request.url.query);
+    local room_name = params["room"];
+    local domain_name = params["domain"];
     local subdomain = params["subdomain"];
 
     local room_address
@@ -98,28 +98,28 @@ function handle_get_room_size(event)
         return { status_code = 403; };
     end
 
-	local room = get_room_from_jid(room_address);
-	local participant_count = 0;
+    local room = get_room_from_jid(room_address);
+    local participant_count = 0;
 
-	log("debug", "Querying room %s", tostring(room_address));
+    log("debug", "Querying room %s", tostring(room_address));
 
-	if room then
-		local occupants = room._occupants;
-		if occupants then
-			participant_count = iterators.count(room:each_occupant());
-		end
-		log("debug",
+    if room then
+        local occupants = room._occupants;
+        if occupants then
+            participant_count = iterators.count(room:each_occupant());
+        end
+        log("debug",
             "there are %s occupants in room", tostring(participant_count));
-	else
-		log("debug", "no such room exists");
-		return { status_code = 404; };
-	end
+    else
+        log("debug", "no such room exists");
+        return { status_code = 404; };
+    end
 
-	if participant_count > 1 then
-		participant_count = participant_count - 1;
-	end
+    if participant_count > 1 then
+        participant_count = participant_count - 1;
+    end
 
-	return { status_code = 200; body = [[{"participants":]]..participant_count..[[}]] };
+    return { status_code = 200; body = [[{"participants":]]..participant_count..[[}]] };
 end
 
 --- Handles request for retrieving the room participants details
@@ -130,9 +130,9 @@ function handle_get_room (event)
         return { status_code = 400; };
     end
 
-	local params = parse(event.request.url.query);
-	local room_name = params["room"];
-	local domain_name = params["domain"];
+    local params = parse(event.request.url.query);
+    local room_name = params["room"];
+    local domain_name = params["domain"];
     local subdomain = params["subdomain"];
     local room_address
         = jid.join(room_name, muc_domain_prefix.."."..domain_name);
@@ -145,53 +145,53 @@ function handle_get_room (event)
         return { status_code = 403; };
     end
 
-	local room = get_room_from_jid(room_address);
-	local participant_count = 0;
-	local occupants_json = array();
+    local room = get_room_from_jid(room_address);
+    local participant_count = 0;
+    local occupants_json = array();
 
-	log("debug", "Querying room %s", tostring(room_address));
+    log("debug", "Querying room %s", tostring(room_address));
 
-	if room then
-		local occupants = room._occupants;
-		if occupants then
-			participant_count = iterators.count(room:each_occupant());
-			for _, occupant in room:each_occupant() do
-			    -- filter focus as we keep it as hidden participant
-			    if string.sub(occupant.nick,-string.len("/focus"))~="/focus" then
-				    for _, pr in occupant:each_session() do
-					local nick = pr:get_child_text("nick", "http://jabber.org/protocol/nick") or "";
-					local email = pr:get_child_text("email") or "";
-					occupants_json:push({
-					    jid = tostring(occupant.nick),
-					    email = tostring(email),
-					    display_name = tostring(nick)});
-				    end
-			    end
-			end
-		end
-		log("debug",
+    if room then
+        local occupants = room._occupants;
+        if occupants then
+            participant_count = iterators.count(room:each_occupant());
+            for _, occupant in room:each_occupant() do
+                -- filter focus as we keep it as hidden participant
+                if string.sub(occupant.nick,-string.len("/focus"))~="/focus" then
+                    for _, pr in occupant:each_session() do
+                        local nick = pr:get_child_text("nick", "http://jabber.org/protocol/nick") or "";
+                        local email = pr:get_child_text("email") or "";
+                        occupants_json:push({
+                            jid = tostring(occupant.nick),
+                            email = tostring(email),
+                            display_name = tostring(nick)});
+                    end
+                end
+            end
+        end
+        log("debug",
             "there are %s occupants in room", tostring(participant_count));
-	else
-		log("debug", "no such room exists");
-		return { status_code = 404; };
-	end
+    else
+        log("debug", "no such room exists");
+        return { status_code = 404; };
+    end
 
-	if participant_count > 1 then
-		participant_count = participant_count - 1;
-	end
+    if participant_count > 1 then
+        participant_count = participant_count - 1;
+    end
 
-	return { status_code = 200; body = json.encode(occupants_json); };
+    return { status_code = 200; body = json.encode(occupants_json); };
 end;
 
 function module.load()
     module:depends("http");
-	module:provides("http", {
-		default_path = "/";
-		route = {
-			["GET room-size"] = function (event) return async_handler_wrapper(event,handle_get_room_size) end;
-			["GET sessions"] = function () return tostring(it.count(it.keys(prosody.full_sessions))); end;
-			["GET room"] = function (event) return async_handler_wrapper(event,handle_get_room) end;
-		};
-	});
+    module:provides("http", {
+        default_path = "/";
+        route = {
+            ["GET room-size"] = function (event) return async_handler_wrapper(event,handle_get_room_size) end;
+            ["GET sessions"] = function () return tostring(it.count(it.keys(prosody.full_sessions))); end;
+            ["GET room"] = function (event) return async_handler_wrapper(event,handle_get_room) end;
+        };
+    });
 end
 
