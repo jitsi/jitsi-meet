@@ -64,7 +64,7 @@ local main_rooms_map = {};
 function get_main_room_jid(room_jid)
     local _, host = jid_split(room_jid);
 
-	return
+    return
         host == main_muc_component_config
         and room_jid
         or main_rooms_map[room_jid];
