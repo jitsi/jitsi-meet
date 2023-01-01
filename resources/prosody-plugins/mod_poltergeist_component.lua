@@ -3,12 +3,12 @@ local st = require "util.stanza";
 -- A component which we use to receive all stanzas for the created poltergeists
 -- replays with error if an iq is sent
 function no_action()
-	return true;
+    return true;
 end
 
 function error_reply(event)
-	module:send(st.error_reply(event.stanza, "cancel", "service-unavailable"));
-	return true;
+    module:send(st.error_reply(event.stanza, "cancel", "service-unavailable"));
+    return true;
 end
 
 module:hook("presence/host", no_action);
