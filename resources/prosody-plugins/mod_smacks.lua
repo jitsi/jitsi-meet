@@ -165,7 +165,7 @@ local function request_ack_if_needed(session, force, reason, stanza)
 	-- session.log("debug", "*** SMACKS(1) ***: awaiting_ack=%s, hibernating=%s", tostring(session.awaiting_ack), tostring(session.hibernating));
 	if session.awaiting_ack == nil and not session.hibernating then
 		local max_unacked = max_unacked_stanzas;
-		if session.state == "inactive"  then
+		if session.state == "inactive" then
 			max_unacked = max_inactive_unacked_stanzas;
 		end
 		-- this check of last_requested_h prevents ack-loops if missbehaving clients report wrong
