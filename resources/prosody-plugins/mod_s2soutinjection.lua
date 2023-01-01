@@ -63,7 +63,7 @@ function proxy_listener.register_outgoing(conn, session)
 end
 
 function proxy_listener.ondisconnect(conn, err)
-	sessions[conn]  = nil;
+	sessions[conn] = nil;
 end
 
 module:hook("route/remote", function(event)
