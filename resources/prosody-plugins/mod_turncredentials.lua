@@ -33,7 +33,6 @@ function random(arr)
     return arr[index];
 end
 
-
 module:hook_global("config-reloaded", function()
     module:log("debug", "config-reloaded")
     secret = module:get_option_string("turncredentials_secret");
@@ -59,8 +58,8 @@ module:hook("iq-get/host/urn:xmpp:extdisco:1:services", function(event)
         elseif item.type == "turn" or item.type == "turns" then
             local turn = {}
             -- turn items need host, port (defaults to 3478),
-	          -- transport (defaults to udp)
-	          -- username, password, ttl
+            -- transport (defaults to udp)
+            -- username, password, ttl
             turn.type = item.type;
             turn.port = tostring(item.port);
             turn.transport = item.transport;
