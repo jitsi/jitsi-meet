@@ -482,12 +482,10 @@ export interface IConfig {
     subject?: string;
     testing?: {
         callStatsThreshold?: number;
-        capScreenshareBitrate?: number;
         disableE2EE?: boolean;
         mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
-        setScreenSharingResolutionConstraints?: boolean;
         testMode?: boolean;
     };
     tileView?: {
