@@ -2,7 +2,8 @@ import { IReduxState, IStore } from '../../app/types';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
-import { setAudioOnly } from '../audio-only/actions';
+import { showNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import {
     setScreenshareMuted,
@@ -75,7 +76,11 @@ async function _startScreenSharing(dispatch: Function, state: IReduxState) {
         const { enabled: audioOnly } = state['features/base/audio-only'];
 
         if (audioOnly) {
-            dispatch(setAudioOnly(false));
+            dispatch(showNotification({
+                titleKey: 'notify.screenSharingAudioOnlyTitle',
+                descriptionKey: 'notify.screenSharingAudioOnlyDescription',
+                maxLines: 3
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         }
     } catch (error: any) {
         console.log('ERROR creating ScreeSharing stream ', error);
