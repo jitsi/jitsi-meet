@@ -1,6 +1,3 @@
-import {
-    SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
-} from '../../video-layout/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
 
@@ -74,7 +71,6 @@ const DEFAULT_STATE = {
     remote: new Map(),
     sortedRemoteVirtualScreenshareParticipants: new Map(),
     sortedRemoteParticipants: new Map(),
-    sortedRemoteScreenshares: new Map(),
     speakersList: new Map()
 };
 
@@ -89,7 +85,6 @@ export interface IParticipantsState {
     raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, IParticipant>;
     sortedRemoteParticipants: Map<string, string>;
-    sortedRemoteScreenshares: Map<string, string>;
     sortedRemoteVirtualScreenshareParticipants: Map<string, string>;
     speakersList: Map<string, string>;
 }
@@ -384,29 +379,6 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             ...state,
             raisedHandsQueue: action.queue
         };
-    }
-    case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED: {
-        const { participantIds } = action;
-        const sortedSharesList = [];
-
-        for (const participant of participantIds) {
-            const remoteParticipant = state.remote.get(participant);
-
-            if (remoteParticipant) {
-                const displayName
-                    = _getDisplayName(state, remoteParticipant.name);
-
-                sortedSharesList.push([ participant, displayName ]);
-            }
-        }
-
-        // Keep the remote screen share list sorted alphabetically.
-        sortedSharesList.length && sortedSharesList.sort((a, b) => a[1].localeCompare(b[1]));
-
-        // @ts-ignore
-        state.sortedRemoteScreenshares = new Map(sortedSharesList);
-
-        return { ...state };
     }
     case OVERWRITE_PARTICIPANT_NAME: {
         const { id, name } = action;

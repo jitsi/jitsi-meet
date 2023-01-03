@@ -29,6 +29,16 @@ body.welcome-page {
             flex-direction: column;
             margin: $welcomePageHeaderContainerMargin;
             z-index: $zindex2;
+            align-items: center;
+            position: relative;
+            max-width: 688px;
+        }
+
+        .header-watermark-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin-top: calc(20px - #{$welcomePageHeaderContainerMarginTop});
         }
 
         .header-text-title {
@@ -123,16 +133,11 @@ body.welcome-page {
             max-width: calc(100% - 40px);
             padding: 16px 0 39px 0;
             width: $welcomePageEnterRoomWidth;
+            text-align: center;
 
-            p {
-                color: $welcomePageDescriptionColor;
-                float: left;
-                text-align: $welcomePageHeaderTextAlign;
-
-                a {
-                    color: inherit;
-                    font-weight: 600;
-                }
+            a {
+                color: inherit;
+                font-weight: 600;
             }
         }
     }
@@ -200,8 +205,8 @@ body.welcome-page {
         color: $welcomePageDescriptionColor;
         padding: 4px;
         position: absolute;
-        top: 32px;
-        right: 32px;
+        top: calc(35px - #{$welcomePageHeaderContainerMarginTop});
+        right: 0;
         z-index: $zindex2;
 
         * {
@@ -224,6 +229,11 @@ body.welcome-page {
             width: $welcomePageWatermarkWidth;
             height: $welcomePageWatermarkHeight;
         }
+
+        .watermark.leftwatermarknomargin {
+            width: $welcomePageWatermarkWidth;
+            height: $welcomePageWatermarkHeight;
+        }
     }
 
     &.without-content {
@@ -242,10 +252,17 @@ body.welcome-page {
         padding-top: 40px;
     }
 
-    .welcome-card-row {
+    .welcome-card-column {
         display: flex;
         justify-content: center;
-        padding: 0 32px;
+        flex-direction: column;
+        align-items: center;
+        max-width: 688px;
+        margin: auto;
+
+        > div {
+            margin-bottom: 16px;
+        }
     }
 
     .welcome-card-text {
@@ -253,7 +270,7 @@ body.welcome-page {
     }
 
     .welcome-card {
-        width: 49%;
+        width: 100%;
         border-radius: 8px;
 
         &--dark {
@@ -267,10 +284,6 @@ body.welcome-page {
 
         &--grey {
             background: #F2F3F4;
-        }
-
-        &--shadow {
-            box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.15);
         }
     }
 

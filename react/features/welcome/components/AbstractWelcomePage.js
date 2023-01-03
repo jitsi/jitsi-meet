@@ -274,7 +274,7 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
 export function _mapStateToProps(state: Object) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
-        _deeplinkingCfg: state['features/base/config'].deeplinking,
+        _deeplinkingCfg: state['features/base/config'].deeplinking || {},
         _enableInsecureRoomNameWarning: state['features/base/config'].enableInsecureRoomNameWarning || false,
         _moderatedRoomServiceUrl: state['features/base/config'].moderatedRoomServiceUrl,
         _recentListEnabled: isRecentListEnabled(),
