@@ -13,6 +13,8 @@ import { ActionButton, InputField, PreMeetingScreen } from '../../../base/premee
 import { connect } from '../../../base/redux';
 import { getDisplayName, updateSettings } from '../../../base/settings';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks';
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
@@ -26,7 +28,6 @@ import {
     isPrejoinDisplayNameVisible
 } from '../../functions';
 
-import DropdownButton from './DropdownButton';
 import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
 
 type Props = {
@@ -297,20 +298,20 @@ class Prejoin extends Component<Props, State> {
 
         const noAudio = {
             key: 'no-audio',
-            dataTestId: 'prejoin.joinWithoutAudio',
+            testId: 'prejoin.joinWithoutAudio',
             icon: IconVolumeOff,
             label: t('prejoin.joinWithoutAudio'),
-            onButtonClick: joinConferenceWithoutAudio,
-            onKeyPressed: this._onJoinConferenceWithoutAudioKeyPress
+            onClick: joinConferenceWithoutAudio,
+            onKeyPress: this._onJoinConferenceWithoutAudioKeyPress
         };
 
         const byPhone = {
             key: 'by-phone',
-            dataTestId: 'prejoin.joinByPhone',
+            testId: 'prejoin.joinByPhone',
             icon: IconPhoneRinging,
             label: t('prejoin.joinAudioByPhone'),
-            onButtonClick: this._showDialog,
-            onKeyPressed: this._showDialogKeyPress
+            onClick: this._showDialog,
+            onKeyPress: this._showDialogKeyPress
         };
 
         return {
@@ -394,9 +395,11 @@ class Prejoin extends Component<Props, State> {
                         <InlineDialog
                             content = { hasExtraJoinButtons && <div className = 'prejoin-preview-dropdown-btns'>
                                 {extraButtonsToRender.map(({ key, ...rest }: Object) => (
-                                    <DropdownButton
+                                    <Button
                                         disabled = { joiningInProgress }
+                                        fullWidth = { true }
                                         key = { key }
+                                        type = { BUTTON_TYPES.SECONDARY }
                                         { ...rest } />
                                 ))}
                             </div> }

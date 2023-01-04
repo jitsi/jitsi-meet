@@ -35,6 +35,11 @@ export interface IButtonProps {
     onClick?: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
 
     /**
+     * Key press callback.
+     */
+    onKeyPress?: (e?: React.KeyboardEvent<HTMLButtonElement>) => void;
+
+    /**
      * The type of button to be displayed.
      */
     type?: BUTTON_TYPES;
