@@ -57,6 +57,11 @@ type Props = {
     joinConferenceWithoutAudio: Function,
 
     /**
+     * Whether conference join is in progress.
+     */
+    joiningInProgress: boolean,
+
+    /**
      * The name of the user that is about to join.
      */
     name: string,
@@ -115,11 +120,6 @@ type Props = {
 type State = {
 
     /**
-     * Flag controlling the visibility of the error label.
-     */
-    showError: boolean,
-
-    /**
      * Flag controlling the visibility of the 'join by phone' buttons.
      */
     showJoinByPhoneButtons: boolean
@@ -138,7 +138,6 @@ class Prejoin extends Component<Props, State> {
         super(props);
 
         this.state = {
-            showError: false,
             showJoinByPhoneButtons: false
         };
 
@@ -165,14 +164,8 @@ class Prejoin extends Component<Props, State> {
      */
     _onJoinButtonClick() {
         if (this.props.showErrorOnJoin) {
-            this.setState({
-                showError: true
-            });
-
             return;
         }
-
-        this.setState({ showError: false });
         this.props.joinConference();
     }
 
@@ -338,12 +331,14 @@ class Prejoin extends Component<Props, State> {
             hasJoinByPhoneButton,
             joinConference,
             joinConferenceWithoutAudio,
+            joiningInProgress,
             name,
             participantId,
             prejoinConfig,
             readOnlyName,
             showCameraPreview,
             showDialog,
+            showErrorOnJoin,
             t,
             videoTrack
         } = this.props;
@@ -359,7 +354,7 @@ class Prejoin extends Component<Props, State> {
             extraButtonsToRender = extraButtonsToRender.filter((btn: Object) => btn.key !== 'by-phone');
         }
         const hasExtraJoinButtons = Boolean(extraButtonsToRender.length);
-        const { showJoinByPhoneButtons, showError } = this.state;
+        const { showJoinByPhoneButtons } = this.state;
 
         return (
             <PreMeetingScreen
@@ -373,8 +368,8 @@ class Prejoin extends Component<Props, State> {
                     {this.showDisplayNameField ? (<InputField
                         autoComplete = { 'name' }
                         autoFocus = { true }
-                        className = { showError ? 'error' : '' }
-                        hasError = { showError }
+                        className = { showErrorOnJoin ? 'error' : '' }
+                        hasError = { showErrorOnJoin }
                         onChange = { _setName }
                         onSubmit = { joinConference }
                         placeHolder = { t('dialog.enterDisplayName') }
@@ -391,7 +386,7 @@ class Prejoin extends Component<Props, State> {
                         </div>
                     )}
 
-                    {showError && <div
+                    {showErrorOnJoin && <div
                         className = 'prejoin-error'
                         data-testid = 'prejoin.errorMessage'>{t('prejoin.errorMissingName')}</div>}
 
@@ -400,6 +395,7 @@ class Prejoin extends Component<Props, State> {
                             content = { hasExtraJoinButtons && <div className = 'prejoin-preview-dropdown-btns'>
                                 {extraButtonsToRender.map(({ key, ...rest }: Object) => (
                                     <DropdownButton
+                                        disabled = { joiningInProgress }
                                         key = { key }
                                         { ...rest } />
                                 ))}
@@ -411,6 +407,7 @@ class Prejoin extends Component<Props, State> {
                                 ariaDropDownLabel = { t('prejoin.joinWithoutAudio') }
                                 ariaLabel = { t('prejoin.joinMeeting') }
                                 ariaPressed = { showJoinByPhoneButtons }
+                                disabled = { joiningInProgress }
                                 hasOptions = { hasExtraJoinButtons }
                                 onClick = { _onJoinButtonClick }
                                 onKeyPress = { _onJoinKeyPress }
@@ -444,11 +441,13 @@ function mapStateToProps(state): Object {
     const name = getDisplayName(state);
     const showErrorOnJoin = isDisplayNameRequired(state) && !name;
     const { id: participantId } = getLocalParticipant(state);
+    const { joiningInProgress } = state['features/prejoin'];
 
     return {
         canEditDisplayName: isPrejoinDisplayNameVisible(state),
         deviceStatusVisible: isDeviceStatusVisible(state),
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
+        joiningInProgress,
         name,
         participantId,
         prejoinConfig: state['features/base/config'].prejoinConfig,

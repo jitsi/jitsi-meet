@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
@@ -9,6 +9,11 @@ interface IProps {
      * Attribute used in automated testing.
      */
     dataTestId: string;
+
+    /**
+     * Whether the button is disabled.
+     */
+    disabled: boolean;
 
     /**
      * The button's icon.
@@ -47,6 +52,19 @@ const useStyles = makeStyles()(theme => {
 
             '&:hover': { // @ts-ignore
                 backgroundColor: theme.palette.field02Hover
+            },
+
+            '&.disabled': {
+                background: theme.palette.disabled01,
+                border: '1px solid #5E6D7A',
+                color: '#AFB6BC',
+                cursor: 'initial',
+
+                '.icon': {
+                    '& > svg': {
+                        fill: '#AFB6BC'
+                    }
+                }
             }
         },
         prejoinPreviewDropdownIcon: {
@@ -67,19 +85,30 @@ const useStyles = makeStyles()(theme => {
  */
 const DropdownButton = ({
     dataTestId,
+    disabled,
     icon,
     onButtonClick,
     onKeyPressed,
     label
 }: IProps) => {
-    const { classes } = useStyles();
+    const { classes, cx } = useStyles();
+    const containerClasses = cx(
+        classes.prejoinPreviewDropdownBtn,
+        disabled && 'disabled'
+    );
+
+    const onClick = useCallback(() =>
+        !disabled && onButtonClick(), [ disabled ]);
+
+    const onKeyPress = useCallback(() =>
+        !disabled && onKeyPressed(), [ disabled ]);
 
     return (
         <div
-            className = { classes.prejoinPreviewDropdownBtn }
+            className = { containerClasses }
             data-testid = { dataTestId }
-            onClick = { onButtonClick }
-            onKeyPress = { onKeyPressed }
+            onClick = { onClick }
+            onKeyPress = { onKeyPress }
             role = 'button'
             tabIndex = { 0 }>
             <Icon
