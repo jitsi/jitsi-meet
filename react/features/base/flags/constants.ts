@@ -261,4 +261,4 @@ export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
  * Flag indicating if the welcome page should be enabled.
  * Default: disabled (false).
  */
-export const WELCOME_PAGE_ENABLED = 'welcome-page.enabled';
+export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
