@@ -26,7 +26,7 @@ type Props = {
     /**
      * True if the invite functions (dial out, invite, share...etc) are disabled.
      */
-    _isInviteFunctionsDiabled: boolean,
+    _isInviteFunctionsDisabled: boolean,
 
     /**
      * True if it's a lonely meeting (participant count excluding fakes is 1).
@@ -80,7 +80,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
     render() {
         const {
             _isInBreakoutRoom,
-            _isInviteFunctionsDiabled,
+            _isInviteFunctionsDisabled,
             _isLonelyMeeting,
             t
         } = this.props;
@@ -94,7 +94,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                 <Text style = { styles.lonelyMessage }>
                     { t('lonelyMeetingExperience.youAreAlone') }
                 </Text>
-                { !_isInviteFunctionsDiabled && !_isInBreakoutRoom && (
+                { !_isInviteFunctionsDisabled && !_isInBreakoutRoom && (
                     <Button
                         accessibilityLabel = 'lonelyMeetingExperience.button'
                         icon = { this._renderAddPeopleIcon }
@@ -131,7 +131,7 @@ function _mapStateToProps(state) {
 
     return {
         _isInBreakoutRoom,
-        _isInviteFunctionsDiabled: !flag || disableInviteFunctions,
+        _isInviteFunctionsDisabled: !flag || disableInviteFunctions,
         _isLonelyMeeting: conference && getParticipantCountWithFake(state) === 1
     };
 }
