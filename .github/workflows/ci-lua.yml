@@ -1,0 +1,29 @@
+name: Lua CI
+
+on: [pull_request]
+
+jobs:
+  luacheck:
+    name: Luacheck
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install luarocks
+      run: sudo apt-get --install-recommends -y install luarocks
+
+    - name: Install luacheck
+      run: sudo luarocks install luacheck
+
+    - name: Check lua codes
+      run: |
+        set -o pipefail
+        luacheck -g $(find -name '*.lua') --no-color | awk -F':' '
+          { print $0 }
+
+          /^\s+.+?:[0-9]+:[0-9]+:/ {
+            gsub(/^\s+|\s+$/, "")
+            gsub(/^\s+/, "", $4)
+            printf "::warning file=%s,line=%s,col=%s::%s\n", $1, $2, $3, $4
+          }
+        '
