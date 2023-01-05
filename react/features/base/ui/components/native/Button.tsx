@@ -90,8 +90,8 @@ const Button: React.FC<IProps> = ({
     return (
         <NativePaperButton
             accessibilityLabel = { t(accessibilityLabel ?? '') }
+            buttonColor = { color }
             children = { t(labelKey ?? '') }
-            color = { color }
             contentStyle = { [
                 styles.buttonContent,
                 contentStyle
