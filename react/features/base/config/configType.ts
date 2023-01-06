@@ -511,7 +511,6 @@ export interface IConfig {
         useAppLanguage?: boolean;
     };
     useHostPageLocalStorage?: boolean;
-    useNewBandwidthAllocationStrategy?: boolean;
     useTurnUdp?: boolean;
     videoQuality?: {
         disabledCodec?: string;

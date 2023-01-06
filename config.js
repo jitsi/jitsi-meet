@@ -418,12 +418,6 @@ var config = {
     //     90: 2,
     // },
 
-    // Provides a way to translate the legacy bridge signaling messages, 'LastNChangedEvent',
-    // 'SelectedEndpointsChangedEvent' and 'ReceiverVideoConstraint' into the new 'ReceiverVideoConstraints' message
-    // that invokes the new bandwidth allocation algorithm in the bridge which is described here
-    // - https://github.com/jitsi/jitsi-videobridge/blob/master/doc/allocation.md.
-    // useNewBandwidthAllocationStrategy: false,
-
     // Specify the settings for video quality optimizations on the client.
     // videoQuality: {
     //    // Provides a way to prevent a video codec from being negotiated on the JVB connection. The codec specified
