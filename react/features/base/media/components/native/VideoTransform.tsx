@@ -1,14 +1,16 @@
-// @flow
-
 import React, { Component } from 'react';
 import { PanResponder, PixelRatio, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { type Dispatch } from 'redux';
 
-import { connect } from '../../../redux';
-import { ASPECT_RATIO_WIDE } from '../../../responsive-ui';
+import { IReduxState } from '../../../../app/types';
+import { connect } from '../../../redux/functions';
+import { ASPECT_RATIO_WIDE } from '../../../responsive-ui/constants';
 import { storeVideoTransform } from '../../actions';
 
+// @ts-ignore
 import styles from './styles';
+
 
 /**
  * The default/initial transform (= no transform).
@@ -55,9 +57,9 @@ const TAP_TIMEOUT_MS = 400;
  * Type of a transform object this component is capable of handling.
  */
 type Transform = {
-    scale: number,
-    translateX: number,
-    translateY: number
+    scale: number;
+    translateX: number;
+    translateY: number;
 };
 
 type Props = {
@@ -65,43 +67,43 @@ type Props = {
     /**
      * The current aspect ratio of the screen.
      */
-    _aspectRatio: Symbol,
+    _aspectRatio: Symbol;
 
     /**
-     * The children components of this view.
+     * Action to dispatch when the component is unmounted.
      */
-    children: Object,
-
-    /**
-     * Transformation is only enabled when this flag is true.
-     */
-    enabled: boolean,
-
-    /**
-     * Function to invoke when a press event is detected.
-     */
-    onPress?: Function,
-
-    /**
-     * The id of the current stream that is displayed.
-     */
-    streamId: string,
-
-    /**
-     * Style of the top level transformable view.
-     */
-    style: Object,
+    _onUnmount: Function;
 
     /**
      * The stored transforms retrieved from Redux to be initially applied
      * to different streams.
      */
-    _transforms: Object,
+    _transforms: Object;
 
     /**
-     * Action to dispatch when the component is unmounted.
+     * The children components of this view.
      */
-    _onUnmount: Function
+    children: Object;
+
+    /**
+     * Transformation is only enabled when this flag is true.
+     */
+    enabled: boolean;
+
+    /**
+     * Function to invoke when a press event is detected.
+     */
+    onPress?: Function;
+
+    /**
+     * The id of the current stream that is displayed.
+     */
+    streamId: string;
+
+    /**
+     * Style of the top level transformable view.
+     */
+    style: Object;
 };
 
 type State = {
@@ -109,12 +111,12 @@ type State = {
     /**
      * The current (non-transformed) layout of the View.
      */
-    layout: ?Object,
+    layout: any;
 
     /**
      * The current transform that is applied.
      */
-    transform: Transform
+    transform: Transform;
 };
 
 /**
@@ -129,14 +131,14 @@ class VideoTransform extends Component<Props, State> {
     /**
      * The initial distance of the fingers on pinch start.
      */
-    initialDistance: ?number;
+    initialDistance: number;
 
     /**
      * The initial position of the finger on touch start.
      */
     initialPosition: {
-        x: number,
-        y: number
+        x: number;
+        y: number;
     };
 
     /**
@@ -233,14 +235,17 @@ class VideoTransform extends Component<Props, State> {
                     videoTransformedViewContainerStyles,
                     style
                 ] }
+
+                // @ts-ignore
                 { ...this.gestureHandlers.panHandlers }>
-                <View
+                <SafeAreaView
+                    edges = { [ 'bottom', 'left' ] }
                     style = { [
                         styles.videoTranformedView,
                         this._getTransformStyle()
                     ] }>
                     { children }
-                </View>
+                </SafeAreaView>
             </View>
         );
     }
@@ -281,15 +286,13 @@ class VideoTransform extends Component<Props, State> {
         };
     }
 
-    _didMove: Object => boolean;
-
     /**
      * Determines if there was large enough movement to be handled.
      *
      * @param {Object} gestureState - The gesture state.
      * @returns {boolean}
      */
-    _didMove({ dx, dy }) {
+    _didMove({ dx, dy }: any) {
         return Math.abs(dx) > this.moveThreshold
                 || Math.abs(dy) > this.moveThreshold;
     }
@@ -302,13 +305,12 @@ class VideoTransform extends Component<Props, State> {
      * @private
      * @returns {Object | null}
      */
-    _getSavedTransform(streamId) {
+    _getSavedTransform(streamId: string) {
         const { enabled, _transforms } = this.props;
 
+        // @ts-ignore
         return (enabled && _transforms[streamId]) || null;
     }
-
-    _getTouchDistance: Object => number;
 
     /**
      * Calculates the touch distance on a pinch event.
@@ -317,14 +319,12 @@ class VideoTransform extends Component<Props, State> {
      * @private
      * @returns {number}
      */
-    _getTouchDistance({ nativeEvent: { touches } }) {
+    _getTouchDistance({ nativeEvent: { touches } }: any) {
         const dx = Math.abs(touches[0].pageX - touches[1].pageX);
         const dy = Math.abs(touches[0].pageY - touches[1].pageY);
 
         return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
     }
-
-    _getTouchPosition: Object => Object;
 
     /**
      * Calculates the position of the touch event.
@@ -333,14 +333,12 @@ class VideoTransform extends Component<Props, State> {
      * @private
      * @returns {Object}
      */
-    _getTouchPosition({ nativeEvent: { touches } }) {
+    _getTouchPosition({ nativeEvent: { touches } }: any) {
         return {
             x: touches[0].pageX,
             y: touches[0].pageY
         };
     }
-
-    _getTransformStyle: () => Object;
 
     /**
      * Generates a transform style object to be used on the component.
@@ -473,8 +471,6 @@ class VideoTransform extends Component<Props, State> {
         }
     }
 
-    _onGesture: (string, ?Object | number) => void;
-
     /**
      * Handles gestures and converts them to transforms.
      *
@@ -494,7 +490,7 @@ class VideoTransform extends Component<Props, State> {
      * @param {?Object | number} value - The value of the gesture, if any.
      * @returns {void}
      */
-    _onGesture(type, value) {
+    _onGesture(type: string, value: any) {
         let transform;
 
         switch (type) {
@@ -528,8 +524,6 @@ class VideoTransform extends Component<Props, State> {
         this.lastTap = 0;
     }
 
-    _onLayout: Object => void;
-
     /**
      * Callback for the onLayout of the component.
      *
@@ -537,7 +531,7 @@ class VideoTransform extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onLayout({ nativeEvent: { layout: { x, y, width, height } } }) {
+    _onLayout({ nativeEvent: { layout: { x, y, width, height } } }: any) {
         this.setState({
             layout: {
                 x,
@@ -548,8 +542,6 @@ class VideoTransform extends Component<Props, State> {
         });
     }
 
-    _onMoveShouldSetPanResponder: (Object, Object) => boolean;
-
     /**
      * Function to decide whether the responder should respond to a move event.
      *
@@ -558,13 +550,11 @@ class VideoTransform extends Component<Props, State> {
      * @private
      * @returns {boolean}
      */
-    _onMoveShouldSetPanResponder(evt, gestureState) {
+    _onMoveShouldSetPanResponder(evt: Object, gestureState: any) {
         return this.props.enabled
             && (this._didMove(gestureState)
                 || gestureState.numberActiveTouches === 2);
     }
-
-    _onPanResponderGrant: (Object, Object) => void;
 
     /**
      * Calculates the initial touch distance.
@@ -574,7 +564,7 @@ class VideoTransform extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onPanResponderGrant(evt, { numberActiveTouches }) {
+    _onPanResponderGrant(evt: Object, { numberActiveTouches }: any) {
         if (numberActiveTouches === 1) {
             this.initialPosition = this._getTouchPosition(evt);
             this.lastTap = Date.now();
@@ -584,8 +574,6 @@ class VideoTransform extends Component<Props, State> {
         }
     }
 
-    _onPanResponderMove: (Object, Object) => void;
-
     /**
      * Handles the PanResponder move (touch move) event.
      *
@@ -594,7 +582,7 @@ class VideoTransform extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onPanResponderMove(evt, gestureState) {
+    _onPanResponderMove(evt: Object, gestureState: any) {
         if (gestureState.numberActiveTouches === 2) {
             // this is a zoom event
             if (
@@ -628,8 +616,6 @@ class VideoTransform extends Component<Props, State> {
         }
     }
 
-    _onPanResponderRelease: () => void;
-
     /**
      * Handles the PanResponder gesture end event.
      *
@@ -638,16 +624,17 @@ class VideoTransform extends Component<Props, State> {
      */
     _onPanResponderRelease() {
         if (this.lastTap && Date.now() - this.lastTap < TAP_TIMEOUT_MS) {
+            // @ts-ignore
             this._onGesture('press');
         }
+
+        // @ts-ignore
         delete this.initialDistance;
         this.initialPosition = {
             x: 0,
             y: 0
         };
     }
-
-    _onStartShouldSetPanResponder: () => boolean;
 
     /**
      * Function to decide whether the responder should respond to a start
@@ -668,7 +655,7 @@ class VideoTransform extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _restoreTransform(streamId) {
+    _restoreTransform(streamId: string) {
         const savedTransform = this._getSavedTransform(streamId);
 
         if (savedTransform) {
@@ -687,7 +674,7 @@ class VideoTransform extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _storeTransform(streamId, transform) {
+    _storeTransform(streamId: string, transform: Transform) {
         const { _onUnmount, enabled } = this.props;
 
         if (enabled) {
@@ -715,7 +702,7 @@ function _mapDispatchToProps(dispatch: Dispatch<any>) {
          * @private
          * @returns {void}
          */
-        _onUnmount(streamId, transform) {
+        _onUnmount(streamId: string, transform: Transform) {
             dispatch(storeVideoTransform(streamId, transform));
         }
     };
@@ -730,7 +717,7 @@ function _mapDispatchToProps(dispatch: Dispatch<any>) {
  *     _transforms: Object
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
 
