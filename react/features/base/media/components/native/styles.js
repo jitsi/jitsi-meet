@@ -23,7 +23,7 @@ export default StyleSheet.create({
 
     videoTransformedViewContainerWide: {
         overflow: 'hidden',
-        paddingRight: '14%'
+        paddingRight: '16%'
     },
 
     /**
