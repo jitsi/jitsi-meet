@@ -21,6 +21,9 @@ local proxy_listener = { default_port = nil, default_mode = "*a", default_interf
 function proxy_listener.onconnect(conn)
 	local session = sessions[conn];
 
+	-- needed in mod_rate_limit
+	session.ip = conn:ip();
+
 	-- Now the real s2s listener can take over the connection.
 	local listener = portmanager.get_service("s2s").listener;
 
