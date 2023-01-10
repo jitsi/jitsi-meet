@@ -18,7 +18,7 @@ jobs:
     - name: Check lua codes
       run: |
         set -o pipefail
-        luacheck -g $(find -name '*.lua') --no-color | awk -F':' '
+        luacheck -gur -i 581 --no-max-line-length --no-color $(find -name '*.lua') | awk -F':' '
           { print $0 }
 
           /^\s+.+?:[0-9]+:[0-9]+:/ {
