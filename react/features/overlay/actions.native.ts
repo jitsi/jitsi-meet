@@ -1,9 +1,7 @@
-/* eslint-disable lines-around-comment */
+/* eslint-disable max-len */
 
 // @ts-ignore
 import { PageReloadDialog, openDialog } from '../base/dialog';
-
-import { MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED } from './actionTypes';
 
 
 /**
@@ -19,7 +17,7 @@ import { MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED } from './actionTypes';
  *     isVisible: {boolean}
  * }}
  */
-export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, browser: string) {
+export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, browser: string) { // eslint-disable-line @typescript-eslint/no-unused-vars
     // Dummy.
 }
 
@@ -27,7 +25,7 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
  * Opens {@link PageReloadDialog}.
  *
  * @param {boolean} isFatal - If the value is true - we open PageReloadDialog.
- * @returns {function}
+ * @returns {Function}
  */
 export function fatalError(isFatal: boolean) {
     if (isFatal) {

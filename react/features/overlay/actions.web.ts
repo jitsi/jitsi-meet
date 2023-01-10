@@ -1,8 +1,3 @@
-/* eslint-disable lines-around-comment */
-
-// @ts-ignore
-import { PageReloadDialog, openDialog } from '../base/dialog';
-
 import { MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED } from './actionTypes';
 
 
@@ -31,8 +26,8 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
  * Opens {@link PageReloadDialog}.
  *
  * @param {boolean} isFatal - If the value is true - we open PageReloadDialog.
- * @returns {function}
+ * @returns {Function}
  */
-export function fatalError(isFatal: boolean) {
+export function fatalError(isFatal: boolean) { // eslint-disable-line @typescript-eslint/no-unused-vars
     // Dummy.
 }
