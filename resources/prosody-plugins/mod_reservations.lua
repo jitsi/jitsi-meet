@@ -252,7 +252,7 @@ end
 function RoomReservation:enqueue_or_route_event(event)
     if self.meta.status == STATUS.PENDING then
         table.insert(self.pending_events, event)
-        if not self.api_call_triggered == true then
+        if self.api_call_triggered ~= true then
             self:call_api_create_conference();
         end
     else
