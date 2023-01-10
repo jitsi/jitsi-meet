@@ -189,6 +189,7 @@ export interface IConfig {
         alwaysVisible?: Array<string>;
         autoHide?: Array<string>;
     };
+    conferenceRequestUrl?: string;
     connectionIndicators?: {
         autoHide?: boolean;
         autoHideTimeout?: number;
