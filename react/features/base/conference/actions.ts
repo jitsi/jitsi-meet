@@ -501,7 +501,7 @@ export function conferenceWillLeave(conference: IJitsiConference) {
  * from Redux.
  * @returns {Function}
  */
-export function createConference(overrideRoom?: string) {
+export function createConference(overrideRoom?: string | String) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { connection, locationURL } = state['features/base/connection'];

@@ -215,9 +215,7 @@ export function moveToRoom(roomId?: string) {
             }
 
             dispatch(clearNotifications());
-
-            // dispatch(setRoom(_roomId));
-            dispatch(createConference(_roomId?.toString()));
+            dispatch(createConference(_roomId));
             dispatch(setAudioMuted(audio.muted));
             dispatch(setVideoMuted(Boolean(video.muted)));
             dispatch(createDesiredLocalTracks());
