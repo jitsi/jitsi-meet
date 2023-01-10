@@ -124,7 +124,7 @@ function on_message(event)
         local faceLandmarks = room.speakerStats[occupant.jid].faceLandmarks;
         table.insert(faceLandmarks,
             {
-                faceExpression = newFaceLandmarks.attr.faceExpression, 
+                faceExpression = newFaceLandmarks.attr.faceExpression,
                 timestamp = tonumber(newFaceLandmarks.attr.timestamp),
                 duration = tonumber(newFaceLandmarks.attr.duration),
             })
