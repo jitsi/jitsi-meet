@@ -315,6 +315,7 @@ class SettingsView extends Component<IProps, IState> {
                             placeholder = { t('settingsView.displayNamePlaceholderText') }
                             textContentType = { 'name' } // iOS only
                             value = { displayName } />
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <Input
                             // @ts-ignore
@@ -341,6 +342,7 @@ class SettingsView extends Component<IProps, IState> {
                             placeholder = { this.props._serverURL }
                             textContentType = { 'URL' } // iOS only
                             value = { serverURL } />
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startCarModeInLowBandwidthMode'>
                             <Switch
@@ -348,6 +350,7 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onStartCarmodeInLowBandwidthMode } />
                         </FormRow>
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow
                             label = 'settingsView.startWithAudioMuted'>
@@ -356,6 +359,7 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onStartAudioMutedChange } />
                         </FormRow>
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startWithVideoMuted'>
                             <Switch
@@ -363,6 +367,7 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onStartVideoMutedChange } />
                         </FormRow>
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'videothumbnail.hideSelfView'>
                             <Switch
@@ -378,12 +383,14 @@ class SettingsView extends Component<IProps, IState> {
                             labelKey = 'settingsView.help'
                             onClick = { this._onShowHelpPressed }
                             type = { BUTTON_TYPES.TERTIARY } />
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <Button
                             accessibilityLabel = 'settingsView.terms'
                             labelKey = 'settingsView.terms'
                             onClick = { this._onShowTermsPressed }
                             type = { BUTTON_TYPES.TERTIARY } />
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <Button
                             accessibilityLabel = 'settingsView.privacy'
@@ -411,6 +418,7 @@ class SettingsView extends Component<IProps, IState> {
                                         // @ts-ignore
                                         onChange = { this._onDisableCallIntegration } />
                                 </FormRow>
+                                {/* @ts-ignore */}
                                 <Divider style = { styles.fieldSeparator } />
                             </>
                         )}
@@ -421,6 +429,7 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onDisableP2P } />
                         </FormRow>
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         {AppInfo.GOOGLE_SERVICES_ENABLED && (
                             <FormRow
