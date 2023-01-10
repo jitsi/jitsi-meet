@@ -18,12 +18,9 @@ jobs:
     - name: Check lua codes
       run: |
         set -o pipefail
-        luacheck -gur -i 581 --no-max-line-length --no-color $(find -name '*.lua') | awk -F':' '
-          { print $0 }
-
-          /^\s+.+?:[0-9]+:[0-9]+:/ {
-            gsub(/^\s+|\s+$/, "")
-            gsub(/^\s+/, "", $4)
+        luacheck -q -gur -i 581 --no-max-line-length --no-color --formatter plain $(find -name '*.lua') | awk -F: '
+          {
+            print $0
             printf "::warning file=%s,line=%s,col=%s::%s\n", $1, $2, $3, $4
           }
         '
