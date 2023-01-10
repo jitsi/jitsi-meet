@@ -273,7 +273,10 @@ function _setRoom({ dispatch, getState }, next, action) {
                     // The following don't have complications around whether
                     // they are defined or not:
                     jwt: false,
-                    settings: true
+
+                    // We need to look for 'startAudioOnly' in settings only for react native clients. Otherwise, the
+                    // default value from ISettingsState (false) will override the value set in config for web clients.
+                    settings: typeof APP === 'undefined'
                 }));
 
     sendAnalytics(createStartAudioOnlyEvent(audioOnly));
