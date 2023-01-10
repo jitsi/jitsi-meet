@@ -20,20 +20,16 @@ import { MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED } from './actionTypes';
  * }}
  */
 export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, browser: string) {
-    return {
-        type: MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
-        browser,
-        isVisible
-    };
+    // Dummy.
 }
 
 /**
  * Opens {@link PageReloadDialog}.
  *
  * @param {boolean} isFatal - If the value is true - we open PageReloadDialog.
- * @returns {Action}
+ * @returns {function}
  */
-export function fatalError(isFatal?: boolean) {
+export function fatalError(isFatal: boolean) {
     if (isFatal) {
         return openDialog(PageReloadDialog);
     }
