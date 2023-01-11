@@ -86,9 +86,9 @@ const PollCreate = (props: AbstractProps) => {
     /* eslint-disable react/no-multi-comp */
     const createRemoveOptionButton = onPress => (
         <Button
-            onClick = { onPress }
             labelKey = 'polls.create.removeOption'
             labelStyle = { dialogStyles.optionRemoveButtonText }
+            onClick = { onPress }
             style = { dialogStyles.optionRemoveButton }
             type = { TERTIARY } />
     );
@@ -119,6 +119,8 @@ const PollCreate = (props: AbstractProps) => {
         );
     const buttonRowStyles = Platform.OS === 'android'
         ? chatStyles.buttonRowAndroid : chatStyles.buttonRowIos;
+    const pollCreateButtonsContainerStyles = Platform.OS === 'android'
+        ? chatStyles.pollCreateButtonsContainerAndroid : chatStyles.pollCreateButtonsContainerIos;
 
     return (
         <View style = { chatStyles.pollCreateContainer }>
@@ -142,7 +144,7 @@ const PollCreate = (props: AbstractProps) => {
                     keyExtractor = { (item, index) => index.toString() }
                     ref = { answerListRef }
                     renderItem = { renderListItem } />
-                <View style = { chatStyles.pollCreateButtonsContainer }>
+                <View style = { pollCreateButtonsContainerStyles }>
                     <Button
                         accessibilityLabel = 'polls.create.addOption'
                         disabled = { answers.length >= ANSWERS_LIMIT }

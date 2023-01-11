@@ -1,16 +1,16 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
 import { chatStyles, dialogStyles, resultsStyles } from './styles';
-import Button from "../../../base/ui/components/native/Button";
-import {BUTTON_TYPES} from "../../../base/ui/constants.any";
 
 
 /**

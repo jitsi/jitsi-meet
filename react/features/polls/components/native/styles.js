@@ -147,9 +147,14 @@ export const chatStyles = createStyleSheet({
         marginTop: BaseTheme.spacing[3]
     },
 
-    pollCreateButtonsContainer: {
-        marginHorizontal: BaseTheme.spacing[3],
-        marginVertical: '8%'
+    pollCreateButtonsContainerAndroid: {
+        marginBottom: BaseTheme.spacing[8],
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
+    pollCreateButtonsContainerIos: {
+        marginBottom: BaseTheme.spacing[5],
+        marginHorizontal: BaseTheme.spacing[3]
     },
 
     pollSendLabel: {
@@ -169,7 +174,7 @@ export const chatStyles = createStyleSheet({
 
     buttonRowAndroid: {
         flexDirection: 'row',
-        marginBottom: BaseTheme.spacing[3]
+        justifyContent: 'space-between'
     },
 
     buttonRowIos: {
@@ -206,14 +211,18 @@ export const chatStyles = createStyleSheet({
         color: BaseTheme.palette.action01
     },
 
-    createPollButton: {
+    createPollButtonIos: {
         marginHorizontal: 20,
         marginVertical: BaseTheme.spacing[5]
     },
 
+    createPollButtonAndroid: {
+        marginHorizontal: 20
+    },
+
     pollPane: {
         flex: 1,
-        padding: 8
+        padding: BaseTheme.spacing[2]
     },
 
     pollPaneContainer: {
