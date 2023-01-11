@@ -13,21 +13,24 @@ export const dialogStyles = createStyleSheet({
     questionText: {
         ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text01,
-        marginBottom: BaseTheme.spacing[2],
-        marginLeft: BaseTheme.spacing[2]
+        marginLeft: BaseTheme.spacing[1]
     },
 
     questionOwnerText: {
         ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text03,
         marginBottom: BaseTheme.spacing[2],
-        marginLeft: BaseTheme.spacing[2]
+        marginLeft: BaseTheme.spacing[1]
     },
 
     optionContainer: {
         flexDirection: 'column',
         marginTop: BaseTheme.spacing[3],
         marginHorizontal: BaseTheme.spacing[3]
+    },
+
+    optionRemoveButton: {
+        width: 128
     },
 
     optionRemoveButtonText: {
@@ -82,7 +85,7 @@ export const resultsStyles = createStyleSheet({
     },
 
     answerContainer: {
-        marginHorizontal: BaseTheme.spacing[2],
+        marginHorizontal: BaseTheme.spacing[1],
         marginVertical: BaseTheme.spacing[3],
         maxWidth: '100%'
     },
@@ -126,7 +129,7 @@ export const chatStyles = createStyleSheet({
     },
 
     pollItemContainer: {
-        backgroundColor: BaseTheme.palette.ui02,
+        backgroundColor: BaseTheme.palette.uiBackground,
         borderColor: BaseTheme.palette.border05,
         borderRadius: BaseTheme.shape.borderRadius,
         boxShadow: BaseTheme.shape.boxShadow,
@@ -149,11 +152,6 @@ export const chatStyles = createStyleSheet({
         marginVertical: '8%'
     },
 
-    pollCreateButton: {
-        flex: 1,
-        marginHorizontal: BaseTheme.spacing[1]
-    },
-
     pollSendLabel: {
         color: BaseTheme.palette.text01,
         textTransform: 'capitalize'
@@ -165,7 +163,8 @@ export const chatStyles = createStyleSheet({
     },
 
     buttonRow: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
 
     buttonRowAndroid: {
@@ -174,11 +173,12 @@ export const chatStyles = createStyleSheet({
     },
 
     buttonRowIos: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
 
     answerContent: {
-        paddingBottom: 8
+        marginBottom: BaseTheme.spacing[2]
     },
 
     switchRow: {
@@ -197,14 +197,18 @@ export const chatStyles = createStyleSheet({
         marginVertical: BaseTheme.spacing[2]
     },
 
+    pollCreateButton: {
+        marginHorizontal: BaseTheme.spacing[1],
+        width: 160
+    },
+
     toggleText: {
-        color: BaseTheme.palette.action01,
-        paddingTop: BaseTheme.spacing[3]
+        color: BaseTheme.palette.action01
     },
 
     createPollButton: {
-        marginHorizontal: BaseTheme.spacing[3],
-        marginVertical: 34
+        marginHorizontal: 20,
+        marginVertical: BaseTheme.spacing[5]
     },
 
     pollPane: {
@@ -220,7 +224,7 @@ export const chatStyles = createStyleSheet({
     bottomLinks: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginHorizontal: BaseTheme.spacing[2]
+        marginHorizontal: BaseTheme.spacing[1]
     },
 
     unreadPollsCounterContainer: {

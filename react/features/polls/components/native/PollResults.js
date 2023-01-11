@@ -9,6 +9,8 @@ import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
 import { chatStyles, dialogStyles, resultsStyles } from './styles';
+import Button from "../../../base/ui/components/native/Button";
+import {BUTTON_TYPES} from "../../../base/ui/constants.any";
 
 
 /**
@@ -101,26 +103,24 @@ const PollResults = (props: AbstractProps) => {
                 keyExtractor = { (item, index) => index.toString() }
                 renderItem = { answer => renderRow(answer.item) } />
             <View style = { chatStyles.bottomLinks }>
-                <TouchableOpacity onPress = { toggleIsDetailed }>
-                    <Text
-                        style = { chatStyles.toggleText }>
-                        {
-                            showDetails
-                                ? t('polls.results.hideDetailedResults')
-                                : t('polls.results.showDetailedResults')
-                        }
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress = { changeVote }>
-                    <Text
-                        style = { chatStyles.toggleText }>
-                        {
-                            haveVoted
-                                ? t('polls.results.changeVote')
-                                : t('polls.results.vote')
-                        }
-                    </Text>
-                </TouchableOpacity>
+                <Button
+                    labelKey = {
+                        showDetails
+                            ? 'polls.results.hideDetailedResults'
+                            : 'polls.results.showDetailedResults'
+                    }
+                    labelStyle = { chatStyles.toggleText }
+                    onClick = { toggleIsDetailed }
+                    type = { BUTTON_TYPES.TERTIARY } />
+                <Button
+                    labelKey = {
+                        haveVoted
+                            ? 'polls.results.changeVote'
+                            : 'polls.results.vote'
+                    }
+                    labelStyle = { chatStyles.toggleText }
+                    onClick = { changeVote }
+                    type = { BUTTON_TYPES.TERTIARY } />
             </View>
         </View>
     );
