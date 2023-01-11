@@ -373,8 +373,12 @@ PODS:
     - React-Core
   - react-native-performance (2.1.0):
     - React-Core
-  - react-native-safe-area-context (3.3.2):
+  - react-native-safe-area-context (4.4.1):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - ReactCommon/turbomodule/core
   - react-native-slider (4.1.12):
     - React-Core
   - react-native-splash-screen (3.3.0):
@@ -751,7 +755,7 @@ SPEC CHECKSUMS:
   react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
   react-native-pager-view: 3ee7d4c7697fb3ef788346e834a60cca97ed8540
   react-native-performance: f4b6604a9d5a8a7407e34a82fab6c641d9a3ec12
-  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
   react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
