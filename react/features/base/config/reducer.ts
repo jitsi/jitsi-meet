@@ -298,8 +298,13 @@ function _translateInterfaceConfig(oldValue: IConfig) {
         }
     }
 
-    // if we have `deeplinking` defined, ignore deprecated values. Otherwise, compose the config.
-    if (!oldValue.deeplinking) {
+    // if we have `deeplinking` defined, ignore deprecated values, except `disableDeepLinking`.
+    // Otherwise, compose the config.
+    if (oldValue.deeplinking && newValue.deeplinking) { // make TS happy
+        newValue.deeplinking.disabled = oldValue.deeplinking.hasOwnProperty('disabled')
+            ? oldValue.deeplinking.disabled
+            : Boolean(oldValue.disableDeepLinking);
+    } else {
         const disabled = Boolean(oldValue.disableDeepLinking);
         const deeplinking: IDeeplinkingConfig = {
             desktop: {} as IDeeplinkingPlatformConfig,
