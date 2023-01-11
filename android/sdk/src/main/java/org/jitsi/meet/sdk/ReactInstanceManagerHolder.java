@@ -124,7 +124,7 @@ class ReactInstanceManagerHolder {
             new com.reactnativecommunity.webview.RNCWebViewPackage(),
             new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
             new com.learnium.RNDeviceInfo.RNDeviceInfo(),
-            new com.swmansion.gesturehandler.react.RNGestureHandlerPackage(),
+            new com.swmansion.gesturehandler.RNGestureHandlerPackage(),
             new org.linusu.RNGetRandomValuesPackage(),
             new com.rnimmersive.RNImmersivePackage(),
             new com.swmansion.rnscreens.RNScreensPackage(),
