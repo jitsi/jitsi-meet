@@ -278,7 +278,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
                 this.recordingData.push(e.data);
                 this.totalSize -= e.data.size;
                 if (this.totalSize <= 0) {
-                    this.stopLocalRecording();
+                    dispatch(stopLocalVideoRecording());
                 }
             }
         });
