@@ -283,8 +283,12 @@ export function generateVisitorConfig(stateful: IStateful, params: Array<string>
     // This flag disables sending the initial conference request
     config.disableFocus = true;
 
-    config.bosh = appendURLParam(config.bosh, 'vnode', vnode);
-    config.websocket = appendURLParam(config.websocket, 'vnode', vnode);
+    if (config.bosh) {
+        config.bosh = appendURLParam(config.bosh, 'vnode', vnode);
+    }
+    if (config.websocket) {
+        config.websocket = appendURLParam(config.websocket, 'vnode', vnode);
+    }
 }
 
 /**
