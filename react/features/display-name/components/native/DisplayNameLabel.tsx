@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 
 import { IReduxState } from '../../../app/types';
 import {
+    applyEllipsis,
     getParticipantById,
     getParticipantDisplayName,
     isScreenShareParticipant
@@ -45,6 +46,9 @@ class DisplayNameLabel extends React.Component<IProps> {
      * @inheritdoc
      */
     render() {
+        const { _participantName } = this.props;
+        const participantNameEllipsis = applyEllipsis(_participantName, 22);
+
         if (!this.props._render) {
             return null;
         }
@@ -52,9 +56,8 @@ class DisplayNameLabel extends React.Component<IProps> {
         return (
             <View style = { this.props.contained ? styles.displayNamePadding : styles.displayNameBackdrop }>
                 <Text
-                    numberOfLines = { 1 }
                     style = { styles.displayNameText }>
-                    { this.props._participantName }
+                    { participantNameEllipsis }
                 </Text>
             </View>
         );
