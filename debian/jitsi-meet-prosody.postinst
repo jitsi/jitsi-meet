@@ -44,12 +44,7 @@ case "$1" in
         fi
         JVB_SECRET="$RET"
 
-        db_get jicofo/jicofo-authuser
-        if [ -z "$RET" ] ; then
-            db_input critical jicofo/jicofo-authuser || true
-            db_go
-        fi
-        JICOFO_AUTH_USER="$RET"
+        JICOFO_AUTH_USER="focus"
 
         db_get jicofo/jicofo-authpassword
         if [ -z "$RET" ] ; then
