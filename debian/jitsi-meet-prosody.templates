@@ -13,12 +13,6 @@ Type: password
 _Description: Jitsi Videobridge Component secret:
  The secret used by Jitsi Videobridge to connect to xmpp server as component.
 
-Template: jicofo/jicofo-authuser
-Type: string
-Default: focus
-_Description: Jicofo username:
- The jicofo needs an authenticated admin user to connect to xmpp server.
-
 Template: jicofo/jicofo-authpassword
 Type: password
 _Description: Jicofo user password:
