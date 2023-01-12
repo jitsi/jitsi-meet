@@ -6,12 +6,15 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconAddUser } from '../../../base/icons';
 import { getParticipantCountWithFake } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
+import { toggleShareDialog } from '../../../share-room';
 
 import styles from './styles';
+
 
 /**
  * Props type of the component.
@@ -32,6 +35,11 @@ type Props = {
      * True if it's a lonely meeting (participant count excluding fakes is 1).
      */
     _isLonelyMeeting: boolean,
+
+    /**
+     * Tackles share meeting url visibility.
+     */
+    _shareDialogVisible: boolean,
 
     /**
      * The Redux Dispatch function.
@@ -60,19 +68,6 @@ class LonelyMeetingExperience extends PureComponent<Props> {
     }
 
     /**
-     * Renders the "add people" icon.
-     *
-     * @returns {ReactElement}
-     */
-    _renderAddPeopleIcon() {
-        return (
-            <Icon
-                size = { 20 }
-                src = { IconAddUser } />
-        );
-    }
-
-    /**
      * Implements {@code PureComponent#render}.
      *
      * @inheritdoc
@@ -82,8 +77,11 @@ class LonelyMeetingExperience extends PureComponent<Props> {
             _isInBreakoutRoom,
             _isInviteFunctionsDisabled,
             _isLonelyMeeting,
+            _shareDialogVisible,
             t
         } = this.props;
+        const { icon01, icon03 } = BaseTheme.palette;
+        const color = _shareDialogVisible ? icon03 : icon01;
 
         if (!_isLonelyMeeting) {
             return null;
@@ -97,7 +95,14 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                 { !_isInviteFunctionsDisabled && !_isInBreakoutRoom && (
                     <Button
                         accessibilityLabel = 'lonelyMeetingExperience.button'
-                        icon = { this._renderAddPeopleIcon }
+                        disabled = { _shareDialogVisible }
+                        {/* eslint-disable-next-line react/jsx-no-bind */}
+                        icon = { () =>
+                            <Icon
+                                color = { color }
+                                size = { 20 }
+                                src = { IconAddUser } />
+                    }
                         labelKey = 'lonelyMeetingExperience.button'
                         onClick = { this._onPress }
                         type = { BUTTON_TYPES.PRIMARY } />
@@ -112,6 +117,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
      * @returns {void}
      */
     _onPress() {
+        this.props.dispatch(toggleShareDialog(true));
         this.props.dispatch(doInvitePeople());
     }
 }
@@ -126,13 +132,15 @@ class LonelyMeetingExperience extends PureComponent<Props> {
 function _mapStateToProps(state) {
     const { disableInviteFunctions } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
+    const { shareDialogVisible } = state['features/share-room']
     const flag = getFeatureFlag(state, INVITE_ENABLED, true);
     const _isInBreakoutRoom = isInBreakoutRoom(state);
 
     return {
         _isInBreakoutRoom,
         _isInviteFunctionsDisabled: !flag || disableInviteFunctions,
-        _isLonelyMeeting: conference && getParticipantCountWithFake(state) === 1
+        _isLonelyMeeting: conference && getParticipantCountWithFake(state) === 1,
+        _shareDialogVisible: shareDialogVisible
     };
 }
 
