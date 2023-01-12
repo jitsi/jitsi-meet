@@ -73,6 +73,7 @@
     min-width: 34px;
     padding: 0 8px;
     height: 28px;
+    font-variant-numeric: tabular-nums;
 
     @media (max-width: 300px) {
         display: none;
