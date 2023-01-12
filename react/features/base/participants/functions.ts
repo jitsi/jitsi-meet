@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment, no-extra-parens, prefer-template */
+
 // @ts-ignore
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
@@ -18,7 +20,6 @@ import {
     PARTICIPANT_ROLE,
     WHITEBOARD_PARTICIPANT_ICON
 } from './constants';
-// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { preloadImage } from './preloadImage';
 import { FakeParticipant, IParticipant } from './types';
@@ -647,4 +648,17 @@ export function getRaiseHandsQueue(stateful: IStateful): Array<{ id: string; rai
  */
 export function hasRaisedHand(participant?: IParticipant): boolean {
     return Boolean(participant?.raisedHandTimestamp);
+}
+
+/**
+ * Applies ellipsis if string is longer.
+ *
+ * @param {string} string - The string.
+ * @param {number} maxLimit - The max limit that should be applied to the string.
+ * @returns {string}
+ */
+export function applyEllipsis(string: string, maxLimit: number) {
+    return ((string).length > maxLimit)
+        ? (((string).substring(0, maxLimit - 3)) + '...')
+        : string;
 }
