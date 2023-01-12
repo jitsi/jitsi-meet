@@ -30,6 +30,7 @@ export const dialogStyles = createStyleSheet({
     },
 
     optionRemoveButton: {
+        marginTop: BaseTheme.spacing[2],
         width: 128
     },
 
