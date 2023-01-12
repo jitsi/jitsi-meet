@@ -1,92 +1,108 @@
-// @flow
+/* eslint-disable lines-around-comment */
 
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
 
-
-import { translate } from '../../../base/i18n';
+import { IReduxState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
+// @ts-ignore
 import { Icon, IconAddUser } from '../../../base/icons';
-import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
-import { connect } from '../../../base/redux';
+import {
+    getLocalParticipant,
+    getParticipantCountWithFake,
+    getRemoteParticipants
+} from '../../../base/participants/functions';
+import { connect } from '../../../base/redux/functions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
+import { toggleShareDialog } from '../../../share-room/actions';
+import { getInviteOthersControl } from '../../../share-room/functions';
 import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
 
+// @ts-ignore
 import CollapsibleList from './CollapsibleList';
+// @ts-ignore
 import MeetingParticipantItem from './MeetingParticipantItem';
+// @ts-ignore
 import styles from './styles';
 
 
-type Props = {
+type Props = WithTranslation & {
 
     /**
      * Current breakout room, if we are in one.
      */
-    _currentRoom: ?Object,
+    _currentRoom: any;
+
+    /**
+     * Control for invite other button.
+     */
+    _inviteOthersControl: any;
 
     /**
      * The local participant.
      */
-    _localParticipant: Object,
+    _localParticipant: any;
 
     /**
      * The number of participants in the conference.
      */
-    _participantsCount: number,
+    _participantsCount: number;
 
     /**
      * The remote participants.
      */
-    _remoteParticipants: Map<string, Object>,
+    _remoteParticipants: Map<string, Object>;
 
     /**
      * Whether or not to show the invite button.
      */
-    _showInviteButton: boolean,
+    _showInviteButton: boolean;
 
     /**
      * The remote participants.
      */
-    _sortedRemoteParticipants: Map<string, string>,
+    _sortedRemoteParticipants: Map<string, string>;
 
     /**
      * List of breakout rooms that were created.
      */
-    breakoutRooms: Array,
+    breakoutRooms: ArrayLike<any>;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Is the local participant moderator?
      */
-    isLocalModerator: boolean,
+    isLocalModerator: boolean;
 
     /**
      * List of participants waiting in lobby.
      */
-    lobbyParticipants: Array,
+    lobbyParticipants: ArrayLike<any>;
 
     /**
      * Participants search string.
      */
-    searchString: string,
+    searchString: string;
 
     /**
      * Function to update the search string.
      */
-    setSearchString: Function,
+    setSearchString: Function;
 
     /**
      * Translation function.
      */
-    t: Function
-}
+    t: Function;
+};
 
 /**
  *  The meeting participant list component.
@@ -107,19 +123,15 @@ class MeetingParticipantList extends PureComponent<Props> {
         this._onSearchStringChange = this._onSearchStringChange.bind(this);
     }
 
-    _keyExtractor: Function;
-
     /**
      * Returns a key for a passed item of the list.
      *
      * @param {string} item - The user ID.
      * @returns {string} - The user ID.
      */
-    _keyExtractor(item) {
+    _keyExtractor(item: string) {
         return item;
     }
-
-    _onInvite: () => void;
 
     /**
      * Handles ivite button presses.
@@ -127,23 +139,9 @@ class MeetingParticipantList extends PureComponent<Props> {
      * @returns {void}
      */
     _onInvite() {
+        this.props.dispatch(toggleShareDialog(true));
         this.props.dispatch(doInvitePeople());
     }
-
-    /**
-     * Renders the "invite more" icon.
-     *
-     * @returns {ReactElement}
-     */
-    _renderInviteMoreIcon() {
-        return (
-            <Icon
-                size = { 20 }
-                src = { IconAddUser } />
-        );
-    }
-
-    _renderParticipant: Object => Object;
 
     /**
      * Renders a participant.
@@ -152,7 +150,7 @@ class MeetingParticipantList extends PureComponent<Props> {
      * @param {string} flatListItem.item - The ID of the participant.
      * @returns {ReactElement}
      */
-    _renderParticipant({ item/* , index, separators */ }) {
+    _renderParticipant({ item/* , index, separators */ }: any) {
         const { _localParticipant, _remoteParticipants, searchString } = this.props;
         const participant = item === _localParticipant?.id ? _localParticipant : _remoteParticipants.get(item);
 
@@ -166,8 +164,6 @@ class MeetingParticipantList extends PureComponent<Props> {
 
         return null;
     }
-
-    _onSearchStringChange: (text: string) => void;
 
     /**
      * Handles search string changes.
@@ -188,6 +184,7 @@ class MeetingParticipantList extends PureComponent<Props> {
     render() {
         const {
             _currentRoom,
+            _inviteOthersControl,
             _localParticipant,
             _participantsCount,
             _showInviteButton,
@@ -219,6 +216,7 @@ class MeetingParticipantList extends PureComponent<Props> {
                 ? containerStyleModerator : styles.notLocalModeratorContainer;
         const finalContainerStyle
             = _participantsCount > 6 && containerStyle;
+        const { color, shareDialogVisible } = _inviteOthersControl;
 
         return (
             <CollapsibleList
@@ -228,7 +226,14 @@ class MeetingParticipantList extends PureComponent<Props> {
                     _showInviteButton
                     && <Button
                         accessibilityLabel = 'participantsPane.actions.invite'
-                        icon = { this._renderInviteMoreIcon }
+                        disabled = { shareDialogVisible }
+                        // eslint-disable-next-line react/jsx-no-bind
+                        icon = { () => (
+                            <Icon
+                                color = { color }
+                                size = { 20 }
+                                src = { IconAddUser } />
+                        ) }
                         labelKey = 'participantsPane.actions.invite'
                         onClick = { this._onInvite }
                         style = { styles.inviteButton }
@@ -236,6 +241,7 @@ class MeetingParticipantList extends PureComponent<Props> {
                 }
                 <Input
                     clearable = { true }
+                    // @ts-ignore
                     customStyles = {{
                         container: styles.inputContainer,
                         input: styles.centerInput }}
@@ -263,9 +269,11 @@ class MeetingParticipantList extends PureComponent<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state: IReduxState): Object {
     const _participantsCount = getParticipantCountWithFake(state);
     const { remoteParticipants } = state['features/filmstrip'];
+    const { shareDialogVisible } = state['features/share-room'];
+    const _inviteOthersControl = getInviteOthersControl(state);
     const _showInviteButton = shouldRenderInviteButton(state);
     const _remoteParticipants = getRemoteParticipants(state);
     const currentRoomId = getCurrentRoomId(state);
@@ -273,11 +281,13 @@ function _mapStateToProps(state): Object {
 
     return {
         _currentRoom,
+        _inviteOthersControl,
         _participantsCount,
         _remoteParticipants,
         _showInviteButton,
         _sortedRemoteParticipants: remoteParticipants,
-        _localParticipant: getLocalParticipant(state)
+        _localParticipant: getLocalParticipant(state),
+        _shareDialogVisible: shareDialogVisible
     };
 }
 
