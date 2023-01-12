@@ -6,7 +6,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { getShareInfoText } from '../invite/functions';
 
 import { BEGIN_SHARE_ROOM } from './actionTypes';
-import { endShareRoom } from './actions';
+import { endShareRoom, toggleShareDialog } from './actions';
 import logger from './logger';
 
 /**
@@ -53,8 +53,10 @@ function _shareRoom(roomURL: string, { dispatch, getState }: IStore) {
                 .then(
                     /* onFulfilled */ value => {
                         onFulfilled(value.action === Share.sharedAction);
+                        dispatch(toggleShareDialog(false));
                     },
                     /* onRejected */ reason => {
+                        dispatch(toggleShareDialog(false));
                         logger.error(
                             `Failed to share conference/room URL ${roomURL}:`,
                             reason);
