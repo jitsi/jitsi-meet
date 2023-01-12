@@ -84,6 +84,7 @@ class KnockingParticipantList extends PureComponent<Props> {
                         style = { styles.knockingParticipantListEntry }>
                         <ParticipantItem
                             displayName = { p.name }
+                            isDisplayNameInsideANotification = { true }
                             isKnockingParticipant = { true }
                             key = { p.id }
                             participantID = { p.id }>

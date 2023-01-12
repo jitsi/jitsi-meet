@@ -5,10 +5,12 @@ import { TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
+import { applyEllipsis } from '../../../base/participants';
 import { AudioStateIcons, MEDIA_STATE, type MediaState, VideoStateIcons } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import styles from './styles';
+
 
 type Props = {
 
@@ -31,6 +33,11 @@ type Props = {
      * The name of the participant. Used for showing lobby names.
      */
     displayName: string,
+
+    /**
+     * Is participant name inside a notification?
+     */
+    isDisplayNameInsideANotification: boolean,
 
     /**
      * Is the participant waiting?
@@ -77,6 +84,7 @@ function ParticipantItem({
     children,
     displayName,
     disableModeratorIndicator,
+    isDisplayNameInsideANotification = false,
     isKnockingParticipant = false,
     isModerator,
     local,
@@ -88,6 +96,8 @@ function ParticipantItem({
 }: Props) {
 
     const { t } = useTranslation();
+    const maxLimit = isDisplayNameInsideANotification ? 10 : 22;
+    const displayNameEllipsis = applyEllipsis(displayName, maxLimit);
 
     return (
         <View style = { styles.participantContainer } >
@@ -106,9 +116,8 @@ function ParticipantItem({
                     ] }>
                     <View style = { styles.participantNameContainer }>
                         <Text
-                            numberOfLines = { 1 }
                             style = { styles.participantName }>
-                            { displayName }
+                            { displayNameEllipsis }
                             { local && ` (${t('chat.you')})` }
                         </Text>
                     </View>

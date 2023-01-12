@@ -107,8 +107,8 @@ export default {
     participantNameContainer: {
         display: 'flex',
         flexDirection: 'row',
+        marginLeft: BaseTheme.spacing[2],
         overflow: 'hidden',
-        paddingLeft: BaseTheme.spacing[3],
         width: '100%'
     },
 
@@ -120,8 +120,8 @@ export default {
     moderatorLabel: {
         color: BaseTheme.palette.text03,
         alignSelf: 'flex-start',
-        paddingLeft: BaseTheme.spacing[3],
-        paddingTop: BaseTheme.spacing[1]
+        marginLeft: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[1]
     },
 
     participantStatesContainer: {
