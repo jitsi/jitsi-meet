@@ -55,6 +55,7 @@ export default {
     buttonLabelTertiary: {
         ...buttonLabel,
         color: BaseTheme.palette.text01,
+        margin: BaseTheme.spacing[3],
         textAlign: 'center'
     },
 

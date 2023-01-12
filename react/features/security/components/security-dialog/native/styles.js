@@ -61,7 +61,6 @@ export default {
 
     savedPasswordContainer: {
         flexDirection: 'row',
-        marginTop: 14,
         width: 208
     },
 
@@ -79,8 +78,7 @@ export default {
     },
 
     passwordSetupButtonLabel: {
-        color: BaseTheme.palette.link01,
-        marginTop: BaseTheme.spacing[3]
+        color: BaseTheme.palette.link01
     },
 
     passwordSetRemotelyContainer: {
@@ -90,12 +88,10 @@ export default {
     },
 
     passwordSetRemotelyText: {
-        color: BaseTheme.palette.text01,
-        marginTop: BaseTheme.spacing[3]
+        color: BaseTheme.palette.text01
     },
 
     passwordSetRemotelyTextDisabled: {
-        color: BaseTheme.palette.text02,
-        marginTop: BaseTheme.spacing[3]
+        color: BaseTheme.palette.text02
     }
 };
