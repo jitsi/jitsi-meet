@@ -1,55 +1,62 @@
+/* eslint-disable lines-around-comment */
+
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { INVITE_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { translate } from '../../../base/i18n';
+import { IReduxState } from '../../../app/types';
+// @ts-ignore
+import { INVITE_ENABLED, getFeatureFlag } from '../../../base/flags/';
+import { translate } from '../../../base/i18n/functions';
+// @ts-ignore
 import { Icon, IconAddUser } from '../../../base/icons';
-import { getParticipantCountWithFake } from '../../../base/participants';
-import { connect } from '../../../base/redux';
+import { getParticipantCountWithFake } from '../../../base/participants/functions';
+import { connect } from '../../../base/redux/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
-import { toggleShareDialog } from '../../../share-room';
+import { toggleShareDialog } from '../../../share-room/actions';
 
+// @ts-ignore
 import styles from './styles';
 
 
 /**
  * Props type of the component.
  */
-type Props = {
+type Props = WithTranslation & {
 
     /**
      * True if currently in a breakout room.
      */
-    _isInBreakoutRoom: boolean,
+    _isInBreakoutRoom: boolean;
 
     /**
      * True if the invite functions (dial out, invite, share...etc) are disabled.
      */
-    _isInviteFunctionsDisabled: boolean,
+    _isInviteFunctionsDisabled: boolean;
 
     /**
      * True if it's a lonely meeting (participant count excluding fakes is 1).
      */
-    _isLonelyMeeting: boolean,
+    _isLonelyMeeting: boolean;
 
     /**
      * Tackles share meeting url visibility.
      */
-    _shareDialogVisible: boolean,
+    _shareDialogVisible: boolean;
 
     /**
      * The Redux Dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function;
 };
 
 /**
@@ -96,13 +103,13 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                     <Button
                         accessibilityLabel = 'lonelyMeetingExperience.button'
                         disabled = { _shareDialogVisible }
-                        {/* eslint-disable-next-line react/jsx-no-bind */}
-                        icon = { () =>
+                        // eslint-disable-next-line react/jsx-no-bind
+                        icon = { () => (
                             <Icon
                                 color = { color }
                                 size = { 20 }
                                 src = { IconAddUser } />
-                    }
+                        ) }
                         labelKey = 'lonelyMeetingExperience.button'
                         onClick = { this._onPress }
                         type = { BUTTON_TYPES.PRIMARY } />
@@ -129,10 +136,10 @@ class LonelyMeetingExperience extends PureComponent<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     const { disableInviteFunctions } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
-    const { shareDialogVisible } = state['features/share-room']
+    const { shareDialogVisible } = state['features/share-room'];
     const flag = getFeatureFlag(state, INVITE_ENABLED, true);
     const _isInBreakoutRoom = isInBreakoutRoom(state);
 
