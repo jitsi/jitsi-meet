@@ -15,7 +15,11 @@ import {
 import { getLocalParticipant } from '../participants/functions';
 import { toState } from '../redux/functions';
 import { getJitsiMeetGlobalNS } from '../util/helpers';
-import { getBackendSafePath, safeDecodeURIComponent } from '../util/uri';
+import {
+    appendURLParam,
+    getBackendSafePath,
+    safeDecodeURIComponent
+} from '../util/uri';
 
 import { setObfuscatedRoom } from './actions';
 import {
@@ -279,8 +283,12 @@ export function generateVisitorConfig(stateful: IStateful, params: Array<string>
     // This flag disables sending the initial conference request
     config.disableFocus = true;
 
-    config.bosh += `?vnode=${vnode}`;
-    config.websocket += `?vnode=${vnode}`;
+    if (config.bosh) {
+        config.bosh = appendURLParam(config.bosh, 'vnode', vnode);
+    }
+    if (config.websocket) {
+        config.websocket = appendURLParam(config.websocket, 'vnode', vnode);
+    }
 }
 
 /**
