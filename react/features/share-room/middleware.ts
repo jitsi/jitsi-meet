@@ -56,6 +56,7 @@ function _shareRoom(roomURL: string, { dispatch, getState }: IStore) {
                         dispatch(toggleShareDialog(false));
                     },
                     /* onRejected */ reason => {
+                        dispatch(toggleShareDialog(false));
                         logger.error(
                             `Failed to share conference/room URL ${roomURL}:`,
                             reason);
