@@ -170,16 +170,6 @@ export const chatStyles = createStyleSheet({
 
     buttonRow: {
         flexDirection: 'row',
-        justifyContent: 'center'
-    },
-
-    buttonRowAndroid: {
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-
-    buttonRowIos: {
-        flexDirection: 'row',
         justifyContent: 'space-between'
     },
 

@@ -117,8 +117,6 @@ const PollCreate = (props: AbstractProps) => {
                 }
             </View>
         );
-    const buttonRowStyles = Platform.OS === 'android'
-        ? chatStyles.buttonRowAndroid : chatStyles.buttonRowIos;
     const pollCreateButtonsContainerStyles = Platform.OS === 'android'
         ? chatStyles.pollCreateButtonsContainerAndroid : chatStyles.pollCreateButtonsContainerIos;
 
@@ -157,7 +155,7 @@ const PollCreate = (props: AbstractProps) => {
                         style = { chatStyles.pollCreateAddButton }
                         type = { SECONDARY } />
                     <View
-                        style = { buttonRowStyles }>
+                        style = { chatStyles.buttonRow }>
                         <Button
                             accessibilityLabel = 'polls.create.cancel'
                             labelKey = 'polls.create.cancel'
