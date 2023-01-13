@@ -63,7 +63,6 @@ const PollAnswer = (props: AbstractProps) => {
                     type = { PRIMARY } />
             </View>
         </>
-
     );
 };
 
