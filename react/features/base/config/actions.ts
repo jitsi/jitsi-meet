@@ -98,7 +98,7 @@ export function overwriteConfig(config: Object) {
  * base/config.
  * @returns {Function}
  */
-export function setConfig(config: Object = {}) {
+export function setConfig(config: IConfig = {}) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { locationURL } = getState()['features/base/connection'];
 
@@ -118,6 +118,26 @@ export function setConfig(config: Object = {}) {
                 config,
                 window.interfaceConfig,
                 locationURL);
+
+        let { bosh } = config;
+
+        if (bosh) {
+            // Normalize the BOSH URL.
+            if (bosh.startsWith('//')) {
+                // By default our config.js doesn't include the protocol.
+                bosh = `${locationURL?.protocol}${bosh}`;
+            } else if (bosh.startsWith('/')) {
+                // Handle relative URLs, which won't work on mobile.
+                const {
+                    protocol,
+                    host,
+                    contextRoot
+                } = parseURIString(locationURL?.href);
+
+                bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
+            }
+            config.bosh = bosh;
+        }
 
         dispatch({
             type: SET_CONFIG,
