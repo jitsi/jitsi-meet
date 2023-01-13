@@ -53,7 +53,6 @@ const PollsPane = (props: AbstractProps) => {
                 createMode
                     ? <PollCreate setCreateMode = { setCreateMode } />
                     : <PollsList />
-
             }
             {
                 !createMode && <Button
