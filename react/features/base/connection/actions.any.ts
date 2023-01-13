@@ -3,8 +3,7 @@ import _ from 'lodash';
 import { IReduxState } from '../../app/types';
 import {
     appendURLParam,
-    getBackendSafeRoomName,
-    parseURIString
+    getBackendSafeRoomName
 } from '../util/uri';
 
 import {
@@ -145,31 +144,13 @@ export function constructOptions(state: IReduxState) {
     // redux store.
     const options = _.cloneDeep(state['features/base/config']);
 
-    let { bosh, websocket } = options;
+    const { bosh } = options;
+    let { websocket } = options;
 
     // TESTING: Only enable WebSocket for some percentage of users.
     if (websocket && navigator.product === 'ReactNative') {
         if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
             websocket = undefined;
-        }
-    }
-
-    // Normalize the BOSH URL.
-    if (bosh && !websocket) {
-        const { locationURL } = state['features/base/connection'];
-
-        if (bosh.startsWith('//')) {
-            // By default our config.js doesn't include the protocol.
-            bosh = `${locationURL?.protocol}${bosh}`;
-        } else if (bosh.startsWith('/')) {
-            // Handle relative URLs, which won't work on mobile.
-            const {
-                protocol,
-                host,
-                contextRoot
-            } = parseURIString(locationURL?.href);
-
-            bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
         }
     }
 
