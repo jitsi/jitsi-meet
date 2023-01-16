@@ -112,7 +112,7 @@ StateListenerRegistry.register(
 
                     const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
 
-                    if (navigator.product === 'ReactNative' || isParticipantsPaneVisible) {
+                    if (isParticipantsPaneVisible) {
                         return;
                     }
 
@@ -130,6 +130,8 @@ StateListenerRegistry.register(
                     const knockingParticipants = getKnockingParticipants(getState());
                     const firstParticipant = knockingParticipants[0];
                     const showChat = showLobbyChatButton(firstParticipant)(getState());
+
+                    console.log(knockingParticipants.length, 'TESTS');
 
                     if (knockingParticipants.length > 1) {
                         descriptionKey = 'notify.participantsWantToJoin';
