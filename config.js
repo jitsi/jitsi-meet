@@ -1083,9 +1083,6 @@ var config = {
     //     // whether to hide the logo on the deep linking pages.
     //     hideLogo: false,
 
-    //     // whether to show deeplinking image.
-    //     showImage: false,
-
     //     // The ios deeplinking config.
     //     ios: {
     //         appName: 'Jitsi Meet',

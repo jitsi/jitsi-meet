@@ -195,8 +195,6 @@ var interfaceConfig = {
      */
     // MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
 
-    // SHOW_DEEP_LINKING_IMAGE: false,
-
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */

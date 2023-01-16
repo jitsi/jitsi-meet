@@ -105,7 +105,7 @@ class DeepLinkingMobilePage extends Component<Props> {
      */
     render() {
         const {
-            _deeplinkingCfg: { hideLogo, showImage },
+            _deeplinkingCfg: { hideLogo },
             _mobileConfig: { downloadLink, appName },
             _room,
             t,
@@ -145,14 +145,6 @@ class DeepLinkingMobilePage extends Component<Props> {
                     }
                 </div>
                 <div className = { `${_SNS}__body` }>
-                    {
-                        showImage
-                            ? <img
-                                alt = { t('welcomepage.logo.logoDeepLinking') }
-                                className = 'image'
-                                src = 'images/deep-linking-image.png' />
-                            : null
-                    }
                     <p className = { `${_SNS}__text` }>
                         { t(`${_TNS}.appNotInstalled`, { app: appName }) }
                     </p>
