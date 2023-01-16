@@ -131,8 +131,6 @@ StateListenerRegistry.register(
                     const firstParticipant = knockingParticipants[0];
                     const showChat = showLobbyChatButton(firstParticipant)(getState());
 
-                    console.log(knockingParticipants.length, 'TESTS');
-
                     if (knockingParticipants.length > 1) {
                         descriptionKey = 'notify.participantsWantToJoin';
                         notificationTitle = i18n.t('notify.waitingParticipants', {
