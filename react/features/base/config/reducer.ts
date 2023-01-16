@@ -310,7 +310,6 @@ function _translateInterfaceConfig(oldValue: IConfig) {
             desktop: {} as IDeeplinkingPlatformConfig,
             hideLogo: false,
             disabled,
-            showImage: false,
             android: {} as IDeeplinkingMobileConfig,
             ios: {} as IDeeplinkingMobileConfig
         };
@@ -330,7 +329,6 @@ function _translateInterfaceConfig(oldValue: IConfig) {
             }
 
             deeplinking.hideLogo = Boolean(interfaceConfig.HIDE_DEEP_LINKING_LOGO);
-            deeplinking.showImage = interfaceConfig.SHOW_DEEP_LINKING_IMAGE;
             deeplinking.android = {
                 appName: interfaceConfig.NATIVE_APP_NAME,
                 appScheme: interfaceConfig.APP_SCHEME,

@@ -115,7 +115,6 @@ export interface IDeeplinkingConfig {
     disabled: boolean;
     hideLogo: boolean;
     ios?: IDeeplinkingMobileConfig;
-    showImage: boolean;
 }
 
 export interface IConfig {
