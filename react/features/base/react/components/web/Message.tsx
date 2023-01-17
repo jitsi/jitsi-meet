@@ -1,11 +1,9 @@
-// @flow
-
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 import { toArray } from 'react-emoji-render';
 
 import GifMessage from '../../../../chat/components/web/GifMessage';
 import { GIF_PREFIX } from '../../../../gifs/constants';
-import { isGifMessage } from '../../../../gifs/functions';
+import { isGifMessage } from '../../../../gifs/functions.web';
 
 import Linkify from './Linkify';
 
@@ -14,7 +12,7 @@ type Props = {
     /**
      * The body of the message.
      */
-    text: string
+    text: string;
 };
 
 /**
@@ -41,7 +39,7 @@ class Message extends Component<Props> {
      */
     _processMessage() {
         const { text } = this.props;
-        const message = [];
+        const message: (string | ReactNode)[] = [];
 
         // Tokenize the text in order to avoid emoji substitution for URLs
         const tokens = text ? text.split(' ') : [];
@@ -80,8 +78,6 @@ class Message extends Component<Props> {
 
         return message;
     }
-
-    _processMessage: () => Array<string | React$Element<*>>;
 
     /**
      * Implements React's {@link Component#render()}.

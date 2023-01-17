@@ -1,9 +1,9 @@
-// @flow
-
 import { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { getLocalizedDateFormatter } from '../../base/i18n';
+import { getLocalizedDateFormatter } from '../../base/i18n/dateUtil';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../constants';
+import { IMessage } from '../reducer';
 
 /**
  * Formatter string to display the message timestamp.
@@ -13,46 +13,41 @@ const TIMESTAMP_FORMAT = 'H:mm';
 /**
  * The type of the React {@code Component} props of {@code AbstractChatMessage}.
  */
-export type Props = {
+export interface IProps extends WithTranslation {
+
+    /**
+     * Whether current participant is currently knocking in the lobby room.
+     */
+    knocking: boolean;
 
     /**
      * The representation of a chat message.
      */
-    message: Object,
+    message: IMessage;
 
     /**
      * Whether or not the avatar image of the participant which sent the message
      * should be displayed.
      */
-    showAvatar: boolean,
+    showAvatar?: boolean;
 
     /**
      * Whether or not the name of the participant which sent the message should
      * be displayed.
      */
-    showDisplayName: boolean,
+    showDisplayName: boolean;
 
     /**
      * Whether or not the time at which the message was sent should be
      * displayed.
      */
-    showTimestamp: boolean,
-
-    /**
-     * Whether current participant is currently knocking in the lobby room.
-     */
-    knocking: boolean,
-
-    /**
-     * Invoked to receive translated strings.
-     */
-    t: Function
-};
+    showTimestamp: boolean;
+}
 
 /**
  * Abstract component to display a chat message.
  */
-export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
+export default class AbstractChatMessage<P extends IProps> extends PureComponent<P> {
     /**
      * Returns the timestamp to display for the message.
      *

@@ -5,7 +5,6 @@ import { scrollIntoView } from 'seamless-scroll-polyfill';
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
 import AbstractMessageContainer, { IProps } from '../AbstractMessageContainer';
 
-// @ts-ignore
 import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
 
