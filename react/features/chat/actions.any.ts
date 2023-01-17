@@ -120,7 +120,7 @@ export function sendMessage(message: string, ignorePrivacy = false) {
  *     type: SET_PRIVATE_MESSAGE_RECIPIENT
  * }}
  */
-export function setPrivateMessageRecipient(participant: Object) {
+export function setPrivateMessageRecipient(participant?: Object) {
     return {
         participant,
         type: SET_PRIVATE_MESSAGE_RECIPIENT

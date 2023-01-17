@@ -1,21 +1,19 @@
-// @flow
-
 import punycode from 'punycode';
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 import ReactLinkify from 'react-linkify';
 
-type Props = {
+interface IProps {
 
     /**
      * The children of the component.
      */
-    children: React$Node
-};
+    children: ReactNode;
+}
 
 /**
  * Implements a react wrapper for the react-linkify component.
  */
-export default class Linkify extends Component<Props> {
+export default class Linkify extends Component<IProps> {
     /**
      * Implements {@Component#render}.
      *

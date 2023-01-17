@@ -1,34 +1,60 @@
-// @flow
-
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React from 'react';
 
-import { translate } from '../../../base/i18n';
-import { Icon, IconCloseCircle } from '../../../base/icons';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import { IconCloseLarge } from '../../../base/icons/svg';
+import { connect } from '../../../base/redux/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import AbstractMessageRecipient, {
-    type Props,
+    IProps,
     _mapDispatchToProps,
     _mapStateToProps
 } from '../AbstractMessageRecipient';
 
+const styles = (theme: Theme) => {
+    return {
+        container: {
+            margin: '0 16px 8px',
+            padding: '6px',
+            paddingLeft: '16px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            backgroundColor: theme.palette.support05,
+            borderRadius: theme.shape.borderRadius,
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: theme.palette.text01
+        },
+
+        iconButton: {
+            padding: '2px',
+
+            '&:hover': {
+                backgroundColor: theme.palette.action03
+            }
+        }
+    };
+};
+
 /**
  * Class to implement the displaying of the recipient of the next message.
  */
-class MessageRecipient extends AbstractMessageRecipient<Props> {
+class MessageRecipient extends AbstractMessageRecipient<IProps> {
     /**
      * Initializes a new {@code MessageRecipient} instance.
      *
-     * @param {*} props - The read-only properties with which the new instance
+     * @param {IProps} props - The read-only properties with which the new instance
      * is to be initialized.
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
         this._onKeyPress = this._onKeyPress.bind(this);
     }
-
-    _onKeyPress: (Object) => void;
 
     /**
      * KeyPress handler for accessibility.
@@ -37,7 +63,7 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
      *
      * @returns {void}
      */
-    _onKeyPress(e) {
+    _onKeyPress(e: React.KeyboardEvent) {
         if (
             (this.props._onRemovePrivateMessageRecipient || this.props._onHideLobbyChatRecipient)
                 && (e.key === ' ' || e.key === 'Enter')
@@ -64,11 +90,11 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
             return null;
         }
 
-        const { t } = this.props;
+        const { classes, t } = this.props;
 
         return (
             <div
-                className = { _isLobbyChatActive ? 'lobby-chat-recipient' : '' }
+                className = { classes.container }
                 id = 'chat-recipient'
                 role = 'alert'>
                 <span>
@@ -76,19 +102,18 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
                         recipient: _isLobbyChatActive ? _lobbyMessageRecipient : _privateMessageRecipient
                     }) }
                 </span>
-                <div
-                    aria-label = { t('dialog.close') }
+                <Button
+                    accessibilityLabel = { t('dialog.close') }
+                    className = { classes.iconButton }
+                    icon = { IconCloseLarge }
                     onClick = { _isLobbyChatActive
                         ? this.props._onHideLobbyChatRecipient : this.props._onRemovePrivateMessageRecipient }
                     onKeyPress = { this._onKeyPress }
-                    role = 'button'
-                    tabIndex = { 0 }>
-                    <Icon
-                        src = { IconCloseCircle } />
-                </div>
+                    type = { BUTTON_TYPES.TERTIARY } />
             </div>
         );
     }
 }
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(MessageRecipient));
+export default translate(connect(_mapStateToProps, _mapDispatchToProps)(
+    withStyles(styles)(MessageRecipient)));

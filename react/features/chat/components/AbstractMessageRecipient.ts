@@ -1,53 +1,50 @@
-// @flow
-
 import { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { getParticipantDisplayName, isLocalParticipantModerator } from '../../base/participants';
-import { setPrivateMessageRecipient } from '../actions';
+import { IReduxState } from '../../app/types';
+import { getParticipantDisplayName, isLocalParticipantModerator } from '../../base/participants/functions';
 import { setLobbyChatActiveState } from '../actions.any';
+import { setPrivateMessageRecipient } from '../actions.web';
 
-export type Props = {
-
-    /**
-     * Function used to translate i18n labels.
-     */
-    t: Function,
+export interface IProps extends WithTranslation {
 
     /**
-     * Function to remove the recipent setting of the chat window.
-     */
-    _onRemovePrivateMessageRecipient: Function,
+      * Is lobby messaging active.
+      */
+    _isLobbyChatActive: boolean;
 
-     /**
+    /**
+      * The name of the lobby message recipient, if any.
+      */
+    _lobbyMessageRecipient?: string;
+
+    /**
      * Function to make the lobby message recipient inactive.
      */
-    _onHideLobbyChatRecipient: Function,
+    _onHideLobbyChatRecipient: () => void;
+
+    /**
+     * Function to remove the recipient setting of the chat window.
+     */
+    _onRemovePrivateMessageRecipient: () => void;
 
     /**
      * The name of the message recipient, if any.
      */
-     _privateMessageRecipient: ?string,
+    _privateMessageRecipient?: string;
 
-     /**
-      * Is lobby messaging active.
-      */
-     _isLobbyChatActive: boolean,
-
-     /**
-      * The name of the lobby message recipient, if any.
-      */
-     _lobbyMessageRecipient: ?string,
-
-     /**
+    /**
       * Shows widget if it is necessary.
       */
-     _visible: boolean;
-};
+    _visible: boolean;
+
+    classes?: any;
+}
 
 /**
  * Abstract class for the {@code MessageRecipient} component.
  */
-export default class AbstractMessageRecipient<P: Props> extends PureComponent<P> {
+export default class AbstractMessageRecipient<P extends IProps> extends PureComponent<P> {
 
 }
 
@@ -55,9 +52,9 @@ export default class AbstractMessageRecipient<P: Props> extends PureComponent<P>
  * Maps part of the props of this component to Redux actions.
  *
  * @param {Function} dispatch - The Redux dispatch function.
- * @returns {Props}
+ * @returns {IProps}
  */
-export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
+export function _mapDispatchToProps(dispatch: Function) {
     return {
         _onRemovePrivateMessageRecipient: () => {
             dispatch(setPrivateMessageRecipient());
@@ -72,9 +69,9 @@ export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
  * Maps part of the Redux store to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-export function _mapStateToProps(state: Object): $Shape<Props> {
+export function _mapStateToProps(state: IReduxState) {
     const { privateMessageRecipient, lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
 
     return {

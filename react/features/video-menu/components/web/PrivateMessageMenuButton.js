@@ -2,14 +2,15 @@
 
 import React, { Component } from 'react';
 
+import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconMessage } from '../../../base/icons';
+import { getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { openChat } from '../../../chat/';
 import {
-    type Props as AbstractProps,
-    _mapStateToProps as _abstractMapStateToProps
+    type Props as AbstractProps
 } from '../../../chat/components/web/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 
@@ -85,8 +86,12 @@ class PrivateMessageMenuButton extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
+    const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
+    const { visible = enabled } = ownProps;
+
     return {
-        ..._abstractMapStateToProps(state, ownProps),
+        _participant: getParticipantById(state, ownProps.participantID),
+        visible,
         _hidden: typeof interfaceConfig !== 'undefined'
             && (interfaceConfig.DISABLE_PRIVATE_MESSAGES || !isButtonEnabled('chat', state))
     };
