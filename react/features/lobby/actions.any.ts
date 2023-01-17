@@ -20,7 +20,7 @@ import {
     SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
 import { LOBBY_CHAT_INITIALIZED, MODERATOR_IN_CHAT_WITH_LEFT } from './constants';
-import { getKnockingParticipants, getLobbyEnabled } from './functions';
+import { getKnockingParticipants, getLobbyConfig, getLobbyEnabled } from './functions';
 import { IKnockingParticipant } from './types';
 
 /**
@@ -389,9 +389,9 @@ export function setLobbyMessageListener() {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const conference = getCurrentConference(state);
-        const { enableLobbyChat = true } = state['features/base/config'];
+        const { enableChat = true } = getLobbyConfig(state);
 
-        if (!enableLobbyChat) {
+        if (!enableChat) {
             return;
         }
 

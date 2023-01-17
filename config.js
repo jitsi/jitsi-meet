@@ -542,12 +542,15 @@ var config = {
     // Disables responsive tiles.
     // disableResponsiveTiles: false,
 
-    // Hides lobby button
+    // DEPRECATED. Please use `securityUi?.hideLobbyButton` instead.
+    // Hides lobby button.
     // hideLobbyButton: false,
 
+    // DEPRECATED. Please use `lobby?.autoKnock` instead.
     // If Lobby is enabled starts knocking automatically.
     // autoKnockLobby: false,
 
+    // DEPRECATED. Please use `lobby?.enableChat` instead.
     // Enable lobby chat.
     // enableLobbyChat: true,
 
@@ -570,6 +573,22 @@ var config = {
     //     disabled: false,
     //     // If set,landing page will redirect to this URL.
     //     customUrl: ''
+    // },
+
+    // Configs for the lobby screen.
+    // lobby {
+    //     // If Lobby is enabled, it starts knocking automatically. Replaces `autoKnockLobby`.
+    //     autoKnock: false,
+    //     // Enables the lobby chat. Replaces `enableLobbyChat`.
+    //     enableChat: true,
+    // },
+
+    // Configs for the security related UI elements.
+    // securityUi: {
+    //     // Hides the lobby button. Replaces `hideLobbyButton`.
+    //     hideLobbyButton: false,
+    //     // Hides the possibility to set and enter a lobby password.
+    //     disableLobbyPassword: false,
     // },
 
     // Disable app shortcuts that are registered upon joining a conference

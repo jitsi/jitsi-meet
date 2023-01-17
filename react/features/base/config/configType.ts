@@ -393,6 +393,10 @@ export interface IConfig {
         validatorRegExpString?: string;
     };
     liveStreamingEnabled?: boolean;
+    lobby?: {
+        autoKnock?: boolean;
+        enableChat?: boolean;
+    };
     localRecording?: {
         disable?: boolean;
         disableSelfRecording?: boolean;
@@ -462,6 +466,10 @@ export interface IConfig {
     screenshotCapture?: {
         enabled?: boolean;
         mode?: 'always' | 'recording';
+    };
+    securityUi?: {
+        disableLobbyPassword?: boolean;
+        hideLobbyButton?: boolean;
     };
     serviceUrl?: string;
     sipInviteUrl?: string;

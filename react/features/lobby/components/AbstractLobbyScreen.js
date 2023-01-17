@@ -3,6 +3,7 @@
 import React, { PureComponent } from 'react';
 
 import { conferenceWillJoin, getConferenceName } from '../../base/conference';
+import { getSecurityUiConfig } from '../../base/config/functions.any';
 import { INVITE_ENABLED, getFeatureFlag } from '../../base/flags';
 import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
@@ -443,6 +444,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
     const { disableInviteFunctions } = state['features/base/config'];
     const { knocking, passwordJoinFailed } = state['features/lobby'];
     const { iAmSipGateway } = state['features/base/config'];
+    const { disableLobbyPassword } = getSecurityUiConfig(state);
     const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
     const deviceStatusVisible = isDeviceStatusVisible(state);
     const { membersOnly } = state['features/base/conference'];
@@ -460,7 +462,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
         _participantId: participantId,
         _participantName: localParticipant?.name,
         _passwordJoinFailed: passwordJoinFailed,
-        _renderPassword: !iAmSipGateway,
+        _renderPassword: !iAmSipGateway && !disableLobbyPassword,
         showCopyUrlButton
     };
 }
