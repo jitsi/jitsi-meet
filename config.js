@@ -1544,6 +1544,12 @@ var config = {
     // },
 };
 
+// Temporary backwards compatibility with old mobile clients.
+config.flags = config.flags || {};
+config.flags.sourceNameSignaling = true;
+config.flags.sendMultipleVideoStreams = true;
+config.flags.receiveMultipleVideoStreams = true;
+
 // Set the default values for JaaS customers
 if (enableJaaS) {
     config.dialInNumbersUrl = 'https://conference-mapper.jitsi.net/v1/access/dids';
