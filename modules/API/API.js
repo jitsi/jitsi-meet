@@ -1942,6 +1942,21 @@ class API {
     }
 
     /**
+     * Notify external application ( if API is enabled) that a remote menu button was clicked.
+     *
+     * @param {string} key - The key of the remote menu button.
+     * @param {string} participantId - The ID of the participant for with the remote menu button was clicked.
+     * @returns {void}
+     */
+    notifyRemoteMenuButtonClicked(key, participantId) {
+        this._sendEvent({
+            name: 'remote-menu-button-clicked',
+            key,
+            participantId
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}

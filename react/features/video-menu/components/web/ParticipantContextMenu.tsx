@@ -26,7 +26,7 @@ import { isForceMuted } from '../../../participants-pane/functions';
 import { requestRemoteControl, stopController } from '../../../remote-control';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 
-// @ts-ignore
+import CustomOptionButton from './CustomOptionButton';
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 // @ts-ignore
 import SendToRoomButton from './SendToRoomButton';
@@ -171,8 +171,8 @@ const ParticipantContextMenu = ({
     }
     , [ thumbnailMenu, _overflowDrawer, drawerParticipant, participant ]);
 
-    const buttons = [];
-    const buttons2 = [];
+    const buttons: JSX.Element[] = [];
+    const buttons2: JSX.Element[] = [];
 
     const showVolumeSlider = !startSilent
         && !isIosMobileBrowser()
@@ -183,8 +183,8 @@ const ParticipantContextMenu = ({
     if (_isModerator) {
         if ((thumbnailMenu || _overflowDrawer) && isModerationSupported && _isAudioMuted) {
             buttons.push(<AskToUnmuteButton
-                isAudioForceMuted = { _isAudioForceMuted }
-                isVideoForceMuted = { _isVideoForceMuted }
+                isVideoForceMuted = { _isAudioForceMuted }
+                isAudioForceMuted = { _isVideoForceMuted }
                 key = 'ask-unmute'
                 participantID = { _getCurrentParticipantId() } />
             );
@@ -276,6 +276,14 @@ const ParticipantContextMenu = ({
                 remoteControlState = { remoteControlState } />
         );
     }
+    buttons2.push(
+        <CustomOptionButton
+            icon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZT0id2hpdGUiIGNsYXNzPSJ3LTYgaC02Ij4KICA8cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0xMiA2djEybS0zLTIuODE4bC44NzkuNjU5YzEuMTcxLjg3OSAzLjA3Ljg3OSA0LjI0MiAwIDEuMTcyLS44NzkgMS4xNzItMi4zMDMgMC0zLjE4MkMxMy41MzYgMTIuMjE5IDEyLjc2OCAxMiAxMiAxMmMtLjcyNSAwLTEuNDUtLjIyLTIuMDAzLS42NTktMS4xMDYtLjg3OS0xLjEwNi0yLjMwMyAwLTMuMTgyczIuOS0uODc5IDQuMDA2IDBsLjQxNS4zM00yMSAxMmE5IDkgMCAxMS0xOCAwIDkgOSAwIDAxMTggMHoiIC8+Cjwvc3ZnPgoK'
+            id = 'yay'
+            key = 'yay'
+            participantId = { _getCurrentParticipantId() }
+            text = 'Click Here' />
+    );
 
     const breakoutRoomsButtons: any = [];
 
