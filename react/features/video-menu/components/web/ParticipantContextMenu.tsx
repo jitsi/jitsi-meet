@@ -144,7 +144,7 @@ const ParticipantContextMenu = ({
         isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
     const _isAudioMuted = useSelector((state: IReduxState) => isParticipantAudioMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
-    const { remoteVideoMenu = {}, disableRemoteMute, startSilent }
+    const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customRemoteMenuOptionButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
     const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
@@ -183,8 +183,8 @@ const ParticipantContextMenu = ({
     if (_isModerator) {
         if ((thumbnailMenu || _overflowDrawer) && isModerationSupported && _isAudioMuted) {
             buttons.push(<AskToUnmuteButton
-                isVideoForceMuted = { _isAudioForceMuted }
                 isAudioForceMuted = { _isVideoForceMuted }
+                isVideoForceMuted = { _isAudioForceMuted }
                 key = 'ask-unmute'
                 participantID = { _getCurrentParticipantId() } />
             );
@@ -276,14 +276,23 @@ const ParticipantContextMenu = ({
                 remoteControlState = { remoteControlState } />
         );
     }
-    buttons2.push(
-        <CustomOptionButton
-            icon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZT0id2hpdGUiIGNsYXNzPSJ3LTYgaC02Ij4KICA8cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0xMiA2djEybS0zLTIuODE4bC44NzkuNjU5YzEuMTcxLjg3OSAzLjA3Ljg3OSA0LjI0MiAwIDEuMTcyLS44NzkgMS4xNzItMi4zMDMgMC0zLjE4MkMxMy41MzYgMTIuMjE5IDEyLjc2OCAxMiAxMiAxMmMtLjcyNSAwLTEuNDUtLjIyLTIuMDAzLS42NTktMS4xMDYtLjg3OS0xLjEwNi0yLjMwMyAwLTMuMTgyczIuOS0uODc5IDQuMDA2IDBsLjQxNS4zM00yMSAxMmE5IDkgMCAxMS0xOCAwIDkgOSAwIDAxMTggMHoiIC8+Cjwvc3ZnPgoK'
-            id = 'yay'
-            key = 'yay'
-            participantId = { _getCurrentParticipantId() }
-            text = 'Click Here' />
-    );
+
+    if (customRemoteMenuOptionButtons) {
+        customRemoteMenuOptionButtons.forEach(
+            ({ icon, id, text }) => {
+                const onClick = useCallback(
+                    () => APP.API.notifyRemoteMenuButtonClicked(id, _getCurrentParticipantId()), []);
+
+                buttons2.push(
+                    <CustomOptionButton
+                        icon = { icon }
+                        key = { id }
+                        onClick = { onClick }
+                        text = { text } />
+                );
+            }
+        );
+    }
 
     const breakoutRoomsButtons: any = [];
 

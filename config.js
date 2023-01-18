@@ -799,6 +799,14 @@ var config = {
     // 'microphone', 'camera', 'select-background', 'invite', 'settings'
     // hiddenPremeetingButtons: [],
 
+    // An array with custom option buttons for the remote control menu
+    // type:  Array<{ icon: string; id: string; text: string; }>
+    // customRemoteMenuOptionButtons: [];
+
+    // An array with custom option buttons for the toolbox
+    // type:  Array<{ icon: string; id: string; text: string; }>
+    // customToolboxMenuOptionButtons?: Array<{ icon: string; id: string; text: string; }>;
+
     // Stats
     //
 

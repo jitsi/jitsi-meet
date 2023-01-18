@@ -1,20 +1,16 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 
 
 const CustomOptionButton = (
-        { icon, text, id, participantId }:
+        { icon, onClick, text }:
         {
             icon: string;
-            id: string;
-            participantId: string;
+            onClick: (e?: React.MouseEvent<Element, MouseEvent> | undefined) => void;
             text: string;
     }
 ) => {
-    const _onClick = useCallback(() => {
-        APP.API.notifyRemoteMenuButtonClicked(id, participantId);
-    }, [ ]);
 
     const iconNode = useMemo(() => (<img
         height = { 20 }
@@ -25,7 +21,7 @@ const CustomOptionButton = (
         <ContextMenuItem
             accessibilityLabel = { text }
             customIcon = { iconNode }
-            onClick = { _onClick }
+            onClick = { onClick }
             text = { text } />
     );
 };

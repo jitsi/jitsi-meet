@@ -31,6 +31,13 @@ import { _cleanupConfig, _setDeeplinkingDefaults } from './functions';
  * @type {Object}
  */
 const INITIAL_NON_RN_STATE: IConfig = {
+    customRemoteMenuOptionButtons: [
+        {
+            icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZT0id2hpdGUiIGNsYXNzPSJ3LTYgaC02Ij4KICA8cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0xMiA2djEybS0zLTIuODE4bC44NzkuNjU5YzEuMTcxLjg3OSAzLjA3Ljg3OSA0LjI0MiAwIDEuMTcyLS44NzkgMS4xNzItMi4zMDMgMC0zLjE4MkMxMy41MzYgMTIuMjE5IDEyLjc2OCAxMiAxMiAxMmMtLjcyNSAwLTEuNDUtLjIyLTIuMDAzLS42NTktMS4xMDYtLjg3OS0xLjEwNi0yLjMwMyAwLTMuMTgyczIuOS0uODc5IDQuMDA2IDBsLjQxNS4zM00yMSAxMmE5IDkgMCAxMS0xOCAwIDkgOSAwIDAxMTggMHoiIC8+Cjwvc3ZnPgoK',
+            id: 'send-money',
+            text: 'Send money'
+        }
+    ]
 };
 
 /**
