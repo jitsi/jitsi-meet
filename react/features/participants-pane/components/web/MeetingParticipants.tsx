@@ -8,7 +8,6 @@ import { IReduxState } from '../../../app/types';
 import { rejectParticipantAudio } from '../../../av-moderation/actions';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
-import { isMobileBrowser } from '../../../base/environment/utils';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
@@ -171,7 +170,7 @@ function _mapStateToProps(state: IReduxState): Object {
 
     const participantsCount = sortedParticipantIds.length;
     const showInviteButton = shouldRenderInviteButton(state) && isToolbarButtonEnabled('invite', state);
-    const overflowDrawer = showOverflowDrawer(state) && isMobileBrowser();
+    const overflowDrawer = showOverflowDrawer(state);
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];
 

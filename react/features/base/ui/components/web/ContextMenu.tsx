@@ -2,13 +2,11 @@ import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from '
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../../app/types';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Drawer, JitsiPortal } from '../../../../toolbox/components/web';
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
-import { isMobileBrowser } from '../../../environment/utils';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 /**
@@ -161,7 +159,7 @@ const ContextMenu = ({
     const [ isHidden, setIsHidden ] = useState(true);
     const containerRef = useRef<HTMLDivElement | null>(null);
     const { classes: styles, cx } = useStyles();
-    const _overflowDrawer = useSelector((state: IReduxState) => showOverflowDrawer(state) && isMobileBrowser());
+    const _overflowDrawer = useSelector(showOverflowDrawer);
 
     useLayoutEffect(() => {
         if (_overflowDrawer) {

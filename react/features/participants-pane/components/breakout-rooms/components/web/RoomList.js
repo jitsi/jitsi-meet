@@ -41,10 +41,11 @@ export const RoomList = ({ searchString }: Props) => {
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
     const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
-    const _overflowDrawer = useSelector(state => showOverflowDrawer(state) && isMobileBrowser());
+    const overflowDrawer = useSelector(showOverflowDrawer);
     const [ lowerMenu, raiseMenu, toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
     const [ lowerParticipantMenu, raiseParticipantMenu, toggleParticipantMenu,
         participantMenuEnter, participantMenuLeave, raiseParticipantContext ] = useContextMenu();
+    const hideMenu = useCallback(() => !overflowDrawer && lowerMenu(), [ overflowDrawer, lowerMenu ]);
     const onRaiseMenu = useCallback(room => target => raiseMenu(room, target), [ raiseMenu ]);
 
     return (
@@ -56,14 +57,14 @@ export const RoomList = ({ searchString }: Props) => {
                     <React.Fragment key = { room.id }>
                         <CollapsibleRoom
                             isHighlighted = { raiseContext.entity === room }
-                            onLeave = { lowerMenu }
+                            onLeave = { hideMenu }
                             onRaiseMenu = { onRaiseMenu(room) }
                             participantContextEntity = { raiseParticipantContext.entity }
                             raiseParticipantContextMenu = { raiseParticipantMenu }
                             room = { room }
                             searchString = { searchString }
                             toggleParticipantMenu = { toggleParticipantMenu }>
-                            {!_overflowDrawer && <>
+                            {!isMobileBrowser() && <>
                                 {!hideJoinRoomButton && <JoinActionButton room = { room } />}
                                 {isLocalModerator && !room.isMainRoom
                                     && <RoomActionEllipsis onClick = { toggleMenu(room) } />}
