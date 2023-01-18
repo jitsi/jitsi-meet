@@ -3,6 +3,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
+import { isMobileBrowser } from '../../../../../base/environment/utils';
 import { isLocalParticipantModerator } from '../../../../../base/participants';
 import { equals } from '../../../../../base/redux';
 import useContextMenu from '../../../../../base/ui/hooks/useContextMenu.web';
@@ -40,7 +41,7 @@ export const RoomList = ({ searchString }: Props) => {
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
     const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
-    const _overflowDrawer = useSelector(showOverflowDrawer);
+    const _overflowDrawer = useSelector(state => showOverflowDrawer(state) && isMobileBrowser());
     const [ lowerMenu, raiseMenu, toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
     const [ lowerParticipantMenu, raiseParticipantMenu, toggleParticipantMenu,
         participantMenuEnter, participantMenuLeave, raiseParticipantContext ] = useContextMenu();

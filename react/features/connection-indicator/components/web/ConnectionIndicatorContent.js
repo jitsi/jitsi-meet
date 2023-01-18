@@ -82,6 +82,11 @@ type Props = AbstractProps & {
     _enableSaveLogs: boolean,
 
     /**
+     * Whether is narrow layout or not.
+     */
+    _isNarrowLayout: boolean,
+
+    /**
      * Whether or not the displays stats are for local video.
      */
     _isLocalVideo: boolean,
@@ -193,6 +198,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 enableSaveLogs = { this.props._enableSaveLogs }
                 framerate = { framerate }
                 isLocalVideo = { this.props._isLocalVideo }
+                isNarrowLayout = { this.props._isNarrowLayout }
                 isVirtualScreenshareParticipant = { this.props._isVirtualScreenshareParticipant }
                 maxEnabledResolution = { maxEnabledResolution }
                 onSaveLogs = { this.props._onSaveLogs }
@@ -312,6 +318,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const conference = state['features/base/conference'].conference;
     const participant
         = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
+    const { isNarrowLayout } = state['features/base/responsive-ui'];
     const tracks = state['features/base/tracks'];
     const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantId);
     let videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
@@ -330,6 +337,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _isConnectionStatusInactive,
         _isConnectionStatusInterrupted,
         _isE2EEVerified: participant?.e2eeVerified,
+        _isNarrowLayout: isNarrowLayout,
         _isVirtualScreenshareParticipant: isScreenShareParticipant(participant),
         _isLocalVideo: participant?.local,
         _region: participant?.region,

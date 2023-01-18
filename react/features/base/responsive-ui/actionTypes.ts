@@ -52,3 +52,15 @@ export const SET_REDUCED_UI = 'SET_REDUCED_UI';
  */
 export const SET_CONTEXT_MENU_OPEN = 'SET_CONTEXT_MENU_OPEN';
 
+/**
+ * The type of redux action which signals whether we are in narrow layout.
+ *
+ * {
+ *     type: SET_NARROW_LAYOUT,
+ *     isNarrow: boolean
+ * }
+ *
+ * @public
+ */
+export const SET_NARROW_LAYOUT = 'SET_NARROW_LAYOUT';
+

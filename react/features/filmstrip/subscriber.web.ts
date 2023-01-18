@@ -1,8 +1,7 @@
-import { isMobileBrowser } from '../base/environment/utils';
 import { pinParticipant } from '../base/participants/actions';
 import { getParticipantCountWithFake } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { clientResized } from '../base/responsive-ui/actions';
+import { clientResized, setNarrowLayout } from '../base/responsive-ui/actions';
 import { shouldHideSelfView } from '../base/settings/functions.web';
 import { selectParticipantInLargeVideo } from '../large-video/actions.any';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
@@ -136,9 +135,8 @@ StateListenerRegistry.register(
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/responsive-ui'].clientWidth < DISPLAY_DRAWER_THRESHOLD,
     /* listener */ (widthBelowThreshold, store) => {
-        if (isMobileBrowser()) {
-            store.dispatch(setOverflowDrawer(widthBelowThreshold));
-        }
+        store.dispatch(setOverflowDrawer(widthBelowThreshold));
+        store.dispatch(setNarrowLayout(widthBelowThreshold));
     });
 
 /**

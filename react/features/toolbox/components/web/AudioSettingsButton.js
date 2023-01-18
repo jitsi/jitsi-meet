@@ -155,12 +155,13 @@ class AudioSettingsButton extends Component<Props> {
  */
 function mapStateToProps(state) {
     const { permissions = {} } = state['features/base/devices'];
+    const { isNarrowLayout } = state['features/base/responsive-ui'];
 
     return {
         hasPermissions: permissions.audio,
         isDisabled: isAudioSettingsButtonDisabled(state),
         isOpen: getAudioSettingsVisibility(state),
-        visible: !isMobileBrowser()
+        visible: !isMobileBrowser() && !isNarrowLayout
     };
 }
 

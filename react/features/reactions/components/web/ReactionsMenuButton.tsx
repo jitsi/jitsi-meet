@@ -43,9 +43,9 @@ interface IProps extends WithTranslation {
     handleClick: Function;
 
     /**
-     * Whether or not it's a mobile browser.
+     * Whether or not it's narrow mode or mobile browser.
      */
-    isMobile: boolean;
+    isNarrow: boolean;
 
     /**
      * Whether or not the reactions menu is open.
@@ -75,7 +75,7 @@ function ReactionsMenuButton({
     dispatch,
     handleClick,
     isOpen,
-    isMobile,
+    isNarrow,
     notifyMode,
     reactionsQueue,
     t
@@ -95,7 +95,7 @@ function ReactionsMenuButton({
 
     return (
         <div className = 'reactions-menu-popup-container'>
-            {!_reactionsEnabled || isMobile ? (
+            {!_reactionsEnabled || isNarrow ? (
                 <RaiseHandButton
                     buttonKey = { buttonKey }
                     handleClick = { handleClick }
@@ -135,10 +135,12 @@ function ReactionsMenuButton({
  * @returns {Object}
  */
 function mapStateToProps(state: IReduxState) {
+    const { isNarrowLayout } = state['features/base/responsive-ui'];
+
     return {
         _reactionsEnabled: isReactionsEnabled(state),
         isOpen: getReactionsMenuVisibility(state),
-        isMobile: isMobileBrowser(),
+        isNarrow: isMobileBrowser() || isNarrowLayout,
         reactionsQueue: getReactionsQueue(state)
     };
 }

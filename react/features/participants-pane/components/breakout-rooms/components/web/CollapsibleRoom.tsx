@@ -5,6 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../../app/types';
 import ListItem from '../../../../../base/components/participants-pane-list/ListItem';
+import { isMobileBrowser } from '../../../../../base/environment/utils';
 import Icon from '../../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
@@ -128,7 +129,7 @@ export const CollapsibleRoom = ({
         onRaiseMenu(target);
     }, [ onRaiseMenu ]);
     const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
-    const overflowDrawer: boolean = useSelector(showOverflowDrawer);
+    const overflowDrawer: boolean = useSelector((state: IReduxState) => showOverflowDrawer(state) && isMobileBrowser());
     const moderator = useSelector(isLocalParticipantModerator);
 
     const arrow = (<div className = { styles.arrowContainer }>
