@@ -17,8 +17,8 @@ import { getConferenceInfo } from '../functions';
 
 import ConferenceInfoContainer from './ConferenceInfoContainer';
 import InsecureRoomNameLabel from './InsecureRoomNameLabel';
-import ParticipantsCount from './ParticipantsCount';
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
+import SpeakerStatsLabel from './SpeakerStatsLabel';
 import SubjectText from './SubjectText';
 import ToggleTopPanelLabel from './ToggleTopPanelLabel';
 
@@ -52,7 +52,7 @@ const COMPONENTS = [
         id: 'conference-timer'
     },
     {
-        Component: ParticipantsCount,
+        Component: SpeakerStatsLabel,
         id: 'participants-count'
     },
     {
