@@ -644,15 +644,15 @@ function initCommands() {
             }
 
             let recordingConfig;
-            const { recordingService } = state['features/base/config'];
-
-            if (!recordingService.enabled && !dropboxToken) {
-                logger.error('Failed starting recording: the recording service is not enabled');
-
-                return;
-            }
 
             if (mode === JitsiRecordingConstants.mode.FILE) {
+                const { recordingService } = state['features/base/config'];
+
+                if (!recordingService.enabled && !dropboxToken) {
+                    logger.error('Failed starting recording: the recording service is not enabled');
+
+                    return;
+                }
                 if (dropboxToken) {
                     recordingConfig = {
                         mode: JitsiRecordingConstants.mode.FILE,
