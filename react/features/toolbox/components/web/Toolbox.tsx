@@ -348,9 +348,10 @@ const styles = () => {
         contextMenu: {
             position: 'relative' as const,
             right: 'auto',
-            maxHeight: 'inherit',
             margin: 0,
-            marginBottom: '8px'
+            marginBottom: '8px',
+            maxHeight: "60vh",
+            overflow: "scroll",
         },
 
         hangupMenu: {
