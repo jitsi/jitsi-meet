@@ -265,9 +265,6 @@ export function participantJoined(participant: IParticipant) {
  */
 export function participantSourcesUpdated(jitsiParticipant: IJitsiParticipant) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!jitsiParticipant) {
-            return;
-        }
         const id = jitsiParticipant.getId();
         const participant = getParticipantById(getState(), id);
 

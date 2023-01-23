@@ -419,7 +419,8 @@ export function getRemoteScreensharesBasedOnPresence(stateful: IStateful): strin
     const conference = getCurrentConference(stateful);
 
     return conference?.getParticipants()?.reduce((screenshares: string[], participant: IJitsiParticipant) => {
-        const videoSources: Map<string, ISourceInfo> = participant.getSources(MEDIA_TYPE.VIDEO);
+        const sources: Map<string, Map<string, ISourceInfo>> = participant.getSources();
+        const videoSources = sources.get(MEDIA_TYPE.VIDEO);
         const screenshareSources = Array.from(videoSources ?? new Map())
             .filter(source => source[1].videoType === VIDEO_TYPE.DESKTOP && !source[1].muted)
             .map(source => source[0]);

@@ -22,7 +22,7 @@ import {
     isRemoteScreenshareParticipant,
     isScreenShareParticipant
 } from './functions';
-import { ILocalParticipant, IParticipant, ISourceInfo } from './types';
+import { FakeParticipant, ILocalParticipant, IParticipant, ISourceInfo } from './types';
 
 /**
  * Participant object.
@@ -296,12 +296,12 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             const videoSources: Map<string, ISourceInfo> | undefined = sources.get(MEDIA_TYPE.VIDEO);
 
             if (videoSources?.size) {
-                const { remoteVideoSources } = state;
+                const newRemoteVideoSources = new Set(state.remoteVideoSources);
 
-                for (const source of Array.from(videoSources.keys())) {
-                    remoteVideoSources.add(source);
+                for (const source of videoSources.keys()) {
+                    newRemoteVideoSources.add(source);
                 }
-                state.remoteVideoSources = new Set(remoteVideoSources);
+                state.remoteVideoSources = newRemoteVideoSources;
             }
         }
 
@@ -352,12 +352,19 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
 
         if (oldParticipant?.sources?.size) {
             const videoSources: Map<string, ISourceInfo> | undefined = oldParticipant.sources.get(MEDIA_TYPE.VIDEO);
+            const newRemoteVideoSources = new Set(state.remoteVideoSources);
 
             if (videoSources?.size) {
-                for (const source of Array.from(videoSources.keys())) {
-                    state.remoteVideoSources.delete(source);
+                for (const source of videoSources.keys()) {
+                    newRemoteVideoSources.delete(source);
                 }
             }
+            state.remoteVideoSources = newRemoteVideoSources;
+        } else if (oldParticipant?.fakeParticipant === FakeParticipant.RemoteScreenShare) {
+            const newRemoteVideoSources = new Set(state.remoteVideoSources);
+
+            newRemoteVideoSources.delete(id);
+            state.remoteVideoSources = newRemoteVideoSources;
         }
 
         if (oldParticipant && oldParticipant.conference === conference) {
@@ -411,12 +418,12 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             const videoSources: Map<string, ISourceInfo> = sources.get(MEDIA_TYPE.VIDEO);
 
             if (videoSources?.size) {
-                const { remoteVideoSources } = state;
+                const newRemoteVideoSources = new Set(state.remoteVideoSources);
 
-                for (const source of Array.from(videoSources.keys())) {
-                    remoteVideoSources.add(source);
+                for (const source of videoSources.keys()) {
+                    newRemoteVideoSources.add(source);
                 }
-                state.remoteVideoSources = new Set(remoteVideoSources);
+                state.remoteVideoSources = newRemoteVideoSources;
             }
         }
 

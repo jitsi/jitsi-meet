@@ -104,7 +104,7 @@ StateListenerRegistry.register(
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].remoteVideoSources,
     /* listener */ (remoteVideoSources, store) => {
-        _updateReceiverVideoConstraints(store);
+        getSsrcRewritingFeatureFlag(store.getState()) && _updateReceiverVideoConstraints(store);
     });
 
 /**

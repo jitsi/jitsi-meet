@@ -19,8 +19,8 @@ StateListenerRegistry.register(
 );
 
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/participants'],
-    /* listener */(participants, store) => getSsrcRewritingFeatureFlag(store.getState())
+    /* selector */ state => state['features/base/participants'].remoteVideoSources,
+    /* listener */(remoteVideoSources, store) => getSsrcRewritingFeatureFlag(store.getState())
         && _updateScreenshareParticipantsBasedOnPresence(store)
 );
 
