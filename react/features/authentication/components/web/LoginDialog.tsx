@@ -253,9 +253,9 @@ class LoginDialog extends Component<IProps, IState> {
 
         return (
             <Dialog
+                disableAutoHideOnSubmit = { true }
                 disableBackdropClose = { true }
                 hideCloseButton = { true }
-                disableAutoHideOnSubmit = { true }
                 ok = {{
                     disabled: connecting
                         || loginStarted
