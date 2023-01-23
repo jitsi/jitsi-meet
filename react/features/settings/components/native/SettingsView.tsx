@@ -37,7 +37,7 @@ import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions
 // @ts-ignore
 import FormRow from './FormRow';
 // @ts-ignore
-import FormSectionAccordion from './FormSectionAccordion';
+import FormSection from './FormSection';
 // @ts-ignore
 import styles from './styles';
 
@@ -305,7 +305,8 @@ class SettingsView extends Component<IProps, IState> {
                             participantId = { this.props._localParticipantId }
                             size = { AVATAR_SIZE } />
                     </View>
-                    <FormSectionAccordion
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.profileSection'>
                         <Input
                             // @ts-ignore
@@ -327,8 +328,9 @@ class SettingsView extends Component<IProps, IState> {
                             placeholder = { t('settingsView.emailPlaceholderText') }
                             textContentType = { 'emailAddress' } // iOS only
                             value = { email } />
-                    </FormSectionAccordion>
-                    <FormSectionAccordion
+                    </FormSection>
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.conferenceSection'>
                         <Input
                             // @ts-ignore
@@ -375,8 +377,9 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onDisableSelfView } />
                         </FormRow>
-                    </FormSectionAccordion>
-                    <FormSectionAccordion
+                    </FormSection>
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.links'>
                         <Button
                             accessibilityLabel = 'settingsView.help'
@@ -397,17 +400,20 @@ class SettingsView extends Component<IProps, IState> {
                             labelKey = 'settingsView.privacy'
                             onClick = { this._onShowPrivacyPressed }
                             type = { BUTTON_TYPES.TERTIARY } />
-                    </FormSectionAccordion>
-                    <FormSectionAccordion
+                    </FormSection>
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.buildInfoSection'>
+                        {/* @ts-ignore */}
                         <FormRow
                             label = 'settingsView.version'>
                             <Text style = { styles.text }>
                                 {`${AppInfo.version} build ${AppInfo.buildNumber}`}
                             </Text>
                         </FormRow>
-                    </FormSectionAccordion>
-                    <FormSectionAccordion
+                    </FormSection>
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.advanced'>
                         { Platform.OS === 'android' && (
                             <>
@@ -441,7 +447,7 @@ class SettingsView extends Component<IProps, IState> {
                                     onChange = { this._onDisableCrashReporting } />
                             </FormRow>
                         )}
-                    </FormSectionAccordion>
+                    </FormSection>
                 </ScrollView>
             </JitsiScreen>
         );

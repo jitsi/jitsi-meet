@@ -91,22 +91,17 @@ export default {
     /**
      * Style for the form section separator titles.
      */
-    formSectionTitle: {
+
+    formSectionTitleContent: {
         backgroundColor: BaseTheme.palette.ui02,
-        paddingBottom: 0,
-        paddingTop: 0
+        paddingVertical: BaseTheme.spacing[1]
     },
 
     formSectionTitleText: {
+        ...BaseTheme.typography.bodyShortRegular,
         color: BaseTheme.palette.text01,
-        fontSize: 14,
         opacity: 0.6,
         textAlign: 'center'
-    },
-
-    section: {
-        color: BaseTheme.palette.icon01,
-        fontSize: 14
     },
 
     /**
