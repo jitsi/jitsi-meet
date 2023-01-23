@@ -51,6 +51,7 @@ const getMimeType = (): string => {
 };
 
 const VIDEO_BIT_RATE = 2500000; // 2.5Mbps in bits
+const MAX_SIZE = 1073741824; // 1GB in bytes
 
 // Lazily initialize.
 let preferredMediaType: string;
@@ -62,7 +63,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
     audioContext: undefined,
     audioDestination: undefined,
     roomName: '',
-    totalSize: 1073741824, // 1GB in bytes
+    totalSize: MAX_SIZE,
     selfRecording: {
         on: false,
         withVideo: false
@@ -161,6 +162,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
             this.recorder = undefined;
             this.audioContext = undefined;
             this.audioDestination = undefined;
+            this.totalSize = MAX_SIZE;
             setTimeout(() => this.saveRecording(this.recordingData, this.getFilename()), 1000);
         }
     },
