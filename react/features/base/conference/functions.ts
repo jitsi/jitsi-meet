@@ -14,7 +14,6 @@ import {
 } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
 import { toState } from '../redux/functions';
-import { getJitsiMeetGlobalNS } from '../util/helpers';
 import {
     appendURLParam,
     getBackendSafePath,
@@ -249,8 +248,6 @@ export function getConferenceOptions(stateful: IStateful) {
         delete config.analytics?.googleAnalyticsTrackingId;
         delete options.callStatsID;
         delete options.callStatsSecret;
-    } else {
-        options.getWiFiStatsMethod = getWiFiStatsMethod;
     }
 
     return options;
@@ -380,21 +377,6 @@ export function getAnalyticsRoomName(state: IReduxState, dispatch: IStore['dispa
     }
 
     return getRoomName(state);
-}
-
-/**
- * Returns the result of getWiFiStats from the global NS or does nothing
- * (returns empty result).
- * Fixes a concurrency problem where we need to pass a function when creating
- * a JitsiConference, but that method is added to the context later.
- *
- * @returns {Promise}
- * @private
- */
-function getWiFiStatsMethod() {
-    const gloabalNS = getJitsiMeetGlobalNS();
-
-    return gloabalNS.getWiFiStats ? gloabalNS.getWiFiStats() : Promise.resolve('{}');
 }
 
 /**
