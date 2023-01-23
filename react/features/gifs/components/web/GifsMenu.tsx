@@ -1,4 +1,4 @@
-import { GiphyFetch, TrendingOptions } from '@giphy/js-fetch-api';
+import { GiphyFetch, TrendingOptions, setServerUrl } from '@giphy/js-fetch-api';
 import { Grid } from '@giphy/react-components';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,8 @@ import {
     formatGifUrlMessage,
     getGifAPIKey,
     getGifRating,
-    getGifUrl
+    getGifUrl,
+    getGiphyProxyUrl
 } from '../../function.any';
 
 const OVERFLOW_DRAWER_PADDING = 16;
@@ -92,6 +93,7 @@ function GifsMenu() {
     const overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const rating = useSelector(getGifRating);
+    const proxyUrl = useSelector(getGiphyProxyUrl);
 
     const fetchGifs = useCallback(async (offset = 0) => {
         const options: TrendingOptions = {
@@ -114,7 +116,7 @@ function GifsMenu() {
 
     const handleGifClick = useCallback((gif, e) => {
         e?.stopPropagation();
-        const url = getGifUrl(gif);
+        const url = getGifUrl(gif, proxyUrl);
 
         sendAnalytics(createGifSentEvent());
         batch(() => {
@@ -176,6 +178,12 @@ function GifsMenu() {
     // For some reason, the Grid component does not do an initial call on mobile.
     // This fixes that.
     useEffect(() => setSearchKey(''), []);
+
+    useEffect(() => {
+        if (proxyUrl) {
+            setServerUrl(proxyUrl);
+        }
+    }, []);
 
     const onInputKeyPress = useCallback((e: React.KeyboardEvent) => {
         e.stopPropagation();
