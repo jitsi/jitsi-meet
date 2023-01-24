@@ -102,7 +102,7 @@ function provider.get_sasl_handler(session)
                     self.username = session1.username;
                     break;
                 end
-        	end
+            end
         else
             self.username = message;
         end
