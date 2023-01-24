@@ -1,9 +1,13 @@
 import debounce from 'lodash/debounce';
 
-import { IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { _handleParticipantError } from '../base/conference/functions';
+import { getSsrcRewritingFeatureFlag } from '../base/config/functions.any';
 import { MEDIA_TYPE } from '../base/media/constants';
-import { getLocalParticipant } from '../base/participants/functions';
+import {
+    getLocalParticipant,
+    getSourceNamesByMediaType
+} from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks/functions';
 import { reportError } from '../base/util/helpers';
@@ -93,6 +97,15 @@ StateListenerRegistry.register(
         deepEquals: true
     }
 );
+
+/**
+ * Updates the receiver constraints when new video sources are added to the conference.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/participants'].remoteVideoSources,
+    /* listener */ (remoteVideoSources, store) => {
+        getSsrcRewritingFeatureFlag(store.getState()) && _updateReceiverVideoConstraints(store);
+    });
 
 /**
  * StateListenerRegistry provides a reliable way of detecting changes to
@@ -295,6 +308,42 @@ StateListenerRegistry.register(
     });
 
 /**
+ * Returns the source names asociated with the given participants list.
+ *
+ * @param {Array<string>} participantList - The list of participants.
+ * @param {Object} state - The redux state.
+ * @returns {Array<string>}
+ */
+function _getSourceNames(participantList: Array<string>, state: IReduxState): Array<string> {
+    const { remoteScreenShares } = state['features/video-layout'];
+    const tracks = state['features/base/tracks'];
+    const sourceNamesList: string[] = [];
+
+    participantList.forEach(participantId => {
+        if (getSsrcRewritingFeatureFlag(state)) {
+            const sourceNames: string[] | undefined
+                = getSourceNamesByMediaType(state, participantId, MEDIA_TYPE.VIDEO);
+
+            sourceNames?.length && sourceNamesList.push(...sourceNames);
+        } else {
+            let sourceName: string;
+
+            if (remoteScreenShares.includes(participantId)) {
+                sourceName = participantId;
+            } else {
+                sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+            }
+
+            if (sourceName) {
+                sourceNamesList.push(sourceName);
+            }
+        }
+    });
+
+    return sourceNamesList;
+}
+
+/**
  * Helper function for updating the preferred sender video constraint, based on the user preference.
  *
  * @param {number} preferred - The user preferred max frame height.
@@ -360,53 +409,29 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         lastN
     };
 
-    const activeParticipantsSources: string[] = [];
-    const visibleRemoteTrackSourceNames: string[] = [];
+    let activeParticipantsSources: string[] = [];
+    let visibleRemoteTrackSourceNames: string[] = [];
     let largeVideoSourceName: string | undefined;
 
     receiverConstraints.onStageSources = [];
     receiverConstraints.selectedSources = [];
 
     if (visibleRemoteParticipants?.size) {
-        visibleRemoteParticipants.forEach(participantId => {
-            let sourceName;
-
-            if (remoteScreenShares.includes(participantId)) {
-                sourceName = participantId;
-            } else {
-                sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
-            }
-
-            if (sourceName) {
-                visibleRemoteTrackSourceNames.push(sourceName);
-            }
-        });
+        visibleRemoteTrackSourceNames = _getSourceNames(Array.from(visibleRemoteParticipants), state);
     }
 
     if (activeParticipantsIds?.length > 0) {
-        activeParticipantsIds.forEach((participantId: string) => {
-            let sourceName;
-
-            if (remoteScreenShares.includes(participantId)) {
-                sourceName = participantId;
-            } else {
-                sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
-            }
-
-            if (sourceName) {
-                activeParticipantsSources.push(sourceName);
-            }
-        });
-
+        activeParticipantsSources = _getSourceNames(activeParticipantsIds, state);
     }
 
     if (localParticipantId !== largeVideoParticipantId) {
         if (remoteScreenShares.includes(largeVideoParticipantId)) {
             largeVideoSourceName = largeVideoParticipantId;
         } else {
-            largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
-                tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId
-            );
+            largeVideoSourceName = getSsrcRewritingFeatureFlag(state)
+                ? getSourceNamesByMediaType(state, largeVideoParticipantId, MEDIA_TYPE.VIDEO)?.[0]
+                : getTrackSourceNameByMediaTypeAndParticipant(
+                    tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId);
         }
     }
 

@@ -103,6 +103,7 @@ import {
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
+    participantSourcesUpdated,
     participantUpdated,
     screenshareParticipantDisplayNameChanged,
     updateRemoteParticipantFeatures
@@ -1986,6 +1987,11 @@ export default {
         room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {
             APP.store.dispatch(participantKicked(kicker, kicked));
         });
+
+        room.on(JitsiConferenceEvents.PARTICIPANT_SOURCE_UPDATED,
+            jitsiParticipant => {
+                APP.store.dispatch(participantSourcesUpdated(jitsiParticipant));
+            });
 
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
             APP.store.dispatch(suspendDetected());

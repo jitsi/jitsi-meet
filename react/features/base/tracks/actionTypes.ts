@@ -67,6 +67,16 @@ export const TRACK_MUTE_UNMUTE_FAILED = 'TRACK_MUTE_UNMUTE_FAILED';
 export const TRACK_NO_DATA_FROM_SOURCE = 'TRACK_NO_DATA_FROM_SOURCE';
 
 /**
+ * The type of redux action dispatched when the owner of a track changes due to ssrc remapping.
+ *
+ * {
+ *     type: TRACK_OWNER_CHANGED,
+ *     track: Track
+ * }
+ */
+export const TRACK_OWNER_CHANGED = 'TRACK_OWNER_CHANGED';
+
+/**
  * The type of redux action dispatched when a track has been (locally or
  * remotely) removed from the conference.
  *
@@ -96,7 +106,7 @@ export const TRACK_STOPPED = 'TRACK_STOPPED';
  * }
  */
 export const TRACK_UPDATED = 'TRACK_UPDATED';
-
+ 
 /**
  * The type of redux action dispatched when a local track starts being created
  * via a WebRTC {@code getUserMedia} call. The action's payload includes an

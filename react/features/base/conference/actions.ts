@@ -15,9 +15,11 @@ import {
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
+    participantSourcesUpdated,
     participantUpdated
 } from '../participants/actions';
 import { getNormalizedDisplayName } from '../participants/functions';
+import { IJitsiParticipant } from '../participants/types';
 import { toState } from '../redux/functions';
 import {
     destroyLocalTracks,
@@ -127,6 +129,10 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
         (kicker: any, kicked: any) => dispatch(participantKicked(kicker, kicked)));
+
+    conference.on(
+        JitsiConferenceEvents.PARTICIPANT_SOURCE_UPDATED,
+        (jitsiParticipant: IJitsiParticipant) => dispatch(participantSourcesUpdated(jitsiParticipant)));
 
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED, // @ts-ignore
