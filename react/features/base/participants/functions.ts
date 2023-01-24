@@ -409,7 +409,12 @@ export function getParticipantDisplayName(stateful: IStateful, id: string): stri
 }
 
 /**
- * Returns the source names of the screenshare sources in the conference.
+ * Returns the source names of the screenshare sources in the conference based on the presence shared by the remote
+ * endpoints. This should be only used for creating/removing virtual screenshare participant tiles when ssrc-rewriting
+ * is enabled. Once the tile is created, the source-name gets added to the receiver constraints based on which the
+ * JVB will add the source to the video sources map and signal it to the local endpoint. Only then, a remote track is
+ * created/remapped and the tracks in redux will be updated. Once the track is updated in redux, the client will
+ * will continue to use the other track based getter functions for other operations related to screenshare.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
  * retrieve the state.

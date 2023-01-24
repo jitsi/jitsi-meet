@@ -44,8 +44,7 @@ function _createOrRemoveVirtualParticipants(
 
     if (removedScreenshareSourceNames.length) {
         removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference, {
-            fakeParticipant: FakeParticipant.RemoteScreenShare,
-            isReplaced: undefined
+            fakeParticipant: FakeParticipant.RemoteScreenShare
         })));
     }
 
@@ -92,8 +91,7 @@ function _updateScreenshareParticipants(store: IStore): void {
 
         if (localScreenShare && !newLocalSceenshareSourceName) {
             dispatch(participantLeft(localScreenShare.id, conference, {
-                fakeParticipant: FakeParticipant.LocalScreenShare,
-                isReplaced: undefined
+                fakeParticipant: FakeParticipant.LocalScreenShare
             }));
         }
     }
