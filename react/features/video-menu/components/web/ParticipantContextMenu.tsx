@@ -27,6 +27,7 @@ import { requestRemoteControl, stopController } from '../../../remote-control';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 
 import CustomOptionButton from './CustomOptionButton';
+// @ts-ignore
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 // @ts-ignore
 import SendToRoomButton from './SendToRoomButton';

@@ -78,6 +78,7 @@ export default [
     'channelLastN',
     'connectionIndicators',
     'constraints',
+    'customRemoteMenuOptionButtons',
     'brandingRoomAlias',
     'debug',
     'debugAudioLevels',
