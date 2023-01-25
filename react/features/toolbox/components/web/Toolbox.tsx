@@ -120,6 +120,7 @@ import HelpButton from '../HelpButton';
 
 // @ts-ignore
 import AudioSettingsButton from './AudioSettingsButton';
+import CustomOptionButton from './CustomOptionButton';
 import { EndConferenceButton } from './EndConferenceButton';
 // @ts-ignore
 import FullscreenButton from './FullscreenButton';
@@ -173,6 +174,8 @@ interface IProps extends WithTranslation {
      * The {@code JitsiConference} for the current conference.
      */
     _conference?: IJitsiConference;
+
+    _customToolboxMenuOptionButtons: Array<{ icon: string; id: string; text: string; }>;
 
     /**
      * Whether or not screensharing button is disabled.
@@ -714,6 +717,7 @@ class Toolbox extends Component<IProps> {
      */
     _getAllButtons() {
         const {
+            _customToolboxMenuOptionButtons,
             _feedbackConfigured,
             _hasSalesforce,
             _isIosMobile,
@@ -914,6 +918,20 @@ class Toolbox extends Component<IProps> {
             group: 4
         };
 
+        const customButtons = _customToolboxMenuOptionButtons.reduce((prev, { icon, id, text }) => {
+            return {
+                ...prev,
+                [id]: {
+                    key: id,
+                    Content: CustomOptionButton,
+                    group: 4,
+                    icon,
+                    id,
+                    text
+                }
+            };
+        }, {});
+
         return {
             microphone,
             camera,
@@ -944,7 +962,8 @@ class Toolbox extends Component<IProps> {
             embed,
             feedback,
             download,
-            help
+            help,
+            ...customButtons
         };
     }
 
@@ -997,7 +1016,8 @@ class Toolbox extends Component<IProps> {
         const {
             _clientWidth,
             _toolbarButtons,
-            _jwtDisabledButons
+            _jwtDisabledButons,
+            _customToolboxMenuOptionButtons
         } = this.props;
 
         const buttons = this._getAllButtons();
@@ -1007,6 +1027,7 @@ class Toolbox extends Component<IProps> {
         const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
         let sliceIndex = order.length + 2;
+        const customButtonsKeys = _customToolboxMenuOptionButtons.map(({ id }) => id);
 
         const keys = Object.keys(buttons);
 
@@ -1015,7 +1036,9 @@ class Toolbox extends Component<IProps> {
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
         ].filter(Boolean).filter(({ key, alias = NOT_APPLICABLE }) =>
             !_jwtDisabledButons.includes(key)
-            && (isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons))
+            && (isToolbarButtonEnabled(key, _toolbarButtons)
+                || isToolbarButtonEnabled(alias, _toolbarButtons)
+                || customButtonsKeys.includes(key))
         );
 
         if (isHangupVisible) {
@@ -1528,7 +1551,8 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         callStatsID,
         disableProfile,
         iAmRecorder,
-        iAmSipGateway
+        iAmSipGateway,
+        customToolboxMenuOptionButtons
     } = state['features/base/config'];
     const {
         fullScreen,
@@ -1547,6 +1571,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
+        _customToolboxMenuOptionButtons: customToolboxMenuOptionButtons,
         _desktopSharingEnabled: JitsiMeetJS.isDesktopSharingEnabled(),
         _desktopSharingButtonDisabled: isDesktopShareButtonDisabled(state),
         _dialog: Boolean(state['features/base/dialog'].component),
