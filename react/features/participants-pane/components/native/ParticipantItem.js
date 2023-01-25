@@ -95,7 +95,6 @@ function ParticipantItem({
                 onPress = { onPress }
                 style = { styles.participantContent }>
                 <Avatar
-                    className = 'participant-avatar'
                     displayName = { displayName }
                     participantId = { participantID }
                     size = { 32 } />
