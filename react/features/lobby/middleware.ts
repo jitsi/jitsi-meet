@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment */
+
 import i18n from 'i18next';
 import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -13,6 +15,11 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { isTestModeEnabled } from '../base/testing/functions';
 import { handleLobbyChatInitialized, removeLobbyChatParticipant } from '../chat/actions.any';
+import { navigate }
+// @ts-ignore
+    from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+// @ts-ignore
+import { screen } from '../mobile/navigation/routes';
 import {
     hideNotification,
     showNotification
@@ -121,57 +128,6 @@ StateListenerRegistry.register(
                         getState
                     });
 
-                    let notificationTitle;
-                    let customActionNameKey;
-                    let customActionHandler;
-                    let descriptionKey;
-                    let icon;
-
-                    const knockingParticipants = getKnockingParticipants(getState());
-                    const firstParticipant = knockingParticipants[0];
-                    const showChat = showLobbyChatButton(firstParticipant)(getState());
-
-                    if (knockingParticipants.length > 1) {
-                        descriptionKey = 'notify.participantsWantToJoin';
-                        notificationTitle = i18n.t('notify.waitingParticipants', {
-                            waitingParticipants: knockingParticipants.length
-                        });
-                        icon = NOTIFICATION_ICON.PARTICIPANTS;
-                        customActionNameKey = [ 'notify.viewLobby' ];
-                        customActionHandler = [ () => batch(() => {
-                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                            dispatch(openParticipantsPane());
-                        }) ];
-                    } else {
-                        descriptionKey = 'notify.participantWantsToJoin';
-                        notificationTitle = firstParticipant.name;
-                        icon = NOTIFICATION_ICON.PARTICIPANT;
-                        customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
-                        customActionHandler = [ () => batch(() => {
-                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                            dispatch(approveKnockingParticipant(firstParticipant.id));
-                        }),
-                        () => batch(() => {
-                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                            dispatch(rejectKnockingParticipant(firstParticipant.id));
-                        }) ];
-                        if (showChat) {
-                            customActionNameKey.splice(1, 0, 'lobby.chat');
-                            customActionHandler.splice(1, 0, () => batch(() => {
-                                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                                dispatch(handleLobbyChatInitialized(firstParticipant.id));
-                            }));
-                        }
-                    }
-                    dispatch(showNotification({
-                        title: notificationTitle,
-                        descriptionKey,
-                        uid: LOBBY_NOTIFICATION_ID,
-                        customActionNameKey,
-                        customActionHandler,
-                        icon
-                    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-
                     if (typeof APP !== 'undefined') {
                         APP.API.notifyKnockingParticipant({
                             id,
@@ -232,6 +188,12 @@ function _handleLobbyNotification(store: IStore) {
 
     if (knockingParticipants.length === 1) {
         const firstParticipant = knockingParticipants[0];
+        const { disablePolls } = getState()['features/base/config'];
+        const showChat = showLobbyChatButton(firstParticipant)(getState());
+
+        const chatRoute = disablePolls
+            ? screen.conference.chat
+            : screen.conference.chatandpolls.main;
 
         descriptionKey = 'notify.participantWantsToJoin';
         notificationTitle = firstParticipant.name;
@@ -245,7 +207,23 @@ function _handleLobbyNotification(store: IStore) {
             dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
             dispatch(rejectKnockingParticipant(firstParticipant.id));
         }) ];
-    } else {
+
+        if (showChat) {
+            customActionNameKey.splice(1, 0, 'lobby.chat');
+            customActionHandler.splice(1, 0, () => {
+                batch(() => {
+                    dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                    dispatch(handleLobbyChatInitialized(firstParticipant.id));
+                });
+
+                if (navigator.product === 'ReactNative') {
+                    navigate(chatRoute);
+                }
+            });
+        }
+    }
+
+    if (knockingParticipants.length > 1) {
         descriptionKey = 'notify.participantsWantToJoin';
         notificationTitle = i18n.t('notify.waitingParticipants', {
             waitingParticipants: knockingParticipants.length
@@ -257,6 +235,7 @@ function _handleLobbyNotification(store: IStore) {
             dispatch(openParticipantsPane());
         }) ];
     }
+
     dispatch(showNotification({
         title: notificationTitle,
         descriptionKey,
