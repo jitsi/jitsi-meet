@@ -350,8 +350,8 @@ const styles = () => {
             right: 'auto',
             margin: 0,
             marginBottom: '8px',
-            maxHeight: "80vh",
-            overflowY: "auto"
+            maxHeight: '80vh',
+            overflowY: 'auto'
         },
 
         hangupMenu: {
