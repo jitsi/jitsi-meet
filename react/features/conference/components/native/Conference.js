@@ -433,7 +433,14 @@ class Conference extends AbstractConference<Props, State> {
 
                     <LonelyMeetingExperience />
 
-                    { _shouldDisplayTileView || <><Filmstrip /><Toolbox /></> }
+                    {
+                        _shouldDisplayTileView
+                        || <>
+                            <Filmstrip />
+                            { this._renderNotificationsContainer() }
+                            <Toolbox />
+                        </>
+                    }
                 </View>
 
                 <SafeAreaView
@@ -462,13 +469,10 @@ class Conference extends AbstractConference<Props, State> {
                         {/* eslint-disable-next-line react/jsx-no-bind */}
                         <AlwaysOnLabels createOnPress = { this._createOnPress } />
                     </View>
-                    { this._renderNotificationsContainer() }
                     <KnockingParticipantList />
                 </SafeAreaView>
 
                 <TestConnectionInfo />
-                { this._renderConferenceNotification() }
-
                 {_shouldDisplayTileView && <Toolbox />}
             </>
         );
