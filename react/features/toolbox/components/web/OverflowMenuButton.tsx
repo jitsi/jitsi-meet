@@ -5,13 +5,13 @@ import { makeStyles } from 'tss-react/mui';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
 import Popover from '../../../base/popover/components/Popover.web';
 // @ts-ignore
 import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
 import { REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
 import { getReactionsQueue } from '../../../reactions/functions.any';
 import { DRAWER_MAX_HEIGHT } from '../../constants';
+import { showOverflowDrawer } from '../../functions.web';
 
 // @ts-ignore
 import Drawer from './Drawer';
@@ -67,7 +67,7 @@ const OverflowMenuButton = ({
     showMobileReactions
 }: IProps) => {
     const { classes } = useStyles();
-    const overflowDrawer = useSelector((state: IReduxState) => state['features/toolbox'].overflowDrawer);
+    const overflowDrawer = useSelector(showOverflowDrawer);
     const reactionsQueue = useSelector(getReactionsQueue);
 
     const onCloseDialog = useCallback(() => {

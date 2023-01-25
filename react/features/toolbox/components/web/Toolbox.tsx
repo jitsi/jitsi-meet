@@ -232,6 +232,11 @@ interface IProps extends WithTranslation {
     _isMobile: boolean;
 
     /**
+     * Whether we are in narrow layout mode.
+     */
+    _isNarrowLayout: boolean;
+
+    /**
      * Whether or not the profile is disabled.
      */
     _isProfileDisabled: boolean;
@@ -710,8 +715,10 @@ class Toolbox extends Component<IProps> {
             _hasSalesforce,
             _isIosMobile,
             _isMobile,
+            _isNarrowLayout,
             _isSpeakerStatsDisabled,
             _multiStreamModeEnabled,
+            _reactionsEnabled,
             _screenSharing,
             _whiteboardEnabled
         } = this.props;
@@ -748,7 +755,7 @@ class Toolbox extends Component<IProps> {
             group: 2
         };
 
-        const raisehand = {
+        const raisehand = (!_reactionsEnabled || (!_isNarrowLayout && !_isMobile)) && {
             key: 'raisehand',
             Content: ReactionsMenuButton,
             handleClick: this._onToolbarToggleRaiseHand,
@@ -1387,6 +1394,7 @@ class Toolbox extends Component<IProps> {
             _endConferenceSupported,
             _hangupMenuVisible,
             _isMobile,
+            _isNarrowLayout,
             _overflowDrawer,
             _overflowMenuVisible,
             _reactionsEnabled,
@@ -1396,7 +1404,7 @@ class Toolbox extends Component<IProps> {
         } = this.props;
 
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
-        const containerClassName = `toolbox-content${_isMobile ? ' toolbox-content-mobile' : ''}`;
+        const containerClassName = `toolbox-content${_isMobile || _isNarrowLayout ? ' toolbox-content-mobile' : ''}`;
 
         const { mainMenuButtons, overflowMenuButtons } = this._getVisibleButtons();
 
@@ -1424,7 +1432,7 @@ class Toolbox extends Component<IProps> {
                                 key = 'overflow-menu'
                                 onVisibilityChange = { this._onSetOverflowVisible }
                                 showMobileReactions = {
-                                    _reactionsEnabled && overflowMenuButtons.find(({ key }) => key === 'raisehand')
+                                    _reactionsEnabled && (_isMobile || _isNarrowLayout)
                                 }>
                                 <ContextMenu
                                     accessibilityLabel = { t(toolbarAccLabel) }
@@ -1509,6 +1517,7 @@ class Toolbox extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { conference } = state['features/base/conference'];
+    const { isNarrowLayout } = state['features/base/responsive-ui'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
 
     const {
@@ -1551,6 +1560,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _jwtDisabledButons: getJwtDisabledButtons(state),
         _hasSalesforce: isSalesforceEnabled(state),
         _hangupMenuVisible: hangupMenuVisible,
+        _isNarrowLayout: isNarrowLayout,
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state),

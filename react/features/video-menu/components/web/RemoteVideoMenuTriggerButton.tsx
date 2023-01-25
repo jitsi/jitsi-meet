@@ -192,9 +192,10 @@ class RemoteVideoMenuTriggerButton extends Component<IProps> {
                 id = 'remote-video-menu-trigger'
                 onPopoverClose = { this._onPopoverClose }
                 onPopoverOpen = { this._onPopoverOpen }
+                overflowDrawer = { _overflowDrawer }
                 position = { this.props._menuPosition }
                 visible = { popoverVisible }>
-                {!_overflowDrawer && buttonVisible && !_disabled && (
+                { buttonVisible && !_disabled && (
                     !isMobileBrowser() && <Button
                         accessibilityLabel = { this.props.t('dialog.remoteUserControls', { username }) }
                         className = { classes.triggerButton }

@@ -10,6 +10,7 @@ import {
     SAFE_AREA_INSETS_CHANGED,
     SET_ASPECT_RATIO,
     SET_CONTEXT_MENU_OPEN,
+    SET_NARROW_LAYOUT,
     SET_REDUCED_UI
 } from './actionTypes';
 import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
@@ -141,5 +142,21 @@ export function setSafeAreaInsets(insets: Object) {
     return {
         type: SAFE_AREA_INSETS_CHANGED,
         insets
+    };
+}
+
+/**
+ * Sets narrow layout.
+ *
+ * @param {boolean} isNarrow - Whether is narrow layout.
+ * @returns {{
+*    type: SET_NARROW_LAYOUT,
+*    isNarrow: boolean
+* }}
+ */
+export function setNarrowLayout(isNarrow: boolean) {
+    return {
+        type: SET_NARROW_LAYOUT,
+        isNarrow
     };
 }

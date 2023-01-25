@@ -236,10 +236,11 @@ class ReactionsMenu extends Component<IProps> {
  */
 function mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
+    const { isNarrowLayout } = state['features/base/responsive-ui'];
 
     return {
         _localParticipantID: localParticipant?.id,
-        _isMobile: isMobileBrowser(),
+        _isMobile: isMobileBrowser() || isNarrowLayout,
         _isGifEnabled: isGifEnabled(state),
         _isGifMenuVisible: isGifsMenuOpen(state),
         _raisedHand: hasRaisedHand(localParticipant)

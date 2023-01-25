@@ -221,7 +221,7 @@ class LocalVideoMenuTriggerButton extends Component<IProps> {
                     overflowDrawer = { _overflowDrawer }
                     position = { _menuPosition }
                     visible = { popoverVisible }>
-                    {!_overflowDrawer && buttonVisible && !isMobileBrowser() && (
+                    {buttonVisible && !isMobileBrowser() && (
                         <Button
                             accessibilityLabel = { t('dialog.localUserControls') }
                             className = { classes.triggerButton }
