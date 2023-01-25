@@ -3,13 +3,12 @@
 import { IStore } from '../app/types';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
-    getFatalError,
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../base/lib-jitsi-meet/functions.any';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
-import { fatalError } from './actions';
+import { openPageReloadDialog } from './actions';
 
 
 /**
@@ -57,11 +56,10 @@ const ERROR_TYPES = {
  */
 const getErrorExtraInfo = (getState: IStore['getState'], error: ErrorType) => {
     const state = getState();
-    const {
-        conferenceError,
-        configError,
-        connectionError
-    } = getFatalError(state);
+
+    const { error: conferenceError } = state['features/base/conference'];
+    const { error: configError } = state['features/base/config'];
+    const { error: connectionError } = state['features/base/connection'];
 
     if (error === conferenceError) {
         return {
@@ -92,17 +90,13 @@ const getErrorExtraInfo = (getState: IStore['getState'], error: ErrorType) => {
  */
 StateListenerRegistry.register(
     /* selector */ state => {
-        const {
-            conferenceError,
-            configError,
-            connectionError
-        } = getFatalError(state);
+        const { error: conferenceError } = state['features/base/conference'];
+        const { error: configError } = state['features/base/config'];
+        const { error: connectionError } = state['features/base/connection'];
 
         return configError || connectionError || conferenceError;
     },
     /* listener */ (error: ErrorType, { dispatch, getState }) => {
-        const { isFatal } = getFatalError(getState);
-
         if (!error) {
             return;
         }
@@ -115,12 +109,12 @@ StateListenerRegistry.register(
             });
         } else {
             // @ts-ignore
-            dispatch(fatalError(isFatal));
+            dispatch(openPageReloadDialog);
         }
 
         if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
             // @ts-ignore
-            dispatch(fatalError(isFatal));
+            dispatch(openPageReloadDialog);
         }
     }
 );

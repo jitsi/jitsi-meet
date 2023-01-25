@@ -25,9 +25,8 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
 /**
  * Opens {@link PageReloadDialog}.
  *
- * @param {boolean} isFatal - If the value is true - we open PageReloadDialog.
  * @returns {Function}
  */
-export function fatalError(isFatal: boolean) { // eslint-disable-line @typescript-eslint/no-unused-vars
-    // Dummy.
+export function openPageReloadDialog() {
+    // Dummy
 }

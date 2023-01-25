@@ -126,6 +126,24 @@ export function getFatalError(stateful: IStateful) {
     const jitsiConferenceError
         = conferenceError && isFatalJitsiConferenceError(conferenceError);
     const isFatal = jitsiConnectionError || jitsiConferenceError || configError;
+
+    return isFatal;
+}
+
+/**
+ * Page reload dialog content props.
+ *
+ * @param {IStateful} stateful - The redux store, state, or
+ * {@code getState} function.
+ * @returns {Object}
+ */
+export function getPageReloadDialogProps(stateful: IStateful) {
+    const state = toState(stateful);
+
+    const { error: conferenceError } = state['features/base/conference'];
+    const { error: configError } = state['features/base/config'];
+    const { error: connectionError } = state['features/base/connection'];
+
     const isNetworkFailure = configError || connectionError;
 
     let message, reason, title;
@@ -149,10 +167,6 @@ export function getFatalError(stateful: IStateful) {
     }
 
     return {
-        conferenceError,
-        configError,
-        connectionError,
-        isFatal,
         message,
         reason,
         title

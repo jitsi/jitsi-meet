@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { IReduxState } from '../../../app/types';
 import { connect } from '../../../base/redux/functions';
-import { getOverlayToRender } from '../../functions';
+import { getOverlayToRender } from '../../functions.web';
 
 
 /**

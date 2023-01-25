@@ -9,7 +9,8 @@ import type { Dispatch } from 'redux';
 import { appNavigate, reloadNow } from '../../../../app/actions.native';
 import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
-import { getFatalError } from '../../../lib-jitsi-meet/functions.native';
+import { getPageReloadDialogProps }
+    from '../../../lib-jitsi-meet/functions.native';
 import { connect } from '../../../redux/functions';
 // @ts-ignore
 import { ConfirmDialog } from '../../index';
@@ -171,7 +172,7 @@ function mapStateToProps(state: IReduxState) {
         message,
         reason,
         title
-    } = getFatalError(state);
+    } = getPageReloadDialogProps(state);
 
     return {
         message,

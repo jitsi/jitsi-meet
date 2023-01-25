@@ -1,7 +1,7 @@
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 import { areThereNotifications } from '../notifications/functions';
-import { getOverlayToRender } from '../overlay/functions';
+
 
 /**
  * Tells whether or not the notifications should be displayed within
@@ -12,10 +12,7 @@ import { getOverlayToRender } from '../overlay/functions';
  */
 export function shouldDisplayNotifications(stateful: IStateful) {
     const state = toState(stateful);
-    const isAnyOverlayVisible = Boolean(getOverlayToRender(state));
     const { calleeInfoVisible } = state['features/invite'];
 
-    return areThereNotifications(state)
-      && !isAnyOverlayVisible
-      && !calleeInfoVisible;
+    return areThereNotifications(state) && !calleeInfoVisible;
 }

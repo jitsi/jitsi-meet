@@ -98,9 +98,7 @@ export default class AbstractPageReloadOverlay<P: Props>
      * {@code false}, otherwise.
      */
     static needsRender(state: Object) {
-        const { isFatal } = getFatalError(state);
-
-        return isFatal;
+        return getFatalError(state);
     }
 
     _interval: ?IntervalID;
