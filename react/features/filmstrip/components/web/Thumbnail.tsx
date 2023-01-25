@@ -665,7 +665,7 @@ class Thumbnail extends Component<IProps, IState> {
             video: {}
         };
 
-        const avatarSize = Math.min(_height / 2, _width - 30);
+        const avatarSize = Math.min(_height / 2, _width - 30, 200);
         let { left } = style || {};
 
         if (typeof left === 'number' && horizontalOffset) {
