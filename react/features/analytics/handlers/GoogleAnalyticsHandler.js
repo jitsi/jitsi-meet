@@ -1,12 +1,13 @@
 /* global ga */
 
-import { getJitsiMeetGlobalNS } from '../../base/util';
+// import { getJitsiMeetGlobalNS } from '../../base/util';
 
 import AbstractHandler from './AbstractHandler';
 
 /**
  * Analytics handler for Google Analytics.
  */
+// eslint-disable-next-line no-unused-vars,require-jsdoc
 class GoogleAnalyticsHandler extends AbstractHandler {
 
     /**
@@ -141,7 +142,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
 
 }
 
-const globalNS = getJitsiMeetGlobalNS();
+// const globalNS = getJitsiMeetGlobalNS();
 
-globalNS.analyticsHandlers = globalNS.analyticsHandlers || [];
-globalNS.analyticsHandlers.push(GoogleAnalyticsHandler);
+// globalNS.analyticsHandlers = globalNS.analyticsHandlers || [];
+// globalNS.analyticsHandlers.push(GoogleAnalyticsHandler);
