@@ -1,8 +1,8 @@
 /* eslint-disable lines-around-comment */
 
 import logger from '../../overlay/logger';
-import { IStateful } from '../app/types';
-import { toState } from '../redux/functions';
+import {IStateful} from '../app/types';
+import {toState} from '../redux/functions';
 
 // @ts-ignore
 import JitsiMeetJS from './_';
@@ -125,9 +125,8 @@ export function getFatalError(stateful: IStateful) {
         = connectionError && isFatalJitsiConnectionError(connectionError);
     const jitsiConferenceError
         = conferenceError && isFatalJitsiConferenceError(conferenceError);
-    const isFatal = jitsiConnectionError || jitsiConferenceError || configError;
 
-    return isFatal;
+    return jitsiConnectionError || jitsiConferenceError || configError;
 }
 
 /**
