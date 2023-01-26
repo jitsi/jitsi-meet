@@ -184,8 +184,8 @@ const ParticipantContextMenu = ({
     if (_isModerator) {
         if ((thumbnailMenu || _overflowDrawer) && isModerationSupported && _isAudioMuted) {
             buttons.push(<AskToUnmuteButton
-                isAudioForceMuted = { _isVideoForceMuted }
-                isVideoForceMuted = { _isAudioForceMuted }
+                isAudioForceMuted = { _isAudioForceMuted }
+                isVideoForceMuted = { _isVideoForceMuted }
                 key = 'ask-unmute'
                 participantID = { _getCurrentParticipantId() } />
             );
