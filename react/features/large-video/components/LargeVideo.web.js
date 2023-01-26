@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { VIDEO_TYPE } from '../../base/media';
-import { getLocalParticipant, getParticipantCount } from '../../base/participants';
+import { getLocalParticipant } from '../../base/participants';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { getHideSelfView } from '../../base/settings/functions.any';
@@ -112,11 +112,6 @@ type Props = {
     _hideSelfView: boolean;
 
     /**
-     * Whether or not is only 1 participant in the meeting.
-     */
-    _aloneInTheMeeting: boolean;
-
-    /**
      * Local Participant id.
      */
     _localParticipantId: string;
@@ -168,8 +163,7 @@ class LargeVideo extends Component<Props> {
             _seeWhatIsBeingShared,
             _largeVideoParticipantId,
             _hideSelfView,
-            _localParticipantId,
-            _aloneInTheMeeting } = this.props;
+            _localParticipantId } = this.props;
 
         if (prevProps._visibleFilmstrip !== _visibleFilmstrip) {
             this._updateLayout();
@@ -183,8 +177,9 @@ class LargeVideo extends Component<Props> {
             VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, true);
         }
 
-        if (_aloneInTheMeeting && prevProps._hideSelfView !== _hideSelfView) {
-            VideoLayout.updateLargeVideo(_localParticipantId, true, false);
+        if (_largeVideoParticipantId === _localParticipantId
+            && prevProps._hideSelfView !== _hideSelfView) {
+            VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, false);
         }
     }
 
@@ -390,8 +385,7 @@ function _mapStateToProps(state) {
         _visibleFilmstrip: visible,
         _whiteboardEnabled: isWhiteboardEnabled(state),
         _hideSelfView: getHideSelfView(state),
-        _localParticipantId: localParticipantId,
-        _aloneInTheMeeting: getParticipantCount(state) === 1
+        _localParticipantId: localParticipantId
     };
 }
 
