@@ -88,7 +88,7 @@ export async function sendFaceExpressionsWebhook(state: IReduxState) {
 
     const reqBody = {
         meetingFqn: extractFqnFromPath(),
-        sessionId: conference?.sessionId,
+        sessionId: conference?.getMeetingUniqueId(),
         submitted: Date.now(),
         emotions: faceLandmarksBuffer,
         participantId: localParticipant?.jwtId,
