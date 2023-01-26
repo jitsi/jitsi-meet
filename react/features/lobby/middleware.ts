@@ -212,7 +212,6 @@ function _handleLobbyNotification(store: IStore) {
             customActionNameKey.splice(1, 0, 'lobby.chat');
             customActionHandler.splice(1, 0, () => {
                 batch(() => {
-                    dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
                     dispatch(handleLobbyChatInitialized(firstParticipant.id));
                 });
 
