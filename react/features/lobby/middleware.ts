@@ -211,9 +211,7 @@ function _handleLobbyNotification(store: IStore) {
         if (showChat) {
             customActionNameKey.splice(1, 0, 'lobby.chat');
             customActionHandler.splice(1, 0, () => {
-                batch(() => {
-                    dispatch(handleLobbyChatInitialized(firstParticipant.id));
-                });
+                dispatch(handleLobbyChatInitialized(firstParticipant.id));
 
                 if (navigator.product === 'ReactNative') {
                     navigate(chatRoute);
