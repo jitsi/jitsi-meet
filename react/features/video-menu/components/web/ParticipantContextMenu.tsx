@@ -145,7 +145,7 @@ const ParticipantContextMenu = ({
         isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
     const _isAudioMuted = useSelector((state: IReduxState) => isParticipantAudioMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
-    const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customRemoteMenuOptionButtons }
+    const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
     const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
@@ -278,8 +278,8 @@ const ParticipantContextMenu = ({
         );
     }
 
-    if (customRemoteMenuOptionButtons) {
-        customRemoteMenuOptionButtons.forEach(
+    if (customParticipantMenuButtons) {
+        customParticipantMenuButtons.forEach(
             ({ icon, id, text }) => {
                 const onClick = useCallback(
                     () => APP.API.notifyRemoteMenuButtonClicked(id, _getCurrentParticipantId()), []);

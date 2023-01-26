@@ -176,7 +176,10 @@ interface IProps extends WithTranslation {
      */
     _conference?: IJitsiConference;
 
-    _customToolboxMenuOptionButtons: Array<{ icon: string; id: string; text: string; }>;
+    /**
+     * Custom Toolbar buttons.
+     */
+    _customToolbarButtons: Array<{ icon: string; id: string; text: string; }>;
 
     /**
      * Whether or not screensharing button is disabled.
@@ -718,7 +721,7 @@ class Toolbox extends Component<IProps> {
      */
     _getAllButtons() {
         const {
-            _customToolboxMenuOptionButtons,
+            _customToolbarButtons,
             _feedbackConfigured,
             _hasSalesforce,
             _isIosMobile,
@@ -919,7 +922,7 @@ class Toolbox extends Component<IProps> {
             group: 4
         };
 
-        const customButtons = _customToolboxMenuOptionButtons?.reduce((prev, { icon, id, text }) => {
+        const customButtons = _customToolbarButtons?.reduce((prev, { icon, id, text }) => {
             return {
                 ...prev,
                 [id]: {
@@ -998,16 +1001,10 @@ class Toolbox extends Component<IProps> {
         if (typeof APP === 'undefined' || !this.props._buttonsWithNotifyClick?.length) {
             return;
         }
-        const { _customToolboxMenuOptionButtons } = this.props;
-        const customButtonsKeys = _customToolboxMenuOptionButtons.map(({ id }) => id);
 
         Object.values(buttons).forEach((button: any) => {
             if (typeof button === 'object') {
-                if (customButtonsKeys.includes(button.key)) {
-                    button.notifyMode = NOTIFY_CLICK_MODE.ONLY_NOTIFY;
-                } else {
-                    button.notifyMode = this._getButtonNotifyMode(button.key);
-                }
+                button.notifyMode = this._getButtonNotifyMode(button.key);
             }
         });
     }
@@ -1554,7 +1551,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         disableProfile,
         iAmRecorder,
         iAmSipGateway,
-        customToolboxMenuOptionButtons
+        customToolbarButtons
     } = state['features/base/config'];
     const {
         fullScreen,
@@ -1573,7 +1570,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
-        _customToolboxMenuOptionButtons: customToolboxMenuOptionButtons,
+        _customToolbarButtons: customToolbarButtons,
         _desktopSharingEnabled: JitsiMeetJS.isDesktopSharingEnabled(),
         _desktopSharingButtonDisabled: isDesktopShareButtonDisabled(state),
         _dialog: Boolean(state['features/base/dialog'].component),

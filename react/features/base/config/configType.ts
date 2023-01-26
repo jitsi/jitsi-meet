@@ -206,8 +206,8 @@ export interface IConfig {
         };
     };
     corsAvatarURLs?: Array<string>;
-    customRemoteMenuOptionButtons?: Array<{ icon: string; id: string; text: string; }>;
-    customToolboxMenuOptionButtons?: Array<{ icon: string; id: string; text: string; }>;
+    customParticipantMenuButtons?: Array<{ icon: string; id: string; text: string; }>;
+    customToolbarButtons?: Array<{ icon: string; id: string; text: string; }>;
     deeplinking?: IDeeplinkingConfig;
     defaultLanguage?: string;
     defaultLocalDisplayName?: string;

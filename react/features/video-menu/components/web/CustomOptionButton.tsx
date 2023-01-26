@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 
-
 const CustomOptionButton = (
         { icon, onClick, text }:
         {
@@ -11,7 +10,6 @@ const CustomOptionButton = (
             text: string;
     }
 ) => {
-
     const iconNode = useMemo(() => (<img
         height = { 20 }
         src = { icon }
