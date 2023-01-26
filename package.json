@@ -28,7 +28,7 @@
     "@atlaskit/tooltip": "17.1.2",
     "@emotion/react": "11.10.0",
     "@emotion/styled": "11.10.0",
-    "@giphy/js-fetch-api": "4.1.2",
+    "@giphy/js-fetch-api": "4.7.1",
     "@giphy/react-components": "5.6.0",
     "@giphy/react-native-sdk": "1.7.0",
     "@hapi/bourne": "2.0.0",
