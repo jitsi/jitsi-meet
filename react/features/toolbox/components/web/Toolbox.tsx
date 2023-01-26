@@ -1037,8 +1037,7 @@ class Toolbox extends Component<IProps> {
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
         ].filter(Boolean).filter(({ key, alias = NOT_APPLICABLE }) =>
             !_jwtDisabledButons.includes(key)
-            && (isToolbarButtonEnabled(key, _toolbarButtons)
-                || isToolbarButtonEnabled(alias, _toolbarButtons))
+            && (isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons))
         );
 
         if (isHangupVisible) {
