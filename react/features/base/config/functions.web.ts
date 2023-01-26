@@ -108,3 +108,23 @@ export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
         android.dynamicLink.isi = android.dynamicLink.isi || '1165103905';
     }
 }
+
+/**
+ * Returns the list of buttons that have that notify the api when clicked.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Array<string>} - The list of buttons.
+ */
+export function getButtonsWithNotifyClick(state: IReduxState): Array<string> {
+    const { buttonsWithNotifyClick, customToolboxMenuOptionButtons } = state['features/base/config'];
+    const customButtons = customToolboxMenuOptionButtons?.map(({ id }) => id);
+
+    const buttons = Array.isArray(buttonsWithNotifyClick) ? buttonsWithNotifyClick as Array<string> : [];
+
+    if (customButtons) {
+        buttons.push(...customButtons);
+    }
+
+    return buttons;
+}
+

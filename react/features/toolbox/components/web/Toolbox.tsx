@@ -12,6 +12,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import {
+    getButtonsWithNotifyClick,
     getMultipleVideoSendingSupportFeatureFlag,
     getToolbarButtons,
     isToolbarButtonEnabled
@@ -918,7 +919,7 @@ class Toolbox extends Component<IProps> {
             group: 4
         };
 
-        const customButtons = _customToolboxMenuOptionButtons.reduce((prev, { icon, id, text }) => {
+        const customButtons = _customToolboxMenuOptionButtons?.reduce((prev, { icon, id, text }) => {
             return {
                 ...prev,
                 [id]: {
@@ -1549,7 +1550,6 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const endConferenceSupported = conference?.isEndConferenceSupported() && isLocalParticipantModerator(state);
 
     const {
-        buttonsWithNotifyClick,
         callStatsID,
         disableProfile,
         iAmRecorder,
@@ -1569,7 +1569,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     return {
         _backgroundType: state['features/virtual-background'].backgroundType ?? '',
-        _buttonsWithNotifyClick: buttonsWithNotifyClick,
+        _buttonsWithNotifyClick: getButtonsWithNotifyClick(state),
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,

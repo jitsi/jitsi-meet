@@ -79,6 +79,7 @@ export default [
     'connectionIndicators',
     'constraints',
     'customRemoteMenuOptionButtons',
+    'customToolboxMenuOptionButtons',
     'brandingRoomAlias',
     'debug',
     'debugAudioLevels',
