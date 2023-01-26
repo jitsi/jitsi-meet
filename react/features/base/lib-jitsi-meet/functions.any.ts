@@ -1,8 +1,8 @@
 /* eslint-disable lines-around-comment */
 
 import logger from '../../overlay/logger';
-import {IStateful} from '../app/types';
-import {toState} from '../redux/functions';
+import { IStateful } from '../app/types';
+import { toState } from '../redux/functions';
 
 // @ts-ignore
 import JitsiMeetJS from './_';
