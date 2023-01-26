@@ -32,9 +32,16 @@ export function getReplaceParticipant(state: IReduxState): string | undefined {
  * @returns {Array<string>} - The list of enabled toolbar buttons.
  */
 export function getToolbarButtons(state: IReduxState): Array<string> {
-    const { toolbarButtons } = state['features/base/config'];
+    const { toolbarButtons, customToolboxMenuOptionButtons } = state['features/base/config'];
+    const customButtons = customToolboxMenuOptionButtons?.map(({ id }) => id);
 
-    return Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
+    const buttons = Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
+
+    if (customButtons) {
+        buttons.push(...customButtons);
+    }
+
+    return buttons;
 }
 
 /**

@@ -926,7 +926,6 @@ class Toolbox extends Component<IProps> {
                     Content: CustomOptionButton,
                     group: 4,
                     icon,
-                    id,
                     text
                 }
             };
@@ -998,10 +997,16 @@ class Toolbox extends Component<IProps> {
         if (typeof APP === 'undefined' || !this.props._buttonsWithNotifyClick?.length) {
             return;
         }
+        const { _customToolboxMenuOptionButtons } = this.props;
+        const customButtonsKeys = _customToolboxMenuOptionButtons.map(({ id }) => id);
 
         Object.values(buttons).forEach((button: any) => {
             if (typeof button === 'object') {
-                button.notifyMode = this._getButtonNotifyMode(button.key);
+                if (customButtonsKeys.includes(button.key)) {
+                    button.notifyMode = NOTIFY_CLICK_MODE.ONLY_NOTIFY;
+                } else {
+                    button.notifyMode = this._getButtonNotifyMode(button.key);
+                }
             }
         });
     }
@@ -1016,8 +1021,7 @@ class Toolbox extends Component<IProps> {
         const {
             _clientWidth,
             _toolbarButtons,
-            _jwtDisabledButons,
-            _customToolboxMenuOptionButtons
+            _jwtDisabledButons
         } = this.props;
 
         const buttons = this._getAllButtons();
@@ -1027,7 +1031,6 @@ class Toolbox extends Component<IProps> {
         const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
         let sliceIndex = order.length + 2;
-        const customButtonsKeys = _customToolboxMenuOptionButtons.map(({ id }) => id);
 
         const keys = Object.keys(buttons);
 
@@ -1037,8 +1040,7 @@ class Toolbox extends Component<IProps> {
         ].filter(Boolean).filter(({ key, alias = NOT_APPLICABLE }) =>
             !_jwtDisabledButons.includes(key)
             && (isToolbarButtonEnabled(key, _toolbarButtons)
-                || isToolbarButtonEnabled(alias, _toolbarButtons)
-                || customButtonsKeys.includes(key))
+                || isToolbarButtonEnabled(alias, _toolbarButtons))
         );
 
         if (isHangupVisible) {

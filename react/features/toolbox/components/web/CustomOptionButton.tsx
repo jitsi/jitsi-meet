@@ -6,9 +6,8 @@ import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/
 
 
 type Props = AbstractButtonProps & {
-    icon;
-    id;
-    text;
+    icon: string;
+    text: string;
 };
 
 /**
@@ -34,16 +33,6 @@ class CustomOptionButton extends AbstractButton<Props, any, any> {
 
     label = this.text;
     tooltip = this.text;
-
-    /**
- * Handles clicking / pressing the button, and opens / closes the whiteboard view.
- *
- * @private
- * @returns {void}
- */
-    _handleClick() {
-        APP.API.notifyToolboxMenuButtonClicked(this.id);
-    }
 }
 
 export default CustomOptionButton;
