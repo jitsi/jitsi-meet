@@ -282,7 +282,7 @@ const ParticipantContextMenu = ({
         customParticipantMenuButtons.forEach(
             ({ icon, id, text }) => {
                 const onClick = useCallback(
-                    () => APP.API.notifyRemoteMenuButtonClicked(id, _getCurrentParticipantId()), []);
+                    () => APP.API.notifyParticipantMenuButtonClicked(id, _getCurrentParticipantId()), []);
 
                 buttons2.push(
                     <CustomOptionButton
