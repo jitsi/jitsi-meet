@@ -2,13 +2,13 @@ import { GiphySDK } from '@giphy/react-native-sdk';
 
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
-import { isGifEnabled } from './function.any';
+import { getGifConfig, isGifEnabled } from './function.any';
 
 /**
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/config']?.giphy,
+    /* selector */ state => getGifConfig(state),
     /* listener */ (_, store) => {
         const state = store.getState();
 

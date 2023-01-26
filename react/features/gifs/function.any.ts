@@ -4,6 +4,46 @@ import { GIF_DEFAULT_RATING, GIF_PREFIX } from './constants';
 import { IGif } from './reducer';
 
 /**
+ * Returns the gif config.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {Object}
+ */
+export function getGifConfig(state: IReduxState) {
+    return state['features/base/config'].giphy || {};
+}
+
+/**
+ * Get the GIF display mode.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {string}
+ */
+export function getGifDisplayMode(state: IReduxState) {
+    return getGifConfig(state).displayMode || 'all';
+}
+
+/**
+ * Get the GIF audience rating.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {string}
+ */
+export function getGifRating(state: IReduxState) {
+    return getGifConfig(state).rating || GIF_DEFAULT_RATING;
+}
+
+/**
+ * Get the Giphy proxy url.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {string}
+ */
+export function getGiphyProxyUrl(state: IReduxState) {
+    return getGifConfig(state).proxyUrl;
+}
+
+/**
  * Gets the URL of the GIF for the given participant or null if there's none.
  *
  * @param {IReduxState} state - Redux state.
@@ -29,12 +69,17 @@ export function isGifMessage(message: string) {
  * Returns the url of the gif selected in the gifs menu.
  *
  * @param {Object} gif - The gif data.
+ * @param {string} proxyUrl - The proxy server url.
  * @returns {boolean}
  */
-export function getGifUrl(gif?: { data?: { embed_url: string; }; embed_url?: string; }) {
+export function getGifUrl(gif?: { data?: { embed_url: string; }; embed_url?: string; }, proxyUrl?: string) {
     const embedUrl = gif?.embed_url || gif?.data?.embed_url || '';
     const idx = embedUrl.lastIndexOf('/');
     const id = embedUrl.substr(idx + 1);
+
+    if (proxyUrl) {
+        return `${proxyUrl}gifs/id/${id}`;
+    }
 
     return `https://i.giphy.com/media/${id}/giphy.gif`;
 }
@@ -56,7 +101,7 @@ export function formatGifUrlMessage(url: string) {
  * @returns {string}
  */
 export function getGifAPIKey(state: IReduxState) {
-    return state['features/base/config']?.giphy?.sdkKey ?? '';
+    return getGifConfig(state).sdkKey ?? '';
 }
 
 /**
@@ -77,26 +122,3 @@ export function isGifEnabled(state: IReduxState) {
     return showGiphyIntegration && Boolean(!disableThirdPartyRequests && giphy?.enabled && Boolean(giphy?.sdkKey));
 }
 
-/**
- * Get the GIF display mode.
- *
- * @param {IReduxState} state - Redux state.
- * @returns {string}
- */
-export function getGifDisplayMode(state: IReduxState) {
-    const { giphy } = state['features/base/config'];
-
-    return giphy?.displayMode || 'all';
-}
-
-/**
- * Get the GIF audience rating.
- *
- * @param {IReduxState} state - Redux state.
- * @returns {string}
- */
-export function getGifRating(state: IReduxState) {
-    const { giphy } = state['features/base/config'];
-
-    return giphy?.rating || GIF_DEFAULT_RATING;
-}

@@ -1518,6 +1518,8 @@ var config = {
     //     tileTime: 5000,
     //     // Limit results by rating: g, pg, pg-13, r. Default value: g.
     //     rating: 'pg',
+    //     // The proxy server url for giphy requests in the web app.
+    //     proxyUrl: 'https://giphy-proxy.example.com',
     // },
 
     // Logging
