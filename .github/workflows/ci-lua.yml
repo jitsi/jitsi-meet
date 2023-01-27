@@ -17,8 +17,7 @@ jobs:
 
     - name: Check lua codes
       run: |
-        set -o pipefail
-        luacheck -q -gur -i 581 --no-max-line-length --no-color --formatter plain $(find -name '*.lua') | awk -F: '
+        set -o pipefail && luacheck . | awk -F: '
           {
             print $0
             printf "::warning file=%s,line=%s,col=%s::%s\n", $1, $2, $3, $4
