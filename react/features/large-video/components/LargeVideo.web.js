@@ -373,9 +373,11 @@ function _mapStateToProps(state) {
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
         _displayScreenSharingPlaceholder: isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isOnSpot,
+        _hideSelfView: getHideSelfView(state),
         _isChatOpen: isChatOpen,
         _isScreenSharing: isLocalScreenshareOnLargeVideo,
         _largeVideoParticipantId: largeVideoParticipant?.id,
+        _localParticipantId: localParticipantId,
         _noAutoPlayVideo: testingConfig?.noAutoPlayVideo,
         _resizableFilmstrip: isFilmstripResizable(state),
         _seeWhatIsBeingShared: seeWhatIsBeingShared,
@@ -383,9 +385,7 @@ function _mapStateToProps(state) {
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,
-        _whiteboardEnabled: isWhiteboardEnabled(state),
-        _hideSelfView: getHideSelfView(state),
-        _localParticipantId: localParticipantId
+        _whiteboardEnabled: isWhiteboardEnabled(state)
     };
 }
 
