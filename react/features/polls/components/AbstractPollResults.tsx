@@ -1,13 +1,11 @@
-// @flow
-
-import React, { useCallback, useMemo, useState } from 'react';
-import type { AbstractComponent } from 'react';
+import React, { ComponentType, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createPollEvent, sendAnalytics } from '../../analytics';
-import { getParticipantDisplayName } from '../../base/participants';
-import { getParticipantById } from '../../base/participants/functions';
+import { createPollEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { IReduxState } from '../../app/types';
+import { getParticipantById, getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
@@ -20,28 +18,28 @@ type InputProps = {
     /**
      * ID of the poll to display.
      */
-    pollId: string,
+    pollId: string;
 };
 
 export type AnswerInfo = {
-    name: string,
-    percentage: number,
-    voters?: Array<{ id: number, name: string }>,
-    voterCount: number
+    name: string;
+    percentage: number;
+    voterCount: number;
+    voters?: Array<{ id: string; name: string; } | undefined>;
 };
 
 /**
  * The type of the React {@code Component} props of {@link AbstractPollResults}.
  */
 export type AbstractProps = {
-    answers: Array<AnswerInfo>,
-    changeVote: Function,
-    creatorName: string,
-    showDetails: boolean,
-    question: string,
-    t: Function,
-    toggleIsDetailed: Function,
-    haveVoted: boolean,
+    answers: Array<AnswerInfo>;
+    changeVote: (e: React.MouseEvent) => void;
+    creatorName: string;
+    haveVoted: boolean;
+    question: string;
+    showDetails: boolean;
+    t: Function;
+    toggleIsDetailed: (e: React.MouseEvent) => void;
 };
 
 /**
@@ -51,18 +49,18 @@ export type AbstractProps = {
  * @param {React.AbstractComponent} Component - The concrete component.
  * @returns {React.AbstractComponent}
  */
-const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
+const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props: InputProps) => {
     const { pollId } = props;
 
     const pollDetails = useSelector(getPoll(pollId));
     const participant = useBoundSelector(getParticipantById, pollDetails.senderId);
-    const reduxState = useSelector(state => state);
+    const reduxState = useSelector((state: IReduxState) => state);
 
     const [ showDetails, setShowDetails ] = useState(false);
     const toggleIsDetailed = useCallback(() => {
         sendAnalytics(createPollEvent('vote.detailsViewed'));
-        setShowDetails(!showDetails);
-    });
+        setShowDetails(details => !details);
+    }, []);
 
     const answers: Array<AnswerInfo> = useMemo(() => {
         const allVoters = new Set();
@@ -79,7 +77,7 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
             const nrOfVotersPerAnswer = answer.voters ? Object.keys(answer.voters).length : 0;
             const percentage = allVoters.size > 0 ? Math.round(nrOfVotersPerAnswer / allVoters.size * 100) : 0;
 
-            let voters = null;
+            let voters;
 
             if (showDetails && answer.voters) {
                 const answerVoters = answer.voters?.length ? [ ...answer.voters ] : Object.keys({ ...answer.voters });

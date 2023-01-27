@@ -85,6 +85,7 @@ export interface IJitsiConference {
     sendFaceLandmarks: (faceLandmarks: FaceLandmarks) => void;
     sendFeedback: Function;
     sendLobbyMessage: Function;
+    sendMessage: Function;
     sessionId: string;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;

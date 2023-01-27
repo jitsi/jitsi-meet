@@ -1,18 +1,17 @@
-// @flow
-
-import React, { useCallback, useState } from 'react';
-import type { AbstractComponent } from 'react';
+import React, { ComponentType, FormEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { createPollEvent, sendAnalytics } from '../../analytics';
+import { createPollEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { IReduxState } from '../../app/types';
 import { COMMAND_NEW_POLL } from '../constants';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
  */
 type InputProps = {
-    setCreateMode: boolean => void,
+    setCreateMode: (mode: boolean) => void;
 };
 
 /*
@@ -20,16 +19,15 @@ type InputProps = {
  * concrete implementations (web/native).
  **/
 export type AbstractProps = InputProps & {
-    answers: Array<string>,
-    question: string,
-    setQuestion: string => void,
-    setAnswer: (number, string) => void,
-    addAnswer: ?number => void,
-    moveAnswer: (number, number) => void,
-    removeAnswer: number => void,
-    onSubmit: Function,
-    isSubmitDisabled: boolean,
-    t: Function,
+    addAnswer: (index?: number) => void;
+    answers: Array<string>;
+    isSubmitDisabled: boolean;
+    onSubmit: (event?: FormEvent<HTMLFormElement>) => void;
+    question: string;
+    removeAnswer: (index: number) => void;
+    setAnswer: (index: number, value: string) => void;
+    setQuestion: (question: string) => void;
+    t: Function;
 };
 
 /**
@@ -39,7 +37,7 @@ export type AbstractProps = InputProps & {
  * @param {React.AbstractComponent} Component - The concrete component.
  * @returns {React.AbstractComponent}
  */
-const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
+const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: InputProps) => {
 
     const { setCreateMode } = props;
 
@@ -51,25 +49,15 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
         answers[i] = answer;
 
         setAnswers([ ...answers ]);
-    });
+    }, [ answers ]);
 
-    const addAnswer = useCallback((i: ?number) => {
+    const addAnswer = useCallback((i?: number) => {
         const newAnswers = [ ...answers ];
 
         sendAnalytics(createPollEvent('option.added'));
         newAnswers.splice(typeof i === 'number' ? i : answers.length, 0, '');
         setAnswers(newAnswers);
-    });
-
-    const moveAnswer = useCallback((i, j) => {
-        const newAnswers = [ ...answers ];
-        const answer = answers[i];
-
-        sendAnalytics(createPollEvent('option.moved'));
-        newAnswers.splice(i, 1);
-        newAnswers.splice(j, 0, answer);
-        setAnswers(newAnswers);
-    });
+    }, [ answers ]);
 
     const removeAnswer = useCallback(i => {
         if (answers.length <= 2) {
@@ -80,9 +68,9 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
         sendAnalytics(createPollEvent('option.removed'));
         newAnswers.splice(i, 1);
         setAnswers(newAnswers);
-    });
+    }, [ answers ]);
 
-    const conference = useSelector(state => state['features/base/conference'].conference);
+    const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
 
     const onSubmit = useCallback(ev => {
         if (ev) {
@@ -95,7 +83,7 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
             return;
         }
 
-        conference.sendMessage({
+        conference?.sendMessage({
             type: COMMAND_NEW_POLL,
             pollId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
             question,
@@ -118,7 +106,6 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
         addAnswer = { addAnswer }
         answers = { answers }
         isSubmitDisabled = { isSubmitDisabled }
-        moveAnswer = { moveAnswer }
         onSubmit = { onSubmit }
         question = { question }
         removeAnswer = { removeAnswer }

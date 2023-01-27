@@ -21,6 +21,7 @@ interface IProps extends IInputProps {
     name?: string;
     onKeyPress?: (e: React.KeyboardEvent) => void;
     readOnly?: boolean;
+    required?: boolean;
     textarea?: boolean;
     type?: 'text' | 'email' | 'number' | 'password';
 }
@@ -148,6 +149,7 @@ const Input = React.forwardRef<any, IProps>(({
     onKeyPress,
     placeholder,
     readOnly = false,
+    required,
     textarea = false,
     type = 'text',
     value
@@ -178,6 +180,7 @@ const Input = React.forwardRef<any, IProps>(({
                             error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
                         disabled = { disabled }
                         { ...(id ? { id } : {}) }
+                        maxLength = { maxLength }
                         maxRows = { maxRows }
                         minRows = { minRows }
                         name = { name }
@@ -186,6 +189,7 @@ const Input = React.forwardRef<any, IProps>(({
                         placeholder = { placeholder }
                         readOnly = { readOnly }
                         ref = { ref }
+                        required = { required }
                         value = { value } />
                 ) : (
                     <input
@@ -202,6 +206,7 @@ const Input = React.forwardRef<any, IProps>(({
                         placeholder = { placeholder }
                         readOnly = { readOnly }
                         ref = { ref }
+                        required = { required }
                         type = { type }
                         value = { value } />
                 )}
