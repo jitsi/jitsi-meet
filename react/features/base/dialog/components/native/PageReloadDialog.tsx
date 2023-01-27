@@ -13,7 +13,7 @@ import { getPageReloadDialogProps }
     from '../../../lib-jitsi-meet/functions.native';
 import { connect } from '../../../redux/functions';
 // @ts-ignore
-import { ConfirmDialog } from '../../index';
+import ConfirmDialog from './ConfirmDialog';
 
 
 /**
@@ -21,7 +21,6 @@ import { ConfirmDialog } from '../../index';
  * {@link PageReloadDialog}.
  */
 interface IPageReloadDialogProps extends WithTranslation {
-    details: Object;
     dispatch: Dispatch<any>;
     message: string;
     reason: string;
