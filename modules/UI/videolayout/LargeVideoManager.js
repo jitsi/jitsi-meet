@@ -14,11 +14,13 @@ import { i18next } from '../../../react/features/base/i18n';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
+    getLocalParticipant,
     getParticipantById,
     getParticipantDisplayName,
     isLocalScreenshareParticipant,
     isScreenShareParticipant
 } from '../../../react/features/base/participants';
+import { getHideSelfView } from '../../../react/features/base/settings/functions.any';
 import {
     getVideoTrackByParticipant,
     trackStreamingStatusChanged
@@ -232,6 +234,10 @@ export default class LargeVideoManager {
 
         preUpdate.then(() => {
             const { id, stream, videoType, resolve } = this.newStreamData;
+            const state = APP.store.getState();
+            const shouldHideSelfView = getHideSelfView(state);
+            const localId = getLocalParticipant(state)?.id;
+
 
             // FIXME this does not really make sense, because the videoType
             // (camera or desktop) is a completely different thing than
@@ -245,13 +251,16 @@ export default class LargeVideoManager {
             // eslint-disable-next-line no-shadow
             const container = this.getCurrentContainer();
 
+            if (shouldHideSelfView && localId === id) {
+                return container.hide();
+            }
+
             container.setStream(id, stream, videoType);
 
             // change the avatar url on large
             this.updateAvatar();
 
             const isVideoMuted = !stream || stream.isMuted();
-            const state = APP.store.getState();
             const participant = getParticipantById(state, id);
             const videoTrack = getVideoTrackByParticipant(state, participant);
 

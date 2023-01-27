@@ -7,6 +7,7 @@ import { VIDEO_TYPE } from '../../base/media';
 import { getLocalParticipant } from '../../base/participants';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
+import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant } from '../../base/tracks';
 import { setColorAlpha } from '../../base/util';
 import { StageParticipantNameLabel } from '../../display-name';
@@ -105,6 +106,16 @@ type Props = {
      */
     _whiteboardEnabled: boolean;
 
+     /**
+     * Whether or not the hideSelfView is enabled.
+     */
+    _hideSelfView: boolean;
+
+    /**
+     * Local Participant id.
+     */
+    _localParticipantId: string;
+
     /**
      * The Redux dispatch function.
      */
@@ -146,7 +157,13 @@ class LargeVideo extends Component<Props> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: Props) {
-        const { _visibleFilmstrip, _isScreenSharing, _seeWhatIsBeingShared, _largeVideoParticipantId } = this.props;
+        const {
+            _visibleFilmstrip,
+            _isScreenSharing,
+            _seeWhatIsBeingShared,
+            _largeVideoParticipantId,
+            _hideSelfView,
+            _localParticipantId } = this.props;
 
         if (prevProps._visibleFilmstrip !== _visibleFilmstrip) {
             this._updateLayout();
@@ -158,6 +175,11 @@ class LargeVideo extends Component<Props> {
 
         if (_isScreenSharing && _seeWhatIsBeingShared) {
             VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, true);
+        }
+
+        if (_largeVideoParticipantId === _localParticipantId
+            && prevProps._hideSelfView !== _hideSelfView) {
+            VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, false);
         }
     }
 
@@ -351,9 +373,11 @@ function _mapStateToProps(state) {
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
         _displayScreenSharingPlaceholder: isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isOnSpot,
+        _hideSelfView: getHideSelfView(state),
         _isChatOpen: isChatOpen,
         _isScreenSharing: isLocalScreenshareOnLargeVideo,
         _largeVideoParticipantId: largeVideoParticipant?.id,
+        _localParticipantId: localParticipantId,
         _noAutoPlayVideo: testingConfig?.noAutoPlayVideo,
         _resizableFilmstrip: isFilmstripResizable(state),
         _seeWhatIsBeingShared: seeWhatIsBeingShared,

@@ -5,7 +5,7 @@ import {
     getParticipantById,
     getRemoteParticipantCountWithFake
 } from '../base/participants/functions';
-import { shouldHideSelfView } from '../base/settings/functions.web';
+import { getHideSelfView } from '../base/settings/functions.any';
 import { getMaxColumnCount } from '../video-layout/functions.web';
 
 import {
@@ -146,7 +146,7 @@ export function setVerticalViewDimensions() {
         const state = getState();
         const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
         const { width: filmstripWidth } = state['features/filmstrip'];
-        const disableSelfView = shouldHideSelfView(state);
+        const disableSelfView = getHideSelfView(state);
         const resizableFilmstrip = isFilmstripResizable(state);
         const _verticalViewGrid = showGridInVerticalView(state);
         const numberOfRemoteParticipants = getRemoteParticipantCountWithFake(state);
@@ -255,7 +255,7 @@ export function setHorizontalViewDimensions() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
-        const disableSelfView = shouldHideSelfView(state);
+        const disableSelfView = getHideSelfView(state);
         const thumbnails = calculateThumbnailSizeForHorizontalView(clientHeight);
         const remoteVideosContainerWidth
             = clientWidth - (disableSelfView ? 0 : thumbnails?.local?.width) - HORIZONTAL_FILMSTRIP_MARGIN;
