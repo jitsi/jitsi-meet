@@ -50,7 +50,7 @@ const ERROR_TYPES = {
 /**
  * Gets the error type and whether it's fatal or not.
  *
- * @param {Function} state - The redux function for fetching the current state.
+ * @param {Object} state - The redux state.
  * @param {Object|string} error - The error to process.
  * @returns {void}
  */
