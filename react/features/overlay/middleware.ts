@@ -50,13 +50,11 @@ const ERROR_TYPES = {
 /**
  * Gets the error type and whether it's fatal or not.
  *
- * @param {Function} getState - The redux function for fetching the current state.
+ * @param {Function} state - The redux function for fetching the current state.
  * @param {Object|string} error - The error to process.
  * @returns {void}
  */
-const getErrorExtraInfo = (getState: IStore['getState'], error: ErrorType) => {
-    const state = getState();
-
+const getErrorExtraInfo = (state: any, error: ErrorType) => {
     const { error: conferenceError } = state['features/base/conference'];
     const { error: configError } = state['features/base/config'];
     const { error: connectionError } = state['features/base/connection'];
@@ -96,7 +94,9 @@ StateListenerRegistry.register(
 
         return configError || connectionError || conferenceError;
     },
-    /* listener */ (error: ErrorType, { dispatch, getState }) => {
+    /* listener */ (error: ErrorType, store: IStore) => {
+        const state = store.getState();
+
         if (!error) {
             return;
         }
@@ -105,16 +105,16 @@ StateListenerRegistry.register(
         if (typeof APP !== 'undefined') {
             APP.API.notifyError({
                 ...error,
-                ...getErrorExtraInfo(getState, error)
+                ...getErrorExtraInfo(state, error)
             });
         } else {
             // @ts-ignore
-            dispatch(openPageReloadDialog);
+            store.dispatch(openPageReloadDialog());
         }
 
         if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
             // @ts-ignore
-            dispatch(openPageReloadDialog);
+            store.dispatch(openPageReloadDialog());
         }
     }
 );
