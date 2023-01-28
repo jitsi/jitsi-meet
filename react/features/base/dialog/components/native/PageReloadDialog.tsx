@@ -12,6 +12,7 @@ import { translate } from '../../../i18n/functions';
 import { getPageReloadDialogProps }
     from '../../../lib-jitsi-meet/functions.native';
 import { connect } from '../../../redux/functions';
+
 // @ts-ignore
 import ConfirmDialog from './ConfirmDialog';
 
