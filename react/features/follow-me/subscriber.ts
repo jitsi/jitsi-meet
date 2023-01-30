@@ -92,7 +92,7 @@ function _getFollowMeState(state: IReduxState) {
     return {
         filmstripVisible: state['features/filmstrip'].visible,
         maxStageParticipants: stageFilmstrip ? state['features/base/settings'].maxStageParticipants : undefined,
-        nextOnStage: stageFilmstrip ? undefined : pinnedParticipant?.id,
+        nextOnStage: pinnedParticipant?.id,
         pinnedStageParticipants: stageFilmstrip ? JSON.stringify(getPinnedActiveParticipants(state)) : undefined,
         sharedDocumentVisible: state['features/etherpad'].editing,
         tileViewEnabled: shouldDisplayTileView(state)
