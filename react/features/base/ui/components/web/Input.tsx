@@ -10,6 +10,7 @@ import { IInputProps } from '../types';
 
 interface IProps extends IInputProps {
     accessibilityLabel?: string;
+    autoComplete?: string;
     autoFocus?: boolean;
     bottomLabel?: string;
     className?: string;
@@ -131,6 +132,7 @@ const useStyles = makeStyles()(theme => {
 
 const Input = React.forwardRef<any, IProps>(({
     accessibilityLabel,
+    autoComplete,
     autoFocus,
     bottomLabel,
     className,
@@ -175,6 +177,7 @@ const Input = React.forwardRef<any, IProps>(({
                 {textarea ? (
                     <TextareaAutosize
                         aria-label = { accessibilityLabel }
+                        autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
                             error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
@@ -194,6 +197,7 @@ const Input = React.forwardRef<any, IProps>(({
                 ) : (
                     <input
                         aria-label = { accessibilityLabel }
+                        autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
                             error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }

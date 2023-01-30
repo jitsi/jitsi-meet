@@ -41,11 +41,11 @@
     &-dropdown-btns {
         padding: 8px 0;
     }
-  
+
     &-dropdown-container {
         position: relative;
         width: 100%;
-  
+
         /**
         * Override default InlineDialog behaviour, since it does not play nicely with relative widths
         */
@@ -56,5 +56,12 @@
             width: 100%;
         }
     }
-  }
-  
+}
+
+.prejoin-input {
+    margin-bottom: 16px;
+
+    & input {
+        text-align: center;
+    }
+}
