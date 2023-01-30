@@ -93,7 +93,8 @@ const styles = (theme: Theme) => {
         userMessage: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             color: theme.palette.text01,
-            whiteSpace: 'pre-wrap'
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word'
         },
 
         privateMessageNotice: {

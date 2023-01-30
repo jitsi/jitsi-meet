@@ -26,7 +26,8 @@ const useStyles = makeStyles()(theme => {
     return {
         messageGroup: {
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            maxWidth: '100%'
         },
 
         groupContainer: {
