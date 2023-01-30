@@ -1,7 +1,4 @@
-// @flow
-
-import React, { useState } from 'react';
-import type { AbstractComponent } from 'react';
+import React, { ComponentType, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /*
@@ -9,10 +6,10 @@ import { useTranslation } from 'react-i18next';
  * concrete implementations (web/native).
  **/
 export type AbstractProps = {
-    createMode: boolean,
-    onCreate: void => void,
-    setCreateMode: boolean => void,
-    t: Function,
+    createMode: boolean;
+    onCreate: () => void;
+    setCreateMode: (mode: boolean) => void;
+    t: Function;
 };
 
 /**
@@ -22,7 +19,7 @@ export type AbstractProps = {
  * @param {React.AbstractComponent} Component - The concrete component.
  * @returns {React.AbstractComponent}
  */
-const AbstractPollsPane = (Component: AbstractComponent<AbstractProps>) => () => {
+const AbstractPollsPane = (Component: ComponentType<AbstractProps>) => () => {
 
     const [ createMode, setCreateMode ] = useState(false);
 

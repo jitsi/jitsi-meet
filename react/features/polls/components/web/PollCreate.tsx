@@ -1,21 +1,62 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { Tooltip } from '../../../base/tooltip';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
+import Input from '../../../base/ui/components/web/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
-// @ts-ignore
-import AbstractPollCreate from '../AbstractPollCreate';
-// @ts-ignore
-import type { AbstractProps } from '../AbstractPollCreate';
+import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
 const useStyles = makeStyles()(theme => {
     return {
+        container: {
+            height: '100%',
+            position: 'relative'
+        },
+        createContainer: {
+            padding: '0 24px',
+            height: 'calc(100% - 88px)',
+            overflowY: 'auto'
+        },
+        header: {
+            ...withPixelLineHeight(theme.typography.heading6),
+            color: theme.palette.text01,
+            margin: '24px 0 16px'
+        },
+        questionContainer: {
+            paddingBottom: '24px',
+            borderBottom: `1px solid ${theme.palette.ui03}`
+        },
+        answerList: {
+            listStyleType: 'none',
+            margin: 0,
+            padding: 0
+        },
+        answer: {
+            marginBottom: '24px'
+        },
+        removeOption: {
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: theme.palette.link01,
+            marginTop: '8px',
+            border: 0,
+            background: 'transparent'
+        },
+        addButtonContainer: {
+            display: 'flex'
+        },
+        footer: {
+            position: 'absolute',
+            bottom: 0,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: '24px',
+            width: '100%',
+            boxSizing: 'border-box'
+        },
         buttonMargin: {
-            marginRight: theme.spacing(2)
+            marginRight: theme.spacing(3)
         }
     };
 });
@@ -32,7 +73,7 @@ const PollCreate = ({
     setQuestion,
     t
 }: AbstractProps) => {
-    const { classes: styles } = useStyles();
+    const { classes } = useStyles();
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
@@ -139,76 +180,54 @@ const PollCreate = ({
         }
     }, [ answers, addAnswer, removeAnswer, requestFocus ]);
 
-    const autogrow = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const el = ev.target;
-
-        el.style.height = '1px';
-        el.style.height = `${el.scrollHeight + 2}px`;
-    };
-
     /* eslint-disable react/jsx-no-bind */
     return (<form
-        className = 'polls-pane-content'
+        className = { classes.container }
         onSubmit = { onSubmit }>
-        <div className = 'poll-create-container poll-container'>
-            <div className = 'poll-create-header'>
+        <div className = { classes.createContainer }>
+            <div className = { classes.header }>
                 { t('polls.create.create') }
             </div>
-            <div className = 'poll-question-field'>
-                <span className = 'poll-create-label'>
-                    { t('polls.create.pollQuestion') }
-                </span>
-                <textarea
+            <div className = { classes.questionContainer }>
+                <Input
                     autoFocus = { true }
-                    className = 'expandable-input'
+                    label = { t('polls.create.pollQuestion') }
                     maxLength = { CHAR_LIMIT }
-                    onChange = { ev => setQuestion(ev.target.value) }
-                    onInput = { autogrow }
-                    onKeyDown = { onQuestionKeyDown }
+                    onChange = { setQuestion }
+                    onKeyPress = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
-                    required = { true }
-                    rows = { 1 }
+                    textarea = { true }
                     value = { question } />
             </div>
-            <ol className = 'poll-answer-field-list'>
+            <ol className = { classes.answerList }>
                 {answers.map((answer: any, i: number) =>
                     (<li
-                        className = 'poll-answer-field'
+                        className = { classes.answer }
                         key = { i }>
-                        <span className = 'poll-create-label'>
-                            { t('polls.create.pollOption', { index: i + 1 })}
-                        </span>
-                        <div className = 'poll-create-option-row'>
-                            <textarea
-                                className = 'expandable-input'
-                                maxLength = { CHAR_LIMIT }
-                                onChange = { ev => setAnswer(i, ev.target.value) }
-                                onInput = { autogrow }
-                                onKeyDown = { ev => onAnswerKeyDown(i, ev) }
-                                placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
-                                ref = { r => registerFieldRef(i, r) }
-                                required = { true }
-                                rows = { 1 }
-                                value = { answer } />
-                        </div>
+                        <Input
+                            label = { t('polls.create.pollOption', { index: i + 1 }) }
+                            maxLength = { CHAR_LIMIT }
+                            onChange = { val => setAnswer(i, val) }
+                            onKeyPress = { ev => onAnswerKeyDown(i, ev) }
+                            placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
+                            ref = { r => registerFieldRef(i, r) }
+                            textarea = { true }
+                            value = { answer } />
 
                         { answers.length > 2
-                        && <Tooltip content = { t('polls.create.removeOption') }>
-                            <button
-                                className = 'poll-remove-option-button'
-                                onClick = { () => removeAnswer(i) }
-                                type = 'button'>
-                                { t('polls.create.removeOption') }
-                            </button>
-                        </Tooltip>}
+                        && <button
+                            className = { classes.removeOption }
+                            onClick = { () => removeAnswer(i) }
+                            type = 'button'>
+                            { t('polls.create.removeOption') }
+                        </button>}
                     </li>)
                 )}
             </ol>
-            <div className = 'poll-add-button'>
+            <div className = { classes.addButtonContainer }>
                 <Button
                     accessibilityLabel = { t('polls.create.addOption') }
                     disabled = { answers.length >= ANSWERS_LIMIT }
-                    fullWidth = { true }
                     labelKey = { 'polls.create.addOption' }
                     onClick = { () => {
                         addAnswer();
@@ -217,23 +236,20 @@ const PollCreate = ({
                     type = { BUTTON_TYPES.SECONDARY } />
             </div>
         </div>
-        <div className = 'poll-footer poll-create-footer'>
+        <div className = { classes.footer }>
             <Button
                 accessibilityLabel = { t('polls.create.cancel') }
-                className = { styles.buttonMargin }
-                fullWidth = { true }
+                className = { classes.buttonMargin }
                 labelKey = { 'polls.create.cancel' }
                 onClick = { () => setCreateMode(false) }
                 type = { BUTTON_TYPES.SECONDARY } />
             <Button
                 accessibilityLabel = { t('polls.create.send') }
                 disabled = { isSubmitDisabled }
-                fullWidth = { true }
                 isSubmit = { true }
                 labelKey = { 'polls.create.send' } />
         </div>
     </form>);
-
 };
 
 /*

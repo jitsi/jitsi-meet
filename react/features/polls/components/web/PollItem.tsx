@@ -1,22 +1,22 @@
-// @flow
-
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { PollAnswer, PollResults } from '..';
 import { shouldShowResults } from '../../functions';
 
+import PollAnswer from './PollAnswer';
+import PollResults from './PollResults';
 
-type Props = {
+
+interface IProps {
 
     /**
      * Id of the poll.
      */
-    pollId: string,
+    pollId: string;
 
 }
 
-const PollItem = React.forwardRef<Props, HTMLElement>(({ pollId }: Props, ref) => {
+const PollItem = React.forwardRef<HTMLDivElement, IProps>(({ pollId }: IProps, ref) => {
     const showResults = useSelector(shouldShowResults(pollId));
 
     return (
