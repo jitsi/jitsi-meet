@@ -35,7 +35,7 @@ export const dialogStyles = createStyleSheet({
     },
 
     optionRemoveButtonText: {
-        color: BaseTheme.palette.actionDangerActive
+        color: BaseTheme.palette.link01
     },
 
     field: {
