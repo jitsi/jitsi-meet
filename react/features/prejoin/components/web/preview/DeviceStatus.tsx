@@ -4,9 +4,8 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../../base/i18n/functions';
-import Icon from '../../../../base/icons/components/Icon';
-import { IconCheck, IconExclamationTriangle } from '../../../../base/icons/svg';
 import { connect } from '../../../../base/redux/functions';
+import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import {
     getDeviceStatusText,
     getDeviceStatusType
@@ -29,13 +28,12 @@ export interface IProps extends WithTranslation {
 const useStyles = makeStyles()(theme => {
     return {
         deviceStatus: {
-            alignItems: 'center',
-            color: '#fff',
             display: 'flex',
-            fontSize: '14px',
-            lineHeight: '20px',
-            padding: '6px',
-            textAlign: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: '#fff',
+            marginTop: theme.spacing(4),
 
             '& span': {
                 marginLeft: theme.spacing(3)
@@ -47,32 +45,22 @@ const useStyles = makeStyles()(theme => {
                 borderRadius: '6px',
                 color: theme.palette.uiBackground,
                 padding: '12px 16px',
-                textAlign: 'left'
+                textAlign: 'left',
+                marginTop: theme.spacing(2)
             },
-            '& .device-icon': {
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                display: 'inline-block',
-                height: '16px',
-                width: '16px'
-            },
-            '& .device-icon--ok svg path': {
-                fill: '#189B55'
+
+            '@media (max-width: 720px)': {
+                marginTop: 0
             }
+        },
+        indicator: {
+            width: '16px',
+            height: '16px',
+            borderRadius: '100%',
+            backgroundColor: theme.palette.success01
         }
     };
 });
-
-const iconMap = {
-    warning: {
-        src: IconExclamationTriangle,
-        className: 'device-icon--warning'
-    },
-    ok: {
-        src: IconCheck,
-        className: 'device-icon--ok'
-    }
-};
 
 /**
  * Strip showing the current status of the devices.
@@ -82,7 +70,6 @@ const iconMap = {
  */
 function DeviceStatus({ deviceStatusType, deviceStatusText, t }: IProps) {
     const { classes, cx } = useStyles();
-    const { src, className } = iconMap[deviceStatusType as keyof typeof iconMap];
     const hasError = deviceStatusType === 'warning';
     const containerClassName = cx(classes.deviceStatus, { 'device-status-error': hasError });
 
@@ -91,10 +78,7 @@ function DeviceStatus({ deviceStatusType, deviceStatusText, t }: IProps) {
             className = { containerClassName }
             role = 'alert'
             tabIndex = { -1 }>
-            <Icon
-                className = { `device-icon ${className}` }
-                size = { 16 }
-                src = { src } />
+            {!hasError && <div className = { classes.indicator } />}
             <span role = 'heading'>
                 {hasError ? t('prejoin.errorNoPermissions') : t(deviceStatusText ?? '')}
             </span>
