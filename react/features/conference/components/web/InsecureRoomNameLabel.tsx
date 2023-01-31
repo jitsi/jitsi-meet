@@ -1,13 +1,11 @@
-// @flow
-
 import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
+import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import { IconExclamationTriangle } from '../../../base/icons/svg';
-import { Label } from '../../../base/label';
+import Label from '../../../base/label/components/web/Label';
 import { COLORS } from '../../../base/label/constants';
-import { connect } from '../../../base/redux';
 import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInsecureRoomNameLabel';
 
 /**

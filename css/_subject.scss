@@ -12,7 +12,6 @@
     &#autoHide.with-always-on {
         overflow: hidden;
         animation: hideSubject forwards .6s ease-out;
-        margin-left: 4px;
 
         & > .subject-info-container {
             justify-content: flex-start;
@@ -41,43 +40,6 @@
     margin-bottom: 4px;
     max-width: 80%;
     height: 28px;
-}
-
-.subject-text {
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 3px 0px 0px 3px;
-    box-sizing: border-box;
-    font-size: 14px;
-    line-height: 28px;
-    padding: 0 16px;
-    height: 28px;
-    max-width: 324px;
-
-    @media (max-width: 300px) {
-        display: none;
-    }
-
-    &--content {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-}
-
-.subject-timer {
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 0px 3px 3px 0px;
-    box-sizing: border-box;
-    font-size: 12px;
-    line-height: 28px;
-    min-width: 34px;
-    padding: 0 8px;
-    height: 28px;
-    font-variant-numeric: tabular-nums;
-
-    @media (max-width: 300px) {
-        display: none;
-    }
 }
 
 .details-container {

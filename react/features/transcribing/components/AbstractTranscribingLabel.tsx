@@ -1,4 +1,4 @@
-// @flow
+import { IReduxState } from '../../app/types';
 
 /**
  * The type of the React {@code Component} props of {@link TranscribingLabel}.
@@ -8,12 +8,12 @@ export type Props = {
     /**
      * True if the label needs to be rendered, false otherwise.
      */
-    _showLabel: boolean,
+    _showLabel: boolean;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function;
 };
 
 /**
@@ -26,7 +26,7 @@ export type Props = {
  *     _showLabel: boolean
  * }}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     return {
         _showLabel: state['features/transcribing'].isTranscribing
     };

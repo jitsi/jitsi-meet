@@ -50,10 +50,10 @@ const useStyles = makeStyles()(theme => {
             ...withPixelLineHeight(theme.typography.labelRegular),
             alignItems: 'center',
             background: theme.palette.ui04,
-            borderRadius: Number(theme.shape.borderRadius) / 2,
+            borderRadius: '4px',
             color: theme.palette.text01,
             display: 'flex',
-            margin: '0 0 4px 4px',
+            margin: '0 2px',
             padding: '6px',
             height: 28,
             boxSizing: 'border-box'

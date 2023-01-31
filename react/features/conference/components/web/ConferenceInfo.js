@@ -6,12 +6,12 @@ import React, { Component } from 'react';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
-import { E2EELabel } from '../../../e2ee';
-import { RecordingLabel } from '../../../recording';
+import E2EELabel from '../../../e2ee/components/E2EELabel';
 import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
+import RecordingLabel from '../../../recording/components/web/RecordingLabel';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
-import { TranscribingLabel } from '../../../transcribing';
-import { VideoQualityLabel } from '../../../video-quality';
+import TranscribingLabel from '../../../transcribing/components/TranscribingLabel.web';
+import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.web';
 import ConferenceTimer from '../ConferenceTimer';
 import { getConferenceInfo } from '../functions';
 
