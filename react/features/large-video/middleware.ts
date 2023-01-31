@@ -49,9 +49,15 @@ MiddlewareRegistry.register(store => next => action => {
 
         return result;
     }
+    case PIN_PARTICIPANT: {
+        const result = next(action);
+
+        store.dispatch(selectParticipantInLargeVideo(action.participant?.id));
+
+        return result;
+    }
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
-    case PIN_PARTICIPANT:
     case TOGGLE_DOCUMENT_EDITING:
     case TRACK_ADDED:
     case TRACK_REMOVED: {
