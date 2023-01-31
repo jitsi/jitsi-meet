@@ -24,7 +24,8 @@ import {
 } from '../../../base/participants/actions';
 import {
     getLocalParticipant,
-    hasRaisedHand
+    hasRaisedHand,
+    isLocalParticipantModerator
 } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import { getLocalVideoTrack } from '../../../base/tracks/functions';
@@ -1518,7 +1519,7 @@ class Toolbox extends Component<IProps> {
 function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { conference } = state['features/base/conference'];
     const { isNarrowLayout } = state['features/base/responsive-ui'];
-    const endConferenceSupported = conference?.isEndConferenceSupported();
+    const endConferenceSupported = conference?.isEndConferenceSupported() && isLocalParticipantModerator(state);
 
     const {
         buttonsWithNotifyClick,
