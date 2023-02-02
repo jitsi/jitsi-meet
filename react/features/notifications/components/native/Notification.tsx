@@ -12,7 +12,7 @@ import {
     Icon,
     IconCloseLarge,
     IconInfoCircle,
-    IconUserGroups,
+    IconUsers,
     IconWarning
     // @ts-ignore
 } from '../../../base/icons';
@@ -132,7 +132,7 @@ class Notification extends AbstractNotification<Props> {
             src = IconWarning;
             break;
         case NOTIFICATION_ICON.PARTICIPANTS:
-            src = IconUserGroups;
+            src = IconUsers;
             break;
         case NOTIFICATION_ICON.WARNING:
             src = IconWarning;
@@ -154,15 +154,17 @@ class Notification extends AbstractNotification<Props> {
      */
     _mapAppearanceToIcon() {
         // @ts-ignore
-        const { appearance } = this.props;
+        const { appearance, icon } = this.props;
         // @ts-ignore
         const color = ICON_COLOR[appearance];
+        const iconContainerStyles = icon === NOTIFICATION_ICON.PARTICIPANTS
+            ? styles.iconContainerInteractive : styles.iconContainer;
 
         return (
-            <View style = { styles.iconContainer }>
+            <View style = { iconContainerStyles }>
                 <Icon
                     color = { color }
-                    size = { 20 }
+                    size = { 24 }
                     src = { this._getIcon() } />
             </View>
         );
@@ -176,14 +178,16 @@ class Notification extends AbstractNotification<Props> {
      */
     render() {
         // @ts-ignore
-        const { _participants } = this.props;
+        const { _participants, icon } = this.props;
         const oneParticipant = _participants.length === 1;
+        const contentColumnStyles = icon === NOTIFICATION_ICON.PARTICIPANTS
+            ? styles.contentColumn : styles.interactiveContentColumn;
 
         return (
             <View
                 pointerEvents = 'box-none'
                 style = { styles.notification }>
-                <View style = { styles.contentColumn }>
+                <View style = { contentColumnStyles }>
                     { oneParticipant ? this._renderAvatar() : this._mapAppearanceToIcon() }
                     <View pointerEvents = 'box-none'>
                         { this._renderContent() }
@@ -210,10 +214,12 @@ class Notification extends AbstractNotification<Props> {
      */
     _renderContent() {
         // @ts-ignore
-        const { maxLines = DEFAULT_MAX_LINES, t, title, titleArguments, titleKey, concatText } = this.props;
+        const { icon, maxLines = DEFAULT_MAX_LINES, t, title, titleArguments, titleKey, concatText } = this.props;
         const titleText = title || (titleKey && t(titleKey, titleArguments));
         const description = this._getDescription();
         const titleConcat = [];
+        const descriptionStyles = icon === NOTIFICATION_ICON.PARTICIPANTS
+            ? styles.contentTextInteractive : styles.contentText;
 
         if (concatText) {
             titleConcat.push(titleText);
@@ -224,7 +230,7 @@ class Notification extends AbstractNotification<Props> {
                 <Text
                     key = { index }
                     numberOfLines = { maxLines }
-                    style = { styles.contentText }>
+                    style = { descriptionStyles }>
                     { replaceNonUnicodeEmojis(line) }
                 </Text>
             ));
@@ -232,8 +238,7 @@ class Notification extends AbstractNotification<Props> {
 
         return (
             <Text
-                numberOfLines = { maxLines }
-                style = { styles.contentText }>
+                numberOfLines = { maxLines }>
                 { titleText }
             </Text>
         );

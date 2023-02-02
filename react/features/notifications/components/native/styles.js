@@ -2,6 +2,22 @@
 
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
+const contentColumn = {
+    flex: 1,
+    flexDirection: 'column',
+    marginLeft: BaseTheme.spacing[2]
+};
+
+const contentText = {
+    color: BaseTheme.palette.text04,
+    marginLeft: BaseTheme.spacing[6]
+};
+
+const iconContainer = {
+    position: 'absolute',
+    left: BaseTheme.spacing[1]
+};
+
 /**
  * The styles of the React {@code Components} of the feature notifications.
  */
@@ -11,19 +27,24 @@ export default {
      * The content (left) column of the notification.
      */
     contentColumn: {
-        justifyContent: 'center',
-        flex: 1,
-        flexDirection: 'column',
-        marginLeft: BaseTheme.spacing[2]
+        ...contentColumn
+    },
+
+    interactiveContentColumn: {
+        ...contentColumn,
+        justifyContent: 'center'
     },
 
     /**
      * Test style of the notification.
      */
     contentText: {
-        color: BaseTheme.palette.text04,
-        marginLeft: BaseTheme.spacing[6],
-        position: 'relative'
+        ...contentText
+    },
+
+    contentTextInteractive: {
+        ...contentText,
+        marginTop: BaseTheme.spacing[1]
     },
 
     /**
@@ -34,11 +55,7 @@ export default {
         fontSize: 20
     },
 
-    /**
-     * Outermost view of a single notification.
-     */
     notification: {
-        alignItems: 'center',
         display: 'flex',
         backgroundColor: BaseTheme.palette.ui12,
         borderRadius: BaseTheme.shape.borderRadius,
@@ -71,8 +88,12 @@ export default {
     },
 
     iconContainer: {
-        position: 'absolute',
-        left: BaseTheme.spacing[2]
+        ...iconContainer
+    },
+
+    iconContainerInteractive: {
+        ...iconContainer,
+        top: BaseTheme.spacing[2]
     },
 
     btnLabel: {
@@ -93,7 +114,7 @@ export default {
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
-        marginTop: BaseTheme.spacing[2]
+        marginTop: BaseTheme.spacing[1]
     },
 
     avatarText: {
