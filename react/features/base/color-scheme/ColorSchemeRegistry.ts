@@ -1,4 +1,3 @@
-import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
 import { StyleType } from '../styles/functions.any';
 
@@ -33,13 +32,13 @@ class ColorSchemeRegistry {
     /**
      * Retrieves the color-scheme applied style definition of a component.
      *
-     * @param {IStateful} stateful - An object or function that can be
+     * @param {Object | Function} stateful - An object or function that can be
      * resolved to Redux state using the {@code toState} function.
      * @param {string} componentName - The name of the component whose style we
      * want to retrieve.
      * @returns {StyleType}
      */
-    get(stateful: IStateful, componentName: string): StyleType {
+    get(stateful: Object | Function, componentName: string): StyleType {
         let schemedStyle = this._schemedStyles.get(componentName);
 
         if (!schemedStyle) {
@@ -77,7 +76,7 @@ class ColorSchemeRegistry {
      * Creates a color schemed style object applying the color scheme to every
      * colors in the style object prepared in a special way.
      *
-     * @param {IStateful} stateful - An object or function that can be
+     * @param {Object | Function} stateful - An object or function that can be
      * resolved to Redux state using the {@code toState} function.
      * @param {string} componentName - The name of the component to apply the
      * color scheme to.
@@ -86,7 +85,7 @@ class ColorSchemeRegistry {
      * @returns {StyleType}
      */
     _applyColorScheme(
-            stateful: IStateful,
+            stateful: Object | Function,
             componentName: string,
             style: StyleType): StyleType {
         let schemedStyle: any;
@@ -136,7 +135,7 @@ class ColorSchemeRegistry {
     /**
      * Function to get the color value for the provided identifier.
      *
-     * @param {IStateful} stateful - An object or function that can be
+     * @param {Object | Function} stateful - An object or function that can be
      * resolved to Redux state using the {@code toState} function.
      * @param {string} componentName - The name of the component to get the
      * color value for.
@@ -145,15 +144,18 @@ class ColorSchemeRegistry {
      * @returns {string}
      */
     _getColor(
-            stateful: IStateful,
+            stateful: Object | Function,
             componentName: string,
             colorDefinition: string): string {
+        // @ts-ignore
         const colorScheme = toState(stateful)['features/base/color-scheme'] || {};
 
         return {
             ...defaultScheme._defaultTheme,
             ...colorScheme._defaultTheme,
-            ...defaultScheme[componentName as keyof typeof defaultScheme],
+
+            // @ts-ignore
+            ...defaultScheme[componentName],
             ...colorScheme[componentName]
         }[colorDefinition];
     }

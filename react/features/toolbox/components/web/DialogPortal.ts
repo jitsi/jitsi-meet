@@ -48,7 +48,6 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
     useEffect(() => {
         if (style) {
             for (const styleProp of Object.keys(style)) {
-                // https://github.com/facebook/flow/issues/3733
                 const objStyle: any = portalTarget.style;
 
                 objStyle[styleProp] = style[styleProp];
