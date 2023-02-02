@@ -1,8 +1,6 @@
-/* @flow */
+import React, { Component, ReactNode } from 'react';
 
-import React, { Component } from 'react';
-
-import { getFixedPlatformStyle } from '../../styles';
+import { getFixedPlatformStyle } from '../../styles/functions';
 
 /**
  * {@code AbstractContainer} Component's property types.
@@ -12,22 +10,22 @@ export type Props = {
     /**
      * An optional accessibility label to apply to the container root.
      */
-    accessibilityLabel?: string,
+    accessibilityLabel?: string;
 
     /**
      * Whether or not this element is an accessibility element.
      */
-    accessible?: boolean,
+    accessible?: boolean;
 
     /**
      * React Elements to display within the component.
      */
-    children: React$Node,
+    children: ReactNode;
 
     /**
      * Class names of the component (for web).
      */
-    className?: string,
+    className?: string;
 
     /**
      * The event handler/listener to be invoked when this
@@ -36,13 +34,13 @@ export type Props = {
      * undefined, {@code touchFeedback} is considered defined as
      * {@code true}.
      */
-    onClick?: ?Function,
+    onClick?: Function;
 
     /**
      * The style (as in stylesheet) to be applied to this
      * {@code AbstractContainer}.
      */
-    style?: Array<?string> | Object,
+    style?: Array<string | undefined> | Object;
 
     /**
      * If this instance is to provide visual feedback when touched, then
@@ -50,19 +48,19 @@ export type Props = {
      * undefined and {@link onClick} is defined, {@code touchFeedback} is
      * considered defined as {@code true}.
      */
-    touchFeedback?: ?Function,
+    touchFeedback?: Function;
 
     /**
      * Color to display when clicked.
      */
-    underlayColor?: string,
+    underlayColor?: string;
 
     /**
      * If this {@code AbstractContainer} is to be visible, then {@code true}
      * or {@code false} if this instance is to be hidden or not rendered at
      * all.
      */
-    visible?: ?boolean
+    visible?: boolean;
 };
 
 /**
@@ -71,7 +69,7 @@ export type Props = {
  *
  * @augments Component
  */
-export default class AbstractContainer<P: Props> extends Component<P> {
+export default class AbstractContainer<P extends Props> extends Component<P> {
     /**
      * Renders this {@code AbstractContainer} as a React {@code Component} of a
      * specific type.
@@ -84,12 +82,12 @@ export default class AbstractContainer<P: Props> extends Component<P> {
      * @protected
      * @returns {ReactElement}
      */
-    _render(type, props?: P) {
+    _render(type: string, props?: P) {
         const {
             children,
             style,
 
-            /* eslint-disable no-unused-vars */
+            /* eslint-disable @typescript-eslint/no-unused-vars */
 
             // The following properties are defined for the benefit of
             // AbstractContainer and its extenders so they are to not be
@@ -97,14 +95,14 @@ export default class AbstractContainer<P: Props> extends Component<P> {
             touchFeedback,
             visible,
 
-            /* eslint-enable no-unused-vars */
+            /* eslint-enable @typescript-eslint/no-unused-vars */
 
             ...filteredProps
         } = props || this.props;
 
+        // @ts-ignore
         const _style = getFixedPlatformStyle(style);
 
-        // $FlowFixMe
         return React.createElement(type, {
             style: _style,
             ...filteredProps

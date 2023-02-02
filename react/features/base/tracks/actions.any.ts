@@ -159,7 +159,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                 throw new Error(`Local track for ${device} already exists`);
             }
 
-            const gumProcess
+            const gumProcess: any
                 = createLocalTracksF(
                     {
                         cameraDeviceId: options.cameraDeviceId,
@@ -169,7 +169,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                         micDeviceId: options.micDeviceId
                     },
                     store)
-                .then(
+                .then( // @ts-ignore
                     (localTracks: any[]) => {
                         // Because GUM is called for 1 device (which is actually
                         // a media type 'audio', 'video', 'screen', etc.) we

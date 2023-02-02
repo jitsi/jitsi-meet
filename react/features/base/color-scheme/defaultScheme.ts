@@ -1,4 +1,5 @@
-import { ColorPalette, getRGBAFormat } from '../styles';
+import { ColorPalette } from '../styles/components/styles/ColorPalette';
+import { getRGBAFormat } from '../styles/functions.any';
 
 /**
  * The default color scheme of the application.

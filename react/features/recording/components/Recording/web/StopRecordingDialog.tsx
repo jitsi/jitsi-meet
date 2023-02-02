@@ -1,13 +1,13 @@
-// @flow
-
 import React from 'react';
 
-import { translate } from '../../../../base/i18n';
-import { connect } from '../../../../base/redux';
+import { translate } from '../../../../base/i18n/functions';
+import { connect } from '../../../../base/redux/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
 import AbstractStopRecordingDialog, {
-    type Props,
+    IProps,
     _mapStateToProps
 } from '../AbstractStopRecordingDialog';
 
@@ -17,7 +17,7 @@ import AbstractStopRecordingDialog, {
  *
  * @augments Component
  */
-class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
+class StopRecordingDialog extends AbstractStopRecordingDialog<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *

@@ -6,6 +6,8 @@ import { ONLINE_STATE_CHANGED_EVENT } from './events';
  * The network info service implementation for web (Chrome, Firefox and Safari).
  */
 export default class NetworkInfoService extends EventEmitter {
+    _onlineStateListener: any;
+    _offlineStateListener: any;
 
     /**
      * Creates new instance...
@@ -23,7 +25,7 @@ export default class NetworkInfoService extends EventEmitter {
      * @private
      * @returns {void}
      */
-    _handleOnlineStatusChange(isOnline) {
+    _handleOnlineStatusChange(isOnline: boolean) {
         this.emit(ONLINE_STATE_CHANGED_EVENT, { isOnline });
     }
 
@@ -33,6 +35,7 @@ export default class NetworkInfoService extends EventEmitter {
      * @returns {boolean}
      */
     static isSupported() {
+        // @ts-ignore
         return window.addEventListener && typeof navigator.onLine !== 'undefined';
     }
 

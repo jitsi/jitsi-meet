@@ -1,6 +1,4 @@
-// @flow
-
-import { type StyleType } from './functions.any';
+import { StyleType } from './functions.any';
 
 export * from './functions.any';
 

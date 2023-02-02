@@ -38,6 +38,7 @@ import ModeratorTab from './ModeratorTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
 import SoundsTab from './SoundsTab';
+/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of
@@ -247,10 +248,12 @@ class SettingsDialog extends Component<IProps> {
             return {
                 ...tab,
                 onMount: tab.onMount
+
                     // @ts-ignore
                     ? (...args: any) => dispatch(tab.onMount(...args))
                     : undefined,
                 submit: (...args: any) => tab.submit
+
                     // @ts-ignore
                     && dispatch(tab.submit(...args))
             };

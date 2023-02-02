@@ -47,6 +47,7 @@ import {
     VolumeSlider
     // @ts-ignore
 } from './';
+/* eslint-enable lines-around-comment */
 
 interface IProps {
 

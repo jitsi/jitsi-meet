@@ -4,8 +4,6 @@ import { IStore } from '../../app/types';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import StopRecordingDialog from '../../recording/components/Recording/web/StopRecordingDialog';
 import { openDialog } from '../dialog/actions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';

@@ -1,7 +1,6 @@
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
-// @ts-ignore
 import NetworkInfoService from './NetworkInfoService';
 import { _storeNetworkInfoCleanup, setNetworkInfo } from './actions';
 import { STORE_NAME } from './constants';
@@ -25,9 +24,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             const networkInfoService = new NetworkInfoService();
             const stop = () => {
                 networkInfoService.stop();
+
+                // @ts-ignore
                 networkInfoService.removeAllListeners();
             };
 
+            // @ts-ignore
             networkInfoService.addListener(
                 ONLINE_STATE_CHANGED_EVENT,
                 ({ isOnline, networkType, details }: NetworkInfo) => {

@@ -28,6 +28,7 @@ import logger from '../logger';
 import UploadImageButton from './UploadImageButton';
 // @ts-ignore
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
+/* eslint-enable lines-around-comment */
 
 interface IProps extends WithTranslation {
 
@@ -129,6 +130,7 @@ const useStyles = makeStyles()(theme => {
             gridTemplateColumns: 'auto auto auto auto auto',
             columnGap: '9px',
             cursor: 'pointer',
+
             // @ts-ignore
             [[ '& .desktop-share:hover',
                 '& .thumbnail:hover',
@@ -235,6 +237,7 @@ const useStyles = makeStyles()(theme => {
                     height: '60px',
                     width: '60px'
                 },
+
                 // @ts-ignore
                 [[ '& .desktop-share-selected',
                     '& .thumbnail-selected',
@@ -468,6 +471,7 @@ function VirtualBackground({
             {loading ? (
                 <div className = { classes.virtualBackgroundLoading }>
                     <Spinner
+
                         // @ts-ignore
                         isCompleting = { false }
                         size = 'medium' />

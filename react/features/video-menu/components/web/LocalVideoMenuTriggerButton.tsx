@@ -30,6 +30,7 @@ import FlipLocalVideoButton from './FlipLocalVideoButton';
 import HideSelfViewVideoButton from './HideSelfViewVideoButton';
 // @ts-ignore
 import TogglePinToStageButton from './TogglePinToStageButton';
+/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of

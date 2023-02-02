@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import _ from 'lodash';
@@ -48,9 +47,7 @@ import {
 // @ts-ignore
 import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
-// @ts-ignore
 import ThumbnailWrapper from './ThumbnailWrapper';
-// @ts-ignore
 import { styles } from './styles';
 
 /**
@@ -307,6 +304,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             'keyboardShortcuts.toggleFilmstrip'
         );
         document.addEventListener('mouseup', this._onDragMouseUp);
+
         // @ts-ignore
         document.addEventListener('mousemove', this._throttledResize);
     }
@@ -319,6 +317,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
     componentWillUnmount() {
         APP.keyboardshortcut.unregisterShortcut('F');
         document.removeEventListener('mouseup', this._onDragMouseUp);
+
         // @ts-ignore
         document.removeEventListener('mousemove', this._throttledResize);
     }
@@ -694,6 +693,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     initialScrollLeft = { 0 }
                     initialScrollTop = { 0 }
                     itemData = {{ filmstripType }}
+
                     // @ts-ignore
                     itemKey = { this._gridItemKey }
                     onItemsRendered = { this._onGridItemsRendered }

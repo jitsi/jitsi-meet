@@ -1,6 +1,4 @@
-// @flow
-
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 type Props = {
@@ -8,27 +6,27 @@ type Props = {
     /**
      * The component(s) to be displayed within the drawer portal.
      */
-    children: React$Node,
+    children: ReactNode;
 
     /**
      * Custom class name to apply on the container div.
      */
-    className?: string,
+    className?: string;
 
     /**
-     * Function used to get the refferrence to the container div.
+     * Function used to get the reference to the container div.
      */
-    getRef?: Function,
+    getRef?: Function;
 
     /**
      * Function used to get the updated size info of the container on it's resize.
      */
-    setSize?: Function,
+    setSize?: Function;
 
     /**
      * Custom style to apply to the container div.
      */
-    style?: Object,
+    style?: any;
 };
 
 /**
@@ -45,13 +43,12 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
 
         return portalDiv;
     });
-    const timerRef = useRef();
+    const timerRef = useRef<number>();
 
     useEffect(() => {
         if (style) {
             for (const styleProp of Object.keys(style)) {
-                // https://github.com/facebook/flow/issues/3733
-                const objStyle: Object = portalTarget.style;
+                const objStyle: any = portalTarget.style;
 
                 objStyle[styleProp] = style[styleProp];
             }
@@ -76,9 +73,9 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
             const { contentRect } = entries[0];
 
             if (contentRect.width !== size.width || contentRect.height !== size.height) {
-                setSize && setSize(contentRect);
+                setSize?.(contentRect);
                 clearTimeout(timerRef.current);
-                timerRef.current = setTimeout(() => {
+                timerRef.current = window.setTimeout(() => {
                     portalTarget.style.visibility = 'visible';
                 }, 100);
             }
@@ -98,8 +95,8 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
     }, []);
 
     return ReactDOM.createPortal(
-      children,
-      portalTarget
+        children,
+        portalTarget
     );
 }
 

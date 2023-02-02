@@ -1,7 +1,5 @@
-// @flow
-
-import { toState } from '../redux';
-import { StyleType } from '../styles';
+import { toState } from '../redux/functions';
+import { StyleType } from '../styles/functions.any';
 
 import defaultScheme from './defaultScheme';
 
@@ -90,7 +88,7 @@ class ColorSchemeRegistry {
             stateful: Object | Function,
             componentName: string,
             style: StyleType): StyleType {
-        let schemedStyle;
+        let schemedStyle: any;
 
         if (Array.isArray(style)) {
             // The style is an array of styles, we apply the same transformation
@@ -116,7 +114,7 @@ class ColorSchemeRegistry {
                     // The value is another style object, we apply the same
                     // transformation recursively.
                     schemedStyle[styleName]
-                        = this._applyColorScheme(
+                        = this._applyColorScheme( // @ts-ignore
                             stateful, componentName, styleValue);
                 } else if (typeof styleValue === 'function') {
                     // The value is a function, which indicates that it's a
@@ -149,11 +147,14 @@ class ColorSchemeRegistry {
             stateful: Object | Function,
             componentName: string,
             colorDefinition: string): string {
+        // @ts-ignore
         const colorScheme = toState(stateful)['features/base/color-scheme'] || {};
 
         return {
             ...defaultScheme._defaultTheme,
             ...colorScheme._defaultTheme,
+
+            // @ts-ignore
             ...defaultScheme[componentName],
             ...colorScheme[componentName]
         }[colorDefinition];

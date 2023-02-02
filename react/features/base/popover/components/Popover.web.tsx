@@ -1,9 +1,9 @@
 import React, { Component, ReactNode } from 'react';
 
 import { IReduxState } from '../../../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { DialogPortal, Drawer, JitsiPortal } from '../../../toolbox/components/web';
+import DialogPortal from '../../../toolbox/components/web/DialogPortal';
+import Drawer from '../../../toolbox/components/web/Drawer';
+import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
 import { isMobileBrowser } from '../../environment/utils';
 import { connect } from '../../redux/functions';
 import { getContextMenuStyle } from '../functions.web';

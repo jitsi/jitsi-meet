@@ -1,5 +1,4 @@
-// @flow
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import DialogPortal from './DialogPortal';
 
@@ -8,12 +7,12 @@ type Props = {
     /**
      * The component(s) to be displayed within the drawer portal.
      */
-    children: React$Node,
+    children: ReactNode;
 
     /**
      * Class name used to add custom styles to the portal.
      */
-    className?: string
+    className?: string;
 };
 
 /**

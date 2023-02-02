@@ -26,11 +26,13 @@ import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
 // @ts-ignore
 import MeetingParticipantItems from './MeetingParticipantItems';
+/* eslint-enable lines-around-comment */
 
 const useStyles = makeStyles()(theme => {
     return {
         heading: {
             color: theme.palette.text02,
+
             // @ts-ignore
             ...withPixelLineHeight(theme.typography.labelButton),
             margin: `8px 0 ${participantsPaneTheme.panePadding}px`,

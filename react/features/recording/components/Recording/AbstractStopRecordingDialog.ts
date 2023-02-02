@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -15,7 +16,7 @@ import LocalRecordingManager from './LocalRecordingManager';
  * The type of the React {@code Component} props of
  * {@link AbstractStopRecordingDialog}.
  */
-export interface IProps {
+export interface IProps extends WithTranslation {
 
     /**
      * The {@code JitsiConference} for the current conference.
@@ -41,11 +42,6 @@ export interface IProps {
      * The user trying to stop the video while local recording is running.
      */
     localRecordingVideoStop?: boolean;
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function;
 }
 
 /**

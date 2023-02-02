@@ -23,6 +23,7 @@ import FakeParticipantContextMenu from './FakeParticipantContextMenu';
 import ParticipantContextMenu from './ParticipantContextMenu';
 // @ts-ignore
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
+/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of

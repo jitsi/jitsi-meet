@@ -1,6 +1,4 @@
 
-// @flow
-
 import { isIconUrl } from './functions';
 
 /**
@@ -14,9 +12,9 @@ import { isIconUrl } from './functions';
  */
 export function preloadImage(
         src: string | Object,
-        useCORS: ?boolean = false,
-        tryOnce: ?boolean = false
-): Promise<Object> {
+        useCORS = false,
+        tryOnce = false
+): Promise<{ isUsingCORS?: boolean; src: string | Object; }> {
     if (isIconUrl(src)) {
         return Promise.resolve({ src });
     }
@@ -41,8 +39,9 @@ export function preloadImage(
             }
         };
 
-        // $FlowExpectedError
         image.referrerPolicy = 'no-referrer';
+
+        // @ts-ignore
         image.src = src;
     });
 }

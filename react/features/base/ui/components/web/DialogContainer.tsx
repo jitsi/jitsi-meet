@@ -3,9 +3,7 @@ import React, { Component, ComponentType } from 'react';
 
 import { IReduxState } from '../../../../app/types';
 import { IReactionEmojiProps } from '../../../../reactions/constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { JitsiPortal } from '../../../../toolbox/components/web';
+import JitsiPortal from '../../../../toolbox/components/web/JitsiPortal';
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import { connect } from '../../../redux/functions';
 

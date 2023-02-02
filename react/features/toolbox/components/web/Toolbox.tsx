@@ -2,7 +2,7 @@
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { batch } from 'react-redux';
+import { batch, connect } from 'react-redux';
 
 // @ts-expect-error
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
@@ -10,6 +10,7 @@ import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/funct
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
+import { IJitsiConference } from '../../../base/conference/reducer';
 import {
     getMultipleVideoSendingSupportFeatureFlag,
     getToolbarButtons,
@@ -27,8 +28,8 @@ import {
     hasRaisedHand,
     isLocalParticipantModerator
 } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 import { getLocalVideoTrack } from '../../../base/tracks/functions';
+import { ITrack } from '../../../base/tracks/types';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { toggleChat } from '../../../chat/actions.web';
@@ -138,6 +139,7 @@ import ShareDesktopButton from './ShareDesktopButton';
 import ToggleCameraButton from './ToggleCameraButton';
 // @ts-ignore
 import VideoSettingsButton from './VideoSettingsButton';
+/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -147,12 +149,12 @@ interface IProps extends WithTranslation {
     /**
      * String showing if the virtual background type is desktop-share.
      */
-    _backgroundType: String;
+    _backgroundType: string;
 
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    _buttonsWithNotifyClick: Array<string | {
+    _buttonsWithNotifyClick?: Array<string | {
         key: string;
         preventExecution: boolean;
     }>;
@@ -170,7 +172,7 @@ interface IProps extends WithTranslation {
     /**
      * The {@code JitsiConference} for the current conference.
      */
-    _conference: Object;
+    _conference?: IJitsiConference;
 
     /**
      * Whether or not screensharing button is disabled.
@@ -205,7 +207,7 @@ interface IProps extends WithTranslation {
     /**
      * Whether or not the app is currently in full screen.
      */
-    _fullScreen: boolean;
+    _fullScreen?: boolean;
 
     /**
      * Whether or not the GIFs feature is enabled.
@@ -245,7 +247,7 @@ interface IProps extends WithTranslation {
     /**
      * Whether or not speaker stats is disable.
      */
-    _isSpeakerStatsDisabled: boolean;
+    _isSpeakerStatsDisabled?: boolean;
 
 
     /**
@@ -261,12 +263,12 @@ interface IProps extends WithTranslation {
     /**
      * The ID of the local participant.
      */
-    _localParticipantID: String;
+    _localParticipantID?: string;
 
     /**
      * The JitsiLocalTrack to display.
      */
-    _localVideo: Object;
+    _localVideo?: ITrack;
 
     /**
      * Whether or not multi-stream send support is enabled.
@@ -306,7 +308,7 @@ interface IProps extends WithTranslation {
     /**
      * Whether or not the local participant is sharing a YouTube video.
      */
-    _sharingVideo: boolean;
+    _sharingVideo?: boolean;
 
     /**
      * Whether or not the tile view is enabled.
@@ -1540,7 +1542,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
 
     return {
-        _backgroundType: state['features/virtual-background'].backgroundType,
+        _backgroundType: state['features/virtual-background'].backgroundType ?? '',
         _buttonsWithNotifyClick: buttonsWithNotifyClick,
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
