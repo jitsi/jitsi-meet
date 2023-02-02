@@ -391,7 +391,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._frame.name = frameName;
         this._frame.id = frameName;
         this._setSize(height, width);
-        this._frame.sandbox = 'allow-scripts allow-same-origin allow-popups allow-forms';
+        this._frame.sandbox = 'allow-scripts allow-same-origin allow-popups allow-forms allow-downloads';
         this._frame.setAttribute('allowFullScreen', 'true');
         this._frame.style.border = 0;
 
