@@ -185,6 +185,7 @@ function _handleLobbyNotification(store: IStore) {
     let customActionHandler;
     let descriptionKey;
     let icon;
+    let concatText;
 
     if (knockingParticipants.length === 1) {
         const firstParticipant = knockingParticipants[0];
@@ -226,9 +227,15 @@ function _handleLobbyNotification(store: IStore) {
             waitingParticipants: knockingParticipants.length
         });
         icon = NOTIFICATION_ICON.PARTICIPANTS;
+        concatText = true;
         customActionNameKey = [ 'notify.viewLobby' ];
         customActionHandler = [ () => batch(() => {
             dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+
+            if (navigator.product === 'ReactNative') {
+                navigate(screen.conference.participants);
+            }
+
             dispatch(openParticipantsPane());
         }) ];
     }
@@ -239,6 +246,7 @@ function _handleLobbyNotification(store: IStore) {
         uid: LOBBY_NOTIFICATION_ID,
         customActionNameKey,
         customActionHandler,
+        concatText,
         icon
     }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 }
