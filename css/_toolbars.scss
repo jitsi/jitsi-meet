@@ -135,11 +135,11 @@
 }
 
 .hangup-menu-button {
-    background-color: $hangupMenuButtonColor;
+    background-color: $hangupColor;
 
     @media (hover: hover) and (pointer: fine) {
         &:hover {
-            background-color: $hangupMenuButtonHoverColor;
+            background-color: $hangupHoverColor;
         }
     }
 
