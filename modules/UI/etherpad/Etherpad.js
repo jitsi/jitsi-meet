@@ -35,7 +35,7 @@ class Etherpad extends LargeContainer {
 
         iframe.id = 'etherpadIFrame';
         iframe.src = url;
-        iframe.frameBorder = 0;
+        iframe.style.border = 0;
         iframe.scrolling = 'no';
         iframe.width = DEFAULT_WIDTH;
         iframe.height = DEFAULT_HEIGHT;
