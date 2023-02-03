@@ -231,6 +231,11 @@ const LocalRecordingManager: ILocalRecordingManager = {
                 });
             }
 
+            // handle no mic permission
+            if (!getLocalTrack(getTrackState(getState()), MEDIA_TYPE.AUDIO)?.jitsiTrack?.track) {
+                throw new Error('NoMicTrack');
+            }
+
             const currentTitle = document.title;
 
             document.title = i18next.t('localRecording.selectTabTitle');
