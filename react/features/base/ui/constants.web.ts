@@ -228,7 +228,11 @@ export const commonStyles = (theme: Theme) => {
 
             '@media (hover: hover) and (pointer: fine)': {
                 '&:hover': {
-                    background: theme.palette.ui04
+                    backgroundColor: theme.palette.ui04
+                },
+
+                '&:active': {
+                    backgroundColor: theme.palette.ui03
                 }
             },
             [theme.breakpoints.down(320)]: {
@@ -237,7 +241,7 @@ export const commonStyles = (theme: Theme) => {
             },
 
             '&.toggled': {
-                background: theme.palette.ui03
+                backgroundColor: theme.palette.ui03
             },
 
             '&.disabled': {
@@ -265,7 +269,15 @@ export const commonStyles = (theme: Theme) => {
             padding: 6,
             textAlign: 'center' as const,
             pointerEvents: 'all' as const,
-            boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)'
+            boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)',
+
+            '& > div': {
+                marginRight: theme.spacing(2),
+
+                '&:last-of-type': {
+                    marginRight: 0
+                }
+            }
         }
     };
 };
