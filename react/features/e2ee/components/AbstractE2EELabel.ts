@@ -1,32 +1,28 @@
-// @flow
+import { WithTranslation } from 'react-i18next';
 
+import { IReduxState } from '../../app/types';
 
-export type Props = {
+export interface IProps extends WithTranslation {
 
     /**
      * Custom e2ee labels.
      */
-    _e2eeLabels?: Object;
+    _e2eeLabels?: any;
 
     /**
      * True if the label needs to be rendered, false otherwise.
      */
-    _showLabel: boolean,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    _showLabel?: boolean;
+}
 
 /**
  * Maps (parts of) the redux state to the associated props of this {@code Component}.
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     const { e2ee = {} } = state['features/base/config'];
 
     return {

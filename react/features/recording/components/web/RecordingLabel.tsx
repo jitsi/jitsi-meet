@@ -3,6 +3,7 @@ import { withStyles } from '@mui/styles';
 import React from 'react';
 
 import { translate } from '../../../base/i18n/functions';
+import { IconRecord, IconSites } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux/functions';
@@ -22,10 +23,10 @@ import AbstractRecordingLabel, {
 const styles = (theme: Theme) => {
     return {
         [JitsiRecordingConstants.mode.STREAM]: {
-            background: theme.palette.ui03
+            background: theme.palette.support07
         },
         [JitsiRecordingConstants.mode.FILE]: {
-            background: theme.palette.iconError
+            background: theme.palette.actionDanger
         }
     };
 };
@@ -51,15 +52,13 @@ class RecordingLabel extends AbstractRecordingLabel {
         }
 
         // @ts-ignore
-        const { classes, mode, t } = this.props;
+        const { classes, mode } = this.props;
 
         return (
             <div>
                 <Label
                     className = { classes?.[mode] }
-
-                    // @ts-ignore
-                    text = { t(this._getLabelKey()) } />
+                    icon = { mode === JitsiRecordingConstants.mode.FILE ? IconRecord : IconSites } />
             </div>
         );
     }
