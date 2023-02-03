@@ -89,7 +89,7 @@
     "chat": {
         "enter": "Entrar na sala",
         "error": "Erro: a sua mensagem não foi enviada. Motivo: {{error}}",
-        "fieldPlaceHolder": "Escreva aqui a sua mensagem",
+        "fieldPlaceHolder": "Aa",
         "lobbyChatMessageTo": "Mensagem de chat na sala de espera para {{recipient}}",
         "message": "Mensagem",
         "messageAccessibleTitle": "{{user}} disse:",
@@ -147,6 +147,7 @@
         "bridgeCount": "Servidores: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Ligado a:",
+        "e2eeVerified": "E2EE verificada:",
         "framerate": "Taxa de frames:",
         "less": "Mostrar menos",
         "localaddress": "Endereço local:",
@@ -266,7 +267,7 @@
         "e2eeWarning": "AVISO: Nem todos os participantes neste encontro parecem ter apoio para a encriptação de ponta a ponta. Se o permitir, eles não o poderão ver nem ouvir.",
         "e2eeWillDisableDueToMaxModeDescription": "AVISO: A encriptação de ponta a ponta será automaticamente desativada se mais participantes aderirem à conferência.",
         "embedMeeting": "Embutir reunião",
-        "enterDisplayName": "Digite o seu nome aqui",
+        "enterDisplayName": "Digite o seu nome",
         "error": "Erro",
         "gracefulShutdown": "O nosso serviço está atualmente em manutenção. Por favor, tente novamente mais tarde.",
         "grantModeratorDialog": "Tem a certeza que quer conceder direitos de moderador a {{participantName}}?",
@@ -408,6 +409,10 @@
         "user": "Utilizador",
         "userIdentifier": "Identificador do utilizador",
         "userPassword": "Palavra-passe do utilizador",
+        "verifyParticipantConfirm": "Coincidem",
+        "verifyParticipantDismiss": "Não coincidem",
+        "verifyParticipantQuestion": "EXPERIMENTAL: Perguntar ao participante {{participantName}} se vêem o mesmo conteúdo, na mesma ordem.",
+        "verifyParticipantTitle": "Verificação pelo utilizador",
         "videoLink": "Link do vídeo",
         "viewUpgradeOptions": "Ver opções de actualização",
         "viewUpgradeOptionsContent": "Para obter acesso ilimitado a funcionalidades premium como gravação, transcrições, RTMP Streaming & mais, terá de actualizar o seu plano.",
@@ -436,9 +441,6 @@
     "giphy": {
         "noResults": "Não foram encontrados resultados :(",
         "search": "Procurar no GIPHY"
-    },
-    "helpView": {
-        "title": "Centro de ajuda"
     },
     "incomingCall": {
         "answer": "Responder",
@@ -563,7 +565,6 @@
     "lobby": {
         "admit": "Aceitar",
         "admitAll": "Aceitar todos",
-        "allow": "Permitir",
         "backToKnockModeButton": "Peça para aderir",
         "chat": "Chat",
         "dialogTitle": "Modo sala de espera",
@@ -649,6 +650,8 @@
         "connectedOneMember": "{{name}} entrou na reunião",
         "connectedThreePlusMembers": "{{name}} e muitos outros entraram na reunião",
         "connectedTwoMembers": "{{first}} e {{second}} entraram na reunião",
+        "dataChannelClosed": "Deficiência na qualidade do vídeo",
+        "dataChannelClosedDescription": "O canal de ponte foi desconectado e, portanto, a qualidade do vídeo está limitada à sua configuração mais baixa.",
         "disconnected": "desconectado",
         "displayNotifications": "Mostrar notificações para",
         "focus": "Foco da conferência",
@@ -709,6 +712,8 @@
         "reactionSoundsForAll": "Desativar sons para todos",
         "screenShareNoAudio": "A caixa de compartilhar áudio não foi marcada no ecrã de seleção da janela.",
         "screenShareNoAudioTitle": "Não foi possível partilhar o áudio do sistema!",
+        "screenSharingAudioOnlyDescription": "Note por favor que ao partilhar o seu ecrã está a afectar o modo \"Melhor desempenho\" e irá utilizar mais largura de banda.",
+        "screenSharingAudioOnlyTitle": "Modo \"Melhor desempenho\"",
         "selfViewTitle": "Pode sempre reexibir a autovisualização a partir das definições",
         "somebody": "Alguém",
         "startSilentDescription": "Volte à reunião para habilitar o áudio",
@@ -858,9 +863,6 @@
         "rejected": "Rejeitado",
         "ringing": "Tocando..."
     },
-    "privacyView": {
-        "title": "Privacidade"
-    },
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "Definir seu nome de exibição",
@@ -914,6 +916,7 @@
         "localRecordingVideoWarning": "Para gravar o seu vídeo deve tê-lo ligado quando iniciar a gravação",
         "localRecordingWarning": "Certifique-se de selecionar o separador actual a fim de utilizar o vídeo e áudio corretos. A gravação está actualmente limitada a 1 GB, o que é cerca de 100 minutos.",
         "loggedIn": "Conectado como {{userName}}",
+        "noMicPermission": "Não foi possível criar a faixa de microfone. Por favor, conceda permissão para utilizar o microfone.",
         "noStreams": "Não foi detetado nenhum sinal áudio ou vídeo.",
         "off": "Gravação parada",
         "offBy": "{{name}} parou a gravação",
@@ -964,7 +967,7 @@
         "incomingMessage": "Receber uma mensagem",
         "language": "Idioma",
         "loggedIn": "Sessão iniciada como {{name}}",
-        "maxStageParticipants": "Número máximo de participantes que podem ser afixados",
+        "maxStageParticipants": "Número máximo de participantes que podem ser afixados (EXPERIMENTAL)",
         "microphones": "Microfones",
         "moderator": "Moderador",
         "more": "Mais",
@@ -983,7 +986,7 @@
         "sounds": "Sons",
         "speakers": "Participantes",
         "startAudioMuted": "Todos começam com microfone desligado",
-        "startReactionsMuted": "Sons de reação silenciados para todos",
+        "startReactionsMuted": "Todos começam com os sons de reação desativados",
         "startVideoMuted": "Todos começam com câmara desligada",
         "talkWhileMuted": "Falar com o microfone desligado",
         "title": "Definições"
@@ -1003,6 +1006,7 @@
         "displayName": "Nome de exibição",
         "displayNamePlaceholderText": "Ex: João Dias",
         "email": "Email",
+        "emailPlaceholderText": "email@example.com",
         "goTo": "Ir para",
         "header": "Configurações",
         "help": "Ajuda",
@@ -1291,6 +1295,7 @@
         "show": "Mostrar no palco",
         "showSelfView": "Mostrar autovisualização",
         "unpinFromStage": "Desafixar",
+        "verify": "Verificar participante",
         "videoMuted": "Câmara desativada",
         "videomute": "Participante parou a câmara"
     },
@@ -1358,6 +1363,7 @@
         "recentList": "Recente",
         "recentListDelete": "Remover",
         "recentListEmpty": "A sua lista recente está atualmente vazia. Converse com a sua equipa e encontrará aqui todas as suas reuniões recentes.",
+        "recentMeetings": "As suas reuniões recentes",
         "reducedUIText": "Bem-vindo ao {{app}}!",
         "roomNameAllowedChars": "Nome da reunião não deve conter qualquer um destes caracteres: ?. &, :, ', \", %, #.",
         "roomname": "Digite o nome da sala",
@@ -1366,6 +1372,7 @@
         "settings": "Definições",
         "startMeeting": "Iniciar reunião",
         "terms": "Termos",
-        "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas"
+        "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas",
+        "upcomingMeetings": "As suas próximas reuniões"
     }
 }
