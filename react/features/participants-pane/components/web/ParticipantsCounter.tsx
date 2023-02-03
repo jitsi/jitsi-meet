@@ -16,8 +16,8 @@ const useStyles = makeStyles()(theme => {
             ...withPixelLineHeight(theme.typography.labelBold),
             pointerEvents: 'none',
             position: 'absolute',
-            right: '-3px',
-            top: '-2px'
+            right: '-4px',
+            top: '-3px'
         }
     };
 });
