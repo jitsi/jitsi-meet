@@ -6,7 +6,7 @@
         border-radius: 3px;
         font-size: 14px;
         line-height: 24px;
-        max-height: 456px;
+        max-height: 80vh;
         overflow: auto;
         width: 300px;
         &-ul {
@@ -59,9 +59,8 @@
             color: #fff;
             display: inline-block;
             line-height: 24px;
-            text-overflow: ellipsis;
             max-width: 213px;
-            overflow: hidden;
+            overflow-x: scroll;
             white-space: nowrap;
         }
     }
