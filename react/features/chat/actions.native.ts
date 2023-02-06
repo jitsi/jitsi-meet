@@ -26,8 +26,8 @@ export * from './actions.any';
 export function openChat(participant: Object, pollsDisabled: boolean) {
     return {
         lobbyChatRoute: pollsDisabled
-            ? screen.conference.chat
-            : screen.conference.chatandpolls.main,
+            ? navigate(screen.conference.chat)
+            : navigate(screen.conference.chatandpolls.main),
         participant,
         privateChatRoute: pollsDisabled
             ? navigate(screen.conference.chat, {
