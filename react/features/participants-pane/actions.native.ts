@@ -12,24 +12,9 @@ import ConnectionStatusComponent
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
 
 import { SET_VOLUME } from './actionTypes';
-import {
-    ContextMenuLobbyParticipantReject
-    // @ts-ignore
-} from './components/native';
 import RoomParticipantMenu from './components/native/RoomParticipantMenu';
+
 export * from './actions.any';
-/* eslint-enable lines-around-comment */
-
-/**
- * Displays the context menu for the selected lobby participant.
- *
- * @param {Object} participant - The selected lobby participant.
- * @returns {Function}
- */
-export function showContextMenuReject(participant: Object) {
-    return openSheet(ContextMenuLobbyParticipantReject, { participant });
-}
-
 
 /**
  * Displays the connection status for the local meeting participant.
