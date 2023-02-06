@@ -179,7 +179,7 @@ interface IProps extends WithTranslation {
     /**
      * Custom Toolbar buttons.
      */
-    _customToolbarButtons: Array<{ icon: string; id: string; text: string; }>;
+    _customToolbarButtons?: Array<{ icon: string; id: string; text: string; }>;
 
     /**
      * Whether or not screensharing button is disabled.
