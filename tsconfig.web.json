@@ -2,8 +2,8 @@
     "include": ["react/features/**/*.ts", "react/features/**/*.tsx", "./custom.d.ts", "./globals.d.ts"],
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
-        "module": "es6",
-        "target": "es6",
+        "module": "es2020",
+        "target": "es2020",
         "jsx": "react",
         "lib": [ "webworker", "ES2020", "DOM" ],
         "skipLibCheck": true,

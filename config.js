@@ -1335,6 +1335,7 @@ var config = {
      deploymentInfo
      dialOutAuthUrl
      dialOutCodesUrl
+     dialOutRegionUrl
      disableRemoteControl
      displayJids
      externalConnectUrl
