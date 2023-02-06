@@ -225,11 +225,6 @@ function _handleLobbyNotification(store: IStore) {
         customActionNameKey = [ 'notify.viewLobby' ];
         customActionHandler = [ () => batch(() => {
             dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-
-            // if (navigator.product === 'ReactNative') {
-            //     navigate(screen.conference.participants);
-            // }
-
             dispatch(openParticipantsPane());
         }) ];
     }

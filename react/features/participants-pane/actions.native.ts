@@ -1,6 +1,11 @@
 /* eslint-disable lines-around-comment */
 import { IStore } from '../app/types';
 import { openSheet } from '../base/dialog/actions';
+import { navigate }
+// @ts-ignore
+    from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+// @ts-ignore
+import { screen } from '../mobile/navigation/routes';
 // @ts-ignore
 import { SharedVideoMenu } from '../video-menu';
 // @ts-ignore
@@ -11,7 +16,7 @@ import ConnectionStatusComponent
 // @ts-ignore
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
 
-import { SET_VOLUME } from './actionTypes';
+import { PARTICIPANTS_PANE_OPEN, SET_VOLUME } from './actionTypes';
 import RoomParticipantMenu from './components/native/RoomParticipantMenu';
 
 export * from './actions.any';
@@ -88,3 +93,15 @@ export function showRoomParticipantMenu(room: Object, participantJid: string, pa
         participantJid,
         participantName });
 }
+
+/**
+ * Action to open the participants pane.
+ *
+ * @returns {Object}
+ */
+export const open = () => {
+    return {
+        participantsPaneRoute: navigate(screen.conference.participants),
+        type: PARTICIPANTS_PANE_OPEN
+    };
+};
