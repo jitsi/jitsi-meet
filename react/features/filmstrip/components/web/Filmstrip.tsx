@@ -853,6 +853,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     { ...actions }>
                     <Icon
                         aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
+                        size = { 24 }
                         src = { icon } />
                 </button>
             </div>

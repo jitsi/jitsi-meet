@@ -20,7 +20,7 @@ export const styles = (theme: Theme) => {
             height: '24px',
             position: 'absolute' as const,
             borderRadius: '4px',
-            top: 'calc(-24px - 3px)',
+            top: 'calc(-24px - 2px)',
             left: 'calc(50% - 16px)',
             opacity: 0,
             transition: 'opacity .3s',
@@ -51,7 +51,7 @@ export const styles = (theme: Theme) => {
 
         toggleVerticalFilmstripContainer: {
             transform: 'rotate(-90deg)',
-            left: 'calc(-24px - 3px - 4px)',
+            left: 'calc(-24px - 2px - 4px)',
             top: 'calc(50% - 12px)'
         },
 

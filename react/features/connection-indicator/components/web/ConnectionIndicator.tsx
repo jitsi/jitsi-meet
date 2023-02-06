@@ -147,7 +147,7 @@ const styles = (theme: Theme) => {
         },
 
         icon: {
-            padding: '6px',
+            padding: '4px',
             borderRadius: '4px',
 
             '&.status-high': {

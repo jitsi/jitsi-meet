@@ -337,7 +337,7 @@ const defaultStyles = (theme: Theme) => {
 
         activeSpeaker: {
             '& .active-speaker-indicator': {
-                boxShadow: `inset 0px 0px 0px 4px ${theme.palette.link01Active} !important`
+                boxShadow: `inset 0px 0px 0px 3px ${theme.palette.action01Hover} !important`
             }
         },
 
