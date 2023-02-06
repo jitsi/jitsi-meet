@@ -14,12 +14,9 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { isTestModeEnabled } from '../base/testing/functions';
+// @ts-ignore
+import { openChat } from '../chat/actions';
 import { handleLobbyChatInitialized, removeLobbyChatParticipant } from '../chat/actions.any';
-import { navigate }
-// @ts-ignore
-    from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-// @ts-ignore
-import { screen } from '../mobile/navigation/routes';
 import {
     hideNotification,
     showNotification
@@ -53,6 +50,7 @@ import { KNOCKING_PARTICIPANT_SOUND_ID } from './constants';
 import { getKnockingParticipants, showLobbyChatButton } from './functions';
 import { KNOCKING_PARTICIPANT_FILE } from './sounds';
 import { IKnockingParticipant } from './types';
+
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -192,10 +190,6 @@ function _handleLobbyNotification(store: IStore) {
         const { disablePolls } = getState()['features/base/config'];
         const showChat = showLobbyChatButton(firstParticipant)(getState());
 
-        const chatRoute = disablePolls
-            ? screen.conference.chat
-            : screen.conference.chatandpolls.main;
-
         descriptionKey = 'notify.participantWantsToJoin';
         notificationTitle = firstParticipant.name;
         icon = NOTIFICATION_ICON.PARTICIPANT;
@@ -209,15 +203,15 @@ function _handleLobbyNotification(store: IStore) {
             dispatch(rejectKnockingParticipant(firstParticipant.id));
         }) ];
 
+        // This checks if lobby chat button is available
+        // and, if so, it adds it to the customActionNameKey array
         if (showChat) {
             customActionNameKey.splice(1, 0, 'lobby.chat');
-            customActionHandler.splice(1, 0, () => {
+            customActionHandler.splice(1, 0, () => batch(() => {
                 dispatch(handleLobbyChatInitialized(firstParticipant.id));
-
-                if (navigator.product === 'ReactNative') {
-                    navigate(chatRoute);
-                }
-            });
+                // @ts-ignore
+                dispatch(openChat(disablePolls));
+            }));
         }
     }
 
@@ -232,9 +226,9 @@ function _handleLobbyNotification(store: IStore) {
         customActionHandler = [ () => batch(() => {
             dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
 
-            if (navigator.product === 'ReactNative') {
-                navigate(screen.conference.participants);
-            }
+            // if (navigator.product === 'ReactNative') {
+            //     navigate(screen.conference.participants);
+            // }
 
             dispatch(openParticipantsPane());
         }) ];
