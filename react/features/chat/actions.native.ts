@@ -13,19 +13,17 @@ export * from './actions.any';
 /**
  * Displays the chat panel.
  *
- * @param {string} lobbyChatRoute - The route for the lobby chat.
  * @param {Object} participant - The recipient for the private chat.
- * @param {string} privateChatRoute - The route for the private chat.
  * @param {boolean} pollsDisabled - Checks if polls are disabled.
  *
  * @returns {{
- *     lobbyChatRoute: lobbyChatRoute,
- *     participant: Participant,
- *     privateChatRoute: privateChatRoute,
+ *     lobbyChatRoute,
+ *     participant: participant,
+ *     privateChatRoute,
  *     type: OPEN_CHAT
  * }}
  */
-export function openChat(lobbyChatRoute: string, participant: Object, privateChatRoute: string, pollsDisabled: boolean) {
+export function openChat(participant: Object, pollsDisabled: boolean) {
     return {
         lobbyChatRoute: pollsDisabled
             ? screen.conference.chat
