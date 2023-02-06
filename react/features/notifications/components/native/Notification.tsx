@@ -104,7 +104,7 @@ class Notification extends AbstractNotification<Props> {
                                 this._onDismissed();
                             }
                         } }
-                        rippleColor = { false }
+                        useRippleColor = { false }
                         type = { BUTTON_TYPES.TERTIARY } />
                 );
             });

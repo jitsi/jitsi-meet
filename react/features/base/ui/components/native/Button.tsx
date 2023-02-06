@@ -16,7 +16,7 @@ export interface IProps extends IButtonProps {
     color?: string;
     contentStyle?: Object | undefined;
     labelStyle?: Object | undefined;
-    rippleColor?: boolean;
+    useRippleColor?: boolean;
     style?: Object | undefined;
 }
 
@@ -29,7 +29,7 @@ const Button: React.FC<IProps> = ({
     labelKey,
     labelStyle,
     onClick: onPress,
-    rippleColor = true,
+    useRippleColor = true,
     style,
     type
 }: IProps) => {
@@ -38,7 +38,7 @@ const Button: React.FC<IProps> = ({
     const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
 
     const enableRippleColor
-        = rippleColor ? BaseTheme.palette.action03Active : 'transparent';
+        = useRippleColor ? BaseTheme.palette.action03Active : 'transparent';
 
     let buttonLabelStyles;
     let buttonStyles;
@@ -70,7 +70,7 @@ const Button: React.FC<IProps> = ({
     }
 
     if (type === TERTIARY) {
-        buttonLabelStyles = rippleColor && disabled
+        buttonLabelStyles = useRippleColor && disabled
             ? styles.buttonLabelTertiaryDisabled : styles.buttonLabelTertiary;
 
         return (
