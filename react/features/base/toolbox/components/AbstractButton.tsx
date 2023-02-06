@@ -1,80 +1,76 @@
-// @flow
-
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
-import { combineStyles } from '../../styles';
+import { combineStyles } from '../../styles/functions.any';
 
 import type { Styles } from './AbstractToolboxItem';
 import ToolboxItem from './ToolboxItem';
 
-export type Props = {|
+export type Props = {
 
     /**
      * Function to be called after the click handler has been processed.
      */
-    afterClick: ?Function,
+    afterClick?: Function;
 
     /**
      * The button's key.
      */
-    buttonKey?: string,
+    buttonKey?: string;
 
     /**
      * Whether or not the button is displayed in a context menu.
      */
-    contextMenu?: boolean,
+    contextMenu?: boolean;
 
     /**
      * An extra class name to be added at the end of the element's class name
      * in order to enable custom styling.
      */
-    customClass?: string,
+    customClass?: string;
 
     /**
      * Extra styles which will be applied in conjunction with `styles` or
      * `toggledStyles` when the button is disabled;.
      */
-    disabledStyles: ?Styles,
+    disabledStyles?: Styles;
 
     /**
      * External handler for click action.
      */
-    handleClick?: Function,
+    handleClick?: Function;
 
     /**
      * Notify mode for `toolbarButtonClicked` event -
      * whether to only notify or to also prevent button click routine.
      */
-    notifyMode?: string,
+    notifyMode?: string;
 
     /**
      * Whether to show the label or not.
      */
-    showLabel: boolean,
+    showLabel: boolean;
 
     /**
      * Collection of styles for the button.
      */
-    styles: ?Styles,
+    styles?: Styles;
 
     /**
      * Collection of styles for the button, when in toggled state.
      */
-    toggledStyles: ?Styles,
+    toggledStyles?: Styles;
 
     /**
      * From which direction the tooltip should appear, relative to the button.
      */
-    tooltipPosition: string,
+    tooltipPosition: string;
 
     /**
      * Whether this button is visible or not.
      */
-    visible: boolean
-|};
-
-declare var APP: Object;
+    visible: boolean;
+};
 
 /**
  * Default style for disabled buttons.
@@ -93,7 +89,7 @@ export const defaultDisabledButtonStyles = {
 /**
  * An abstract implementation of a button.
  */
-export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
+export default class AbstractButton<P extends Props, S> extends Component<P, S> {
     static defaultProps = {
         afterClick: undefined,
         disabledStyles: defaultDisabledButtonStyles,
@@ -146,7 +142,9 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      *
      * @abstract
      */
-    tooltip: ?string;
+    get tooltip(): string | undefined {
+        return undefined;
+    }
 
     /**
      * Initializes a new {@code AbstractButton} instance.
@@ -229,7 +227,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @private
      * @returns {?Styles}
      */
-    _getStyles(): ?Styles {
+    _getStyles(): Styles | undefined {
         const { disabledStyles, styles, toggledStyles } = this.props;
         const buttonStyles
             = (this._isToggled() ? toggledStyles : styles) || styles;
@@ -280,10 +278,8 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @returns {?boolean}
      */
     _isToggled() {
-        return undefined;
+        return false;
     }
-
-    _onClick: (*) => void;
 
     /**
      * Handles clicking / pressing the button.
@@ -292,7 +288,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @private
      * @returns {void}
      */
-    _onClick(e) {
+    _onClick(e: React.MouseEvent<HTMLElement>) {
         const { afterClick, handleClick, notifyMode, buttonKey } = this.props;
 
         if (typeof APP !== 'undefined' && notifyMode) {
@@ -309,9 +305,10 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
             this._handleClick();
         }
 
-        afterClick && afterClick(e);
+        afterClick?.(e);
 
         // blur after click to release focus from button to allow PTT.
+        // @ts-ignore
         e?.currentTarget?.blur && e.currentTarget.blur();
     }
 
@@ -321,7 +318,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @inheritdoc
      * @returns {React$Node}
      */
-    render(): React$Node {
+    render(): ReactNode {
         const props = {
             ...this.props,
             accessibilityLabel: this.accessibilityLabel,
@@ -337,6 +334,8 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
         return (
             <ToolboxItem
                 disabled = { this._isDisabled() }
+
+                // @ts-ignore
                 onClick = { this._onClick }
                 onKeyDown = { this._onKeyDown }
                 { ...props } />

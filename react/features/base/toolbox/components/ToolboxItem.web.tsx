@@ -1,8 +1,8 @@
-// @flow
-
 import React, { Fragment } from 'react';
 
-import { Icon } from '../../icons';
+import Icon from '../../icons/components/Icon';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { Tooltip } from '../../tooltip';
 import ContextMenuItem from '../../ui/components/web/ContextMenuItem';
 
@@ -14,12 +14,12 @@ type Props = AbstractToolboxItemProps & {
     /**
      * Whether or not the item is displayed in a context menu.
      */
-    contextMenu?: boolean,
+    contextMenu?: boolean;
 
     /**
     * On key down handler.
     */
-    onKeyDown: Function
+    onKeyDown: (e?: React.KeyboardEvent) => void;
 };
 
 /**
@@ -37,8 +37,6 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         this._onKeyPress = this._onKeyPress.bind(this);
     }
 
-    _onKeyPress: (Object) => void;
-
     /**
      * Handles 'Enter' and Space key on the button to trigger onClick for accessibility.
      *
@@ -46,9 +44,9 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
      * @private
      * @returns {void}
      */
-    _onKeyPress(event) {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
+    _onKeyPress(event?: React.KeyboardEvent) {
+        if (event?.key === 'Enter' || event?.key === ' ') {
+            event?.preventDefault();
             this.props.onClick();
         }
     }
@@ -92,13 +90,13 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
 
         if (contextMenu) {
             return (<ContextMenuItem
-                accessibilityLabel = { this.accessibilityLabel }
+                accessibilityLabel = { this.accessibilityLabel ?? '' }
                 disabled = { disabled }
                 icon = { icon }
                 onClick = { onClick }
                 onKeyDown = { onKeyDown }
                 onKeyPress = { this._onKeyPress }
-                text = { this.label } />);
+                text = { this.label ?? '' } />);
         }
         let children = (
             <Fragment>

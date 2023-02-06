@@ -1,29 +1,29 @@
-// @flow
+import React, { ReactNode } from 'react';
+import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
-import React from 'react';
-
-import { translate } from '../../../base/i18n';
-import { IconMessage } from '../../../base/icons';
-import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { IReduxState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
+import { IconMessage } from '../../../base/icons/svg';
+import AbstractButton, { Props as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 import ChatCounter from './ChatCounter';
 
 /**
  * The type of the React {@code Component} props of {@link ChatButton}.
  */
-type Props = AbstractButtonProps & {
+interface IProps extends AbstractButtonProps, WithTranslation {
 
     /**
      * Whether or not the chat feature is currently displayed.
      */
-    _chatOpen: boolean,
-};
+    _chatOpen: boolean;
+}
 
 /**
  * Implementation of a button for accessing chat pane.
  */
-class ChatButton extends AbstractButton<Props, *> {
+class ChatButton extends AbstractButton<IProps, any> {
     accessibilityLabel = 'toolbar.accessibilityLabel.chat';
     icon = IconMessage;
     label = 'toolbar.openChat';
@@ -67,7 +67,7 @@ class ChatButton extends AbstractButton<Props, *> {
      * @protected
      * @returns {boReact$Nodeolean}
      */
-    render(): React$Node {
+    render(): ReactNode {
         return (
             <div
                 className = 'toolbar-button-with-badge'
@@ -85,7 +85,7 @@ class ChatButton extends AbstractButton<Props, *> {
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-const mapStateToProps = state => {
+const mapStateToProps = (state: IReduxState) => {
     return {
         _chatOpen: state['features/chat'].isOpen
     };

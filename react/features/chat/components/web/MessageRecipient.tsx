@@ -1,10 +1,10 @@
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
 import { IconCloseLarge } from '../../../base/icons/svg';
-import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';

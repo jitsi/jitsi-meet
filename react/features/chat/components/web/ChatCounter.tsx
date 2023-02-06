@@ -1,26 +1,25 @@
-// @flow
-
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import { connect } from '../../../base/redux';
+import { IReduxState } from '../../../app/types';
 import { getUnreadPollCount } from '../../../polls/functions';
 import { getUnreadCount } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of {@link ChatCounter}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The value of to display as a count.
      */
-    _count: number,
+    _count: number;
 
     /**
      * True if the chat window should be rendered.
      */
-    _isOpen: boolean
-};
+    _isOpen: boolean;
+}
 
 /**
  * Implements a React {@link Component} which displays a count of the number of
@@ -28,7 +27,7 @@ type Props = {
  *
  * @augments Component
  */
-class ChatCounter extends Component<Props> {
+class ChatCounter extends Component<IProps> {
 
     /**
      * Implements React's {@link Component#render()}.
@@ -61,14 +60,12 @@ class ChatCounter extends Component<Props> {
  *     _count: number
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     const { isOpen } = state['features/chat'];
 
     return {
-
         _count: getUnreadCount(state) + getUnreadPollCount(state),
         _isOpen: isOpen
-
     };
 }
 

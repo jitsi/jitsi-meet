@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useEffect, useState } from 'react';
 
 import { isIosMobileBrowser } from '../../../base/environment/utils';

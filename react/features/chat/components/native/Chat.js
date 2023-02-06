@@ -9,7 +9,7 @@ import { connect } from '../../../base/redux';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
 import { closeChat } from '../../actions.native';
 import AbstractChat, {
-    type Props as AbstractProps,
+    type IProps as AbstractProps,
     _mapStateToProps
 } from '../AbstractChat';
 

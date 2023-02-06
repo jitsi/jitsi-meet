@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import Emoji from 'react-emoji-render';
 
@@ -14,7 +12,7 @@ type Props = {
      * Callback to invoke when a smiley is selected. The smiley will be passed
      * back.
      */
-    onSmileySelect: Function
+    onSmileySelect: Function;
 };
 
 /**
@@ -38,8 +36,6 @@ class SmileysPanel extends PureComponent<Props> {
         this._onEscKey = this._onEscKey.bind(this);
     }
 
-    _onEscKey: (Object) => void;
-
     /**
      * KeyPress handler for accessibility.
      *
@@ -47,7 +43,7 @@ class SmileysPanel extends PureComponent<Props> {
      *
      * @returns {void}
      */
-    _onEscKey(e) {
+    _onEscKey(e: React.KeyboardEvent) {
         // Escape handling does not work in onKeyPress
         if (e.key === 'Escape') {
             e.preventDefault();
@@ -56,8 +52,6 @@ class SmileysPanel extends PureComponent<Props> {
         }
     }
 
-    _onKeyPress: (Object) => void;
-
     /**
      * KeyPress handler for accessibility.
      *
@@ -65,14 +59,12 @@ class SmileysPanel extends PureComponent<Props> {
      *
      * @returns {void}
      */
-    _onKeyPress(e) {
+    _onKeyPress(e: any) {
         if (e.key === ' ') {
             e.preventDefault();
-            this.props.onSmileySelect(e.target.id && smileys[e.target.id]);
+            this.props.onSmileySelect(e.target.id && smileys[e.target.id as keyof typeof smileys]);
         }
     }
-
-    _onClick: (Object) => void;
 
     /**
      * Click handler for to select emoji.
@@ -81,9 +73,9 @@ class SmileysPanel extends PureComponent<Props> {
      *
      * @returns {void}
      */
-    _onClick(e) {
+    _onClick(e: React.MouseEvent) {
         e.preventDefault();
-        this.props.onSmileySelect(e.currentTarget.id && smileys[e.currentTarget.id]);
+        this.props.onSmileySelect(e.currentTarget.id && smileys[e.currentTarget.id as keyof typeof smileys]);
     }
 
     /**
@@ -105,7 +97,7 @@ class SmileysPanel extends PureComponent<Props> {
                 tabIndex = { 0 }>
                 <Emoji
                     onlyEmojiClassName = 'smiley'
-                    text = { smileys[smileyKey] } />
+                    text = { smileys[smileyKey as keyof typeof smileys] } />
             </div>
         ));
 

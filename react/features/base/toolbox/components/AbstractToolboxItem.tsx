@@ -1,30 +1,29 @@
-// @flow
+import React, { Component, ReactNode } from 'react';
+import { GestureResponderEvent } from 'react-native';
 
-import { Component } from 'react';
-
-import type { StyleType } from '../../styles';
+import { StyleType } from '../../styles/functions.any';
 
 export type Styles = {
 
     /**
      * Style for the item's icon.
      */
-    iconStyle: StyleType,
+    iconStyle: StyleType;
 
     /**
      * Style for the item's label.
      */
-    labelStyle: StyleType,
+    labelStyle: StyleType;
 
     /**
      * Style for the item itself.
      */
-    style: StyleType,
+    style: StyleType;
 
     /**
      * Color for the item underlay (shows when clicked).
      */
-    underlayColor: ?string
+    underlayColor?: string;
 };
 
 export type Props = {
@@ -33,76 +32,78 @@ export type Props = {
      * A succinct description of what the item does. Used by accessibility
      * tools and torture tests.
      */
-    accessibilityLabel: string,
+    accessibilityLabel: string;
 
     /**
      * An extra class name to be added at the end of the element's class name
      * in order to enable custom styling.
      */
-    customClass?: string,
+    customClass?: string;
 
     /**
      * Whether this item is disabled or not. When disabled, clicking an the item
      * has no effect, and it may reflect on its style.
      */
-    disabled: boolean,
+    disabled: boolean;
 
     /**
      * A React Element to display at the end of {@code ToolboxItem}.
      */
-    elementAfter?: React$Node,
+    elementAfter?: ReactNode;
 
     /**
      * The icon to render for this {@code ToolboxItem}.
      */
-    icon: Object,
+    icon: Function;
 
     /**
      * The text associated with this item. When `showLabel` is set to
      * {@code true}, it will be displayed alongside the icon.
      */
-    label: string,
+    label: string;
+
+    labelProps: any;
 
     /**
      * On click handler.
      */
-    onClick: Function,
+    onClick: (e?: React.MouseEvent | GestureResponderEvent) => void;
 
     /**
      * Whether to show the label or not.
      */
-    showLabel: boolean,
+    showLabel: boolean;
 
     /**
      * Collection of styles for the item. Used only on native.
      */
-    styles: ?Styles,
+    styles?: Styles;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: ?Function,
+    t?: Function;
 
     /**
      * True if the item is toggled, false otherwise.
      */
-    toggled: ?boolean,
+    toggled?: boolean;
 
     /**
      * The text to display in the tooltip. Used only on web.
      */
-    tooltip: ?string,
+    tooltip?: string;
 
     /**
      * From which direction the tooltip should appear, relative to the
      * item. Used only on web.
      */
-    tooltipPosition: string,
+    tooltipPosition: string;
 
     /**
      * Whether this item is visible or not.
      */
-    visible: boolean
+    visible: boolean;
 };
 
 /**
@@ -111,7 +112,7 @@ export type Props = {
  *
  * @abstract
  */
-export default class AbstractToolboxItem<P : Props> extends Component<P> {
+export default class AbstractToolboxItem<P extends Props> extends Component<P> {
     /**
      * Default values for {@code AbstractToolboxItem} component's properties.
      *
@@ -147,7 +148,7 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * @protected
      * @returns {?string}
      */
-    get label(): ?string {
+    get label(): string | undefined {
         return this._maybeTranslateAttribute(this.props.label, this.props.labelProps);
     }
 
@@ -158,7 +159,7 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * @protected
      * @returns {?string}
      */
-    get tooltip(): ?string {
+    get tooltip(): string | undefined {
         return this._maybeTranslateAttribute(this.props.tooltip);
     }
 
@@ -169,7 +170,7 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * @protected
      * @returns {?string}
      */
-    get accessibilityLabel(): ?string {
+    get accessibilityLabel(): string | undefined {
         return this._maybeTranslateAttribute(this.props.accessibilityLabel);
     }
 
@@ -182,7 +183,7 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * @private
      * @returns {string}
      */
-    _maybeTranslateAttribute(text, textProps) {
+    _maybeTranslateAttribute(text?: string, textProps?: string) {
         const { t } = this.props;
 
         if (textProps) {
@@ -193,8 +194,6 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
         return typeof t === 'function' ? t(text) : text;
     }
 
-    _onClick: (*) => void;
-
     /**
      * Handles clicking/pressing this {@code AbstractToolboxItem} by
      * forwarding the event to the {@code onClick} prop of this instance if any.
@@ -202,10 +201,10 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * @protected
      * @returns {void}
      */
-    _onClick(...args) {
+    _onClick(...args: any) {
         const { disabled, onClick } = this.props;
 
-        disabled || (onClick && onClick(...args));
+        disabled || onClick?.(...args);
     }
 
     /**
@@ -218,7 +217,7 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      */
     _renderItem() {
         // To be implemented by a subclass.
-        return null;
+        return <></>;
     }
 
     /**

@@ -1,41 +1,41 @@
-// @flow
-
 import React, { useCallback } from 'react';
+import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { Icon, IconCloseLarge } from '../../../base/icons';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import { toggleChat } from '../../actions.web';
 
-type Props = {
-
-    /**
-     * Function to be called when pressing the close button.
-     */
-    onCancel: Function,
+interface IProps extends WithTranslation {
 
     /**
      * An optional class name.
      */
-    className: string,
+    className: string;
+
+    /**
+     * Optional id.
+     */
+    id?: string;
 
     /**
      * Whether the polls feature is enabled or not.
      */
-    isPollsEnabled: boolean,
+    isPollsEnabled: boolean;
 
     /**
-     * Invoked to obtain translated strings.
+     * Function to be called when pressing the close button.
      */
-    t: Function
-};
+    onCancel: Function;
+}
 
 /**
  * Custom header of the {@code ChatDialog}.
  *
  * @returns {React$Element<any>}
  */
-function Header({ onCancel, className, isPollsEnabled, t }: Props) {
+function Header({ onCancel, className, isPollsEnabled, t }: IProps) {
 
     const onKeyPressHandler = useCallback(e => {
         if (onCancel && (e.key === ' ' || e.key === 'Enter')) {
