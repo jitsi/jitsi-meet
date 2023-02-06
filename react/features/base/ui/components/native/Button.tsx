@@ -16,8 +16,8 @@ export interface IProps extends IButtonProps {
     color?: string;
     contentStyle?: Object | undefined;
     labelStyle?: Object | undefined;
-    useRippleColor?: boolean;
     style?: Object | undefined;
+    useRippleColor?: boolean;
 }
 
 const Button: React.FC<IProps> = ({
@@ -29,9 +29,9 @@ const Button: React.FC<IProps> = ({
     labelKey,
     labelStyle,
     onClick: onPress,
-    useRippleColor = true,
     style,
-    type
+    type,
+    useRippleColor = true
 }: IProps) => {
     const { t } = useTranslation();
     const { CONTAINED } = BUTTON_MODES;
