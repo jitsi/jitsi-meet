@@ -54,23 +54,22 @@ const styles = (theme: Theme) => {
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            padding: '0 5px',
+            padding: '10px 16px',
 
             '&:hover': {
-                backgroundColor: theme.palette.ui04
+                backgroundColor: theme.palette.ui02
             }
         },
 
         icon: {
             minWidth: '20px',
-            padding: '5px',
+            marginRight: '16px',
             position: 'relative' as const
         },
 
         sliderContainer: {
             position: 'relative' as const,
-            width: '100%',
-            paddingRight: '5px'
+            width: '100%'
         },
 
         slider: {

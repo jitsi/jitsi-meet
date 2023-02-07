@@ -358,7 +358,8 @@ const styles = () => {
             right: 'auto',
             margin: 0,
             marginBottom: '8px',
-            maxHeight: 'calc(100vh - 100px)'
+            maxHeight: 'calc(100vh - 100px)',
+            width: '240px'
         },
 
         hangupMenu: {

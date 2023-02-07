@@ -108,7 +108,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui01,
             border: `1px solid ${theme.palette.ui04}`,
             borderRadius: `${Number(theme.shape.borderRadius)}px`,
-            boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
+            boxShadow: '0px 1px 2px rgba(41, 41, 41, 0.25)',
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             marginTop: `${(participantsPaneTheme.panePadding * 2) + theme.typography.bodyShortRegular.fontSize}px`,

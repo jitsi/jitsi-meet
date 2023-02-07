@@ -25,6 +25,7 @@ import {
     getParticipantCount,
     isEveryoneModerator
 } from '../../../base/participants/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
@@ -45,6 +46,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         text: {
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
             color: theme.palette.text02,
             padding: '10px 16px',
             height: '40px',
