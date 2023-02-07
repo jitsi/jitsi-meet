@@ -67,7 +67,9 @@ export const KEYS = {
     BACKSLASH: '\\',
     MINUS: '-',
     EQUAL: '=',
-    SLASH: '/'
+    SLASH: '/',
+    ASTERISK: '*',
+    PLUS: '+'
 };
 
 /* eslint-disable max-len */
@@ -114,6 +116,11 @@ const keyCodeToKey = {
     103: KEYS.NUMPAD_7,
     104: KEYS.NUMPAD_8,
     105: KEYS.NUMPAD_9,
+    106: KEYS.ASTERISK,
+    107: KEYS.PLUS,
+    109: KEYS.MINUS,
+    110: KEYS.PERIOD,
+    111: KEYS.SLASH,
     112: KEYS.F1,
     113: KEYS.F2,
     114: KEYS.F3,
