@@ -8,6 +8,7 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
+import { doGetJSON } from '../base/util/httpUtils';
 import { parseURLParams } from '../base/util/parseURLParams';
 import {
     StatusCode,
@@ -56,6 +57,34 @@ export function checkDialNumber(
 }
 
 /**
+ * Sends an ajax request to check if the outbound call is permitted.
+ *
+ * @param {string} dialOutRegionUrl - The config endpoint.
+ * @param {string} jwt - The jwt token.
+ * @param {string} appId - The customer id.
+ * @param {string} phoneNumber - The destination phone number.
+ * @returns {Promise} - The promise created by the request.
+ */
+export function checkOutboundDestination(
+        dialOutRegionUrl: string,
+        jwt: string,
+        appId: string,
+        phoneNumber: string
+): Promise<any> {
+    return doGetJSON(dialOutRegionUrl, true, {
+        body: JSON.stringify({
+            appId,
+            phoneNumber
+        }),
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'Content-Type': 'application/json'
+        }
+    });
+}
+
+/**
  * Removes all non-numeric characters from a string.
  *
  * @param {string} text - The string from which to remove all characters except
@@ -77,6 +106,11 @@ export type GetInviteResultsOptions = {
     addPeopleEnabled: boolean;
 
     /**
+     * The customer id.
+     */
+    appId: string;
+
+    /**
      * The endpoint to use for checking phone number validity.
      */
     dialOutAuthUrl: string;
@@ -85,6 +119,11 @@ export type GetInviteResultsOptions = {
      * Whether or not to check phone numbers.
      */
     dialOutEnabled: boolean;
+
+    /**
+     * The endpoint to use for checking dial permission to an outbound destination.
+     */
+    dialOutRegionUrl: string;
 
     /**
      * The jwt token to pass to the search service.
@@ -123,8 +162,10 @@ export function getInviteResultsForQuery(
     const text = query.trim();
 
     const {
-        dialOutAuthUrl,
         addPeopleEnabled,
+        appId,
+        dialOutAuthUrl,
+        dialOutRegionUrl,
         dialOutEnabled,
         peopleSearchQueryTypes,
         peopleSearchUrl,
@@ -187,7 +228,7 @@ export function getInviteResultsForQuery(
     }
 
     return Promise.all([ peopleSearchPromise, phoneNumberPromise ])
-        .then(([ peopleResults, phoneResults ]) => {
+        .then(async ([ peopleResults, phoneResults ]) => {
             const results: any[] = [
                 ...peopleResults
             ];
@@ -203,14 +244,26 @@ export function getInviteResultsForQuery(
                 = peopleResults.find(result => result.type === INVITE_TYPES.PHONE);
 
             if (!hasPhoneResult && typeof phoneResults.allow === 'boolean') {
-                results.push({
+                const result = {
                     allowed: phoneResults.allow,
                     country: phoneResults.country,
                     type: INVITE_TYPES.PHONE,
                     number: phoneResults.phone,
                     originalEntry: text,
                     showCountryCodeReminder: !hasCountryCode
-                });
+                };
+
+                if (!phoneResults.allow) {
+                    try {
+                        const response = await checkOutboundDestination(dialOutRegionUrl, jwt, appId, text);
+
+                        result.allowed = response.allowed;
+                    } catch (error) {
+                        logger.error('Error checking permission to dial to outbound destination', error);
+                    }
+                }
+
+                results.push(result);
             }
 
             if (sipInviteEnabled && isASipAddress(text)) {
