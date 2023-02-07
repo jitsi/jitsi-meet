@@ -1547,10 +1547,10 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     const {
         callStatsID,
+        customToolbarButtons,
         disableProfile,
         iAmRecorder,
-        iAmSipGateway,
-        customToolbarButtons
+        iAmSipGateway
     } = state['features/base/config'];
     const {
         fullScreen,

@@ -801,11 +801,11 @@ var config = {
 
     // An array with custom option buttons for the participant context menu
     // type:  Array<{ icon: string; id: string; text: string; }>
-    // customParticipantMenuButtons: [];
+    // customParticipantMenuButtons: [],
 
     // An array with custom option buttons for the toolbar
     // type:  Array<{ icon: string; id: string; text: string; }>
-    // customToolbarButtons: [];
+    // customToolbarButtons: [],
 
     // Stats
     //

@@ -100,7 +100,7 @@ interface IProps {
     onMouseLeave?: (e?: React.MouseEvent) => void;
 }
 
-const MAX_HEIGHT = 500;
+const MAX_HEIGHT = 400;
 
 const useStyles = makeStyles()(theme => {
     return {
