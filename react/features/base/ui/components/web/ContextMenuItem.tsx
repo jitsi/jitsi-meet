@@ -90,6 +90,10 @@ const useStyles = makeStyles()(theme => {
 
             '&:active': {
                 backgroundColor: theme.palette.ui03
+            },
+
+            '&:focus': {
+                boxShadow: `inset 0 0 0 2px ${theme.palette.action01Hover}`
             }
         },
 
@@ -154,7 +158,7 @@ const ContextMenuItem = ({
                     className = { styles.contextMenuItemIcon }
                     size = { 20 }
                     src = { icon } />}
-            <span className = { cx(textClassName) }>{text}</span>
+            <span className = { cx(styles.text, textClassName) }>{text}</span>
         </div>
     );
 };
