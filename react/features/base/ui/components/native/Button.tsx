@@ -13,9 +13,10 @@ import { IButtonProps } from '../types';
 import styles from './buttonStyles';
 
 export interface IProps extends IButtonProps {
-    color?: string;
+    color?: string | undefined;
     contentStyle?: Object | undefined;
     labelStyle?: Object | undefined;
+    mode?: any;
     style?: Object | undefined;
     useRippleColor?: boolean;
 }
@@ -28,14 +29,15 @@ const Button: React.FC<IProps> = ({
     icon,
     labelKey,
     labelStyle,
+    mode = BUTTON_MODES.CONTAINED,
     onClick: onPress,
     style,
     type,
     useRippleColor = true
 }: IProps) => {
     const { t } = useTranslation();
-    const { CONTAINED } = BUTTON_MODES;
     const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
+    const { CONTAINED, TEXT } = BUTTON_MODES;
 
     const enableRippleColor
         = useRippleColor ? BaseTheme.palette.action03Active : 'transparent';
@@ -43,20 +45,20 @@ const Button: React.FC<IProps> = ({
     let buttonLabelStyles;
     let buttonStyles;
     let color;
-    let mode;
 
     if (type === PRIMARY) {
-        buttonLabelStyles = styles.buttonLabelPrimary;
-        color = BaseTheme.palette.action01;
-        mode = CONTAINED;
+        buttonLabelStyles = mode === TEXT
+            ? styles.buttonLabelPrimaryText
+            : styles.buttonLabelPrimary;
+        color = mode === CONTAINED && BaseTheme.palette.action01;
     } else if (type === SECONDARY) {
         buttonLabelStyles = styles.buttonLabelSecondary;
-        color = BaseTheme.palette.action02;
-        mode = CONTAINED;
+        color = mode === CONTAINED && BaseTheme.palette.action02;
     } else if (type === DESTRUCTIVE) {
-        color = BaseTheme.palette.actionDanger;
-        buttonLabelStyles = styles.buttonLabelDestructive;
-        mode = CONTAINED;
+        buttonLabelStyles = mode === TEXT
+            ? styles.buttonLabelDestructiveText
+            : styles.buttonLabelDestructive;
+        color = mode === CONTAINED && BaseTheme.palette.actionDanger;
     } else {
         color = buttonColor;
         buttonLabelStyles = styles.buttonLabel;
@@ -70,8 +72,10 @@ const Button: React.FC<IProps> = ({
     }
 
     if (type === TERTIARY) {
-        buttonLabelStyles = useRippleColor && disabled
-            ? styles.buttonLabelTertiaryDisabled : styles.buttonLabelTertiary;
+        if (useRippleColor && disabled) {
+            buttonLabelStyles = styles.buttonLabelTertiaryDisabled;
+        }
+        buttonLabelStyles = styles.buttonLabelTertiary;
 
         return (
             <TouchableRipple

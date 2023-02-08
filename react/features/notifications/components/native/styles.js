@@ -96,18 +96,10 @@ export default {
         top: BaseTheme.spacing[2]
     },
 
-    btnLabel: {
-        color: BaseTheme.palette.link01
-    },
-
     btnContainer: {
         display: 'flex',
         flexDirection: 'row',
         marginLeft: BaseTheme.spacing[4]
-    },
-
-    rejectBtnLabel: {
-        color: BaseTheme.palette.actionDanger
     },
 
     avatarContainer: {

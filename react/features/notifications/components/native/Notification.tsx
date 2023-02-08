@@ -4,9 +4,6 @@ import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { IReduxState } from '../../../app/types';
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n/functions';
 import {
     Icon,
@@ -16,15 +13,12 @@ import {
     IconWarning
     // @ts-ignore
 } from '../../../base/icons';
-import { getRemoteParticipants } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 import { colors } from '../../../base/ui/Tokens';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
-import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { replaceNonUnicodeEmojis } from '../../../chat/functions';
-import { getKnockingParticipants } from '../../../lobby/functions';
 import { NOTIFICATION_ICON } from '../../constants';
 import AbstractNotification, {
     type Props as AbstractNotificationProps
@@ -34,13 +28,6 @@ import AbstractNotification, {
 // @ts-ignore
 import styles from './styles';
 
-
-/**
- * Default value for the maxLines prop.
- *
- * @type {number}
- */
-const DEFAULT_MAX_LINES = 2;
 
 /**
  * Secondary colors for notification icons.
@@ -78,36 +65,26 @@ class Notification extends AbstractNotification<Props> {
     _mapAppearanceToButtons() {
         const {
             customActionHandler,
-            customActionNameKey
+            customActionNameKey,
+            customActionType
             // @ts-ignore
         } = this.props;
 
-        if (customActionNameKey?.length && customActionHandler?.length) {
-            return customActionNameKey?.map((customAction: string, index: number) => {
-                let buttonLabelStyle: Object | undefined;
-
-                if (customAction === 'lobby.reject') {
-                    buttonLabelStyle = styles.rejectBtnLabel;
-                } else {
-                    buttonLabelStyle = styles.btnLabel;
-                }
-
-                return (
-                    <Button
-                        accessibilityLabel = { customAction }
-                        key = { index }
-                        labelKey = { customAction }
-                        labelStyle = { buttonLabelStyle }
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onClick = { () => {
-                            if (customActionHandler[index]()) {
-                                this._onDismissed();
-                            }
-                        } }
-                        type = { BUTTON_TYPES.TERTIARY }
-                        useRippleColor = { false } />
-                );
-            });
+        if (customActionNameKey?.length && customActionHandler?.length && customActionType?.length) {
+            return customActionNameKey?.map((customAction: string, index: number) => (
+                <Button
+                    accessibilityLabel = { customAction }
+                    key = { index }
+                    labelKey = { customAction }
+                    mode = { BUTTON_MODES.TEXT }
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onClick = { () => {
+                        if (customActionHandler[index]()) {
+                            this._onDismissed();
+                        }
+                    } }
+                    type = { customActionType[index] } />
+            ));
         }
 
         return [];
@@ -157,7 +134,7 @@ class Notification extends AbstractNotification<Props> {
         const { appearance, icon } = this.props;
         // @ts-ignore
         const color = ICON_COLOR[appearance];
-        const iconContainerStyles = icon === NOTIFICATION_ICON.PARTICIPANTS
+        const iconContainerStyles = icon === NOTIFICATION_ICON.PARTICIPANT
             ? styles.iconContainerInteractive : styles.iconContainer;
 
         return (
@@ -178,8 +155,7 @@ class Notification extends AbstractNotification<Props> {
      */
     render() {
         // @ts-ignore
-        const { _participants, icon } = this.props;
-        const oneParticipant = _participants.length === 1;
+        const { icon } = this.props;
         const contentColumnStyles = icon === NOTIFICATION_ICON.PARTICIPANTS
             ? styles.contentColumn : styles.interactiveContentColumn;
 
@@ -188,7 +164,7 @@ class Notification extends AbstractNotification<Props> {
                 pointerEvents = 'box-none'
                 style = { styles.notification }>
                 <View style = { contentColumnStyles }>
-                    { oneParticipant ? this._renderAvatar() : this._mapAppearanceToIcon() }
+                    { this._mapAppearanceToIcon() }
                     <View pointerEvents = 'box-none'>
                         { this._renderContent() }
                     </View>
@@ -214,66 +190,35 @@ class Notification extends AbstractNotification<Props> {
      */
     _renderContent() {
         // @ts-ignore
-        const { icon, maxLines = DEFAULT_MAX_LINES, t, title, titleArguments, titleKey, concatText } = this.props;
+        const { icon, t, title, titleArguments, titleKey } = this.props;
         const titleText = title || (titleKey && t(titleKey, titleArguments));
         const description = this._getDescription();
-        const titleConcat = [];
         const descriptionStyles = icon === NOTIFICATION_ICON.PARTICIPANTS
             ? styles.contentTextInteractive : styles.contentText;
 
-        if (concatText) {
-            titleConcat.push(titleText);
-        }
-
         if (description?.length) {
-            return [ ...titleConcat, ...description ].map((line, index) => (
-                <Text
-                    key = { index }
-                    numberOfLines = { maxLines }
-                    style = { descriptionStyles }>
-                    { replaceNonUnicodeEmojis(line) }
-                </Text>
-            ));
+            return (
+                <>
+                    <Text style = { styles.contentText }>
+                        { titleText }
+                    </Text>
+                    {
+                        description.map((line, index) => (
+                            <Text
+                                key = { index }
+                                style = { descriptionStyles }>
+                                { replaceNonUnicodeEmojis(line) }
+                            </Text>
+                        ))
+                    }
+                </>
+            );
         }
 
         return (
-            <Text
-                numberOfLines = { maxLines }>
+            <Text>
                 { titleText }
             </Text>
-        );
-    }
-
-    /**
-     * Renders the avatar.
-     *
-     * @returns {Array<ReactElement>}
-     * @private
-     */
-    _renderAvatar() {
-        // @ts-ignore
-        const { _participants } = this.props;
-
-        return (
-            <>
-                {
-                    _participants?.map((p: any, index: number) => (
-                        <View
-                            key = { index }
-                            style = { styles.avatarContainer }>
-                            <Avatar
-                                displayName = { p.name }
-                                participantId = { p.id }
-                                size = { 32 } />
-                            <Text
-                                numberOfLines = { 1 }
-                                style = { styles.avatarText }>
-                                { p.name }
-                            </Text>
-                        </View>
-                    ))
-                }
-            </>
         );
     }
 
@@ -282,21 +227,6 @@ class Notification extends AbstractNotification<Props> {
     _onDismissed: () => void;
 }
 
-/**
- * Maps (parts of) the redux state to the associated {@code Notification}'s props.
- *
- * @param {Object} state - The redux state.
- * @private
- * @returns {Props}
- */
-function _mapStateToProps(state: IReduxState) {
-    const knockingParticipants = getKnockingParticipants(state);
-    const remoteParticipants = getRemoteParticipants(state);
-
-    return {
-        _participants: knockingParticipants || remoteParticipants
-    };
-}
 
 // @ts-ignore
-export default translate(connect(_mapStateToProps)(Notification));
+export default translate(Notification);

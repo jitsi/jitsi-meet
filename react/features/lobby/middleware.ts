@@ -6,21 +6,35 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
-import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOINED
+} from '../base/conference/actionTypes';
 import { conferenceWillJoin } from '../base/conference/actions';
-import { JitsiConferenceErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/participants/functions';
+import {
+    JitsiConferenceErrors,
+    JitsiConferenceEvents
+} from '../base/lib-jitsi-meet';
+import {
+    getFirstLoadableAvatarUrl,
+    getParticipantDisplayName
+} from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import {
+    playSound,
+    registerSound,
+    unregisterSound
+} from '../base/sounds/actions';
 import { isTestModeEnabled } from '../base/testing/functions';
+import { BUTTON_TYPES } from '../base/ui/constants.any';
 // @ts-ignore
 import { openChat } from '../chat/actions';
-import { handleLobbyChatInitialized, removeLobbyChatParticipant } from '../chat/actions.any';
 import {
-    hideNotification,
-    showNotification
-} from '../notifications/actions';
+    handleLobbyChatInitialized,
+    removeLobbyChatParticipant
+} from '../chat/actions.any';
+import { hideNotification, showNotification } from '../notifications/actions';
 import {
     LOBBY_NOTIFICATION_ID,
     NOTIFICATION_ICON,
@@ -32,7 +46,10 @@ import { open as openParticipantsPane } from '../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { shouldAutoKnock } from '../prejoin/functions';
 
-import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED, KNOCKING_PARTICIPANT_LEFT } from './actionTypes';
+import {
+    KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
+    KNOCKING_PARTICIPANT_LEFT
+} from './actionTypes';
 import {
     approveKnockingParticipant,
     hideLobbyScreen,
@@ -181,9 +198,9 @@ function _handleLobbyNotification(store: IStore) {
     let notificationTitle;
     let customActionNameKey;
     let customActionHandler;
+    let customActionType;
     let descriptionKey;
     let icon;
-    let concatText;
 
     if (knockingParticipants.length === 1) {
         const firstParticipant = knockingParticipants[0];
@@ -194,6 +211,7 @@ function _handleLobbyNotification(store: IStore) {
         notificationTitle = firstParticipant.name;
         icon = NOTIFICATION_ICON.PARTICIPANT;
         customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
+        customActionType = [ BUTTON_TYPES.PRIMARY, BUTTON_TYPES.DESTRUCTIVE ];
         customActionHandler = [ () => batch(() => {
             dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
             dispatch(approveKnockingParticipant(firstParticipant.id));
@@ -207,6 +225,7 @@ function _handleLobbyNotification(store: IStore) {
         // and, if so, it adds it to the customActionNameKey array
         if (showChat) {
             customActionNameKey.splice(1, 0, 'lobby.chat');
+            customActionType.splice(1, 0, BUTTON_TYPES.SECONDARY);
             customActionHandler.splice(1, 0, () => batch(() => {
                 dispatch(handleLobbyChatInitialized(firstParticipant.id));
                 // @ts-ignore
@@ -221,8 +240,8 @@ function _handleLobbyNotification(store: IStore) {
             waitingParticipants: knockingParticipants.length
         });
         icon = NOTIFICATION_ICON.PARTICIPANTS;
-        concatText = true;
         customActionNameKey = [ 'notify.viewLobby' ];
+        customActionType = [ BUTTON_TYPES.PRIMARY ];
         customActionHandler = [ () => batch(() => {
             dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
             dispatch(openParticipantsPane());
@@ -234,8 +253,8 @@ function _handleLobbyNotification(store: IStore) {
         descriptionKey,
         uid: LOBBY_NOTIFICATION_ID,
         customActionNameKey,
+        customActionType,
         customActionHandler,
-        concatText,
         icon
     }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 }
