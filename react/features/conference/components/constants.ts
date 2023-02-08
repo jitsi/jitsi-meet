@@ -8,6 +8,7 @@ export const CONFERENCE_INFO = {
         'e2ee',
         'transcribing',
         'video-quality',
+        'visitors-count',
         'insecure-room',
         'top-panel-toggle'
     ]

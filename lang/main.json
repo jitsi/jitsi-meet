@@ -1333,6 +1333,7 @@
         "webAssemblyWarning": "WebAssembly not supported",
         "webAssemblyWarningDescription": "WebAssembly disabled or not supported by this browser"
     },
+    "visitorsLabel": "Number of visitors: {{count}}",
     "volumeSlider": "Volume slider",
     "welcomepage": {
         "accessibilityLabel": {
