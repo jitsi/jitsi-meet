@@ -1,6 +1,5 @@
 /* eslint-disable lines-around-comment */
 
-import logger from '../../overlay/logger';
 import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
 
@@ -127,47 +126,4 @@ export function getFatalError(stateful: IStateful) {
         = conferenceError && isFatalJitsiConferenceError(conferenceError);
 
     return jitsiConnectionError || jitsiConferenceError || configError;
-}
-
-/**
- * Page reload dialog content props.
- *
- * @param {IStateful} stateful - The redux store, state, or
- * {@code getState} function.
- * @returns {Object}
- */
-export function getPageReloadDialogProps(stateful: IStateful) {
-    const state = toState(stateful);
-
-    const { error: conferenceError } = state['features/base/conference'];
-    const { error: configError } = state['features/base/config'];
-    const { error: connectionError } = state['features/base/connection'];
-
-    const isNetworkFailure = configError || connectionError;
-
-    let message, reason, title;
-
-    if (isNetworkFailure) {
-        title = 'dialog.conferenceDisconnectTitle';
-        message = 'dialog.conferenceDisconnectMsg';
-    } else {
-        title = 'dialog.conferenceReloadTitle';
-        message = 'dialog.conferenceReloadMsg';
-    }
-
-    if (conferenceError) {
-        reason = `error.conference.${conferenceError.name}`;
-    } else if (connectionError) {
-        reason = `error.conference.${connectionError.name}`;
-    } else if (configError) {
-        reason = `error.config.${configError.name}`;
-    } else {
-        logger.error('No reload reason defined!');
-    }
-
-    return {
-        message,
-        reason,
-        title
-    };
 }

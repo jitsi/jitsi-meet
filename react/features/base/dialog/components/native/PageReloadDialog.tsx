@@ -1,7 +1,6 @@
 /* eslint-disable lines-around-comment */
 
 // @ts-ignore
-import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
@@ -9,13 +8,17 @@ import type { Dispatch } from 'redux';
 import { appNavigate, reloadNow } from '../../../../app/actions.native';
 import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
-import { getPageReloadDialogProps }
-    from '../../../lib-jitsi-meet/functions.native';
+import { isFatalJitsiConnectionError } from '../../../lib-jitsi-meet/functions.native';
 import { connect } from '../../../redux/functions';
+// @ts-ignore
+import logger from '../../logger';
 
 // @ts-ignore
 import ConfirmDialog from './ConfirmDialog';
 
+
+const randomInt = (min: number, max: number) =>
+    Math.floor((Math.random() * (max - min + 1)) + min);
 
 /**
  * The type of the React {@code Component} props of
@@ -23,9 +26,8 @@ import ConfirmDialog from './ConfirmDialog';
  */
 interface IPageReloadDialogProps extends WithTranslation {
     dispatch: Dispatch<any>;
-    message: string;
+    isNetworkFailure: boolean;
     reason: string;
-    title: string;
 }
 
 /**
@@ -33,7 +35,10 @@ interface IPageReloadDialogProps extends WithTranslation {
  * {@link PageReloadDialog}.
  */
 interface IPageReloadDialogState {
+    message: string;
     timeLeft: number;
+    timeoutSeconds: number;
+    title: string;
 }
 
 /**
@@ -56,9 +61,23 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
     constructor(props: IPageReloadDialogProps) {
         super(props);
 
-        // @ts-ignore
+        const timeoutSeconds = 10 + randomInt(0, 20);
+
+        let message, title;
+
+        if (this.props.isNetworkFailure) {
+            title = 'dialog.conferenceDisconnectTitle';
+            message = 'dialog.conferenceDisconnectMsg';
+        } else {
+            title = 'dialog.conferenceReloadTitle';
+            message = 'dialog.conferenceReloadMsg';
+        }
+
         this.state = {
-            timeLeft: 10 + randomInt(0, 20)
+            message,
+            timeLeft: timeoutSeconds,
+            timeoutSeconds,
+            title
         };
 
         this._onCancel = this._onCancel.bind(this);
@@ -74,6 +93,10 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
     componentDidMount() {
         const { dispatch } = this.props;
         const { timeLeft } = this.state;
+
+        logger.info(
+            `The conference will be reloaded after ${
+                this.state.timeoutSeconds} seconds.`);
 
         this._interval
             = setInterval(
@@ -141,8 +164,8 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * @returns {ReactElement}
      */
     render() {
-        const { message, t, title } = this.props;
-        const { timeLeft } = this.state;
+        const { t } = this.props;
+        const { message, timeLeft, title } = this.state;
 
         return (
             <ConfirmDialog
@@ -168,16 +191,33 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
  * }}
  */
 function mapStateToProps(state: IReduxState) {
-    const {
-        message,
-        reason,
-        title
-    } = getPageReloadDialogProps(state);
+    const { error: conferenceError } = state['features/base/conference'];
+    const { error: configError } = state['features/base/config'];
+    const { error: connectionError } = state['features/base/connection'];
+
+    const { fatalError } = state['features/overlay'];
+    const fatalConnectionError
+        // @ts-ignore
+        = connectionError && isFatalJitsiConnectionError(connectionError);
+    const fatalConfigError = fatalError === configError;
+
+    const isNetworkFailure = fatalConfigError || fatalConnectionError;
+
+    let reason;
+
+    if (conferenceError) {
+        reason = `error.conference.${conferenceError.name}`;
+    } else if (connectionError) {
+        reason = `error.conference.${connectionError.name}`;
+    } else if (configError) {
+        reason = `error.config.${configError.name}`;
+    } else {
+        logger.error('No reload reason defined!');
+    }
 
     return {
-        message,
-        reason,
-        title
+        isNetworkFailure,
+        reason
     };
 }
 
