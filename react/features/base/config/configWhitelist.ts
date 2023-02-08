@@ -78,8 +78,6 @@ export default [
     'channelLastN',
     'connectionIndicators',
     'constraints',
-    'customParticipantMenuButtons',
-    'customToolbarButtons',
     'brandingRoomAlias',
     'debug',
     'debugAudioLevels',

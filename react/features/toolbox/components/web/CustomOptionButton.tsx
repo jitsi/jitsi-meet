@@ -26,10 +26,16 @@ class CustomOptionButton extends AbstractButton<Props, any, any> {
     text = this.props.text;
 
     accessibilityLabel = this.text;
-    icon = () => (<img
-        height = { 20 }
+
+    /**
+     * Custom icon component.
+     *
+     * @param {any} props - Icon's props.
+     * @returns {img}
+     */
+    icon = props => (<img
         src = { this.iconSrc }
-        width = { 20 } />);
+        { ...props } />);
 
     label = this.text;
     tooltip = this.text;

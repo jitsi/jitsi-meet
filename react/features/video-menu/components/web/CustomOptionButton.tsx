@@ -1,24 +1,24 @@
-import React, { useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 
 const CustomOptionButton = (
-        { icon, onClick, text }:
+        { icon: iconSrc, onClick, text }:
         {
             icon: string;
             onClick: (e?: React.MouseEvent<Element, MouseEvent> | undefined) => void;
             text: string;
     }
 ) => {
-    const iconNode = useMemo(() => (<img
-        height = { 20 }
-        src = { icon }
-        width = { 20 } />), [ icon ]);
+
+    const icon = useCallback(props => (<img
+        src = { iconSrc }
+        { ...props } />), [ iconSrc ]);
 
     return (
         <ContextMenuItem
             accessibilityLabel = { text }
-            customIcon = { iconNode }
+            icon = { icon }
             onClick = { onClick }
             text = { text } />
     );
