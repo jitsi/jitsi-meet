@@ -12,6 +12,7 @@ import RecordingLabel from '../../../recording/components/web/RecordingLabel';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import TranscribingLabel from '../../../transcribing/components/TranscribingLabel.web';
 import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.web';
+import VisitorsCountLabel from '../../../visitors/components/web/VisitorsCountLabel';
 import ConferenceTimer from '../ConferenceTimer';
 import { getConferenceInfo } from '../functions';
 
@@ -79,6 +80,10 @@ const COMPONENTS = [
     {
         Component: VideoQualityLabel,
         id: 'video-quality'
+    },
+    {
+        Component: VisitorsCountLabel,
+        id: 'visitors-count'
     },
     {
         Component: InsecureRoomNameLabel,
