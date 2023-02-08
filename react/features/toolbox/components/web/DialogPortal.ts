@@ -1,5 +1,8 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { useSelector } from 'react-redux';
+
+import { IReduxState } from '../../../app/types';
 
 type Props = {
 
@@ -36,6 +39,7 @@ type Props = {
  * @returns {ReactElement}
  */
 function DialogPortal({ children, className, style, getRef, setSize }: Props) {
+    const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
     const [ portalTarget ] = useState(() => {
         const portalDiv = document.createElement('div');
 
@@ -92,7 +96,7 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
                 document.body.removeChild(portalTarget);
             }
         };
-    }, []);
+    }, [ clientWidth ]);
 
     return ReactDOM.createPortal(
         children,

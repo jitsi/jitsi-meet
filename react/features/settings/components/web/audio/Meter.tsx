@@ -1,34 +1,33 @@
-// @flow
-
 import React from 'react';
 
-import { Icon, IconMeter } from '../../../../base/icons';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconMeter } from '../../../../base/icons/svg';
 
-type Props = {
+interface IProps {
 
     /**
      * Own class name for the component.
      */
-    className: string,
+    className: string;
 
     /**
      * Flag indicating whether the component is greyed out/disabled.
      */
-    isDisabled?: boolean,
+    isDisabled?: boolean;
 
     /**
      * The level of the meter.
      * Should be between 0 and 7 as per the used SVG.
      */
-    level: number,
-};
+    level: number;
+}
 
 /**
  * React {@code Component} representing an audio level meter.
  *
  * @returns { ReactElement}
  */
-export default function({ className, isDisabled, level }: Props) {
+export default function({ className, isDisabled, level }: IProps) {
     let ownClassName;
 
     if (level > -1) {

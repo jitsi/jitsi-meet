@@ -34,6 +34,8 @@ const getComputedOuterHeight = (element: HTMLElement) => {
 
 interface IProps {
 
+    [key: `aria-${string}`]: string;
+
     /**
      * Accessibility label for menu container.
      */
@@ -58,6 +60,11 @@ interface IProps {
      * Whether or not the menu is hidden. Used to overwrite the internal isHidden.
      */
     hidden?: boolean;
+
+    /**
+     * Optional id.
+     */
+    id?: string;
 
     /**
      * Whether or not the menu is already in a drawer.
@@ -98,6 +105,11 @@ interface IProps {
      * Callback for the mouse leaving the component.
      */
     onMouseLeave?: (e?: React.MouseEvent) => void;
+
+    /**
+     * Tab index for the menu.
+     */
+    tabIndex?: number;
 }
 
 const MAX_HEIGHT = 400;
@@ -146,6 +158,7 @@ const ContextMenu = ({
     className,
     entity,
     hidden,
+    id,
     inDrawer,
     isDrawerOpen,
     offsetTarget,
@@ -153,7 +166,8 @@ const ContextMenu = ({
     onKeyDown,
     onDrawerClose,
     onMouseEnter,
-    onMouseLeave
+    onMouseLeave,
+    tabIndex
 }: IProps) => {
     const [ isHidden, setIsHidden ] = useState(true);
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -217,11 +231,14 @@ const ContextMenu = ({
                 isHidden && styles.contextMenuHidden,
                 className
             ) }
+            id = { id }
             onClick = { onClick }
             onKeyDown = { onKeyDown }
             onMouseEnter = { onMouseEnter }
             onMouseLeave = { onMouseLeave }
-            ref = { containerRef }>
+            ref = { containerRef }
+            role = 'menu'
+            tabIndex = { tabIndex }>
             {children}
         </div>;
 };

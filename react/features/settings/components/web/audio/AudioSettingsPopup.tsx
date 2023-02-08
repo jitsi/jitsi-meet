@@ -1,8 +1,8 @@
-// @flow
+import React, { ReactNode } from 'react';
+import { connect } from 'react-redux';
 
-import React from 'react';
-
-import { areAudioLevelsEnabled } from '../../../../base/config/functions';
+import { IReduxState } from '../../../../app/types';
+import { areAudioLevelsEnabled } from '../../../../base/config/functions.web';
 import {
     setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDevice as setAudioOutputDeviceAction
@@ -12,39 +12,38 @@ import {
     getAudioOutputDeviceData
 } from '../../../../base/devices/functions.web';
 import Popover from '../../../../base/popover/components/Popover.web';
-import { connect } from '../../../../base/redux';
 import { SMALL_MOBILE_WIDTH } from '../../../../base/responsive-ui/constants';
 import {
     getCurrentMicDeviceId,
     getCurrentOutputDeviceId
-} from '../../../../base/settings';
+} from '../../../../base/settings/functions.web';
 import { toggleAudioSettings } from '../../../actions';
-import { getAudioSettingsVisibility } from '../../../functions';
+import { getAudioSettingsVisibility } from '../../../functions.web';
 
-import AudioSettingsContent, { type Props as AudioSettingsContentProps } from './AudioSettingsContent';
+import AudioSettingsContent, { type IProps as AudioSettingsContentProps } from './AudioSettingsContent';
 
 
-type Props = AudioSettingsContentProps & {
+interface IProps extends AudioSettingsContentProps {
 
     /**
     * Component's children (the audio button).
     */
-    children: React$Node,
+    children: ReactNode;
 
     /**
     * Flag controlling the visibility of the popup.
     */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
     * Callback executed when the popup closes.
     */
-    onClose: Function,
+    onClose: Function;
 
     /**
      * The popup placement enum value.
      */
-    popupPlacement: string
+    popupPlacement: string;
 }
 
 /**
@@ -64,7 +63,7 @@ function AudioSettingsPopup({
     outputDevices,
     popupPlacement,
     measureAudioLevels
-}: Props) {
+}: IProps) {
     return (
         <div className = 'audio-preview'>
             <Popover
@@ -92,16 +91,16 @@ function AudioSettingsPopup({
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: IReduxState) {
     const { clientWidth } = state['features/base/responsive-ui'];
 
     return {
-        popupPlacement: clientWidth <= SMALL_MOBILE_WIDTH ? 'auto' : 'top-end',
+        popupPlacement: clientWidth <= Number(SMALL_MOBILE_WIDTH) ? 'auto' : 'top-end',
         currentMicDeviceId: getCurrentMicDeviceId(state),
         currentOutputDeviceId: getCurrentOutputDeviceId(state),
-        isOpen: getAudioSettingsVisibility(state),
-        microphoneDevices: getAudioInputDeviceData(state),
-        outputDevices: getAudioOutputDeviceData(state),
+        isOpen: Boolean(getAudioSettingsVisibility(state)),
+        microphoneDevices: getAudioInputDeviceData(state) ?? [],
+        outputDevices: getAudioOutputDeviceData(state) ?? [],
         measureAudioLevels: areAudioLevelsEnabled(state)
     };
 }
