@@ -153,6 +153,7 @@ import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise'
 import { endpointMessageReceived } from './react/features/subtitles';
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
+import { setVisitorsMode } from './react/features/visitors/actions';
 import UIEvents from './service/UI/UIEvents';
 
 const logger = Logger.getLogger(__filename);
@@ -341,6 +342,8 @@ class ConferenceConnector {
 
         case JitsiConferenceErrors.REDIRECTED: {
             generateVisitorConfig(APP.store.getState(), params);
+
+            APP.store.dispatch(setVisitorsMode(true));
 
             connection.disconnect().then(() => {
                 connect(this._conference.roomName).then(con => {
