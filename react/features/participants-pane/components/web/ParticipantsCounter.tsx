@@ -9,18 +9,18 @@ const useStyles = makeStyles()(theme => {
     return {
         badge: {
             backgroundColor: theme.palette.ui03,
-            borderRadius: '12px',
+            borderRadius: '100%',
             height: '16px',
             minWidth: '16px',
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.labelBold),
-	    lineHeight: '20px',
             pointerEvents: 'none',
             position: 'absolute',
             right: '-4px',
             top: '-3px',
-	    textAlign: 'center',
-	    padding: '2px'
+            textAlign: 'center',
+            boxSizing: 'border-box',
+            paddingTop: '2px'
         }
     };
 });
