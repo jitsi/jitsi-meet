@@ -11,6 +11,7 @@ import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } fr
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
+import { VISITORS_MODE_BUTTONS } from '../../../base/config/constants';
 import {
     getButtonsWithNotifyClick,
     getMultipleVideoSendingSupportFeatureFlag,
@@ -1562,7 +1563,11 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const { clientWidth } = state['features/base/responsive-ui'];
-    const toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
+    let toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
+
+    if (state['features/visitors'].enabled) {
+        toolbarButtons = VISITORS_MODE_BUTTONS.filter(e => toolbarButtons.indexOf(e) > -1);
+    }
 
     return {
         _backgroundType: state['features/virtual-background'].backgroundType ?? '',
