@@ -106,6 +106,7 @@ export default class AbstractPageReloadOverlay<P: Props>
         const { error: connectionError } = state['features/base/connection'];
 
         const jitsiConnectionError
+
             // @ts-ignore
             = connectionError && isFatalJitsiConnectionError(connectionError);
         const jitsiConferenceError
