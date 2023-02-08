@@ -30,6 +30,9 @@ import MeetingParticipantItems from './MeetingParticipantItems';
 
 const useStyles = makeStyles()(theme => {
     return {
+        headingW: {
+            color: theme.palette.warning02
+        },
         heading: {
             color: theme.palette.text02,
 
@@ -103,11 +106,16 @@ function MeetingParticipants({
     const askUnmuteText = t('participantsPane.actions.askUnmute');
     const muteParticipantButtonText = t('dialog.muteParticipantButton');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
+    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count);
 
-    const { classes: styles } = useStyles();
+    const { classes: styles, cx } = useStyles();
 
     return (
         <>
+            <div className = { cx(styles.heading, styles.headingW) }>
+                {visitorsCount && visitorsCount > 0
+                    && t('participantsPane.headings.visitors', { count: visitorsCount })}
+            </div>
             <div className = { styles.heading }>
                 {currentRoom?.name
                     ? `${currentRoom.name} (${participantsCount})`
