@@ -103,27 +103,3 @@ export function isFatalJitsiConnectionError(error: Error | string) {
             || error === JitsiConnectionErrors.OTHER_ERROR
             || error === JitsiConnectionErrors.SERVER_ERROR);
 }
-
-
-/**
- * Determines whether the error is fatal or not.
- *
- * @param {IStateful} stateful - The redux store, state, or
- * {@code getState} function.
- * @returns {boolean}
- */
-export function getFatalError(stateful: IStateful) {
-    const state = toState(stateful);
-
-    const { error: conferenceError } = state['features/base/conference'];
-    const { error: configError } = state['features/base/config'];
-    const { error: connectionError } = state['features/base/connection'];
-
-    const jitsiConnectionError
-        // @ts-ignore
-        = connectionError && isFatalJitsiConnectionError(connectionError);
-    const jitsiConferenceError
-        = conferenceError && isFatalJitsiConferenceError(conferenceError);
-
-    return jitsiConnectionError || jitsiConferenceError || configError;
-}

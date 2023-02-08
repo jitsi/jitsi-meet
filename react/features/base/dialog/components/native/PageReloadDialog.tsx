@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment */
 
 // @ts-ignore
+import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
@@ -16,9 +17,6 @@ import logger from '../../logger';
 // @ts-ignore
 import ConfirmDialog from './ConfirmDialog';
 
-
-const randomInt = (min: number, max: number) =>
-    Math.floor((Math.random() * (max - min + 1)) + min);
 
 /**
  * The type of the React {@code Component} props of
@@ -194,8 +192,8 @@ function mapStateToProps(state: IReduxState) {
     const { error: conferenceError } = state['features/base/conference'];
     const { error: configError } = state['features/base/config'];
     const { error: connectionError } = state['features/base/connection'];
-
     const { fatalError } = state['features/overlay'];
+
     const fatalConnectionError
         // @ts-ignore
         = connectionError && isFatalJitsiConnectionError(connectionError);
