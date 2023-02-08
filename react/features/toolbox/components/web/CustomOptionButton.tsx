@@ -33,7 +33,7 @@ class CustomOptionButton extends AbstractButton<Props, any, any> {
      * @param {any} props - Icon's props.
      * @returns {img}
      */
-    icon = props => (<img
+    icon = (props: any) => (<img
         src = { this.iconSrc }
         { ...props } />);
 
