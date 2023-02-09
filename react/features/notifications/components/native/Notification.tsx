@@ -83,6 +83,7 @@ class Notification extends AbstractNotification<Props> {
                             this._onDismissed();
                         }
                     } }
+                    style = { styles.btn }
                     type = { customActionType[index] } />
             ));
         }
@@ -106,7 +107,7 @@ class Notification extends AbstractNotification<Props> {
 
         switch (icon || appearance) {
         case NOTIFICATION_ICON.PARTICIPANT:
-            src = IconWarning;
+            src = IconInfoCircle;
             break;
         case NOTIFICATION_ICON.PARTICIPANTS:
             src = IconUsers;
@@ -131,14 +132,12 @@ class Notification extends AbstractNotification<Props> {
      */
     _mapAppearanceToIcon() {
         // @ts-ignore
-        const { appearance, icon } = this.props;
+        const { appearance } = this.props;
         // @ts-ignore
         const color = ICON_COLOR[appearance];
-        const iconContainerStyles = icon === NOTIFICATION_ICON.PARTICIPANT
-            ? styles.iconContainerInteractive : styles.iconContainer;
 
         return (
-            <View style = { iconContainerStyles }>
+            <View style = { styles.iconContainer }>
                 <Icon
                     color = { color }
                     size = { 24 }
@@ -165,7 +164,9 @@ class Notification extends AbstractNotification<Props> {
                 style = { styles.notification }>
                 <View style = { contentColumnStyles }>
                     { this._mapAppearanceToIcon() }
-                    <View pointerEvents = 'box-none'>
+                    <View
+                        pointerEvents = 'box-none'
+                        style = { styles.contentContainer }>
                         { this._renderContent() }
                     </View>
                     <View style = { styles.btnContainer }>
@@ -199,7 +200,7 @@ class Notification extends AbstractNotification<Props> {
         if (description?.length) {
             return (
                 <>
-                    <Text style = { styles.contentText }>
+                    <Text style = { styles.contentTextTitle }>
                         { titleText }
                     </Text>
                     {
@@ -216,7 +217,7 @@ class Notification extends AbstractNotification<Props> {
         }
 
         return (
-            <Text>
+            <Text style = { styles.contentTextTitle }>
                 { titleText }
             </Text>
         );

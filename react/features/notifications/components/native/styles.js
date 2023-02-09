@@ -38,6 +38,11 @@ export default {
     /**
      * Test style of the notification.
      */
+
+    contentContainer: {
+        marginTop: BaseTheme.spacing[2]
+    },
+
     contentText: {
         ...contentText
     },
@@ -45,6 +50,11 @@ export default {
     contentTextInteractive: {
         ...contentText,
         marginTop: BaseTheme.spacing[1]
+    },
+
+    contentTextTitle: {
+        ...contentText,
+        fontWeight: 'bold'
     },
 
     /**
@@ -88,7 +98,8 @@ export default {
     },
 
     iconContainer: {
-        ...iconContainer
+        ...iconContainer,
+        top: BaseTheme.spacing[2]
     },
 
     iconContainerInteractive: {
@@ -96,22 +107,13 @@ export default {
         top: BaseTheme.spacing[2]
     },
 
-    btnContainer: {
-        display: 'flex',
-        flexDirection: 'row',
+    btn: {
         marginLeft: BaseTheme.spacing[4]
     },
 
-    avatarContainer: {
-        alignItems: 'center',
+    btnContainer: {
         display: 'flex',
         flexDirection: 'row',
-        marginTop: BaseTheme.spacing[1]
-    },
-
-    avatarText: {
-        color: BaseTheme.palette.text04,
-        fontWeight: 'bold',
-        marginLeft: BaseTheme.spacing[2]
+        marginLeft: BaseTheme.spacing[1]
     }
 };
