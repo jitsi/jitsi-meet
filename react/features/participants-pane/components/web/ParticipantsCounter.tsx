@@ -11,13 +11,16 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui03,
             borderRadius: '100%',
             height: '16px',
-            width: '16px',
+            minWidth: '16px',
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.labelBold),
             pointerEvents: 'none',
             position: 'absolute',
             right: '-4px',
-            top: '-3px'
+            top: '-3px',
+            textAlign: 'center',
+            boxSizing: 'border-box',
+            paddingTop: '2px'
         }
     };
 });
