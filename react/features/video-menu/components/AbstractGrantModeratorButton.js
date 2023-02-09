@@ -1,7 +1,7 @@
 // @flow
 
 import { openDialog } from '../../base/dialog';
-import { IconCrown } from '../../base/icons';
+import { IconModerator } from '../../base/icons';
 import {
     PARTICIPANT_ROLE,
     getLocalParticipant,
@@ -35,7 +35,7 @@ export type Props = AbstractButtonProps & {
  */
 export default class AbstractGrantModeratorButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.grantModerator';
-    icon = IconCrown;
+    icon = IconModerator;
     label = 'videothumbnail.grantModerator';
 
     /**
