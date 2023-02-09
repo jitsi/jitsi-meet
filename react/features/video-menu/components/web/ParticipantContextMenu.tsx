@@ -26,6 +26,7 @@ import { isForceMuted } from '../../../participants-pane/functions';
 import { requestRemoteControl, stopController } from '../../../remote-control';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 
+import CustomOptionButton from './CustomOptionButton';
 // @ts-ignore
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 // @ts-ignore
@@ -144,7 +145,7 @@ const ParticipantContextMenu = ({
         isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
     const _isAudioMuted = useSelector((state: IReduxState) => isParticipantAudioMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
-    const { remoteVideoMenu = {}, disableRemoteMute, startSilent }
+    const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
     const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
@@ -171,8 +172,8 @@ const ParticipantContextMenu = ({
     }
     , [ thumbnailMenu, _overflowDrawer, drawerParticipant, participant ]);
 
-    const buttons = [];
-    const buttons2 = [];
+    const buttons: JSX.Element[] = [];
+    const buttons2: JSX.Element[] = [];
 
     const showVolumeSlider = !startSilent
         && !isIosMobileBrowser()
@@ -274,6 +275,23 @@ const ParticipantContextMenu = ({
                 onClick = { onRemoteControlToggle }
                 participantID = { _getCurrentParticipantId() }
                 remoteControlState = { remoteControlState } />
+        );
+    }
+
+    if (customParticipantMenuButtons) {
+        customParticipantMenuButtons.forEach(
+            ({ icon, id, text }) => {
+                const onClick = useCallback(
+                    () => APP.API.notifyParticipantMenuButtonClicked(id, _getCurrentParticipantId()), []);
+
+                buttons2.push(
+                    <CustomOptionButton
+                        icon = { icon }
+                        key = { id }
+                        onClick = { onClick }
+                        text = { text } />
+                );
+            }
         );
     }
 

@@ -32,9 +32,16 @@ export function getReplaceParticipant(state: IReduxState): string | undefined {
  * @returns {Array<string>} - The list of enabled toolbar buttons.
  */
 export function getToolbarButtons(state: IReduxState): Array<string> {
-    const { toolbarButtons } = state['features/base/config'];
+    const { toolbarButtons, customToolbarButtons } = state['features/base/config'];
+    const customButtons = customToolbarButtons?.map(({ id }) => id);
 
-    return Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
+    const buttons = Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
+
+    if (customButtons) {
+        buttons.push(...customButtons);
+    }
+
+    return buttons;
 }
 
 /**
@@ -101,3 +108,30 @@ export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
         android.dynamicLink.isi = android.dynamicLink.isi || '1165103905';
     }
 }
+
+/**
+ * Returns the list of buttons that have that notify the api when clicked.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Array} - The list of buttons.
+ */
+export function getButtonsWithNotifyClick(state: IReduxState): Array<{ key: string; preventExecution: boolean; }> {
+    const { buttonsWithNotifyClick, customToolbarButtons } = state['features/base/config'];
+    const customButtons = customToolbarButtons?.map(({ id }) => {
+        return {
+            key: id,
+            preventExecution: false
+        };
+    });
+
+    const buttons = Array.isArray(buttonsWithNotifyClick)
+        ? buttonsWithNotifyClick as Array<{ key: string; preventExecution: boolean; }>
+        : [];
+
+    if (customButtons) {
+        buttons.push(...customButtons);
+    }
+
+    return buttons;
+}
+

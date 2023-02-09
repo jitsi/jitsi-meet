@@ -1942,6 +1942,21 @@ class API {
     }
 
     /**
+     * Notify external application ( if API is enabled) that a participant menu button was clicked.
+     *
+     * @param {string} key - The key of the participant menu button.
+     * @param {string} participantId - The ID of the participant for with the participant menu button was clicked.
+     * @returns {void}
+     */
+    notifyParticipantMenuButtonClicked(key, participantId) {
+        this._sendEvent({
+            name: 'participant-menu-button-clicked',
+            key,
+            participantId
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}

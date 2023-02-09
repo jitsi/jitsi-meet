@@ -799,6 +799,14 @@ var config = {
     // 'microphone', 'camera', 'select-background', 'invite', 'settings'
     // hiddenPremeetingButtons: [],
 
+    // An array with custom option buttons for the participant context menu
+    // type:  Array<{ icon: string; id: string; text: string; }>
+    // customParticipantMenuButtons: [],
+
+    // An array with custom option buttons for the toolbar
+    // type:  Array<{ icon: string; id: string; text: string; }>
+    // customToolbarButtons: [],
+
     // Stats
     //
 

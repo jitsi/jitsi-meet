@@ -12,6 +12,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import {
+    getButtonsWithNotifyClick,
     getMultipleVideoSendingSupportFeatureFlag,
     getToolbarButtons,
     isToolbarButtonEnabled
@@ -120,6 +121,7 @@ import HelpButton from '../HelpButton';
 
 // @ts-ignore
 import AudioSettingsButton from './AudioSettingsButton';
+import CustomOptionButton from './CustomOptionButton';
 import { EndConferenceButton } from './EndConferenceButton';
 // @ts-ignore
 import FullscreenButton from './FullscreenButton';
@@ -173,6 +175,11 @@ interface IProps extends WithTranslation {
      * The {@code JitsiConference} for the current conference.
      */
     _conference?: IJitsiConference;
+
+    /**
+     * Custom Toolbar buttons.
+     */
+    _customToolbarButtons?: Array<{ icon: string; id: string; text: string; }>;
 
     /**
      * Whether or not screensharing button is disabled.
@@ -715,6 +722,7 @@ class Toolbox extends Component<IProps> {
      */
     _getAllButtons() {
         const {
+            _customToolbarButtons,
             _feedbackConfigured,
             _hasSalesforce,
             _isIosMobile,
@@ -915,6 +923,19 @@ class Toolbox extends Component<IProps> {
             group: 4
         };
 
+        const customButtons = _customToolbarButtons?.reduce((prev, { icon, id, text }) => {
+            return {
+                ...prev,
+                [id]: {
+                    key: id,
+                    Content: CustomOptionButton,
+                    group: 4,
+                    icon,
+                    text
+                }
+            };
+        }, {});
+
         return {
             microphone,
             camera,
@@ -945,7 +966,8 @@ class Toolbox extends Component<IProps> {
             embed,
             feedback,
             download,
-            help
+            help,
+            ...customButtons
         };
     }
 
@@ -1525,8 +1547,8 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const endConferenceSupported = conference?.isEndConferenceSupported() && isLocalParticipantModerator(state);
 
     const {
-        buttonsWithNotifyClick,
         callStatsID,
+        customToolbarButtons,
         disableProfile,
         iAmRecorder,
         iAmSipGateway
@@ -1544,10 +1566,11 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     return {
         _backgroundType: state['features/virtual-background'].backgroundType ?? '',
-        _buttonsWithNotifyClick: buttonsWithNotifyClick,
+        _buttonsWithNotifyClick: getButtonsWithNotifyClick(state),
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
+        _customToolbarButtons: customToolbarButtons,
         _desktopSharingEnabled: JitsiMeetJS.isDesktopSharingEnabled(),
         _desktopSharingButtonDisabled: isDesktopShareButtonDisabled(state),
         _dialog: Boolean(state['features/base/dialog'].component),
