@@ -4,8 +4,9 @@ import { IconMessage, IconReply } from '../../../base/icons';
 import { getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { handleLobbyChatInitialized, openChat } from '../../../chat/actions.native';
-
+import { handleLobbyChatInitialized, openChat } from '../../../chat/actions';
+import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 
 export type Props = AbstractButtonProps & {
 
@@ -65,7 +66,18 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
             this.props.dispatch(handleLobbyChatInitialized(this.props.participantID));
         }
 
-        this.props.dispatch(openChat(this.props._participant, this.props._isPollsDisabled));
+        this.props.dispatch(openChat(this.props._participant));
+
+        this.props._isPollsDisabled
+            ? navigate(screen.conference.chat, {
+                privateMessageRecipient: this.props._participant
+            })
+            : navigate(screen.conference.chatandpolls.main, {
+                screen: screen.conference.chatandpolls.tab.chat,
+                params: {
+                    privateMessageRecipient: this.props._participant
+                }
+            });
     }
 
     /**
