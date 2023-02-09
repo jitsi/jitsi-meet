@@ -91,16 +91,29 @@ ReducerRegistry.register<INotificationsState>('features/notifications',
  */
 function _insertNotificationByPriority(notifications: INotification[], notification: INotification) {
 
-    // We need to filter out the notifications from queue that have the same id as the new notifications,
-    // in order for the UI to update.
-    const filteredNotifications = notifications.filter(
+    // Default to putting the new notification at the end of the queue.
+    let insertAtLocation = notifications.length;
+
+    // Get the index if the new notification has an UID
+    for (let i = 0; i < notifications.length; i++) {
+        if (notification?.uid) {
+            insertAtLocation = i;
+            break;
+        }
+    }
+
+    // Create a copy to avoid mutation.
+    const copyOfNotifications = notifications.slice();
+
+    // Replace queued notification with new notification.
+    copyOfNotifications.splice(insertAtLocation, 1, notification);
+
+    // Filter out notifications from queue that have the same id with new notifications.
+    const filteredNotifications = copyOfNotifications.filter(
         queuedNotification => queuedNotification.uid !== notification.uid);
 
     const newNotificationPriority
         = NOTIFICATION_TYPE_PRIORITIES[notification.props.appearance ?? ''] || 0;
-
-    // Default to putting the new notification at the end of the queue.
-    let insertAtLocation = notifications.length;
 
     // Find where to insert the new notification based on priority. Do not
     // insert at the front of the queue so that the user can finish acting on
@@ -117,10 +130,7 @@ function _insertNotificationByPriority(notifications: INotification[], notificat
         }
     }
 
-    // Create a copy to avoid mutation and insert the notification.
-    const copyOfNotifications = filteredNotifications.slice();
+    filteredNotifications.splice(insertAtLocation, 0, notification);
 
-    copyOfNotifications.splice(insertAtLocation, 0, notification);
-
-    return copyOfNotifications;
+    return filteredNotifications;
 }
