@@ -100,8 +100,9 @@ export function showRoomParticipantMenu(room: Object, participantJid: string, pa
  * @returns {Object}
  */
 export const open = () => {
+    navigate(screen.conference.participants);
+
     return {
-        participantsPaneRoute: navigate(screen.conference.participants),
         type: PARTICIPANTS_PANE_OPEN
     };
 };
