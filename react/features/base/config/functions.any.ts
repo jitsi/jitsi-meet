@@ -316,3 +316,13 @@ export function getDialOutStatusUrl(state: IReduxState) {
 export function getDialOutUrl(state: IReduxState) {
     return state['features/base/config'].guestDialOutUrl;
 }
+
+/**
+ * Selector to return the security UI config.
+ *
+ * @param {IReduxState} state - State object.
+ * @returns {Object}
+ */
+export function getSecurityUiConfig(state: IReduxState) {
+    return state['features/base/config']?.securityUi || {};
+}

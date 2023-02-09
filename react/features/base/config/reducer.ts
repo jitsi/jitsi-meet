@@ -535,6 +535,30 @@ function _translateLegacyConfig(oldValue: IConfig) {
         };
     }
 
+    if (oldValue.autoKnockLobby !== undefined
+        && newValue.lobby?.autoKnock === undefined) {
+        newValue.lobby = {
+            ...newValue.lobby || {},
+            autoKnock: oldValue.autoKnockLobby
+        };
+    }
+
+    if (oldValue.enableLobbyChat !== undefined
+        && newValue.lobby?.enableChat === undefined) {
+        newValue.lobby = {
+            ...newValue.lobby || {},
+            enableChat: oldValue.enableLobbyChat
+        };
+    }
+
+    if (oldValue.hideLobbyButton !== undefined
+        && newValue.securityUi?.hideLobbyButton === undefined) {
+        newValue.securityUi = {
+            ...newValue.securityUi || {},
+            hideLobbyButton: oldValue.hideLobbyButton
+        };
+    }
+
     _setDeeplinkingDefaults(newValue.deeplinking as IDeeplinkingConfig);
 
     return newValue;

@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import type { Dispatch } from 'redux';
 
+import { getSecurityUiConfig } from '../../../../base/config/functions.any';
 import { MEETING_PASSWORD_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
@@ -502,7 +503,7 @@ class SecurityDialog extends PureComponent<Props, State> {
  */
 function _mapStateToProps(state: Object): Object {
     const { conference, locked, password } = state['features/base/conference'];
-    const { hideLobbyButton } = state['features/base/config'];
+    const { disableLobbyPassword, hideLobbyButton } = getSecurityUiConfig(state);
     const { lobbyEnabled } = state['features/lobby'];
     const { roomPasswordNumberOfDigits } = state['features/base/config'];
     const lobbySupported = conference && conference.isLobbySupported();
@@ -518,7 +519,7 @@ function _mapStateToProps(state: Object): Object {
         _lockedConference: Boolean(conference && locked),
         _password: password,
         _passwordNumberOfDigits: roomPasswordNumberOfDigits,
-        _roomPasswordControls: visible
+        _roomPasswordControls: visible && !disableLobbyPassword
     };
 }
 
