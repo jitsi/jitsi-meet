@@ -10,8 +10,8 @@ import { BaseIndicator } from '../../../base/react';
  *
  * @returns {JSX.Element}
  */
-export default function MoeratorIndicator(): JSX.Element {
-    return (
-        <BaseIndicator icon = { IconModerator } />
-    );
-}
+const ModeratorIndicator = (): JSX.Element => (
+    <BaseIndicator icon = { IconModerator } />
+);
+
+export default ModeratorIndicator;

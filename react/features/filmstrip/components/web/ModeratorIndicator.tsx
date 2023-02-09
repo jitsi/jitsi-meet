@@ -1,7 +1,9 @@
+/* eslint-disable lines-around-comment */
+
 import React from 'react';
 
+// @ts-ignore
 import { IconModerator } from '../../../base/icons';
-// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { BaseIndicator } from '../../../base/react';
 
