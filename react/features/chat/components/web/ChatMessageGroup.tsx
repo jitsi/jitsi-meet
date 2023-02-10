@@ -45,6 +45,7 @@ const useStyles = makeStyles()(theme => {
         avatar: {
             margin: `${theme.spacing(1)} ${theme.spacing(2)} ${theme.spacing(3)} 0`,
             position: 'sticky',
+            flexShrink: 0,
             top: 0
         }
     };
