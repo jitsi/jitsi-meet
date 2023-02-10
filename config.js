@@ -197,6 +197,22 @@ var config = {
     //     enableOpusDtx: false,
     // },
 
+    // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
+    // can be used by enabling it below, but the Krisp JS SDK files must be supplied in your
+    // installation. Specifically, these files are needed:
+    //   - https://meet.example.com/libs/krisp/krisp.mjs
+    //   - https://meet.example.com/libs/krisp/models/model_8.kw
+    //   - https://meet.example.com/libs/krisp/models/model_16.kw
+    //   - https://meet.example.com/libs/krisp/models/model_32.kw
+    // NOTE: Krisp JS SDK v1.0.9 was tested.
+    // noiseSuppression: {
+    //     krisp: {
+    //         enabled: false,
+    //         logProcessStats: false,
+    //         debugLogs: false,
+    //     },
+    // },
+
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
