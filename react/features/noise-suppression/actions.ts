@@ -50,6 +50,7 @@ export function setNoiseSuppressionEnabled(enabled: boolean): any {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
+        const { noiseSuppression: nsOptions } = state['features/base/config'];
         const localAudio = getLocalJitsiAudioTrack(state);
         const noiseSuppressionEnabled = isNoiseSuppressionEnabled(state);
 
@@ -61,7 +62,7 @@ export function setNoiseSuppressionEnabled(enabled: boolean): any {
                     return;
                 }
 
-                await localAudio.setEffect(new NoiseSuppressionEffect());
+                await localAudio.setEffect(new NoiseSuppressionEffect(nsOptions));
                 dispatch(setNoiseSuppressionEnabledState(true));
                 logger.info('Noise suppression enabled.');
 

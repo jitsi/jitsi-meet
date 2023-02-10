@@ -117,6 +117,14 @@ export interface IDeeplinkingConfig {
     ios?: IDeeplinkingMobileConfig;
 }
 
+export interface INoiseSuppressionConfig {
+    krisp?: {
+        debugLogs?: boolean;
+        enabled?: boolean;
+        logProcessStats?: boolean;
+    };
+}
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     analytics?: {
@@ -416,6 +424,7 @@ export interface IConfig {
     microsoftApiApplicationClientID?: string;
     moderatedRoomServiceUrl?: string;
     mouseMoveCallbackInterval?: number;
+    noiseSuppression?: INoiseSuppressionConfig;
     noticeMessage?: string;
     notificationTimeouts?: {
         long?: number;
