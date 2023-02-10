@@ -40,19 +40,10 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
 
 #pragma mark Initializers
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        [self initWithXXX];
-    }
-
-    return self;
-}
-
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        [self initWithXXX];
+        [self doInitialize];
     }
 
     return self;
@@ -61,7 +52,7 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        [self initWithXXX];
+        [self doInitialize];
     }
 
     return self;
@@ -71,9 +62,9 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
  * Internal initialization:
  *
  * - sets the background color
- * - initializes the external API scope
+ * - registers necessary observers
  */
-- (void)initWithXXX {
+- (void)doInitialize {
     // Set a background color which is in accord with the JavaScript and Android
     // parts of the application and causes less perceived visual flicker than
     // the default background color.
