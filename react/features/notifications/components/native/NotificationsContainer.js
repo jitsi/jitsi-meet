@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { Animated } from 'react-native';
 
 import { connect } from '../../../base/redux';
 import { hideNotification } from '../../actions';
@@ -51,6 +51,10 @@ class NotificationsContainer extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        this.state = {
+            notificationContainerAnimation: new Animated.Value(0)
+        };
+
         /**
          * The timeout set for automatically dismissing a displayed
          * notification. This value is set on the instance and not state to
@@ -72,6 +76,15 @@ class NotificationsContainer extends Component<Props> {
     componentDidMount() {
         // Set the initial dismiss timeout (if any)
         this._manageDismissTimeout();
+
+        Animated.timing(
+            this.state.notificationContainerAnimation,
+            {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: true
+            })
+            .start();
     }
 
     /**
@@ -181,17 +194,18 @@ class NotificationsContainer extends Component<Props> {
         }
 
         return (
-            <View
+            <Animated.View
                 pointerEvents = 'box-none'
                 style = { [
                     styles.notificationContainer,
-                    this.props.style
+                    this.props.style,
+                    { opacity: this.state.notificationContainerAnimation }
                 ] } >
                 <Notification
                     { ...theNotification.props }
                     onDismissed = { this._onDismissed }
                     uid = { theNotification.uid } />
-            </View>
+            </Animated.View>
         );
     }
 

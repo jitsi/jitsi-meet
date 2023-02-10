@@ -13,11 +13,6 @@ const contentText = {
     marginLeft: BaseTheme.spacing[6]
 };
 
-const iconContainer = {
-    position: 'absolute',
-    left: BaseTheme.spacing[1]
-};
-
 /**
  * The styles of the React {@code Components} of the feature notifications.
  */
@@ -26,11 +21,11 @@ export default {
     /**
      * The content (left) column of the notification.
      */
-    contentColumn: {
+    interactiveContentColumn: {
         ...contentColumn
     },
 
-    interactiveContentColumn: {
+    contentColumn: {
         ...contentColumn,
         justifyContent: 'center'
     },
@@ -44,7 +39,8 @@ export default {
     },
 
     contentText: {
-        ...contentText
+        ...contentText,
+        marginVertical: BaseTheme.spacing[1]
     },
 
     contentTextInteractive: {
@@ -54,7 +50,8 @@ export default {
 
     contentTextTitle: {
         ...contentText,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginTop: BaseTheme.spacing[1]
     },
 
     /**
@@ -98,12 +95,8 @@ export default {
     },
 
     iconContainer: {
-        ...iconContainer,
-        top: BaseTheme.spacing[2]
-    },
-
-    iconContainerInteractive: {
-        ...iconContainer,
+        left: BaseTheme.spacing[1],
+        position: 'absolute',
         top: BaseTheme.spacing[2]
     },
 
