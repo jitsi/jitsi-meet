@@ -164,7 +164,7 @@ const Checkbox = ({
                 <Icon
                     className = 'checkmark'
                     color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
-                    size = { 18 }
+                    size = { "80%" }
                     src = { IconCheck } />
             </label>
             <label>{label}</label>
