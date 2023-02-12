@@ -119,7 +119,6 @@ class ReactInstanceManagerHolder {
             new com.oblador.performance.PerformancePackage(),
             new com.reactnativecommunity.slider.ReactSliderPackage(),
             new com.brentvatne.react.ReactVideoPackage(),
-            new org.reactnative.maskedview.RNCMaskedViewPackage(),
             new com.reactnativecommunity.webview.RNCWebViewPackage(),
             new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
             new com.learnium.RNDeviceInfo.RNDeviceInfo(),
