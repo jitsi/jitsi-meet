@@ -377,7 +377,7 @@ const styles = () => {
             rowGap: '8px',
             margin: 0,
             padding: '16px',
-            marginBottom: '8px'
+            marginBottom: '4px'
         }
     };
 };

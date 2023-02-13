@@ -34,6 +34,9 @@ const getComputedOuterHeight = (element: HTMLElement) => {
 
 interface IProps {
 
+    /**
+     * ARIA attributes.
+     */
     [key: `aria-${string}`]: string;
 
     /**
@@ -107,6 +110,11 @@ interface IProps {
     onMouseLeave?: (e?: React.MouseEvent) => void;
 
     /**
+     * Container role.
+     */
+    role?: string;
+
+    /**
      * Tab index for the menu.
      */
     tabIndex?: number;
@@ -167,7 +175,9 @@ const ContextMenu = ({
     onDrawerClose,
     onMouseEnter,
     onMouseLeave,
-    tabIndex
+    role,
+    tabIndex,
+    ...aria
 }: IProps) => {
     const [ isHidden, setIsHidden ] = useState(true);
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -225,6 +235,7 @@ const ContextMenu = ({
             </Drawer>
         </JitsiPortal>
         : <div
+            { ...aria }
             aria-label = { accessibilityLabel }
             className = { cx(participantsPaneTheme.ignoredChildClassName,
                 styles.contextMenu,
@@ -237,7 +248,7 @@ const ContextMenu = ({
             onMouseEnter = { onMouseEnter }
             onMouseLeave = { onMouseLeave }
             ref = { containerRef }
-            role = 'menu'
+            role = { role ?? 'menu' }
             tabIndex = { tabIndex }>
             {children}
         </div>;

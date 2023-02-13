@@ -1,45 +1,63 @@
-// @flow
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
-import { translate } from '../../../../base/i18n';
-import Video from '../../../../base/media/components/Video';
-import { equals } from '../../../../base/redux';
-import { createLocalVideoTracks } from '../../../functions';
-
+import { IReduxState, IStore } from '../../../../app/types';
+import { openDialog } from '../../../../base/dialog/actions';
+import { translate } from '../../../../base/i18n/functions';
+import { IconImage } from '../../../../base/icons/svg';
+import Video from '../../../../base/media/components/Video.web';
+import { equals } from '../../../../base/redux/functions';
+import { updateSettings } from '../../../../base/settings/actions';
+import Checkbox from '../../../../base/ui/components/web/Checkbox';
+import ContextMenu from '../../../../base/ui/components/web/ContextMenu';
+import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
+import ContextMenuItemGroup from '../../../../base/ui/components/web/ContextMenuItemGroup';
+import VirtualBackgroundDialog from '../../../../virtual-background/components/VirtualBackgroundDialog';
+import { createLocalVideoTracks } from '../../../functions.web';
 
 const videoClassName = 'video-preview-video flipVideoX';
 
 /**
  * The type of the React {@code Component} props of {@link VideoSettingsContent}.
  */
-export type Props = {
+export interface IProps extends WithTranslation {
+
+    /**
+     * Callback to change the flip state.
+     */
+    changeFlip: (flip: boolean) => void;
 
     /**
      * The deviceId of the camera device currently being used.
      */
-    currentCameraDeviceId: string,
+    currentCameraDeviceId: string;
+
+    /**
+     * Whether or not the local video is flipped.
+     */
+    localFlipX: boolean;
+
+    /**
+     * Open virtual background dialog.
+     */
+    selectBackground: () => void;
 
     /**
      * Callback invoked to change current camera.
      */
-    setVideoInputDevice: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
+    setVideoInputDevice: Function;
 
     /**
      * Callback invoked to toggle the settings popup visibility.
      */
-    toggleVideoSettings: Function,
+    toggleVideoSettings: Function;
 
     /**
      * All the camera device ids currently connected.
      */
-    videoDeviceIds: string[],
-};
+    videoDeviceIds: string[];
+}
 
 /**
  * The type of the React {@code Component} state of {@link VideoSettingsContent}.
@@ -49,7 +67,7 @@ type State = {
     /**
      * An array of all the jitsiTracks and eventual errors.
      */
-    trackData: Object[],
+    trackData: { deviceId: string; error?: string; jitsiTrack: any | null; }[];
 };
 
 /**
@@ -58,9 +76,8 @@ type State = {
  *
  * @augments Component
  */
-class VideoSettingsContent extends Component<Props, State> {
+class VideoSettingsContent extends Component<IProps, State> {
     _componentWasUnmounted: boolean;
-    _videoContentRef: Object;
 
     /**
      * Initializes a new {@code VideoSettingsContent} instance.
@@ -68,10 +85,9 @@ class VideoSettingsContent extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
-        this._onEscClick = this._onEscClick.bind(this);
-        this._videoContentRef = React.createRef();
+        this._onToggleFlip = this._onToggleFlip.bind(this);
 
         this.state = {
             trackData: new Array(props.videoDeviceIds.length).fill({
@@ -79,20 +95,16 @@ class VideoSettingsContent extends Component<Props, State> {
             })
         };
     }
-    _onEscClick: (KeyboardEvent) => void;
 
     /**
-     * Click handler for the video entries.
+     * Toggles local video flip state.
      *
-     * @param {KeyboardEvent} event - Esc key click to close the popup.
      * @returns {void}
      */
-    _onEscClick(event) {
-        if (event.key === 'Escape') {
-            event.preventDefault();
-            event.stopPropagation();
-            this._videoContentRef.current.style.display = 'none';
-        }
+    _onToggleFlip() {
+        const { localFlipX, changeFlip } = this.props;
+
+        changeFlip(!localFlipX);
     }
 
     /**
@@ -122,9 +134,9 @@ class VideoSettingsContent extends Component<Props, State> {
      * @param {Object[]} trackData - An array of tracks that are to be disposed.
      * @returns {Promise<void>}
      */
-    _disposeTracks(trackData) {
+    _disposeTracks(trackData: { jitsiTrack: any; }[]) {
         trackData.forEach(({ jitsiTrack }) => {
-            jitsiTrack && jitsiTrack.dispose();
+            jitsiTrack?.dispose();
         });
     }
 
@@ -134,7 +146,7 @@ class VideoSettingsContent extends Component<Props, State> {
      * @param {string} deviceId - The id of the camera device.
      * @returns {Function}
      */
-    _onEntryClick(deviceId) {
+    _onEntryClick(deviceId: string) {
         return () => {
             this.props.setVideoInputDevice(deviceId);
             this.props.toggleVideoSettings();
@@ -148,7 +160,7 @@ class VideoSettingsContent extends Component<Props, State> {
      * @param {number} index - The index of the entry.
      * @returns {React$Node}
      */
-    _renderPreviewEntry(data, index) {
+    _renderPreviewEntry(data: { deviceId: string; error?: string; jitsiTrack: any | null; }, index: number) {
         const { error, jitsiTrack, deviceId } = data;
         const { currentCameraDeviceId, t } = this.props;
         const isSelected = deviceId === currentCameraDeviceId;
@@ -167,19 +179,19 @@ class VideoSettingsContent extends Component<Props, State> {
             );
         }
 
-        const props: Object = {
+        const props: any = {
             className,
             key,
             tabIndex
         };
-        const label = jitsiTrack && jitsiTrack.getTrackLabel();
+        const label = jitsiTrack?.getTrackLabel();
 
         if (isSelected) {
             props['aria-checked'] = true;
             props.className = `${className} video-preview-entry--selected`;
         } else {
             props.onClick = this._onEntryClick(deviceId);
-            props.onKeyPress = e => {
+            props.onKeyPress = (e: React.KeyboardEvent) => {
                 if (e.key === ' ' || e.key === 'Enter') {
                     e.preventDefault();
                     props.onClick();
@@ -192,12 +204,10 @@ class VideoSettingsContent extends Component<Props, State> {
                 { ...props }
                 role = 'radio'>
                 <div className = 'video-preview-label'>
-                    {label && <div className = 'video-preview-label-container'>
-                        <div className = 'video-preview-label-text'>
-                            <span>{label}</span></div>
+                    {label && <div className = 'video-preview-label-text'>
+                        <span>{label}</span>
                     </div>}
                 </div>
-                <div className = 'video-preview-overlay' />
                 <Video
                     className = { videoClassName }
                     playsinline = { true }
@@ -230,7 +240,7 @@ class VideoSettingsContent extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: IProps) {
         if (!equals(this.props.videoDeviceIds, prevProps.videoDeviceIds)) {
             this._setTracks();
         }
@@ -243,21 +253,57 @@ class VideoSettingsContent extends Component<Props, State> {
      */
     render() {
         const { trackData } = this.state;
+        const { selectBackground, t, localFlipX } = this.props;
 
         return (
-            <div
+            <ContextMenu
                 aria-labelledby = 'video-settings-button'
                 className = 'video-preview-container'
+                hidden = { false }
                 id = 'video-settings-dialog'
-                onKeyDown = { this._onEscClick }
-                ref = { this._videoContentRef }
                 role = 'radiogroup'
-                tabIndex = '-1'>
-                {trackData.map((data, i) => this._renderPreviewEntry(data, i))}
-            </div>
+                tabIndex = { -1 }>
+                <ContextMenuItemGroup>
+                    {trackData.map((data, i) => this._renderPreviewEntry(data, i))}
+                </ContextMenuItemGroup>
+                <ContextMenuItemGroup>
+                    <ContextMenuItem
+                        accessibilityLabel = 'virtualBackground.title'
+                        icon = { IconImage }
+                        onClick = { selectBackground }
+                        text = { t('virtualBackground.title') } />
+                    <div
+                        className = 'video-preview-checkbox-container'
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onClick = { e => e.stopPropagation() }>
+                        <Checkbox
+                            checked = { localFlipX }
+                            label = { t('videothumbnail.mirrorVideo') }
+                            onChange = { this._onToggleFlip } />
+                    </div>
+                </ContextMenuItemGroup>
+            </ContextMenu>
         );
     }
 }
 
+const mapStateToProps = (state: IReduxState) => {
+    const { localFlipX } = state['features/base/settings'];
 
-export default translate(VideoSettingsContent);
+    return {
+        localFlipX: Boolean(localFlipX)
+    };
+};
+
+const mapDispatchToProps = (dispatch: IStore['dispatch']) => {
+    return {
+        selectBackground: () => dispatch(openDialog(VirtualBackgroundDialog)),
+        changeFlip: (flip: boolean) => {
+            dispatch(updateSettings({
+                localFlipX: flip
+            }));
+        }
+    };
+};
+
+export default translate(connect(mapStateToProps, mapDispatchToProps)(VideoSettingsContent));
