@@ -107,9 +107,6 @@ StateListenerRegistry.register(
                 ...error,
                 ...getErrorExtraInfo(state, error)
             });
-        } else {
-            // @ts-ignore
-            store.dispatch(openPageReloadDialog());
         }
 
         if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
