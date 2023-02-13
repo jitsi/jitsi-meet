@@ -52,7 +52,7 @@ const DEFAULT_STATE: ISettingsState = {
 };
 
 export interface ISettingsState {
-    audioOutputDeviceId?: string | boolean;
+    audioOutputDeviceId?: string;
     audioSettingsVisible?: boolean;
     avatarURL?: string;
     cameraDeviceId?: string | boolean;
@@ -108,6 +108,7 @@ Object.keys(DEFAULT_STATE).forEach(key => {
 
 // we want to filter these props, to not be stored as they represent
 // what is currently opened/used as devices
+// @ts-ignore
 filterSubtree.audioOutputDeviceId = false;
 filterSubtree.cameraDeviceId = false;
 filterSubtree.micDeviceId = false;

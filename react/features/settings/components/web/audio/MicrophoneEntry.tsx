@@ -1,61 +1,80 @@
-// @flow
-
+import clsx from 'clsx';
 import React, { Component } from 'react';
 
+import Icon from '../../../../base/icons/components/Icon';
+import { IconCheck, IconExclamationSolid } from '../../../../base/icons/svg';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import JitsiMeetJS from '../../../../base/lib-jitsi-meet/_';
+import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
 
-import AudioSettingsEntry, { type Props as AudioSettingsEntryProps } from './AudioSettingsEntry';
 import Meter from './Meter';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;
 
-type Props = AudioSettingsEntryProps & {
+type Props = {
+
+    /**
+     * The text for this component.
+     */
+    children: string;
 
     /**
      * The deviceId of the microphone.
      */
-    deviceId: string,
+    deviceId: string;
 
     /**
      * Flag indicating if there is a problem with the device.
      */
-    hasError?: boolean,
+    hasError?: boolean;
 
     /**
      * Flag indicating if there is a problem with the device.
      */
-    index?: number,
+    index?: number;
+
+    /**
+     * Flag indicating the selection state.
+     */
+    isSelected: boolean;
 
     /**
      * The audio track for the current entry.
      */
-    jitsiTrack: Object,
+    jitsiTrack: any;
+
+    /**
+     * The id for the label, that contains the item text.
+     */
+    labelId?: string;
 
     /**
      * The length of the microphone list.
      */
-    length: number,
+    length: number;
 
 
-    /**
-     * Click handler for component.
-     */
-    onClick: Function,
-    listHeaderId: string,
+    listHeaderId: string;
 
     /**
     * Used to decide whether to listen to audio level changes.
     */
-    measureAudioLevels: boolean,
-}
+    measureAudioLevels: boolean;
+
+    /**
+     * Click handler for component.
+     */
+    onClick: Function;
+};
 
 type State = {
 
     /**
      * The audio level.
      */
-    level: number
-}
+    level: number;
+};
 
 /**
  * React {@code Component} representing an entry for the microphone audio settings.
@@ -81,8 +100,6 @@ export default class MicrophoneEntry extends Component<Props, State> {
         this._updateLevel = this._updateLevel.bind(this);
     }
 
-    _onClick: () => void;
-
     /**
      * Click handler for the entry.
      *
@@ -95,26 +112,17 @@ export default class MicrophoneEntry extends Component<Props, State> {
     /**
      * Key pressed handler for the entry.
      *
-     * @returns {void}
-     */
-    _onKeyPress: (KeyboardEvent) => void;
-
-    /**
-     * Key pressed handler for the entry.
-     *
      * @param {Object} e - The event.
      * @private
      *
      * @returns {void}
      */
-    _onKeyPress(e) {
+    _onKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ') {
             e.preventDefault();
             this.props.onClick(this.props.deviceId);
         }
     }
-
-    _updateLevel: (number) => void;
 
     /**
      * Updates the level of the meter.
@@ -122,7 +130,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
      * @param {number} num - The audio level provided by the jitsiTrack.
      * @returns {void}
      */
-    _updateLevel(num) {
+    _updateLevel(num: number) {
         this.setState({
             level: Math.floor(num / 0.125)
         });
@@ -147,8 +155,8 @@ export default class MicrophoneEntry extends Component<Props, State> {
      * @param {Object} jitsiTrack - The jitsiTrack to unsubscribe from.
      * @returns {void}
      */
-    _stopListening(jitsiTrack) {
-        jitsiTrack && jitsiTrack.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, this._updateLevel);
+    _stopListening(jitsiTrack?: any) {
+        jitsiTrack?.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, this._updateLevel);
         this.setState({
             level: -1
         });
@@ -202,9 +210,9 @@ export default class MicrophoneEntry extends Component<Props, State> {
             measureAudioLevels
         } = this.props;
 
-        const deviceTextId: string = `choose_microphone${deviceId}`;
+        const deviceTextId = `choose_microphone${deviceId}`;
 
-        const labelledby: string = `${listHeaderId} ${deviceTextId} `;
+        const labelledby = `${listHeaderId} ${deviceTextId} `;
 
         const className = `audio-preview-microphone ${measureAudioLevels
             ? 'audio-preview-microphone--withmeter' : 'audio-preview-microphone--nometer'}`;
@@ -220,12 +228,17 @@ export default class MicrophoneEntry extends Component<Props, State> {
                 onKeyPress = { this._onKeyPress }
                 role = 'radio'
                 tabIndex = { 0 }>
-                <AudioSettingsEntry
-                    hasError = { hasError }
-                    isSelected = { isSelected }
-                    labelId = { deviceTextId }>
-                    {children}
-                </AudioSettingsEntry>
+                <ContextMenuItem
+                    accessibilityLabel = ''
+                    icon = { isSelected ? IconCheck : undefined }
+                    selected = { isSelected }
+                    text = { children }
+                    textClassName = { clsx('audio-preview-entry-text', !isSelected && 'left-margin') }>
+                    {hasError && <Icon
+                        className = 'audio-preview-icon audio-preview-icon--exclamation'
+                        size = { 16 }
+                        src = { IconExclamationSolid } />}
+                </ContextMenuItem>
                 { Boolean(jitsiTrack) && measureAudioLevels && <Meter
                     className = 'audio-preview-meter-mic'
                     isDisabled = { hasError }

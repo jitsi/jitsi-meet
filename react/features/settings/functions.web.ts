@@ -42,7 +42,7 @@ export function createLocalVideoTracks(ids: string[], timeout?: number) {
  *   label: string
  * }[]>}
  */
-export function createLocalAudioTracks(devices: MediaDeviceInfo[], timeout?: number) {
+export function createLocalAudioTracks(devices: Array<{ deviceId: string; label: string; }>, timeout?: number) {
     return Promise.all(
         devices.map(async ({ deviceId, label }) => {
             let jitsiTrack = null;
