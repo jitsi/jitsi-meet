@@ -256,7 +256,7 @@ const useStyles = makeStyles()(theme => {
             }
         },
         dialogMarginTop: {
-            marginTop: '44px'
+            marginTop: '8px'
         },
         virtualBackgroundLoading: {
             overflow: 'hidden',
