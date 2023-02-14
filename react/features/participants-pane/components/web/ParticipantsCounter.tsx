@@ -19,7 +19,6 @@ const useStyles = makeStyles()(theme => {
             right: '-4px',
             top: '-3px',
             textAlign: 'center',
-            boxSizing: 'border-box',
             paddingTop: '2px'
         }
     };
