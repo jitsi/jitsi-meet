@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { FlatList } from 'react-native';
+import { FlatList, Text } from 'react-native';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
@@ -67,6 +67,11 @@ type Props = WithTranslation & {
      * The remote participants.
      */
     _sortedRemoteParticipants: Map<string, string>;
+
+    /**
+     * The current visitors count if any.
+     */
+    _visitorsCount: number;
 
     /**
      * List of breakout rooms that were created.
@@ -189,6 +194,7 @@ class MeetingParticipantList extends PureComponent<Props> {
             _participantsCount,
             _showInviteButton,
             _sortedRemoteParticipants,
+            _visitorsCount,
             breakoutRooms,
             isLocalModerator,
             lobbyParticipants,
@@ -217,48 +223,54 @@ class MeetingParticipantList extends PureComponent<Props> {
         const finalContainerStyle
             = _participantsCount > 6 && containerStyle;
         const { color, shareDialogVisible } = _inviteOthersControl;
+        const _visitorsLabelText = _visitorsCount > 0
+            ? t('participantsPane.headings.visitors', { count: _visitorsCount })
+            : undefined;
 
         return (
-            <CollapsibleList
-                containerStyle = { finalContainerStyle }
-                title = { title } >
-                {
-                    _showInviteButton
-                    && <Button
-                        accessibilityLabel = 'participantsPane.actions.invite'
-                        disabled = { shareDialogVisible }
-                        // eslint-disable-next-line react/jsx-no-bind
-                        icon = { () => (
-                            <Icon
-                                color = { color }
-                                size = { 20 }
-                                src = { IconAddUser } />
-                        ) }
-                        labelKey = 'participantsPane.actions.invite'
-                        onClick = { this._onInvite }
-                        style = { styles.inviteButton }
-                        type = { BUTTON_TYPES.PRIMARY } />
+            <>
+                { _visitorsCount > 0 && <Text style = { styles.visitorsLabel }>{ _visitorsLabelText }</Text>
                 }
-                <Input
-                    clearable = { true }
-                    // @ts-ignore
-                    customStyles = {{
-                        container: styles.inputContainer,
-                        input: styles.centerInput }}
-                    onChange = { this._onSearchStringChange }
-                    placeholder = { t('participantsPane.search') }
-                    value = { this.props.searchString } />
-                <FlatList
-                    bounces = { false }
-                    data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
-                    horizontal = { false }
-                    keyExtractor = { this._keyExtractor }
-                    renderItem = { this._renderParticipant }
-                    scrollEnabled = { true }
-                    showsHorizontalScrollIndicator = { false }
-                    windowSize = { 2 } />
-            </CollapsibleList>
-        );
+                <CollapsibleList
+                    containerStyle = { finalContainerStyle }
+                    title = { title } >
+                    {
+                        _showInviteButton
+                        && <Button
+                            accessibilityLabel = 'participantsPane.actions.invite'
+                            disabled = { shareDialogVisible }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            icon = { () => (
+                                <Icon
+                                    color = { color }
+                                    size = { 20 }
+                                    src = { IconAddUser } />
+                            ) }
+                            labelKey = 'participantsPane.actions.invite'
+                            onClick = { this._onInvite }
+                            style = { styles.inviteButton }
+                            type = { BUTTON_TYPES.PRIMARY } />
+                    }
+                    <Input
+                        clearable = { true }
+                        // @ts-ignore
+                        customStyles = {{
+                            container: styles.inputContainer,
+                            input: styles.centerInput }}
+                        onChange = { this._onSearchStringChange }
+                        placeholder = { t('participantsPane.search') }
+                        value = { this.props.searchString } />
+                    <FlatList
+                        bounces = { false }
+                        data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
+                        horizontal = { false }
+                        keyExtractor = { this._keyExtractor }
+                        renderItem = { this._renderParticipant }
+                        scrollEnabled = { true }
+                        showsHorizontalScrollIndicator = { false }
+                        windowSize = { 2 } />
+                </CollapsibleList>
+            </>);
     }
 }
 
@@ -287,7 +299,8 @@ function _mapStateToProps(state: IReduxState): Object {
         _showInviteButton,
         _sortedRemoteParticipants: remoteParticipants,
         _localParticipant: getLocalParticipant(state),
-        _shareDialogVisible: shareDialogVisible
+        _shareDialogVisible: shareDialogVisible,
+        _visitorsCount: state['features/visitors'].count || 0
     };
 }
 

@@ -9,6 +9,7 @@ import Label from '../../../base/label/components/web/Label';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
+import { getVisitorsShortText } from '../../functions';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -26,13 +27,6 @@ const VisitorsCountLabel = () => {
         state['features/visitors'].count || 0);
     const { t } = useTranslation();
 
-    let visitorsCountLabel = String(visitorsCount);
-
-    // over 100 we show numbers lik 0.2 K or 9.5 K.
-    if (visitorsCount > 100) {
-        visitorsCountLabel = `${Math.round(visitorsCount / 100) / 10} K`;
-    }
-
     return visitorsMode && (<Tooltip
         content = { t('visitorsLabel', { count: visitorsCount }) }
         position = { 'bottom' }>
@@ -41,7 +35,7 @@ const VisitorsCountLabel = () => {
             icon = { IconUsers }
             iconColor = { theme.palette.icon04 }
             id = 'visitorsCountLabel'
-            text = { `${visitorsCountLabel}` } />
+            text = { `${getVisitorsShortText(visitorsCount)}` } />
     </Tooltip>);
 };
 
