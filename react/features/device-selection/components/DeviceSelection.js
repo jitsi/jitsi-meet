@@ -12,7 +12,7 @@ import logger from '../logger';
 
 import AudioInputPreview from './AudioInputPreview';
 import AudioOutputPreview from './AudioOutputPreview';
-import DeviceHidContainer from './DeviceHidContainer';
+import DeviceHidContainer from './DeviceHidContainer.web';
 import DeviceSelector from './DeviceSelector';
 import VideoInputPreview from './VideoInputPreview';
 

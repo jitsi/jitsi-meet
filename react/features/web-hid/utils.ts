@@ -23,9 +23,9 @@ export const TELEPHONY_USAGE_ACTIONS = {
  * @type {{ filters: {}; exclusionFilters: {}; }}
  */
 export const requestTelephonyHID = {
-    filters: [
-        { usagePage: 11 }
-    ],
+    filters: [ {
+        usagePage: 11
+    } ],
     exclusionFilters: [
         {
             // Blue Microphones

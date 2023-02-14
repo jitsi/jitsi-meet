@@ -5,11 +5,14 @@ import { MEDIA_TYPE } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { muteLocal } from '../video-menu/actions.any';
 
+
 import { REQUEST_HID_DEVICE } from './actionTypes';
-import { initDeviceInfo, updateDeviceInfo, updateReportResult } from './actions.web';
+import { initDeviceInfo, updateDeviceInfo, updateReportResult } from './actions';
 import { getWebHidInstance, getWebHidState, isDeviceHidSupported } from './functions';
+import logger from './logger';
 import { EVENT_TYPE } from './types';
 import { TELEPHONY_USAGE_ACTIONS } from './utils';
+
 
 /**
  * A listener for initialising the webhid device.
@@ -47,6 +50,8 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
         const hidManager = getWebHidInstance();
 
         if (!hidManager.isSupported()) {
+            logger.warn('HID is not supported');
+
             break;
         }
 
@@ -78,6 +83,7 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
         const hidManager = getWebHidInstance();
 
         if (!isDeviceHidSupported()) {
+
             break;
         }
 

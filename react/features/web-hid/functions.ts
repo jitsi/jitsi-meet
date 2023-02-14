@@ -52,6 +52,5 @@ export function getDeviceInfo(state: IReduxState): IDeviceInfo {
  * @returns {boolean}
  */
 export function shouldRequestHIDDevice(deviceInfo: IDeviceInfo): boolean {
-
     return !deviceInfo || Object.keys(deviceInfo).length === 0;
 }

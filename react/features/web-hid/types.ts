@@ -18,6 +18,8 @@ export interface ITelephonyUsageReportList {
 }
 
 export interface IUsageReportItem {
+
+    // @ts-ignore
     reportItem: HIDReportItem;
     telephonyUsageReportList: ITelephonyUsageReportList[];
 }
@@ -29,6 +31,8 @@ export interface IReportItem {
 }
 
 export interface ISendReportConfig {
+
+    // @ts-ignore
     currentDevice: HIDDevice;
     reportMapResult: Map<number, boolean>;
     reports: Map<string, IReportItem[]>;

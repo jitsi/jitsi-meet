@@ -1,4 +1,3 @@
-
 /**
  * Action type to MUTE.
  */

@@ -5,11 +5,8 @@ import { makeStyles } from 'tss-react/mui';
 
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
-import { requestHidDevice } from '../../web-hid/actions.web';
-import {
-    getDeviceInfo,
-    shouldRequestHIDDevice
-} from '../../web-hid/functions.web';
+import { requestHidDevice } from '../../web-hid/actions';
+import { getDeviceInfo, shouldRequestHIDDevice } from '../../web-hid/functions';
 
 const useStyles = makeStyles()(() => {
     return {
