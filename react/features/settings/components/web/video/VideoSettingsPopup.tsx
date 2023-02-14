@@ -1,7 +1,7 @@
-// @flow
+import React, { ReactNode } from 'react';
+import { connect } from 'react-redux';
 
-import React from 'react';
-
+import { IReduxState } from '../../../../app/types';
 import {
     setVideoInputDeviceAndUpdateSettings
 } from '../../../../base/devices/actions.web';
@@ -9,36 +9,35 @@ import {
     getVideoDeviceIds
 } from '../../../../base/devices/functions.web';
 import Popover from '../../../../base/popover/components/Popover.web';
-import { connect } from '../../../../base/redux';
 import { SMALL_MOBILE_WIDTH } from '../../../../base/responsive-ui/constants';
-import { getCurrentCameraDeviceId } from '../../../../base/settings';
+import { getCurrentCameraDeviceId } from '../../../../base/settings/functions.web';
 import { toggleVideoSettings } from '../../../actions';
-import { getVideoSettingsVisibility } from '../../../functions';
+import { getVideoSettingsVisibility } from '../../../functions.web';
 
-import VideoSettingsContent, { type Props as VideoSettingsProps } from './VideoSettingsContent';
+import VideoSettingsContent, { type IProps as VideoSettingsProps } from './VideoSettingsContent';
 
 
-type Props = VideoSettingsProps & {
+interface IProps extends VideoSettingsProps {
 
     /**
     * Component children (the Video button).
     */
-    children: React$Node,
+    children: ReactNode;
 
     /**
     * Flag controlling the visibility of the popup.
     */
-    isOpen: boolean,
+    isOpen: boolean;
 
     /**
     * Callback executed when the popup closes.
     */
-    onClose: Function,
+    onClose: Function;
 
     /**
      * The popup placement enum value.
      */
-    popupPlacement: string
+    popupPlacement: string;
 }
 
 /**
@@ -54,7 +53,7 @@ function VideoSettingsPopup({
     popupPlacement,
     setVideoInputDevice,
     videoDeviceIds
-}: Props) {
+}: IProps) {
     return (
         <div className = 'video-preview'>
             <Popover
@@ -80,14 +79,14 @@ function VideoSettingsPopup({
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: IReduxState) {
     const { clientWidth } = state['features/base/responsive-ui'];
 
     return {
         currentCameraDeviceId: getCurrentCameraDeviceId(state),
-        isOpen: getVideoSettingsVisibility(state),
-        popupPlacement: clientWidth <= SMALL_MOBILE_WIDTH ? 'auto' : 'top-end',
-        videoDeviceIds: getVideoDeviceIds(state)
+        isOpen: Boolean(getVideoSettingsVisibility(state)),
+        popupPlacement: clientWidth <= Number(SMALL_MOBILE_WIDTH) ? 'auto' : 'top-end',
+        videoDeviceIds: getVideoDeviceIds(state) ?? []
     };
 }
 
