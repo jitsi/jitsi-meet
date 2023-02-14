@@ -135,11 +135,13 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * welcome page.
      *
      * @private
-     * @returns {void}
+     * @returns {boolean}
      */
     _onCancel() {
         clearInterval(this._interval);
         this.props.dispatch(appNavigate(undefined));
+
+        return true;
     }
 
     /**
@@ -148,11 +150,13 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * kick in.
      *
      * @private
-     * @returns {void}
+     * @returns {boolean}
      */
     _onReloadNow() {
         clearInterval(this._interval);
         this.props.dispatch(reloadNow());
+
+        return true;
     }
 
     /**
