@@ -57,10 +57,8 @@ const INITIAL_RN_STATE: IConfig = {
     // than requiring this override here...
 
     p2p: {
-        // Temporarily disable P2P on mobile while we sort out some (codec?) issues.
-        enabled: false,
         disabledCodec: 'vp9',
-        preferredCodec: 'h264'
+        preferredCodec: 'vp8'
     },
 
     videoQuality: {

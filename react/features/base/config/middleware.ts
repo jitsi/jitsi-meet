@@ -52,9 +52,7 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
     const settings = state['features/base/settings'];
     const config: IConfig = {};
 
-    // FIXME: P2P is currently temporality disabled on mobile.
-    // eslint-disable-next-line no-constant-condition
-    if (false && typeof settings.disableP2P !== 'undefined') {
+    if (typeof settings.disableP2P !== 'undefined') {
         config.p2p = { enabled: !settings.disableP2P };
     }
 
