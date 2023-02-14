@@ -110,8 +110,10 @@ StateListenerRegistry.register(
         }
 
         if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
-            // @ts-ignore
-            store.dispatch(openPageReloadDialog());
+            setTimeout(() => {
+                // @ts-ignore
+                store.dispatch(openPageReloadDialog());
+            }, 500);
         }
     }
 );
