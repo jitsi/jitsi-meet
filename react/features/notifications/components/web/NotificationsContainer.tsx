@@ -124,7 +124,6 @@ const useStyles = (theme: Theme) => {
  */
 class NotificationsContainer extends Component<IProps> {
     _api: Object;
-    _timeouts: Map<string, number>;
 
     /**
      * Initializes a new {@code NotificationsContainer} instance.
@@ -133,8 +132,6 @@ class NotificationsContainer extends Component<IProps> {
      */
     constructor(props: IProps) {
         super(props);
-
-        this._timeouts = new Map();
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDismissed = this._onDismissed.bind(this);
@@ -186,13 +183,6 @@ class NotificationsContainer extends Component<IProps> {
      * @returns {void}
      */
     _onDismissed(uid: string) {
-        const timeout = this._timeouts.get(`${uid}`);
-
-        if (timeout) {
-            clearTimeout(timeout);
-            this._timeouts.delete(`${uid}`);
-        }
-
         this.props.dispatch(hideNotification(uid));
     }
 
