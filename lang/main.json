@@ -211,14 +211,14 @@
         "microphonePermission": "Error obtaining microphone permission"
     },
     "deviceSelection": {
-        "noPermission": "Permission not granted",
-        "previewUnavailable": "Preview unavailable",
-        "selectADevice": "Select a device",
-        "testAudio": "Play a test sound",
         "hid": {
             "callControl": "Call control",
             "connectedDevices": "Connected devices:"
-        }
+        },
+        "noPermission": "Permission not granted",
+        "previewUnavailable": "Preview unavailable",
+        "selectADevice": "Select a device",
+        "testAudio": "Play a test sound"
     },
     "dialIn": {
         "screenTitle": "Dial-in summary"
