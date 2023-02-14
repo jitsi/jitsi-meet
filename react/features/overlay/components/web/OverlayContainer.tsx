@@ -1,11 +1,9 @@
-// @flow
-
 import React, { Component } from 'react';
 
-import { connect } from '../../base/redux';
-import { getOverlayToRender } from '../functions';
+import { IReduxState } from '../../../app/types';
+import { connect } from '../../../base/redux/functions';
+import { getOverlayToRender } from '../../functions.web';
 
-declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@link Component} props of {@code OverlayContainer}.
@@ -16,8 +14,8 @@ type Props = {
      * The React {@link Component} type of overlay to be rendered by the
      * associated {@code OverlayContainer}.
      */
-    overlay: ?React$ComponentType<*>
-}
+    overlay: any;
+};
 
 /**
  * Implements a React {@link Component} that will display the correct overlay
@@ -48,7 +46,7 @@ class OverlayContainer extends Component<Props> {
  *     overlay: ?Object
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
         /**
          * The React {@link Component} type of overlay to be rendered by the

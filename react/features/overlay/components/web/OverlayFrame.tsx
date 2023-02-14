@@ -1,8 +1,4 @@
-// @flow
-
-import React, { Component } from 'react';
-
-declare var interfaceConfig: Object;
+import React, { Component, ReactChildren } from 'react';
 
 /**
  * The type of the React {@code Component} props of {@link OverlayFrame}.
@@ -12,18 +8,18 @@ type Props = {
     /**
      * The children components to be displayed into the overlay frame.
      */
-    children: React$Node,
+    children: ReactChildren;
 
     /**
      * Indicates the css style of the overlay. If true, then lighter; darker,
      * otherwise.
      */
-    isLightOverlay?: boolean,
+    isLightOverlay?: boolean;
 
     /**
      * The style property.
      */
-    style: Object
+    style: Object;
 };
 
 /**

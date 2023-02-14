@@ -20,7 +20,6 @@ import {
 import { isVpaasMeeting } from '../jaas/functions';
 import { clearNotifications, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { setFatalError } from '../overlay/actions';
 import { isWelcomePageEnabled } from '../welcome/functions';
 
 import {
@@ -222,7 +221,6 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
  */
 export function reloadNow() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        dispatch(setFatalError(undefined));
 
         const state = getState();
         const { locationURL } = state['features/base/connection'];

@@ -1,12 +1,11 @@
-// @flow
-
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import GlobalStyles from '../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web';
 import DialogContainer from '../../base/ui/components/web/DialogContainer';
 import { ChromeExtensionBanner } from '../../chrome-extension-banner';
+import OverlayContainer from '../../overlay/components/web/OverlayContainer';
 
 import { AbstractApp } from './AbstractApp';
 
@@ -14,12 +13,30 @@ import { AbstractApp } from './AbstractApp';
 import '../middlewares';
 import '../reducers';
 
+
 /**
  * Root app {@code Component} on Web/React.
  *
  * @augments AbstractApp
  */
 export class App extends AbstractApp {
+
+    /**
+     * Creates an extra {@link ReactElement}s to be added (unconditionally)
+     * alongside the main element.
+     *
+     * @abstract
+     * @protected
+     * @returns {ReactElement}
+     */
+    _createExtraElement() {
+        return (
+            <Fragment>
+                <OverlayContainer />
+            </Fragment>
+        );
+    }
+
     /**
      * Overrides the parent method to inject {@link AtlasKitThemeProvider} as
      * the top most component.

@@ -7,15 +7,15 @@ import type { Dispatch } from 'redux';
 import {
     createPageReloadScheduledEvent,
     sendAnalytics
-} from '../../analytics';
-import { reloadNow } from '../../app/actions';
+} from '../../../analytics';
+import { reloadNow } from '../../../app/actions';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
-} from '../../base/lib-jitsi-meet/functions';
-import logger from '../logger';
+} from '../../../base/lib-jitsi-meet/functions';
+import logger from '../../logger';
 
-import ReloadButton from './web/ReloadButton';
+import ReloadButton from './ReloadButton';
 
 declare var APP: Object;
 
@@ -91,6 +91,7 @@ type State = {
  */
 export default class AbstractPageReloadOverlay<P: Props>
     extends Component<P, State> {
+
     /**
      * Determines whether this overlay needs to be rendered (according to a
      * specific redux state). Called by {@link OverlayContainer}.
@@ -100,34 +101,18 @@ export default class AbstractPageReloadOverlay<P: Props>
      * {@code false}, otherwise.
      */
     static needsRender(state: Object) {
-        // FIXME web does not rely on the 'recoverable' flag set on an error
-        // action, but on a predefined list of fatal errors. Because of that
-        // the value of 'fatalError' which relies on the flag should not be used
-        // on web yet (until conference/connection and their errors handling is
-        // not unified).
-        return typeof APP === 'undefined'
-            ? Boolean(state['features/overlay'].fatalError)
-            : this.needsRenderWeb(state);
-    }
+        const { error: conferenceError } = state['features/base/conference'];
+        const { error: configError } = state['features/base/config'];
+        const { error: connectionError } = state['features/base/connection'];
 
-    /**
-     * Determines whether this overlay needs to be rendered (according to a
-     * specific redux state). Called by {@link OverlayContainer}.
-     *
-     * @param {Object} state - The redux state.
-     * @returns {boolean} - If this overlay needs to be rendered, {@code true};
-     * {@code false}, otherwise.
-     */
-    static needsRenderWeb(state: Object) {
-        const conferenceError = state['features/base/conference'].error;
-        const configError = state['features/base/config'].error;
-        const connectionError = state['features/base/connection'].error;
+        const jitsiConnectionError
 
-        return (
-            (connectionError && isFatalJitsiConnectionError(connectionError))
-                || (conferenceError
-                    && isFatalJitsiConferenceError(conferenceError))
-                || configError);
+            // @ts-ignore
+            = connectionError && isFatalJitsiConnectionError(connectionError);
+        const jitsiConferenceError
+            = conferenceError && isFatalJitsiConferenceError(conferenceError);
+
+        return jitsiConnectionError || jitsiConferenceError || configError;
     }
 
     _interval: ?IntervalID;

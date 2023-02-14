@@ -1,10 +1,7 @@
-// @flow
-
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import { BaseApp } from '../../base/app';
 import { toURLString } from '../../base/util';
-import { OverlayContainer } from '../../overlay';
 import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';
 
@@ -73,23 +70,7 @@ export class AbstractApp extends BaseApp<Props, *> {
         }
     }
 
-    /**
-     * Creates an extra {@link ReactElement}s to be added (unconditionally)
-     * alongside the main element.
-     *
-     * @abstract
-     * @protected
-     * @returns {ReactElement}
-     */
-    _createExtraElement() {
-        return (
-            <Fragment>
-                <OverlayContainer />
-            </Fragment>
-        );
-    }
-
-    _createMainElement: (React$Element<*>, Object) => ?React$Element<*>;
+    _createMainElement: (React.ReactElement, Object) => ?React.ReactElement;
 
     /**
      * Gets the default URL to be opened when this {@code App} mounts.

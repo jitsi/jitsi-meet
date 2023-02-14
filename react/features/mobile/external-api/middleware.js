@@ -40,7 +40,6 @@ import { getLocalTracks, isLocalTrackMuted, toggleScreensharing } from '../../ba
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
 import { closeChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
-import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes';
 import { setRequestingSubtitles } from '../../subtitles';
 import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
@@ -214,16 +213,6 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
 
-    case SET_PAGE_RELOAD_OVERLAY_CANCELED:
-        sendEvent(
-            store,
-            CONFERENCE_TERMINATED,
-            /* data */ {
-                error: _toErrorString(action.error),
-                url: _normalizeUrl(store.getState()['features/base/connection'].locationURL)
-            });
-
-        break;
     case SET_VIDEO_MUTED:
         sendEvent(
             store,

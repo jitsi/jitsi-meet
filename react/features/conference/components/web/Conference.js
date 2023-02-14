@@ -16,6 +16,7 @@ import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { LobbyScreen } from '../../../lobby';
 import { getIsLobbyVisible } from '../../../lobby/functions';
+import { getOverlayToRender } from '../../../overlay/functions.web';
 import { ParticipantsPane } from '../../../participants-pane/components/web';
 import Prejoin from '../../../prejoin/components/web/Prejoin';
 import { isPrejoinPageVisible } from '../../../prejoin/functions';
@@ -32,6 +33,7 @@ import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
+
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -58,6 +60,11 @@ type Props = AbstractProps & {
      * The alpha(opacity) of the background.
      */
     _backgroundAlpha: number,
+
+    /**
+     * Are any overlays visible?
+     */
+    _isAnyOverlayVisible: boolean,
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
@@ -198,6 +205,7 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
+            _isAnyOverlayVisible,
             _layoutClassName,
             _notificationsVisible,
             _overflowDrawer,
@@ -234,7 +242,7 @@ class Conference extends AbstractConference<Props, *> {
 
                     { _showPrejoin || _showLobby || <Toolbox /> }
 
-                    {_notificationsVisible && (_overflowDrawer
+                    {_notificationsVisible && !_isAnyOverlayVisible && (_overflowDrawer
                         ? <JitsiPortal className = 'notification-portal'>
                             {this.renderNotificationsContainer({ portal: true })}
                         </JitsiPortal>
@@ -383,6 +391,7 @@ function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
+        _isAnyOverlayVisible: Boolean(getOverlayToRender(state)),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _overflowDrawer: overflowDrawer,

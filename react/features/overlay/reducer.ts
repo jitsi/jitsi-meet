@@ -1,17 +1,13 @@
-import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from '../base/config/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
-import { assign, set } from '../base/redux/functions';
+import { assign } from '../base/redux/functions';
 
-import {
-    MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
-    SET_FATAL_ERROR
-} from './actionTypes';
+import { MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED } from './actionTypes';
+
 
 export interface IOverlayState {
     browser?: string;
     fatalError?: Error;
     isMediaPermissionPromptVisible?: boolean;
-    loadConfigOverlayVisible?: boolean;
 }
 
 /**
@@ -21,18 +17,8 @@ export interface IOverlayState {
  */
 ReducerRegistry.register<IOverlayState>('features/overlay', (state = {}, action): IOverlayState => {
     switch (action.type) {
-    case CONFIG_WILL_LOAD:
-        return _setShowLoadConfigOverlay(state, Boolean(action.room));
-
-    case LOAD_CONFIG_ERROR:
-    case SET_CONFIG:
-        return _setShowLoadConfigOverlay(state, false);
-
     case MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED:
         return _mediaPermissionPromptVisibilityChanged(state, action);
-
-    case SET_FATAL_ERROR:
-        return _setFatalError(state, action);
     }
 
     return state;
@@ -55,30 +41,4 @@ function _mediaPermissionPromptVisibilityChanged(
         browser,
         isMediaPermissionPromptVisible: isVisible
     });
-}
-
-/**
- * Sets the {@code LoadConfigOverlay} overlay visible or not.
- *
- * @param {Object} state - The redux state of the feature overlay.
- * @param {boolean} show - Whether to show or not the overlay.
- * @returns {Object} The new state of the feature overlay after the reduction of
- * the specified action.
- */
-function _setShowLoadConfigOverlay(state: IOverlayState, show?: boolean) {
-    return set(state, 'loadConfigOverlayVisible', show);
-}
-
-/**
- * Reduces a specific redux action {@code SET_FATAL_ERROR} of the feature
- * overlay.
- *
- * @param {Object} state - The redux state of the feature overlay.
- * @param {Error} fatalError - If the value is set it indicates that a fatal
- * error has occurred and that the reload screen is to be displayed.
- * @returns {Object}
- * @private
- */
-function _setFatalError(state: IOverlayState, { fatalError }: { fatalError?: Error; }) {
-    return set(state, 'fatalError', fatalError);
 }

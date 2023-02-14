@@ -1,8 +1,11 @@
+/* eslint-disable lines-around-comment */
+
 import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
 
 // @ts-ignore
 import JitsiMeetJS from './_';
+
 
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
