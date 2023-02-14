@@ -41,7 +41,10 @@ interface IProps extends WithTranslation {
 const useStyles = makeStyles()(theme => {
     return {
         addBackground: {
-            marginRight: theme.spacing(2)
+            marginRight: theme.spacing(2),
+            '& svg': {
+                fill: '#669aec !important'
+            }
         },
         button: {
             display: 'none'
