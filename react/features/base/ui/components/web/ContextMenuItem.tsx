@@ -178,7 +178,14 @@ const ContextMenuItem = ({
                     className = { styles.contextMenuItemIcon }
                     size = { 20 }
                     src = { icon } />}
-            {text && <span className = { cx(styles.text, textClassName) }>{text}</span>}
+            {text && (
+                <span
+                    className = { cx(styles.text,
+                _overflowDrawer && styles.drawerText,
+                textClassName) }>
+                    {text}
+                </span>
+            )}
             {children}
         </div>
     );

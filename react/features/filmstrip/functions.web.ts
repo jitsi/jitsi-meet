@@ -760,7 +760,7 @@ export function isStageFilmstripTopPanel(state: IReduxState, minParticipantCount
 export function isStageFilmstripEnabled(state: IReduxState) {
     const { filmstrip } = state['features/base/config'];
 
-    return !filmstrip?.disableStageFilmstrip && interfaceConfig.VERTICAL_FILMSTRIP;
+    return Boolean(!filmstrip?.disableStageFilmstrip && interfaceConfig.VERTICAL_FILMSTRIP);
 }
 
 /**

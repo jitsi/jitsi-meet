@@ -6,11 +6,6 @@ import { Component } from 'react';
 export interface IProps {
 
     /**
-     * Function that closes the dialog.
-     */
-    closeDialog: Function;
-
-    /**
      * Callback to invoke on change.
      */
     onTabStateChange: Function;

@@ -117,7 +117,7 @@ export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
     const language = i18next.language || DEFAULT_LANGUAGE;
-    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
+    const configuredTabs: string[] = interfaceConfig.SETTINGS_SECTIONS || [];
     const enabledNotifications = getNotificationsMap(stateful);
     const stageFilmstripEnabled = isStageFilmstripEnabled(state);
 
