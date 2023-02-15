@@ -7,6 +7,7 @@ import JitsiPortal from '../../../../toolbox/components/web/JitsiPortal';
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { spacing } from '../../Tokens';
 
 /**
  * Get a style property from a style declaration as a float.
@@ -194,9 +195,22 @@ const ContextMenu = ({
             && offsetTarget.offsetParent instanceof HTMLElement
         ) {
             const { current: container } = containerRef;
+
+            // make sure the max height is not set
+            // @ts-ignore
+            container.style.maxHeight = null;
             const { offsetTop, offsetParent: { offsetHeight, scrollTop } } = offsetTarget;
-            const outerHeight = getComputedOuterHeight(container);
-            const height = Math.min(MAX_HEIGHT, outerHeight);
+            let outerHeight = getComputedOuterHeight(container);
+            let height = Math.min(MAX_HEIGHT, outerHeight);
+
+            if (offsetTop + height > offsetHeight + scrollTop && height > offsetTop) {
+                // top offset and + padding + border
+                container.style.maxHeight = `${offsetTop - ((spacing[2] * 2) + 2)}px`;
+            }
+
+            // get the height after style changes
+            outerHeight = getComputedOuterHeight(container);
+            height = Math.min(MAX_HEIGHT, outerHeight);
 
             container.style.top = offsetTop + height > offsetHeight + scrollTop
                 ? `${offsetTop - outerHeight}`
