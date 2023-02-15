@@ -187,9 +187,12 @@ function _onFollowMeCommand(attributes: any = {}, id: string, store: IStore) {
         }
 
         if (!_.isEqual(stageParticipants, oldStageParticipants)) {
-            oldStageParticipants.forEach((p: { participantId: string; }) =>
+            const toRemove = _.differenceWith(oldStageParticipants, stageParticipants, _.isEqual);
+            const toAdd = _.differenceWith(stageParticipants, oldStageParticipants, _.isEqual);
+
+            toRemove.forEach((p: { participantId: string; }) =>
                 store.dispatch(removeStageParticipant(p.participantId)));
-            stageParticipants.forEach((p: { participantId: string; }) =>
+            toAdd.forEach((p: { participantId: string; }) =>
                 store.dispatch(addStageParticipant(p.participantId, true)));
         }
     }
