@@ -8,7 +8,7 @@ import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
 
 import Notification from './Notification';
-import styles from './styles';
+
 
 type Props = {
 
@@ -21,12 +21,7 @@ type Props = {
     /**
      * Invoked to update the redux store in order to remove notifications.
      */
-     dispatch: Function,
-
-    /**
-     * Any custom styling applied to the notifications container.
-     */
-    style: Object
+     dispatch: Function
 };
 
 /**
@@ -186,27 +181,21 @@ class NotificationsContainer extends Component<Props> {
     render() {
         const { _notifications } = this.props;
 
-        // Currently the native container displays only the topmost notification
-        const theNotification = _notifications[0];
+        return _notifications.map((notification, index) => {
+            const { props, uid } = notification;
 
-        if (!theNotification) {
-            return null;
-        }
-
-        return (
-            <Animated.View
-                pointerEvents = 'box-none'
-                style = { [
-                    styles.notificationContainer,
-                    this.props.style,
-                    { opacity: this.state.notificationContainerAnimation }
-                ] } >
-                <Notification
-                    { ...theNotification.props }
-                    onDismissed = { this._onDismissed }
-                    uid = { theNotification.uid } />
-            </Animated.View>
-        );
+            return (
+                <Animated.View
+                    key = { index }
+                    pointerEvents = 'box-none'
+                    style = {{ opacity: this.state.notificationContainerAnimation }} >
+                    <Notification
+                        { ...props }
+                        onDismissed = { this._onDismissed }
+                        uid = { uid } />
+                </Animated.View>
+            );
+        });
     }
 
     _onDismissed: number => void;

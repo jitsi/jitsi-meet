@@ -74,14 +74,6 @@ export default {
     },
 
     /**
-     * Outermost container of a list of notifications.
-     */
-    notificationContainer: {
-        flexGrow: 0,
-        justifyContent: 'flex-end'
-    },
-
-    /**
      * Wrapper for the message.
      */
     notificationContent: {
