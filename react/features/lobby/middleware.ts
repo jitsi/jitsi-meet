@@ -134,7 +134,7 @@ StateListenerRegistry.register(
 
                     const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
 
-                    if (isParticipantsPaneVisible) {
+                    if (isParticipantsPaneVisible || navigator.product === 'ReactNative') {
                         return;
                     }
 
@@ -232,9 +232,7 @@ function _handleLobbyNotification(store: IStore) {
                 dispatch(openChat(disablePolls));
             }));
         }
-    }
-
-    if (knockingParticipants.length > 1) {
+    } else {
         descriptionKey = 'notify.participantsWantToJoin';
         notificationTitle = i18n.t('notify.waitingParticipants', {
             waitingParticipants: knockingParticipants.length
