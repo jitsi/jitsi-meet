@@ -249,11 +249,15 @@ function initCommands() {
 
             // if id not provided, unpin everybody.
             if (!id) {
-                const pinnedParticipants = getPinnedActiveParticipants(state);
+                if (isStageFilmstripAvailable(state)) {
+                    const pinnedParticipants = getPinnedActiveParticipants(state);
 
-                pinnedParticipants?.forEach(p => {
-                    APP.store.dispatch(togglePinStageParticipant(p.participantId));
-                });
+                    pinnedParticipants?.forEach(p => {
+                        APP.store.dispatch(togglePinStageParticipant(p.participantId));
+                    });
+                } else {
+                    APP.store.dispatch(pinParticipant());
+                }
 
                 return;
             }
