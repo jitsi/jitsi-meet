@@ -20,6 +20,7 @@ import {
     parseURIString,
     toURLString
 } from '../base/util/uri';
+import { reloadNowInitiated } from '../mobile/navigation/actions';
 // @ts-ignore
 import { isPrejoinPageEnabled } from '../mobile/navigation/functions';
 import {
@@ -142,11 +143,15 @@ export function appNavigate(uri?: string) {
             dispatch(createDesiredLocalTracks());
             dispatch(clearNotifications());
 
-            if (isPrejoinPageEnabled(getState())) {
+            // @ts-ignore
+            const { initiated: conferenceReloaded } = getState()['features/app'];
+
+            if (!conferenceReloaded && isPrejoinPageEnabled(getState())) {
                 navigateRoot(screen.preJoin);
             } else {
                 dispatch(connect());
                 navigateRoot(screen.conference.root);
+                dispatch(reloadNowInitiated(false));
             }
         } else {
             goBackToRoot(getState(), dispatch);

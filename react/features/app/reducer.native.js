@@ -1,5 +1,5 @@
 import { ReducerRegistry } from '../base/redux';
-import { _ROOT_NAVIGATION_READY } from '../mobile/navigation/actionTypes';
+import { RELOAD_NOW_INITIATED, SET_ROOT_NAVIGATION } from '../mobile/navigation/actionTypes';
 
 /**
  * Listen for actions which changes the state of the app feature.
@@ -11,7 +11,12 @@ import { _ROOT_NAVIGATION_READY } from '../mobile/navigation/actionTypes';
  */
 ReducerRegistry.register('features/app', (state = {}, action) => {
     switch (action.type) {
-    case _ROOT_NAVIGATION_READY:
+    case RELOAD_NOW_INITIATED:
+        return {
+            ...state,
+            initiated: action.initiated
+        };
+    case SET_ROOT_NAVIGATION:
         return {
             ...state,
             ready: action.ready

@@ -13,8 +13,7 @@ import Prejoin from '../../../prejoin/components/native/Prejoin';
 // @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
-// @ts-ignore
-import { _ROOT_NAVIGATION_READY } from '../actionTypes';
+import { setRootNavigation } from '../actions';
 // @ts-ignore
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 // @ts-ignore
@@ -55,10 +54,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
     const initialRouteName = isWelcomePageAvailable
         ? screen.welcome.main : screen.connecting;
     const onReady = useCallback(() => {
-        dispatch({
-            type: _ROOT_NAVIGATION_READY,
-            ready: true
-        });
+        dispatch(setRootNavigation(true));
     }, [ dispatch ]);
 
     return (
