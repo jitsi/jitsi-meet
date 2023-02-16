@@ -64,7 +64,7 @@ module:hook('muc-occupant-pre-join', function (event)
 
     local occupant = event.occupant;
     if ends_with(occupant.nick, '/focus') then
-        prosody.events.fire_event('jicofo-unlock-room', { room = room; });
+        module:fire_event('jicofo-unlock-room', { room = room; });
     else
         room.jicofo_lock = true;
         if not room.pre_join_queue then
@@ -98,4 +98,4 @@ function handle_jicofo_unlock(event)
     room.pre_join_queue = nil;
 end
 
-module:hook_global('jicofo-unlock-room', handle_jicofo_unlock);
+module:hook('jicofo-unlock-room', handle_jicofo_unlock);
