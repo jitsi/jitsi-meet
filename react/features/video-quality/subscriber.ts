@@ -463,7 +463,17 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         }
 
         if (getCurrentLayout(state) === LAYOUTS.STAGE_FILMSTRIP_VIEW && activeParticipantsSources.length > 0) {
-            const onStageSources = [ ...activeParticipantsSources ];
+            const selectedSources: string[] = [];
+            const onStageSources: string[] = [];
+
+            // If more than one video source is pinned to the stage filmstrip, they need to be added to the
+            // 'selectedSources' so that the bridge can allocate bandwidth for all the sources as opposed to doing
+            // greedy allocation for the sources (which happens when they are added to 'onStageSources').
+            if (activeParticipantsSources.length > 1) {
+                selectedSources.push(...activeParticipantsSources);
+            } else {
+                onStageSources.push(activeParticipantsSources[0]);
+            }
 
             activeParticipantsSources.forEach(sourceName => {
                 const isScreenSharing = remoteScreenShares.includes(sourceName);
@@ -485,6 +495,7 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
             }
 
             receiverConstraints.onStageSources = onStageSources;
+            receiverConstraints.selectedSources = selectedSources;
         } else if (largeVideoSourceName) {
             let quality = VIDEO_QUALITY_UNLIMITED;
 
