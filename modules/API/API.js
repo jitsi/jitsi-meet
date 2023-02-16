@@ -71,8 +71,13 @@ import {
 import { appendSuffix } from '../../react/features/display-name';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
-import { addStageParticipant, resizeFilmStrip, setVolume } from '../../react/features/filmstrip/actions.web';
-import { isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
+import {
+    addStageParticipant,
+    resizeFilmStrip,
+    setVolume,
+    togglePinStageParticipant
+} from '../../react/features/filmstrip/actions.web';
+import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
 import { invite } from '../../react/features/invite';
 import {
     selectParticipantInLargeVideo
@@ -241,6 +246,22 @@ function initCommands() {
             logger.debug('Pin participant command received');
 
             const state = APP.store.getState();
+
+            // if id not provided, unpin everybody.
+            if (!id) {
+                if (isStageFilmstripAvailable(state)) {
+                    const pinnedParticipants = getPinnedActiveParticipants(state);
+
+                    pinnedParticipants?.forEach(p => {
+                        APP.store.dispatch(togglePinStageParticipant(p.participantId));
+                    });
+                } else {
+                    APP.store.dispatch(pinParticipant());
+                }
+
+                return;
+            }
+
             const participant = videoType === VIDEO_TYPE.DESKTOP
                 ? getVirtualScreenshareParticipantByOwnerId(state, id) : getParticipantById(state, id);
 
@@ -254,7 +275,7 @@ function initCommands() {
 
             const participantId = participant.id;
 
-            if (isStageFilmstripAvailable(APP.store.getState())) {
+            if (isStageFilmstripAvailable(state)) {
                 APP.store.dispatch(addStageParticipant(participantId, true));
             } else {
                 APP.store.dispatch(pinParticipant(participantId));
