@@ -165,3 +165,7 @@ export interface IReduxState {
     'features/virtual-background': IVirtualBackground;
     'features/whiteboard': IWhiteboardState;
 }
+
+export interface IReloadNowOptions {
+    hidePrejoin?: boolean;
+}

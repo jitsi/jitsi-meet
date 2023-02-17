@@ -33,12 +33,13 @@ type ErrorType = {
 };
 
 /**
- * List of errors that are not fatal (or handled differently) so then the overlays won't kick in.
+ * List of errors that are not fatal (or handled differently) so then the page reload dialog won't kick in.
  */
-const NON_OVERLAY_ERRORS = [
+const RN_NO_RELOAD_DIALOG_ERRORS = [
     JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
     JitsiConferenceErrors.CONFERENCE_DESTROYED,
-    JitsiConferenceErrors.CONNECTION_ERROR
+    JitsiConferenceErrors.CONNECTION_ERROR,
+    JitsiConferenceErrors.CONFERENCE_RESTARTED
 ];
 
 const ERROR_TYPES = {
@@ -109,7 +110,7 @@ StateListenerRegistry.register(
             });
         }
 
-        if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
+        if (RN_NO_RELOAD_DIALOG_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
             setTimeout(() => {
                 // @ts-ignore
                 store.dispatch(openPageReloadDialog());
