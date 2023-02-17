@@ -8,7 +8,6 @@ import type { Dispatch } from 'redux';
 
 import { appNavigate, reloadNow } from '../../../../app/actions.native';
 import { IReduxState } from '../../../../app/types';
-import { reloadNowInitiated } from '../../../../mobile/navigation/actions';
 import { translate } from '../../../i18n/functions';
 import { isFatalJitsiConnectionError } from '../../../lib-jitsi-meet/functions.native';
 import { connect } from '../../../redux/functions';
@@ -106,7 +105,6 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
                         this._interval = undefined;
                     }
 
-                    dispatch(reloadNowInitiated(true));
                     dispatch(reloadNow());
                 } else {
                     this.setState(prevState => {
@@ -141,7 +139,6 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      */
     _onCancel() {
         clearInterval(this._interval);
-        this.props.dispatch(reloadNowInitiated(false));
         this.props.dispatch(appNavigate(undefined));
 
         return true;
@@ -157,10 +154,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      */
     _onReloadNow() {
         clearInterval(this._interval);
-        this.props.dispatch(reloadNowInitiated(true));
         this.props.dispatch(reloadNow());
-
-        return true;
     }
 
     /**

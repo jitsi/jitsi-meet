@@ -1,22 +1,5 @@
-import { RELOAD_NOW_INITIATED, SET_ROOT_NAVIGATION } from './actionTypes';
+import { SET_ROOT_NAVIGATION } from './actionTypes';
 
-
-/**
- * A reload was initiated.
- *
- * @param {Object} initiated - Reload started.
- *
- * @returns {{
- *     initiated: initiated,
- *     type: RELOAD_NOW_INITIATED
- * }}
- */
-export function reloadNowInitiated(initiated: boolean) {
-    return {
-        initiated,
-        type: RELOAD_NOW_INITIATED
-    };
-}
 
 /**
  * Sets root navigation.
