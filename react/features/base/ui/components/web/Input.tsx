@@ -23,6 +23,7 @@ interface IProps extends IInputProps {
     onKeyPress?: (e: React.KeyboardEvent) => void;
     readOnly?: boolean;
     required?: boolean;
+    testId?: string;
     textarea?: boolean;
     type?: 'text' | 'email' | 'number' | 'password';
 }
@@ -152,6 +153,7 @@ const Input = React.forwardRef<any, IProps>(({
     placeholder,
     readOnly = false,
     required,
+    testId,
     textarea = false,
     type = 'text',
     value
@@ -201,6 +203,7 @@ const Input = React.forwardRef<any, IProps>(({
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
                             error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
+                        data-testid = { testId }
                         disabled = { disabled }
                         { ...(id ? { id } : {}) }
                         maxLength = { maxLength }
