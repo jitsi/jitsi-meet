@@ -27,6 +27,7 @@ import ShareAudioDialog from '../../screen-share/components/web/ShareAudioDialog
 import ShareScreenWarningDialog from '../../screen-share/components/web/ShareScreenWarningDialog';
 import SecurityDialog from '../../security/components/security-dialog/web/SecurityDialog';
 import LogoutDialog from '../../settings/components/web/LogoutDialog';
+import SettingsDialog from '../../settings/components/web/SettingsDialog';
 import SharedVideoDialog from '../../shared-video/components/web/SharedVideoDialog';
 import SpeakerStats from '../../speaker-stats/components/web/SpeakerStats';
 import LanguageSelectorDialog from '../../subtitles/components/LanguageSelectorDialog.web';
@@ -51,7 +52,7 @@ const NEW_DIALOG_LIST = [ KeyboardShortcutsDialog, ChatPrivacyDialog, DisplayNam
     SharedVideoDialog, SpeakerStats, LanguageSelectorDialog, MuteEveryoneDialog, MuteEveryonesVideoDialog,
     GrantModeratorDialog, KickRemoteParticipantDialog, MuteRemoteParticipantsVideoDialog, VideoQualityDialog,
     VirtualBackgroundDialog, LoginDialog, WaitForOwnerDialog, DesktopPicker, RemoteControlAuthorizationDialog,
-    LogoutDialog, SalesforceLinkDialog, ParticipantVerificationDialog, PasswordRequiredPrompt ];
+    LogoutDialog, SalesforceLinkDialog, ParticipantVerificationDialog, PasswordRequiredPrompt, SettingsDialog ];
 
 // This function is necessary while the transition from @atlaskit dialog to our component is ongoing.
 const isNewDialog = (component: any) => NEW_DIALOG_LIST.some(comp => comp === component);
