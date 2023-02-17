@@ -39,6 +39,8 @@ export { default as IconExclamationSolid } from './exclamation-solid.svg';
 export { default as IconExclamationTriangle } from './exclamation-triangle.svg';
 export { default as IconExitFullscreen } from './exit-fullscreen.svg';
 export { default as IconFaceSmile } from './face-smile.svg';
+export { default as IconFavorite } from './favorite.svg';
+export { default as IconFavoriteSolid } from './favorite-solid.svg';
 export { default as IconFeedback } from './feedback.svg';
 export { default as IconGear } from './gear.svg';
 export { default as IconGoogle } from './google.svg';
