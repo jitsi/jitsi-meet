@@ -155,6 +155,8 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
     _onReloadNow() {
         clearInterval(this._interval);
         this.props.dispatch(reloadNow());
+
+        return true;
     }
 
     /**
