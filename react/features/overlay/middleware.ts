@@ -38,7 +38,8 @@ type ErrorType = {
 const NON_OVERLAY_ERRORS = [
     JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
     JitsiConferenceErrors.CONFERENCE_DESTROYED,
-    JitsiConferenceErrors.CONNECTION_ERROR
+    JitsiConferenceErrors.CONNECTION_ERROR,
+    JitsiConferenceErrors.CONFERENCE_RESTARTED
 ];
 
 const ERROR_TYPES = {
