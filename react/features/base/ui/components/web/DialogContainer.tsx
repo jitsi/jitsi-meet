@@ -1,4 +1,3 @@
-import { ModalTransition } from '@atlaskit/modal-dialog';
 import React, { Component, ComponentType } from 'react';
 
 import { IReduxState } from '../../../../app/types';
@@ -20,11 +19,6 @@ interface IProps {
      * The props to pass to the component that will be rendered.
      */
     _componentProps: Object;
-
-    /**
-     * Whether the dialog is using the new component.
-     */
-    _isNewDialog: boolean;
 
     /**
      * Whether the overflow drawer should be used.
@@ -74,16 +68,12 @@ class DialogContainer extends Component<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        return this.props._isNewDialog ? (
+        return (
             <DialogTransition>
                 {this.props._overflowDrawer
                     ? <JitsiPortal>{this._renderDialogContent()}</JitsiPortal>
-                    : this._renderDialogContent() }
+                    : this._renderDialogContent()}
             </DialogTransition>
-        ) : (
-            <ModalTransition>
-                { this._renderDialogContent() }
-            </ModalTransition>
         );
     }
 }
@@ -104,7 +94,6 @@ function mapStateToProps(state: IReduxState) {
     return {
         _component: stateFeaturesBaseDialog.component,
         _componentProps: stateFeaturesBaseDialog.componentProps,
-        _isNewDialog: stateFeaturesBaseDialog.isNewDialog,
         _overflowDrawer: overflowDrawer,
         _reducedUI: reducedUI
     };
