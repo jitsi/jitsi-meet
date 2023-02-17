@@ -4,10 +4,11 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconCloseLarge } from '../../../base/icons';
-import { InputField, PreMeetingScreen } from '../../../base/premeeting';
+import { PreMeetingScreen } from '../../../base/premeeting';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import Button from '../../../base/ui/components/web/Button';
+import Input from '../../../base/ui/components/web/Input';
 import ChatInput from '../../../chat/components/web/ChatInput';
 import MessageContainer from '../../../chat/components/web/MessageContainer';
 import AbstractLobbyScreen, {
@@ -184,9 +185,10 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { t } = this.props;
 
         return (
-            <InputField
+            <Input
+                className = 'prejoin-input'
                 onChange = { this._onChangeDisplayName }
-                placeHolder = { t('lobby.nameField') }
+                placeholder = { t('lobby.nameField') }
                 testId = 'lobby.nameField'
                 value = { displayName } />
         );
@@ -202,10 +204,10 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
         return (
             <>
-                <InputField
-                    className = { _passwordJoinFailed ? 'error' : '' }
+                <Input
+                    className = { `prejoin-input ${_passwordJoinFailed ? 'error' : ''}` }
                     onChange = { this._onChangePassword }
-                    placeHolder = { t('lobby.passwordField') }
+                    placeholder = { t('lobby.passwordField') }
                     testId = 'lobby.password'
                     type = 'password'
                     value = { this.state.password } />
