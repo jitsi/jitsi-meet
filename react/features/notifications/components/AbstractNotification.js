@@ -109,7 +109,7 @@ export type Props = {
  *
  * @augments Component
  */
-export default class AbstractNotification<P: Props> extends Component<*> {
+export default class AbstractNotification<P: Props> extends Component<P> {
     /**
      * Default values for {@code Notification} component's properties.
      *
