@@ -281,22 +281,3 @@ export const commonStyles = (theme: Theme) => {
         }
     };
 };
-
-/**
- * Returns the global styles.
- *
- * @param {Object} theme - The Jitsi theme.
- * @returns {Object}
- */
-export const getGlobalStyles = (theme: Theme) => {
-    return {
-        // @atlaskit/modal-dialog OVERRIDES
-        '.atlaskit-portal div[role=dialog]': {
-            // override dialog background
-            '& > div': {
-                background: theme.palette.ui02,
-                color: theme.palette.text01
-            }
-        }
-    };
-};
