@@ -31,10 +31,6 @@ const useStyles = makeStyles()(theme => {
                 top: 0,
                 left: 0,
                 bottom: 0
-
-                // height: '100%',
-                // margin: '0 !important',
-                // maxHeight: 'initial'
             },
 
             '@media (max-width: 448px)': {
