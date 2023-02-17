@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Animated } from 'react-native';
+import { View } from 'react-native';
 
 import { connect } from '../../../base/redux';
 import { hideNotification } from '../../actions';
@@ -46,10 +46,6 @@ class NotificationsContainer extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
-        this.state = {
-            notificationContainerAnimation: new Animated.Value(0)
-        };
-
         /**
          * The timeout set for automatically dismissing a displayed
          * notification. This value is set on the instance and not state to
@@ -64,22 +60,13 @@ class NotificationsContainer extends Component<Props> {
     }
 
     /**
-     * Sets a timeout for the first notification (if applicable).
+     * Sets a timeout (if applicable).
      *
      * @inheritdoc
      */
     componentDidMount() {
         // Set the initial dismiss timeout (if any)
         this._manageDismissTimeout();
-
-        Animated.timing(
-            this.state.notificationContainerAnimation,
-            {
-                toValue: 1,
-                duration: 500,
-                useNativeDriver: true
-            })
-            .start();
     }
 
     /**
@@ -181,21 +168,23 @@ class NotificationsContainer extends Component<Props> {
     render() {
         const { _notifications } = this.props;
 
-        return _notifications.map((notification, index) => {
-            const { props, uid } = notification;
+        return (
+            <View pointerEvents = 'box-none'>
+                {
+                    _notifications.map((notification, index) => {
+                        const { props, uid } = notification;
 
-            return (
-                <Animated.View
-                    key = { index }
-                    pointerEvents = 'box-none'
-                    style = {{ opacity: this.state.notificationContainerAnimation }} >
-                    <Notification
-                        { ...props }
-                        onDismissed = { this._onDismissed }
-                        uid = { uid } />
-                </Animated.View>
-            );
-        });
+                        return (
+                            <Notification
+                                { ...props }
+                                key = { index }
+                                onDismissed = { this._onDismissed }
+                                uid = { uid } />
+                        );
+                    })
+                }
+            </View>
+        );
     }
 
     _onDismissed: number => void;

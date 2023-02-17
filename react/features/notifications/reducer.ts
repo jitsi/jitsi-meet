@@ -94,14 +94,13 @@ function _insertNotificationByPriority(notifications: INotification[], notificat
     // Create a copy to avoid mutation.
     const copyOfNotifications = notifications.slice();
 
-    // Check if any queued notification has the same id as the new notification
-    const sameUIDNotification = (queuedNotification: INotification) => queuedNotification?.uid === notification?.uid;
-
-    // Get the index
-    let insertAtLocation = copyOfNotifications.findIndex(sameUIDNotification);
+    // Get the index of any queued notification that has the same id as the new notification
+    let insertAtLocation = copyOfNotifications.findIndex(
+            (queuedNotification: INotification) =>
+                queuedNotification?.uid === notification?.uid
+    );
 
     if (insertAtLocation !== -1) {
-
         copyOfNotifications.splice(insertAtLocation, 1, notification);
 
         return copyOfNotifications;

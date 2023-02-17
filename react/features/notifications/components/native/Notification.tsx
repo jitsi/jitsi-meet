@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Animated, Text, View } from 'react-native';
 
 import { translate } from '../../../base/i18n/functions';
 import {
@@ -54,6 +54,54 @@ type Props = AbstractNotificationProps & WithTranslation & {
  * @augments Component
  */
 class Notification extends AbstractNotification<Props> {
+
+    /**
+     * Initializes a new {@code NotificationsContainer} instance.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        // @ts-ignore
+        this.state = {
+            notificationContainerAnimation: new Animated.Value(0)
+        };
+    }
+
+    /**
+     * Implements React's {@link Component#componentDidMount()}.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        Animated.timing(
+            // @ts-ignore
+            this.state.notificationContainerAnimation,
+            {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: true
+            })
+            .start();
+    }
+
+    /**
+     * Implements React's {@link Component#componentWillUnmount}.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        Animated.timing(
+            // @ts-ignore
+            this.state.notificationContainerAnimation,
+            {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: true
+            })
+            .start();
+    }
 
     /**
      * Creates action button configurations for the notification based on
@@ -159,9 +207,15 @@ class Notification extends AbstractNotification<Props> {
             ? styles.contentColumn : styles.interactiveContentColumn;
 
         return (
-            <View
+            <Animated.View
                 pointerEvents = 'box-none'
-                style = { styles.notification }>
+                style = { [
+                    styles.notification,
+                    {
+                        // @ts-ignore
+                        opacity: this.state.notificationContainerAnimation
+                    }
+                ] }>
                 <View style = { contentColumnStyles }>
                     { this._mapAppearanceToIcon() }
                     <View
@@ -178,7 +232,7 @@ class Notification extends AbstractNotification<Props> {
                     onPress = { this._onDismissed }
                     src = { IconCloseLarge }
                     type = { BUTTON_TYPES.TERTIARY } />
-            </View>
+            </Animated.View>
         );
     }
 

@@ -12,7 +12,7 @@ export * from './actions.any';
  *
  * @param {Object} participant - The recipient for the private chat.
  * @returns {{
- *     participant: participant,
+ *     participant: Participant,
  *     type: OPEN_CHAT
  * }}
  */

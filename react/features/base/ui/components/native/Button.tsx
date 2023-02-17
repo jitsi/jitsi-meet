@@ -39,7 +39,7 @@ const Button: React.FC<IProps> = ({
     const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
     const { CONTAINED, TEXT } = BUTTON_MODES;
 
-    const enableRippleColor
+    const rippleColor
         = useRippleColor ? BaseTheme.palette.action03Active : 'transparent';
 
     let buttonLabelStyles;
@@ -82,7 +82,7 @@ const Button: React.FC<IProps> = ({
                 accessibilityLabel = { accessibilityLabel }
                 disabled = { disabled }
                 onPress = { onPress }
-                rippleColor = { enableRippleColor }
+                rippleColor = { rippleColor }
                 style = { [
                     buttonStyles,
                     style
