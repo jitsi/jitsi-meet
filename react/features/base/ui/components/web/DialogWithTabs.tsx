@@ -13,6 +13,8 @@ import Button from './Button';
 import ClickableIcon from './ClickableIcon';
 import ContextMenuItem from './ContextMenuItem';
 
+const MOBILE_BREAKPOINT = 607;
+
 const useStyles = makeStyles()(theme => {
     return {
         dialog: {
@@ -23,15 +25,20 @@ const useStyles = makeStyles()(theme => {
                 width: '560px'
             },
 
-            '@media (max-width: 607px)': {
+            [`@media (max-width: ${MOBILE_BREAKPOINT}px)`]: {
                 width: '100%',
-                height: '100%',
-                margin: '0 !important',
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                bottom: 0,
-                maxHeight: 'initial'
+                bottom: 0
+
+                // height: '100%',
+                // margin: '0 !important',
+                // maxHeight: 'initial'
+            },
+
+            '@media (max-width: 448px)': {
+                height: '100%'
             }
         },
 
@@ -42,7 +49,7 @@ const useStyles = makeStyles()(theme => {
             maxWidth: '100%',
             borderRight: `1px solid ${theme.palette.ui03}`,
 
-            '@media (max-width: 607px)': {
+            [`@media (max-width: ${MOBILE_BREAKPOINT}px)`]: {
                 width: '100%',
                 borderRight: 'none'
             }
@@ -61,7 +68,7 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             justifyContent: 'space-between',
 
-            '@media (max-width: 607px)': {
+            [`@media (max-width: ${MOBILE_BREAKPOINT}px)`]: {
                 padding: '16px 24px'
             }
         },
@@ -81,7 +88,7 @@ const useStyles = makeStyles()(theme => {
             overflow: 'hidden',
             width: '100%',
 
-            '@media (max-width: 607px)': {
+            [`@media (max-width: ${MOBILE_BREAKPOINT}px)`]: {
                 padding: '0'
             }
         },
@@ -94,7 +101,7 @@ const useStyles = makeStyles()(theme => {
             justifyContent: 'flex-end',
             flexGrow: 0,
 
-            '@media (max-width: 607px)': {
+            [`@media (max-width: ${MOBILE_BREAKPOINT}px)`]: {
                 justifyContent: 'space-between',
                 padding: '16px 24px'
             }
@@ -121,7 +128,7 @@ const useStyles = makeStyles()(theme => {
             width: '100%',
             boxSizing: 'border-box',
 
-            '@media (max-width: 607px)': {
+            [`@media (max-width: ${MOBILE_BREAKPOINT}px)`]: {
                 padding: '0 24px'
             }
         },
@@ -171,7 +178,7 @@ const DialogWithTabs = ({
     const [ isMobile, setIsMobile ] = useState(false);
 
     useEffect(() => {
-        if (clientWidth < 608) {
+        if (clientWidth <= MOBILE_BREAKPOINT) {
             !isMobile && setIsMobile(true);
         } else {
             isMobile && setIsMobile(false);
@@ -252,14 +259,14 @@ const DialogWithTabs = ({
         return null;
     }, [ selectedTabIndex, tabStates ]);
 
-    const closeIcon = (
+    const closeIcon = useMemo(() => (
         <ClickableIcon
             accessibilityLabel = { t('dialog.close') }
             className = { classes.closeIcon }
             icon = { IconCloseLarge }
             id = 'modal-header-close-button'
             onClick = { onClose } />
-    );
+    ), [ onClose ]);
 
     return (
         <BaseDialog
