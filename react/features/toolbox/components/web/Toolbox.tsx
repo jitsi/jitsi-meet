@@ -366,6 +366,7 @@ const styles = () => {
             margin: 0,
             marginBottom: '8px',
             maxHeight: 'calc(100vh - 100px)',
+            minWidth: '240px'
         },
 
         hangupMenu: {
