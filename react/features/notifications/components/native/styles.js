@@ -69,7 +69,7 @@ export default {
         flexDirection: 'row',
         maxHeight: 104,
         height: 'auto',
-        marginBottom: BaseTheme.spacing[5],
+        marginBottom: BaseTheme.spacing[3],
         marginHorizontal: BaseTheme.spacing[2]
     },
 

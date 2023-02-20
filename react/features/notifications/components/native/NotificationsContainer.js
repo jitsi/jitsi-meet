@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { View } from 'react-native';
 
 import { connect } from '../../../base/redux';
 import { hideNotification } from '../../actions';
@@ -169,7 +168,7 @@ class NotificationsContainer extends Component<Props> {
         const { _notifications } = this.props;
 
         return (
-            <View pointerEvents = 'box-none'>
+            <>
                 {
                     _notifications.map((notification, index) => {
                         const { props, uid } = notification;
@@ -183,7 +182,7 @@ class NotificationsContainer extends Component<Props> {
                         );
                     })
                 }
-            </View>
+            </>
         );
     }
 
