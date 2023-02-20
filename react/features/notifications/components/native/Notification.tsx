@@ -56,7 +56,7 @@ type Props = AbstractNotificationProps & WithTranslation & {
 class Notification extends AbstractNotification<Props> {
 
     /**
-     * Initializes a new {@code NotificationsContainer} instance.
+     * Initializes a new {@code Notification} instance.
      *
      * @inheritdoc
      */
@@ -80,23 +80,6 @@ class Notification extends AbstractNotification<Props> {
             this.state.notificationContainerAnimation,
             {
                 toValue: 1,
-                duration: 500,
-                useNativeDriver: true
-            })
-            .start();
-    }
-
-    /**
-     * Implements React's {@link Component#componentWillUnmount}.
-     *
-     * @inheritdoc
-     */
-    componentWillUnmount() {
-        Animated.timing(
-            // @ts-ignore
-            this.state.notificationContainerAnimation,
-            {
-                toValue: 0,
                 duration: 500,
                 useNativeDriver: true
             })
