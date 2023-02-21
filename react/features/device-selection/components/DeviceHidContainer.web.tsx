@@ -3,21 +3,35 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import Icon from '../../base/icons/components/Icon';
+import { IconTrash } from '../../base/icons/svg';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
-import { requestHidDevice } from '../../web-hid/actions';
+import { closeHidDevice, requestHidDevice } from '../../web-hid/actions';
 import { getDeviceInfo, shouldRequestHIDDevice } from '../../web-hid/functions';
 
 const useStyles = makeStyles()(() => {
     return {
         callControlContainer: {
+            marginBottom: '16px',
             fontSize: '14px',
             '> label': {
                 display: 'block',
                 marginBottom: '20px'
             }
         },
+        deviceRow: {
+            display: 'flex',
+            justifyContent: 'space-between'
+        },
 
+        deleteDevice: {
+            cursor: 'pointer',
+            textAlign: 'center'
+        },
+        headerConnectedDevice: {
+            fontWeight: 600
+        },
         hidContainer: {
             '> span': {
                 marginLeft: '16px'
@@ -36,16 +50,20 @@ function DeviceHidContainer() {
     const { t } = useTranslation();
     const deviceInfo = useSelector(getDeviceInfo);
     const showRequestDeviceInfo = shouldRequestHIDDevice(deviceInfo);
-    const { classes: styles, cx } = useStyles();
+    const { classes } = useStyles();
     const dispatch = useDispatch();
 
     const onRequestControl = useCallback(() => {
         dispatch(requestHidDevice());
     }, [ dispatch ]);
 
+    const onDeleteHid = useCallback(() => {
+        dispatch(closeHidDevice());
+    }, [ dispatch ]);
+
     return (
         <div
-            className = { cx(styles.callControlContainer) }
+            className = { classes.callControlContainer }
             key = 'callControl'>
             <label
                 className = 'device-selector-label'
@@ -54,18 +72,27 @@ function DeviceHidContainer() {
             </label>
             {showRequestDeviceInfo && (
                 <Button
-                    accessibilityLabel = { 'Request control button' }
+                    accessibilityLabel = { t('deviceSelection.hid.requestConnectDevice') }
                     id = 'request-control-btn'
                     key = 'request-control-btn'
-                    label = { 'Connect device' }
+                    label = { t('deviceSelection.hid.requestConnectDevice') }
                     onClick = { onRequestControl }
                     size = 'small'
                     type = { BUTTON_TYPES.SECONDARY } />
             )}
             {!showRequestDeviceInfo && (
-                <div className = { cx(styles.hidContainer) }>
-                    <p>{t('deviceSelection.hid.connectedDevices')}</p>
-                    <span>{deviceInfo.productName}</span>
+                <div className = { classes.hidContainer }>
+                    <p className = { classes.headerConnectedDevice }>{t('deviceSelection.hid.connectedDevices')}</p>
+                    <div className = { classes.deviceRow }>
+                        <span>{deviceInfo.device?.productName}</span>
+                        <Icon
+                            ariaLabel = { t('deviceSelection.hid.deleteDevice') }
+                            className = { classes.deleteDevice }
+                            onClick = { onDeleteHid }
+                            role = 'button'
+                            src = { IconTrash }
+                            tabIndex = { 0 } />
+                    </div>
                 </div>
             )}
         </div>

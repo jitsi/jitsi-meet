@@ -1,17 +1,15 @@
+import logger from './logger';
 import {
+    ACTION_HOOK_TYPE_NAME,
+    COMMANDS,
     EVENT_TYPE,
+    HOOK_STATUS,
     IDeviceInfo,
-    IReportItem,
-    ISendReportConfig,
-    ITelephonyUsageReportList,
-    IUsageReportItem
+    INPUT_REPORT_EVENT_NAME
 } from './types';
 import {
+    DEVICE_USAGE,
     TELEPHONY_DEVICE_USAGE_PAGE,
-    TELEPHONY_USAGE_ACTIONS,
-    decode,
-    encode,
-    mapTelephonyUsageToReportId,
     requestTelephonyHID
 } from './utils';
 
@@ -21,21 +19,51 @@ import {
  * @class WebHidManager
  */
 export default class WebHidManager extends EventTarget {
+    hidSupport: boolean;
+    deviceInfo: IDeviceInfo;
+    availableDevices: HIDDevice[];
+    isParseDescriptorsSuccess: boolean;
+    outputEventGenerators: { [key: string]: Function; };
+    deviceCommand = {
+        outputReport: {
+            mute: {
+                reportId: 0,
+                usageOffset: -1
+            },
+            offHook: {
+                reportId: 0,
+                usageOffset: -1
+            },
+            ring: {
+                reportId: 0,
+                usageOffset: 0
+            },
+            hold: {
+                reportId: 0,
+                usageOffset: 0
+            }
+        },
+        inputReport: {
+            hookSwitch: {
+                reportId: 0,
+                usageOffset: -1,
+                isAbsolute: false
+            },
+            phoneMute: {
+                reportId: 0,
+                usageOffset: -1,
+                isAbsolute: false
+            }
+        }
+    };
+
     private static instance: WebHidManager;
-    private reportResultMap = new Map([
-        [ 0, false ],
-        [ 1, false ],
-        [ 2, false ],
-        [ 3, false ]
-    ]);
-    private telephonyDevice: HIDDevice;
 
     /**
      *  WebHidManager getInstance.
      *
      * @static
      * @returns {WebHidManager}  - WebHidManager instance.
-     * @memberof WebHidManager
      */
     static getInstance(): WebHidManager {
         if (!this.instance) {
@@ -46,13 +74,17 @@ export default class WebHidManager extends EventTarget {
     }
 
     /**
-     *  Current HIDDevice.
+     * Creates an instance of WebHidManager.
      *
-     * @returns {HIDDevice} - HIDDevice.
-     * @memberof WebHidManager
      */
-    getTelephonyDevice() {
-        return this.telephonyDevice;
+    constructor() {
+        super();
+
+        this.deviceInfo = {} as IDeviceInfo;
+        this.hidSupport = this.isSupported();
+        this.availableDevices = [];
+        this.isParseDescriptorsSuccess = false;
+        this.outputEventGenerators = {};
     }
 
     /**
@@ -60,32 +92,38 @@ export default class WebHidManager extends EventTarget {
      * - experimental API in Chrome.
      *
      * @returns {boolean} - True if supported, otherwise false.
-     * @memberof WebHidManager
      */
     isSupported(): boolean {
-        return 'hid' in navigator;
+        return !(!window.navigator.hid || !window.navigator.hid.requestDevice);
     }
 
     /**
-     * Handler for listen to already connected hid.
+     * Handler for for requesting telephony hid devices.
      *
      * @returns {void}
      */
-    async requestHidDevice() {
-        try {
-            // @ts-ignore
-            const devices = await navigator.hid.requestDevice(requestTelephonyHID);
+    async requestHidDevices() {
+        if (!this.hidSupport) {
+            logger.warn('The WebHID API is NOT supported!');
 
-            if (devices.length) {
-                this.telephonyDevice = devices[0];
-
-                return devices[0];
-            }
-
-            return null;
-        } catch (er) {
-            return null;
+            return false;
         }
+
+        if (this.deviceInfo?.device && this.deviceInfo.device.opened) {
+            await this.close();
+        }
+
+        const devices = await navigator.hid.requestDevice(requestTelephonyHID);
+
+        if (!devices || !devices.length) {
+            logger.warn('No HID devices selected.');
+
+            return false;
+        }
+
+        this.availableDevices = devices;
+
+        return true;
     }
 
     /**
@@ -94,318 +132,873 @@ export default class WebHidManager extends EventTarget {
      * @returns {void}
      */
     async listenToConnectedHid() {
-        // @ts-ignore
-        const devices = await navigator.hid.getDevices();
-        const devicesWithCollections = devices.filter((device: HIDDevice) => device.collections);
+        const devices = await this.loadPairedDevices();
 
-        for (const device of devicesWithCollections) {
-            const usagePageCollection = device.collections.some(
+        if (!devices || !devices.length) {
+            logger.info('No hid device found.');
+
+            return;
+        }
+
+        const telephonyDevice = this.getTelephonyDevice(devices);
+
+        if (!telephonyDevice) {
+            logger.info('No HID device to request');
+
+            return;
+        }
+
+        await this.open(telephonyDevice);
+
+        // restore the default state of hook and mic LED
+        this.resetDeviceState();
+
+        // switch headsets to OFF_HOOK for mute/unmute commands
+        this.sendDeviceReport({ command: COMMANDS.OFF_HOOK });
+    }
+
+    /**
+     * Get first telephony device from availableDevices.
+     *
+     * @param {HIDDevice[]} availableDevices -.
+     * @returns {HIDDevice} -.
+     */
+    private getTelephonyDevice(availableDevices: HIDDevice[]) {
+        if (!availableDevices || !availableDevices.length) {
+            logger.info('No HID device to request');
+
+            return undefined;
+        }
+
+        return availableDevices?.find(device => this.findTelephonyCollectionInfo(device.collections));
+    }
+
+    /**
+     * Find telephony collection info from a list of collection infos.
+     *
+     * @private
+     * @param {HIDCollectionInfo[]} deviceCollections -.
+     * @returns {HIDCollectionInfo} - Hid collection info.
+     */
+    private findTelephonyCollectionInfo(deviceCollections: HIDCollectionInfo[]) {
+        return deviceCollections?.find(
                 (collection: HIDCollectionInfo) => collection.usagePage === TELEPHONY_DEVICE_USAGE_PAGE
-            );
+        );
+    }
 
-            // if any telephony device page, than handle it
-            if (usagePageCollection) {
-                this.telephonyDevice = device;
+    /**
+     * Open the hid device and start listening to inputReport events.
+     *
+     * @param {HIDDevice} telephonyDevice -.
+     * @returns {void} -.
+     */
+    private async open(telephonyDevice: HIDDevice) {
+        try {
+            this.deviceInfo = { device: telephonyDevice } as IDeviceInfo;
 
-                // open the device
-                this.handleHidDevice(device);
+            if (!this.deviceInfo || !this.deviceInfo.device) {
+                logger.warn('no HID device found');
 
-                break;
+                return;
             }
+
+            if (!this.deviceInfo.device.opened) {
+                await this.deviceInfo.device.open();
+            }
+
+            this.isParseDescriptorsSuccess = await this.parseDeviceDescriptors(this.deviceInfo.device);
+
+            if (!this.isParseDescriptorsSuccess) {
+                logger.warn('Failed to parse webhid');
+
+                return;
+            }
+
+            this.dispatchEvent(new CustomEvent(EVENT_TYPE.INIT_DEVICE, { detail: {
+                deviceInfo: {
+                    ...this.deviceInfo
+                } as IDeviceInfo } }));
+
+            //  listen for input reports by registering an oninputreport event listener
+            this.deviceInfo.device.oninputreport = await this.handleInputReport.bind(this);
+
+            this.resetDeviceState();
+        } catch (e) {
+            logger.error(`Error content open device:${e}`);
         }
     }
 
     /**
-     * Open current device and add listen handler.
+     * Close device and reset state.
      *
-     * @param {HIDDevice} device - Hid device.
-     * @returns {void}
+     * @returns {void}.
      */
-    async handleHidDevice(device: HIDDevice) {
-        if (!device.opened) {
-            await device.open();
+    async close() {
+        try {
+            await this.resetDeviceState();
+
+            if (this.availableDevices) {
+                logger.info('clear available devices list');
+                this.availableDevices = [];
+            }
+
+            if (!this.deviceInfo) {
+                return;
+            }
+
+            if (this.deviceInfo?.device?.opened) {
+                await this.deviceInfo.device.close();
+            }
+
+            if (this.deviceInfo.device) {
+                this.deviceInfo.device.oninputreport = null;
+            }
+            this.deviceInfo = {} as IDeviceInfo;
+        } catch (e) {
+            logger.error(e);
         }
+    }
 
-        device.oninputreport = this.handleInputReport.bind(this);
+    /**
+     * Get paired hid devices.
+     *
+     * @returns {void} -.
+     */
+    async loadPairedDevices() {
+        try {
+            const devices = await navigator.hid.getDevices();
 
-        this.dispatchEvent(new CustomEvent(EVENT_TYPE.INIT_DEVICE, { detail: {
-            deviceInfo: {
-                opened: device.opened,
-                productId: device.productId,
-                productName: device.productName,
-                vendorId: device.vendorId
-            } as IDeviceInfo } }));
+            this.availableDevices = devices;
 
-        // set device in on-call state in order to synchronize state of conference audio with headsets audio state
-        device.sendReport(3, new Uint8Array([ 0 ]));
-        device.sendReport(4, new Uint8Array([ 1 ]));
+            return devices;
+        } catch (e) {
+            logger.error('loadPairedDevices error:', e);
+        }
+    }
+
+    /**
+     * Parse device descriptors - input and output reports.
+     *
+     * @param {HIDDevice} device -.
+     * @returns {boolean} - True if descriptors have been parsed with success.
+     */
+    parseDeviceDescriptors(device: HIDDevice) {
+        try {
+            this.outputEventGenerators = {};
+
+            if (!device || !device.collections) {
+                logger.error('Undefined device collection');
+
+                return false;
+            }
+
+            const telephonyCollection = this.findTelephonyCollectionInfo(device.collections);
+
+            if (!telephonyCollection || Object.keys(telephonyCollection).length === 0) {
+                logger.error('No telephony collection');
+
+                return false;
+            }
+
+            if (telephonyCollection.inputReports) {
+                if (!this.parseInputReports(telephonyCollection.inputReports)) {
+                    logger.warn('parse inputReports failed');
+
+                    return false;
+                }
+                logger.info('parse inputReports success');
+
+            }
+
+            if (telephonyCollection.outputReports) {
+                if (!this.parseOutputReports(telephonyCollection.outputReports)) {
+                    logger.warn('parse outputReports failed');
+
+                    return false;
+                }
+                logger.info('parse outputReports success');
+
+                return true;
+
+            }
+
+            return false;
+        } catch (e) {
+            logger.error(`parseDeviceDescriptors error:${JSON.stringify(e, null, '    ')}`);
+
+            return false;
+        }
     }
 
     /**
      * HandleInputReport.
      *
-     * @param {HIDInputReportEvent} e - Input report event.
-     * @returns {void}
+     * @param {HIDInputReportEvent} event -.
+     * @returns {void} -.
      */
-    handleInputReport(e: HIDInputReportEvent) {
-        const { data, device, reportId } = e;
+    handleInputReport(event: HIDInputReportEvent) {
+        try {
+            const { data, device, reportId } = event;
 
-        if (reportId === 1) {
-            const reports = this.getReports(device);
+            if (reportId === 0) {
+                logger.warn('handleInputReport: ignore invalid reportId');
 
-            if (!reports) {
+                return;
+            }
+            logger.info(`handleInputReport_reportId:${reportId}`);
+
+
+            const inputReport = this.deviceCommand.inputReport;
+
+            logger.info(`current inputReport:${JSON.stringify(inputReport, null, '    ')}`);
+            if (reportId !== inputReport.hookSwitch.reportId && reportId !== inputReport.phoneMute.reportId) {
+                logger.warn('handleInputReport:ignore unknown reportId');
+
                 return;
             }
 
-            this.dispatchEvent(new CustomEvent(EVENT_TYPE.UPDATE_DEVICE, {
-                detail: {
-                    updatedDeviceInfo: {
-                        opened: device.opened
-                    } as Partial<IDeviceInfo>
-                }
-            }));
-            this.handleReportAudio(reports, data, this.reportResultMap);
-        }
-    }
+            let hookStatusChange = false;
+            let muteStatusChange = false;
 
+            const reportData = new Uint8Array(data.buffer);
+            const needReply = true;
 
-    /**
-     * Gather all reports from provided device collections.
-     *
-     * @param {HIDDevice} device - HIDDevice.
-     * @returns {Map<string, IReportItem[]>} - Reports of provided device.
-     */
-    getReports(device: HIDDevice) {
-        if (!device || !device.collections) {
-            return;
-        }
+            if (reportId === inputReport.hookSwitch.reportId) {
+                const item = inputReport.hookSwitch;
+                const byteIndex = Math.trunc(item.usageOffset / 8);
+                const bitPosition = item.usageOffset % 8;
+                // eslint-disable-next-line no-bitwise
+                const usageOn = (data.getUint8(byteIndex) & (0x01 << bitPosition)) !== 0;
 
-        const results = new Map();
-
-        for (const collection of device.collections) {
-            if (collection.outputReports) {
-                for (const report of collection.outputReports) {
-                    const outputReportResults = this.handleReport(report, '1');
-
-                    outputReportResults.forEach((val, key) => {
-                        results.set(key, val);
-                    });
-                }
-            }
-            if (collection.inputReports) {
-                for (const report of collection.inputReports) {
-                    const inputReports = this.handleReport(report, '0');
-
-                    inputReports.forEach((val, key) => {
-                        results.set(key, val);
-                    });
-                }
-            }
-        }
-
-        return results;
-    }
-
-    /**
-     *  Handle mute unmute toggle from collections.
-     *
-     * @param {Map<string, IReportItem[]>} results - .
-     * @param {DataView} data - Current data view.
-     * @param {Map<number,boolean>} reportMapResult - .
-     * @returns {void}
-     */
-    handleReportAudio(
-            results: Map<string, IReportItem[]>,
-            data: DataView,
-            reportMapResult: Map<number, boolean>
-    ): void {
-        const bufferArray = new Uint8Array(data.buffer);
-        const reportMap = results.get('0');
-
-        if (!reportMap) {
-            return;
-        }
-        const report = reportMap.find((r: { reportId: number; }) => r.reportId === 1);
-        const actions = [];
-
-        if (!report) {
-            return;
-        }
-
-        for (const usageReportItem of report.usageReportItems) {
-            for (const telephonyUsageReportItem of usageReportItem.telephonyUsageReportList) {
-                const reportValue = decode(telephonyUsageReportItem.reportSize, bufferArray);
-                const reportId = mapTelephonyUsageToReportId(telephonyUsageReportItem.telephonyUsageId);
-                const reportItem = reportMapResult.get(reportId);
-                let reportValueResult;
-
-                if (!usageReportItem.reportItem.isAbsolute && usageReportItem.reportItem.hasPreferredState) {
-                    if (reportValue > 0) {
-                        // eslint-disable-next-line no-continue
-                        continue;
+                logger.info('recv hookSwitch ', usageOn ? HOOK_STATUS.OFF : HOOK_STATUS.ON);
+                if (inputReport.hookSwitch.isAbsolute) {
+                    if (this.deviceInfo.hookStatus === HOOK_STATUS.ON && usageOn) {
+                        this.deviceInfo.hookStatus = HOOK_STATUS.OFF;
+                        hookStatusChange = true;
+                    } else if (this.deviceInfo.hookStatus === HOOK_STATUS.OFF && !usageOn) {
+                        this.deviceInfo.hookStatus = HOOK_STATUS.ON;
+                        hookStatusChange = true;
                     }
-                    reportValueResult = !reportItem;
-                } else if (usageReportItem.reportItem.isAbsolute) {
-                    reportValueResult = reportValue === 1;
-                } else {
-                    break;
-                }
-
-                reportMapResult.set(reportId, reportValueResult);
-                actions.push({
-                    reportId,
-                    enabled: reportValueResult,
-                    reportItem
-                });
-            }
-        }
-
-        for (const action of actions) {
-            if (action.reportId === 0) {
-                if (action.enabled) {
-                    this.dispatchEvent(new CustomEvent(EVENT_TYPE.MUTE_ON,
-                        { detail: { reportHidMap: reportMapResult } }));
-                } else {
-                    this.dispatchEvent(new CustomEvent(EVENT_TYPE.MUTE_OFF,
-                        { detail: { reportHidMap: reportMapResult } }));
+                } else if (usageOn) {
+                    this.deviceInfo.hookStatus = this.deviceInfo.hookStatus === HOOK_STATUS.OFF
+                        ? HOOK_STATUS.ON : HOOK_STATUS.OFF;
+                    hookStatusChange = true;
                 }
             }
+
+            if (reportId === inputReport.phoneMute.reportId) {
+                const item = inputReport.phoneMute;
+                const byteIndex = Math.trunc(item.usageOffset / 8);
+                const bitPosition = item.usageOffset % 8;
+                // eslint-disable-next-line no-bitwise
+                const usageOn = (data.getUint8(byteIndex) & (0x01 << bitPosition)) !== 0;
+
+                logger.info('recv phoneMute ', usageOn ? HOOK_STATUS.ON : HOOK_STATUS.OFF);
+                if (inputReport.phoneMute.isAbsolute) {
+                    if (this.deviceInfo.muted !== usageOn) {
+                        this.deviceInfo.muted = usageOn;
+                        muteStatusChange = true;
+                    }
+                } else if (usageOn) {
+                    this.deviceInfo.muted = !this.deviceInfo.muted;
+                    muteStatusChange = true;
+                }
+            }
+
+            const inputReportData = {
+                productName: device.productName,
+                reportId: this.getHexByte(reportId),
+                reportData,
+                eventName: '',
+                isMute: false,
+                hookStatus: ''
+            };
+
+            if (hookStatusChange) {
+                // Answer key state change
+                inputReportData.eventName = INPUT_REPORT_EVENT_NAME.ON_DEVICE_HOOK_SWITCH;
+                inputReportData.hookStatus = this.deviceInfo.hookStatus;
+                logger.warn(`hook status change: ${this.deviceInfo.hookStatus}`);
+            }
+
+            if (muteStatusChange) {
+                // Mute key state change
+                inputReportData.eventName = INPUT_REPORT_EVENT_NAME.ON_DEVICE_MUTE_SWITCH;
+                inputReportData.isMute = this.deviceInfo.muted;
+                logger.warn(`mute status change: ${this.deviceInfo.muted}`);
+            }
+
+            const actionResult = this.extractActionResult(inputReportData);
+
+            this.dispatchEvent(
+                new CustomEvent(EVENT_TYPE.UPDATE_DEVICE, {
+                    detail: {
+                        actionResult,
+                        deviceInfo: this.deviceInfo
+                    }
+                })
+            );
+
+            logger.warn(
+                `hookStatusChange=${
+                    hookStatusChange
+                }, muteStatusChange=${
+                    muteStatusChange
+                }, needReply=${
+                    needReply}`
+            );
+            if (needReply && (hookStatusChange || muteStatusChange)) {
+                let newOffHook;
+
+                if (this.deviceInfo.hookStatus === HOOK_STATUS.OFF) {
+                    newOffHook = true;
+                } else if (this.deviceInfo.hookStatus === HOOK_STATUS.ON) {
+                    newOffHook = false;
+                } else {
+                    logger.warn('Invalid hook status');
+
+                    return;
+                }
+                this.sendReplyReport(reportId, newOffHook, this.deviceInfo.muted);
+            }
+        } catch (e) {
+            logger.error(e);
         }
     }
 
     /**
-     * Handle a single report.
+     * Extract action result.
      *
-     * @param {HIDReportInfo} report - HIDReportInfo.
-     * @param {string} key - Report key.
-     * @returns {Map<string, IReportItem[]>} -.
+     * @private
+     * @param {*} data -.
+     * @returns {Object} - EventName.
      */
-    handleReport(report: HIDReportInfo, key: string) {
-        const result = new Map<string, IReportItem[]>();
-        let reportCountSize = 0;
-        const usageReportItems: IUsageReportItem[] = [];
-        let telephonyUsageReportList: ITelephonyUsageReportList[];
-
-        if (!report.items) {
-            return result;
+    private extractActionResult(data: any) {
+        switch (data.eventName) {
+        case INPUT_REPORT_EVENT_NAME.ON_DEVICE_HOOK_SWITCH:
+            return {
+                eventName: data.hookStatus === HOOK_STATUS.ON
+                    ? ACTION_HOOK_TYPE_NAME.HOOK_SWITCH_ON : ACTION_HOOK_TYPE_NAME.HOOK_SWITCH_OFF
+            };
+        case INPUT_REPORT_EVENT_NAME.ON_DEVICE_MUTE_SWITCH:
+            return {
+                eventName: data.isMute ? ACTION_HOOK_TYPE_NAME.MUTE_SWITCH_ON : ACTION_HOOK_TYPE_NAME.MUTE_SWITCH_OFF
+            };
+        case 'ondevicevolumechange':
+            return {
+                eventName: data.volumeStatus === 'up'
+                    ? ACTION_HOOK_TYPE_NAME.VOLUME_CHANGE_UP : ACTION_HOOK_TYPE_NAME.VOLUME_CHANGE_DOWN
+            };
+        default:
+            break;
         }
-
-        const valuesOfTelephonyUsageActions = Object.values(TELEPHONY_USAGE_ACTIONS);
-
-        for (const reportItem of report.items) {
-            const usages = reportItem.usages ? reportItem.usages : [];
-            const reportSize = reportItem.reportSize ? reportItem.reportSize : 0;
-
-            telephonyUsageReportList = [];
-
-            for (let q = 0; q < usages.length; q++) {
-                if (valuesOfTelephonyUsageActions.includes(usages[q])) {
-                    telephonyUsageReportList.push({
-                        telephonyUsageId: usages[q],
-                        reportSize: reportCountSize + (q * reportSize)
-                    });
-                }
-            }
-
-            if (telephonyUsageReportList.length > 0) {
-                usageReportItems.push({
-                    reportItem,
-                    telephonyUsageReportList
-                });
-            }
-
-            reportCountSize += reportSize * (reportItem.reportCount ? reportItem.reportCount : 0);
-        }
-
-        if (usageReportItems.length) {
-            if (!result.has(key)) {
-                result.set(key, []);
-            }
-
-            const reportId = report.reportId ? report.reportId : 0;
-
-            reportCountSize = Math.ceil(reportCountSize / 8);
-
-            const reportItems = result.get(key) as IReportItem[];
-
-            reportItems.push({
-                reportCountSize,
-                reportId,
-                usageReportItems
-            } as IReportItem);
-            result.set(key, reportItems);
-        }
-
-        return result;
     }
 
     /**
-     * GetDataFromReports.
+     * Reset device state.
      *
-     * @param {Map<string, IReportItem[]>} reports - .
-     * @param {number} telephonyAction - .
-     * @returns {*}
-     * @memberof WebHidManager
+     * @returns {void} -.
      */
-    getDataFromReports(reports: Map<string, IReportItem[]>, telephonyAction: number) {
-        const reportItems = reports.get('1');
-
-        if (!reportItems) {
+    resetDeviceState() {
+        if (!this.deviceInfo || !this.deviceInfo.device || !this.deviceInfo.device.opened) {
             return;
         }
 
-        for (const reportItem of reportItems) {
-            for (const usageReportItem of reportItem.usageReportItems) {
-                if (usageReportItem.telephonyUsageReportList.some(
-                    (telephonyUsageReportItem: ITelephonyUsageReportList) =>
-                        telephonyUsageReportItem.telephonyUsageId === telephonyAction)) {
-                    return reportItem;
-                }
-            }
-        }
+        this.deviceInfo.hookStatus = HOOK_STATUS.ON;
+        this.deviceInfo.muted = false;
+        this.deviceInfo.ring = false;
+        this.deviceInfo.hold = false;
+
+        this.sendDeviceReport({ command: COMMANDS.ON_HOOK });
+        this.sendDeviceReport({ command: COMMANDS.MUTE_OFF });
     }
 
     /**
-     * Send report to hid device.
+     * Parse input reports.
      *
-     * @param {ISendReportConfig} sendReportConfig -.
+     * @param {HIDReportInfo[]} inputReports -.
+     * @returns {void} -.
+     */
+    private parseInputReports(inputReports: HIDReportInfo[]) {
+        inputReports.forEach(report => {
+            if (!report || !report.items?.length || report.reportId === undefined) {
+                return;
+            }
+
+            let usageOffset = 0;
+
+            report.items.forEach((item: HIDReportItem) => {
+                if (
+                    item.usages === undefined
+                    || item.reportSize === undefined
+                    || item.reportCount === undefined
+                    || item.isAbsolute === undefined
+                ) {
+                    logger.warn('parseInputReports invalid parameters!');
+
+                    return;
+                }
+
+                const reportSize = item.reportSize ?? 0;
+                const reportId = report.reportId ?? 0;
+
+                item.usages.forEach((usage: number, i: number) => {
+                    switch (usage) {
+                    case DEVICE_USAGE.hookSwitch.usageId:
+                        this.deviceCommand.inputReport.hookSwitch = {
+                            reportId,
+                            usageOffset: usageOffset + (i * reportSize),
+                            isAbsolute: item.isAbsolute ?? false
+                        };
+                        break;
+                    case DEVICE_USAGE.phoneMute.usageId:
+                        this.deviceCommand.inputReport.phoneMute = {
+                            reportId,
+                            usageOffset: usageOffset + (i * reportSize),
+                            isAbsolute: item.isAbsolute ?? false
+                        };
+                        break;
+                    default:
+                        break;
+                    }
+                });
+
+                usageOffset += item.reportCount * item.reportSize;
+            });
+        });
+
+        if (!this.deviceCommand.inputReport.phoneMute || !this.deviceCommand.inputReport.hookSwitch) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Parse output reports.
+     *
+     * @private
+     * @param {HIDReportInfo[]} outputReports -.
+     * @returns {void} -.
+     */
+    private parseOutputReports(outputReports: HIDReportInfo[]) {
+        outputReports.forEach((report: HIDReportInfo) => {
+            if (!report || !report.items?.length || report.reportId === undefined) {
+                return;
+            }
+
+            let usageOffset = 0;
+            const usageOffsetMap: Map<number, number> = new Map();
+
+            report.items.forEach(item => {
+                if (item.usages === undefined || item.reportSize === undefined || item.reportCount === undefined) {
+                    logger.warn('parseOutputReports  invalid parameters!');
+
+                    return;
+                }
+
+                const reportSize = item.reportSize ?? 0;
+                const reportId = report.reportId ?? 0;
+
+                item.usages.forEach((usage: number, i: number) => {
+                    switch (usage) {
+                    case DEVICE_USAGE.mute.usageId:
+                        this.deviceCommand.outputReport.mute = {
+                            reportId,
+                            usageOffset: usageOffset + (i * reportSize)
+                        };
+                        usageOffsetMap.set(usage, usageOffset + (i * reportSize));
+                        break;
+                    case DEVICE_USAGE.offHook.usageId:
+                        this.deviceCommand.outputReport.offHook = {
+                            reportId,
+                            usageOffset: usageOffset + (i * reportSize)
+                        };
+                        usageOffsetMap.set(usage, usageOffset + (i * reportSize));
+                        break;
+                    case DEVICE_USAGE.ring.usageId:
+                        this.deviceCommand.outputReport.ring = {
+                            reportId,
+                            usageOffset: usageOffset + (i * reportSize)
+                        };
+                        usageOffsetMap.set(usage, usageOffset + (i * reportSize));
+                        break;
+                    case DEVICE_USAGE.hold.usageId:
+                        this.deviceCommand.outputReport.hold = {
+                            reportId,
+                            usageOffset: usageOffset = i * reportSize
+                        };
+                        usageOffsetMap.set(usage, usageOffset + (i * reportSize));
+                        break;
+                    default:
+                        break;
+                    }
+                });
+
+                usageOffset += item.reportCount * item.reportSize;
+            });
+
+            const reportLength = usageOffset;
+
+            for (const [ usage, offset ] of usageOffsetMap) {
+                this.outputEventGenerators[usage] = (val: number) => {
+                    const reportData = new Uint8Array(reportLength / 8);
+
+                    if (offset >= 0 && val) {
+                        const byteIndex = Math.trunc(offset / 8);
+                        const bitPosition = offset % 8;
+
+                        // eslint-disable-next-line no-bitwise
+                        reportData[byteIndex] = 1 << bitPosition;
+                    }
+
+                    return reportData;
+                };
+            }
+        });
+
+        let hook, mute, ring;
+
+        for (const item in this.outputEventGenerators) {
+            if (Object.prototype.hasOwnProperty.call(this.outputEventGenerators, item)) {
+                let newItem = this.getHexByte(item);
+
+                newItem = `0x0${newItem}`;
+                if (DEVICE_USAGE.mute.usageId === Number(newItem)) {
+                    mute = this.outputEventGenerators[DEVICE_USAGE.mute.usageId];
+                } else if (DEVICE_USAGE.offHook.usageId === Number(newItem)) {
+                    hook = this.outputEventGenerators[DEVICE_USAGE.offHook.usageId];
+                } else if (DEVICE_USAGE.ring.usageId === Number(newItem)) {
+                    ring = this.outputEventGenerators[DEVICE_USAGE.ring.usageId];
+                }
+            }
+        }
+        if (!mute && !ring && !hook) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Send device report.
+     *
+     * @param {{ command: string }} data -.
+     * @returns {void} -.
+     */
+    async sendDeviceReport(data: { command: string; }) {
+        if (!data || !data.command || !this.deviceInfo
+            || !this.deviceInfo.device || !this.deviceInfo.device.opened || !this.isParseDescriptorsSuccess) {
+            logger.info('There are currently non-compliant conditions');
+
+            return;
+        }
+
+        if (data.command === COMMANDS.MUTE_ON || data.command === COMMANDS.MUTE_OFF) {
+            if (!this.outputEventGenerators[DEVICE_USAGE.mute.usageId]) {
+                logger.info('current no parse mute event');
+
+                return;
+            }
+        } else if (data.command === COMMANDS.ON_HOOK || data.command === COMMANDS.OFF_HOOK) {
+            if (!this.outputEventGenerators[DEVICE_USAGE.offHook.usageId]) {
+                logger.info('current no parse offHook event');
+
+                return;
+            }
+        } else if (data.command === COMMANDS.ON_RING || data.command === COMMANDS.OFF_RING) {
+            if (!this.outputEventGenerators[DEVICE_USAGE.ring.usageId]) {
+                logger.info('current no parse ring event');
+
+                return;
+            }
+        }
+
+        let oldOffHook;
+        let newOffHook;
+        let newMuted;
+        let newRing;
+        let newHold;
+        let offHookReport;
+        let muteReport;
+        let ringReport;
+        let holdReport;
+        let reportData = new Uint8Array();
+
+        const reportId = this.matchReportId(data.command);
+
+        if (reportId === 0) {
+            logger.warn(`Unsupported command ${data.command}`);
+
+            return;
+        }
+
+        /* keep old status. */
+        const oldMuted = this.deviceInfo.muted;
+
+        if (this.deviceInfo.hookStatus === HOOK_STATUS.OFF) {
+            oldOffHook = true;
+        } else if (this.deviceInfo.hookStatus === HOOK_STATUS.ON) {
+            oldOffHook = false;
+        } else {
+            logger.warn('Invalid hook status');
+
+            return;
+        }
+
+        const oldRing = this.deviceInfo.ring;
+        const oldHold = this.deviceInfo.hold;
+
+        logger.info(
+            `send device command: old_hook=${oldOffHook}, old_muted=${oldMuted}, old_ring=${oldRing}`
+        );
+
+        /* get new status. */
+        switch (data.command) {
+        case COMMANDS.MUTE_ON:
+            newMuted = true;
+            break;
+        case COMMANDS.MUTE_OFF:
+            newMuted = false;
+            break;
+        case COMMANDS.ON_HOOK:
+            newOffHook = false;
+            break;
+        case COMMANDS.OFF_HOOK:
+            newOffHook = true;
+            break;
+        case COMMANDS.ON_RING:
+            newRing = true;
+            break;
+        case COMMANDS.OFF_RING:
+            newRing = false;
+            break;
+        case COMMANDS.ON_HOLD:
+            newHold = true;
+            break;
+        case COMMANDS.OFF_HOLD:
+            newHold = false;
+            break;
+        default:
+            logger.info(`Unknown command ${data.command}`);
+
+            return;
+        }
+        logger.info(
+            `send device command: new_hook = ${newOffHook}, new_muted = ${newMuted},
+             new_ring = ${newRing} new_hold = ${newHold}`
+        );
+
+        if (this.outputEventGenerators[DEVICE_USAGE.mute.usageId]) {
+            if (newMuted === undefined) {
+                muteReport = this.outputEventGenerators[DEVICE_USAGE.mute.usageId](oldMuted);
+            } else {
+                muteReport = this.outputEventGenerators[DEVICE_USAGE.mute.usageId](newMuted);
+            }
+        }
+
+        if (this.outputEventGenerators[DEVICE_USAGE.offHook.usageId]) {
+            if (newOffHook === undefined) {
+                offHookReport = this.outputEventGenerators[DEVICE_USAGE.offHook.usageId](oldOffHook);
+            } else {
+                offHookReport = this.outputEventGenerators[DEVICE_USAGE.offHook.usageId](newOffHook);
+            }
+        }
+
+        if (this.outputEventGenerators[DEVICE_USAGE.ring.usageId]) {
+            if (newRing === undefined) {
+                ringReport = this.outputEventGenerators[DEVICE_USAGE.ring.usageId](oldRing);
+            } else {
+                ringReport = this.outputEventGenerators[DEVICE_USAGE.ring.usageId](newRing);
+            }
+        }
+
+        if (this.outputEventGenerators[DEVICE_USAGE.hold.usageId]) {
+            holdReport = this.outputEventGenerators[DEVICE_USAGE.hold.usageId](oldHold);
+        }
+
+        if (reportId === this.deviceCommand.outputReport.mute.reportId) {
+            reportData = new Uint8Array(muteReport);
+        }
+
+        if (reportId === this.deviceCommand.outputReport.offHook.reportId) {
+            reportData = new Uint8Array(offHookReport);
+        }
+
+        if (reportId === this.deviceCommand.outputReport.ring.reportId) {
+            reportData = new Uint8Array(ringReport);
+        }
+
+        if (reportId === this.deviceCommand.outputReport.hold.reportId) {
+            reportData = new Uint8Array(holdReport);
+        }
+
+        logger.warn(`send device command ${data.command}: reportId=${reportId}, reportData=${reportData}`);
+        logger.warn(`reportData is ${JSON.stringify(reportData, null, '    ')}`);
+        await this.deviceInfo.device.sendReport(reportId, reportData);
+
+        /* update new status. */
+        this.updateDeviceStatus(data);
+    }
+
+    /**
+     * Update device status.
+     *
+     * @private
+     * @param {{ command: string; }} data -.
      * @returns {void}
-     * @memberof WebHidManager
      */
-    async sendReportToDevice(sendReportConfig: ISendReportConfig) {
-        const reportData = this.getDataFromReports(sendReportConfig.reports, sendReportConfig.telephonyUsageActionId);
+    private updateDeviceStatus(data: { command: string; }) {
+        switch (data.command) {
+        case COMMANDS.MUTE_ON:
+            this.deviceInfo.muted = true;
+            break;
+        case COMMANDS.MUTE_OFF:
+            this.deviceInfo.muted = false;
+            break;
+        case COMMANDS.ON_HOOK:
+            this.deviceInfo.hookStatus = HOOK_STATUS.ON;
+            break;
+        case COMMANDS.OFF_HOOK:
+            this.deviceInfo.hookStatus = HOOK_STATUS.OFF;
+            break;
+        case COMMANDS.ON_RING:
+            this.deviceInfo.ring = true;
+            break;
+        case COMMANDS.OFF_RING:
+            this.deviceInfo.ring = false;
+            break;
+        case COMMANDS.ON_HOLD:
+            this.deviceInfo.hold = true;
+            break;
+        case 'offHold':
+            this.deviceInfo.hold = false;
+            break;
+        default:
+            logger.info(`Unknown command ${data.command}`);
+            break;
+        }
+        logger.info(
+            `device status after send command: hook=${this.deviceInfo.hookStatus},
+            muted=${this.deviceInfo.muted}, ring=${this.deviceInfo.ring}`
+        );
+    }
 
-        if (!reportData) {
+    /**
+     * Math given command with known commands.
+     *
+     * @private
+     * @param {string} command -.
+     * @returns {number} ReportId.
+     */
+    private matchReportId(command: string) {
+        switch (command) {
+        case COMMANDS.MUTE_ON:
+        case COMMANDS.MUTE_OFF:
+            return this.deviceCommand.outputReport.mute.reportId;
+        case COMMANDS.ON_HOOK:
+        case COMMANDS.OFF_HOOK:
+            return this.deviceCommand.outputReport.offHook.reportId;
+        case COMMANDS.ON_RING:
+        case COMMANDS.OFF_RING:
+            return this.deviceCommand.outputReport.ring.reportId;
+        case COMMANDS.ON_HOLD:
+        case COMMANDS.OFF_HOLD:
+            return this.deviceCommand.outputReport.hold.reportId;
+        default:
+            logger.info(`Unknown command ${command}`);
+
+            return 0;
+        }
+    }
+
+    /**
+     * Send reply report to device.
+     *
+     * @param {number} inputReportId -.
+     * @param {(string | boolean | undefined)} curOffHook -.
+     * @param {(string | undefined)} curMuted -.
+     * @returns {void} -.
+     */
+    private async sendReplyReport(
+            inputReportId: number,
+            curOffHook: string | boolean | undefined,
+            curMuted: boolean | string | undefined
+    ) {
+        const reportId = this.retriveInputReportId(inputReportId);
+
+
+        if (!this.deviceInfo || !this.deviceInfo.device || !this.deviceInfo.device.opened) {
             return;
         }
 
-        const valueActionNumber = sendReportConfig.valueAction ? 1 : 0;
-        const telephonyActionResultList = [],
-            telephonyReportSizeList = [];
+        if (reportId === 0 || curOffHook === undefined || curMuted === undefined) {
+            return;
+        }
 
-        for (const usageReportItem of reportData.usageReportItems) {
-            for (const telephonyUsageReportItem of usageReportItem.telephonyUsageReportList) {
-                telephonyReportSizeList.push(telephonyUsageReportItem.reportSize);
+        let reportData = new Uint8Array();
+        let muteReport;
+        let offHookReport;
+        let ringReport;
 
-                if (telephonyUsageReportItem.telephonyUsageId === sendReportConfig.telephonyUsageActionId) {
-                    telephonyActionResultList.push(valueActionNumber);
-                } else {
-                    const reportId = mapTelephonyUsageToReportId(telephonyUsageReportItem.telephonyUsageId);
-                    const reportIdValue = sendReportConfig.reportMapResult.get(reportId);
-
-                    telephonyActionResultList.push(reportIdValue ? 1 : 0);
-                }
+        if (this.deviceCommand.outputReport.offHook.reportId === this.deviceCommand.outputReport.mute.reportId) {
+            muteReport = this.outputEventGenerators[DEVICE_USAGE.mute.usageId](curMuted);
+            offHookReport = this.outputEventGenerators[DEVICE_USAGE.offHook.usageId](curOffHook);
+            reportData = new Uint8Array(offHookReport);
+            for (const [ i, data ] of muteReport.entries()) {
+                // eslint-disable-next-line no-bitwise
+                reportData[i] |= data;
             }
+        } else if (reportId === this.deviceCommand.outputReport.offHook.reportId) {
+            offHookReport = this.outputEventGenerators[DEVICE_USAGE.offHook.usageId](curOffHook);
+            reportData = new Uint8Array(offHookReport);
+        } else if (reportId === this.deviceCommand.outputReport.mute.reportId) {
+            muteReport = this.outputEventGenerators[DEVICE_USAGE.mute.usageId](curMuted);
+            reportData = new Uint8Array(muteReport);
+        } else if (reportId === this.deviceCommand.outputReport.ring.reportId) {
+            ringReport = this.outputEventGenerators[DEVICE_USAGE.mute.usageId](curMuted);
+            reportData = new Uint8Array(ringReport);
         }
-        const encodedTelephonyUsageActionId = encode(
-            telephonyReportSizeList,
-            telephonyActionResultList,
-            reportData.reportCountSize);
 
-        try {
-            await sendReportConfig.currentDevice.sendReport(reportData.reportId, encodedTelephonyUsageActionId);
-        } catch {
-            //
+        logger.warn(`send device reply: reportId=${reportId}, reportData=${reportData}`);
+        logger.info('reportData=', reportData);
+        await this.deviceInfo.device.sendReport(reportId, reportData);
+    }
+
+    /**
+     * Retrieve input report id.
+     *
+     * @private
+     * @param {number} inputReportId -.
+     * @returns {number} ReportId -.
+     */
+    private retriveInputReportId(inputReportId: number) {
+        let reportId = 0;
+
+        if (this.deviceCommand.outputReport.offHook.reportId === this.deviceCommand.outputReport.mute.reportId) {
+            reportId = this.deviceCommand.outputReport.offHook.reportId;
+        } else if (inputReportId === this.deviceCommand.inputReport.hookSwitch.reportId) {
+            reportId = this.deviceCommand.outputReport.offHook.reportId;
+        } else if (inputReportId === this.deviceCommand.inputReport.phoneMute.reportId) {
+            reportId = this.deviceCommand.outputReport.mute.reportId;
         }
+
+        return reportId;
+    }
+
+    /**
+     * Get the hexadecimal bytes.
+     *
+     * @param {number|string} data -.
+     * @returns {string}
+     */
+    getHexByte(data: number | string) {
+        let hex = Number(data).toString(16);
+
+        while (hex.length < 2) {
+            hex = `0${hex}`;
+        }
+
+        return hex;
     }
 }

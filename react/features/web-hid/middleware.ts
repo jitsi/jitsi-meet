@@ -3,15 +3,15 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { SET_AUDIO_MUTED } from '../base/media/actionTypes';
 import { MEDIA_TYPE } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { getLocalTracks, isLocalTrackMuted } from '../base/tracks/functions.any';
 import { muteLocal } from '../video-menu/actions.any';
 
 
-import { REQUEST_HID_DEVICE } from './actionTypes';
-import { initDeviceInfo, updateDeviceInfo, updateReportResult } from './actions';
-import { getWebHidInstance, getWebHidState, isDeviceHidSupported } from './functions';
+import { CLOSE_HID_DEVICE, REQUEST_HID_DEVICE } from './actionTypes';
+import { initDeviceInfo, updateDeviceInfo } from './actions';
+import { getWebHidInstance, isDeviceHidSupported } from './functions';
 import logger from './logger';
-import { EVENT_TYPE } from './types';
-import { TELEPHONY_USAGE_ACTIONS } from './utils';
+import { ACTION_HOOK_TYPE_NAME, COMMANDS, EVENT_TYPE } from './types';
 
 
 /**
@@ -25,25 +25,13 @@ let initDeviceListener: (e: any) => void;
 let updateDeviceListener: (e: any) => void;
 
 /**
- * A listener for mute on action from webhid-manager.
- */
-let muteOnListener: (e: any) => void;
-
-/**
- * A listener for mute on action from webhid-manager.
- */
-let muteOffListener: (e: any) => void;
-
-
-/**
  * The redux middleware for {@link WebHid}.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
 MiddlewareRegistry.register((store: IStore) => next => async action => {
-    const { dispatch, getState } = store;
-    const state = getState();
+    const { dispatch } = store;
 
     switch (action.type) {
     case APP_WILL_MOUNT: {
@@ -56,26 +44,22 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
         }
 
         const _initDeviceListener = (e: any) => dispatch(initDeviceInfo(e.detail.deviceInfo));
-        const _updateDeviceListener = (e: any) => dispatch(updateDeviceInfo(e.detail.updatedDeviceInfo));
-        const _muteOnListener = (e: any) => {
-            dispatch(updateReportResult(e.detail.reportHidMap));
-            dispatch(muteLocal(true, MEDIA_TYPE.AUDIO));
-        };
-        const _muteOffListener = (e: any) => {
-            dispatch(updateReportResult(e.detail.reportHidMap));
-            dispatch(muteLocal(false, MEDIA_TYPE.AUDIO));
+        const _updateDeviceListener = (e: any) => {
+            dispatch(updateDeviceInfo(e.detail.deviceInfo));
+
+            if (e.detail?.actionResult?.eventName === ACTION_HOOK_TYPE_NAME.MUTE_SWITCH_ON) {
+                dispatch(muteLocal(true, MEDIA_TYPE.AUDIO));
+            } else if (e.detail?.actionResult?.eventName === ACTION_HOOK_TYPE_NAME.MUTE_SWITCH_OFF) {
+                dispatch(muteLocal(false, MEDIA_TYPE.AUDIO));
+            }
         };
 
         initDeviceListener = _initDeviceListener;
         updateDeviceListener = _updateDeviceListener;
-        muteOnListener = _muteOnListener;
-        muteOffListener = _muteOffListener;
 
         hidManager.listenToConnectedHid();
         hidManager.addEventListener(EVENT_TYPE.INIT_DEVICE, initDeviceListener);
         hidManager.addEventListener(EVENT_TYPE.UPDATE_DEVICE, updateDeviceListener);
-        hidManager.addEventListener(EVENT_TYPE.MUTE_ON, muteOnListener);
-        hidManager.addEventListener(EVENT_TYPE.MUTE_OFF, muteOffListener);
 
         break;
     }
@@ -83,7 +67,6 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
         const hidManager = getWebHidInstance();
 
         if (!isDeviceHidSupported()) {
-
             break;
         }
 
@@ -93,28 +76,74 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
         if (typeof updateDeviceListener === 'function') {
             hidManager.removeEventListener(EVENT_TYPE.UPDATE_DEVICE, updateDeviceListener);
         }
-        if (typeof muteOnListener === 'function') {
-            hidManager.removeEventListener(EVENT_TYPE.MUTE_ON, muteOnListener);
+
+        hidManager.close();
+
+        break;
+    }
+    case CLOSE_HID_DEVICE: {
+        if (!isDeviceHidSupported()) {
+            logger.info('HID device not supported');
+
+            break;
         }
-        if (typeof muteOffListener === 'function') {
-            hidManager.removeEventListener(EVENT_TYPE.MUTE_OFF, muteOffListener);
+
+        const hidManager = getWebHidInstance();
+
+        // cleanup even handlers when hid device is removed from Settings.
+        if (typeof initDeviceListener === 'function') {
+            hidManager.removeEventListener(EVENT_TYPE.INIT_DEVICE, initDeviceListener);
         }
+        if (typeof updateDeviceListener === 'function') {
+            hidManager.removeEventListener(EVENT_TYPE.UPDATE_DEVICE, updateDeviceListener);
+        }
+
+        hidManager.close();
+        dispatch(muteLocal(false, MEDIA_TYPE.AUDIO));
 
         break;
     }
     case REQUEST_HID_DEVICE: {
         if (!isDeviceHidSupported()) {
+            logger.info('HID device not supported');
+
             break;
         }
 
         const hidManager = getWebHidInstance();
-        const device = await hidManager.requestHidDevice();
 
-        if (!device) {
+        await hidManager.requestHidDevices();
+
+        if (!hidManager.availableDevices || !hidManager.availableDevices.length) {
+            logger.info('HID device not available');
             break;
         }
 
-        hidManager.handleHidDevice(device);
+        const _initDeviceListener = (e: any) => dispatch(initDeviceInfo(e.detail.deviceInfo));
+        const _updateDeviceListener = (e: any) => {
+            dispatch(updateDeviceInfo(e.detail.deviceInfo));
+
+            if (e.detail?.actionResult?.eventName === ACTION_HOOK_TYPE_NAME.MUTE_SWITCH_ON) {
+                dispatch(muteLocal(true, MEDIA_TYPE.AUDIO));
+            } else if (e.detail?.actionResult?.eventName === ACTION_HOOK_TYPE_NAME.MUTE_SWITCH_OFF) {
+                dispatch(muteLocal(false, MEDIA_TYPE.AUDIO));
+            }
+        };
+
+        initDeviceListener = _initDeviceListener;
+        updateDeviceListener = _updateDeviceListener;
+
+        hidManager.addEventListener(EVENT_TYPE.INIT_DEVICE, initDeviceListener);
+        hidManager.addEventListener(EVENT_TYPE.UPDATE_DEVICE, updateDeviceListener);
+        await hidManager.listenToConnectedHid();
+
+        const localTracks = getLocalTracks(store.getState()['features/base/tracks']);
+        const isAudioMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.AUDIO);
+
+        // sync headset to mute if participant is already muted.
+        if (isAudioMuted) {
+            hidManager.sendDeviceReport({ command: COMMANDS.MUTE_ON });
+        }
 
         break;
     }
@@ -125,30 +154,7 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
             break;
         }
 
-        const currentDevice = hidManager.getTelephonyDevice();
-
-        if (!currentDevice) {
-            break;
-        }
-
-        const hidState = getWebHidState(state);
-        const mapHidAction = hidState.reportResultHid;
-
-        const reports = hidManager.getReports(currentDevice);
-
-        if (!reports) {
-            break;
-        }
-
-        mapHidAction.set(0, action.muted);
-        dispatch(updateReportResult(mapHidAction));
-        hidManager.sendReportToDevice({
-            currentDevice,
-            reports,
-            telephonyUsageActionId: TELEPHONY_USAGE_ACTIONS.LED_MUTE,
-            valueAction: action.muted,
-            reportMapResult: hidState.reportResultHid
-        });
+        hidManager.sendDeviceReport({ command: action.muted ? COMMANDS.MUTE_ON : COMMANDS.MUTE_OFF });
         break;
     }
     }

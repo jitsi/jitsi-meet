@@ -1,6 +1,6 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { INIT_DEVICE, UPDATE_DEVICE, UPDATE_REPORT_HID } from './actionTypes';
+import { CLOSE_HID_DEVICE, INIT_DEVICE, UPDATE_DEVICE } from './actionTypes';
 import { IDeviceInfo } from './types';
 
 /**
@@ -11,19 +11,11 @@ import { IDeviceInfo } from './types';
 * }}
 */
 const DEFAULT_STATE = {
-    deviceInfo: {} as IDeviceInfo,
-    reportResultHid: new Map([
-        [ 0, false ],
-        [ 1, false ],
-        [ 2, false ],
-        [ 3, false ]
-    ]
-    )
+    deviceInfo: {} as IDeviceInfo
 };
 
 export interface IWebHid {
     deviceInfo: IDeviceInfo;
-    reportResultHid: Map<number, boolean>;
 }
 
 
@@ -44,10 +36,10 @@ ReducerRegistry.register<IWebHid>(
                 ...action.updates
             }
         };
-    case UPDATE_REPORT_HID:
+    case CLOSE_HID_DEVICE:
         return {
             ...state,
-            reportResultHid: action.reportResultHid
+            deviceInfo: DEFAULT_STATE.deviceInfo
         };
     default:
         return state;

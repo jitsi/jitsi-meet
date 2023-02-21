@@ -213,7 +213,9 @@
     "deviceSelection": {
         "hid": {
             "callControl": "Call control",
-            "connectedDevices": "Connected devices:"
+            "connectedDevices": "Connected devices:",
+            "deleteDevice": "Delete device",
+            "requestConnectDevice": "Request connect device"
         },
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
