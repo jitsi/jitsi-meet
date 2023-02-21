@@ -28,6 +28,11 @@ export type Props = {
     customActionNameKey: string[],
 
     /**
+     * The type of button.
+     */
+    customActionType: ?string[],
+
+    /**
      * The text to display in the body of the notification. If not passed
      * in, the passed in descriptionKey will be used.
      */

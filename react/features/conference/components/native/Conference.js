@@ -24,7 +24,6 @@ import {
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { startKnocking } from '../../../lobby/actions.any';
-import { KnockingParticipantList } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
@@ -433,7 +432,13 @@ class Conference extends AbstractConference<Props, State> {
 
                     <LonelyMeetingExperience />
 
-                    { _shouldDisplayTileView || <><Filmstrip /><Toolbox /></> }
+                    {
+                        _shouldDisplayTileView
+                        || <>
+                            <Filmstrip />
+                            <Toolbox />
+                        </>
+                    }
                 </View>
 
                 <SafeAreaView
@@ -463,10 +468,10 @@ class Conference extends AbstractConference<Props, State> {
                         <AlwaysOnLabels createOnPress = { this._createOnPress } />
                     </View>
                     { this._renderNotificationsContainer() }
-                    <KnockingParticipantList />
                 </SafeAreaView>
 
                 <TestConnectionInfo />
+
                 { this._renderConferenceNotification() }
 
                 {_shouldDisplayTileView && <Toolbox />}

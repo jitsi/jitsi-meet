@@ -8,7 +8,7 @@ import { IconMessage } from '../../../base/icons';
 import { getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { openChat } from '../../../chat/';
+import { openChat } from '../../../chat/actions.web';
 import {
     type Props as AbstractProps
 } from '../../../chat/components/web/PrivateMessageButton';

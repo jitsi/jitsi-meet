@@ -9,7 +9,7 @@ import Label from '../../../base/label/components/web/Label';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
-import { open as openParticipantsPane } from '../../../participants-pane/actions';
+import { open as openParticipantsPane } from '../../../participants-pane/actions.web';
 
 const useStyles = makeStyles()(theme => {
     return {

@@ -90,11 +90,24 @@ ReducerRegistry.register<INotificationsState>('features/notifications',
  * queue.
  */
 function _insertNotificationByPriority(notifications: INotification[], notification: INotification) {
+
+    // Create a copy to avoid mutation.
+    const copyOfNotifications = notifications.slice();
+
+    // Get the index of any queued notification that has the same id as the new notification
+    let insertAtLocation = copyOfNotifications.findIndex(
+            (queuedNotification: INotification) =>
+                queuedNotification?.uid === notification?.uid
+    );
+
+    if (insertAtLocation !== -1) {
+        copyOfNotifications.splice(insertAtLocation, 1, notification);
+
+        return copyOfNotifications;
+    }
+
     const newNotificationPriority
         = NOTIFICATION_TYPE_PRIORITIES[notification.props.appearance ?? ''] || 0;
-
-    // Default to putting the new notification at the end of the queue.
-    let insertAtLocation = notifications.length;
 
     // Find where to insert the new notification based on priority. Do not
     // insert at the front of the queue so that the user can finish acting on
@@ -103,16 +116,13 @@ function _insertNotificationByPriority(notifications: INotification[], notificat
         const queuedNotification = notifications[i];
         const queuedNotificationPriority
             = NOTIFICATION_TYPE_PRIORITIES[queuedNotification.props.appearance ?? '']
-                || 0;
+            || 0;
 
         if (queuedNotificationPriority < newNotificationPriority) {
             insertAtLocation = i;
             break;
         }
     }
-
-    // Create a copy to avoid mutation and insert the notification.
-    const copyOfNotifications = notifications.slice();
 
     copyOfNotifications.splice(insertAtLocation, 0, notification);
 

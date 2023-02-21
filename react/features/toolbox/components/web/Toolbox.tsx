@@ -53,7 +53,7 @@ import { NoiseSuppressionButton } from '../../../noise-suppression/components';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
-} from '../../../participants-pane/actions';
+} from '../../../participants-pane/actions.web';
 // @ts-ignore
 import { ParticipantsPaneButton } from '../../../participants-pane/components/web';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';

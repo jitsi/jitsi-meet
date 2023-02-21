@@ -1,14 +1,13 @@
 // @flow
 
 import React, { Component } from 'react';
-import { View } from 'react-native';
 
 import { connect } from '../../../base/redux';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
 
 import Notification from './Notification';
-import styles from './styles';
+
 
 type Props = {
 
@@ -21,12 +20,7 @@ type Props = {
     /**
      * Invoked to update the redux store in order to remove notifications.
      */
-     dispatch: Function,
-
-    /**
-     * Any custom styling applied to the notifications container.
-     */
-    style: Object
+     dispatch: Function
 };
 
 /**
@@ -65,7 +59,7 @@ class NotificationsContainer extends Component<Props> {
     }
 
     /**
-     * Sets a timeout for the first notification (if applicable).
+     * Sets a timeout (if applicable).
      *
      * @inheritdoc
      */
@@ -173,25 +167,22 @@ class NotificationsContainer extends Component<Props> {
     render() {
         const { _notifications } = this.props;
 
-        // Currently the native container displays only the topmost notification
-        const theNotification = _notifications[0];
-
-        if (!theNotification) {
-            return null;
-        }
-
         return (
-            <View
-                pointerEvents = 'box-none'
-                style = { [
-                    styles.notificationContainer,
-                    this.props.style
-                ] } >
-                <Notification
-                    { ...theNotification.props }
-                    onDismissed = { this._onDismissed }
-                    uid = { theNotification.uid } />
-            </View>
+            <>
+                {
+                    _notifications.map((notification, index) => {
+                        const { props, uid } = notification;
+
+                        return (
+                            <Notification
+                                { ...props }
+                                key = { index }
+                                onDismissed = { this._onDismissed }
+                                uid = { uid } />
+                        );
+                    })
+                }
+            </>
         );
     }
 

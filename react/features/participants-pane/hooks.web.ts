@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { handleLobbyChatInitialized } from '../chat/actions.any';
+import { handleLobbyChatInitialized } from '../chat/actions.web';
 import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/actions.web';
 
 interface IDrawerParticipant {
