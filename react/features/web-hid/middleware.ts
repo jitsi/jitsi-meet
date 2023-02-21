@@ -6,13 +6,11 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { getLocalTracks, isLocalTrackMuted } from '../base/tracks/functions.any';
 import { muteLocal } from '../video-menu/actions.any';
 
-
 import { CLOSE_HID_DEVICE, REQUEST_HID_DEVICE } from './actionTypes';
 import { initDeviceInfo, updateDeviceInfo } from './actions';
 import { getWebHidInstance, isDeviceHidSupported } from './functions';
 import logger from './logger';
 import { ACTION_HOOK_TYPE_NAME, COMMANDS, EVENT_TYPE } from './types';
-
 
 /**
  * A listener for initialising the webhid device.
@@ -90,7 +88,7 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
 
         const hidManager = getWebHidInstance();
 
-        // cleanup even handlers when hid device is removed from Settings.
+        // cleanup event handlers when hid device is removed from Settings.
         if (typeof initDeviceListener === 'function') {
             hidManager.removeEventListener(EVENT_TYPE.INIT_DEVICE, initDeviceListener);
         }

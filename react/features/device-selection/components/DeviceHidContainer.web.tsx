@@ -24,7 +24,6 @@ const useStyles = makeStyles()(() => {
             display: 'flex',
             justifyContent: 'space-between'
         },
-
         deleteDevice: {
             cursor: 'pointer',
             textAlign: 'center'
@@ -44,7 +43,7 @@ const useStyles = makeStyles()(() => {
  * Device hid container.
  *
  * @param {IProps} props - The props of the component.
- * @returns {*}
+ * @returns {ReactElement}
  */
 function DeviceHidContainer() {
     const { t } = useTranslation();
