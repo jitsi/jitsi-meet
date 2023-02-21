@@ -134,6 +134,13 @@ StateListenerRegistry.register(
 
                     const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
 
+                    if (typeof APP !== 'undefined') {
+                        APP.API.notifyKnockingParticipant({
+                            id,
+                            name
+                        });
+                    }
+
                     if (isParticipantsPaneVisible || navigator.product === 'ReactNative') {
                         return;
                     }
@@ -142,13 +149,6 @@ StateListenerRegistry.register(
                         dispatch,
                         getState
                     });
-
-                    if (typeof APP !== 'undefined') {
-                        APP.API.notifyKnockingParticipant({
-                            id,
-                            name
-                        });
-                    }
                 });
             });
 
