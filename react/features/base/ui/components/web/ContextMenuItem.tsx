@@ -172,7 +172,7 @@ const ContextMenuItem = ({
             onClick = { disabled ? undefined : onClick }
             onKeyDown = { disabled ? undefined : onKeyDown }
             onKeyPress = { disabled ? undefined : onKeyPress }
-            role = 'menuitem'>
+            role = 'button'>
             {customIcon ? customIcon
                 : icon && <Icon
                     className = { styles.contextMenuItemIcon }

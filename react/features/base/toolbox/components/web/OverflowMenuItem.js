@@ -123,7 +123,7 @@ class OverflowMenuItem extends Component<Props> {
                 className = { className }
                 onClick = { disabled ? null : onClick }
                 onKeyPress = { this._onKeyPress }
-                role = 'menuitem'
+                role = 'button'
                 tabIndex = { 0 }>
                 <span className = 'overflow-menu-item-icon'>
                     <Icon
