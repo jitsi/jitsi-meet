@@ -123,6 +123,7 @@ const OverflowMenuButton = ({
                 ) : (
                     <Popover
                         content = { children }
+                        focusTrap = { true }
                         onPopoverClose = { onCloseDialog }
                         onPopoverOpen = { onOpenDialog }
                         position = 'top'
