@@ -268,6 +268,22 @@ export function getVirtualScreenshareParticipantOwnerId(id: string) {
 }
 
 /**
+ * Returns owner participant IDs of the virtual screenshares participant.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's.
+ * @returns {(string[])}
+ */
+export function getVirtualScreenshareParticipantOwnerIds(stateful: IStateful) {
+    const virtualScreenshareParticipants = toState(stateful)['features/base/participants']
+        .sortedRemoteVirtualScreenshareParticipants;
+
+    const virtualScreenshareParticipantIds = Array.from(virtualScreenshareParticipants.keys())
+        .map(id => getVirtualScreenshareParticipantOwnerId(id));
+
+    return virtualScreenshareParticipantIds;
+}
+
+/**
  * Returns the Map with fake participants.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
