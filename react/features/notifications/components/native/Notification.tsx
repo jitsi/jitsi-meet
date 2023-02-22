@@ -190,10 +190,9 @@ class Notification extends AbstractNotification<Props> {
             ? styles.contentColumn : styles.interactiveContentColumn;
         const description = this._getDescription();
 
-        const notificationStyles =
-            description?.length
-                ? styles.notificationWithDescription
-                : styles.notification;
+        const notificationStyles = description?.length
+            ? styles.notificationWithDescription
+            : styles.notification;
 
         return (
             <Animated.View

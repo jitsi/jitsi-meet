@@ -20,7 +20,7 @@ const notification = {
     marginBottom: BaseTheme.spacing[3],
     marginHorizontal: BaseTheme.spacing[2],
     width: 400
-}
+};
 
 /**
  * The styles of the React {@code Components} of the feature notifications.
