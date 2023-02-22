@@ -36,9 +36,16 @@ interface IProps {
     disablePopover?: boolean;
 
     /**
-     * The id of the dom element acting as the Popover label if using focusTrap=true.
+     * The id of the dom element acting as the Popover label (matches aria-labelledby).
      */
     headingId?: string;
+
+    /**
+     * String acting as the Popover label (matches aria-label).
+     *
+     * If headingId is set, this will not be used.
+     */
+    headingLabel?: string;
 
     /**
      * An id attribute to apply to the root of the {@code Popover}
@@ -192,7 +199,16 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, className, content, headingId, id, overflowDrawer, visible, trigger } = this.props;
+        const { children,
+            className,
+            content,
+            headingId,
+            headingLabel,
+            id,
+            overflowDrawer,
+            visible,
+            trigger
+        } = this.props;
 
         if (overflowDrawer) {
             return (
@@ -234,7 +250,8 @@ class Popover extends Component<IProps, IState> {
                             lockProps = {{
                                 role: 'dialog',
                                 'aria-modal': true,
-                                'aria-labelledby': headingId
+                                'aria-labelledby': headingId,
+                                'aria-label': !headingId && headingLabel ? headingLabel : undefined
                             }}
                             returnFocus = { true }>
                             {this._renderContent()}

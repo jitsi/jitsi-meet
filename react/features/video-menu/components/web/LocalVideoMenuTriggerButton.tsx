@@ -216,6 +216,7 @@ class LocalVideoMenuTriggerButton extends Component<IProps> {
             isMobileBrowser() || _showLocalVideoFlipButton || _showHideSelfViewButton
                 ? <Popover
                     content = { content }
+                    headingLabel = { t('dialog.localUserControls') }
                     id = 'local-video-menu-trigger'
                     onPopoverClose = { this._onPopoverClose }
                     onPopoverOpen = { this._onPopoverOpen }

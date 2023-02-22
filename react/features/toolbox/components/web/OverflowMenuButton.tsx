@@ -123,6 +123,7 @@ const OverflowMenuButton = ({
                 ) : (
                     <Popover
                         content = { children }
+                        headingId = 'overflow-context-menu'
                         onPopoverClose = { onCloseDialog }
                         onPopoverOpen = { onOpenDialog }
                         position = 'top'

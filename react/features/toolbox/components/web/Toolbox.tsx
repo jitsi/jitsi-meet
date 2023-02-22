@@ -1466,6 +1466,7 @@ class Toolbox extends Component<IProps> {
                                     accessibilityLabel = { t(toolbarAccLabel) }
                                     className = { classes.contextMenu }
                                     hidden = { false }
+                                    id = 'overflow-context-menu'
                                     inDrawer = { _overflowDrawer }
                                     onKeyDown = { this._onEscKey }>
                                     {overflowMenuButtons.reduce((acc, val) => {

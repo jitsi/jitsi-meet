@@ -121,6 +121,7 @@ export default function ToolboxButtonWithIconPopup(props: Props) {
             <div className = 'settings-button-small-icon-container'>
                 <Popover
                     content = { popoverContent }
+                    headingLabel = { ariaLabel }
                     onPopoverClose = { onPopoverClose }
                     onPopoverOpen = { onPopoverOpen }
                     position = 'top'
