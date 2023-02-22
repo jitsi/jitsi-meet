@@ -9,7 +9,8 @@ import { connect } from '../../base/redux';
 import { BUTTON_TYPES } from '../../base/ui/constants.native';
 import {
     CALENDAR_NOTIFICATION_ID,
-    NOTIFICATION_ICON
+    NOTIFICATION_ICON,
+    hideNotification
 } from '../../notifications';
 import Notification from '../../notifications/components/native/Notification';
 
@@ -78,6 +79,7 @@ class ConferenceNotification extends Component<Props, State> {
         this._maybeDisplayNotification
             = this._maybeDisplayNotification.bind(this);
         this._onGoToNext = this._onGoToNext.bind(this);
+        this._onDismissed = this._onDismissed.bind(this);
     }
 
     /**
@@ -127,6 +129,7 @@ class ConferenceNotification extends Component<Props, State> {
                     customActionType = { customActionType }
                     description = { description }
                     icon = { NOTIFICATION_ICON.WARNING }
+                    onDismissed = { this._onDismissed }
                     title = { t(title) }
                     uid = { CALENDAR_NOTIFICATION_ID } />
             );
@@ -170,6 +173,21 @@ class ConferenceNotification extends Component<Props, State> {
         this.setState({
             event: eventToShow
         });
+    }
+
+    _onDismissed: number => void;
+
+    /**
+     * Emits an action to remove the notification from the redux store so it
+     * stops displaying.
+     *
+     * @param {number} uid - The id of the notification to be removed.
+     * @private
+     * @returns {void}
+     */
+    _onDismissed() {
+        clearInterval(this.updateIntervalId);
+        this.props.dispatch(hideNotification(CALENDAR_NOTIFICATION_ID));
     }
 
     _onGoToNext: () => void;
