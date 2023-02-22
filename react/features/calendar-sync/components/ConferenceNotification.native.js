@@ -1,29 +1,26 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
 
-import { appNavigate } from '../../app/actions';
+import { appNavigate } from '../../app/actions.native';
 import { getURLWithoutParamsNormalized } from '../../base/connection';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
-import { Icon, IconArrowRight } from '../../base/icons';
 import { connect } from '../../base/redux';
-import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
-
-import styles from './styles';
+import { BUTTON_TYPES } from '../../base/ui/constants.native';
+import {
+    CALENDAR_NOTIFICATION_ID,
+    NOTIFICATION_ICON
+} from '../../notifications';
+import Notification from '../../notifications/components/native/Notification';
 
 const ALERT_MILLISECONDS = 5 * 60 * 1000;
+
 
 /**
  * The type of the React {@code Component} props of
  * {@link ConferenceNotification}.
  */
 type Props = {
-
-    /**
-     * The current aspect ratio of the screen.
-     */
-    _aspectRatio: Symbol,
 
     /**
      * The URL of the current conference without params.
@@ -78,10 +75,6 @@ class ConferenceNotification extends Component<Props, State> {
         };
 
         // Bind event handlers so they are only bound once per instance.
-        this._getNotificationContentStyle
-            = this._getNotificationContentStyle.bind(this);
-        this._getNotificationPosition
-            = this._getNotificationPosition.bind(this);
         this._maybeDisplayNotification
             = this._maybeDisplayNotification.bind(this);
         this._onGoToNext = this._onGoToNext.bind(this);
@@ -114,108 +107,32 @@ class ConferenceNotification extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { event } = this.state;
         const { t } = this.props;
+        const { event } = this.state;
+        const customActionNameKey = [ 'notify.joinMeeting' ];
+        const customActionType = [ BUTTON_TYPES.PRIMARY ];
+        const customActionHandler = [ this._onGoToNext ];
+        const now = Date.now();
 
         if (event) {
-            const now = Date.now();
-            const label
-                = event.startDate < now && event.endDate > now
-                    ? 'calendarSync.ongoingMeeting'
-                    : 'calendarSync.nextMeeting';
+            const title = event.startDate < now && event.endDate > now
+                ? 'calendarSync.ongoingMeeting'
+                : 'calendarSync.nextMeeting';
+            const description = getLocalizedDateFormatter(event.startDate).fromNow();
 
             return (
-                <View
-                    style = { [
-                        styles.notificationContainer,
-                        this._getNotificationPosition()
-                    ] } >
-                    <View
-                        style = { this._getNotificationContentStyle() }>
-                        <TouchableOpacity
-                            onPress = { this._onGoToNext } >
-                            <View style = { styles.touchableView }>
-                                <View
-                                    style = {
-                                        styles.notificationTextContainer
-                                    }>
-                                    <Text style = { styles.notificationText }>
-                                        { t(label) }
-                                    </Text>
-                                    <Text style = { styles.notificationText }>
-                                        {
-                                            getLocalizedDateFormatter(
-                                                event.startDate
-                                            ).fromNow()
-                                        }
-                                    </Text>
-                                </View>
-                                <View
-                                    style = {
-                                        styles.notificationIconContainer
-                                    }>
-                                    <Icon
-                                        src = { IconArrowRight }
-                                        style = { styles.notificationIcon } />
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <Notification
+                    customActionHandler = { customActionHandler }
+                    customActionNameKey = { customActionNameKey }
+                    customActionType = { customActionType }
+                    description = { description }
+                    icon = { NOTIFICATION_ICON.WARNING }
+                    title = { t(title) }
+                    uid = { CALENDAR_NOTIFICATION_ID } />
             );
         }
 
         return null;
-    }
-
-    _getNotificationContentStyle: () => Array<Object>;
-
-    /**
-     * Decides the color of the notification and some additional
-     * styles based on notificationPosition.
-     *
-     * @private
-     * @returns {Array<Object>}
-     */
-    _getNotificationContentStyle() {
-        const { event } = this.state;
-        const { _aspectRatio } = this.props;
-        const now = Date.now();
-        const style = [
-            styles.notificationContent
-        ];
-
-        if (event && event.startDate < now && event.endDate > now) {
-            style.push(styles.notificationContentPast);
-        } else {
-            style.push(styles.notificationContentNext);
-        }
-
-        if (_aspectRatio === ASPECT_RATIO_NARROW) {
-            style.push(styles.notificationContentSide);
-        } else {
-            style.push(styles.notificationContentTop);
-        }
-
-        return style;
-    }
-
-    _getNotificationPosition: () => Object;
-
-    /**
-     * Decides the position of the notification.
-     *
-     * @private
-     * @returns {Object}
-     */
-    _getNotificationPosition() {
-        const { _aspectRatio } = this.props;
-
-        if (_aspectRatio === ASPECT_RATIO_NARROW) {
-            return styles.notificationContainerSide;
-        }
-
-        return styles.notificationContainerTop;
     }
 
     _maybeDisplayNotification: () => void;
@@ -236,7 +153,7 @@ class ConferenceNotification extends Component<Props, State> {
 
             for (const event of _eventList) {
                 const eventUrl
-                    = event.url
+                    = event?.url
                         && getURLWithoutParamsNormalized(new URL(event.url));
 
                 if (eventUrl && eventUrl !== _currentConferenceURL) {
@@ -266,7 +183,7 @@ class ConferenceNotification extends Component<Props, State> {
     _onGoToNext() {
         const { event } = this.state;
 
-        if (event && event.url) {
+        if (event?.url) {
             this.props.dispatch(appNavigate(event.url));
         }
     }
@@ -286,7 +203,6 @@ function _mapStateToProps(state: Object) {
     const { locationURL } = state['features/base/connection'];
 
     return {
-        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
         _currentConferenceURL:
             locationURL ? getURLWithoutParamsNormalized(locationURL) : '',
         _eventList: state['features/calendar-sync'].events
