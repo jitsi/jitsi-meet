@@ -190,7 +190,6 @@ class RemoteVideoMenuTriggerButton extends Component<IProps> {
         return (
             <Popover
                 content = { content }
-                focusTrap = { true }
                 id = 'remote-video-menu-trigger'
                 onPopoverClose = { this._onPopoverClose }
                 onPopoverOpen = { this._onPopoverOpen }

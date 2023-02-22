@@ -233,7 +233,6 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
                     inheritedStats = { this.state.stats }
                     participantId = { participantId } /> }
                 disablePopover = { !enableStatsDisplay }
-                focusTrap = { true }
                 id = 'participant-connection-indicator'
                 onPopoverClose = { this._onHidePopover }
                 onPopoverOpen = { this._onShowPopover }

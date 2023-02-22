@@ -36,11 +36,6 @@ interface IProps {
     disablePopover?: boolean;
 
     /**
-     * Whether to use trap keyboard focus in the popover when its visible or not.
-     */
-    focusTrap?: boolean;
-
-    /**
      * The id of the dom element acting as the Popover label if using focusTrap=true.
      */
     headingId?: string;
@@ -197,7 +192,7 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, className, content, headingId, id, overflowDrawer, visible, trigger, focusTrap } = this.props;
+        const { children, className, content, headingId, id, overflowDrawer, visible, trigger } = this.props;
 
         if (overflowDrawer) {
             return (
@@ -235,17 +230,15 @@ class Popover extends Component<IProps, IState> {
                         getRef = { this._setContextMenuRef }
                         setSize = { this._setContextMenuStyle }
                         style = { this.state.contextMenuStyle }>
-                        {focusTrap ? (
-                            <ReactFocusLock
-                                lockProps = {{
-                                    role: 'dialog',
-                                    'aria-modal': true,
-                                    'aria-labelledby': headingId
-                                }}
-                                returnFocus = { true }>
-                                {this._renderContent()}
-                            </ReactFocusLock>
-                        ) : this._renderContent()}
+                        <ReactFocusLock
+                            lockProps = {{
+                                role: 'dialog',
+                                'aria-modal': true,
+                                'aria-labelledby': headingId
+                            }}
+                            returnFocus = { true }>
+                            {this._renderContent()}
+                        </ReactFocusLock>
                     </DialogPortal>
                 )}
                 { children }
