@@ -57,13 +57,6 @@ export const NOTIFICATION_ICON = {
 };
 
 /**
- * The identifier of the calendar notification.
- *
- * @type {string}
- */
-export const CALENDAR_NOTIFICATION_ID = 'CALENDAR_NOTIFICATION_ID';
-
-/**
  * The identifier of the disable self view notification.
  *
  * @type {string}

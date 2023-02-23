@@ -7,11 +7,7 @@ import { getURLWithoutParamsNormalized } from '../../base/connection';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { BUTTON_TYPES } from '../../base/ui/constants.native';
-import {
-    CALENDAR_NOTIFICATION_ID,
-    NOTIFICATION_ICON,
-    hideNotification
-} from '../../notifications';
+import { NOTIFICATION_ICON, } from '../../notifications';
 import Notification from '../../notifications/components/native/Notification';
 
 const ALERT_MILLISECONDS = 5 * 60 * 1000;
@@ -130,8 +126,7 @@ class ConferenceNotification extends Component<Props, State> {
                     description = { description }
                     icon = { NOTIFICATION_ICON.WARNING }
                     onDismissed = { this._onDismissed }
-                    title = { t(title) }
-                    uid = { CALENDAR_NOTIFICATION_ID } />
+                    title = { t(title) } />
             );
         }
 
