@@ -1372,7 +1372,6 @@ var config = {
      dialOutRegionUrl
      disableRemoteControl
      displayJids
-     externalConnectUrl
      e2eeLabels
      firefox_fake_device
      googleApiApplicationClientID
