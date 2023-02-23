@@ -207,7 +207,7 @@ class LoginDialog extends Component<IProps, IState> {
         let messageKey;
 
         if (progress && progress < 1) {
-            messageKey = t('connection.FETCH_SESSION_ID');
+            messageKey = 'connection.FETCH_SESSION_ID';
         } else if (error) {
             const { name } = error;
 
@@ -218,14 +218,14 @@ class LoginDialog extends Component<IProps, IState> {
                     && credentials.jid === toJid(username, configHosts ?? { authdomain: '',
                         domain: '' })
                     && credentials.password === password) {
-                    messageKey = t('dialog.incorrectPassword');
+                    messageKey = 'dialog.incorrectPassword';
                 }
             } else if (name) {
-                messageKey = t('dialog.connectErrorWithMsg');
+                messageKey = 'dialog.connectErrorWithMsg';
                 messageOptions.msg = `${name} ${error.message}`;
             }
         } else if (connecting) {
-            messageKey = t('connection.CONNECTING');
+            messageKey = 'connection.CONNECTING';
         }
 
         if (messageKey) {
