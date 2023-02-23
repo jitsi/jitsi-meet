@@ -1,5 +1,3 @@
-// @flow
-
 import type { Dispatch } from 'redux';
 
 import { appNavigate } from '../app/actions';

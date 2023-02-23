@@ -19,6 +19,7 @@ import { getDefaultURL } from '../../../app/functions.native';
 import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
+import { getLegalUrls } from '../../../base/config/functions.native';
 import { translate } from '../../../base/i18n/functions';
 // @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -45,19 +46,6 @@ import styles from './styles';
  * Application information module.
  */
 const { AppInfo } = NativeModules;
-
-/**
- * The URL at which the terms (of service/use) are available to the user.
- */
-const TERMS_URL = 'https://jitsi.org/meet/terms';
-
-/**
- * The URL at which the privacy policy is available to the user.
- */
-const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
-
-
-const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
 
 interface IState {
 
@@ -119,11 +107,13 @@ interface IState {
 interface IProps extends WithTranslation {
 
     /**
-     * The URL for when the help link.
-     *
-     * @protected
+     * The legal URL's.
      */
-    _helpCentreUrl: string;
+    _legalUrls: {
+        helpCentre: string;
+        privacy: string;
+        terms: string;
+    };
 
     /**
      * The ID of the local participant.
@@ -710,7 +700,7 @@ class SettingsView extends Component<IProps, IState> {
      * @returns {void}
      */
     _onShowHelpPressed() {
-        Linking.openURL(this.props._helpCentreUrl);
+        Linking.openURL(this.props._legalUrls.helpCentre);
     }
 
     /**
@@ -719,7 +709,7 @@ class SettingsView extends Component<IProps, IState> {
      * @returns {void}
      */
     _onShowPrivacyPressed() {
-        Linking.openURL(PRIVACY_URL);
+        Linking.openURL(this.props._legalUrls.privacy);
     }
 
     /**
@@ -728,7 +718,7 @@ class SettingsView extends Component<IProps, IState> {
      * @returns {void}
      */
     _onShowTermsPressed() {
-        Linking.openURL(TERMS_URL);
+        Linking.openURL(this.props._legalUrls.terms);
     }
 
     /**
@@ -795,7 +785,7 @@ function _mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
 
     return {
-        _helpCentreUrl: state['features/base/config'].helpCentreURL || DEFAULT_HELP_CENTRE_URL,
+        _legalUrls: getLegalUrls(state),
         _localParticipantId: localParticipant?.id,
         _serverURL: getDefaultURL(state),
         _serverURLChangeEnabled: isServerURLChangeEnabled(state),

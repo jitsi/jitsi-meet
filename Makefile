@@ -48,8 +48,6 @@ deploy-appbundle:
 		$(BUILD_DIR)/do_external_connect.min.js.map \
 		$(BUILD_DIR)/external_api.min.js \
 		$(BUILD_DIR)/external_api.min.js.map \
-		$(BUILD_DIR)/dial_in_info_bundle.min.js \
-		$(BUILD_DIR)/dial_in_info_bundle.min.js.map \
 		$(BUILD_DIR)/alwaysontop.min.js \
 		$(BUILD_DIR)/alwaysontop.min.js.map \
 		$(OUTPUT_DIR)/analytics-ga.js \

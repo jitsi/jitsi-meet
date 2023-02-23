@@ -1146,6 +1146,13 @@ var config = {
     //     }
     // },
 
+    // // The terms, privacy and help centre URL's.
+    // legalUrls: {
+    //     helpCentre: 'https://web-cdn.jitsi.net/faq/meet-faq.html',
+    //     privacy: 'https://jitsi.org/meet/privacy',
+    //     terms: 'https://jitsi.org/meet/terms'
+    // },
+
     // A property to disable the right click context menu for localVideo
     // the menu has option to flip the locally seen video for local presentations
     // disableLocalVideoFlip: false,
