@@ -19,7 +19,8 @@ const notification = {
     height: 'auto',
     marginBottom: BaseTheme.spacing[3],
     marginHorizontal: BaseTheme.spacing[2],
-    width: 400
+    maxWidth: 400,
+    width: 'auto'
 };
 
 /**
