@@ -275,10 +275,17 @@ export function getVirtualScreenshareParticipantOwnerId(id: string) {
  */
 export function getVirtualScreenshareParticipantOwnerIds(stateful: IStateful) {
     const virtualScreenshareParticipants = toState(stateful)['features/base/participants']
-        .sortedRemoteVirtualScreenshareParticipants;
+        .sortedRemoteVirtualScreenshareParticipants ?? new Map();
 
     const virtualScreenshareParticipantIds = Array.from(virtualScreenshareParticipants.keys())
         .map(id => getVirtualScreenshareParticipantOwnerId(id));
+    const localScreenShareParticipantId = getLocalScreenShareParticipant(stateful)?.id;
+
+    if (localScreenShareParticipantId) {
+        return [
+            ...virtualScreenshareParticipantIds,
+            getVirtualScreenshareParticipantOwnerId(localScreenShareParticipantId) ];
+    }
 
     return virtualScreenshareParticipantIds;
 }
