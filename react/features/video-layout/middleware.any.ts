@@ -45,7 +45,7 @@ MiddlewareRegistry.register(store => next => action => {
     // Actions that temporarily clear the user preferred state of tile view,
     // then re-set it when needed.
     case PIN_PARTICIPANT: {
-        const pinnedParticipant = getPinnedParticipant(store.getState());
+        const pinnedParticipant = action.participant?.id;
 
         if (pinnedParticipant) {
             _storeTileViewStateAndClear(store);
