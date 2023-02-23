@@ -8,9 +8,18 @@ const contentColumn = {
     marginLeft: BaseTheme.spacing[2]
 };
 
-const contentText = {
-    color: BaseTheme.palette.text04,
-    marginLeft: BaseTheme.spacing[6]
+const notification = {
+    display: 'flex',
+    backgroundColor: BaseTheme.palette.ui12,
+    borderRadius: BaseTheme.shape.borderRadius,
+    borderLeftColor: BaseTheme.palette.link01Active,
+    borderLeftWidth: 4,
+    flexDirection: 'row',
+    maxHeight: 104,
+    height: 'auto',
+    marginBottom: BaseTheme.spacing[3],
+    marginHorizontal: BaseTheme.spacing[2],
+    width: 400
 };
 
 /**
@@ -39,17 +48,14 @@ export default {
     },
 
     contentText: {
-        ...contentText,
-        marginVertical: BaseTheme.spacing[1]
-    },
-
-    contentTextInteractive: {
-        ...contentText,
+        color: BaseTheme.palette.text04,
+        marginLeft: BaseTheme.spacing[6],
         marginTop: BaseTheme.spacing[1]
     },
 
     contentTextTitle: {
-        ...contentText,
+        color: BaseTheme.palette.text04,
+        marginLeft: BaseTheme.spacing[6],
         fontWeight: 'bold',
         marginTop: BaseTheme.spacing[1]
     },
@@ -63,14 +69,12 @@ export default {
     },
 
     notification: {
-        display: 'flex',
-        backgroundColor: BaseTheme.palette.ui12,
-        borderRadius: BaseTheme.shape.borderRadius,
-        flexDirection: 'row',
-        maxHeight: 104,
-        height: 'auto',
-        marginBottom: BaseTheme.spacing[3],
-        marginHorizontal: BaseTheme.spacing[2]
+        ...notification
+    },
+
+    notificationWithDescription: {
+        ...notification,
+        paddingBottom: BaseTheme.spacing[2]
     },
 
     /**

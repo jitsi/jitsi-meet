@@ -43,7 +43,7 @@ const ICON_COLOR = {
 };
 
 
-type Props = AbstractNotificationProps & WithTranslation & {
+export type Props = AbstractNotificationProps & WithTranslation & {
     _participants: ArrayLike<any>;
 };
 
@@ -188,12 +188,17 @@ class Notification extends AbstractNotification<Props> {
         const { icon } = this.props;
         const contentColumnStyles = icon === NOTIFICATION_ICON.PARTICIPANTS
             ? styles.contentColumn : styles.interactiveContentColumn;
+        const description = this._getDescription();
+
+        const notificationStyles = description?.length
+            ? styles.notificationWithDescription
+            : styles.notification;
 
         return (
             <Animated.View
                 pointerEvents = 'box-none'
                 style = { [
-                    styles.notification,
+                    notificationStyles,
                     {
                         // @ts-ignore
                         opacity: this.state.notificationContainerAnimation
@@ -228,11 +233,9 @@ class Notification extends AbstractNotification<Props> {
      */
     _renderContent() {
         // @ts-ignore
-        const { icon, t, title, titleArguments, titleKey } = this.props;
+        const { t, title, titleArguments, titleKey } = this.props;
         const titleText = title || (titleKey && t(titleKey, titleArguments));
         const description = this._getDescription();
-        const descriptionStyles = icon === NOTIFICATION_ICON.PARTICIPANTS
-            ? styles.contentTextInteractive : styles.contentText;
 
         if (description?.length) {
             return (
@@ -244,7 +247,7 @@ class Notification extends AbstractNotification<Props> {
                         description.map((line, index) => (
                             <Text
                                 key = { index }
-                                style = { descriptionStyles }>
+                                style = { styles.contentText }>
                                 { replaceNonUnicodeEmojis(line) }
                             </Text>
                         ))
