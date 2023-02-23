@@ -12,6 +12,7 @@ import { ChatButton } from '../../../chat';
 import { ReactionsMenuButton } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { TileViewButton } from '../../../video-layout';
+import { iAmVisitor } from '../../../visitors/functions';
 import { getMovableButtons, isToolboxVisible } from '../../functions.native';
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
@@ -148,7 +149,7 @@ function _mapStateToProps(state: Object): Object {
         _endConferenceSupported: Boolean(endConferenceSupported),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
-        _visitorsModeEnabled: state['features/visitors'].enabled,
+        _visitorsModeEnabled: iAmVisitor(state),
         _width: state['features/base/responsive-ui'].clientWidth,
         _reactionsEnabled: isReactionsEnabled(state)
     };

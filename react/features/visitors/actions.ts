@@ -1,16 +1,16 @@
-import { UPDATE_VISITORS_COUNT, VISITORS_MODE_ENABLED } from './actionTypes';
+import { I_AM_VISITOR_MODE, UPDATE_VISITORS_COUNT } from './actionTypes';
 
 /**
  * Sets Visitors mode on or off.
  *
  * @param {boolean} enabled - The new visitors mode state.
  * @returns {{
- *     type: VISITORS_MODE_ENABLED,
+ *     type: I_AM_VISITOR_MODE,
  * }}
  */
-export function setVisitorsMode(enabled: boolean) {
+export function setIAmVisitor(enabled: boolean) {
     return {
-        type: VISITORS_MODE_ENABLED,
+        type: I_AM_VISITOR_MODE,
         enabled
     };
 }

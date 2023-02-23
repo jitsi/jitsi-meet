@@ -12,8 +12,8 @@ export const UPDATE_VISITORS_COUNT = 'UPDATE_VISITORS_COUNT';
  * The type of (redux) action which enables/disables visitors UI mode.
  *
  * {
- *     type: VISITORS_MODE_ENABLED,
+ *     type: I_AM_VISITOR_MODE,
  *     enabled: boolean
  * }
  */
-export const VISITORS_MODE_ENABLED = 'VISITORS_MODE_ENABLED';
+export const I_AM_VISITOR_MODE = 'I_AM_VISITOR_MODE';

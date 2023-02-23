@@ -9,7 +9,7 @@ import Label from '../../../base/label/components/web/Label';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
-import { getVisitorsShortText } from '../../functions';
+import { getVisitorsShortText, iAmVisitor } from '../../functions';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -22,7 +22,7 @@ const useStyles = makeStyles()(theme => {
 
 const VisitorsCountLabel = () => {
     const { classes: styles, theme } = useStyles();
-    const visitorsMode = useSelector((state: IReduxState) => state['features/visitors'].enabled);
+    const visitorsMode = useSelector((state: IReduxState) => iAmVisitor(state));
     const visitorsCount = useSelector((state: IReduxState) =>
         state['features/visitors'].count || 0);
     const { t } = useTranslation();

@@ -1,4 +1,5 @@
 import { IReduxState } from '../../app/types';
+import { iAmVisitor } from '../../visitors/functions';
 import { IStateful } from '../app/types';
 import CONFIG_WHITELIST from '../config/configWhitelist';
 import { IConfigState } from '../config/reducer';
@@ -121,5 +122,5 @@ export function shouldHideShareAudioHelper(state: IReduxState): boolean | undefi
  */
 export function getHideSelfView(state: IReduxState) {
     return state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView
-        || state['features/visitors'].enabled;
+        || iAmVisitor(state);
 }
