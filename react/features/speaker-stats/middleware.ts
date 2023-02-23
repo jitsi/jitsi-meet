@@ -73,8 +73,11 @@ MiddlewareRegistry.register(({ dispatch, getState }: IStore) => (next: Function)
     case PARTICIPANT_LEFT:
     case PARTICIPANT_KICKED:
     case PARTICIPANT_UPDATED: {
-        dispatch(initReorderStats());
+        const { pendingReorder } = getState()['features/speaker-stats'];
 
+        if (!pendingReorder) {
+            dispatch(initReorderStats());
+        }
         break;
     }
 
