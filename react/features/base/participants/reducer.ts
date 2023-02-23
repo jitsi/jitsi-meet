@@ -67,6 +67,8 @@ const DEFAULT_STATE = {
     fakeParticipants: new Map(),
     local: undefined,
     localScreenShare: undefined,
+    numberOfParticipantsDisabledE2EE: 0,
+    numberOfParticipantsNotSupportingE2EE: 0,
     overwrittenNameList: {},
     pinnedParticipant: undefined,
     raisedHandsQueue: [],
@@ -83,6 +85,8 @@ export interface IParticipantsState {
     fakeParticipants: Map<string, IParticipant>;
     local?: ILocalParticipant;
     localScreenShare?: IParticipant;
+    numberOfParticipantsDisabledE2EE: number;
+    numberOfParticipantsNotSupportingE2EE: number;
     overwrittenNameList: { [id: string]: string; };
     pinnedParticipant?: string;
     raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
@@ -208,8 +212,9 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             newParticipant = state.local = _participant(state.local, action);
         }
 
-        if (newParticipant) {
+        const oldParticipant = local ? state.local : state.remote.get(id);
 
+        if (newParticipant) {
             // everyoneIsModerator calculation:
             const isModerator = isParticipantModerator(newParticipant);
 
@@ -217,6 +222,15 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
                 state.everyoneIsModerator = false;
             } else if (!state.everyoneIsModerator && isModerator) {
                 state.everyoneIsModerator = _isEveryoneModerator(state);
+            }
+        }
+
+        if (oldParticipant && newParticipant && !newParticipant.fakeParticipant) {
+            if (oldParticipant.e2eeEnabled !== newParticipant.e2eeEnabled) {
+                state.numberOfParticipantsDisabledE2EE += newParticipant.e2eeEnabled ? -1 : 1;
+            }
+            if (!local && oldParticipant.e2eeSupported !== newParticipant.e2eeSupported) {
+                state.numberOfParticipantsNotSupportingE2EE += newParticipant.e2eeSupported ? -1 : 1;
             }
         }
 
@@ -274,6 +288,18 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             state.everyoneIsModerator = false;
         } else if (!local && remote.size === 0 && isModerator) {
             state.everyoneIsModerator = true;
+        }
+
+        if (!fakeParticipant) {
+            const { e2eeEnabled, e2eeSupported } = participant as IParticipant;
+
+            if (!e2eeEnabled) {
+                state.numberOfParticipantsDisabledE2EE += 1;
+            }
+
+            if (!participant.local && !e2eeSupported) {
+                state.numberOfParticipantsNotSupportingE2EE += 1;
+            }
         }
 
         if (participant.local) {
@@ -405,6 +431,18 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         if (sortedRemoteVirtualScreenshareParticipants.has(id)) {
             sortedRemoteVirtualScreenshareParticipants.delete(id);
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
+        }
+
+        if (oldParticipant && !oldParticipant.fakeParticipant) {
+            const { e2eeEnabled, e2eeSupported } = oldParticipant;
+
+            if (!e2eeEnabled) {
+                state.numberOfParticipantsDisabledE2EE -= 1;
+            }
+
+            if (!oldParticipant.local && !e2eeSupported) {
+                state.numberOfParticipantsNotSupportingE2EE -= 1;
+            }
         }
 
         return { ...state };

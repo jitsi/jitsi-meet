@@ -429,11 +429,12 @@ StateListenerRegistry.register(
                 'e2ee.enabled': (participant: IJitsiParticipant, value: string) =>
                     _e2eeUpdated(store, conference, participant.getId(), value),
                 'features_e2ee': (participant: IJitsiParticipant, value: boolean) =>
-                    store.dispatch(participantUpdated({
-                        conference,
-                        id: participant.getId(),
-                        e2eeSupported: value
-                    })),
+                    getParticipantById(store.getState(), participant.getId())?.e2eeSupported !== value
+                        && store.dispatch(participantUpdated({
+                            conference,
+                            id: participant.getId(),
+                            e2eeSupported: value
+                        })),
                 'features_jigasi': (participant: IJitsiParticipant, value: boolean) =>
                     store.dispatch(participantUpdated({
                         conference,
@@ -506,7 +507,12 @@ StateListenerRegistry.register(
 function _e2eeUpdated({ getState, dispatch }: IStore, conference: IJitsiConference,
         participantId: string, newValue: string | boolean) {
     const e2eeEnabled = newValue === 'true';
-    const { e2ee = {} } = getState()['features/base/config'];
+    const state = getState();
+    const { e2ee = {} } = state['features/base/config'];
+
+    if (e2eeEnabled === getParticipantById(state, participantId)?.e2eeEnabled) {
+        return;
+    }
 
     dispatch(participantUpdated({
         conference,
