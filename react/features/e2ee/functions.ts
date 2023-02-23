@@ -1,6 +1,6 @@
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
-import { getParticipantById, getParticipantCount } from '../base/participants/functions';
+import { getParticipantById, getParticipantCount, getParticipantCountWithFake } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
 
@@ -19,17 +19,17 @@ import { MAX_MODE_LIMIT, MAX_MODE_THRESHOLD } from './constants';
  */
 export function doesEveryoneSupportE2EE(stateful: IStateful) {
     const state = toState(stateful);
-    const { everyoneSupportE2EE } = state['features/e2ee'];
+    const { numberOfParticipantsNotSupportingE2EE } = state['features/base/participants'];
     const { e2eeSupported } = state['features/base/conference'];
-    const participantCount = getParticipantCount(state);
+    const participantCount = getParticipantCountWithFake(state);
 
-    if (typeof everyoneSupportE2EE === 'undefined' && participantCount === 1) {
+    if (participantCount === 1) {
         // This will happen if we are alone.
 
         return e2eeSupported;
     }
 
-    return everyoneSupportE2EE;
+    return numberOfParticipantsNotSupportingE2EE === 0;
 }
 
 /**
