@@ -187,7 +187,9 @@ class ConferenceNotification extends Component<Props, State> {
      */
     _onDismissed() {
         clearInterval(this.updateIntervalId);
-        this.props.dispatch(hideNotification(CALENDAR_NOTIFICATION_ID));
+        this.setState({
+            event: !this.state.event
+        })
     }
 
     _onGoToNext: () => void;
