@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "Na tej konferency njejsu hyšći žedne powěsći. Zachopśo rozgrono how!",
         "privateNotice": "priwatna powěsć za {{recipient}}",
+        "sendButton": "",
         "smileysPanel": "emojije k wuzwólenju",
         "tabs": {
             "chat": "chatowanje",
@@ -146,7 +147,7 @@
         "bridgeCount": "licba serwerow: ",
         "codecs": "kody (A/V): ",
         "connectedTo": "zwězanje z:",
-        "e2e_rtt": "E2E RTT:",
+        "e2eeVerified": "",
         "framerate": "wobrazowa frekwenca:",
         "less": "mjenjej pokazaś",
         "localaddress": "lokalna adresa:",
@@ -271,6 +272,7 @@
         "gracefulShutdown": "Ta słužba njestoj tuchylu k dispoziciji dla wótwardowaŕskich źěłow. Wopytajśo pózdźej hyšći raz.",
         "grantModeratorDialog": "Cośo-li napšawdu tomu wobźělnikoju abo wobźělnicy moderatorske pšawa daś?",
         "grantModeratorTitle": "moderatorske pšawa daś",
+        "hide": "chowaś",
         "hideShareAudioHelper": "Tu informaciju njepokazaś wěcej",
         "incorrectPassword": "mě a kodowe słowo njejstej płaśecej",
         "incorrectRoomLockPassword": "wopacne kodowe słowo",
@@ -388,6 +390,7 @@
         "shareYourScreenDisabled": "Sobuźělenje monitora jo wušaltowane.",
         "sharedVideoDialogError": "zmólka: njepłaśeca adresa URL",
         "sharedVideoLinkPlaceholder": "Link na YouTube abo direktny link k wideo",
+        "show": "pokazaś",
         "start": "startuj: ",
         "startLiveStreaming": "livestream startowaś",
         "startRecording": "nagrawanje startowaś",
@@ -406,6 +409,10 @@
         "user": "wobźělnik",
         "userIdentifier": "wužywaŕske mě",
         "userPassword": "kodowe słowo",
+        "verifyParticipantConfirm": "",
+        "verifyParticipantDismiss": "",
+        "verifyParticipantQuestion": "",
+        "verifyParticipantTitle": "",
         "videoLink": "wideo-link",
         "viewUpgradeOptions": "opcije za aktualizěrowanje (upgrade) pokazaś",
         "viewUpgradeOptionsContent": "Wy musyśo swój tarif rozšyriś, aby mógli wužywaś premium-funkcije kaž nagrawanje, transkripciju, RTMP-streaming a dalšne",
@@ -434,9 +441,6 @@
     "giphy": {
         "noResults": "Žedne rezultaty njejsu namakane :(",
         "search": "GIPHY pśepytaś"
-    },
-    "helpView": {
-        "header": "center pomocy"
     },
     "incomingCall": {
         "answer": "wótegroniś",
@@ -478,9 +482,11 @@
         "noRoom": "Žedna konferenca njejo pódana, z kótarejuž by se mógli zwězaś.",
         "numbers": "numery za konferencu",
         "password": "$t(lockRoomPasswordUppercase):",
+        "reachedLimit": "",
         "sip": "adresa SIP",
         "title": "drugim sobu źěliś",
-        "tooltip": "Spśistupni drugim link a informacije za zwězanje z tym zmakanim."
+        "tooltip": "Spśistupni drugim link a informacije za zwězanje z tym zmakanim.",
+        "upgradeOptions": ""
     },
     "inlineDialogFailure": {
         "msg": "Zmólenje jo se stało.",
@@ -552,13 +558,13 @@
         "signedInAs": "Wy sćo něnto zalogowane ako:",
         "start": "livestream zachopiś",
         "streamIdHelp": "Co to jo?",
+        "title": "",
         "unavailableTitle": "livestreaming njestoj k dispoziciji",
         "youtubeTerms": "wužywaŕske wustawki za youtube"
     },
     "lobby": {
         "admit": "pśizwóliś",
         "admitAll": "wšyknym pśizwólenje daś",
-        "allow": "zwóliś",
         "backToKnockModeButton": "mimo kodowego słowa, město togo wó pśistup pšosyś",
         "chat": "chat",
         "dialogTitle": "lobbyjowy modus",
@@ -594,6 +600,7 @@
         "passwordJoinButton": "pśistupiś",
         "reject": "wótpokazaś",
         "rejectAll": "wšykne wótpokazaś",
+        "title": "",
         "toggleLabel": "lobby aktiwěrowaś / deaktiwěrowaś"
     },
     "localRecording": {
@@ -620,6 +627,7 @@
         "no": "ně",
         "participant": "wobźělnik/-ica",
         "participantStats": "statistika wobźělnikow",
+        "selectTabTitle": "",
         "sessionToken": "token pósejźenja",
         "start": "nagrawanje zachopiś",
         "stop": "nagrawanje zastajiś",
@@ -642,6 +650,8 @@
         "connectedOneMember": "{{name}} jo na zmakanju wobźělony",
         "connectedThreePlusMembers": "{{name}} a {{count}} dalšnych wobźělnikow su na konferency wobźělone",
         "connectedTwoMembers": "{{first}} a {{second}} stej na konferency wobźělonej",
+        "dataChannelClosed": "",
+        "dataChannelClosedDescription": "",
         "disconnected": "zwězanje jo pśetergnjone",
         "displayNotifications": "powěźeńki pokazaś za",
         "focus": "wjednistwo konference",
@@ -702,6 +712,8 @@
         "reactionSoundsForAll": "zuki interakcije za wšykne deaktiwěrowaś",
         "screenShareNoAudio": "Opcija \"audio sobuźěliś\" njejo wordowała wuzwólona pśi wuzwólenju wokna.",
         "screenShareNoAudioTitle": "Audio se njeźěli sobu",
+        "screenSharingAudioOnlyDescription": "",
+        "screenSharingAudioOnlyTitle": "",
         "selfViewTitle": "Wy móžośo swój sam-se-naglěd pśecej we nastajenjach reaktiwěrowaś",
         "somebody": "něcht",
         "startSilentDescription": "Pśistupśo zmakanju hyšći raz, aby audio aktiwěrowali.",
@@ -736,13 +748,13 @@
             "videoModeration": "kameru zašaltowaś"
         },
         "close": "zacyniś",
-        "header": "wobźělniki",
         "headings": {
             "lobby": "lobby ({{count}})",
             "participantsList": "wobźělniki ({{count}})",
             "waitingLobby": "cakajuce we lobbyju ({{count}})"
         },
-        "search": "wobźělniki pytaś"
+        "search": "wobźělniki pytaś",
+        "title": "wobźělniki"
     },
     "passwordDigitsOnly": "až do {{number}} cyfrow",
     "passwordSetRemotely": "wustajone wót drugego wobźělnika",
@@ -851,9 +863,6 @@
         "rejected": "wótpokazany",
         "ringing": "se zwóni …"
     },
-    "privacyView": {
-        "header": "woplěwanje datow"
-    },
     "profile": {
         "avatar": "bildka wužywarja",
         "setDisplayNameLabel": "zjawne mě wustajiś",
@@ -907,6 +916,7 @@
         "localRecordingVideoWarning": "Aby bildu ze swójeje samskeje kamery nagrawali, musyśo swóju kameru na zachopjeńku nagrawanja zašaltowaś.",
         "localRecordingWarning": "Pśespytujśo, lěc sćo aktuelnu kórtu wuzwólili, aby wideo a zuk nagrawali. Dłujkosć nagrawanja jo tuchylu na 1 GB wobgranicowana, což dosega za jadnab 100 minutow.",
         "loggedIn": "ako {{userName}} zalogowany/-a",
+        "noMicPermission": "",
         "noStreams": "Žeden zuk a žeden wideo njejo namakany.",
         "off": "Nagrawanje jo zastajone.",
         "offBy": "{{name}} jo zastajił nagrawanje.",
@@ -924,6 +934,7 @@
         "signIn": "zalogowaś",
         "signOut": "wulogowaś",
         "surfaceError": "Wuzwólśo aktuelnu kórtu (tab).",
+        "title": "",
         "unavailable": "Ojej! {{serviceName}} njestoj aktuelnje k dispoziciji. My źěłamy na pórěźenju problema. Wopytajśo pózdźej hyšći raz.",
         "unavailableTitle": "Nagrawanje njestoj k dispoziciji",
         "uploadToCloud": "do mrokawy (cloud) kopěrowaś"
@@ -935,8 +946,8 @@
     "security": {
         "about": "Wy móžośo swóju konferencu z kodowym słowom zawěsćiś. Wobźělniki budu musaś jo zapódaś, aby se na njej wobźělili.",
         "aboutReadOnly": "Chtož ma moderatorske pšawa, móžo konferencu z kodowym słowom zawěsćiś. Wobźělniki budu musaś jo zapódaś, aby se na zmakanju wobźělili.",
-        "header": "wěstosćowe opcije",
-        "insecureRoomNameWarning": "Mě śpy njejo wěste dosć. Njepśepšosone wobźělniki mógu ku konferency pśistupiś. Wobmysliśo, lěc njocośo kodowe słowo wustajiś (klikniśo na bublin \"wěstosćowe opcije\")"
+        "insecureRoomNameWarning": "Mě śpy njejo wěste dosć. Njepśepšosone wobźělniki mógu ku konferency pśistupiś. Wobmysliśo, lěc njocośo kodowe słowo wustajiś (klikniśo na bublin \"wěstosćowe opcije\")",
+        "title": "wěstosćowe opcije"
     },
     "settings": {
         "buttonLabel": "",
@@ -968,7 +979,6 @@
         "playSounds": "zuki za pokazki aktiwěrowaś",
         "reactions": "interakcije",
         "sameAsSystem": "kaž system ({{label}})",
-        "screenTitle": "nastajenja",
         "selectAudioOutput": "wuchadajucy audio",
         "selectCamera": "kamera",
         "selectMic": "mikrofon",
@@ -996,6 +1006,7 @@
         "displayName": "mě na displayju",
         "displayNamePlaceholderText": "na pśikład Heksempelojc Liza",
         "email": "e-mail",
+        "emailPlaceholderText": "",
         "goTo": "k",
         "header": "nastajenja",
         "help": "pomoc",
@@ -1004,6 +1015,7 @@
         "profileSection": "profil",
         "serverURL": "adresa URL serwera",
         "showAdvanced": "rozšyrjone nastajenja pokazaś",
+        "startCarModeInLowBandwidthMode": "",
         "startWithAudioMuted": "pśistupiś z wuśišenim",
         "startWithVideoMuted": "pśistupiś mimo wideo",
         "terms": "wustawki",
@@ -1042,7 +1054,7 @@
         "title": "Konferenca jo se pśetergnuła, dokulaž spicy modus jo se aktiwěrował (standby)."
     },
     "termsView": {
-        "header": "wužywaŕske wustawki"
+        "title": "wužywaŕske wustawki"
     },
     "toggleTopPanelLabel": "górjejcnu lejstwu zašaltowaś/ wušaltowaś",
     "toolbar": {
@@ -1059,7 +1071,6 @@
             "chat": "woknyško za chat pokazaś / schowaś",
             "clap": "pśiklasnuś",
             "collapse": "miniměrowaś",
-            "dock": "we głownem woknyšku fiksěrowaś",
             "document": "sobuźělony dokument zacyniś",
             "download": "našu aplikaciju ześěgnuś",
             "embedMeeting": "konferencu integrowaś",
@@ -1113,9 +1124,9 @@
             "tileView": "kachlickowy naglěd aktiwěrowaś/deaktiwěrowaś",
             "toggleCamera": "kameru pśešaltowaś",
             "toggleFilmstrip": "miniaturowy naglěd aktiwěrowaś/deaktiwěrowaś",
-            "undock": "w nowem woknje pokazaś",
             "videoblur": "rozmytu slězynu aktiwěrowaś/deaktiwěrowaś",
-            "videomute": "opciju „wideo wuśišyś“ aktiwěrowaś/deaktiwěrowaś"
+            "videomute": "opciju „wideo wuśišyś“ aktiwěrowaś/deaktiwěrowaś",
+            "whiteboard": ""
         },
         "addPeople": "wobźělniki ku konferency pśidaś",
         "audioOnlyOff": "modus „jano audio“ deaktiwěrowaś",
@@ -1131,7 +1142,6 @@
         "closeReactionsMenu": "meni za interakcije zacyniś",
         "disableNoiseSuppression": "pódušenje šumjenja deaktiwěrowaś",
         "disableReactionSounds": "Wy móžośo zuki za interakcije we toś tej konferency deaktiwěrowaś",
-        "dock": "we głownem woknje fiksěrowaś",
         "documentClose": "sobuźělony dokument zacyniś",
         "documentOpen": "sobuźělony dokument wótcyniś",
         "download": "naše aplikacije za downloadowanje",
@@ -1146,6 +1156,7 @@
         "giphy": "GIPHY pokazaś/schowaś",
         "hangup": "konferencu spušćiś",
         "help": "pomoc",
+        "hideWhiteboard": "",
         "invite": "wobźělniki pśepšosyś",
         "joinBreakoutRoom": "do breakout-śpy stupiś",
         "laugh": "se smjaś",
@@ -1191,6 +1202,7 @@
         "shareaudio": "audio sobuźěliś",
         "sharedvideo": "wideo sobuźěliś",
         "shortcuts": "tastowe skrotconki pokazaś",
+        "showWhiteboard": "",
         "silence": "śišyna",
         "speakerStats": "statistika powědarjow",
         "startScreenSharing": "sobuźělenje monitora startowaś",
@@ -1203,7 +1215,6 @@
         "talkWhileMutedPopup": "Wopytajośo rowno něco groniś? Waš mikrofon jo wusišony.",
         "tileViewToggle": "kachelowy naglěd aktiwěrowaś/deaktiwěrowaś",
         "toggleCamera": "kameru pśešaltowaś",
-        "undock": "we nowem woknje pokazaś",
         "videoSettings": "nastajenja kamery",
         "videomute": "kameru startowaś / zastajiś"
     },
@@ -1215,6 +1226,8 @@
         "labelToolTip": "Konferenca se transkriběrujo",
         "off": "Transkriběrowanje jo pśetergnjone",
         "pending": "Transkriběrowanje konferency se pśigótujo…",
+        "sourceLanguageDesc": "",
+        "sourceLanguageHere": "",
         "start": "pokazowanje pódtitelow startowaś",
         "stop": "pokazowanje pódtitelow dokóńcowaś",
         "subtitles": "",
@@ -1273,6 +1286,7 @@
         "grantModerator": "moderatorske pšawa wuźěliś",
         "hideSelfView": "swój sam-se-naglěd schowaś",
         "kick": "wuchyśiś",
+        "mirrorVideo": "",
         "moderator": "moderator/ka",
         "mute": "wobźělnik jo wuśišony",
         "muted": "wuśišony",
@@ -1282,6 +1296,7 @@
         "show": "pokazaś prězy",
         "showSelfView": "swój sam-se-naglěd pokazaś",
         "unpinFromStage": "wótpěś",
+        "verify": "",
         "videoMuted": "kamera jo wušaltowana",
         "videomute": "wobźělnik jo kameru zastajił"
     },
@@ -1349,13 +1364,16 @@
         "recentList": "pśeglěd",
         "recentListDelete": "zapisk wulašowaś",
         "recentListEmpty": "Pśeglěd Wašych konferencow jo tuchylu prozny. Gaž buźośo se z Wašym teamom rozgranjaś, ga wšykne Waše konference budu se how zjawiś.",
+        "recentMeetings": "",
         "reducedUIText": "Witajśo do {{app}}!",
         "roomNameAllowedChars": "Mě konference njedej žednje wopśimjeś žednogo wót slědujucych znamješkow: ?, &, :, ', \", %, #.",
         "roomname": "mě konference zapódaś",
         "roomnameHint": "Mě a adresa URL konference, kótarejž cośo pśistupiś. Wy móžośo sebje jadno mě wumysliś, Wy musyśo jo jano drugim wobźělnikam zjawiś, aby k tej samej konferency pśistupili.",
         "sendFeedback": "měnjenje pósłaś",
+        "settings": "",
         "startMeeting": "zmakanje zachopiś",
         "terms": "wužywaŕske wustawki (AGB)",
-        "title": "wěste, połnje funkcionalne wideokonference,  kompletnje zadermo"
+        "title": "wěste, połnje funkcionalne wideokonference,  kompletnje zadermo",
+        "upcomingMeetings": ""
     }
 }
