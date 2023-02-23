@@ -1,3 +1,5 @@
+import { batch } from 'react-redux';
+
 import {
     HIDDEN_PARTICIPANT_JOINED,
     HIDDEN_PARTICIPANT_LEFT,
@@ -64,8 +66,10 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (potentialTranscriberJIDs.includes(participant.id)
             && participant.name === TRANSCRIBER_DISPLAY_NAME) {
-            store.dispatch(transcriberJoined(participant.id));
-            store.dispatch(hidePendingTranscribingNotification());
+            batch(() => {
+                store.dispatch(transcriberJoined(participant.id));
+                store.dispatch(hidePendingTranscribingNotification());
+            });
         }
 
         break;
