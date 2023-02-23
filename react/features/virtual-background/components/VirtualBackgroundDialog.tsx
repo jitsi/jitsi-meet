@@ -104,7 +104,7 @@ function _mapStateToProps(state: IReduxState): Object {
         _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
         _virtualBackground: state['features/virtual-background'],
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
-        _showUploadButton: !(hasBrandingImages || state['features/base/config'].disableAddingBackgroundImages),
+        _showUploadButton: state['features/base/config'].disableAddingBackgroundImages,
         _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack,
         _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state)
     };
