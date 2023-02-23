@@ -293,17 +293,6 @@ UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));
 UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
 
 /**
- * Updates the displayed avatar for participant.
- *
- * @param {string} id - User id whose avatar should be updated.
- * @param {string} avatarURL - The URL to avatar image to display.
- * @returns {void}
- */
-UI.refreshAvatarDisplay = function(id) {
-    VideoLayout.changeUserAvatar(id);
-};
-
-/**
  * Notify user that connection failed.
  * @param {string} stropheErrorMsg raw Strophe error message
  */

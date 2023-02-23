@@ -641,7 +641,6 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: any)
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
     if (typeof raisedHandTimestamp !== 'undefined') {
-
         if (local) {
             const { conference } = getState()['features/base/conference'];
             const rHand = parseInt(raisedHandTimestamp, 10);
@@ -689,14 +688,6 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: any)
                     dispatch(setLoadableAvatarUrl(participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
                 });
         }
-    }
-
-    // Notify external listeners of potential avatarURL changes.
-    if (typeof APP === 'object') {
-        const currentKnownId = local ? APP.conference.getMyUserId() : id;
-
-        // Force update of local video getting a new id.
-        APP.UI.refreshAvatarDisplay(currentKnownId);
     }
 
     return result;
