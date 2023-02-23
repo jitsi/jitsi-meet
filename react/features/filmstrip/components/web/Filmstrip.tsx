@@ -13,7 +13,6 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
-import { IParticipant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
 import { getHideSelfView } from '../../../base/settings/functions.any';
 import { showToolbox } from '../../../toolbox/actions.web';
@@ -113,7 +112,7 @@ interface IProps extends WithTranslation {
     /**
      * The local screen share participant. This prop is behind the sourceNameSignaling feature flag.
      */
-    _localScreenShare: IParticipant;
+    _localScreenShareId: string | undefined;
 
     /**
      * Whether or not the filmstrip videos should currently be displayed.
@@ -333,7 +332,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
         const {
             _currentLayout,
             _disableSelfView,
-            _localScreenShare,
+            _localScreenShareId,
             _mainFilmstripVisible,
             _resizableFilmstrip,
             _topPanelFilmstrip,
@@ -408,7 +407,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                         }
                     </div>
                 )}
-                {_localScreenShare && !_disableSelfView && !_verticalViewGrid && (
+                {_localScreenShareId && !_disableSelfView && !_verticalViewGrid && (
                     <div
                         className = 'filmstrip__videos'
                         id = 'filmstripLocalScreenShare'>
@@ -416,7 +415,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                             {
                                 !tileViewActive && filmstripType === FILMSTRIP_TYPE.MAIN && <Thumbnail
                                     key = 'localScreenShare'
-                                    participantID = { _localScreenShare.id } />
+                                    participantID = { _localScreenShareId } />
                             }
                         </div>
                     </div>
@@ -919,7 +918,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _isToolboxVisible: isToolboxVisible(state),
         _isVerticalFilmstrip,
-        _localScreenShare: localScreenShare,
+        _localScreenShareId: localScreenShare?.id,
         _mainFilmstripVisible: visible,
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
