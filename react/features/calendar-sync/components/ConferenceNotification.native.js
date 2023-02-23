@@ -7,7 +7,7 @@ import { getURLWithoutParamsNormalized } from '../../base/connection';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { BUTTON_TYPES } from '../../base/ui/constants.native';
-import { NOTIFICATION_ICON, } from '../../notifications';
+import { NOTIFICATION_ICON } from '../../notifications';
 import Notification from '../../notifications/components/native/Notification';
 
 const ALERT_MILLISECONDS = 5 * 60 * 1000;
@@ -184,7 +184,7 @@ class ConferenceNotification extends Component<Props, State> {
         clearInterval(this.updateIntervalId);
         this.setState({
             event: !this.state.event
-        })
+        });
     }
 
     _onGoToNext: () => void;
