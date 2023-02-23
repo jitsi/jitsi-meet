@@ -10,7 +10,7 @@ import { Icon, IconSip } from '../../../../base/icons';
 
 countries.registerLocale(en);
 
-type NormalizedNumber = {
+interface INormalizedNumber {
 
     /**
      * The country code.
@@ -26,9 +26,11 @@ type NormalizedNumber = {
      * Whether the number is toll-free.
      */
     tollFree?: boolean;
-};
+}
 
-type NumbersMapping = { [countryName: string]: Array<NormalizedNumber>; };
+interface INumbersMapping {
+     [countryName: string]: Array<INormalizedNumber>;
+}
 
 interface IProps extends WithTranslation {
 
@@ -46,7 +48,7 @@ interface IProps extends WithTranslation {
      * The phone numbers to display. Can be an array of number Objects or an
      * object with countries as keys and an array of numbers as values.
      */
-     numbers: NumbersMapping;
+     numbers: INumbersMapping;
 
 }
 
@@ -82,7 +84,7 @@ const NumbersList: React.FC<IProps> = ({ t, conferenceID, clickableNumbers, numb
         return number;
     }, [ conferenceID, clickableNumbers ]);
 
-    const renderNumbersList = useCallback((numbers: Array<NormalizedNumber>) => {
+    const renderNumbersList = useCallback((numbers: Array<INormalizedNumber>) => {
         const numbersListItems = numbers.map(number =>
             (<li
                 className = 'dial-in-number'
@@ -97,7 +99,7 @@ const NumbersList: React.FC<IProps> = ({ t, conferenceID, clickableNumbers, numb
         );
     }, []);
 
-    const renderNumbersTollFreeList = useCallback((numbers: Array<NormalizedNumber>) => {
+    const renderNumbersTollFreeList = useCallback((numbers: Array<INormalizedNumber>) => {
         const tollNumbersListItems = numbers.map(number =>
             (<li
                 className = 'toll-free'
@@ -113,7 +115,7 @@ const NumbersList: React.FC<IProps> = ({ t, conferenceID, clickableNumbers, numb
     }, []);
 
     const renderNumbers = useMemo(() => {
-        let numbers: NumbersMapping;
+        let numbers: INumbersMapping;
 
         if (!numbersMapping) {
             return;
@@ -167,7 +169,7 @@ const NumbersList: React.FC<IProps> = ({ t, conferenceID, clickableNumbers, numb
         const rows: [JSX.Element] = [] as unknown as [JSX.Element];
 
         Object.keys(numbers).forEach((countryName: string) => {
-            const numbersArray: Array<NormalizedNumber> = numbers[countryName];
+            const numbersArray: Array<INormalizedNumber> = numbers[countryName];
             const countryCode = numbersArray[0].countryCode
                 || countries.getAlpha2Code(countryName, 'en')?.toUpperCase()
                 || countryName;
