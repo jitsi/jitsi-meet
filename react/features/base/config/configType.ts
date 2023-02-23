@@ -388,6 +388,11 @@ export interface IConfig {
     lastNLimits?: {
         [key: number]: number;
     };
+    legalUrls?: {
+        helpCentre: string;
+        privacy: string;
+        terms: string;
+    };
     liveStreaming?: {
         dataPrivacyLink?: string;
         enabled?: boolean;

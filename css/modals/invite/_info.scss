@@ -50,6 +50,8 @@
 }
 
 .dial-in-numbers-list {
+    max-width: 334px;
+    width: 100%;
     margin-top: 20px;
     font-size: 12px;
     line-height: 24px;
@@ -57,10 +59,6 @@
 
     thead {
         text-align: left;
-    }
-
-    tr {
-        border-bottom: 1px solid #d1dbe8;
     }
 
     .flag-cell {
@@ -91,6 +89,7 @@
         font-weight: bold;
         list-style: none;
         vertical-align: top;
+        text-align: right;
     }
 
     li.toll-free:empty:before {
@@ -117,11 +116,6 @@
         text-align: center;
         min-width: 200px;
         margin-top: 40px;
-    }
-
-    .dial-in-conference-name,
-    .dial-in-conference-pin {
-        font-size: 18px;
     }
 
     .dial-in-conference-description {

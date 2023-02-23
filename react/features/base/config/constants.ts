@@ -70,3 +70,18 @@ export const THIRD_PARTY_PREJOIN_BUTTONS = [ 'microphone', 'camera', 'select-bac
 export const FEATURE_FLAGS = {
     SSRC_REWRITING: 'ssrcRewritingEnabled'
 };
+
+/**
+ * The URL at which the terms (of service/use) are available to the user.
+ */
+export const DEFAULT_TERMS_URL = 'https://jitsi.org/meet/terms';
+
+/**
+ * The URL at which the privacy policy is available to the user.
+ */
+export const DEFAULT_PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+
+/**
+ * The URL at which the help centre is available to the user.
+ */
+export const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';

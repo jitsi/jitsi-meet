@@ -11,7 +11,13 @@ import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
 import CONFIG_WHITELIST from './configWhitelist';
-import { FEATURE_FLAGS, _CONFIG_STORE_PREFIX } from './constants';
+import {
+    DEFAULT_HELP_CENTRE_URL,
+    DEFAULT_PRIVACY_URL,
+    DEFAULT_TERMS_URL,
+    FEATURE_FLAGS,
+    _CONFIG_STORE_PREFIX
+} from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
@@ -325,4 +331,25 @@ export function getDialOutUrl(state: IReduxState) {
  */
 export function getSecurityUiConfig(state: IReduxState) {
     return state['features/base/config']?.securityUi || {};
+}
+
+/**
+ * Returns the terms, privacy and help centre URL's.
+ *
+ * @param {IReduxState} state - The state of the application.
+ * @returns {{
+ *  privacy: string,
+ *  helpCentre: string,
+ *  terms: string
+ * }}
+ */
+export function getLegalUrls(state: IReduxState) {
+    const helpCentreURL = state['features/base/config']?.helpCentreURL;
+    const configLegalUrls = state['features/base/config']?.legalUrls;
+
+    return {
+        privacy: configLegalUrls?.privacy || DEFAULT_PRIVACY_URL,
+        helpCentre: helpCentreURL || configLegalUrls?.helpCentre || DEFAULT_HELP_CENTRE_URL,
+        terms: configLegalUrls?.terms || DEFAULT_TERMS_URL
+    };
 }
