@@ -88,7 +88,11 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
         lastNSelected = 1;
     }
 
-    dispatch(setLastN(lastNSelected));
+    const { lastN } = state['features/base/lastn'];
+
+    if (lastN !== lastNSelected) {
+        dispatch(setLastN(lastNSelected));
+    }
 }, 1000); /* Don't send this more often than once a second. */
 
 
