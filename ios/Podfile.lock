@@ -389,7 +389,7 @@ PODS:
   - react-native-video/Video (6.0.0-alpha.1):
     - PromisesSwift
     - React-Core
-  - react-native-webrtc (106.0.5):
+  - react-native-webrtc (106.0.6):
     - JitsiWebRTC (~> 106.0.0)
     - React-Core
   - react-native-webview (11.15.1):
@@ -754,7 +754,7 @@ SPEC CHECKSUMS:
   react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
-  react-native-webrtc: ef315d8adb68e78298b22100377d12ef168efdb5
+  react-native-webrtc: 22ac6c64a1e38552bb173dde81ffea6979a58ef3
   react-native-webview: ea4899a1056c782afa96dd082179a66cbebf5504
   React-perflogger: 0458a87ea9a7342079e7a31b0d32b3734fb8415f
   React-RCTActionSheet: 22538001ea2926dea001111dd2846c13a0730bc9
