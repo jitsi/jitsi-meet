@@ -44,6 +44,9 @@
 --        to the given string.
 --      * By default, reservation checks are skipped for breakout rooms. You can subject
 --        breakout rooms to the same checks by setting "reservations_skip_breakout_rooms" to false.
+--      * set "reservations_mail_owner_aware" to true if the reservation backend is aware of
+--        mail_owner/room_name combination. By default the system assumes that the reservation
+--        backend returns the same HTTP response code regardless of the mail_owner for a given room name.
 --
 --
 --  Example config:
@@ -69,6 +72,8 @@
 --        reservations_enable_lobby_support = true  -- support "lobby" field
 --        reservations_enable_password_support = true  -- support "password" field
 --
+--        reservations_mail_owner_aware = true -- backend takes mail_owner into account
+--
 
 local jid = require 'util.jid';
 local http = require "net.http";
@@ -90,6 +95,7 @@ local max_occupants_enabled = module:get_option("reservations_enable_max_occupan
 local lobby_support_enabled = module:get_option("reservations_enable_lobby_support", false);
 local password_support_enabled = module:get_option("reservations_enable_password_support", false);
 local skip_breakout_room = module:get_option("reservations_skip_breakout_rooms", true);
+local mail_owner_aware_reservations = module:get_option("reservations_mail_owner_aware", false);
 
 
 -- Option for user to control HTTP response codes that will result in a retry.
@@ -533,7 +539,7 @@ end
 local reservations = {}
 
 local function get_or_create_reservations(room_jid, creator_jid)
-    if reservations[room_jid] == nil then
+    if reservations[room_jid] == nil or (mail_owner_aware_reservations and reservations[room_jid].meta.mail_owner ~= creator_jid) then
         module:log("debug", "Creating new reservation data for %s", room_jid);
         reservations[room_jid] = newRoomReservation(room_jid, creator_jid);
     end
