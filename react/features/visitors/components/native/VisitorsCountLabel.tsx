@@ -7,7 +7,7 @@ import { IconUsers } from '../../../base/icons/svg';
 // @ts-ignore
 import Label from '../../../base/label/components/native/Label';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
-import { getVisitorsShortText } from '../../functions';
+import { getVisitorsShortText, iAmVisitor } from '../../functions';
 
 const styles = {
     raisedHandsCountLabel: {
@@ -26,7 +26,7 @@ const styles = {
 };
 
 const VisitorsCountLabel = () => {
-    const visitorsMode = useSelector((state: IReduxState) => state['features/visitors'].enabled);
+    const visitorsMode = useSelector((state: IReduxState) => iAmVisitor(state));
     const visitorsCount = useSelector((state: IReduxState) =>
         state['features/visitors'].count || 0);
 

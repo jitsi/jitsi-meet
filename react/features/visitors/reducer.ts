@@ -1,17 +1,17 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    UPDATE_VISITORS_COUNT,
-    VISITORS_MODE_ENABLED
+    I_AM_VISITOR_MODE,
+    UPDATE_VISITORS_COUNT
 } from './actionTypes';
 
 const DEFAULT_STATE = {
-    enabled: false
+    iAmVisitor: false
 };
 
 export interface IVisitorsState {
     count?: number;
-    enabled: boolean;
+    iAmVisitor: boolean;
 }
 ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_STATE, action): IVisitorsState => {
     switch (action.type) {
@@ -25,10 +25,10 @@ ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_S
             count: action.count
         };
     }
-    case VISITORS_MODE_ENABLED: {
+    case I_AM_VISITOR_MODE: {
         return {
             ...state,
-            enabled: action.enabled
+            iAmVisitor: action.enabled
         };
     }
     }

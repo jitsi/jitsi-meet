@@ -101,6 +101,7 @@ import {
 import { VideoQualityButton, VideoQualityDialog } from '../../../video-quality/components';
 // @ts-ignore
 import { VideoBackgroundButton } from '../../../virtual-background';
+import { iAmVisitor } from '../../../visitors/functions';
 import WhiteboardButton from '../../../whiteboard/components/web/WhiteboardButton';
 import { isWhiteboardButtonVisible } from '../../../whiteboard/functions';
 import {
@@ -1565,7 +1566,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { clientWidth } = state['features/base/responsive-ui'];
     let toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
 
-    if (state['features/visitors'].enabled) {
+    if (iAmVisitor(state)) {
         toolbarButtons = VISITORS_MODE_BUTTONS.filter(e => toolbarButtons.indexOf(e) > -1);
     }
 
