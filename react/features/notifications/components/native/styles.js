@@ -17,7 +17,7 @@ const notification = {
     flexDirection: 'row',
     maxHeight: 104,
     height: 'auto',
-    marginBottom: BaseTheme.spacing[3],
+    marginBottom: BaseTheme.spacing[2],
     marginHorizontal: BaseTheme.spacing[2],
     maxWidth: 400,
     width: 'auto'

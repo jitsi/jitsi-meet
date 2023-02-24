@@ -436,6 +436,7 @@ class Conference extends AbstractConference<Props, State> {
                         _shouldDisplayTileView
                         || <>
                             <Filmstrip />
+                            { this._renderNotificationsContainer() }
                             <Toolbox />
                         </>
                     }
@@ -467,7 +468,6 @@ class Conference extends AbstractConference<Props, State> {
                         {/* eslint-disable-next-line react/jsx-no-bind */}
                         <AlwaysOnLabels createOnPress = { this._createOnPress } />
                     </View>
-                    { this._renderNotificationsContainer() }
                 </SafeAreaView>
 
                 <TestConnectionInfo />
@@ -530,7 +530,8 @@ class Conference extends AbstractConference<Props, State> {
 
         return super.renderNotificationsContainer(
             {
-                style: notificationsStyle
+                style: notificationsStyle,
+                toolboxVisible: this.props._toolboxVisible
             }
         );
     }

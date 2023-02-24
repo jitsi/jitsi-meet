@@ -1,6 +1,8 @@
 // @flow
 
 import React, { Component } from 'react';
+import { Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { connect } from '../../../base/redux';
 import { hideNotification } from '../../actions';
@@ -20,7 +22,9 @@ type Props = {
     /**
      * Invoked to update the redux store in order to remove notifications.
      */
-     dispatch: Function
+     dispatch: Function,
+
+     toolboxVisible: boolean
 };
 
 /**
@@ -165,10 +169,12 @@ class NotificationsContainer extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _notifications } = this.props;
+        const { _notifications, toolboxVisible } = this.props;
+        const bottomEdge = Platform.OS === 'ios' && !toolboxVisible;
 
         return (
-            <>
+            <SafeAreaView
+                edges = { [ bottomEdge && 'bottom', 'left', 'right' ].filter(Boolean) }>
                 {
                     _notifications.map((notification, index) => {
                         const { props, uid } = notification;
@@ -182,7 +188,7 @@ class NotificationsContainer extends Component<Props> {
                         );
                     })
                 }
-            </>
+            </SafeAreaView>
         );
     }
 
