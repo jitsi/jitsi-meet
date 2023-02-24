@@ -48,12 +48,7 @@ type Props = {
     /**
      * Dialog title.
      */
-    title?: string,
-
-    /**
-     * Dialog visibility.
-     */
-    visible?: Boolean
+    title?: string
 };
 
 /**
@@ -69,8 +64,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
      * @static
      */
     static defaultProps = {
-        isConfirmDestructive: false,
-        visible: true
+        isConfirmDestructive: false
     };
 
     /**
@@ -106,8 +100,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
             confirmLabel,
             isConfirmDestructive,
             t,
-            title,
-            visible
+            title
         } = this.props;
 
         const dialogButtonStyle
@@ -117,7 +110,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
         return (
             <Dialog.Container
                 coverScreen = { false }
-                visible = { visible }>
+                visible = { true }>
                 {
                     title && <Dialog.Title>
                         { t(title) }

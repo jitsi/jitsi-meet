@@ -180,8 +180,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
                 descriptionKey = { `${t(message, { seconds: timeLeft })}` }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onReloadNow }
-                title = { title }
-                visible = { timeLeft >= 1 } />
+                title = { title } />
         );
     }
 }
