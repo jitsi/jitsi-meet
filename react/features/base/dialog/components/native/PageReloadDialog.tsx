@@ -33,10 +33,8 @@ interface IPageReloadDialogProps extends WithTranslation {
  * {@link PageReloadDialog}.
  */
 interface IPageReloadDialogState {
-    message: string;
     timeLeft: number;
     timeoutSeconds: number;
-    title: string;
 }
 
 /**
@@ -61,25 +59,14 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
 
         const timeoutSeconds = 10 + randomInt(0, 20);
 
-        let message, title;
-
-        if (this.props.isNetworkFailure) {
-            title = 'dialog.conferenceDisconnectTitle';
-            message = 'dialog.conferenceDisconnectMsg';
-        } else {
-            title = 'dialog.conferenceReloadTitle';
-            message = 'dialog.conferenceReloadMsg';
-        }
-
         this.state = {
-            message,
             timeLeft: timeoutSeconds,
-            timeoutSeconds,
-            title
+            timeoutSeconds
         };
 
         this._onCancel = this._onCancel.bind(this);
         this._onReloadNow = this._onReloadNow.bind(this);
+        this._onReconnecting = this._onReconnecting.bind(this);
     }
 
     /**
@@ -89,32 +76,14 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * @returns {void}
      */
     componentDidMount() {
-        const { dispatch } = this.props;
-        const { timeLeft } = this.state;
+        const { timeoutSeconds } = this.state;
 
         logger.info(
-            `The conference will be reloaded after ${
-                this.state.timeoutSeconds} seconds.`);
+            `The conference will be reloaded after ${timeoutSeconds} seconds.`
+        );
 
-        this._interval
-            = setInterval(
-            () => {
-                if (timeLeft === 0) {
-                    if (this._interval) {
-                        clearInterval(this._interval);
-                        this._interval = undefined;
-                    }
-
-                    dispatch(reloadNow());
-                } else {
-                    this.setState(prevState => {
-                        return {
-                            timeLeft: prevState.timeLeft - 1
-                        };
-                    });
-                }
-            },
-            1000);
+        this._interval = setInterval(() =>
+            this._onReconnecting(), 1000);
     }
 
     /**
@@ -138,10 +107,33 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * @returns {boolean}
      */
     _onCancel() {
+        const { dispatch } = this.props;
+
         clearInterval(this._interval);
-        this.props.dispatch(appNavigate(undefined));
+        dispatch(appNavigate(undefined));
 
         return true;
+    }
+
+    /**
+     * Handles automatic reconnection.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onReconnecting() {
+        const { timeLeft } = this.state;
+
+        if (timeLeft < 2) {
+            if (this._interval) {
+                this._onReloadNow();
+                this._interval = undefined;
+            }
+        }
+
+        this.setState({
+            timeLeft: timeLeft - 1
+        });
     }
 
     /**
@@ -153,8 +145,10 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * @returns {boolean}
      */
     _onReloadNow() {
+        const { dispatch } = this.props;
+
         clearInterval(this._interval);
-        this.props.dispatch(reloadNow());
+        dispatch(reloadNow());
 
         return true;
     }
@@ -166,8 +160,18 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
-        const { message, timeLeft, title } = this.state;
+        const { isNetworkFailure, t } = this.props;
+        const { timeLeft } = this.state;
+
+        let message, title;
+
+        if (isNetworkFailure) {
+            title = 'dialog.conferenceDisconnectTitle';
+            message = 'dialog.conferenceDisconnectMsg';
+        } else {
+            title = 'dialog.conferenceReloadTitle';
+            message = 'dialog.conferenceReloadMsg';
+        }
 
         return (
             <ConfirmDialog
@@ -176,7 +180,8 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
                 descriptionKey = { `${t(message, { seconds: timeLeft })}` }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onReloadNow }
-                title = { title } />
+                title = { title }
+                visible = { timeLeft >= 1 } />
         );
     }
 }
@@ -187,8 +192,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
- *     message: string,
- *     reason: string,
+ *     isNetworkFailure: boolean,
  *     title: string
  * }}
  */
