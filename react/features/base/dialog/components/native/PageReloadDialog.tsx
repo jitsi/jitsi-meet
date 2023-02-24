@@ -11,6 +11,7 @@ import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
 import { isFatalJitsiConnectionError } from '../../../lib-jitsi-meet/functions.native';
 import { connect } from '../../../redux/functions';
+import { hideDialog } from '../../actions';
 // @ts-ignore
 import logger from '../../logger';
 
@@ -121,10 +122,12 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * @returns {void}
      */
     _onReconnecting() {
+        const { dispatch } = this.props;
         const { timeLeft } = this.state;
 
-        if (timeLeft < 2) {
+        if (timeLeft === 0) {
             if (this._interval) {
+                dispatch(hideDialog());
                 this._onReloadNow();
                 this._interval = undefined;
             }
