@@ -34,7 +34,6 @@ interface IPageReloadDialogProps extends WithTranslation {
  */
 interface IPageReloadDialogState {
     timeLeft: number;
-    timeoutSeconds: number;
 }
 
 /**
@@ -46,6 +45,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
 
     // @ts-ignore
     _interval: IntervalID;
+    _timeoutSeconds: number;
 
     /**
      * Initializes a new PageReloadOverlay instance.
@@ -57,11 +57,10 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
     constructor(props: IPageReloadDialogProps) {
         super(props);
 
-        const timeoutSeconds = 10 + randomInt(0, 20);
+        this._timeoutSeconds = 10 + randomInt(0, 20);
 
         this.state = {
-            timeLeft: timeoutSeconds,
-            timeoutSeconds
+            timeLeft: this._timeoutSeconds
         };
 
         this._onCancel = this._onCancel.bind(this);
@@ -76,10 +75,10 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * @returns {void}
      */
     componentDidMount() {
-        const { timeoutSeconds } = this.state;
+        const { timeLeft } = this.state;
 
         logger.info(
-            `The conference will be reloaded after ${timeoutSeconds} seconds.`
+            `The conference will be reloaded after ${timeLeft} seconds.`
         );
 
         this._interval = setInterval(() =>
@@ -192,7 +191,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
  * @protected
  * @returns {{
  *     isNetworkFailure: boolean,
- *     title: string
+ *     reason: string
  * }}
  */
 function mapStateToProps(state: IReduxState) {
