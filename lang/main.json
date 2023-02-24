@@ -214,7 +214,11 @@
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",
-        "testAudio": "Play a test sound"
+        "testAudio": "Play a test sound",
+        "hid": {
+            "callControl": "Call control",
+            "connectedDevices": "Connected devices:"
+        }
     },
     "dialIn": {
         "screenTitle": "Dial-in summary"

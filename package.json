@@ -55,6 +55,7 @@
     "@types/amplitude-js": "8.16.2",
     "@types/audioworklet": "0.0.29",
     "@types/w3c-image-capture": "1.0.6",
+    "@types/w3c-web-hid": "1.0.3",
     "@vladmandic/human": "2.6.5",
     "@vladmandic/human-models": "2.5.9",
     "@xmldom/xmldom": "0.7.9",
