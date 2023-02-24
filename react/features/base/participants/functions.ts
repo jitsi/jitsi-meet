@@ -601,7 +601,7 @@ export function getDominantSpeakerParticipant(stateful: IStateful) {
 export function isEveryoneModerator(stateful: IStateful) {
     const state = toState(stateful)['features/base/participants'];
 
-    return state.everyoneIsModerator === true;
+    return state.numberOfNonModeratorParticipants === 0;
 }
 
 /**
