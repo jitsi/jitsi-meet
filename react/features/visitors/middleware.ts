@@ -10,7 +10,7 @@ StateListenerRegistry.register(
             conference.on(JitsiConferenceEvents.PROPERTIES_CHANGED, (properties: { 'visitor-count': number; }) => {
                 const visitorCount = Number(properties?.['visitor-count']);
 
-                if (getState()['features/visitors'].count !== visitorCount) {
+                if (!isNaN(visitorCount) && getState()['features/visitors'].count !== visitorCount) {
                     dispatch(updateVisitorsCount(visitorCount));
                 }
             });
