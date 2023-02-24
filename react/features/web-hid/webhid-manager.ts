@@ -99,15 +99,15 @@ export default class WebHidManager extends EventTarget {
     }
 
     /**
-     * Handler for for requesting telephony hid devices.
+     * Handler for requesting telephony hid devices.
      *
-     * @returns {void}
+     * @returns {HIDDevice[]|null}
      */
     async requestHidDevices() {
         if (!this.hidSupport) {
             logger.warn('The WebHID API is NOT supported!');
 
-            return false;
+            return null;
         }
 
         if (this.deviceInfo?.device && this.deviceInfo.device.opened) {
@@ -125,7 +125,7 @@ export default class WebHidManager extends EventTarget {
 
         this.availableDevices = devices;
 
-        return true;
+        return devices;
     }
 
     /**
@@ -264,7 +264,7 @@ export default class WebHidManager extends EventTarget {
     /**
      * Get paired hid devices.
      *
-     * @returns {void} -.
+     * @returns {HIDDevice[]}
      */
     async loadPairedDevices() {
         try {
@@ -477,7 +477,7 @@ export default class WebHidManager extends EventTarget {
      *
      * @private
      * @param {*} data -.
-     * @returns {Object} - EventName.
+     * @returns {{eventName: string}} - EventName.
      */
     private extractActionResult(data: any) {
         switch (data.eventName) {

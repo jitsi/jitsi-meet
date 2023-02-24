@@ -215,7 +215,7 @@
             "callControl": "Call control",
             "connectedDevices": "Connected devices:",
             "deleteDevice": "Delete device",
-            "requestConnectDevice": "Request connect device"
+            "pairDevice": "Pair device"
         },
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",

@@ -4,11 +4,7 @@ import { CLOSE_HID_DEVICE, INIT_DEVICE, UPDATE_DEVICE } from './actionTypes';
 import { IDeviceInfo } from './types';
 
 /**
- * The initial state of the feature testing.
- *
- * @type {{
-*     reportResultMap: Map
-* }}
+ * The initial state of the web-hid feature.
 */
 const DEFAULT_STATE = {
     deviceInfo: {} as IDeviceInfo

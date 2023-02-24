@@ -31,8 +31,8 @@
         "react/features/stream-effects/noise-suppression",
         "react/features/stream-effects/rnnoise",
         "react/features/virtual-background",
-        "react/features/whiteboard",
         "react/features/web-hid",
+        "react/features/whiteboard",
         "**/web/*",
         "**/*.web.ts",
         "**/*.web.tsx"

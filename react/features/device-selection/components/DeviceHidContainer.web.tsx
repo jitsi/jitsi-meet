@@ -13,6 +13,7 @@ import { getDeviceInfo, shouldRequestHIDDevice } from '../../web-hid/functions';
 const useStyles = makeStyles()(() => {
     return {
         callControlContainer: {
+            marginTop: '8px',
             marginBottom: '16px',
             fontSize: '14px',
             '> label': {
@@ -71,10 +72,10 @@ function DeviceHidContainer() {
             </label>
             {showRequestDeviceInfo && (
                 <Button
-                    accessibilityLabel = { t('deviceSelection.hid.requestConnectDevice') }
+                    accessibilityLabel = { t('deviceSelection.hid.pairDevice') }
                     id = 'request-control-btn'
                     key = 'request-control-btn'
-                    label = { t('deviceSelection.hid.requestConnectDevice') }
+                    label = { t('deviceSelection.hid.pairDevice') }
                     onClick = { onRequestControl }
                     size = 'small'
                     type = { BUTTON_TYPES.SECONDARY } />

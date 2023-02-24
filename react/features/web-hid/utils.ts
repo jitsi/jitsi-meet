@@ -42,17 +42,11 @@ export const DEVICE_USAGE = {
 /**
  * Filter with telephony devices based on HID Usage tables for Universal Serial Bus (page 17).
  *
- * @type {{ filters: {}; exclusionFilters: {}; }}
+ * @type {{ filters: { usagePage: string }; exclusionFilters: {}; }}
  */
 export const requestTelephonyHID = {
     filters: [ {
-        usagePage: 11
+        usagePage: TELEPHONY_DEVICE_USAGE_PAGE
     } ],
-    exclusionFilters: [
-        {
-            // Blue Microphones
-            productId: 40580,
-            vendorId: 46478
-        }
-    ]
+    exclusionFilters: []
 };
