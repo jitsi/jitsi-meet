@@ -211,6 +211,12 @@
         "microphonePermission": "Error obtaining microphone permission"
     },
     "deviceSelection": {
+        "hid": {
+            "callControl": "Call control",
+            "connectedDevices": "Connected devices:",
+            "deleteDevice": "Delete device",
+            "pairDevice": "Pair device"
+        },
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",

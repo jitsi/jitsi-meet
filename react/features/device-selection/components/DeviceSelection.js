@@ -12,6 +12,7 @@ import logger from '../logger';
 
 import AudioInputPreview from './AudioInputPreview';
 import AudioOutputPreview from './AudioOutputPreview';
+import DeviceHidContainer from './DeviceHidContainer.web';
 import DeviceSelector from './DeviceSelector';
 import VideoInputPreview from './VideoInputPreview';
 
@@ -75,6 +76,11 @@ export type Props = {
      * rendered.
      */
     hideAudioOutputSelect: boolean,
+
+    /**
+     * Whether or not the hid device container should display.
+     */
+    hideDeviceHIDContainer: boolean,
 
     /**
      * Whether video input preview should be displayed or not.
@@ -213,6 +219,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         const {
             hideAudioInputPreview,
             hideAudioOutputPreview,
+            hideDeviceHIDContainer,
             hideVideoInputPreview,
             selectedAudioOutputId
         } = this.props;
@@ -240,6 +247,8 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                     { !hideAudioOutputPreview
                         && <AudioOutputPreview
                             deviceId = { selectedAudioOutputId } /> }
+                    { !hideDeviceHIDContainer
+                        && <DeviceHidContainer /> }
                 </div>
             </div>
         );
