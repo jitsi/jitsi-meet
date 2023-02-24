@@ -137,7 +137,7 @@ export default class WebHidManager extends EventTarget {
         const devices = await this.loadPairedDevices();
 
         if (!devices || !devices.length) {
-            logger.info('No hid device found.');
+            logger.warn('No hid device found.');
 
             return;
         }
@@ -145,7 +145,7 @@ export default class WebHidManager extends EventTarget {
         const telephonyDevice = this.getTelephonyDevice(devices);
 
         if (!telephonyDevice) {
-            logger.info('No HID device to request');
+            logger.warn('No HID device to request');
 
             return;
         }
@@ -167,7 +167,7 @@ export default class WebHidManager extends EventTarget {
      */
     private getTelephonyDevice(availableDevices: HIDDevice[]) {
         if (!availableDevices || !availableDevices.length) {
-            logger.info('No HID device to request');
+            logger.warn('No HID device to request');
 
             return undefined;
         }
@@ -309,7 +309,7 @@ export default class WebHidManager extends EventTarget {
 
                     return false;
                 }
-                logger.info('parse inputReports success');
+                logger.warn('parse inputReports success');
 
             }
 
@@ -319,11 +319,13 @@ export default class WebHidManager extends EventTarget {
 
                     return false;
                 }
-                logger.info('parse outputReports success');
+                logger.warn('parse outputReports success');
 
                 return true;
 
             }
+
+            logger.warn('parseDeviceDescriptors: returns false, end');
 
             return false;
         } catch (e) {
@@ -348,12 +350,10 @@ export default class WebHidManager extends EventTarget {
 
                 return;
             }
-            logger.info(`handleInputReport_reportId:${reportId}`);
-
 
             const inputReport = this.deviceCommand.inputReport;
 
-            logger.info(`current inputReport:${JSON.stringify(inputReport, null, '    ')}`);
+            logger.warn(`current inputReport:${JSON.stringify(inputReport, null, '    ')}, reporId: ${reportId}`);
             if (reportId !== inputReport.hookSwitch.reportId && reportId !== inputReport.phoneMute.reportId) {
                 logger.warn('handleInputReport:ignore unknown reportId');
 
@@ -373,7 +373,7 @@ export default class WebHidManager extends EventTarget {
                 // eslint-disable-next-line no-bitwise
                 const usageOn = (data.getUint8(byteIndex) & (0x01 << bitPosition)) !== 0;
 
-                logger.info('recv hookSwitch ', usageOn ? HOOK_STATUS.OFF : HOOK_STATUS.ON);
+                logger.warn('recv hookSwitch ', usageOn ? HOOK_STATUS.OFF : HOOK_STATUS.ON);
                 if (inputReport.hookSwitch.isAbsolute) {
                     if (this.deviceInfo.hookStatus === HOOK_STATUS.ON && usageOn) {
                         this.deviceInfo.hookStatus = HOOK_STATUS.OFF;
@@ -396,7 +396,7 @@ export default class WebHidManager extends EventTarget {
                 // eslint-disable-next-line no-bitwise
                 const usageOn = (data.getUint8(byteIndex) & (0x01 << bitPosition)) !== 0;
 
-                logger.info('recv phoneMute ', usageOn ? HOOK_STATUS.ON : HOOK_STATUS.OFF);
+                logger.warn('recv phoneMute ', usageOn ? HOOK_STATUS.ON : HOOK_STATUS.OFF);
                 if (inputReport.phoneMute.isAbsolute) {
                     if (this.deviceInfo.muted !== usageOn) {
                         this.deviceInfo.muted = usageOn;
@@ -463,6 +463,9 @@ export default class WebHidManager extends EventTarget {
                     return;
                 }
                 this.sendReplyReport(reportId, newOffHook, this.deviceInfo.muted);
+            } else {
+                logger.warn(`Not sending reply report: needReply ${needReply},
+                hookStatusChange: ${hookStatusChange}, muteStatusChange: ${muteStatusChange}`);
             }
         } catch (e) {
             logger.error(e);
@@ -571,6 +574,8 @@ export default class WebHidManager extends EventTarget {
         });
 
         if (!this.deviceCommand.inputReport.phoneMute || !this.deviceCommand.inputReport.hookSwitch) {
+            logger.warn('parseInputReports - no phoneMute or hookSwitch. Skip. Returning false');
+
             return false;
         }
 
@@ -692,26 +697,28 @@ export default class WebHidManager extends EventTarget {
     async sendDeviceReport(data: { command: string; }) {
         if (!data || !data.command || !this.deviceInfo
             || !this.deviceInfo.device || !this.deviceInfo.device.opened || !this.isParseDescriptorsSuccess) {
-            logger.info('There are currently non-compliant conditions');
+            logger.warn('There are currently non-compliant conditions');
 
             return;
         }
 
+        logger.warn(`sendDeviceReport data.command: ${data.command}`);
+
         if (data.command === COMMANDS.MUTE_ON || data.command === COMMANDS.MUTE_OFF) {
             if (!this.outputEventGenerators[DEVICE_USAGE.mute.usageId]) {
-                logger.info('current no parse mute event');
+                logger.warn('current no parse mute event');
 
                 return;
             }
         } else if (data.command === COMMANDS.ON_HOOK || data.command === COMMANDS.OFF_HOOK) {
             if (!this.outputEventGenerators[DEVICE_USAGE.offHook.usageId]) {
-                logger.info('current no parse offHook event');
+                logger.warn('current no parse offHook event');
 
                 return;
             }
         } else if (data.command === COMMANDS.ON_RING || data.command === COMMANDS.OFF_RING) {
             if (!this.outputEventGenerators[DEVICE_USAGE.ring.usageId]) {
-                logger.info('current no parse ring event');
+                logger.warn('current no parse ring event');
 
                 return;
             }
@@ -752,7 +759,7 @@ export default class WebHidManager extends EventTarget {
         const oldRing = this.deviceInfo.ring;
         const oldHold = this.deviceInfo.hold;
 
-        logger.info(
+        logger.warn(
             `send device command: old_hook=${oldOffHook}, old_muted=${oldMuted}, old_ring=${oldRing}`
         );
 
@@ -787,7 +794,7 @@ export default class WebHidManager extends EventTarget {
 
             return;
         }
-        logger.info(
+        logger.warn(
             `send device command: new_hook = ${newOffHook}, new_muted = ${newMuted},
              new_ring = ${newRing} new_hold = ${newHold}`
         );
@@ -836,7 +843,8 @@ export default class WebHidManager extends EventTarget {
             reportData = new Uint8Array(holdReport);
         }
 
-        logger.warn(`send device command ${data.command}: reportId=${reportId}, reportData=${reportData}`);
+        logger.warn(`[sendDeviceReport] send device command (before call webhid API)
+         ${data.command}: reportId=${reportId}, reportData=${reportData}`);
         logger.warn(`reportData is ${JSON.stringify(reportData, null, '    ')}`);
         await this.deviceInfo.device.sendReport(reportId, reportData);
 
@@ -878,11 +886,11 @@ export default class WebHidManager extends EventTarget {
             this.deviceInfo.hold = false;
             break;
         default:
-            logger.info(`Unknown command ${data.command}`);
+            logger.warn(`Unknown command ${data.command}`);
             break;
         }
-        logger.info(
-            `device status after send command: hook=${this.deviceInfo.hookStatus},
+        logger.warn(
+            `[updateDeviceStatus] device status after send command: hook=${this.deviceInfo.hookStatus},
             muted=${this.deviceInfo.muted}, ring=${this.deviceInfo.ring}`
         );
     }
@@ -932,10 +940,15 @@ export default class WebHidManager extends EventTarget {
 
 
         if (!this.deviceInfo || !this.deviceInfo.device || !this.deviceInfo.device.opened) {
+            logger.warn('[sendReplyReport] device is not opened or does not exist');
+
             return;
         }
 
         if (reportId === 0 || curOffHook === undefined || curMuted === undefined) {
+            logger.warn(`[sendReplyReport] return, provided data not valid,
+                reportId: ${reportId}, curOffHook: ${curOffHook}, curMuted: ${curMuted}`);
+
             return;
         }
 
@@ -963,8 +976,7 @@ export default class WebHidManager extends EventTarget {
             reportData = new Uint8Array(ringReport);
         }
 
-        logger.warn(`send device reply: reportId=${reportId}, reportData=${reportData}`);
-        logger.info('reportData=', reportData);
+        logger.warn(`[sendReplyReport] send device reply: reportId=${reportId}, reportData=${reportData}`);
         await this.deviceInfo.device.sendReport(reportId, reportData);
     }
 
