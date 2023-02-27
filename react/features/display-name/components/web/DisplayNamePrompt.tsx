@@ -58,6 +58,7 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<IState> {
                 <Input
                     autoFocus = { true }
                     className = 'dialog-bottom-margin'
+                    id = 'dialog-displayName'
                     label = { this.props.t('dialog.enterDisplayName') }
                     name = 'displayName'
                     onChange = { this._onDisplayNameChange }

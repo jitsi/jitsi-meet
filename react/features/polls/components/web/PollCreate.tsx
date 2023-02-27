@@ -191,6 +191,7 @@ const PollCreate = ({
             <div className = { classes.questionContainer }>
                 <Input
                     autoFocus = { true }
+                    id = 'polls-create-input'
                     label = { t('polls.create.pollQuestion') }
                     maxLength = { CHAR_LIMIT }
                     onChange = { setQuestion }
@@ -205,6 +206,7 @@ const PollCreate = ({
                         className = { classes.answer }
                         key = { i }>
                         <Input
+                            id = { `polls-answer-input-${i}` }
                             label = { t('polls.create.pollOption', { index: i + 1 }) }
                             maxLength = { CHAR_LIMIT }
                             onChange = { val => setAnswer(i, val) }

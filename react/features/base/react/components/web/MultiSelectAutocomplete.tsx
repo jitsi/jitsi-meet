@@ -25,6 +25,11 @@ interface IProps {
     footer?: any;
 
     /**
+     * Id for the included input, necessary for screen readers.
+     */
+    id: string;
+
+    /**
      * Indicates if the component is disabled.
      */
     isDisabled: boolean;
@@ -174,6 +179,7 @@ class MultiSelectAutocomplete extends Component<IProps, IState> {
                     error = { this.state.error }
                     errorDialog = { errorDialog }
                     filterValue = { this.state.filterValue }
+                    id = { this.props.id }
                     isOpen = { this.state.isOpen }
                     items = { this.state.items }
                     noMatchesText = { noMatchesFound }

@@ -208,6 +208,7 @@ function GifsMenu({ columns = 2, parent }: IProps) {
             <Input
                 autoFocus = { true }
                 className = { cx(styles.searchField, 'gif-input') }
+                id = 'gif-search-input'
                 onChange = { handleSearchKeyChange }
                 onKeyPress = { onInputKeyPress }
                 placeholder = { t('giphy.search') }

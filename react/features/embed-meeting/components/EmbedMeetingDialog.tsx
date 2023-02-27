@@ -55,6 +55,7 @@ function EmbedMeeting({ t, url }: IProps) {
             <div className = { classes.container }>
                 <Input
                     accessibilityLabel = { t('dialog.embedMeeting') }
+                    id = 'embed-meeting-input'
                     readOnly = { true }
                     textarea = { true }
                     value = { getEmbedCode() } />

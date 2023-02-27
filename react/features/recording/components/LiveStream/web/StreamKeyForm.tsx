@@ -66,6 +66,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
             <div className = 'stream-key-form'>
                 <Input
                     autoFocus = { true }
+                    id = 'streamkey-input'
                     label = { t('dialog.streamKey') }
                     name = 'streamId'
                     onChange = { this._onInputChange }

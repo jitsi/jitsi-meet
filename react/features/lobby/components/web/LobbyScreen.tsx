@@ -158,6 +158,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
         return (
             <Input
                 className = 'lobby-prejoin-input'
+                id = 'lobby-name-field'
                 onChange = { this._onChangeDisplayName }
                 placeholder = { t('lobby.nameField') }
                 testId = 'lobby.nameField'
@@ -177,6 +178,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
             <>
                 <Input
                     className = { `lobby-prejoin-input ${_passwordJoinFailed ? 'error' : ''}` }
+                    id = 'lobby-password-input'
                     onChange = { this._onChangePassword }
                     placeholder = { t('lobby.passwordField') }
                     testId = 'lobby.password'
