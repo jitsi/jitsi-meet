@@ -112,12 +112,6 @@ const useStyles = makeStyles()(theme => {
             }
         },
 
-        closeIcon: {
-            '&:focus': {
-                boxShadow: 'none'
-            }
-        },
-
         content: {
             flexGrow: 1,
             overflowY: 'auto',
@@ -258,7 +252,6 @@ const DialogWithTabs = ({
     const closeIcon = useMemo(() => (
         <ClickableIcon
             accessibilityLabel = { t('dialog.close') }
-            className = { classes.closeIcon }
             icon = { IconCloseLarge }
             id = 'modal-header-close-button'
             onClick = { onClose } />
@@ -298,7 +291,6 @@ const DialogWithTabs = ({
                             <span className = { classes.backContainer }>
                                 <ClickableIcon
                                     accessibilityLabel = { t('dialog.Back') }
-                                    className = { classes.closeIcon }
                                     icon = { IconArrowBack }
                                     id = 'modal-header-back-button'
                                     onClick = { back } />
