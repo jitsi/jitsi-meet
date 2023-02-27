@@ -1238,7 +1238,7 @@ class API {
      * @returns {void}
      */
     notifyNotificationTriggered(title: string, description: string) {
-        this.sendEvent({
+        this._sendEvent({
             description,
             name: 'notification-triggered',
             title
