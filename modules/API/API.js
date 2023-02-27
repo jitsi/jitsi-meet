@@ -1230,6 +1230,22 @@ class API {
     }
 
     /**
+     * Notify the external app that a notification has been triggered.
+     *
+     * @param {string} title - The notification title.
+     * @param {string} description - The notification description.
+     *
+     * @returns {void}
+     */
+    notifyNotificationTriggered(title: string, description: string) {
+        this._sendEvent({
+            description,
+            name: 'notification-triggered',
+            title
+        });
+    }
+
+    /**
      * Notify external application that the video quality setting has changed.
      *
      * @param {number} videoQuality - The video quality. The number represents the maximum height of the video streams.
