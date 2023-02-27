@@ -196,8 +196,8 @@ const BaseDialog = ({
                     isElementInTheViewport
                 }>
                 <div
-                    aria-describedby = { description }
-                    aria-labelledby = { title ?? t(titleKey ?? '') }
+                    aria-description = { description }
+                    aria-label = { title ?? t(titleKey ?? '') }
                     aria-modal = { true }
                     className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
                     role = 'dialog'>

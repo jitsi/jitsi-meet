@@ -254,6 +254,8 @@
         "WaitingForHostTitle": "Waiting for the host ...",
         "Yes": "Yes",
         "accessibilityLabel": {
+            "Cancel": "Cancel (leave dialog)",
+            "Ok": "OK (save and leave dialog)",
             "close": "Close dialog",
             "liveStreaming": "Live Stream",
             "sharingTabs": "Sharing options"

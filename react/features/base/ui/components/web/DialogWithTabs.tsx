@@ -317,7 +317,8 @@ const DialogWithTabs = ({
         <BaseDialog
             className = { cx(classes.dialog, className) }
             onClose = { onClose }
-            size = 'large'>
+            size = 'large'
+            titleKey = { titleKey }>
             {(!isMobile || !selectedTab) && (
                 <div
                     aria-orientation = 'vertical'
@@ -325,11 +326,11 @@ const DialogWithTabs = ({
                     role = { isMobile ? undefined : 'tablist' }>
                     <div className = { classes.titleContainer }>
                         <MoveFocusInside>
-                            <h2
+                            <h1
                                 className = { classes.title }
                                 tabIndex = { -1 }>
                                 {t(titleKey ?? '')}
-                            </h2>
+                            </h1>
                         </MoveFocusInside>
                         {isMobile && closeIcon}
                     </div>
@@ -366,11 +367,11 @@ const DialogWithTabs = ({
                     {isMobile && (
                         <div className = { cx(classes.buttonContainer, classes.header) }>
                             <span className = { classes.backContainer }>
-                                <h2
+                                <h1
                                     className = { classes.title }
                                     tabIndex = { -1 }>
                                     {(selectedTabIndex !== null) && t(tabs[selectedTabIndex].labelKey)}
-                                </h2>
+                                </h1>
                                 <ClickableIcon
                                     accessibilityLabel = { t('dialog.Back') }
                                     icon = { IconArrowBack }
@@ -401,13 +402,13 @@ const DialogWithTabs = ({
                     <div
                         className = { cx(classes.buttonContainer, classes.footer) }>
                         <Button
-                            accessibilityLabel = { t('dialog.Cancel') }
+                            accessibilityLabel = { t('dialog.accessibilityLabel.Cancel') }
                             id = 'modal-dialog-cancel-button'
                             labelKey = { 'dialog.Cancel' }
                             onClick = { onClose }
                             type = 'tertiary' />
                         <Button
-                            accessibilityLabel = { t('dialog.Ok') }
+                            accessibilityLabel = { t('dialog.accessibilityLabel.Ok') }
                             id = 'modal-dialog-ok-button'
                             labelKey = { 'dialog.Ok' }
                             onClick = { onSubmit } />

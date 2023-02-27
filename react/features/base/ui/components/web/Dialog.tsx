@@ -124,11 +124,11 @@ const Dialog = ({
             title = { title }
             titleKey = { titleKey }>
             <div className = { classes.header }>
-                <p
+                <h1
                     className = { classes.title }
                     id = 'dialog-title'>
                     {title ?? t(titleKey ?? '')}
-                </p>
+                </h1>
                 {!hideCloseButton && (
                     <ClickableIcon
                         accessibilityLabel = { t('dialog.accessibilityLabel.close') }
