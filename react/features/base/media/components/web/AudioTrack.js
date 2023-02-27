@@ -79,6 +79,7 @@ class AudioTrack extends Component<Props> {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
+        this._errorHandler = this._errorHandler.bind(this);
         this._setRef = this._setRef.bind(this);
         this._play = this._play.bind(this);
     }
@@ -103,6 +104,8 @@ class AudioTrack extends Component<Props> {
             if (typeof _muted === 'boolean') {
                 this._ref.muted = _muted;
             }
+
+            this._ref.addEventListener('error', this._errorHandler);
         }
     }
 
@@ -115,6 +118,7 @@ class AudioTrack extends Component<Props> {
      */
     componentWillUnmount() {
         this._detachTrack(this.props.audioTrack);
+        this._ref.removeEventListener('error', this._errorHandler);
     }
 
     /**
@@ -202,10 +206,25 @@ class AudioTrack extends Component<Props> {
         }
     }
 
+    _errorHandler: (?Error) => void;
+
+    /**
+     * Reattaches the audio track to the underlying HTMLAudioElement when an 'error' event is fired.
+     *
+     * @param {Error} error - The error event fired on the HTMLAudioElement.
+     * @returns {void}
+     */
+    _errorHandler(error) {
+        logger.error(`Error ${error?.message} called on audio track ${this.props.audioTrack?.jitsiTrack}. `
+            + 'Attempting to reattach the audio track to the element and execute play on it');
+        this._detachTrack(this.props.audioTrack);
+        this._attachTrack(this.props.audioTrack);
+    }
+
     _play: ?number => void;
 
     /**
-     * Plays the uderlying HTMLAudioElement.
+     * Plays the underlying HTMLAudioElement.
      *
      * @param {number} retries - The number of previously failed retries.
      * @returns {void}
