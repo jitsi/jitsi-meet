@@ -126,8 +126,6 @@ export function showNotification(props: INotificationProps = {}, type?: string) 
                 || notifications.includes(titleKey ?? ''));
 
         if (typeof APP !== 'undefined') {
-            // when we are redirecting the library should handle any
-            // unload and clean of the connection.
             APP.API.notifyNotificationTriggered(titleKey, descriptionKey);
         }
 
