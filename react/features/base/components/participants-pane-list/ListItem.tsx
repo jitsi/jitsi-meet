@@ -88,7 +88,7 @@ const useStyles = makeStyles()(theme => {
             boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.15)',
             minHeight: '40px',
 
-            '&:hover': {
+            '&:hover, &:focus-within': {
                 backgroundColor: theme.palette.ui02,
 
                 '& .indicators': {
@@ -97,6 +97,8 @@ const useStyles = makeStyles()(theme => {
 
                 '& .actions': {
                     display: 'flex',
+                    position: 'relative',
+                    top: 'auto',
                     boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
                     backgroundColor: theme.palette.ui02
                 }
@@ -154,7 +156,8 @@ const useStyles = makeStyles()(theme => {
         },
 
         actionsContainer: {
-            display: 'none',
+            position: 'absolute',
+            top: '-1000px',
             boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
             backgroundColor: theme.palette.ui02
         },

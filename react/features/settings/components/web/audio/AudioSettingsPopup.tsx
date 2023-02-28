@@ -75,6 +75,7 @@ function AudioSettingsPopup({
                     outputDevices = { outputDevices }
                     setAudioInputDevice = { setAudioInputDevice }
                     setAudioOutputDevice = { setAudioOutputDevice } /> }
+                headingId = 'audio-settings-button'
                 onPopoverClose = { onClose }
                 position = { popupPlacement }
                 trigger = 'click'

@@ -1,4 +1,5 @@
 import React, { Component, ReactNode } from 'react';
+import ReactFocusLock from 'react-focus-lock';
 
 import { IReduxState } from '../../../app/types';
 import DialogPortal from '../../../toolbox/components/web/DialogPortal';
@@ -33,6 +34,18 @@ interface IProps {
      * Whether displaying of the popover should be prevented.
      */
     disablePopover?: boolean;
+
+    /**
+     * The id of the dom element acting as the Popover label (matches aria-labelledby).
+     */
+    headingId?: string;
+
+    /**
+     * String acting as the Popover label (matches aria-label).
+     *
+     * If headingId is set, this will not be used.
+     */
+    headingLabel?: string;
 
     /**
      * An id attribute to apply to the root of the {@code Popover}
@@ -186,7 +199,16 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, className, content, id, overflowDrawer, visible, trigger } = this.props;
+        const { children,
+            className,
+            content,
+            headingId,
+            headingLabel,
+            id,
+            overflowDrawer,
+            visible,
+            trigger
+        } = this.props;
 
         if (overflowDrawer) {
             return (
@@ -197,6 +219,7 @@ class Popover extends Component<IProps, IState> {
                     { children }
                     <JitsiPortal>
                         <Drawer
+                            headingId = { headingId }
                             isOpen = { visible }
                             onClose = { this._onHideDialog }>
                             { content }
@@ -214,7 +237,8 @@ class Popover extends Component<IProps, IState> {
                 onKeyPress = { this._onKeyPress }
                 { ...(trigger === 'hover' ? {
                     onMouseEnter: this._onShowDialog,
-                    onMouseLeave: this._onHideDialog
+                    onMouseLeave: this._onHideDialog,
+                    tabIndex: 0
                 } : {}) }
                 ref = { this._containerRef }>
                 { visible && (
@@ -222,7 +246,16 @@ class Popover extends Component<IProps, IState> {
                         getRef = { this._setContextMenuRef }
                         setSize = { this._setContextMenuStyle }
                         style = { this.state.contextMenuStyle }>
-                        {this._renderContent()}
+                        <ReactFocusLock
+                            lockProps = {{
+                                role: 'dialog',
+                                'aria-modal': true,
+                                'aria-labelledby': headingId,
+                                'aria-label': !headingId && headingLabel ? headingLabel : undefined
+                            }}
+                            returnFocus = { true }>
+                            {this._renderContent()}
+                        </ReactFocusLock>
                     </DialogPortal>
                 )}
                 { children }

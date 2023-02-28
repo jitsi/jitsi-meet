@@ -216,7 +216,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
      */
     render() {
         // @ts-ignore
-        const { enableStatsDisplay, participantId, statsPopoverPosition, classes } = this.props;
+        const { enableStatsDisplay, participantId, statsPopoverPosition, classes, t } = this.props;
         const visibilityClass = this._getVisibilityClass();
 
         // @ts-ignore
@@ -233,6 +233,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, IState> {
                     inheritedStats = { this.state.stats }
                     participantId = { participantId } /> }
                 disablePopover = { !enableStatsDisplay }
+                headingLabel = { t('videothumbnail.connectionInfo') }
                 id = 'participant-connection-indicator'
                 onPopoverClose = { this._onHidePopover }
                 onPopoverOpen = { this._onShowPopover }

@@ -773,6 +773,7 @@
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "Set by another participant",
+    "pinParticipant": "{{participantName}} - Pin",
     "pinnedParticipant": "The participant is pinned",
     "polls": {
         "answer": {
@@ -1249,6 +1250,7 @@
         "subtitlesOff": "Off",
         "tr": "TR"
     },
+    "unpinParticipant": "{{participantName}} - Unpin",
     "userMedia": {
         "androidGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
         "chromeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",

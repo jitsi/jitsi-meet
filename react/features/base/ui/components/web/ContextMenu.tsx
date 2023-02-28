@@ -262,7 +262,7 @@ const ContextMenu = ({
             onMouseEnter = { onMouseEnter }
             onMouseLeave = { onMouseLeave }
             ref = { containerRef }
-            role = { role ?? 'menu' }
+            role = { role }
             tabIndex = { tabIndex }>
             {children}
         </div>;

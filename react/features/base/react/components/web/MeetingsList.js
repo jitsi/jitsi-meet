@@ -115,7 +115,6 @@ class MeetingsList extends Component<Props> {
                 <Container
                     aria-label = { t('welcomepage.recentList') }
                     className = 'meetings-list'
-                    role = 'menu'
                     tabIndex = '-1'>
                     {
                         meetings.length === 0
@@ -243,7 +242,7 @@ class MeetingsList extends Component<Props> {
                 key = { index }
                 onClick = { onPress }
                 onKeyPress = { onKeyPress }
-                role = 'menuitem'
+                role = 'button'
                 tabIndex = { 0 }>
                 <Container className = 'left-column'>
                     <Text className = 'title'>

@@ -190,6 +190,7 @@ class RemoteVideoMenuTriggerButton extends Component<IProps> {
         return (
             <Popover
                 content = { content }
+                headingLabel = { this.props.t('dialog.remoteUserControls', { username }) }
                 id = 'remote-video-menu-trigger'
                 onPopoverClose = { this._onPopoverClose }
                 onPopoverOpen = { this._onPopoverOpen }
