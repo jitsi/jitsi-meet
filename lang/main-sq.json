@@ -183,14 +183,22 @@
     },
     "deepLinking": {
         "appNotInstalled": "Që të merrni pjesë në këtë takim që nga telefoni juaj, ju duhet aplikacioni për celular {{app}}.",
-        "description": "S’ngjau gjë? Provuam të nisim takimin tuaj te aplikacioni për desktop {{app}}. Rorpovoni, ose niseni nga aplikacioni web {{app}}.",
+        "description": "S’ngjau gjë? Provuam të nisim takimin tuaj te aplikacioni për desktop {{app}}. Riprovoni, ose niseni nga aplikacioni web {{app}}.",
+        "descriptionNew": "S’ngjau gjë? Provuam nisjen e takimit tuaj te aplikacioni për desktop {{app}}. <br /><br /> Mund të riprovoni, ose ta nisni në web.",
         "descriptionWithoutWeb": "S’ngjau gjë? Provuam nisjen e takimit tuaj te aplikacioni për desktop {{app}}.",
         "downloadApp": "Shkarkoni aplikacionin",
+        "downloadMobileApp": "Shkarkojeni prej App Store",
         "ifDoNotHaveApp": "Nëse s’e keni ende aplikacionin:",
         "ifHaveApp": "Nëse e keni tashmë aplikacionin:",
         "joinInApp": "Merrni pjesë në këtë takim duke përdorur aplikacionin",
+        "joinInAppNew": "Hyni që nga aplikacioni",
+        "joinInBrowser": "Hyni që nga shfletues",
+        "launchMeetingLabel": "Si doni të hyhet në këtë takim?",
         "launchWebButton": "Nise në web",
+        "noMobileApp": "S’e keni aplikacionin?",
+        "termsAndConditions": "Duke vazhduar, pajtoheni me <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>terms & conditions.</a> tona",
         "title": "Po niset takimi juaj në {{app}}…",
+        "titleNew": "Po niset takimi juaj…",
         "tryAgainButton": "Riprovoni në desktop",
         "unsupportedBrowser": "Duket se përdorni një shfletues që s’e mbulojmë."
     },
@@ -203,6 +211,12 @@
         "microphonePermission": "Gabim në marrje lejesh mbi mikrofonin"
     },
     "deviceSelection": {
+        "hid": {
+            "callControl": "Kontroll thirrjesh",
+            "connectedDevices": "Pajisje të lidhura:",
+            "deleteDevice": "Fshije pajisjen",
+            "pairDevice": "Çiftoni pajisje"
+        },
         "noPermission": "S’u akordua leje",
         "previewUnavailable": "S’bëhet dot paraparje",
         "selectADevice": "Përzgjidhni një pajisje",
@@ -438,12 +452,14 @@
         "veryBad": "Shumë i Dobët",
         "veryGood": "Shumë i Mirë"
     },
+    "filmstrip": {
+        "accessibilityLabel": {
+            "heading": "Miniatura videosh"
+        }
+    },
     "giphy": {
         "noResults": "S’u gjetën përfundime :(",
         "search": "Kërkoni në GIPHY"
-    },
-    "helpView": {
-        "title": "Qendër ndihme"
     },
     "incomingCall": {
         "answer": "Përgjigjuni",
@@ -715,6 +731,8 @@
         "reactionSoundsForAll": "Çaktivizoji tingujt për të tërë",
         "screenShareNoAudio": "Kutizës për ndarje audioje me të tjerë s’i është vënë shenjë te skena e përzgjedhjes së dritares.",
         "screenShareNoAudioTitle": "S’u nda dot me të tjerë audioja e sistemit!",
+        "screenSharingAudioOnlyDescription": "Ju lutemi, kini parasysh se duke dhënë ekranin tuaj, ndikoni te mënyra “Punimi më i mirë” dhe do të përdorni më tepër gjerësi bande",
+        "screenSharingAudioOnlyTitle": "Mënyra “”Punimi më i mirë",
         "selfViewTitle": "Mundeni përherë të hiqni fshehjen e pamjes së vetes, që nga rregullimet",
         "somebody": "Dikush",
         "startSilentDescription": "Që të aktivizohet audioja, rihyni në takim",
@@ -734,7 +752,7 @@
             "allow": "Lejoju pjesëmarrësve të:",
             "allowVideo": "Çaktivizoni videon",
             "askUnmute": "Kërkoni heqje heshtimi",
-            "audioModeration": "Hiqni heshtim të vetes",
+            "audioModeration": "Heqin heshtim të vetes",
             "blockEveryoneMicCamera": "Bllokoni mikrofonin dhe kamerën e gjithkujt",
             "invite": "Ftoni Dikë",
             "moreModerationActions": "Më tepër mundësi moderimi",
@@ -746,12 +764,13 @@
             "stopEveryonesVideo": "Ndal videon e gjithkujt",
             "stopVideo": "Ndale videon",
             "unblockEveryoneMicCamera": "Zhblloko mikrofonin dhe kamerën e gjithkujt",
-            "videoModeration": "Nis videon e vet"
+            "videoModeration": "Nisin videon e vetes"
         },
         "close": "Mbylle",
         "headings": {
             "lobby": "Holli ({{count}})",
             "participantsList": "Pjesëmarrës në takim ({{count}})",
+            "visitors": "Vizitorë ({{count}})",
             "waitingLobby": "Duke pritur në holl ({{count}})"
         },
         "search": "Kërkoni te pjesëmarrësit",
@@ -759,6 +778,7 @@
     },
     "passwordDigitsOnly": "Deri në {{number}} shifra",
     "passwordSetRemotely": "Caktuar nga një tjetër pjesëmarrës",
+    "pinParticipant": "{{participantName}} - Fiksoje",
     "pinnedParticipant": "Pjesëmarrësi është fiksuar",
     "polls": {
         "answer": {
@@ -864,9 +884,6 @@
         "rejected": "Hedhur poshtë",
         "ringing": "Po i bihet ziles…"
     },
-    "privacyView": {
-        "title": "Privatësi"
-    },
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "Caktoni emrin tuaj për në ekran",
@@ -920,6 +937,7 @@
         "localRecordingVideoWarning": "Që ta regjistroni, videon tuaj duhet ta keni të hapur, kur niset regjistrimi",
         "localRecordingWarning": "Sigurohuni se përzgjidhni skedën e tanishme, që të mund të përdoret videoja dhe audioja e saktë. Regjistrimi aktualisht është i kufizuar deri në 1GB, çka është aty afër 100 minutave.",
         "loggedIn": "I futur si {{userName}}",
+        "noMicPermission": "S’u krijua dot pistë mikrofoni. Ju lutemi, akordoni leje për përdorim të mikrofonit.",
         "noStreams": "S’u pikas rrjedhë audio ose video.",
         "off": "Regjistrimi u ndal",
         "offBy": "{{name}} ndali regjistrimin",
@@ -955,7 +973,7 @@
     "settings": {
         "buttonLabel": "Rregullime",
         "calendar": {
-            "about": "Integrimi i me kalendar {{appName}} përdoret për të hyrë me sukses te kalendari juaj, që kështu të mund të lexohen veprimtari të ardhshme.",
+            "about": "Integrimi me kalendar {{appName}} përdoret për të hyrë me sukses te kalendari juaj, që kështu të mund të lexohen veprimtari të ardhshme.",
             "disconnect": "Shkëputu",
             "microsoftSignIn": "Hyni me Microsoft",
             "signedIn": "Aktualisht po shihen veprimtari kalendari për {{email}}. Klikoni mbi butonin Shkëputu më poshtë që të ndalni parjen e veprimtarive të kalendarit.",
@@ -1084,6 +1102,7 @@
             "giphy": "Shfaq/fshih menunë GIPHY",
             "grantModerator": "Akordoji të Drejta Moderatori",
             "hangup": "Braktiseni takimin",
+            "heading": "Panel",
             "help": "Ndihmë",
             "invite": "Ftoni njerëz",
             "kick": "Përzëre pjesëmarrësin",
@@ -1237,6 +1256,7 @@
         "subtitlesOff": "Off",
         "tr": "TR"
     },
+    "unpinParticipant": "{{participantName}} - Hiqja fiksimin",
     "userMedia": {
         "androidGrantPermissions": "Kur shfletuesi juaj të kërkojë leje, përzgjidhni <b><i>Lejoje</i></b>.",
         "chromeGrantPermissions": "Kur shfletuesi juaj të kërkojë leje, përzgjidhni <b><i>Lejoje</i></b>.",
@@ -1275,9 +1295,11 @@
         "ldTooltip": "Po shihet video në cilësi të ulët",
         "lowDefinition": "Cilësi e ulët",
         "performanceSettings": "Rregullime funksionimi",
+        "recording": "Regjistrim në kryerje e sipër",
         "sd": "CS",
         "sdTooltip": "Po shihet video në cilësi standarde",
         "standardDefinition": "Cilësi standarde"
+        "streaming": "Transmetim në kryerje e sipër"
     },
     "videothumbnail": {
         "connectionInfo": "Hollësi Lidhjeje",
@@ -1289,6 +1311,7 @@
         "grantModerator": "Akordoji të Drejta Moderatori",
         "hideSelfView": "Fshihe pamjen e vetes",
         "kick": "Përzëre",
+        "mirrorVideo": "Pasqyro videon time",
         "moderator": "Moderator",
         "mute": "Pjesëmarrësi është heshtuar",
         "muted": "I heshtuar",
@@ -1326,6 +1349,7 @@
         "webAssemblyWarning": "Nuk mbulohet WebAssembly",
         "webAssemblyWarningDescription": "WebAssembly e çaktivizuar ose e pambuluar nga ky shfletues"
     },
+    "visitorsLabel": "Numër vizitorësh: {{count}}",
     "volumeSlider": "Rrëshqitës volumi",
     "welcomepage": {
         "accessibilityLabel": {
@@ -1366,6 +1390,7 @@
         "recentList": "Së fundi",
         "recentListDelete": "Fshije zërin",
         "recentListEmpty": "Lista juaj për “së fundi” aktualisht është e zbrazët. Bisedoni me ekipin tuaj dhe do të gjeni këtu krejt takimet tuaj së fundi.",
+        "recentMeetings": "Takimet tuaja së fundi",
         "reducedUIText": "Mirë se vini në {{app}}!",
         "roomNameAllowedChars": "Emri i takimit s’duhet të përmbajë ndonjë nga këto shenja: ?, &, :, ', \", %, #.",
         "roomname": "Jepni emër dhome",
@@ -1375,5 +1400,11 @@
         "startMeeting": "Nisni takim",
         "terms": "Kushte",
         "title": "Konferenca video të parrezik, me të gjitha veçoritë dhe plotësisht të lira"
+        "upcomingMeetings": "Takimet tuaja s’afërmi"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Tabelë shënimesh"
+        }
     }
 }
