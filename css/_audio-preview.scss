@@ -22,11 +22,7 @@
     }
 
     &-entry-text {
-        display: inline-block;
-        text-overflow: ellipsis;
         max-width: 213px;
-        overflow: hidden;
-        white-space: nowrap;
 
         &.left-margin {
             margin-left: 36px;

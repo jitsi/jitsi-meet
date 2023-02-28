@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import { IconCheck } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
-import { BUTTON_TYPES } from '../../../../base/ui/constants.any';
+import { BUTTON_TYPES, TEXT_OVERFLOW_TYPES } from '../../../../base/ui/constants.any';
 import logger from '../../../logger';
 
 const TEST_SOUND_PATH = 'sounds/ring.mp3';
@@ -118,6 +118,7 @@ const SpeakerEntry = (props: IProps) => {
             <ContextMenuItem
                 accessibilityLabel = ''
                 icon = { isSelected ? IconCheck : undefined }
+                overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
                 selected = { isSelected }
                 text = { children }
                 textClassName = { clsx('audio-preview-entry-text', !isSelected && 'left-margin') }>
