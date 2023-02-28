@@ -204,7 +204,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         }
 
         let newParticipant: IParticipant | null = null;
-        const oldParticipant = local ? state.local : state.remote.get(id);
+        const oldParticipant = local || state.local?.id === id ? state.local : state.remote.get(id);
 
         if (state.remote.has(id)) {
             newParticipant = _participant(oldParticipant, action);
@@ -366,6 +366,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             pinnedParticipant
         } = state;
         let oldParticipant = remote.get(id);
+        let isLocalScreenShare = false;
 
         if (oldParticipant?.sources?.size) {
             const videoSources: Map<string, ISourceInfo> | undefined = oldParticipant.sources.get(MEDIA_TYPE.VIDEO);
@@ -390,6 +391,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             oldParticipant = state.local;
             delete state.local;
         } else if (localScreenShare?.id === id) {
+            isLocalScreenShare = true;
             oldParticipant = state.local;
             delete state.localScreenShare;
         } else {
@@ -420,7 +422,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
         }
 
-        if (oldParticipant && !oldParticipant.fakeParticipant) {
+        if (oldParticipant && !oldParticipant.fakeParticipant && !isLocalScreenShare) {
             const { e2eeEnabled, e2eeSupported } = oldParticipant;
 
             if (!isParticipantModerator(oldParticipant)) {
