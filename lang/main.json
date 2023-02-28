@@ -1295,9 +1295,11 @@
         "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",
         "performanceSettings": "Performance settings",
+        "recording": "Recording in progress",
         "sd": "SD",
         "sdTooltip": "Viewing standard definition video",
-        "standardDefinition": "Standard definition"
+        "standardDefinition": "Standard definition",
+        "streaming": "Streaming in progress"
     },
     "videothumbnail": {
         "connectionInfo": "Connection Info",
