@@ -167,7 +167,7 @@ body.welcome-page {
             margin: 4px;
             display: $welcomePageTabButtonsDisplay;
 
-            .tab {
+            [role="tab"] {
                 background-color: #c7ddff;
                 border-radius: 7px;
                 cursor: pointer;
@@ -176,8 +176,10 @@ body.welcome-page {
                 margin: 2px;
                 padding: 7px 0;
                 text-align: center;
+                color: inherit;
+                border: 0;
 
-                &.selected {
+                &[aria-selected="true"] {
                     background-color: #FFF;
                 }
             }
