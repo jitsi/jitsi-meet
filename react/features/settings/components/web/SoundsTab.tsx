@@ -98,6 +98,7 @@ class SoundsTab extends AbstractDialogTab<Props> {
      */
     render() {
         const {
+            disabledSounds,
             soundsIncomingMessage,
             soundsParticipantJoined,
             soundsParticipantKnocking,
@@ -117,40 +118,45 @@ class SoundsTab extends AbstractDialogTab<Props> {
                     {t('settings.playSounds')}
                 </h2>
                 {enableReactions && <Checkbox
-                    checked = { soundsReactions }
+                    checked = { soundsReactions && !disabledSounds.includes('REACTION_SOUND') }
                     className = 'settings-checkbox'
-                    disabled = { moderatorMutedSoundsReactions }
+                    disabled = { moderatorMutedSoundsReactions || disabledSounds.includes('REACTION_SOUND') }
                     label = { t('settings.reactions') }
                     name = 'soundsReactions'
                     onChange = { this._onChange } />
                 }
                 <Checkbox
-                    checked = { soundsIncomingMessage }
+                    checked = { soundsIncomingMessage && !disabledSounds.includes('INCOMING_MSG_SOUND') }
                     className = 'settings-checkbox'
+                    disabled = { disabledSounds.includes('INCOMING_MSG_SOUND') }
                     label = { t('settings.incomingMessage') }
                     name = 'soundsIncomingMessage'
                     onChange = { this._onChange } />
                 <Checkbox
-                    checked = { soundsParticipantJoined }
+                    checked = { soundsParticipantJoined && !disabledSounds.includes('PARTICIPANT_JOINED_SOUND') }
                     className = 'settings-checkbox'
+                    disabled = { disabledSounds.includes('PARTICIPANT_JOINED_SOUND') }
                     label = { t('settings.participantJoined') }
                     name = 'soundsParticipantJoined'
                     onChange = { this._onChange } />
                 <Checkbox
-                    checked = { soundsParticipantLeft }
+                    checked = { soundsParticipantLeft && !disabledSounds.includes('PARTICIPANT_LEFT_SOUND') }
                     className = 'settings-checkbox'
+                    disabled = { disabledSounds.includes('PARTICIPANT_LEFT_SOUND') }
                     label = { t('settings.participantLeft') }
                     name = 'soundsParticipantLeft'
                     onChange = { this._onChange } />
                 <Checkbox
-                    checked = { soundsTalkWhileMuted }
+                    checked = { soundsTalkWhileMuted && !disabledSounds.includes('TALK_WHILE_MUTED_SOUND') }
                     className = 'settings-checkbox'
+                    disabled = { disabledSounds.includes('TALK_WHILE_MUTED_SOUND') }
                     label = { t('settings.talkWhileMuted') }
                     name = 'soundsTalkWhileMuted'
                     onChange = { this._onChange } />
                 <Checkbox
-                    checked = { soundsParticipantKnocking }
+                    checked = { soundsParticipantKnocking && !disabledSounds.includes('KNOCKING_PARTICIPANT_SOUND') }
                     className = 'settings-checkbox'
+                    disabled = { disabledSounds.includes('KNOCKING_PARTICIPANT_SOUND') }
                     label = { t('settings.participantKnocking') }
                     name = 'soundsParticipantKnocking'
                     onChange = { this._onChange } />
