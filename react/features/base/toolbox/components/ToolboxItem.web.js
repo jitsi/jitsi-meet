@@ -84,7 +84,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             onKeyDown: disabled ? undefined : onKeyDown,
             onKeyPress: this._onKeyPress,
             tabIndex: 0,
-            role: showLabel ? 'menuitem' : 'button'
+            role: 'button'
         };
 
         const elementType = showLabel ? 'li' : 'div';

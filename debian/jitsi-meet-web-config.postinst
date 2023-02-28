@@ -176,6 +176,11 @@ case "$1" in
         fi
 
         # Fixes multi-stream flags to workaround problem with mobile joining a multi-stream call with multi-stream disabled
+        FIX_MSG="// Temporary backwards compatibility with old mobile clients."
+        if ! grep -q "^${FIX_MSG}" $JITSI_MEET_CONFIG; then
+            echo  $FIX_MSG >> $JITSI_MEET_CONFIG
+            echo "config.flags = config.flags || {};" >> $JITSI_MEET_CONFIG
+        fi
         if ! grep -q "^config.flags.sourceNameSignaling*" $JITSI_MEET_CONFIG; then
             echo "config.flags.sourceNameSignaling = true;" >> $JITSI_MEET_CONFIG
         fi

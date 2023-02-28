@@ -98,7 +98,7 @@ function _upgradeRoleFinished(
             name: authenticationError || connectionError,
             ...other
         };
-        progress = authenticationError ? 0.5 : 0;
+        progress = 0;
     }
 
     return {

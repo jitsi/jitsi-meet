@@ -10,9 +10,8 @@ import { IconCheck, IconCloseLarge } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple } from '../../../lobby/actions.web';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
+import Drawer from '../../../toolbox/components/web/Drawer';
+import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 

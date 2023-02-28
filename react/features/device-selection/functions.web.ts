@@ -21,6 +21,7 @@ import {
     getUserSelectedMicDeviceId,
     getUserSelectedOutputDeviceId
 } from '../base/settings/functions.web';
+import { isDeviceHidSupported } from '../web-hid/functions';
 
 /**
  * Returns the properties for the device selection dialog from Redux state.
@@ -43,6 +44,7 @@ export function getDeviceSelectionDialogProps(stateful: IStateful, isDisplayedOn
     const speakerChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output');
     const userSelectedCamera = getUserSelectedCameraDeviceId(state);
     const userSelectedMic = getUserSelectedMicDeviceId(state);
+    const deviceHidSupported = isDeviceHidSupported();
 
     // When the previews are disabled we don't need multiple audio input support in order to change the mic. This is the
     // case for Safari on iOS.
@@ -77,6 +79,7 @@ export function getDeviceSelectionDialogProps(stateful: IStateful, isDisplayedOn
         hideAudioInputPreview: disableAudioInputChange || !JitsiMeetJS.isCollectingLocalStats() || disablePreviews,
         hideAudioOutputPreview: !speakerChangeSupported || disablePreviews,
         hideAudioOutputSelect: !speakerChangeSupported,
+        hideDeviceHIDContainer: !deviceHidSupported,
         hideVideoInputPreview: !inputDeviceChangeSupported || disablePreviews,
         selectedAudioInputId,
         selectedAudioOutputId,

@@ -313,9 +313,9 @@ export function isLocalTrackMuted(tracks: ITrack[], mediaType: MediaType) {
  * @returns {boolean}
  */
 export function isLocalVideoTrackDesktop(state: IReduxState) {
-    const videoTrack = getLocalVideoTrack(getTrackState(state));
+    const desktopTrack = getLocalDesktopTrack(getTrackState(state));
 
-    return videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
+    return desktopTrack !== undefined && !desktopTrack.muted;
 }
 
 

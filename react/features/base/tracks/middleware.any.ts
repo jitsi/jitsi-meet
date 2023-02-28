@@ -79,7 +79,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SET_SCREENSHARE_MUTED:
-        _setMuted(store, action, action.mediaType);
+        _setMuted(store, action, MEDIA_TYPE.SCREENSHARE);
         break;
 
     case SET_VIDEO_MUTED:
@@ -88,7 +88,7 @@ MiddlewareRegistry.register(store => next => action => {
             return;
         }
 
-        _setMuted(store, action, action.mediaType);
+        _setMuted(store, action, MEDIA_TYPE.VIDEO);
         break;
 
     case TOGGLE_CAMERA_FACING_MODE: {

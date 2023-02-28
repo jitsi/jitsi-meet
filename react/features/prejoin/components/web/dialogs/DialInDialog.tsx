@@ -12,6 +12,7 @@ import Button from '../../../../base/ui/components/web/Button';
 import { getCountryCodeFromPhone } from '../../../utils';
 // @ts-ignore
 import Label from '../Label';
+/* eslint-enable lines-around-comment */
 
 interface IProps extends WithTranslation {
 

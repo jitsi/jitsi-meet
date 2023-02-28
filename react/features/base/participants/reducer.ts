@@ -1,6 +1,4 @@
-import {
-    SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
-} from '../../video-layout/actionTypes';
+import { MEDIA_TYPE } from '../media/constants';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
 
@@ -10,6 +8,7 @@ import {
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
+    PARTICIPANT_SOURCES_UPDATED,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     RAISE_HAND_UPDATED,
@@ -23,7 +22,7 @@ import {
     isRemoteScreenshareParticipant,
     isScreenShareParticipant
 } from './functions';
-import { ILocalParticipant, IParticipant } from './types';
+import { FakeParticipant, ILocalParticipant, IParticipant, ISourceInfo } from './types';
 
 /**
  * Participant object.
@@ -72,9 +71,9 @@ const DEFAULT_STATE = {
     pinnedParticipant: undefined,
     raisedHandsQueue: [],
     remote: new Map(),
+    remoteVideoSources: new Set<string>(),
     sortedRemoteVirtualScreenshareParticipants: new Map(),
     sortedRemoteParticipants: new Map(),
-    sortedRemoteScreenshares: new Map(),
     speakersList: new Map()
 };
 
@@ -88,8 +87,8 @@ export interface IParticipantsState {
     pinnedParticipant?: string;
     raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, IParticipant>;
+    remoteVideoSources: Set<string>;
     sortedRemoteParticipants: Map<string, string>;
-    sortedRemoteScreenshares: Map<string, string>;
     sortedRemoteVirtualScreenshareParticipants: Map<string, string>;
     speakersList: Map<string, string>;
 }
@@ -248,7 +247,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             fakeParticipant,
             id,
             name,
-            pinned
+            pinned,
+            sources
         } = participant;
         const { pinnedParticipant, dominantSpeaker } = state;
 
@@ -291,6 +291,19 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         }
 
         state.remote.set(id, participant);
+
+        if (sources?.size) {
+            const videoSources: Map<string, ISourceInfo> | undefined = sources.get(MEDIA_TYPE.VIDEO);
+
+            if (videoSources?.size) {
+                const newRemoteVideoSources = new Set(state.remoteVideoSources);
+
+                for (const source of videoSources.keys()) {
+                    newRemoteVideoSources.add(source);
+                }
+                state.remoteVideoSources = newRemoteVideoSources;
+            }
+        }
 
         // Insert the new participant.
         const displayName = _getDisplayName(state, name);
@@ -337,6 +350,23 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         } = state;
         let oldParticipant = remote.get(id);
 
+        if (oldParticipant?.sources?.size) {
+            const videoSources: Map<string, ISourceInfo> | undefined = oldParticipant.sources.get(MEDIA_TYPE.VIDEO);
+            const newRemoteVideoSources = new Set(state.remoteVideoSources);
+
+            if (videoSources?.size) {
+                for (const source of videoSources.keys()) {
+                    newRemoteVideoSources.delete(source);
+                }
+            }
+            state.remoteVideoSources = newRemoteVideoSources;
+        } else if (oldParticipant?.fakeParticipant === FakeParticipant.RemoteScreenShare) {
+            const newRemoteVideoSources = new Set(state.remoteVideoSources);
+
+            newRemoteVideoSources.delete(id);
+            state.remoteVideoSources = newRemoteVideoSources;
+        }
+
         if (oldParticipant && oldParticipant.conference === conference) {
             remote.delete(id);
         } else if (local?.id === id) {
@@ -379,34 +409,31 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
 
         return { ...state };
     }
+    case PARTICIPANT_SOURCES_UPDATED: {
+        const { id, sources } = action.participant;
+        const participant = state.remote.get(id);
+
+        if (participant) {
+            participant.sources = sources;
+            const videoSources: Map<string, ISourceInfo> = sources.get(MEDIA_TYPE.VIDEO);
+
+            if (videoSources?.size) {
+                const newRemoteVideoSources = new Set(state.remoteVideoSources);
+
+                for (const source of videoSources.keys()) {
+                    newRemoteVideoSources.add(source);
+                }
+                state.remoteVideoSources = newRemoteVideoSources;
+            }
+        }
+
+        return { ...state };
+    }
     case RAISE_HAND_UPDATED: {
         return {
             ...state,
             raisedHandsQueue: action.queue
         };
-    }
-    case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED: {
-        const { participantIds } = action;
-        const sortedSharesList = [];
-
-        for (const participant of participantIds) {
-            const remoteParticipant = state.remote.get(participant);
-
-            if (remoteParticipant) {
-                const displayName
-                    = _getDisplayName(state, remoteParticipant.name);
-
-                sortedSharesList.push([ participant, displayName ]);
-            }
-        }
-
-        // Keep the remote screen share list sorted alphabetically.
-        sortedSharesList.length && sortedSharesList.sort((a, b) => a[1].localeCompare(b[1]));
-
-        // @ts-ignore
-        state.sortedRemoteScreenshares = new Map(sortedSharesList);
-
-        return { ...state };
     }
     case OVERWRITE_PARTICIPANT_NAME: {
         const { id, name } = action;
@@ -521,7 +548,8 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         name,
         pinned,
         presence,
-        role
+        role,
+        sources
     } = participant;
     let { conference, id } = participant;
 
@@ -551,7 +579,8 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         name,
         pinned: pinned || false,
         presence,
-        role: role || PARTICIPANT_ROLE.NONE
+        role: role || PARTICIPANT_ROLE.NONE,
+        sources
     };
 }
 

@@ -99,6 +99,11 @@ interface IProps extends WithTranslation {
     isLocalVideo: boolean;
 
     /**
+     * Whether we are in narrow layout mode or not.
+     */
+    isNarrowLayout: boolean;
+
+    /**
      * Whether or not the statistics are for screen share.
      */
     isVirtualScreenshareParticipant: boolean;
@@ -261,9 +266,10 @@ class ConnectionStatsTable extends Component<IProps> {
             disableShowMoreStats,
             enableSaveLogs,
             isVirtualScreenshareParticipant,
-            isLocalVideo
+            isLocalVideo,
+            isNarrowLayout
         } = this.props;
-        const className = clsx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() });
+        const className = clsx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() || isNarrowLayout });
 
         if (isVirtualScreenshareParticipant) {
             return this._renderScreenShareStatus();

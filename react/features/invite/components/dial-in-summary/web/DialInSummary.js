@@ -1,8 +1,13 @@
 // @flow
 
+
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
+import clsx from 'clsx';
 import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
+import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { getDialInConferenceID, getDialInNumbers } from '../../../_utils';
 
 import ConferenceID from './ConferenceID';
@@ -21,6 +26,11 @@ type Props = {
     className: string,
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: any;
+
+    /**
      * Whether or not numbers should include links with the telephone protocol.
      */
     clickableNumbers: boolean,
@@ -29,6 +39,16 @@ type Props = {
      * The name of the conference to show a conferenceID for.
      */
     room: string,
+
+    /**
+     * Whether the dial in summary container is scrollable.
+     */
+    scrollable: Boolean,
+
+    /**
+     * Whether the room name should show as title.
+     */
+    showTitle?: boolean,
 
     /**
      * The url where we were loaded.
@@ -71,6 +91,26 @@ type State = {
      */
     numbersEnabled: ?boolean
 }
+
+const styles = (theme: Theme) => {
+    return {
+        hasNumbers: {
+            alignItems: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            background: '#1E1E1E',
+            color: theme.palette.text01
+        },
+        scrollable: {
+            height: '100vh',
+            overflowY: 'scroll'
+        },
+        roomName: {
+            margin: '40px auto 8px',
+            ...withPixelLineHeight(theme.typography.heading5)
+        }
+    };
+};
 
 /**
  * Displays a page listing numbers for dialing into a conference and pin to
@@ -136,24 +176,27 @@ class DialInSummary extends Component<Props, State> {
         let contents;
 
         const { conferenceID, error, loading, numbersEnabled } = this.state;
+        const { classes, showTitle, room, clickableNumbers, scrollable, t } = this.props;
 
         if (loading) {
             contents = '';
         } else if (numbersEnabled === false) {
-            contents = this.props.t('info.dialInNotSupported');
+            contents = t('info.dialInNotSupported');
         } else if (error) {
             contents = error;
         } else {
-            className = 'has-numbers';
+            className = clsx(classes.hasNumbers, scrollable && classes.scrollable);
             contents = [
                 conferenceID
-                    ? <ConferenceID
-                        conferenceID = { conferenceID }
-                        conferenceName = { this.props.room }
-                        key = 'conferenceID' />
-                    : null,
+                    ? <>
+                        { showTitle && <div className = { classes.roomName }>{ room }</div> }
+                        <ConferenceID
+                            conferenceID = { conferenceID }
+                            conferenceName = { room }
+                            key = 'conferenceID' />
+                    </> : null,
                 <NumbersList
-                    clickableNumbers = { this.props.clickableNumbers }
+                    clickableNumbers = { clickableNumbers }
                     conferenceID = { conferenceID }
                     key = 'numbers'
                     numbers = { this.state.numbers } />
@@ -161,7 +204,7 @@ class DialInSummary extends Component<Props, State> {
         }
 
         return (
-            <div className = { `${this.props.className} ${className}` }>
+            <div className = { className }>
                 { contents }
             </div>
         );
@@ -272,4 +315,4 @@ class DialInSummary extends Component<Props, State> {
     }
 }
 
-export default translate(DialInSummary);
+export default translate(withStyles(styles)(DialInSummary));

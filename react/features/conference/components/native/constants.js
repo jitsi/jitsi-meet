@@ -26,6 +26,7 @@ export const LABEL_ID_STREAMING = 'streaming';
 export const LABEL_ID_TRANSCRIBING = 'transcribing';
 export const LABEL_ID_INSECURE_ROOM_NAME = 'insecure-room-name';
 export const LABEL_ID_RAISED_HANDS_COUNT = 'raised-hands-count';
+export const LABEL_ID_VISITORS_COUNT = 'visitors-count';
 
 /**
  * The {@code ExpandedLabel} components to be rendered for the individual

@@ -373,8 +373,12 @@ PODS:
     - React-Core
   - react-native-performance (2.1.0):
     - React-Core
-  - react-native-safe-area-context (3.3.2):
+  - react-native-safe-area-context (4.4.1):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - ReactCommon/turbomodule/core
   - react-native-slider (4.1.12):
     - React-Core
   - react-native-splash-screen (3.3.0):
@@ -385,7 +389,7 @@ PODS:
   - react-native-video/Video (6.0.0-alpha.1):
     - PromisesSwift
     - React-Core
-  - react-native-webrtc (1.106.1):
+  - react-native-webrtc (106.0.6):
     - JitsiWebRTC (~> 106.0.0)
     - React-Core
   - react-native-webview (11.15.1):
@@ -461,13 +465,11 @@ PODS:
     - React-Core
   - RNCClipboard (1.5.1):
     - React-Core
-  - RNCMaskedView (0.2.6):
-    - React-Core
   - RNDefaultPreference (1.4.4):
     - React-Core
   - RNDeviceInfo (8.4.8):
     - React-Core
-  - RNGestureHandler (2.1.0):
+  - RNGestureHandler (2.9.0):
     - React-Core
   - RNGoogleSignin (7.0.4):
     - GoogleSignIn (~> 6.0.0)
@@ -543,7 +545,6 @@ DEPENDENCIES:
   - RNCalendarEvents (from `../node_modules/react-native-calendar-events`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
-  - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
   - RNDefaultPreference (from `../node_modules/react-native-default-preference`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -678,8 +679,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
     :path: "../node_modules/@react-native-community/clipboard"
-  RNCMaskedView:
-    :path: "../node_modules/@react-native-masked-view/masked-view"
   RNDefaultPreference:
     :path: "../node_modules/react-native-default-preference"
   RNDeviceInfo:
@@ -751,11 +750,11 @@ SPEC CHECKSUMS:
   react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
   react-native-pager-view: 3ee7d4c7697fb3ef788346e834a60cca97ed8540
   react-native-performance: f4b6604a9d5a8a7407e34a82fab6c641d9a3ec12
-  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
   react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
-  react-native-webrtc: 4a4c31be61f88d1d3356526eebce72f462a6760e
+  react-native-webrtc: 22ac6c64a1e38552bb173dde81ffea6979a58ef3
   react-native-webview: ea4899a1056c782afa96dd082179a66cbebf5504
   React-perflogger: 0458a87ea9a7342079e7a31b0d32b3734fb8415f
   React-RCTActionSheet: 22538001ea2926dea001111dd2846c13a0730bc9
@@ -772,10 +771,9 @@ SPEC CHECKSUMS:
   RNCalendarEvents: 7e65eb4a94f53c1744d1e275f7fafcfaa619f7a3
   RNCAsyncStorage: 005c0e2f09575360f142d0d1f1f15e4ec575b1af
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
-  RNCMaskedView: c298b644a10c0c142055b3ae24d83879ecb13ccd
   RNDefaultPreference: 08bdb06cfa9188d5da97d4642dac745218d7fb31
   RNDeviceInfo: 0400a6d0c94186d1120c3cbd97b23abc022187a9
-  RNGestureHandler: e5c7cab5f214503dcefd6b2b0cefb050e1f51c4a
+  RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNGoogleSignin: c4381751eefd73c552b923ba347a9bfc6f18771c
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
   RNSound: 27e8268bdb0a1f191f219a33267f7e0445e8d62f

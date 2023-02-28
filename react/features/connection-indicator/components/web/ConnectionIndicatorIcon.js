@@ -103,7 +103,7 @@ export const ConnectionIndicatorIcon = ({
         <span className = { emptyIconWrapperClassName }>
             <Icon
                 className = { clsx(classes.icon, colorClass) }
-                size = { 12 }
+                size = { 16 }
                 src = { IconConnection } />
         </span>
     );

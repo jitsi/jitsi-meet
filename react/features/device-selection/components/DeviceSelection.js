@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { getAvailableDevices } from '../../base/devices/actions.web';
 import AbstractDialogTab, {
     type Props as AbstractDialogTabProps
 } from '../../base/dialog/components/web/AbstractDialogTab';
@@ -11,6 +12,7 @@ import logger from '../logger';
 
 import AudioInputPreview from './AudioInputPreview';
 import AudioOutputPreview from './AudioOutputPreview';
+import DeviceHidContainer from './DeviceHidContainer.web';
 import DeviceSelector from './DeviceSelector';
 import VideoInputPreview from './VideoInputPreview';
 
@@ -76,16 +78,15 @@ export type Props = {
     hideAudioOutputSelect: boolean,
 
     /**
+     * Whether or not the hid device container should display.
+     */
+    hideDeviceHIDContainer: boolean,
+
+    /**
      * Whether video input preview should be displayed or not.
      * (In the case of iOS Safari).
      */
     hideVideoInputPreview: boolean,
-
-    /**
-     * An optional callback to invoke after the component has completed its
-     * mount logic.
-     */
-    mountCallback?: Function,
 
     /**
      * The id of the audio input device to preview.
@@ -176,7 +177,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
             this._createVideoInputTrack(this.props.selectedVideoInputId)
         ])
         .catch(err => logger.warn('Failed to initialize preview tracks', err))
-        .then(() => this.props.mountCallback && this.props.mountCallback());
+            .then(() => getAvailableDevices());
     }
 
     /**
@@ -218,6 +219,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         const {
             hideAudioInputPreview,
             hideAudioOutputPreview,
+            hideDeviceHIDContainer,
             hideVideoInputPreview,
             selectedAudioOutputId
         } = this.props;
@@ -245,6 +247,8 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                     { !hideAudioOutputPreview
                         && <AudioOutputPreview
                             deviceId = { selectedAudioOutputId } /> }
+                    { !hideDeviceHIDContainer
+                        && <DeviceHidContainer /> }
                 </div>
             </div>
         );

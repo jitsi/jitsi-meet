@@ -2,12 +2,12 @@ import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from '
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Drawer, JitsiPortal } from '../../../../toolbox/components/web';
+import Drawer from '../../../../toolbox/components/web/Drawer';
+import JitsiPortal from '../../../../toolbox/components/web/JitsiPortal';
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { spacing } from '../../Tokens';
 
 /**
  * Get a style property from a style declaration as a float.
@@ -36,6 +36,11 @@ const getComputedOuterHeight = (element: HTMLElement) => {
 interface IProps {
 
     /**
+     * ARIA attributes.
+     */
+    [key: `aria-${string}`]: string;
+
+    /**
      * Accessibility label for menu container.
      */
     accessibilityLabel?: string;
@@ -59,6 +64,11 @@ interface IProps {
      * Whether or not the menu is hidden. Used to overwrite the internal isHidden.
      */
     hidden?: boolean;
+
+    /**
+     * Optional id.
+     */
+    id?: string;
 
     /**
      * Whether or not the menu is already in a drawer.
@@ -99,6 +109,16 @@ interface IProps {
      * Callback for the mouse leaving the component.
      */
     onMouseLeave?: (e?: React.MouseEvent) => void;
+
+    /**
+     * Container role.
+     */
+    role?: string;
+
+    /**
+     * Tab index for the menu.
+     */
+    tabIndex?: number;
 }
 
 const MAX_HEIGHT = 400;
@@ -109,7 +129,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui01,
             border: `1px solid ${theme.palette.ui04}`,
             borderRadius: `${Number(theme.shape.borderRadius)}px`,
-            boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
+            boxShadow: '0px 1px 2px rgba(41, 41, 41, 0.25)',
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             marginTop: `${(participantsPaneTheme.panePadding * 2) + theme.typography.bodyShortRegular.fontSize}px`,
@@ -147,6 +167,7 @@ const ContextMenu = ({
     className,
     entity,
     hidden,
+    id,
     inDrawer,
     isDrawerOpen,
     offsetTarget,
@@ -154,7 +175,10 @@ const ContextMenu = ({
     onKeyDown,
     onDrawerClose,
     onMouseEnter,
-    onMouseLeave
+    onMouseLeave,
+    role,
+    tabIndex,
+    ...aria
 }: IProps) => {
     const [ isHidden, setIsHidden ] = useState(true);
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -171,9 +195,22 @@ const ContextMenu = ({
             && offsetTarget.offsetParent instanceof HTMLElement
         ) {
             const { current: container } = containerRef;
+
+            // make sure the max height is not set
+            // @ts-ignore
+            container.style.maxHeight = null;
             const { offsetTop, offsetParent: { offsetHeight, scrollTop } } = offsetTarget;
-            const outerHeight = getComputedOuterHeight(container);
-            const height = Math.min(MAX_HEIGHT, outerHeight);
+            let outerHeight = getComputedOuterHeight(container);
+            let height = Math.min(MAX_HEIGHT, outerHeight);
+
+            if (offsetTop + height > offsetHeight + scrollTop && height > offsetTop) {
+                // top offset and + padding + border
+                container.style.maxHeight = `${offsetTop - ((spacing[2] * 2) + 2)}px`;
+            }
+
+            // get the height after style changes
+            outerHeight = getComputedOuterHeight(container);
+            height = Math.min(MAX_HEIGHT, outerHeight);
 
             container.style.top = offsetTop + height > offsetHeight + scrollTop
                 ? `${offsetTop - outerHeight}`
@@ -202,7 +239,7 @@ const ContextMenu = ({
     return _overflowDrawer
         ? <JitsiPortal>
             <Drawer
-                isOpen = { isDrawerOpen && _overflowDrawer }
+                isOpen = { Boolean(isDrawerOpen && _overflowDrawer) }
                 onClose = { onDrawerClose }>
                 <div
                     className = { styles.drawer }
@@ -212,17 +249,21 @@ const ContextMenu = ({
             </Drawer>
         </JitsiPortal>
         : <div
+            { ...aria }
             aria-label = { accessibilityLabel }
             className = { cx(participantsPaneTheme.ignoredChildClassName,
                 styles.contextMenu,
                 isHidden && styles.contextMenuHidden,
                 className
             ) }
+            id = { id }
             onClick = { onClick }
             onKeyDown = { onKeyDown }
             onMouseEnter = { onMouseEnter }
             onMouseLeave = { onMouseLeave }
-            ref = { containerRef }>
+            ref = { containerRef }
+            role = { role }
+            tabIndex = { tabIndex }>
             {children}
         </div>;
 };

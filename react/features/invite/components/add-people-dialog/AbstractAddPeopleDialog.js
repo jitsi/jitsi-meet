@@ -36,6 +36,11 @@ export type Props = {
     _dialOutAuthUrl: string,
 
     /**
+     * The URL for validating if an outbound destination is allowed.
+     */
+    _dialOutRegionUrl: string;
+
+    /**
      * Whether or not to show Dial Out functionality.
      */
     _dialOutEnabled: boolean,
@@ -235,7 +240,9 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
     _query(query = '') {
         const {
             _addPeopleEnabled: addPeopleEnabled,
+            _appId: appId,
             _dialOutAuthUrl: dialOutAuthUrl,
+            _dialOutRegionUrl: dialOutRegionUrl,
             _dialOutEnabled: dialOutEnabled,
             _jwt: jwt,
             _peopleSearchQueryTypes: peopleSearchQueryTypes,
@@ -244,8 +251,10 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
         } = this.props;
         const options = {
             addPeopleEnabled,
+            appId,
             dialOutAuthUrl,
             dialOutEnabled,
+            dialOutRegionUrl,
             jwt,
             peopleSearchQueryTypes,
             peopleSearchUrl,
@@ -275,14 +284,17 @@ export function _mapStateToProps(state: Object) {
     const {
         callFlowsEnabled,
         dialOutAuthUrl,
+        dialOutRegionUrl,
         peopleSearchQueryTypes,
         peopleSearchUrl
     } = state['features/base/config'];
 
     return {
         _addPeopleEnabled: isAddPeopleEnabled(state),
+        _appId: state['features/base/jwt']?.tenant,
         _callFlowsEnabled: callFlowsEnabled,
         _dialOutAuthUrl: dialOutAuthUrl,
+        _dialOutRegionUrl: dialOutRegionUrl,
         _dialOutEnabled: isDialOutEnabled(state),
         _jwt: state['features/base/jwt'].jwt,
         _peopleSearchQueryTypes: peopleSearchQueryTypes,

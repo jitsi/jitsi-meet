@@ -13,6 +13,8 @@ export enum BUTTON_TYPES {
  */
 export const BUTTON_MODES: {
     CONTAINED: 'contained';
+    TEXT: 'text';
 } = {
-    CONTAINED: 'contained'
+    CONTAINED: 'contained',
+    TEXT: 'text'
 };

@@ -4,10 +4,6 @@
  * Style variables
  */
 $baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-$hangupColor:#DD3849;
-$hangupHoverColor: #F25363;
-$hangupMenuButtonColor:#0056E0;;
-$hangupMenuButtonHoverColor: #246FE5;
 
 /**
  * Size variables.
@@ -79,7 +75,6 @@ $modalTextColor: #333;
 $chatActionsSeparatorColor: rgb(173, 105, 112);
 $chatBackgroundColor: #131519;
 $chatInputSeparatorColor: #A4B8D1;
-$chatLobbyMessageBackgroundColor: #6A50D3;
 $chatLobbyActionsSeparatorColor: #6A50D3;
 $chatLocalMessageBackgroundColor: #484A4F;
 $chatPrivateMessageBackgroundColor: rgb(153, 69, 77);
@@ -170,8 +165,9 @@ $welcomePageHeaderPaddingBottom: 0px;
 $welcomePageHeaderTitleMaxWidth: initial;
 $welcomePageHeaderTextAlign: center;
 
+$welcomePageHeaderContainerMarginTop: 104px;
 $welcomePageHeaderContainerDisplay: flex;
-$welcomePageHeaderContainerMargin: 104px 32px 0 32px;
+$welcomePageHeaderContainerMargin: $welcomePageHeaderContainerMarginTop auto 0;
 
 $welcomePageHeaderTextTitleMarginBottom: 0;
 $welcomePageHeaderTextTitleFontSize: 42px;
@@ -204,11 +200,6 @@ $deepLinkingDialInConferenceIdMargin: 10px 0 10px 0;
 $deepLinkingDialInConferenceIdPadding: inherit;
 $deepLinkingDialInConferenceIdBackgroundColor: inherit;
 $deepLinkingDialInConferenceIdBorderRadius: inherit;
-
-$deepLinkingDialInConferenceNameFontSize: inherit;
-$deepLinkingDialInConferenceNameLineHeight: inherit;
-$deepLinkingDialInConferenceNameMarginBottom: none;
-$deepLinkingDialInConferenceNameFontWeight: inherit;
 
 $deepLinkingDialInConferenceDescriptionFontSize: 0.8em;
 $deepLinkingDialInConferenceDescriptionLineHeight: inherit;

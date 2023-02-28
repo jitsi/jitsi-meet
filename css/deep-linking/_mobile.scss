@@ -67,6 +67,13 @@
             font-size: 1em;
         }
 
+
+        .dial-in-conference-id {
+            text-align: center;
+            min-width: 200px;
+            margin-top: 40px;
+        }
+
         .dial-in-conference-id {
             margin: $deepLinkingDialInConferenceIdMargin;
             padding: $deepLinkingDialInConferenceIdPadding;
@@ -74,22 +81,10 @@
             border-radius: $deepLinkingDialInConferenceIdBorderRadius;
         }
 
-        .dial-in-conference-name {
-            font-size: $deepLinkingDialInConferenceNameFontSize;
-            line-height: $deepLinkingDialInConferenceNameLineHeight;
-            margin-bottom: $deepLinkingDialInConferenceNameMarginBottom;
-            font-weight: $deepLinkingDialInConferenceNameFontWeight;
-        }
-
         .dial-in-conference-description {
             font-size: $deepLinkingDialInConferenceDescriptionFontSize;
             line-height: $deepLinkingDialInConferenceDescriptionLineHeight;
             margin-bottom: $deepLinkingDialInConferenceDescriptionMarginBottom;
-        }
-
-        .dial-in-conference-pin {
-            font-size: $deepLinkingDialInConferencePinFontSize;
-            line-height: $deepLinkingDialInConferencePinLineHeight;
         }
 
         .toll-free-list {

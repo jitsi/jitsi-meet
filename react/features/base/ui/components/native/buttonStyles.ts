@@ -42,6 +42,11 @@ export default {
         color: BaseTheme.palette.text01
     },
 
+    buttonLabelPrimaryText: {
+        ...buttonLabel,
+        color: BaseTheme.palette.action01
+    },
+
     buttonLabelSecondary: {
         ...buttonLabel,
         color: BaseTheme.palette.text04
@@ -52,9 +57,15 @@ export default {
         color: BaseTheme.palette.text01
     },
 
+    buttonLabelDestructiveText: {
+        ...buttonLabel,
+        color: BaseTheme.palette.actionDanger
+    },
+
     buttonLabelTertiary: {
         ...buttonLabel,
         color: BaseTheme.palette.text01,
+        margin: BaseTheme.spacing[3],
         textAlign: 'center'
     },
 

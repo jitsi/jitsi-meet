@@ -91,38 +91,16 @@ export default {
     /**
      * Style for the form section separator titles.
      */
-    formSectionTitle: {
+
+    formSectionTitleContent: {
         backgroundColor: BaseTheme.palette.ui02,
-        paddingBottom: 0,
-        paddingTop: 0
+        paddingVertical: BaseTheme.spacing[1]
     },
 
     formSectionTitleText: {
+        ...BaseTheme.typography.bodyShortRegular,
         color: BaseTheme.palette.text01,
-        fontSize: 14,
         opacity: 0.6,
-        textAlign: 'center'
-    },
-
-    section: {
-        color: BaseTheme.palette.icon01,
-        fontSize: 14
-    },
-
-    sectionLink: {
-        ...BaseTheme.typography.bodyShortBoldLarge,
-        color: BaseTheme.palette.link01,
-        margin: BaseTheme.spacing[3],
-        textAlign: 'center'
-    },
-
-    sectionLinkContainer: {
-        margin: BaseTheme.spacing[3]
-    },
-
-    sectionLinkText: {
-        ...BaseTheme.typography.bodyShortBoldLarge,
-        color: BaseTheme.palette.link01,
         textAlign: 'center'
     },
 

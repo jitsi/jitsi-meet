@@ -2,9 +2,7 @@ import React, { useCallback } from 'react';
 
 // @ts-ignore
 import { Container } from '../../react/base';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { styleTypeToObject } from '../../styles';
+import { styleTypeToObject } from '../../styles/functions';
 
 interface IProps {
 
@@ -141,6 +139,8 @@ export default function Icon(props: IProps) {
         color: styleColor,
         fontSize: styleSize,
         ...restStyle
+
+        // @ts-ignore
     } = styleTypeToObject(style ?? {});
     const calculatedColor = color ?? styleColor ?? DEFAULT_COLOR;
     const calculatedSize = size ?? styleSize ?? DEFAULT_SIZE;

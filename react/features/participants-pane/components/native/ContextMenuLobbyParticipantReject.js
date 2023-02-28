@@ -35,7 +35,6 @@ const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => {
         <View
             style = { styles.contextMenuItemSectionAvatar }>
             <Avatar
-                className = 'participant-avatar'
                 participantId = { p.id }
                 size = { 24 } />
             <Text style = { styles.contextMenuItemName }>

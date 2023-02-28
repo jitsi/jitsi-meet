@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconCrown } from '../../../base/icons';
+import { IconModerator } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import AbstractGrantModeratorButton, {
@@ -46,7 +46,7 @@ class GrantModeratorButton extends AbstractGrantModeratorButton {
             <ContextMenuItem
                 accessibilityLabel = { t('toolbar.accessibilityLabel.grantModerator') }
                 className = 'grantmoderatorlink'
-                icon = { IconCrown }
+                icon = { IconModerator }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick }
                 text = { t('videothumbnail.grantModerator') } />

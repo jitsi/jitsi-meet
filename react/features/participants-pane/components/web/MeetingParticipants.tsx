@@ -26,11 +26,16 @@ import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
 // @ts-ignore
 import MeetingParticipantItems from './MeetingParticipantItems';
+/* eslint-enable lines-around-comment */
 
 const useStyles = makeStyles()(theme => {
     return {
+        headingW: {
+            color: theme.palette.warning02
+        },
         heading: {
             color: theme.palette.text02,
+
             // @ts-ignore
             ...withPixelLineHeight(theme.typography.labelButton),
             margin: `8px 0 ${participantsPaneTheme.panePadding}px`,
@@ -101,11 +106,22 @@ function MeetingParticipants({
     const askUnmuteText = t('participantsPane.actions.askUnmute');
     const muteParticipantButtonText = t('dialog.muteParticipantButton');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
+    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count);
 
-    const { classes: styles } = useStyles();
+    const { classes: styles, cx } = useStyles();
 
     return (
         <>
+            <span
+                aria-level = { 1 }
+                className = 'sr-only'
+                role = 'heading'>
+                { t('participantsPane.title') }
+            </span>
+            <div className = { cx(styles.heading, styles.headingW) }>
+                {visitorsCount && visitorsCount > 0
+                    && t('participantsPane.headings.visitors', { count: visitorsCount })}
+            </div>
             <div className = { styles.heading }>
                 {currentRoom?.name
                     ? `${currentRoom.name} (${participantsCount})`

@@ -89,41 +89,35 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CLEAR_NOTIFICATIONS: {
-        if (navigator.product !== 'ReactNative') {
-            const _notifications = getNotifications(state);
+        const _notifications = getNotifications(state);
 
-            for (const notification of _notifications) {
-                if (timers.has(notification.uid)) {
-                    const timeout = timers.get(notification.uid);
+        for (const notification of _notifications) {
+            if (timers.has(notification.uid)) {
+                const timeout = timers.get(notification.uid);
 
-                    clearTimeout(timeout);
-                    timers.delete(notification.uid);
-                }
+                clearTimeout(timeout);
+                timers.delete(notification.uid);
             }
-            timers.clear();
         }
+        timers.clear();
         break;
     }
     case SHOW_NOTIFICATION: {
-        if (navigator.product !== 'ReactNative') {
-            if (timers.has(action.uid)) {
-                const timer = timers.get(action.uid);
-
-                clearTimeout(timer);
-                timers.delete(action.uid);
-            }
-
-            createTimeoutId(action, dispatch);
-        }
-        break;
-    }
-    case HIDE_NOTIFICATION: {
-        if (navigator.product !== 'ReactNative') {
+        if (timers.has(action.uid)) {
             const timer = timers.get(action.uid);
 
             clearTimeout(timer);
             timers.delete(action.uid);
         }
+
+        createTimeoutId(action, dispatch);
+        break;
+    }
+    case HIDE_NOTIFICATION: {
+        const timer = timers.get(action.uid);
+
+        clearTimeout(timer);
+        timers.delete(action.uid);
         break;
     }
     case PARTICIPANT_JOINED: {

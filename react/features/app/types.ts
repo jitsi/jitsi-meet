@@ -65,6 +65,7 @@ import { IRecordingState } from '../recording/reducer';
 import { IRemoteControlState } from '../remote-control/reducer';
 import { IScreenShareState } from '../screen-share/reducer';
 import { IScreenshotCaptureState } from '../screenshot-capture/reducer';
+import { IShareRoomState } from '../share-room/reducer';
 import { ISharedVideoState } from '../shared-video/reducer';
 import { ISpeakerStatsState } from '../speaker-stats/reducer';
 import { ISubtitlesState } from '../subtitles/reducer';
@@ -75,6 +76,8 @@ import { IVideoLayoutState } from '../video-layout/reducer';
 import { IVideoQualityPersistedState, IVideoQualityState } from '../video-quality/reducer';
 import { IVideoSipGW } from '../videosipgw/reducer';
 import { IVirtualBackground } from '../virtual-background/reducer';
+import { IVisitorsState } from '../visitors/reducer';
+import { IWebHid } from '../web-hid/reducer';
 import { IWhiteboardState } from '../whiteboard/reducer';
 
 export interface IStore {
@@ -89,6 +92,7 @@ export interface IReduxState {
     'features/background': IBackgroundState;
     'features/base/app': IAppState;
     'features/base/audio-only': IAudioOnlyState;
+    'features/base/color-scheme': any;
     'features/base/conference': IConferenceState;
     'features/base/config': IConfigState;
     'features/base/connection': IConnectionState;
@@ -148,6 +152,7 @@ export interface IReduxState {
     'features/screen-share': IScreenShareState;
     'features/screenshot-capture': IScreenshotCaptureState;
     'features/settings': ISettingsState;
+    'features/share-room': IShareRoomState;
     'features/shared-video': ISharedVideoState;
     'features/speaker-stats': ISpeakerStatsState;
     'features/subtitles': ISubtitlesState;
@@ -160,5 +165,11 @@ export interface IReduxState {
     'features/video-quality-persistent-storage': IVideoQualityPersistedState;
     'features/videosipgw': IVideoSipGW;
     'features/virtual-background': IVirtualBackground;
+    'features/visitors': IVisitorsState;
+    'features/web-hid': IWebHid;
     'features/whiteboard': IWhiteboardState;
+}
+
+export interface IReloadNowOptions {
+    hidePrejoin?: boolean;
 }

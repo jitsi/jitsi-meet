@@ -5,8 +5,6 @@ import {
     isLocalParticipantModerator
 } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { getPinnedActiveParticipants, isStageFilmstripEnabled } from '../filmstrip/functions';
 import { shouldDisplayTileView } from '../video-layout/functions';
 
@@ -92,7 +90,7 @@ function _getFollowMeState(state: IReduxState) {
     return {
         filmstripVisible: state['features/filmstrip'].visible,
         maxStageParticipants: stageFilmstrip ? state['features/base/settings'].maxStageParticipants : undefined,
-        nextOnStage: stageFilmstrip ? undefined : pinnedParticipant?.id,
+        nextOnStage: pinnedParticipant?.id,
         pinnedStageParticipants: stageFilmstrip ? JSON.stringify(getPinnedActiveParticipants(state)) : undefined,
         sharedDocumentVisible: state['features/etherpad'].editing,
         tileViewEnabled: shouldDisplayTileView(state)

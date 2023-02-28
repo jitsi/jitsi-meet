@@ -3,6 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { getSecurityUiConfig } from '../../../base/config/functions.any';
 import {
     LOBBY_MODE_ENABLED,
     MEETING_PASSWORD_ENABLED,
@@ -81,7 +82,7 @@ export default class AbstractSecurityDialogButton<P: Props, S:*>
  */
 export function _mapStateToProps(state: Object) {
     const { conference } = state['features/base/conference'];
-    const { hideLobbyButton } = state['features/base/config'];
+    const { hideLobbyButton } = getSecurityUiConfig(state);
     const { locked } = state['features/base/conference'];
     const { lobbyEnabled } = state['features/lobby'];
     const lobbySupported = conference && conference.isLobbySupported();

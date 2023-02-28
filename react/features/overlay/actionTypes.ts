@@ -13,26 +13,3 @@
  */
 export const MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED
     = 'MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED';
-
-/**
- * Adjust the state of the fatal error which shows/hides the reload screen. See
- * action methods's description for more info about each of the fields.
- *
- * {
- *     type: SET_FATAL_ERROR,
- *     fatalError: ?Object
- * }
- * @public
- */
-export const SET_FATAL_ERROR = 'SET_FATAL_ERROR';
-
-/**
- * The type of the Redux action which signals that the overlay was canceled.
- *
- * {
- *     type: export const SET_PAGE_RELOAD_OVERLAY_CANCELED
- * }
- * @public
- */
-export const SET_PAGE_RELOAD_OVERLAY_CANCELED
-    = 'SET_PAGE_RELOAD_OVERLAY_CANCELED';

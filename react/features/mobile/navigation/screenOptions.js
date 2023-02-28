@@ -26,14 +26,6 @@ export const fullScreenOptions = {
     headerShown: false
 };
 
-export const linkScreenOptions = {
-    gestureEnabled: true,
-    headerShown: true,
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    }
-};
-
 /**
  * Navigation container theme.
  */

@@ -73,7 +73,6 @@ class ReactInstanceManagerHolder {
                 new SplashScreenModule(reactContext),
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext),
-                new WiFiStatsModule(reactContext),
                 new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)));
 
         if (AudioModeModule.useConnectionService()) {
@@ -120,11 +119,10 @@ class ReactInstanceManagerHolder {
             new com.oblador.performance.PerformancePackage(),
             new com.reactnativecommunity.slider.ReactSliderPackage(),
             new com.brentvatne.react.ReactVideoPackage(),
-            new org.reactnative.maskedview.RNCMaskedViewPackage(),
             new com.reactnativecommunity.webview.RNCWebViewPackage(),
             new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
             new com.learnium.RNDeviceInfo.RNDeviceInfo(),
-            new com.swmansion.gesturehandler.react.RNGestureHandlerPackage(),
+            new com.swmansion.gesturehandler.RNGestureHandlerPackage(),
             new org.linusu.RNGetRandomValuesPackage(),
             new com.rnimmersive.RNImmersivePackage(),
             new com.swmansion.rnscreens.RNScreensPackage(),

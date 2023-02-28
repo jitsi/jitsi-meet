@@ -12,6 +12,7 @@ import { ChatButton } from '../../../chat';
 import { ReactionsMenuButton } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { TileViewButton } from '../../../video-layout';
+import { iAmVisitor } from '../../../visitors/functions';
 import { getMovableButtons, isToolboxVisible } from '../../functions.native';
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
@@ -49,6 +50,11 @@ type Props = {
     _visible: boolean,
 
     /**
+     * Whether we are in visitors mode.
+     */
+    _visitorsModeEnabled: boolean,
+
+    /**
      * The width of the screen.
      */
     _width: number
@@ -61,7 +67,7 @@ type Props = {
  * @returns {React$Element}.
  */
 function Toolbox(props: Props) {
-    const { _endConferenceSupported, _reactionsEnabled, _styles, _visible, _width } = props;
+    const { _endConferenceSupported, _reactionsEnabled, _styles, _visible, _visitorsModeEnabled, _width } = props;
 
     if (!_visible) {
         return null;
@@ -87,20 +93,22 @@ function Toolbox(props: Props) {
                 edges = { [ bottomEdge && 'bottom' ].filter(Boolean) }
                 pointerEvents = 'box-none'
                 style = { styles.toolbox }>
-                <AudioMuteButton
+                {!_visitorsModeEnabled && <AudioMuteButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />
-                <VideoMuteButton
+                }
+                {!_visitorsModeEnabled && <VideoMuteButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />
-                {
-                    additionalButtons.has('chat')
+                }
+                {!_visitorsModeEnabled && additionalButtons.has('chat')
                       && <ChatButton
                           styles = { buttonStylesBorderless }
                           toggledStyles = { backgroundToggledStyle } />
                 }
-                {additionalButtons.has('screensharing') && <ScreenSharingButton styles = { buttonStylesBorderless } />}
-                { additionalButtons.has('raisehand') && (_reactionsEnabled
+                {!_visitorsModeEnabled && additionalButtons.has('screensharing')
+                    && <ScreenSharingButton styles = { buttonStylesBorderless } />}
+                { !_visitorsModeEnabled && additionalButtons.has('raisehand') && (_reactionsEnabled
                     ? <ReactionsMenuButton
                         styles = { buttonStylesBorderless }
                         toggledStyles = { backgroundToggledStyle } />
@@ -108,9 +116,10 @@ function Toolbox(props: Props) {
                         styles = { buttonStylesBorderless }
                         toggledStyles = { backgroundToggledStyle } />)}
                 {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
-                <OverflowMenuButton
+                {!_visitorsModeEnabled && <OverflowMenuButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />
+                }
                 { _endConferenceSupported
                     ? <HangupMenuButton
                         styles = { hangupMenuButtonStyles }
@@ -140,6 +149,7 @@ function _mapStateToProps(state: Object): Object {
         _endConferenceSupported: Boolean(endConferenceSupported),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
+        _visitorsModeEnabled: iAmVisitor(state),
         _width: state['features/base/responsive-ui'].clientWidth,
         _reactionsEnabled: isReactionsEnabled(state)
     };

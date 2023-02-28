@@ -2,6 +2,7 @@ import { IReduxState } from '../app/types';
 import { getRoomName } from '../base/conference/functions';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { isAudioMuted, isVideoMutedByUser } from '../base/media/functions';
+import { getLobbyConfig } from '../lobby/functions';
 
 /**
  * Selector for the visibility of the 'join by phone' button.
@@ -159,11 +160,12 @@ export function isPrejoinPageVisible(state: IReduxState): boolean {
  * @returns {boolean}
  */
 export function shouldAutoKnock(state: IReduxState): boolean {
-    const { iAmRecorder, iAmSipGateway, autoKnockLobby, prejoinConfig } = state['features/base/config'];
+    const { iAmRecorder, iAmSipGateway, prejoinConfig } = state['features/base/config'];
     const { userSelectedSkipPrejoin } = state['features/base/settings'];
+    const { autoKnock } = getLobbyConfig(state);
     const isPrejoinEnabled = prejoinConfig?.enabled;
 
     return Boolean(((isPrejoinEnabled && !userSelectedSkipPrejoin)
-            || autoKnockLobby || (iAmRecorder && iAmSipGateway))
+            || autoKnock || (iAmRecorder && iAmSipGateway))
         && !state['features/lobby'].knocking);
 }

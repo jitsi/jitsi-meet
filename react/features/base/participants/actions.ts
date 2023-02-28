@@ -18,6 +18,7 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
+    PARTICIPANT_SOURCES_UPDATED,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     RAISE_HAND_UPDATED,
@@ -36,7 +37,7 @@ import {
     getVirtualScreenshareParticipantOwnerId
 } from './functions';
 import logger from './logger';
-import { FakeParticipant, IParticipant } from './types';
+import { FakeParticipant, IJitsiParticipant, IParticipant } from './types';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -250,6 +251,39 @@ export function participantJoined(participant: IParticipant) {
                 participant
             });
         }
+    };
+}
+
+/**
+ * Updates the sources of a remote participant.
+ *
+ * @param {IJitsiParticipant} jitsiParticipant - The IJitsiParticipant instance.
+ * @returns {{
+ *      type: PARTICIPANT_SOURCES_UPDATED,
+ *      participant: IParticipant
+ * }}
+ */
+export function participantSourcesUpdated(jitsiParticipant: IJitsiParticipant) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const id = jitsiParticipant.getId();
+        const participant = getParticipantById(getState(), id);
+
+        if (participant?.local) {
+            return;
+        }
+        const sources = jitsiParticipant.getSources();
+
+        if (!sources?.size) {
+            return;
+        }
+
+        return dispatch({
+            type: PARTICIPANT_SOURCES_UPDATED,
+            participant: {
+                id,
+                sources
+            }
+        });
     };
 }
 

@@ -3,9 +3,13 @@ import { withStyles } from '@mui/styles';
 import React from 'react';
 
 import { translate } from '../../../base/i18n/functions';
+import { IconRecord, IconSites } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux/functions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { Tooltip } from '../../../base/tooltip';
 import AbstractRecordingLabel, {
     _mapStateToProps
 
@@ -21,11 +25,8 @@ import AbstractRecordingLabel, {
  */
 const styles = (theme: Theme) => {
     return {
-        [JitsiRecordingConstants.mode.STREAM]: {
-            background: theme.palette.ui03
-        },
-        [JitsiRecordingConstants.mode.FILE]: {
-            background: theme.palette.iconError
+        record: {
+            background: theme.palette.actionDanger
         }
     };
 };
@@ -52,15 +53,18 @@ class RecordingLabel extends AbstractRecordingLabel {
 
         // @ts-ignore
         const { classes, mode, t } = this.props;
+        const isRecording = mode === JitsiRecordingConstants.mode.FILE;
+        const icon = isRecording ? IconRecord : IconSites;
+        const content = t(isRecording ? 'videoStatus.recording' : 'videoStatus.streaming');
 
         return (
-            <div>
+            <Tooltip
+                content = { content }
+                position = { 'bottom' }>
                 <Label
-                    className = { classes?.[mode] }
-
-                    // @ts-ignore
-                    text = { t(this._getLabelKey()) } />
-            </div>
+                    className = { classes?.record }
+                    icon = { icon } />
+            </Tooltip>
         );
     }
 }

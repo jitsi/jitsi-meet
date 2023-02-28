@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import _ from 'lodash';
@@ -16,7 +15,7 @@ import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
 import { IParticipant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
-import { shouldHideSelfView } from '../../../base/settings/functions.web';
+import { getHideSelfView } from '../../../base/settings/functions.any';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS } from '../../../video-layout/constants';
@@ -48,9 +47,7 @@ import {
 // @ts-ignore
 import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
-// @ts-ignore
 import ThumbnailWrapper from './ThumbnailWrapper';
-// @ts-ignore
 import { styles } from './styles';
 
 /**
@@ -307,6 +304,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             'keyboardShortcuts.toggleFilmstrip'
         );
         document.addEventListener('mouseup', this._onDragMouseUp);
+
         // @ts-ignore
         document.addEventListener('mousemove', this._throttledResize);
     }
@@ -319,6 +317,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
     componentWillUnmount() {
         APP.keyboardshortcut.unregisterShortcut('F');
         document.removeEventListener('mouseup', this._onDragMouseUp);
+
         // @ts-ignore
         document.removeEventListener('mousemove', this._throttledResize);
     }
@@ -344,7 +343,8 @@ class Filmstrip extends PureComponent <IProps, IState> {
             _verticalViewGrid,
             _verticalViewMaxWidth,
             classes,
-            filmstripType
+            filmstripType,
+            t
         } = this.props;
         const { isMouseDown } = this.state;
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
@@ -435,6 +435,12 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     _verticalViewGrid && 'no-vertical-padding',
                     _verticalViewBackground && classes.filmstripBackground) }
                 style = { filmstripStyle }>
+                <span
+                    aria-level = { 1 }
+                    className = 'sr-only'
+                    role = 'heading'>
+                    { t('filmstrip.accessibilityLabel.heading') }
+                </span>
                 { toolbar }
                 {_resizableFilmstrip
                     ? <div
@@ -694,6 +700,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     initialScrollLeft = { 0 }
                     initialScrollTop = { 0 }
                     itemData = {{ filmstripType }}
+
                     // @ts-ignore
                     itemKey = { this._gridItemKey }
                     onItemsRendered = { this._onGridItemsRendered }
@@ -853,6 +860,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     { ...actions }>
                     <Icon
                         aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
+                        size = { 24 }
                         src = { icon } />
                 </button>
             </div>
@@ -877,7 +885,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
-    const disableSelfView = shouldHideSelfView(state);
+    const disableSelfView = getHideSelfView(state);
     const { clientWidth, clientHeight } = state['features/base/responsive-ui'];
 
     const collapseTileView = reduceHeight

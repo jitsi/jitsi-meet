@@ -163,6 +163,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
 
             } else if (err.message === 'NoLocalStreams') {
                 descriptionKey = 'recording.noStreams';
+            } else if (err.message === 'NoMicTrack') {
+                descriptionKey = 'recording.noMicPermission';
             }
             const props = {
                 descriptionKey,

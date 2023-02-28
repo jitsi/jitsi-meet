@@ -32,7 +32,7 @@
 
 #chat-conversation-container {
     // extract message input height
-    height: calc(100% - 68px);
+    height: calc(100% - 64px);
     overflow: hidden;
     position: relative;
 }
@@ -76,32 +76,6 @@
     }
 }
 
-#chat-recipient {
-    align-items: center;
-    background-color: $chatPrivateMessageBackgroundColor;
-    display: flex;
-    flex-direction: row;
-    font-weight: 100;
-    padding: 10px;
-
-    span {
-        color: white;
-        display: flex;
-        flex: 1;
-    }
-
-    div {
-        svg {
-            cursor: pointer;
-            fill: white;
-        }
-    }
-
-    &.lobby-chat-recipient {
-        background-color: $chatLobbyMessageBackgroundColor;
-    }
-}
-
 
 .chat-header {
     height: 70px;
@@ -124,13 +98,12 @@
 }
 
 .chat-input-container {
-    padding: 0 16px 16px;
+    padding: 0 16px 24px;
 }
 
 #chat-input {
     display: flex;
     align-items: flex-end;
-    padding: 4px;
     position: relative;
 }
 
@@ -263,15 +236,6 @@
         -webkit-user-select: text;
         user-select: text;
     }
-
-    .display-name {
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 5px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
 }
 
 .sr-only {
@@ -288,22 +252,9 @@
 }
 
 .chatmessage {
-    background-color: $chatRemoteMessageBackgroundColor;
-    border-radius: 0px 6px 6px 6px;
-    box-sizing: border-box;
-    color: white;
-    margin-top: 3px;
-    max-width: 100%;
-    position: relative;
-
     &.localuser {
         background-color: $chatLocalMessageBackgroundColor;
         border-radius: 6px 0px 6px 6px;
-    }
-
-    .usermessage {
-        white-space: pre-wrap;
-        font-size: 14px;
     }
 
     &.error {
@@ -320,20 +271,10 @@
         }
     }
 
-    .privatemessagenotice {
-        font-size: 11px;
-        font-weight: 100;
-    }
-
     .messagecontent {
-        margin: 8px;
         max-width: 100%;
         overflow: hidden;
     }
-}
-
-.timestamp {
-    color: #757575;
 }
 
 #smileys {
@@ -409,23 +350,8 @@
 }
 
 .chat-message-group {
-    display: flex;
-    flex-direction: column;
-
     &.local {
         align-items: flex-end;
-
-        .chatmessage {
-            background-color: $chatLocalMessageBackgroundColor;
-            border-radius: 6px 0px 6px 6px;
-
-            &.privatemessage {
-                background-color: $chatPrivateMessageBackgroundColor;
-            }
-            &.lobbymessage {
-                background-color: $chatLobbyMessageBackgroundColor;
-            }
-        }
 
         .display-name {
             display: none;
@@ -437,56 +363,8 @@
     }
 
     &.error {
-        .chatmessage {
-            background-color: $defaultWarningColor;
-            border-radius: 0px;
-            font-weight: 100;
-        }
-
         .display-name {
             display: none;
-        }
-    }
-
-    .chatmessage-wrapper {
-        max-width: 100%;
-
-        .replywrapper {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-
-            .messageactions {
-                align-self: stretch;
-                border-left: 1px solid $chatActionsSeparatorColor;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                padding: 5px;
-
-                &.lobbychatmessageactions {
-                    border-left-color: $chatLobbyActionsSeparatorColor;
-                }
-
-                .toolbox-icon {
-                    cursor: pointer;
-                }
-            }
-        }
-    }
-
-    .chatmessage {
-        background-color: $chatRemoteMessageBackgroundColor;
-        border-radius: 0px 6px 6px 6px;
-        display: inline-block;
-        margin-top: 3px;
-        color: white;
-
-        &.privatemessage {
-            background-color: $chatPrivateMessageBackgroundColor;
-        }
-        &.lobbymessage {
-            background-color: $chatLobbyMessageBackgroundColor;
         }
     }
 }

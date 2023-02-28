@@ -1,7 +1,6 @@
-// @ts-expect-error
+// @ts-ignore
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { IStore } from '../app/types';
-import { getParticipantById } from '../base/participants/functions';
 
 import { OPEN_CHAT } from './actionTypes';
 import { closeChat } from './actions.any';
@@ -25,27 +24,6 @@ export function openChat(participant?: Object) {
         });
     };
 }
-
-/**
- * Displays the chat panel for a participant identified by an id.
- *
- * @param {string} id - The id of the participant.
- * @returns {{
- *     participant: Participant,
- *     type: OPEN_CHAT
- * }}
- */
-export function openChatById(id: string) {
-    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
-        const participant = getParticipantById(getState(), id);
-
-        return dispatch({
-            participant,
-            type: OPEN_CHAT
-        });
-    };
-}
-
 
 /**
  * Toggles display of the chat panel.

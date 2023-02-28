@@ -166,7 +166,7 @@ function _appStateChanged({ dispatch, getState }, next, action) {
 
         sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
 
-        dispatch(setVideoMuted(mute, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
+        dispatch(setVideoMuted(mute, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
     }
 
     return next(action);
@@ -191,9 +191,9 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
     sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
 
     // Make sure we mute both the desktop and video tracks.
-    dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
+    dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
     if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-        dispatch(setScreenshareMuted(audioOnly, MEDIA_TYPE.SCREENSHARE, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
+        dispatch(setScreenshareMuted(audioOnly, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
     }
 
     return next(action);
@@ -273,7 +273,10 @@ function _setRoom({ dispatch, getState }, next, action) {
                     // The following don't have complications around whether
                     // they are defined or not:
                     jwt: false,
-                    settings: true
+
+                    // We need to look for 'startAudioOnly' in settings only for react native clients. Otherwise, the
+                    // default value from ISettingsState (false) will override the value set in config for web clients.
+                    settings: typeof APP === 'undefined'
                 }));
 
     sendAnalytics(createStartAudioOnlyEvent(audioOnly));

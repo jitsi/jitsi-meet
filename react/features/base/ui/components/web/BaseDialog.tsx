@@ -1,0 +1,201 @@
+import React, { ReactNode, useCallback, useContext, useEffect } from 'react';
+import FocusLock from 'react-focus-lock';
+import { useTranslation } from 'react-i18next';
+import { keyframes } from 'tss-react';
+import { makeStyles } from 'tss-react/mui';
+
+import { withPixelLineHeight } from '../../../styles/functions.web';
+
+import { DialogTransitionContext } from './DialogTransition';
+
+const useStyles = makeStyles()(theme => {
+    return {
+        container: {
+            width: '100%',
+            height: '100%',
+            position: 'fixed',
+            color: theme.palette.text01,
+            ...withPixelLineHeight(theme.typography.bodyLongRegular),
+            top: 0,
+            left: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            zIndex: 301,
+            animation: `${keyframes`
+                0% {
+                    opacity: 0.4;
+                }
+                100% {
+                    opacity: 1;
+                }
+            `} 0.2s forwards ease-out`,
+
+            '&.unmount': {
+                animation: `${keyframes`
+                    0% {
+                        opacity: 1;
+                    }
+                    100% {
+                        opacity: 0.5;
+                    }
+                `} 0.15s forwards ease-in`
+            }
+        },
+
+        backdrop: {
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            top: 0,
+            left: 0,
+            backgroundColor: theme.palette.ui02,
+            opacity: 0.75
+        },
+
+        modal: {
+            backgroundColor: theme.palette.ui01,
+            border: `1px solid ${theme.palette.ui03}`,
+            boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
+            borderRadius: `${theme.shape.borderRadius}px`,
+            display: 'flex',
+            flexDirection: 'column',
+            height: 'auto',
+            minHeight: '200px',
+            maxHeight: '80vh',
+            marginTop: '64px',
+            animation: `${keyframes`
+                0% {
+                    margin-top: 85px
+                }
+                100% {
+                    margin-top: 64px
+                }
+            `} 0.2s forwards ease-out`,
+
+            '&.medium': {
+                width: '400px'
+            },
+
+            '&.large': {
+                width: '664px'
+            },
+
+            '&.unmount': {
+                animation: `${keyframes`
+                    0% {
+                        margin-top: 64px
+                    }
+                    100% {
+                        margin-top: 40px
+                    }
+                `} 0.15s forwards ease-in`
+            },
+
+            '@media (max-width: 448px)': {
+                width: '100% !important',
+                maxHeight: 'initial',
+                height: '100%',
+                margin: 0,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                bottom: 0,
+                animation: `${keyframes`
+                    0% {
+                        margin-top: 15px
+                    }
+                    100% {
+                        margin-top: 0
+                    }
+                `} 0.2s forwards ease-out`,
+
+                '&.unmount': {
+                    animation: `${keyframes`
+                        0% {
+                            margin-top: 0
+                        }
+                        100% {
+                            margin-top: 15px
+                        }
+                    `} 0.15s forwards ease-in`
+                }
+            }
+        },
+
+        focusLock: {
+            zIndex: 1
+        }
+    };
+});
+
+export interface IProps {
+    children?: ReactNode;
+    className?: string;
+    description?: string;
+    disableBackdropClose?: boolean;
+    disableEnter?: boolean;
+    onClose?: () => void;
+    size?: 'large' | 'medium';
+    submit?: () => void;
+    title?: string;
+    titleKey?: string;
+}
+
+const BaseDialog = ({
+    children,
+    className,
+    description,
+    disableBackdropClose,
+    disableEnter,
+    onClose,
+    size = 'medium',
+    submit,
+    title,
+    titleKey
+}: IProps) => {
+    const { classes, cx } = useStyles();
+    const { isUnmounting } = useContext(DialogTransitionContext);
+    const { t } = useTranslation();
+
+    const onBackdropClick = useCallback(() => {
+        !disableBackdropClose && onClose?.();
+    }, [ disableBackdropClose, onClose ]);
+
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            onClose?.();
+        }
+        if (e.key === 'Enter' && !disableEnter) {
+            submit?.();
+        }
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    return (
+        <div className = { cx(classes.container, isUnmounting && 'unmount') }>
+            <div
+                className = { classes.backdrop }
+                onClick = { onBackdropClick } />
+            <FocusLock
+                className = { classes.focusLock }
+                returnFocus = { true }>
+                <div
+                    aria-describedby = { description }
+                    aria-labelledby = { title ?? t(titleKey ?? '') }
+                    aria-modal = { true }
+                    className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
+                    role = 'dialog'>
+                    {children}
+                </div>
+            </FocusLock>
+        </div>
+    );
+};
+
+export default BaseDialog;

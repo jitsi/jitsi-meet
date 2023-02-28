@@ -239,7 +239,7 @@ function M.verify(token, expectedAlgo, key, acceptedIssuers, acceptedAudiences)
         return nil, "'iss' claim is missing";
     end
     if not verify_claim(issClaim, acceptedIssuers) then
-    	return nil, "invalid 'iss' claim";
+        return nil, "invalid 'iss' claim";
     end
 	end
 
@@ -249,7 +249,7 @@ function M.verify(token, expectedAlgo, key, acceptedIssuers, acceptedAudiences)
         return nil, "'aud' claim is missing";
     end
     if not verify_claim(audClaim, acceptedAudiences) then
-    	return nil, "invalid 'aud' claim";
+        return nil, "invalid 'aud' claim";
     end
 	end
 

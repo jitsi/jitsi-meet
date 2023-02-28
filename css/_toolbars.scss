@@ -120,12 +120,16 @@
     margin: 8px 0;
 }
 
-.hangup-button {
-    background-color: $hangupColor;
+div.hangup-button {
+    background-color: #CB2233;
 
     @media (hover: hover) and (pointer: fine) {
         &:hover {
-            background-color: $hangupHoverColor;
+            background-color: #E04757;
+        }
+
+        &:active {
+            background-color: #A21B29;
         }
     }
 
@@ -134,12 +138,16 @@
     }
 }
 
-.hangup-menu-button {
-    background-color: $hangupMenuButtonColor;
+div.hangup-menu-button {
+    background-color: #CB2233;
 
     @media (hover: hover) and (pointer: fine) {
         &:hover {
-            background-color: $hangupMenuButtonHoverColor;
+            background-color: #E04757;
+        }
+
+        &:active {
+            background-color: #A21B29;
         }
     }
 

@@ -1,7 +1,5 @@
-// @ts-ignore
 import { StyleType } from './functions.any';
 
-// @ts-ignore
 export * from './functions.any';
 
 /**

@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { AnyAction } from 'redux';
 
 import { IReduxState, IStore } from '../app/types';
@@ -30,12 +29,14 @@ import { pushReactions } from '../reactions/actions.any';
 import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { endpointMessageReceived } from '../subtitles/actions.any';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { showToolbox } from '../toolbox/actions';
 
 
 import { ADD_MESSAGE, CLOSE_CHAT, OPEN_CHAT, SEND_MESSAGE, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
 import { addMessage, clearMessages, closeChat } from './actions.any';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { ChatPrivacyDialog } from './components';
 import {
@@ -47,7 +48,6 @@ import {
 } from './constants';
 import { getUnreadCount } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
-/* eslint-enable lines-around-comment */
 
 /**
  * Timeout for when to show the privacy notice after a private message was received.

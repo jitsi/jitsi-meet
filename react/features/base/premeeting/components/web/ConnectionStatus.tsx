@@ -7,6 +7,7 @@ import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
 import { connect } from '../../../redux/functions';
+import { withPixelLineHeight } from '../../../styles/functions.web';
 import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
 import { CONNECTION_TYPE } from '../../constants';
 import { getConnectionData } from '../../functions';
@@ -27,11 +28,8 @@ interface IProps extends WithTranslation {
 const useStyles = makeStyles()(theme => {
     return {
         connectionStatus: {
-            borderRadius: '6px',
             color: '#fff',
-            fontSize: '12px',
-            letterSpacing: '0.16px',
-            lineHeight: '16px',
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
             position: 'absolute',
             width: '100%',
 
@@ -56,14 +54,15 @@ const useStyles = makeStyles()(theme => {
                 backgroundColor: 'rgba(0, 0, 0, 0.7)',
                 alignItems: 'center',
                 display: 'flex',
-                padding: '14px 16px'
+                padding: '12px 16px',
+                borderRadius: theme.shape.borderRadius
             },
 
             '& .con-status-circle': {
                 borderRadius: '50%',
                 display: 'inline-block',
                 padding: theme.spacing(1),
-                marginRight: theme.spacing(3)
+                marginRight: theme.spacing(2)
             },
 
             '& .con-status--good': {

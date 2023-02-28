@@ -44,7 +44,7 @@ const SalesforceLinkDialog = () => {
 
     const handlePress = useCallback(() => {
         navigate(screen.conference.main);
-        linkMeeting();
+        selectedRecord && linkMeeting();
     }, [ navigate, linkMeeting ]);
 
     const renderSpinner = () => (

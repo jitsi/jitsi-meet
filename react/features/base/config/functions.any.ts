@@ -11,7 +11,13 @@ import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
 import CONFIG_WHITELIST from './configWhitelist';
-import { _CONFIG_STORE_PREFIX } from './constants';
+import {
+    DEFAULT_HELP_CENTRE_URL,
+    DEFAULT_PRIVACY_URL,
+    DEFAULT_TERMS_URL,
+    FEATURE_FLAGS,
+    _CONFIG_STORE_PREFIX
+} from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
@@ -60,7 +66,17 @@ export function getMeetingRegion(state: IReduxState) {
  * @returns {boolean}
  */
 export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
-    return navigator.product !== 'ReactNative' && isUnifiedPlanEnabled(state);
+    return isUnifiedPlanEnabled(state);
+}
+
+/**
+ * Selector used to get the SSRC-rewriting feature flag.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getSsrcRewritingFeatureFlag(state: IReduxState) {
+    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING);
 }
 
 /**
@@ -305,4 +321,35 @@ export function getDialOutStatusUrl(state: IReduxState) {
  */
 export function getDialOutUrl(state: IReduxState) {
     return state['features/base/config'].guestDialOutUrl;
+}
+
+/**
+ * Selector to return the security UI config.
+ *
+ * @param {IReduxState} state - State object.
+ * @returns {Object}
+ */
+export function getSecurityUiConfig(state: IReduxState) {
+    return state['features/base/config']?.securityUi || {};
+}
+
+/**
+ * Returns the terms, privacy and help centre URL's.
+ *
+ * @param {IReduxState} state - The state of the application.
+ * @returns {{
+ *  privacy: string,
+ *  helpCentre: string,
+ *  terms: string
+ * }}
+ */
+export function getLegalUrls(state: IReduxState) {
+    const helpCentreURL = state['features/base/config']?.helpCentreURL;
+    const configLegalUrls = state['features/base/config']?.legalUrls;
+
+    return {
+        privacy: configLegalUrls?.privacy || DEFAULT_PRIVACY_URL,
+        helpCentre: helpCentreURL || configLegalUrls?.helpCentre || DEFAULT_HELP_CENTRE_URL,
+        terms: configLegalUrls?.terms || DEFAULT_TERMS_URL
+    };
 }

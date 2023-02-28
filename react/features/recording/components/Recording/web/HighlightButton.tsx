@@ -60,12 +60,10 @@ const styles = (theme: Theme) => {
             position: 'relative'
         },
         disabled: {
-            background: theme.palette.text02,
-            margin: '0 4px 4px 4px'
+            background: theme.palette.text02
         },
         regular: { // @ts-ignore
-            background: theme.palette.field02,
-            margin: '0 4px 4px 4px'
+            background: theme.palette.field02
         },
         highlightNotification: { // @ts-ignore
             backgroundColor: theme.palette.field02,
@@ -196,7 +194,6 @@ export class HighlightButton extends AbstractHighlightButton<Props, IState> {
 
             // @ts-ignore
         } = this.props;
-
 
         if (!_visible) {
             return null;

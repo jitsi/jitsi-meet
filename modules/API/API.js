@@ -71,8 +71,13 @@ import {
 import { appendSuffix } from '../../react/features/display-name';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
-import { addStageParticipant, resizeFilmStrip, setVolume } from '../../react/features/filmstrip/actions.web';
-import { isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
+import {
+    addStageParticipant,
+    resizeFilmStrip,
+    setVolume,
+    togglePinStageParticipant
+} from '../../react/features/filmstrip/actions.web';
+import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
 import { invite } from '../../react/features/invite';
 import {
     selectParticipantInLargeVideo
@@ -241,6 +246,22 @@ function initCommands() {
             logger.debug('Pin participant command received');
 
             const state = APP.store.getState();
+
+            // if id not provided, unpin everybody.
+            if (!id) {
+                if (isStageFilmstripAvailable(state)) {
+                    const pinnedParticipants = getPinnedActiveParticipants(state);
+
+                    pinnedParticipants?.forEach(p => {
+                        APP.store.dispatch(togglePinStageParticipant(p.participantId));
+                    });
+                } else {
+                    APP.store.dispatch(pinParticipant());
+                }
+
+                return;
+            }
+
             const participant = videoType === VIDEO_TYPE.DESKTOP
                 ? getVirtualScreenshareParticipantByOwnerId(state, id) : getParticipantById(state, id);
 
@@ -254,7 +275,7 @@ function initCommands() {
 
             const participantId = participant.id;
 
-            if (isStageFilmstripAvailable(APP.store.getState())) {
+            if (isStageFilmstripAvailable(state)) {
                 APP.store.dispatch(addStageParticipant(participantId, true));
             } else {
                 APP.store.dispatch(pinParticipant(participantId));
@@ -644,15 +665,15 @@ function initCommands() {
             }
 
             let recordingConfig;
-            const { recordingService } = state['features/base/config'];
-
-            if (!recordingService.enabled && !dropboxToken) {
-                logger.error('Failed starting recording: the recording service is not enabled');
-
-                return;
-            }
 
             if (mode === JitsiRecordingConstants.mode.FILE) {
+                const { recordingService } = state['features/base/config'];
+
+                if (!recordingService.enabled && !dropboxToken) {
+                    logger.error('Failed starting recording: the recording service is not enabled');
+
+                    return;
+                }
                 if (dropboxToken) {
                     recordingConfig = {
                         mode: JitsiRecordingConstants.mode.FILE,
@@ -1205,6 +1226,22 @@ class API {
             name: 'moderation-participant-rejected',
             id: participantId,
             mediaType
+        });
+    }
+
+    /**
+     * Notify the external app that a notification has been triggered.
+     *
+     * @param {string} title - The notification title.
+     * @param {string} description - The notification description.
+     *
+     * @returns {void}
+     */
+    notifyNotificationTriggered(title: string, description: string) {
+        this._sendEvent({
+            description,
+            name: 'notification-triggered',
+            title
         });
     }
 
@@ -1938,6 +1975,21 @@ class API {
             name: 'peer-connection-failure',
             isP2P,
             wasConnected
+        });
+    }
+
+    /**
+     * Notify external application ( if API is enabled) that a participant menu button was clicked.
+     *
+     * @param {string} key - The key of the participant menu button.
+     * @param {string} participantId - The ID of the participant for with the participant menu button was clicked.
+     * @returns {void}
+     */
+    notifyParticipantMenuButtonClicked(key, participantId) {
+        this._sendEvent({
+            name: 'participant-menu-button-clicked',
+            key,
+            participantId
         });
     }
 

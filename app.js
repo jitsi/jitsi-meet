@@ -33,17 +33,6 @@ window.APP = {
     API,
     conference,
 
-    // Used by do_external_connect.js if we receive the attach data after
-    // connect was already executed. status property can be 'initialized',
-    // 'ready', or 'connecting'. We are interested in 'ready' status only which
-    // means that connect was executed but we have to wait for the attach data.
-    // In status 'ready' handler property will be set to a function that will
-    // finish the connect process when the attach data or error is received.
-    connect: {
-        handler: null,
-        status: 'initialized'
-    },
-
     // Used for automated performance tests.
     connectionTimes: {
         'index.loaded': window.indexLoadedTime

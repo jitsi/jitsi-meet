@@ -118,6 +118,18 @@ export const PARTICIPANT_KICKED = 'PARTICIPANT_KICKED';
 export const PARTICIPANT_LEFT = 'PARTICIPANT_LEFT';
 
 /**
+ * Action to handle case when the sources attached to a participant are updated.
+ *
+ * {
+ *      type: PARTICIPANT_SOURCES_UPDATED,
+ *      participant: {
+ *          id: string
+ *      }
+ * }
+ */
+export const PARTICIPANT_SOURCES_UPDATED = 'PARTICIPANT_SOURCES_UPDATED';
+
+/**
  * Action to handle case when info about participant changes.
  *
  * {

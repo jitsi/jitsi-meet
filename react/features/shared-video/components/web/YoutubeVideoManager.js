@@ -201,7 +201,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
                     'rel': 0
                 }
             },
-            onError: () => this.onError(),
+            onError: e => this.onError(e),
             onReady: this.onPlayerReady,
             onStateChange: this.onPlayerStateChange,
             videoId

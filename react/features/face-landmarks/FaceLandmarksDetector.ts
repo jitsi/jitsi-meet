@@ -305,9 +305,16 @@ class FaceLandmarksDetector {
     private async sendDataToWorker(faceCenteringThreshold = 10): Promise<boolean> {
         if (!this.imageCapture
             || !this.worker
-            || !this.imageCapture?.track
-            || this.imageCapture?.track.readyState !== 'live') {
+            || !this.imageCapture) {
             logger.log('Environment not ready! Could not send data to worker');
+
+            return false;
+        }
+
+        // if ImageCapture is polyfilled then it would not have the track,
+        // so there would be no point in checking for its readyState
+        if (this.imageCapture.track && this.imageCapture.track.readyState !== 'live') {
+            logger.log('Track not ready! Could not send data to worker');
 
             return false;
         }

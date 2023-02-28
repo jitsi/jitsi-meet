@@ -187,6 +187,7 @@ const Button = React.forwardRef<any, any>(({
     label,
     labelKey,
     onClick = () => null,
+    onKeyPress = () => null,
     size = 'medium',
     testId,
     type = BUTTON_TYPES.PRIMARY
@@ -206,6 +207,7 @@ const Button = React.forwardRef<any, any>(({
             disabled = { disabled }
             { ...(id ? { id } : {}) }
             onClick = { onClick }
+            onKeyPress = { onKeyPress }
             ref = { ref }
             title = { accessibilityLabel }
             type = { isSubmit ? 'submit' : 'button' }>

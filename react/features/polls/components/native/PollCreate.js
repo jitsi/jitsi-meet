@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, Platform, Text, View } from 'react-native';
-import { Divider, TouchableRipple } from 'react-native-paper';
+import { FlatList, Platform, View } from 'react-native';
+import { Divider } from 'react-native-paper';
 
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
@@ -52,7 +52,7 @@ const PollCreate = (props: AbstractProps) => {
      * about whether a newly created input field has been rendered yet or not.
      */
     const [ lastFocus, requestFocus ] = useState(null);
-    const { PRIMARY, SECONDARY } = BUTTON_TYPES;
+    const { PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
 
     useEffect(() => {
         if (lastFocus === null) {
@@ -85,13 +85,12 @@ const PollCreate = (props: AbstractProps) => {
 
     /* eslint-disable react/no-multi-comp */
     const createRemoveOptionButton = onPress => (
-        <TouchableRipple
-            onPress = { onPress }
-            rippleColor = { 'transparent' } >
-            <Text style = { dialogStyles.optionRemoveButtonText }>
-                { t('polls.create.removeOption') }
-            </Text>
-        </TouchableRipple>
+        <Button
+            labelKey = 'polls.create.removeOption'
+            labelStyle = { dialogStyles.optionRemoveButtonText }
+            onClick = { onPress }
+            style = { dialogStyles.optionRemoveButton }
+            type = { TERTIARY } />
     );
 
 
@@ -118,8 +117,8 @@ const PollCreate = (props: AbstractProps) => {
                 }
             </View>
         );
-    const buttonRowStyles = Platform.OS === 'android'
-        ? chatStyles.buttonRowAndroid : chatStyles.buttonRowIos;
+    const pollCreateButtonsContainerStyles = Platform.OS === 'android'
+        ? chatStyles.pollCreateButtonsContainerAndroid : chatStyles.pollCreateButtonsContainerIos;
 
     return (
         <View style = { chatStyles.pollCreateContainer }>
@@ -143,7 +142,7 @@ const PollCreate = (props: AbstractProps) => {
                     keyExtractor = { (item, index) => index.toString() }
                     ref = { answerListRef }
                     renderItem = { renderListItem } />
-                <View style = { chatStyles.pollCreateButtonsContainer }>
+                <View style = { pollCreateButtonsContainerStyles }>
                     <Button
                         accessibilityLabel = 'polls.create.addOption'
                         disabled = { answers.length >= ANSWERS_LIMIT }
@@ -156,7 +155,7 @@ const PollCreate = (props: AbstractProps) => {
                         style = { chatStyles.pollCreateAddButton }
                         type = { SECONDARY } />
                     <View
-                        style = { buttonRowStyles }>
+                        style = { chatStyles.buttonRow }>
                         <Button
                             accessibilityLabel = 'polls.create.cancel'
                             labelKey = 'polls.create.cancel'

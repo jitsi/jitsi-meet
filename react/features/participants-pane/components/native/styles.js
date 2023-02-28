@@ -288,5 +288,11 @@ export default {
     centerInput: {
         paddingRight: BaseTheme.spacing[3],
         textAlign: 'center'
+    },
+
+    visitorsLabel: {
+        ...BaseTheme.typography.heading6,
+        color: BaseTheme.palette.warning02,
+        marginLeft: BaseTheme.spacing[3]
     }
 };

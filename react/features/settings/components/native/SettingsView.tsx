@@ -1,11 +1,11 @@
 /* eslint-disable lines-around-comment  */
 
-import { Link } from '@react-navigation/native';
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import {
     Alert,
+    Linking,
     NativeModules,
     Platform,
     ScrollView,
@@ -14,20 +14,23 @@ import {
 } from 'react-native';
 import { Divider } from 'react-native-paper';
 
+
 import { getDefaultURL } from '../../../app/functions.native';
 import { IReduxState } from '../../../app/types';
 // @ts-ignore
 import { Avatar } from '../../../base/avatar';
+import { getLegalUrls } from '../../../base/config/functions.native';
 import { translate } from '../../../base/i18n/functions';
 // @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
+import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import Switch from '../../../base/ui/components/native/Switch';
 // @ts-ignore
-import { screen } from '../../../mobile/navigation/routes';
+import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 // @ts-ignore
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
 import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions.native';
@@ -35,7 +38,7 @@ import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions
 // @ts-ignore
 import FormRow from './FormRow';
 // @ts-ignore
-import FormSectionAccordion from './FormSectionAccordion';
+import FormSection from './FormSection';
 // @ts-ignore
 import styles from './styles';
 
@@ -43,7 +46,6 @@ import styles from './styles';
  * Application information module.
  */
 const { AppInfo } = NativeModules;
-
 
 interface IState {
 
@@ -103,6 +105,15 @@ interface IState {
  * {@link SettingsView}.
  */
 interface IProps extends WithTranslation {
+
+    /**
+     * The legal URL's.
+     */
+    _legalUrls: {
+        helpCentre: string;
+        privacy: string;
+        terms: string;
+    };
 
     /**
      * The ID of the local participant.
@@ -225,6 +236,9 @@ class SettingsView extends Component<IProps, IState> {
         this._onStartVideoMutedChange
             = this._onStartVideoMutedChange.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
+        this._onShowHelpPressed = this._onShowHelpPressed.bind(this);
+        this._onShowPrivacyPressed = this._onShowPrivacyPressed.bind(this);
+        this._onShowTermsPressed = this._onShowTermsPressed.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
     }
 
@@ -281,7 +295,8 @@ class SettingsView extends Component<IProps, IState> {
                             participantId = { this.props._localParticipantId }
                             size = { AVATAR_SIZE } />
                     </View>
-                    <FormSectionAccordion
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.profileSection'>
                         <Input
                             // @ts-ignore
@@ -291,6 +306,7 @@ class SettingsView extends Component<IProps, IState> {
                             placeholder = { t('settingsView.displayNamePlaceholderText') }
                             textContentType = { 'name' } // iOS only
                             value = { displayName } />
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <Input
                             // @ts-ignore
@@ -302,8 +318,9 @@ class SettingsView extends Component<IProps, IState> {
                             placeholder = { t('settingsView.emailPlaceholderText') }
                             textContentType = { 'emailAddress' } // iOS only
                             value = { email } />
-                    </FormSectionAccordion>
-                    <FormSectionAccordion
+                    </FormSection>
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.conferenceSection'>
                         <Input
                             // @ts-ignore
@@ -317,6 +334,7 @@ class SettingsView extends Component<IProps, IState> {
                             placeholder = { this.props._serverURL }
                             textContentType = { 'URL' } // iOS only
                             value = { serverURL } />
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startCarModeInLowBandwidthMode'>
                             <Switch
@@ -324,6 +342,7 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onStartCarmodeInLowBandwidthMode } />
                         </FormRow>
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow
                             label = 'settingsView.startWithAudioMuted'>
@@ -332,6 +351,7 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onStartAudioMutedChange } />
                         </FormRow>
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startWithVideoMuted'>
                             <Switch
@@ -339,6 +359,7 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onStartVideoMutedChange } />
                         </FormRow>
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'videothumbnail.hideSelfView'>
                             <Switch
@@ -346,40 +367,43 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onDisableSelfView } />
                         </FormRow>
-                    </FormSectionAccordion>
-                    <FormSectionAccordion
+                    </FormSection>
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.links'>
-                        <Link
-                            style = { styles.sectionLink }
-                            // @ts-ignore
-                            to = {{ screen: screen.settings.links.help }}>
-                            { t('settingsView.help') }
-                        </Link>
+                        <Button
+                            accessibilityLabel = 'settingsView.help'
+                            labelKey = 'settingsView.help'
+                            onClick = { this._onShowHelpPressed }
+                            type = { BUTTON_TYPES.TERTIARY } />
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
-                        <Link
-                            style = { styles.sectionLink }
-                            // @ts-ignore
-                            to = {{ screen: screen.settings.links.terms }}>
-                            { t('settingsView.terms') }
-                        </Link>
+                        <Button
+                            accessibilityLabel = 'settingsView.terms'
+                            labelKey = 'settingsView.terms'
+                            onClick = { this._onShowTermsPressed }
+                            type = { BUTTON_TYPES.TERTIARY } />
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
-                        <Link
-                            style = { styles.sectionLink }
-                            // @ts-ignore
-                            to = {{ screen: screen.settings.links.privacy }}>
-                            { t('settingsView.privacy') }
-                        </Link>
-                    </FormSectionAccordion>
-                    <FormSectionAccordion
+                        <Button
+                            accessibilityLabel = 'settingsView.privacy'
+                            labelKey = 'settingsView.privacy'
+                            onClick = { this._onShowPrivacyPressed }
+                            type = { BUTTON_TYPES.TERTIARY } />
+                    </FormSection>
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.buildInfoSection'>
+                        {/* @ts-ignore */}
                         <FormRow
                             label = 'settingsView.version'>
                             <Text style = { styles.text }>
                                 {`${AppInfo.version} build ${AppInfo.buildNumber}`}
                             </Text>
                         </FormRow>
-                    </FormSectionAccordion>
-                    <FormSectionAccordion
+                    </FormSection>
+                    {/* @ts-ignore */}
+                    <FormSection
                         label = 'settingsView.advanced'>
                         { Platform.OS === 'android' && (
                             <>
@@ -390,6 +414,7 @@ class SettingsView extends Component<IProps, IState> {
                                         // @ts-ignore
                                         onChange = { this._onDisableCallIntegration } />
                                 </FormRow>
+                                {/* @ts-ignore */}
                                 <Divider style = { styles.fieldSeparator } />
                             </>
                         )}
@@ -400,6 +425,7 @@ class SettingsView extends Component<IProps, IState> {
                                 // @ts-ignore
                                 onChange = { this._onDisableP2P } />
                         </FormRow>
+                        {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         {AppInfo.GOOGLE_SERVICES_ENABLED && (
                             <FormRow
@@ -411,7 +437,7 @@ class SettingsView extends Component<IProps, IState> {
                                     onChange = { this._onDisableCrashReporting } />
                             </FormRow>
                         )}
-                    </FormSectionAccordion>
+                    </FormSection>
                 </ScrollView>
             </JitsiScreen>
         );
@@ -669,6 +695,33 @@ class SettingsView extends Component<IProps, IState> {
     }
 
     /**
+     * Opens the help url into the browser.
+     *
+     * @returns {void}
+     */
+    _onShowHelpPressed() {
+        Linking.openURL(this.props._legalUrls.helpCentre);
+    }
+
+    /**
+     * Opens the privacy url into the browser.
+     *
+     * @returns {void}
+     */
+    _onShowPrivacyPressed() {
+        Linking.openURL(this.props._legalUrls.privacy);
+    }
+
+    /**
+     * Opens the terms url into the browser.
+     *
+     * @returns {void}
+     */
+    _onShowTermsPressed() {
+        Linking.openURL(this.props._legalUrls.terms);
+    }
+
+    /**
      * Shows an alert warning the user about disabling crash reporting.
      *
      * @returns {void}
@@ -732,6 +785,7 @@ function _mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
 
     return {
+        _legalUrls: getLegalUrls(state),
         _localParticipantId: localParticipant?.id,
         _serverURL: getDefaultURL(state),
         _serverURLChangeEnabled: isServerURLChangeEnabled(state),

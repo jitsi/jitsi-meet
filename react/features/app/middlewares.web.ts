@@ -15,12 +15,12 @@ import '../prejoin/middleware';
 import '../remote-control/middleware';
 import '../screen-share/middleware';
 import '../shared-video/middleware';
+import '../web-hid/middleware';
 import '../settings/middleware';
 import '../talk-while-muted/middleware';
 import '../toolbox/middleware';
 import '../face-landmarks/middleware';
 import '../gifs/middleware';
 import '../whiteboard/middleware';
-import '../base/dialog/middleware';
 
 import './middlewares.any';

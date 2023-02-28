@@ -5,6 +5,7 @@ export interface INotificationProps {
     concatText?: boolean;
     customActionHandler?: Function[];
     customActionNameKey?: string[];
+    customActionType?: string[];
     description?: string | React.ReactNode;
     descriptionArguments?: Object;
     descriptionKey?: string;

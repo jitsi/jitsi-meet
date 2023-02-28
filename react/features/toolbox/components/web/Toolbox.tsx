@@ -2,7 +2,7 @@
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { batch } from 'react-redux';
+import { batch, connect } from 'react-redux';
 
 // @ts-expect-error
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
@@ -10,7 +10,10 @@ import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/funct
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
+import { IJitsiConference } from '../../../base/conference/reducer';
+import { VISITORS_MODE_BUTTONS } from '../../../base/config/constants';
 import {
+    getButtonsWithNotifyClick,
     getMultipleVideoSendingSupportFeatureFlag,
     getToolbarButtons,
     isToolbarButtonEnabled
@@ -24,10 +27,11 @@ import {
 } from '../../../base/participants/actions';
 import {
     getLocalParticipant,
-    hasRaisedHand
+    hasRaisedHand,
+    isLocalParticipantModerator
 } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 import { getLocalVideoTrack } from '../../../base/tracks/functions';
+import { ITrack } from '../../../base/tracks/types';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { toggleChat } from '../../../chat/actions.web';
@@ -50,7 +54,7 @@ import { NoiseSuppressionButton } from '../../../noise-suppression/components';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
-} from '../../../participants-pane/actions';
+} from '../../../participants-pane/actions.web';
 // @ts-ignore
 import { ParticipantsPaneButton } from '../../../participants-pane/components/web';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
@@ -97,6 +101,7 @@ import {
 import { VideoQualityButton, VideoQualityDialog } from '../../../video-quality/components';
 // @ts-ignore
 import { VideoBackgroundButton } from '../../../virtual-background';
+import { iAmVisitor } from '../../../visitors/functions';
 import WhiteboardButton from '../../../whiteboard/components/web/WhiteboardButton';
 import { isWhiteboardButtonVisible } from '../../../whiteboard/functions';
 import {
@@ -118,6 +123,7 @@ import HelpButton from '../HelpButton';
 
 // @ts-ignore
 import AudioSettingsButton from './AudioSettingsButton';
+import CustomOptionButton from './CustomOptionButton';
 import { EndConferenceButton } from './EndConferenceButton';
 // @ts-ignore
 import FullscreenButton from './FullscreenButton';
@@ -137,6 +143,7 @@ import ShareDesktopButton from './ShareDesktopButton';
 import ToggleCameraButton from './ToggleCameraButton';
 // @ts-ignore
 import VideoSettingsButton from './VideoSettingsButton';
+/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -146,12 +153,12 @@ interface IProps extends WithTranslation {
     /**
      * String showing if the virtual background type is desktop-share.
      */
-    _backgroundType: String;
+    _backgroundType: string;
 
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    _buttonsWithNotifyClick: Array<string | {
+    _buttonsWithNotifyClick?: Array<string | {
         key: string;
         preventExecution: boolean;
     }>;
@@ -169,7 +176,12 @@ interface IProps extends WithTranslation {
     /**
      * The {@code JitsiConference} for the current conference.
      */
-    _conference: Object;
+    _conference?: IJitsiConference;
+
+    /**
+     * Custom Toolbar buttons.
+     */
+    _customToolbarButtons?: Array<{ icon: string; id: string; text: string; }>;
 
     /**
      * Whether or not screensharing button is disabled.
@@ -204,7 +216,7 @@ interface IProps extends WithTranslation {
     /**
      * Whether or not the app is currently in full screen.
      */
-    _fullScreen: boolean;
+    _fullScreen?: boolean;
 
     /**
      * Whether or not the GIFs feature is enabled.
@@ -232,6 +244,11 @@ interface IProps extends WithTranslation {
     _isMobile: boolean;
 
     /**
+     * Whether we are in narrow layout mode.
+     */
+    _isNarrowLayout: boolean;
+
+    /**
      * Whether or not the profile is disabled.
      */
     _isProfileDisabled: boolean;
@@ -239,7 +256,7 @@ interface IProps extends WithTranslation {
     /**
      * Whether or not speaker stats is disable.
      */
-    _isSpeakerStatsDisabled: boolean;
+    _isSpeakerStatsDisabled?: boolean;
 
 
     /**
@@ -255,12 +272,12 @@ interface IProps extends WithTranslation {
     /**
      * The ID of the local participant.
      */
-    _localParticipantID: String;
+    _localParticipantID?: string;
 
     /**
      * The JitsiLocalTrack to display.
      */
-    _localVideo: Object;
+    _localVideo?: ITrack;
 
     /**
      * Whether or not multi-stream send support is enabled.
@@ -300,7 +317,7 @@ interface IProps extends WithTranslation {
     /**
      * Whether or not the local participant is sharing a YouTube video.
      */
-    _sharingVideo: boolean;
+    _sharingVideo?: boolean;
 
     /**
      * Whether or not the tile view is enabled.
@@ -348,9 +365,10 @@ const styles = () => {
         contextMenu: {
             position: 'relative' as const,
             right: 'auto',
-            maxHeight: 'inherit',
             margin: 0,
-            marginBottom: '8px'
+            marginBottom: '8px',
+            maxHeight: 'calc(100vh - 100px)',
+            minWidth: '240px'
         },
 
         hangupMenu: {
@@ -361,7 +379,7 @@ const styles = () => {
             rowGap: '8px',
             margin: 0,
             padding: '16px',
-            marginBottom: '8px'
+            marginBottom: '4px'
         }
     };
 };
@@ -706,12 +724,15 @@ class Toolbox extends Component<IProps> {
      */
     _getAllButtons() {
         const {
+            _customToolbarButtons,
             _feedbackConfigured,
             _hasSalesforce,
             _isIosMobile,
             _isMobile,
+            _isNarrowLayout,
             _isSpeakerStatsDisabled,
             _multiStreamModeEnabled,
+            _reactionsEnabled,
             _screenSharing,
             _whiteboardEnabled
         } = this.props;
@@ -748,7 +769,7 @@ class Toolbox extends Component<IProps> {
             group: 2
         };
 
-        const raisehand = {
+        const raisehand = (!_reactionsEnabled || (!_isNarrowLayout && !_isMobile)) && {
             key: 'raisehand',
             Content: ReactionsMenuButton,
             handleClick: this._onToolbarToggleRaiseHand,
@@ -904,6 +925,19 @@ class Toolbox extends Component<IProps> {
             group: 4
         };
 
+        const customButtons = _customToolbarButtons?.reduce((prev, { icon, id, text }) => {
+            return {
+                ...prev,
+                [id]: {
+                    key: id,
+                    Content: CustomOptionButton,
+                    group: 4,
+                    icon,
+                    text
+                }
+            };
+        }, {});
+
         return {
             microphone,
             camera,
@@ -934,7 +968,8 @@ class Toolbox extends Component<IProps> {
             embed,
             feedback,
             download,
-            help
+            help,
+            ...customButtons
         };
     }
 
@@ -1387,6 +1422,7 @@ class Toolbox extends Component<IProps> {
             _endConferenceSupported,
             _hangupMenuVisible,
             _isMobile,
+            _isNarrowLayout,
             _overflowDrawer,
             _overflowMenuVisible,
             _reactionsEnabled,
@@ -1396,7 +1432,7 @@ class Toolbox extends Component<IProps> {
         } = this.props;
 
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
-        const containerClassName = `toolbox-content${_isMobile ? ' toolbox-content-mobile' : ''}`;
+        const containerClassName = `toolbox-content${_isMobile || _isNarrowLayout ? ' toolbox-content-mobile' : ''}`;
 
         const { mainMenuButtons, overflowMenuButtons } = this._getVisibleButtons();
 
@@ -1424,12 +1460,13 @@ class Toolbox extends Component<IProps> {
                                 key = 'overflow-menu'
                                 onVisibilityChange = { this._onSetOverflowVisible }
                                 showMobileReactions = {
-                                    _reactionsEnabled && overflowMenuButtons.find(({ key }) => key === 'raisehand')
+                                    _reactionsEnabled && (_isMobile || _isNarrowLayout)
                                 }>
                                 <ContextMenu
                                     accessibilityLabel = { t(toolbarAccLabel) }
                                     className = { classes.contextMenu }
                                     hidden = { false }
+                                    id = 'overflow-context-menu'
                                     inDrawer = { _overflowDrawer }
                                     onKeyDown = { this._onEscKey }>
                                     {overflowMenuButtons.reduce((acc, val) => {
@@ -1509,11 +1546,12 @@ class Toolbox extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { conference } = state['features/base/conference'];
-    const endConferenceSupported = conference?.isEndConferenceSupported();
+    const { isNarrowLayout } = state['features/base/responsive-ui'];
+    const endConferenceSupported = conference?.isEndConferenceSupported() && isLocalParticipantModerator(state);
 
     const {
-        buttonsWithNotifyClick,
         callStatsID,
+        customToolbarButtons,
         disableProfile,
         iAmRecorder,
         iAmSipGateway
@@ -1527,14 +1565,19 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const { clientWidth } = state['features/base/responsive-ui'];
-    const toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
+    let toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
+
+    if (iAmVisitor(state)) {
+        toolbarButtons = VISITORS_MODE_BUTTONS.filter(e => toolbarButtons.indexOf(e) > -1);
+    }
 
     return {
-        _backgroundType: state['features/virtual-background'].backgroundType,
-        _buttonsWithNotifyClick: buttonsWithNotifyClick,
+        _backgroundType: state['features/virtual-background'].backgroundType ?? '',
+        _buttonsWithNotifyClick: getButtonsWithNotifyClick(state),
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
+        _customToolbarButtons: customToolbarButtons,
         _desktopSharingEnabled: JitsiMeetJS.isDesktopSharingEnabled(),
         _desktopSharingButtonDisabled: isDesktopShareButtonDisabled(state),
         _dialog: Boolean(state['features/base/dialog'].component),
@@ -1551,6 +1594,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _jwtDisabledButons: getJwtDisabledButtons(state),
         _hasSalesforce: isSalesforceEnabled(state),
         _hangupMenuVisible: hangupMenuVisible,
+        _isNarrowLayout: isNarrowLayout,
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state),

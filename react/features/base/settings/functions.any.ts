@@ -1,9 +1,9 @@
 import { IReduxState } from '../../app/types';
+import { iAmVisitor } from '../../visitors/functions';
 import { IStateful } from '../app/types';
 import CONFIG_WHITELIST from '../config/configWhitelist';
 import { IConfigState } from '../config/reducer';
 import { IJwtState } from '../jwt/reducer';
-import { getParticipantCount } from '../participants/functions';
 import { toState } from '../redux/functions';
 import { parseURLParams } from '../util/parseURLParams';
 
@@ -115,21 +115,12 @@ export function shouldHideShareAudioHelper(state: IReduxState): boolean | undefi
 }
 
 /**
- * Whether we should hide self view.
- *
- * @param {Object} state - Redux state.
- * @returns {boolean}
- */
-export function shouldHideSelfView(state: IReduxState) {
-    return getParticipantCount(state) === 1 ? false : getHideSelfView(state);
-}
-
-/**
- * Gets the disable self view setting.
+ * Gets the disabled self view setting.
  *
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
 export function getHideSelfView(state: IReduxState) {
-    return state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView;
+    return state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView
+        || iAmVisitor(state);
 }

@@ -1,12 +1,15 @@
+/* eslint-disable lines-around-comment */
+
 import { IStore } from '../app/types';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
-} from '../base/lib-jitsi-meet/functions';
+} from '../base/lib-jitsi-meet/functions.any';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
-import { setFatalError } from './actions';
+import { openPageReloadDialog } from './actions';
+
 
 /**
  * Error type. Basically like Error, but augmented with a recoverable property.
@@ -30,12 +33,13 @@ type ErrorType = {
 };
 
 /**
- * List of errors that are not fatal (or handled differently) so then the overlays won't kick in.
+ * List of errors that are not fatal (or handled differently) so then the page reload dialog won't kick in.
  */
-const NON_OVERLAY_ERRORS = [
+const RN_NO_RELOAD_DIALOG_ERRORS = [
     JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
     JitsiConferenceErrors.CONFERENCE_DESTROYED,
-    JitsiConferenceErrors.CONNECTION_ERROR
+    JitsiConferenceErrors.CONNECTION_ERROR,
+    JitsiConferenceErrors.CONFERENCE_RESTARTED
 ];
 
 const ERROR_TYPES = {
@@ -47,12 +51,11 @@ const ERROR_TYPES = {
 /**
  * Gets the error type and whether it's fatal or not.
  *
- * @param {Function} getState - The redux function for fetching the current state.
+ * @param {Object} state - The redux state.
  * @param {Object|string} error - The error to process.
  * @returns {void}
  */
-const getErrorExtraInfo = (getState: IStore['getState'], error: ErrorType) => {
-    const state = getState();
+const getErrorExtraInfo = (state: any, error: ErrorType) => {
     const { error: conferenceError } = state['features/base/conference'];
     const { error: configError } = state['features/base/config'];
     const { error: connectionError } = state['features/base/connection'];
@@ -92,20 +95,26 @@ StateListenerRegistry.register(
 
         return configError || connectionError || conferenceError;
     },
-    /* listener */ (error: ErrorType, { dispatch, getState }) => {
+    /* listener */ (error: ErrorType, store: IStore) => {
+        const state = store.getState();
+
         if (!error) {
             return;
         }
 
+        // eslint-disable-next-line no-negated-condition
         if (typeof APP !== 'undefined') {
             APP.API.notifyError({
                 ...error,
-                ...getErrorExtraInfo(getState, error)
+                ...getErrorExtraInfo(state, error)
             });
         }
 
-        if (NON_OVERLAY_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
-            dispatch(setFatalError(error));
+        if (RN_NO_RELOAD_DIALOG_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
+            setTimeout(() => {
+                // @ts-ignore
+                store.dispatch(openPageReloadDialog());
+            }, 500);
         }
     }
 );

@@ -14,6 +14,11 @@ export interface IProps {
     accessibilityLabel: string;
 
     /**
+     * Component children.
+     */
+    children?: ReactNode;
+
+    /**
      * CSS class name used for custom styles.
      */
     className?: string;
@@ -55,6 +60,11 @@ export interface IProps {
     onKeyPress?: (e?: React.KeyboardEvent) => void;
 
     /**
+     * Whether the item is marked as selected.
+     */
+    selected?: boolean;
+
+    /**
      * TestId of the element, if any.
      */
     testId?: string;
@@ -62,7 +72,7 @@ export interface IProps {
     /**
      * Action text.
      */
-    text: string;
+    text?: string;
 
     /**
      * Class name for the text.
@@ -90,7 +100,17 @@ const useStyles = makeStyles()(theme => {
 
             '&:active': {
                 backgroundColor: theme.palette.ui03
+            },
+
+            '&:focus': {
+                boxShadow: `inset 0 0 0 2px ${theme.palette.action01Hover}`
             }
+        },
+
+        selected: {
+            borderLeft: `3px solid ${theme.palette.action01Hover}`,
+            paddingLeft: '13px',
+            backgroundColor: theme.palette.ui02
         },
 
         contextMenuItemDisabled: {
@@ -120,6 +140,7 @@ const useStyles = makeStyles()(theme => {
 
 const ContextMenuItem = ({
     accessibilityLabel,
+    children,
     className,
     customIcon,
     disabled,
@@ -128,6 +149,7 @@ const ContextMenuItem = ({
     onClick,
     onKeyDown,
     onKeyPress,
+    selected,
     testId,
     text,
     textClassName }: IProps) => {
@@ -141,6 +163,7 @@ const ContextMenuItem = ({
             className = { cx(styles.contextMenuItem,
                     _overflowDrawer && styles.contextMenuItemDrawer,
                     disabled && styles.contextMenuItemDisabled,
+                    selected && styles.selected,
                     className
             ) }
             data-testid = { testId }
@@ -148,13 +171,23 @@ const ContextMenuItem = ({
             key = { text }
             onClick = { disabled ? undefined : onClick }
             onKeyDown = { disabled ? undefined : onKeyDown }
-            onKeyPress = { disabled ? undefined : onKeyPress }>
+            onKeyPress = { disabled ? undefined : onKeyPress }
+            role = 'button'
+            tabIndex = { disabled ? undefined : 0 }>
             {customIcon ? customIcon
                 : icon && <Icon
                     className = { styles.contextMenuItemIcon }
                     size = { 20 }
                     src = { icon } />}
-            <span className = { cx(textClassName) }>{text}</span>
+            {text && (
+                <span
+                    className = { cx(styles.text,
+                _overflowDrawer && styles.drawerText,
+                textClassName) }>
+                    {text}
+                </span>
+            )}
+            {children}
         </div>
     );
 };

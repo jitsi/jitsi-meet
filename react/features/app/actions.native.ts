@@ -30,12 +30,10 @@ import {
 // @ts-ignore
 import { screen } from '../mobile/navigation/routes';
 import { clearNotifications } from '../notifications/actions';
-// @ts-ignore
-import { setFatalError } from '../overlay';
 
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
-import { IStore } from './types';
+import { IReloadNowOptions, IStore } from './types';
 
 export * from './actions.any';
 
@@ -46,9 +44,10 @@ export * from './actions.any';
  * @param {string|undefined} uri - The URI to which to navigate. It may be a
  * full URL with an HTTP(S) scheme, a full or partial URI with the app-specific
  * scheme, or a mere room name.
+ * @param {Object} [options] - Options.
  * @returns {Function}
  */
-export function appNavigate(uri?: string) {
+export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
     logger.info(`appNavigate to ${uri}`);
 
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
@@ -144,7 +143,10 @@ export function appNavigate(uri?: string) {
             dispatch(createDesiredLocalTracks());
             dispatch(clearNotifications());
 
-            if (isPrejoinPageEnabled(getState())) {
+            // @ts-ignore
+            const { hidePrejoin } = options;
+
+            if (!hidePrejoin && isPrejoinPageEnabled(getState())) {
                 navigateRoot(screen.preJoin);
             } else {
                 dispatch(connect());
@@ -177,7 +179,6 @@ export function maybeRedirectToWelcomePage(options: any) { // eslint-disable-lin
  */
 export function reloadNow() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        dispatch(setFatalError(undefined));
 
         const state = getState();
         const { locationURL } = state['features/base/connection'];
@@ -188,6 +189,8 @@ export function reloadNow() {
 
         logger.info(`Reloading the conference using URL: ${locationURL}`);
 
-        dispatch(appNavigate(toURLString(newURL)));
+        dispatch(appNavigate(toURLString(newURL), {
+            hidePrejoin: true
+        }));
     };
 }

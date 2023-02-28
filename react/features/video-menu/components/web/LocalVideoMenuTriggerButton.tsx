@@ -30,6 +30,7 @@ import FlipLocalVideoButton from './FlipLocalVideoButton';
 import HideSelfViewVideoButton from './HideSelfViewVideoButton';
 // @ts-ignore
 import TogglePinToStageButton from './TogglePinToStageButton';
+/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of
@@ -215,13 +216,14 @@ class LocalVideoMenuTriggerButton extends Component<IProps> {
             isMobileBrowser() || _showLocalVideoFlipButton || _showHideSelfViewButton
                 ? <Popover
                     content = { content }
+                    headingLabel = { t('dialog.localUserControls') }
                     id = 'local-video-menu-trigger'
                     onPopoverClose = { this._onPopoverClose }
                     onPopoverOpen = { this._onPopoverOpen }
                     overflowDrawer = { _overflowDrawer }
                     position = { _menuPosition }
                     visible = { popoverVisible }>
-                    {!_overflowDrawer && buttonVisible && !isMobileBrowser() && (
+                    {buttonVisible && !isMobileBrowser() && (
                         <Button
                             accessibilityLabel = { t('dialog.localUserControls') }
                             className = { classes.triggerButton }

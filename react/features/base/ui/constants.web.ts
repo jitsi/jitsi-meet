@@ -228,7 +228,11 @@ export const commonStyles = (theme: Theme) => {
 
             '@media (hover: hover) and (pointer: fine)': {
                 '&:hover': {
-                    background: theme.palette.ui04
+                    backgroundColor: theme.palette.ui04
+                },
+
+                '&:active': {
+                    backgroundColor: theme.palette.ui03
                 }
             },
             [theme.breakpoints.down(320)]: {
@@ -237,7 +241,7 @@ export const commonStyles = (theme: Theme) => {
             },
 
             '&.toggled': {
-                background: theme.palette.ui03
+                backgroundColor: theme.palette.ui03
             },
 
             '&.disabled': {
@@ -268,30 +272,11 @@ export const commonStyles = (theme: Theme) => {
             boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)',
 
             '& > div': {
-                marginLeft: 8,
+                marginRight: theme.spacing(2),
 
-                '&:first-child': {
-                    marginLeft: 0
+                '&:last-of-type': {
+                    marginRight: 0
                 }
-            }
-        }
-    };
-};
-
-/**
- * Returns the global styles.
- *
- * @param {Object} theme - The Jitsi theme.
- * @returns {Object}
- */
-export const getGlobalStyles = (theme: Theme) => {
-    return {
-        // @atlaskit/modal-dialog OVERRIDES
-        '.atlaskit-portal div[role=dialog]': {
-            // override dialog background
-            '& > div': {
-                background: theme.palette.ui02,
-                color: theme.palette.text01
             }
         }
     };

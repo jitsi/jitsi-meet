@@ -286,7 +286,7 @@ end
 --- retry @param retry number of times
 -- @param url endpoint to be called
 -- @param retry nr of retries, if retry is
--- @param auth_token value to be passed as auth Bearer 
+-- @param auth_token value to be passed as auth Bearer
 -- nil there will be no retries
 -- @returns result of the http call or nil if
 -- the external call failed after the last retry

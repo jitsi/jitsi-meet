@@ -2,6 +2,7 @@
 
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -39,6 +40,9 @@ const PollsPane = (props: AbstractProps) => {
 
     }, [ isPollsTabFocused, nbUnreadPolls ]);
 
+    const createPollButtonStyles = Platform.OS === 'android'
+        ? chatStyles.createPollButtonAndroid : chatStyles.createPollButtonIos;
+
     return (
         <JitsiScreen
             contentContainerStyle = { chatStyles.pollPane }
@@ -49,14 +53,13 @@ const PollsPane = (props: AbstractProps) => {
                 createMode
                     ? <PollCreate setCreateMode = { setCreateMode } />
                     : <PollsList />
-
             }
             {
                 !createMode && <Button
                     accessibilityLabel = 'polls.create.create'
                     labelKey = 'polls.create.create'
                     onClick = { onCreate }
-                    style = { chatStyles.createPollButton }
+                    style = { createPollButtonStyles }
                     type = { BUTTON_TYPES.PRIMARY } />
             }
         </JitsiScreen>

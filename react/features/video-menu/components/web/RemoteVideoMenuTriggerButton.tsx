@@ -23,6 +23,7 @@ import FakeParticipantContextMenu from './FakeParticipantContextMenu';
 import ParticipantContextMenu from './ParticipantContextMenu';
 // @ts-ignore
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
+/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of
@@ -189,12 +190,14 @@ class RemoteVideoMenuTriggerButton extends Component<IProps> {
         return (
             <Popover
                 content = { content }
+                headingLabel = { this.props.t('dialog.remoteUserControls', { username }) }
                 id = 'remote-video-menu-trigger'
                 onPopoverClose = { this._onPopoverClose }
                 onPopoverOpen = { this._onPopoverOpen }
+                overflowDrawer = { _overflowDrawer }
                 position = { this.props._menuPosition }
                 visible = { popoverVisible }>
-                {!_overflowDrawer && buttonVisible && !_disabled && (
+                { buttonVisible && !_disabled && (
                     !isMobileBrowser() && <Button
                         accessibilityLabel = { this.props.t('dialog.remoteUserControls', { username }) }
                         className = { classes.triggerButton }

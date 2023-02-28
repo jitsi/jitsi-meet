@@ -8,39 +8,6 @@ import Filmstrip from '../videolayout/Filmstrip';
 import LargeContainer from '../videolayout/LargeContainer';
 import VideoLayout from '../videolayout/VideoLayout';
 
-/**
- *
- */
-function bubbleIframeMouseMove(iframe) {
-    const existingOnMouseMove = iframe.contentWindow.onmousemove;
-
-    iframe.contentWindow.onmousemove = function(e) {
-        if (existingOnMouseMove) {
-            existingOnMouseMove(e);
-        }
-        const evt = document.createEvent('MouseEvents');
-        const boundingClientRect = iframe.getBoundingClientRect();
-
-        evt.initMouseEvent(
-            'mousemove',
-            true, // bubbles
-            false, // not cancelable
-            window,
-            e.detail,
-            e.screenX,
-            e.screenY,
-            e.clientX + boundingClientRect.left,
-            e.clientY + boundingClientRect.top,
-            e.ctrlKey,
-            e.altKey,
-            e.shiftKey,
-            e.metaKey,
-            e.button,
-            null // no related element
-        );
-        iframe.dispatchEvent(evt);
-    };
-}
 
 /**
  * Default Etherpad frame width.
@@ -68,33 +35,13 @@ class Etherpad extends LargeContainer {
 
         iframe.id = 'etherpadIFrame';
         iframe.src = url;
-        iframe.frameBorder = 0;
+        iframe.style.border = 0;
         iframe.scrolling = 'no';
         iframe.width = DEFAULT_WIDTH;
         iframe.height = DEFAULT_HEIGHT;
         iframe.setAttribute('style', 'visibility: hidden;');
 
         this.container.appendChild(iframe);
-
-        iframe.onload = function() {
-            // eslint-disable-next-line no-self-assign
-            document.domain = document.domain;
-            bubbleIframeMouseMove(iframe);
-
-            setTimeout(() => {
-                const doc = iframe.contentDocument;
-
-                // the iframes inside of the etherpad are
-                // not yet loaded when the etherpad iframe is loaded
-                const outer = doc.getElementsByName('ace_outer')[0];
-
-                bubbleIframeMouseMove(outer);
-
-                const inner = doc.getElementsByName('ace_inner')[0];
-
-                bubbleIframeMouseMove(inner);
-            }, 2000);
-        };
 
         this.iframe = iframe;
     }

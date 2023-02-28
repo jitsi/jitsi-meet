@@ -8,12 +8,14 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { RecordingLabel } from '../../../recording';
 import { openHighlightDialog } from '../../../recording/actions.native';
 import HighlightButton from '../../../recording/components/Recording/native/HighlightButton';
+import VisitorsCountLabel from '../../../visitors/components/native/VisitorsCountLabel';
 
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
 import {
     LABEL_ID_RAISED_HANDS_COUNT,
     LABEL_ID_RECORDING,
     LABEL_ID_STREAMING,
+    LABEL_ID_VISITORS_COUNT,
     LabelHitSlop
 } from './constants';
 
@@ -50,6 +52,11 @@ const AlwaysOnLabels = ({ createOnPress }: Props) => {
             hitSlop = { LabelHitSlop }
             onPress = { createOnPress(LABEL_ID_RAISED_HANDS_COUNT) } >
             <RaisedHandsCountLabel />
+        </TouchableOpacity>
+        <TouchableOpacity
+            hitSlop = { LabelHitSlop }
+            onPress = { createOnPress(LABEL_ID_VISITORS_COUNT) } >
+            <VisitorsCountLabel />
         </TouchableOpacity>
     </>);
 };

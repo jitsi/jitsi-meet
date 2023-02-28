@@ -48,7 +48,7 @@ type Props = {
     /**
      * Dialog title.
      */
-    title?: string,
+    title?: string
 };
 
 /**

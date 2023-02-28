@@ -183,6 +183,7 @@ const ConferenceNavigationContainer = () => {
                     name = { screen.settings.main }
                     options = { settingsNavigationContainerScreenOptions } />
                 <ConferenceStack.Screen
+                    // @ts-ignore
                     component = { CarMode }
                     name = { screen.conference.carmode }
                     options = {{

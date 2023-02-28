@@ -58,6 +58,8 @@ module:hook(
     "muc-broadcast-presence",
     function (event)
         -- Detect if the presence is for a poltergeist or not.
+	-- FIX ME: luacheck warning 581
+	--   not (x == y)' can be replaced by 'x ~= y' (if neither side is a table or NaN)
         if not (jid.bare(event.occupant.jid) == poltergeist_component) then
             return
         end

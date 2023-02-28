@@ -2,13 +2,13 @@
 
 import React from 'react';
 
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../base/i18n/functions';
+import { connect } from '../../../base/redux/functions';
+
 import AbstractPageReloadOverlay, {
     type Props,
     abstractMapStateToProps
-} from '../AbstractPageReloadOverlay';
-
+} from './AbstractPageReloadOverlay';
 import OverlayFrame from './OverlayFrame';
 
 /**

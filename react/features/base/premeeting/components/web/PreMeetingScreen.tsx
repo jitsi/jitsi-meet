@@ -1,18 +1,18 @@
-/* eslint-disable lines-around-comment */
+import clsx from 'clsx';
 import React, { ReactNode } from 'react';
+import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import DeviceStatus from '../../../../prejoin/components/web/preview/DeviceStatus';
-// @ts-ignore
-import { Toolbox } from '../../../../toolbox/components/web';
+import Toolbox from '../../../../toolbox/components/web/Toolbox';
 import { getConferenceName } from '../../../conference/functions';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
 import { getToolbarButtons, isToolbarButtonEnabled } from '../../../config/functions.web';
-import { connect } from '../../../redux/functions';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import ConnectionStatus from './ConnectionStatus';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import Preview from './Preview';
 
@@ -51,7 +51,7 @@ interface IProps {
     /**
      * Indicates whether the copy url button should be shown.
      */
-    showCopyUrlButton: boolean;
+    showCopyUrlButton?: boolean;
 
     /**
      * Indicates whether the device status should be shown.
@@ -86,7 +86,64 @@ interface IProps {
 
 const useStyles = makeStyles()(theme => {
     return {
-        subtitle: {
+        container: {
+            height: '100%',
+            position: 'absolute',
+            inset: '0 0 0 0',
+            display: 'flex',
+            backgroundColor: theme.palette.ui01,
+            zIndex: 252,
+
+            '@media (max-width: 720px)': {
+                flexDirection: 'column-reverse'
+            }
+        },
+        content: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            flexShrink: 0,
+            boxSizing: 'border-box',
+            margin: '0 48px',
+            padding: '24px 0 16px',
+            position: 'relative',
+            width: '300px',
+            height: '100%',
+            zIndex: 252,
+
+            '@media (max-width: 720px)': {
+                height: 'auto',
+                margin: '0 auto'
+            },
+
+            // mobile phone landscape
+            '@media (max-width: 420px)': {
+                padding: '16px 16px 0 16px',
+                width: '100%'
+            },
+
+            '@media (max-width: 400px)': {
+                padding: '16px'
+            }
+        },
+        contentControls: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            margin: 'auto',
+            width: '100%'
+        },
+        title: {
+            ...withPixelLineHeight(theme.typography.heading4),
+            color: `${theme.palette.text01}!important`,
+            marginBottom: theme.spacing(3),
+            textAlign: 'center',
+
+            '@media (max-width: 400px)': {
+                display: 'none'
+            }
+        },
+        roomName: {
             ...withPixelLineHeight(theme.typography.heading5),
             color: theme.palette.text01,
             marginBottom: theme.spacing(4),
@@ -112,7 +169,6 @@ const PreMeetingScreen = ({
     videoTrack
 }: IProps) => {
     const { classes } = useStyles();
-    const containerClassName = `premeeting-screen ${className ? className : ''}`;
     const style = _premeetingBackground ? {
         background: _premeetingBackground,
         backgroundPosition: 'center',
@@ -120,17 +176,17 @@ const PreMeetingScreen = ({
     } : {};
 
     return (
-        <div className = { containerClassName }>
+        <div className = { clsx('premeeting-screen', classes.container, className) }>
             <div style = { style }>
-                <div className = 'content'>
+                <div className = { classes.content }>
                     <ConnectionStatus />
 
-                    <div className = 'content-controls'>
-                        <h1 className = 'title'>
+                    <div className = { classes.contentControls }>
+                        <h1 className = { classes.title }>
                             {title}
                         </h1>
                         {_roomName && (
-                            <span className = { classes.subtitle }>
+                            <span className = { classes.roomName }>
                                 {_roomName}
                             </span>
                         )}
@@ -175,7 +231,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
             ? premeetingButtons
             : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
-        _roomName: hideConferenceSubject ? undefined : getConferenceName(state)
+        _roomName: (hideConferenceSubject ? undefined : getConferenceName(state)) ?? ''
     };
 }
 

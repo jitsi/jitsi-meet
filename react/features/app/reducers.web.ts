@@ -16,5 +16,6 @@ import '../screenshot-capture/reducer';
 import '../talk-while-muted/reducer';
 import '../virtual-background/reducer';
 import '../whiteboard/reducer';
+import '../web-hid/reducer';
 
 import './reducers.any';

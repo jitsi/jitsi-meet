@@ -48,7 +48,6 @@ export const colors = {
     // after we replace them in the components.
     primary10: '#17A0DB',
     primary11: '#1081B2',
-    primary12: '#B8C7E0',
     surface00: '#111111',
     surface12: '#AAAAAA',
     surface13: '#495258',
@@ -199,7 +198,6 @@ export const colorMap = {
     border01: 'surface08',
     border02: 'surface06',
     border03: 'surface04',
-    border04: 'primary12',
     border05: 'surface07',
     borderError: 'error06',
     warning03: 'warning07',

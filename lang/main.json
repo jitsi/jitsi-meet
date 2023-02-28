@@ -184,13 +184,21 @@
     "deepLinking": {
         "appNotInstalled": "You need the {{app}} mobile app to join this meeting on your phone.",
         "description": "Nothing happened? We tried launching your meeting in the {{app}} desktop app. Try again or launch it in the {{app}} web app.",
+        "descriptionNew": "Nothing happened? We tried launching your meeting in the {{app}} desktop app. <br /><br /> You can try again or launch it on web.",
         "descriptionWithoutWeb": "Nothing happened? We tried launching your meeting in the {{app}} desktop app.",
         "downloadApp": "Download the app",
+        "downloadMobileApp": "Download from App Store",
         "ifDoNotHaveApp": "If you don't have the app yet:",
         "ifHaveApp": "If you already have the app:",
         "joinInApp": "Join this meeting using the app",
+        "joinInAppNew": "Join in app",
+        "joinInBrowser": "Join in browser",
+        "launchMeetingLabel": "How do you want to join this meeting?",
         "launchWebButton": "Launch in web",
+        "noMobileApp": "You don’t have the app?",
+        "termsAndConditions": "By continuing you agree to our <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>terms & conditions.</a>",
         "title": "Launching your meeting in {{app}}...",
+        "titleNew": "Launching your meeting ...",
         "tryAgainButton": "Try again in desktop",
         "unsupportedBrowser": "It looks like you're using a browser we don't support."
     },
@@ -203,6 +211,12 @@
         "microphonePermission": "Error obtaining microphone permission"
     },
     "deviceSelection": {
+        "hid": {
+            "callControl": "Call control",
+            "connectedDevices": "Connected devices:",
+            "deleteDevice": "Delete device",
+            "pairDevice": "Pair device"
+        },
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",
@@ -438,12 +452,14 @@
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
     },
+    "filmstrip": {
+        "accessibilityLabel": {
+            "heading": "Video thumbnails"
+        }
+    },
     "giphy": {
         "noResults": "No results found :(",
         "search": "Search GIPHY"
-    },
-    "helpView": {
-        "title": "Help center"
     },
     "incomingCall": {
         "answer": "Answer",
@@ -715,6 +731,8 @@
         "reactionSoundsForAll": "Disable sounds for all",
         "screenShareNoAudio": "Share audio box was not checked in the window selection screen.",
         "screenShareNoAudioTitle": "Couldn't share system audio!",
+        "screenSharingAudioOnlyDescription": "Please note that by sharing your screen you're affecting the \"Best performance\" mode and you will use more bandwidth.",
+        "screenSharingAudioOnlyTitle": "\"Best performance\" mode",
         "selfViewTitle": "You can always un-hide the self-view from settings",
         "somebody": "Somebody",
         "startSilentDescription": "Rejoin the meeting to enable audio",
@@ -752,6 +770,7 @@
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})",
+            "visitors": "Visitors ({{count}})",
             "waitingLobby": "Waiting in lobby ({{count}})"
         },
         "search": "Search participants",
@@ -759,6 +778,7 @@
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "Set by another participant",
+    "pinParticipant": "{{participantName}} - Pin",
     "pinnedParticipant": "The participant is pinned",
     "polls": {
         "answer": {
@@ -864,9 +884,6 @@
         "rejected": "Rejected",
         "ringing": "Ringing..."
     },
-    "privacyView": {
-        "title": "Privacy"
-    },
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "Set your display name",
@@ -920,6 +937,7 @@
         "localRecordingVideoWarning": "To record your video you must have it on when starting the recording",
         "localRecordingWarning": "Make sure you select the current tab in order to use the right video and audio. The recording is currently limited to 1GB, which is around 100 minutes.",
         "loggedIn": "Logged in as {{userName}}",
+        "noMicPermission": "Microphone track could not be created. Please grant permission to use the microphone.",
         "noStreams": "No audio or video stream detected.",
         "off": "Recording stopped",
         "offBy": "{{name}} stopped the recording",
@@ -1084,6 +1102,7 @@
             "giphy": "Toggle GIPHY menu",
             "grantModerator": "Grant Moderator Rights",
             "hangup": "Leave the meeting",
+            "heading": "Toolbar",
             "help": "Help",
             "invite": "Invite people",
             "kick": "Kick participant",
@@ -1237,6 +1256,7 @@
         "subtitlesOff": "Off",
         "tr": "TR"
     },
+    "unpinParticipant": "{{participantName}} - Unpin",
     "userMedia": {
         "androidGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
         "chromeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
@@ -1275,9 +1295,11 @@
         "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",
         "performanceSettings": "Performance settings",
+        "recording": "Recording in progress",
         "sd": "SD",
         "sdTooltip": "Viewing standard definition video",
-        "standardDefinition": "Standard definition"
+        "standardDefinition": "Standard definition",
+        "streaming": "Streaming in progress"
     },
     "videothumbnail": {
         "connectionInfo": "Connection Info",
@@ -1289,6 +1311,7 @@
         "grantModerator": "Grant Moderator Rights",
         "hideSelfView": "Hide self view",
         "kick": "Kick out",
+        "mirrorVideo": "Mirror my video",
         "moderator": "Moderator",
         "mute": "Participant is muted",
         "muted": "Muted",
@@ -1326,6 +1349,7 @@
         "webAssemblyWarning": "WebAssembly not supported",
         "webAssemblyWarningDescription": "WebAssembly disabled or not supported by this browser"
     },
+    "visitorsLabel": "Number of visitors: {{count}}",
     "volumeSlider": "Volume slider",
     "welcomepage": {
         "accessibilityLabel": {
@@ -1366,6 +1390,7 @@
         "recentList": "Recent",
         "recentListDelete": "Delete entry",
         "recentListEmpty": "Your recent list is currently empty. Chat with your team and you will find all your recent meetings here.",
+        "recentMeetings": "Your recent meetings",
         "reducedUIText": "Welcome to {{app}}!",
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "roomname": "Enter room name",
@@ -1374,6 +1399,12 @@
         "settings": "Settings",
         "startMeeting": "Start meeting",
         "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing"
+        "title": "Secure, fully featured, and completely free video conferencing",
+        "upcomingMeetings": "Your upcoming meetings"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Whiteboard"
+        }
     }
 }

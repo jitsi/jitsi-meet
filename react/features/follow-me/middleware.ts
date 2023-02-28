@@ -9,7 +9,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { updateSettings } from '../base/settings/actions';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { addStageParticipant, setFilmstripVisible } from '../filmstrip/actions';
+import { addStageParticipant, removeStageParticipant, setFilmstripVisible } from '../filmstrip/actions';
 import { setTileView } from '../video-layout/actions.any';
 
 import {
@@ -180,9 +180,19 @@ function _onFollowMeCommand(attributes: any = {}, id: string, store: IStore) {
 
     if (attributes.pinnedStageParticipants !== undefined) {
         const stageParticipants = JSON.parse(attributes.pinnedStageParticipants);
+        let oldStageParticipants = [];
 
-        if (!_.isEqual(stageParticipants, oldState.pinnedStageParticipants)) {
-            stageParticipants.forEach((p: { participantId: string; }) =>
+        if (oldState.pinnedStageParticipants !== undefined) {
+            oldStageParticipants = JSON.parse(oldState.pinnedStageParticipants);
+        }
+
+        if (!_.isEqual(stageParticipants, oldStageParticipants)) {
+            const toRemove = _.differenceWith(oldStageParticipants, stageParticipants, _.isEqual);
+            const toAdd = _.differenceWith(stageParticipants, oldStageParticipants, _.isEqual);
+
+            toRemove.forEach((p: { participantId: string; }) =>
+                store.dispatch(removeStageParticipant(p.participantId)));
+            toAdd.forEach((p: { participantId: string; }) =>
                 store.dispatch(addStageParticipant(p.participantId, true)));
         }
     }

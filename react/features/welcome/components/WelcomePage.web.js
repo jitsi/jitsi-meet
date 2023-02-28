@@ -184,24 +184,27 @@ class WelcomePage extends AbstractWelcomePage {
             <div
                 className = { `welcome ${contentClassName} ${footerClassName}` }
                 id = 'welcome_page'>
-                <div className = 'welcome-watermark'>
-                    <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
-                </div>
-
                 <div className = 'header'>
-                    <div className = 'welcome-page-settings'>
-                        <SettingsButton
-                            defaultTab = { SETTINGS_TABS.CALENDAR }
-                            isDisplayedOnWelcomePage = { true } />
-                        { showAdditionalToolbarContent
-                            ? <div
-                                className = 'settings-toolbar-content'
-                                ref = { this._setAdditionalToolbarContentRef } />
-                            : null
-                        }
-                    </div>
                     <div className = 'header-image' />
                     <div className = 'header-container'>
+                        <div className = 'header-watermark-container'>
+                            <div className = 'welcome-watermark'>
+                                <Watermarks
+                                    defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL }
+                                    noMargins = { true } />
+                            </div>
+                        </div>
+                        <div className = 'welcome-page-settings'>
+                            <SettingsButton
+                                defaultTab = { SETTINGS_TABS.CALENDAR }
+                                isDisplayedOnWelcomePage = { true } />
+                            { showAdditionalToolbarContent
+                                ? <div
+                                    className = 'settings-toolbar-content'
+                                    ref = { this._setAdditionalToolbarContentRef } />
+                                : null
+                            }
+                        </div>
                         <h1 className = 'header-text-title'>
                             { t('welcomepage.headerTitle') }
                         </h1>
@@ -246,18 +249,16 @@ class WelcomePage extends AbstractWelcomePage {
 
                         { _moderatedRoomServiceUrl && (
                             <div id = 'moderated-meetings'>
-                                <p>
-                                    {
-                                        translateToHTML(
-                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
-                                    }
-                                </p>
+                                {
+                                    translateToHTML(
+                                    t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
+                                }
                             </div>)}
                     </div>
                 </div>
 
                 <div className = 'welcome-cards-container'>
-                    <div className = 'welcome-card-row'>
+                    <div className = 'welcome-card-column'>
                         <div className = 'welcome-tabs welcome-card welcome-card--blue'>
                             { this._renderTabs() }
                         </div>
@@ -343,12 +344,17 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     _renderFooter() {
-        const { t } = this.props;
         const {
-            MOBILE_DOWNLOAD_LINK_ANDROID,
-            MOBILE_DOWNLOAD_LINK_F_DROID,
-            MOBILE_DOWNLOAD_LINK_IOS
-        } = interfaceConfig;
+            t,
+            _deeplinkingCfg: {
+                ios = {},
+                android = {}
+            }
+        } = this.props;
+
+        const { downloadLink: iosDownloadLink } = ios;
+
+        const { fDroidUrl, downloadLink: androidDownloadLink } = android;
 
         return (<footer className = 'welcome-footer'>
             <div className = 'welcome-footer-centered'>
@@ -357,21 +363,21 @@ class WelcomePage extends AbstractWelcomePage {
                         <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
                         <a
                             className = 'welcome-badge'
-                            href = { MOBILE_DOWNLOAD_LINK_IOS }>
+                            href = { iosDownloadLink }>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkIos') }
                                 src = './images/app-store-badge.png' />
                         </a>
                         <a
                             className = 'welcome-badge'
-                            href = { MOBILE_DOWNLOAD_LINK_ANDROID }>
+                            href = { androidDownloadLink }>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
                                 src = './images/google-play-badge.png' />
                         </a>
                         <a
                             className = 'welcome-badge'
-                            href = { MOBILE_DOWNLOAD_LINK_F_DROID }>
+                            href = { fDroidUrl }>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
                                 src = './images/f-droid-badge.png' />
@@ -399,14 +405,14 @@ class WelcomePage extends AbstractWelcomePage {
 
         if (_calendarEnabled) {
             tabs.push({
-                label: t('welcomepage.calendar'),
+                label: t('welcomepage.upcomingMeetings'),
                 content: <CalendarList />
             });
         }
 
         if (_recentListEnabled) {
             tabs.push({
-                label: t('welcomepage.recentList'),
+                label: t('welcomepage.recentMeetings'),
                 content: <RecentList />
             });
         }

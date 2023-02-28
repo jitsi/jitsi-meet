@@ -1,14 +1,15 @@
 // @flow
 
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { connect } from '../../../base/redux';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
 
 import Notification from './Notification';
-import styles from './styles';
+
 
 type Props = {
 
@@ -23,10 +24,7 @@ type Props = {
      */
      dispatch: Function,
 
-    /**
-     * Any custom styling applied to the notifications container.
-     */
-    style: Object
+     toolboxVisible: boolean
 };
 
 /**
@@ -65,7 +63,7 @@ class NotificationsContainer extends Component<Props> {
     }
 
     /**
-     * Sets a timeout for the first notification (if applicable).
+     * Sets a timeout (if applicable).
      *
      * @inheritdoc
      */
@@ -171,27 +169,26 @@ class NotificationsContainer extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _notifications } = this.props;
-
-        // Currently the native container displays only the topmost notification
-        const theNotification = _notifications[0];
-
-        if (!theNotification) {
-            return null;
-        }
+        const { _notifications, toolboxVisible } = this.props;
+        const bottomEdge = Platform.OS === 'ios' && !toolboxVisible;
 
         return (
-            <View
-                pointerEvents = 'box-none'
-                style = { [
-                    styles.notificationContainer,
-                    this.props.style
-                ] } >
-                <Notification
-                    { ...theNotification.props }
-                    onDismissed = { this._onDismissed }
-                    uid = { theNotification.uid } />
-            </View>
+            <SafeAreaView
+                edges = { [ bottomEdge && 'bottom', 'left', 'right' ].filter(Boolean) }>
+                {
+                    _notifications.map((notification, index) => {
+                        const { props, uid } = notification;
+
+                        return (
+                            <Notification
+                                { ...props }
+                                key = { index }
+                                onDismissed = { this._onDismissed }
+                                uid = { uid } />
+                        );
+                    })
+                }
+            </SafeAreaView>
         );
     }
 

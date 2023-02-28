@@ -44,6 +44,15 @@ export function getKnockingParticipantsById(state: IReduxState) {
     return getKnockingParticipants(state).map(participant => participant.id);
 }
 
+/**
+ * Selector to return the lobby config.
+ *
+ * @param {IReduxState} state - State object.
+ * @returns {Object}
+ */
+export function getLobbyConfig(state: IReduxState) {
+    return state['features/base/config']?.lobby || {};
+}
 
 /**
  * Function that handles the visibility of the lobby chat message.
@@ -56,13 +65,13 @@ export function showLobbyChatButton(
 ) {
     return function(state: IReduxState) {
 
-        const { enableLobbyChat = true } = state['features/base/config'];
+        const { enableChat = true } = getLobbyConfig(state);
         const { lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
         const conference = getCurrentConference(state);
 
         const lobbyLocalId = conference?.myLobbyUserId();
 
-        if (!enableLobbyChat) {
+        if (!enableChat) {
             return false;
         }
 
