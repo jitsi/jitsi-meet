@@ -67,6 +67,11 @@ type Props = {
     searchString?: string,
 
     /**
+     * Callback used to stop a participant's video.
+     */
+    stopVideo: Function,
+
+    /**
      * The translated "you" text.
      */
     youText: string
@@ -78,28 +83,25 @@ type Props = {
  * @returns {ReactNode}
  */
 function MeetingParticipantItems({
-    askUnmuteText,
     isInBreakoutRoom,
     lowerMenu,
     toggleMenu,
     muteAudio,
-    muteParticipantButtonText,
     participantIds,
     openDrawerForParticipant,
     overflowDrawer,
     raiseContextId,
     participantActionEllipsisLabel,
     searchString,
+    stopVideo,
     youText
 }: Props) {
     const renderParticipant = id => (
         <MeetingParticipantItem
-            askUnmuteText = { askUnmuteText }
             isHighlighted = { raiseContextId === id }
             isInBreakoutRoom = { isInBreakoutRoom }
             key = { id }
             muteAudio = { muteAudio }
-            muteParticipantButtonText = { muteParticipantButtonText }
             onContextMenu = { toggleMenu(id) }
             onLeave = { lowerMenu }
             openDrawerForParticipant = { openDrawerForParticipant }
@@ -107,6 +109,7 @@ function MeetingParticipantItems({
             participantActionEllipsisLabel = { participantActionEllipsisLabel }
             participantID = { id }
             searchString = { searchString }
+            stopVideo = { stopVideo }
             youText = { youText } />
     );
 
