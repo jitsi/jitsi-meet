@@ -241,6 +241,7 @@ export function getSoundsTabProps(stateful: IStateful) {
     const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
 
     return {
+        disabledSounds: state['features/base/config'].disabledSounds || [],
         soundsIncomingMessage,
         soundsParticipantJoined,
         soundsParticipantKnocking,
