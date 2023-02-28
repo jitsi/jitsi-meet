@@ -12,7 +12,7 @@ import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
-import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
+import { isCalendarEnabled } from '../../../calendar-sync/functions.native';
 import { DisplayNameLabel } from '../../../display-name';
 import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
 import {
@@ -321,21 +321,6 @@ class Conference extends AbstractConference<Props, State> {
         return true;
     }
 
-    /**
-     * Renders the conference notification badge if the feature is enabled.
-     *
-     * @private
-     * @returns {React$Node}
-     */
-    _renderConferenceNotification() {
-        const { _calendarEnabled, _reducedUI } = this.props;
-
-        return (
-            _calendarEnabled && !_reducedUI
-                ? <ConferenceNotification />
-                : undefined);
-    }
-
     _createOnPress: (string) => void;
 
     /**
@@ -471,8 +456,6 @@ class Conference extends AbstractConference<Props, State> {
                 </SafeAreaView>
 
                 <TestConnectionInfo />
-
-                { this._renderConferenceNotification() }
 
                 {_shouldDisplayTileView && <Toolbox />}
             </>
