@@ -504,7 +504,7 @@
         "reachedLimit": "Keni mbërritur në kufijtë e planit tuaj.",
         "sip": "Adresë SIP",
         "title": "Ndani me të tjerë",
-        "tooltip": "Ndani me të tjerë lidhje dhe hollësi numrash për këtë takim"
+        "tooltip": "Ndani me të tjerë lidhje dhe hollësi numrash për këtë takim",
         "upgradeOptions": "Ju lutemi, shihni mundësitë e përmirësimit, te"
     },
     "inlineDialogFailure": {
