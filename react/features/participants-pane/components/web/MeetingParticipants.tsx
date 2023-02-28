@@ -112,6 +112,12 @@ function MeetingParticipants({
 
     return (
         <>
+            <span
+                aria-level = { 1 }
+                className = 'sr-only'
+                role = 'heading'>
+                { t('participantsPane.title') }
+            </span>
             <div className = { cx(styles.heading, styles.headingW) }>
                 {visitorsCount && visitorsCount > 0
                     && t('participantsPane.headings.visitors', { count: visitorsCount })}

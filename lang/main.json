@@ -452,6 +452,11 @@
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
     },
+    "filmstrip": {
+        "accessibilityLabel": {
+            "heading": "Video thumbnails"
+        }
+    },
     "giphy": {
         "noResults": "No results found :(",
         "search": "Search GIPHY"
@@ -1097,6 +1102,7 @@
             "giphy": "Toggle GIPHY menu",
             "grantModerator": "Grant Moderator Rights",
             "hangup": "Leave the meeting",
+            "heading": "Toolbar",
             "help": "Help",
             "invite": "Invite people",
             "kick": "Kick participant",
@@ -1393,5 +1399,10 @@
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing",
         "upcomingMeetings": "Your upcoming meetings"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Whiteboard"
+        }
     }
 }

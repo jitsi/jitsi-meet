@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 // @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { IReduxState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
@@ -33,11 +34,23 @@ interface IDimensions {
 }
 
 /**
+ * The type of the React {@link Component} props of {@link Whiteboard}.
+ */
+type Props = {
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function;
+};
+
+/**
  * The Whiteboard component.
  *
+ * @param {Props} props - The React props passed to this component.
  * @returns {JSX.Element} - The React component.
  */
-const Whiteboard: () => JSX.Element = () => {
+const Whiteboard = (props: Props): JSX.Element => {
     const excalidrawRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
 
@@ -113,6 +126,20 @@ const Whiteboard: () => JSX.Element = () => {
             {
                 isOpen && (
                     <div className = 'excalidraw-wrapper'>
+                        {/*
+                          * Excalidraw renders a few lvl 2 headings. This is
+                          * quite fortunate, because we actually use lvl 1
+                          * headings to mark the big sections of our app. So make
+                          * sure to mark the Excalidraw context with a lvl 1
+                          * heading before showing the whiteboard.
+                          */
+                            <span
+                                aria-level = { 1 }
+                                className = 'sr-only'
+                                role = 'heading'>
+                                { props.t('whiteboard.accessibilityLabel.heading') }
+                            </span>
+                        }
                         <ExcalidrawApp
                             collabDetails = { collabDetails }
                             collabServerUrl = { collabServerUrl }
@@ -132,4 +159,4 @@ const Whiteboard: () => JSX.Element = () => {
     );
 };
 
-export default Whiteboard;
+export default translate(Whiteboard);

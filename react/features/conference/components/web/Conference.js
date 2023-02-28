@@ -210,7 +210,8 @@ class Conference extends AbstractConference<Props, *> {
             _notificationsVisible,
             _overflowDrawer,
             _showLobby,
-            _showPrejoin
+            _showPrejoin,
+            t
         } = this.props;
 
         return (
@@ -240,7 +241,17 @@ class Conference extends AbstractConference<Props, *> {
                         }
                     </div>
 
-                    { _showPrejoin || _showLobby || <Toolbox /> }
+                    { _showPrejoin || _showLobby || (
+                        <>
+                            <span
+                                aria-level = { 1 }
+                                className = 'sr-only'
+                                role = 'heading'>
+                                { t('toolbar.accessibilityLabel.heading') }
+                            </span>
+                            <Toolbox />
+                        </>
+                    )}
 
                     {_notificationsVisible && !_isAnyOverlayVisible && (_overflowDrawer
                         ? <JitsiPortal className = 'notification-portal'>
