@@ -85,6 +85,8 @@ const SCORES = [
     'feedback.veryGood'
 ];
 
+const ICON_SIZE = 32;
+
 type Scrollable = {
     scroll: Function;
 };
@@ -296,11 +298,10 @@ class FeedbackDialog extends Component<IProps, State> {
                         }) }>
                         { isFilled
                             ? <Icon
-                                color = '#1EC26A'
-                                size = { 32 }
+                                size = { ICON_SIZE }
                                 src = { IconFavoriteSolid } />
                             : <Icon
-                                size = { 32 }
+                                size = { ICON_SIZE }
                                 src = { IconFavorite } /> }
                     </span>
                 );
