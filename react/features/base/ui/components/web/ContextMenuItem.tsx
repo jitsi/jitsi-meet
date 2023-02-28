@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -179,6 +179,18 @@ const ContextMenuItem = ({
     const { classes: styles, cx } = useStyles();
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
 
+    const onKeyPressHandler = useCallback(e => {
+        // only trigger the fallback behavior (onClick) if we dont have any explicit keyboard event handler
+        if (onClick && !onKeyPress && !onKeyDown && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            onClick(e);
+        }
+
+        if (onKeyPress) {
+            onKeyPress(e);
+        }
+    }, [ onClick, onKeyPress, onKeyDown ]);
+
     return (
         <div
             aria-controls = { controls }
@@ -196,7 +208,7 @@ const ContextMenuItem = ({
             key = { text }
             onClick = { disabled ? undefined : onClick }
             onKeyDown = { disabled ? undefined : onKeyDown }
-            onKeyPress = { disabled ? undefined : onKeyPress }
+            onKeyPress = { disabled ? undefined : onKeyPressHandler }
             role = { role }
             tabIndex = { role === 'tab'
                 ? selected ? 0 : -1
