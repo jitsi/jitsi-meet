@@ -81,6 +81,7 @@ export { default as IconSend } from './send.svg';
 export { default as IconShare } from './share.svg';
 export { default as IconShareDoc } from './share-doc.svg';
 export { default as IconShortcuts } from './shortcuts.svg';
+export { default as IconSip } from './sip.svg';
 export { default as IconSites } from './sites.svg';
 export { default as IconStop } from './stop.svg';
 export { default as IconStopScreenshare } from './stop-screenshare.svg';
