@@ -163,7 +163,7 @@
     "circular-dependency-plugin": "5.2.0",
     "clean-css-cli": "4.3.0",
     "css-loader": "3.6.0",
-    "eslint": "8.25.0",
+    "eslint": "8.35.0",
     "eslint-plugin-flowtype": "8.0.3",
     "eslint-plugin-import": "2.25.2",
     "eslint-plugin-jsdoc": "37.0.3",
