@@ -7,6 +7,7 @@ import { IconCheck, IconExclamationSolid } from '../../../../base/icons/svg';
 // @ts-ignore
 import JitsiMeetJS from '../../../../base/lib-jitsi-meet/_';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
+import { TEXT_OVERFLOW_TYPES } from '../../../../base/ui/constants.any';
 
 import Meter from './Meter';
 
@@ -231,6 +232,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
                 <ContextMenuItem
                     accessibilityLabel = ''
                     icon = { isSelected ? IconCheck : undefined }
+                    overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
                     selected = { isSelected }
                     text = { children }
                     textClassName = { clsx('audio-preview-entry-text', !isSelected && 'left-margin') }>

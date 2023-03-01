@@ -5,6 +5,9 @@ import { makeStyles } from 'tss-react/mui';
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { TEXT_OVERFLOW_TYPES } from '../../constants.any';
+
+import TextWithOverflow from './TextWithOverflow';
 
 export interface IProps {
 
@@ -58,6 +61,11 @@ export interface IProps {
      * Keypress handler.
      */
     onKeyPress?: (e?: React.KeyboardEvent) => void;
+
+    /**
+     * Overflow type for item text.
+     */
+    overflowType?: TEXT_OVERFLOW_TYPES;
 
     /**
      * Whether the item is marked as selected.
@@ -149,6 +157,7 @@ const ContextMenuItem = ({
     onClick,
     onKeyDown,
     onKeyPress,
+    overflowType,
     selected,
     testId,
     text,
@@ -180,12 +189,13 @@ const ContextMenuItem = ({
                     size = { 20 }
                     src = { icon } />}
             {text && (
-                <span
+                <TextWithOverflow
                     className = { cx(styles.text,
-                _overflowDrawer && styles.drawerText,
-                textClassName) }>
+                    _overflowDrawer && styles.drawerText,
+                    textClassName) }
+                    overflowType = { overflowType } >
                     {text}
-                </span>
+                </TextWithOverflow>
             )}
             {children}
         </div>
