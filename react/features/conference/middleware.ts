@@ -21,7 +21,9 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
+// @ts-ignore
 import { isCalendarEnabled } from '../calendar-sync';
+// @ts-ignore
 import { FeedbackDialog } from '../feedback';
 import { setFilmstripEnabled } from '../filmstrip/actions.any';
 import { hideNotification, showNotification } from '../notifications/actions';
@@ -36,7 +38,7 @@ import { setToolboxEnabled } from '../toolbox/actions.any';
 // @ts-ignore
 import { notifyKickedOut } from './actions';
 
-let intervalId;
+let intervalId: any;
 
 
 MiddlewareRegistry.register(store => next => action => {
