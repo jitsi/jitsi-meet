@@ -202,7 +202,8 @@ class CalendarList extends AbstractPage<Props> {
                     className = 'meetings-list-empty-button'
                     onClick = { this._onOpenSettings }
                     onKeyPress = { this._onKeyPressOpenSettings }
-                    role = 'button'>
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <Icon
                         className = 'meetings-list-empty-icon'
                         src = { IconCalendar } />
