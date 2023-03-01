@@ -11,7 +11,6 @@ import {
 import { openDialog } from '../base/dialog/actions';
 import i18next from '../base/i18n/i18next';
 import { updateSettings } from '../base/settings/actions';
-import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
@@ -97,12 +96,6 @@ export function submitMoreTab(newState: any) {
             dispatch(updateSettings({
                 userSelectedSkipPrejoin: !showPrejoinPage
             }));
-        }
-
-        if (newState.currentFramerate !== currentState.currentFramerate) {
-            const frameRate = parseInt(newState.currentFramerate, 10);
-
-            dispatch(setScreenshareFramerate(frameRate));
         }
 
         if (newState.maxStageParticipants !== currentState.maxStageParticipants) {

@@ -1,58 +1,76 @@
-/* @flow */
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../base/i18n/functions';
+import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Select from '../../base/ui/components/web/Select';
 
 /**
  * The type of the React {@code Component} props of {@link DeviceSelector}.
  */
-type Props = {
+interface IProps extends WithTranslation {
+
+    /**
+     * CSS classes object.
+     */
+    classes: any;
 
     /**
      * MediaDeviceInfos used for display in the select element.
      */
-    devices: Array<Object>,
+    devices: Array<MediaDeviceInfo> | undefined;
 
     /**
      * If false, will return a selector with no selection options.
      */
-    hasPermission: boolean,
+    hasPermission: boolean;
 
     /**
      * CSS class for the icon to the left of the dropdown trigger.
      */
-    icon: string,
-
-    /**
-     * If true, will render the selector disabled with a default selection.
-     */
-    isDisabled: boolean,
-
-    /**
-     * The translation key to display as a menu label.
-     */
-    label: string,
-
-    /**
-     * The callback to invoke when a selection is made.
-     */
-    onSelect: Function,
-
-    /**
-     * The default device to display as selected.
-     */
-    selectedDeviceId: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
+    icon: string;
 
     /**
      * The id of the dropdown element.
      */
-    id: string
+    id: string;
+
+    /**
+     * If true, will render the selector disabled with a default selection.
+     */
+    isDisabled: boolean;
+
+    /**
+     * The translation key to display as a menu label.
+     */
+    label: string;
+
+    /**
+     * The callback to invoke when a selection is made.
+     */
+    onSelect: Function;
+
+    /**
+     * The default device to display as selected.
+     */
+    selectedDeviceId: string;
+}
+
+const styles = (theme: Theme) => {
+    return {
+        textSelector: {
+            width: '100%',
+            boxSizing: 'border-box',
+            borderRadius: theme.shape.borderRadius,
+            backgroundColor: theme.palette.uiBackground,
+            padding: '10px 16px',
+            textAlign: 'center',
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            border: `1px solid ${theme.palette.ui03}`
+        }
+    };
 };
 
 /**
@@ -61,17 +79,18 @@ type Props = {
  *
  * @augments Component
  */
-class DeviceSelector extends Component<Props> {
+class DeviceSelector extends Component<IProps> {
     /**
      * Initializes a new DeviceSelector instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onSelect = this._onSelect.bind(this);
+        this._createDropdown = this._createDropdown.bind(this);
     }
 
     /**
@@ -112,25 +131,6 @@ class DeviceSelector extends Component<Props> {
     }
 
     /**
-     * Creates a React Element for displaying the passed in text surrounded by
-     * two icons. The left icon is the icon class passed in through props and
-     * the right icon is AtlasKit ExpandIcon.
-     *
-     * @param {string} triggerText - The text to display within the element.
-     * @private
-     * @returns {ReactElement}
-     */
-    _createDropdownTrigger(triggerText) {
-        return (
-            <div className = 'device-selector-trigger'>
-                <span className = 'device-selector-trigger-text'>
-                    { triggerText }
-                </span>
-            </div>
-        );
-    }
-
-    /**
      * Creates a AKDropdownMenu Component using passed in props and options. If
      * the dropdown needs to be disabled, then only the AKDropdownMenu trigger
      * element is returned to simulate a disabled state.
@@ -146,31 +146,29 @@ class DeviceSelector extends Component<Props> {
      * @private
      * @returns {ReactElement}
      */
-    _createDropdown(options) {
+    _createDropdown(options: { defaultSelected?: MediaDeviceInfo; isDisabled: boolean;
+        items?: Array<{ label: string; value: string; }>; placeholder: string; }) {
         const triggerText
             = (options.defaultSelected && (options.defaultSelected.label || options.defaultSelected.deviceId))
                 || options.placeholder;
-        const trigger = this._createDropdownTrigger(triggerText);
+        const { classes } = this.props;
 
-        if (options.isDisabled || !options.items.length) {
+        if (options.isDisabled || !options.items?.length) {
             return (
-                <div className = 'device-selector-trigger-disabled'>
-                    { trigger }
+                <div className = { classes.textSelector }>
+                    {triggerText}
                 </div>
             );
         }
 
         return (
-            <div className = 'dropdown-menu'>
-                <Select
-                    onChange = { this._onSelect }
-                    options = { options.items }
-                    value = { this.props.selectedDeviceId } />
-            </div>
+            <Select
+                label = { this.props.t(this.props.label) }
+                onChange = { this._onSelect }
+                options = { options.items }
+                value = { this.props.selectedDeviceId } />
         );
     }
-
-    _onSelect: (Object) => void;
 
     /**
      * Invokes the passed in callback to notify of selection changes.
@@ -180,7 +178,7 @@ class DeviceSelector extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _onSelect(e) {
+    _onSelect(e: React.ChangeEvent<HTMLSelectElement>) {
         const deviceId = e.target.value;
 
         if (this.props.selectedDeviceId !== deviceId) {
@@ -217,4 +215,4 @@ class DeviceSelector extends Component<Props> {
     }
 }
 
-export default translate(DeviceSelector);
+export default withStyles(styles)(translate(DeviceSelector));

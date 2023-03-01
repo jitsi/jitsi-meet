@@ -19,8 +19,6 @@ import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
 
-import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
-
 /**
  * Used for web. Indicates if the setting section is enabled.
  *
@@ -118,12 +116,9 @@ export function getNotificationsMap(stateful: IStateful) {
  */
 export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
-    const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
     const stageFilmstripEnabled = isStageFilmstripEnabled(state);
 
     return {
-        currentFramerate: framerate,
-        desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
         maxStageParticipants: state['features/base/settings'].maxStageParticipants,

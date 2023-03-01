@@ -1,35 +1,38 @@
-/* @flow */
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../base/i18n/functions';
-import Audio from '../../base/media/components/Audio';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import Audio from '../../base/media/components/Audio.web';
+import Button from '../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../base/ui/constants.any';
 
 const TEST_SOUND_PATH = 'sounds/ring.mp3';
 
 /**
  * The type of the React {@code Component} props of {@link AudioOutputPreview}.
  */
-type Props = {
+interface IProps extends WithTranslation {
+
+    /**
+     * Button className.
+     */
+    className?: string;
 
     /**
      * The device id of the audio output device to use.
      */
-    deviceId: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    deviceId: string;
+}
 
 /**
  * React component for playing a test sound through a specified audio device.
  *
  * @augments Component
  */
-class AudioOutputPreview extends Component<Props> {
-    _audioElement: ?Object;
+class AudioOutputPreview extends Component<IProps> {
+    _audioElement: HTMLAudioElement | null;
 
     /**
      * Initializes a new AudioOutputPreview instance.
@@ -37,7 +40,7 @@ class AudioOutputPreview extends Component<Props> {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._audioElement = null;
@@ -66,23 +69,20 @@ class AudioOutputPreview extends Component<Props> {
      */
     render() {
         return (
-            <div className = 'audio-output-preview'>
-                <a
-                    aria-label = { this.props.t('deviceSelection.testAudio') }
+            <>
+                <Button
+                    accessibilityLabel = { this.props.t('deviceSelection.testAudio') }
+                    className = { this.props.className }
+                    labelKey = 'deviceSelection.testAudio'
                     onClick = { this._onClick }
                     onKeyPress = { this._onKeyPress }
-                    role = 'button'
-                    tabIndex = { 0 }>
-                    { this.props.t('deviceSelection.testAudio') }
-                </a>
+                    type = { BUTTON_TYPES.SECONDARY } />
                 <Audio
                     setRef = { this._audioElementReady }
                     src = { TEST_SOUND_PATH } />
-            </div>
+            </>
         );
     }
-
-    _audioElementReady: (Object) => void;
 
     /**
      * Sets the instance variable for the component's audio element so it can be
@@ -92,13 +92,11 @@ class AudioOutputPreview extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _audioElementReady(element: Object) {
+    _audioElementReady(element: HTMLAudioElement) {
         this._audioElement = element;
 
         this._setAudioSink();
     }
-
-    _onClick: () => void;
 
     /**
      * Plays a test sound.
@@ -107,11 +105,8 @@ class AudioOutputPreview extends Component<Props> {
      * @returns {void}
      */
     _onClick() {
-        this._audioElement
-            && this._audioElement.play();
+        this._audioElement?.play();
     }
-
-    _onKeyPress: (Object) => void;
 
     /**
      * KeyPress handler for accessibility.
@@ -120,7 +115,7 @@ class AudioOutputPreview extends Component<Props> {
      *
      * @returns {void}
      */
-    _onKeyPress(e) {
+    _onKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             this._onClick();
@@ -135,7 +130,7 @@ class AudioOutputPreview extends Component<Props> {
      */
     _setAudioSink() {
         this._audioElement
-            && this.props.deviceId
+            && this.props.deviceId // @ts-ignore
             && this._audioElement.setSinkId(this.props.deviceId);
     }
 }
