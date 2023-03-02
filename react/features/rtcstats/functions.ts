@@ -68,11 +68,15 @@ export function connectAndSendIdentity({ getState, dispatch }: IStore, identity:
             // This is done in order to facilitate queries based on different conference configurations.
             // e.g. Find all RTCPeerConnections that connect to a specific shard or were created in a
             // conference with a specific version.
-            // XXX(george): we also want to be able to correlate between rtcstats and callstats, so we're
-            // appending the callstats user name (if it exists) to the display name.
-            const displayName = options.statisticsId
-                || options.statisticsDisplayName
-                || jitsiLocalStorage.getItem('callStatsUserName');
+            let displayName = jitsiLocalStorage.getItem('callStatsUserName');
+
+            if (options.statisticsId || options.statisticsDisplayName) {
+                if (options.statisticsId && options.statisticsDisplayName) {
+                    displayName = `${options.statisticsDisplayName} (${options.statisticsId})`;
+                } else {
+                    displayName = options.statisticsId || options.statisticsDisplayName;
+                }
+            }
 
             RTCStats.sendIdentityData({
                 ...getAmplitudeIdentity(),
