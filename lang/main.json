@@ -991,6 +991,7 @@
         "maxStageParticipants": "Maximum number of participants who can be pinned to the main stage (EXPERIMENTAL)",
         "microphones": "Microphones",
         "moderator": "Moderator",
+        "moderatorOptions": "Moderator options",
         "more": "More",
         "name": "Name",
         "noDevice": "None",
