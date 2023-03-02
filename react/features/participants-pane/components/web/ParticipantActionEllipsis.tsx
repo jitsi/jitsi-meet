@@ -14,14 +14,17 @@ interface IProps {
      * Click handler function.
      */
     onClick: () => void;
+
+    participantID: string;
 }
 
-const ParticipantActionEllipsis = ({ accessibilityLabel, onClick }: IProps) => (
+const ParticipantActionEllipsis = ({ accessibilityLabel, onClick, participantID }: IProps) => (
     <Button
         accessibilityLabel = { accessibilityLabel }
         icon = { IconDotsHorizontal }
         onClick = { onClick }
-        size = 'small' />
+        size = 'small'
+        testId = { `participant-more-options-${participantID}` } />
 );
 
 export default ParticipantActionEllipsis;

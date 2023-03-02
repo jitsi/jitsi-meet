@@ -87,7 +87,7 @@ const ParticipantQuickAction = ({
                 label = { t('participantsPane.actions.mute') }
                 onClick = { muteAudio(participantID) }
                 size = 'small'
-                testId = { `mute-${participantID}` } />
+                testId = { `mute-audio-${participantID}` } />
         );
     }
     case QUICK_ACTION_BUTTON.ASK_TO_UNMUTE: {
@@ -98,7 +98,7 @@ const ParticipantQuickAction = ({
                 label = { t('participantsPane.actions.askUnmute') }
                 onClick = { askToUnmute }
                 size = 'small'
-                testId = { `unmute-${participantID}` } />
+                testId = { `unmute-audio-${participantID}` } />
         );
     }
     case QUICK_ACTION_BUTTON.ALLOW_VIDEO: {
@@ -109,7 +109,7 @@ const ParticipantQuickAction = ({
                 label = { t('participantsPane.actions.allowVideo') }
                 onClick = { allowVideo }
                 size = 'small'
-                testId = { `unmute-${participantID}` } />
+                testId = { `unmute-video-${participantID}` } />
         );
     }
     case QUICK_ACTION_BUTTON.STOP_VIDEO: {
@@ -120,7 +120,7 @@ const ParticipantQuickAction = ({
                 label = { t('participantsPane.actions.stopVideo') }
                 onClick = { stopVideo(participantID) }
                 size = 'small'
-                testId = { `mute-${participantID}` } />
+                testId = { `mute-video-${participantID}` } />
         );
     }
     default: {

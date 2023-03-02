@@ -272,7 +272,8 @@ function MeetingParticipantItem({
                     )}
                     <ParticipantActionEllipsis
                         accessibilityLabel = { participantActionEllipsisLabel }
-                        onClick = { onContextMenu } />
+                        onClick = { onContextMenu }
+                        participantID = { _participantID } />
                 </>
             }
 

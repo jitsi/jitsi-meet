@@ -53,6 +53,7 @@ const AskToUnmuteButton = ({ buttonType, participantID }: Props) => {
             accessibilityLabel = { text }
             icon = { icon }
             onClick = { _onClick }
+            testId = { `unmute-${buttonType}-${participantID}` }
             text = { text } />
     );
 };
