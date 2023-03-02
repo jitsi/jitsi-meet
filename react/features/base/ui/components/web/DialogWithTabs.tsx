@@ -131,6 +131,7 @@ const useStyles = makeStyles()(theme => {
 
         footer: {
             justifyContent: 'flex-end',
+            paddingTop: theme.spacing(4),
 
             '& button:last-child': {
                 marginLeft: '16px'

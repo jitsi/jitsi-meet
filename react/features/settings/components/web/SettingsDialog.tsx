@@ -4,7 +4,15 @@ import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 
 import { IReduxState } from '../../../app/types';
-import { IconBell, IconCalendar, IconGear, IconHost, IconUser, IconVolumeUp } from '../../../base/icons/svg';
+import {
+    IconBell,
+    IconCalendar,
+    IconGear,
+    IconHost,
+    IconShortcuts,
+    IconUser,
+    IconVolumeUp
+} from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import DialogWithTabs, { IDialogTab } from '../../../base/ui/components/web/DialogWithTabs';
@@ -19,7 +27,8 @@ import {
     submitModeratorTab,
     submitMoreTab,
     submitNotificationsTab,
-    submitProfileTab
+    submitProfileTab,
+    submitShortcutsTab
 } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import {
@@ -27,7 +36,8 @@ import {
     getMoreTabProps,
     getNotificationsMap,
     getNotificationsTabProps,
-    getProfileTabProps
+    getProfileTabProps,
+    getShortcutsTabProps
 } from '../../functions';
 
 // @ts-ignore
@@ -36,6 +46,7 @@ import ModeratorTab from './ModeratorTab';
 import MoreTab from './MoreTab';
 import NotificationsTab from './NotificationsTab';
 import ProfileTab from './ProfileTab';
+import ShortcutsTab from './ShortcutsTab';
 /* eslint-enable lines-around-comment */
 
 /**
@@ -341,6 +352,24 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             icon: IconCalendar
         });
     }
+
+    tabs.push({
+        name: SETTINGS_TABS.SHORTCUTS,
+        component: ShortcutsTab,
+        labelKey: 'settings.shortcuts',
+        props: getShortcutsTabProps(state, isDisplayedOnWelcomePage),
+        propsUpdateFunction: (tabState: any, newProps: any) => {
+            // Updates tab props, keeping users selection
+
+            return {
+                ...newProps,
+                keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
+            };
+        },
+        className: `settings-pane ${classes.settingsDialog}`,
+        submit: submitShortcutsTab,
+        icon: IconShortcuts
+    });
 
     if (showMoreTab) {
         tabs.push({

@@ -1006,6 +1006,7 @@
         "selectCamera": "Camera",
         "selectMic": "Microphone",
         "selfView": "Self view",
+        "shortcuts": "Shortcuts",
         "speakers": "Speakers",
         "startAudioMuted": "Everyone starts muted",
         "startReactionsMuted": "Mute reaction sounds for everyone",

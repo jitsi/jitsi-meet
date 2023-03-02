@@ -1,8 +1,6 @@
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-expect-error
-import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps
 } from '../../../base/dialog/components/web/AbstractDialogTab';
@@ -81,7 +79,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
         // Bind event handler so it is only bound once for every instance.
         this._onFramerateItemSelect = this._onFramerateItemSelect.bind(this);
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
-        this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
     }
@@ -133,19 +130,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
     }
 
     /**
-     * Callback invoked to select if global keyboard shortcuts
-     * should be enabled.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onKeyboardShortcutEnableChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        keyboardShortcut.enable(checked);
-        super._onChange({ keyboardShortcutEnable: checked });
-    }
-
-    /**
      * Callback invoked to select a max number of stage participants from the select dropdown.
      *
      * @param {Object} e - The key event to handle.
@@ -186,31 +170,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
                         options = { frameRateItems }
                         value = { currentFramerate } />
                 </div>
-            </div>
-        );
-    }
-
-    /**
-     * Returns the React Element for keyboardShortcut settings.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderKeyboardShortcutCheckbox() {
-        const { t } = this.props;
-
-        return (
-            <div
-                className = 'settings-sub-pane-element'
-                key = 'keyboard-shortcut'>
-                <span className = 'checkbox-label'>
-                    { t('keyboardShortcuts.keyboardShortcuts') }
-                </span>
-                <Checkbox
-                    checked = { keyboardShortcut.getEnabled() }
-                    label = { t('prejoin.keyboardShortcuts') }
-                    name = 'enable-keyboard-shortcuts'
-                    onChange = { this._onKeyboardShortcutEnableChanged } />
             </div>
         );
     }
@@ -304,7 +263,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
                 className = 'settings-sub-pane left'
                 key = 'settings-sub-pane-left'>
                 { showPrejoinSettings && this._renderPrejoinScreenSettings() }
-                { this._renderKeyboardShortcutCheckbox() }
             </div>
         );
     }

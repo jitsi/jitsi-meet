@@ -4,7 +4,8 @@ export const SETTINGS_TABS = {
     MORE: 'more_tab',
     MODERATOR: 'moderator-tab',
     NOTIFICATIONS: 'notifications_tab',
-    PROFILE: 'profile_tab'
+    PROFILE: 'profile_tab',
+    SHORTCUTS: 'shortcuts_tab'
 };
 
 /**

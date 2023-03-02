@@ -1,5 +1,7 @@
 import { batch } from 'react-redux';
 
+// @ts-expect-error
+import keyboardShortcut from '../../../modules/keyboardshortcut/keyboardshortcut';
 import { IStore } from '../app/types';
 import {
     setFollowMe,
@@ -22,7 +24,8 @@ import {
     getModeratorTabProps,
     getMoreTabProps,
     getNotificationsTabProps,
-    getProfileTabProps
+    getProfileTabProps,
+    getShortcutsTabProps
 } from './functions';
 
 /**
@@ -235,5 +238,21 @@ export function toggleVideoSettings() {
         const value = getState()['features/settings'].videoSettingsVisible;
 
         dispatch(setVideoSettingsVisibility(!value));
+    };
+}
+
+/**
+ * Submits the settings from the "Shortcuts" tab of the settings dialog.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitShortcutsTab(newState: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const currentState = getShortcutsTabProps(getState());
+
+        if (newState.keyboardShortcutsEnabled !== currentState.keyboardShortcutsEnabled) {
+            keyboardShortcut.enable(newState.keyboardShortcutsEnabled);
+        }
     };
 }
