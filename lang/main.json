@@ -240,6 +240,7 @@
         "WaitingForHostTitle": "Waiting for the host ...",
         "Yes": "Yes",
         "accessibilityLabel": {
+            "close": "Close dialog",
             "liveStreaming": "Live Stream"
         },
         "add": "Add",
